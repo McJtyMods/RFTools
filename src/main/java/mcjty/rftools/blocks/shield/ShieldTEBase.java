@@ -377,7 +377,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         int meta = 0;
         int te = 0;
 
-        if (ShieldRenderingMode.MODE_SOLID.equals(shieldRenderingMode) && stack != null && stack.getItem() != null) {
+        if (ShieldRenderingMode.MODE_MIMIC.equals(shieldRenderingMode) && stack != null && stack.getItem() != null) {
             if (!(stack.getItem() instanceof ItemBlock)) {
                 return new int[] { camoId, meta, te };
             }
@@ -461,7 +461,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         int rf = ShieldConfiguration.rfBase * s / 10;
         if (ShieldRenderingMode.MODE_SHIELD.equals(shieldRenderingMode)) {
             rf += ShieldConfiguration.rfShield * s / 10;
-        } else if (ShieldRenderingMode.MODE_SOLID.equals(shieldRenderingMode)) {
+        } else if (ShieldRenderingMode.MODE_MIMIC.equals(shieldRenderingMode)) {
             rf += ShieldConfiguration.rfCamo * s / 10;
         }
         return rf;
@@ -705,6 +705,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             shieldBlockTileEntity.setDamageBits(damageBits);
             shieldBlockTileEntity.setCollisionData(cddata);
             shieldBlockTileEntity.setShieldColor(shieldColor);
+            shieldBlockTileEntity.setShieldRenderingMode(shieldRenderingMode);
         }
     }
 

@@ -3,9 +3,7 @@ package mcjty.rftools.blocks.shield;
 import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
-import mcjty.lib.gui.events.ButtonEvent;
 import mcjty.lib.gui.events.ChoiceEvent;
-import mcjty.lib.gui.events.ColorChoiceEvent;
 import mcjty.lib.gui.events.DefaultSelectionEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
@@ -21,6 +19,7 @@ import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.blocks.shield.filters.*;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -117,53 +116,29 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
                 .setFilledBackground(0xff9e9e9e);
 
         Button applyCamo = new Button(mc, this).setText("Set").setTooltips("Set the camouflage block").
-                setLayoutHint(new PositionalLayout.PositionalHint(51, 142, 28, 16)).addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget parent) {
-                applyCamoToShield();
-            }
-        });
-        ColorChoiceLabel colorSelector = new ColorChoiceLabel(mc, this).addColors(0x96ffc8, 0x4698ff, 0xff6030, 0x55a0a0, 0xa055a0, 0xffffff).
-                setTooltips("Color for the shield").
-                setLayoutHint(new PositionalLayout.PositionalHint(31, 177, 48, 16)).
-                addChoiceEvent(new ColorChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, Integer newColor) {
-                sendServerCommand(RFToolsMessages.INSTANCE, ShieldTEBase.CMD_SETCOLOR, new Argument("color", newColor));
-            }
-        });
+                setLayoutHint(new PositionalLayout.PositionalHint(51, 142, 28, 16)).addButtonEvent(parent -> applyCamoToShield());
+        applyCamo.setEnabled(false);
+        applyCamo.setTooltips("Not implemented yet");   // @todo
+        ColorChoiceLabel colorSelector = new ColorChoiceLabel(mc, this)
+                .setTooltips("Color for the shield")
+                .setLayoutHint(new PositionalLayout.PositionalHint(31, 177, 48, 16));
+        colorSelector.addColors(0x96ffc8);
+        for (EnumDyeColor color : EnumDyeColor.values()) {
+            colorSelector.addColors(color.getMapColor().colorValue);
+        }
         colorSelector.setCurrentColor(tileEntity.getShieldColor());
+        colorSelector.addChoiceEvent((parent, newColor) -> sendServerCommand(RFToolsMessages.INSTANCE, ShieldTEBase.CMD_SETCOLOR, new Argument("color", newColor)));
 
         player = new TextField(mc, this).setTooltips("Optional player name").setLayoutHint(new PositionalLayout.PositionalHint(170, 44, 80, 14));
 
         addFilter = new Button(mc, this).setText("Add").setTooltips("Add selected filter").setLayoutHint(new PositionalLayout.PositionalHint(4, 6, 36, 14)).
-                addButtonEvent(new ButtonEvent() {
-                    @Override
-                    public void buttonClicked(Widget parent) {
-                        addNewFilter();
-                    }
-                });
+                addButtonEvent(parent -> addNewFilter());
         delFilter = new Button(mc, this).setText("Del").setTooltips("Delete selected filter").setLayoutHint(new PositionalLayout.PositionalHint(39, 6, 36, 14)).
-                addButtonEvent(new ButtonEvent() {
-                    @Override
-                    public void buttonClicked(Widget parent) {
-                        removeSelectedFilter();
-                    }
-                });
+                addButtonEvent(parent -> removeSelectedFilter());
         upFilter = new Button(mc, this).setText("Up").setTooltips("Move filter up").setLayoutHint(new PositionalLayout.PositionalHint(4, 22, 36, 14)).
-                addButtonEvent(new ButtonEvent() {
-                    @Override
-                    public void buttonClicked(Widget parent) {
-                        moveFilterUp();
-                    }
-                });
+                addButtonEvent(parent -> moveFilterUp());
         downFilter = new Button(mc, this).setText("Down").setTooltips("Move filter down").setLayoutHint(new PositionalLayout.PositionalHint(39, 22, 36, 14)).
-                addButtonEvent(new ButtonEvent() {
-                    @Override
-                    public void buttonClicked(Widget parent) {
-                        moveFilterDown();
-                    }
-                });
+                addButtonEvent(parent -> moveFilterDown());
 
         Panel controlPanel = new Panel(mc, this).setLayout(new PositionalLayout()).setLayoutHint(new PositionalLayout.PositionalHint(170, 60, 80, 43))
                 .addChild(addFilter).addChild(delFilter).addChild(upFilter).addChild(downFilter)
@@ -344,18 +319,17 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
     private void initVisibilityMode() {
         visibilityOptions = new ChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(31, 161, 48, 14));
         for (ShieldRenderingMode m : ShieldRenderingMode.values()) {
-            visibilityOptions.addChoices(m.getDescription());
+            if (m != ShieldRenderingMode.MODE_MIMIC) {  // @todo
+                visibilityOptions.addChoices(m.getDescription());
+            }
         }
         visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_INVISIBLE.getDescription(), "Shield is completely invisible");
         visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_SHIELD.getDescription(), "Default shield texture");
-        visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_SOLID.getDescription(), "Use the texture from the supplied block");
+        visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_TRANSP.getDescription(), "Transparent shield texture");
+        visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_SOLID.getDescription(), "Solid shield texture");
+//        visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_MIMIC.getDescription(), "Use the texture from the supplied block"); // @todo, currently not implemented
         visibilityOptions.setChoice(tileEntity.getShieldRenderingMode().getDescription());
-        visibilityOptions.addChoiceEvent(new ChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, String newChoice) {
-                changeVisibilityMode();
-            }
-        });
+        visibilityOptions.addChoiceEvent((parent, newChoice) -> changeVisibilityMode());
     }
 
     private void initActionOptions() {

@@ -77,6 +77,11 @@ public final class ModBlocks {
         EndergenicSetup.initClient();
     }
 
+    @SideOnly(Side.CLIENT)
+    public static void initClientPost() {
+        ShieldSetup.initClientPost();
+    }
+
     private static void initBaseBlocks() {
         machineFrame = new MachineFrame();
         machineBase = new MachineBase();

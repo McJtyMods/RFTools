@@ -6,6 +6,8 @@ import java.util.Map;
 public enum ShieldRenderingMode {
     MODE_INVISIBLE("Invisible"),
     MODE_SHIELD("Shield"),
+    MODE_MIMIC("Mimic"),
+    MODE_TRANSP("Transp"),
     MODE_SOLID("Solid"),
     ;
 

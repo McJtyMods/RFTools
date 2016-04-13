@@ -18,6 +18,8 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
     private int hasTe = 0;
     private int shieldColor;
 
+    private ShieldRenderingMode shieldRenderingMode = ShieldRenderingMode.MODE_SHIELD;
+
     protected int damageBits = 0;     // A 4-bit value indicating if a specific type of entity should get damage.
     private int collisionData = 0;  // A 4-bit value indicating collision detection data.
 
@@ -62,6 +64,15 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
         markDirtyClient();
     }
 
+    public ShieldRenderingMode getShieldRenderingMode() {
+        return shieldRenderingMode;
+    }
+
+    public void setShieldRenderingMode(ShieldRenderingMode shieldRenderingMode) {
+        this.shieldRenderingMode = shieldRenderingMode;
+        markDirtyClient();
+    }
+
     public void setCamoBlock(int camoId, int hasTe) {
         this.camoId = camoId;
         this.hasTe = hasTe;
@@ -98,6 +109,7 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
         tagCompound.setInteger("damageBits", damageBits);
         tagCompound.setInteger("collisionData", collisionData);
         tagCompound.setInteger("shieldColor", shieldColor);
+        tagCompound.setInteger("stt", shieldRenderingMode.ordinal());
         if (shieldBlock != null) {
             tagCompound.setInteger("shieldX", shieldBlock.getX());
             tagCompound.setInteger("shieldY", shieldBlock.getY());
@@ -121,6 +133,7 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
         if (shieldColor == 0) {
             shieldColor = 0x96ffc8;
         }
+        shieldRenderingMode = ShieldRenderingMode.values()[tagCompound.getInteger("stt")];
 
         int sx = tagCompound.getInteger("shieldX");
         int sy = tagCompound.getInteger("shieldY");

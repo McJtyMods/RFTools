@@ -5,6 +5,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -17,13 +19,28 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class SolidShieldBlock extends AbstractShieldBlock {
 
-    public static final PropertyInteger ICON_TOPDOWN = PropertyInteger.create("icontopdown", 0, 3);
-    public static final PropertyInteger ICON_SIDE = PropertyInteger.create("iconside", 0, 3);
+    public static final PropertyInteger ICON_TOPDOWN = PropertyInteger.create("icontopdown", 0, 5);
+    public static final PropertyInteger ICON_SIDE = PropertyInteger.create("iconside", 0, 5);
 
     @Override
     protected void init() {
         setRegistryName("solid_shield_block");
         setUnlocalizedName("solid_shield_block");
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void initBlockColors() {
+        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(new IBlockColor() {
+            @Override
+            public int colorMultiplier(IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) {
+                TileEntity te = worldIn.getTileEntity(pos);
+                if (te instanceof NoTickShieldBlockTileEntity) {
+                    NoTickShieldBlockTileEntity tileEntity = (NoTickShieldBlockTileEntity) te;
+                    return tileEntity.getShieldColor();
+                }
+                return 0xffffff;
+            }
+        }, this);
     }
 
     @Override
@@ -73,6 +90,18 @@ public class SolidShieldBlock extends AbstractShieldBlock {
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+        TileEntity te = worldIn.getTileEntity(pos);
+        if (te instanceof NoTickShieldBlockTileEntity) {
+            NoTickShieldBlockTileEntity tileEntity = (NoTickShieldBlockTileEntity) te;
+            ShieldRenderingMode mode = tileEntity.getShieldRenderingMode();
+            if (mode == ShieldRenderingMode.MODE_TRANSP) {
+                return state.withProperty(ICON_TOPDOWN, 4).withProperty(ICON_SIDE, 4);
+            } else if (mode == ShieldRenderingMode.MODE_SOLID) {
+                return state.withProperty(ICON_TOPDOWN, 5).withProperty(ICON_SIDE, 5);
+            }
+        }
+
+
         int x = pos.getX();
         int y = pos.getY();
         int z = pos.getZ();

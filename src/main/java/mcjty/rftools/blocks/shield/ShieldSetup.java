@@ -52,6 +52,12 @@ public class ShieldSetup {
         noTickSolidShieldBlock.initModel();
     }
 
+    @SideOnly(Side.CLIENT)
+    public static void initClientPost() {
+        solidShieldBlock.initBlockColors();
+        noTickSolidShieldBlock.initBlockColors();
+    }
+
     public static void initCrafting() {
         ItemStack lapisStack = new ItemStack(Items.dye, 1, 4);
         Block redstoneTorch = Blocks.redstone_torch;

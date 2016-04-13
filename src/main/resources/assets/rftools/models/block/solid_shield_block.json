@@ -1,12 +1,19 @@
 {
-  "parent": "block/cube",
+  "parent": "block/block",
+  "elements": [
+    {   "from": [ 0, 0, 0 ],
+      "to": [ 16, 16, 16 ],
+      "faces": {
+        "down":  { "texture": "#topdown", "tintindex": 0, "cullface": "down" },
+        "up":    { "texture": "#topdown", "tintindex": 0, "cullface": "up" },
+        "north": { "texture": "#side", "tintindex": 0, "cullface": "north" },
+        "south": { "texture": "#side", "tintindex": 0, "cullface": "south" },
+        "west":  { "texture": "#side", "tintindex": 0, "cullface": "west" },
+        "east":  { "texture": "#side", "tintindex": 0, "cullface": "east" }
+      }
+    }
+  ],
   "textures": {
-    "particle": "rftools:blocks/shield/shield0",
-    "down": "#topdown",
-    "up": "#topdown",
-    "north": "#side",
-    "east": "#side",
-    "south": "#side",
-    "west": "#side"
+    "particle": "rftools:blocks/shield/shield0"
   }
 }
