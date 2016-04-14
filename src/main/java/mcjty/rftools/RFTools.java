@@ -17,6 +17,7 @@ import mcjty.rftools.blocks.storage.RemoteStorageIdRegistry;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import mcjty.rftools.commands.CommandRftTp;
 import mcjty.rftools.items.ModItems;
+import mcjty.rftools.items.manual.GuiRFToolsManual;
 import mcjty.rftools.proxy.CommonProxy;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -178,7 +179,7 @@ public class RFTools implements ModBase {
 
     @Override
     public void openManual(EntityPlayer player, int bookIndex, String page) {
-//        GuiRFToolsManual.locatePage = page;
+        GuiRFToolsManual.locatePage = page;
         player.openGui(RFTools.instance, bookIndex, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
     }
 }
