@@ -36,8 +36,7 @@ public class StorageScannerBlock extends GenericRFToolsBlock implements Infusabl
             list.add(TextFormatting.WHITE + "This machine will scan all nearby inventories");
             list.add(TextFormatting.WHITE + "and show them in a list. You can then search");
             list.add(TextFormatting.WHITE + "for items in all those inventories.");
-            list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption and");
-            list.add(TextFormatting.YELLOW + "increased scanning speed.");
+            list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }

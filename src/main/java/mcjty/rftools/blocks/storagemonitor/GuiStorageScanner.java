@@ -16,10 +16,13 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
+import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -42,13 +45,15 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     private EnergyBar progressBar;
     private ScrollableLabel radiusLabel;
     private Button scanButton;
-    private int clientVersion = -1;
 
-    // For client side: the hilighted coordinates.
-    public static Set<BlockPos> fromServer_coordinates = new HashSet<>();
+    private int listDirty = 0;
 
     // From server: all the positions with inventories
     public static List<BlockPos> fromServer_inventories = new ArrayList<>();
+    // From server: all the positions with inventories matching the search
+    public static Set<BlockPos> fromServer_foundInventories = new HashSet<>();
+    // From server: the contents of an inventory
+    public static List<ItemStack> fromServer_inventory = new ArrayList<>();
 
     public GuiStorageScanner(StorageScannerTileEntity storageScannerTileEntity, EmptyContainer storageScannerContainer) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, storageScannerTileEntity, storageScannerContainer, RFTools.GUI_MANUAL_MAIN, "stomon");
@@ -70,8 +75,6 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         storageList = new WidgetList(mc, this).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget parent, int index) {
-                itemList.removeChildren();
-                tileEntity.clearShowingItems();
                 getInventoryOnServer();
             }
 
@@ -97,7 +100,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 setText("Scan").
                 setDesiredWidth(50).
                 setDesiredHeight(14).
-                addButtonEvent(parent -> startStopScan()).
+                addButtonEvent(parent -> RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID,
+                                                                                          new InventoriesInfoPacketServer(tileEntity.getWorld(), tileEntity.getPos(), true)))).
                 setTooltips("Start/stop a scan of", "all storage units", "in radius");
         progressBar = new EnergyBar(mc, this).setShowText(false).
                 setEnergyOnColor(0xff0022ee).setEnergyOffColor(0xff111163).setSpacerColor(0xff000043).
@@ -111,7 +115,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
         TextField textField = new TextField(mc, this).addTextEvent((parent, newText) -> {
             storageList.clearHilightedRows();
-            fromServer_coordinates.clear();
+            fromServer_foundInventories.clear();
             startSearch(newText);
         });
         Panel searchPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(18).addChild(new Label(mc, this).setText("Search:")).addChild(textField);
@@ -147,20 +151,18 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         sendServerCommand(RFToolsMessages.INSTANCE, StorageScannerTileEntity.CMD_SETRADIUS, new Argument("r", r));
     }
 
-    private void startStopScan() {
-        RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new InventoriesInfoPacketServer(tileEntity.getWorld(), tileEntity.getPos())));
-    }
-
     private void startSearch(String text) {
         if (!text.isEmpty()) {
-            RFToolsMessages.INSTANCE.sendToServer(new PacketSearchItems(tileEntity.getPos(), text));
+            RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID,
+                                                                              new SearchItemsInfoPacketServer(tileEntity.getWorld(), tileEntity.getPos(), text)));
         }
     }
 
     private void getInventoryOnServer() {
         BlockPos c = getSelectedContainerPos();
         if (c != null) {
-            RFToolsMessages.INSTANCE.sendToServer(new PacketGetInventory(tileEntity.getPos(), c));
+            RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID,
+                                                                              new GetContentsInfoPacketServer(tileEntity.getWorld(), tileEntity.getPos(), c)));
         }
     }
 
@@ -168,97 +170,74 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         int selected = storageList.getSelected();
         if (selected != -1) {
             if (selected < fromServer_inventories.size()) {
-                BlockPos pos = fromServer_inventories.get(selected);
-                return pos;
+                return fromServer_inventories.get(selected);
             }
         }
         return null;
     }
 
-    private InvBlockInfo getSelectedContainer() {
-//        int selected = storageList.getSelected();
-//        if (selected != -1) {
-//            SyncedValueList<InvBlockInfo> inventories = tileEntity.getInventories();
-//            if (selected < inventories.size()) {
-//                InvBlockInfo invBlockInfo = inventories.get(selected);
-//                return invBlockInfo;
-//            }
-//        }
-        // @todo
-        return null;
+    private void requestListsIfNeeded() {
+        listDirty--;
+        if (listDirty <= 0) {
+            RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID,
+                                                                              new InventoriesInfoPacketServer(tileEntity.getWorld(), tileEntity.getPos(), false)));
+            listDirty = 10;
+        }
     }
 
     private void updateContentsList() {
-        List<ItemStack> items = tileEntity.getShowingItems();
-        if (itemList.getMaximum() == 0) {
-            // We need to refresh.
-            for (ItemStack stack : items) {
-                if (stack != null) {
-                    String displayName = BlockInfo.getReadableName(stack, 0);
+        itemList.removeChildren();
+        for (ItemStack stack : fromServer_inventory) {
+            if (stack != null) {
+                String displayName = BlockInfo.getReadableName(stack, 0);
 
-                    Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
-                    panel.addChild(new BlockRender(mc, this).setRenderItem(stack));
-                    panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setDynamic(true).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
-                    itemList.addChild(panel);
-                }
+                Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
+                panel.addChild(new BlockRender(mc, this).setRenderItem(stack));
+                panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setDynamic(true).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+                itemList.addChild(panel);
             }
         }
     }
 
     private void updateStorageList() {
-//        SyncedValueList<InvBlockInfo> inventories = tileEntity.getInventories();
-//        if (inventories.getClientVersion() != clientVersion) {
-//            clientVersion = inventories.getClientVersion();
-//            storageList.removeChildren();
-//            for (InvBlockInfo blockInfo : inventories) {
-//                Coordinate c = blockInfo.getCoordinate();
-//                Block block = mc.theWorld.getBlock(c.getX(), c.getY(), c.getZ());
-//                int meta = mc.theWorld.getBlockMetadata(c.getX(), c.getY(), c.getZ());
-//                String displayName;
-//                if (block == null || block.isAir(mc.theWorld, c.getX(), c.getY(), c.getZ())) {
-//                    displayName = "[REMOVED]";
-//                    block = null;
-//                } else {
-//                    displayName = BlockInfo.getReadableName(block, meta);
-//                }
-//
-//                Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
-//                panel.addChild(new BlockRender(mc, this).setRenderItem(block));
-//                panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(90));
-//                panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setDynamic(true).setText(c.toString()));
-//                storageList.addChild(panel);
-//            }
-//        }
-//        storageList.clearHilightedRows();
-//        Set<Coordinate> coordinates = fromServer_coordinates;
-//        int i = 0;
-//        for (InvBlockInfo blockInfo : inventories) {
-//            Coordinate c = blockInfo.getCoordinate();
-//            if (coordinates.contains(c)) {
-//                storageList.addHilightedRow(i);
-//            }
-//            i++;
-//        }
+        storageList.removeChildren();
+        for (BlockPos c : fromServer_inventories) {
+            IBlockState state = mc.theWorld.getBlockState(c);
+            Block block = state.getBlock();
+            String displayName;
+            if (mc.theWorld.isAirBlock(c)) {
+                displayName = "[REMOVED]";
+                block = null;
+            } else {
+                displayName = BlockInfo.getReadableName(state);
+            }
+
+            Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
+            panel.addChild(new BlockRender(mc, this).setRenderItem(block));
+            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(90));
+            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setDynamic(true).setText(BlockPosTools.toString(c)));
+            storageList.addChild(panel);
+        }
+
+
+        storageList.clearHilightedRows();
+        int i = 0;
+        for (BlockPos c : fromServer_inventories) {
+            if (fromServer_foundInventories.contains(c)) {
+                storageList.addHilightedRow(i);
+            }
+            i++;
+        }
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         updateStorageList();
         updateContentsList();
-        updateScanButton();
+        requestListsIfNeeded();
         drawWindow();
         int currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
         tileEntity.requestRfFromServer(RFTools.MODID);
-    }
-
-    private void updateScanButton() {
-//        if (tileEntity.isScanning()) {
-//            scanButton.setText("Stop");
-//            progressBar.setValue(tileEntity.getProgress());
-//        } else {
-//            scanButton.setText("Scan");
-//            progressBar.setValue(0);
-//        }
     }
 }

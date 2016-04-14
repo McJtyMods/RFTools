@@ -2,40 +2,37 @@ package mcjty.rftools.blocks.storagemonitor;
 
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.varia.BlockPosTools;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.Constants;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity {
 
     public static final String CMD_SETRADIUS = "setRadius";
-    public static final String CMD_STARTSEARCH = "startSearch";
-    public static final String CLIENTCMD_SEARCHREADY = "searchReady";
 
-    // For client side: the items of the inventory we're currently looking at.
-    private List<ItemStack> showingItems = new ArrayList<ItemStack> ();
-
+    private List<BlockPos> inventories = new ArrayList<>();
     private Integer radius = 1;
 
     public StorageScannerTileEntity() {
         super(StorageScannerConfiguration.MAXENERGY, StorageScannerConfiguration.RECEIVEPERTICK);
     }
 
-    public List<BlockPos> startSearch(String search) {
-        List<BlockPos> inventories = findInventories();
+    public Set<BlockPos> performSearch(String search) {
+        List<BlockPos> inventories = getInventories();
         search = search.toLowerCase();
-        List<BlockPos> output = new ArrayList<>();
+        Set<BlockPos> output = new HashSet<>();
         for (BlockPos c : inventories) {
             TileEntity tileEntity = worldObj.getTileEntity(c);
+            // @todo IItemHandler
             if (tileEntity instanceof IInventory) {
                 IInventory inventory = (IInventory) tileEntity;
                 for (int i = 0 ; i < inventory.getSizeInventory() ; i++) {
@@ -61,20 +58,12 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity {
         radius = v;
     }
 
-    public void storeItemsForClient(List<ItemStack> items) {
-        showingItems = new ArrayList<ItemStack>(items);
-    }
-
-    public List<ItemStack> getShowingItems() {
-        return showingItems;
-    }
-
-    public void clearShowingItems() {
-        showingItems.clear();
+    public List<BlockPos> getInventories() {
+        return inventories;
     }
 
     public List<BlockPos> findInventories() {
-        List<BlockPos> positions = new ArrayList<>();
+        inventories.clear();
         for (int x = getPos().getX() - radius ; x <= getPos().getX() + radius ; x++) {
             for (int z = getPos().getZ() - radius ; z <= getPos().getZ() + radius ; z++) {
                 for (int y = getPos().getY() - radius ; y <= getPos().getY() + radius ; y++) {
@@ -82,16 +71,17 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity {
                     TileEntity te = worldObj.getTileEntity(p);
                     if (te instanceof IInventory) {
                         // @todo IItemHandler
-                        positions.add(p);
+                        inventories.add(p);
                     }
                 }
             }
         }
-        return positions;
+        return inventories;
     }
 
     public List<ItemStack> getInventoryForBlock(BlockPos cpos) {
-        showingItems = new ArrayList<>();
+        List<ItemStack> showingItems = new ArrayList<>();
+        // @todo IItemHandler
 
         if (getEnergyStored(EnumFacing.DOWN) < StorageScannerConfiguration.rfPerOperation) {
             return showingItems;
@@ -114,6 +104,14 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity {
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
+        NBTTagList list = tagCompound.getTagList("inventories", Constants.NBT.TAG_COMPOUND);
+        inventories.clear();
+        for (int i = 0 ; i < list.tagCount() ; i++) {
+            NBTTagCompound tag = (NBTTagCompound) list.get(i);
+            BlockPos c = BlockPosTools.readFromNBT(tag, "c");
+            inventories.add(c);
+        }
+
     }
 
     @Override
@@ -125,6 +123,12 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity {
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
+        NBTTagList list = new NBTTagList();
+        for (BlockPos c : inventories) {
+            NBTTagCompound tag = BlockPosTools.writeToNBT(c);
+            list.appendTag(tag);
+        }
+        tagCompound.setTag("inventories", list);
     }
 
     @Override
@@ -141,31 +145,6 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity {
         }
         if (CMD_SETRADIUS.equals(command)) {
             setRadius(args.get("r").getInteger());
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public List executeWithResultList(String command, Map<String, Argument> args) {
-        List rc = super.executeWithResultList(command, args);
-        if (rc != null) {
-            return rc;
-        }
-        if (CMD_STARTSEARCH.equals(command)) {
-            return startSearch(args.get("search").getString());
-        }
-        return null;
-    }
-
-    @Override
-    public boolean execute(String command, List list) {
-        boolean rc = super.execute(command, list);
-        if (rc) {
-            return true;
-        }
-        if (CLIENTCMD_SEARCHREADY.equals(command)) {
-            GuiStorageScanner.fromServer_coordinates = new HashSet<>(list);
             return true;
         }
         return false;

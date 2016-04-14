@@ -6,17 +6,17 @@ import mcjty.lib.network.clientinfo.InfoPacketClient;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-public class InventoriesInfoPacketClient implements InfoPacketClient {
+public class SearchItemsInfoPacketClient implements InfoPacketClient {
 
-    private List<BlockPos> inventories;
+    private Set<BlockPos> inventories;
 
     @Override
     public void fromBytes(ByteBuf byteBuf) {
         int size = byteBuf.readInt();
-        inventories = new ArrayList<>(size);
+        inventories = new HashSet<>(size);
         for (int i = 0 ; i < size ; i++) {
             inventories.add(NetworkTools.readPos(byteBuf));
         }
@@ -30,15 +30,15 @@ public class InventoriesInfoPacketClient implements InfoPacketClient {
         }
     }
 
-    public InventoriesInfoPacketClient() {
+    public SearchItemsInfoPacketClient() {
     }
 
-    public InventoriesInfoPacketClient(List<BlockPos> inventories) {
+    public SearchItemsInfoPacketClient(Set<BlockPos> inventories) {
         this.inventories = inventories;
     }
 
     @Override
     public void onMessageClient(EntityPlayerSP entityPlayerSP) {
-        GuiStorageScanner.fromServer_inventories = inventories;
+        GuiStorageScanner.fromServer_foundInventories = inventories;
     }
 }
