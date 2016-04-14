@@ -278,12 +278,20 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
+        if (index == ModularStorageContainer.SLOT_STORAGE_MODULE) {
+            if (!worldObj.isRemote) {
+                copyToModule();
+            }
+        }
+
         boolean s1 = containsItem(index);
         ItemStack itemStack = decrStackSizeHelper(index, amount);
         handleNewAmount(s1, index);
 
         if (index == ModularStorageContainer.SLOT_STORAGE_MODULE) {
-            copyFromModule(inventoryHelper.getStackInSlot(ModularStorageContainer.SLOT_STORAGE_MODULE));
+            ItemStack stackInSlot = inventoryHelper.getStackInSlot(ModularStorageContainer.SLOT_STORAGE_MODULE);
+            // Will probably be null here. Just to be safe
+            copyFromModule(stackInSlot);
         }
         return itemStack;
     }
@@ -309,6 +317,9 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
         if (index == ModularStorageContainer.SLOT_STORAGE_MODULE) {
+            if (isServer()) {
+                copyToModule();
+            }
         } else if (index == ModularStorageContainer.SLOT_TYPE_MODULE) {
             // Make sure front side is updated.
             IBlockState state = worldObj.getBlockState(getPos());
