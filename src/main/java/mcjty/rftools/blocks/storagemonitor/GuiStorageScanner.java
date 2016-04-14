@@ -1,13 +1,14 @@
 package mcjty.rftools.blocks.storagemonitor;
 
 import mcjty.lib.base.StyleConfig;
-import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.entity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.Window;
+import mcjty.lib.gui.events.BlockRenderEvent;
 import mcjty.lib.gui.events.DefaultSelectionEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
+import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Button;
@@ -25,6 +26,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -39,14 +41,19 @@ import java.util.Set;
 
 public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEntity> {
     public static final int STORAGE_MONITOR_WIDTH = 256;
-    public static final int STORAGE_MONITOR_HEIGHT = 224;
+    public static final int STORAGE_MONITOR_HEIGHT = 244;
+
+    private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/storagescanner.png");
 
     private WidgetList storageList;
     private WidgetList itemList;
     private EnergyBar energyBar;
-    private EnergyBar progressBar;
     private ScrollableLabel radiusLabel;
     private Button scanButton;
+    private Button upButton;
+    private Button downButton;
+
+    private long prevTime = -1;
 
     private int listDirty = 0;
 
@@ -55,9 +62,9 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     // From server: all the positions with inventories matching the search
     public static Set<BlockPos> fromServer_foundInventories = new HashSet<>();
     // From server: the contents of an inventory
-    public static List<ItemStack> fromServer_inventory = new ArrayList<>();
+    public static List<Pair<ItemStack,Integer>> fromServer_inventory = new ArrayList<>();
 
-    public GuiStorageScanner(StorageScannerTileEntity storageScannerTileEntity, EmptyContainer storageScannerContainer) {
+    public GuiStorageScanner(StorageScannerTileEntity storageScannerTileEntity, StorageScannerContainer storageScannerContainer) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, storageScannerTileEntity, storageScannerContainer, RFTools.GUI_MANUAL_MAIN, "stomon");
         GenericEnergyStorageTileEntity.setCurrentRF(storageScannerTileEntity.getEnergyStored(EnumFacing.DOWN));
 
@@ -69,10 +76,24 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     public void initGui() {
         super.initGui();
 
-
         int maxEnergyStored = tileEntity.getMaxEnergyStored(EnumFacing.DOWN);
-        energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setVertical().setDesiredWidth(10).setDesiredHeight(84).setMaxValue(maxEnergyStored).setShowText(false);
+        energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setVertical().setDesiredWidth(10).setDesiredHeight(56).setMaxValue(maxEnergyStored).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
+
+        upButton = new Button(mc, this).setText("U").setTooltips("Move inventory up")
+            .addButtonEvent(widget -> {
+                moveUp();
+            });
+        downButton = new Button(mc, this).setText("D").setTooltips("Move inventory down")
+            .addButtonEvent(widget -> {
+                moveDown();
+            });
+
+        Panel energyPanel = new Panel(mc, this).setLayout(new VerticalLayout().setVerticalMargin(0).setSpacing(1))
+                .setDesiredWidth(10)
+                .addChild(energyBar)
+                .addChild(upButton)
+                .addChild(downButton);
 
         storageList = new WidgetList(mc, this).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
@@ -88,31 +109,30 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
         Slider storageListSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(storageList);
 
-        Panel topPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(1)).
-                setDesiredHeight(90).
-                addChild(energyBar).
-                addChild(storageList).addChild(storageListSlider);
+        Panel topPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(1))
+                .setLayoutHint(new PositionalLayout.PositionalHint(6, 4, 256-12, 86))
+                .setDesiredHeight(88)
+                .addChild(energyPanel)
+                .addChild(storageList).addChild(storageListSlider);
 
-        itemList = new WidgetList(mc, this);
+        itemList = new WidgetList(mc, this).setPropagateEventsToChildren(true);
         Slider itemListSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(itemList);
-        Panel midPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(1)).
-                addChild(itemList).addChild(itemListSlider);
+        Panel itemPanel = new Panel(mc, this)
+                .setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(1))
+                .setLayoutHint(new PositionalLayout.PositionalHint(6, 88, 256-12, 56))
+                .addChild(itemList).addChild(itemListSlider);
 
-        scanButton = new Button(mc, this).
-                setText("Scan").
-                setDesiredWidth(50).
-                setDesiredHeight(14).
-                addButtonEvent(parent -> RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID,
-                                                                                          new InventoriesInfoPacketServer(tileEntity.getWorld(), tileEntity.getPos(), true)))).
-                setTooltips("Start/stop a scan of", "all storage units", "in radius");
-        progressBar = new EnergyBar(mc, this).setShowText(false).
-                setEnergyOnColor(0xff0022ee).setEnergyOffColor(0xff111163).setSpacerColor(0xff000043).
-                setHorizontal().setMaxValue(100).setDesiredWidth(30).setValue(0);
-        radiusLabel = new ScrollableLabel(mc, this).
-                addValueEvent((parent, newValue) -> changeRadius(newValue)).
-                setRealMinimum(1).
-                setRealMaximum(20).
-                setDesiredWidth(30);
+        scanButton = new Button(mc, this)
+                .setText("Scan")
+                .setDesiredWidth(50)
+                .setDesiredHeight(14)
+                .addButtonEvent(parent -> RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID,
+                                                                                                            new InventoriesInfoPacketServer(tileEntity.getWorld(), tileEntity.getPos(), true))))
+                .setTooltips("Start/stop a scan of", "all storage units", "in radius");
+        radiusLabel = new ScrollableLabel(mc, this)
+                .addValueEvent((parent, newValue) -> changeRadius(newValue))
+                .setRealMinimum(1)
+                .setRealMaximum(20);
         radiusLabel.setRealValue(tileEntity.getRadius());
 
         TextField textField = new TextField(mc, this).addTextEvent((parent, newText) -> {
@@ -120,23 +140,51 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             fromServer_foundInventories.clear();
             startSearch(newText);
         });
-        Panel searchPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(18).addChild(new Label(mc, this).setText("Search:")).addChild(textField);
+        Panel searchPanel = new Panel(mc, this)
+                .setLayoutHint(new PositionalLayout.PositionalHint(8, 142, 256-16, 18))
+                .setLayout(new HorizontalLayout()).setDesiredHeight(18)
+                .addChild(new Label(mc, this).setText("Search:"))
+                .addChild(textField);
 
-        Slider radiusSlider = new Slider(mc, this).
-                setHorizontal().
-                setTooltips("Radius of scan").
-                setMinimumKnobSize(12).
-                setScrollable(radiusLabel);
-        Panel scanPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(18).addChild(scanButton).addChild(progressBar).addChild(radiusSlider).addChild(radiusLabel);
+        Slider radiusSlider = new Slider(mc, this)
+                .setHorizontal()
+                .setTooltips("Radius of scan")
+                .setMinimumKnobSize(12)
+                .setDesiredHeight(14)
+                .setScrollable(radiusLabel);
+        Panel scanPanel = new Panel(mc, this)
+                .setLayoutHint(new PositionalLayout.PositionalHint(8, 162, 74, 54))
+                .setFilledRectThickness(-2)
+                .setFilledBackground(StyleConfig.colorListBackground)
+                .setLayout(new VerticalLayout().setVerticalMargin(6).setSpacing(1))
+                .addChild(scanButton)
+                .addChild(radiusSlider)
+                .addChild(radiusLabel);
 
-        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setSpacing(1).setVerticalMargin(3)).addChild(topPanel).addChild(midPanel).addChild(searchPanel).addChild(scanPanel);
+        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(topPanel).addChild(itemPanel).addChild(searchPanel).addChild(scanPanel);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
 
         Keyboard.enableRepeatEvents(true);
 
+        fromServer_foundInventories.clear();
+        fromServer_inventory.clear();
+//        fromServer_inventories.clear();
+
         tileEntity.requestRfFromServer(RFTools.MODID);
+    }
+
+    private void moveUp() {
+        sendServerCommand(RFToolsMessages.INSTANCE, StorageScannerTileEntity.CMD_UP, new Argument("index", storageList.getSelected()));
+        storageList.setSelected(storageList.getSelected()-1);
+        listDirty = 0;
+    }
+
+    private void moveDown() {
+        sendServerCommand(RFToolsMessages.INSTANCE, StorageScannerTileEntity.CMD_DOWN, new Argument("index", storageList.getSelected()));
+        storageList.setSelected(storageList.getSelected()+1);
+        listDirty = 0;
     }
 
     private void hilightSelectedContainer(int index) {
@@ -183,6 +231,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         if (listDirty <= 0) {
             RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID,
                                                                               new InventoriesInfoPacketServer(tileEntity.getWorld(), tileEntity.getPos(), false)));
+            getInventoryOnServer();
             listDirty = 20;
         }
     }
@@ -194,25 +243,47 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         int numcolumns = 11;
         int spacing = 3;
 
-        for (ItemStack item : fromServer_inventory) {
+        for (Pair<ItemStack,Integer> item : fromServer_inventory) {
             currentPos = addItemToList(item, itemList, currentPos, numcolumns, spacing);
         }
     }
 
-    private Pair<Panel,Integer> addItemToList(ItemStack stack, WidgetList itemList, Pair<Panel,Integer> currentPos, int numcolumns, int spacing) {
+    private Pair<Panel,Integer> addItemToList(Pair<ItemStack, Integer> item, WidgetList itemList, Pair<Panel,Integer> currentPos, int numcolumns, int spacing) {
         Panel panel = currentPos.getKey();
         if (panel == null || currentPos.getValue() >= numcolumns) {
             panel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(spacing)).setDesiredHeight(12).setUserObject(new Integer(-1)).setDesiredHeight(16);
             currentPos = MutablePair.of(panel, 0);
             itemList.addChild(panel);
         }
-        BlockRender blockRender = new BlockRender(mc, this).setRenderItem(stack).setUserObject(new Integer(0)).setOffsetX(-1).setOffsetY(-1);
+        BlockRender blockRender = new BlockRender(mc, this).setRenderItem(item.getKey()).setUserObject(item.getValue()).setOffsetX(-1).setOffsetY(-1);
+        blockRender.addSelectionEvent(new BlockRenderEvent() {
+            @Override
+            public void select(Widget widget) {
+                long t = System.currentTimeMillis();
+                if (prevTime != -1 && (t - prevTime) < 250) {
+                    Integer slot = (Integer) widget.getUserObject();
+                    if (slot != null) {
+                        requestItem(slot);
+                    }
+                }
+                prevTime = t;
+            }
+
+            @Override
+            public void doubleClick(Widget widget) {
+            }
+        });
         panel.addChild(blockRender);
         currentPos.setValue(currentPos.getValue() + 1);
         return currentPos;
     }
 
-
+    private void requestItem(int slot) {
+        sendServerCommand(RFToolsMessages.INSTANCE, StorageScannerTileEntity.CMD_REQUESTITEM,
+                          new Argument("inv", getSelectedContainerPos()),
+                          new Argument("slot", slot));
+        getInventoryOnServer();
+    }
 
 
     private void updateStorageList() {
@@ -251,6 +322,22 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         updateStorageList();
         updateContentsList();
         requestListsIfNeeded();
+
+        int selected = storageList.getSelected();
+        if (selected == -1 || storageList.getChildCount() <= 1) {
+            upButton.setEnabled(false);
+            downButton.setEnabled(false);
+        } else if (selected == 0) {
+            upButton.setEnabled(false);
+            downButton.setEnabled(true);
+        } else if (selected == storageList.getChildCount()-1) {
+            upButton.setEnabled(true);
+            downButton.setEnabled(false);
+        } else {
+            upButton.setEnabled(true);
+            downButton.setEnabled(true);
+        }
+
         drawWindow();
         int currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
         energyBar.setValue(currentRF);

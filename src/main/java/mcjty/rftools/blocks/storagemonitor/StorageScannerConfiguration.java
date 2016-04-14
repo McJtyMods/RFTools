@@ -6,11 +6,13 @@ public class StorageScannerConfiguration {
     public static final String CATEGORY_STORAGE_MONITOR = "storagemonitor";
     public static int MAXENERGY = 50000;
     public static int RECEIVEPERTICK = 500;
-    public static int rfPerOperation = 100;
+    public static int rfPerRequest = 100;
+    public static int rfPerInsert = 20;
     public static int hilightTime = 5;
 
     public static void init(Configuration cfg) {
-        rfPerOperation = cfg.get(CATEGORY_STORAGE_MONITOR, "rfPerOperation", rfPerOperation, "Amount of RF used per scan operation").getInt();
+        rfPerRequest = cfg.get(CATEGORY_STORAGE_MONITOR, "rfPerRequest", rfPerRequest, "Amount of RF used to request an item").getInt();
+        rfPerInsert = cfg.get(CATEGORY_STORAGE_MONITOR, "rfPerInsert", rfPerInsert, "Amount of RF used to insert an item").getInt();
         hilightTime = cfg.get(CATEGORY_STORAGE_MONITOR, "hilightTime", hilightTime, "Time (in seconds) to hilight a block in the world").getInt();
         MAXENERGY = cfg.get(CATEGORY_STORAGE_MONITOR, "scannerMaxRF", MAXENERGY,
                 "Maximum RF storage that the storage scanner can hold").getInt();

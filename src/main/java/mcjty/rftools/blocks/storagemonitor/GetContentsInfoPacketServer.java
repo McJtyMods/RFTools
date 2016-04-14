@@ -10,6 +10,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 import java.util.Optional;
@@ -53,7 +54,7 @@ public class GetContentsInfoPacketServer implements InfoPacketServer {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof StorageScannerTileEntity) {
             StorageScannerTileEntity scannerTileEntity = (StorageScannerTileEntity) te;
-            List<ItemStack> inv = scannerTileEntity.getInventoryForBlock(cpos);
+            List<Pair<ItemStack,Integer>> inv = scannerTileEntity.getInventoryForBlock(cpos);
             return Optional.of(new GetContentsInfoPacketClient(inv));
         }
 

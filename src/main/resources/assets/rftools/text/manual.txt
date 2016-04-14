@@ -285,9 +285,7 @@ The Storage Scanner is a block that can scan the surrounding
 area for inventories (chests, furnaces, other devices, basically
 anything that can hold items) and show them in a list. You can
 then select an inventory in that list and it will display the
-contents of that inventory. Scanning the environment uses energy
-and can take a while if you select a big radius. It also uses
-RF to perform this scan.
+contents of that inventory.
 {-------------------------------------------------------------}
 If you open the user interface of this scanner you get two lists.
 The top list is initially empty but will be filled when you press
@@ -308,10 +306,16 @@ mark all the inventories where it found an item that matches what
 you typed with a yellow color. This gives you an easy way to find
 out where you put that diamond pickaxe again.
 
-The slider next to the 'Scan' button allows you to select the radius
+The slider below the 'Scan' button allows you to select the radius
 that this machine will use to scan the area. A value of '4' means
-that an area of 9x9x9 will be scanned. Note that this operation can
-take a while.
+that an area of 9x9x9 will be scanned.
+{-------------------------------------------------------------}
+It is also possible to request an item out of the given inventory
+by double clicking it in the list of items. And if an item is
+inserted into the 'inserter' slot then it will be distributed
+to the first available inventory (which is why the order of the
+inventories in the top list is important). Both operations
+require some power.
 {-------------------------------------------------------------}
 {b}Storage System
 {n:storage}
