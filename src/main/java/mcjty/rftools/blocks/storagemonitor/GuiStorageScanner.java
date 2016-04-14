@@ -26,6 +26,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
@@ -181,23 +183,37 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         if (listDirty <= 0) {
             RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID,
                                                                               new InventoriesInfoPacketServer(tileEntity.getWorld(), tileEntity.getPos(), false)));
-            listDirty = 10;
+            listDirty = 20;
         }
     }
 
     private void updateContentsList() {
         itemList.removeChildren();
-        for (ItemStack stack : fromServer_inventory) {
-            if (stack != null) {
-                String displayName = BlockInfo.getReadableName(stack, 0);
 
-                Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
-                panel.addChild(new BlockRender(mc, this).setRenderItem(stack));
-                panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setDynamic(true).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
-                itemList.addChild(panel);
-            }
+        Pair<Panel,Integer> currentPos = MutablePair.of(null, 0);
+        int numcolumns = 11;
+        int spacing = 3;
+
+        for (ItemStack item : fromServer_inventory) {
+            currentPos = addItemToList(item, itemList, currentPos, numcolumns, spacing);
         }
     }
+
+    private Pair<Panel,Integer> addItemToList(ItemStack stack, WidgetList itemList, Pair<Panel,Integer> currentPos, int numcolumns, int spacing) {
+        Panel panel = currentPos.getKey();
+        if (panel == null || currentPos.getValue() >= numcolumns) {
+            panel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(spacing)).setDesiredHeight(12).setUserObject(new Integer(-1)).setDesiredHeight(16);
+            currentPos = MutablePair.of(panel, 0);
+            itemList.addChild(panel);
+        }
+        BlockRender blockRender = new BlockRender(mc, this).setRenderItem(stack).setUserObject(new Integer(0)).setOffsetX(-1).setOffsetY(-1);
+        panel.addChild(blockRender);
+        currentPos.setValue(currentPos.getValue() + 1);
+        return currentPos;
+    }
+
+
+
 
     private void updateStorageList() {
         storageList.removeChildren();

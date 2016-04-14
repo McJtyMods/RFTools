@@ -56,6 +56,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity {
 
     public void setRadius(int v) {
         radius = v;
+        markDirty();
     }
 
     public List<BlockPos> getInventories() {
