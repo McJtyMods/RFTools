@@ -352,12 +352,12 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
-        return SpawnerContainer.factory.isInputSlot(index);
+        return true;
     }
 
     @Override
     public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
-        return SpawnerContainer.factory.isOutputSlot(index);
+        return true;
     }
 
     @Override
