@@ -18,6 +18,7 @@ import mcjty.rftools.blocks.security.SecuritySetup;
 import mcjty.rftools.blocks.shield.ShieldSetup;
 import mcjty.rftools.blocks.spawner.SpawnerSetup;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
+import mcjty.rftools.blocks.storagemonitor.StorageScannerSetup;
 import mcjty.rftools.blocks.teleporter.TeleporterSetup;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -49,6 +50,7 @@ public final class ModBlocks {
         ItemFilterSetup.init();
         SecuritySetup.init();
         EndergenicSetup.init();
+        StorageScannerSetup.init();
     }
 
     @SideOnly(Side.CLIENT)
@@ -75,6 +77,7 @@ public final class ModBlocks {
         ItemFilterSetup.initClient();
         SecuritySetup.initClient();
         EndergenicSetup.initClient();
+        StorageScannerSetup.initClient();
     }
 
     @SideOnly(Side.CLIENT)

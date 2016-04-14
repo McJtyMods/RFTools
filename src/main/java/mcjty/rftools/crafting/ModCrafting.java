@@ -19,6 +19,7 @@ import mcjty.rftools.blocks.security.SecuritySetup;
 import mcjty.rftools.blocks.shield.ShieldSetup;
 import mcjty.rftools.blocks.spawner.SpawnerSetup;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
+import mcjty.rftools.blocks.storagemonitor.StorageScannerSetup;
 import mcjty.rftools.blocks.teleporter.TeleporterSetup;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.SyringeItem;
@@ -63,6 +64,7 @@ public final class ModCrafting {
         ItemFilterSetup.initCrafting();
         SecuritySetup.initCrafting();
         EndergenicSetup.initCrafting();
+        StorageScannerSetup.initCrafting();
     }
 
     private static void initBaseCrafting() {

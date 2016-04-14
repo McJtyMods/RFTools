@@ -22,6 +22,8 @@ import mcjty.rftools.blocks.storage.PacketCompact;
 import mcjty.rftools.blocks.storage.PacketCycleStorage;
 import mcjty.rftools.blocks.storage.StorageInfoPacketClient;
 import mcjty.rftools.blocks.storage.StorageInfoPacketServer;
+import mcjty.rftools.blocks.storagemonitor.InventoriesInfoPacketClient;
+import mcjty.rftools.blocks.storagemonitor.InventoriesInfoPacketServer;
 import mcjty.rftools.blocks.teleporter.*;
 import mcjty.rftools.items.creativeonly.PacketDelightingInfoReady;
 import mcjty.rftools.items.creativeonly.PacketGetDelightingInfo;
@@ -84,5 +86,6 @@ public class RFToolsMessages {
         PacketHandler.register(PacketHandler.nextPacketID(), StorageInfoPacketServer.class, StorageInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), PowerCellInfoPacketServer.class, PowerCellInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), CounterInfoPacketServer.class, CounterInfoPacketClient.class);
+        PacketHandler.register(PacketHandler.nextPacketID(), InventoriesInfoPacketServer.class, InventoriesInfoPacketClient.class);
     }
 }

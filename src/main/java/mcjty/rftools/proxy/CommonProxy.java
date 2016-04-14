@@ -22,6 +22,7 @@ import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.shield.ShieldConfiguration;
 import mcjty.rftools.blocks.spawner.SpawnerConfiguration;
 import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
+import mcjty.rftools.blocks.storagemonitor.StorageScannerConfiguration;
 import mcjty.rftools.crafting.ModCrafting;
 import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.ModItems;
@@ -142,6 +143,7 @@ public abstract class CommonProxy {
             cfg.addCustomCategoryComment(BlockProtectorConfiguration.CATEGORY_BLOCKPROTECTOR, "Settings for the block protector machine");
             cfg.addCustomCategoryComment(NetworkMonitorConfiguration.CATEGORY_NETWORK_MONITOR, "Settings for the network monitor item");
             cfg.addCustomCategoryComment(EndergenicConfiguration.CATEGORY_ENDERGENIC, "Settings for the endergenic generator");
+            cfg.addCustomCategoryComment(StorageScannerConfiguration.CATEGORY_STORAGE_MONITOR, "Settings for the storage scanner machine");
 
             GeneralConfiguration.init(cfg);
             CoalGeneratorConfiguration.init(cfg);
@@ -157,6 +159,7 @@ public abstract class CommonProxy {
             BlockProtectorConfiguration.init(cfg);
             NetworkMonitorConfiguration.init(cfg);
             EndergenicConfiguration.init(cfg);
+            StorageScannerConfiguration.init(cfg);
         } catch (Exception e1) {
             FMLLog.log(Level.ERROR, e1, "Problem loading config file!");
         } finally {
