@@ -30,8 +30,10 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     public static final String CMD_REQUESTITEM = "requestItem";
     public static final String CMD_UP = "up";
     public static final String CMD_DOWN = "down";
+    public static final String CMD_TOGGLEROUTABLE = "toggleRoutable";
 
     private List<BlockPos> inventories = new ArrayList<>();
+    private Set<BlockPos> routable = new HashSet<>();
     private int radius = 1;
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, StorageScannerContainer.factory, 2);
@@ -50,7 +52,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
                 ItemStack stack = inventoryHelper.getStackInSlot(StorageScannerContainer.SLOT_IN);
                 for (BlockPos blockPos : inventories) {
-                    if (!blockPos.equals(getPos())) {
+                    if (!blockPos.equals(getPos()) && routable.contains(blockPos)) {
                         TileEntity te = worldObj.getTileEntity(blockPos);
                         if (te != null) {
                             stack = InventoryHelper.insertItem(worldObj, blockPos, null, stack);
@@ -73,8 +75,19 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         Set<BlockPos> output = new HashSet<>();
         for (BlockPos c : inventories) {
             TileEntity tileEntity = worldObj.getTileEntity(c);
-            // @todo IItemHandler
-            if (tileEntity instanceof IInventory) {
+            if (tileEntity != null && tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
+                IItemHandler capability = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                for (int i = 0 ; i < capability.getSlots() ; i++) {
+                    ItemStack itemStack = capability.getStackInSlot(i);
+                    if (itemStack != null) {
+                        String readableName = itemStack.getDisplayName();
+                        if (readableName.toLowerCase().contains(search)) {
+                            output.add(c);
+                            break;
+                        }
+                    }
+                }
+            } else if (tileEntity instanceof IInventory) {
                 IInventory inventory = (IInventory) tileEntity;
                 for (int i = 0 ; i < inventory.getSizeInventory() ; i++) {
                     ItemStack itemStack = inventory.getStackInSlot(i);
@@ -97,6 +110,19 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     public void setRadius(int v) {
         radius = v;
+        markDirtyClient();
+    }
+
+    public boolean isRoutable(BlockPos p) {
+        return routable.contains(p);
+    }
+
+    public void toggleRoutable(BlockPos p) {
+        if (routable.contains(p)) {
+            routable.remove(p);
+        } else {
+            routable.add(p);
+        }
         markDirtyClient();
     }
 
@@ -156,7 +182,6 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         }
 
         // Now append all inventories that are new.
-
         for (int x = getPos().getX() - radius ; x <= getPos().getX() + radius ; x++) {
             for (int z = getPos().getZ() - radius ; z <= getPos().getZ() + radius ; z++) {
                 for (int y = getPos().getY() - radius ; y <= getPos().getY() + radius ; y++) {
@@ -182,7 +207,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         }
 
         TileEntity tileEntity = worldObj.getTileEntity(pos);
-        if (tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
+        if (tileEntity != null && tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
             IItemHandler capability = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
             ItemStack item = capability.getStackInSlot(slot);
             if (item != null) {
@@ -213,7 +238,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         List<Pair<ItemStack,Integer>> showingItems = new ArrayList<>();
 
         TileEntity tileEntity = worldObj.getTileEntity(cpos);
-        if (tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
+        if (tileEntity != null && tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
             IItemHandler capability = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
             for (int i = 0 ; i < capability.getSlots() ; i++) {
                 ItemStack itemStack = capability.getStackInSlot(i);
@@ -243,7 +268,13 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             BlockPos c = BlockPosTools.readFromNBT(tag, "c");
             inventories.add(c);
         }
-
+        list = tagCompound.getTagList("routable", Constants.NBT.TAG_COMPOUND);
+        routable.clear();
+        for (int i = 0 ; i < list.tagCount() ; i++) {
+            NBTTagCompound tag = (NBTTagCompound) list.get(i);
+            BlockPos c = BlockPosTools.readFromNBT(tag, "c");
+            routable.add(c);
+        }
     }
 
     @Override
@@ -261,6 +292,12 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             list.appendTag(tag);
         }
         tagCompound.setTag("inventories", list);
+        list = new NBTTagList();
+        for (BlockPos c : routable) {
+            NBTTagCompound tag = BlockPosTools.writeToNBT(c);
+            list.appendTag(tag);
+        }
+        tagCompound.setTag("routable", list);
     }
 
     @Override
@@ -288,6 +325,9 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             return true;
         } else if (CMD_DOWN.equals(command)) {
             moveDown(args.get("index").getInteger());
+            return true;
+        } else if (CMD_TOGGLEROUTABLE.equals(command)) {
+            toggleRoutable(args.get("pos").getCoordinate());
             return true;
         }
         return false;

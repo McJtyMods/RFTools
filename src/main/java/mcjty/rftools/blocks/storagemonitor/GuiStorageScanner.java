@@ -40,10 +40,11 @@ import java.util.Set;
 
 
 public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEntity> {
-    public static final int STORAGE_MONITOR_WIDTH = 256;
-    public static final int STORAGE_MONITOR_HEIGHT = 244;
+    private static final int STORAGE_MONITOR_WIDTH = 256;
+    private static final int STORAGE_MONITOR_HEIGHT = 244;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/storagescanner.png");
+    private static final ResourceLocation guielements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     private WidgetList storageList;
     private WidgetList itemList;
@@ -105,7 +106,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             public void doubleClick(Widget parent, int index) {
                 hilightSelectedContainer(index);
             }
-        });
+        }).setPropagateEventsToChildren(true);
 
         Slider storageListSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(storageList);
 
@@ -285,6 +286,11 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         getInventoryOnServer();
     }
 
+    private void changeRoutable(BlockPos c) {
+        sendServerCommand(RFToolsMessages.INSTANCE, StorageScannerTileEntity.CMD_TOGGLEROUTABLE,
+                new Argument("pos", c));
+        listDirty = 0;
+    }
 
     private void updateStorageList() {
         storageList.removeChildren();
@@ -299,10 +305,16 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 displayName = BlockInfo.getReadableName(state);
             }
 
+            boolean routable = tileEntity.isRoutable(c);
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
             panel.addChild(new BlockRender(mc, this).setRenderItem(block));
             panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(90));
             panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setDynamic(true).setText(BlockPosTools.toString(c)));
+            ImageChoiceLabel choiceLabel = new ImageChoiceLabel(mc, this).addChoiceEvent((parent, newChoice) -> changeRoutable(c)).setDesiredWidth(13);
+            choiceLabel.addChoice("No", "Not routable", guielements, 131, 19);
+            choiceLabel.addChoice("Yes", "Routable", guielements, 115, 19);
+            choiceLabel.setCurrentChoice(routable ? 1 : 0);
+            panel.addChild(choiceLabel);
             storageList.addChild(panel);
         }
 

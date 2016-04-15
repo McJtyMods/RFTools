@@ -316,6 +316,9 @@ inserted into the 'inserter' slot then it will be distributed
 to the first available inventory (which is why the order of the
 inventories in the top list is important). Both operations
 require some power.
+
+Note that the storage scanner will only insert items into inventories
+that are starred (press the 'star' button in the top list).
 {-------------------------------------------------------------}
 {b}Storage System
 {n:storage}
