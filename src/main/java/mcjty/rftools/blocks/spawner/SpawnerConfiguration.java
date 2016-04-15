@@ -280,16 +280,28 @@ public class SpawnerConfiguration {
         addMobSpawnAmount(cfg, EntityRabbit.class, MATERIALTYPE_KEY, Items.rabbit_stew, 0, 0.1f);
         addMobSpawnAmount(cfg, EntityRabbit.class, MATERIALTYPE_BULK, Blocks.dirt, 0, .2f);
         addMobSpawnAmount(cfg, EntityRabbit.class, MATERIALTYPE_LIVING, null, 0, 10);
+        addMobSpawnRF(cfg, "WitherSkeleton", 1500);
+        addMobSpawnAmount(cfg, "WitherSkeleton", MATERIALTYPE_KEY, Items.bone, 0, 0.1f);
+        addMobSpawnAmount(cfg, "WitherSkeleton", MATERIALTYPE_BULK, Blocks.netherrack, 0, .5f);
+        addMobSpawnAmount(cfg, "WitherSkeleton", MATERIALTYPE_LIVING, null, 0, 30);
     }
 
     public static void addMobSpawnRF(Configuration cfg, Class<? extends EntityLiving> clazz, int rf) {
         String name = EntityList.classToStringMapping.get(clazz);
+        addMobSpawnRF(cfg, name, rf);
+    }
+
+    private static void addMobSpawnRF(Configuration cfg, String name, int rf) {
         rf = cfg.get(CATEGORY_MOBSPAWNRF, name, rf).getInt();
         mobSpawnRf.put(name, rf);
     }
 
     public static void addMobSpawnAmount(Configuration cfg, Class<? extends EntityLiving> clazz, int materialType, Object object, int meta, float amount) {
         String name = EntityList.classToStringMapping.get(clazz);
+        addMobSpawnAmount(cfg, name, materialType, object, meta, amount);
+    }
+
+    private static void addMobSpawnAmount(Configuration cfg, String name, int materialType, Object object, int meta, float amount) {
         List<MobSpawnAmount> list = mobSpawnAmounts.get(name);
         if (list == null) {
             list = new ArrayList<>(3);

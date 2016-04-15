@@ -14,8 +14,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -100,8 +100,8 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
             return;
         }
 
-        String mob = tagCompound.getString("mobClass");
-        if (mob == null) {
+        mobId = tagCompound.getString("mobId");
+        if (mobId == null) {
             clearMatter();
             return;
         }
@@ -109,13 +109,6 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         if (level < GeneralConfiguration.maxMobInjections) {
             clearMatter();
             return;
-        }
-
-        try {
-            Class<?> clazz = Class.forName(mob);
-            mobId = EntityList.classToStringMapping.get(clazz);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -230,8 +223,19 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 
         EntityLiving entityLiving;
         try {
-            Class<? extends Entity> clazz = EntityList.stringToClassMapping.get(mobId);
+            Class<? extends Entity> clazz;
+            if ("WitherSkeleton".equals(mobId)) {
+                clazz = EntitySkeleton.class;
+            } else {
+                clazz = EntityList.stringToClassMapping.get(mobId);
+            }
             entityLiving = (EntityLiving) clazz.getConstructor(World.class).newInstance(worldObj);
+            if ("WitherSkeleton".equals(mobId)) {
+                ((EntitySkeleton) entityLiving).setSkeletonType(1);
+            } else if (entityLiving instanceof EntitySkeleton) {
+                // Force non-wither otherwise
+                ((EntitySkeleton) entityLiving).setSkeletonType(0);
+            }
         } catch (InstantiationException e) {
             Logging.logError("Fail to spawn mob: " + mobId);
             return;

@@ -10,7 +10,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityDragonPart;
-import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -93,18 +93,18 @@ public class SyringeItem extends GenericRFToolsItem {
     public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
         Class<? extends Entity> clazz = findSelectedMobClass(entity);
         if (clazz != null) {
-            String prevMob = null;
+            String prevMobId = null;
             NBTTagCompound tagCompound = stack.getTagCompound();
             if (tagCompound != null) {
-                prevMob = tagCompound.getString("mobClass");
+                prevMobId = tagCompound.getString("mobId");
             } else {
                 tagCompound = new NBTTagCompound();
                 stack.setTagCompound(tagCompound);
             }
-            if (prevMob == null || !prevMob.equals(clazz.getCanonicalName())) {
-                tagCompound.setString("mobClass", clazz.getCanonicalName());
+            String id = findSelectedMobId(clazz, entity);
+            if (prevMobId == null || !prevMobId.equals(id)) {
                 tagCompound.setString("mobName", findSelectedMobName(entity));
-                tagCompound.setString("mobId", EntityList.classToStringMapping.get(clazz));
+                tagCompound.setString("mobId", id);
                 tagCompound.setInteger("level", 1);
             } else {
                 int level = tagCompound.getInteger("level");
@@ -116,6 +116,16 @@ public class SyringeItem extends GenericRFToolsItem {
             }
         }
         return super.onLeftClickEntity(stack, player, entity);
+    }
+
+    private String findSelectedMobId(Class<? extends Entity> clazz, Entity entity) {
+        if (entity instanceof EntitySkeleton) {
+            EntitySkeleton skeleton = (EntitySkeleton) entity;
+            if (skeleton.getSkeletonType() == 1) {
+                return "WitherSkeleton";
+            }
+        }
+        return EntityList.classToStringMapping.get(clazz);
     }
 
     private Class<? extends Entity> findSelectedMobClass(Entity entity) {
@@ -130,6 +140,9 @@ public class SyringeItem extends GenericRFToolsItem {
     }
 
     private String findSelectedMobName(Entity entity) {
+        if (entity instanceof EntitySkeleton && ((EntitySkeleton) entity).getSkeletonType() == 1) {
+            return "Wither Skeleton";
+        }
         return entity.getName();
     }
 
@@ -157,12 +170,15 @@ public class SyringeItem extends GenericRFToolsItem {
     }
 
     public static ItemStack createMobSyringe(Class<? extends Entity> mobClass) {
+        String id = EntityList.getEntityStringFromClass(mobClass);
+        String name = I18n.translateToLocal("entity." + id + ".name");
+        return createMobSyringe(id, name);
+    }
+
+    private static ItemStack createMobSyringe(String id, String name) {
         ItemStack syringe = new ItemStack(ModItems.syringeItem);
         NBTTagCompound tagCompound = new NBTTagCompound();
-        tagCompound.setString("mobClass", mobClass.getCanonicalName());
-        String id = EntityList.getEntityStringFromClass(mobClass);
         tagCompound.setString("mobId", id);
-        String name = I18n.translateToLocal("entity." + id + ".name");
         if (name == null || name.isEmpty()) {
             name = id;
         }
@@ -193,7 +209,7 @@ public class SyringeItem extends GenericRFToolsItem {
                 if (tagCompound.hasKey("mobId")) {
                     return tagCompound.getString("mobId");
                 } else {
-                    return tagCompound.getString("mobClass");
+                    return "?";
                 }
             }
             return mob;
