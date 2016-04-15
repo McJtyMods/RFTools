@@ -9,11 +9,13 @@ import mcjty.lib.varia.CustomSidedInvWrapper;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.items.ModItems;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -347,12 +349,12 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public int[] getSlotsForFace(EnumFacing side) {
-        return SpawnerContainer.factory.getAccessibleSlots();
+        return new int[] { SpawnerContainer.SLOT_SYRINGE };
     }
 
     @Override
     public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
-        return true;
+        return isItemValidForSlot(index, itemStackIn);
     }
 
     @Override
@@ -385,7 +387,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return true;
+        return stack.getItem() == ModItems.syringeItem;
     }
 
     IItemHandler invHandler = new CustomSidedInvWrapper(this);
