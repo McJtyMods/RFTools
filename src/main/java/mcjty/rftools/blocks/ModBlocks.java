@@ -3,6 +3,7 @@ package mcjty.rftools.blocks;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorSetup;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.blocks.crafter.CrafterSetup;
+import mcjty.rftools.blocks.elevator.ElevatorSetup;
 import mcjty.rftools.blocks.endergen.EndergenicSetup;
 import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
 import mcjty.rftools.blocks.generator.CoalGeneratorSetup;
@@ -51,6 +52,7 @@ public final class ModBlocks {
         SecuritySetup.init();
         EndergenicSetup.init();
         StorageScannerSetup.init();
+        ElevatorSetup.init();
     }
 
     @SideOnly(Side.CLIENT)
@@ -78,6 +80,7 @@ public final class ModBlocks {
         SecuritySetup.initClient();
         EndergenicSetup.initClient();
         StorageScannerSetup.initClient();
+        ElevatorSetup.initClient();
     }
 
     @SideOnly(Side.CLIENT)

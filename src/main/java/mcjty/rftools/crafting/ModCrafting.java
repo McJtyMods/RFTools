@@ -5,6 +5,7 @@ import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorSetup;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.blocks.crafter.CrafterSetup;
+import mcjty.rftools.blocks.elevator.ElevatorSetup;
 import mcjty.rftools.blocks.endergen.EndergenicSetup;
 import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
 import mcjty.rftools.blocks.generator.CoalGeneratorSetup;
@@ -65,6 +66,7 @@ public final class ModCrafting {
         SecuritySetup.initCrafting();
         EndergenicSetup.initCrafting();
         StorageScannerSetup.initCrafting();
+        ElevatorSetup.initCrafting();
     }
 
     private static void initBaseCrafting() {

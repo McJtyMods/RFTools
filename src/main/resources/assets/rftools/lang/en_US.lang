@@ -82,6 +82,7 @@ tile.coalgenerator.name=Coal Generator
 tile.crafter1.name=Crafter Tier 1
 tile.crafter2.name=Crafter Tier 2
 tile.crafter3.name=Crafter Tier 3
+tile.elevator.name=Elevator
 tile.relay.name=Power Relay
 tile.item_filter.name=Item Filter
 tile.storage_scanner.name=Storage Scanner
