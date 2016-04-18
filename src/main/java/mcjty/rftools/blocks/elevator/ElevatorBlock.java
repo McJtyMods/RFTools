@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.elevator;
 
 
+import mcjty.lib.api.Infusable;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
@@ -22,7 +23,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class ElevatorBlock extends GenericRFToolsBlock<ElevatorTileEntity, EmptyContainer> {
+public class ElevatorBlock extends GenericRFToolsBlock<ElevatorTileEntity, EmptyContainer> implements Infusable {
 
     public ElevatorBlock() {
         super(Material.iron, ElevatorTileEntity.class, EmptyContainer.class, "elevator", true);
@@ -53,7 +54,8 @@ public class ElevatorBlock extends GenericRFToolsBlock<ElevatorTileEntity, Empty
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(TextFormatting.WHITE + "This machine needs to be placed at a certain");
             list.add(TextFormatting.WHITE + "level pointing towards where a moving platform");
-            list.add(TextFormatting.YELLOW + "will be");
+            list.add(TextFormatting.YELLOW + "will be. Only the lowest elevator needs power");
+            list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption");
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }

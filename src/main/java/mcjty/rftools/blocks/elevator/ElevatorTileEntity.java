@@ -6,12 +6,14 @@ import mcjty.rftools.blocks.shield.RelCoordinate;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
@@ -42,6 +44,14 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     public void update() {
         if (!worldObj.isRemote) {
             if (isMoving()) {
+                markDirtyClient();
+
+                int rfNeeded = (int) (ElevatorConfiguration.rfPerTickMoving * (3.0f - getInfusedFactor()) / 3.0f);
+                if (getEnergyStored(EnumFacing.DOWN) < rfNeeded) {
+                    return;
+                }
+                consumeEnergy(rfNeeded);
+
                 handlePlatformMovement();
                 return;
             }
@@ -49,21 +59,40 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
             if (powered == prevIn) {
                 return;
             }
-            boolean pulse = powered && !prevIn;
             prevIn = powered;
             markDirty();
 
-            if (pulse) {
+            if (powered) {
                 movePlatformHere();
             }
+        } else {
+//            if (isMoving()) {
+//                double d = calculateSpeed();
+//                if (stopY > startY) {
+//                    moveEntities(d * 3, d);
+//                } else {
+//                    moveEntities(0, -d);
+//                }
+
+//                handlePlatformMovement();
+//            }
         }
     }
 
     private List<Pair<Entity, Double>> entities = new ArrayList<>();
 
+
+    private double calculateSpeed() {
+        // The speed center y location is the location at which speed is maximum.
+        // It is located closer to the end to make sure slowing down is a shorter period then speeding up.
+        double speedDiff = ElevatorConfiguration.maximumSpeed - ElevatorConfiguration.minimumSpeed;
+        double speedFromStart = ElevatorConfiguration.minimumSpeed + speedDiff * Math.abs((movingY - startY) / ElevatorConfiguration.maxSpeedDistanceStart);
+        double speedFromStop = ElevatorConfiguration.minimumSpeed + speedDiff * Math.abs((movingY - stopY) / ElevatorConfiguration.maxSpeedDistanceEnd);
+        return Math.min(speedFromStart, speedFromStop);
+    }
+
     private void handlePlatformMovement() {
-        double d = .1;
-        markDirtyClient();
+        double d = calculateSpeed();
         if (stopY > startY) {
             if (movingY >= stopY) {
                 stopMoving();
@@ -71,7 +100,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
             }
             movingY += d;
 
-            moveEntities();
+            moveEntities(d * 3, d);
 
             if (movingY >= stopY) {
                 movingY = stopY;
@@ -83,7 +112,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
             }
             movingY -= d;
 
-            moveEntities();
+            moveEntities(0, -d);
 
             if (movingY <= stopY) {
                 movingY = stopY;
@@ -92,12 +121,25 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         }
     }
 
-    private void moveEntities() {
+    private void moveEntities(double offset, double speed) {
         for (Pair<Entity, Double> pair : entities) {
             Entity entity = pair.getLeft();
-            Double dy = pair.getRight();
-            entity.posY = movingY + dy;
-            entity.setPositionAndUpdate(entity.posX, movingY + dy, entity.posZ);
+
+            Double dy = pair.getRight() + offset;
+            if (entity instanceof EntityPlayer) {
+//                entity.motionY += speed;
+
+                entity.posY = movingY + dy;
+                entity.setPositionAndUpdate(entity.posX, movingY + dy, entity.posZ);
+
+
+//                entity.setPosition(entity.posX, movingY + dy, entity.posZ);
+//                worldObj.updateEntityWithOptionalForce(entity, false);
+            } else {
+                entity.posY = movingY + dy;
+                entity.setPositionAndUpdate(entity.posX, movingY + dy, entity.posZ);
+            }
+            entity.onGround = true;
             entity.fallDistance = 0;
         }
     }
@@ -132,13 +174,23 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
                 EnumFacing otherSide = otherState.getValue(ElevatorBlock.FACING_HORIZ);
                 if (otherSide == side) {
                     BlockPos frontPos = elevatorPos.offset(side);
-                    if (!worldObj.isAirBlock(frontPos)) {
+                    if (isValidPlatformBlock(frontPos)) {
                         return elevatorPos;
                     }
                 }
             }
         }
         return null;
+    }
+
+    private boolean isValidPlatformBlock(BlockPos frontPos) {
+        if (worldObj.isAirBlock(frontPos)) {
+            return false;
+        }
+        if (worldObj.getTileEntity(frontPos) != null) {
+            return false;
+        }
+        return true;
     }
 
     public List<BlockPos> getPositions() {
@@ -154,7 +206,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         for (BlockPos pos : positions) {
             worldObj.setBlockState(setY(pos, (int) stopY), movingState, 3);
         }
-        moveEntities();
+        moveEntities(0, 0);
 
         positions.clear();
         movingState = null;
@@ -211,32 +263,40 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
 
         Bounds bounds = new Bounds();
 
-        for (int a = 0 ; a < 9 ; a++) {
+        for (int a = 1 ; a < ElevatorConfiguration.maxPlatformSize ; a++) {
             BlockPos offset = start.offset(side, a);
             if (worldObj.getBlockState(offset) == movingState) {
                 worldObj.setBlockToAir(offset);
                 bounds.addPos(offset);
                 positions.add(setY(offset, controllerPos.getY()));
 
-                // @todo not entirely correct
-                for (int b = 1 ; b < 4 ; b++) {
+                for (int b = 1 ; b <= (ElevatorConfiguration.maxPlatformSize / 2) ; b++) {
                     BlockPos offsetLeft = offset.offset(side.rotateY(), b);
                     if (worldObj.getBlockState(offsetLeft) == movingState) {
                         worldObj.setBlockToAir(offsetLeft);
                         bounds.addPos(offsetLeft);
                         positions.add(setY(offsetLeft, controllerPos.getY()));
+                    } else {
+                        break;
                     }
+                }
+
+                for (int b = 1 ; b <= (ElevatorConfiguration.maxPlatformSize / 2) ; b++) {
                     BlockPos offsetRight = offset.offset(side.rotateYCCW(), b);
                     if (worldObj.getBlockState(offsetRight) == movingState) {
                         worldObj.setBlockToAir(offsetRight);
                         bounds.addPos(offsetRight);
                         positions.add(setY(offsetRight, controllerPos.getY()));
+                    } else {
+                        break;
                     }
                 }
+            } else {
+                break;
             }
         }
 
-        List<Entity> entityList = worldObj.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(bounds.getMinX(), start.getY(), bounds.getMinZ(), bounds.getMaxX(), start.getY() + 3, bounds.getMaxZ()));
+        List<Entity> entityList = worldObj.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(bounds.getMinX(), start.getY(), bounds.getMinZ(), bounds.getMaxX()+1, start.getY() + 3, bounds.getMaxZ()+1));
         entities = entityList.stream().map(e -> Pair.of(e, e.posY - startY)).collect(Collectors.toList());
 
         // @todo
@@ -259,7 +319,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         // First check if the platform is here already:
         EnumFacing side = worldObj.getBlockState(getPos()).getValue(ElevatorBlock.FACING_HORIZ);
         BlockPos frontPos = getPos().offset(side);
-        if (!worldObj.isAirBlock(frontPos)) {
+        if (isValidPlatformBlock(frontPos)) {
             // Platform is already here (or something is blocking here)
             return;
         }
