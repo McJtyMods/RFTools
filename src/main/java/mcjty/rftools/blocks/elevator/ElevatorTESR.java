@@ -11,6 +11,7 @@ import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.ReportedException;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldType;
@@ -22,6 +23,12 @@ public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> 
     public void renderTileEntityAt(ElevatorTileEntity te, double x, double y, double z, float partialTicks, int destroyStage) {
 
         if (te.isMoving()) {
+            // Correction in the y translation to avoid jitter when both player and platform are moving
+            AxisAlignedBB aabb = te.getAABBAboveElevator();
+            boolean on = Minecraft.getMinecraft().thePlayer.getEntityBoundingBox().intersectsWith(aabb);
+
+            double diff = on ? (te.getPos().getY() - (y+te.getMovingY()) - 1) : 0;
+
             GlStateManager.pushMatrix();
 
             RenderHelper.disableStandardItemLighting();
@@ -34,7 +41,7 @@ public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> 
 
             IBlockState movingState = te.getMovingState();
 
-            GlStateManager.translate(0, te.getMovingY() - te.getPos().getY(), 0);
+            GlStateManager.translate(0, te.getMovingY() - te.getPos().getY() + diff, 0);
             Tessellator tessellator = Tessellator.getInstance();
             BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
             for (BlockPos pos : te.getPositions()) {

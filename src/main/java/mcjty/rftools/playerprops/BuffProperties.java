@@ -20,6 +20,8 @@ public class BuffProperties {
 
     private boolean globalSyncNeeded = true;
 
+    private boolean onElevator = false;
+
     public BuffProperties() {
         buffTimeout = 0;
         globalSyncNeeded = true;
@@ -65,10 +67,15 @@ public class BuffProperties {
         // Perform all buffs that we can perform here (not potion effects and also not
         // passive effects like feather falling.
         boolean enableFlight = false;
-        for (PlayerBuff buff : buffs.keySet()) {
-            if (buff == PlayerBuff.BUFF_FLIGHT) {
-                enableFlight = true;
-                break;
+        if (onElevator) {
+            enableFlight = true;
+            player.capabilities.isFlying = true;
+        } else {
+            for (PlayerBuff buff : buffs.keySet()) {
+                if (buff == PlayerBuff.BUFF_FLIGHT) {
+                    enableFlight = true;
+                    break;
+                }
             }
         }
 
@@ -100,6 +107,18 @@ public class BuffProperties {
         player.sendPlayerAbilities();
     }
 
+    public static void enableElevatorMode(EntityPlayer player) {
+        BuffProperties buffProperties = PlayerExtendedProperties.getBuffProperties(player);
+        buffProperties.onElevator = true;
+        buffProperties.performBuffs((EntityPlayerMP) player);
+    }
+
+    public static void disableElevatorMode(EntityPlayer player) {
+        BuffProperties buffProperties = PlayerExtendedProperties.getBuffProperties(player);
+        buffProperties.onElevator = false;
+        player.capabilities.isFlying = false;
+        buffProperties.performBuffs((EntityPlayerMP) player);
+    }
 
     public static void addBuffToPlayer(EntityPlayer player, PlayerBuff buff, int ticks) {
         BuffProperties buffProperties = PlayerExtendedProperties.getBuffProperties(player);
@@ -122,6 +141,7 @@ public class BuffProperties {
     }
 
     public void saveNBTData(NBTTagCompound compound) {
+        compound.setBoolean("onElevator", onElevator);
         compound.setInteger("buffTicks", buffTimeout);
         compound.setBoolean("allowFlying", allowFlying);
         compound.setBoolean("oldAllowFlying", oldAllowFlying);
@@ -139,6 +159,7 @@ public class BuffProperties {
     }
 
     public void loadNBTData(NBTTagCompound compound) {
+        onElevator = compound.getBoolean("onElevator");
         buffTimeout = compound.getInteger("buffTicks");
         int[] buffArray = compound.getIntArray("buffs");
         int[] timeoutArray = compound.getIntArray("buffTimeouts");
