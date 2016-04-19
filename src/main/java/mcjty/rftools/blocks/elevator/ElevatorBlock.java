@@ -10,8 +10,10 @@ import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -59,6 +61,26 @@ public class ElevatorBlock extends GenericRFToolsBlock<ElevatorTileEntity, Empty
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+        super.onBlockPlacedBy(world, pos, state, placer, stack);
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof ElevatorTileEntity) {
+            ElevatorTileEntity elevatorTileEntity = (ElevatorTileEntity) te;
+            elevatorTileEntity.clearCaches();
+        }
+    }
+
+    @Override
+    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof ElevatorTileEntity) {
+            ElevatorTileEntity elevatorTileEntity = (ElevatorTileEntity) te;
+            elevatorTileEntity.clearCaches();
+        }
+        super.breakBlock(world, pos, state);
     }
 
     @SideOnly(Side.CLIENT)

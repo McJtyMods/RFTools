@@ -8,6 +8,7 @@ public class ScreenConfiguration {
     public static int CONTROLLER_RECEIVEPERTICK = 1000;
 
     public static int BUTTON_RFPERTICK = 0;
+    public static int ELEVATOR_BUTTON_RFPERTICK = 0;
     public static int CLOCK_RFPERTICK = 1;
     public static int COMPUTER_RFPERTICK = 4;
     public static int COUNTERPLUS_RFPERTICK = 30;
@@ -30,7 +31,9 @@ public class ScreenConfiguration {
                 "RF per tick that the the screen controller can receive").getInt();
 
         BUTTON_RFPERTICK = cfg.get(CATEGORY_SCREEN, "buttonRFPerTick", BUTTON_RFPERTICK,
-                "RF per tick/per block for the button module").getInt();
+                                   "RF per tick/per block for the button module").getInt();
+        ELEVATOR_BUTTON_RFPERTICK = cfg.get(CATEGORY_SCREEN, "elevatorButtonRFPerTick", ELEVATOR_BUTTON_RFPERTICK,
+                                   "RF per tick/per block for the elevator button module").getInt();
         CLOCK_RFPERTICK = cfg.get(CATEGORY_SCREEN, "clockRFPerTick", CLOCK_RFPERTICK,
                 "RF per tick/per block for the clock module").getInt();
         COMPUTER_RFPERTICK = cfg.get(CATEGORY_SCREEN, "computerRFPerTick", COMPUTER_RFPERTICK,

@@ -15,6 +15,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
@@ -43,11 +44,33 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     // The state that is moving
     private IBlockState movingState;
 
+    // Cache: points to the current controller (bottom elevator block)
+    private BlockPos cachedControllerPos;
+    private int cachedLevels;       // Cached number of levels
+    private int cachedCurrent;
+
     // All players currently on the platform (server side only)
     private Set<EntityPlayer> players = new HashSet<>();
 
     public ElevatorTileEntity() {
         super(ElevatorConfiguration.MAXENERGY, ElevatorConfiguration.RFPERTICK);
+    }
+
+    public void clearCaches() {
+        EnumFacing side = worldObj.getBlockState(getPos()).getValue(ElevatorBlock.FACING_HORIZ);
+        for (int y = 0 ; y < worldObj.getHeight() ; y++) {
+            BlockPos pos2 = getPosAtY(getPos(), y);
+            TileEntity te = worldObj.getTileEntity(pos2);
+            if (te instanceof ElevatorTileEntity) {
+                EnumFacing side2 = worldObj.getBlockState(pos2).getValue(ElevatorBlock.FACING_HORIZ);
+                if (side2 == side) {
+                    ElevatorTileEntity tileEntity = (ElevatorTileEntity) te;
+                    tileEntity.cachedControllerPos = null;
+                    tileEntity.cachedLevels = 0;
+                    tileEntity.cachedCurrent = -1;
+                }
+            }
+        }
     }
 
     @Override
@@ -180,6 +203,10 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
 
     // Find the position of the bottom elevator.
     private BlockPos findBottomElevator() {
+        if (cachedControllerPos != null) {
+            return cachedControllerPos;
+        }
+
         // The orientation of this elevator.
         EnumFacing side = worldObj.getBlockState(getPos()).getValue(ElevatorBlock.FACING_HORIZ);
 
@@ -189,6 +216,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
             if (otherState.getBlock() == ElevatorSetup.elevatorBlock) {
                 EnumFacing otherSide = otherState.getValue(ElevatorBlock.FACING_HORIZ);
                 if (otherSide == side) {
+                    cachedControllerPos = elevatorPos;
                     return elevatorPos;
                 }
             }
@@ -240,6 +268,8 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         for (BlockPos pos : positions) {
             worldObj.setBlockState(getPosAtY(pos, (int) stopY), movingState, 3);
         }
+        // Current level will have to be recalculated
+        cachedCurrent = -1;
     }
 
     private void clearMovement() {
@@ -362,6 +392,77 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
 
     public double getMovingY() {
         return movingY;
+    }
+
+    // Go to the specific level (levels start at 0)
+    public void toLevel(int level) {
+        EnumFacing side = worldObj.getBlockState(getPos()).getValue(ElevatorBlock.FACING_HORIZ);
+        BlockPos controllerPos = findBottomElevator();
+        for (int y = controllerPos.getY() ; y < worldObj.getHeight() ; y++) {
+            BlockPos pos2 = getPosAtY(controllerPos, y);
+            TileEntity te2 = worldObj.getTileEntity(pos2);
+            if (te2 instanceof ElevatorTileEntity) {
+                EnumFacing side2 = worldObj.getBlockState(pos2).getValue(ElevatorBlock.FACING_HORIZ);
+                if (side == side2) {
+                    if (level == 0) {
+                        ((ElevatorTileEntity) te2).movePlatformHere();
+                        return;
+                    }
+                    level--;
+                }
+            }
+        }
+    }
+
+    public int getCurrentLevel() {
+        BlockPos controllerPos = findBottomElevator();
+        EnumFacing side = worldObj.getBlockState(getPos()).getValue(ElevatorBlock.FACING_HORIZ);
+        TileEntity te = worldObj.getTileEntity(controllerPos);
+        if (te instanceof ElevatorTileEntity) {
+            ElevatorTileEntity controller = (ElevatorTileEntity) te;
+            if (controller.cachedCurrent == -1) {
+                int level = 0;
+                for (int y = controllerPos.getY() ; y < worldObj.getHeight() ; y++) {
+                    BlockPos pos2 = getPosAtY(controllerPos, y);
+                    TileEntity te2 = worldObj.getTileEntity(pos2);
+                    if (te2 instanceof ElevatorTileEntity) {
+                        EnumFacing side2 = worldObj.getBlockState(pos2).getValue(ElevatorBlock.FACING_HORIZ);
+                        if (side == side2) {
+                            BlockPos frontPos = pos2.offset(side);
+                            if (isValidPlatformBlock(frontPos)) {
+                                controller.cachedCurrent = level;
+                            }
+                            level++;
+                        }
+                    }
+                }
+            }
+            return controller.cachedCurrent;
+        }
+        return 0;
+    }
+
+    public int getLevelCount() {
+        BlockPos controllerPos = findBottomElevator();
+        EnumFacing side = worldObj.getBlockState(getPos()).getValue(ElevatorBlock.FACING_HORIZ);
+        TileEntity te = worldObj.getTileEntity(controllerPos);
+        if (te instanceof ElevatorTileEntity) {
+            ElevatorTileEntity controller = (ElevatorTileEntity) te;
+            if (controller.cachedLevels == 0) {
+                for (int y = controllerPos.getY() ; y < worldObj.getHeight() ; y++) {
+                    BlockPos pos2 = getPosAtY(controllerPos, y);
+                    TileEntity te2 = worldObj.getTileEntity(pos2);
+                    if (te2 instanceof ElevatorTileEntity) {
+                        EnumFacing side2 = worldObj.getBlockState(pos2).getValue(ElevatorBlock.FACING_HORIZ);
+                        if (side == side2) {
+                            controller.cachedLevels++;
+                        }
+                    }
+                }
+            }
+            return controller.cachedLevels;
+        }
+        return 0;
     }
 
     // Can be called on any elevator block. Not only the contoller (bottom one)

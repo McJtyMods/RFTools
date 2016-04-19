@@ -31,6 +31,7 @@ item.redstone_module.name=Redstone Module
 item.machineinformation_module.name=Machine Information Module
 item.ComputerModule.name=Computer Module
 item.button_module.name=Button Module
+item.elevator_button_module.name=Elevator Button Module
 item.smartwrench.name=Smart Wrench
 item.storage_module0.name=Storage Module Tier 1
 item.storage_module1.name=Storage Module Tier 2

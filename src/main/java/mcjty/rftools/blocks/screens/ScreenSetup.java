@@ -25,6 +25,7 @@ public class ScreenSetup {
     public static FluidPlusModuleItem fluidPlusModuleItem;
     public static MachineInformationModuleItem machineInformationModuleItem;
     public static ButtonModuleItem buttonModuleItem;
+    public static ElevatorButtonModuleItem elevatorButtonModuleItem;
     public static RedstoneModuleItem redstoneModuleItem;
     public static CounterModuleItem counterModuleItem;
     public static CounterPlusModuleItem counterPlusModuleItem;
@@ -44,6 +45,7 @@ public class ScreenSetup {
         fluidPlusModuleItem = new FluidPlusModuleItem();
         machineInformationModuleItem = new MachineInformationModuleItem();
         buttonModuleItem = new ButtonModuleItem();
+        elevatorButtonModuleItem = new ElevatorButtonModuleItem();
         redstoneModuleItem = new RedstoneModuleItem();
         counterModuleItem = new CounterModuleItem();
         counterPlusModuleItem = new CounterPlusModuleItem();
@@ -65,6 +67,7 @@ public class ScreenSetup {
         fluidPlusModuleItem.initModel();
         machineInformationModuleItem.initModel();
         buttonModuleItem.initModel();
+        elevatorButtonModuleItem.initModel();
         redstoneModuleItem.initModel();
         counterModuleItem.initModel();
         counterPlusModuleItem.initModel();
@@ -103,8 +106,11 @@ public class ScreenSetup {
 //        GameRegistry.addRecipe(new ItemStack(computerModuleItem), " f ", "rir", " b ", 'f', Blocks.quartz_block, 'r', Items.redstone, 'i', Items.iron_ingot,
 //                'b', inkSac);
         GameRegistry.addRecipe(new ItemStack(buttonModuleItem), " f ", "rir", " b ", 'f', Blocks.stone_button, 'r', Items.redstone, 'i', Items.iron_ingot,
-                'b', inkSac);
+                               'b', inkSac);
         GameRegistry.addRecipe(new ItemStack(buttonModuleItem), "b", 'b', buttonModuleItem);    // To clear it
+
+        GameRegistry.addRecipe(new ItemStack(elevatorButtonModuleItem), "fff", "rir", " b ", 'f', Blocks.stone_button, 'r', Items.redstone, 'i', Items.iron_ingot,
+                               'b', inkSac);
 
         GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
                 null, new ItemStack(Items.ender_pearl), null,
