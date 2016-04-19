@@ -73,6 +73,8 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         }
     }
 
+
+
     @Override
     public void update() {
         if (!worldObj.isRemote) {
@@ -110,7 +112,58 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
             if (isMoving()) {
                 handleClientMovement();
             }
+            handleSound();
         }
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        if (worldObj.isRemote) {
+            stopSounds();
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void stopSounds() {
+        ElevatorSounds.stopSound(worldObj, getPos());
+    }
+
+    @SideOnly(Side.CLIENT)
+    protected void handleSound() {
+        if (ElevatorConfiguration.baseElevatorVolume < 0.01f) {
+            // No sounds.
+            return;
+        }
+
+        if (!isMoving()) {
+            stopSounds();
+            return;
+        }
+        boolean startup;
+        boolean shutdown;
+        if (stopY < startY) {
+            startup = (startY-movingY) < ElevatorConfiguration.maxSpeedDistanceStart;
+            shutdown = (!startup) && (movingY-stopY) < ElevatorConfiguration.maxSpeedDistanceStart;
+        } else {
+            startup = (movingY-startY) < ElevatorConfiguration.maxSpeedDistanceStart;
+            shutdown = (!startup) && (stopY-movingY) < ElevatorConfiguration.maxSpeedDistanceStart;
+        }
+
+        if (startup) {
+            if (!ElevatorSounds.isStartupPlaying(worldObj, pos)) {
+                ElevatorSounds.playStartup(worldObj, pos);
+            }
+        } else if (shutdown) {
+            if (!ElevatorSounds.isStopPlaying(worldObj, pos)) {
+                ElevatorSounds.playStop(worldObj, pos);
+            }
+        } else {
+            if (!ElevatorSounds.isLoopPlaying(worldObj, pos)) {
+                ElevatorSounds.playLoop(worldObj, pos);
+            }
+        }
+        ElevatorSounds.moveSound(worldObj, pos, (float) movingY);
     }
 
     @SideOnly(Side.CLIENT)

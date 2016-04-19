@@ -14,6 +14,9 @@ public class ElevatorConfiguration {
     public static double maxSpeedDistanceStart = 5;
     public static double maxSpeedDistanceEnd = 2;
 
+    public static float baseElevatorVolume = 1.0f;      // Use 0 to turn off elevator sounds
+    public static float loopVolumeFactor = 1.0f;        // How much to decrease volume of the looping sound.
+
     public static void init(Configuration cfg) {
         rfPerTickMoving = cfg.get(CATEGORY_ELEVATOR, "elevatorPerTick", rfPerTickMoving, "Amount of RF used per tick when moving").getInt();
         maxPlatformSize = cfg.get(CATEGORY_ELEVATOR, "maxPlatformSize", maxPlatformSize, "Maximum platform size that can be moved").getInt();
@@ -25,5 +28,10 @@ public class ElevatorConfiguration {
                 "Maximum RF storage that the generator can hold").getInt();
         RFPERTICK = cfg.get(CATEGORY_ELEVATOR, "elevatorRFPerTick", RFPERTICK,
                               "RF per tick that the evelator block can receive").getInt();
+
+        baseElevatorVolume = (float) cfg.get(CATEGORY_ELEVATOR, "baseElevatorVolume", baseElevatorVolume,
+                "The volume for the elevator sound (1.0 is default, 0.0 is off)").getDouble();
+        loopVolumeFactor = (float) cfg.get(CATEGORY_ELEVATOR, "loopVolumeFactor", loopVolumeFactor,
+                "Relative volume of the elevator looping sound. With 1.0 the looping sound has equal loudness as the elevator base volume").getDouble();
     }
 }

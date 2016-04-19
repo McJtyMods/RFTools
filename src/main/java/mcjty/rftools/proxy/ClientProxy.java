@@ -4,6 +4,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.RenderGameOverlayEventHandler;
 import mcjty.rftools.RenderWorldLastEventHandler;
 import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.blocks.elevator.ElevatorSounds;
 import mcjty.rftools.items.ModItems;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -24,6 +25,7 @@ public class ClientProxy extends CommonProxy {
         OBJLoader.INSTANCE.addDomain(RFTools.MODID);
         ModItems.initClient();
         ModBlocks.initClient();
+        ElevatorSounds.init();
     }
 
     @Override
