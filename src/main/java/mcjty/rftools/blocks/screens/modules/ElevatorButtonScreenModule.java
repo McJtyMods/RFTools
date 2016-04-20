@@ -92,7 +92,7 @@ public class ElevatorButtonScreenModule implements IScreenModule<IModuleDataCont
         ElevatorTileEntity elevatorTileEntity = (ElevatorTileEntity) te;
 
         if (vertical) {
-            int yoffset = 7;
+            int yoffset = 0;
             if (y >= yoffset) {
                 int level = (y - yoffset) / (large ? (LARGESIZE - 2) : (SMALLSIZE - 2));
                 if (level < 0) {

@@ -58,8 +58,6 @@ public class BoosterBlock extends GenericRFToolsBlock<BoosterTileEntity, Booster
         }
     }
 
-    private static long lastTime = 0;
-
     @SideOnly(Side.CLIENT)
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
