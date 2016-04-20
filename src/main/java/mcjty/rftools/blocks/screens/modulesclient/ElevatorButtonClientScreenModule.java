@@ -12,8 +12,16 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class ElevatorButtonClientScreenModule implements IClientScreenModule<IModuleDataContents> {
+
+    public static final int LARGESIZE = 22;
+    public static final int SMALLSIZE = 16;
+
     private int buttonColor = 0xffffff;
     private int currentLevelButtonColor = 0xffff00;
+    private boolean vertical = false;
+    private boolean large = false;
+    private boolean lights = false;
+    private boolean start1 = false;
 
     @Override
     public TransformMode getTransformMode() {
@@ -22,24 +30,49 @@ public class ElevatorButtonClientScreenModule implements IClientScreenModule<IMo
 
     @Override
     public int getHeight() {
-        return 16;
+        if (vertical) {
+            return large ? (LARGESIZE*5) : (SMALLSIZE *7);
+        } else {
+            return large ? LARGESIZE : SMALLSIZE;
+        }
+    }
+
+    private int getDimension() {
+        return large ? LARGESIZE : SMALLSIZE;
     }
 
     @Override
     public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleDataContents screenData, float factor) {
         GlStateManager.disableLighting();
-        int xoffset = 5;
 
         if (screenData == null) {
             return;
         }
         int currentLevel = (int) screenData.getContents();
         int buttons = (int) screenData.getMaxContents();
-        for (int i = 0 ; i < buttons ; i++) {
-            RenderHelper.drawBeveledBox(xoffset, currenty, xoffset + 12, currenty + 14, 0xffeeeeee, 0xff333333, 0xff666666);
-            int col = i == currentLevel ? this.currentLevelButtonColor : this.buttonColor;
-            fontRenderer.drawString(fontRenderer.trimStringToWidth(String.valueOf(i), 12), xoffset+3, currenty + 2, col);
-            xoffset += 14;
+        int xoffset = 5;
+        for (int i = 0; i < buttons; i++) {
+            int level = vertical ? buttons-i-1 : i;
+            String test = String.valueOf(level + (start1 ? 1 : 0));
+            int col = level == currentLevel ? this.currentLevelButtonColor : this.buttonColor;
+            int textoffset = large ? 3 : 0;
+            if (vertical) {
+                if (lights) {
+                    RenderHelper.drawBeveledBox(xoffset, currenty, xoffset + 120, currenty + getDimension() - 2, 0xffffffff, 0xffffffff, 0xff000000 + col);
+                } else {
+                    RenderHelper.drawBeveledBox(xoffset, currenty, xoffset + 120, currenty + getDimension() - 2, 0xffeeeeee, 0xff333333, 0xff666666);
+                    fontRenderer.drawString(fontRenderer.trimStringToWidth(test, 120), xoffset + 3 + textoffset, currenty + 2 + textoffset, col);
+                }
+                currenty += getDimension() - 2;
+            } else {
+                if (lights) {
+                    RenderHelper.drawBeveledBox(xoffset, currenty, xoffset + getDimension() - 4, currenty + getDimension() - 2, 0xffffffff, 0xffffffff, 0xff000000 + col);
+                } else {
+                    RenderHelper.drawBeveledBox(xoffset, currenty, xoffset + getDimension() - 4, currenty + getDimension() - 2, 0xffeeeeee, 0xff333333, 0xff666666);
+                    fontRenderer.drawString(fontRenderer.trimStringToWidth(test, getDimension() - 4), xoffset + 3 + textoffset, currenty + 2 + textoffset, col);
+                }
+                xoffset += getDimension() - 2;
+            }
         }
     }
 
@@ -51,6 +84,8 @@ public class ElevatorButtonClientScreenModule implements IClientScreenModule<IMo
     public void createGui(IModuleGuiBuilder guiBuilder) {
         guiBuilder
                 .color("buttonColor", "Button color").color("curColor", "Current level button color").nl()
+                .toggle("vertical", "Vertical", "Order the buttons vertically").toggle("large", "Large", "Larger buttons").nl()
+                .toggle("lights", "Lights", "Use buttons resembling lights").toggle("start1", "Start 1", "start numbering at 1 instead of 0").nl()
                 .label("Block:").block("elevator").nl();
     }
 
@@ -59,11 +94,18 @@ public class ElevatorButtonClientScreenModule implements IClientScreenModule<IMo
         if (tagCompound != null) {
             if (tagCompound.hasKey("buttonColor")) {
                 buttonColor = tagCompound.getInteger("buttonColor");
-            } else if (tagCompound.hasKey("curColor")) {
-                currentLevelButtonColor = tagCompound.getInteger("curColor");
             } else {
                 buttonColor = 0xffffff;
             }
+            if (tagCompound.hasKey("curColor")) {
+                currentLevelButtonColor = tagCompound.getInteger("curColor");
+            } else {
+                currentLevelButtonColor = 0xffff00;
+            }
+            vertical = tagCompound.getBoolean("vertical");
+            large = tagCompound.getBoolean("large");
+            lights = tagCompound.getBoolean("lights");
+            start1 = tagCompound.getBoolean("start1");
         }
     }
 

@@ -47,7 +47,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     // Cache: points to the current controller (bottom elevator block)
     private BlockPos cachedControllerPos;
     private int cachedLevels;       // Cached number of levels
-    private int cachedCurrent;
+    private int cachedCurrent = -1;
 
     // All players currently on the platform (server side only)
     private Set<EntityPlayer> players = new HashSet<>();

@@ -58,7 +58,22 @@ public class ElevatorButtonModuleItem extends GenericRFToolsItem implements IMod
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.ELEVATOR_BUTTON_RFPERTICK + " RF/tick");
-        list.add(TextFormatting.WHITE + "Sneak right-click on an elevator block");
+        boolean hasTarget = false;
+        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        if (tagCompound != null) {
+            if (tagCompound.hasKey("elevatorx")) {
+                int monitorx = tagCompound.getInteger("elevatorx");
+                int monitory = tagCompound.getInteger("elevatory");
+                int monitorz = tagCompound.getInteger("elevatorz");
+                String monitorname = tagCompound.getString("elevatorname");
+                list.add(TextFormatting.YELLOW + "Elevator: " + monitorname + " (at " + monitorx + "," + monitory + "," + monitorz + ")");
+                hasTarget = true;
+            }
+        }
+        if (!hasTarget) {
+            list.add(TextFormatting.YELLOW + "Sneak right-click on an elector block to set the");
+            list.add(TextFormatting.YELLOW + "target for this module");
+        }
     }
 
     @Override
