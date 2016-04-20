@@ -95,6 +95,7 @@ tile.matter_transmitter.name=Matter Transmitter
 tile.matter_receiver.name=Matter Receiver
 tile.dialing_device.name=Dialing Device
 tile.simple_dialer.name=Simple Dialer
+tile.booster.name=Booster
 tile.destination_analyzer.name=Destination Analyzer
 tile.matter_booster.name=Matter Booster
 tile.endergenic.name=Endergenic Generator

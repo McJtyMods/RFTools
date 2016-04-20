@@ -111,6 +111,7 @@ public class RFTools implements ModBase {
     public static final int GUI_PEARL_INJECTOR = modGuiIndex++;
     public static final int GUI_ENDERMONITOR = modGuiIndex++;
     public static final int GUI_STORAGE_SCANNER = modGuiIndex++;
+    public static final int GUI_BOOSTER = modGuiIndex++;
 
     /**
      * Run before anything else. Read your config, create blocks, items, etc, and

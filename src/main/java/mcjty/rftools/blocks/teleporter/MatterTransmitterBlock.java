@@ -33,7 +33,6 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock implements Infus
 
     public MatterTransmitterBlock() {
         super(Material.iron, MatterTransmitterTileEntity.class, EmptyContainer.class, "matter_transmitter", false);
-        setCreativeTab(RFTools.tabRfTools);
         setDefaultState(this.blockState.getBaseState());
     }
 

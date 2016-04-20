@@ -30,7 +30,6 @@ public class MatterReceiverBlock extends GenericRFToolsBlock implements Infusabl
 
     public MatterReceiverBlock() {
         super(Material.iron, MatterReceiverTileEntity.class, EmptyContainer.class, "matter_receiver", false);
-        setCreativeTab(RFTools.tabRfTools);
         setDefaultState(this.blockState.getBaseState());
     }
 

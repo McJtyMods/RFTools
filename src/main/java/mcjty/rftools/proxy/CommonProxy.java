@@ -11,6 +11,7 @@ import mcjty.rftools.ModSounds;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorConfiguration;
+import mcjty.rftools.blocks.booster.BoosterConfiguration;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.crafter.CrafterConfiguration;
 import mcjty.rftools.blocks.elevator.ElevatorConfiguration;
@@ -146,6 +147,7 @@ public abstract class CommonProxy {
             cfg.addCustomCategoryComment(EndergenicConfiguration.CATEGORY_ENDERGENIC, "Settings for the endergenic generator");
             cfg.addCustomCategoryComment(StorageScannerConfiguration.CATEGORY_STORAGE_MONITOR, "Settings for the storage scanner machine");
             cfg.addCustomCategoryComment(ElevatorConfiguration.CATEGORY_ELEVATOR, "Settings for the elevator");
+            cfg.addCustomCategoryComment(BoosterConfiguration.CATEGORY_BOOSTER, "Settings for the booster");
 
             GeneralConfiguration.init(cfg);
             CoalGeneratorConfiguration.init(cfg);
@@ -163,6 +165,7 @@ public abstract class CommonProxy {
             EndergenicConfiguration.init(cfg);
             StorageScannerConfiguration.init(cfg);
             ElevatorConfiguration.init(cfg);
+            BoosterConfiguration.init(cfg);
 
         } catch (Exception e1) {
             FMLLog.log(Level.ERROR, e1, "Problem loading config file!");

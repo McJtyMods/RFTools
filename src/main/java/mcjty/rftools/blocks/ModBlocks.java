@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks;
 
 import mcjty.rftools.blocks.blockprotector.BlockProtectorSetup;
+import mcjty.rftools.blocks.booster.BoosterSetup;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.blocks.crafter.CrafterSetup;
 import mcjty.rftools.blocks.elevator.ElevatorSetup;
@@ -53,6 +54,7 @@ public final class ModBlocks {
         EndergenicSetup.init();
         StorageScannerSetup.init();
         ElevatorSetup.init();
+        BoosterSetup.init();
     }
 
     @SideOnly(Side.CLIENT)
@@ -81,6 +83,7 @@ public final class ModBlocks {
         EndergenicSetup.initClient();
         StorageScannerSetup.initClient();
         ElevatorSetup.initClient();
+        BoosterSetup.initClient();
     }
 
     @SideOnly(Side.CLIENT)
