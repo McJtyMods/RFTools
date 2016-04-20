@@ -1,8 +1,11 @@
 package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.container.InventoryHelper;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.rftools.blocks.booster.BoosterContainer;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
@@ -24,6 +27,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -70,6 +74,33 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
         ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(this), 0, ScreenTileEntity.class);
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
     }
+
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+        if (heldItem != null && heldItem.getItem() instanceof IModuleProvider) {
+            TileEntity te = world.getTileEntity(pos);
+            if (te instanceof ScreenTileEntity) {
+                ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
+                for (int i = ScreenContainer.SLOT_MODULES ; i < ScreenContainer.SLOT_MODULES + ScreenContainer.SCREEN_MODULES ; i++) {
+                    if (screenTileEntity.getStackInSlot(i) == null) {
+                        ItemStack copy = heldItem.copy();
+                        copy.stackSize = 1;
+                        screenTileEntity.setInventorySlotContents(i, copy);
+                        heldItem.stackSize--;
+                        if (heldItem.stackSize == 0) {
+                            player.setHeldItem(hand, null);
+                        }
+                        if (world.isRemote) {
+                            player.addChatComponentMessage(new TextComponentString("Installed module in the screen"));
+                        }
+                        return true;
+                    }
+                }
+            }
+        }
+        return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
+    }
+
 
     @Override
     public void onBlockClicked(World world, BlockPos pos, EntityPlayer playerIn) {
