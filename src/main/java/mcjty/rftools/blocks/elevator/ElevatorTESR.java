@@ -24,7 +24,7 @@ public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> 
 
         if (te.isMoving()) {
             // Correction in the y translation to avoid jitter when both player and platform are moving
-            AxisAlignedBB aabb = te.getAABBAboveElevator();
+            AxisAlignedBB aabb = te.getAABBAboveElevator(0);
             boolean on = Minecraft.getMinecraft().thePlayer.getEntityBoundingBox().intersectsWith(aabb);
 
             double diff = on ? (te.getPos().getY() - (y+te.getMovingY()) - 1) : 0;

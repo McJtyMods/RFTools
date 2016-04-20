@@ -94,7 +94,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
                     moveEntities(0, true);
                     clearMovement();
                 } else {
-                    moveEntities(d > 0 ? d * 4 : d, false);
+                    moveEntities(d, false);
                 }
                 return;
             }
@@ -171,7 +171,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         double d = calculateSpeed();
         handlePlatformMovement(d);
         EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
-        AxisAlignedBB aabb = getAABBAboveElevator();
+        AxisAlignedBB aabb = getAABBAboveElevator(d);
         boolean on = Minecraft.getMinecraft().thePlayer.getEntityBoundingBox().intersectsWith(aabb);
         if (on) {
             player.setPosition(player.posX, movingY + 1, player.posZ);
@@ -215,13 +215,14 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     }
 
     // Only server side
-    private void moveEntities(double offset, boolean stop) {
+    private void moveEntities(double speed, boolean stop) {
         if (bounds == null) {
             return;
         }
+        double offset = speed > 0 ? speed * 4 : speed;
         Set<EntityPlayer> oldPlayers = this.players;
         players = new HashSet<>();
-        List<Entity> entities = worldObj.getEntitiesWithinAABB(Entity.class, getAABBAboveElevator());
+        List<Entity> entities = worldObj.getEntitiesWithinAABB(Entity.class, getAABBAboveElevator(speed));
         for (Entity entity : entities) {
 
             entity.fallDistance = 0;
@@ -435,8 +436,17 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         }
     }
 
-    public AxisAlignedBB getAABBAboveElevator() {
-        return new AxisAlignedBB(bounds.getMinX(), movingY, bounds.getMinZ(), bounds.getMaxX() + 1, movingY + 3, bounds.getMaxZ() + 1);
+    public AxisAlignedBB getAABBAboveElevator(double speed) {
+        double o1;
+        double o2;
+        if (speed > 0) {
+            o1 = -speed * 2;
+            o2 = 0;
+        } else {
+            o1 = 0;
+            o2 = -speed * 2;
+        }
+        return new AxisAlignedBB(bounds.getMinX(), movingY-1+o1, bounds.getMinZ(), bounds.getMaxX() + 1, movingY + 3+o2, bounds.getMaxZ() + 1);
     }
 
     public boolean isMoving() {
@@ -570,6 +580,16 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
             return new AxisAlignedBB(getPos().add(-9, 0, -9), getPos().add(9, 255, 9));
         }
         return super.getRenderBoundingBox();
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public double getMaxRenderDistanceSquared() {
+        if (isMoving()) {
+            return 256 * 256;
+        } else {
+            return super.getMaxRenderDistanceSquared();
+        }
     }
 
     private static short bytesToShort(byte b1, byte b2) {
