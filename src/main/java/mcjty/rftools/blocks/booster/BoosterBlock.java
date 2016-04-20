@@ -5,6 +5,7 @@ import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.rftools.blocks.environmental.EnvModuleProvider;
 import mcjty.rftools.blocks.teleporter.MatterTransmitterTileEntity;
 import mcjty.rftools.network.PacketGetDestinationInfo;
 import mcjty.rftools.network.RFToolsMessages;
@@ -19,7 +20,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -63,6 +67,30 @@ public class BoosterBlock extends GenericRFToolsBlock<BoosterTileEntity, Booster
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         super.getWailaBody(itemStack, currenttip, accessor, config);
         return currenttip;
+    }
+
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+        if (heldItem != null && heldItem.getItem() instanceof EnvModuleProvider) {
+            TileEntity te = world.getTileEntity(pos);
+            if (te instanceof BoosterTileEntity) {
+                BoosterTileEntity boosterTileEntity = (BoosterTileEntity) te;
+                if (boosterTileEntity.getStackInSlot(BoosterContainer.SLOT_MODULE) == null) {
+                    ItemStack module = heldItem.copy();
+                    module.stackSize = 1;
+                    boosterTileEntity.setInventorySlotContents(BoosterContainer.SLOT_MODULE, module);
+                    heldItem.stackSize--;
+                    if (heldItem.stackSize == 0) {
+                        player.setHeldItem(hand, null);
+                    }
+                    if (world.isRemote) {
+                        player.addChatComponentMessage(new TextComponentString("Installed module in the booster"));
+                    }
+                    return true;
+                }
+            }
+        }
+        return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
     }
 
     @Override
