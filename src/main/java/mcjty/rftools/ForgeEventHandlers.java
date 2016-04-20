@@ -7,10 +7,12 @@ import mcjty.rftools.blocks.blockprotector.BlockProtectorTileEntity;
 import mcjty.rftools.blocks.blockprotector.BlockProtectors;
 import mcjty.rftools.blocks.environmental.NoTeleportAreaManager;
 import mcjty.rftools.blocks.environmental.PeacefulAreaManager;
+import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.playerprops.BuffProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import mcjty.rftools.playerprops.PorterProperties;
 import mcjty.rftools.playerprops.PropertiesDispatcher;
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
@@ -100,6 +102,32 @@ public class ForgeEventHandlers {
         int y = event.getPos().getY();
         int z = event.getPos().getZ();
         World world = event.getWorld();
+        if (!world.isRemote) {
+            if (((EntityPlayerMP)event.getPlayer()).interactionManager.isCreative()) {
+                // In creative we don't want our screens to be destroyed by left click unless he/she is sneaking
+                Block block = world.getBlockState(event.getPos()).getBlock();
+                if (block == ScreenSetup.screenBlock || block == ScreenSetup.screenHitBlock) {
+                    if (!event.getPlayer().isSneaking()) {
+                        // If not sneaking while we hit a screen we cancel the destroy. Otherwise we go through.
+                        event.setCanceled(true);
+                        return;
+                    }
+                }
+            }
+//        } else {
+//            if (Minecraft.getMinecraft().playerController.isInCreativeMode()) {
+//                // In creative we don't want our screens to be destroyed by left click unless he/she is sneaking
+//                Block block = world.getBlockState(event.getPos()).getBlock();
+//                if (block == ScreenSetup.screenBlock || block == ScreenSetup.screenHitBlock) {
+//                    if (!event.getPlayer().isSneaking()) {
+//                        // If not sneaking while we hit a screen we cancel the destroy. Otherwise we go through.
+//                        event.setCanceled(true);
+//                        block.onBlockClicked(world, event.getPos(), event.getPlayer());
+//                        return;
+//                    }
+//                }
+//            }
+        }
         Collection<GlobalCoordinate> protectors = getProtectors(world, x, y, z);
         checkHarvestProtection(event, x, y, z, world, protectors);
     }
