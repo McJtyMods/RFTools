@@ -1,5 +1,4 @@
 {b}RFTools Manual
-
 Table of contents:
 {l:general}General Tips
 {l:security}Security
@@ -12,11 +11,11 @@ Table of contents:
 {l:powercell}Power storage
 {l:stomon}Storage Scanner
 {l:storage}Storage System
+{l:filter}Item Filter
 {/}
 
 
-
-{l:filter}Item Filter
+{l:elevator}Elevator
 {l:crafter}Automatic Crafter
 {l:protect}Block Protector
 {l:prelay}RF Power Relay
@@ -25,20 +24,23 @@ Table of contents:
 {l:shield}Shield System
 {l:screens}Modular Screens
 {l:envctrl}Environmental Control
+{l:booster}Booster
 {l:spawner}Spawner System
 {l:builder}Builder
 {-------------------------------------------------------------}
 {b}General Tips
 {n:general}
 All blocks in this mod (with a few exceptions like the Endergenic
-Generator and blocks for which orientation doesn't matter) can
-be rotated by using a wrench on them.
+Generator and blocks for which orientation doesn't matter) can be
+rotated by using a wrench on them.
 
-All blocks in this mod can be picked up by using a wrench while
-sneaking. Most settings (like stored energy, possible inventory,
-recipes and so on) will be remembered and restored when the block
-is put back in the world. You can also break the blocks with
-a pickaxe without losing anything.
+All blocks in this mod can be picked up by using a wrench while sneaking.
+Most settings (like stored energy, possible inventory, recipes and so on)
+will be remembered and restored when the block is put back in the world.
+You can also break the blocks with a pickaxe without losing anything.
+
+Many cards and/or modules can be directly installed in the
+appropriate block by right clicking the block with the module.
 {-------------------------------------------------------------}
 {b}Security
 {n:security}
@@ -366,6 +368,22 @@ the crafter buffer.
 
 The storage filter item has its own GUI which you can only access
 by having the filter in your hand (outside of the machine).
+{-------------------------------------------------------------}
+{b}Elevator
+{n:elevator}
+{rb:elevator}
+
+The elevator is a block that can move entities (including the player)
+up and down. To setup an elevator you need to place elevator blocks
+at every level and at one level make a platform in front of the
+elevator using solid blocks. Only the bottom elevator block needs power.
+If one of the elevator blocks gets a redstone signal then the platform
+will move there.
+{-------------------------------------------------------------}
+The elevator works well with the wireless redstone system and the
+button screen module so you can control the elevator from a distance.
+In addition you can use the elevator button module which allows you
+to directly control to what level the platform should move.
 {-------------------------------------------------------------}
 {b}Automatic Crafter
 {n:crafter}
@@ -780,6 +798,14 @@ regeneration, and so on. Every module requires power so this doesn't
 come free. A single controller can affect an cylindrical area
 with a maximum radius of 100 from bottom to top of the world
 (if you're prepared to consume that much power).
+{-------------------------------------------------------------}
+{b}Booster
+{n:booster}
+{rb:booster}
+
+The booster is related to the environmental controller. Instead
+of affecting an entire area it only affects the entities directly
+on top of it. In addition it only supports one module at a time.
 {-------------------------------------------------------------}
 {b}Spawner System
 {n:spawner}
