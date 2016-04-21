@@ -39,7 +39,7 @@ public class BlockProtectorBlock extends GenericRFToolsBlock implements Infusabl
     public static final PropertyBool WORKING = PropertyBool.create("working");
 
     public BlockProtectorBlock() {
-        super(Material.iron, BlockProtectorTileEntity.class, BlockProtectorContainer.class, "block_protector", true);
+        super(Material.IRON, BlockProtectorTileEntity.class, BlockProtectorContainer.class, "block_protector", true);
     }
 
     @SideOnly(Side.CLIENT)

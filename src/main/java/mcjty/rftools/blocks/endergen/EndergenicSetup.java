@@ -29,12 +29,12 @@ public class EndergenicSetup {
     }
 
     public static void initCrafting() {
-        Block redstoneTorch = Blocks.redstone_torch;
+        Block redstoneTorch = Blocks.REDSTONE_TORCH;
         if (GeneralConfiguration.enableEndergenRecipe) {
-            GameRegistry.addRecipe(new ItemStack(endergenicBlock), "DoD", "oMo", "DoD", 'M', ModBlocks.machineFrame, 'D', Items.diamond, 'o', Items.ender_pearl);
+            GameRegistry.addRecipe(new ItemStack(endergenicBlock), "DoD", "oMo", "DoD", 'M', ModBlocks.machineFrame, 'D', Items.DIAMOND, 'o', Items.ENDER_PEARL);
         }
-        GameRegistry.addRecipe(new ItemStack(pearlInjectorBlock), " C ", "rMr", " H ", 'C', Blocks.chest, 'r', Items.redstone,
-                'M', ModBlocks.machineFrame, 'H', Blocks.hopper);
-        GameRegistry.addRecipe(new ItemStack(enderMonitorBlock), "ror", "TMT", "rTr", 'o', Items.ender_pearl, 'r', Items.redstone, 'T', redstoneTorch, 'M', ModBlocks.machineBase);
+        GameRegistry.addRecipe(new ItemStack(pearlInjectorBlock), " C ", "rMr", " H ", 'C', Blocks.CHEST, 'r', Items.REDSTONE,
+                'M', ModBlocks.machineFrame, 'H', Blocks.HOPPER);
+        GameRegistry.addRecipe(new ItemStack(enderMonitorBlock), "ror", "TMT", "rTr", 'o', Items.ENDER_PEARL, 'r', Items.REDSTONE, 'T', redstoneTorch, 'M', ModBlocks.machineBase);
     }
 }

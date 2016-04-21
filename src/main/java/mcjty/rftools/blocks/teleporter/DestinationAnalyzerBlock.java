@@ -26,7 +26,7 @@ public class DestinationAnalyzerBlock extends Block {
     public static final PropertyDirection FACING = PropertyDirection.create("facing");
 
     public DestinationAnalyzerBlock() {
-        super(Material.iron);
+        super(Material.IRON);
         setUnlocalizedName("destination_analyzer");
         setRegistryName("destination_analyzer");
         setCreativeTab(RFTools.tabRfTools);

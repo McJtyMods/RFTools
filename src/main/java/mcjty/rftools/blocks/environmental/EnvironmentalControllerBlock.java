@@ -32,7 +32,7 @@ import java.util.List;
 public class EnvironmentalControllerBlock extends GenericRFToolsBlock implements Infusable /*, IRedstoneConnectable*/ {
 
     public EnvironmentalControllerBlock() {
-        super(Material.iron, EnvironmentalControllerTileEntity.class, EnvironmentalControllerContainer.class, "environmental_controller", true);
+        super(Material.IRON, EnvironmentalControllerTileEntity.class, EnvironmentalControllerContainer.class, "environmental_controller", true);
     }
 
     @Override

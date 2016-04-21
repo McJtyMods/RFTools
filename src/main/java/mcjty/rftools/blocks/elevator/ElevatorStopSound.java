@@ -17,7 +17,7 @@ public class ElevatorStopSound extends MovingSound {
     private final BlockPos pos;
 
     public ElevatorStopSound(World world, int x, int y, int z) {
-        super(SoundEvent.soundEventRegistry.getObject(new ResourceLocation(RFTools.MODID + ":elevator_stop")), SoundCategory.BLOCKS);
+        super(SoundEvent.REGISTRY.getObject(new ResourceLocation(RFTools.MODID + ":elevator_stop")), SoundCategory.BLOCKS);
         this.world = world;
         this.pos = new BlockPos(x, y, z);
 

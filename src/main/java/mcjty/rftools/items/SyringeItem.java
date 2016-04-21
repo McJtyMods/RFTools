@@ -125,7 +125,7 @@ public class SyringeItem extends GenericRFToolsItem {
                 return "WitherSkeleton";
             }
         }
-        return EntityList.classToStringMapping.get(clazz);
+        return EntityList.CLASS_TO_NAME.get(clazz);
     }
 
     private Class<? extends Entity> findSelectedMobClass(Entity entity) {

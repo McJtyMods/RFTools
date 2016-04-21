@@ -1,6 +1,5 @@
 package mcjty.rftools.world;
 
-import mcjty.lib.varia.Logging;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
@@ -49,13 +48,13 @@ public class RFToolsWorldGenerator implements IWorldGenerator {
             IBlockState base;
             if (world.provider.getDimension() == 1) {
                 ore = ModBlocks.dimensionalShardBlock.getDefaultState().withProperty(DimensionalShardBlock.ORETYPE, DimensionalShardBlock.OreType.ORE_END);
-                base = Blocks.end_stone.getDefaultState();
+                base = Blocks.END_STONE.getDefaultState();
             } else if (world.provider.getDimension() == -1) {
                 ore = ModBlocks.dimensionalShardBlock.getDefaultState().withProperty(DimensionalShardBlock.ORETYPE, DimensionalShardBlock.OreType.ORE_NETHER);
-                base = Blocks.netherrack.getDefaultState();
+                base = Blocks.NETHERRACK.getDefaultState();
             } else {
                 ore = ModBlocks.dimensionalShardBlock.getDefaultState();
-                base = Blocks.stone.getDefaultState();
+                base = Blocks.STONE.getDefaultState();
             }
             addOreSpawn(ore, base, world, random, chunkX * 16, chunkZ * 16,
                         GeneralConfiguration.oreMinimumVeinSize, GeneralConfiguration.oreMaximumVeinSize, GeneralConfiguration.oreMaximumVeinCount,

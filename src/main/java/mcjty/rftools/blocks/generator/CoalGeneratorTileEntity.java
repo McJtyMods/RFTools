@@ -147,7 +147,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
         if (index == CoalGeneratorContainer.SLOT_CHARGEITEM) {
             return stack.getItem() instanceof IEnergyContainerItem;
         } else if (index == CoalGeneratorContainer.SLOT_COALINPUT) {
-            return stack.getItem() == Items.coal;
+            return stack.getItem() == Items.COAL;
         }
         return true;
     }

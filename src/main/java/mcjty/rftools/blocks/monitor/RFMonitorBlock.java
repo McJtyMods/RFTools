@@ -30,7 +30,7 @@ public class RFMonitorBlock extends GenericRFToolsBlock {
     public static PropertyInteger LEVEL = PropertyInteger.create("level", 0, 5);
 
     public RFMonitorBlock() {
-        super(Material.iron, RFMonitorBlockTileEntity.class, EmptyContainer.class, "rf_monitor", false);
+        super(Material.IRON, RFMonitorBlockTileEntity.class, EmptyContainer.class, "rf_monitor", false);
     }
 
     @SideOnly(Side.CLIENT)

@@ -227,7 +227,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
             if ("WitherSkeleton".equals(mobId)) {
                 clazz = EntitySkeleton.class;
             } else {
-                clazz = EntityList.stringToClassMapping.get(mobId);
+                clazz = EntityList.NAME_TO_CLASS.get(mobId);
             }
             entityLiving = (EntityLiving) clazz.getConstructor(World.class).newInstance(worldObj);
             if ("WitherSkeleton".equals(mobId)) {

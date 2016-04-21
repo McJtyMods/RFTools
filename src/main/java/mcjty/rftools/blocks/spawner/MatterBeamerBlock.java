@@ -36,7 +36,7 @@ public class MatterBeamerBlock extends GenericRFToolsBlock implements Infusable 
     public static final PropertyBool WORKING = PropertyBool.create("working");
 
     public MatterBeamerBlock() {
-        super(Material.iron, MatterBeamerTileEntity.class, MatterBeamerContainer.class, "matter_beamer", true);
+        super(Material.IRON, MatterBeamerTileEntity.class, MatterBeamerContainer.class, "matter_beamer", true);
     }
 
     @Override
@@ -104,7 +104,7 @@ public class MatterBeamerBlock extends GenericRFToolsBlock implements Infusable 
     protected boolean wrenchUse(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
         if (world.isRemote) {
             MatterBeamerTileEntity matterBeamerTileEntity = (MatterBeamerTileEntity) world.getTileEntity(pos);
-            world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvent.soundEventRegistry.getObject(new ResourceLocation("block.note.pling")), SoundCategory.BLOCKS, 1.0f, 1.0f, false);
+            world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvent.REGISTRY.getObject(new ResourceLocation("block.note.pling")), SoundCategory.BLOCKS, 1.0f, 1.0f, false);
             matterBeamerTileEntity.useWrench(player);
         }
         return true;

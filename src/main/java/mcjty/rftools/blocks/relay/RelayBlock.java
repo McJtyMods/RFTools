@@ -29,7 +29,7 @@ public class RelayBlock extends GenericRFToolsBlock /* implements IRedstoneConne
     public static final PropertyBool ENABLED = PropertyBool.create("enabled");
 
     public RelayBlock() {
-        super(Material.iron, RelayTileEntity.class, EmptyContainer.class, "relay", false);
+        super(Material.IRON, RelayTileEntity.class, EmptyContainer.class, "relay", false);
     }
 
     @Override

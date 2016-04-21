@@ -39,7 +39,7 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
 
 
     public AbstractShieldBlock() {
-        super(Material.glass);
+        super(Material.GLASS);
         init();
         setBlockUnbreakable();
         setResistance(6000000.0F);
@@ -165,7 +165,7 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
     }
 
     @Override
-    public void onEntityCollidedWithBlock(World world, BlockPos pos, Entity entity) {
+    public void onEntityCollidedWithBlock(World world, BlockPos pos, IBlockState state, Entity entity) {
         if (!(entity instanceof EntityLivingBase)) {
             NoTickShieldBlockTileEntity shieldBlockTileEntity = (NoTickShieldBlockTileEntity) world.getTileEntity(pos);
             int cdData = shieldBlockTileEntity.getCollisionData();

@@ -37,7 +37,7 @@ public class ScreenHitBlock extends Block implements ITileEntityProvider {
     public static final PropertyDirection FACING = PropertyDirection.create("facing");
 
     public ScreenHitBlock() {
-        super(Material.glass);
+        super(Material.GLASS);
         setBlockUnbreakable();
         setResistance(6000000.0F);
         setUnlocalizedName("screen_hitblock");

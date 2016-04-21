@@ -22,9 +22,9 @@ public class ItemFilterSetup {
     }
 
     public static void initCrafting() {
-        Block redstoneTorch = Blocks.redstone_torch;
+        Block redstoneTorch = Blocks.REDSTONE_TORCH;
 
-        GameRegistry.addRecipe(new ItemStack(itemFilterBlock), "pcp", "rMr", "pTp", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'p', Items.paper,
-                               'r', Items.redstone, 'c', Blocks.chest);
+        GameRegistry.addRecipe(new ItemStack(itemFilterBlock), "pcp", "rMr", "pTp", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'p', Items.PAPER,
+                               'r', Items.REDSTONE, 'c', Blocks.CHEST);
     }
 }

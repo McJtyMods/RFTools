@@ -26,7 +26,7 @@ import java.util.List;
 public class SpawnerBlock extends GenericRFToolsBlock implements Infusable {
 
     public SpawnerBlock() {
-        super(Material.iron, SpawnerTileEntity.class, SpawnerContainer.class, "spawner", true);
+        super(Material.IRON, SpawnerTileEntity.class, SpawnerContainer.class, "spawner", true);
     }
 
     @SideOnly(Side.CLIENT)
@@ -90,7 +90,7 @@ public class SpawnerBlock extends GenericRFToolsBlock implements Infusable {
     protected boolean wrenchUse(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
         if (world.isRemote) {
             SpawnerTileEntity spawnerTileEntity = (SpawnerTileEntity) world.getTileEntity(pos);
-            world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvent.soundEventRegistry.getObject(new ResourceLocation("block.note.pling")), SoundCategory.BLOCKS, 1.0f, 1.0f, false);
+            world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvent.REGISTRY.getObject(new ResourceLocation("block.note.pling")), SoundCategory.BLOCKS, 1.0f, 1.0f, false);
             spawnerTileEntity.useWrench(player);
         }
         return true;

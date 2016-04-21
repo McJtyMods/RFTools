@@ -17,7 +17,7 @@ import java.util.List;
 public class MachineInfuserBlock extends GenericRFToolsBlock<MachineInfuserTileEntity, MachineInfuserContainer> implements Infusable {
 
     public MachineInfuserBlock() {
-        super(Material.iron, MachineInfuserTileEntity.class, MachineInfuserContainer.class, "machine_infuser", true);
+        super(Material.IRON, MachineInfuserTileEntity.class, MachineInfuserContainer.class, "machine_infuser", true);
     }
 
     @Override

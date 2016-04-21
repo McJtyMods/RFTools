@@ -25,7 +25,7 @@ import java.util.List;
 public class CounterBlock extends LogicSlabBlock<CounterTileEntity, EmptyContainer> {
 
     public CounterBlock() {
-        super(Material.iron, "counter_block", CounterTileEntity.class, EmptyContainer.class);
+        super(Material.IRON, "counter_block", CounterTileEntity.class, EmptyContainer.class);
     }
 
     @SideOnly(Side.CLIENT)

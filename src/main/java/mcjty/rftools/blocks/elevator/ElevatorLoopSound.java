@@ -19,7 +19,7 @@ public class ElevatorLoopSound extends MovingSound {
     private float scaleDown = 1.0f;
 
     public ElevatorLoopSound(World world, int x, int y, int z) {
-        super(SoundEvent.soundEventRegistry.getObject(new ResourceLocation(RFTools.MODID + ":elevator_loop")), SoundCategory.BLOCKS);
+        super(SoundEvent.REGISTRY.getObject(new ResourceLocation(RFTools.MODID + ":elevator_loop")), SoundCategory.BLOCKS);
         this.world = world;
         this.pos = new BlockPos(x, y, z);
 

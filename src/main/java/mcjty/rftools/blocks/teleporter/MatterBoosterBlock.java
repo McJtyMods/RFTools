@@ -26,7 +26,7 @@ public class MatterBoosterBlock extends Block {
     public static final PropertyDirection FACING = PropertyDirection.create("facing");
 
     public MatterBoosterBlock() {
-        super(Material.iron);
+        super(Material.IRON);
         setUnlocalizedName("matter_booster");
         setRegistryName("matter_booster");
         setCreativeTab(RFTools.tabRfTools);

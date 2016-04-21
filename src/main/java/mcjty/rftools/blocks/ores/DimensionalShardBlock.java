@@ -47,7 +47,7 @@ public class DimensionalShardBlock extends Block {
     public static final PropertyEnum<OreType> ORETYPE = PropertyEnum.create("oretype", OreType.class);
 
     public DimensionalShardBlock() {
-        super(Material.rock);
+        super(Material.ROCK);
         setHardness(3.0f);
         setResistance(5.0f);
         setHarvestLevel("pickaxe", 2);

@@ -48,9 +48,9 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 minecraft {
-    version = "1.9-12.16.0.1853-1.9"
+    version = "1.9-12.16.0.1865-1.9"
     runDir = "run"
-    mappings = "snapshot_20160406"
+    mappings = "snapshot_20160421"
     useDepAts = true
 }
 

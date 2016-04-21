@@ -17,7 +17,7 @@ import java.util.List;
 public class SequencerBlock extends LogicSlabBlock<SequencerTileEntity, EmptyContainer> {
 
     public SequencerBlock() {
-        super(Material.iron, "sequencer_block", SequencerTileEntity.class, EmptyContainer.class);
+        super(Material.IRON, "sequencer_block", SequencerTileEntity.class, EmptyContainer.class);
     }
 
     @SideOnly(Side.CLIENT)

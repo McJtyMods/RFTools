@@ -59,31 +59,31 @@ public class ShieldSetup {
     }
 
     public static void initCrafting() {
-        ItemStack lapisStack = new ItemStack(Items.dye, 1, 4);
-        Block redstoneTorch = Blocks.redstone_torch;
+        ItemStack lapisStack = new ItemStack(Items.DYE, 1, 4);
+        Block redstoneTorch = Blocks.REDSTONE_TORCH;
 
         if (GeneralConfiguration.enableShieldProjectorRecipe) {
-            GameRegistry.addRecipe(new ItemStack(shieldBlock1), "gTg", "rMr", "ooo", 'M', ModBlocks.machineFrame, 'o', Blocks.obsidian,
-                                   'r', Items.redstone, 'T', redstoneTorch, 'g', Items.gold_ingot);
+            GameRegistry.addRecipe(new ItemStack(shieldBlock1), "gTg", "rMr", "ooo", 'M', ModBlocks.machineFrame, 'o', Blocks.OBSIDIAN,
+                                   'r', Items.REDSTONE, 'T', redstoneTorch, 'g', Items.GOLD_INGOT);
 
             GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-                    new ItemStack(Blocks.redstone_block), new ItemStack(Blocks.obsidian), new ItemStack(Blocks.redstone_block),
-                    new ItemStack(Blocks.obsidian), new ItemStack(shieldBlock1), new ItemStack(Blocks.obsidian),
-                    new ItemStack(Blocks.redstone_block), new ItemStack(Blocks.obsidian), new ItemStack(Blocks.redstone_block)
+                    new ItemStack(Blocks.REDSTONE_BLOCK), new ItemStack(Blocks.OBSIDIAN), new ItemStack(Blocks.REDSTONE_BLOCK),
+                    new ItemStack(Blocks.OBSIDIAN), new ItemStack(shieldBlock1), new ItemStack(Blocks.OBSIDIAN),
+                    new ItemStack(Blocks.REDSTONE_BLOCK), new ItemStack(Blocks.OBSIDIAN), new ItemStack(Blocks.REDSTONE_BLOCK)
             }, new ItemStack(shieldBlock2), 4));
             GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-                    new ItemStack(ModItems.dimensionalShardItem), new ItemStack(Blocks.obsidian), new ItemStack(ModItems.dimensionalShardItem),
-                    new ItemStack(Blocks.obsidian), new ItemStack(shieldBlock2), new ItemStack(Blocks.obsidian),
-                    new ItemStack(ModItems.dimensionalShardItem), new ItemStack(Blocks.obsidian), new ItemStack(ModItems.dimensionalShardItem)
+                    new ItemStack(ModItems.dimensionalShardItem), new ItemStack(Blocks.OBSIDIAN), new ItemStack(ModItems.dimensionalShardItem),
+                    new ItemStack(Blocks.OBSIDIAN), new ItemStack(shieldBlock2), new ItemStack(Blocks.OBSIDIAN),
+                    new ItemStack(ModItems.dimensionalShardItem), new ItemStack(Blocks.OBSIDIAN), new ItemStack(ModItems.dimensionalShardItem)
             }, new ItemStack(shieldBlock3), 4));
             GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-                    new ItemStack(Items.nether_star), new ItemStack(Blocks.obsidian), new ItemStack(ModItems.dimensionalShardItem),
-                    new ItemStack(Blocks.obsidian), new ItemStack(shieldBlock3), new ItemStack(Blocks.obsidian),
-                    new ItemStack(ModItems.dimensionalShardItem), new ItemStack(Blocks.obsidian), new ItemStack(Items.nether_star)
+                    new ItemStack(Items.NETHER_STAR), new ItemStack(Blocks.OBSIDIAN), new ItemStack(ModItems.dimensionalShardItem),
+                    new ItemStack(Blocks.OBSIDIAN), new ItemStack(shieldBlock3), new ItemStack(Blocks.OBSIDIAN),
+                    new ItemStack(ModItems.dimensionalShardItem), new ItemStack(Blocks.OBSIDIAN), new ItemStack(Items.NETHER_STAR)
             }, new ItemStack(shieldBlock4), 4));
         }
 
-        GameRegistry.addRecipe(new ItemStack(shieldTemplateBlock, 8, 0), "www", "lgl", "www", 'w', Blocks.wool, 'l', lapisStack, 'g', Blocks.glass);
+        GameRegistry.addRecipe(new ItemStack(shieldTemplateBlock, 8, 0), "www", "lgl", "www", 'w', Blocks.WOOL, 'l', lapisStack, 'g', Blocks.GLASS);
         GameRegistry.addRecipe(new ItemStack(shieldTemplateBlock, 1, 1), "s", 's', new ItemStack(shieldTemplateBlock, 1, 0));
         GameRegistry.addRecipe(new ItemStack(shieldTemplateBlock, 1, 2), "s", 's', new ItemStack(shieldTemplateBlock, 1, 1));
         GameRegistry.addRecipe(new ItemStack(shieldTemplateBlock, 1, 3), "s", 's', new ItemStack(shieldTemplateBlock, 1, 2));

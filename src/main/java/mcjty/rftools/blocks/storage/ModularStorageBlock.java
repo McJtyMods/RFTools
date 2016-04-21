@@ -41,7 +41,7 @@ public class ModularStorageBlock extends GenericRFToolsBlock {
     public static final PropertyEnum<ModularAmountOverlay> AMOUNT = PropertyEnum.create("amount", ModularAmountOverlay.class);
 
     public ModularStorageBlock() {
-        super(Material.iron, ModularStorageTileEntity.class, ModularStorageContainer.class, "modular_storage", true);
+        super(Material.IRON, ModularStorageTileEntity.class, ModularStorageContainer.class, "modular_storage", true);
     }
 
     @SideOnly(Side.CLIENT)

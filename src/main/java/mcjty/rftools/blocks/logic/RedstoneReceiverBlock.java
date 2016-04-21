@@ -17,7 +17,7 @@ import java.util.List;
 
 public class RedstoneReceiverBlock extends LogicSlabBlock<RedstoneReceiverTileEntity, EmptyContainer> {
     public RedstoneReceiverBlock() {
-        super(Material.iron, "redstone_receiver_block", RedstoneReceiverTileEntity.class, EmptyContainer.class, RedstoneReceiverItemBlock.class);
+        super(Material.IRON, "redstone_receiver_block", RedstoneReceiverTileEntity.class, EmptyContainer.class, RedstoneReceiverItemBlock.class);
     }
 
     @SideOnly(Side.CLIENT)

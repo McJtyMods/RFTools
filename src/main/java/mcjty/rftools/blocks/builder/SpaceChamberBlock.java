@@ -17,7 +17,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class SpaceChamberBlock extends Block {
 
     public SpaceChamberBlock() {
-        super(Material.iron);
+        super(Material.IRON);
         setHardness(2.0f);
         setSoundType(SoundType.METAL);
         setHarvestLevel("pickaxe", 0);

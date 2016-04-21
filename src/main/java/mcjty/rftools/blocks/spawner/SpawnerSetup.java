@@ -24,8 +24,8 @@ public class SpawnerSetup {
     }
 
     public static void initCrafting() {
-        GameRegistry.addRecipe(new ItemStack(spawnerBlock), "rzr", "eMl", "rbr", 'M', ModBlocks.machineFrame, 'z', Items.rotten_flesh, 'e', Items.ender_pearl,
-                'l', Items.blaze_rod, 'b', Items.bone, 'r', Items.redstone);
-        GameRegistry.addRecipe(new ItemStack(matterBeamerBlock), "RGR", "GMG", "RGR", 'M', ModBlocks.machineFrame, 'R', Blocks.redstone_block, 'G', Blocks.glowstone);
+        GameRegistry.addRecipe(new ItemStack(spawnerBlock), "rzr", "eMl", "rbr", 'M', ModBlocks.machineFrame, 'z', Items.ROTTEN_FLESH, 'e', Items.ENDER_PEARL,
+                'l', Items.BLAZE_ROD, 'b', Items.BONE, 'r', Items.REDSTONE);
+        GameRegistry.addRecipe(new ItemStack(matterBeamerBlock), "RGR", "GMG", "RGR", 'M', ModBlocks.machineFrame, 'R', Blocks.REDSTONE_BLOCK, 'G', Blocks.GLOWSTONE);
     }
 }

@@ -27,7 +27,7 @@ import java.util.List;
 public class EndergenicBlock extends GenericRFToolsBlock implements Infusable /*, IRedstoneConnectable*/ {
 
     public EndergenicBlock() {
-        super(Material.iron, EndergenicTileEntity.class, EmptyContainer.class, "endergenic", true);
+        super(Material.IRON, EndergenicTileEntity.class, EmptyContainer.class, "endergenic", true);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class EndergenicBlock extends GenericRFToolsBlock implements Infusable /*
     protected boolean wrenchUse(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
         if (world.isRemote) {
             EndergenicTileEntity endergenicTileEntity = (EndergenicTileEntity) world.getTileEntity(pos);
-            SoundEvent pling = SoundEvent.soundEventRegistry.getObject(new ResourceLocation("block.note.pling"));
+            SoundEvent pling = SoundEvent.REGISTRY.getObject(new ResourceLocation("block.note.pling"));
             world.playSound(player, pos, pling, SoundCategory.BLOCKS, 1.0f, 1.0f);
             endergenicTileEntity.useWrench(player);
         }

@@ -17,7 +17,7 @@ import java.util.List;
 public class TimerBlock extends LogicSlabBlock<TimerTileEntity, EmptyContainer> {
 
     public TimerBlock() {
-        super(Material.iron, "timer_block", TimerTileEntity.class, EmptyContainer.class);
+        super(Material.IRON, "timer_block", TimerTileEntity.class, EmptyContainer.class);
     }
 
     @SideOnly(Side.CLIENT)

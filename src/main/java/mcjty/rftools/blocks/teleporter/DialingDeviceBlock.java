@@ -18,7 +18,7 @@ import java.util.List;
 public class DialingDeviceBlock extends GenericRFToolsBlock implements Infusable {
 
     public DialingDeviceBlock() {
-        super(Material.iron, DialingDeviceTileEntity.class, EmptyContainer.class, "dialing_device", false);
+        super(Material.IRON, DialingDeviceTileEntity.class, EmptyContainer.class, "dialing_device", false);
     }
 
     @SideOnly(Side.CLIENT)

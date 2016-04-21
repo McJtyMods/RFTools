@@ -429,22 +429,22 @@ public class ShapeCardItem extends GenericRFToolsItem {
         Set<Block> blocks = new HashSet<Block>();
         boolean oredict = isOreDictionary(stack);
         if (isVoiding(stack, "stone")) {
-            addBlocks(blocks, Blocks.stone, oredict);
+            addBlocks(blocks, Blocks.STONE, oredict);
         }
         if (isVoiding(stack, "cobble")) {
-            addBlocks(blocks, Blocks.cobblestone, oredict);
+            addBlocks(blocks, Blocks.COBBLESTONE, oredict);
         }
         if (isVoiding(stack, "dirt")) {
-            addBlocks(blocks, Blocks.dirt, oredict);
+            addBlocks(blocks, Blocks.DIRT, oredict);
         }
         if (isVoiding(stack, "sand")) {
-            addBlocks(blocks, Blocks.sand, oredict);
+            addBlocks(blocks, Blocks.SAND, oredict);
         }
         if (isVoiding(stack, "gravel")) {
-            addBlocks(blocks, Blocks.gravel, oredict);
+            addBlocks(blocks, Blocks.GRAVEL, oredict);
         }
         if (isVoiding(stack, "netherrack")) {
-            addBlocks(blocks, Blocks.netherrack, oredict);
+            addBlocks(blocks, Blocks.NETHERRACK, oredict);
         }
         return blocks;
     }

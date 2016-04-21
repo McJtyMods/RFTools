@@ -34,7 +34,7 @@ public class ShieldBlock extends GenericRFToolsBlock implements Infusable /*, IR
     private final int max;
 
     public ShieldBlock(String blockName, Class<? extends ShieldTEBase> clazz, int max) {
-        super(Material.iron, clazz, ShieldContainer.class, blockName, true);
+        super(Material.IRON, clazz, ShieldContainer.class, blockName, true);
         this.max = max;
     }
 

@@ -18,7 +18,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class MachineBase extends Block {
     public MachineBase() {
-        super(Material.iron);
+        super(Material.IRON);
         setUnlocalizedName("machine_base");
         setRegistryName("machine_base");
         setCreativeTab(RFTools.tabRfTools);

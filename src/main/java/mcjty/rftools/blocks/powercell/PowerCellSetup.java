@@ -35,16 +35,16 @@ public class PowerCellSetup {
     }
 
     public static void initCrafting() {
-        GameRegistry.addRecipe(new ItemStack(powerCellBlock), "rdr", "bMb", "rer", 'M', ModBlocks.machineFrame, 'r', Blocks.redstone_block,
-                'b', Items.prismarine_shard, 'e', Items.emerald, 'd', Items.diamond);
-        GameRegistry.addRecipe(new ItemStack(powerCellCardItem), "rgr", "gPg", "rgr", 'P', Items.paper, 'r', Items.redstone, 'g', Items.gold_nugget);
+        GameRegistry.addRecipe(new ItemStack(powerCellBlock), "rdr", "bMb", "rer", 'M', ModBlocks.machineFrame, 'r', Blocks.REDSTONE_BLOCK,
+                'b', Items.PRISMARINE_SHARD, 'e', Items.EMERALD, 'd', Items.DIAMOND);
+        GameRegistry.addRecipe(new ItemStack(powerCellCardItem), "rgr", "gPg", "rgr", 'P', Items.PAPER, 'r', Items.REDSTONE, 'g', Items.GOLD_NUGGET);
         GameRegistry.addRecipe(new ItemStack(powerCellCardItem), "c", 'c', powerCellCardItem);
 
         InfusedDiamond ind = ModItems.infusedDiamond;
         GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
-                new ItemStack(Blocks.redstone_block), new ItemStack(ind), new ItemStack(Blocks.redstone_block),
+                new ItemStack(Blocks.REDSTONE_BLOCK), new ItemStack(ind), new ItemStack(Blocks.REDSTONE_BLOCK),
                 new ItemStack(ind), new ItemStack(powerCellBlock), new ItemStack(ind),
-                new ItemStack(Blocks.redstone_block), new ItemStack(ind), new ItemStack(Blocks.redstone_block)
+                new ItemStack(Blocks.REDSTONE_BLOCK), new ItemStack(ind), new ItemStack(Blocks.REDSTONE_BLOCK)
         }, new ItemStack(advancedPowerCellBlock), 4));
 
     }

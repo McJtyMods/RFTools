@@ -29,7 +29,7 @@ import java.util.List;
 public class BuilderBlock extends GenericRFToolsBlock<BuilderTileEntity, BuilderContainer> implements Infusable /*, IRedstoneConnectable */ {
 
     public BuilderBlock() {
-        super(Material.iron, BuilderTileEntity.class, BuilderContainer.class, "builder", true);
+        super(Material.IRON, BuilderTileEntity.class, BuilderContainer.class, "builder", true);
     }
 
     @Override

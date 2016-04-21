@@ -19,7 +19,7 @@ import java.util.List;
 public class ItemFilterBlock extends GenericRFToolsBlock {
 
     public ItemFilterBlock() {
-        super(Material.iron, ItemFilterTileEntity.class, ItemFilterContainer.class, "item_filter", true);
+        super(Material.IRON, ItemFilterTileEntity.class, ItemFilterContainer.class, "item_filter", true);
     }
 
     @Override

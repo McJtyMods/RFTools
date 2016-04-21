@@ -23,8 +23,8 @@ public class StorageScannerSetup {
     }
 
     public static void initCrafting() {
-        Block redstoneTorch = Blocks.redstone_torch;
-        GameRegistry.addRecipe(new ItemStack(storageScannerBlock), "ToT", "gMg", "ToT", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'o', Items.ender_pearl,
-                'g', Items.gold_ingot);
+        Block redstoneTorch = Blocks.REDSTONE_TORCH;
+        GameRegistry.addRecipe(new ItemStack(storageScannerBlock), "ToT", "gMg", "ToT", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'o', Items.ENDER_PEARL,
+                'g', Items.GOLD_INGOT);
     }
 }

@@ -28,11 +28,11 @@ public class SecuritySetup {
     }
 
     public static void initCrafting() {
-        GameRegistry.addRecipe(new ItemStack(orphaningCardItem), " b ", "rir", " p ", 'r', Items.redstone, 'i', Items.iron_ingot,
-                               'b', Items.book, 'p', Items.paper);
-        GameRegistry.addRecipe(new ItemStack(securityCardItem), " f ", "rir", " p ", 'r', Items.redstone, 'i', Items.iron_ingot,
-                'f', Items.flint, 'p', Items.paper);
-        GameRegistry.addRecipe(new ItemStack(securityManagerBlock), "rfr", "fMf", "rcr", 'M', ModBlocks.machineFrame, 'r', Items.redstone, 'f', Items.flint,
-                'c', Blocks.chest);
+        GameRegistry.addRecipe(new ItemStack(orphaningCardItem), " b ", "rir", " p ", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
+                               'b', Items.BOOK, 'p', Items.PAPER);
+        GameRegistry.addRecipe(new ItemStack(securityCardItem), " f ", "rir", " p ", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
+                'f', Items.FLINT, 'p', Items.PAPER);
+        GameRegistry.addRecipe(new ItemStack(securityManagerBlock), "rfr", "fMf", "rcr", 'M', ModBlocks.machineFrame, 'r', Items.REDSTONE, 'f', Items.FLINT,
+                'c', Blocks.CHEST);
     }
 }

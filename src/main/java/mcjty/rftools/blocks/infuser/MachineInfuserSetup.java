@@ -22,6 +22,6 @@ public class MachineInfuserSetup {
 
     public static void initCrafting() {
         GameRegistry.addRecipe(new ItemStack(machineInfuserBlock), "srs", "dMd", "srs", 'M', ModBlocks.machineFrame, 's', ModItems.dimensionalShardItem,
-                'r', Items.redstone, 'd', Items.diamond);
+                'r', Items.REDSTONE, 'd', Items.DIAMOND);
     }
 }

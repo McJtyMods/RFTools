@@ -37,13 +37,13 @@ public class LogicBlockSetup {
     }
 
     public static void initCrafting() {
-        Block redstoneTorch = Blocks.redstone_torch;
-        GameRegistry.addRecipe(new ItemStack(sequencerBlock), "rTr", "TMT", "rTr", 'r', Items.redstone, 'T', redstoneTorch, 'M', ModBlocks.machineBase);
-        GameRegistry.addRecipe(new ItemStack(counterBlock), "gcg", "TMT", "rTr", 'c', Items.clock, 'r', Items.redstone, 'T', redstoneTorch, 'M', ModBlocks.machineBase, 'g', Items.gold_nugget);
-        GameRegistry.addRecipe(new ItemStack(timerBlock), "rcr", "TMT", "rTr", 'c', Items.clock, 'r', Items.redstone, 'T', redstoneTorch, 'M', ModBlocks.machineBase);
-        GameRegistry.addRecipe(new ItemStack(threeLogicBlock), "rcr", "cMc", "rcr", 'c', Items.comparator, 'r', Items.redstone, 'M', ModBlocks.machineBase);
-        GameRegistry.addRecipe(new ItemStack(redstoneTransmitterBlock), "ror", "TMT", "rRr", 'o', Items.ender_pearl, 'r', Items.redstone, 'T', redstoneTorch, 'R', Blocks.redstone_block, 'M', ModBlocks.machineBase);
-        GameRegistry.addRecipe(new ItemStack(redstoneReceiverBlock), "ror", "TMT", "rRr", 'o', Items.ender_pearl, 'r', Items.redstone, 'T', Items.comparator, 'R', Blocks.redstone_block, 'M', ModBlocks.machineBase);
+        Block redstoneTorch = Blocks.REDSTONE_TORCH;
+        GameRegistry.addRecipe(new ItemStack(sequencerBlock), "rTr", "TMT", "rTr", 'r', Items.REDSTONE, 'T', redstoneTorch, 'M', ModBlocks.machineBase);
+        GameRegistry.addRecipe(new ItemStack(counterBlock), "gcg", "TMT", "rTr", 'c', Items.CLOCK, 'r', Items.REDSTONE, 'T', redstoneTorch, 'M', ModBlocks.machineBase, 'g', Items.GOLD_NUGGET);
+        GameRegistry.addRecipe(new ItemStack(timerBlock), "rcr", "TMT", "rTr", 'c', Items.CLOCK, 'r', Items.REDSTONE, 'T', redstoneTorch, 'M', ModBlocks.machineBase);
+        GameRegistry.addRecipe(new ItemStack(threeLogicBlock), "rcr", "cMc", "rcr", 'c', Items.COMPARATOR, 'r', Items.REDSTONE, 'M', ModBlocks.machineBase);
+        GameRegistry.addRecipe(new ItemStack(redstoneTransmitterBlock), "ror", "TMT", "rRr", 'o', Items.ENDER_PEARL, 'r', Items.REDSTONE, 'T', redstoneTorch, 'R', Blocks.REDSTONE_BLOCK, 'M', ModBlocks.machineBase);
+        GameRegistry.addRecipe(new ItemStack(redstoneReceiverBlock), "ror", "TMT", "rRr", 'o', Items.ENDER_PEARL, 'r', Items.REDSTONE, 'T', Items.COMPARATOR, 'R', Blocks.REDSTONE_BLOCK, 'M', ModBlocks.machineBase);
         GameRegistry.addRecipe(new ItemStack(redstoneTransmitterBlock), "r", 'r', redstoneTransmitterBlock);    // To clear it
     }
 }

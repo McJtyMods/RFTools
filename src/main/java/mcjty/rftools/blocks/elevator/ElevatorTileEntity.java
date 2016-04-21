@@ -660,7 +660,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         if (tagCompound.hasKey("movingBlock")) {
             String id = tagCompound.getString("movingBlock");
             int meta = tagCompound.getInteger("movingMeta");
-            movingState = Block.blockRegistry.getObject(new ResourceLocation(id)).getStateFromMeta(meta);
+            movingState = Block.REGISTRY.getObject(new ResourceLocation(id)).getStateFromMeta(meta);
         }
     }
 

@@ -32,7 +32,7 @@ public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> 
             GlStateManager.pushMatrix();
 
             RenderHelper.disableStandardItemLighting();
-            this.bindTexture(TextureMap.locationBlocksTexture);
+            this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
             if (Minecraft.isAmbientOcclusionEnabled()) {
                 GlStateManager.shadeModel(GL11.GL_SMOOTH);
             } else {

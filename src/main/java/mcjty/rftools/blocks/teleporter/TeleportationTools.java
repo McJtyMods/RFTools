@@ -35,9 +35,9 @@ public class TeleportationTools {
 
     public static void getPotions() {
         if (confusion == null) {
-            confusion = Potion.potionRegistry.getObject(new ResourceLocation("nausea"));
-            harm = Potion.potionRegistry.getObject(new ResourceLocation("instant_damage"));
-            wither = Potion.potionRegistry.getObject(new ResourceLocation("wither"));
+            confusion = Potion.REGISTRY.getObject(new ResourceLocation("nausea"));
+            harm = Potion.REGISTRY.getObject(new ResourceLocation("instant_damage"));
+            wither = Potion.REGISTRY.getObject(new ResourceLocation("wither"));
         }
     }
 
@@ -165,7 +165,7 @@ public class TeleportationTools {
         severity = applyBadEffectIfNeeded(player, severity, bad, good, boostNeeded);
         if (severity <= 0) {
             if (TeleportConfiguration.teleportVolume >= 0.01) {
-                SoundEvent sound = SoundEvent.soundEventRegistry.getObject(new ResourceLocation(RFTools.MODID + ":teleport_whoosh"));
+                SoundEvent sound = SoundEvent.REGISTRY.getObject(new ResourceLocation(RFTools.MODID + ":teleport_whoosh"));
                 SoundTools.playSound(player.worldObj, sound, player.posX, player.posY, player.posZ, TeleportConfiguration.teleportVolume, 1.0f);
             }
         }
@@ -323,7 +323,7 @@ public class TeleportationTools {
         }
 
         if (TeleportConfiguration.teleportErrorVolume >= 0.01) {
-            SoundEvent sound = SoundEvent.soundEventRegistry.getObject(new ResourceLocation(RFTools.MODID + ":teleport_error"));
+            SoundEvent sound = SoundEvent.REGISTRY.getObject(new ResourceLocation(RFTools.MODID + ":teleport_error"));
             SoundTools.playSound(player.worldObj, sound, player.posX, player.posY, player.posZ, TeleportConfiguration.teleportVolume, 1.0f);
         }
 

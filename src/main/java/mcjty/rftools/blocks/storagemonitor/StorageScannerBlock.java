@@ -18,7 +18,7 @@ import java.util.List;
 public class StorageScannerBlock extends GenericRFToolsBlock<StorageScannerTileEntity, StorageScannerContainer> implements Infusable {
 
     public StorageScannerBlock() {
-        super(Material.iron, StorageScannerTileEntity.class, StorageScannerContainer.class, "storage_scanner", true);
+        super(Material.IRON, StorageScannerTileEntity.class, StorageScannerContainer.class, "storage_scanner", true);
     }
 
     @SideOnly(Side.CLIENT)

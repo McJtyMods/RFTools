@@ -28,7 +28,7 @@ import java.util.List;
 public class ElevatorBlock extends GenericRFToolsBlock<ElevatorTileEntity, EmptyContainer> implements Infusable {
 
     public ElevatorBlock() {
-        super(Material.iron, ElevatorTileEntity.class, EmptyContainer.class, "elevator", true);
+        super(Material.IRON, ElevatorTileEntity.class, EmptyContainer.class, "elevator", true);
     }
 
     @Override

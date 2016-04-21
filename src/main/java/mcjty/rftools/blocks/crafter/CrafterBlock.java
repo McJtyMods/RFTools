@@ -30,7 +30,7 @@ import java.util.List;
 public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterContainer> implements Infusable /*, IRedstoneConnectable*/ {
 
     public CrafterBlock(String blockName, Class<? extends CrafterBaseTE> tileEntityClass) {
-        super(Material.iron, tileEntityClass, CrafterContainer.class, blockName, true);
+        super(Material.IRON, tileEntityClass, CrafterContainer.class, blockName, true);
     }
 
     @SideOnly(Side.CLIENT)

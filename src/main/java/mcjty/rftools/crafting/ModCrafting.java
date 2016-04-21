@@ -72,19 +72,19 @@ public final class ModCrafting {
     }
 
     private static void initBaseCrafting() {
-        ItemStack inkSac = new ItemStack(Items.dye, 1, 0);
-        ItemStack lapisStack = new ItemStack(Items.dye, 1, 4);
+        ItemStack inkSac = new ItemStack(Items.DYE, 1, 0);
+        ItemStack lapisStack = new ItemStack(Items.DYE, 1, 4);
 
-        GameRegistry.addRecipe(new ItemStack(ModBlocks.machineFrame), "ili", "g g", "ili", 'i', Items.iron_ingot, 'g', Items.gold_nugget, 'l', lapisStack);
-        GameRegistry.addRecipe(new ItemStack(ModBlocks.machineBase), "   ", "ggg", "sss", 'g', Items.gold_nugget, 's', Blocks.stone);
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.machineFrame), "ili", "g g", "ili", 'i', Items.IRON_INGOT, 'g', Items.GOLD_NUGGET, 'l', lapisStack);
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.machineBase), "   ", "ggg", "sss", 'g', Items.GOLD_NUGGET, 's', Blocks.STONE);
 
-        GameRegistry.addRecipe(new ItemStack(ModItems.rfToolsManualItem), " r ", "rbr", " r ", 'r', Items.redstone, 'b', Items.book);
-        GameRegistry.addRecipe(new ItemStack(ModItems.smartWrenchItem), "  i", " l ", "l  ", 'i', Items.iron_ingot, 'l', lapisStack);
-        GameRegistry.addRecipe(new ItemStack(ModItems.infusedDiamond), "sss", "sds", "sss", 's', ModItems.dimensionalShardItem, 'd', Items.diamond);
+        GameRegistry.addRecipe(new ItemStack(ModItems.rfToolsManualItem), " r ", "rbr", " r ", 'r', Items.REDSTONE, 'b', Items.BOOK);
+        GameRegistry.addRecipe(new ItemStack(ModItems.smartWrenchItem), "  i", " l ", "l  ", 'i', Items.IRON_INGOT, 'l', lapisStack);
+        GameRegistry.addRecipe(new ItemStack(ModItems.infusedDiamond), "sss", "sds", "sss", 's', ModItems.dimensionalShardItem, 'd', Items.DIAMOND);
 
-        GameRegistry.addRecipe(new ItemStack(ModItems.networkMonitorItem), "rlr", "iri", "rlr", 'r', Items.redstone, 'i', Items.iron_ingot, 'l', inkSac);
+        GameRegistry.addRecipe(new ItemStack(ModItems.networkMonitorItem), "rlr", "iri", "rlr", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT, 'l', inkSac);
 
-        GameRegistry.addRecipe(new ItemStack(ModItems.syringeItem), "i  ", " i ", "  b", 'i', Items.iron_ingot, 'b', Items.glass_bottle);
+        GameRegistry.addRecipe(new ItemStack(ModItems.syringeItem), "i  ", " i ", "  b", 'i', Items.IRON_INGOT, 'b', Items.GLASS_BOTTLE);
 
         String[] syringeMatcher = new String[] { "level", "mobId" };
 
@@ -106,12 +106,12 @@ public final class ModCrafting {
             case GeneralConfiguration.CRAFT_NONE:
                 break;
             case GeneralConfiguration.CRAFT_EASY:
-                GameRegistry.addRecipe(new ItemStack(ModItems.dimensionalShardItem, 8), " d ", "irg", " q ", 'd', Items.diamond, 'g', Items.gold_ingot,
-                                       'i', Items.iron_ingot, 'q', Items.quartz);
+                GameRegistry.addRecipe(new ItemStack(ModItems.dimensionalShardItem, 8), " d ", "irg", " q ", 'd', Items.DIAMOND, 'g', Items.GOLD_INGOT,
+                                       'i', Items.IRON_INGOT, 'q', Items.QUARTZ);
                 break;
             case GeneralConfiguration.CRAFT_HARD:
-                GameRegistry.addRecipe(new ItemStack(ModItems.dimensionalShardItem, 8), "deg", "irG", "qcL", 'd', Items.diamond, 'e', Items.emerald, 'g', Items.gold_ingot,
-                                       'i', Items.iron_ingot, 'r', Items.redstone, 'G', Items.glowstone_dust, 'q', Items.quartz, 'c', Items.prismarine_shard, 'L', Blocks.glass);
+                GameRegistry.addRecipe(new ItemStack(ModItems.dimensionalShardItem, 8), "deg", "irG", "qcL", 'd', Items.DIAMOND, 'e', Items.EMERALD, 'g', Items.GOLD_INGOT,
+                                       'i', Items.IRON_INGOT, 'r', Items.REDSTONE, 'G', Items.GLOWSTONE_DUST, 'q', Items.QUARTZ, 'c', Items.PRISMARINE_SHARD, 'L', Blocks.GLASS);
                 break;
         }
     }

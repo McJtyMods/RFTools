@@ -102,10 +102,10 @@ public class EnvironmentalSetup {
     }
 
     public static void initCrafting() {
-        GameRegistry.addRecipe(new ItemStack(environmentalControllerBlock), "oDo", "GMI", "oEo", 'o', Items.ender_pearl, 'M', ModBlocks.machineFrame,
-                'D', Blocks.diamond_block, 'E', Blocks.emerald_block, 'G', Blocks.gold_block, 'I', Blocks.iron_block);
+        GameRegistry.addRecipe(new ItemStack(environmentalControllerBlock), "oDo", "GMI", "oEo", 'o', Items.ENDER_PEARL, 'M', ModBlocks.machineFrame,
+                'D', Blocks.DIAMOND_BLOCK, 'E', Blocks.EMERALD_BLOCK, 'G', Blocks.GOLD_BLOCK, 'I', Blocks.IRON_BLOCK);
 
-        Object inkSac = Item.itemRegistry.getObjectById(351);
+        Object inkSac = Item.REGISTRY.getObjectById(351);
 
         String[] syringeMatcher = new String[] { "level", "mobId" };
         String[] pickMatcher = new String[] { "ench" };
@@ -122,12 +122,12 @@ public class EnvironmentalSetup {
         ItemStack caveSpiderSyringe = SyringeItem.createMobSyringe(EntityCaveSpider.class);
         ItemStack blazeSyringe = SyringeItem.createMobSyringe(EntityBlaze.class);
         ItemStack shulkerEntity = SyringeItem.createMobSyringe(EntityShulker.class);
-        ItemStack diamondPick = createEnchantedItem(Items.diamond_pickaxe, Enchantment.enchantmentRegistry.getObject(new ResourceLocation("efficiency")), 3);
-        ItemStack reds = new ItemStack(Items.redstone);
-        ItemStack gold = new ItemStack(Items.gold_ingot);
+        ItemStack diamondPick = createEnchantedItem(Items.DIAMOND_PICKAXE, Enchantment.REGISTRY.getObject(new ResourceLocation("efficiency")), 3);
+        ItemStack reds = new ItemStack(Items.REDSTONE);
+        ItemStack gold = new ItemStack(Items.GOLD_INGOT);
         ItemStack ink = new ItemStack((Item) inkSac);
-        ItemStack obsidian = new ItemStack(Blocks.obsidian);
-        ItemStack lapis = new ItemStack(Items.dye, 1, 4);
+        ItemStack obsidian = new ItemStack(Blocks.OBSIDIAN);
+        ItemStack lapis = new ItemStack(Items.DYE, 1, 4);
 
         GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
                 new ItemStack[] {null, chickenSyringe, null, reds, gold, reds, null, ink, null},
@@ -222,7 +222,7 @@ public class EnvironmentalSetup {
                 new ItemStack(poisonEModuleItem)));
 
         GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
-                new ItemStack[]{null, new ItemStack(Items.clock), null, lapis, obsidian, lapis, null, ink, null},
+                new ItemStack[]{null, new ItemStack(Items.CLOCK), null, lapis, obsidian, lapis, null, ink, null},
                 new String[][]{null, null, null, null, null, null, null, null, null},
                 new ItemStack(slownessEModuleItem)));
 

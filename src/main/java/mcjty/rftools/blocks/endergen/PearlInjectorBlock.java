@@ -25,7 +25,7 @@ import java.util.List;
 public class PearlInjectorBlock extends GenericRFToolsBlock /*implements IRedstoneConnectable*/ {
 
     public PearlInjectorBlock() {
-        super(Material.iron, PearlInjectorTileEntity.class, PearlInjectorContainer.class, "pearl_injector", true);
+        super(Material.IRON, PearlInjectorTileEntity.class, PearlInjectorContainer.class, "pearl_injector", true);
     }
 
     @SideOnly(Side.CLIENT)

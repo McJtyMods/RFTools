@@ -29,7 +29,7 @@ public class PacketChamberInfoReady implements IMessage {
             byte meta = buf.readByte();
             int count = buf.readInt();
             int cost = buf.readInt();
-            Block block = Block.blockRegistry.getObjectById(id);
+            Block block = Block.REGISTRY.getObjectById(id);
             BlockMeta bm = new BlockMeta(block, meta);
             blocks.put(bm, count);
             costs.put(bm, cost);
@@ -52,7 +52,7 @@ public class PacketChamberInfoReady implements IMessage {
         buf.writeInt(blocks.size());
         for (Map.Entry<BlockMeta, Integer> entry : blocks.entrySet()) {
             Block block = entry.getKey().getBlock();
-            buf.writeInt(Block.blockRegistry.getIDForObject(block));
+            buf.writeInt(Block.REGISTRY.getIDForObject(block));
             buf.writeByte(entry.getKey().getMeta());
             buf.writeInt(entry.getValue());
             buf.writeInt(costs.get(entry.getKey()));

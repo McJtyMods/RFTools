@@ -28,7 +28,7 @@ public class CoalGeneratorBlock extends GenericRFToolsBlock<CoalGeneratorTileEnt
     public static final PropertyBool WORKING = PropertyBool.create("working");
 
     public CoalGeneratorBlock() {
-        super(Material.iron, CoalGeneratorTileEntity.class, CoalGeneratorContainer.class, "coalgenerator", true);
+        super(Material.IRON, CoalGeneratorTileEntity.class, CoalGeneratorContainer.class, "coalgenerator", true);
     }
 
     @SideOnly(Side.CLIENT)

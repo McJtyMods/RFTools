@@ -605,7 +605,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         int bottles = collectXP / 7;
         if (bottles > 0) {
-            if (insertItem(new ItemStack(Items.experience_bottle, bottles)) == null) {
+            if (insertItem(new ItemStack(Items.EXPERIENCE_BOTTLE, bottles)) == null) {
                 collectXP = collectXP % 7;
                 world.removeEntity(orb);
                 consumeEnergy(rfNeeded);
@@ -865,7 +865,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (clear) {
             worldObj.setBlockToAir(spos);
         } else {
-            worldObj.setBlockState(spos, Blocks.dirt.getDefaultState(), 2);       // No block update!
+            worldObj.setBlockState(spos, Blocks.DIRT.getDefaultState(), 2);       // No block update!
         }
         consumeEnergy(rfNeeded);
         if (!silent) {
@@ -890,7 +890,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         if (block.getBlockHardness(srcState, worldObj, srcPos) >= 0) {
             boolean clear = ShapeCardItem.isClearingQuarry(getCardType());
-            if ((!clear) && block == Blocks.dirt) {
+            if ((!clear) && block == Blocks.DIRT) {
                 // We can skip dirt if we are not clearing.
                 return false;
             }
@@ -947,7 +947,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         if (block.getBlockHardness(srcState, worldObj, srcPos) >= 0) {
             boolean clear = ShapeCardItem.isClearingQuarry(getCardType());
-            if ((!clear) && block == Blocks.dirt) {
+            if ((!clear) && block == Blocks.DIRT) {
                 // We can skip dirt if we are not clearing.
                 return false;
             }
@@ -1211,7 +1211,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (block == null) {
             return true;
         }
-        if (block.getMaterial(state) == Material.air) {
+        if (block.getMaterial(state) == Material.AIR) {
             return true;
         }
         if (block == BuilderSetup.supportBlock) {

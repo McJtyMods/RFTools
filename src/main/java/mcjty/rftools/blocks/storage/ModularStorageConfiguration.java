@@ -94,7 +94,7 @@ public class ModularStorageConfiguration {
 
     public static void dumpClasses(boolean docode) {
         Logging.log("#### Dumping item and block classification");
-        for (Object o : Block.blockRegistry) {
+        for (Object o : Block.REGISTRY) {
             Block block = (Block) o;
             if (docode) {
                 formateAsCode(block.getClass(), getCategory(block.getClass()));
@@ -103,7 +103,7 @@ public class ModularStorageConfiguration {
             }
         }
 
-        for (Object o : Item.itemRegistry) {
+        for (Object o : Item.REGISTRY) {
             Item item = (Item) o;
             if (docode) {
                 formateAsCode(item.getClass(), getCategory(item.getClass()));

@@ -21,7 +21,7 @@ import java.util.List;
 public class EnderMonitorBlock extends LogicSlabBlock<EnderMonitorTileEntity, EmptyContainer> {
 
     public EnderMonitorBlock() {
-        super(Material.iron, "ender_monitor", EnderMonitorTileEntity.class, EmptyContainer.class);
+        super(Material.IRON, "ender_monitor", EnderMonitorTileEntity.class, EmptyContainer.class);
         setCreativeTab(RFTools.tabRfTools);
     }
 

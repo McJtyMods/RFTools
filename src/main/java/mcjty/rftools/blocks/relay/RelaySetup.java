@@ -23,7 +23,7 @@ public class RelaySetup {
 
 
     public static void initCrafting() {
-        Block redstoneTorch = Blocks.redstone_torch;
-        GameRegistry.addRecipe(new ItemStack(relayBlock), "gTg", "gMg", "gTg", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'g', Items.gold_ingot);
+        Block redstoneTorch = Blocks.REDSTONE_TORCH;
+        GameRegistry.addRecipe(new ItemStack(relayBlock), "gTg", "gMg", "gTg", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'g', Items.GOLD_INGOT);
     }
 }

@@ -42,7 +42,7 @@ import java.util.List;
 public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenContainer> {
 
     public ScreenBlock() {
-        super(Material.iron, ScreenTileEntity.class, ScreenContainer.class, "screen", true);
+        super(Material.IRON, ScreenTileEntity.class, ScreenContainer.class, "screen", true);
     }
 
     @SideOnly(Side.CLIENT)
@@ -253,14 +253,14 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
     @Override
     protected boolean openGui(World world, int x, int y, int z, EntityPlayer player) {
         ItemStack itemStack = player.getHeldItem(EnumHand.MAIN_HAND);
-        if (itemStack != null && itemStack.getItem() == Items.dye) {
+        if (itemStack != null && itemStack.getItem() == Items.DYE) {
             int damage = itemStack.getItemDamage();
             if (damage < 0) {
                 damage = 0;
             } else if (damage > 15) {
                 damage = 15;
             }
-            int color = ItemDye.dyeColors[damage];
+            int color = ItemDye.DYE_COLORS[damage];
             ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(new BlockPos(x, y, z));
             screenTileEntity.setColor(color);
             return true;

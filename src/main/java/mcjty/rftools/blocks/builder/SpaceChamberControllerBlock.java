@@ -25,7 +25,7 @@ import java.util.List;
 public class SpaceChamberControllerBlock extends GenericRFToolsBlock<SpaceChamberControllerTileEntity, EmptyContainer> {
 
     public SpaceChamberControllerBlock() {
-        super(Material.iron, SpaceChamberControllerTileEntity.class, EmptyContainer.class, "space_chamber_controller", true);
+        super(Material.IRON, SpaceChamberControllerTileEntity.class, EmptyContainer.class, "space_chamber_controller", true);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class SpaceChamberControllerBlock extends GenericRFToolsBlock<SpaceChambe
     @Override
     protected boolean wrenchUse(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
         if (world.isRemote) {
-            SoundEvent pling = SoundEvent.soundEventRegistry.getObject(new ResourceLocation("block.note.pling"));
+            SoundEvent pling = SoundEvent.REGISTRY.getObject(new ResourceLocation("block.note.pling"));
             world.playSound(pos.getX(), pos.getY(), pos.getZ(), pling, SoundCategory.BLOCKS, 1.0f, 1.0f, false);
         } else {
             SpaceChamberControllerTileEntity chamberControllerTileEntity = (SpaceChamberControllerTileEntity) world.getTileEntity(pos);

@@ -21,7 +21,7 @@ import java.util.List;
 public class ThreeLogicBlock extends LogicSlabBlock<ThreeLogicTileEntity, EmptyContainer> {
 
     public ThreeLogicBlock() {
-        super(Material.iron, "logic_block", ThreeLogicTileEntity.class, EmptyContainer.class);
+        super(Material.IRON, "logic_block", ThreeLogicTileEntity.class, EmptyContainer.class);
     }
 
     @SideOnly(Side.CLIENT)

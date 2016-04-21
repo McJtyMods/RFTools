@@ -314,12 +314,12 @@ public class GuiShapeCard extends GuiScreen {
             int x = (int) (window.getToplevel().getBounds().getX() + voidPanel.getBounds().getX()) + 1;
             int y = (int) (window.getToplevel().getBounds().getY() + voidPanel.getBounds().getY() + stone.getBounds().getY()) + 1;
 
-            renderVoidBlock(x, y, stone, Blocks.stone);
-            renderVoidBlock(x, y, cobble, Blocks.cobblestone);
-            renderVoidBlock(x, y, dirt, Blocks.dirt);
-            renderVoidBlock(x, y, gravel, Blocks.gravel);
-            renderVoidBlock(x, y, sand, Blocks.sand);
-            renderVoidBlock(x, y, netherrack, Blocks.netherrack);
+            renderVoidBlock(x, y, stone, Blocks.STONE);
+            renderVoidBlock(x, y, cobble, Blocks.COBBLESTONE);
+            renderVoidBlock(x, y, dirt, Blocks.DIRT);
+            renderVoidBlock(x, y, gravel, Blocks.GRAVEL);
+            renderVoidBlock(x, y, sand, Blocks.SAND);
+            renderVoidBlock(x, y, netherrack, Blocks.NETHERRACK);
         }
 
         List<String> tooltips = window.getTooltips();

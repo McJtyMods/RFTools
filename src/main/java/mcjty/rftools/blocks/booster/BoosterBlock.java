@@ -26,7 +26,7 @@ import java.util.List;
 public class BoosterBlock extends GenericRFToolsBlock<BoosterTileEntity, BoosterContainer> implements Infusable {
 
     public BoosterBlock() {
-        super(Material.iron, BoosterTileEntity.class, BoosterContainer.class, "booster", false);
+        super(Material.IRON, BoosterTileEntity.class, BoosterContainer.class, "booster", false);
     }
 
     @Override

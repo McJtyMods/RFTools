@@ -17,7 +17,7 @@ import java.util.List;
 public class RemoteStorageBlock extends GenericRFToolsBlock implements Infusable {
 
     public RemoteStorageBlock() {
-        super(Material.iron, RemoteStorageTileEntity.class, RemoteStorageContainer.class, "remote_storage", true);
+        super(Material.IRON, RemoteStorageTileEntity.class, RemoteStorageContainer.class, "remote_storage", true);
     }
 
     @SideOnly(Side.CLIENT)

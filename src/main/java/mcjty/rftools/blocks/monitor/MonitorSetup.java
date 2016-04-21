@@ -25,8 +25,8 @@ public class MonitorSetup {
     }
 
     public static void initCrafting() {
-        Block redstoneTorch = Blocks.redstone_torch;
-        GameRegistry.addRecipe(new ItemStack(monitorBlock), " T ", "rMr", " T ", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'r', Items.redstone);
-        GameRegistry.addRecipe(new ItemStack(liquidMonitorBlock), " T ", "bMb", " T ", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'b', Items.bucket);
+        Block redstoneTorch = Blocks.REDSTONE_TORCH;
+        GameRegistry.addRecipe(new ItemStack(monitorBlock), " T ", "rMr", " T ", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'r', Items.REDSTONE);
+        GameRegistry.addRecipe(new ItemStack(liquidMonitorBlock), " T ", "bMb", " T ", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'b', Items.BUCKET);
     }
 }

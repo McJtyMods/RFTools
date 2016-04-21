@@ -100,7 +100,7 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
                 // @todo this is a bit of a hack. Don't know how to do it better right now
                 IBlockState blockState = world.getBlockState(pos.offset(inputSide));
                 Block b = blockState.getBlock();
-                if (b == Blocks.redstone_wire) {
+                if (b == Blocks.REDSTONE_WIRE) {
                     power = world.isBlockPowered(pos.offset(inputSide)) ? 15 : 0;
                 }
             }

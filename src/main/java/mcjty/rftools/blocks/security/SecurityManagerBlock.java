@@ -19,7 +19,7 @@ import java.util.List;
 public class SecurityManagerBlock extends GenericRFToolsBlock {
 
     public SecurityManagerBlock() {
-        super(Material.iron, SecurityManagerTileEntity.class, SecurityManagerContainer.class, "security_manager", true);
+        super(Material.IRON, SecurityManagerTileEntity.class, SecurityManagerContainer.class, "security_manager", true);
     }
 
     @SideOnly(Side.CLIENT)

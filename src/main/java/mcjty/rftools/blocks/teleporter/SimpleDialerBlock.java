@@ -26,7 +26,7 @@ import java.util.List;
 public class SimpleDialerBlock extends LogicSlabBlock<SimpleDialerTileEntity, EmptyContainer> {
 
     public SimpleDialerBlock() {
-        super(Material.iron, "simple_dialer", SimpleDialerTileEntity.class, EmptyContainer.class, SimpleDialerItemBlock.class);
+        super(Material.IRON, "simple_dialer", SimpleDialerTileEntity.class, EmptyContainer.class, SimpleDialerItemBlock.class);
     }
 
     @SideOnly(Side.CLIENT)

@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.booster;
 
 import mcjty.rftools.blocks.ModBlocks;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -21,7 +20,7 @@ public class BoosterSetup {
     }
 
     public static void initCrafting() {
-        GameRegistry.addRecipe(new ItemStack(boosterBlock), "oDo", "GMI", "oEo", 'o', Items.glass_bottle, 'M', ModBlocks.machineFrame,
-                'D', Items.diamond, 'E', Items.redstone, 'G', Items.gold_ingot, 'I', Items.iron_ingot);
+        GameRegistry.addRecipe(new ItemStack(boosterBlock), "oDo", "GMI", "oEo", 'o', Items.GLASS_BOTTLE, 'M', ModBlocks.machineFrame,
+                'D', Items.DIAMOND, 'E', Items.REDSTONE, 'G', Items.GOLD_INGOT, 'I', Items.IRON_INGOT);
     }
 }

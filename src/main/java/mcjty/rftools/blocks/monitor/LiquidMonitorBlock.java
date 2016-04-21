@@ -30,7 +30,7 @@ public class LiquidMonitorBlock extends GenericRFToolsBlock {
     public static PropertyInteger LEVEL = PropertyInteger.create("level", 0, 5);
 
     public LiquidMonitorBlock() {
-        super(Material.iron, LiquidMonitorBlockTileEntity.class, EmptyContainer.class, "liquid_monitor", false);
+        super(Material.IRON, LiquidMonitorBlockTileEntity.class, EmptyContainer.class, "liquid_monitor", false);
     }
 
     @SideOnly(Side.CLIENT)

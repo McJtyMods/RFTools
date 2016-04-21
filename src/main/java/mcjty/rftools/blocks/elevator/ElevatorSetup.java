@@ -22,9 +22,9 @@ public class ElevatorSetup {
     }
 
     public static void initCrafting() {
-        Block redstoneTorch = Blocks.redstone_torch;
+        Block redstoneTorch = Blocks.REDSTONE_TORCH;
 
-        GameRegistry.addRecipe(new ItemStack(elevatorBlock), "cec", "cMc", "cTc", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'c', Items.redstone, 'e', Items.ender_pearl);
+        GameRegistry.addRecipe(new ItemStack(elevatorBlock), "cec", "cMc", "cTc", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'c', Items.REDSTONE, 'e', Items.ENDER_PEARL);
     }
 
 }

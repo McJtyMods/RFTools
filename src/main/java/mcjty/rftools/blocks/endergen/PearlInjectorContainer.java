@@ -21,7 +21,7 @@ public class PearlInjectorContainer extends GenericContainer {
     public static final ContainerFactory factory = new ContainerFactory() {
         @Override
         protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(Items.ender_pearl)), CONTAINER_INVENTORY, SLOT_BUFFER, 10, 25, 9, 18, 2, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(Items.ENDER_PEARL)), CONTAINER_INVENTORY, SLOT_BUFFER, 10, 25, 9, 18, 2, 18);
             layoutPlayerInventorySlots(10, 70);
         }
     };

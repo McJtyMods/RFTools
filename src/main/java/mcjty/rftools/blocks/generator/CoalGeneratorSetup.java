@@ -22,9 +22,9 @@ public class CoalGeneratorSetup {
     }
 
     public static void initCrafting() {
-        Block redstoneTorch = Blocks.redstone_torch;
+        Block redstoneTorch = Blocks.REDSTONE_TORCH;
 
-        GameRegistry.addRecipe(new ItemStack(coalGeneratorBlock), "cTc", "cMc", "cTc", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'c', Items.coal);
+        GameRegistry.addRecipe(new ItemStack(coalGeneratorBlock), "cTc", "cMc", "cTc", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'c', Items.COAL);
     }
 
 }

@@ -393,7 +393,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
 
     private Block calculateShieldBlock(int damageBits) {
         if (!shieldActive || powerTimeout > 0) {
-            return Blocks.air;
+            return Blocks.AIR;
         }
         if (ShieldRenderingMode.MODE_INVISIBLE.equals(shieldRenderingMode)) {
             if (damageBits == 0) {
@@ -682,7 +682,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
         for (RelCoordinate c : shieldBlocks) {
-            if (Blocks.air.equals(block)) {
+            if (Blocks.AIR.equals(block)) {
                 worldObj.setBlockToAir(new BlockPos(xCoord + c.getDx(), yCoord + c.getDy(), zCoord + c.getDz()));
             } else {
                 updateShieldBlock(camoId, cddata, damageBits, block, c);

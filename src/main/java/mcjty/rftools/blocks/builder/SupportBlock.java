@@ -35,7 +35,7 @@ public class SupportBlock extends Block {
     public static PropertyInteger STATUS = PropertyInteger.create("status", 0, 2);
 
     public SupportBlock() {
-        super(Material.glass);
+        super(Material.GLASS);
         setUnlocalizedName("support_block");
         setRegistryName("support_block");
         setCreativeTab(RFTools.tabRfTools);

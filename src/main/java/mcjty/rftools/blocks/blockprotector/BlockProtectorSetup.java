@@ -23,7 +23,7 @@ public class BlockProtectorSetup {
 
     public static void initCrafting() {
         if (GeneralConfiguration.enableBlockProtectorRecipe) {
-            GameRegistry.addRecipe(new ItemStack(blockProtectorBlock), "oto", "tMt", "oto", 'M', ModBlocks.machineFrame, 'o', Blocks.obsidian, 't', ShieldSetup.shieldTemplateBlock);
+            GameRegistry.addRecipe(new ItemStack(blockProtectorBlock), "oto", "tMt", "oto", 'M', ModBlocks.machineFrame, 'o', Blocks.OBSIDIAN, 't', ShieldSetup.shieldTemplateBlock);
         }
     }
 }
