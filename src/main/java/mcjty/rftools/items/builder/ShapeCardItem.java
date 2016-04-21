@@ -436,6 +436,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
         }
         if (isVoiding(stack, "dirt")) {
             addBlocks(blocks, Blocks.DIRT, oredict);
+            addBlocks(blocks, Blocks.GRASS, oredict);
         }
         if (isVoiding(stack, "sand")) {
             addBlocks(blocks, Blocks.SAND, oredict);
