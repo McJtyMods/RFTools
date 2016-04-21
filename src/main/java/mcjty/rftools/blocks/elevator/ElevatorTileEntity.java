@@ -234,7 +234,11 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
                     if (entity.getEntityBoundingBox().intersectsWith(getAABBBigMargin())) {
                         // Entity is no longer on the platform but was on the platform before and
                         // is still in the elevator shaft. In that case we put it back.
+                        entity.fallDistance = 0;
+                        entitiesOnPlatform.add(entity);
                         moveEntityOnPlatform(stop, offset, entity);
+                        entity.onGround = true;
+                        entity.fallDistance = 0;
                     }
                 }
 
@@ -450,7 +454,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     }
 
     public AxisAlignedBB getAABBBigMargin() {
-        return new AxisAlignedBB(bounds.getMinX(), movingY-50, bounds.getMinZ(), bounds.getMaxX() + 1, movingY + 50, bounds.getMaxZ() + 1);
+        return new AxisAlignedBB(bounds.getMinX(), movingY-150, bounds.getMinZ(), bounds.getMaxX() + 1, movingY + 150, bounds.getMaxZ() + 1);
     }
 
 
