@@ -6,7 +6,9 @@ import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
+import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -70,6 +72,16 @@ public class ShieldBlock extends GenericRFToolsBlock implements Infusable /*, IR
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
+    }
+
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+        if (heldItem != null && (heldItem.getItem() == BuilderSetup.shapeCardItem)) {
+            if (RFToolsTools.installModule(player, heldItem, hand, pos, ShieldContainer.SLOT_SHAPE, ShieldContainer.SLOT_SHAPE)) {
+                return true;
+            }
+        }
+        return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
     }
 
     @Override

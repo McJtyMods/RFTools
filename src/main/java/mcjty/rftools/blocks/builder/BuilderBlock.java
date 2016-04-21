@@ -4,6 +4,7 @@ import mcjty.lib.api.Infusable;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.rftools.varia.RFToolsTools;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
@@ -13,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -58,6 +60,16 @@ public class BuilderBlock extends GenericRFToolsBlock<BuilderTileEntity, Builder
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
+    }
+
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+        if (heldItem != null && (heldItem.getItem() == BuilderSetup.shapeCardItem || heldItem.getItem() == BuilderSetup.spaceChamberCardItem)) {
+            if (RFToolsTools.installModule(player, heldItem, hand, pos, BuilderContainer.SLOT_TAB, BuilderContainer.SLOT_TAB)) {
+                return true;
+            }
+        }
+        return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
     }
 
     private static long lastTime = 0;

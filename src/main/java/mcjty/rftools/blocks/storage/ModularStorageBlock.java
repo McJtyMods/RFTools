@@ -5,6 +5,7 @@ import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.varia.RFToolsTools;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
@@ -18,9 +19,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -120,6 +124,16 @@ public class ModularStorageBlock extends GenericRFToolsBlock {
             return newstate.withProperty(TYPEMODULE, TYPE_ORE);
         }
         return newstate.withProperty(TYPEMODULE, TYPE_NONE);
+    }
+
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+        if (heldItem != null && heldItem.getItem() == ModularStorageSetup.storageFilterItem) {
+            if (RFToolsTools.installModule(player, heldItem, hand, pos, ModularStorageContainer.SLOT_FILTER_MODULE, ModularStorageContainer.SLOT_FILTER_MODULE)) {
+                return true;
+            }
+        }
+        return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
     }
 
     @Override

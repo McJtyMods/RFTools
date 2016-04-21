@@ -8,6 +8,7 @@ import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import mcjty.rftools.items.smartwrench.SmartWrenchMode;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.varia.RFToolsTools;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
@@ -84,6 +85,16 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
+    }
+
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+        if (heldItem != null && heldItem.getItem() == PowerCellSetup.powerCellCardItem) {
+            if (RFToolsTools.installModule(player, heldItem, hand, pos, PowerCellContainer.SLOT_CARD, PowerCellContainer.SLOT_CARD)) {
+                return true;
+            }
+        }
+        return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
     }
 
     private boolean isAdvanced() {

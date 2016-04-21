@@ -4,18 +4,18 @@ import mcjty.lib.api.Infusable;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.rftools.varia.RFToolsTools;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
@@ -98,16 +98,13 @@ public class EnvironmentalControllerBlock extends GenericRFToolsBlock implements
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
-        EnvironmentalControllerTileEntity environmentalControllerTileEntity = (EnvironmentalControllerTileEntity) tileEntity;
-        EnvironmentalControllerContainer environmentalControllerContainer = new EnvironmentalControllerContainer(entityPlayer, environmentalControllerTileEntity);
-        return new GuiEnvironmentalController(environmentalControllerTileEntity, environmentalControllerContainer);
-    }
-
-    @Override
-    public Container createServerContainer(EntityPlayer entityPlayer, TileEntity tileEntity) {
-        return new EnvironmentalControllerContainer(entityPlayer, (EnvironmentalControllerTileEntity) tileEntity);
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+        if (heldItem != null && heldItem.getItem() instanceof EnvModuleProvider) {
+            if (RFToolsTools.installModule(player, heldItem, hand, pos, EnvironmentalControllerContainer.SLOT_MODULES, EnvironmentalControllerContainer.SLOT_MODULES + EnvironmentalControllerContainer.ENV_MODULES)) {
+                return true;
+            }
+        }
+        return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
     }
 
     @Override
