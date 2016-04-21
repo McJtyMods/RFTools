@@ -49,8 +49,9 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     private int cachedLevels;       // Cached number of levels
     private int cachedCurrent = -1;
 
-    // All players currently on the platform (server side only)
-    private Set<EntityPlayer> players = new HashSet<>();
+    // All entities currently on the platform (server side only)
+    private Set<Entity> entitiesOnPlatform = new HashSet<>();
+    private boolean entitiesOnPlatformComplete = false; // If true then we know entitiesOnPlatform is complete, otherwise it only contains players.
 
     public ElevatorTileEntity() {
         super(ElevatorConfiguration.MAXENERGY, ElevatorConfiguration.RFPERTICK);
@@ -140,23 +141,16 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
             stopSounds();
             return;
         }
-        boolean startup;
-        boolean shutdown;
-        if (stopY < startY) {
-            startup = (startY-movingY) < ElevatorConfiguration.maxSpeedDistanceStart;
-            shutdown = (!startup) && (movingY-stopY) < ElevatorConfiguration.maxSpeedDistanceEnd;
-        } else {
-            startup = (movingY-startY) < ElevatorConfiguration.maxSpeedDistanceStart;
-            shutdown = (!startup) && (stopY-movingY) < ElevatorConfiguration.maxSpeedDistanceEnd;
-        }
+        boolean startup = Math.abs(startY-movingY) < ElevatorConfiguration.maxSpeedDistanceStart;
+        boolean shutdown = Math.abs(movingY-stopY) < ElevatorConfiguration.maxSpeedDistanceEnd * 2;
 
-        if (startup) {
-            if (!ElevatorSounds.isStartupPlaying(worldObj, pos)) {
-                ElevatorSounds.playStartup(worldObj, pos);
-            }
-        } else if (shutdown) {
+        if (shutdown) {
             if (!ElevatorSounds.isStopPlaying(worldObj, pos)) {
                 ElevatorSounds.playStop(worldObj, pos);
+            }
+        } else if (startup) {
+            if (!ElevatorSounds.isStartupPlaying(worldObj, pos)) {
+                ElevatorSounds.playStartup(worldObj, pos);
             }
         } else {
             if (!ElevatorSounds.isLoopPlaying(worldObj, pos)) {
@@ -219,40 +213,58 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         if (bounds == null) {
             return;
         }
-        double offset = speed > 0 ? speed * 4 : speed;
-        Set<EntityPlayer> oldPlayers = this.players;
-        players = new HashSet<>();
+        double offset = speed > 0 ? speed * 2 : speed;
+        Set<Entity> oldEntities = this.entitiesOnPlatform;
+        entitiesOnPlatform = new HashSet<>();
         List<Entity> entities = worldObj.getEntitiesWithinAABB(Entity.class, getAABBAboveElevator(speed));
         for (Entity entity : entities) {
-
             entity.fallDistance = 0;
-            if (entity instanceof EntityPlayer) {
-                double dy = 1;
-                EntityPlayer player = (EntityPlayer) entity;
-                if (stop) {
-                    BuffProperties.disableElevatorMode(player);
-                    entity.posY = movingY + dy;
-                    entity.setPositionAndUpdate(entity.posX, movingY + dy, entity.posZ);
-                } else {
-                    BuffProperties.enableElevatorMode(player);
-                    entity.setPosition(entity.posX, movingY + dy, entity.posZ);
-                    players.add(player);
-                }
-            } else {
-                double dy = 1.2 + offset;
-                entity.posY = movingY + dy;
-                entity.setPositionAndUpdate(entity.posX, movingY + dy, entity.posZ);
-            }
+            entitiesOnPlatform.add(entity);
+            moveEntityOnPlatform(stop, offset, entity);
             entity.onGround = true;
             entity.fallDistance = 0;
         }
 
-        for (EntityPlayer player : oldPlayers) {
-            if (!players.contains(player)) {
-                BuffProperties.disableElevatorMode(player);
+        for (Entity entity : oldEntities) {
+            if (!this.entitiesOnPlatform.contains(entity)) {
+                // Entity was on the platform before but it isn't anymore. If it was a player we do a safety check
+                // to ensure it is still in the patform shaft and in that case put it back on the platform.
+                // We also put back the entity if we know the list is complete.
+                if (entity instanceof EntityPlayer || entitiesOnPlatformComplete) {
+                    if (entity.getEntityBoundingBox().intersectsWith(getAABBBigMargin())) {
+                        // Entity is no longer on the platform but was on the platform before and
+                        // is still in the elevator shaft. In that case we put it back.
+                        moveEntityOnPlatform(stop, offset, entity);
+                    }
+                }
+
+                if (entity instanceof EntityPlayer) {
+                    BuffProperties.disableElevatorMode((EntityPlayer) entity);
+                }
             }
         }
 
+        // Entities on platform is now complete so set this to true
+        entitiesOnPlatformComplete = true;
+    }
+
+    private void moveEntityOnPlatform(boolean stop, double offset, Entity entity) {
+        if (entity instanceof EntityPlayer) {
+            double dy = 1;
+            EntityPlayer player = (EntityPlayer) entity;
+            if (stop) {
+                BuffProperties.disableElevatorMode(player);
+                entity.posY = movingY + dy;
+                entity.setPositionAndUpdate(entity.posX, movingY + dy, entity.posZ);
+            } else {
+                BuffProperties.enableElevatorMode(player);
+                entity.setPosition(entity.posX, movingY + dy, entity.posZ);
+            }
+        } else {
+            double dy = 1.2 + offset;
+            entity.posY = movingY + dy;
+            entity.setPositionAndUpdate(entity.posX, movingY + dy, entity.posZ);
+        }
     }
 
     // Find the position of the bottom elevator.
@@ -329,7 +341,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
 
     private void clearMovement() {
         positions.clear();
-        players.clear();
+        entitiesOnPlatform.clear();
         movingState = null;
         bounds = null;
         movingY = -1;
@@ -436,6 +448,11 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
             }
         }
     }
+
+    public AxisAlignedBB getAABBBigMargin() {
+        return new AxisAlignedBB(bounds.getMinX(), movingY-50, bounds.getMinZ(), bounds.getMaxX() + 1, movingY + 50, bounds.getMaxZ() + 1);
+    }
+
 
     public AxisAlignedBB getAABBAboveElevator(double speed) {
         double o1;
@@ -616,8 +633,9 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         readFromNBTCommon(tagCompound);
+        entitiesOnPlatformComplete = false;
         if (tagCompound.hasKey("players")) {
-            players.clear();
+            entitiesOnPlatform.clear();
             WorldServer world = DimensionManager.getWorld(0);
             List<EntityPlayerMP> serverPlayers = world.getMinecraftServer().getPlayerList().getPlayerList();
             NBTTagList playerList = tagCompound.getTagList("players", Constants.NBT.TAG_COMPOUND);
@@ -628,7 +646,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
                 UUID uuid = new UUID(msb, lsb);
                 for (EntityPlayerMP serverPlayer : serverPlayers) {
                     if (serverPlayer.getGameProfile().getId().equals(uuid)) {
-                        players.add(serverPlayer);
+                        entitiesOnPlatform.add(serverPlayer);
                         break;
                     }
                 }
@@ -697,14 +715,17 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         }
         if (!worldObj.isRemote) {
             // Only do this server side
-            if (!players.isEmpty()) {
+            if (!entitiesOnPlatform.isEmpty()) {
                 NBTTagList playerList = new NBTTagList();
-                for (EntityPlayer player : players) {
-                    UUID id = player.getGameProfile().getId();
-                    NBTTagCompound p = new NBTTagCompound();
-                    p.setLong("lsb", id.getLeastSignificantBits());
-                    p.setLong("msb", id.getMostSignificantBits());
-                    playerList.appendTag(p);
+                for (Entity entity : entitiesOnPlatform) {
+                    if (entity instanceof EntityPlayer) {
+                        EntityPlayer player = (EntityPlayer) entity;
+                        UUID id = player.getGameProfile().getId();
+                        NBTTagCompound p = new NBTTagCompound();
+                        p.setLong("lsb", id.getLeastSignificantBits());
+                        p.setLong("msb", id.getMostSignificantBits());
+                        playerList.appendTag(p);
+                    }
                 }
                 tagCompound.setTag("players", playerList);
             }
