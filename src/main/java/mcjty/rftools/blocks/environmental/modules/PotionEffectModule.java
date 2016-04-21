@@ -120,8 +120,9 @@ public abstract class PotionEffectModule implements EnvironmentModule {
     }
 
     @Override
-    public void apply(World world, BlockPos pos, EntityLivingBase entity, int duration) {
+    public boolean apply(World world, BlockPos pos, EntityLivingBase entity, int duration) {
         entity.addPotionEffect(new PotionEffect(potion, duration, amplifier, true, false));
+        return true;
     }
 
     @Override

@@ -57,7 +57,8 @@ public abstract class BuffEModule implements EnvironmentModule {
     }
 
     @Override
-    public void apply(World world, BlockPos pos, EntityLivingBase entity, int duration) {
+    public boolean apply(World world, BlockPos pos, EntityLivingBase entity, int duration) {
+        return false;
     }
 
     @Override

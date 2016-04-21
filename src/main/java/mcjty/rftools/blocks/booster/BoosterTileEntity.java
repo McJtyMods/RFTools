@@ -32,6 +32,7 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
     private AxisAlignedBB beamBox = null;
     private RedstoneMode redstoneMode = RedstoneMode.REDSTONE_IGNORED;
     private boolean powered = false;
+    private int timeout = 0;
 
     private EnvironmentModule cachedModule;
 
@@ -70,6 +71,11 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
     @Override
     public void update() {
         if (!worldObj.isRemote) {
+            if (timeout > 0) {
+                timeout--;
+                markDirty();
+                return;
+            }
             if (cachedModule == null) {
                 ItemStack stack = inventoryHelper.getStackInSlot(BoosterContainer.SLOT_MODULE);
                 if (stack != null) {
@@ -87,10 +93,20 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
                 }
             }
             if (cachedModule != null) {
+                int rf = getEnergyStored(EnumFacing.DOWN);
+                int rfNeeded = (int) (cachedModule.getRfPerTick() * BoosterConfiguration.energyMultiplier);
+                rfNeeded = (int) (rfNeeded * (3.0f - getInfusedFactor()) / 3.0f);
                 for (EntityLivingBase entity : searchEntities()) {
-                    // @todo check if effect is already there?
-                    cachedModule.apply(worldObj, getPos(), entity, 20);
+                    if (rfNeeded <= rf) {
+                        if (cachedModule.apply(worldObj, getPos(), entity, 40)) {
+                            // Consume energy
+                            consumeEnergy(rfNeeded);
+                            rf -= rfNeeded;
+                        }
+                    }
                 }
+                timeout = 10;
+                markDirty();
             }
         }
     }
