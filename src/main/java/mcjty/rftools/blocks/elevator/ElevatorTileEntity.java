@@ -79,7 +79,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     public void update() {
         if (!worldObj.isRemote) {
             if (isMoving()) {
-                markDirtyClient();
+                markDirty();
 
                 int rfNeeded = (int) (ElevatorConfiguration.rfPerTickMoving * (3.0f - getInfusedFactor()) / 3.0f);
                 if (getEnergyStored(EnumFacing.DOWN) < rfNeeded) {
@@ -144,10 +144,10 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         boolean shutdown;
         if (stopY < startY) {
             startup = (startY-movingY) < ElevatorConfiguration.maxSpeedDistanceStart;
-            shutdown = (!startup) && (movingY-stopY) < ElevatorConfiguration.maxSpeedDistanceStart;
+            shutdown = (!startup) && (movingY-stopY) < ElevatorConfiguration.maxSpeedDistanceEnd;
         } else {
             startup = (movingY-startY) < ElevatorConfiguration.maxSpeedDistanceStart;
-            shutdown = (!startup) && (stopY-movingY) < ElevatorConfiguration.maxSpeedDistanceStart;
+            shutdown = (!startup) && (stopY-movingY) < ElevatorConfiguration.maxSpeedDistanceEnd;
         }
 
         if (startup) {
@@ -324,6 +324,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         }
         // Current level will have to be recalculated
         cachedCurrent = -1;
+        markDirtyClient();
     }
 
     private void clearMovement() {
