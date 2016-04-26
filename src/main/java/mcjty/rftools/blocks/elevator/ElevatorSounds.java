@@ -4,13 +4,11 @@ import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.RFTools;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MovingSound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,19 +16,14 @@ public class ElevatorSounds {
 
     private static final Map<GlobalCoordinate, MovingSound> sounds = new HashMap<>();
 
-    public static final String[] REGISTER_SOUND = { "registerSound", "func_187502_a", "a" };
-
     public static void init() {
-        try {
-            Method m = ReflectionHelper.findMethod(SoundEvent.class, null, REGISTER_SOUND, String.class);
-            m.invoke(null, RFTools.MODID + ":elevator_start");
-            m.invoke(null, RFTools.MODID + ":elevator_loop");
-            m.invoke(null, RFTools.MODID + ":elevator_stop");
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
+        registerSound(new ResourceLocation(RFTools.MODID, "elevator_start"));
+        registerSound(new ResourceLocation(RFTools.MODID, "elevator_loop"));
+        registerSound(new ResourceLocation(RFTools.MODID, "elevator_stop"));
+    }
+
+    private static void registerSound(ResourceLocation sound) {
+        SoundEvent.REGISTRY.register(-1, sound, new SoundEvent(sound));
     }
 
     public static void moveSound(World world, BlockPos pos, float y) {
