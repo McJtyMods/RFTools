@@ -173,7 +173,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
                 System.out.println("StorageControlScreenModule.mouseClick: 2");
                 for (int i = 0 ; i < player.inventory.getSizeInventory() ; i++) {
                     if (isShown(player.inventory.getStackInSlot(i))) {
-                        ItemStack stack = scannerTileEntity.injectStack(player.getHeldItem(EnumHand.MAIN_HAND));
+                        ItemStack stack = scannerTileEntity.injectStack(player.inventory.getStackInSlot(i));
                         player.inventory.setInventorySlotContents(i, stack);
                     }
                 }
