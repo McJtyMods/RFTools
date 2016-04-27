@@ -69,6 +69,36 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         }
     }
 
+    public int countStack(ItemStack stack) {
+        if (stack == null) {
+            return 0;
+        }
+        // @todo optimize for modular storage
+        int cnt = 0;
+        List<BlockPos> inventories = getInventories();
+        for (BlockPos c : inventories) {
+            TileEntity tileEntity = worldObj.getTileEntity(c);
+            if (tileEntity != null && tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
+                IItemHandler capability = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                for (int i = 0 ; i < capability.getSlots() ; i++) {
+                    ItemStack itemStack = capability.getStackInSlot(i);
+                    if (ItemStack.areItemStacksEqual(stack, itemStack)) {
+                        cnt += itemStack.stackSize;
+                    }
+                }
+            } else if (tileEntity instanceof IInventory) {
+                IInventory inventory = (IInventory) tileEntity;
+                for (int i = 0 ; i < inventory.getSizeInventory() ; i++) {
+                    ItemStack itemStack = inventory.getStackInSlot(i);
+                    if (ItemStack.areItemStacksEqual(stack, itemStack)) {
+                        cnt += itemStack.stackSize;
+                    }
+                }
+            }
+        }
+        return cnt;
+    }
+
     public Set<BlockPos> performSearch(String search) {
         List<BlockPos> inventories = getInventories();
         search = search.toLowerCase();

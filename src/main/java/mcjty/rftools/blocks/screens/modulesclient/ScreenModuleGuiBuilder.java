@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
+import mcjty.lib.gui.events.BlockRenderEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
@@ -10,6 +11,7 @@ import mcjty.rftools.blocks.screens.IModuleGuiChanged;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -197,6 +199,38 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
         return this;
     }
 
+    @Override
+    public IModuleGuiBuilder ghostStack(String tagname) {
+        ItemStack stack = null;
+        if (currentData.hasKey(tagname)) {
+            stack = ItemStack.loadItemStackFromNBT(currentData.getCompoundTag(tagname));
+        }
+
+        BlockRender blockRender = new BlockRender(mc, gui).setRenderItem(stack).setDesiredWidth(20).setFilledBackground(0xff555555);
+        row.add(blockRender);
+        blockRender.addSelectionEvent(new BlockRenderEvent() {
+            @Override
+            public void select(Widget widget) {
+                ItemStack holding = Minecraft.getMinecraft().thePlayer.inventory.getItemStack();
+                blockRender.setRenderItem(holding);
+                if (holding == null) {
+                    currentData.removeTag(tagname);
+                } else {
+                    NBTTagCompound tc = new NBTTagCompound();
+                    holding.writeToNBT(tc);
+                    currentData.setTag(tagname, tc);
+                }
+                moduleGuiChanged.updateData();
+            }
+
+            @Override
+            public void doubleClick(Widget widget) {
+
+            }
+        });
+
+        return this;
+    }
 
     @Override
     public ScreenModuleGuiBuilder nl() {

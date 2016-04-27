@@ -9,6 +9,7 @@ import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.api.screens.data.IModuleData;
 import mcjty.rftools.varia.RFToolsTools;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -195,7 +196,7 @@ public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModul
     }
 
     @Override
-    public void mouseClick(World world, int x, int y, boolean clicked) {
+    public void mouseClick(World world, int x, int y, boolean clicked, EntityPlayer player) {
 
     }
 }

@@ -6,6 +6,7 @@ import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.api.screens.data.IModuleDataContents;
 import mcjty.rftools.varia.RFToolsTools;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -81,7 +82,7 @@ public class FluidBarScreenModule implements IScreenModule<IModuleDataContents> 
     }
 
     @Override
-    public void mouseClick(World world, int x, int y, boolean clicked) {
+    public void mouseClick(World world, int x, int y, boolean clicked, EntityPlayer player) {
 
     }
 }

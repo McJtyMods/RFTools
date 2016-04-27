@@ -23,6 +23,7 @@ public class ScreenConfiguration {
     public static int MACHINEINFO_RFPERTICK = 4;
     public static int REDSTONE_RFPERTICK = 4;
     public static int TEXT_RFPERTICK = 0;
+    public static int STORAGE_CONTROL_RFPERTICK = 6;
 
     public static void init(Configuration cfg) {
         CONTROLLER_MAXENERGY = cfg.get(CATEGORY_SCREEN, "screenControllerMaxRF", CONTROLLER_MAXENERGY,

@@ -29,6 +29,7 @@ public class ScreenSetup {
     public static RedstoneModuleItem redstoneModuleItem;
     public static CounterModuleItem counterModuleItem;
     public static CounterPlusModuleItem counterPlusModuleItem;
+    public static StorageControlModuleItem storageControlModuleItem;
 
     public static void init() {
         screenBlock = new ScreenBlock();
@@ -49,6 +50,7 @@ public class ScreenSetup {
         redstoneModuleItem = new RedstoneModuleItem();
         counterModuleItem = new CounterModuleItem();
         counterPlusModuleItem = new CounterPlusModuleItem();
+        storageControlModuleItem = new StorageControlModuleItem();
     }
 
     @SideOnly(Side.CLIENT)
@@ -71,6 +73,7 @@ public class ScreenSetup {
         redstoneModuleItem.initModel();
         counterModuleItem.initModel();
         counterPlusModuleItem.initModel();
+        storageControlModuleItem.initModel();
     }
 
     public static void initCrafting() {
@@ -91,8 +94,6 @@ public class ScreenSetup {
                 'b', inkSac);
         GameRegistry.addRecipe(new ItemStack(energyModuleItem), " r ", "rir", " b ", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
                 'b', inkSac);
-//        GameRegistry.addRecipe(new ItemStack(dimensionModuleItem), " c ", "rir", " b ", 'c', Items.ENDER_PEARL, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
-//                'b', inkSac);
         GameRegistry.addRecipe(new ItemStack(fluidModuleItem), " c ", "rir", " b ", 'c', Items.BUCKET, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
                 'b', inkSac);
         GameRegistry.addRecipe(new ItemStack(inventoryModuleItem), " c ", "rir", " b ", 'c', Blocks.CHEST, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
@@ -110,6 +111,8 @@ public class ScreenSetup {
         GameRegistry.addRecipe(new ItemStack(buttonModuleItem), "b", 'b', buttonModuleItem);    // To clear it
 
         GameRegistry.addRecipe(new ItemStack(elevatorButtonModuleItem), "fff", "rir", " b ", 'f', Blocks.STONE_BUTTON, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
+                               'b', inkSac);
+        GameRegistry.addRecipe(new ItemStack(storageControlModuleItem), " c ", "rir", " b ", 'c', Blocks.CRAFTING_TABLE, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
                                'b', inkSac);
 
         GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {

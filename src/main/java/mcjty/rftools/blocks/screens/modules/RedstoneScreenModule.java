@@ -6,6 +6,7 @@ import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.api.screens.data.IModuleDataBoolean;
 import mcjty.rftools.blocks.logic.RedstoneChannels;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -79,7 +80,7 @@ public class RedstoneScreenModule implements IScreenModule<IModuleDataBoolean> {
     }
 
     @Override
-    public void mouseClick(World world, int x, int y, boolean clicked) {
+    public void mouseClick(World world, int x, int y, boolean clicked, EntityPlayer player) {
 
     }
 }

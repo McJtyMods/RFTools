@@ -3,10 +3,12 @@ package mcjty.rftools.blocks.screens;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IClientScreenModule;
+import mcjty.rftools.api.screens.ModuleRenderInfo;
 import mcjty.rftools.api.screens.data.IModuleData;
 import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModuleHelper;
 import mcjty.rftools.blocks.screens.network.PacketGetScreenData;
 import mcjty.rftools.network.RFToolsMessages;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -14,6 +16,8 @@ import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
@@ -72,7 +76,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
             Map<Integer, IModuleData> screenData = updateScreenData(tileEntity);
 
             List<IClientScreenModule> modules = tileEntity.getClientScreenModules();
-            renderModules(fontrenderer, mode, modules, screenData, tileEntity.getSize());
+            renderModules(fontrenderer, tileEntity, mode, modules, screenData, tileEntity.getSize());
         }
 
         GlStateManager.enableLighting();
@@ -101,11 +105,28 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
 
     private ClientScreenModuleHelper clientScreenModuleHelper = new ClientScreenModuleHelper();
 
-    private void renderModules(FontRenderer fontrenderer, IClientScreenModule.TransformMode mode, List<IClientScreenModule> modules, Map<Integer, IModuleData> screenData, int size) {
+    private void renderModules(FontRenderer fontrenderer, ScreenTileEntity tileEntity, IClientScreenModule.TransformMode mode, List<IClientScreenModule> modules, Map<Integer, IModuleData> screenData, int size) {
         float f3;
         float factor = size + 1.0f;
         int currenty = 7;
         int moduleIndex = 0;
+
+        BlockPos pos = tileEntity.getPos();
+
+        RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
+        IClientScreenModule hitModule = null;
+        ScreenTileEntity.ModuleRaytraceResult hit = null;
+        // @todo still a bug when not hitting the front
+        if (mouseOver != null && mouseOver.sideHit != null) {
+            double xx = mouseOver.hitVec.xCoord - pos.getX();
+            double yy = mouseOver.hitVec.yCoord - pos.getY();
+            double zz = mouseOver.hitVec.zCoord - pos.getZ();
+            hit = tileEntity.getHitModule(xx, yy, zz, mouseOver.sideHit);
+            if (hit != null) {
+                hitModule = modules.get(hit.getModuleIndex());
+            }
+        }
+
         for (IClientScreenModule module : modules) {
             if (module != null) {
                 int height = module.getHeight();
@@ -143,7 +164,14 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
                     IModuleData data = screenData.get(moduleIndex);
                     // @todo this is a bit clumsy way to check if the data is compatible with the given module:
                     try {
-                        module.render(clientScreenModuleHelper, fontrenderer, currenty, data, factor);
+                        int hitx = -1;
+                        int hity = -1;
+                        if (module == hitModule) {
+                            hitx = hit.getX();
+                            hity = hit.getY() - hit.getCurrenty();
+                        }
+                        ModuleRenderInfo renderInfo = new ModuleRenderInfo(factor, pos, hitx, hity);
+                        module.render(clientScreenModuleHelper, fontrenderer, currenty, data, renderInfo);
                     } catch (ClassCastException e) {
                     }
                     currenty += height;

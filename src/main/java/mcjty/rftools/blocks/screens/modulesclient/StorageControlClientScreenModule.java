@@ -4,7 +4,7 @@ import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
 import mcjty.rftools.api.screens.ModuleRenderInfo;
-import mcjty.rftools.blocks.screens.modules.ItemStackScreenModule;
+import mcjty.rftools.blocks.screens.modules.StorageControlScreenModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.*;
@@ -15,11 +15,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
-public class ItemStackClientScreenModule implements IClientScreenModule<ItemStackScreenModule.ModuleDataStacks> {
-    private int slot1 = -1;
-    private int slot2 = -1;
-    private int slot3 = -1;
-    private int slot4 = -1;
+public class StorageControlClientScreenModule implements IClientScreenModule<StorageControlScreenModule.ModuleDataStacks> {
+    private ItemStack[] stacks = new ItemStack[9];
 
     @Override
     public TransformMode getTransformMode() {
@@ -28,17 +25,44 @@ public class ItemStackClientScreenModule implements IClientScreenModule<ItemStac
 
     @Override
     public int getHeight() {
-        return 22;
+        return 110;
     }
 
     @Override
-    public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, ItemStackScreenModule.ModuleDataStacks screenData, ModuleRenderInfo renderInfo) {
+    public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, StorageControlScreenModule.ModuleDataStacks screenData, ModuleRenderInfo renderInfo) {
         if (screenData == null) {
             return;
         }
 
+        if (renderInfo.hitx >= 0) {
+            GlStateManager.disableLighting();
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(-0.5F, 0.5F, 0.07F);
+            float f3 = 0.0105F;
+            GlStateManager.scale(f3 * renderInfo.factor, -f3 * renderInfo.factor, f3);
+            GL11.glNormal3f(0.0F, 0.0F, -1.0F);
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+
+            int y = currenty;
+            int i = 0;
+
+            for (int yy = 0 ; yy < 3 ; yy++) {
+                for (int xx = 0 ; xx < 3 ; xx++) {
+                    if (stacks[i] != null) {
+                        int x = xx * 40;
+                        boolean hilighted = renderInfo.hitx >= x+8 && renderInfo.hitx <= x + 38 && renderInfo.hity >= y-3 && renderInfo.hity <= y + 33;
+                        if (hilighted) {
+                            mcjty.lib.gui.RenderHelper.drawBeveledBox(5 + xx * 30, 10 + yy * 30-4, 29 + xx * 30, 10 + yy * 30+20, 0xff333333, 0xff333333, 0xff333333);
+                        }
+                    }
+                    i++;
+                }
+                y += 40;
+            }
+            GlStateManager.popMatrix();
+        }
+
         RenderHelper.enableGUIStandardItemLighting();
-//        RenderHelper.enableStandardItemLighting();
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
         GlStateManager.depthMask(true);
@@ -47,31 +71,45 @@ public class ItemStackClientScreenModule implements IClientScreenModule<ItemStac
         GlStateManager.enableDepth();
 
         GlStateManager.pushMatrix();
-        float f3 = 0.0075F;
+        float f3 = 0.0105F;
         GlStateManager.translate(-0.5F, 0.5F, 0.06F);
         float factor = renderInfo.factor;
         GlStateManager.scale(f3 * factor, -f3 * factor, 0.0001f);
 
-//        short short1 = 240;
-//        short short2 = 240;
-//        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, short1 / 1.0F, short2 / 1.0F);
-        int x = 10;
-        x = renderSlot(currenty, screenData, slot1, 0, x);
-        x = renderSlot(currenty, screenData, slot2, 1, x);
-        x = renderSlot(currenty, screenData, slot3, 2, x);
-        renderSlot(currenty, screenData, slot4, 3, x);
+        int y = currenty;
+        int i = 0;
+
+        for (int yy = 0 ; yy < 3 ; yy++) {
+            for (int xx = 0 ; xx < 3 ; xx++) {
+                if (stacks[i] != null) {
+                    int x = 7 + xx * 30;
+                    renderSlot(currenty, stacks[i], x);
+                }
+                i++;
+            }
+            currenty += 30;
+        }
 
         GlStateManager.popMatrix();
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(-0.5F, 0.5F, 0.08F);
+        f3 = 0.0050F;
         GlStateManager.scale(f3 * factor, -f3 * factor, 0.0001f);
 
-        x = 10;
-        x = renderSlotOverlay(fontRenderer, currenty, screenData, slot1, 0, x);
-        x = renderSlotOverlay(fontRenderer, currenty, screenData, slot2, 1, x);
-        x = renderSlotOverlay(fontRenderer, currenty, screenData, slot3, 2, x);
-        renderSlotOverlay(fontRenderer, currenty, screenData, slot4, 3, x);
+        currenty = y + 30;
+        i = 0;
+
+        for (int yy = 0 ; yy < 3 ; yy++) {
+            for (int xx = 0 ; xx < 3 ; xx++) {
+                if (stacks[i] != null) {
+                    renderSlotOverlay(fontRenderer, currenty, stacks[i], screenData.getAmount(i), 42 + xx * 64);
+                }
+                i++;
+            }
+            currenty += 64;
+        }
+
         GlStateManager.popMatrix();
 
         GlStateManager.disableLighting();
@@ -86,56 +124,34 @@ public class ItemStackClientScreenModule implements IClientScreenModule<ItemStac
 
     }
 
-    private int renderSlot(int currenty, ItemStackScreenModule.ModuleDataStacks screenData, int slot, int index, int x) {
-        if (slot != -1) {
-            ItemStack itm = null;
-            try {
-                itm = screenData.getStack(index);
-            } catch (Exception e) {
-                // Ignore this.
-            }
-            if (itm != null) {
-                RenderItem itemRender = Minecraft.getMinecraft().getRenderItem();
-                itemRender.renderItemAndEffectIntoGUI(itm, x, currenty);
-            }
-            x += 30;
-        }
-        return x;
+    private void renderSlot(int currenty, ItemStack stack, int x) {
+        RenderItem itemRender = Minecraft.getMinecraft().getRenderItem();
+        itemRender.renderItemAndEffectIntoGUI(stack, x, currenty);
     }
 
-    private int renderSlotOverlay(FontRenderer fontRenderer, int currenty, ItemStackScreenModule.ModuleDataStacks screenData, int slot, int index, int x) {
-        if (slot != -1) {
-            ItemStack itm = screenData.getStack(index);
-            if (itm != null) {
+    private void renderSlotOverlay(FontRenderer fontRenderer, int currenty, ItemStack stack, int amount, int x) {
 //                itemRender.renderItemOverlayIntoGUI(fontRenderer, Minecraft.getMinecraft().getTextureManager(), itm, x, currenty);
-                renderItemOverlayIntoGUI(fontRenderer, itm, x, currenty);
-            }
-            x += 30;
-        }
-        return x;
+        renderItemOverlayIntoGUI(fontRenderer, stack, amount, x, currenty);
     }
 
-    private static void renderItemOverlayIntoGUI(FontRenderer fontRenderer, ItemStack itemStack, int x, int y) {
+    private static void renderItemOverlayIntoGUI(FontRenderer fontRenderer, ItemStack itemStack, int size, int x, int y) {
         if (itemStack != null) {
-            int size = itemStack.stackSize;
-            if (size > 1) {
-                String s1;
-                if (size < 10000) {
-                    s1 = String.valueOf(size);
-                } else if (size < 1000000) {
-                    s1 = String.valueOf(size / 1000) + "k";
-                } else if (size < 1000000000) {
-                    s1 = String.valueOf(size / 1000000) + "m";
-                } else {
-                    s1 = String.valueOf(size / 1000000000) + "g";
-                }
-                GlStateManager.disableLighting();
-//                GL11.glDisable(GL11.GL_DEPTH_TEST);
-                GlStateManager.disableBlend();
-                fontRenderer.drawString(s1, x + 19 - 2 - fontRenderer.getStringWidth(s1), y + 6 + 3, 16777215);
-                GlStateManager.enableLighting();
-//                GL11.glEnable(GL11.GL_DEPTH_TEST);
+            String s1;
+            if (size < 10000) {
+                s1 = String.valueOf(size);
+            } else if (size < 1000000) {
+                s1 = String.valueOf(size / 1000) + "k";
+            } else if (size < 1000000000) {
+                s1 = String.valueOf(size / 1000000) + "m";
+            } else {
+                s1 = String.valueOf(size / 1000000000) + "g";
             }
+            GlStateManager.disableLighting();
+//                GL11.glDisable(GL11.GL_DEPTH_TEST);
+            GlStateManager.disableBlend();
+            fontRenderer.drawString(s1, x + 19 - 2 - fontRenderer.getStringWidth(s1), y + 6 + 3, 16777215);
+            GlStateManager.enableLighting();
+//                GL11.glEnable(GL11.GL_DEPTH_TEST);
 
             if (itemStack.getItem().showDurabilityBar(itemStack)) {
                 double health = itemStack.getItem().getDurabilityForDisplay(itemStack);
@@ -176,28 +192,20 @@ public class ItemStackClientScreenModule implements IClientScreenModule<ItemStac
 
     @Override
     public void createGui(IModuleGuiBuilder guiBuilder) {
-        guiBuilder.
-                label("Slot 1:").integer("slot1", "Slot index to show").nl().
-                label("Slot 2:").integer("slot2", "Slot index to show").nl().
-                label("Slot 3:").integer("slot3", "Slot index to show").nl().
-                label("Slot 4:").integer("slot4", "Slot index to show").nl().
-                block("monitor").nl();
+        guiBuilder
+                .ghostStack("stack0").ghostStack("stack1").ghostStack("stack2").nl()
+                .ghostStack("stack3").ghostStack("stack4").ghostStack("stack5").nl()
+                .ghostStack("stack6").ghostStack("stack7").ghostStack("stack8").nl()
+                .block("monitor").nl();
     }
 
     @Override
     public void setupFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
-            if (tagCompound.hasKey("slot1")) {
-                slot1 = tagCompound.getInteger("slot1");
-            }
-            if (tagCompound.hasKey("slot2")) {
-                slot2 = tagCompound.getInteger("slot2");
-            }
-            if (tagCompound.hasKey("slot3")) {
-                slot3 = tagCompound.getInteger("slot3");
-            }
-            if (tagCompound.hasKey("slot4")) {
-                slot4 = tagCompound.getInteger("slot4");
+            for (int i = 0 ; i < stacks.length ; i++) {
+                if (tagCompound.hasKey("stack"+i)) {
+                    stacks[i] = ItemStack.loadItemStackFromNBT(tagCompound.getCompoundTag("stack"+i));
+                }
             }
         }
     }

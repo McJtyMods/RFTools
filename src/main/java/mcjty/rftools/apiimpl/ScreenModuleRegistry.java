@@ -7,6 +7,7 @@ import mcjty.rftools.blocks.screens.data.ModuleDataInteger;
 import mcjty.rftools.blocks.screens.data.ModuleDataString;
 import mcjty.rftools.blocks.screens.modules.ItemStackScreenModule;
 import mcjty.rftools.blocks.screens.modules.ScreenModuleHelper;
+import mcjty.rftools.blocks.screens.modules.StorageControlScreenModule;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -26,6 +27,7 @@ public class ScreenModuleRegistry implements IScreenModuleRegistry {
         dataFactoryMap.put(ModuleDataString.ID, ModuleDataString::new);
         dataFactoryMap.put(ScreenModuleHelper.ModuleDataContents.ID, ScreenModuleHelper.ModuleDataContents::new);
         dataFactoryMap.put(ItemStackScreenModule.ModuleDataStacks.ID, ItemStackScreenModule.ModuleDataStacks::new);
+        dataFactoryMap.put(StorageControlScreenModule.ModuleDataStacks.ID, StorageControlScreenModule.ModuleDataStacks::new);
     }
 
     @Override

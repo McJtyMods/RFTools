@@ -52,8 +52,9 @@ public interface IClientScreenModule<T extends IModuleData> {
      * Here you actually render your module. Warning! Always check if screenData is actually set! It is possible
      * you get null here which can mean that you don't need server data or the data isn't ready yet. Prepare for that.
      * Warnings! Always use the GLStateManager and restore state.
+     * @param renderInfo
      */
-    void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, T screenData, float factor);
+    void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, T screenData, ModuleRenderInfo renderInfo);
 
     /**
      * For interactive modules you can implement this to detect if your module was clickedd

@@ -20,6 +20,7 @@ item.Infused_diamond.name=Infused Diamond
 item.text_module.name=Text Module
 item.energy_module.name=Energy Module
 item.energyplus_module.name=Energy Plus Module
+item.storage_control_module.name=Storage Control Module
 item.inventory_module.name=Inventory Module
 item.inventoryplus_module.name=Inventory Plus Module
 item.clock_module.name=Clock Module

@@ -87,6 +87,16 @@ public interface IModuleGuiBuilder {
     IModuleGuiBuilder block(String tagname);
 
     /**
+     * Add a gui component for a ghost stack. This allows the users to select ghost
+     * stacks.
+     *
+     * @param tagname the tag that will be used to save the format in your NBT. The format
+     *                is saved as an integer ordinal value for the FormatStyle enum.
+     * @return
+     */
+    IModuleGuiBuilder ghostStack(String tagname);
+
+    /**
      * Perform a new line in your GUI.
      * @return
      */

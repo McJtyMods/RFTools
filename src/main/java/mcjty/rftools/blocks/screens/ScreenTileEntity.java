@@ -135,7 +135,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
             } else {
                 List<IScreenModule> modules = getScreenModules();
                 if (cm.module < modules.size()) {
-                    modules.get(cm.module).mouseClick(worldObj, cm.x, cm.y, false);
+                    modules.get(cm.module).mouseClick(worldObj, cm.x, cm.y, false, null);
                 }
             }
         }
@@ -180,7 +180,54 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
 //        computerModules.clear();
     }
 
+    public static class ModuleRaytraceResult {
+        private final int x;
+        private final int y;
+        private final int currenty;
+        private final int moduleIndex;
+
+        public ModuleRaytraceResult(int moduleIndex, int x, int y, int currenty) {
+            this.moduleIndex = moduleIndex;
+            this.x = x;
+            this.y = y;
+            this.currenty = currenty;
+        }
+
+        public int getModuleIndex() {
+            return moduleIndex;
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public int getY() {
+            return y;
+        }
+
+        public int getCurrenty() {
+            return currenty;
+        }
+    }
+
     public void hitScreenClient(double hitX, double hitY, double hitZ, EnumFacing side) {
+        ModuleRaytraceResult result = getHitModule(hitX, hitY, hitZ, side);
+        if (result == null) {
+            return;
+        }
+
+        List<IClientScreenModule> clientScreenModulesx = getClientScreenModules();
+        clientScreenModulesx.get(result.getModuleIndex()).mouseClick(worldObj, result.getX(), result.getY() - result.getCurrenty(), true);
+        clickedModules.add(new ActivatedModule(result.getModuleIndex(), 5, result.getX(), result.getY()));
+
+        RFToolsMessages.INSTANCE.sendToServer(new PacketServerCommand(getPos(), CMD_CLICK,
+                new Argument("x", result.getX()),
+                new Argument("y", result.getY() - result.getCurrenty()),
+                new Argument("module", result.getModuleIndex())));
+    }
+
+    public ModuleRaytraceResult getHitModule(double hitX, double hitY, double hitZ, EnumFacing side) {
+        ModuleRaytraceResult result;
         float factor = size+1.0f;
         float dx = 0;
         float dy = (float) ((-hitY + 1.0) / factor);
@@ -197,6 +244,8 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
             case EAST:
                 dx = (float) ((1.0 - hitZ) / factor);
                 break;
+            default:
+                return null;
         }
         int x = (int) (dx * 128);
         int y = (int) (dy * 128);
@@ -218,23 +267,17 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
             moduleIndex++;
         }
         if (moduleIndex >= clientScreenModules.size()) {
-            return;
+            return null;
         }
-
-        clientScreenModules.get(moduleIndex).mouseClick(worldObj, x, y - currenty, true);
-        clickedModules.add(new ActivatedModule(moduleIndex, 5, x, y));
-
-        RFToolsMessages.INSTANCE.sendToServer(new PacketServerCommand(getPos(), CMD_CLICK,
-                new Argument("x", x),
-                new Argument("y", y - currenty),
-                new Argument("module", moduleIndex)));
+        result = new ModuleRaytraceResult(moduleIndex, x, y, currenty);
+        return result;
     }
 
-    private void hitScreenServer(int x, int y, int module) {
+    private void hitScreenServer(EntityPlayer player, int x, int y, int module) {
         List<IScreenModule> screenModules = getScreenModules();
         IScreenModule screenModule = screenModules.get(module);
         if (screenModule != null) {
-            screenModule.mouseClick(worldObj, x, y, true);
+            screenModule.mouseClick(worldObj, x, y, true, player);
             clickedModules.add(new ActivatedModule(module, 5, x, y));
         }
     }
@@ -500,7 +543,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
             int x = args.get("x").getInteger();
             int y = args.get("y").getInteger();
             int module = args.get("module").getInteger();
-            hitScreenServer(x, y, module);
+            hitScreenServer(playerMP, x, y, module);
             return true;
         }
         return false;

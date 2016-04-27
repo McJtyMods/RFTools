@@ -7,6 +7,7 @@ import mcjty.rftools.api.screens.data.IModuleDataContents;
 import mcjty.rftools.varia.RFToolsTools;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.varia.EnergyTools;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -70,7 +71,7 @@ public class EnergyBarScreenModule implements IScreenModule<IModuleDataContents>
     }
 
     @Override
-    public void mouseClick(World world, int x, int y, boolean clicked) {
+    public void mouseClick(World world, int x, int y, boolean clicked, EntityPlayer player) {
 
     }
 }

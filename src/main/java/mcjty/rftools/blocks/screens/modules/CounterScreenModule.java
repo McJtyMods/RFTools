@@ -7,6 +7,7 @@ import mcjty.rftools.api.screens.data.IModuleDataInteger;
 import mcjty.rftools.varia.RFToolsTools;
 import mcjty.rftools.blocks.logic.CounterTileEntity;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -68,7 +69,7 @@ public class CounterScreenModule implements IScreenModule<IModuleDataInteger> {
     }
 
     @Override
-    public void mouseClick(World world, int x, int y, boolean clicked) {
+    public void mouseClick(World world, int x, int y, boolean clicked, EntityPlayer player) {
 
     }
 }
