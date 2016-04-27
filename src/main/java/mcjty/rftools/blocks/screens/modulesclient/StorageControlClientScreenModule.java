@@ -50,14 +50,14 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
                 for (int xx = 0 ; xx < 3 ; xx++) {
                     if (stacks[i] != null) {
                         int x = xx * 40;
-                        boolean hilighted = renderInfo.hitx >= x+8 && renderInfo.hitx <= x + 38 && renderInfo.hity >= y-3 && renderInfo.hity <= y + 33;
+                        boolean hilighted = renderInfo.hitx >= x+8 && renderInfo.hitx <= x + 38 && renderInfo.hity >= y-6 && renderInfo.hity <= y + 26;
                         if (hilighted) {
-                            mcjty.lib.gui.RenderHelper.drawBeveledBox(5 + xx * 30, 10 + yy * 30-4, 29 + xx * 30, 10 + yy * 30+20, 0xff333333, 0xff333333, 0xff333333);
+                            mcjty.lib.gui.RenderHelper.drawBeveledBox(5 + xx * 30, 10 + yy * 24-4, 29 + xx * 30, 10 + yy * 24+20, 0xff333333, 0xff333333, 0xff333333);
                         }
                     }
                     i++;
                 }
-                y += 40;
+                y += 35;
             }
             GlStateManager.popMatrix();
         }
@@ -83,11 +83,11 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
             for (int xx = 0 ; xx < 3 ; xx++) {
                 if (stacks[i] != null) {
                     int x = 7 + xx * 30;
-                    renderSlot(currenty, stacks[i], x);
+                    renderSlot(y, stacks[i], x);
                 }
                 i++;
             }
-            currenty += 30;
+            y += 24;
         }
 
         GlStateManager.popMatrix();
@@ -97,18 +97,23 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
         f3 = 0.0050F;
         GlStateManager.scale(f3 * factor, -f3 * factor, 0.0001f);
 
-        currenty = y + 30;
+        y = currenty + 30;
         i = 0;
 
         for (int yy = 0 ; yy < 3 ; yy++) {
             for (int xx = 0 ; xx < 3 ; xx++) {
                 if (stacks[i] != null) {
-                    renderSlotOverlay(fontRenderer, currenty, stacks[i], screenData.getAmount(i), 42 + xx * 64);
+                    renderSlotOverlay(fontRenderer, y, stacks[i], screenData.getAmount(i), 42 + xx * 64);
                 }
                 i++;
             }
-            currenty += 64;
+            y += 52;
         }
+
+        boolean insertStackActive = renderInfo.hitx >= 0 && renderInfo.hitx < 60 && renderInfo.hity > 80;
+        fontRenderer.drawString("Insert Stack", 20, y - 20, insertStackActive ? 0xffffff : 0x555555);
+        boolean insertAllActive = renderInfo.hitx >= 60 && renderInfo.hity > 80;
+        fontRenderer.drawString("Insert All", 120, y - 20, insertAllActive ? 0xffffff : 0x555555);
 
         GlStateManager.popMatrix();
 

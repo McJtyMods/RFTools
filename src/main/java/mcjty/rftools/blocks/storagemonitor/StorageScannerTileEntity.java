@@ -6,8 +6,10 @@ import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.CustomSidedInvWrapper;
+import mcjty.lib.varia.SoundTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,6 +18,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -51,22 +55,114 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                 }
 
                 ItemStack stack = inventoryHelper.getStackInSlot(StorageScannerContainer.SLOT_IN);
-                for (BlockPos blockPos : inventories) {
-                    if (!blockPos.equals(getPos()) && routable.contains(blockPos)) {
-                        TileEntity te = worldObj.getTileEntity(blockPos);
-                        if (te != null) {
-                            stack = InventoryHelper.insertItem(worldObj, blockPos, null, stack);
-                            if (stack == null) {
-                                break;
-                            }
-                        }
-                    }
-                }
+                stack = injectStack(stack);
                 inventoryHelper.setInventorySlotContents(64, StorageScannerContainer.SLOT_IN, stack);
 
                 consumeEnergy(StorageScannerConfiguration.rfPerInsert);
             }
         }
+    }
+
+    public ItemStack injectStack(ItemStack stack) {
+        for (BlockPos blockPos : inventories) {
+            if (!blockPos.equals(getPos()) && routable.contains(blockPos)) {
+                TileEntity te = worldObj.getTileEntity(blockPos);
+                if (te != null) {
+                    stack = InventoryHelper.insertItem(worldObj, blockPos, null, stack);
+                    if (stack == null) {
+                        break;
+                    }
+                }
+            }
+        }
+        return stack;
+    }
+
+    /**
+     * Give a stack matching the input stack to the player containing either a single
+     * item or else a full stack
+     * @param stack
+     * @param single
+     * @param player
+     */
+    public void giveToPlayer(ItemStack stack, boolean single, EntityPlayer player) {
+        if (stack == null) {
+            return;
+        }
+        if (getEnergyStored(EnumFacing.DOWN) < StorageScannerConfiguration.rfPerRequest) {
+            player.addChatComponentMessage(new TextComponentString(TextFormatting.RED + "Not enough power to request items!"));
+            return;
+        }
+        List<BlockPos> inventories = getInventories();
+        int cnt = stack.getMaxStackSize();
+        for (BlockPos c : inventories) {
+            TileEntity tileEntity = worldObj.getTileEntity(c);
+            if (tileEntity != null && tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
+                IItemHandler capability = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                for (int i = 0 ; i < capability.getSlots() ; i++) {
+                    ItemStack itemStack = capability.getStackInSlot(i);
+                    if (stack.isItemEqual(itemStack)) {
+                        if (single) {
+                            ItemStack requested = capability.extractItem(i, 1, false);
+                            if (giveToPlayer(requested, player)) {
+                                consumeEnergy(StorageScannerConfiguration.rfPerRequest);
+                                SoundTools.playSound(worldObj, SoundEvents.ENTITY_ITEM_PICKUP, getPos().getX(), getPos().getY(), getPos().getZ(), 1.0f, 1.0f);
+                            }
+                            return;
+                        } else {
+                            ItemStack requested = capability.extractItem(i, cnt, false);
+                            if (requested != null) {
+                                cnt -= requested.stackSize;
+                                giveToPlayer(requested, player);
+                                if (cnt <= 0) {
+                                    consumeEnergy(StorageScannerConfiguration.rfPerRequest);
+                                    SoundTools.playSound(worldObj, SoundEvents.ENTITY_ITEM_PICKUP, getPos().getX(), getPos().getY(), getPos().getZ(), 1.0f, 1.0f);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            } else if (tileEntity instanceof IInventory) {
+                IInventory inventory = (IInventory) tileEntity;
+                for (int i = 0 ; i < inventory.getSizeInventory() ; i++) {
+                    ItemStack itemStack = inventory.getStackInSlot(i);
+                    if (stack.isItemEqual(itemStack)) {
+                        if (single) {
+                            ItemStack requested = inventory.decrStackSize(i, 1);
+                            if (giveToPlayer(requested, player)) {
+                                consumeEnergy(StorageScannerConfiguration.rfPerRequest);
+                                SoundTools.playSound(worldObj, SoundEvents.ENTITY_ITEM_PICKUP, getPos().getX(), getPos().getY(), getPos().getZ(), 1.0f, 1.0f);
+                            }
+                            return;
+                        } else {
+                            ItemStack requested = inventory.decrStackSize(i, cnt);
+                            if (requested != null) {
+                                cnt -= requested.stackSize;
+                                giveToPlayer(requested, player);
+                                if (cnt <= 0) {
+                                    consumeEnergy(StorageScannerConfiguration.rfPerRequest);
+                                    SoundTools.playSound(worldObj, SoundEvents.ENTITY_ITEM_PICKUP, getPos().getX(), getPos().getY(), getPos().getZ(), 1.0f, 1.0f);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+    }
+
+    private boolean giveToPlayer(ItemStack stack, EntityPlayer player) {
+        if (stack == null) {
+            return false;
+        }
+        if (!player.inventory.addItemStackToInventory(stack)) {
+            player.entityDropItem(stack, 1.05f);
+        }
+        return true;
     }
 
     public int countStack(ItemStack stack) {
@@ -82,7 +178,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                 IItemHandler capability = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
                 for (int i = 0 ; i < capability.getSlots() ; i++) {
                     ItemStack itemStack = capability.getStackInSlot(i);
-                    if (ItemStack.areItemStacksEqual(stack, itemStack)) {
+                    if (stack.isItemEqual(itemStack)) {
                         cnt += itemStack.stackSize;
                     }
                 }
@@ -90,7 +186,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                 IInventory inventory = (IInventory) tileEntity;
                 for (int i = 0 ; i < inventory.getSizeInventory() ; i++) {
                     ItemStack itemStack = inventory.getStackInSlot(i);
-                    if (ItemStack.areItemStacksEqual(stack, itemStack)) {
+                    if (stack.isItemEqual(itemStack)) {
                         cnt += itemStack.stackSize;
                     }
                 }

@@ -13,6 +13,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
@@ -61,6 +62,18 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
 
     @Override
     public ModuleDataStacks getData(IScreenDataHelper helper, World worldObj, long millis) {
+        StorageScannerTileEntity scannerTileEntity = getStorageScanner();
+        if (scannerTileEntity == null) {
+            return null;
+        }
+        int[] amounts = new int[stacks.length];
+        for (int i = 0 ; i < stacks.length ; i++) {
+            amounts[i] = scannerTileEntity.countStack(stacks[i]);
+        }
+        return new ModuleDataStacks(amounts);
+    }
+
+    private StorageScannerTileEntity getStorageScanner() {
         World world = DimensionManager.getWorld(dim);
         if (world == null) {
             return null;
@@ -79,12 +92,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
             return null;
         }
 
-        StorageScannerTileEntity scannerTileEntity = (StorageScannerTileEntity) te;
-        int[] amounts = new int[stacks.length];
-        for (int i = 0 ; i < stacks.length ; i++) {
-            amounts[i] = scannerTileEntity.countStack(stacks[i]);
-        }
-        return new ModuleDataStacks(amounts);
+        return (StorageScannerTileEntity) te;
     }
 
     @Override
@@ -125,9 +133,54 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
         return ScreenConfiguration.STORAGE_CONTROL_RFPERTICK;
     }
 
+
+    private boolean isShown(ItemStack stack) {
+        if (stack == null) {
+            return false;
+        }
+        for (ItemStack s : stacks) {
+            if (stack.isItemEqual(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void mouseClick(World world, int hitx, int hity, boolean clicked, EntityPlayer player) {
+        StorageScannerTileEntity scannerTileEntity = getStorageScanner();
+        if (scannerTileEntity == null || (!clicked) || player == null) {
+            return;
+        }
         if (hitx >= 0) {
+
+            System.out.println("hitx = " + hitx);
+            System.out.println("hity = " + hity);
+            boolean insertStackActive = hitx >= 0 && hitx < 60 && hity > 96;
+
+            if (insertStackActive) {
+                System.out.println("StorageControlScreenModule.mouseClick: 1");
+                if (isShown(player.getHeldItem(EnumHand.MAIN_HAND))) {
+                    ItemStack stack = scannerTileEntity.injectStack(player.getHeldItem(EnumHand.MAIN_HAND));
+                    player.setHeldItem(EnumHand.MAIN_HAND, stack);
+                }
+                player.openContainer.detectAndSendChanges();
+                return;
+            }
+
+            boolean insertAllActive = hitx >= 60 && hity > 96;
+            if (insertAllActive) {
+                System.out.println("StorageControlScreenModule.mouseClick: 2");
+                for (int i = 0 ; i < player.inventory.getSizeInventory() ; i++) {
+                    if (isShown(player.inventory.getStackInSlot(i))) {
+                        ItemStack stack = scannerTileEntity.injectStack(player.getHeldItem(EnumHand.MAIN_HAND));
+                        player.inventory.setInventorySlotContents(i, stack);
+                    }
+                }
+                player.openContainer.detectAndSendChanges();
+                return;
+            }
+
             int i = 0;
             for (int yy = 0 ; yy < 3 ; yy++) {
                 int y = yy * 40;
@@ -136,7 +189,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
                         int x = xx * 40;
                         boolean hilighted = hitx >= x+8 && hitx <= x + 38 && hity >= y-3 && hity <= y + 33;
                         if (hilighted) {
-                            System.out.println("stacks[i] = " + stacks[i]);
+                            scannerTileEntity.giveToPlayer(stacks[i], player.isSneaking(), player);
                             return;
                         }
                     }

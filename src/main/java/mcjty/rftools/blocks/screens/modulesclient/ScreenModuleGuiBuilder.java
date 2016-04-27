@@ -212,12 +212,15 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
             @Override
             public void select(Widget widget) {
                 ItemStack holding = Minecraft.getMinecraft().thePlayer.inventory.getItemStack();
-                blockRender.setRenderItem(holding);
                 if (holding == null) {
                     currentData.removeTag(tagname);
+                    blockRender.setRenderItem(null);
                 } else {
+                    ItemStack copy = holding.copy();
+                    copy.stackSize = 1;
+                    blockRender.setRenderItem(copy);
                     NBTTagCompound tc = new NBTTagCompound();
-                    holding.writeToNBT(tc);
+                    copy.writeToNBT(tc);
                     currentData.setTag(tagname, tc);
                 }
                 moduleGuiChanged.updateData();
