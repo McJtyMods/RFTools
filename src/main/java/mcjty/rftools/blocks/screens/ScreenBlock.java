@@ -42,7 +42,7 @@ import java.util.List;
 public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenContainer> {
 
     public ScreenBlock() {
-        super(Material.IRON, ScreenTileEntity.class, ScreenContainer.class, "screen", true);
+        super(Material.IRON, ScreenTileEntity.class, ScreenContainer.class, ScreenItemBlock.class, "screen", true);
     }
 
     @SideOnly(Side.CLIENT)

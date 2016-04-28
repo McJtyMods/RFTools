@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.screens;
 
+import mcjty.lib.container.GenericBlock;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IClientScreenModule;
@@ -36,7 +37,6 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
 
     @Override
     public void renderTileEntityAt(ScreenTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
-//        GL11.glPushAttrib(GL11.GL_CURRENT_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_ENABLE_BIT | GL11.GL_LIGHTING_BIT | GL11.GL_TEXTURE_BIT);
         GlStateManager.pushAttrib();
         GlStateManager.pushMatrix();
         float f3;
@@ -84,7 +84,6 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
 
         GlStateManager.popMatrix();
         GlStateManager.popAttrib();
-//        GL11.glPopAttrib();
     }
 
     private Map<Integer, IModuleData> updateScreenData(ScreenTileEntity screenTileEntity) {
@@ -116,8 +115,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
         IClientScreenModule hitModule = null;
         ScreenTileEntity.ModuleRaytraceResult hit = null;
-        // @todo still a bug when not hitting the front
-        if (mouseOver != null && mouseOver.sideHit != null) {
+        if (mouseOver != null && pos.equals(mouseOver.getBlockPos()) && mouseOver.sideHit == getWorld().getBlockState(pos).getValue(GenericBlock.FACING)) {
             double xx = mouseOver.hitVec.xCoord - pos.getX();
             double yy = mouseOver.hitVec.yCoord - pos.getY();
             double zz = mouseOver.hitVec.zCoord - pos.getZ();

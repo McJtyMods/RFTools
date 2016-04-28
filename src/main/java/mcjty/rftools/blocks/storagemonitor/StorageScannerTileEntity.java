@@ -55,7 +55,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                 }
 
                 ItemStack stack = inventoryHelper.getStackInSlot(StorageScannerContainer.SLOT_IN);
-                stack = injectStack(stack);
+                stack = injectStackInternal(stack);
                 inventoryHelper.setInventorySlotContents(64, StorageScannerContainer.SLOT_IN, stack);
 
                 consumeEnergy(StorageScannerConfiguration.rfPerInsert);
@@ -63,7 +63,20 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         }
     }
 
-    public ItemStack injectStack(ItemStack stack) {
+
+    public ItemStack injectStack(ItemStack stack, EntityPlayer player) {
+        if (getEnergyStored(EnumFacing.DOWN) < StorageScannerConfiguration.rfPerInsert) {
+            player.addChatComponentMessage(new TextComponentString(TextFormatting.RED + "Not enough power to insert items!"));
+            return stack;
+        }
+        stack = injectStackInternal(stack);
+        if (stack == null) {
+            consumeEnergy(StorageScannerConfiguration.rfPerInsert);
+        }
+        return stack;
+    }
+
+    private ItemStack injectStackInternal(ItemStack stack) {
         for (BlockPos blockPos : inventories) {
             if (!blockPos.equals(getPos()) && routable.contains(blockPos)) {
                 TileEntity te = worldObj.getTileEntity(blockPos);

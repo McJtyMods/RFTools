@@ -50,7 +50,7 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
                 for (int xx = 0 ; xx < 3 ; xx++) {
                     if (stacks[i] != null) {
                         int x = xx * 40;
-                        boolean hilighted = renderInfo.hitx >= x+8 && renderInfo.hitx <= x + 38 && renderInfo.hity >= y-6 && renderInfo.hity <= y + 26;
+                        boolean hilighted = renderInfo.hitx >= x+8 && renderInfo.hitx <= x + 38 && renderInfo.hity >= y-7 && renderInfo.hity <= y + 22;
                         if (hilighted) {
                             mcjty.lib.gui.RenderHelper.drawBeveledBox(5 + xx * 30, 10 + yy * 24-4, 29 + xx * 30, 10 + yy * 24+20, 0xff333333, 0xff333333, 0xff333333);
                         }
@@ -110,14 +110,15 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
             y += 52;
         }
 
-        boolean insertStackActive = renderInfo.hitx >= 0 && renderInfo.hitx < 60 && renderInfo.hity > 80;
+        GlStateManager.disableLighting();
+
+        boolean insertStackActive = renderInfo.hitx >= 0 && renderInfo.hitx < 60 && renderInfo.hity > 98;
         fontRenderer.drawString("Insert Stack", 20, y - 20, insertStackActive ? 0xffffff : 0x555555);
-        boolean insertAllActive = renderInfo.hitx >= 60 && renderInfo.hity > 80;
+        boolean insertAllActive = renderInfo.hitx >= 60 && renderInfo.hity > 97;
         fontRenderer.drawString("Insert All", 120, y - 20, insertAllActive ? 0xffffff : 0x555555);
 
         GlStateManager.popMatrix();
 
-        GlStateManager.disableLighting();
         GlStateManager.disableDepth();
 
         GlStateManager.depthMask(false);

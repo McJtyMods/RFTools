@@ -154,26 +154,22 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
         }
         if (hitx >= 0) {
 
-            System.out.println("hitx = " + hitx);
-            System.out.println("hity = " + hity);
-            boolean insertStackActive = hitx >= 0 && hitx < 60 && hity > 96;
+            boolean insertStackActive = hitx >= 0 && hitx < 60 && hity > 98;
 
             if (insertStackActive) {
-                System.out.println("StorageControlScreenModule.mouseClick: 1");
                 if (isShown(player.getHeldItem(EnumHand.MAIN_HAND))) {
-                    ItemStack stack = scannerTileEntity.injectStack(player.getHeldItem(EnumHand.MAIN_HAND));
+                    ItemStack stack = scannerTileEntity.injectStack(player.getHeldItem(EnumHand.MAIN_HAND), player);
                     player.setHeldItem(EnumHand.MAIN_HAND, stack);
                 }
                 player.openContainer.detectAndSendChanges();
                 return;
             }
 
-            boolean insertAllActive = hitx >= 60 && hity > 96;
+            boolean insertAllActive = hitx >= 60 && hity > 98;
             if (insertAllActive) {
-                System.out.println("StorageControlScreenModule.mouseClick: 2");
                 for (int i = 0 ; i < player.inventory.getSizeInventory() ; i++) {
                     if (isShown(player.inventory.getStackInSlot(i))) {
-                        ItemStack stack = scannerTileEntity.injectStack(player.inventory.getStackInSlot(i));
+                        ItemStack stack = scannerTileEntity.injectStack(player.inventory.getStackInSlot(i), player);
                         player.inventory.setInventorySlotContents(i, stack);
                     }
                 }
@@ -183,11 +179,11 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
 
             int i = 0;
             for (int yy = 0 ; yy < 3 ; yy++) {
-                int y = yy * 40;
+                int y = yy * 35;
                 for (int xx = 0 ; xx < 3 ; xx++) {
                     if (stacks[i] != null) {
                         int x = xx * 40;
-                        boolean hilighted = hitx >= x+8 && hitx <= x + 38 && hity >= y-3 && hity <= y + 33;
+                        boolean hilighted = hitx >= x+8 && hitx <= x + 38 && hity >= y-7 && hity <= y + 22;
                         if (hilighted) {
                             scannerTileEntity.giveToPlayer(stacks[i], player.isSneaking(), player);
                             return;
