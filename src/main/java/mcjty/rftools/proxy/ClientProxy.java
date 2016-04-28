@@ -5,8 +5,12 @@ import mcjty.rftools.RenderGameOverlayEventHandler;
 import mcjty.rftools.RenderWorldLastEventHandler;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.elevator.ElevatorSounds;
+import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.items.ModItems;
+import net.minecraft.block.Block;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.model.obj.OBJLoader;
@@ -48,5 +52,14 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent
     public void renderWorldLastEvent(RenderWorldLastEvent evt) {
         RenderWorldLastEventHandler.tick(evt);
+    }
+
+    @SubscribeEvent
+    public void onRenderBlockOutline(DrawBlockHighlightEvent evt) {
+        BlockPos pos = evt.getTarget().getBlockPos();
+        Block block = evt.getPlayer().getEntityWorld().getBlockState(pos).getBlock();
+        if (block == ScreenSetup.screenBlock || block == ScreenSetup.screenHitBlock) {
+            evt.setCanceled(true);
+        }
     }
 }
