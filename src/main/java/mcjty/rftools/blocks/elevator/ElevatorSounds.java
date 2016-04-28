@@ -16,14 +16,20 @@ public class ElevatorSounds {
 
     private static final Map<GlobalCoordinate, MovingSound> sounds = new HashMap<>();
 
+    public static SoundEvent startSound;
+    public static SoundEvent loopSound;
+    public static SoundEvent stopSound;
+
     public static void init() {
-        registerSound(new ResourceLocation(RFTools.MODID, "elevator_start"));
-        registerSound(new ResourceLocation(RFTools.MODID, "elevator_loop"));
-        registerSound(new ResourceLocation(RFTools.MODID, "elevator_stop"));
+        startSound = registerSound(new ResourceLocation(RFTools.MODID, "elevator_start"));
+        loopSound = registerSound(new ResourceLocation(RFTools.MODID, "elevator_loop"));
+        stopSound = registerSound(new ResourceLocation(RFTools.MODID, "elevator_stop"));
     }
 
-    private static void registerSound(ResourceLocation sound) {
-        SoundEvent.REGISTRY.register(-1, sound, new SoundEvent(sound));
+    private static SoundEvent registerSound(ResourceLocation sound) {
+        SoundEvent event = new SoundEvent(sound).setRegistryName(sound);
+        SoundEvent.REGISTRY.register(-1, sound, event);
+        return event;
     }
 
     public static void moveSound(World world, BlockPos pos, float y) {

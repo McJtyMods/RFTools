@@ -1,11 +1,8 @@
 package mcjty.rftools.blocks.elevator;
 
-import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.client.audio.MovingSound;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -17,7 +14,7 @@ public class ElevatorStartupSound extends MovingSound {
     private final BlockPos pos;
 
     public ElevatorStartupSound(World world, int x, int y, int z) {
-        super(SoundEvent.REGISTRY.getObject(new ResourceLocation(RFTools.MODID, "elevator_start")), SoundCategory.BLOCKS);
+        super(ElevatorSounds.startSound, SoundCategory.BLOCKS);
         this.world = world;
         this.pos = new BlockPos(x, y, z);
 
