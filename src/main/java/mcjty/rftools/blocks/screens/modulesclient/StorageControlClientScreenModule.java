@@ -114,9 +114,9 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
         GlStateManager.disableLighting();
 
         boolean insertStackActive = renderInfo.hitx >= 0 && renderInfo.hitx < 60 && renderInfo.hity > 98 && renderInfo.hity <= 120;
-        fontRenderer.drawString("Insert Stack", 20, y - 20, insertStackActive ? 0xffffff : 0x555555);
+        fontRenderer.drawString("Insert Stack", 20, y - 20, insertStackActive ? 0xffffff : 0x666666);
         boolean insertAllActive = renderInfo.hitx >= 60 && renderInfo.hitx <= 120 && renderInfo.hity > 98 && renderInfo.hity <= 120;
-        fontRenderer.drawString("Insert All", 120, y - 20, insertAllActive ? 0xffffff : 0x555555);
+        fontRenderer.drawString("Insert All", 120, y - 20, insertAllActive ? 0xffffff : 0x666666);
 
         GlStateManager.popMatrix();
 

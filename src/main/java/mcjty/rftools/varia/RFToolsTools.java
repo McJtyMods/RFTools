@@ -18,6 +18,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -40,7 +41,45 @@ public class RFToolsTools {
         }
     }
 
+    /**
+     * Handle a slot from an inventory and consume it
+     * @param tileEntity
+     * @param slot
+     * @param consumer
+     */
+    public static void handleSlot(TileEntity tileEntity, int slot, Consumer<ItemStack> consumer) {
+        if (tileEntity != null && tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
+            IItemHandler capability = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+            ItemStack item = capability.getStackInSlot(slot);
+            if (item != null) {
+                ItemStack stack = capability.extractItem(slot, item.stackSize, false);
+                consumer.accept(stack);
+            }
+        } else if (tileEntity instanceof IInventory) {
+            IInventory inventory = (IInventory) tileEntity;
+            ItemStack item = inventory.getStackInSlot(slot);
+            if (item != null) {
+                ItemStack stack = inventory.decrStackSize(slot, item.stackSize);
+                consumer.accept(stack);
+            }
+        }
+    }
 
+    public static boolean isInventory(TileEntity te) {
+        if (te != null && te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
+            return true;
+        } else if (te instanceof IInventory) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Return a stream of items in an inventory matching the predicate
+     * @param tileEntity
+     * @param predicate
+     * @return
+     */
     public static Stream<ItemStack> getItems(TileEntity tileEntity, Predicate<ItemStack> predicate) {
         Stream.Builder<ItemStack> builder = Stream.builder();
 

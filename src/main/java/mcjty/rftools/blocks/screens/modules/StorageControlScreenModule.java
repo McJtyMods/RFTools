@@ -150,7 +150,6 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
 
     @Override
     public void mouseClick(World world, int hitx, int hity, boolean clicked, EntityPlayer player) {
-        System.out.println("hitx = " + hitx + "," + hity + ", clicked=" + clicked);
         StorageScannerTileEntity scannerTileEntity = getStorageScanner();
         if (scannerTileEntity == null || (!clicked) || player == null) {
             return;
@@ -158,7 +157,9 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
         if (hitx >= 0) {
             boolean insertStackActive = hitx >= 0 && hitx < 60 && hity > 98;
             if (insertStackActive) {
+                System.out.println("StorageControlScreenModule.mouseClick:1");
                 if (isShown(player.getHeldItem(EnumHand.MAIN_HAND))) {
+                    System.out.println("StorageControlScreenModule.mouseClick:2");
                     ItemStack stack = scannerTileEntity.injectStack(player.getHeldItem(EnumHand.MAIN_HAND), player);
                     player.setHeldItem(EnumHand.MAIN_HAND, stack);
                 }
