@@ -10,6 +10,7 @@ import mcjty.rftools.items.ModItems;
 import net.minecraft.block.Block;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -56,10 +57,16 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public void onRenderBlockOutline(DrawBlockHighlightEvent evt) {
-        BlockPos pos = evt.getTarget().getBlockPos();
-        Block block = evt.getPlayer().getEntityWorld().getBlockState(pos).getBlock();
-        if (block == ScreenSetup.screenBlock || block == ScreenSetup.screenHitBlock) {
-            evt.setCanceled(true);
+        RayTraceResult target = evt.getTarget();
+        if (target != null && target.typeOfHit == RayTraceResult.Type.BLOCK) {
+            BlockPos pos = target.getBlockPos();
+            if (pos == null || evt.getPlayer() == null) {
+                return;
+            }
+            Block block = evt.getPlayer().getEntityWorld().getBlockState(pos).getBlock();
+            if (block == ScreenSetup.screenBlock || block == ScreenSetup.screenHitBlock) {
+                evt.setCanceled(true);
+            }
         }
     }
 }
