@@ -23,6 +23,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
 
     protected int dim = 0;
     protected BlockPos coordinate = BlockPosTools.INVALID;
+    private boolean starred = false;
 
 
     public static class ModuleDataStacks implements IModuleData {
@@ -68,7 +69,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
         }
         int[] amounts = new int[stacks.length];
         for (int i = 0 ; i < stacks.length ; i++) {
-            amounts[i] = scannerTileEntity.countStack(stacks[i]);
+            amounts[i] = scannerTileEntity.countStack(stacks[i], starred);
         }
         return new ModuleDataStacks(amounts);
     }
@@ -109,6 +110,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
 
     protected void setupCoordinateFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
         coordinate = BlockPosTools.INVALID;
+        starred = tagCompound.getBoolean("starred");
         if (tagCompound.hasKey("monitorx")) {
             if (tagCompound.hasKey("monitordim")) {
                 this.dim = tagCompound.getInteger("monitordim");
@@ -148,14 +150,13 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
 
     @Override
     public void mouseClick(World world, int hitx, int hity, boolean clicked, EntityPlayer player) {
+        System.out.println("hitx = " + hitx + "," + hity + ", clicked=" + clicked);
         StorageScannerTileEntity scannerTileEntity = getStorageScanner();
         if (scannerTileEntity == null || (!clicked) || player == null) {
             return;
         }
         if (hitx >= 0) {
-
             boolean insertStackActive = hitx >= 0 && hitx < 60 && hity > 98;
-
             if (insertStackActive) {
                 if (isShown(player.getHeldItem(EnumHand.MAIN_HAND))) {
                     ItemStack stack = scannerTileEntity.injectStack(player.getHeldItem(EnumHand.MAIN_HAND), player);
@@ -179,11 +180,12 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
 
             int i = 0;
             for (int yy = 0 ; yy < 3 ; yy++) {
-                int y = yy * 35;
+                int y = 7 + yy * 35;
                 for (int xx = 0 ; xx < 3 ; xx++) {
                     if (stacks[i] != null) {
                         int x = xx * 40;
-                        boolean hilighted = hitx >= x+8 && hitx <= x + 38 && hity >= y-7 && hity <= y + 22;
+
+                        boolean hilighted = hitx >= x +8 && hitx <= x + 38 && hity >= y-7 && hity <= y + 22;
                         if (hilighted) {
                             scannerTileEntity.giveToPlayer(stacks[i], player.isSneaking(), player);
                             return;

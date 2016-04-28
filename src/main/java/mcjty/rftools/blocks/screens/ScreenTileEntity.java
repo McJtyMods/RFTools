@@ -210,20 +210,34 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         }
     }
 
+    private boolean isActivated(int index) {
+        for (ActivatedModule module : clickedModules) {
+            if (module.module == index) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void hitScreenClient(double hitX, double hitY, double hitZ, EnumFacing side) {
         ModuleRaytraceResult result = getHitModule(hitX, hitY, hitZ, side);
         if (result == null) {
             return;
         }
 
-        List<IClientScreenModule> clientScreenModulesx = getClientScreenModules();
-        clientScreenModulesx.get(result.getModuleIndex()).mouseClick(worldObj, result.getX(), result.getY() - result.getCurrenty(), true);
-        clickedModules.add(new ActivatedModule(result.getModuleIndex(), 5, result.getX(), result.getY()));
+        List<IClientScreenModule> modules = getClientScreenModules();
+        int module = result.getModuleIndex();
+        if (isActivated(module)) {
+            // We are getting a hit twice. Module is already activated. Do nothing
+            return;
+        }
+        modules.get(module).mouseClick(worldObj, result.getX(), result.getY() - result.getCurrenty(), true);
+        clickedModules.add(new ActivatedModule(module, 5, result.getX(), result.getY()));
 
         RFToolsMessages.INSTANCE.sendToServer(new PacketServerCommand(getPos(), CMD_CLICK,
                 new Argument("x", result.getX()),
                 new Argument("y", result.getY() - result.getCurrenty()),
-                new Argument("module", result.getModuleIndex())));
+                new Argument("module", module)));
     }
 
     public ModuleRaytraceResult getHitModule(double hitX, double hitY, double hitZ, EnumFacing side) {

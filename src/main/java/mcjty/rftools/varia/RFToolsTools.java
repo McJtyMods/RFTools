@@ -1,27 +1,25 @@
 package mcjty.rftools.varia;
 
-import mcjty.rftools.api.screens.IModuleProvider;
-import mcjty.rftools.blocks.screens.ScreenContainer;
-import mcjty.rftools.blocks.screens.ScreenTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class RFToolsTools {
 
@@ -42,6 +40,29 @@ public class RFToolsTools {
         }
     }
 
+
+    public static Stream<ItemStack> getItems(TileEntity tileEntity, Predicate<ItemStack> predicate) {
+        Stream.Builder<ItemStack> builder = Stream.builder();
+
+        if (tileEntity != null && tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
+            IItemHandler capability = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+            for (int i = 0 ; i < capability.getSlots() ; i++) {
+                ItemStack itemStack = capability.getStackInSlot(i);
+                if (itemStack != null && predicate.test(itemStack)) {
+                    builder.add(itemStack);
+                }
+            }
+        } else if (tileEntity instanceof IInventory) {
+            IInventory inventory = (IInventory) tileEntity;
+            for (int i = 0 ; i < inventory.getSizeInventory() ; i++) {
+                ItemStack itemStack = inventory.getStackInSlot(i);
+                if (itemStack != null && predicate.test(itemStack)) {
+                    builder.add(itemStack);
+                }
+            }
+        }
+        return builder.build();
+    }
 
     /**
      * Inject a module that the player is holding into the appropriate slots

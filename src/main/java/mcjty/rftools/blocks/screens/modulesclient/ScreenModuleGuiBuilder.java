@@ -206,7 +206,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
             stack = ItemStack.loadItemStackFromNBT(currentData.getCompoundTag(tagname));
         }
 
-        BlockRender blockRender = new BlockRender(mc, gui).setRenderItem(stack).setDesiredWidth(20).setFilledBackground(0xff555555);
+        BlockRender blockRender = new BlockRender(mc, gui).setRenderItem(stack).setDesiredWidth(18).setDesiredHeight(18).setFilledRectThickness(1).setFilledBackground(0xff555555);
         row.add(blockRender);
         blockRender.addSelectionEvent(new BlockRenderEvent() {
             @Override

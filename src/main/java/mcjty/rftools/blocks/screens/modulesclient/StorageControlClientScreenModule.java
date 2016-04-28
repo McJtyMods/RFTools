@@ -52,7 +52,8 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
                         int x = xx * 40;
                         boolean hilighted = renderInfo.hitx >= x+8 && renderInfo.hitx <= x + 38 && renderInfo.hity >= y-7 && renderInfo.hity <= y + 22;
                         if (hilighted) {
-                            mcjty.lib.gui.RenderHelper.drawBeveledBox(5 + xx * 30, 10 + yy * 24-4, 29 + xx * 30, 10 + yy * 24+20, 0xff333333, 0xff333333, 0xff333333);
+//                            mcjty.lib.gui.RenderHelper.drawBeveledBox(5 + xx * 30, 10 + yy * 24 - 4, 29 + xx * 30, 10 + yy * 24 + 20, 0xffffffff, 0xffffffff, 0xff333333);
+                            mcjty.lib.gui.RenderHelper.drawFlatButtonBox((int) (5 + xx * 30.5f), 10 + yy * 24 - 4, (int) (29 + xx * 30.5f), 10 + yy * 24 + 20, 0xffffffff, 0xff333333, 0xffffffff);
                         }
                     }
                     i++;
@@ -112,9 +113,9 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
 
         GlStateManager.disableLighting();
 
-        boolean insertStackActive = renderInfo.hitx >= 0 && renderInfo.hitx < 60 && renderInfo.hity > 98;
+        boolean insertStackActive = renderInfo.hitx >= 0 && renderInfo.hitx < 60 && renderInfo.hity > 98 && renderInfo.hity <= 120;
         fontRenderer.drawString("Insert Stack", 20, y - 20, insertStackActive ? 0xffffff : 0x555555);
-        boolean insertAllActive = renderInfo.hitx >= 60 && renderInfo.hity > 97;
+        boolean insertAllActive = renderInfo.hitx >= 60 && renderInfo.hitx <= 120 && renderInfo.hity > 98 && renderInfo.hity <= 120;
         fontRenderer.drawString("Insert All", 120, y - 20, insertAllActive ? 0xffffff : 0x555555);
 
         GlStateManager.popMatrix();
@@ -153,18 +154,15 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
                 s1 = String.valueOf(size / 1000000000) + "g";
             }
             GlStateManager.disableLighting();
-//                GL11.glDisable(GL11.GL_DEPTH_TEST);
             GlStateManager.disableBlend();
             fontRenderer.drawString(s1, x + 19 - 2 - fontRenderer.getStringWidth(s1), y + 6 + 3, 16777215);
             GlStateManager.enableLighting();
-//                GL11.glEnable(GL11.GL_DEPTH_TEST);
 
             if (itemStack.getItem().showDurabilityBar(itemStack)) {
                 double health = itemStack.getItem().getDurabilityForDisplay(itemStack);
                 int j1 = (int) Math.round(13.0D - health * 13.0D);
                 int k = (int) Math.round(255.0D - health * 255.0D);
                 GlStateManager.disableLighting();
-//                GL11.glDisable(GL11.GL_DEPTH_TEST);
                 GlStateManager.disableTexture2D();
                 GlStateManager.disableAlpha();
                 GlStateManager.disableBlend();
@@ -174,11 +172,9 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
                 renderQuad(tessellator, x + 2, y + 13, 13, 2, 0, 0.0D);
                 renderQuad(tessellator, x + 2, y + 13, 12, 1, i1, 0.02D);
                 renderQuad(tessellator, x + 2, y + 13, j1, 1, l, 0.04D);
-                //GL11.glEnable(GL11.GL_BLEND); // Forge: Disable Bled because it screws with a lot of things down the line.
                 GlStateManager.enableAlpha();
                 GlStateManager.enableTexture2D();
                 GlStateManager.enableLighting();
-//                GL11.glEnable(GL11.GL_DEPTH_TEST);
                 GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             }
         }
@@ -202,6 +198,7 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
                 .ghostStack("stack0").ghostStack("stack1").ghostStack("stack2").nl()
                 .ghostStack("stack3").ghostStack("stack4").ghostStack("stack5").nl()
                 .ghostStack("stack6").ghostStack("stack7").ghostStack("stack8").nl()
+                .toggle("starred", "Starred", "If enabled only count items", "in 'starred' inventories", "(mark inventories in storage scanner)")
                 .block("monitor").nl();
     }
 

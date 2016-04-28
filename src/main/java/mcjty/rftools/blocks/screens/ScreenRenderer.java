@@ -115,7 +115,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
         IClientScreenModule hitModule = null;
         ScreenTileEntity.ModuleRaytraceResult hit = null;
-        if (mouseOver != null && pos.equals(mouseOver.getBlockPos()) && mouseOver.sideHit == getWorld().getBlockState(pos).getValue(GenericBlock.FACING)) {
+        if (mouseOver != null && /*pos.equals(mouseOver.getBlockPos()) && */mouseOver.sideHit == getWorld().getBlockState(pos).getValue(GenericBlock.FACING)) {
             double xx = mouseOver.hitVec.xCoord - pos.getX();
             double yy = mouseOver.hitVec.yCoord - pos.getY();
             double zz = mouseOver.hitVec.zCoord - pos.getZ();

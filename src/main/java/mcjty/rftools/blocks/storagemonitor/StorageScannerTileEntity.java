@@ -7,6 +7,7 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.CustomSidedInvWrapper;
 import mcjty.lib.varia.SoundTools;
+import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
@@ -69,11 +70,27 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             player.addChatComponentMessage(new TextComponentString(TextFormatting.RED + "Not enough power to insert items!"));
             return stack;
         }
+        if (!checkForRoutableInventories()) {
+            player.addChatComponentMessage(new TextComponentString(TextFormatting.RED + "There are no routable inventories!"));
+            return stack;
+        }
         stack = injectStackInternal(stack);
         if (stack == null) {
             consumeEnergy(StorageScannerConfiguration.rfPerInsert);
         }
         return stack;
+    }
+
+    private boolean checkForRoutableInventories() {
+        for (BlockPos blockPos : inventories) {
+            if (!blockPos.equals(getPos()) && routable.contains(blockPos)) {
+                TileEntity te = worldObj.getTileEntity(blockPos);
+                if (te != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private ItemStack injectStackInternal(ItemStack stack) {
@@ -178,34 +195,22 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         return true;
     }
 
-    public int countStack(ItemStack stack) {
+    public int countStack(ItemStack stack, boolean starred) {
         if (stack == null) {
             return 0;
         }
         // @todo optimize for modular storage
-        int cnt = 0;
+        final int[] cnt = {0};
         List<BlockPos> inventories = getInventories();
         for (BlockPos c : inventories) {
-            TileEntity tileEntity = worldObj.getTileEntity(c);
-            if (tileEntity != null && tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
-                IItemHandler capability = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-                for (int i = 0 ; i < capability.getSlots() ; i++) {
-                    ItemStack itemStack = capability.getStackInSlot(i);
-                    if (stack.isItemEqual(itemStack)) {
-                        cnt += itemStack.stackSize;
-                    }
-                }
-            } else if (tileEntity instanceof IInventory) {
-                IInventory inventory = (IInventory) tileEntity;
-                for (int i = 0 ; i < inventory.getSizeInventory() ; i++) {
-                    ItemStack itemStack = inventory.getStackInSlot(i);
-                    if (stack.isItemEqual(itemStack)) {
-                        cnt += itemStack.stackSize;
-                    }
-                }
+            if ((!starred) || routable.contains(c)) {
+                TileEntity tileEntity = worldObj.getTileEntity(c);
+                RFToolsTools.getItems(tileEntity, s -> s.isItemEqual(stack)).forEach(s -> {
+                    cnt[0] += s.stackSize;
+                });
             }
         }
-        return cnt;
+        return cnt[0];
     }
 
     public Set<BlockPos> performSearch(String search) {
