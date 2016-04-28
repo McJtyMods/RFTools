@@ -6,6 +6,7 @@ import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.CustomSidedInvWrapper;
 import mcjty.rftools.ClientInfo;
+import mcjty.rftools.api.general.IInventoryTracker;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.items.storage.StorageModuleItem;
@@ -29,7 +30,7 @@ import net.minecraftforge.items.IItemHandler;
 
 import java.util.Map;
 
-public class ModularStorageTileEntity extends GenericTileEntity implements ITickable, DefaultSidedInventory {
+public class ModularStorageTileEntity extends GenericTileEntity implements ITickable, DefaultSidedInventory, IInventoryTracker {
 
     public static final String CMD_SETTINGS = "settings";
     public static final String CMD_COMPACT = "compact";
@@ -37,6 +38,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
 
     private int[] accessible = null;
     private int maxSize = 0;
+    private int version = 0;
 
     private StorageFilterCache filterCache = null;
 
@@ -258,6 +260,12 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         return numStacks;
     }
 
+    @Override
+    public ItemStack removeStackFromSlot(int index) {
+        version++;
+        return inventoryHelper.removeStackFromSlot(index);
+    }
+
     private ItemStack decrStackSizeHelper(int index, int amount) {
         if (isStorageAvailableRemotely(index)) {
             index -= ModularStorageContainer.SLOT_STORAGE;
@@ -278,6 +286,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
+        version++;
         if (index == ModularStorageContainer.SLOT_STORAGE_MODULE) {
             if (!worldObj.isRemote) {
                 copyToModule();
@@ -316,6 +325,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
+        version++;
         if (index == ModularStorageContainer.SLOT_STORAGE_MODULE) {
             if (isServer()) {
                 copyToModule();
@@ -547,6 +557,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         sortMode = tagCompound.getString("sortMode");
         viewMode = tagCompound.getString("viewMode");
         groupMode = tagCompound.getBoolean("groupMode");
+        version = tagCompound.getInteger("version");
         filter = tagCompound.getString("filter");
         inventoryHelper.setNewCount(ModularStorageContainer.SLOT_STORAGE + maxSize);
         accessible = null;
@@ -609,6 +620,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         tagCompound.setString("viewMode", viewMode);
         tagCompound.setBoolean("groupMode", groupMode);
         tagCompound.setString("filter", filter);
+        tagCompound.setInteger("version", version);
     }
 
     private void writeSlot(NBTTagCompound tagCompound, int index, String name) {
@@ -722,6 +734,10 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         markDirtyClient();
     }
 
+    @Override
+    public int getVersion() {
+        return version;
+    }
 
     IItemHandler invHandler = new CustomSidedInvWrapper(this);
 

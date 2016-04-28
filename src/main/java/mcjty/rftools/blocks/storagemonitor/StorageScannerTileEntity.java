@@ -7,11 +7,13 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.CustomSidedInvWrapper;
 import mcjty.lib.varia.SoundTools;
+import mcjty.rftools.api.general.IInventoryTracker;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -38,6 +40,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     public static final String CMD_TOGGLEROUTABLE = "toggleRoutable";
 
     private List<BlockPos> inventories = new ArrayList<>();
+    private Map<Pair<BlockPos, Item>, Pair<Integer, Integer>> cachedCounts = new HashMap<>();
     private Set<BlockPos> routable = new HashSet<>();
     private int radius = 1;
 
@@ -182,18 +185,38 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         if (stack == null) {
             return 0;
         }
-        // @todo optimize for modular storage
-        final int[] cnt = {0};
+        int cnt = 0;
         List<BlockPos> inventories = getInventories();
         for (BlockPos c : inventories) {
             if ((!starred) || routable.contains(c)) {
                 TileEntity tileEntity = worldObj.getTileEntity(c);
-                RFToolsTools.getItems(tileEntity, s -> s.isItemEqual(stack)).forEach(s -> {
-                    cnt[0] += s.stackSize;
-                });
+                Integer cachedCount = null;
+                if (tileEntity instanceof IInventoryTracker) {
+                    IInventoryTracker tracker = (IInventoryTracker) tileEntity;
+                    Pair<Integer, Integer> pair = cachedCounts.get(Pair.of(c, stack.getItem()));
+                    if (pair != null) {
+                        Integer oldVersion = pair.getLeft();
+                        if (oldVersion == tracker.getVersion()) {
+                            cachedCount = pair.getRight();
+                        }
+                    }
+                }
+                if (cachedCount != null) {
+                    cnt += cachedCount;
+                } else {
+                    final int[] cc = {0};
+                    RFToolsTools.getItems(tileEntity, s -> s.isItemEqual(stack)).forEach(s -> {
+                        cc[0] += s.stackSize;
+                    });
+                    cnt += cc[0];
+                    if (tileEntity instanceof IInventoryTracker) {
+                        IInventoryTracker tracker = (IInventoryTracker) tileEntity;
+                        cachedCounts.put(Pair.of(c, stack.getItem()), Pair.of(tracker.getVersion(), cc[0]));
+                    }
+                }
             }
         }
-        return cnt[0];
+        return cnt;
     }
 
     public Set<BlockPos> performSearch(String search) {

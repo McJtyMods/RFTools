@@ -25,7 +25,7 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
 
     @Override
     public int getHeight() {
-        return 110;
+        return 114;
     }
 
     @Override
