@@ -286,6 +286,8 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     public List<BlockPos> findInventories() {
+        // Clear the caches
+        cachedCounts.clear();
 
         // First remove all inventories that are either out of range or no longer an inventory:
         List<BlockPos> old = inventories;
