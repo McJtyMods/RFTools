@@ -125,7 +125,7 @@ public abstract class GenericRFToolsBlock<T extends GenericTileEntity, C extends
 //                if (securityChannel != -1) {
 //                    SecurityChannels securityChannels = SecurityChannels.getChannels(world);
 //                    SecurityChannels.SecurityChannel channel = securityChannels.getChannel(securityChannel);
-//                    boolean playerListed = channel.getPlayers().contains(player.getDisplayName());
+//                    boolean playerListed = channel.getPlayers().contains(player.getDisplayNameString());
 //                    if (channel.isWhitelist() != playerListed) {
 //                        Logging.message(player, EnumChatFormatting.RED + "You have no permission to use this block!");
 //                        return true;

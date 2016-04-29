@@ -92,7 +92,7 @@ public class TeleportDestinations extends WorldSavedData {
             List list = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
             for (Object player : list) {
                 EntityPlayerMP entityplayermp = (EntityPlayerMP) player;
-                if (playerName.equals(entityplayermp.getDisplayName())) {
+                if (playerName.equals(entityplayermp.getDisplayNameString())) {
                     properties = PlayerExtendedProperties.getProperties(entityplayermp);
                     break;
                 }

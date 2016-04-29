@@ -162,7 +162,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
         List list = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
         for (Object p : list) {
             EntityPlayerMP entityplayermp = (EntityPlayerMP) p;
-            if (playerName.equals(entityplayermp.getDisplayName())) {
+            if (playerName.equals(entityplayermp.getDisplayNameString())) {
                 PlayerExtendedProperties properties = PlayerExtendedProperties.getProperties(entityplayermp);
                 properties.getFavoriteDestinationsProperties().setDestinationFavorite(new GlobalCoordinate(receiver, dimension), favorite);
                 return;
