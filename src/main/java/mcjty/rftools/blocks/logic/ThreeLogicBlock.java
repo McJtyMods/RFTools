@@ -51,15 +51,39 @@ public class ThreeLogicBlock extends LogicSlabBlock<ThreeLogicTileEntity, EmptyC
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof LogicTileEntity) {
             LogicTileEntity logicTileEntity = (LogicTileEntity)te;
+            EnumFacing downSide = logicTileEntity.getFacing().getSide();
             EnumFacing inputSide = logicTileEntity.getFacing().getInputSide();
-            EnumFacing.Axis axis = logicTileEntity.getFacing().getSide().getAxis();
-            int powered1 = getInputStrength(world, pos, inputSide.rotateAround(axis)) > 0 ? 1 : 0;
+            EnumFacing leftSide = rotateLeft(downSide, inputSide);
+            EnumFacing rightSide = rotateRight(downSide, inputSide);
+
+            int powered1 = getInputStrength(world, pos, leftSide) > 0 ? 1 : 0;
             int powered2 = getInputStrength(world, pos, inputSide) > 0 ? 2 : 0;
-            int powered3 = getInputStrength(world, pos, inputSide.getOpposite().rotateAround(axis)) > 0 ? 4 : 0;
+            int powered3 = getInputStrength(world, pos, rightSide) > 0 ? 4 : 0;
             logicTileEntity.setPowered(powered1 + powered2 + powered3);
         }
     }
 
+    public static EnumFacing rotateLeft(EnumFacing downSide, EnumFacing inputSide) {
+        switch (downSide) {
+            case DOWN:
+                return inputSide.rotateY();
+            case UP:
+                return inputSide.rotateYCCW();
+            case NORTH:
+                return inputSide.rotateAround(EnumFacing.Axis.Z);
+            case SOUTH:
+                return inputSide.getOpposite().rotateAround(EnumFacing.Axis.Z);
+            case WEST:
+                return inputSide.rotateAround(EnumFacing.Axis.X);
+            case EAST:
+                return inputSide.getOpposite().rotateAround(EnumFacing.Axis.X);
+        }
+        return inputSide;
+    }
+
+    public static EnumFacing rotateRight(EnumFacing downSide, EnumFacing inputSide) {
+        return rotateLeft(downSide.getOpposite(), inputSide);
+    }
 
     @Override
     public int getGuiID() {
