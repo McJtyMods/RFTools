@@ -39,12 +39,12 @@ public enum LogicFacing implements IStringSerializable {
 
     private final String name;
     private final int meta;
-    private final EnumFacing outputSide;
+    private final EnumFacing inputSide;
 
-    LogicFacing(String name, int meta, EnumFacing outputSide) {
+    LogicFacing(String name, int meta, EnumFacing inputSide) {
         this.name = name;
         this.meta = meta;
-        this.outputSide = outputSide;
+        this.inputSide = inputSide;
     }
 
     @Override
@@ -56,8 +56,8 @@ public enum LogicFacing implements IStringSerializable {
         return meta;
     }
 
-    public EnumFacing getOutputSide() {
-        return outputSide;
+    public EnumFacing getInputSide() {
+        return inputSide;
     }
 
     public EnumFacing getSide() {

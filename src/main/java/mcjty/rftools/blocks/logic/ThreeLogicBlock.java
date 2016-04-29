@@ -8,11 +8,9 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -52,9 +50,9 @@ public class ThreeLogicBlock extends LogicSlabBlock<ThreeLogicTileEntity, EmptyC
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof LogicTileEntity) {
             LogicTileEntity logicTileEntity = (LogicTileEntity)te;
-            int powered1 = getInputStrength(world, pos, logicTileEntity.getFacing().getOutputSide().rotateY()) > 0 ? 1 : 0;
-            int powered2 = getInputStrength(world, pos, logicTileEntity.getFacing().getOutputSide()) > 0 ? 2 : 0;
-            int powered3 = getInputStrength(world, pos, logicTileEntity.getFacing().getOutputSide().rotateYCCW()) > 0 ? 4 : 0;
+            int powered1 = getInputStrength(world, pos, logicTileEntity.getFacing().getInputSide().rotateY()) > 0 ? 1 : 0;
+            int powered2 = getInputStrength(world, pos, logicTileEntity.getFacing().getInputSide()) > 0 ? 2 : 0;
+            int powered3 = getInputStrength(world, pos, logicTileEntity.getFacing().getInputSide().rotateYCCW()) > 0 ? 4 : 0;
             logicTileEntity.setPowered(powered1 + powered2 + powered3);
         }
     }

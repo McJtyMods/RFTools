@@ -97,7 +97,7 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof LogicTileEntity) {
             LogicTileEntity logicTileEntity = (LogicTileEntity)te;
-            int powered = getInputStrength(world, pos, logicTileEntity.getFacing().getOutputSide());
+            int powered = getInputStrength(world, pos, logicTileEntity.getFacing().getInputSide());
             logicTileEntity.setPowered(powered);
         }
     }
@@ -122,7 +122,7 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof LogicTileEntity) {
             LogicTileEntity logicTileEntity = (LogicTileEntity)te;
-            EnumFacing direction = logicTileEntity.getFacing().getOutputSide();
+            EnumFacing direction = logicTileEntity.getFacing().getInputSide();
             switch (direction) {
                 case NORTH:
                 case SOUTH:
@@ -148,7 +148,7 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof LogicTileEntity) {
             LogicTileEntity logicTileEntity = (LogicTileEntity) te;
-            if (side == logicTileEntity.getFacing().getOutputSide()) {
+            if (side == logicTileEntity.getFacing().getInputSide()) {
                 return state.getValue(OUTPUTPOWER) ? 15 : 0;
             } else {
                 return 0;
