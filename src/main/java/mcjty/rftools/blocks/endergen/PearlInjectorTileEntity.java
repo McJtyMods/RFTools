@@ -140,9 +140,17 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
         return Items.ENDER_PEARL.equals(stack.getItem());
     }
 
+    private int[] accessibleSlots;
+
     @Override
     public int[] getSlotsForFace(EnumFacing side) {
-        return PearlInjectorContainer.factory.getAccessibleSlots();
+        if (accessibleSlots == null) {
+            accessibleSlots = new int[PearlInjectorContainer.BUFFER_SIZE];
+            for (int i = 0 ; i < PearlInjectorContainer.BUFFER_SIZE ; i++) {
+                accessibleSlots[i] = i;
+            }
+        }
+        return accessibleSlots;
     }
 
     @Override
