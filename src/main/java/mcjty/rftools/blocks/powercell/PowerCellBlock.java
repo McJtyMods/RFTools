@@ -193,7 +193,12 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
                     powerCellNetwork.save(world);
                 }
             }
-        }
+        } else if (!stack.hasTagCompound() && !world.isRemote) {
+			PowerCellTileEntity powerCellTileEntity = (PowerCellTileEntity) world.getTileEntity(pos);
+			if (powerCellTileEntity != null && isCreative(this)) {
+				powerCellTileEntity.execute((EntityPlayerMP) placer, PowerCellTileEntity.CMD_SETOUTPUT, Maps.<String, Argument>newHashMap());
+			}
+		}
     }
 
     @Override
