@@ -1,7 +1,9 @@
 package mcjty.rftools.blocks.powercell;
 
+import com.google.common.collect.Maps;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.network.Argument;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
@@ -18,6 +20,7 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -196,7 +199,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
         } else if (!stack.hasTagCompound() && !world.isRemote) {
 			PowerCellTileEntity powerCellTileEntity = (PowerCellTileEntity) world.getTileEntity(pos);
 			if (powerCellTileEntity != null && isCreative(this)) {
-				powerCellTileEntity.execute((EntityPlayerMP) placer, PowerCellTileEntity.CMD_SETOUTPUT, Maps.<String, Argument>newHashMap());
+				powerCellTileEntity.execute((EntityPlayerMP) placer, PowerCellTileEntity.CMD_SETOUTPUT, Maps.newHashMap());
 			}
 		}
     }
