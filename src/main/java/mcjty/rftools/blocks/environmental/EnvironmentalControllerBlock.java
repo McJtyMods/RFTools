@@ -100,7 +100,7 @@ public class EnvironmentalControllerBlock extends GenericRFToolsBlock implements
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (heldItem != null && heldItem.getItem() instanceof EnvModuleProvider) {
-            if (RFToolsTools.installModule(player, heldItem, hand, pos, EnvironmentalControllerContainer.SLOT_MODULES, EnvironmentalControllerContainer.SLOT_MODULES + EnvironmentalControllerContainer.ENV_MODULES)) {
+            if (RFToolsTools.installModule(player, heldItem, hand, pos, EnvironmentalControllerContainer.SLOT_MODULES, EnvironmentalControllerContainer.SLOT_MODULES + EnvironmentalControllerContainer.ENV_MODULES - 1)) {
                 return true;
             }
         }
