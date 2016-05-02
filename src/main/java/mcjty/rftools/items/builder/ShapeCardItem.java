@@ -469,12 +469,12 @@ public class ShapeCardItem extends GenericRFToolsItem {
     public static Shape getShape(ItemStack stack) {
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
-            return Shape.SHAPE_BOX;
+            return Shape.SHAPE_SOLIDBOX;
         }
         int shape = tagCompound.getInteger("shape");
         Shape s = Shape.getShape(shape);
         if (s == null) {
-            return Shape.SHAPE_BOX;
+            return Shape.SHAPE_SOLIDBOX;
         }
         return s;
     }
