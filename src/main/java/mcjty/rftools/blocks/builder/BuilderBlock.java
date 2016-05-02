@@ -2,9 +2,9 @@ package mcjty.rftools.blocks.builder;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.container.InventoryHelper;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
-import mcjty.rftools.varia.RFToolsTools;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
@@ -65,7 +65,7 @@ public class BuilderBlock extends GenericRFToolsBlock<BuilderTileEntity, Builder
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (heldItem != null && (heldItem.getItem() == BuilderSetup.shapeCardItem || heldItem.getItem() == BuilderSetup.spaceChamberCardItem)) {
-            if (RFToolsTools.installModule(player, heldItem, hand, pos, BuilderContainer.SLOT_TAB, BuilderContainer.SLOT_TAB)) {
+            if (InventoryHelper.installModule(player, heldItem, hand, pos, BuilderContainer.SLOT_TAB, BuilderContainer.SLOT_TAB)) {
                 return true;
             }
         }

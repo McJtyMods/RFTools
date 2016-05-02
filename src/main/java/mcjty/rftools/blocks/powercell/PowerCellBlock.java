@@ -3,14 +3,13 @@ package mcjty.rftools.blocks.powercell;
 import com.google.common.collect.Maps;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.GenericGuiContainer;
-import mcjty.lib.network.Argument;
+import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import mcjty.rftools.items.smartwrench.SmartWrenchMode;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.rftools.varia.RFToolsTools;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
@@ -93,7 +92,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (heldItem != null && heldItem.getItem() == PowerCellSetup.powerCellCardItem) {
-            if (RFToolsTools.installModule(player, heldItem, hand, pos, PowerCellContainer.SLOT_CARD, PowerCellContainer.SLOT_CARD)) {
+            if (InventoryHelper.installModule(player, heldItem, hand, pos, PowerCellContainer.SLOT_CARD, PowerCellContainer.SLOT_CARD)) {
                 return true;
             }
         }

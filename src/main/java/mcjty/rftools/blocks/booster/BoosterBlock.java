@@ -2,10 +2,10 @@ package mcjty.rftools.blocks.booster;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.container.InventoryHelper;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.blocks.environmental.EnvModuleProvider;
-import mcjty.rftools.varia.RFToolsTools;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
@@ -63,7 +63,7 @@ public class BoosterBlock extends GenericRFToolsBlock<BoosterTileEntity, Booster
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (heldItem != null && heldItem.getItem() instanceof EnvModuleProvider) {
-            if (RFToolsTools.installModule(player, heldItem, hand, pos, BoosterContainer.SLOT_MODULE, BoosterContainer.SLOT_MODULE)) {
+            if (InventoryHelper.installModule(player, heldItem, hand, pos, BoosterContainer.SLOT_MODULE, BoosterContainer.SLOT_MODULE)) {
                 return true;
             }
         }

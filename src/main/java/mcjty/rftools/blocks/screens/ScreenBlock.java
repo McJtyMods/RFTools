@@ -1,10 +1,10 @@
 package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.container.InventoryHelper;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
-import mcjty.rftools.varia.RFToolsTools;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
@@ -76,7 +76,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (heldItem != null && heldItem.getItem() instanceof IModuleProvider) {
-            if (RFToolsTools.installModule(player, heldItem, hand, pos, ScreenContainer.SLOT_MODULES, ScreenContainer.SLOT_MODULES +  + ScreenContainer.SCREEN_MODULES)) {
+            if (InventoryHelper.installModule(player, heldItem, hand, pos, ScreenContainer.SLOT_MODULES, ScreenContainer.SLOT_MODULES + ScreenContainer.SCREEN_MODULES - 1)) {
                 return true;
             }
         }
