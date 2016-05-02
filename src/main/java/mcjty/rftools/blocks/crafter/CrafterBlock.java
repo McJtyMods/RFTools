@@ -2,10 +2,10 @@ package mcjty.rftools.blocks.crafter;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.container.InventoryHelper;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
-import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -97,7 +97,7 @@ public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterCont
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (heldItem != null && heldItem.getItem() == ModularStorageSetup.storageFilterItem) {
-            if (RFToolsTools.installModule(player, heldItem, hand, pos, CrafterContainer.SLOT_FILTER_MODULE, CrafterContainer.SLOT_FILTER_MODULE)) {
+            if (InventoryHelper.installModule(player, heldItem, hand, pos, CrafterContainer.SLOT_FILTER_MODULE, CrafterContainer.SLOT_FILTER_MODULE)) {
                 return true;
             }
         }

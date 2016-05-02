@@ -2,10 +2,10 @@ package mcjty.rftools.blocks.spawner;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.container.InventoryHelper;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.items.ModItems;
-import mcjty.rftools.varia.RFToolsTools;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
@@ -58,7 +58,7 @@ public class SpawnerBlock extends GenericRFToolsBlock implements Infusable {
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (heldItem != null && (heldItem.getItem() == ModItems.syringeItem)) {
-            if (RFToolsTools.installModule(player, heldItem, hand, pos, SpawnerContainer.SLOT_SYRINGE, SpawnerContainer.SLOT_SYRINGE)) {
+            if (InventoryHelper.installModule(player, heldItem, hand, pos, SpawnerContainer.SLOT_SYRINGE, SpawnerContainer.SLOT_SYRINGE)) {
                 return true;
             }
         }

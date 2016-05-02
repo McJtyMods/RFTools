@@ -2,9 +2,9 @@ package mcjty.rftools.blocks.environmental;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.container.InventoryHelper;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
-import mcjty.rftools.varia.RFToolsTools;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
@@ -100,7 +100,7 @@ public class EnvironmentalControllerBlock extends GenericRFToolsBlock implements
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (heldItem != null && heldItem.getItem() instanceof EnvModuleProvider) {
-            if (RFToolsTools.installModule(player, heldItem, hand, pos, EnvironmentalControllerContainer.SLOT_MODULES, EnvironmentalControllerContainer.SLOT_MODULES + EnvironmentalControllerContainer.ENV_MODULES - 1)) {
+            if (InventoryHelper.installModule(player, heldItem, hand, pos, EnvironmentalControllerContainer.SLOT_MODULES, EnvironmentalControllerContainer.SLOT_MODULES + EnvironmentalControllerContainer.ENV_MODULES - 1)) {
                 return true;
             }
         }
