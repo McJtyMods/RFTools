@@ -76,7 +76,7 @@ public class GuiStorageFilter extends GenericGuiContainer<ModularStorageTileEnti
                 updateSettings();
             }
         });
-        nbtMode.addChoice("Off", "Ignore MBT", guiElements, 8 * 16, 32);
+        nbtMode.addChoice("Off", "Ignore NBT", guiElements, 8 * 16, 32);
         nbtMode.addChoice("On", "NBT must match", guiElements, 9 * 16, 32);
 
         modMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(130, 45, 16, 16)).setTooltips("Filter ignoring mod").addChoiceEvent(new ChoiceEvent() {
