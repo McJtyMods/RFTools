@@ -12,7 +12,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -39,7 +38,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     public static final String CMD_TOGGLEROUTABLE = "toggleRoutable";
 
     private List<BlockPos> inventories = new ArrayList<>();
-    private Map<Pair<BlockPos, Item>, Pair<Integer, Integer>> cachedCounts = new HashMap<>();
+    private Map<CachedItemKey, CachedItemCount> cachedCounts = new HashMap<>();
     private Set<BlockPos> routable = new HashSet<>();
     private int radius = 1;
 
@@ -192,11 +191,11 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                 Integer cachedCount = null;
                 if (tileEntity instanceof IInventoryTracker) {
                     IInventoryTracker tracker = (IInventoryTracker) tileEntity;
-                    Pair<Integer, Integer> pair = cachedCounts.get(Pair.of(c, stack.getItem()));
-                    if (pair != null) {
-                        Integer oldVersion = pair.getLeft();
+                    CachedItemCount itemCount = cachedCounts.get(new CachedItemKey(c, stack.getItem(), stack.getItemDamage()));
+                    if (itemCount != null) {
+                        Integer oldVersion = itemCount.getVersion();
                         if (oldVersion == tracker.getVersion()) {
-                            cachedCount = pair.getRight();
+                            cachedCount = itemCount.getCount();
                         }
                     }
                 }
@@ -204,13 +203,13 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                     cnt += cachedCount;
                 } else {
                     final int[] cc = {0};
-                    InventoryHelper.getItems(tileEntity, s -> s.isItemEqual(stack)).forEach(s -> {
+                    InventoryHelper.getItems(tileEntity, stack::isItemEqual).forEach(s -> {
                         cc[0] += s.stackSize;
                     });
                     cnt += cc[0];
                     if (tileEntity instanceof IInventoryTracker) {
                         IInventoryTracker tracker = (IInventoryTracker) tileEntity;
-                        cachedCounts.put(Pair.of(c, stack.getItem()), Pair.of(tracker.getVersion(), cc[0]));
+                        cachedCounts.put(new CachedItemKey(c, stack.getItem(), stack.getItemDamage()), new CachedItemCount(tracker.getVersion(), cc[0]));
                     }
                 }
             }
