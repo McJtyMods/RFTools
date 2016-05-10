@@ -23,6 +23,7 @@ public class ElevatorButtonClientScreenModule implements IClientScreenModule<IMo
     private boolean large = false;
     private boolean lights = false;
     private boolean start1 = false;
+    private String levels[] = new String[8];
 
     @Override
     public TransformMode getTransformMode() {
@@ -54,27 +55,42 @@ public class ElevatorButtonClientScreenModule implements IClientScreenModule<IMo
         int xoffset = 5;
         for (int i = 0; i < buttons; i++) {
             int level = vertical ? buttons-i-1 : i;
-            String test = String.valueOf(level + (start1 ? 1 : 0));
+            String text;
+            if (hasLevelText(level)) {
+                text = levels[level];
+            } else {
+                text = String.valueOf(level + (start1 ? 1 : 0));
+            }
             int col = level == currentLevel ? this.currentLevelButtonColor : this.buttonColor;
             int textoffset = large ? 3 : 0;
             if (vertical) {
                 if (lights) {
                     RenderHelper.drawBeveledBox(xoffset, currenty, xoffset + 120, currenty + getDimension() - 2, 0xffffffff, 0xffffffff, 0xff000000 + col);
+                    if (hasLevelText(level)) {
+                        fontRenderer.drawString(fontRenderer.trimStringToWidth(levels[i], 120), xoffset + 3 + textoffset, currenty + 2 + textoffset, 0xffffff);
+                    }
                 } else {
                     RenderHelper.drawBeveledBox(xoffset, currenty, xoffset + 120, currenty + getDimension() - 2, 0xffeeeeee, 0xff333333, 0xff666666);
-                    fontRenderer.drawString(fontRenderer.trimStringToWidth(test, 120), xoffset + 3 + textoffset, currenty + 2 + textoffset, col);
+                    fontRenderer.drawString(fontRenderer.trimStringToWidth(text, 120), xoffset + 3 + textoffset, currenty + 2 + textoffset, col);
                 }
                 currenty += getDimension() - 2;
             } else {
                 if (lights) {
                     RenderHelper.drawBeveledBox(xoffset, currenty, xoffset + getDimension() - 4, currenty + getDimension() - 2, 0xffffffff, 0xffffffff, 0xff000000 + col);
+                    if (hasLevelText(level)) {
+                        fontRenderer.drawString(fontRenderer.trimStringToWidth(levels[i], 120), xoffset + 3 + textoffset, currenty + 2 + textoffset, 0xffffff);
+                    }
                 } else {
                     RenderHelper.drawBeveledBox(xoffset, currenty, xoffset + getDimension() - 4, currenty + getDimension() - 2, 0xffeeeeee, 0xff333333, 0xff666666);
-                    fontRenderer.drawString(fontRenderer.trimStringToWidth(test, getDimension() - 4), xoffset + 3 + textoffset, currenty + 2 + textoffset, col);
+                    fontRenderer.drawString(fontRenderer.trimStringToWidth(text, getDimension() - 4), xoffset + 3 + textoffset, currenty + 2 + textoffset, col);
                 }
                 xoffset += getDimension() - 2;
             }
         }
+    }
+
+    private boolean hasLevelText(int i) {
+        return i < levels.length && levels[i] != null && !levels[i].isEmpty();
     }
 
     @Override
@@ -87,6 +103,8 @@ public class ElevatorButtonClientScreenModule implements IClientScreenModule<IMo
                 .color("buttonColor", "Button color").color("curColor", "Current level button color").nl()
                 .toggle("vertical", "Vertical", "Order the buttons vertically").toggle("large", "Large", "Larger buttons").nl()
                 .toggle("lights", "Lights", "Use buttons resembling lights").toggle("start1", "Start 1", "start numbering at 1 instead of 0").nl()
+                .text("l0", "Level 0 name").text("l1", "Level 1 name").text("l2", "Level 2 name").text("l3", "Level 3 name").nl()
+                .text("l4", "Level 4 name").text("l5", "Level 5 name").text("l6", "Level 6 name").text("l7", "Level 7 name").nl()
                 .label("Block:").block("elevator").nl();
     }
 
@@ -107,6 +125,13 @@ public class ElevatorButtonClientScreenModule implements IClientScreenModule<IMo
             large = tagCompound.getBoolean("large");
             lights = tagCompound.getBoolean("lights");
             start1 = tagCompound.getBoolean("start1");
+            for (int i = 0 ; i < levels.length ; i++) {
+                if (tagCompound.hasKey("l" + i)) {
+                    levels[i] = tagCompound.getString("l" + i);
+                } else {
+                    levels[i] = null;
+                }
+            }
         }
     }
 
