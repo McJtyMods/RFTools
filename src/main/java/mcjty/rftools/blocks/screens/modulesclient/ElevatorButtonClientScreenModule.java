@@ -67,7 +67,7 @@ public class ElevatorButtonClientScreenModule implements IClientScreenModule<IMo
                 if (lights) {
                     RenderHelper.drawBeveledBox(xoffset, currenty, xoffset + 120, currenty + getDimension() - 2, 0xffffffff, 0xffffffff, 0xff000000 + col);
                     if (hasLevelText(level)) {
-                        fontRenderer.drawString(fontRenderer.trimStringToWidth(levels[i], 120), xoffset + 3 + textoffset, currenty + 2 + textoffset, 0xffffff);
+                        fontRenderer.drawString(fontRenderer.trimStringToWidth(levels[level], 120), xoffset + 3 + textoffset, currenty + 2 + textoffset, 0xffffff);
                     }
                 } else {
                     RenderHelper.drawBeveledBox(xoffset, currenty, xoffset + 120, currenty + getDimension() - 2, 0xffeeeeee, 0xff333333, 0xff666666);
@@ -78,7 +78,7 @@ public class ElevatorButtonClientScreenModule implements IClientScreenModule<IMo
                 if (lights) {
                     RenderHelper.drawBeveledBox(xoffset, currenty, xoffset + getDimension() - 4, currenty + getDimension() - 2, 0xffffffff, 0xffffffff, 0xff000000 + col);
                     if (hasLevelText(level)) {
-                        fontRenderer.drawString(fontRenderer.trimStringToWidth(levels[i], 120), xoffset + 3 + textoffset, currenty + 2 + textoffset, 0xffffff);
+                        fontRenderer.drawString(fontRenderer.trimStringToWidth(levels[level], 120), xoffset + 3 + textoffset, currenty + 2 + textoffset, 0xffffff);
                     }
                 } else {
                     RenderHelper.drawBeveledBox(xoffset, currenty, xoffset + getDimension() - 4, currenty + getDimension() - 2, 0xffeeeeee, 0xff333333, 0xff666666);
