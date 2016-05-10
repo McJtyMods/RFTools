@@ -9,6 +9,7 @@ import mcjty.rftools.api.screens.data.IModuleData;
 import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModuleHelper;
 import mcjty.rftools.blocks.screens.network.PacketGetScreenData;
 import mcjty.rftools.network.RFToolsMessages;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -115,13 +116,20 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
         IClientScreenModule hitModule = null;
         ScreenTileEntity.ModuleRaytraceResult hit = null;
-        if (mouseOver != null && /*pos.equals(mouseOver.getBlockPos()) && */mouseOver.sideHit == getWorld().getBlockState(pos).getValue(GenericBlock.FACING)) {
-            double xx = mouseOver.hitVec.xCoord - pos.getX();
-            double yy = mouseOver.hitVec.yCoord - pos.getY();
-            double zz = mouseOver.hitVec.zCoord - pos.getZ();
-            hit = tileEntity.getHitModule(xx, yy, zz, mouseOver.sideHit);
-            if (hit != null) {
-                hitModule = modules.get(hit.getModuleIndex());
+        IBlockState blockState = getWorld().getBlockState(pos);
+        if (blockState.getBlock() != ScreenSetup.screenBlock && blockState.getBlock() != ScreenSetup.screenHitBlock) {
+            // Safety
+            return;
+        }
+        if (mouseOver != null) {
+            if (mouseOver.sideHit == blockState.getValue(GenericBlock.FACING)) {
+                double xx = mouseOver.hitVec.xCoord - pos.getX();
+                double yy = mouseOver.hitVec.yCoord - pos.getY();
+                double zz = mouseOver.hitVec.zCoord - pos.getZ();
+                hit = tileEntity.getHitModule(xx, yy, zz, mouseOver.sideHit);
+                if (hit != null) {
+                    hitModule = modules.get(hit.getModuleIndex());
+                }
             }
         }
 

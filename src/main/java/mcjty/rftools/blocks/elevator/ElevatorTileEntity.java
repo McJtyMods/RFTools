@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.elevator;
 
 
+import mcjty.lib.container.GenericBlock;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.blocks.shield.RelCoordinate;
 import mcjty.rftools.playerprops.BuffProperties;
@@ -58,12 +59,12 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     }
 
     public void clearCaches() {
-        EnumFacing side = worldObj.getBlockState(getPos()).getValue(ElevatorBlock.FACING_HORIZ);
+        EnumFacing side = worldObj.getBlockState(getPos()).getValue(GenericBlock.FACING_HORIZ);
         for (int y = 0 ; y < worldObj.getHeight() ; y++) {
             BlockPos pos2 = getPosAtY(getPos(), y);
             TileEntity te = worldObj.getTileEntity(pos2);
             if (te instanceof ElevatorTileEntity) {
-                EnumFacing side2 = worldObj.getBlockState(pos2).getValue(ElevatorBlock.FACING_HORIZ);
+                EnumFacing side2 = worldObj.getBlockState(pos2).getValue(GenericBlock.FACING_HORIZ);
                 if (side2 == side) {
                     ElevatorTileEntity tileEntity = (ElevatorTileEntity) te;
                     tileEntity.cachedControllerPos = null;
@@ -278,13 +279,13 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         }
 
         // The orientation of this elevator.
-        EnumFacing side = worldObj.getBlockState(getPos()).getValue(ElevatorBlock.FACING_HORIZ);
+        EnumFacing side = worldObj.getBlockState(getPos()).getValue(GenericBlock.FACING_HORIZ);
 
         for (int y = 0; y < worldObj.getHeight(); y++) {
             BlockPos elevatorPos = getPosAtY(getPos(), y);
             IBlockState otherState = worldObj.getBlockState(elevatorPos);
             if (otherState.getBlock() == ElevatorSetup.elevatorBlock) {
-                EnumFacing otherSide = otherState.getValue(ElevatorBlock.FACING_HORIZ);
+                EnumFacing otherSide = otherState.getValue(GenericBlock.FACING_HORIZ);
                 if (otherSide == side) {
                     cachedControllerPos = elevatorPos;
                     return elevatorPos;
@@ -297,13 +298,13 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     // Find the position of the elevator that has the platform.
     private BlockPos findElevatorWithPlatform() {
         // The orientation of this elevator.
-        EnumFacing side = worldObj.getBlockState(getPos()).getValue(ElevatorBlock.FACING_HORIZ);
+        EnumFacing side = worldObj.getBlockState(getPos()).getValue(GenericBlock.FACING_HORIZ);
 
         for (int y = 0; y < worldObj.getHeight(); y++) {
             BlockPos elevatorPos = getPosAtY(getPos(), y);
             IBlockState otherState = worldObj.getBlockState(elevatorPos);
             if (otherState.getBlock() == ElevatorSetup.elevatorBlock) {
-                EnumFacing otherSide = otherState.getValue(ElevatorBlock.FACING_HORIZ);
+                EnumFacing otherSide = otherState.getValue(GenericBlock.FACING_HORIZ);
                 if (otherSide == side) {
                     BlockPos frontPos = elevatorPos.offset(side);
                     if (isValidPlatformBlock(frontPos)) {
@@ -401,7 +402,6 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
 
     // Only call this on the controller (bottom elevator)
     private void startMoving(BlockPos start, BlockPos stop, IBlockState state) {
-        System.out.println("Start moving: ystart = " + start.getY() + ", ystop = " + stop.getY());
         movingY = start.getY();
         startY = start.getY();
         stopY = stop.getY();
@@ -417,7 +417,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
 
     // Always called on controller TE (bottom one)
     private void getBounds(BlockPos start) {
-        EnumFacing side = worldObj.getBlockState(getPos()).getValue(ElevatorBlock.FACING_HORIZ);
+        EnumFacing side = worldObj.getBlockState(getPos()).getValue(GenericBlock.FACING_HORIZ);
         bounds = new Bounds();
         for (int a = 1; a < ElevatorConfiguration.maxPlatformSize; a++) {
             BlockPos offset = start.offset(side, a);
@@ -481,13 +481,13 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
 
     // Go to the specific level (levels start at 0)
     public void toLevel(int level) {
-        EnumFacing side = worldObj.getBlockState(getPos()).getValue(ElevatorBlock.FACING_HORIZ);
+        EnumFacing side = worldObj.getBlockState(getPos()).getValue(GenericBlock.FACING_HORIZ);
         BlockPos controllerPos = findBottomElevator();
         for (int y = controllerPos.getY() ; y < worldObj.getHeight() ; y++) {
             BlockPos pos2 = getPosAtY(controllerPos, y);
             TileEntity te2 = worldObj.getTileEntity(pos2);
             if (te2 instanceof ElevatorTileEntity) {
-                EnumFacing side2 = worldObj.getBlockState(pos2).getValue(ElevatorBlock.FACING_HORIZ);
+                EnumFacing side2 = worldObj.getBlockState(pos2).getValue(GenericBlock.FACING_HORIZ);
                 if (side == side2) {
                     if (level == 0) {
                         ((ElevatorTileEntity) te2).movePlatformHere();
@@ -501,7 +501,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
 
     public int getCurrentLevel() {
         BlockPos controllerPos = findBottomElevator();
-        EnumFacing side = worldObj.getBlockState(getPos()).getValue(ElevatorBlock.FACING_HORIZ);
+        EnumFacing side = worldObj.getBlockState(getPos()).getValue(GenericBlock.FACING_HORIZ);
         TileEntity te = worldObj.getTileEntity(controllerPos);
         if (te instanceof ElevatorTileEntity) {
             ElevatorTileEntity controller = (ElevatorTileEntity) te;
@@ -511,7 +511,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
                     BlockPos pos2 = getPosAtY(controllerPos, y);
                     TileEntity te2 = worldObj.getTileEntity(pos2);
                     if (te2 instanceof ElevatorTileEntity) {
-                        EnumFacing side2 = worldObj.getBlockState(pos2).getValue(ElevatorBlock.FACING_HORIZ);
+                        EnumFacing side2 = worldObj.getBlockState(pos2).getValue(GenericBlock.FACING_HORIZ);
                         if (side == side2) {
                             BlockPos frontPos = pos2.offset(side);
                             if (isValidPlatformBlock(frontPos)) {
@@ -529,7 +529,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
 
     public int getLevelCount() {
         BlockPos controllerPos = findBottomElevator();
-        EnumFacing side = worldObj.getBlockState(getPos()).getValue(ElevatorBlock.FACING_HORIZ);
+        EnumFacing side = worldObj.getBlockState(getPos()).getValue(GenericBlock.FACING_HORIZ);
         TileEntity te = worldObj.getTileEntity(controllerPos);
         if (te instanceof ElevatorTileEntity) {
             ElevatorTileEntity controller = (ElevatorTileEntity) te;
@@ -538,7 +538,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
                     BlockPos pos2 = getPosAtY(controllerPos, y);
                     TileEntity te2 = worldObj.getTileEntity(pos2);
                     if (te2 instanceof ElevatorTileEntity) {
-                        EnumFacing side2 = worldObj.getBlockState(pos2).getValue(ElevatorBlock.FACING_HORIZ);
+                        EnumFacing side2 = worldObj.getBlockState(pos2).getValue(GenericBlock.FACING_HORIZ);
                         if (side == side2) {
                             controller.cachedLevels++;
                         }
@@ -556,7 +556,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         // What about TE blocks in front of platform?
 
         // First check if the platform is here already:
-        EnumFacing side = worldObj.getBlockState(getPos()).getValue(ElevatorBlock.FACING_HORIZ);
+        EnumFacing side = worldObj.getBlockState(getPos()).getValue(GenericBlock.FACING_HORIZ);
         BlockPos frontPos = getPos().offset(side);
         if (isValidPlatformBlock(frontPos)) {
             // Platform is already here (or something is blocking here)
