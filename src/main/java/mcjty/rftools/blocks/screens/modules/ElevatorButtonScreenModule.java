@@ -91,24 +91,42 @@ public class ElevatorButtonScreenModule implements IScreenModule<IModuleDataCont
         }
         ElevatorTileEntity elevatorTileEntity = (ElevatorTileEntity) te;
 
+        int levelCount = elevatorTileEntity.getLevelCount();
+        int level = -1;
+
         if (vertical) {
+            int max = large ? 6 : 8;
+            boolean twocols = levelCount > max;
+
             int yoffset = 0;
             if (y >= yoffset) {
-                int level = (y - yoffset) / (large ? (LARGESIZE - 2) : (SMALLSIZE - 2));
+                level = (y - yoffset) / (large ? (LARGESIZE - 2) : (SMALLSIZE - 2));
                 if (level < 0) {
                     return;
                 }
-                elevatorTileEntity.toLevel(((ElevatorTileEntity) te).getLevelCount() - level - 1);
+                if (twocols) {
+                    if (x > 73) {
+                        if (level < levelCount - max) {
+                            level = levelCount - level - 1;
+                        } else {
+                            level = -1;
+                        }
+                    } else {
+                        level = max - level - 1;
+                    }
+                } else {
+                    level = levelCount - level - 1;
+                }
+                System.out.println("level = " + level);
             }
         } else {
             int xoffset = 5;
             if (x >= xoffset) {
-                int level = (x - xoffset) / (large ? (LARGESIZE - 2) : (SMALLSIZE - 2));
-                if (level < 0) {
-                    return;
-                }
-                elevatorTileEntity.toLevel(level);
+                level = (x - xoffset) / (large ? (LARGESIZE - 2) : (SMALLSIZE - 2));
             }
+        }
+        if (level >= 0 && level < levelCount) {
+            elevatorTileEntity.toLevel(level);
         }
     }
 

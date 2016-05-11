@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.elevator;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.GenericBlock;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcp.mobius.waila.api.IWailaConfigHandler;
@@ -69,7 +70,7 @@ public class ElevatorBlock extends GenericRFToolsBlock<ElevatorTileEntity, Empty
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof ElevatorTileEntity) {
             ElevatorTileEntity elevatorTileEntity = (ElevatorTileEntity) te;
-            elevatorTileEntity.clearCaches();
+            elevatorTileEntity.clearCaches(world.getBlockState(pos).getValue(GenericBlock.FACING_HORIZ));
         }
     }
 
@@ -78,7 +79,7 @@ public class ElevatorBlock extends GenericRFToolsBlock<ElevatorTileEntity, Empty
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof ElevatorTileEntity) {
             ElevatorTileEntity elevatorTileEntity = (ElevatorTileEntity) te;
-            elevatorTileEntity.clearCaches();
+            elevatorTileEntity.clearCaches(state.getValue(GenericBlock.FACING_HORIZ));
         }
         super.breakBlock(world, pos, state);
     }

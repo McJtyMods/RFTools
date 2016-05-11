@@ -52,9 +52,22 @@ public class ElevatorButtonClientScreenModule implements IClientScreenModule<IMo
         }
         int currentLevel = (int) screenData.getContents();
         int buttons = (int) screenData.getMaxContents();
+        if (vertical) {
+            renderButtonsVertical(fontRenderer, currenty, currentLevel, buttons);
+        } else {
+            renderButtonsHorizontal(fontRenderer, currenty, currentLevel, buttons);
+
+        }
+    }
+
+    private void renderButtonsHorizontal(FontRenderer fontRenderer, int currenty, int currentLevel, int buttons) {
         int xoffset = 5;
+        int max = large ? 6 : 9;
+        if (buttons > max) {
+            buttons = max;
+        }
         for (int i = 0; i < buttons; i++) {
-            int level = vertical ? buttons-i-1 : i;
+            int level = i;
             String text;
             if (hasLevelText(level)) {
                 text = levels[level];
@@ -63,28 +76,54 @@ public class ElevatorButtonClientScreenModule implements IClientScreenModule<IMo
             }
             int col = level == currentLevel ? this.currentLevelButtonColor : this.buttonColor;
             int textoffset = large ? 3 : 0;
-            if (vertical) {
-                if (lights) {
-                    RenderHelper.drawBeveledBox(xoffset, currenty, xoffset + 120, currenty + getDimension() - 2, 0xffffffff, 0xffffffff, 0xff000000 + col);
-                    if (hasLevelText(level)) {
-                        fontRenderer.drawString(fontRenderer.trimStringToWidth(levels[level], 120), xoffset + 3 + textoffset, currenty + 2 + textoffset, 0xffffff);
-                    }
-                } else {
-                    RenderHelper.drawBeveledBox(xoffset, currenty, xoffset + 120, currenty + getDimension() - 2, 0xffeeeeee, 0xff333333, 0xff666666);
-                    fontRenderer.drawString(fontRenderer.trimStringToWidth(text, 120), xoffset + 3 + textoffset, currenty + 2 + textoffset, col);
+            if (lights) {
+                RenderHelper.drawBeveledBox(xoffset, currenty, xoffset + getDimension() - 4, currenty + getDimension() - 2, 0xffffffff, 0xffffffff, 0xff000000 + col);
+                if (hasLevelText(level)) {
+                    fontRenderer.drawString(fontRenderer.trimStringToWidth(levels[level], 120), xoffset + 3 + textoffset, currenty + 2 + textoffset, 0xffffff);
                 }
-                currenty += getDimension() - 2;
             } else {
-                if (lights) {
-                    RenderHelper.drawBeveledBox(xoffset, currenty, xoffset + getDimension() - 4, currenty + getDimension() - 2, 0xffffffff, 0xffffffff, 0xff000000 + col);
-                    if (hasLevelText(level)) {
-                        fontRenderer.drawString(fontRenderer.trimStringToWidth(levels[level], 120), xoffset + 3 + textoffset, currenty + 2 + textoffset, 0xffffff);
-                    }
-                } else {
-                    RenderHelper.drawBeveledBox(xoffset, currenty, xoffset + getDimension() - 4, currenty + getDimension() - 2, 0xffeeeeee, 0xff333333, 0xff666666);
-                    fontRenderer.drawString(fontRenderer.trimStringToWidth(text, getDimension() - 4), xoffset + 3 + textoffset, currenty + 2 + textoffset, col);
+                RenderHelper.drawBeveledBox(xoffset, currenty, xoffset + getDimension() - 4, currenty + getDimension() - 2, 0xffeeeeee, 0xff333333, 0xff666666);
+                fontRenderer.drawString(fontRenderer.trimStringToWidth(text, getDimension() - 4), xoffset + 3 + textoffset, currenty + 2 + textoffset, col);
+            }
+            xoffset += getDimension() - 2;
+        }
+    }
+
+    private void renderButtonsVertical(FontRenderer fontRenderer, int currenty, int currentLevel, int buttons) {
+        int max = large ? 6 : 8;
+
+        int w = buttons > max ? 58 : 120;
+        int y = currenty;
+        boolean twocols = buttons > max;
+
+        for (int i = 0; i < buttons; i++) {
+            int xoffset;
+            int level = buttons-i-1;
+            if (twocols) {
+                xoffset = level >= max ? 70 : 5;
+            } else {
+                xoffset = 5;
+            }
+            String text;
+            if (hasLevelText(level)) {
+                text = levels[level];
+            } else {
+                text = String.valueOf(level + (start1 ? 1 : 0));
+            }
+            int col = level == currentLevel ? this.currentLevelButtonColor : this.buttonColor;
+            int textoffset = large ? 3 : 0;
+            if (lights) {
+                RenderHelper.drawBeveledBox(xoffset, y, xoffset + w, y + getDimension() - 2, 0xffffffff, 0xffffffff, 0xff000000 + col);
+                if (hasLevelText(level)) {
+                    fontRenderer.drawString(fontRenderer.trimStringToWidth(levels[level], w), xoffset + 3 + textoffset, y + 2 + textoffset, 0xffffff);
                 }
-                xoffset += getDimension() - 2;
+            } else {
+                RenderHelper.drawBeveledBox(xoffset, y, xoffset + w, y + getDimension() - 2, 0xffeeeeee, 0xff333333, 0xff666666);
+                fontRenderer.drawString(fontRenderer.trimStringToWidth(text, w), xoffset + 3 + textoffset, y + 2 + textoffset, col);
+            }
+            y += getDimension() - 2;
+            if (level == max) {
+                y = currenty;
             }
         }
     }
