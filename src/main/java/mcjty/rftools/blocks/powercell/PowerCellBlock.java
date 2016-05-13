@@ -212,7 +212,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
             if (te instanceof PowerCellTileEntity) {
                 PowerCellNetwork.Network network = ((PowerCellTileEntity) te).getNetwork();
                 if (network != null) {
-                    int energy = network.getEnergySingleBlock();
+                    int energy = network.getEnergySingleBlock(isAdvanced());
                     if (!drops.isEmpty()) {
                         NBTTagCompound tagCompound = drops.get(0).getTagCompound();
                         if (tagCompound == null) {
@@ -235,7 +235,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
                 PowerCellTileEntity cellTileEntity = (PowerCellTileEntity) te;
                 PowerCellNetwork.Network network = cellTileEntity.getNetwork();
                 if (network != null) {
-                    network.extractEnergySingleBlock(isAdvanced());
+                    int a = network.extractEnergySingleBlock(isAdvanced());
                     Block block = world.getBlockState(pos).getBlock();
                     network.remove(world, cellTileEntity.getGlobalPos(), PowerCellBlock.isAdvanced(block));
                     PowerCellNetwork.getChannels(world).save(world);
