@@ -1,9 +1,10 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "rftools:rftoolsblock",
+    "model": "rftools:rftoolsbackblock",
     "textures": {
-      "front": "rftools:blocks/machineFrontLiquid"
+      "front": "rftools:blocks/machineFront",
+      "back": "rftools:blocks/machineRedstoneOut"
     }
   },
   "variants": {
