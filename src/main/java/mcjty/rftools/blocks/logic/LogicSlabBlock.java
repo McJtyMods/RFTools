@@ -55,17 +55,25 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
 
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntity te = world.getTileEntity(pos);
-        if (te instanceof LogicTileEntity) {
-            LogicTileEntity logicTileEntity = (LogicTileEntity) te;
-            EnumFacing side = logicTileEntity.getFacing().getSide();
-            switch (side) {
-                case DOWN: return BLOCK_DOWN;
-                case UP: return BLOCK_UP;
-                case NORTH: return BLOCK_NORTH;
-                case SOUTH: return BLOCK_SOUTH;
-                case WEST: return BLOCK_WEST;
-                case EAST: return BLOCK_EAST;
+        if (world.getBlockState(pos).getBlock() instanceof LogicSlabBlock) {
+            TileEntity te = world.getTileEntity(pos);
+            if (te instanceof LogicTileEntity) {
+                LogicTileEntity logicTileEntity = (LogicTileEntity) te;
+                EnumFacing side = logicTileEntity.getFacing().getSide();
+                switch (side) {
+                    case DOWN:
+                        return BLOCK_DOWN;
+                    case UP:
+                        return BLOCK_UP;
+                    case NORTH:
+                        return BLOCK_NORTH;
+                    case SOUTH:
+                        return BLOCK_SOUTH;
+                    case WEST:
+                        return BLOCK_WEST;
+                    case EAST:
+                        return BLOCK_EAST;
+                }
             }
         }
         return BLOCK_DOWN;
