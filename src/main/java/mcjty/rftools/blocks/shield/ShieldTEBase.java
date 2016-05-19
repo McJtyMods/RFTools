@@ -891,7 +891,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setByte("powered", (byte) powered);
         tagCompound.setBoolean("composed", shieldComposed);
@@ -912,6 +912,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         tagCompound.setByteArray("relcoords", blocks);
 
 //        shieldBlocksOld.writeToNBT(tagCompound, "coordinates");
+        return tagCompound;
     }
 
     @Override

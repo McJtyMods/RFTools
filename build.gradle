@@ -11,7 +11,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
     }
 }
 
@@ -36,7 +36,7 @@ repositories {
     }
 }
 
-version = "1.9.0-4.48"
+version = "1.9.4-4.48"
 def ENV = System.getenv()
 if (ENV.DRONE_BUILD_NUMBER) {
     version += ".n" + ENV.DRONE_BUILD_NUMBER
@@ -48,9 +48,9 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 minecraft {
-    version = "1.9-12.16.1.1898"
+    version = "1.9.4-12.17.0.1909-1.9.4"
     runDir = "run"
-    mappings = "snapshot_20160510"
+    mappings = "snapshot_20160518"
     useDepAts = true
 }
 
@@ -67,7 +67,7 @@ artifacts {
 
 dependencies {
     deobfCompile "mcp.mobius.waila:Waila:1.7.0-B2_1.9"
-    deobfCompile "mezz.jei:jei_1.9:3.3.3.200"
+    deobfCompile "mezz.jei:jei_1.9.4:3.4.0.202"
 
     //compile "li.cil.oc:OpenComputers:MC1.7.10-1.5.+:api"
 

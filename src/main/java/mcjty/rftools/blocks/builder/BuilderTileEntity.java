@@ -35,7 +35,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
@@ -109,11 +109,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     // For chunkloading with the quarry.
     private ForgeChunkManager.Ticket ticket = null;
     // The currently forced chunk.
-    private ChunkCoordIntPair forcedChunk = null;
+    private ChunkPos forcedChunk = null;
 
     // Cached set of blocks that we need to build in shaped mode
     private Set<BlockPos> cachedBlocks = null;
-    private ChunkCoordIntPair cachedChunk = null;       // For which chunk are the cachedBlocks valid
+    private ChunkPos cachedChunk = null;       // For which chunk are the cachedBlocks valid
 
     // Cached set of blocks that we want to void with the quarry.
     private Set<Block> cachedVoidableBlocks = null;
@@ -705,13 +705,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return chamberChannel;
     }
 
-    private Set<BlockPos> getCachedBlocks(ChunkCoordIntPair chunk) {
+    private Set<BlockPos> getCachedBlocks(ChunkPos chunk) {
         if ((chunk != null && !chunk.equals(cachedChunk)) || (chunk == null && cachedChunk != null)) {
             cachedBlocks = null;
         }
 
         if (cachedBlocks == null) {
-            cachedBlocks = new HashSet<BlockPos>();
+            cachedBlocks = new HashSet<>();
             ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
             ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
             BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
@@ -729,7 +729,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             if (scan == null) {
                 return;
             }
-            if (getCachedBlocks(new ChunkCoordIntPair(scan.getX() >> 4, scan.getZ() >> 4)).contains(scan)) {
+            if (getCachedBlocks(new ChunkPos(scan.getX() >> 4, scan.getZ() >> 4)).contains(scan)) {
                 if (!handleSingleBlock()) {
                     nextLocation();
                 }
@@ -1592,7 +1592,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 }
             }
 
-            ChunkCoordIntPair pair = new ChunkCoordIntPair(cx, cz);
+            ChunkPos pair = new ChunkPos(cx, cz);
             if (pair.equals(forcedChunk)) {
                 return true;
             }
@@ -1752,9 +1752,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setByte("powered", (byte) powered);
+        return tagCompound;
     }
 
     @Override

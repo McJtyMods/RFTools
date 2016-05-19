@@ -96,12 +96,13 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
     }
 
     @Override
-    public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block neighborBlock) {
+    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof LogicTileEntity) {
             LogicTileEntity logicTileEntity = (LogicTileEntity)te;
             EnumFacing inputSide = logicTileEntity.getFacing().getInputSide();
-            int power = getInputStrength(world, pos, inputSide);
+            // @todo
+            int power = getInputStrength((World) world, pos, inputSide);
             if (power == 0) {
                 // Check if there is no redstone wire there. If there is a 'bend' in the redstone wire it is
                 // not detected with getInputStrength().
@@ -109,7 +110,7 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
                 IBlockState blockState = world.getBlockState(pos.offset(inputSide));
                 Block b = blockState.getBlock();
                 if (b == Blocks.REDSTONE_WIRE) {
-                    power = world.isBlockPowered(pos.offset(inputSide)) ? 15 : 0;
+                    power = ((World) world).isBlockPowered(pos.offset(inputSide)) ? 15 : 0;
                 }
             }
             logicTileEntity.setPowered(power);

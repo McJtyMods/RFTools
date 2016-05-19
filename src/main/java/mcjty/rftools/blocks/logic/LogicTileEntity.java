@@ -24,8 +24,9 @@ public class LogicTileEntity extends GenericTileEntity {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("lf", facing.ordinal());
+        return tagCompound;
     }
 }

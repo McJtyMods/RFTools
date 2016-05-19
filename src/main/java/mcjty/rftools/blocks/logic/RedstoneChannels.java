@@ -45,7 +45,7 @@ public class RedstoneChannels extends WorldSavedData {
         if (instance != null) {
             return instance;
         }
-        instance = (RedstoneChannels) world.getMapStorage().loadData(RedstoneChannels.class, REDSTONE_CHANNELS_NAME);
+        instance = (RedstoneChannels) world.getMapStorage().getOrLoadData(RedstoneChannels.class, REDSTONE_CHANNELS_NAME);
         if (instance == null) {
             instance = new RedstoneChannels(REDSTONE_CHANNELS_NAME);
         }
@@ -91,7 +91,7 @@ public class RedstoneChannels extends WorldSavedData {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         NBTTagList lst = new NBTTagList();
         for (Map.Entry<Integer, RedstoneChannel> entry : channels.entrySet()) {
             NBTTagCompound tc = new NBTTagCompound();
@@ -101,6 +101,7 @@ public class RedstoneChannels extends WorldSavedData {
         }
         tagCompound.setTag("channels", lst);
         tagCompound.setInteger("lastId", lastId);
+        return tagCompound;
     }
 
     public static class RedstoneChannel {

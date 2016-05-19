@@ -240,7 +240,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         int[] xes = new int[connectedScreens.size()];
         int[] yes = new int[connectedScreens.size()];
@@ -254,6 +254,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
         tagCompound.setIntArray("screensx", xes);
         tagCompound.setIntArray("screensy", yes);
         tagCompound.setIntArray("screensz", zes);
+        return tagCompound;
     }
 
     @Override

@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -59,8 +60,8 @@ public class RedstoneTransmitterBlock extends LogicSlabBlock<RedstoneTransmitter
     }
 
     @Override
-    public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block neighborBlock) {
-        super.onNeighborBlockChange(world, pos, state, neighborBlock);
+    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
+        super.onNeighborChange(world, pos, neighbor);
         RedstoneTransmitterTileEntity te = (RedstoneTransmitterTileEntity) world.getTileEntity(pos);
         te.update();
     }
@@ -76,7 +77,8 @@ public class RedstoneTransmitterBlock extends LogicSlabBlock<RedstoneTransmitter
                 te.setChannel(id);
                 redstoneChannels.save(world);
             }
-            onNeighborBlockChange(world, pos, state, this);
+            // @todo double check
+            te.update();
         }
     }
 

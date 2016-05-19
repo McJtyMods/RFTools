@@ -60,9 +60,10 @@ public class RedstoneReceiverTileEntity extends LogicTileEntity implements ITick
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setBoolean("rs", redstoneOut);
+        return tagCompound;
     }
 
     @Override

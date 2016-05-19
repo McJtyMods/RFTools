@@ -388,7 +388,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         NBTTagList list = new NBTTagList();
         for (BlockPos c : inventories) {
@@ -402,6 +402,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             list.appendTag(tag);
         }
         tagCompound.setTag("routable", list);
+        return tagCompound;
     }
 
     @Override

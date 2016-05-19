@@ -193,7 +193,7 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         if (monitor != null) {
             tagCompound.setInteger("monitorX", monitor.getX());
@@ -201,6 +201,7 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
             tagCompound.setInteger("monitorZ", monitor.getZ());
         }
         tagCompound.setBoolean("inAlarm", inAlarm);
+        return tagCompound;
     }
 
     @Override

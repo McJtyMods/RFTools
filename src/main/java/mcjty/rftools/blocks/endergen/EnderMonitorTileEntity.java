@@ -88,10 +88,11 @@ public class EnderMonitorTileEntity extends LogicTileEntity implements ITickable
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setBoolean("rs", redstoneOut);
         tagCompound.setBoolean("needPulse", needpulse);
+        return tagCompound;
     }
 
     @Override

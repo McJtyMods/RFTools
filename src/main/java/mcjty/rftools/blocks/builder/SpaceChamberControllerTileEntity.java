@@ -141,10 +141,11 @@ public class SpaceChamberControllerTileEntity extends GenericTileEntity {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         BlockPosTools.writeToNBT(tagCompound, "minCorner", minCorner);
         BlockPosTools.writeToNBT(tagCompound, "maxCorner", maxCorner);
+        return tagCompound;
     }
 
     @Override

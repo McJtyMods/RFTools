@@ -101,7 +101,8 @@ public class SpaceChamberControllerBlock extends GenericRFToolsBlock<SpaceChambe
                 te.setChannel(id);
                 chamberRepository.save(world);
             }
-            onNeighborBlockChange(world, pos, state, this);
+            // @todo
+//            onNeighborBlockChange(world, pos, state, this);
         }
     }
 

@@ -340,11 +340,12 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setBoolean("powerOn", powerOn);
         tagCompound.setBoolean("connected", connected);
         tagCompound.setInteger("rfPerTick", totalRfPerTick);
+        return tagCompound;
     }
 
     @Override

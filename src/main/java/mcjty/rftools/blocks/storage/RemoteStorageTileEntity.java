@@ -460,8 +460,9 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
 
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
+        return tagCompound;
     }
 
     @Override

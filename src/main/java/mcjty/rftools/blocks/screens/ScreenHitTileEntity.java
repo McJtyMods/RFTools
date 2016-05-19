@@ -3,9 +3,10 @@ package mcjty.rftools.blocks.screens;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+
+import javax.annotation.Nullable;
 
 public class ScreenHitTileEntity extends TileEntity {
 
@@ -43,15 +44,17 @@ public class ScreenHitTileEntity extends TileEntity {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("dx", dx);
         tagCompound.setInteger("dy", dy);
         tagCompound.setInteger("dz", dz);
+        return tagCompound;
     }
 
+    @Nullable
     @Override
-    public Packet getDescriptionPacket() {
+    public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound nbtTag = new NBTTagCompound();
         this.writeToNBT(nbtTag);
         return new SPacketUpdateTileEntity(getPos(), 1, nbtTag);

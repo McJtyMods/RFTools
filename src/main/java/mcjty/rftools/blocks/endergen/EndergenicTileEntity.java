@@ -522,7 +522,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
 
         tagCompound.setInteger("charging", chargingMode);
@@ -539,6 +539,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
             pearlList.appendTag(pearl.getTagCompound());
         }
         tagCompound.setTag("pearls", pearlList);
+        return tagCompound;
     }
 
     @Override

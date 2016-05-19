@@ -108,8 +108,9 @@ public class EnvironmentalControllerBlock extends GenericRFToolsBlock implements
     }
 
     @Override
-    public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block neighborBlock) {
-        checkRedstoneWithTE(world, pos);
+    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
+        // @todo
+        checkRedstoneWithTE((World) world, pos);
     }
 
 //    @Override

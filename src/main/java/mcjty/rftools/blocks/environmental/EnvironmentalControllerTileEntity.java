@@ -473,11 +473,12 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("rfPerTick", totalRfPerTick);
         tagCompound.setBoolean("active", active);
         tagCompound.setByte("powered", (byte) powered);
+        return tagCompound;
     }
 
     @Override
