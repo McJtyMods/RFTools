@@ -22,8 +22,8 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
@@ -609,7 +609,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
         return cnt[0];
     }
 
-    public static boolean xInChunk(int x, ChunkCoordIntPair chunk) {
+    public static boolean xInChunk(int x, ChunkPos chunk) {
         if (chunk == null) {
             return true;
         } else {
@@ -617,7 +617,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
         }
     }
 
-    public static boolean zInChunk(int z, ChunkCoordIntPair chunk) {
+    public static boolean zInChunk(int z, ChunkPos chunk) {
         if (chunk == null) {
             return true;
         } else {
@@ -626,7 +626,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
     }
 
     public static void composeShape(Shape shape, World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean forquarry,
-                                    ChunkCoordIntPair chunk) {
+                                    ChunkPos chunk) {
         switch (shape) {
             case SHAPE_BOX:
                 composeBox(worldObj, thisCoord, dimension, offset, blocks, maxSize, false, forquarry, chunk);
@@ -685,7 +685,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
         }
     }
 
-    private static void composeSphere(World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, int side, boolean solid, boolean forquarry, ChunkCoordIntPair chunk) {
+    private static void composeSphere(World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, int side, boolean solid, boolean forquarry, ChunkPos chunk) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
         int zCoord = thisCoord.getZ();
@@ -766,7 +766,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
         return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) ? 1 : 0;
     }
 
-    private static void composeCylinder(World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean capped, boolean solid, boolean forquarry, ChunkCoordIntPair chunk) {
+    private static void composeCylinder(World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean capped, boolean solid, boolean forquarry, ChunkPos chunk) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
         int zCoord = thisCoord.getZ();
@@ -821,7 +821,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
         }
     }
 
-    private static void composeBox(World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean solid, boolean forquarry, ChunkCoordIntPair chunk) {
+    private static void composeBox(World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean solid, boolean forquarry, ChunkPos chunk) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
         int zCoord = thisCoord.getZ();
@@ -850,7 +850,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
         }
     }
 
-    private static void composePrism(World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean forquarry, ChunkCoordIntPair chunk) {
+    private static void composePrism(World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean forquarry, ChunkPos chunk) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
         int zCoord = thisCoord.getZ();
@@ -892,7 +892,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
         }
     }
 
-    private static void composeTorus(World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean solid, boolean forquarry, ChunkCoordIntPair chunk) {
+    private static void composeTorus(World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean solid, boolean forquarry, ChunkPos chunk) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
         int zCoord = thisCoord.getZ();

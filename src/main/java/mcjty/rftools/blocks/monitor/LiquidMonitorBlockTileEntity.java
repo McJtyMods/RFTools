@@ -198,7 +198,7 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         if (monitor != null) {
             tagCompound.setInteger("monitorX", monitor.getX());
@@ -206,6 +206,7 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
             tagCompound.setInteger("monitorZ", monitor.getZ());
         }
         tagCompound.setBoolean("inAlarm", inAlarm);
+        return tagCompound;
     }
 
     @Override

@@ -694,7 +694,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setBoolean("powered", powered);
         tagCompound.setBoolean("prevIn", prevIn);
@@ -741,6 +741,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
                 tagCompound.setTag("players", playerList);
             }
         }
+        return tagCompound;
     }
 
     @Override

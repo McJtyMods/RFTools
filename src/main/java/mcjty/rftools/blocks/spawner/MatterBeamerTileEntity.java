@@ -242,11 +242,12 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
 
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         BlockPosTools.writeToNBT(tagCompound, "dest", destination);
         tagCompound.setByte("powered", (byte) powered);
         tagCompound.setBoolean("glowing", glowing);
+        return tagCompound;
     }
 
     @Override

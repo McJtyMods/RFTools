@@ -160,9 +160,10 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setByte("powered", (byte) powered);
+        return tagCompound;
     }
 
     @Override

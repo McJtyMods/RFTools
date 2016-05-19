@@ -209,7 +209,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("tpTimer", teleportTimer);
         tagCompound.setInteger("cooldownTimer", cooldownTimer);
@@ -221,6 +221,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         }
         tagCompound.setInteger("status", status);
         tagCompound.setInteger("rfPerTick", rfPerTick);
+        return tagCompound;
     }
 
     @Override

@@ -48,7 +48,7 @@ public class SecurityChannels extends WorldSavedData {
         if (instance != null) {
             return instance;
         }
-        instance = (SecurityChannels) world.getMapStorage().loadData(SecurityChannels.class, SECURITY_CHANNELS_NAME);
+        instance = (SecurityChannels) world.getMapStorage().getOrLoadData(SecurityChannels.class, SECURITY_CHANNELS_NAME);
         if (instance == null) {
             instance = new SecurityChannels(SECURITY_CHANNELS_NAME);
         }
@@ -104,7 +104,7 @@ public class SecurityChannels extends WorldSavedData {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         NBTTagList lst = new NBTTagList();
         for (Map.Entry<Integer, SecurityChannel> entry : channels.entrySet()) {
             NBTTagCompound tc = new NBTTagCompound();
@@ -123,6 +123,7 @@ public class SecurityChannels extends WorldSavedData {
         }
         tagCompound.setTag("channels", lst);
         tagCompound.setInteger("lastId", lastId);
+        return tagCompound;
     }
 
     public static class SecurityChannel {

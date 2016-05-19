@@ -47,7 +47,7 @@ public class SpaceChamberRepository extends WorldSavedData {
         if (instance != null) {
             return instance;
         }
-        instance = (SpaceChamberRepository) world.getMapStorage().loadData(SpaceChamberRepository.class, SPACECHAMBER_CHANNELS_NAME);
+        instance = (SpaceChamberRepository) world.getMapStorage().getOrLoadData(SpaceChamberRepository.class, SPACECHAMBER_CHANNELS_NAME);
         if (instance == null) {
             instance = new SpaceChamberRepository(SPACECHAMBER_CHANNELS_NAME);
         }
@@ -94,7 +94,7 @@ public class SpaceChamberRepository extends WorldSavedData {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         NBTTagList lst = new NBTTagList();
         for (Map.Entry<Integer, SpaceChamberChannel> entry : channels.entrySet()) {
             NBTTagCompound tc = new NBTTagCompound();
@@ -106,6 +106,7 @@ public class SpaceChamberRepository extends WorldSavedData {
         }
         tagCompound.setTag("channels", lst);
         tagCompound.setInteger("lastId", lastId);
+        return tagCompound;
     }
 
     public static class SpaceChamberChannel {

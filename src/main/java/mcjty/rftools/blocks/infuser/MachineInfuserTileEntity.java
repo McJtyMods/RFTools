@@ -156,8 +156,9 @@ public class MachineInfuserTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
+        return tagCompound;
     }
 
     @Override

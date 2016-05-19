@@ -113,10 +113,11 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setBoolean("prevIn", prevIn);
         tagCompound.setBoolean("powered", powered);
+        return tagCompound;
     }
 
     @Override

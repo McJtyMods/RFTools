@@ -209,9 +209,10 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("powered", powered);
+        return tagCompound;
     }
 
     @Override

@@ -93,12 +93,13 @@ public class TimerTileEntity extends LogicTileEntity implements ITickable {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setBoolean("rs", redstoneOut);
         tagCompound.setBoolean("prevIn", prevIn);
         tagCompound.setInteger("timer", timer);
         tagCompound.setBoolean("powered", powered);
+        return tagCompound;
     }
 
     @Override

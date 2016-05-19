@@ -57,9 +57,10 @@ public class RedstoneTransmitterTileEntity extends LogicTileEntity {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setBoolean("powered", powered);
+        return tagCompound;
     }
 
     @Override

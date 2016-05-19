@@ -124,8 +124,9 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
+        return tagCompound;
     }
 
     @Override

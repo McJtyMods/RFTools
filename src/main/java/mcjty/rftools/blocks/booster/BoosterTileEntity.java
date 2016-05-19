@@ -56,9 +56,10 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setBoolean("powered", powered);
+        return tagCompound;
     }
 
     @Override

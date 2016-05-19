@@ -96,7 +96,7 @@ public class PowerCellNetwork extends WorldSavedData {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         NBTTagList lst = new NBTTagList();
         for (Map.Entry<Integer, Network> entry : networks.entrySet()) {
             NBTTagCompound tc = new NBTTagCompound();
@@ -106,6 +106,7 @@ public class PowerCellNetwork extends WorldSavedData {
         }
         tagCompound.setTag("networks", lst);
         tagCompound.setInteger("lastId", lastId);
+        return tagCompound;
     }
 
     public static class Network {

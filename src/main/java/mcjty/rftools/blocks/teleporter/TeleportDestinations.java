@@ -77,7 +77,7 @@ public class TeleportDestinations extends WorldSavedData {
         if (instance != null) {
             return instance;
         }
-        instance = (TeleportDestinations) world.getMapStorage().loadData(TeleportDestinations.class, TPDESTINATIONS_NAME);
+        instance = (TeleportDestinations) world.getMapStorage().getOrLoadData(TeleportDestinations.class, TPDESTINATIONS_NAME);
         if (instance == null) {
             instance = new TeleportDestinations(TPDESTINATIONS_NAME);
         }
@@ -249,9 +249,10 @@ public class TeleportDestinations extends WorldSavedData {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         writeDestinationsToNBT(tagCompound, destinations.values(), destinationIdByCoordinate);
         tagCompound.setInteger("lastId", lastId);
+        return tagCompound;
     }
 
     private static void writeDestinationsToNBT(NBTTagCompound tagCompound, Collection<TeleportDestination> destinations,

@@ -40,7 +40,7 @@ public class RemoteStorageIdRegistry extends WorldSavedData {
         if (instance != null) {
             return instance;
         }
-        instance = (RemoteStorageIdRegistry) world.getMapStorage().loadData(RemoteStorageIdRegistry.class, RFTOOLS_REMOTE_STORAGE);
+        instance = (RemoteStorageIdRegistry) world.getMapStorage().getOrLoadData(RemoteStorageIdRegistry.class, RFTOOLS_REMOTE_STORAGE);
         if (instance == null) {
             instance = new RemoteStorageIdRegistry(RFTOOLS_REMOTE_STORAGE);
         }
@@ -114,7 +114,8 @@ public class RemoteStorageIdRegistry extends WorldSavedData {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         tagCompound.setInteger("lastId", lastId);
+        return tagCompound;
     }
 }

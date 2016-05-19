@@ -42,7 +42,7 @@ public class BlockProtectors extends WorldSavedData {
         if (instance != null) {
             return instance;
         }
-        instance = (BlockProtectors) world.getMapStorage().loadData(BlockProtectors.class, PROTECTORS_NAME);
+        instance = (BlockProtectors) world.getMapStorage().getOrLoadData(BlockProtectors.class, PROTECTORS_NAME);
         if (instance == null) {
             instance = new BlockProtectors(PROTECTORS_NAME);
         }
@@ -120,7 +120,7 @@ public class BlockProtectors extends WorldSavedData {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         NBTTagList lst = new NBTTagList();
         for (GlobalCoordinate destination : protectorIdByCoordinate.keySet()) {
             NBTTagCompound tc = new NBTTagCompound();
@@ -135,6 +135,7 @@ public class BlockProtectors extends WorldSavedData {
         }
         tagCompound.setTag("blocks", lst);
         tagCompound.setInteger("lastId", lastId);
+        return tagCompound;
     }
 
 }

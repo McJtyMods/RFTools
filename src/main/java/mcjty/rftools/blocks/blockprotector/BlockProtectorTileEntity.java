@@ -342,7 +342,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         NBTTagList list = new NBTTagList();
         for (BlockPos block : protectedBlocks) {
@@ -351,6 +351,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
         tagCompound.setTag("coordinates", list);
         tagCompound.setByte("powered", (byte) powered);
         tagCompound.setBoolean("active", active);
+        return tagCompound;
     }
 
 
