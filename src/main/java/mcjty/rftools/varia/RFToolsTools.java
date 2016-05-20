@@ -12,6 +12,13 @@ import org.apache.commons.lang3.StringUtils;
 
 public class RFToolsTools {
 
+    public static boolean safeEquals(Object a, Object b) {
+        if (a == null) {
+            return b == null;
+        }
+        return a.equals(b);
+    }
+
     public static boolean chunkLoaded(World world, BlockPos pos) {
         return world.getChunkProvider().getLoadedChunk(pos.getX() >> 4, pos.getZ() >> 4) != null && world.getChunkFromBlockCoords(pos).isLoaded();
     }

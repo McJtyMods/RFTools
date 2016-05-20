@@ -162,6 +162,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     }
 
     public void setViewMode(String viewMode) {
+        System.out.println("viewMode = " + this.viewMode + " -> " + viewMode);
         this.viewMode = viewMode;
         markDirty();
     }
@@ -344,11 +345,14 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         if (index == ModularStorageContainer.SLOT_STORAGE_MODULE) {
             if (isServer()) {
                 copyFromModule(stack);
+                dirty = true;
             }
         }
 
         handleNewAmount(s1, index);
     }
+
+    public boolean dirty = false;
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
@@ -543,6 +547,39 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     }
 
     @Override
+    public void readClientDataFromNBT(NBTTagCompound tagCompound) {
+        numStacks = tagCompound.getInteger("numStacks");
+        maxSize = tagCompound.getInteger("maxSize");
+        remoteId = tagCompound.getInteger("remoteId");
+        inventoryHelper.setNewCount(ModularStorageContainer.SLOT_STORAGE + maxSize);
+        System.out.println("numStacks = " + numStacks);
+    }
+
+    @Override
+    public void writeClientDataToNBT(NBTTagCompound tagCompound) {
+        tagCompound.setInteger("numStacks", numStacks);
+        tagCompound.setInteger("maxSize", maxSize);
+        tagCompound.setInteger("remoteId", remoteId);
+    }
+
+    @Override
+    public Object[] getDataForGUI() {
+        System.out.println("getDataForGUI: viewMode = " + viewMode);
+        return new Object[] {
+                sortMode, viewMode, groupMode, filter
+        };
+    }
+
+    @Override
+    public void syncDataForGUI(Object[] data) {
+        sortMode = (String) data[0];
+        viewMode = (String) data[1];
+        groupMode = (Boolean) data[2];
+        filter = (String) data[3];
+        System.out.println("syncDataForGUI: viewMode = " + viewMode);
+    }
+
+    @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
     }
@@ -552,7 +589,6 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         super.readRestorableFromNBT(tagCompound);
         numStacks = tagCompound.getInteger("numStacks");
         maxSize = tagCompound.getInteger("maxSize");
-//        System.out.println((isServer() ? "SERVER" : "CLIENT") + ": loc=" + xCoord + "," + yCoord + "," + zCoord + ", #stacks=" + numStacks + ", max=" + maxSize);
         remoteId = tagCompound.getInteger("remoteId");
         sortMode = tagCompound.getString("sortMode");
         viewMode = tagCompound.getString("viewMode");
@@ -694,8 +730,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             setViewMode(args.get("viewMode").getString());
             setSortMode(args.get("sortMode").getString());
             setGroupMode(args.get("groupMode").getBoolean());
-            IBlockState state = worldObj.getBlockState(getPos());
-            worldObj.notifyBlockUpdate(getPos(), state, state, 3);
+            markDirtyClient();
             return true;
         } else if (CMD_COMPACT.equals(command)) {
             compact();

@@ -229,6 +229,11 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
     private void updateSettings() {
         if (tileEntity != null) {
+            tileEntity.setSortMode(sortMode.getCurrentChoice());
+            tileEntity.setViewMode(viewMode.getCurrentChoice());
+            tileEntity.setFilter(filter.getText());
+            tileEntity.setGroupMode(groupMode.getCurrentChoiceIndex() == 1);
+            System.out.println("viewMode.getCurrentChoice() = " + viewMode.getCurrentChoice());
             sendServerCommand(RFToolsMessages.INSTANCE, ModularStorageTileEntity.CMD_SETTINGS,
                     new Argument("sortMode", sortMode.getCurrentChoice()),
                     new Argument("viewMode", viewMode.getCurrentChoice()),
@@ -492,6 +497,12 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         updateList();
+
+        viewMode.setCurrentChoice(tileEntity.getViewMode());
+        sortMode.setCurrentChoice(tileEntity.getSortMode());
+        groupMode.setCurrentChoice(tileEntity.isGroupMode() ? 1 : 0);
+        filter.setText(tileEntity.getFilter());
+
         drawWindow();
     }
 }

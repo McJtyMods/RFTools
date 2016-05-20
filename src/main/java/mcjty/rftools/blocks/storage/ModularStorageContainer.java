@@ -3,8 +3,11 @@ package mcjty.rftools.blocks.storage;
 import mcjty.lib.container.*;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.items.storage.StorageTypeItem;
+import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
+import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -17,6 +20,12 @@ public class ModularStorageContainer extends GenericContainer {
     public static final int SLOT_FILTER_MODULE = 2;
     public static final int SLOT_STORAGE = 3;
     public static final int MAXSIZE_STORAGE = 300;
+
+    // Change detection data
+    private String sortMode;
+    private String viewMode;
+    private Boolean groupMode;
+    private String filter;
 
     private ModularStorageTileEntity modularStorageTileEntity;
 
@@ -34,9 +43,17 @@ public class ModularStorageContainer extends GenericContainer {
     public ModularStorageContainer(EntityPlayer player, IInventory containerInventory) {
         super(factory);
         modularStorageTileEntity = (ModularStorageTileEntity) containerInventory;
+
         addInventory(CONTAINER_INVENTORY, containerInventory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
         generateSlots();
+    }
+
+    private void copyFromTE() {
+        sortMode = modularStorageTileEntity.getSortMode();
+        viewMode = modularStorageTileEntity.getViewMode();
+        groupMode = modularStorageTileEntity.isGroupMode();
+        filter = modularStorageTileEntity.getFilter();
     }
 
     @Override
@@ -102,5 +119,38 @@ public class ModularStorageContainer extends GenericContainer {
             modularStorageTileEntity.copyToModule();
         }
         return super.slotClick(index, button, mode, player);
+    }
+
+    @Override
+    public void detectAndSendChanges() {
+        if (modularStorageTileEntity.dirty) {
+            System.out.println("ModularStorageContainer.detectAndSendChanges: DIRTY");
+            System.out.println("this.inventorySlots.size() = " + this.inventorySlots.size());
+            System.out.println("modularStorageTileEntity.getNumStacks() = " + modularStorageTileEntity.getNumStacks());
+            modularStorageTileEntity.dirty = false;
+
+            for (int i = 0; i < this.inventorySlots.size(); ++i) {
+                ItemStack itemstack = this.inventorySlots.get(i).getStack();
+                ItemStack itemstack1 = itemstack == null ? null : itemstack.copy();
+                this.inventoryItemStacks.set(i, itemstack1);
+
+                for (ICrafting listener : this.listeners) {
+                    listener.sendSlotContents(this, i, itemstack1);
+                }
+            }
+
+        } else {
+            super.detectAndSendChanges();
+        }
+
+        boolean same = RFToolsTools.safeEquals(sortMode, modularStorageTileEntity.getSortMode()) &&
+                RFToolsTools.safeEquals(viewMode, modularStorageTileEntity.getViewMode()) &&
+                RFToolsTools.safeEquals(filter, modularStorageTileEntity.getFilter()) &&
+                RFToolsTools.safeEquals(groupMode, modularStorageTileEntity.isGroupMode());
+        if (!same) {
+            System.out.println("detectAndSendChanges: modularStorageTileEntity.getViewMode() = " + modularStorageTileEntity.getViewMode());
+            copyFromTE();
+            notifyPlayerOfChanges(RFToolsMessages.INSTANCE, modularStorageTileEntity.getWorld(), modularStorageTileEntity.getPos());
+        }
     }
 }
