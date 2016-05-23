@@ -169,7 +169,6 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     }
 
     public void setViewMode(String viewMode) {
-        System.out.println("viewMode = " + this.viewMode + " -> " + viewMode);
         this.viewMode = viewMode;
         markDirty();
     }
