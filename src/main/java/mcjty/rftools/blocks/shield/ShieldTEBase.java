@@ -825,12 +825,55 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         return (byte) (s & 0xff);
     }
 
+//    @Override
+//    public Object[] getDataForGUI() {
+//        return new Object[] {
+//                shieldColor, redstoneMode.ordinal(), shieldRenderingMode.ordinal(), damageMode.ordinal()
+//        };
+//    }
+//
+//    @Override
+//    public void syncDataForGUI(Object[] data) {
+//        shieldColor = (Integer) data[0];
+//        redstoneMode = RedstoneMode.values()[(Integer) data[1]];
+//        shieldRenderingMode = ShieldRenderingMode.values()[(Integer) data[2]];
+//        damageMode = DamageTypeMode.values()[(Integer) data[3]];
+//    }
+//
+
     @Override
     public void readClientDataFromNBT(NBTTagCompound tagCompound) {
+        powered = tagCompound.getByte("powered");
+        shieldComposed = tagCompound.getBoolean("composed");
+        shieldActive = tagCompound.getBoolean("active");
+        powerTimeout = tagCompound.getInteger("powerTimeout");
+        templateMeta = tagCompound.getInteger("templateMeta");
+
+        shieldRenderingMode = ShieldRenderingMode.values()[tagCompound.getInteger("visMode")];
+        redstoneMode = RedstoneMode.values()[((int) tagCompound.getByte("rsMode"))];
+        damageMode = DamageTypeMode.values()[((int) tagCompound.getByte("damageMode"))];
+        camoRenderPass = tagCompound.getInteger("camoRenderPass");
+
+        shieldColor = tagCompound.getInteger("shieldColor");
+        if (shieldColor == 0) {
+            shieldColor = 0x96ffc8;
+        }
     }
 
     @Override
     public void writeClientDataToNBT(NBTTagCompound tagCompound) {
+        tagCompound.setByte("powered", (byte) powered);
+        tagCompound.setBoolean("composed", shieldComposed);
+        tagCompound.setBoolean("active", shieldActive);
+        tagCompound.setInteger("powerTimeout", powerTimeout);
+        tagCompound.setInteger("templateMeta", templateMeta);
+
+        tagCompound.setInteger("visMode", shieldRenderingMode.ordinal());
+        tagCompound.setByte("rsMode", (byte) redstoneMode.ordinal());
+        tagCompound.setByte("damageMode", (byte) damageMode.ordinal());
+
+        tagCompound.setInteger("camoRenderPass", camoRenderPass);
+        tagCompound.setInteger("shieldColor", shieldColor);
     }
 
     @Override
@@ -858,15 +901,10 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
-        int m = tagCompound.getInteger("visMode");
-        shieldRenderingMode = ShieldRenderingMode.values()[m];
 
-        m = tagCompound.getByte("rsMode");
-        redstoneMode = RedstoneMode.values()[m];
-
-        m = tagCompound.getByte("damageMode");
-        damageMode = DamageTypeMode.values()[m];
-
+        shieldRenderingMode = ShieldRenderingMode.values()[tagCompound.getInteger("visMode")];
+        redstoneMode = RedstoneMode.values()[((int) tagCompound.getByte("rsMode"))];
+        damageMode = DamageTypeMode.values()[((int) tagCompound.getByte("damageMode"))];
         camoRenderPass = tagCompound.getInteger("camoRenderPass");
 
         shieldColor = tagCompound.getInteger("shieldColor");

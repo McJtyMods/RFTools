@@ -52,6 +52,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
     private Button delFilter;
     private Button upFilter;
     private Button downFilter;
+    private ColorChoiceLabel colorSelector;
 
     // A copy of the filterList we're currently showing.
     private List<ShieldFilter> filters = null;
@@ -119,7 +120,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
                 setLayoutHint(new PositionalLayout.PositionalHint(51, 142, 28, 16)).addButtonEvent(parent -> applyCamoToShield());
         applyCamo.setEnabled(false);
         applyCamo.setTooltips("Not implemented yet");   // @todo
-        ColorChoiceLabel colorSelector = new ColorChoiceLabel(mc, this)
+        colorSelector = new ColorChoiceLabel(mc, this)
                 .setTooltips("Color for the shield")
                 .setLayoutHint(new PositionalLayout.PositionalHint(31, 177, 48, 16));
         colorSelector.addColors(0x96ffc8);
@@ -413,6 +414,8 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         drawWindow();
         int currentRF = tileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
+        colorSelector.setCurrentColor(tileEntity.getShieldColor());
+
         tileEntity.requestRfFromServer(RFTools.MODID);
     }
 }

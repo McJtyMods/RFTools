@@ -120,6 +120,13 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
     }
 
     @Override
+    public NBTTagCompound getUpdateTag() {
+        NBTTagCompound updateTag = super.getUpdateTag();
+        writeToNBT(updateTag);
+        return updateTag;
+    }
+
+    @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         camoId = tagCompound.getInteger("camoId");
