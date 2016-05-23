@@ -835,24 +835,14 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         templateMeta = tagCompound.getInteger("templateMeta");
 
         shieldBlocks.clear();;
-        if (tagCompound.hasKey("coordinates")) {
-            // Support for legacy coordinates field
-            NBTTagCompound compound = tagCompound.getCompoundTag("coordinates");
-            NBTTagList list = compound.getTagList("list", 10);
-            for(int i = 0; i < list.tagCount(); ++i) {
-                BlockPos c = BlockPosTools.readFromNBT(list.getCompoundTagAt(i), "c");
-                shieldBlocks.add(new RelCoordinate(c.getX() - getPos().getX(), c.getY() - getPos().getY(), c.getZ() - getPos().getZ()));
-            }
-        } else {
-            byte[] byteArray = tagCompound.getByteArray("relcoords");
-            int j = 0;
-            for (int i = 0 ; i < byteArray.length / 6 ; i++) {
-                short dx = bytesToShort(byteArray[j+0], byteArray[j+1]);
-                short dy = bytesToShort(byteArray[j+2], byteArray[j+3]);
-                short dz = bytesToShort(byteArray[j+4], byteArray[j+5]);
-                j += 6;
-                shieldBlocks.add(new RelCoordinate(dx, dy, dz));
-            }
+        byte[] byteArray = tagCompound.getByteArray("relcoords");
+        int j = 0;
+        for (int i = 0 ; i < byteArray.length / 6 ; i++) {
+            short dx = bytesToShort(byteArray[j+0], byteArray[j+1]);
+            short dy = bytesToShort(byteArray[j+2], byteArray[j+3]);
+            short dz = bytesToShort(byteArray[j+4], byteArray[j+5]);
+            j += 6;
+            shieldBlocks.add(new RelCoordinate(dx, dy, dz));
         }
     }
 
@@ -911,7 +901,6 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         }
         tagCompound.setByteArray("relcoords", blocks);
 
-//        shieldBlocksOld.writeToNBT(tagCompound, "coordinates");
         return tagCompound;
     }
 
