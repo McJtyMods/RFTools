@@ -826,6 +826,14 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     }
 
     @Override
+    public void readClientDataFromNBT(NBTTagCompound tagCompound) {
+    }
+
+    @Override
+    public void writeClientDataToNBT(NBTTagCompound tagCompound) {
+    }
+
+    @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         powered = tagCompound.getByte("powered");
