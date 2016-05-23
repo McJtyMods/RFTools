@@ -7,10 +7,10 @@ import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
-import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class ModularStorageContainer extends GenericContainer {
     public static final String CONTAINER_INVENTORY = "container";
@@ -26,6 +26,7 @@ public class ModularStorageContainer extends GenericContainer {
     private String viewMode;
     private Boolean groupMode;
     private String filter;
+    private int maxsize;
 
     private ModularStorageTileEntity modularStorageTileEntity;
 
@@ -112,6 +113,10 @@ public class ModularStorageContainer extends GenericContainer {
         }
     }
 
+    @Override
+    public void putStackInSlot(int slotID, ItemStack stack) {
+        super.putStackInSlot(slotID, stack);
+    }
 
     @Override
     public ItemStack slotClick(int index, int button, ClickType mode, EntityPlayer player) {
@@ -123,25 +128,7 @@ public class ModularStorageContainer extends GenericContainer {
 
     @Override
     public void detectAndSendChanges() {
-        if (modularStorageTileEntity.dirty) {
-            System.out.println("ModularStorageContainer.detectAndSendChanges: DIRTY");
-            System.out.println("this.inventorySlots.size() = " + this.inventorySlots.size());
-            System.out.println("modularStorageTileEntity.getNumStacks() = " + modularStorageTileEntity.getNumStacks());
-            modularStorageTileEntity.dirty = false;
-
-            for (int i = 0; i < this.inventorySlots.size(); ++i) {
-                ItemStack itemstack = this.inventorySlots.get(i).getStack();
-                ItemStack itemstack1 = itemstack == null ? null : itemstack.copy();
-                this.inventoryItemStacks.set(i, itemstack1);
-
-                for (ICrafting listener : this.listeners) {
-                    listener.sendSlotContents(this, i, itemstack1);
-                }
-            }
-
-        } else {
-            super.detectAndSendChanges();
-        }
+        super.detectAndSendChanges();
 
         boolean same = RFToolsTools.safeEquals(sortMode, modularStorageTileEntity.getSortMode()) &&
                 RFToolsTools.safeEquals(viewMode, modularStorageTileEntity.getViewMode()) &&

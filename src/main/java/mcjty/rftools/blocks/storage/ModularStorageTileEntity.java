@@ -84,8 +84,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             if (si == -1) {
                 if (prevLevel != -2) {
                     prevLevel = -2;
-                    numStacks = -1;
-                    setMaxSize(0);
+                    clearInventory();
                 }
                 return;
             }
@@ -101,6 +100,14 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
                 prevLevel = level;
                 markDirtyClient();
             }
+        }
+    }
+
+    private void clearInventory() {
+        setMaxSize(0);
+        numStacks = -1;
+        for (int i = ModularStorageContainer.SLOT_STORAGE; i < ModularStorageContainer.MAXSIZE_STORAGE ; i++) {
+            inventoryHelper.setInventorySlotContents(64, i, null);
         }
     }
 
@@ -343,16 +350,11 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         setInventorySlotContentsHelper(getInventoryStackLimit(), index, stack);
 
         if (index == ModularStorageContainer.SLOT_STORAGE_MODULE) {
-            if (isServer()) {
-                copyFromModule(stack);
-                dirty = true;
-            }
+            copyFromModule(stack);
         }
 
         handleNewAmount(s1, index);
     }
-
-    public boolean dirty = false;
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
@@ -433,8 +435,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         }
 
         if (stack == null) {
-            setMaxSize(0);
-            numStacks = -1;
+            clearInventory();
             return;
         }
 
@@ -442,21 +443,18 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         if (stack.getItemDamage() == StorageModuleItem.STORAGE_REMOTE) {
             NBTTagCompound tagCompound = stack.getTagCompound();
             if (tagCompound == null || !tagCompound.hasKey("id")) {
-                setMaxSize(0);
-                numStacks = -1;
+                clearInventory();
                 return;
             }
             remoteId = tagCompound.getInteger("id");
             RemoteStorageTileEntity remoteStorageTileEntity = getRemoteStorage(remoteId);
             if (remoteStorageTileEntity == null) {
-                setMaxSize(0);
-                numStacks = -1;
+                clearInventory();
                 return;
             }
             ItemStack storageStack = remoteStorageTileEntity.findStorageWithId(remoteId);
             if (storageStack == null) {
-                setMaxSize(0);
-                numStacks = -1;
+                clearInventory();
                 return;
             }
             setMaxSize(StorageModuleItem.MAXSIZE[storageStack.getItemDamage()]);
@@ -552,8 +550,9 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         maxSize = tagCompound.getInteger("maxSize");
         remoteId = tagCompound.getInteger("remoteId");
         inventoryHelper.setNewCount(ModularStorageContainer.SLOT_STORAGE + maxSize);
-        System.out.println("numStacks = " + numStacks);
     }
+
+
 
     @Override
     public void writeClientDataToNBT(NBTTagCompound tagCompound) {
@@ -564,7 +563,6 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
 
     @Override
     public Object[] getDataForGUI() {
-        System.out.println("getDataForGUI: viewMode = " + viewMode);
         return new Object[] {
                 sortMode, viewMode, groupMode, filter
         };
@@ -576,7 +574,6 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         viewMode = (String) data[1];
         groupMode = (Boolean) data[2];
         filter = (String) data[3];
-        System.out.println("syncDataForGUI: viewMode = " + viewMode);
     }
 
     @Override
