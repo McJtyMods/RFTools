@@ -3,14 +3,15 @@ package mcjty.rftools.blocks.logic;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -46,7 +47,7 @@ public class ThreeLogicBlock extends LogicSlabBlock<ThreeLogicTileEntity, EmptyC
     }
 
     @Override
-    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof LogicTileEntity) {
             LogicTileEntity logicTileEntity = (LogicTileEntity)te;
@@ -55,9 +56,9 @@ public class ThreeLogicBlock extends LogicSlabBlock<ThreeLogicTileEntity, EmptyC
             EnumFacing leftSide = rotateLeft(downSide, inputSide);
             EnumFacing rightSide = rotateRight(downSide, inputSide);
 
-            int powered1 = getInputStrength((World) world, pos, leftSide) > 0 ? 1 : 0;
-            int powered2 = getInputStrength((World) world, pos, inputSide) > 0 ? 2 : 0;
-            int powered3 = getInputStrength((World) world, pos, rightSide) > 0 ? 4 : 0;
+            int powered1 = getInputStrength(world, pos, leftSide) > 0 ? 1 : 0;
+            int powered2 = getInputStrength(world, pos, inputSide) > 0 ? 2 : 0;
+            int powered3 = getInputStrength(world, pos, rightSide) > 0 ? 4 : 0;
             logicTileEntity.setPowered(powered1 + powered2 + powered3);
         }
     }

@@ -43,9 +43,8 @@ public class RelayBlock extends GenericRFToolsBlock /* implements IRedstoneConne
     }
 
     @Override
-    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
-        // @todo
-        checkRedstoneWithTE((World) world, pos);
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn) {
+        checkRedstoneWithTE(world, pos);
     }
 
 //    @Override

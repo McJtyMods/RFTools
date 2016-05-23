@@ -58,8 +58,8 @@ public class CounterBlock extends LogicSlabBlock<CounterTileEntity, EmptyContain
     }
 
     @Override
-    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
-        super.onNeighborChange(world, pos, neighbor);
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn) {
+        super.neighborChanged(state, world, pos, blockIn);
         CounterTileEntity counterTileEntity = (CounterTileEntity) world.getTileEntity(pos);
         counterTileEntity.update();
     }

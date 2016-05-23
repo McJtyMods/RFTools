@@ -111,8 +111,8 @@ public class MatterBeamerBlock extends GenericRFToolsBlock implements Infusable 
     }
 
     @Override
-    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
-        checkRedstoneWithTE((World) world, pos);
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn) {
+        checkRedstoneWithTE(world, pos);
     }
 
     @Override

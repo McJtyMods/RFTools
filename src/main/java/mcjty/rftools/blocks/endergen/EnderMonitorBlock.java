@@ -12,7 +12,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -55,7 +54,7 @@ public class EnderMonitorBlock extends LogicSlabBlock<EnderMonitorTileEntity, Em
     }
 
     @Override
-    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn) {
         // We don't want to do what LogicSlabBlock does as we don't react on redstone input.
     }
 }
