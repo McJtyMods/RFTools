@@ -30,6 +30,10 @@ repositories {
         name 'OC Repo'
         url "http://maven.cil.li/"
     }
+    maven { // TOP
+        name 'tterrag maven'
+        url "http://maven.tterrag.com/"
+    }
     maven {
         name = "sonatype"
         url = "https://oss.sonatype.org/content/repositories/snapshots/"
@@ -68,6 +72,7 @@ artifacts {
 dependencies {
     deobfCompile "mcp.mobius.waila:Waila:1.7.0-B2_1.9"
     deobfCompile "mezz.jei:jei_1.9.4:3.4.0.202"
+    deobfCompile "mcjty.theoneprobe:TheOneProbe:1.9.4-0.0.1beta4-2"
 
     //compile "li.cil.oc:OpenComputers:MC1.7.10-1.5.+:api"
 
