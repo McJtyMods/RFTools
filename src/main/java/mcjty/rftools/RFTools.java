@@ -121,6 +121,7 @@ public class RFTools implements ModBase {
     public void preInit(FMLPreInitializationEvent e) {
         this.proxy.preInit(e);
         MainCompatHandler.registerWaila();
+        MainCompatHandler.registerTOP();
     }
     /**
      * Do your mod setup. Build whatever data structures you care about. Register recipes.

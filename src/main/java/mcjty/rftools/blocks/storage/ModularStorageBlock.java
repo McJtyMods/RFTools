@@ -6,6 +6,9 @@ import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
@@ -64,7 +67,7 @@ public class ModularStorageBlock extends GenericRFToolsBlock {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
@@ -144,6 +147,26 @@ public class ModularStorageBlock extends GenericRFToolsBlock {
     @Override
     public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
         return /*layer == BlockRenderLayer.SOLID || */ layer == BlockRenderLayer.CUTOUT;
+    }
+
+    @Override
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        TileEntity te = world.getTileEntity(data.getPos());
+        if (te instanceof ModularStorageTileEntity) {
+            ModularStorageTileEntity modularStorageTileEntity = (ModularStorageTileEntity) te;
+            int maxSize = modularStorageTileEntity.getMaxSize();
+            if (maxSize == 0) {
+                probeInfo.text(TextFormatting.YELLOW + "No storage module!");
+            } else {
+                int stacks = modularStorageTileEntity.getNumStacks();
+                if (stacks == -1) {
+                    probeInfo.text(TextFormatting.YELLOW + "Maximum size: " + maxSize);
+                } else {
+                    probeInfo.text(TextFormatting.GREEN + "" + stacks + " out of " + maxSize);
+                }
+            }
+        }
     }
 
     @SideOnly(Side.CLIENT)
