@@ -71,7 +71,7 @@ public class MatterReceiverBlock extends GenericRFToolsBlock implements Infusabl
             String name = matterReceiverTileEntity.getName();
             int id = matterReceiverTileEntity.getId();
             if (name == null || "".equals(name)) {
-                probeInfo.text(TextFormatting.GREEN + (id == -1 ? "" : (", Id: " + id)));
+                probeInfo.text(TextFormatting.GREEN + (id == -1 ? "" : ("Id: " + id)));
             } else {
                 probeInfo.text(TextFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
             }
@@ -88,7 +88,7 @@ public class MatterReceiverBlock extends GenericRFToolsBlock implements Infusabl
             String name = matterReceiverTileEntity.getName();
             int id = matterReceiverTileEntity.getId();
             if (name == null || "".equals(name)) {
-                currenttip.add(TextFormatting.GREEN + (id == -1 ? "" : (", Id: " + id)));
+                currenttip.add(TextFormatting.GREEN + (id == -1 ? "" : ("Id: " + id)));
             } else {
                 currenttip.add(TextFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
             }
