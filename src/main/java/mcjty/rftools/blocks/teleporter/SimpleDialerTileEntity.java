@@ -63,6 +63,14 @@ public class SimpleDialerTileEntity extends LogicTileEntity {
         markDirtyClient();
     }
 
+    public GlobalCoordinate getTransmitter() {
+        return transmitter;
+    }
+
+    public Integer getReceiver() {
+        return receiver;
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);

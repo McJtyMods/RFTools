@@ -5,6 +5,9 @@ import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
@@ -13,6 +16,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
@@ -62,6 +66,16 @@ public class CounterBlock extends LogicSlabBlock<CounterTileEntity, EmptyContain
         super.neighborChanged(state, world, pos, blockIn);
         CounterTileEntity counterTileEntity = (CounterTileEntity) world.getTileEntity(pos);
         counterTileEntity.update();
+    }
+
+    @Override
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        TileEntity te = world.getTileEntity(data.getPos());
+        if (te instanceof CounterTileEntity) {
+            CounterTileEntity counterTileEntity = (CounterTileEntity) te;
+            probeInfo.text(TextFormatting.GREEN + "Current: " + counterTileEntity.getCurrent());
+        }
     }
 
     @SideOnly(Side.CLIENT)

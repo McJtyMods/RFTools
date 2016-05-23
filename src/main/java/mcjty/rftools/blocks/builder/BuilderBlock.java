@@ -5,6 +5,9 @@ import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
@@ -74,6 +77,16 @@ public class BuilderBlock extends GenericRFToolsBlock<BuilderTileEntity, Builder
     }
 
     private static long lastTime = 0;
+
+    @Override
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        TileEntity te = world.getTileEntity(data.getPos());
+        if (te instanceof BuilderTileEntity) {
+            int scan = BuilderTileEntity.getCurrentLevel();
+            probeInfo.text(TextFormatting.GREEN + "Current level: " + (scan == -1 ? "not scanning" : scan));
+        }
+    }
 
     @SideOnly(Side.CLIENT)
     @Override

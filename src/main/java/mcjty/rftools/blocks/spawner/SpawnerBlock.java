@@ -6,6 +6,9 @@ import mcjty.lib.container.InventoryHelper;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.items.ModItems;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
@@ -65,6 +68,18 @@ public class SpawnerBlock extends GenericRFToolsBlock implements Infusable {
         return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
     }
 
+    @Override
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        TileEntity te = world.getTileEntity(data.getPos());
+        if (te instanceof SpawnerTileEntity) {
+            SpawnerTileEntity spawnerTileEntity = (SpawnerTileEntity) te;
+            float[] matter = spawnerTileEntity.getMatter();
+            probeInfo.text(TextFormatting.GREEN + "Key Matter: " + matter[0]);
+            probeInfo.text(TextFormatting.GREEN + "Bulk Matter: " + matter[1]);
+            probeInfo.text(TextFormatting.GREEN + "Living Matter: " + matter[2]);
+        }
+    }
 
     @SideOnly(Side.CLIENT)
     @Override

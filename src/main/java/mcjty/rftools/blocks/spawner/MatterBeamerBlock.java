@@ -4,6 +4,9 @@ import mcjty.lib.api.Infusable;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
@@ -69,6 +72,21 @@ public class MatterBeamerBlock extends GenericRFToolsBlock implements Infusable 
             list.add(TextFormatting.YELLOW + "and increased speed.");
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+        }
+    }
+
+    @Override
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        TileEntity te = world.getTileEntity(data.getPos());
+        if (te instanceof MatterBeamerTileEntity) {
+            MatterBeamerTileEntity matterBeamerTileEntity = (MatterBeamerTileEntity) te;
+            BlockPos coordinate = matterBeamerTileEntity.getDestination();
+            if (coordinate == null) {
+                probeInfo.text(TextFormatting.RED + "Not connected to a spawner!");
+            } else {
+                probeInfo.text(TextFormatting.GREEN + "Connected!");
+            }
         }
     }
 

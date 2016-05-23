@@ -2,6 +2,9 @@ package mcjty.rftools.blocks.logic;
 
 import mcjty.lib.container.EmptyContainer;
 import mcjty.rftools.RFTools;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
@@ -11,6 +14,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -43,6 +47,16 @@ public class RedstoneTransmitterBlock extends LogicSlabBlock<RedstoneTransmitter
             list.add(TextFormatting.WHITE + "click on receiver/transmitter to use that channel");
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+        }
+    }
+
+    @Override
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        TileEntity te = world.getTileEntity(data.getPos());
+        if (te instanceof RedstoneTransmitterTileEntity) {
+            RedstoneTransmitterTileEntity redstoneTransmitterTileEntity = (RedstoneTransmitterTileEntity) te;
+            probeInfo.text(TextFormatting.GREEN + "Channel: " + redstoneTransmitterTileEntity.getChannel());
         }
     }
 

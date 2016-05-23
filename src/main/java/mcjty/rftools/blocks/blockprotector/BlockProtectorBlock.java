@@ -8,6 +8,9 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.blocks.generator.CoalGeneratorTileEntity;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
@@ -69,6 +72,18 @@ public class BlockProtectorBlock extends GenericRFToolsBlock implements Infusabl
             list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+        }
+    }
+
+    @Override
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        TileEntity te = world.getTileEntity(data.getPos());
+        if (te instanceof BlockProtectorTileEntity) {
+            BlockProtectorTileEntity blockProtectorTileEntity = (BlockProtectorTileEntity) te;
+            int id = blockProtectorTileEntity.getId();
+            probeInfo.text(TextFormatting.GREEN + "Id: " + id);
+            probeInfo.text(TextFormatting.GREEN + "Blocks protected: " + blockProtectorTileEntity.getProtectedBlocks().size());
         }
     }
 

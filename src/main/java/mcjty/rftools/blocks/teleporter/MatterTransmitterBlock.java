@@ -9,6 +9,9 @@ import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.network.PacketGetDestinationInfo;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.network.ReturnDestinationInfoHelper;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
@@ -104,6 +107,31 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock implements Infus
     }
 
     private static long lastTime = 0;
+
+    @Override
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        TileEntity te = world.getTileEntity(data.getPos());
+        if (te instanceof MatterTransmitterTileEntity) {
+            MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) te;
+            probeInfo.text(TextFormatting.GREEN + "Name: " + matterTransmitterTileEntity.getName());
+            if (matterTransmitterTileEntity.isDialed()) {
+                if (System.currentTimeMillis() - lastTime > 500) {
+                    lastTime = System.currentTimeMillis();
+                    RFToolsMessages.INSTANCE.sendToServer(new PacketGetDestinationInfo(matterTransmitterTileEntity.getTeleportId()));
+                }
+
+                String name = "?";
+                if (ReturnDestinationInfoHelper.id != null && ReturnDestinationInfoHelper.id == matterTransmitterTileEntity.getTeleportId()) {
+                    name = ReturnDestinationInfoHelper.name;
+                }
+                probeInfo.text(TextFormatting.YELLOW + "[DIALED to " + name + "]");
+            }
+            if (matterTransmitterTileEntity.isOnce()) {
+                probeInfo.text(TextFormatting.YELLOW + "[ONCE]");
+            }
+        }
+    }
 
     @SideOnly(Side.CLIENT)
     @Override

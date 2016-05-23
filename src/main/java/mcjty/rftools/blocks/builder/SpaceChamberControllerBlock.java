@@ -3,6 +3,9 @@ package mcjty.rftools.blocks.builder;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
@@ -48,6 +51,25 @@ public class SpaceChamberControllerBlock extends GenericRFToolsBlock<SpaceChambe
             list.add(TextFormatting.WHITE + "area of space you want to copy/move elsewhere");
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+        }
+    }
+
+    @Override
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        TileEntity te = world.getTileEntity(data.getPos());
+        if (te instanceof SpaceChamberControllerTileEntity) {
+            SpaceChamberControllerTileEntity spaceChamberControllerTileEntity = (SpaceChamberControllerTileEntity) te;
+            int channel = spaceChamberControllerTileEntity.getChannel();
+            probeInfo.text(TextFormatting.GREEN + "Channel: " + channel);
+            if (channel != -1) {
+                int size = spaceChamberControllerTileEntity.getChamberSize();
+                if (size == -1) {
+                    probeInfo.text(TextFormatting.YELLOW + "Chamber not formed!");
+                } else {
+                    probeInfo.text(TextFormatting.GREEN + "Area: " + size + " blocks");
+                }
+            }
         }
     }
 

@@ -5,6 +5,9 @@ import mcjty.lib.api.Infusable;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
@@ -17,6 +20,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -54,6 +58,20 @@ public class CoalGeneratorBlock extends GenericRFToolsBlock<CoalGeneratorTileEnt
             list.add(TextFormatting.YELLOW + "and lasts longer on a single fuel");
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+        }
+    }
+
+    @Override
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        TileEntity te = world.getTileEntity(data.getPos());
+        if (te instanceof CoalGeneratorTileEntity) {
+            CoalGeneratorTileEntity coalGeneratorTileEntity = (CoalGeneratorTileEntity) te;
+            Boolean working = coalGeneratorTileEntity.isWorking();
+            if (working) {
+                probeInfo.text(TextFormatting.GREEN + "Producing " + coalGeneratorTileEntity.getRfPerTick() + " RF/t");
+            }
+
         }
     }
 

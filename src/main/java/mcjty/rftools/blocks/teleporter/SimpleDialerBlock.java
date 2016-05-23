@@ -1,9 +1,14 @@
 package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.varia.BlockPosTools;
+import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.logic.LogicSlabBlock;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
@@ -56,6 +61,26 @@ public class SimpleDialerBlock extends LogicSlabBlock<SimpleDialerTileEntity, Em
             list.add(TextFormatting.WHITE + "dials or interrupts a transmitter.");
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+        }
+    }
+
+    @Override
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        TileEntity te = world.getTileEntity(data.getPos());
+        if (te instanceof SimpleDialerTileEntity) {
+            SimpleDialerTileEntity simpleDialerTileEntity = (SimpleDialerTileEntity) te;
+            GlobalCoordinate trans = simpleDialerTileEntity.getTransmitter();
+            if (trans != null) {
+                probeInfo.text(TextFormatting.GREEN + "Transmitter at: " + BlockPosTools.toString(trans.getCoordinate()) + " (dim " + trans.getDimension() + ")");
+            }
+            Integer receiver = simpleDialerTileEntity.getReceiver();
+            if (receiver != null) {
+                probeInfo.text(TextFormatting.GREEN + "Receiver: " + receiver);
+            }
+            if (simpleDialerTileEntity.isOnceMode()) {
+                probeInfo.text(TextFormatting.GREEN + "Dial Once mode enabled");
+            }
         }
     }
 

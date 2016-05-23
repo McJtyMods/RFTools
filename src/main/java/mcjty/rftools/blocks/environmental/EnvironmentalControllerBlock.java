@@ -5,6 +5,9 @@ import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
@@ -13,6 +16,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -51,6 +55,26 @@ public class EnvironmentalControllerBlock extends GenericRFToolsBlock implements
     @Override
     public Class<? extends GenericGuiContainer> getGuiClass() {
         return GuiEnvironmentalController.class;
+    }
+
+    @Override
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        TileEntity te = world.getTileEntity(data.getPos());
+        if (te instanceof EnvironmentalControllerTileEntity) {
+            EnvironmentalControllerTileEntity tileEntity = (EnvironmentalControllerTileEntity) te;
+            int rfPerTick = tileEntity.getTotalRfPerTick();
+            int volume = tileEntity.getVolume();
+            if (tileEntity.isActive()) {
+                probeInfo.text(TextFormatting.GREEN + "Active " + rfPerTick + " RF/tick (" + volume + " blocks)");
+            } else {
+                probeInfo.text(TextFormatting.GREEN + "Inactive (" + volume + " blocks)");
+            }
+            int radius = tileEntity.getRadius();
+            int miny = tileEntity.getMiny();
+            int maxy = tileEntity.getMaxy();
+            probeInfo.text(TextFormatting.GREEN + "Area: radius " + radius + " (between " + miny + " and " + maxy + ")");
+        }
     }
 
     @SideOnly(Side.CLIENT)

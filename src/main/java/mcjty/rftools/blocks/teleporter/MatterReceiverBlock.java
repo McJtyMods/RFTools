@@ -6,6 +6,9 @@ import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
@@ -59,6 +62,22 @@ public class MatterReceiverBlock extends GenericRFToolsBlock implements Infusabl
         }
     }
 
+    @Override
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        TileEntity te = world.getTileEntity(data.getPos());
+        if (te instanceof MatterReceiverTileEntity) {
+            MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
+            String name = matterReceiverTileEntity.getName();
+            int id = matterReceiverTileEntity.getId();
+            if (name == null || "".equals(name)) {
+                probeInfo.text(TextFormatting.GREEN + (id == -1 ? "" : (", Id: " + id)));
+            } else {
+                probeInfo.text(TextFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
+            }
+        }
+    }
+
     @SideOnly(Side.CLIENT)
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
@@ -68,7 +87,11 @@ public class MatterReceiverBlock extends GenericRFToolsBlock implements Infusabl
             MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
             String name = matterReceiverTileEntity.getName();
             int id = matterReceiverTileEntity.getId();
-            currenttip.add(TextFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
+            if (name == null || "".equals(name)) {
+                currenttip.add(TextFormatting.GREEN + (id == -1 ? "" : (", Id: " + id)));
+            } else {
+                currenttip.add(TextFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
+            }
         }
         return currenttip;
     }

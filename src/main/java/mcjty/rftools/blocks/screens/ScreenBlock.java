@@ -5,6 +5,9 @@ import mcjty.lib.container.InventoryHelper;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
@@ -43,6 +46,25 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
 
     public ScreenBlock() {
         super(Material.IRON, ScreenTileEntity.class, ScreenContainer.class, ScreenItemBlock.class, "screen", true);
+    }
+
+    @Override
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        TileEntity te = world.getTileEntity(data.getPos());
+        if (te instanceof ScreenTileEntity) {
+            ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
+            boolean connected = screenTileEntity.isConnected();
+            if (!connected) {
+                probeInfo.text(TextFormatting.YELLOW + "[NOT CONNECTED]");
+            }
+            boolean power = screenTileEntity.isPowerOn();
+            if (!power) {
+                probeInfo.text(TextFormatting.YELLOW + "[NO POWER]");
+            }
+            int rfPerTick = screenTileEntity.getTotalRfPerTick();
+            probeInfo.text(TextFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
+        }
     }
 
     @SideOnly(Side.CLIENT)
