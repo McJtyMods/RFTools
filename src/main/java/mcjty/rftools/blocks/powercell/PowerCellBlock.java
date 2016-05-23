@@ -10,6 +10,9 @@ import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import mcjty.rftools.items.smartwrench.SmartWrenchMode;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
@@ -113,6 +116,35 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
 
     private int getAdvancedFactor() {
         return isAdvanced() ? PowerCellConfiguration.advancedFactor : 1;
+    }
+
+    @Override
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        TileEntity te = world.getTileEntity(data.getPos());
+        if (te instanceof PowerCellTileEntity) {
+            PowerCellTileEntity powerCellTileEntity = (PowerCellTileEntity) te;
+            int id = powerCellTileEntity.getNetworkId();
+            if (mode == ProbeMode.EXTENDED) {
+                if (id != -1) {
+                    probeInfo.text(TextFormatting.GREEN + "ID: " + new DecimalFormat("#.##").format(id));
+                } else {
+                    probeInfo.text(TextFormatting.GREEN + "Local storage!");
+                }
+            }
+
+            float costFactor = powerCellTileEntity.getCostFactor();
+            int rfPerTick = powerCellTileEntity.getRfPerTickPerSide();
+
+            probeInfo.text(TextFormatting.GREEN + "Input/Output: " + rfPerTick + " RF/t");
+            PowerCellTileEntity.Mode powermode = powerCellTileEntity.getMode(data.getSideHit());
+            if (powermode == PowerCellTileEntity.Mode.MODE_INPUT) {
+                probeInfo.text(TextFormatting.YELLOW + "Side: input");
+            } else if (powermode == PowerCellTileEntity.Mode.MODE_OUTPUT) {
+                int cost = (int) ((costFactor - 1.0f) * 1000.0f);
+                probeInfo.text(TextFormatting.YELLOW + "Side: output (cost " + cost / 10 + "." + cost % 10 + "%)");
+            }
+        }
     }
 
     @Override
