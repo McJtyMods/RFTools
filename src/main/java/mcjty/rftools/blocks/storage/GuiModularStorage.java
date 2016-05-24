@@ -500,10 +500,12 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         updateList();
 
-        viewMode.setCurrentChoice(tileEntity.getViewMode());
-        sortMode.setCurrentChoice(tileEntity.getSortMode());
-        groupMode.setCurrentChoice(tileEntity.isGroupMode() ? 1 : 0);
-        filter.setText(tileEntity.getFilter());
+        if (tileEntity != null) {
+            viewMode.setCurrentChoice(tileEntity.getViewMode());
+            sortMode.setCurrentChoice(tileEntity.getSortMode());
+            groupMode.setCurrentChoice(tileEntity.isGroupMode() ? 1 : 0);
+            filter.setText(tileEntity.getFilter());
+        }
 
         drawWindow();
     }
