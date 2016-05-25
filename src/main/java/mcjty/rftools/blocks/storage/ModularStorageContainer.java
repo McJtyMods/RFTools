@@ -4,7 +4,6 @@ import mcjty.lib.container.*;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.items.storage.StorageTypeItem;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ClickType;
@@ -12,6 +11,7 @@ import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,13 +24,6 @@ public class ModularStorageContainer extends GenericContainer {
     public static final int SLOT_FILTER_MODULE = 2;
     public static final int SLOT_STORAGE = 3;
     public static final int MAXSIZE_STORAGE = 300;
-
-    // Change detection data
-    private String sortMode;
-    private String viewMode;
-    private Boolean groupMode;
-    private String filter;
-    private int maxsize;
 
     private ModularStorageTileEntity modularStorageTileEntity;
 
@@ -52,13 +45,6 @@ public class ModularStorageContainer extends GenericContainer {
         addInventory(CONTAINER_INVENTORY, containerInventory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
         generateSlots();
-    }
-
-    private void copyFromTE() {
-        sortMode = modularStorageTileEntity.getSortMode();
-        viewMode = modularStorageTileEntity.getViewMode();
-        groupMode = modularStorageTileEntity.isGroupMode();
-        filter = modularStorageTileEntity.getFilter();
     }
 
     @Override
@@ -132,39 +118,43 @@ public class ModularStorageContainer extends GenericContainer {
 
     @Override
     public void detectAndSendChanges() {
-        boolean differs = false;
+        List<Pair<Integer, ItemStack>> differentSlots = new ArrayList<>();
         for (int i = 0; i < this.inventorySlots.size(); ++i) {
             ItemStack itemstack = this.inventorySlots.get(i).getStack();
             ItemStack itemstack1 = this.inventoryItemStacks.get(i);
 
             if (!ItemStack.areItemStacksEqual(itemstack1, itemstack)) {
-                differs = true;
                 itemstack1 = itemstack == null ? null : itemstack.copy();
                 this.inventoryItemStacks.set(i, itemstack1);
-            }
-        }
-        if (differs) {
-            List<ItemStack> stacks = new ArrayList<>(modularStorageTileEntity.getSizeInventory());
-            for (int i = 0 ; i < modularStorageTileEntity.getSizeInventory() ; i++) {
-                stacks.add(modularStorageTileEntity.getStackInSlot(i));
-            }
-
-            for (IContainerListener listener : this.listeners) {
-                if (listener instanceof EntityPlayerMP) {
-                    EntityPlayerMP player = (EntityPlayerMP) listener;
-                    RFToolsMessages.INSTANCE.sendTo(new PacketSyncInventoryToClient(modularStorageTileEntity.getPos(), modularStorageTileEntity.getMaxSize(),
-                            modularStorageTileEntity.getNumStacks(), stacks), player);
+                differentSlots.add(Pair.of(i, itemstack));
+                if (differentSlots.size() >= 30) {
+                    syncSlotsToListeners(differentSlots);
+                    // Make a new list so that the one we gave to syncSlots is preserved
+                    differentSlots = new ArrayList<>();
                 }
             }
         }
+        if (!differentSlots.isEmpty()) {
+            syncSlotsToListeners(differentSlots);
+        }
+    }
 
-        boolean same = RFToolsTools.safeEquals(sortMode, modularStorageTileEntity.getSortMode()) &&
-                RFToolsTools.safeEquals(viewMode, modularStorageTileEntity.getViewMode()) &&
-                RFToolsTools.safeEquals(filter, modularStorageTileEntity.getFilter()) &&
-                RFToolsTools.safeEquals(groupMode, modularStorageTileEntity.isGroupMode());
-        if (!same) {
-            copyFromTE();
-            notifyPlayerOfChanges(RFToolsMessages.INSTANCE, modularStorageTileEntity.getWorld(), modularStorageTileEntity.getPos());
+    private void syncSlotsToListeners(List<Pair<Integer, ItemStack>> differentSlots) {
+        String sortMode = modularStorageTileEntity.getSortMode();
+        String viewMode = modularStorageTileEntity.getViewMode();
+        boolean groupMode = modularStorageTileEntity.isGroupMode();
+        String filter = modularStorageTileEntity.getFilter();
+
+        for (IContainerListener listener : this.listeners) {
+            if (listener instanceof EntityPlayerMP) {
+                EntityPlayerMP player = (EntityPlayerMP) listener;
+                RFToolsMessages.INSTANCE.sendTo(new PacketSyncSlotsToClient(
+                        modularStorageTileEntity.getPos(),
+                        sortMode, viewMode, groupMode, filter,
+                        modularStorageTileEntity.getMaxSize(),
+                        modularStorageTileEntity.getNumStacks(),
+                        differentSlots), player);
+            }
         }
     }
 }

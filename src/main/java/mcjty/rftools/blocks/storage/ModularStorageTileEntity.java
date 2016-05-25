@@ -569,25 +569,17 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     /**
      * Called from the container (detectAndSendChanges) and executed on the client.
      */
-    public void syncInventoryFromServer(int maxSize, int numStacks) {
+    public void syncInventoryFromServer(int maxSize, int numStacks, String sortMode, String viewMode, boolean groupMode, String filter) {
+        this.sortMode = sortMode;
+        this.viewMode = viewMode;
+        this.groupMode = groupMode;
+        this.filter = filter;
         this.numStacks = numStacks;
         this.maxSize = maxSize;
-        inventoryHelper.setNewCount(ModularStorageContainer.SLOT_STORAGE + maxSize);
-    }
-
-    @Override
-    public Object[] getDataForGUI() {
-        return new Object[] {
-                sortMode, viewMode, groupMode, filter
-        };
-    }
-
-    @Override
-    public void syncDataForGUI(Object[] data) {
-        sortMode = (String) data[0];
-        viewMode = (String) data[1];
-        groupMode = (Boolean) data[2];
-        filter = (String) data[3];
+        int newcount = ModularStorageContainer.SLOT_STORAGE + maxSize;
+        if (newcount != inventoryHelper.getCount()) {
+            inventoryHelper.setNewCount(newcount);
+        }
     }
 
     @Override

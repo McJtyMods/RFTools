@@ -78,7 +78,7 @@ public class RFToolsMessages {
         net.registerMessage(PacketSecurityNameReady.Handler.class, PacketSecurityNameReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketDelightingInfoReady.Handler.class, PacketDelightingInfoReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketConnectedBlocksReady.Handler.class, PacketConnectedBlocksReady.class, PacketHandler.nextID(), Side.CLIENT);
-        net.registerMessage(PacketSyncInventoryToClient.Handler.class, PacketSyncInventoryToClient.class, PacketHandler.nextID(), Side.CLIENT);
+        net.registerMessage(PacketSyncSlotsToClient.Handler.class, PacketSyncSlotsToClient.class, PacketHandler.nextID(), Side.CLIENT);
 
         PacketHandler.register(PacketHandler.nextPacketID(), StorageInfoPacketServer.class, StorageInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), PowerCellInfoPacketServer.class, PowerCellInfoPacketClient.class);
