@@ -12,8 +12,6 @@ import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -134,10 +132,6 @@ public class ModularStorageContainer extends GenericContainer {
 
     @Override
     public void detectAndSendChanges() {
-//        super.detectAndSendChanges();
-
-        System.out.println((FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT ? "CLIENT " : "SERVER ") + "detectAndSendChanges");
-
         boolean differs = false;
         for (int i = 0; i < this.inventorySlots.size(); ++i) {
             ItemStack itemstack = this.inventorySlots.get(i).getStack();
@@ -150,7 +144,6 @@ public class ModularStorageContainer extends GenericContainer {
             }
         }
         if (differs) {
-            System.out.println((FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT ? "CLIENT " : "SERVER ") + "detectAndSendChanges DIFFERS");
             List<ItemStack> stacks = new ArrayList<>(modularStorageTileEntity.getSizeInventory());
             for (int i = 0 ; i < modularStorageTileEntity.getSizeInventory() ; i++) {
                 stacks.add(modularStorageTileEntity.getStackInSlot(i));

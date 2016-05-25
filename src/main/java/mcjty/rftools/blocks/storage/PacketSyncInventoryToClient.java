@@ -63,12 +63,6 @@ public class PacketSyncInventoryToClient implements IMessage {
         this.maxSize = maxSize;
         this.numStacks = numStacks;
         this.items = items;
-        for (int i = 0 ; i < items.size() ; i++) {
-            ItemStack stack = items.get(i);
-            if (stack != null) {
-                System.out.println("i = " + i + ", stack = " + stack);
-            }
-        }
     }
 
     public static class Handler implements IMessageHandler<PacketSyncInventoryToClient, IMessage> {
@@ -82,8 +76,7 @@ public class PacketSyncInventoryToClient implements IMessage {
             TileEntity te = Minecraft.getMinecraft().theWorld.getTileEntity(message.pos);
             if (te instanceof ModularStorageTileEntity) {
                 ModularStorageTileEntity storage = (ModularStorageTileEntity) te;
-                storage.syncInventoryFromServer(message.maxSize, message.numStacks, message.items);
-                System.out.println("Minecraft.getMinecraft().thePlayer.openContainer = " + Minecraft.getMinecraft().thePlayer.openContainer);
+                storage.syncInventoryFromServer(message.maxSize, message.numStacks);
                 Container container = Minecraft.getMinecraft().thePlayer.openContainer;
                 if (container instanceof ModularStorageContainer) {
                     for (int i = 0; i < message.items.size(); i++) {

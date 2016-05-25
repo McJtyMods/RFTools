@@ -233,7 +233,6 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             tileEntity.setViewMode(viewMode.getCurrentChoice());
             tileEntity.setFilter(filter.getText());
             tileEntity.setGroupMode(groupMode.getCurrentChoiceIndex() == 1);
-            System.out.println("viewMode.getCurrentChoice() = " + viewMode.getCurrentChoice());
             sendServerCommand(RFToolsMessages.INSTANCE, ModularStorageTileEntity.CMD_SETTINGS,
                     new Argument("sortMode", sortMode.getCurrentChoice()),
                     new Argument("viewMode", viewMode.getCurrentChoice()),
@@ -314,7 +313,6 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
     @Override
     protected void mouseClicked(int x, int y, int button) throws IOException {
-        System.out.println("GuiModularStorage.mouseClicked #################################################################");
         if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)) {
             Slot slot = getSlotAtPosition(x, y);
             if (slot != null && slot.getHasStack()) {
