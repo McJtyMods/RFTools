@@ -6,11 +6,17 @@ import mcjty.rftools.items.storage.StorageTypeItem;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ClickType;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ModularStorageContainer extends GenericContainer {
     public static final String CONTAINER_INVENTORY = "container";
@@ -128,14 +134,42 @@ public class ModularStorageContainer extends GenericContainer {
 
     @Override
     public void detectAndSendChanges() {
-        super.detectAndSendChanges();
+//        super.detectAndSendChanges();
+
+        System.out.println((FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT ? "CLIENT " : "SERVER ") + "detectAndSendChanges");
+
+        boolean differs = false;
+        for (int i = 0; i < this.inventorySlots.size(); ++i) {
+            ItemStack itemstack = this.inventorySlots.get(i).getStack();
+            ItemStack itemstack1 = this.inventoryItemStacks.get(i);
+
+            if (!ItemStack.areItemStacksEqual(itemstack1, itemstack)) {
+                differs = true;
+                itemstack1 = itemstack == null ? null : itemstack.copy();
+                this.inventoryItemStacks.set(i, itemstack1);
+            }
+        }
+        if (differs) {
+            System.out.println((FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT ? "CLIENT " : "SERVER ") + "detectAndSendChanges DIFFERS");
+            List<ItemStack> stacks = new ArrayList<>(modularStorageTileEntity.getSizeInventory());
+            for (int i = 0 ; i < modularStorageTileEntity.getSizeInventory() ; i++) {
+                stacks.add(modularStorageTileEntity.getStackInSlot(i));
+            }
+
+            for (IContainerListener listener : this.listeners) {
+                if (listener instanceof EntityPlayerMP) {
+                    EntityPlayerMP player = (EntityPlayerMP) listener;
+                    RFToolsMessages.INSTANCE.sendTo(new PacketSyncInventoryToClient(modularStorageTileEntity.getPos(), modularStorageTileEntity.getMaxSize(),
+                            modularStorageTileEntity.getNumStacks(), stacks), player);
+                }
+            }
+        }
 
         boolean same = RFToolsTools.safeEquals(sortMode, modularStorageTileEntity.getSortMode()) &&
                 RFToolsTools.safeEquals(viewMode, modularStorageTileEntity.getViewMode()) &&
                 RFToolsTools.safeEquals(filter, modularStorageTileEntity.getFilter()) &&
                 RFToolsTools.safeEquals(groupMode, modularStorageTileEntity.isGroupMode());
         if (!same) {
-            System.out.println("detectAndSendChanges: modularStorageTileEntity.getViewMode() = " + modularStorageTileEntity.getViewMode());
             copyFromTE();
             notifyPlayerOfChanges(RFToolsMessages.INSTANCE, modularStorageTileEntity.getWorld(), modularStorageTileEntity.getPos());
         }

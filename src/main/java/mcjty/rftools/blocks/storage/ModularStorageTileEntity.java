@@ -24,10 +24,12 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.FMLContainer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
+import java.util.List;
 import java.util.Map;
 
 public class ModularStorageTileEntity extends GenericTileEntity implements ITickable, DefaultSidedInventory, IInventoryTracker {
@@ -104,10 +106,12 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     }
 
     private void clearInventory() {
+
+        System.out.println((FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT ? "CLIENT " : "SERVER ") + "clearInventory");
         setMaxSize(0);
         numStacks = -1;
         for (int i = ModularStorageContainer.SLOT_STORAGE; i < ModularStorageContainer.MAXSIZE_STORAGE ; i++) {
-            inventoryHelper.setInventorySlotContents(64, i, null);
+            inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), i, null);
         }
     }
 
@@ -214,20 +218,39 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
 
     @Override
     public ItemStack getStackInSlot(int index) {
+        if (index < 7) {
+            System.out.println((FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT ? "CLIENT " : "SERVER ") + "getStackInSlot: numStacks = " + numStacks + ", maxSize = " + maxSize);
+        }
+
         if (index >= getSizeInventory()) {
             return null;
         }
+        if (index < 7) {
+            System.out.println((FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT ? "CLIENT " : "SERVER ") + "getStackInSlot(1): index = " + index + " size = " + getSizeInventory());
+        }
         if (isStorageAvailableRemotely(index)) {
+            if (index < 7) {
+                System.out.println((FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT ? "CLIENT " : "SERVER ") + "getStackInSlot(2): index = " + index + " size = " + getSizeInventory());
+            }
+
             index -= ModularStorageContainer.SLOT_STORAGE;
             RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
             if (storageTileEntity == null) {
+                System.out.println("ModularStorageTileEntity.getStackInSlot: NULL 1");
                 return null;
             }
             ItemStack[] slots = storageTileEntity.findStacksForId(remoteId);
             if (slots == null || index >= slots.length) {
+                System.out.println("ModularStorageTileEntity.getStackInSlot: NULL 2");
                 return null;
             }
+            if (index < 7) {
+                System.out.println("slots[index] = " + slots[index]);
+            }
             return slots[index];
+        }
+        if (index < 7) {
+            System.out.println((FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT ? "CLIENT " : "SERVER ") + "inventoryHelper.getStackInSlot(index) = " + inventoryHelper.getStackInSlot(index));
         }
         return inventoryHelper.getStackInSlot(index);
     }
@@ -326,6 +349,11 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             }
             storageTileEntity.updateRemoteSlot(si, limit, index, stack);
         } else {
+
+
+            if (index < 7) {
+                System.out.println((FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT ? "CLIENT " : "SERVER ") + "setInventorySlotContentsHelper = " + index + ", stack = " + stack);
+            }
             inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
         }
     }
@@ -349,7 +377,10 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         setInventorySlotContentsHelper(getInventoryStackLimit(), index, stack);
 
         if (index == ModularStorageContainer.SLOT_STORAGE_MODULE) {
-            copyFromModule(stack);
+//            if ((!isRemote()) || isServer()) {
+            if (isServer()) {
+                copyFromModule(stack);
+            }
         }
 
         handleNewAmount(s1, index);
@@ -442,20 +473,25 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         if (stack.getItemDamage() == StorageModuleItem.STORAGE_REMOTE) {
             NBTTagCompound tagCompound = stack.getTagCompound();
             if (tagCompound == null || !tagCompound.hasKey("id")) {
+                System.out.println((FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT ? "CLIENT " : "SERVER ") + "copyFromModule CLEAR 1");
                 clearInventory();
                 return;
             }
             remoteId = tagCompound.getInteger("id");
             RemoteStorageTileEntity remoteStorageTileEntity = getRemoteStorage(remoteId);
             if (remoteStorageTileEntity == null) {
+                System.out.println((FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT ? "CLIENT " : "SERVER ") + "copyFromModule CLEAR 2");
                 clearInventory();
                 return;
             }
             ItemStack storageStack = remoteStorageTileEntity.findStorageWithId(remoteId);
             if (storageStack == null) {
+                System.out.println((FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT ? "CLIENT " : "SERVER ") + "copyFromModule CLEAR 3");
                 clearInventory();
                 return;
             }
+
+            System.out.println((FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT ? "CLIENT " : "SERVER ") + "copyFromModule = " + storageStack.getItemDamage());
             setMaxSize(StorageModuleItem.MAXSIZE[storageStack.getItemDamage()]);
         } else {
             setMaxSize(StorageModuleItem.MAXSIZE[stack.getItemDamage()]);
@@ -535,8 +571,11 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         return world;
     }
 
+
+
     private void setMaxSize(int ms) {
         maxSize = ms;
+        System.out.println((FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT ? "CLIENT " : "SERVER ") + "setMaxSize = " + maxSize);
         inventoryHelper.setNewCount(ModularStorageContainer.SLOT_STORAGE + maxSize);
         accessible = null;
 
@@ -548,6 +587,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         numStacks = tagCompound.getInteger("numStacks");
         maxSize = tagCompound.getInteger("maxSize");
         remoteId = tagCompound.getInteger("remoteId");
+        System.out.println((FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT ? "CLIENT " : "SERVER ") + "readClientDataFromNBT, maxSize = " + maxSize);
         inventoryHelper.setNewCount(ModularStorageContainer.SLOT_STORAGE + maxSize);
     }
 
@@ -558,6 +598,20 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         tagCompound.setInteger("numStacks", numStacks);
         tagCompound.setInteger("maxSize", maxSize);
         tagCompound.setInteger("remoteId", remoteId);
+    }
+
+    /**
+     * Called from the container (detectAndSendChanges) and executed on the client.
+     */
+    public void syncInventoryFromServer(int maxSize, int numStacks, List<ItemStack> items) {
+        this.numStacks = numStacks;
+        this.maxSize = maxSize;
+        System.out.println((FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT ? "CLIENT " : "SERVER ") + "syncInventoryFromServer, maxSize = " + maxSize + ", numStacks = " + numStacks);
+        inventoryHelper.setNewCount(ModularStorageContainer.SLOT_STORAGE + maxSize);
+
+//        for (int i = 0 ; i < items.size() ; i++) {
+//            inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), i, items.get(i));
+//        }
     }
 
     @Override

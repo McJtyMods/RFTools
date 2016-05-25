@@ -18,10 +18,7 @@ import mcjty.rftools.blocks.security.PacketSecurityInfoReady;
 import mcjty.rftools.blocks.security.PacketSecurityNameReady;
 import mcjty.rftools.blocks.shield.PacketFiltersReady;
 import mcjty.rftools.blocks.shield.PacketGetFilters;
-import mcjty.rftools.blocks.storage.PacketCompact;
-import mcjty.rftools.blocks.storage.PacketCycleStorage;
-import mcjty.rftools.blocks.storage.StorageInfoPacketClient;
-import mcjty.rftools.blocks.storage.StorageInfoPacketServer;
+import mcjty.rftools.blocks.storage.*;
 import mcjty.rftools.blocks.storagemonitor.*;
 import mcjty.rftools.blocks.teleporter.*;
 import mcjty.rftools.items.creativeonly.PacketDelightingInfoReady;
@@ -81,6 +78,7 @@ public class RFToolsMessages {
         net.registerMessage(PacketSecurityNameReady.Handler.class, PacketSecurityNameReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketDelightingInfoReady.Handler.class, PacketDelightingInfoReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketConnectedBlocksReady.Handler.class, PacketConnectedBlocksReady.class, PacketHandler.nextID(), Side.CLIENT);
+        net.registerMessage(PacketSyncInventoryToClient.Handler.class, PacketSyncInventoryToClient.class, PacketHandler.nextID(), Side.CLIENT);
 
         PacketHandler.register(PacketHandler.nextPacketID(), StorageInfoPacketServer.class, StorageInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), PowerCellInfoPacketServer.class, PowerCellInfoPacketClient.class);
