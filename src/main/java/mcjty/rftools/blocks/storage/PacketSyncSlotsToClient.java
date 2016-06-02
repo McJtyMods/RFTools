@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.storage;
 
 import io.netty.buffer.ByteBuf;
-import mcjty.theoneprobe.network.NetworkTools;
+import mcjty.lib.network.NetworkTools;
 import net.minecraft.client.Minecraft;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
