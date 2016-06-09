@@ -1,5 +1,6 @@
 package mcjty.rftools;
 
+import mcjty.lib.api.smartwrench.SmartWrenchMode;
 import mcjty.lib.gui.RenderGlowEffect;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorTileEntity;
@@ -7,7 +8,6 @@ import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
-import mcjty.rftools.items.smartwrench.SmartWrenchMode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.GlStateManager;

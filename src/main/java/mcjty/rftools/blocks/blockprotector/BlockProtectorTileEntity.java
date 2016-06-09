@@ -1,12 +1,12 @@
 package mcjty.rftools.blocks.blockprotector;
 
+import mcjty.lib.api.smartwrench.SmartWrenchSelector;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.blocks.RedstoneMode;
-import mcjty.rftools.items.smartwrench.SmartWrenchSelector;
+import mcjty.lib.varia.RedstoneMode;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,8 +31,6 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
     public static final String CMD_RSMODE = "rsMode";
     public static final String COMPONENT_NAME = "block_protector";
 
-    private RedstoneMode redstoneMode = RedstoneMode.REDSTONE_IGNORED;
-    private int powered = 0;
     private int id = -1;
     private boolean active = false;
 
@@ -115,7 +113,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
             return;
         }
 
-        if (isDisabled()) {
+        if (!isMachineEnabled()) {
             setActive(false);
             return;
         } else {
@@ -148,52 +146,9 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
         markDirtyClient();
     }
 
-    private boolean isDisabled() {
-        if (redstoneMode != RedstoneMode.REDSTONE_IGNORED) {
-            boolean rs = powered > 0;
-            if (redstoneMode == RedstoneMode.REDSTONE_OFFREQUIRED) {
-                if (rs) {
-                    return true;
-                }
-            } else if (redstoneMode == RedstoneMode.REDSTONE_ONREQUIRED) {
-                if (!rs) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public void setPowered(int powered) {
-        if (this.powered != powered) {
-            this.powered = powered;
-            markDirty();
-        }
-    }
-
-
-    private Object[] setRedstoneMode(String mode) {
-        RedstoneMode redstoneMode = RedstoneMode.getMode(mode);
-        if (redstoneMode == null) {
-            throw new IllegalArgumentException("Not a valid mode");
-        }
-        setRedstoneMode(redstoneMode);
-        return null;
-    }
-
-
-    public RedstoneMode getRedstoneMode() {
-        return redstoneMode;
-    }
-
-    public void setRedstoneMode(RedstoneMode redstoneMode) {
-        this.redstoneMode = redstoneMode;
-        markDirtyClient();
-    }
 
     public boolean attemptHarvestProtection() {
-        if (isDisabled()) return false;
+        if (!isMachineEnabled()) return false;
         int rf = getEnergyStored(EnumFacing.DOWN);
         if (BlockProtectorConfiguration.rfForHarvestAttempt > rf) {
             return false;
@@ -204,7 +159,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
 
     // Distance is relative with 0 being closes to the explosion and 1 being furthest away.
     public int attemptExplosionProtection(float distance, float radius) {
-        if (isDisabled()) return -1;
+        if (!isMachineEnabled()) return -1;
         int rf = getEnergyStored(EnumFacing.DOWN);
         int rfneeded = (int) (BlockProtectorConfiguration.rfForExplosionProtection * (1.0 - distance) * radius / 8.0f) + 1;
         rfneeded = (int) (rfneeded * (2.0f - getInfusedFactor()) / 2.0f);
@@ -325,7 +280,6 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
             NBTTagCompound tag = (NBTTagCompound) tagList.get(i);
             protectedBlocks.add(BlockPosTools.readFromNBT(tag, "c"));
         }
-        powered = tagCompound.getByte("powered");
         active = tagCompound.getBoolean("active");
     }
 
@@ -338,7 +292,6 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
             id = -1;
         }
         int m = tagCompound.getByte("rsMode");
-        redstoneMode = RedstoneMode.values()[m];
     }
 
     @Override
@@ -349,7 +302,6 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
             list.appendTag(BlockPosTools.writeToNBT(block));
         }
         tagCompound.setTag("coordinates", list);
-        tagCompound.setByte("powered", (byte) powered);
         tagCompound.setBoolean("active", active);
         return tagCompound;
     }
@@ -359,7 +311,6 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         tagCompound.setInteger("protectorId", id);
-        tagCompound.setByte("rsMode", (byte) redstoneMode.ordinal());
     }
 
     @Override
@@ -370,7 +321,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
         }
         if (CMD_RSMODE.equals(command)) {
             String m = args.get("rs").getString();
-            setRedstoneMode(RedstoneMode.getMode(m));
+            setRSMode(RedstoneMode.getMode(m));
             return true;
         }
         return false;

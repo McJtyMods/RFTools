@@ -2,13 +2,13 @@ package mcjty.rftools.blocks.powercell;
 
 import com.google.common.collect.Maps;
 import mcjty.lib.api.Infusable;
+import mcjty.lib.api.smartwrench.SmartWrenchMode;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
-import mcjty.rftools.items.smartwrench.SmartWrenchMode;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;

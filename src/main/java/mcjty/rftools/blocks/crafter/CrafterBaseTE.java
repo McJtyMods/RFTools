@@ -4,9 +4,8 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.lib.varia.CustomSidedInvWrapper;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.blocks.RedstoneMode;
+import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,10 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.HashMap;
@@ -44,11 +40,8 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     private CraftingRecipe recipes[];
     private int supportedRecipes;
 
-    private int powered;
-
     private StorageFilterCache filterCache = null;
 
-    private RedstoneMode redstoneMode = RedstoneMode.REDSTONE_IGNORED;
     private int speedMode = SPEED_SLOW;
 
     private InventoryCrafting workInventory = new InventoryCrafting(new Container() {
@@ -62,6 +55,16 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     public CrafterBaseTE() {
         super(CrafterConfiguration.MAXENERGY, CrafterConfiguration.RECEIVEPERTICK);
         setSupportedRecipes(8);
+    }
+
+    @Override
+    protected boolean needsRedstoneMode() {
+        return true;
+    }
+
+    @Override
+    protected boolean needsCustomInvWrapper() {
+        return true;
     }
 
     public ItemStack[] getGhostSlots() {
@@ -78,15 +81,6 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
     public int getSupportedRecipes() {
         return supportedRecipes;
-    }
-
-    public RedstoneMode getRedstoneMode() {
-        return redstoneMode;
-    }
-
-    public void setRedstoneMode(RedstoneMode redstoneMode) {
-        this.redstoneMode = redstoneMode;
-        markDirtyClient();
     }
 
     public int getSpeedMode() {
@@ -176,7 +170,6 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        powered = tagCompound.getInteger("powered");
     }
 
     @Override
@@ -185,9 +178,6 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         readBufferFromNBT(tagCompound, inventoryHelper);
         readGhostBufferFromNBT(tagCompound);
         readRecipesFromNBT(tagCompound);
-
-        int m = tagCompound.getInteger("rsMode");
-        redstoneMode = RedstoneMode.values()[m];
 
         speedMode = tagCompound.getByte("speedMode");
     }
@@ -211,7 +201,6 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setInteger("powered", powered);
         return tagCompound;
     }
 
@@ -221,7 +210,6 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         writeBufferToNBT(tagCompound, inventoryHelper);
         writeGhostBufferToNBT(tagCompound);
         writeRecipesToNBT(tagCompound);
-        tagCompound.setByte("rsMode", (byte) redstoneMode.ordinal());
         tagCompound.setByte("speedMode", (byte) speedMode);
     }
 
@@ -255,21 +243,9 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         }
     }
 
-    @Override
-    public void setPowered(int powered) {
-        this.powered = powered;
-        markDirty();
-    }
-
     protected void checkStateServer() {
-        if (redstoneMode != RedstoneMode.REDSTONE_IGNORED) {
-
-            boolean rs = powered > 0;
-            if (redstoneMode == RedstoneMode.REDSTONE_OFFREQUIRED && rs) {
-                return;
-            } else if (redstoneMode == RedstoneMode.REDSTONE_ONREQUIRED && !rs) {
-                return;
-            }
+        if (!isMachineEnabled()) {
+            return;
         }
 
         int steps = 1;
@@ -446,7 +422,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         }
         if (CMD_MODE.equals(command)) {
             String m = args.get("rs").getString();
-            setRedstoneMode(RedstoneMode.getMode(m));
+            setRSMode(RedstoneMode.getMode(m));
             setSpeedMode(args.get("speed").getInteger());
             return true;
         } else if (CMD_REMEMBER.equals(command)) {
@@ -457,23 +433,5 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
             return true;
         }
         return false;
-    }
-
-    IItemHandler invHandler = new CustomSidedInvWrapper(this);
-
-    @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return true;
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @Override
-    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return (T) invHandler;
-        }
-        return super.getCapability(capability, facing);
     }
 }

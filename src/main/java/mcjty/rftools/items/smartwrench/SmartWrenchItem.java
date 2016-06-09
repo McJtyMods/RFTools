@@ -1,6 +1,9 @@
 package mcjty.rftools.items.smartwrench;
 
 import cofh.api.item.IToolHammer;
+import mcjty.lib.api.smartwrench.SmartWrench;
+import mcjty.lib.api.smartwrench.SmartWrenchMode;
+import mcjty.lib.api.smartwrench.SmartWrenchSelector;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;

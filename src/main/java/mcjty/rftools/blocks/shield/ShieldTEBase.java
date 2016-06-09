@@ -1,17 +1,16 @@
 package mcjty.rftools.blocks.shield;
 
+import mcjty.lib.api.smartwrench.SmartWrenchSelector;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.CustomSidedInvWrapper;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.blocks.shield.filters.*;
 import mcjty.rftools.items.builder.ShapeCardItem;
-import mcjty.rftools.items.smartwrench.SmartWrenchSelector;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
