@@ -106,7 +106,7 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn) {
+    protected void checkRedstone(World world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof LogicTileEntity) {
             LogicTileEntity logicTileEntity = (LogicTileEntity)te;
@@ -125,6 +125,10 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
             }
             logicTileEntity.setPowerInput(power);
         }
+    }
+
+    @Override
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn) {
     }
 
     @Override

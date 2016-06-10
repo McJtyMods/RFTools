@@ -34,6 +34,11 @@ public class SimpleDialerBlock extends LogicSlabBlock<SimpleDialerTileEntity, Em
         super(Material.IRON, "simple_dialer", SimpleDialerTileEntity.class, EmptyContainer.class, SimpleDialerItemBlock.class);
     }
 
+    @Override
+    public boolean hasRedstoneOutput() {
+        return false;
+    }
+
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {

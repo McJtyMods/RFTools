@@ -4,15 +4,11 @@ import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.logic.LogicSlabBlock;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -23,6 +19,11 @@ public class EnderMonitorBlock extends LogicSlabBlock<EnderMonitorTileEntity, Em
     public EnderMonitorBlock() {
         super(Material.IRON, "ender_monitor", EnderMonitorTileEntity.class, EmptyContainer.class);
         setCreativeTab(RFTools.tabRfTools);
+    }
+
+    @Override
+    public boolean needsRedstoneCheck() {
+        return false;
     }
 
     @Override
@@ -51,10 +52,5 @@ public class EnderMonitorBlock extends LogicSlabBlock<EnderMonitorTileEntity, Em
     @Override
     public String getIdentifyingIconName() {
         return "machineEnderMonitorTop";
-    }
-
-    @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn) {
-        // We don't want to do what LogicSlabBlock does as we don't react on redstone input.
     }
 }

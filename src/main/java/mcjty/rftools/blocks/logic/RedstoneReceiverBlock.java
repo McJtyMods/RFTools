@@ -22,8 +22,14 @@ import org.lwjgl.input.Keyboard;
 import java.util.List;
 
 public class RedstoneReceiverBlock extends LogicSlabBlock<RedstoneReceiverTileEntity, EmptyContainer> {
+
     public RedstoneReceiverBlock() {
         super(Material.IRON, "redstone_receiver_block", RedstoneReceiverTileEntity.class, EmptyContainer.class, RedstoneReceiverItemBlock.class);
+    }
+
+    @Override
+    public boolean needsRedstoneCheck() {
+        return false;
     }
 
     @SideOnly(Side.CLIENT)

@@ -31,8 +31,8 @@ public class RedstoneTransmitterBlock extends LogicSlabBlock<RedstoneTransmitter
     }
 
     @Override
-    public boolean needsRedstoneCheck() {
-        return true;
+    public boolean hasRedstoneOutput() {
+        return false;
     }
 
     @SideOnly(Side.CLIENT)
