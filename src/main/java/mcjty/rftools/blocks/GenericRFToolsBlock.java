@@ -29,7 +29,7 @@ public abstract class GenericRFToolsBlock<T extends GenericTileEntity, C extends
                                Class<? extends C> containerClass,
                                Class<? extends ItemBlock> itemBlockClass,
                                String name, boolean isContainer) {
-        super(RFTools.instance, material, tileEntityClass, containerClass, name, isContainer);
+        super(RFTools.instance, material, tileEntityClass, containerClass, itemBlockClass, name, isContainer);
         setCreativeTab(RFTools.tabRfTools);
     }
 
