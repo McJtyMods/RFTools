@@ -128,10 +128,6 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn) {
-    }
-
-    @Override
     public boolean isFullBlock(IBlockState state) {
         return super.isFullBlock(state);
     }
