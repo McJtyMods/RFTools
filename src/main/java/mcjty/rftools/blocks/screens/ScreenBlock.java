@@ -1,7 +1,8 @@
 package mcjty.rftools.blocks.screens;
 
+import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.container.GenericGuiContainer;
-import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
@@ -96,15 +97,14 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (heldItem != null && heldItem.getItem() instanceof IModuleProvider) {
-            if (InventoryHelper.installModule(player, heldItem, hand, pos, ScreenContainer.SLOT_MODULES, ScreenContainer.SLOT_MODULES + ScreenContainer.SCREEN_MODULES - 1)) {
-                return true;
+    protected IModuleSupport getModuleSupport() {
+        return new ModuleSupport(ScreenContainer.SLOT_MODULES, ScreenContainer.SLOT_MODULES + ScreenContainer.SCREEN_MODULES - 1) {
+            @Override
+            public boolean isModule(ItemStack itemStack) {
+                return itemStack.getItem() instanceof IModuleProvider;
             }
-        }
-        return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
+        };
     }
-
 
     @Override
     public void onBlockClicked(World world, BlockPos pos, EntityPlayer playerIn) {

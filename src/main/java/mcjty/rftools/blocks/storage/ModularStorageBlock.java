@@ -1,8 +1,9 @@
 package mcjty.rftools.blocks.storage;
 
+import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.container.GenericGuiContainer;
-import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
+import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.network.RFToolsMessages;
@@ -22,8 +23,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
@@ -130,13 +129,13 @@ public class ModularStorageBlock extends GenericRFToolsBlock {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (heldItem != null && heldItem.getItem() == ModularStorageSetup.storageFilterItem) {
-            if (InventoryHelper.installModule(player, heldItem, hand, pos, ModularStorageContainer.SLOT_FILTER_MODULE, ModularStorageContainer.SLOT_FILTER_MODULE)) {
-                return true;
+    protected IModuleSupport getModuleSupport() {
+        return new ModuleSupport(ModularStorageContainer.SLOT_FILTER_MODULE) {
+            @Override
+            public boolean isModule(ItemStack itemStack) {
+                return itemStack.getItem() == ModularStorageSetup.storageFilterItem;
             }
-        }
-        return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
+        };
     }
 
     @Override
