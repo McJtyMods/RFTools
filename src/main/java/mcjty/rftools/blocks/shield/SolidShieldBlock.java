@@ -25,7 +25,7 @@ public class SolidShieldBlock extends AbstractShieldBlock {
     @Override
     protected void init() {
         setRegistryName("solid_shield_block");
-        setUnlocalizedName("solid_shield_block");
+        setUnlocalizedName("rftools.solid_shield_block");
     }
 
     @SideOnly(Side.CLIENT)

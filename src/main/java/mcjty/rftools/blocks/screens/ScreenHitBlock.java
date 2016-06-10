@@ -40,7 +40,7 @@ public class ScreenHitBlock extends Block implements ITileEntityProvider {
         super(Material.GLASS);
         setBlockUnbreakable();
         setResistance(6000000.0F);
-        setUnlocalizedName("screen_hitblock");
+        setUnlocalizedName("rftools.screen_hitblock");
         setRegistryName("screen_hitblock");
         GameRegistry.register(this);
         GameRegistry.register(new ItemBlock(this), getRegistryName());

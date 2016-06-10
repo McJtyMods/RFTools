@@ -27,7 +27,7 @@ public class DestinationAnalyzerBlock extends Block {
 
     public DestinationAnalyzerBlock() {
         super(Material.IRON);
-        setUnlocalizedName("destination_analyzer");
+        setUnlocalizedName("rftools.destination_analyzer");
         setRegistryName("destination_analyzer");
         setCreativeTab(RFTools.tabRfTools);
         setHardness(2.0f);

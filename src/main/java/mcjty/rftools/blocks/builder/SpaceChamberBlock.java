@@ -21,7 +21,7 @@ public class SpaceChamberBlock extends Block {
         setHardness(2.0f);
         setSoundType(SoundType.METAL);
         setHarvestLevel("pickaxe", 0);
-        setUnlocalizedName("space_chamber");
+        setUnlocalizedName("rftools.space_chamber");
         setRegistryName("space_chamber");
         setCreativeTab(RFTools.tabRfTools);
         GameRegistry.register(this);

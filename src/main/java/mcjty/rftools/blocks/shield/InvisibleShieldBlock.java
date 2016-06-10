@@ -18,7 +18,7 @@ public class InvisibleShieldBlock extends AbstractShieldBlock {
 
     @Override
     protected void init() {
-        setUnlocalizedName("invisible_shield_block");
+        setUnlocalizedName("rftools.invisible_shield_block");
         setRegistryName("invisible_shield_block");
     }
 

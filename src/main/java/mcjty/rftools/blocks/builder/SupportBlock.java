@@ -36,7 +36,7 @@ public class SupportBlock extends Block {
 
     public SupportBlock() {
         super(Material.GLASS);
-        setUnlocalizedName("support_block");
+        setUnlocalizedName("rftools.support_block");
         setRegistryName("support_block");
         setCreativeTab(RFTools.tabRfTools);
         GameRegistry.register(this);

@@ -27,7 +27,7 @@ public class MatterBoosterBlock extends Block {
 
     public MatterBoosterBlock() {
         super(Material.IRON);
-        setUnlocalizedName("matter_booster");
+        setUnlocalizedName("rftools.matter_booster");
         setRegistryName("matter_booster");
         setCreativeTab(RFTools.tabRfTools);
         setHardness(2.0f);

@@ -10,7 +10,7 @@ public class NoTickSolidShieldBlock extends SolidShieldBlock {
     @Override
     protected void init() {
         setRegistryName("notick_solid_shield_block");
-        setUnlocalizedName("notick_solid_shield_block");
+        setUnlocalizedName("rftools.notick_solid_shield_block");
     }
 
     @Override

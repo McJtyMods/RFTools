@@ -9,7 +9,7 @@ public class NoTickInvisibleShieldBlock extends InvisibleShieldBlock {
 
     @Override
     protected void init() {
-        setUnlocalizedName("notick_invisible_shield_block");
+        setUnlocalizedName("rftools.notick_invisible_shield_block");
         setRegistryName("notick_invisible_shield_block");
     }
 

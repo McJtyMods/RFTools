@@ -51,7 +51,7 @@ public class DimensionalShardBlock extends Block {
         setHardness(3.0f);
         setResistance(5.0f);
         setHarvestLevel("pickaxe", 2);
-        setUnlocalizedName("dimensional_shard_ore");
+        setUnlocalizedName("rftools.dimensional_shard_ore");
         setRegistryName("dimensional_shard_ore");
         setLightLevel(0.5f);
         setCreativeTab(RFTools.tabRfTools);

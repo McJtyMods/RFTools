@@ -52,7 +52,7 @@ public class ShieldTemplateBlock extends Block {
 
     public ShieldTemplateBlock() {
         super(Material.GLASS);
-        setUnlocalizedName("shield_template_block");
+        setUnlocalizedName("rftools.shield_template_block");
         setRegistryName("shield_template_block");
         setCreativeTab(RFTools.tabRfTools);
         GameRegistry.register(this);
