@@ -99,7 +99,6 @@ public class BlockProtectorBlock extends GenericRFToolsBlock implements Infusabl
         return currenttip;
     }
 
-
     @Override
     protected boolean wrenchSneakSelect(World world, BlockPos pos, EntityPlayer player) {
         if (!world.isRemote) {

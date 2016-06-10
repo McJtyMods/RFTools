@@ -4,10 +4,13 @@ import cofh.api.item.IToolHammer;
 import mcjty.lib.api.smartwrench.SmartWrench;
 import mcjty.lib.api.smartwrench.SmartWrenchMode;
 import mcjty.lib.api.smartwrench.SmartWrenchSelector;
+import mcjty.lib.container.GenericBlock;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -23,7 +26,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -96,6 +98,16 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
     @Override
     public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
+            if (player.isSneaking()) {
+                // Make sure the block get activated if it is a GenericBlock
+                IBlockState state = world.getBlockState(pos);
+                Block block = state.getBlock();
+                if (block instanceof GenericBlock) {
+                    if (block.onBlockActivated(world, pos, state, player, hand, player.getHeldItem(hand), facing, hitX, hitY, hitZ)) {
+                        return EnumActionResult.SUCCESS;
+                    }
+                }
+            }
             SmartWrenchMode mode = getCurrentMode(stack);
             if (mode == SmartWrenchMode.MODE_SELECT) {
                 GlobalCoordinate b = getCurrentBlock(stack);
@@ -115,11 +127,11 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
         return EnumActionResult.SUCCESS;
     }
 
-    @Override
-    public boolean doesSneakBypassUse(ItemStack stack, IBlockAccess world, BlockPos pos, EntityPlayer player) {
-        return true;
-    }
-
+//    @Override
+//    public boolean doesSneakBypassUse(ItemStack stack, IBlockAccess world, BlockPos pos, EntityPlayer player) {
+//        return true;
+//    }
+//
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
