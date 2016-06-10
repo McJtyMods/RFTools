@@ -21,7 +21,6 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
 
     // For pulse detection.
     private boolean prevIn = false;
-    private boolean powered = false;
 
     private int delay = 1;
     private int timer = 0;
@@ -94,16 +93,10 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
         }
     }
 
-    @Override
-    public void setPowered(int powered) {
-        this.powered = powered > 0;
-        markDirty();
-    }
-
     private void checkStateServer() {
 
-        boolean pulse = powered && !prevIn;
-        prevIn = powered;
+        boolean pulse = (powerLevel > 0) && !prevIn;
+        prevIn = powerLevel > 0;
 
         if (pulse) {
             handlePulse();
@@ -127,7 +120,7 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
             worldObj.notifyBlockUpdate(this.pos, state, state, 3);
         }
 
-        handleCycle(powered);
+        handleCycle(powerLevel > 0);
     }
 
     /**
@@ -219,7 +212,6 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
         currentStep = tagCompound.getInteger("step");
         prevIn = tagCompound.getBoolean("prevIn");
         timer = tagCompound.getInteger("timer");
-        powered = tagCompound.getBoolean("powered");
     }
 
     @Override
@@ -241,7 +233,6 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
         tagCompound.setInteger("step", currentStep);
         tagCompound.setBoolean("prevIn", prevIn);
         tagCompound.setInteger("timer", timer);
-        tagCompound.setBoolean("powered", powered);
         return tagCompound;
     }
 

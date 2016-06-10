@@ -4,7 +4,6 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.varia.BlockTools;
-import mcjty.lib.varia.CustomSidedInvWrapper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -14,9 +13,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 
 public class PearlInjectorTileEntity extends GenericTileEntity implements DefaultSidedInventory, ITickable {
 
@@ -24,7 +20,11 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
 
     // For pulse detection.
     private boolean prevIn = false;
-    private boolean powered = false;
+
+    @Override
+    protected boolean needsCustomInvWrapper() {
+        return true;
+    }
 
     private EndergenicTileEntity findEndergenicTileEntity() {
         IBlockState state = worldObj.getBlockState(getPos());
@@ -53,18 +53,12 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
         }
     }
 
-    @Override
-    public void setPowered(int powered) {
-        this.powered = powered > 0;
-        markDirty();
-    }
-
     private void checkStateServer() {
-        boolean pulse = powered && !prevIn;
-        if (prevIn == powered) {
+        boolean pulse = (powerLevel > 0) && !prevIn;
+        if (prevIn == powerLevel > 0) {
             return;
         }
-        prevIn = powered;
+        prevIn = powerLevel > 0;
 
         if (pulse) {
             injectPearl();
@@ -103,7 +97,6 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         prevIn = tagCompound.getBoolean("prevIn");
-        powered = tagCompound.getBoolean("powered");
     }
 
     @Override
@@ -116,7 +109,6 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setBoolean("prevIn", prevIn);
-        tagCompound.setBoolean("powered", powered);
         return tagCompound;
     }
 
@@ -162,23 +154,5 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
     @Override
     public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
         return isItemValidForSlot(index, itemStackIn);
-    }
-
-    IItemHandler invHandler = new CustomSidedInvWrapper(this);
-
-    @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return true;
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @Override
-    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return (T) invHandler;
-        }
-        return super.getCapability(capability, facing);
     }
 }

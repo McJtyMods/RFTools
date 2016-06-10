@@ -1,8 +1,9 @@
 package mcjty.rftools.blocks.environmental;
 
+import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.GenericGuiContainer;
-import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -10,7 +11,6 @@ import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,8 +18,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
@@ -122,18 +120,18 @@ public class EnvironmentalControllerBlock extends GenericRFToolsBlock implements
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (heldItem != null && heldItem.getItem() instanceof EnvModuleProvider) {
-            if (InventoryHelper.installModule(player, heldItem, hand, pos, EnvironmentalControllerContainer.SLOT_MODULES, EnvironmentalControllerContainer.SLOT_MODULES + EnvironmentalControllerContainer.ENV_MODULES - 1)) {
-                return true;
+    protected IModuleSupport getModuleSupport() {
+        return new ModuleSupport(EnvironmentalControllerContainer.SLOT_MODULES, EnvironmentalControllerContainer.SLOT_MODULES + EnvironmentalControllerContainer.ENV_MODULES - 1) {
+            @Override
+            public boolean isModule(ItemStack itemStack) {
+                return itemStack.getItem() instanceof EnvModuleProvider;
             }
-        }
-        return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
+        };
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn) {
-        checkRedstoneWithTE(world, pos);
+    public boolean needsRedstoneCheck() {
+        return true;
     }
 
 //    @Override

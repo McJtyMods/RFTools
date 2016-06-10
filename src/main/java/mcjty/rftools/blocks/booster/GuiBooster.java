@@ -8,8 +8,8 @@ import mcjty.lib.gui.widgets.EnergyBar;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.network.Argument;
+import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -65,11 +65,11 @@ public class GuiBooster extends GenericGuiContainer<BoosterTileEntity> {
                 addChoice(RedstoneMode.REDSTONE_IGNORED.getDescription(), "Redstone mode:\nIgnored", iconGuiElements, 0, 0).
                 addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
                 addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
-        redstoneMode.setCurrentChoice(tileEntity.getRedstoneMode().ordinal());
+        redstoneMode.setCurrentChoice(tileEntity.getRSMode().ordinal());
     }
 
     private void changeRedstoneMode() {
-        tileEntity.setRedstoneMode(RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()]);
+        tileEntity.setRSMode(RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()]);
         sendServerCommand(RFToolsMessages.INSTANCE, BoosterTileEntity.CMD_RSMODE, new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()));
     }
 

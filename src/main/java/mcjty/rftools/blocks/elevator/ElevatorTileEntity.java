@@ -33,7 +33,6 @@ import java.util.*;
 public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implements ITickable {
 
     private boolean prevIn = false;
-    private boolean powered = false;
 
     private double movingY = -1;
     private int startY;
@@ -102,13 +101,13 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
                 return;
             }
 
-            if (powered == prevIn) {
+            if ((powerLevel > 0) == prevIn) {
                 return;
             }
-            prevIn = powered;
+            prevIn = (powerLevel > 0);
             markDirty();
 
-            if (powered) {
+            if (powerLevel > 0) {
                 movePlatformHere();
             }
         } else {
@@ -595,15 +594,6 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         return new BlockPos(p.getX(), y, p.getZ());
     }
 
-    @Override
-    public void setPowered(int powered) {
-        boolean p = powered > 0;
-        if (this.powered != p) {
-            this.powered = p;
-            markDirty();
-        }
-    }
-
     @SideOnly(Side.CLIENT)
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
@@ -670,7 +660,6 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     private void readFromNBTCommon(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         prevIn = tagCompound.getBoolean("prevIn");
-        powered = tagCompound.getBoolean("powered");
         movingY = tagCompound.getDouble("movingY");
         startY = tagCompound.getInteger("startY");
         stopY = tagCompound.getInteger("stopY");
@@ -698,7 +687,6 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("powered", powered);
         tagCompound.setBoolean("prevIn", prevIn);
         tagCompound.setDouble("movingY", movingY);
         tagCompound.setInteger("startY", startY);

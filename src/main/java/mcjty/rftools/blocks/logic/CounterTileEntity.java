@@ -14,7 +14,6 @@ public class CounterTileEntity extends LogicTileEntity {
 
     // For pulse detection.
     private boolean prevIn = false;
-    private boolean powered = false;
 
     private int counter = 1;
     private int current = 0;
@@ -42,18 +41,12 @@ public class CounterTileEntity extends LogicTileEntity {
         markDirtyClient();
     }
 
-    @Override
-    public void setPowered(int powered) {
-        this.powered = powered > 0;
-        markDirty();
-    }
-
     protected void update() {
         if (worldObj.isRemote) {
             return;
         }
-        boolean pulse = powered && !prevIn;
-        prevIn = powered;
+        boolean pulse = (powerLevel > 0) && !prevIn;
+        prevIn = powerLevel > 0;
 
         boolean newout = false;
 
@@ -81,7 +74,6 @@ public class CounterTileEntity extends LogicTileEntity {
         super.readFromNBT(tagCompound);
         redstoneOut = tagCompound.getBoolean("rs");
         prevIn = tagCompound.getBoolean("prevIn");
-        powered = tagCompound.getBoolean("powered");
     }
 
     @Override
@@ -99,7 +91,6 @@ public class CounterTileEntity extends LogicTileEntity {
         super.writeToNBT(tagCompound);
         tagCompound.setBoolean("rs", redstoneOut);
         tagCompound.setBoolean("prevIn", prevIn);
-        tagCompound.setBoolean("powered", powered);
         return tagCompound;
     }
 

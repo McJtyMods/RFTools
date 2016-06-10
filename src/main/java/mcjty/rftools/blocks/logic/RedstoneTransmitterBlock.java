@@ -30,9 +30,14 @@ public class RedstoneTransmitterBlock extends LogicSlabBlock<RedstoneTransmitter
         super(Material.IRON, "redstone_transmitter_block", RedstoneTransmitterTileEntity.class, EmptyContainer.class, RedstoneReceiverItemBlock.class);
     }
 
+    @Override
+    public boolean needsRedstoneCheck() {
+        return true;
+    }
+
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {

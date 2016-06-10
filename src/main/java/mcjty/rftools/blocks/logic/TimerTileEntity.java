@@ -15,7 +15,6 @@ public class TimerTileEntity extends LogicTileEntity implements ITickable {
 
     // For pulse detection.
     private boolean prevIn = false;
-    private boolean powered = false;
 
     private int delay = 20;
     private int timer = 0;
@@ -41,15 +40,9 @@ public class TimerTileEntity extends LogicTileEntity implements ITickable {
         }
     }
 
-    @Override
-    public void setPowered(int powered) {
-        this.powered = powered > 0;
-        markDirty();
-    }
-
     private void checkStateServer() {
-        boolean pulse = powered && !prevIn;
-        prevIn = powered;
+        boolean pulse = (powerLevel > 0) && !prevIn;
+        prevIn = powerLevel > 0;
 
         markDirty();
 
@@ -83,7 +76,6 @@ public class TimerTileEntity extends LogicTileEntity implements ITickable {
         redstoneOut = tagCompound.getBoolean("rs");
         prevIn = tagCompound.getBoolean("prevIn");
         timer = tagCompound.getInteger("timer");
-        powered = tagCompound.getBoolean("powered");
     }
 
     @Override
@@ -98,7 +90,6 @@ public class TimerTileEntity extends LogicTileEntity implements ITickable {
         tagCompound.setBoolean("rs", redstoneOut);
         tagCompound.setBoolean("prevIn", prevIn);
         tagCompound.setInteger("timer", timer);
-        tagCompound.setBoolean("powered", powered);
         return tagCompound;
     }
 

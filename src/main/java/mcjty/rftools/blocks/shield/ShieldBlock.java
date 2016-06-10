@@ -1,15 +1,15 @@
 package mcjty.rftools.blocks.shield;
 
+import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.GenericGuiContainer;
-import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
+import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -39,6 +39,11 @@ public class ShieldBlock extends GenericRFToolsBlock implements Infusable /*, IR
     }
 
     @Override
+    public boolean needsRedstoneCheck() {
+        return true;
+    }
+
+    @Override
     public boolean hasNoRotation() {
         return true;
     }
@@ -56,7 +61,7 @@ public class ShieldBlock extends GenericRFToolsBlock implements Infusable /*, IR
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
 
         list.add(TextFormatting.GREEN + "Supports " + max + " blocks");
@@ -75,13 +80,13 @@ public class ShieldBlock extends GenericRFToolsBlock implements Infusable /*, IR
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (heldItem != null && (heldItem.getItem() == BuilderSetup.shapeCardItem)) {
-            if (InventoryHelper.installModule(player, heldItem, hand, pos, ShieldContainer.SLOT_SHAPE, ShieldContainer.SLOT_SHAPE)) {
-                return true;
+    protected IModuleSupport getModuleSupport() {
+        return new ModuleSupport(ShieldContainer.SLOT_SHAPE) {
+            @Override
+            public boolean isModule(ItemStack itemStack) {
+                return itemStack.getItem() == BuilderSetup.shapeCardItem;
             }
-        }
-        return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, hitX, hitY, hitZ);
+        };
     }
 
     @Override
@@ -142,10 +147,6 @@ public class ShieldBlock extends GenericRFToolsBlock implements Infusable /*, IR
         super.breakBlock(world, pos, state);
     }
 
-    @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn) {
-        checkRedstoneWithTE(world, pos);
-    }
 //
 //    @Override
 //    public boolean shouldRedstoneConduitConnect(World world, int x, int y, int z, EnumFacing from) {

@@ -68,7 +68,6 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
 
     // For pulse detection.
     private boolean prevIn = false;
-    private boolean powered = false;
 
     // Statistics for this generator.
     // These values count what is happening.
@@ -127,12 +126,6 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         return goodCounter;
     }
 
-    @Override
-    public void setPowered(int powered) {
-        this.powered = powered > 0;
-        markDirty();
-    }
-
     private void checkStateServer() {
         tickCounter++;
 
@@ -163,8 +156,8 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
             }
         }
 
-        boolean pulse = powered && !prevIn;
-        prevIn = powered;
+        boolean pulse = (powerLevel > 0) && !prevIn;
+        prevIn = powerLevel > 0;
         if (pulse) {
             if (chargingMode == CHARGE_IDLE) {
                 log("Server Tick: pulse -> start charging");
@@ -509,7 +502,6 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         destination = BlockPosTools.readFromNBT(tagCompound, "dest");
         distance = tagCompound.getInteger("distance");
         prevIn = tagCompound.getBoolean("prevIn");
-        powered = tagCompound.getBoolean("powered");
         badCounter = tagCompound.getByte("bad");
         goodCounter = tagCompound.getByte("good");
         pearls.clear();
@@ -530,7 +522,6 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         BlockPosTools.writeToNBT(tagCompound, "dest", destination);
         tagCompound.setInteger("distance", distance);
         tagCompound.setBoolean("prevIn", prevIn);
-        tagCompound.setBoolean("powered", powered);
         tagCompound.setByte("bad", (byte) badCounter);
         tagCompound.setByte("good", (byte) goodCounter);
 

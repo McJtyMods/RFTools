@@ -59,7 +59,7 @@ public class ThreeLogicBlock extends LogicSlabBlock<ThreeLogicTileEntity, EmptyC
             int powered1 = getInputStrength(world, pos, leftSide) > 0 ? 1 : 0;
             int powered2 = getInputStrength(world, pos, inputSide) > 0 ? 2 : 0;
             int powered3 = getInputStrength(world, pos, rightSide) > 0 ? 4 : 0;
-            logicTileEntity.setPowered(powered1 + powered2 + powered3);
+            logicTileEntity.setPowerInput(powered1 + powered2 + powered3);
         }
     }
 

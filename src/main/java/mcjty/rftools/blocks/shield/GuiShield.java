@@ -15,7 +15,7 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.RedstoneMode;
+import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.blocks.shield.filters.*;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
@@ -309,11 +309,11 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
                 addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
                 addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
         redstoneMode.setLayoutHint(new PositionalLayout.PositionalHint(62, 200, 16, 16));
-        redstoneMode.setCurrentChoice(tileEntity.getRedstoneMode().ordinal());
+        redstoneMode.setCurrentChoice(tileEntity.getRSMode().ordinal());
     }
 
     private void changeRedstoneMode() {
-        tileEntity.setRedstoneMode(RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()]);
+        tileEntity.setRSMode(RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()]);
         sendServerCommand(RFToolsMessages.INSTANCE, ShieldTEBase.CMD_RSMODE, new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()));
     }
 

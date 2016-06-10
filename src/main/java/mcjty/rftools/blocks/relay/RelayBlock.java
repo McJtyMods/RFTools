@@ -4,7 +4,6 @@ import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
@@ -15,7 +14,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -33,6 +31,11 @@ public class RelayBlock extends GenericRFToolsBlock /* implements IRedstoneConne
     }
 
     @Override
+    public boolean needsRedstoneCheck() {
+        return true;
+    }
+
+    @Override
     public Class<? extends GenericGuiContainer> getGuiClass() {
         return GuiRelay.class;
     }
@@ -40,11 +43,6 @@ public class RelayBlock extends GenericRFToolsBlock /* implements IRedstoneConne
     @Override
     public int getGuiID() {
         return RFTools.GUI_RELAY;
-    }
-
-    @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn) {
-        checkRedstoneWithTE(world, pos);
     }
 
 //    @Override

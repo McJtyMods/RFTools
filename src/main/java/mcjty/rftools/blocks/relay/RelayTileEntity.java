@@ -21,8 +21,6 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
 
     public static final String CMD_SETTINGS = "settings";
 
-    private int powered = 0;
-
     private boolean[] inputModeOn = new boolean[] { false, false, false, false, false, false };
     private boolean[] inputModeOff = new boolean[] { false, false, false, false, false, false };
     private int rfOn[] = new int[] { 1000, 1000, 1000, 1000, 1000, 1000 };
@@ -40,20 +38,12 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
         }
     }
 
-    @Override
-    public void setPowered(int powered) {
-        if (this.powered != powered) {
-            this.powered = powered;
-            markDirtyClient();
-        }
-    }
-
     public boolean isPowered() {
-        return powered > 0;
+        return powerLevel > 0;
     }
 
     private void checkStateServer() {
-        boolean redstoneSignal = powered > 0;
+        boolean redstoneSignal = powerLevel > 0;
         int[] rf = redstoneSignal ? rfOn : rfOff;
         boolean[] inputMode = redstoneSignal ? inputModeOn : inputModeOff;
 
@@ -93,7 +83,7 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
 
     @Override
     public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
-        boolean redstoneSignal = powered > 0;
+        boolean redstoneSignal = powerLevel > 0;
 
         boolean[] inputMode = redstoneSignal ? inputModeOn : inputModeOff;
         IBlockState state = worldObj.getBlockState(getPos());
@@ -124,12 +114,6 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
-        super.readFromNBT(tagCompound);
-        powered = tagCompound.getByte("powered");
-    }
-
-    @Override
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         if (tagCompound.hasKey("rfOn")) {
@@ -157,13 +141,6 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
                 inputModeOff[i] = inOff[i] > 0;
             }
         }
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
-        super.writeToNBT(tagCompound);
-        tagCompound.setByte("powered", (byte) powered);
-        return tagCompound;
     }
 
     @Override

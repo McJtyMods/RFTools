@@ -6,7 +6,6 @@ public class RedstoneTransmitterTileEntity extends LogicTileEntity {
 
     private int channel = -1;
     private boolean prevValue = false;
-    private boolean powered = false;
 
     public RedstoneTransmitterTileEntity() {
     }
@@ -20,12 +19,6 @@ public class RedstoneTransmitterTileEntity extends LogicTileEntity {
         markDirtyClient();
     }
 
-    @Override
-    public void setPowered(int powered) {
-        this.powered = powered > 0;
-        markDirty();
-    }
-
     public void update() {
         if (worldObj.isRemote) {
             return;
@@ -35,32 +28,19 @@ public class RedstoneTransmitterTileEntity extends LogicTileEntity {
             return;
         }
 
-        if (powered != prevValue) {
-            prevValue = powered;
+        if ((powerLevel > 0) != prevValue) {
+            prevValue = powerLevel > 0;
             RedstoneChannels channels = RedstoneChannels.getChannels(worldObj);
             RedstoneChannels.RedstoneChannel ch = channels.getOrCreateChannel(channel);
-            ch.setValue(powered ? 15 : 0);
+            ch.setValue(powerLevel > 0 ? 15 : 0);
             channels.save(worldObj);
         }
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
-        super.readFromNBT(tagCompound);
-        powered = tagCompound.getBoolean("powered");
     }
 
     @Override
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         channel = tagCompound.getInteger("channel");
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
-        super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("powered", powered);
-        return tagCompound;
     }
 
     @Override

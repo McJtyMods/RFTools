@@ -34,6 +34,11 @@ public class BoosterBlock extends GenericRFToolsBlock<BoosterTileEntity, Booster
         return true;
     }
 
+    @Override
+    public boolean needsRedstoneCheck() {
+        return true;
+    }
+
     @SideOnly(Side.CLIENT)
     @Override
     public Class<? extends GenericGuiContainer> getGuiClass() {

@@ -5,7 +5,6 @@ import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -28,6 +27,11 @@ public class EndergenicBlock extends GenericRFToolsBlock implements Infusable /*
 
     public EndergenicBlock() {
         super(Material.IRON, EndergenicTileEntity.class, EmptyContainer.class, "endergenic", true);
+    }
+
+    @Override
+    public boolean needsRedstoneCheck() {
+        return true;
     }
 
     @Override
@@ -86,11 +90,6 @@ public class EndergenicBlock extends GenericRFToolsBlock implements Infusable /*
             endergenicTileEntity.useWrench(player);
         }
         return true;
-    }
-
-    @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn) {
-        checkRedstoneWithTE(world, pos);
     }
 
 //    @Override

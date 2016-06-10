@@ -42,6 +42,16 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
         return true;
     }
 
+    @Override
+    public boolean hasRedstoneOutput() {
+        return true;
+    }
+
+    @Override
+    public boolean needsRedstoneCheck() {
+        return true;
+    }
+
     public LogicSlabBlock(Material material, String name, Class<? extends T> tileEntityClass, Class<? extends C> containerClass, Class<? extends ItemBlock> itemBlockClass) {
         super(material, tileEntityClass, containerClass, itemBlockClass, name, false);
     }
@@ -113,7 +123,7 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
                     power = world.isBlockPowered(pos.offset(inputSide)) ? 15 : 0;
                 }
             }
-            logicTileEntity.setPowered(power);
+            logicTileEntity.setPowerInput(power);
         }
     }
 
@@ -154,12 +164,7 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
     }
 
     @Override
-    public boolean canProvidePower(IBlockState state) {
-        return true;
-    }
-
-    @Override
-    public int getWeakPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+    protected int getRedstoneOutput(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof LogicTileEntity) {
             LogicTileEntity logicTileEntity = (LogicTileEntity) te;
@@ -170,12 +175,6 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
             }
         }
         return 0;
-    }
-
-
-    @Override
-    public int getStrongPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
-        return getWeakPower(state, world, pos, side);
     }
 
     @Override

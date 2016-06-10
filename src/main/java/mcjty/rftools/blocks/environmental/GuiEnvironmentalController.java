@@ -14,8 +14,8 @@ import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
+import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.RedstoneMode;
 import mcjty.rftools.blocks.teleporter.PacketGetPlayers;
 import mcjty.rftools.blocks.teleporter.PlayerName;
 import mcjty.rftools.network.RFToolsMessages;
@@ -185,7 +185,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
                 addChoice(RedstoneMode.REDSTONE_IGNORED.getDescription(), "Redstone mode:\nIgnored", iconGuiElements, 0, 0).
                 addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
                 addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
-        redstoneMode.setCurrentChoice(tileEntity.getRedstoneMode().ordinal());
+        redstoneMode.setCurrentChoice(tileEntity.getRSMode().ordinal());
     }
 
     private void changeMode(String newAccess) {
@@ -207,7 +207,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
     }
 
     private void changeRedstoneMode() {
-        tileEntity.setRedstoneMode(RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()]);
+        tileEntity.setRSMode(RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()]);
         sendServerCommand(RFToolsMessages.INSTANCE, EnvironmentalControllerTileEntity.CMD_RSMODE, new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()));
     }
 

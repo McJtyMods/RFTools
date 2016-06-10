@@ -6,9 +6,8 @@ import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.BlockTools;
-import mcjty.lib.varia.CustomSidedInvWrapper;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.blocks.RedstoneMode;
+import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.blocks.shield.filters.*;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import net.minecraft.block.Block;
@@ -28,12 +27,9 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 
 import java.util.*;
 
@@ -56,7 +52,6 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
 
     public static final String COMPONENT_NAME = "shield_projector";
 
-    private RedstoneMode redstoneMode = RedstoneMode.REDSTONE_IGNORED;
     private DamageTypeMode damageMode = DamageTypeMode.DAMAGETYPE_GENERIC;
 
     // If true the shield is currently made.
@@ -67,8 +62,6 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     private boolean shieldActive = false;
     // Timeout in case power is low. Here we wait a bit before trying again.
     private int powerTimeout = 0;
-
-    private int powered = 0;
 
     private int shieldColor;
 
@@ -90,6 +83,16 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
 
     public ShieldTEBase(int maxEnergy, int maxReceive) {
         super(maxEnergy, maxReceive);
+    }
+
+    @Override
+    protected boolean needsRedstoneMode() {
+        return true;
+    }
+
+    @Override
+    protected boolean needsCustomInvWrapper() {
+        return true;
     }
 
     public void setSupportedBlocks(int supportedBlocks) {
@@ -200,7 +203,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         if (redstoneMode == null) {
             throw new IllegalArgumentException("Not a valid mode");
         }
-        setRedstoneMode(redstoneMode);
+        setRSMode(redstoneMode);
         return null;
     }
 
@@ -275,16 +278,8 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         return new Object[] { done };
     }
 
-    @Override
-    public void setPowered(int powered) {
-        if (this.powered != powered) {
-            this.powered = powered;
-            markDirty();
-        }
-    }
-
     public boolean isPowered() {
-        return powered > 0;
+        return powerLevel > 0;
     }
 
     public List<ShieldFilter> getFilters() {
@@ -335,15 +330,6 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             filters.add(selected, filter);
         }
         updateShield();
-        markDirtyClient();
-    }
-
-    public RedstoneMode getRedstoneMode() {
-        return redstoneMode;
-    }
-
-    public void setRedstoneMode(RedstoneMode redstoneMode) {
-        this.redstoneMode = redstoneMode;
         markDirtyClient();
     }
 
@@ -537,18 +523,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             }
         }
 
-        boolean newShieldActive = shieldActive;
-
-        if (redstoneMode == RedstoneMode.REDSTONE_IGNORED) {
-            newShieldActive = true;         // Always active in this mode.
-        } else {
-            boolean rs = powered > 0;
-            if (redstoneMode == RedstoneMode.REDSTONE_OFFREQUIRED) {
-                newShieldActive = !rs;
-            } else if (redstoneMode == RedstoneMode.REDSTONE_ONREQUIRED) {
-                newShieldActive = rs;
-            }
-        }
+        boolean newShieldActive = isMachineEnabled();
         if (newShieldActive != shieldActive) {
             needsUpdate = true;
             shieldActive = newShieldActive;
@@ -842,15 +817,15 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
 
     @Override
     public void readClientDataFromNBT(NBTTagCompound tagCompound) {
-        powered = tagCompound.getByte("powered");
+        powerLevel = tagCompound.getByte("powered");
         shieldComposed = tagCompound.getBoolean("composed");
         shieldActive = tagCompound.getBoolean("active");
         powerTimeout = tagCompound.getInteger("powerTimeout");
         templateMeta = tagCompound.getInteger("templateMeta");
 
         shieldRenderingMode = ShieldRenderingMode.values()[tagCompound.getInteger("visMode")];
-        redstoneMode = RedstoneMode.values()[((int) tagCompound.getByte("rsMode"))];
-        damageMode = DamageTypeMode.values()[((int) tagCompound.getByte("damageMode"))];
+        rsMode = RedstoneMode.values()[(tagCompound.getByte("rsMode"))];
+        damageMode = DamageTypeMode.values()[(tagCompound.getByte("damageMode"))];
         camoRenderPass = tagCompound.getInteger("camoRenderPass");
 
         shieldColor = tagCompound.getInteger("shieldColor");
@@ -861,14 +836,14 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
 
     @Override
     public void writeClientDataToNBT(NBTTagCompound tagCompound) {
-        tagCompound.setByte("powered", (byte) powered);
+        tagCompound.setByte("powered", (byte) powerLevel);
         tagCompound.setBoolean("composed", shieldComposed);
         tagCompound.setBoolean("active", shieldActive);
         tagCompound.setInteger("powerTimeout", powerTimeout);
         tagCompound.setInteger("templateMeta", templateMeta);
 
         tagCompound.setInteger("visMode", shieldRenderingMode.ordinal());
-        tagCompound.setByte("rsMode", (byte) redstoneMode.ordinal());
+        tagCompound.setByte("rsMode", (byte) rsMode.ordinal());
         tagCompound.setByte("damageMode", (byte) damageMode.ordinal());
 
         tagCompound.setInteger("camoRenderPass", camoRenderPass);
@@ -878,7 +853,6 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        powered = tagCompound.getByte("powered");
         shieldComposed = tagCompound.getBoolean("composed");
         shieldActive = tagCompound.getBoolean("active");
         powerTimeout = tagCompound.getInteger("powerTimeout");
@@ -902,7 +876,6 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         readBufferFromNBT(tagCompound, inventoryHelper);
 
         shieldRenderingMode = ShieldRenderingMode.values()[tagCompound.getInteger("visMode")];
-        redstoneMode = RedstoneMode.values()[((int) tagCompound.getByte("rsMode"))];
         damageMode = DamageTypeMode.values()[((int) tagCompound.getByte("damageMode"))];
         camoRenderPass = tagCompound.getInteger("camoRenderPass");
 
@@ -928,7 +901,6 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setByte("powered", (byte) powered);
         tagCompound.setBoolean("composed", shieldComposed);
         tagCompound.setBoolean("active", shieldActive);
         tagCompound.setInteger("powerTimeout", powerTimeout);
@@ -954,7 +926,6 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
         tagCompound.setInteger("visMode", shieldRenderingMode.ordinal());
-        tagCompound.setByte("rsMode", (byte) redstoneMode.ordinal());
         tagCompound.setByte("damageMode", (byte) damageMode.ordinal());
 
         tagCompound.setInteger("camoRenderPass", camoRenderPass);
@@ -1008,7 +979,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             return true;
         } else if (CMD_RSMODE.equals(command)) {
             String m = args.get("rs").getString();
-            setRedstoneMode(RedstoneMode.getMode(m));
+            setRSMode(RedstoneMode.getMode(m));
             return true;
         } else if (CMD_DAMAGEMODE.equals(command)) {
             String m = args.get("mode").getString();
@@ -1096,23 +1067,5 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);
-    }
-
-    IItemHandler invHandler = new CustomSidedInvWrapper(this);
-
-    @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return true;
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @Override
-    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return (T) invHandler;
-        }
-        return super.getCapability(capability, facing);
     }
 }

@@ -4,9 +4,8 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.lib.varia.CustomSidedInvWrapper;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.blocks.RedstoneMode;
+import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
 import mcjty.rftools.blocks.teleporter.PlayerName;
 import net.minecraft.entity.Entity;
@@ -20,10 +19,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 
 import java.util.*;
 
@@ -65,16 +61,23 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     private int volume = -1;
     private boolean active = false;
 
-    private RedstoneMode redstoneMode = RedstoneMode.REDSTONE_IGNORED;
-    private int powered = 0;
-
     private int powerTimeout = 0;
 
     public EnvironmentalControllerTileEntity() {
         super(EnvironmentalConfiguration.ENVIRONMENTAL_MAXENERGY, EnvironmentalConfiguration.ENVIRONMENTAL_RECEIVEPERTICK);
     }
 
-//    @Override
+    @Override
+    protected boolean needsRedstoneMode() {
+        return true;
+    }
+
+    @Override
+    protected boolean needsCustomInvWrapper() {
+        return true;
+    }
+
+    //    @Override
 //    @Optional.Method(modid = "ComputerCraft")
 //    public String getType() {
 //        return COMPONENT_NAME;
@@ -291,18 +294,8 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         }
 
         int rf = getEnergyStored(EnumFacing.DOWN);
-
-        if (redstoneMode != RedstoneMode.REDSTONE_IGNORED) {
-            boolean rs = powered > 0;
-            if (redstoneMode == RedstoneMode.REDSTONE_OFFREQUIRED) {
-                if (rs) {
-                    rf = 0;         // Turn of by simulating no power.
-                }
-            } else if (redstoneMode == RedstoneMode.REDSTONE_ONREQUIRED) {
-                if (!rs) {
-                    rf = 0;         // Turn of by simulating no power.
-                }
-            }
+        if (!isMachineEnabled()) {
+            rf = 0;
         }
 
         getEnvironmentModules();
@@ -335,26 +328,16 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         if (redstoneMode == null) {
             throw new IllegalArgumentException("Not a valid mode");
         }
-        setRedstoneMode(redstoneMode);
+        setRSMode(redstoneMode);
         return null;
     }
 
-    public void setRedstoneMode(RedstoneMode redstoneMode) {
-        this.redstoneMode = redstoneMode;
-        markDirtyClient();
-    }
-
-    public RedstoneMode getRedstoneMode() {
-        return redstoneMode;
-    }
-
     @Override
-    public void setPowered(int powered) {
-        if (this.powered != powered) {
-            this.powered = powered;
+    public void setPowerInput(int powered) {
+        if (powerLevel != powered) {
             powerTimeout = 0;
-            markDirty();
         }
+        super.setPowerInput(powered);
     }
 
     // This is called server side.
@@ -439,7 +422,6 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         super.readFromNBT(tagCompound);
         totalRfPerTick = tagCompound.getInteger("rfPerTick");
         active = tagCompound.getBoolean("active");
-        powered = tagCompound.getByte("powered");
     }
 
     @Override
@@ -450,15 +432,13 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         miny = tagCompound.getInteger("miny");
         maxy = tagCompound.getInteger("maxy");
         volume = -1;
-        int m = tagCompound.getByte("rsMode");
-        redstoneMode = RedstoneMode.values()[m];
 
         // Compatibility
         if (tagCompound.hasKey("whitelist")) {
             boolean wl = tagCompound.getBoolean("whitelist");
             mode = wl ? EnvironmentalMode.MODE_WHITELIST : EnvironmentalMode.MODE_BLACKLIST;
         } else {
-            m = tagCompound.getInteger("mode");
+            int m = tagCompound.getInteger("mode");
             mode = EnvironmentalMode.values()[m];
         }
 
@@ -477,7 +457,6 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("rfPerTick", totalRfPerTick);
         tagCompound.setBoolean("active", active);
-        tagCompound.setByte("powered", (byte) powered);
         return tagCompound;
     }
 
@@ -488,7 +467,6 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         tagCompound.setInteger("radius", radius);
         tagCompound.setInteger("miny", miny);
         tagCompound.setInteger("maxy", maxy);
-        tagCompound.setByte("rsMode", (byte) redstoneMode.ordinal());
 
         tagCompound.setInteger("mode", mode.ordinal());
 
@@ -516,7 +494,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
             return true;
         } else if (CMD_RSMODE.equals(command)) {
             String m = args.get("rs").getString();
-            setRedstoneMode(RedstoneMode.getMode(m));
+            setRSMode(RedstoneMode.getMode(m));
             return true;
         } else if (CMD_ADDPLAYER.equals(command)) {
             addPlayer(args.get("player").getString());
@@ -560,23 +538,5 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     @Override
     public boolean shouldRenderInPass(int pass) {
         return pass == 1;
-    }
-
-    IItemHandler invHandler = new CustomSidedInvWrapper(this);
-
-    @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return true;
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @Override
-    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return (T) invHandler;
-        }
-        return super.getCapability(capability, facing);
     }
 }

@@ -28,6 +28,11 @@ public class PearlInjectorBlock extends GenericRFToolsBlock /*implements IRedsto
         super(Material.IRON, PearlInjectorTileEntity.class, PearlInjectorContainer.class, "pearl_injector", true);
     }
 
+    @Override
+    public boolean needsRedstoneCheck() {
+        return true;
+    }
+
     @SideOnly(Side.CLIENT)
     @Override
     public Class<? extends GenericGuiContainer> getGuiClass() {
@@ -68,11 +73,6 @@ public class PearlInjectorBlock extends GenericRFToolsBlock /*implements IRedsto
     @Override
     public int getGuiID() {
         return RFTools.GUI_PEARL_INJECTOR;
-    }
-
-    @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn) {
-        checkRedstoneWithTE(world, pos);
     }
 
 //    @Override

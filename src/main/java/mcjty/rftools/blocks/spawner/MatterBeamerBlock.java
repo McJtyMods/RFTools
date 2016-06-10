@@ -9,7 +9,6 @@ import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
@@ -40,6 +39,11 @@ public class MatterBeamerBlock extends GenericRFToolsBlock implements Infusable 
 
     public MatterBeamerBlock() {
         super(Material.IRON, MatterBeamerTileEntity.class, MatterBeamerContainer.class, "matter_beamer", true);
+    }
+
+    @Override
+    public boolean needsRedstoneCheck() {
+        return true;
     }
 
     @Override
@@ -126,11 +130,6 @@ public class MatterBeamerBlock extends GenericRFToolsBlock implements Infusable 
             matterBeamerTileEntity.useWrench(player);
         }
         return true;
-    }
-
-    @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn) {
-        checkRedstoneWithTE(world, pos);
     }
 
     @Override

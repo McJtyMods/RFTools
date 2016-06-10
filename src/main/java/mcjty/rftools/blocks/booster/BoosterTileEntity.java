@@ -4,8 +4,7 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.lib.varia.CustomSidedInvWrapper;
-import mcjty.rftools.blocks.RedstoneMode;
+import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.blocks.environmental.EnvModuleProvider;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
 import net.minecraft.entity.EntityLivingBase;
@@ -16,9 +15,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 
 import java.util.List;
 import java.util.Map;
@@ -30,8 +26,6 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
     private InventoryHelper inventoryHelper = new InventoryHelper(this, BoosterContainer.factory, 1);
 
     private AxisAlignedBB beamBox = null;
-    private RedstoneMode redstoneMode = RedstoneMode.REDSTONE_IGNORED;
-    private boolean powered = false;
     private int timeout = 0;
 
     private EnvironmentModule cachedModule;
@@ -40,33 +34,26 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
         super(BoosterConfiguration.BOOSTER_MAXENERGY, BoosterConfiguration.BOOSTER_RECEIVEPERTICK);
     }
 
+    @Override
+    protected boolean needsRedstoneMode() {
+        return true;
+    }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
-        super.readFromNBT(tagCompound);
-        powered = tagCompound.getBoolean("powered");
+    protected boolean needsCustomInvWrapper() {
+        return true;
     }
 
     @Override
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
-        int m = tagCompound.getByte("rsMode");
-        redstoneMode = RedstoneMode.values()[m];
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
-        super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("powered", powered);
-        return tagCompound;
     }
 
     @Override
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
-        tagCompound.setByte("rsMode", (byte) redstoneMode.ordinal());
     }
 
     @Override
@@ -124,24 +111,6 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
         return getInventoryHelper().decrStackSize(index, count);
     }
 
-    public void setRedstoneMode(RedstoneMode redstoneMode) {
-        this.redstoneMode = redstoneMode;
-        markDirtyClient();
-    }
-
-    public RedstoneMode getRedstoneMode() {
-        return redstoneMode;
-    }
-
-    @Override
-    public void setPowered(int powered) {
-        boolean p = powered > 0;
-        if (this.powered != p) {
-            this.powered = p;
-            markDirty();
-        }
-    }
-
     private List<EntityLivingBase> searchEntities() {
         if (beamBox == null) {
             int xCoord = getPos().getX();
@@ -161,7 +130,7 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         if (CMD_RSMODE.equals(command)) {
             String m = args.get("rs").getString();
-            setRedstoneMode(RedstoneMode.getMode(m));
+            setRSMode(RedstoneMode.getMode(m));
             return true;
         }
         return false;
@@ -190,24 +159,5 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
     @Override
     public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
         return BoosterContainer.factory.isInputSlot(index);
-    }
-
-
-    IItemHandler invHandler = new CustomSidedInvWrapper(this);
-
-    @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return true;
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @Override
-    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return (T) invHandler;
-        }
-        return super.getCapability(capability, facing);
     }
 }

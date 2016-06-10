@@ -12,7 +12,6 @@ public class ThreeLogicTileEntity extends LogicTileEntity implements ITickable {
 
     public static final String CMD_SETSTATE = "setState";
 
-    private int powered = 0;
     private boolean redstoneOut = false;
     private int[] logicTable = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };    // 0 == off, 1 == on, -1 == keep
 
@@ -26,20 +25,12 @@ public class ThreeLogicTileEntity extends LogicTileEntity implements ITickable {
         }
     }
 
-    @Override
-    public void setPowered(int powered) {
-        if (this.powered != powered) {
-            this.powered = powered;
-            markDirty();
-        }
-    }
-
     public int getState(int index) {
         return logicTable[index];
     }
 
     private void checkStateServer() {
-        int s = logicTable[powered];
+        int s = logicTable[powerLevel];
         if (s == -1) {
             return; // Nothing happens (keep mode)
         }
@@ -57,7 +48,6 @@ public class ThreeLogicTileEntity extends LogicTileEntity implements ITickable {
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         redstoneOut = tagCompound.getBoolean("rs");
-        powered = tagCompound.getInteger("powered");
     }
 
     @Override
@@ -72,7 +62,6 @@ public class ThreeLogicTileEntity extends LogicTileEntity implements ITickable {
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setBoolean("rs", redstoneOut);
-        tagCompound.setInteger("powered", powered);
         return tagCompound;
     }
 

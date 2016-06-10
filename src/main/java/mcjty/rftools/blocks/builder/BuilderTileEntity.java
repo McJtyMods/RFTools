@@ -6,7 +6,6 @@ import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketRequestIntegerFromServer;
 import mcjty.lib.varia.BlockPosTools;
-import mcjty.lib.varia.CustomSidedInvWrapper;
 import mcjty.lib.varia.SoundTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
@@ -39,7 +38,6 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -92,7 +90,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     // For usage in the gui
     private static int currentLevel = 0;
 
-    private int powered = 0;
     private int collectCounter = BuilderConfiguration.collectTimer;
     private int collectXP = 0;
 
@@ -120,6 +117,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     public BuilderTileEntity() {
         super(BuilderConfiguration.BUILDER_MAXENERGY, BuilderConfiguration.BUILDER_RECEIVEPERTICK);
+    }
+
+    @Override
+    protected boolean needsCustomInvWrapper() {
+        return true;
     }
 
     private boolean isShapeCard() {
@@ -399,13 +401,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     @Override
-    public void setPowered(int powered) {
-        if (this.powered != powered) {
-            this.powered = powered;
+    public void setPowerInput(int powered) {
+        boolean changed = powerLevel != powered;
+        super.setPowerInput(powered);
+        if (changed) {
             if (loopMode || (powered > 0 && scan == null)) {
                 restartScan();
             }
-            markDirty();
         }
     }
 
@@ -509,7 +511,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private void checkStateServer() {
-        if (powered == 0 && loopMode) {
+        if (powerLevel == 0 && loopMode) {
             return;
         }
 
@@ -518,7 +520,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         if (isShapeCard()) {
-            if (powered == 0) {
+            if (powerLevel == 0) {
                 chunkUnload();
                 return;
             }
@@ -1539,7 +1541,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void restartScan() {
         chunkUnload();
-        if (loopMode || (powered > 0 && scan == null)) {
+        if (loopMode || (powerLevel > 0 && scan == null)) {
             if (getCardType() == ShapeCardItem.CARD_SPACE) {
                 calculateBox();
                 scan = minBox;
@@ -1730,12 +1732,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
-        super.readFromNBT(tagCompound);
-        powered = tagCompound.getByte("powered");
-    }
-
-    @Override
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
@@ -1749,13 +1745,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         scan = BlockPosTools.readFromNBT(tagCompound, "scan");
         minBox = BlockPosTools.readFromNBT(tagCompound, "minBox");
         maxBox = BlockPosTools.readFromNBT(tagCompound, "maxBox");
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
-        super.writeToNBT(tagCompound);
-        tagCompound.setByte("powered", (byte) powered);
-        return tagCompound;
     }
 
     @Override
@@ -1839,24 +1828,5 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return true;
         }
         return false;
-    }
-
-
-    IItemHandler invHandler = new CustomSidedInvWrapper(this);
-
-    @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return true;
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @Override
-    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return (T) invHandler;
-        }
-        return super.getCapability(capability, facing);
     }
 }

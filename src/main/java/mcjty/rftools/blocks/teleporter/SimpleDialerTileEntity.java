@@ -12,15 +12,8 @@ public class SimpleDialerTileEntity extends LogicTileEntity {
     private boolean onceMode = false;
 
     private boolean prevIn = false;
-    private boolean powered = false;
 
     public SimpleDialerTileEntity() {
-    }
-
-    @Override
-    public void setPowered(int powered) {
-        this.powered = powered > 0;
-        markDirty();
     }
 
     public void update() {
@@ -28,14 +21,14 @@ public class SimpleDialerTileEntity extends LogicTileEntity {
             return;
         }
 
-        if (powered == prevIn) {
+        if ((powerLevel > 0) == prevIn) {
             return;
         }
 
-        prevIn = powered;
+        prevIn = powerLevel > 0;
         markDirty();
 
-        if (powered) {
+        if (powerLevel > 0) {
             TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
             BlockPos coordinate = null;
             int dim = 0;
@@ -72,12 +65,6 @@ public class SimpleDialerTileEntity extends LogicTileEntity {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
-        super.readFromNBT(tagCompound);
-        powered = tagCompound.getBoolean("powered");
-    }
-
-    @Override
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         if (tagCompound.hasKey("transX")) {
@@ -91,13 +78,6 @@ public class SimpleDialerTileEntity extends LogicTileEntity {
             receiver = null;
         }
         onceMode = tagCompound.getBoolean("once");
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
-        super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("powered", powered);
-        return tagCompound;
     }
 
     @Override

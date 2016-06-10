@@ -34,7 +34,6 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
 
     // The location of the destination spawner..
     private BlockPos destination = null;
-    private int powered = 0;
     private boolean glowing = false;
 
     private int ticker = TICKTIME;
@@ -55,16 +54,8 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
         }
     }
 
-    @Override
-    public void setPowered(int powered) {
-        if (this.powered != powered) {
-            this.powered = powered;
-            markDirty();
-        }
-    }
-
     public boolean isPowered() {
-        return powered != 0;
+        return powerLevel != 0;
     }
 
     public boolean isGlowing() {
@@ -72,7 +63,7 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
     }
 
     private void checkStateServer() {
-        if (powered == 0) {
+        if (powerLevel == 0) {
             disableBlockGlow();
             return;
         }
@@ -230,7 +221,6 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         destination = BlockPosTools.readFromNBT(tagCompound, "dest");
-        powered = tagCompound.getByte("powered");
         glowing = tagCompound.getBoolean("glowing");
     }
 
@@ -245,7 +235,6 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         BlockPosTools.writeToNBT(tagCompound, "dest", destination);
-        tagCompound.setByte("powered", (byte) powered);
         tagCompound.setBoolean("glowing", glowing);
         return tagCompound;
     }
