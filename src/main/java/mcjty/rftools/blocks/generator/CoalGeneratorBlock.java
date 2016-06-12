@@ -35,6 +35,11 @@ public class CoalGeneratorBlock extends GenericRFToolsBlock<CoalGeneratorTileEnt
         super(Material.IRON, CoalGeneratorTileEntity.class, CoalGeneratorContainer.class, "coalgenerator", true);
     }
 
+    @Override
+    public boolean needsRedstoneCheck() {
+        return true;
+    }
+
     @SideOnly(Side.CLIENT)
     @Override
     public Class<? extends GenericGuiContainer> getGuiClass() {

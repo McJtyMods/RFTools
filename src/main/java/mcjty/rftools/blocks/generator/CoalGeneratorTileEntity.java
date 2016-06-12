@@ -6,8 +6,11 @@ import cofh.api.energy.IEnergyContainerItem;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyProviderTileEntity;
+import mcjty.lib.network.Argument;
+import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.varia.EnergyTools;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,7 +21,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 
+import java.util.Map;
+
 public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity implements ITickable, DefaultSidedInventory {
+
+    public static final String CMD_RSMODE = "rsMode";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, CoalGeneratorContainer.factory, 2);
 
@@ -34,10 +41,28 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
     }
 
     @Override
+    protected boolean needsRedstoneMode() {
+        return true;
+    }
+
+    @Override
+    public void setPowerInput(int powered) {
+        boolean changed = powerLevel != powered;
+        super.setPowerInput(powered);
+        if (changed) {
+            markDirtyClient();
+        }
+    }
+
+    @Override
     public void update() {
         if (!worldObj.isRemote) {
             handleChargingItem();
             handleSendingEnergy();
+
+            if (!isMachineEnabled()) {
+                return;
+            }
 
             boolean working = burning > 0;
 
@@ -78,13 +103,13 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
 
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
-        boolean working = burning > 0;
+        boolean working = isWorking();
 
         super.onDataPacket(net, packet);
 
         if (worldObj.isRemote) {
             // If needed send a render update.
-            boolean newWorking = burning > 0;
+            boolean newWorking = isWorking();
             if (newWorking != working) {
                 worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
             }
@@ -92,7 +117,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
     }
 
     public boolean isWorking() {
-        return burning > 0;
+        return burning > 0 && isMachineEnabled();
     }
 
     private void handleChargingItem() {
@@ -176,4 +201,20 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
         tagCompound.setInteger("burning", burning);
         writeBufferToNBT(tagCompound, inventoryHelper);
     }
+
+    @Override
+    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
+        boolean rc = super.execute(playerMP, command, args);
+        if (rc) {
+            return true;
+        }
+        if (CMD_RSMODE.equals(command)) {
+            String m = args.get("rs").getString();
+            setRSMode(RedstoneMode.getMode(m));
+            return true;
+        }
+
+        return false;
+    }
+
 }
