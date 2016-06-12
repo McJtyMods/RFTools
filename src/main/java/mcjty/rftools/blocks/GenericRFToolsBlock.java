@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks;
 
+import mcjty.lib.container.GenericBlock;
 import mcjty.lib.container.GenericItemBlock;
-import mcjty.lib.container.GenericModBlock;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
@@ -15,7 +15,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
-public abstract class GenericRFToolsBlock<T extends GenericTileEntity, C extends Container> extends GenericModBlock {
+public abstract class GenericRFToolsBlock<T extends GenericTileEntity, C extends Container> extends GenericBlock<T, C> {
 
     public GenericRFToolsBlock(Material material,
                                Class<? extends T> tileEntityClass,

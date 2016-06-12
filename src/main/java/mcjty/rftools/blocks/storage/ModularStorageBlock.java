@@ -37,7 +37,7 @@ import java.util.List;
 import static mcjty.rftools.blocks.storage.ModularAmountOverlay.*;
 import static mcjty.rftools.blocks.storage.ModularTypeModule.*;
 
-public class ModularStorageBlock extends GenericRFToolsBlock {
+public class ModularStorageBlock extends GenericRFToolsBlock<ModularStorageTileEntity, ModularStorageContainer> {
 
     public static final PropertyEnum<ModularTypeModule> TYPEMODULE = PropertyEnum.create("type", ModularTypeModule.class);
     public static final PropertyEnum<ModularAmountOverlay> AMOUNT = PropertyEnum.create("amount", ModularAmountOverlay.class);

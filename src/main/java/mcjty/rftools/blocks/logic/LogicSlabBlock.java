@@ -27,7 +27,7 @@ import static net.minecraft.util.EnumFacing.*;
 /**
  * The superclass for all logic slabs in RFTools.
  */
-public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Container> extends GenericRFToolsBlock {
+public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Container> extends GenericRFToolsBlock<T, C> {
 
     public static PropertyBool OUTPUTPOWER = PropertyBool.create("output");
     public static PropertyInteger META_INTERMEDIATE = PropertyInteger.create("intermediate", 0, 3);

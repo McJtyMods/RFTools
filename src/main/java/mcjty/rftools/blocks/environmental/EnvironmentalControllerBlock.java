@@ -31,7 +31,7 @@ import java.util.List;
 
 //@Optional.InterfaceList({
 //        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
-public class EnvironmentalControllerBlock extends GenericRFToolsBlock implements Infusable /*, IRedstoneConnectable*/ {
+public class EnvironmentalControllerBlock extends GenericRFToolsBlock<EnvironmentalControllerTileEntity, EnvironmentalControllerContainer> implements Infusable /*, IRedstoneConnectable*/ {
 
     public EnvironmentalControllerBlock() {
         super(Material.IRON, EnvironmentalControllerTileEntity.class, EnvironmentalControllerContainer.class, "environmental_controller", true);

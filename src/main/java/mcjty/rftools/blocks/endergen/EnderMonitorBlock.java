@@ -48,9 +48,4 @@ public class EnderMonitorBlock extends LogicSlabBlock<EnderMonitorTileEntity, Em
             list.add(TextFormatting.GREEN + "Mode: " + smode);
         }
     }
-
-    @Override
-    public String getIdentifyingIconName() {
-        return "machineEnderMonitorTop";
-    }
 }

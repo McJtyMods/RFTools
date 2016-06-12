@@ -32,7 +32,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class MatterTransmitterBlock extends GenericRFToolsBlock implements Infusable {
+public class MatterTransmitterBlock extends GenericRFToolsBlock<MatterTransmitterTileEntity, EmptyContainer> implements Infusable {
 
     public MatterTransmitterBlock() {
         super(Material.IRON, MatterTransmitterTileEntity.class, EmptyContainer.class, "matter_transmitter", false);

@@ -22,7 +22,7 @@ import java.util.List;
 
 //@Optional.InterfaceList({
 //        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
-public class RelayBlock extends GenericRFToolsBlock /* implements IRedstoneConnectable */ {
+public class RelayBlock extends GenericRFToolsBlock<RelayTileEntity, EmptyContainer> /* implements IRedstoneConnectable */ {
 
     public static final PropertyBool ENABLED = PropertyBool.create("enabled");
 

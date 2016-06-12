@@ -30,7 +30,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class SpawnerBlock extends GenericRFToolsBlock implements Infusable {
+public class SpawnerBlock extends GenericRFToolsBlock<SpawnerTileEntity, SpawnerContainer> implements Infusable {
 
     public SpawnerBlock() {
         super(Material.IRON, SpawnerTileEntity.class, SpawnerContainer.class, "spawner", true);

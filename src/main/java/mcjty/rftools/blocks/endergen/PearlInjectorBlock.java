@@ -3,16 +3,12 @@ package mcjty.rftools.blocks.endergen;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -22,7 +18,7 @@ import java.util.List;
 
 //@Optional.InterfaceList({
 //        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
-public class PearlInjectorBlock extends GenericRFToolsBlock /*implements IRedstoneConnectable*/ {
+public class PearlInjectorBlock extends GenericRFToolsBlock<PearlInjectorTileEntity, PearlInjectorContainer> /*implements IRedstoneConnectable*/ {
 
     public PearlInjectorBlock() {
         super(Material.IRON, PearlInjectorTileEntity.class, PearlInjectorContainer.class, "pearl_injector", true);

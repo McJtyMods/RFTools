@@ -16,7 +16,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class SecurityManagerBlock extends GenericRFToolsBlock {
+public class SecurityManagerBlock extends GenericRFToolsBlock<SecurityManagerTileEntity, SecurityManagerContainer> {
 
     public SecurityManagerBlock() {
         super(Material.IRON, SecurityManagerTileEntity.class, SecurityManagerContainer.class, "security_manager", true);
@@ -26,11 +26,6 @@ public class SecurityManagerBlock extends GenericRFToolsBlock {
     @Override
     public Class<? extends GenericGuiContainer> getGuiClass() {
         return GuiSecurityManager.class;
-    }
-
-    @Override
-    public String getIdentifyingIconName() {
-        return "machineSecurityManager";
     }
 
     @SideOnly(Side.CLIENT)

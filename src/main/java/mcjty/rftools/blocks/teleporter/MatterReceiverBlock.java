@@ -29,7 +29,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class MatterReceiverBlock extends GenericRFToolsBlock implements Infusable {
+public class MatterReceiverBlock extends GenericRFToolsBlock<MatterReceiverTileEntity, EmptyContainer> implements Infusable {
 
     public MatterReceiverBlock() {
         super(Material.IRON, MatterReceiverTileEntity.class, EmptyContainer.class, "matter_receiver", false);
@@ -44,7 +44,7 @@ public class MatterReceiverBlock extends GenericRFToolsBlock implements Infusabl
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {

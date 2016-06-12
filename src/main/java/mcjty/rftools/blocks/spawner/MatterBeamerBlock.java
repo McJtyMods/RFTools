@@ -33,7 +33,7 @@ import java.util.List;
 
 //@Optional.InterfaceList({
 //        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
-public class MatterBeamerBlock extends GenericRFToolsBlock implements Infusable /*, IRedstoneConnectable*/ {
+public class MatterBeamerBlock extends GenericRFToolsBlock<MatterBeamerTileEntity, MatterBeamerContainer> implements Infusable /*, IRedstoneConnectable*/ {
 
     public static final PropertyBool WORKING = PropertyBool.create("working");
 

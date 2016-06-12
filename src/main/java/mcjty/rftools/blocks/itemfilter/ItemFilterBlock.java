@@ -16,7 +16,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class ItemFilterBlock extends GenericRFToolsBlock {
+public class ItemFilterBlock extends GenericRFToolsBlock<ItemFilterTileEntity, ItemFilterContainer> {
 
     public ItemFilterBlock() {
         super(Material.IRON, ItemFilterTileEntity.class, ItemFilterContainer.class, "item_filter", true);

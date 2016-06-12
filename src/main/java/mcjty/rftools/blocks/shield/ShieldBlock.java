@@ -29,7 +29,7 @@ import java.util.List;
 
 //@Optional.InterfaceList({
 //        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
-public class ShieldBlock extends GenericRFToolsBlock implements Infusable /*, IRedstoneConnectable*/ {
+public class ShieldBlock extends GenericRFToolsBlock<ShieldTEBase, ShieldContainer> implements Infusable /*, IRedstoneConnectable*/ {
 
     private final int max;
 
