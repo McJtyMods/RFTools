@@ -8,6 +8,7 @@ import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.SyringeItem;
 import mcjty.rftools.network.RFToolsMessages;
@@ -16,13 +17,12 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
+import java.text.DecimalFormat;
 import java.util.List;
-import java.util.Set;
 
 
 public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
@@ -53,14 +53,14 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 8, 54)).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
-        blocks[0] = new BlockRender(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(110, 5, 18, 18));
-        blocks[1] = new BlockRender(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(110, 25, 18, 18));
-        blocks[2] = new BlockRender(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(110, 45, 18, 18));
-        labels[0] = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT); labels[0].setLayoutHint(new PositionalLayout.PositionalHint(130, 5, 40, 18));
-        labels[1] = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT); labels[1].setLayoutHint(new PositionalLayout.PositionalHint(130, 25, 40, 18));
-        labels[2] = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT); labels[2].setLayoutHint(new PositionalLayout.PositionalHint(130, 45, 40, 18));
-        name = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT); name.setLayoutHint(new PositionalLayout.PositionalHint(28, 31, 78, 16));
-        rfTick = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT); rfTick.setLayoutHint(new PositionalLayout.PositionalHint(28, 47, 78, 16));
+        blocks[0] = new BlockRender(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(80, 5, 18, 18));
+        blocks[1] = new BlockRender(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(80, 25, 18, 18));
+        blocks[2] = new BlockRender(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(80, 45, 18, 18));
+        labels[0] = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT); labels[0].setLayoutHint(new PositionalLayout.PositionalHint(100, 5, 74, 18));
+        labels[1] = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT); labels[1].setLayoutHint(new PositionalLayout.PositionalHint(100, 25, 74, 18));
+        labels[2] = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT); labels[2].setLayoutHint(new PositionalLayout.PositionalHint(100, 45, 74, 18));
+        name = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT); name.setLayoutHint(new PositionalLayout.PositionalHint(22, 31, 78, 16));
+        rfTick = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT); rfTick.setLayoutHint(new PositionalLayout.PositionalHint(22, 47, 78, 16));
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
                 addChild(blocks[0]).addChild(labels[0]).
@@ -73,6 +73,8 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
 
         tileEntity.requestRfFromServer(RFTools.MODID);
     }
+
+    private static long lastTime = 0;
 
     private void showSyringeInfo() {
         for (int i = 0 ; i < 3 ; i++) {
@@ -95,6 +97,18 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
             int i = 0;
             List<SpawnerConfiguration.MobSpawnAmount> list = SpawnerConfiguration.mobSpawnAmounts.get(mobId);
             if (list != null) {
+                if (System.currentTimeMillis() - lastTime > 100) {
+                    lastTime = System.currentTimeMillis();
+                    RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new SpawnerInfoPacketServer(
+                            tileEntity.getWorld().provider.getDimension(),
+                            tileEntity.getPos())));
+                }
+
+                float[] matter = SpawnerInfoPacketClient.matterReceived;
+                if (matter == null || matter.length != 3) {
+                    matter = new float[] { 0, 0, 0 };
+                }
+
                 for (SpawnerConfiguration.MobSpawnAmount spawnAmount : list) {
                     ItemStack b = spawnAmount.getObject();
                     float amount = spawnAmount.getAmount();
@@ -109,7 +123,8 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
                     } else {
                         blocks[i].setRenderItem(b);
                     }
-                    labels[i].setText(Float.toString(amount));
+                    String mf = new DecimalFormat("#.##").format(matter[i]);
+                    labels[i].setText(mf + "/" + Float.toString(amount));
                     i++;
                 }
             }

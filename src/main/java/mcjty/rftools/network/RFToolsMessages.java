@@ -18,6 +18,8 @@ import mcjty.rftools.blocks.security.PacketSecurityInfoReady;
 import mcjty.rftools.blocks.security.PacketSecurityNameReady;
 import mcjty.rftools.blocks.shield.PacketFiltersReady;
 import mcjty.rftools.blocks.shield.PacketGetFilters;
+import mcjty.rftools.blocks.spawner.SpawnerInfoPacketClient;
+import mcjty.rftools.blocks.spawner.SpawnerInfoPacketServer;
 import mcjty.rftools.blocks.storage.*;
 import mcjty.rftools.blocks.storagemonitor.*;
 import mcjty.rftools.blocks.teleporter.*;
@@ -86,5 +88,6 @@ public class RFToolsMessages {
         PacketHandler.register(PacketHandler.nextPacketID(), InventoriesInfoPacketServer.class, InventoriesInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), SearchItemsInfoPacketServer.class, SearchItemsInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), GetContentsInfoPacketServer.class, GetContentsInfoPacketClient.class);
+        PacketHandler.register(PacketHandler.nextPacketID(), SpawnerInfoPacketServer.class, SpawnerInfoPacketClient.class);
     }
 }

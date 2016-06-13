@@ -116,7 +116,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
     private void clearMatter() {
         if (matter[0] != 0 || matter[1] != 0 || matter[2] != 0) {
             matter[0] = matter[1] = matter[2] = 0;
-            markDirtyClient();
+            markDirty();
         }
     }
 
@@ -146,8 +146,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
             mm = SpawnerConfiguration.maxMatterStorage;
         }
         matter[materialType] = mm;
-
-        markDirtyClient();
+        markDirty();
     }
 
     private List<SpawnerConfiguration.MobSpawnAmount> getSpawnAmounts() {

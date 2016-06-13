@@ -3,10 +3,14 @@ package mcjty.rftools.blocks.spawner;
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.rftools.blocks.storage.StorageInfoPacketServer;
 import mcjty.rftools.items.ModItems;
+import mcjty.rftools.network.PacketGetDestinationInfo;
+import mcjty.rftools.network.RFToolsMessages;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
@@ -85,6 +89,8 @@ public class SpawnerBlock extends GenericRFToolsBlock<SpawnerTileEntity, Spawner
         }
     }
 
+    private static long lastTime = 0;
+
     @SideOnly(Side.CLIENT)
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
@@ -92,10 +98,19 @@ public class SpawnerBlock extends GenericRFToolsBlock<SpawnerTileEntity, Spawner
         TileEntity te = accessor.getTileEntity();
         if (te instanceof SpawnerTileEntity) {
             SpawnerTileEntity spawnerTileEntity = (SpawnerTileEntity) te;
-            float[] matter = spawnerTileEntity.getMatter();
-            currenttip.add(TextFormatting.GREEN + "Key Matter: " + matter[0]);
-            currenttip.add(TextFormatting.GREEN + "Bulk Matter: " + matter[1]);
-            currenttip.add(TextFormatting.GREEN + "Living Matter: " + matter[2]);
+
+            if (System.currentTimeMillis() - lastTime > 500) {
+                lastTime = System.currentTimeMillis();
+                RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new SpawnerInfoPacketServer(te.getWorld().provider.getDimension(),
+                        te.getPos())));
+            }
+
+            float[] matter = SpawnerInfoPacketClient.matterReceived;
+            if (matter != null && matter.length == 3) {
+                currenttip.add(TextFormatting.GREEN + "Key Matter: " + matter[0]);
+                currenttip.add(TextFormatting.GREEN + "Bulk Matter: " + matter[1]);
+                currenttip.add(TextFormatting.GREEN + "Living Matter: " + matter[2]);
+            }
         }
         return currenttip;
     }
