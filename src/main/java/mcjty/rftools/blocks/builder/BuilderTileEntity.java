@@ -918,8 +918,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                         } else {
                             drops = Collections.emptyList();
                         }
+                        net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, worldObj, pos, srcState, 0, 1.0f, true, fakePlayer);
                     } else {
                         drops = block.getDrops(worldObj, srcPos, srcState, 0);
+                        net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, worldObj, pos, srcState, 0, 1.0f, false, fakePlayer);
                     }
                     if (checkAndInsertItems(drops)) {
                         clearOrDirtBlock(rfNeeded, sx, sy, sz, block, clear);
@@ -963,7 +965,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 if (getCachedVoidableBlocks().contains(block)) {
                     clearOrDirtBlock(rfNeeded, sx, sy, sz, block, clear);
                 } else {
-                    List<ItemStack> drops = block.getDrops(worldObj, srcPos, srcState, (getCardType() == ShapeCardItem.CARD_QUARRY_FORTUNE || getCardType() == ShapeCardItem.CARD_QUARRY_CLEAR_FORTUNE) ? 3 : 0);
+                    int fortune = (getCardType() == ShapeCardItem.CARD_QUARRY_FORTUNE || getCardType() == ShapeCardItem.CARD_QUARRY_CLEAR_FORTUNE) ? 3 : 0;
+                    List<ItemStack> drops = block.getDrops(worldObj, srcPos, srcState, fortune);
+                    net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, worldObj, pos, srcState, fortune, 1.0f, false, fakePlayer);
                     if (checkAndInsertItems(drops)) {
                         clearOrDirtBlock(rfNeeded, sx, sy, sz, block, clear);
                     } else {
