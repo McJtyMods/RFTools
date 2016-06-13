@@ -22,8 +22,10 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nullable;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.List;
 import java.util.Random;
 
 public class SupportBlock extends Block {
@@ -64,9 +66,20 @@ public class SupportBlock extends Block {
         return false;
     }
 
+    @Nullable
+    @Override
+    public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+        return null;
+    }
+
     @Override
     public int quantityDropped(Random random) {
         return 0;
+    }
+
+    @Override
+    public boolean canSilkHarvest(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
+        return false;
     }
 
     @Override
