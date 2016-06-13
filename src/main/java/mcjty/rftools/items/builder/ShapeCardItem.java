@@ -339,7 +339,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
                 case CARD_QUARRY_SILK:
                     list.add(TextFormatting.WHITE + "This item will cause the builder to quarry");
                     list.add(TextFormatting.WHITE + "all blocks in the configured space and replace");
-                    list.add(TextFormatting.WHITE + "them with dirt.");
+                    list.add(TextFormatting.WHITE + "them with " + getDirtOrCobbleName() + ".");
                     list.add(TextFormatting.WHITE + "Blocks are harvested with silk touch");
                     list.add(TextFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
                     list.add(TextFormatting.GREEN + "Base cost: " + (int)(BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.silkquarryShapeCardFactor) + " RF/t per block");
@@ -356,7 +356,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
                 case CARD_QUARRY_FORTUNE:
                     list.add(TextFormatting.WHITE + "This item will cause the builder to quarry");
                     list.add(TextFormatting.WHITE + "all blocks in the configured space and replace");
-                    list.add(TextFormatting.WHITE + "them with dirt.");
+                    list.add(TextFormatting.WHITE + "them with " + getDirtOrCobbleName() + ".");
                     list.add(TextFormatting.WHITE + "Blocks are harvested with fortune");
                     list.add(TextFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
                     list.add(TextFormatting.GREEN + "Base cost: " + (int)(BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.fortunequarryShapeCardFactor) + " RF/t per block");
@@ -373,7 +373,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
                 case CARD_QUARRY:
                     list.add(TextFormatting.WHITE + "This item will cause the builder to quarry");
                     list.add(TextFormatting.WHITE + "all blocks in the configured space and replace");
-                    list.add(TextFormatting.WHITE + "them with dirt.");
+                    list.add(TextFormatting.WHITE + "them with " + getDirtOrCobbleName() + ".");
                     list.add(TextFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
                     list.add(TextFormatting.GREEN + "Base cost: " + BuilderConfiguration.builderRfPerQuarry + " RF/t per block");
                     list.add(TextFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
@@ -389,6 +389,10 @@ public class ShapeCardItem extends GenericRFToolsItem {
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
+    }
+
+    private String getDirtOrCobbleName() {
+        return BuilderConfiguration.quarryCobble ? "cobble" : "dirt";
     }
 
     /**

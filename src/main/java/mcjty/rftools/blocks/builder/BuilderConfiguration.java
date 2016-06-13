@@ -25,6 +25,7 @@ public class BuilderConfiguration {
     public static double silkquarryShapeCardFactor = 3;
     public static double fortunequarryShapeCardFactor = 2;
 
+    public static boolean quarryCobble = false;
     public static boolean quarryChunkloads = true;
     public static boolean shapeCardAllowed = true;
     public static boolean quarryAllowed = true;
@@ -85,6 +86,8 @@ public class BuilderConfiguration {
         fortunequarryShapeCardFactor = cfg.get(CATEGORY_BUILDER, "fortunequarryShapeCardFactor", fortunequarryShapeCardFactor,
                 "The RF per operation of the builder is multiplied with this factor when using the fortune quarry shape card").getDouble();
 
+        quarryCobble = cfg.get(CATEGORY_BUILDER, "quarryCobble", quarryCobble,
+                "If true the quarry replace with cobblestone instead of dirt").getBoolean();
         quarrySkipTileEntities = cfg.get(CATEGORY_BUILDER, "quarrySkipTileEntities", quarrySkipTileEntities,
                 "If true the quarry will skip all tile entities. Set this to false to allow harvesting ores that are tile entities. Be careful with this!").getBoolean();
         quarryChunkloads = cfg.get(CATEGORY_BUILDER, "quarryChunkloads", quarryChunkloads,

@@ -867,12 +867,16 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (clear) {
             worldObj.setBlockToAir(spos);
         } else {
-            worldObj.setBlockState(spos, Blocks.DIRT.getDefaultState(), 2);       // No block update!
+            worldObj.setBlockState(spos, getDirtOrCobble().getDefaultState(), 2);       // No block update!
         }
         consumeEnergy(rfNeeded);
         if (!silent) {
             SoundTools.playSound(worldObj, block.getSoundType().breakSound, sx, sy, sz, 1.0f, 1.0f);
         }
+    }
+
+    private Block getDirtOrCobble() {
+        return BuilderConfiguration.quarryCobble ? Blocks.COBBLESTONE : Blocks.DIRT;
     }
 
     private boolean silkQuarryBlock(int rfNeeded, BlockPos srcPos, Block block) {
@@ -892,7 +896,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         if (block.getBlockHardness(srcState, worldObj, srcPos) >= 0) {
             boolean clear = ShapeCardItem.isClearingQuarry(getCardType());
-            if ((!clear) && block == Blocks.DIRT) {
+            if ((!clear) && block == getDirtOrCobble()) {
                 // We can skip dirt if we are not clearing.
                 return false;
             }
@@ -951,7 +955,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         if (block.getBlockHardness(srcState, worldObj, srcPos) >= 0) {
             boolean clear = ShapeCardItem.isClearingQuarry(getCardType());
-            if ((!clear) && block == Blocks.DIRT) {
+            if ((!clear) && block == getDirtOrCobble()) {
                 // We can skip dirt if we are not clearing.
                 return false;
             }
