@@ -16,6 +16,10 @@ public class FavoriteDestinationsProperties {
     public FavoriteDestinationsProperties() {
     }
 
+    public void copyFrom(FavoriteDestinationsProperties source) {
+        favoriteDestinations = new HashSet<>(source.favoriteDestinations);
+    }
+
     public boolean isDestinationFavorite(GlobalCoordinate coordinate) {
         return favoriteDestinations.contains(coordinate);
     }

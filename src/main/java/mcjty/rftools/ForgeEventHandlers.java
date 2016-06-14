@@ -8,10 +8,7 @@ import mcjty.rftools.blocks.blockprotector.BlockProtectors;
 import mcjty.rftools.blocks.environmental.NoTeleportAreaManager;
 import mcjty.rftools.blocks.environmental.PeacefulAreaManager;
 import mcjty.rftools.blocks.screens.ScreenSetup;
-import mcjty.rftools.playerprops.BuffProperties;
-import mcjty.rftools.playerprops.PlayerExtendedProperties;
-import mcjty.rftools.playerprops.PorterProperties;
-import mcjty.rftools.playerprops.PropertiesDispatcher;
+import mcjty.rftools.playerprops.*;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.IMob;
@@ -27,6 +24,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
@@ -225,6 +223,18 @@ public class ForgeEventHandlers {
             if (PeacefulAreaManager.isPeaceful(new GlobalCoordinate(coordinate, id))) {
                 event.setResult(Event.Result.DENY);
                 Logging.logDebug("Peaceful manager: Prevented a spawn of " + entity.getClass().getName());
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerCloned(PlayerEvent.Clone event) {
+        if (event.isWasDeath()) {
+            // We need to copyFrom the capabilities
+            if (event.getOriginal().hasCapability(PlayerExtendedProperties.FAVORITE_DESTINATIONS_CAPABILITY, null)) {
+                FavoriteDestinationsProperties oldFavorites = event.getOriginal().getCapability(PlayerExtendedProperties.FAVORITE_DESTINATIONS_CAPABILITY, null);
+                FavoriteDestinationsProperties newFavorites = PlayerExtendedProperties.getFavoriteDestinations(event.getEntityPlayer());
+                newFavorites.copyFrom(oldFavorites);
             }
         }
     }
