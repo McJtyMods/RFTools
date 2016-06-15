@@ -832,6 +832,8 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         if (shieldColor == 0) {
             shieldColor = 0x96ffc8;
         }
+
+        readFiltersFromNBT(tagCompound);
     }
 
     @Override
@@ -848,6 +850,8 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
 
         tagCompound.setInteger("camoRenderPass", camoRenderPass);
         tagCompound.setInteger("shieldColor", shieldColor);
+
+        writeFiltersToNBT(tagCompound);
     }
 
     @Override
