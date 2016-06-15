@@ -62,6 +62,12 @@ public class InventoryModuleItem extends GenericRFToolsItem implements IModulePr
     @Override
     public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         TileEntity te = world.getTileEntity(pos);
+        if (te == null) {
+            if (world.isRemote) {
+                Logging.message(player, TextFormatting.RED + "This is not a valid inventory!");
+            }
+            return EnumActionResult.SUCCESS;
+        }
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
