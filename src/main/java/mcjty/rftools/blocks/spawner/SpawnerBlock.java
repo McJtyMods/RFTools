@@ -7,9 +7,7 @@ import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
-import mcjty.rftools.blocks.storage.StorageInfoPacketServer;
 import mcjty.rftools.items.ModItems;
-import mcjty.rftools.network.PacketGetDestinationInfo;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
@@ -32,6 +30,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class SpawnerBlock extends GenericRFToolsBlock<SpawnerTileEntity, SpawnerContainer> implements Infusable {
@@ -83,9 +82,10 @@ public class SpawnerBlock extends GenericRFToolsBlock<SpawnerTileEntity, Spawner
         if (te instanceof SpawnerTileEntity) {
             SpawnerTileEntity spawnerTileEntity = (SpawnerTileEntity) te;
             float[] matter = spawnerTileEntity.getMatter();
-            probeInfo.text(TextFormatting.GREEN + "Key Matter: " + matter[0]);
-            probeInfo.text(TextFormatting.GREEN + "Bulk Matter: " + matter[1]);
-            probeInfo.text(TextFormatting.GREEN + "Living Matter: " + matter[2]);
+            DecimalFormat fmt = new DecimalFormat("#.##");
+            probeInfo.text(TextFormatting.GREEN + "Key Matter: " + fmt.format(matter[0]));
+            probeInfo.text(TextFormatting.GREEN + "Bulk Matter: " + fmt.format(matter[1]));
+            probeInfo.text(TextFormatting.GREEN + "Living Matter: " + fmt.format(matter[2]));
         }
     }
 
@@ -107,9 +107,10 @@ public class SpawnerBlock extends GenericRFToolsBlock<SpawnerTileEntity, Spawner
 
             float[] matter = SpawnerInfoPacketClient.matterReceived;
             if (matter != null && matter.length == 3) {
-                currenttip.add(TextFormatting.GREEN + "Key Matter: " + matter[0]);
-                currenttip.add(TextFormatting.GREEN + "Bulk Matter: " + matter[1]);
-                currenttip.add(TextFormatting.GREEN + "Living Matter: " + matter[2]);
+                DecimalFormat fmt = new DecimalFormat("#.##");
+                currenttip.add(TextFormatting.GREEN + "Key Matter: " + fmt.format(matter[0]));
+                currenttip.add(TextFormatting.GREEN + "Bulk Matter: " + fmt.format(matter[1]));
+                currenttip.add(TextFormatting.GREEN + "Living Matter: " + fmt.format(matter[2]));
             }
         }
         return currenttip;
