@@ -144,6 +144,7 @@ The machine base is the base ingredient for a few other machines.
 {l:redtrans}Redstone Transmitter
 {l:redrec}Redstone Receiver
 {l:threelogic}Logic Gate
+{l:invchecker}Inventory Checker
 {-------------------------------------------------------------}
 {b}Sequencer
 {n:sequencer}
@@ -227,6 +228,13 @@ can make any possible combination of those three inputs into a single
 output. For every input combination you can set the output to off, on
 or keep. In keep the state of the output will be the same as it was
 before the input was switched to this state.
+{-------------------------------------------------------------}
+{b}Inventory Checker
+{n:invchecker}
+{rb:invchecker_block}
+This block checks a slot in a nearby inventory and emits a redstone
+signal in case the number of items in that slot is above a certain
+value (configurable in GUI).
 {-------------------------------------------------------------}
 {b}RF Monitor
 {n:monitor}

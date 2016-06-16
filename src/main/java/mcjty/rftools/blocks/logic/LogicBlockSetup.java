@@ -16,6 +16,7 @@ public class LogicBlockSetup {
     public static RedstoneTransmitterBlock redstoneTransmitterBlock;
     public static RedstoneReceiverBlock redstoneReceiverBlock;
     public static ThreeLogicBlock threeLogicBlock;
+    public static InvCheckerBlock invCheckerBlock;
 
     public static void init() {
         sequencerBlock = new SequencerBlock();
@@ -24,6 +25,7 @@ public class LogicBlockSetup {
         redstoneTransmitterBlock = new RedstoneTransmitterBlock();
         redstoneReceiverBlock = new RedstoneReceiverBlock();
         threeLogicBlock = new ThreeLogicBlock();
+        invCheckerBlock = new InvCheckerBlock();
     }
 
     @SideOnly(Side.CLIENT)
@@ -34,6 +36,7 @@ public class LogicBlockSetup {
         redstoneTransmitterBlock.initModel();
         redstoneReceiverBlock.initModel();
         threeLogicBlock.initModel();
+        invCheckerBlock.initModel();
     }
 
     public static void initCrafting() {
@@ -45,5 +48,6 @@ public class LogicBlockSetup {
         GameRegistry.addRecipe(new ItemStack(redstoneTransmitterBlock), "ror", "TMT", "rRr", 'o', Items.ENDER_PEARL, 'r', Items.REDSTONE, 'T', redstoneTorch, 'R', Blocks.REDSTONE_BLOCK, 'M', ModBlocks.machineBase);
         GameRegistry.addRecipe(new ItemStack(redstoneReceiverBlock), "ror", "TMT", "rRr", 'o', Items.ENDER_PEARL, 'r', Items.REDSTONE, 'T', Items.COMPARATOR, 'R', Blocks.REDSTONE_BLOCK, 'M', ModBlocks.machineBase);
         GameRegistry.addRecipe(new ItemStack(redstoneTransmitterBlock), "r", 'r', redstoneTransmitterBlock);    // To clear it
+        GameRegistry.addRecipe(new ItemStack(invCheckerBlock), " c ", "rMr", " C ", 'M', ModBlocks.machineBase, 'c', Items.COMPARATOR, 'C', Blocks.CHEST, 'r', Items.REDSTONE);
     }
 }
