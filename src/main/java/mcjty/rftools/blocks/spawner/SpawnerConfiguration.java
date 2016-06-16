@@ -109,7 +109,7 @@ public class SpawnerConfiguration {
         counter = addLiving(cfg, Blocks.LEAVES, counter, 0.5f);
         counter = addLiving(cfg, Blocks.LEAVES2, counter, 0.5f);
         counter = addLiving(cfg, Blocks.SAPLING, counter, 0.5f);
-        counter = addLiving(cfg, Blocks.HAY_BLOCK, counter, 1.0f);
+        counter = addLiving(cfg, Blocks.HAY_BLOCK, counter, 1.5f);
         counter = addLiving(cfg, Blocks.MELON_BLOCK, counter, 1.0f);
         counter = addLiving(cfg, Blocks.CACTUS, counter, 0.4f);
         counter = addLiving(cfg, Blocks.RED_FLOWER, counter, 0.3f);
@@ -118,6 +118,9 @@ public class SpawnerConfiguration {
         counter = addLiving(cfg, Blocks.BROWN_MUSHROOM, counter, 0.4f);
         counter = addLiving(cfg, Blocks.RED_MUSHROOM, counter, 0.4f);
         counter = addLiving(cfg, Blocks.PUMPKIN, counter, 0.9f);
+        counter = addLiving(cfg, Blocks.VINE, counter, 0.4f);
+        counter = addLiving(cfg, Blocks.WATERLILY, counter, 0.4f);
+        counter = addLiving(cfg, Blocks.COCOA, counter, 0.8f);
         counter = addLiving(cfg, Items.APPLE, counter, 1.0f);
         counter = addLiving(cfg, Items.WHEAT, counter, 1.1f);
         counter = addLiving(cfg, Items.WHEAT_SEEDS, counter, 0.4f);
@@ -132,6 +135,7 @@ public class SpawnerConfiguration {
         counter = addLiving(cfg, Items.BEETROOT_SEEDS, counter, 0.4f);
         counter = addLiving(cfg, Items.CHORUS_FRUIT, counter, 1.5f);
         counter = addLiving(cfg, Items.FISH, counter, 1.5f);
+        counter = addLiving(cfg, Items.REEDS, counter, 1f);
     }
 
     private static int addLiving(Configuration cfg, Block block, int counter, float factor) {
