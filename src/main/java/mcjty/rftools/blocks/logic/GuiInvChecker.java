@@ -1,29 +1,39 @@
 package mcjty.rftools.blocks.logic;
 
-import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
+import mcjty.lib.gui.events.ChoiceEvent;
 import mcjty.lib.gui.events.TextEvent;
-import mcjty.lib.gui.layout.HorizontalLayout;
-import mcjty.lib.gui.layout.VerticalLayout;
+import mcjty.lib.gui.layout.HorizontalAlignment;
+import mcjty.lib.gui.layout.PositionalLayout;
+import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
-import mcjty.lib.gui.widgets.Widget;
 import mcjty.lib.network.Argument;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
+import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
 
 public class GuiInvChecker extends GenericGuiContainer<InvCheckerTileEntity> {
-    public static final int INVCHECKER_WIDTH = 200;
-    public static final int INVCHECKER_HEIGHT = 30;
+    public static final int INVCHECKER_WIDTH = 180;
+    public static final int INVCHECKER_HEIGHT = 152;
+
+    public static final String OREDICT_USE = "Use";
+    public static final String OREDICT_IGNORE = "Ignore";
+    public static final String META_MATCH = "Match";
+    public static final String META_IGNORE = "Ignore";
 
     private TextField amountField;
     private TextField slotField;
+    private ChoiceLabel oreDictLabel;
+    private ChoiceLabel metaLabel;
 
-    public GuiInvChecker(InvCheckerTileEntity invCheckerTileEntity, EmptyContainer container) {
+    private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/invchecker.png");
+
+    public GuiInvChecker(InvCheckerTileEntity invCheckerTileEntity, InvCheckerContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, invCheckerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "invchecker");
         xSize = INVCHECKER_WIDTH;
         ySize = INVCHECKER_HEIGHT;
@@ -33,33 +43,88 @@ public class GuiInvChecker extends GenericGuiContainer<InvCheckerTileEntity> {
     public void initGui() {
         super.initGui();
 
-        Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout());
+        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
-        amountField = new TextField(mc, this).setTooltips("Set the amount of items in slot").addTextEvent(new TextEvent() {
-            @Override
-            public void textChanged(Widget parent, String newText) {
-                setAmount();
-            }
-        });
+        amountField = new TextField(mc, this).setTooltips("Set the amount of items in slot")
+                .setLayoutHint(new PositionalLayout.PositionalHint(60, 19, 80, 14))
+                .addTextEvent(new TextEvent() {
+                    @Override
+                    public void textChanged(Widget parent, String newText) {
+                        setAmount();
+                    }
+                });
         int amount = tileEntity.getAmount();
         amountField.setText(String.valueOf(amount));
 
-        slotField = new TextField(mc, this).setTooltips("Set the slot index").addTextEvent(new TextEvent() {
-            @Override
-            public void textChanged(Widget parent, String newText) {
-                setSlot();
-            }
-        });
+        slotField = new TextField(mc, this).setTooltips("Set the slot index")
+                .setLayoutHint(new PositionalLayout.PositionalHint(60, 3, 80, 14))
+                .addTextEvent(new TextEvent() {
+                    @Override
+                    public void textChanged(Widget parent, String newText) {
+                        setSlot();
+                    }
+                });
         int current = tileEntity.getSlot();
         slotField.setText(String.valueOf(current));
 
-        Panel bottomPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).
-                addChild(new Label(mc, this).setText("Amount:")).addChild(amountField).
-                addChild(new Label(mc, this).setText("Slot:")).addChild(slotField);
-        toplevel.addChild(bottomPanel);
+        metaLabel = new ChoiceLabel(mc, this)
+                .addChoices(META_IGNORE, META_MATCH)
+                .addChoiceEvent(new ChoiceEvent() {
+                    @Override
+                    public void choiceChanged(Widget parent, String newChoice) {
+                        setMetaUsage();
+                    }
+                })
+                .setChoiceTooltip(META_IGNORE, "Ignore meta/damage on item")
+                .setChoiceTooltip(META_MATCH, "Meta/damage on item must match");
+        metaLabel.setLayoutHint(new PositionalLayout.PositionalHint(60, 35, 80, 14));
+        metaLabel.setChoice(tileEntity.isUseMeta() ? META_MATCH : META_IGNORE);
 
-        toplevel.setBounds(new Rectangle(guiLeft, guiTop, INVCHECKER_WIDTH, INVCHECKER_HEIGHT));
+        oreDictLabel = new ChoiceLabel(mc, this)
+                .addChoices(OREDICT_IGNORE, OREDICT_USE)
+                .addChoiceEvent(new ChoiceEvent() {
+                    @Override
+                    public void choiceChanged(Widget parent, String newChoice) {
+                        setOredictUsage();
+                    }
+                })
+                .setChoiceTooltip(OREDICT_IGNORE, "Ingore ore dictionary")
+                .setChoiceTooltip(OREDICT_USE, "Use ore dictionary matching");
+        oreDictLabel.setLayoutHint(new PositionalLayout.PositionalHint(60, 51, 80, 14));
+        oreDictLabel.setChoice(tileEntity.isOreDict() ? OREDICT_USE : OREDICT_IGNORE);
+
+        toplevel
+                .addChild(new Label(mc, this).setText("Slot:")
+                        .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
+                        .setLayoutHint(new PositionalLayout.PositionalHint(10, 3, 50, 14)))
+                .addChild(slotField)
+                .addChild(new Label(mc, this).setText("Amount:")
+                        .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
+                        .setLayoutHint(new PositionalLayout.PositionalHint(10, 19, 50, 14)))
+                .addChild(amountField)
+                .addChild(new Label(mc, this).setText("Meta:")
+                        .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
+                        .setLayoutHint(new PositionalLayout.PositionalHint(10, 35, 50, 14)))
+                .addChild(metaLabel)
+                .addChild(new Label(mc, this).setText("Oredict:")
+                .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
+                .setLayoutHint(new PositionalLayout.PositionalHint(10, 51, 50, 14)))
+                .addChild(oreDictLabel);
+
+        toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
         window = new Window(this, toplevel);
+    }
+
+    private void setMetaUsage() {
+        boolean b = META_MATCH.equals(metaLabel.getCurrentChoice());
+        tileEntity.setUseMeta(b);
+        sendServerCommand(RFToolsMessages.INSTANCE, InvCheckerTileEntity.CMD_SETMETA, new Argument("b", b));
+    }
+
+    private void setOredictUsage() {
+        boolean b = OREDICT_USE.equals(oreDictLabel.getCurrentChoice());
+        tileEntity.setOreDict(b);
+        sendServerCommand(RFToolsMessages.INSTANCE, InvCheckerTileEntity.CMD_SETOREDICT, new Argument("b", b));
     }
 
     private void setAmount() {

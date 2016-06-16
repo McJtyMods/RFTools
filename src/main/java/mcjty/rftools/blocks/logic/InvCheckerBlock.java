@@ -20,10 +20,10 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class InvCheckerBlock extends LogicSlabBlock<InvCheckerTileEntity, EmptyContainer> {
+public class InvCheckerBlock extends LogicSlabBlock<InvCheckerTileEntity, InvCheckerContainer> {
 
     public InvCheckerBlock() {
-        super(Material.IRON, "invchecker_block", InvCheckerTileEntity.class, EmptyContainer.class);
+        super(Material.IRON, "invchecker_block", InvCheckerTileEntity.class, InvCheckerContainer.class);
     }
 
     @Override
