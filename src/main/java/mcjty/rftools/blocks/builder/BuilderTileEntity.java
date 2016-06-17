@@ -913,14 +913,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     List<ItemStack> drops;
                     if (block.canSilkHarvest(worldObj, srcPos, srcState, fakePlayer)) {
                         Item item = Item.getItemFromBlock(block);
+                        drops = new ArrayList<>();
                         if (item != null) {
                             int m = 0;
                             if (item.getHasSubtypes()) {
                                 m = block.getMetaFromState(srcState);
                             }
-                            drops = Collections.singletonList(new ItemStack(item, 1, m));
-                        } else {
-                            drops = Collections.emptyList();
+                            drops.add(new ItemStack(item, 1, m));
                         }
                         net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, worldObj, pos, srcState, 0, 1.0f, true, fakePlayer);
                     } else {
