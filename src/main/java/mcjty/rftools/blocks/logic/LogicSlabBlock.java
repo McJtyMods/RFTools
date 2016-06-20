@@ -127,20 +127,26 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
         }
     }
 
-    @Override
-    public boolean isFullBlock(IBlockState state) {
-        return super.isFullBlock(state);
-    }
-
-    @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
-        return null;
-    }
+//    @Override
+//    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
+//        return null;
+//    }
 
     @Override
     public boolean isOpaqueCube(IBlockState state) {
         return false;
     }
+
+    @Override
+    public boolean isFullBlock(IBlockState state) {
+        return false;
+    }
+
+    @Override
+    public boolean isFullCube(IBlockState state) {
+        return false;
+    }
+
 
     @Override
     public boolean canConnectRedstone(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
