@@ -145,6 +145,7 @@ The machine base is the base ingredient for a few other machines.
 {l:redrec}Redstone Receiver
 {l:threelogic}Logic Gate
 {l:invchecker}Inventory Checker
+{l:sensor}Sensor
 {-------------------------------------------------------------}
 {b}Sequencer
 {n:sequencer}
@@ -185,7 +186,7 @@ block can be used as a way to detect that a certain activity is overdue.
 {n:counter}
 {rb:counter_block}
 The counter is a simple block that will count redstone pulses and
-emit a redstone signal when it reaches a certain amount. Then it
+emit a redstone signal when it reaches a certain number. Then it
 starts over. You can see in the GUI how many redstone pulses it
 already got.
 {-------------------------------------------------------------}
@@ -235,6 +236,13 @@ before the input was switched to this state.
 This block checks a slot in a nearby inventory and emits a redstone
 signal in case the number of items in that slot is above a certain
 value (configurable in GUI).
+{-------------------------------------------------------------}
+{b}Sensor
+{n:sensor}
+{rb:sensor_block}
+The sensor can detect various things directly in front of it
+(either in a 1x1 area or in a 3x3 area). It can detect blocks
+being placed, crop growth level, number of entities and so on.
 {-------------------------------------------------------------}
 {b}RF Monitor
 {n:monitor}
@@ -434,7 +442,7 @@ or affected by explosions. Use the 'sneak-select' mode on the Smart
 Wrench to select the protector and then just 'select' all blocks you
 want to protect with the Smart Wrench in 'select' mode. The maximum
 distance is 10. Note that the block protector will need a little
-amount of power per tick for every block it protects.
+number of power per tick for every block it protects.
 {-------------------------------------------------------------}
 In addition it needs extra power when a protected block is being
 harvested or affected by an explosion. If there is not enough power
@@ -449,7 +457,7 @@ protector itself.
 {n:prelay}
 {rb:relay}
 The Power Relay allows you to control how much RF to output based on a
-redstone signal. In its GUI you can set the amount of RF/tick to give
+redstone signal. In its GUI you can set the number of RF/tick to give
 in case redstone signal is off and also in case redstone signal is on.
 This can be configured per side. You can also mark sides as being
 input-only. This is where you typically connect the power coming
@@ -747,8 +755,8 @@ If you want to display various things in your base then the
 modular screen system in RFTools might be ideal for you. In
 these screens you can insert up to 11 modules which can give
 you various bits of information like energy in a machine,
-the amount of fluids in a tank, the time of the day, simple text,
-the amount of RF left in a dimension and so on. More modules
+the number of fluids in a tank, the time of the day, simple text,
+the number of RF left in a dimension and so on. More modules
 are planned for the future.
 
 There are large, huge and transparent screen variations of the
@@ -779,7 +787,7 @@ The following screen modules are currently supported:
     - Clock: a digital clock showing the time of the day
     - Energy: monitor the RF energy level of a machine
     - Dimension: monitor the RF energy level of a dimension
-    - Fluid: monitor the amount of fluids in a tank
+    - Fluid: monitor the number of fluids in a tank
     - Inventory: monitor up to 4 slots in an inventory
     - Counter: show the current value of a counter gate
     - Redstone: show yes/no text depending on wireless redstone

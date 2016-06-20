@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.blocks.logic.LogicItemBlock;
+import mcjty.rftools.blocks.logic.generic.LogicItemBlock;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

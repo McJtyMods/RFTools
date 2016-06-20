@@ -5,7 +5,7 @@ import mcjty.rftools.BlockInfo;
 import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.api.screens.IScreenModule;
-import mcjty.rftools.blocks.logic.CounterTileEntity;
+import mcjty.rftools.blocks.logic.counter.CounterTileEntity;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.CounterScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.CounterClientScreenModule;

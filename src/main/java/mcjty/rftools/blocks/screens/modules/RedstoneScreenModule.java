@@ -4,7 +4,7 @@ import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.api.screens.data.IModuleDataBoolean;
-import mcjty.rftools.blocks.logic.RedstoneChannels;
+import mcjty.rftools.blocks.logic.wireless.RedstoneChannels;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;

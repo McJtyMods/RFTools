@@ -2,8 +2,8 @@ package mcjty.rftools.blocks.endergen;
 
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.blocks.logic.LogicSlabBlock;
-import mcjty.rftools.blocks.logic.LogicTileEntity;
+import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
+import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;

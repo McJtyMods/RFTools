@@ -5,7 +5,7 @@ import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.api.screens.data.IModuleDataInteger;
 import mcjty.rftools.varia.RFToolsTools;
-import mcjty.rftools.blocks.logic.CounterTileEntity;
+import mcjty.rftools.blocks.logic.counter.CounterTileEntity;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;

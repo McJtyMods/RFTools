@@ -10,7 +10,7 @@ import mcjty.rftools.api.teleportation.ITeleportationManager;
 import mcjty.rftools.apiimpl.ScreenModuleRegistry;
 import mcjty.rftools.apiimpl.TeleportationManager;
 import mcjty.rftools.blocks.blockprotector.BlockProtectors;
-import mcjty.rftools.blocks.logic.RedstoneChannels;
+import mcjty.rftools.blocks.logic.wireless.RedstoneChannels;
 import mcjty.rftools.blocks.powercell.PowerCellNetwork;
 import mcjty.rftools.blocks.security.SecurityChannels;
 import mcjty.rftools.blocks.storage.RemoteStorageIdRegistry;
@@ -113,6 +113,7 @@ public class RFTools implements ModBase {
     public static final int GUI_STORAGE_SCANNER = modGuiIndex++;
     public static final int GUI_BOOSTER = modGuiIndex++;
     public static final int GUI_INVCHECKER = modGuiIndex++;
+    public static final int GUI_SENSOR = modGuiIndex++;
 
     /**
      * Run before anything else. Read your config, create blocks, items, etc, and
