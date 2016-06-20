@@ -241,7 +241,7 @@ value (configurable in GUI).
 {n:sensor}
 {rb:sensor_block}
 The sensor can detect various things directly in front of it
-(either in a 1x1 area or in a 3x3 area). It can detect blocks
+(either 1 block, 3 blocks or 5 blocks). It can detect blocks
 being placed, crop growth level, number of entities and so on.
 {-------------------------------------------------------------}
 {b}RF Monitor
