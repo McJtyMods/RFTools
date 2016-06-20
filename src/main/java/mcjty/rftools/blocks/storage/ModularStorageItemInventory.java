@@ -32,7 +32,17 @@ public class ModularStorageItemInventory implements IInventory {
     }
 
     private int getMaxSize() {
-        return StorageModuleItem.MAXSIZE[entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound().getInteger("childDamage")];
+        ItemStack heldItem = entityPlayer.getHeldItem(EnumHand.MAIN_HAND);
+        if (heldItem == null) {
+            return 0;
+        }
+        if (heldItem.getItem() != ModularStorageSetup.storageModuleTabletItem) {
+            return 0;
+        }
+        if (heldItem.getTagCompound() == null) {
+            return 0;
+        }
+        return StorageModuleItem.MAXSIZE[heldItem.getTagCompound().getInteger("childDamage")];
     }
 
     public ItemStack[] getStacks() {
