@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.teleporter;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.SoundTools;
+import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.environmental.NoTeleportAreaManager;
 import net.minecraft.block.Block;
@@ -152,8 +153,7 @@ public class TeleportationTools {
         }
 
         Logging.message(player, "Whoosh!");
-// @todo
-//        Achievements.trigger(player, Achievements.firstTeleport);
+        Achievements.trigger(player, Achievements.firstTeleport);
 
         boolean boostNeeded = false;
         int severity = consumeReceiverEnergy(player, dest.getCoordinate(), dest.getDimension());

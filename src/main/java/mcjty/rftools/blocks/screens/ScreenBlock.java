@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.screens;
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.varia.ModuleSupport;
+import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
@@ -409,9 +410,9 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entityLivingBase, ItemStack itemStack) {
         super.onBlockPlacedBy(world, pos, state, entityLivingBase, itemStack);
 
-//        if (entityLivingBase instanceof EntityPlayer) {
-//            Achievements.trigger((EntityPlayer) entityLivingBase, Achievements.clearVision);
-//        }
+        if (entityLivingBase instanceof EntityPlayer) {
+            Achievements.trigger((EntityPlayer) entityLivingBase, Achievements.clearVision);
+        }
         TileEntity tileEntity = world.getTileEntity(pos);
         if (tileEntity instanceof ScreenTileEntity) {
             ScreenTileEntity screenTileEntity = (ScreenTileEntity) tileEntity;

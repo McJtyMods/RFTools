@@ -4,6 +4,7 @@ package mcjty.rftools.blocks.elevator;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericBlock;
+import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcp.mobius.waila.api.IWailaConfigHandler;
@@ -75,6 +76,9 @@ public class ElevatorBlock extends GenericRFToolsBlock<ElevatorTileEntity, Empty
         if (te instanceof ElevatorTileEntity) {
             ElevatorTileEntity elevatorTileEntity = (ElevatorTileEntity) te;
             elevatorTileEntity.clearCaches(world.getBlockState(pos).getValue(GenericBlock.FACING_HORIZ));
+        }
+        if (placer instanceof EntityPlayer) {
+            Achievements.trigger((EntityPlayer) placer, Achievements.goingUp);
         }
     }
 

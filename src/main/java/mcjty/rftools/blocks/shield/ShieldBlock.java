@@ -6,6 +6,7 @@ import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.ModuleSupport;
+import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.blocks.builder.BuilderSetup;
@@ -99,12 +100,14 @@ public class ShieldBlock extends GenericRFToolsBlock<ShieldTEBase, ShieldContain
     public void onBlockClicked(World world, BlockPos pos, EntityPlayer playerIn) {
         if (!world.isRemote) {
             composeDecomposeShield(world, pos, true);
+            Achievements.trigger(playerIn, Achievements.shieldSafety);
         }
     }
 
     @Override
     protected boolean wrenchUse(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
         composeDecomposeShield(world, pos, false);
+        Achievements.trigger(player, Achievements.shieldSafety);
         return true;
     }
 

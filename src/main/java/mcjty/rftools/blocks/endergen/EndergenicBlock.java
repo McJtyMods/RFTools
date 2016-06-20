@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.endergen;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.material.Material;
@@ -76,9 +77,9 @@ public class EndergenicBlock extends GenericRFToolsBlock<EndergenicTileEntity, E
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         super.onBlockPlacedBy(world, pos, state, placer, stack);
-//        if (placer instanceof EntityPlayer) {
-//            Achievements.trigger((EntityPlayer) placer, Achievements.hardPower);
-//        }
+        if (placer instanceof EntityPlayer) {
+            Achievements.trigger((EntityPlayer) placer, Achievements.hardPower);
+        }
     }
 
     @Override

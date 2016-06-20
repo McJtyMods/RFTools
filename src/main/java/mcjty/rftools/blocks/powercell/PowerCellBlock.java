@@ -7,6 +7,7 @@ import mcjty.lib.api.smartwrench.SmartWrenchMode;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.lib.varia.ModuleSupport;
+import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
@@ -234,6 +235,10 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
 				powerCellTileEntity.execute((EntityPlayerMP) placer, PowerCellTileEntity.CMD_SETOUTPUT, Maps.newHashMap());
 			}
 		}
+
+        if (placer instanceof EntityPlayer) {
+            Achievements.trigger((EntityPlayer) placer, Achievements.storeThePower);
+        }
     }
 
     @Override

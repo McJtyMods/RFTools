@@ -5,6 +5,18 @@ achievement.hardPower=Advanced Power!
 achievement.hardPower.desc=Build an Endergenic Generator
 achievement.clearVision=Your Vision Clears!
 achievement.clearVision.desc=Place a modular screen
+achievement.specialOres=Exotic Miner!
+achievement.specialOres.desc=Mine dimensional shards
+achievement.theBuilder=Bob The Builder!
+achievement.theBuilder.desc=Make a Builder and be a Bob!
+achievement.goingUp=Going Up!
+achievement.goingUp.desc=Make an elevator and go up (or down?)
+achievement.storeThePower=Store all the Power!
+achievement.storeThePower.desc=Put down a powercell
+achievement.shieldSafety=Feeling safe now?
+achievement.shieldSafety.desc=Activate a shield
+achievement.allTheItems=Storing the stuff!
+achievement.allTheItems.desc=Place down a modular storage block
 
 # Items
 item.network_monitor.name=RF Network Monitor

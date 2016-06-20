@@ -4,6 +4,7 @@ import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.lib.varia.ModuleSupport;
+import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.network.RFToolsMessages;
@@ -17,6 +18,7 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
@@ -200,5 +202,13 @@ public class ModularStorageBlock extends GenericRFToolsBlock<ModularStorageTileE
         // Make sure the client has sufficient information to show the data.
         ((ModularStorageTileEntity) tileEntity).markDirtyClient();
         return super.createServerContainer(entityPlayer, tileEntity);
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+        super.onBlockPlacedBy(world, pos, state, placer, stack);
+        if (placer instanceof EntityPlayer) {
+            Achievements.trigger((EntityPlayer) placer, Achievements.allTheItems);
+        }
     }
 }
