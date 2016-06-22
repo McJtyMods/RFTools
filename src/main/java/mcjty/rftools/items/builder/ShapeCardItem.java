@@ -60,7 +60,9 @@ public class ShapeCardItem extends GenericRFToolsItem {
         SHAPE_SOLIDBOX(100, "Solid Box"),
         SHAPE_SOLIDSPHERE(103, "Solid Sphere"),
         SHAPE_SOLIDCYLINDER(104, "Solid Cylinder"),
-        SHAPE_SOLIDTORUS(107, "Solid Torus");
+        SHAPE_SOLIDTORUS(107, "Solid Torus"),
+        SHAPE_SOLIDTOPDOME(101, "Solid Top Dome"),
+        SHAPE_SOLIDBOTTOMDOME(102, "Solid Bottom Dome");
 
 
         private final int index;
@@ -89,6 +91,10 @@ public class ShapeCardItem extends GenericRFToolsItem {
                     return SHAPE_CAPPEDCYLINDER;
                 case SHAPE_SOLIDTORUS:
                     return SHAPE_TORUS;
+                case SHAPE_SOLIDTOPDOME:
+                    return SHAPE_TOPDOME;
+                case SHAPE_SOLIDBOTTOMDOME:
+                    return SHAPE_BOTTOMDOME;
             }
             return this;
         }
@@ -643,6 +649,12 @@ public class ShapeCardItem extends GenericRFToolsItem {
                 break;
             case SHAPE_BOTTOMDOME:
                 composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, -1, false, forquarry, chunk);
+                break;
+            case SHAPE_SOLIDTOPDOME:
+                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 1, true, forquarry, chunk);
+                break;
+            case SHAPE_SOLIDBOTTOMDOME:
+                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, -1, true, forquarry, chunk);
                 break;
             case SHAPE_SPHERE:
                 composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 0, false, forquarry, chunk);
