@@ -6,11 +6,14 @@ import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.theoneprobe.api.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -71,6 +74,34 @@ public class EndergenicBlock extends GenericRFToolsBlock<EndergenicTileEntity, E
             list.add(TextFormatting.YELLOW + "reduced powerloss for holding pearls.");
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+        }
+    }
+
+    @Override
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        if (mode == ProbeMode.EXTENDED) {
+            TileEntity te = world.getTileEntity(data.getPos());
+            if (te instanceof EndergenicTileEntity) {
+                EndergenicTileEntity tileEntity = (EndergenicTileEntity) te;
+                IItemStyle style = probeInfo.defaultItemStyle().width(16).height(13);
+                ILayoutStyle layoutStyle = probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER);
+                probeInfo.text(TextFormatting.BLUE + "Stats over the last 5 seconds:");
+                probeInfo.horizontal(layoutStyle)
+                        .item(new ItemStack(Items.REDSTONE), style)
+                        .text("Charged " + tileEntity.getLastChargeCounter() + " time(s)");
+                probeInfo.horizontal(layoutStyle)
+                        .item(new ItemStack(Items.ENDER_PEARL), style)
+                        .text("Fired " + tileEntity.getLastPearlsLaunched())
+                        .text(" / Lost " + tileEntity.getLastPearlsLost());
+                probeInfo.horizontal()
+                    .text(TextFormatting.GREEN + "RF Gain " + tileEntity.getLastRfGained())
+                    .text(" / ")
+                    .text(TextFormatting.RED + "Lost " + tileEntity.getLastRfLost())
+                    .text(" (RF/t " + tileEntity.getLastRfPerTick() + ")");
+            }
+        } else {
+            probeInfo.text("(sneak to get statistics)");
         }
     }
 

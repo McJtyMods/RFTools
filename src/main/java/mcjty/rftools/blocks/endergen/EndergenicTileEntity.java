@@ -75,14 +75,16 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     private int rfLost = 0;
     private int pearlsLaunched = 0;
     private int pearlsLost = 0;
-    private int pearlsOpportunities = 0;
+    private int chargeCounter = 0;
     private int ticks = 100;
 
     // These values actually contain valid statistics.
     private int lastRfPerTick = 0;
+    private int lastRfGained = 0;
+    private int lastRfLost = 0;
     private int lastPearlsLost = 0;
     private int lastPearlsLaunched = 0;
-    private int lastPearlOpportunities = 0;
+    private int lastChargeCounter = 0;
 
     // Current traveling pearls.
     private List<EndergenicPearl> pearls = new ArrayList<EndergenicPearl>();
@@ -122,6 +124,30 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         return badCounter;
     }
 
+    public int getLastRfPerTick() {
+        return lastRfPerTick;
+    }
+
+    public int getLastRfGained() {
+        return lastRfGained;
+    }
+
+    public int getLastRfLost() {
+        return lastRfLost;
+    }
+
+    public int getLastPearlsLost() {
+        return lastPearlsLost;
+    }
+
+    public int getLastPearlsLaunched() {
+        return lastPearlsLaunched;
+    }
+
+    public int getLastChargeCounter() {
+        return lastChargeCounter;
+    }
+
     public int getGoodCounter() {
         return goodCounter;
     }
@@ -131,17 +157,19 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
 
         ticks--;
         if (ticks < 0) {
+            lastRfGained = rfGained;
+            lastRfLost = rfLost;
             lastRfPerTick = (rfGained - rfLost) / 100;
             lastPearlsLost = pearlsLost;
             lastPearlsLaunched = pearlsLaunched;
-            lastPearlOpportunities = pearlsOpportunities;
+            lastChargeCounter = chargeCounter;
 
             ticks = 100;
             rfGained = 0;
             rfLost = 0;
             pearlsLaunched = 0;
             pearlsLost = 0;
-            pearlsOpportunities = 0;
+            chargeCounter = 0;
         }
 
         handlePearls();
@@ -223,7 +251,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
             case 0: return Integer.toString(lastRfPerTick);
             case 1: return Integer.toString(lastPearlsLost);
             case 2: return Integer.toString(lastPearlsLaunched);
-            case 3: return Integer.toString(lastPearlOpportunities);
+            case 3: return Integer.toString(lastChargeCounter);
         }
         return null;
     }
@@ -414,7 +442,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     public void startCharging() {
         markDirty();
         chargingMode = 1;
-        pearlsOpportunities++;
+        chargeCounter++;
     }
 
     // Called from client side when a wrench is used.
@@ -559,7 +587,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         } else if (CMD_GETSTAT_LAUNCHED.equals(command)) {
             return lastPearlsLaunched;
         } else if (CMD_GETSTAT_OPPORTUNITIES.equals(command)) {
-            return lastPearlOpportunities;
+            return lastChargeCounter;
         }
         return null;
     }
