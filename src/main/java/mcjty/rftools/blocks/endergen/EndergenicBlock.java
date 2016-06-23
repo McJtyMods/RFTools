@@ -94,6 +94,9 @@ public class EndergenicBlock extends GenericRFToolsBlock<EndergenicTileEntity, E
                         .item(new ItemStack(Items.ENDER_PEARL), style)
                         .text("Fired " + tileEntity.getLastPearlsLaunched())
                         .text(" / Lost " + tileEntity.getLastPearlsLost());
+                if (tileEntity.getLastPearlsLost() > 0) {
+                    probeInfo.text(TextFormatting.RED + tileEntity.getLastPearlsLostReason());
+                }
                 probeInfo.horizontal()
                     .text(TextFormatting.GREEN + "RF Gain " + tileEntity.getLastRfGained())
                     .text(" / ")

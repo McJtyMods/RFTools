@@ -85,6 +85,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     private int lastPearlsLost = 0;
     private int lastPearlsLaunched = 0;
     private int lastChargeCounter = 0;
+    private String lastPearlsLostReason = "";
 
     // Current traveling pearls.
     private List<EndergenicPearl> pearls = new ArrayList<EndergenicPearl>();
@@ -148,6 +149,10 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         return lastChargeCounter;
     }
 
+    public String getLastPearlsLostReason() {
+        return lastPearlsLostReason;
+    }
+
     public int getGoodCounter() {
         return goodCounter;
     }
@@ -163,6 +168,9 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
             lastPearlsLost = pearlsLost;
             lastPearlsLaunched = pearlsLaunched;
             lastChargeCounter = chargeCounter;
+//
+//            System.out.println(BlockPosTools.toString(getPos()) + " RF: +" + lastRfGained + " -" + lastRfLost + " (" + lastRfPerTick + ")  "
+//                + "Pearls: F" + lastPearlsLaunched + " L" + lastPearlsLost + "  Charges: " + lastChargeCounter);
 
             ticks = 100;
             rfGained = 0;
@@ -180,7 +188,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
             if (random.nextInt(1000) <= EndergenicConfiguration.chanceLost) {
                 // Pearl is lost.
                 log("Server Tick: discard pearl randomly");
-                discardPearl();
+                discardPearl("Random pearl discard");
             }
         }
 
@@ -212,7 +220,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
             if (rfStored < rf) {
                 // Not enough energy. Pearl is lost.
                 log("Server Tick: insufficient energy to hold pearl (" + rfStored + " vs " + rf + ")");
-                discardPearl();
+                discardPearl("Not enough energy to hold pearl");
             } else {
                 int rfExtracted = extractEnergy(EnumFacing.DOWN, rf, false);
                 log("Server Tick: holding pearl, consume " + rfExtracted + " RF");
@@ -340,10 +348,11 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         }
     }
 
-    private void discardPearl() {
+    private void discardPearl(String reason) {
         badCounter = 20;
         markDirtyClientNoRender();
         pearlsLost++;
+        lastPearlsLostReason = reason;
         chargingMode = CHARGE_IDLE;
         fireMonitors(EnderMonitorMode.MODE_LOSTPEARL);
     }
@@ -374,7 +383,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         if (destination == null) {
             // There is no destination so the pearl is simply lost.
             log("Fire Pearl: pearl lost due to lack of destination");
-            discardPearl();
+            discardPearl("Missing destination");
         } else {
             log("Fire Pearl: pearl is launched to "+destination.getX()+","+destination.getY()+","+destination.getZ());
             chargingMode = CHARGE_IDLE;
@@ -392,7 +401,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         if (destination == null) {
             // There is no destination so the injected pearl is simply lost.
             log("Fire Pearl from injector: pearl lost due to lack of destination");
-            discardPearl();
+            discardPearl("Missing destination");
         } else {
             log("Fire Pearl from injector: pearl is launched to "+destination.getX()+","+destination.getY()+","+destination.getZ());
             pearlsLaunched++;
@@ -410,12 +419,12 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
             log("Receive Pearl: pearl arrives but already holding -> both are lost");
             // If this block is already holding a pearl and it still has one then both pearls are
             // automatically lost.
-            discardPearl();
+            discardPearl("Pearl arrived while holding");
         } else if (chargingMode == CHARGE_IDLE) {
             log("Receive Pearl: pearl arrives but generator is idle -> pearl is lost");
             // If this block is idle and it is hit by a pearl then the pearl is lost and nothing
             // happens.
-            discardPearl();
+            discardPearl("Pearl arrived while idle");
         } else {
             // Otherwise we get RF and this block goes into holding mode.
             int rf = (int) (rfPerHit[chargingMode] * EndergenicConfiguration.powergenFactor);
