@@ -76,6 +76,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     private int pearlsLaunched = 0;
     private int pearlsLost = 0;
     private int chargeCounter = 0;
+    private int pearlArrivedAt = -2;
     private int ticks = 100;
 
     // These values actually contain valid statistics.
@@ -85,6 +86,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     private int lastPearlsLost = 0;
     private int lastPearlsLaunched = 0;
     private int lastChargeCounter = 0;
+    private int lastPearlArrivedAt = 0;
     private String lastPearlsLostReason = "";
 
     // Current traveling pearls.
@@ -149,6 +151,10 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         return lastChargeCounter;
     }
 
+    public int getLastPearlArrivedAt() {
+        return lastPearlArrivedAt;
+    }
+
     public String getLastPearlsLostReason() {
         return lastPearlsLostReason;
     }
@@ -168,6 +174,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
             lastPearlsLost = pearlsLost;
             lastPearlsLaunched = pearlsLaunched;
             lastChargeCounter = chargeCounter;
+            lastPearlArrivedAt = pearlArrivedAt;
 //
 //            System.out.println(BlockPosTools.toString(getPos()) + " RF: +" + lastRfGained + " -" + lastRfLost + " (" + lastRfPerTick + ")  "
 //                + "Pearls: F" + lastPearlsLaunched + " L" + lastPearlsLost + "  Charges: " + lastChargeCounter);
@@ -178,6 +185,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
             pearlsLaunched = 0;
             pearlsLost = 0;
             chargeCounter = 0;
+            pearlArrivedAt = -2;
         }
 
         handlePearls();
@@ -426,6 +434,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
             // happens.
             discardPearl("Pearl arrived while idle");
         } else {
+            pearlArrivedAt = chargingMode;
             // Otherwise we get RF and this block goes into holding mode.
             int rf = (int) (rfPerHit[chargingMode] * EndergenicConfiguration.powergenFactor);
             rf = (int) (rf * (getInfusedFactor() + 3.0f) / 3.0f);
