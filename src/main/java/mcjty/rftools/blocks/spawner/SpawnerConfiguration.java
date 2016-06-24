@@ -284,6 +284,10 @@ public class SpawnerConfiguration {
         addMobSpawnAmount(cfg, EntityRabbit.class, MATERIALTYPE_KEY, Items.RABBIT_STEW, 0, 0.1f);
         addMobSpawnAmount(cfg, EntityRabbit.class, MATERIALTYPE_BULK, Blocks.DIRT, 0, .2f);
         addMobSpawnAmount(cfg, EntityRabbit.class, MATERIALTYPE_LIVING, null, 0, 10);
+        addMobSpawnRF(cfg, EntityPolarBear.class, 1500);
+        addMobSpawnAmount(cfg, EntityPolarBear.class, MATERIALTYPE_KEY, Items.FISH, 0, 0.1f);
+        addMobSpawnAmount(cfg, EntityPolarBear.class, MATERIALTYPE_BULK, Blocks.DIRT, 0, .2f);
+        addMobSpawnAmount(cfg, EntityPolarBear.class, MATERIALTYPE_LIVING, null, 0, 20);
         addMobSpawnRF(cfg, "WitherSkeleton", 1500);
         addMobSpawnAmount(cfg, "WitherSkeleton", MATERIALTYPE_KEY, Items.BONE, 0, 0.1f);
         addMobSpawnAmount(cfg, "WitherSkeleton", MATERIALTYPE_BULK, Blocks.NETHERRACK, 0, .5f);
