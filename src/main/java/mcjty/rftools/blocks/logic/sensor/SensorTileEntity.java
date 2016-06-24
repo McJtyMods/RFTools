@@ -103,7 +103,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
 
         boolean newout = false;
 
-        EnumFacing inputSide = getFacing().getInputSide();
+        EnumFacing inputSide = getFacing(worldObj.getBlockState(getPos())).getInputSide();
         BlockPos newpos = getPos().offset(inputSide);
 
         switch (sensorType) {

@@ -8,8 +8,8 @@ public class LogicTileEntity extends GenericTileEntity {
 
     private LogicFacing facing = LogicFacing.DOWN_TONORTH;
 
-    public LogicFacing getFacing() {
-        Integer meta = worldObj.getBlockState(pos).getValue(LogicSlabBlock.META_INTERMEDIATE);
+    public LogicFacing getFacing(IBlockState state) {
+        Integer meta = state.getValue(LogicSlabBlock.META_INTERMEDIATE);
         return LogicFacing.getFacingWithMeta(facing, meta);
     }
 

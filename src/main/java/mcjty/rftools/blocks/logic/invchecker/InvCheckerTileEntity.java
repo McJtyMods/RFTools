@@ -107,7 +107,7 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
 
         boolean newout = false;
 
-        EnumFacing inputSide = getFacing().getInputSide();
+        EnumFacing inputSide = getFacing(worldObj.getBlockState(getPos())).getInputSide();
         TileEntity te = worldObj.getTileEntity(getPos().offset(inputSide));
         if (InventoryHelper.isInventory(te)) {
             ItemStack stack = null;

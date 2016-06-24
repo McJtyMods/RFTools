@@ -288,7 +288,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
             TileEntity te = worldObj.getTileEntity(c);
             if (te instanceof EnderMonitorTileEntity) {
                 EnderMonitorTileEntity enderMonitorTileEntity = (EnderMonitorTileEntity) te;
-                EnumFacing inputSide = enderMonitorTileEntity.getFacing().getInputSide();
+                EnumFacing inputSide = enderMonitorTileEntity.getFacing(worldObj.getBlockState(c)).getInputSide();
                 if (inputSide == dir.getOpposite()) {
                     enderMonitorTileEntity.fireFromEndergenic(mode);
                 }

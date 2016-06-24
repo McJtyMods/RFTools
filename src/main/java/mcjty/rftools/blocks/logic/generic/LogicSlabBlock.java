@@ -65,11 +65,12 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
 
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
-        if (world.getBlockState(pos).getBlock() instanceof LogicSlabBlock) {
+        IBlockState blockState = world.getBlockState(pos);
+        if (blockState.getBlock() instanceof LogicSlabBlock) {
             TileEntity te = world.getTileEntity(pos);
             if (te instanceof LogicTileEntity) {
                 LogicTileEntity logicTileEntity = (LogicTileEntity) te;
-                EnumFacing side = logicTileEntity.getFacing().getSide();
+                EnumFacing side = logicTileEntity.getFacing(blockState).getSide();
                 switch (side) {
                     case DOWN:
                         return BLOCK_DOWN;
@@ -110,7 +111,7 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof LogicTileEntity) {
             LogicTileEntity logicTileEntity = (LogicTileEntity)te;
-            EnumFacing inputSide = logicTileEntity.getFacing().getInputSide();
+            EnumFacing inputSide = logicTileEntity.getFacing(world.getBlockState(pos)).getInputSide();
             // @todo
             int power = getInputStrength(world, pos, inputSide);
             if (power == 0) {
@@ -151,9 +152,9 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
     @Override
     public boolean canConnectRedstone(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof LogicTileEntity) {
+        if (state.getBlock() instanceof LogicSlabBlock && te instanceof LogicTileEntity) {
             LogicTileEntity logicTileEntity = (LogicTileEntity)te;
-            EnumFacing direction = logicTileEntity.getFacing().getInputSide();
+            EnumFacing direction = logicTileEntity.getFacing(state).getInputSide();
             switch (direction) {
                 case NORTH:
                 case SOUTH:
@@ -172,9 +173,9 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
     @Override
     protected int getRedstoneOutput(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof LogicTileEntity) {
+        if (state.getBlock() instanceof LogicSlabBlock && te instanceof LogicTileEntity) {
             LogicTileEntity logicTileEntity = (LogicTileEntity) te;
-            if (side == logicTileEntity.getFacing().getInputSide()) {
+            if (side == logicTileEntity.getFacing(state).getInputSide()) {
                 return state.getValue(OUTPUTPOWER) ? 15 : 0;
             } else {
                 return 0;
@@ -185,10 +186,11 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
 
     @Override
     public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis) {
+        IBlockState state = world.getBlockState(pos);
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof LogicTileEntity) {
+        if (state.getBlock() instanceof LogicSlabBlock && te instanceof LogicTileEntity) {
             LogicTileEntity logicTileEntity = (LogicTileEntity) te;
-            LogicFacing facing = logicTileEntity.getFacing();
+            LogicFacing facing = logicTileEntity.getFacing(state);
             int meta = facing.getMeta();
             switch (meta) {
                 case 0: meta = 2; break;
@@ -198,7 +200,7 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
             }
             LogicFacing newfacing = LogicFacing.getFacingWithMeta(facing, meta);
             logicTileEntity.setFacing(newfacing);
-            world.setBlockState(pos, world.getBlockState(pos).getBlock().getDefaultState()
+            world.setBlockState(pos, state.getBlock().getDefaultState()
                     .withProperty(META_INTERMEDIATE, meta)
                     .withProperty(OUTPUTPOWER, false), 3);
             return true;
@@ -212,7 +214,7 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
         TileEntity te = worldIn.getTileEntity(pos);
         if (te instanceof LogicTileEntity) {
             LogicTileEntity logicTileEntity = (LogicTileEntity) te;
-            LogicFacing facing = logicTileEntity.getFacing();
+            LogicFacing facing = logicTileEntity.getFacing(state);
             facing = LogicFacing.getFacingWithMeta(facing, meta);
             return state.withProperty(LOGIC_FACING, facing);
         } else {

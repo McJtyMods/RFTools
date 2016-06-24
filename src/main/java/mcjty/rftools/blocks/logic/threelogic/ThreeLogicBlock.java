@@ -3,9 +3,11 @@ package mcjty.rftools.blocks.logic.threelogic;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.logic.generic.LogicFacing;
 import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
 import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -48,11 +50,13 @@ public class ThreeLogicBlock extends LogicSlabBlock<ThreeLogicTileEntity, EmptyC
 
     @Override
     protected void checkRedstone(World world, BlockPos pos) {
+        IBlockState state = world.getBlockState(pos);
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof LogicTileEntity) {
+        if (state.getBlock() instanceof LogicSlabBlock && te instanceof LogicTileEntity) {
             LogicTileEntity logicTileEntity = (LogicTileEntity)te;
-            EnumFacing downSide = logicTileEntity.getFacing().getSide();
-            EnumFacing inputSide = logicTileEntity.getFacing().getInputSide();
+            LogicFacing facing = logicTileEntity.getFacing(state);
+            EnumFacing downSide = facing.getSide();
+            EnumFacing inputSide = facing.getInputSide();
             EnumFacing leftSide = rotateLeft(downSide, inputSide);
             EnumFacing rightSide = rotateRight(downSide, inputSide);
 
