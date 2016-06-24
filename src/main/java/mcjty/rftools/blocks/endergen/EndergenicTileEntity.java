@@ -6,7 +6,6 @@ import mcjty.lib.entity.GenericEnergyProviderTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketServerCommand;
 import mcjty.lib.varia.BlockPosTools;
-import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
@@ -284,15 +283,13 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
      */
     private void fireMonitors(EnderMonitorMode mode) {
         BlockPos pos = getPos();
-        for (EnumFacing dir : HORIZ_DIRECTIONS) {
+        for (EnumFacing dir : EnumFacing.VALUES) {
             BlockPos c = pos.offset(dir);
             TileEntity te = worldObj.getTileEntity(c);
             if (te instanceof EnderMonitorTileEntity) {
-                IBlockState state = worldObj.getBlockState(c);
-                int meta = state.getBlock().getMetaFromState(state);
-                EnumFacing k = BlockTools.getOrientationHoriz(meta);
-                if (k == dir.getOpposite()) {
-                    EnderMonitorTileEntity enderMonitorTileEntity = (EnderMonitorTileEntity) te;
+                EnderMonitorTileEntity enderMonitorTileEntity = (EnderMonitorTileEntity) te;
+                EnumFacing inputSide = enderMonitorTileEntity.getFacing().getInputSide();
+                if (inputSide == dir.getOpposite()) {
                     enderMonitorTileEntity.fireFromEndergenic(mode);
                 }
             }
