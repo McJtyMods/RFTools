@@ -14,6 +14,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntitySkeleton;
+import net.minecraft.entity.monster.SkeletonType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -226,15 +227,19 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
             Class<? extends Entity> clazz;
             if ("WitherSkeleton".equals(mobId)) {
                 clazz = EntitySkeleton.class;
+            } else if ("StraySkeleton".equals(mobId)) {
+                clazz = EntitySkeleton.class;
             } else {
                 clazz = EntityList.NAME_TO_CLASS.get(mobId);
             }
             entityLiving = (EntityLiving) clazz.getConstructor(World.class).newInstance(worldObj);
             if ("WitherSkeleton".equals(mobId)) {
-                ((EntitySkeleton) entityLiving).setSkeletonType(1);
+                ((EntitySkeleton) entityLiving).func_189768_a(SkeletonType.WITHER);
+            } else if ("StraySkeleton".equals(mobId)) {
+                    ((EntitySkeleton) entityLiving).func_189768_a(SkeletonType.STRAY);
             } else if (entityLiving instanceof EntitySkeleton) {
                 // Force non-wither otherwise
-                ((EntitySkeleton) entityLiving).setSkeletonType(0);
+                ((EntitySkeleton) entityLiving).func_189768_a(SkeletonType.NORMAL);
             }
         } catch (InstantiationException e) {
             Logging.logError("Fail to spawn mob: " + mobId);

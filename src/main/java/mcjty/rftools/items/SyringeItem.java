@@ -11,6 +11,7 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityDragonPart;
 import net.minecraft.entity.monster.EntitySkeleton;
+import net.minecraft.entity.monster.SkeletonType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -121,8 +122,10 @@ public class SyringeItem extends GenericRFToolsItem {
     private String findSelectedMobId(Class<? extends Entity> clazz, Entity entity) {
         if (entity instanceof EntitySkeleton) {
             EntitySkeleton skeleton = (EntitySkeleton) entity;
-            if (skeleton.getSkeletonType() == 1) {
+            if (skeleton.func_189771_df() == SkeletonType.WITHER) {
                 return "WitherSkeleton";
+            } else if (skeleton.func_189771_df() == SkeletonType.STRAY) {
+                return "StraySkeleton";
             }
         }
         return EntityList.CLASS_TO_NAME.get(clazz);
@@ -140,8 +143,11 @@ public class SyringeItem extends GenericRFToolsItem {
     }
 
     private String findSelectedMobName(Entity entity) {
-        if (entity instanceof EntitySkeleton && ((EntitySkeleton) entity).getSkeletonType() == 1) {
+        if (entity instanceof EntitySkeleton && ((EntitySkeleton) entity).func_189771_df() == SkeletonType.WITHER) {
             return "Wither Skeleton";
+        }
+        if (entity instanceof EntitySkeleton && ((EntitySkeleton) entity).func_189771_df() == SkeletonType.STRAY) {
+            return "Stray Skeleton";
         }
         return entity.getName();
     }

@@ -288,6 +288,10 @@ public class SpawnerConfiguration {
         addMobSpawnAmount(cfg, "WitherSkeleton", MATERIALTYPE_KEY, Items.BONE, 0, 0.1f);
         addMobSpawnAmount(cfg, "WitherSkeleton", MATERIALTYPE_BULK, Blocks.NETHERRACK, 0, .5f);
         addMobSpawnAmount(cfg, "WitherSkeleton", MATERIALTYPE_LIVING, null, 0, 30);
+        addMobSpawnRF(cfg, "StraySkeleton", 800);
+        addMobSpawnAmount(cfg, "StraySkeleton", MATERIALTYPE_KEY, Items.BONE, 0, 0.1f);
+        addMobSpawnAmount(cfg, "StraySkeleton", MATERIALTYPE_BULK, Blocks.NETHERRACK, 0, .5f);
+        addMobSpawnAmount(cfg, "StraySkeleton", MATERIALTYPE_LIVING, null, 0, 20);
     }
 
     public static void addMobSpawnRF(Configuration cfg, Class<? extends EntityLiving> clazz, int rf) {
