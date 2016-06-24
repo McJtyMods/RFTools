@@ -139,6 +139,7 @@ public class RFTools implements ModBase {
             Logging.log("RFTools Detected Dimensions addon: enabling support");
             FMLInterModComms.sendFunctionMessage("rftoolsdim", "getDimensionManager", "mcjty.rftools.apideps.RFToolsDimensionChecker$GetDimensionManager");
         }
+        FMLInterModComms.sendFunctionMessage("theoneprobe", "getTheOneProbe", "mcjty.rftools.theoneprobe.TheOneProbeSupport");
     }
 
     @Mod.EventHandler

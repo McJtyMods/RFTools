@@ -4,11 +4,17 @@ import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -46,6 +52,17 @@ public class EnderMonitorBlock extends LogicSlabBlock<EnderMonitorTileEntity, Em
             int mode = tagCompound.getInteger("mode");
             String smode = EnderMonitorMode.values()[mode].getDescription();
             list.add(TextFormatting.GREEN + "Mode: " + smode);
+        }
+    }
+
+    @Override
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        TileEntity te = world.getTileEntity(data.getPos());
+        if (te instanceof EnderMonitorTileEntity) {
+            EnderMonitorTileEntity tileEntity = (EnderMonitorTileEntity) te;
+            EnderMonitorMode m = tileEntity.getMode();
+            probeInfo.text(TextFormatting.GREEN + "Mode: " + m.getDescription());
         }
     }
 }

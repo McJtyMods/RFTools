@@ -65,6 +65,10 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
         return ((cycleBits >> bit) & 1) == 1;
     }
 
+    public long getCycleBits() {
+        return cycleBits;
+    }
+
     public void setCycleBit(int bit, boolean flag) {
         if (flag) {
             cycleBits |= 1L << bit;
