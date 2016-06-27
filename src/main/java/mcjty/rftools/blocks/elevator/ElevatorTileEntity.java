@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.elevator;
 
 import mcjty.lib.container.GenericBlock;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.varia.Broadcaster;
 import mcjty.rftools.blocks.shield.RelCoordinate;
 import mcjty.rftools.playerprops.BuffProperties;
 import net.minecraft.block.Block;
@@ -22,6 +23,7 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
@@ -82,12 +84,6 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         if (!worldObj.isRemote) {
             if (isMoving()) {
                 markDirty();
-
-                int rfNeeded = (int) (ElevatorConfiguration.rfPerTickMoving * (3.0f - getInfusedFactor()) / 3.0f);
-                if (getEnergyStored(EnumFacing.DOWN) < rfNeeded) {
-                    return;
-                }
-                consumeEnergy(rfNeeded);
 
                 double d = calculateSpeed();
                 boolean stopped = handlePlatformMovement(d);
@@ -586,6 +582,14 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
             // Already moving, do nothing
             return;
         }
+
+        // Check if we have enough energy
+        int rfNeeded = (int) (ElevatorConfiguration.rfPerHeightUnit * Math.abs(getPos().getY() - platformPos.getY()) * (3.0f - getInfusedFactor()) / 3.0f);
+        if (controller.getEnergyStored(EnumFacing.DOWN) < rfNeeded) {
+            Broadcaster.broadcast(worldObj, getPos().getX(), getPos().getY(), getPos().getZ(), TextFormatting.RED + "Not enough power to move the elevator paltform!", 10);
+            return;
+        }
+        controller.consumeEnergy(rfNeeded);
 
         controller.startMoving(platformPos, getPos(), worldObj.getBlockState(platformPos.offset(side)));
     }

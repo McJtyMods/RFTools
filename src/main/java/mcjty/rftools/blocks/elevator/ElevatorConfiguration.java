@@ -5,9 +5,9 @@ import net.minecraftforge.common.config.Configuration;
 public class ElevatorConfiguration {
 
     public static final String CATEGORY_ELEVATOR = "elevator";
-    public static int MAXENERGY = 50000;
-    public static int RFPERTICK = 500;
-    public static int rfPerTickMoving = 60;
+    public static int MAXENERGY = 300000;
+    public static int RFPERTICK = 1000;
+    public static int rfPerHeightUnit = 1000;
     public static int maxPlatformSize = 11;
     public static double minimumSpeed = .1;
     public static double maximumSpeed = .3;
@@ -18,7 +18,7 @@ public class ElevatorConfiguration {
     public static float loopVolumeFactor = 1.0f;        // How much to decrease volume of the looping sound.
 
     public static void init(Configuration cfg) {
-        rfPerTickMoving = cfg.get(CATEGORY_ELEVATOR, "elevatorPerTick", rfPerTickMoving, "Amount of RF used per tick when moving").getInt();
+        rfPerHeightUnit = cfg.get(CATEGORY_ELEVATOR, "rfPerHeightUnit", rfPerHeightUnit, "Amount of RF used per height level when moving").getInt();
         maxPlatformSize = cfg.get(CATEGORY_ELEVATOR, "maxPlatformSize", maxPlatformSize, "Maximum platform size that can be moved").getInt();
         minimumSpeed = cfg.get(CATEGORY_ELEVATOR, "minimumSpeed", minimumSpeed, "Mimumum elevator speed").getDouble();
         maximumSpeed = cfg.get(CATEGORY_ELEVATOR, "maximumSpeed", maximumSpeed, "Maximum elevator speed").getDouble();
