@@ -84,7 +84,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            int totpower = PowerCellConfiguration.rfPerCell * getAdvancedFactor();
+            int totpower = PowerCellConfiguration.rfPerNormalCell * getAdvancedFactor();
             list.add(TextFormatting.WHITE + "This block can store power (" + totpower + " RF)");
             list.add(TextFormatting.WHITE + "Optionally in a big multi dimensional structure");
             list.add(TextFormatting.YELLOW + "Infusing bonus: reduced long distance power");
@@ -168,8 +168,8 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
                 lastTime = System.currentTimeMillis();
                 RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new PowerCellInfoPacketServer(powerCellTileEntity)));
             }
-            int total = (PowerCellInfoPacketClient.tooltipBlocks - PowerCellInfoPacketClient.tooltipAdvancedBlocks) * PowerCellConfiguration.rfPerCell +
-                    PowerCellInfoPacketClient.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerCell * PowerCellConfiguration.advancedFactor;
+            int total = (PowerCellInfoPacketClient.tooltipBlocks - PowerCellInfoPacketClient.tooltipAdvancedBlocks) * PowerCellConfiguration.rfPerNormalCell +
+                    PowerCellInfoPacketClient.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerNormalCell * PowerCellConfiguration.advancedFactor;
             currenttip.add(TextFormatting.GREEN + "Energy: " + PowerCellInfoPacketClient.tooltipEnergy + "/" + total + " RF (" +
                 PowerCellInfoPacketClient.tooltipRfPerTick + " RF/t)");
             PowerCellTileEntity.Mode mode = powerCellTileEntity.getMode(accessor.getSide());
