@@ -356,7 +356,7 @@ There is also a Remote Storage Block:
 {rb:remote_storage}
 With this block you can make a storage module available remotely. You can
 put up to four storage modules in the remote storage block. Then you can
-create Remote Storage Module items. These need to be linked first to de
+create Remote Storage Module items. These need to be linked first to the
 right storage item. To do that place the remote storage module in the
 appropriate slot next to the item.
 
