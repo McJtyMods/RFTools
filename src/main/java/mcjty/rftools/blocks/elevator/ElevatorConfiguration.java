@@ -5,9 +5,9 @@ import net.minecraftforge.common.config.Configuration;
 public class ElevatorConfiguration {
 
     public static final String CATEGORY_ELEVATOR = "elevator";
-    public static int MAXENERGY = 300000;
+    public static int MAXENERGY = 150000;
     public static int RFPERTICK = 1000;
-    public static int rfPerHeightUnit = 1000;
+    public static int rfPerHeightUnit = 500;
     public static int maxPlatformSize = 11;
     public static double minimumSpeed = .1;
     public static double maximumSpeed = .3;
@@ -24,7 +24,7 @@ public class ElevatorConfiguration {
         maximumSpeed = cfg.get(CATEGORY_ELEVATOR, "maximumSpeed", maximumSpeed, "Maximum elevator speed").getDouble();
         maxSpeedDistanceStart = cfg.get(CATEGORY_ELEVATOR, "maxSpeedDistanceStart", maxSpeedDistanceStart, "Distance from the start at which maximum speed is reached").getDouble();
         maxSpeedDistanceEnd = cfg.get(CATEGORY_ELEVATOR, "maxSpeedDistanceEnd", maxSpeedDistanceEnd, "Distance from the end at which speed will start going down again").getDouble();
-        MAXENERGY = cfg.get(CATEGORY_ELEVATOR, "elevatorMaxRF", MAXENERGY,
+        MAXENERGY = cfg.get(CATEGORY_ELEVATOR, "elevatorMaximumRF", MAXENERGY,
                 "Maximum RF storage that the generator can hold").getInt();
         RFPERTICK = cfg.get(CATEGORY_ELEVATOR, "elevatorRFPerTick", RFPERTICK,
                               "RF per tick that the evelator block can receive").getInt();
