@@ -5,7 +5,7 @@ import net.minecraftforge.common.config.Configuration;
 public class PowerCellConfiguration {
 
     public static final String CATEGORY_POWERCELL = "powercell";
-    public static int rfPerCell = 500000;
+    public static int rfPerNormalCell = 1000000;
     public static int advancedFactor = 4;
     public static int rfPerTick = 5000;
 
@@ -18,7 +18,8 @@ public class PowerCellConfiguration {
 
     public static void init(Configuration cfg) {
         rfPerTick = cfg.get(CATEGORY_POWERCELL, "rfPerTick", rfPerTick, "Base amount of RF/tick that can be extracted/inserted in this block").getInt();
-        rfPerCell = cfg.get(CATEGORY_POWERCELL, "rfPerCell", rfPerCell, "Maximum RF storage that a single cell can hold").getInt();
+        rfPerNormalCell = cfg.get(CATEGORY_POWERCELL, "rfPerNormalCell", rfPerNormalCell, "Maximum RF storage that a single cell can hold").getInt();
+
         advancedFactor = cfg.get(CATEGORY_POWERCELL, "advancedFactor", advancedFactor, "How much better is the advanced cell with RF and RF/t").getInt();
 
         powerCellCostFactor = cfg.get(CATEGORY_POWERCELL, "powerCellCostFactor", powerCellCostFactor,

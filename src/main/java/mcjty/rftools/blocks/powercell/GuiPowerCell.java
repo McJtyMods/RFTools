@@ -83,8 +83,8 @@ public class GuiPowerCell extends GenericGuiContainer<PowerCellTileEntity> {
 
         stats.setTooltips("Power statistics. Press to clear:", "Inserted: " + PowerCellInfoPacketClient.tooltipInserted, "Extracted: " + PowerCellInfoPacketClient.tooltipExtracted);
 
-        energyBar.setMaxValue((PowerCellInfoPacketClient.tooltipBlocks - PowerCellInfoPacketClient.tooltipAdvancedBlocks) * PowerCellConfiguration.rfPerCell +
-                PowerCellInfoPacketClient.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerCell * PowerCellConfiguration.advancedFactor);
+        energyBar.setMaxValue((PowerCellInfoPacketClient.tooltipBlocks - PowerCellInfoPacketClient.tooltipAdvancedBlocks) * PowerCellConfiguration.rfPerNormalCell +
+                PowerCellInfoPacketClient.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerNormalCell * PowerCellConfiguration.advancedFactor);
         energyBar.setValue(PowerCellInfoPacketClient.tooltipEnergy);
     }
 }

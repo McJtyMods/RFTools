@@ -364,7 +364,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
     private int receiveEnergyMulti(int maxReceive, boolean simulate) {
         PowerCellNetwork.Network network = getNetwork();
-        int totEnergy = PowerCellConfiguration.rfPerCell * (network.getBlockCount() - network.getAdvancedBlockCount()) + PowerCellConfiguration.rfPerCell * PowerCellConfiguration.advancedFactor * network.getAdvancedBlockCount();
+        int totEnergy = PowerCellConfiguration.rfPerNormalCell * (network.getBlockCount() - network.getAdvancedBlockCount()) + PowerCellConfiguration.rfPerNormalCell * PowerCellConfiguration.advancedFactor * network.getAdvancedBlockCount();
         int maxInsert = Math.min(totEnergy - network.getEnergy(), maxReceive);
         if (maxInsert > 0) {
             if (!simulate) {
@@ -376,7 +376,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     }
 
     private int receiveEnergyLocal(int maxReceive, boolean simulate) {
-        int maxInsert = Math.min(PowerCellConfiguration.rfPerCell * getAdvancedFactor() - energy, maxReceive);
+        int maxInsert = Math.min(PowerCellConfiguration.rfPerNormalCell * getAdvancedFactor() - energy, maxReceive);
         if (maxInsert > 0) {
             if (!simulate) {
                 energy += maxInsert;
@@ -451,11 +451,11 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     public int getMaxEnergyStored(EnumFacing from) {
         int networkId = getNetworkId();
         if (networkId == -1) {
-            return PowerCellConfiguration.rfPerCell * getAdvancedFactor();
+            return PowerCellConfiguration.rfPerNormalCell * getAdvancedFactor();
         }
         PowerCellNetwork.Network network = getNetwork();
-        return (network.getBlockCount() - network.getAdvancedBlockCount()) * PowerCellConfiguration.rfPerCell +
-                network.getAdvancedBlockCount() * PowerCellConfiguration.rfPerCell * PowerCellConfiguration.advancedFactor;
+        return (network.getBlockCount() - network.getAdvancedBlockCount()) * PowerCellConfiguration.rfPerNormalCell +
+                network.getAdvancedBlockCount() * PowerCellConfiguration.rfPerNormalCell * PowerCellConfiguration.advancedFactor;
     }
 
     @Override
