@@ -15,6 +15,8 @@ import mcjty.rftools.blocks.powercell.PowerCellNetwork;
 import mcjty.rftools.blocks.security.SecurityChannels;
 import mcjty.rftools.blocks.storage.RemoteStorageIdRegistry;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
+import mcjty.rftools.commands.CommandRftCfg;
+import mcjty.rftools.commands.CommandRftDb;
 import mcjty.rftools.commands.CommandRftTp;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.manual.GuiRFToolsManual;
@@ -145,8 +147,8 @@ public class RFTools implements ModBase {
     @Mod.EventHandler
     public void serverLoad(FMLServerStartingEvent event) {
         event.registerServerCommand(new CommandRftTp());
-//        event.registerServerCommand(new CommandRftDb());
-//        event.registerServerCommand(new CommandRftCfg());
+        event.registerServerCommand(new CommandRftDb());
+        event.registerServerCommand(new CommandRftCfg());
     }
 
     @Mod.EventHandler
