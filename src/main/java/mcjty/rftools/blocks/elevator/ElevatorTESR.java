@@ -61,6 +61,11 @@ public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> 
         }
     }
 
+    @Override
+    public boolean isGlobalRenderer(ElevatorTileEntity te) {
+        return te.isMoving();
+    }
+
     private static boolean renderBlock(BlockRendererDispatcher dispatcher, IBlockState state, BlockPos pos, IBlockAccess blockAccess, VertexBuffer worldRendererIn) {
         try {
             EnumBlockRenderType enumblockrendertype = state.getRenderType();
