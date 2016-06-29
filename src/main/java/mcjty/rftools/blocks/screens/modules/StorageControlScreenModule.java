@@ -24,7 +24,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
     protected int dim = 0;
     protected BlockPos coordinate = BlockPosTools.INVALID;
     private boolean starred = false;
-
+    private boolean oredict = false;
 
     public static class ModuleDataStacks implements IModuleData {
 
@@ -69,7 +69,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
         }
         int[] amounts = new int[stacks.length];
         for (int i = 0 ; i < stacks.length ; i++) {
-            amounts[i] = scannerTileEntity.countStack(stacks[i], starred);
+            amounts[i] = scannerTileEntity.countStack(stacks[i], starred, oredict);
         }
         return new ModuleDataStacks(amounts);
     }
@@ -111,6 +111,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
     protected void setupCoordinateFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
         coordinate = BlockPosTools.INVALID;
         starred = tagCompound.getBoolean("starred");
+        oredict = tagCompound.getBoolean("oredict");
         if (tagCompound.hasKey("monitorx")) {
             if (tagCompound.hasKey("monitordim")) {
                 this.dim = tagCompound.getInteger("monitordim");
@@ -141,7 +142,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
             return false;
         }
         for (ItemStack s : stacks) {
-            if (stack.isItemEqual(s)) {
+            if (StorageScannerTileEntity.isItemEqual(stack, s, oredict)) {
                 return true;
             }
         }
@@ -157,9 +158,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
         if (hitx >= 0) {
             boolean insertStackActive = hitx >= 0 && hitx < 60 && hity > 98;
             if (insertStackActive) {
-                System.out.println("StorageControlScreenModule.mouseClick:1");
                 if (isShown(player.getHeldItem(EnumHand.MAIN_HAND))) {
-                    System.out.println("StorageControlScreenModule.mouseClick:2");
                     ItemStack stack = scannerTileEntity.injectStack(player.getHeldItem(EnumHand.MAIN_HAND), player);
                     player.setHeldItem(EnumHand.MAIN_HAND, stack);
                 }
@@ -188,7 +187,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
 
                         boolean hilighted = hitx >= x +8 && hitx <= x + 38 && hity >= y-7 && hity <= y + 22;
                         if (hilighted) {
-                            scannerTileEntity.giveToPlayer(stacks[i], player.isSneaking(), player);
+                            scannerTileEntity.giveToPlayer(stacks[i], player.isSneaking(), player, oredict);
                             return;
                         }
                     }
