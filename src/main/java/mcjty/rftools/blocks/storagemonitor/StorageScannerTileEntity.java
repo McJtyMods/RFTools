@@ -23,6 +23,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
@@ -120,7 +121,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
      * @param single
      * @param player
      */
-    public void giveToPlayer(ItemStack stack, boolean single, EntityPlayer player) {
+    public void giveToPlayer(ItemStack stack, boolean single, EntityPlayer player, boolean oredict) {
         if (stack == null) {
             return;
         }
@@ -128,6 +129,8 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             player.addChatComponentMessage(new TextComponentString(TextFormatting.RED + "Not enough power to request items!"));
             return;
         }
+
+        Set<Integer> oredictMatches = getOredictMatchers(stack, oredict);
         List<BlockPos> inventories = getInventories();
         final int[] cnt = {single ? 1 : stack.getMaxStackSize()};
         boolean given = false;
@@ -137,7 +140,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                 IItemHandler capability = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
                 for (int i = 0 ; i < capability.getSlots() ; i++) {
                     ItemStack itemStack = capability.getStackInSlot(i);
-                    if (stack.isItemEqual(itemStack)) {
+                    if (isItemEqual(stack, itemStack, oredictMatches)) {
                         ItemStack received = capability.extractItem(i, cnt[0], false);
                         if (giveItemToPlayer(player, cnt, received)) {
                             given = true;
@@ -148,7 +151,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                 IInventory inventory = (IInventory) tileEntity;
                 for (int i = 0 ; i < inventory.getSizeInventory() ; i++) {
                     ItemStack itemStack = inventory.getStackInSlot(i);
-                    if (stack.isItemEqual(itemStack)) {
+                    if (isItemEqual(stack, itemStack, oredictMatches)) {
                         ItemStack received = inventory.decrStackSize(i, cnt[0]);
                         if (giveItemToPlayer(player, cnt, received)) {
                             given = true;
@@ -182,11 +185,12 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         return true;
     }
 
-    public int countStack(ItemStack stack, boolean starred) {
+    public int countStack(ItemStack stack, boolean starred, boolean oredict) {
         if (stack == null) {
             return 0;
         }
         int cnt = 0;
+        Set<Integer> oredictMatches = getOredictMatchers(stack, oredict);
         List<BlockPos> inventories = getInventories();
         for (BlockPos c : inventories) {
             if ((!starred) || routable.contains(c)) {
@@ -206,7 +210,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                     cnt += cachedCount;
                 } else {
                     final int[] cc = {0};
-                    InventoryHelper.getItems(tileEntity, stack::isItemEqual).forEach(s -> {
+                    InventoryHelper.getItems(tileEntity, s -> isItemEqual(stack, s, oredictMatches)).forEach(s -> {
                         cc[0] += s.stackSize;
                     });
                     cnt += cc[0];
@@ -219,6 +223,35 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         }
         return cnt;
     }
+
+    private static Set<Integer> getOredictMatchers(ItemStack stack, boolean oredict) {
+        Set<Integer> oredictMatches = new HashSet<Integer>();
+        if (oredict) {
+            for (int id : OreDictionary.getOreIDs(stack)) {
+                oredictMatches.add(id);
+            }
+        }
+        return oredictMatches;
+    }
+
+    public static boolean isItemEqual(ItemStack thisItem, ItemStack other, boolean oredict) {
+        return isItemEqual(thisItem, other, getOredictMatchers(thisItem, oredict));
+    }
+
+    public static boolean isItemEqual(ItemStack thisItem, ItemStack other, Set<Integer> oreDictMatchers) {
+        if (oreDictMatchers.isEmpty()) {
+            return thisItem.isItemEqual(other);
+        } else {
+            int[] oreIDs = OreDictionary.getOreIDs(other);
+            for (int id : oreIDs) {
+                if (oreDictMatchers.contains(id)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
     public Set<BlockPos> performSearch(String search) {
         List<BlockPos> inventories = getInventories();
