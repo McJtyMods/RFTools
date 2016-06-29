@@ -19,11 +19,8 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -59,7 +56,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     private int listDirty = 0;
 
     // From server: all the positions with inventories
-    public static List<BlockPos> fromServer_inventories = new ArrayList<>();
+    public static List<InventoriesInfoPacketClient.InventoryInfo> fromServer_inventories = new ArrayList<>();
     // From server: all the positions with inventories matching the search
     public static Set<BlockPos> fromServer_foundInventories = new HashSet<>();
     // From server: the contents of an inventory
@@ -128,7 +125,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 .setDesiredWidth(50)
                 .setDesiredHeight(14)
                 .addButtonEvent(parent -> RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID,
-                                                                                                            new InventoriesInfoPacketServer(tileEntity.getWorld(), tileEntity.getPos(), true))))
+                        new InventoriesInfoPacketServer(tileEntity.getDimension(), tileEntity.getPos(), true))))
                 .setTooltips("Start/stop a scan of", "all storage units", "in radius");
         radiusLabel = new ScrollableLabel(mc, this)
                 .addValueEvent((parent, newValue) -> changeRadius(newValue))
@@ -162,6 +159,13 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 .addChild(radiusSlider)
                 .addChild(radiusLabel);
 
+        if (tileEntity.isDummy()) {
+            scanButton.setEnabled(false);
+            radiusLabel.setVisible(false);
+            energyBar.setVisible(false);
+            radiusSlider.setEnabled(false);
+        }
+
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(topPanel).addChild(itemPanel).addChild(searchPanel).addChild(scanPanel);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
@@ -171,9 +175,12 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
         fromServer_foundInventories.clear();
         fromServer_inventory.clear();
-//        fromServer_inventories.clear();
 
-        tileEntity.requestRfFromServer(RFTools.MODID);
+        if (!tileEntity.isDummy()) {
+            tileEntity.requestRfFromServer(RFTools.MODID);
+        } else {
+            fromServer_inventories.clear();
+        }
     }
 
     private void moveUp() {
@@ -192,10 +199,12 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         if (index == -1) {
             return;
         }
-        BlockPos c = fromServer_inventories.get(index);
-        RFTools.instance.clientInfo.hilightBlock(c, System.currentTimeMillis()+1000* StorageScannerConfiguration.hilightTime);
-        Logging.message(mc.thePlayer, "The inventory is now highlighted");
-        mc.thePlayer.closeScreen();
+        InventoriesInfoPacketClient.InventoryInfo c = fromServer_inventories.get(index);
+        if (c != null) {
+            RFTools.instance.clientInfo.hilightBlock(c.getPos(), System.currentTimeMillis() + 1000 * StorageScannerConfiguration.hilightTime);
+            Logging.message(mc.thePlayer, "The inventory is now highlighted");
+            mc.thePlayer.closeScreen();
+        }
     }
 
     private void changeRadius(int r) {
@@ -205,7 +214,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     private void startSearch(String text) {
         if (!text.isEmpty()) {
             RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID,
-                                                                              new SearchItemsInfoPacketServer(tileEntity.getWorld(), tileEntity.getPos(), text)));
+                    new SearchItemsInfoPacketServer(tileEntity.getDimension(), tileEntity.getPos(), text)));
         }
     }
 
@@ -213,7 +222,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         BlockPos c = getSelectedContainerPos();
         if (c != null) {
             RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID,
-                                                                              new GetContentsInfoPacketServer(tileEntity.getWorld(), tileEntity.getPos(), c)));
+                    new GetContentsInfoPacketServer(tileEntity.getDimension(), tileEntity.getPos(), c)));
         }
     }
 
@@ -221,7 +230,12 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         int selected = storageList.getSelected();
         if (selected != -1) {
             if (selected < fromServer_inventories.size()) {
-                return fromServer_inventories.get(selected);
+                InventoriesInfoPacketClient.InventoryInfo info = fromServer_inventories.get(selected);
+                if (info == null) {
+                    return null;
+                } else {
+                    return info.getPos();
+                }
             }
         }
         return null;
@@ -231,7 +245,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         listDirty--;
         if (listDirty <= 0) {
             RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID,
-                                                                              new InventoriesInfoPacketServer(tileEntity.getWorld(), tileEntity.getPos(), false)));
+                    new InventoriesInfoPacketServer(tileEntity.getDimension(), tileEntity.getPos(), false)));
             getInventoryOnServer();
             listDirty = 20;
         }
@@ -287,6 +301,10 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     }
 
     private void changeRoutable(BlockPos c) {
+        if (tileEntity.isDummy()) {
+            // Can't change routable info remotely
+            return;
+        }
         sendServerCommand(RFToolsMessages.INSTANCE, StorageScannerTileEntity.CMD_TOGGLEROUTABLE,
                 new Argument("pos", c));
         listDirty = 0;
@@ -294,23 +312,15 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
     private void updateStorageList() {
         storageList.removeChildren();
-        for (BlockPos c : fromServer_inventories) {
-            IBlockState state = mc.theWorld.getBlockState(c);
-            Block block = state.getBlock();
-            String displayName;
-            if (mc.theWorld.isAirBlock(c)) {
-                displayName = "[REMOVED]";
-                block = null;
-            } else {
-                displayName = BlockInfo.getReadableName(state);
-            }
-
-            boolean routable = tileEntity.isRoutable(c);
+        for (InventoriesInfoPacketClient.InventoryInfo c : fromServer_inventories) {
+            String displayName = c.getName();
+            boolean routable = c.isRoutable();
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
-            panel.addChild(new BlockRender(mc, this).setRenderItem(block));
+            panel.addChild(new BlockRender(mc, this).setRenderItem(c.getBlock()));
             panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(90));
-            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setDynamic(true).setText(BlockPosTools.toString(c)));
-            ImageChoiceLabel choiceLabel = new ImageChoiceLabel(mc, this).addChoiceEvent((parent, newChoice) -> changeRoutable(c)).setDesiredWidth(13);
+            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setDynamic(true).setText(BlockPosTools.toString(c.getPos())));
+            ImageChoiceLabel choiceLabel = new ImageChoiceLabel(mc, this)
+                    .addChoiceEvent((parent, newChoice) -> changeRoutable(c.getPos())).setDesiredWidth(13);
             choiceLabel.addChoice("No", "Not routable", guielements, 131, 19);
             choiceLabel.addChoice("Yes", "Routable", guielements, 115, 19);
             choiceLabel.setCurrentChoice(routable ? 1 : 0);
@@ -321,8 +331,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
         storageList.clearHilightedRows();
         int i = 0;
-        for (BlockPos c : fromServer_inventories) {
-            if (fromServer_foundInventories.contains(c)) {
+        for (InventoriesInfoPacketClient.InventoryInfo c : fromServer_inventories) {
+            if (fromServer_foundInventories.contains(c.getPos())) {
                 storageList.addHilightedRow(i);
             }
             i++;
@@ -336,7 +346,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         requestListsIfNeeded();
 
         int selected = storageList.getSelected();
-        if (selected == -1 || storageList.getChildCount() <= 1) {
+        if (tileEntity.isDummy() || selected == -1 || storageList.getChildCount() <= 1) {
             upButton.setEnabled(false);
             downButton.setEnabled(false);
         } else if (selected == 0) {
@@ -353,6 +363,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         drawWindow();
         int currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
-        tileEntity.requestRfFromServer(RFTools.MODID);
+        if (!tileEntity.isDummy()) {
+            tileEntity.requestRfFromServer(RFTools.MODID);
+        }
     }
 }

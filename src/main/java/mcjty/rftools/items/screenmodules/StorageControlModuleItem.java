@@ -2,6 +2,7 @@ package mcjty.rftools.items.screenmodules;
 
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.BlockInfo;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.api.screens.IScreenModule;
@@ -28,6 +29,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
+import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
@@ -40,26 +42,40 @@ public class StorageControlModuleItem extends GenericRFToolsItem implements IMod
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.STORAGE_CONTROL_RFPERTICK + " RF/tick");
         boolean hasTarget = false;
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
-            list.add(TextFormatting.YELLOW + "Label: " + tagCompound.getString("text"));
-            if (tagCompound.hasKey("monitorx")) {
-                int monitorx = tagCompound.getInteger("monitorx");
-                int monitory = tagCompound.getInteger("monitory");
-                int monitorz = tagCompound.getInteger("monitorz");
-                String monitorname = tagCompound.getString("monitorname");
-                list.add(TextFormatting.YELLOW + "Monitoring: " + monitorname + " (at " + monitorx + "," + monitory + "," + monitorz + ")");
-                hasTarget = true;
-            }
+            hasTarget = addModuleInformation(list, tagCompound);
         }
         if (!hasTarget) {
             list.add(TextFormatting.YELLOW + "Sneak right-click on a storage scanner to set the");
             list.add(TextFormatting.YELLOW + "target for this storage module");
         }
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            list.add(TextFormatting.WHITE + "This screen module allows you to monitor 9 different");
+            list.add(TextFormatting.WHITE + "items through a storage scanner.");
+            list.add(TextFormatting.WHITE + "This module can also be combined with a tablet");
+            list.add(TextFormatting.WHITE + "for remote access to a storage scanner controlled");
+            list.add(TextFormatting.WHITE + "system");
+        } else {
+            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+        }
+    }
+
+    public static boolean addModuleInformation(List<String> list, NBTTagCompound tagCompound) {
+        list.add(TextFormatting.YELLOW + "Label: " + tagCompound.getString("text"));
+        if (tagCompound.hasKey("monitorx")) {
+            int monitorx = tagCompound.getInteger("monitorx");
+            int monitory = tagCompound.getInteger("monitory");
+            int monitorz = tagCompound.getInteger("monitorz");
+            String monitorname = tagCompound.getString("monitorname");
+            list.add(TextFormatting.YELLOW + "Monitoring: " + monitorname + " (at " + monitorx + "," + monitory + "," + monitorz + ")");
+            return true;
+        }
+        return false;
     }
 
     @Override

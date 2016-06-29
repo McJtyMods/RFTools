@@ -6,6 +6,8 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.items.GenericRFToolsItem;
+import mcjty.rftools.items.screenmodules.StorageControlModuleItem;
+import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,9 +17,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -31,6 +37,9 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
 
     public static final int DAMAGE_EMPTY = 0;
     public static final int DAMAGE_FULL = 1;
+    public static final int DAMAGE_SCANNER = 2;
+
+    public static final int META_FOR_SCANNER = 666;
 
     public StorageModuleTabletItem() {
         super("storage_module_tablet");
@@ -54,10 +63,15 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
                 new ModelResourceLocation(getRegistryName(), "inventory"));
         ModelLoader.setCustomModelResourceLocation(this, DAMAGE_EMPTY, new ModelResourceLocation(getRegistryName() + "_empty", "inventory"));
         ModelLoader.setCustomModelResourceLocation(this, DAMAGE_FULL, new ModelResourceLocation(getRegistryName(), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(this, DAMAGE_SCANNER, new ModelResourceLocation(getRegistryName() + "_scanner", "inventory"));
     }
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+        // Make sure the tablet only works in main hand to avoid problems later
+        if (hand != EnumHand.MAIN_HAND) {
+            return new ActionResult<>(EnumActionResult.PASS, stack);
+        }
         if (!world.isRemote) {
             NBTTagCompound tagCompound = stack.getTagCompound();
             if (tagCompound == null || !tagCompound.hasKey("childDamage")) {
@@ -66,9 +80,14 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
             }
 
             int moduleDamage = tagCompound.getInteger("childDamage");
-            int rfNeeded = ModularStorageConfiguration.TABLET_CONSUMEPERUSE;
-            if (moduleDamage != StorageModuleItem.STORAGE_REMOTE) {
-                rfNeeded += ModularStorageConfiguration.TABLET_EXTRACONSUME * (moduleDamage + 1);
+            int rfNeeded;
+            if (moduleDamage == META_FOR_SCANNER) {
+                rfNeeded = ModularStorageConfiguration.TABLET_CONSUMEPERUSE_SCANNER;
+            } else {
+                rfNeeded = ModularStorageConfiguration.TABLET_CONSUMEPERUSE;
+                if (moduleDamage != StorageModuleItem.STORAGE_REMOTE) {
+                    rfNeeded += ModularStorageConfiguration.TABLET_EXTRACONSUME * (moduleDamage + 1);
+                }
             }
 
             int energy = tagCompound.getInteger("Energy");
@@ -80,7 +99,23 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
             energy -= rfNeeded;
             tagCompound.setInteger("Energy", energy);
 
-            if (moduleDamage == StorageModuleItem.STORAGE_REMOTE) {
+            if (moduleDamage == META_FOR_SCANNER) {
+                if (tagCompound.hasKey("monitorx")) {
+                    int monitordim = tagCompound.getInteger("monitordim");
+                    int monitorx = tagCompound.getInteger("monitorx");
+                    int monitory = tagCompound.getInteger("monitory");
+                    int monitorz = tagCompound.getInteger("monitorz");
+                    BlockPos pos = new BlockPos(monitorx, monitory, monitorz);
+                    WorldServer w = DimensionManager.getWorld(monitordim);
+                    if (w == null || !RFToolsTools.chunkLoaded(w, pos)) {
+                        player.addChatComponentMessage(new TextComponentString(TextFormatting.RED + "Storage scanner is out of range!"));
+                    } else {
+                        player.openGui(RFTools.instance, RFTools.GUI_REMOTE_STORAGESCANNER_ITEM, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+                    }
+                } else {
+                    player.addChatComponentMessage(new TextComponentString(TextFormatting.RED + "Storage module is not linked to a storage scanner!"));
+                }
+            } else if (moduleDamage == StorageModuleItem.STORAGE_REMOTE) {
                 if (!tagCompound.hasKey("id")) {
                     Logging.message(player, TextFormatting.YELLOW + "This remote storage module is not linked!");
                     return new ActionResult<>(EnumActionResult.FAIL, stack);
@@ -96,7 +131,7 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
 
     @Override
     public boolean hasContainerItem(ItemStack stack) {
-        if (stack.getItemDamage() == DAMAGE_FULL) {
+        if (stack.getItemDamage() != DAMAGE_EMPTY) {
             return true;
         }
         return false;
@@ -120,7 +155,7 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
     }
 
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
@@ -128,6 +163,9 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
             if (itemStack.getItemDamage() == DAMAGE_FULL) {
                 int max = StorageModuleItem.MAXSIZE[tagCompound.getInteger("childDamage")];
                 StorageModuleItem.addModuleInformation(list, max, tagCompound);
+            } else if (itemStack.getItemDamage() == DAMAGE_SCANNER) {
+                list.add(TextFormatting.YELLOW + "Storage scanner module installed!");
+                StorageControlModuleItem.addModuleInformation(list, tagCompound);
             } else {
                 list.add(TextFormatting.YELLOW + "No storage module installed!");
             }
@@ -136,6 +174,8 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
             list.add("This RF/charged module can hold a storage module");
             list.add("and allows the wielder to manipulate the contents of");
             list.add("this module (remote or normal).");
+            list.add("You can also combine this with a storage control");
+            list.add("module for remote access to a storage scanner");
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }

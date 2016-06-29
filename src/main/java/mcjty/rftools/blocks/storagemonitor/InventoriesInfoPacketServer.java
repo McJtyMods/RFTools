@@ -4,7 +4,10 @@ import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.network.clientinfo.InfoPacketClient;
 import mcjty.lib.network.clientinfo.InfoPacketServer;
-import mcjty.rftools.blocks.teleporter.TeleportationTools;
+import mcjty.rftools.BlockInfo;
+import mcjty.rftools.varia.RFToolsTools;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -13,6 +16,7 @@ import net.minecraftforge.common.DimensionManager;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class InventoriesInfoPacketServer implements InfoPacketServer {
 
@@ -37,8 +41,8 @@ public class InventoriesInfoPacketServer implements InfoPacketServer {
     public InventoriesInfoPacketServer() {
     }
 
-    public InventoriesInfoPacketServer(World world, BlockPos pos, boolean doscan) {
-        this.id = world.provider.getDimension();
+    public InventoriesInfoPacketServer(int worldId, BlockPos pos, boolean doscan) {
+        this.id = worldId;
         this.pos = pos;
         this.doscan = doscan;
     }
@@ -47,6 +51,10 @@ public class InventoriesInfoPacketServer implements InfoPacketServer {
     public Optional<InfoPacketClient> onMessageServer(EntityPlayerMP entityPlayerMP) {
         World world = DimensionManager.getWorld(id);
         if (world == null) {
+            return Optional.empty();
+        }
+
+        if (!RFToolsTools.chunkLoaded(world, pos)) {
             return Optional.empty();
         }
 
@@ -59,9 +67,30 @@ public class InventoriesInfoPacketServer implements InfoPacketServer {
             } else {
                 inventories = scannerTileEntity.getInventories();
             }
-            return Optional.of(new InventoriesInfoPacketClient(inventories));
+
+            List<InventoriesInfoPacketClient.InventoryInfo> invs = inventories.stream()
+                    .map(pos -> toInventoryInfo(world, pos, scannerTileEntity))
+                    .collect(Collectors.toList());
+
+            return Optional.of(new InventoriesInfoPacketClient(invs));
         }
 
         return Optional.empty();
+    }
+
+    private static InventoriesInfoPacketClient.InventoryInfo toInventoryInfo(World world, BlockPos pos, StorageScannerTileEntity te) {
+        IBlockState state = world.getBlockState(pos);
+        Block block = state.getBlock();
+        String displayName;
+        if (!RFToolsTools.chunkLoaded(world, pos)) {
+            displayName = "[UNLOADED]";
+            block = null;
+        } else if (world.isAirBlock(pos)) {
+            displayName = "[REMOVED]";
+            block = null;
+        } else {
+            displayName = BlockInfo.getReadableName(state);
+        }
+        return new InventoriesInfoPacketClient.InventoryInfo(pos, displayName, te.isRoutable(pos), block);
     }
 }

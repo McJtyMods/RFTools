@@ -7,12 +7,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 
+import java.util.function.Function;
+
 public class ContainerToItemRecipe extends ShapedRecipes {
     private Object objectToInheritFrom;
+    private Function<NBTTagCompound, Integer> getMetaFunction;
 
-    public ContainerToItemRecipe(ItemStack item, ItemStack output) {
+    public ContainerToItemRecipe(ItemStack item, ItemStack output, Function<NBTTagCompound, Integer> getMetaFunction) {
         super(1, 1, new ItemStack[] { item }, output);
         objectToInheritFrom = getObjectFromStack(item.getItem());
+        this.getMetaFunction = getMetaFunction == null ? s -> s.getInteger("childDamage") : getMetaFunction;
     }
 
     private Object getObjectFromStack(Item item) {
@@ -43,7 +47,7 @@ public class ContainerToItemRecipe extends ShapedRecipes {
         if (stack != null) {
             NBTTagCompound tagCompound = getNBTFromObject(inventoryCrafting);
             if (tagCompound != null) {
-                int damage = tagCompound.getInteger("childDamage");
+                int damage = getMetaFunction.apply(tagCompound);
                 NBTTagCompound newtag = new NBTTagCompound();
                 for (Object o : tagCompound.getKeySet()) {
                     String tag = (String) o;

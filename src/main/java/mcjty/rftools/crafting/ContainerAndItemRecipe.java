@@ -7,14 +7,24 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 
+import java.util.function.Function;
+
 public class ContainerAndItemRecipe extends ShapedRecipes {
     private Object objectToInheritFrom;
     private Object objectToGetEnergyFrom;
+    private Function<InventoryCrafting,Integer> getMetaFunction;
 
-    public ContainerAndItemRecipe(ItemStack container, ItemStack item, ItemStack output) {
+    public ContainerAndItemRecipe(ItemStack container, ItemStack item, ItemStack output,
+                                  Function<InventoryCrafting,Integer> getMetaFunction) {
         super(2, 1, new ItemStack[] { container, item }, output);
         objectToInheritFrom = getObjectFromStack(item.getItem());
         objectToGetEnergyFrom = getObjectFromStack(container.getItem());
+        this.getMetaFunction = getMetaFunction == null ? new Function<InventoryCrafting, Integer>() {
+            @Override
+            public Integer apply(InventoryCrafting inventoryCrafting) {
+                return getDamageFromObject(inventoryCrafting);
+            }
+        } : getMetaFunction;
     }
 
     private Object getObjectFromStack(Item item) {
@@ -71,7 +81,7 @@ public class ContainerAndItemRecipe extends ShapedRecipes {
                 getCompound(stack).setInteger("Energy", tagCompoundEnergy.getInteger("Energy"));
             }
 
-            Integer damage = getDamageFromObject(inventoryCrafting);
+            Integer damage = getMetaFunction.apply(inventoryCrafting);
             if (damage != null) {
                 getCompound(stack).setInteger("childDamage", damage);
             }
