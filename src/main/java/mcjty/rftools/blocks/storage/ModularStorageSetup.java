@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.crafting.ContainerAndItemRecipe;
 import mcjty.rftools.crafting.ContainerToItemRecipe;
 import mcjty.rftools.crafting.PreservingShapedRecipe;
@@ -11,6 +12,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import static mcjty.rftools.items.storage.StorageModuleTabletItem.META_FOR_SCANNER;
 
 public class ModularStorageSetup {
     public static ModularStorageBlock modularStorageBlock;
@@ -56,15 +59,19 @@ public class ModularStorageSetup {
 
         GameRegistry.addRecipe(new ItemStack(storageModuleTabletItem, 1, StorageModuleTabletItem.DAMAGE_EMPTY), "geg", "rqr", "grg", 'g', Items.GOLD_NUGGET, 'e', Items.EMERALD, 'r', Blocks.REDSTONE_BLOCK, 'q', Blocks.QUARTZ_BLOCK);
         GameRegistry.addRecipe(new ContainerAndItemRecipe(new ItemStack(storageModuleTabletItem, 1, StorageModuleTabletItem.DAMAGE_EMPTY), new ItemStack(storageModuleItem, 1, StorageModuleItem.STORAGE_TIER1),
-                new ItemStack(storageModuleTabletItem, 1, StorageModuleTabletItem.DAMAGE_FULL)));
+                new ItemStack(storageModuleTabletItem, 1, StorageModuleTabletItem.DAMAGE_FULL), null));
         GameRegistry.addRecipe(new ContainerAndItemRecipe(new ItemStack(storageModuleTabletItem, 1, StorageModuleTabletItem.DAMAGE_EMPTY), new ItemStack(storageModuleItem, 1, StorageModuleItem.STORAGE_TIER2),
-                new ItemStack(storageModuleTabletItem, 1, StorageModuleTabletItem.DAMAGE_FULL)));
+                new ItemStack(storageModuleTabletItem, 1, StorageModuleTabletItem.DAMAGE_FULL), null));
         GameRegistry.addRecipe(new ContainerAndItemRecipe(new ItemStack(storageModuleTabletItem, 1, StorageModuleTabletItem.DAMAGE_EMPTY), new ItemStack(storageModuleItem, 1, StorageModuleItem.STORAGE_TIER3),
-                new ItemStack(storageModuleTabletItem, 1, StorageModuleTabletItem.DAMAGE_FULL)));
+                new ItemStack(storageModuleTabletItem, 1, StorageModuleTabletItem.DAMAGE_FULL), null));
         GameRegistry.addRecipe(new ContainerAndItemRecipe(new ItemStack(storageModuleTabletItem, 1, StorageModuleTabletItem.DAMAGE_EMPTY), new ItemStack(storageModuleItem, 1, StorageModuleItem.STORAGE_REMOTE),
-                new ItemStack(storageModuleTabletItem, 1, StorageModuleTabletItem.DAMAGE_FULL)));
+                new ItemStack(storageModuleTabletItem, 1, StorageModuleTabletItem.DAMAGE_FULL), null));
+        GameRegistry.addRecipe(new ContainerAndItemRecipe(new ItemStack(storageModuleTabletItem, 1, StorageModuleTabletItem.DAMAGE_EMPTY), new ItemStack(ScreenSetup.storageControlModuleItem, 1),
+                new ItemStack(storageModuleTabletItem, 1, StorageModuleTabletItem.DAMAGE_SCANNER), i -> META_FOR_SCANNER));
         GameRegistry.addRecipe(new ContainerToItemRecipe(new ItemStack(storageModuleTabletItem, 1, StorageModuleTabletItem.DAMAGE_FULL),
-                new ItemStack(storageModuleItem)));
+                new ItemStack(storageModuleItem), null));
+        GameRegistry.addRecipe(new ContainerToItemRecipe(new ItemStack(storageModuleTabletItem, 1, StorageModuleTabletItem.DAMAGE_SCANNER),
+                new ItemStack(ScreenSetup.storageControlModuleItem), n -> 0));
 
         GameRegistry.addRecipe(new ItemStack(storageModuleItem, 1, StorageModuleItem.STORAGE_TIER1), " c ", "gig", "qrq", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
                 'g', Items.GOLD_NUGGET, 'c', Blocks.CHEST, 'q', Items.QUARTZ);

@@ -4,6 +4,8 @@ import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.network.clientinfo.InfoPacketClient;
 import mcjty.lib.network.clientinfo.InfoPacketServer;
+import mcjty.rftools.RFTools;
+import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -38,8 +40,8 @@ public class GetContentsInfoPacketServer implements InfoPacketServer {
     public GetContentsInfoPacketServer() {
     }
 
-    public GetContentsInfoPacketServer(World world, BlockPos pos, BlockPos cpos) {
-        this.id = world.provider.getDimension();
+    public GetContentsInfoPacketServer(int worldId, BlockPos pos, BlockPos cpos) {
+        this.id = worldId;
         this.pos = pos;
         this.cpos = cpos;
     }
@@ -48,6 +50,10 @@ public class GetContentsInfoPacketServer implements InfoPacketServer {
     public Optional<InfoPacketClient> onMessageServer(EntityPlayerMP entityPlayerMP) {
         World world = DimensionManager.getWorld(id);
         if (world == null) {
+            return Optional.empty();
+        }
+
+        if (!RFToolsTools.chunkLoaded(world, pos)) {
             return Optional.empty();
         }
 

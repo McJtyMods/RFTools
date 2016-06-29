@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.network.clientinfo.InfoPacketClient;
 import mcjty.lib.network.clientinfo.InfoPacketServer;
+import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -37,8 +38,8 @@ public class SearchItemsInfoPacketServer implements InfoPacketServer {
     public SearchItemsInfoPacketServer() {
     }
 
-    public SearchItemsInfoPacketServer(World world, BlockPos pos, String text) {
-        this.id = world.provider.getDimension();
+    public SearchItemsInfoPacketServer(int worldId, BlockPos pos, String text) {
+        this.id = worldId;
         this.pos = pos;
         this.text = text;
     }
@@ -47,6 +48,10 @@ public class SearchItemsInfoPacketServer implements InfoPacketServer {
     public Optional<InfoPacketClient> onMessageServer(EntityPlayerMP entityPlayerMP) {
         World world = DimensionManager.getWorld(id);
         if (world == null) {
+            return Optional.empty();
+        }
+
+        if (!RFToolsTools.chunkLoaded(world, pos)) {
             return Optional.empty();
         }
 

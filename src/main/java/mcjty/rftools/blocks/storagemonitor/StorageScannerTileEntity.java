@@ -441,6 +441,18 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         return false;
     }
 
+    /**
+     * Return true if this is a dummy TE. i.e. this happens only when accessing a
+     * storage scanner in a tablet on the client side.
+     */
+    public boolean isDummy() {
+        return false;
+    }
+
+    public int getDimension() {
+        return worldObj.provider.getDimension();
+    }
+
     @Override
     public InventoryHelper getInventoryHelper() {
         return inventoryHelper;
@@ -448,7 +460,9 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        return canPlayerAccess(player);
+        // @todo
+        return true;
+//        return canPlayerAccess(player);
     }
 
     @Override

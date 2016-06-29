@@ -5,6 +5,9 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.GuiModularStorage;
 import mcjty.rftools.blocks.storage.ModularStorageItemContainer;
 import mcjty.rftools.blocks.storage.RemoteStorageItemContainer;
+import mcjty.rftools.blocks.storagemonitor.GuiStorageScanner;
+import mcjty.rftools.blocks.storagemonitor.StorageScannerContainer;
+import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import mcjty.rftools.items.builder.GuiChamberDetails;
 import mcjty.rftools.items.builder.GuiShapeCard;
 import mcjty.rftools.items.creativeonly.GuiDevelopersDelight;
@@ -16,9 +19,14 @@ import mcjty.rftools.items.teleportprobe.GuiAdvancedPorter;
 import mcjty.rftools.items.teleportprobe.GuiTeleportProbe;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
 public class GuiProxy implements IGuiHandler {
@@ -29,6 +37,24 @@ public class GuiProxy implements IGuiHandler {
             return null;
         } else if (guiid == RFTools.GUI_REMOTE_STORAGE_ITEM) {
             return new RemoteStorageItemContainer(entityPlayer);
+        } else if (guiid == RFTools.GUI_REMOTE_STORAGESCANNER_ITEM) {
+            // We are in a tablet
+            ItemStack tablet = entityPlayer.getHeldItemMainhand();
+            NBTTagCompound tagCompound = tablet.getTagCompound();
+            int monitordim = tagCompound.getInteger("monitordim");
+            int monitorx = tagCompound.getInteger("monitorx");
+            int monitory = tagCompound.getInteger("monitory");
+            int monitorz = tagCompound.getInteger("monitorz");
+            BlockPos pos = new BlockPos(monitorx, monitory, monitorz);
+            WorldServer w = DimensionManager.getWorld(monitordim);
+            if (w == null) {
+                return null;
+            }
+            TileEntity te = w.getTileEntity(pos);
+            if (!(te instanceof StorageScannerTileEntity)) {
+                return null;
+            }
+            return new StorageScannerContainer(entityPlayer, (IInventory) te);
         } else if (guiid == RFTools.GUI_MODULAR_STORAGE_ITEM) {
             return new ModularStorageItemContainer(entityPlayer);
         } else if (guiid == RFTools.GUI_STORAGE_FILTER) {
@@ -63,6 +89,27 @@ public class GuiProxy implements IGuiHandler {
             return new GuiDevelopersDelight();
         } else if (guiid == RFTools.GUI_REMOTE_STORAGE_ITEM) {
             return new GuiModularStorage(new RemoteStorageItemContainer(entityPlayer));
+        } else if (guiid == RFTools.GUI_REMOTE_STORAGESCANNER_ITEM) {
+            ItemStack tablet = entityPlayer.getHeldItemMainhand();
+            NBTTagCompound tagCompound = tablet.getTagCompound();
+            int monitordim = tagCompound.getInteger("monitordim");
+            int monitorx = tagCompound.getInteger("monitorx");
+            int monitory = tagCompound.getInteger("monitory");
+            int monitorz = tagCompound.getInteger("monitorz");
+            BlockPos pos = new BlockPos(monitorx, monitory, monitorz);
+            StorageScannerTileEntity te = new StorageScannerTileEntity() {
+                @Override
+                public int getDimension() {
+                    return monitordim;
+                }
+
+                @Override
+                public boolean isDummy() {
+                    return true;
+                }
+            };
+            te.setPos(pos);
+            return new GuiStorageScanner(te, new StorageScannerContainer(entityPlayer, te));
         } else if (guiid == RFTools.GUI_MODULAR_STORAGE_ITEM) {
             return new GuiModularStorage(new ModularStorageItemContainer(entityPlayer));
         } else if (guiid == RFTools.GUI_STORAGE_FILTER) {
