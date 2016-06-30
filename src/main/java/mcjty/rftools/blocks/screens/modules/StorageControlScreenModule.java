@@ -5,6 +5,7 @@ import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
+import mcjty.rftools.api.screens.ITooltipInfo;
 import mcjty.rftools.api.screens.data.IModuleData;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
@@ -15,10 +16,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
-public class StorageControlScreenModule implements IScreenModule<StorageControlScreenModule.ModuleDataStacks> {
+public class StorageControlScreenModule implements IScreenModule<StorageControlScreenModule.ModuleDataStacks>, ITooltipInfo {
     private ItemStack[] stacks = new ItemStack[9];
 
     protected int dim = 0;
@@ -44,12 +46,14 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
         public ModuleDataStacks(ByteBuf buf) {
             int s = buf.readInt();
             amounts = new int[s];
-            for (int i = 0 ; i < s ; i++) {
+            for (int i = 0; i < s; i++) {
                 amounts[i] = buf.readInt();
             }
         }
 
-        public int getAmount(int idx) { return amounts[idx]; }
+        public int getAmount(int idx) {
+            return amounts[idx];
+        }
 
         @Override
         public void writeToBuf(ByteBuf buf) {
@@ -68,7 +72,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
             return null;
         }
         int[] amounts = new int[stacks.length];
-        for (int i = 0 ; i < stacks.length ; i++) {
+        for (int i = 0; i < stacks.length; i++) {
             amounts[i] = scannerTileEntity.countStack(stacks[i], starred, oredict);
         }
         return new ModuleDataStacks(amounts);
@@ -100,9 +104,9 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
     public void setupFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             setupCoordinateFromNBT(tagCompound, dim, pos);
-            for (int i = 0 ; i < stacks.length ; i++) {
-                if (tagCompound.hasKey("stack"+i)) {
-                    stacks[i] = ItemStack.loadItemStackFromNBT(tagCompound.getCompoundTag("stack"+i));
+            for (int i = 0; i < stacks.length; i++) {
+                if (tagCompound.hasKey("stack" + i)) {
+                    stacks[i] = ItemStack.loadItemStackFromNBT(tagCompound.getCompoundTag("stack" + i));
                 }
             }
         }
@@ -110,6 +114,40 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
         if (te != null) {
             te.clearCachedCounts();
         }
+    }
+
+    private int getHighlightedStack(int hitx, int hity) {
+        int i = 0;
+        for (int yy = 0; yy < 3; yy++) {
+            int y = 7 + yy * 35;
+            for (int xx = 0; xx < 3; xx++) {
+                if (stacks[i] != null) {
+                    int x = xx * 40;
+
+                    boolean hilighted = hitx >= x + 8 && hitx <= x + 38 && hity >= y - 7 && hity <= y + 22;
+                    if (hilighted) {
+                        return i;
+                    }
+                }
+                i++;
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public String[] getInfo(World world, int x, int y, EntityPlayer player) {
+        StorageScannerTileEntity te = getStorageScanner();
+        if (te != null) {
+            int i = getHighlightedStack(x, y);
+            if (i != -1 && stacks[i] != null) {
+                int count = te.countStack(stacks[i], starred, oredict);
+                return new String[]{
+                        TextFormatting.GREEN + "Item: " +
+                                TextFormatting.WHITE + stacks[i].getDisplayName() + " (" + count + ")"};
+            }
+        }
+        return new String[0];
     }
 
     protected void setupCoordinateFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
@@ -172,7 +210,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
 
             boolean insertAllActive = hitx >= 60 && hity > 98;
             if (insertAllActive) {
-                for (int i = 0 ; i < player.inventory.getSizeInventory() ; i++) {
+                for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
                     if (isShown(player.inventory.getStackInSlot(i))) {
                         ItemStack stack = scannerTileEntity.injectStack(player.inventory.getStackInSlot(i), player);
                         player.inventory.setInventorySlotContents(i, stack);
@@ -182,21 +220,9 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
                 return;
             }
 
-            int i = 0;
-            for (int yy = 0 ; yy < 3 ; yy++) {
-                int y = 7 + yy * 35;
-                for (int xx = 0 ; xx < 3 ; xx++) {
-                    if (stacks[i] != null) {
-                        int x = xx * 40;
-
-                        boolean hilighted = hitx >= x +8 && hitx <= x + 38 && hity >= y-7 && hity <= y + 22;
-                        if (hilighted) {
-                            scannerTileEntity.giveToPlayer(stacks[i], player.isSneaking(), player, oredict);
-                            return;
-                        }
-                    }
-                    i++;
-                }
+            int i = getHighlightedStack(hitx, hity);
+            if (i != -1) {
+                scannerTileEntity.giveToPlayer(stacks[i], player.isSneaking(), player, oredict);
             }
         }
 
