@@ -20,6 +20,10 @@ public class CrafterContainer extends GenericContainer {
 
     private final IInventory crafterBaseTE;
 
+    public IInventory getCrafterTE() {
+        return crafterBaseTE;
+    }
+
     public static final ContainerFactory factory = new ContainerFactory() {
         @Override
         protected void setup() {

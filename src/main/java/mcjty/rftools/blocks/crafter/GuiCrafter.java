@@ -30,6 +30,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
+import java.util.List;
 
 public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     public static final int CRAFTER_WIDTH = 256;
@@ -211,6 +212,13 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
                 addChild(new BlockRender(mc, this).setRenderItem(craftingResult)).
                 addChild(new Label(mc, this).setColor(color).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDynamic(true).setText(readableName));
         recipeList.addChild(panel);
+    }
+
+    public void copyRecipeFromJEI(List<ItemStack> result) {
+        inventorySlots.getSlot(CrafterContainer.SLOT_CRAFTOUTPUT).putStack(result.get(0));
+        for (int i = 1 ; i < result.size() ; i++) {
+            inventorySlots.getSlot(CrafterContainer.SLOT_CRAFTINPUT+i-1).putStack(result.get(i));
+        }
     }
 
     private void selectRecipe() {
