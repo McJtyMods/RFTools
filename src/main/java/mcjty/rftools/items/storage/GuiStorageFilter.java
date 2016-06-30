@@ -22,7 +22,7 @@ import java.awt.*;
 
 public class GuiStorageFilter extends GenericGuiContainer<ModularStorageTileEntity> {
     public static final int CONTROLLER_WIDTH = 180;
-    public static final int CONTROLLER_HEIGHT = 152;
+    public static final int CONTROLLER_HEIGHT = 188;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/storagefilter.png");
     private static final ResourceLocation guiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");

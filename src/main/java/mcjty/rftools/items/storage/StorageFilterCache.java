@@ -17,7 +17,7 @@ public class StorageFilterCache {
     private boolean nbtMode = false;
     private boolean modMode = false;
     private ItemStack stacks[];
-    private Set<Integer> oredictMatches = new HashSet<Integer>();
+    private Set<Integer> oredictMatches = new HashSet<>();
 
     // Parameter is the filter item.
     StorageFilterCache(ItemStack stack) {
