@@ -121,13 +121,11 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
         for (int yy = 0; yy < 3; yy++) {
             int y = 7 + yy * 35;
             for (int xx = 0; xx < 3; xx++) {
-                if (stacks[i] != null) {
-                    int x = xx * 40;
+                int x = xx * 40;
 
-                    boolean hilighted = hitx >= x + 8 && hitx <= x + 38 && hity >= y - 7 && hity <= y + 22;
-                    if (hilighted) {
-                        return i;
-                    }
+                boolean hilighted = hitx >= x + 8 && hitx <= x + 38 && hity >= y - 7 && hity <= y + 22;
+                if (hilighted) {
+                    return i;
                 }
                 i++;
             }
@@ -190,10 +188,16 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
     }
 
     @Override
-    public void mouseClick(World world, int hitx, int hity, boolean clicked, EntityPlayer player) {
+    public void mouseClick(World world, int x, int y, boolean clicked, EntityPlayer player) {
+
+    }
+
+    @Override
+    public NBTTagCompound mouseClick(World world, int hitx, int hity, boolean clicked, EntityPlayer player, TileEntity te,
+                              NBTTagCompound tagCompound) {
         StorageScannerTileEntity scannerTileEntity = getStorageScanner();
         if (scannerTileEntity == null || (!clicked) || player == null) {
-            return;
+            return null;
         }
         if (hitx >= 0) {
             boolean insertStackActive = hitx >= 0 && hitx < 60 && hity > 98;
@@ -203,7 +207,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
                     player.setHeldItem(EnumHand.MAIN_HAND, stack);
                 }
                 player.openContainer.detectAndSendChanges();
-                return;
+                return null;
             }
 
             boolean insertAllActive = hitx >= 60 && hity > 98;
@@ -215,14 +219,29 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
                     }
                 }
                 player.openContainer.detectAndSendChanges();
-                return;
+                return null;
             }
 
             int i = getHighlightedStack(hitx, hity);
             if (i != -1) {
-                scannerTileEntity.giveToPlayer(stacks[i], player.isSneaking(), player, oredict);
+                if (stacks[i] == null) {
+                    ItemStack heldItem = player.getHeldItemMainhand();
+                    if (heldItem != null) {
+                        stacks[i] = heldItem.copy();
+                        stacks[i].stackSize = 1;
+                        NBTTagCompound newCompound = tagCompound.copy();
+                        NBTTagCompound tc = new NBTTagCompound();
+                        stacks[i].writeToNBT(tc);
+                        newCompound.setTag("stack" + i, tc);
+//                        SoundTools.playSound(player.worldObj, SoundEvents.ENTITY_ITEM_PICKUP, getPos().getX(), getPos().getY(), getPos().getZ(), 1.0f, 1.0f);
+                        System.out.println("StorageControlScreenModule.mouseClick");
+                        return newCompound;
+                    }
+                } else {
+                    scannerTileEntity.giveToPlayer(stacks[i], player.isSneaking(), player, oredict);
+                }
             }
         }
-
+        return null;
     }
 }

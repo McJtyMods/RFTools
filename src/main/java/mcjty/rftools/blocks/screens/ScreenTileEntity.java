@@ -143,7 +143,12 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
             } else {
                 List<IScreenModule> modules = getScreenModules();
                 if (cm.module < modules.size()) {
-                    modules.get(cm.module).mouseClick(worldObj, cm.x, cm.y, false, null);
+                    ItemStack itemStack = inventoryHelper.getStackInSlot(cm.module);
+                    NBTTagCompound newCompound = modules.get(cm.module).mouseClick(worldObj, cm.x, cm.y, false, null, this, itemStack.getTagCompound());
+                    if (newCompound != null) {
+                        itemStack.setTagCompound(newCompound);
+                        markDirtyClient();
+                    }
                 }
             }
         }
@@ -315,7 +320,12 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         List<IScreenModule> screenModules = getScreenModules();
         IScreenModule screenModule = screenModules.get(module);
         if (screenModule != null) {
-            screenModule.mouseClick(worldObj, x, y, true, player);
+            ItemStack itemStack = inventoryHelper.getStackInSlot(module);
+            NBTTagCompound newCompound = screenModule.mouseClick(worldObj, x, y, true, player, this, itemStack.getTagCompound());
+            if (newCompound != null) {
+                itemStack.setTagCompound(newCompound);
+                markDirtyClient();
+            }
             clickedModules.add(new ActivatedModule(module, 5, x, y));
         }
     }
