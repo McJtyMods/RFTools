@@ -322,6 +322,10 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         markDirty();
     }
 
+    public void clearCachedCounts() {
+        cachedCounts.clear();
+    }
+
     public List<BlockPos> findInventories() {
         // Clear the caches
         cachedCounts.clear();
