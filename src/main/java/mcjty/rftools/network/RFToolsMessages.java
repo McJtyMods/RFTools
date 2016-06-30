@@ -9,9 +9,7 @@ import mcjty.rftools.blocks.logic.counter.CounterInfoPacketServer;
 import mcjty.rftools.blocks.monitor.*;
 import mcjty.rftools.blocks.powercell.PowerCellInfoPacketClient;
 import mcjty.rftools.blocks.powercell.PowerCellInfoPacketServer;
-import mcjty.rftools.blocks.screens.network.PacketGetScreenData;
-import mcjty.rftools.blocks.screens.network.PacketModuleUpdate;
-import mcjty.rftools.blocks.screens.network.PacketReturnScreenData;
+import mcjty.rftools.blocks.screens.network.*;
 import mcjty.rftools.blocks.security.PacketGetSecurityInfo;
 import mcjty.rftools.blocks.security.PacketGetSecurityName;
 import mcjty.rftools.blocks.security.PacketSecurityInfoReady;
@@ -89,5 +87,6 @@ public class RFToolsMessages {
         PacketHandler.register(PacketHandler.nextPacketID(), SearchItemsInfoPacketServer.class, SearchItemsInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), GetContentsInfoPacketServer.class, GetContentsInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), SpawnerInfoPacketServer.class, SpawnerInfoPacketClient.class);
+        PacketHandler.register(PacketHandler.nextPacketID(), ScreenInfoPacketServer.class, ScreenInfoPacketClient.class);
     }
 }

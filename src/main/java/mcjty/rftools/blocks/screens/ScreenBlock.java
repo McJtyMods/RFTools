@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
@@ -9,6 +10,9 @@ import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.api.screens.ITooltipInfo;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.rftools.blocks.screens.network.ScreenInfoPacketClient;
+import mcjty.rftools.blocks.screens.network.ScreenInfoPacketServer;
+import mcjty.rftools.network.RFToolsMessages;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
@@ -44,6 +48,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
+import java.util.Collections;
 import java.util.List;
 
 public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenContainer> {
@@ -80,6 +85,8 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
         }
     }
 
+    private static long lastTime = 0;
+
     @SideOnly(Side.CLIENT)
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
@@ -94,8 +101,21 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
             if (!power) {
                 currenttip.add(TextFormatting.YELLOW + "[NO POWER]");
             }
-            int rfPerTick = ((ScreenTileEntity) accessor.getTileEntity()).getTotalRfPerTick();
-            currenttip.add(TextFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
+            if (accessor.getPlayer().isSneaking()) {
+                int rfPerTick = ((ScreenTileEntity) accessor.getTileEntity()).getTotalRfPerTick();
+                currenttip.add(TextFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
+            }
+            TileEntity te = accessor.getTileEntity();
+            if (te instanceof ScreenTileEntity) {
+                ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
+                if (System.currentTimeMillis() - lastTime > 500) {
+                    lastTime = System.currentTimeMillis();
+                    RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new ScreenInfoPacketServer(screenTileEntity.getWorld().provider.getDimension(),
+                            screenTileEntity.getPos())));
+                }
+                Collections.addAll(currenttip, ScreenInfoPacketClient.infoReceived);
+
+            }
         }
         return currenttip;
     }
