@@ -30,7 +30,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
-import java.util.List;
 
 public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     public static final int CRAFTER_WIDTH = 256;
@@ -48,6 +47,8 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/crafter.png");
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
+
+    private static int lastSelected = -1;
 
     public GuiCrafter(CrafterBlockTileEntity1 te, CrafterContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, RFTools.GUI_MANUAL_MAIN, "crafter");
@@ -109,6 +110,10 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).addChild(keepItem).addChild(internalRecipe).
                 addChild(recipeList).addChild(listSlider).addChild(applyButton).addChild(redstoneMode).addChild(speedMode).addChild(rememberButton).addChild(forgetButton);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
+
+        if (lastSelected != -1 && lastSelected < tileEntity.getSizeInventory()) {
+            recipeList.setSelected(lastSelected);
+        }
 
         selectRecipe();
         sendChangeToServer(-1, null, null, false, false);
@@ -214,15 +219,9 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         recipeList.addChild(panel);
     }
 
-    public void copyRecipeFromJEI(List<ItemStack> result) {
-        inventorySlots.getSlot(CrafterContainer.SLOT_CRAFTOUTPUT).putStack(result.get(0));
-        for (int i = 1 ; i < result.size() ; i++) {
-            inventorySlots.getSlot(CrafterContainer.SLOT_CRAFTINPUT+i-1).putStack(result.get(i));
-        }
-    }
-
     private void selectRecipe() {
         int selected = recipeList.getSelected();
+        lastSelected = selected;
         if (selected == -1) {
             for (int i = 0 ; i < 10 ; i++) {
                 inventorySlots.getSlot(i).putStack(null);
