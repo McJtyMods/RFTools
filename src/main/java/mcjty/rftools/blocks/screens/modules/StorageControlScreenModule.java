@@ -197,6 +197,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
     public NBTTagCompound update(NBTTagCompound tagCompound, World world, EntityPlayer player) {
         if (dirty >= 0) {
             NBTTagCompound newCompound = (NBTTagCompound) tagCompound.copy();
+            dirty = -1;
             NBTTagCompound tc = new NBTTagCompound();
             stacks[dirty].writeToNBT(tc);
             newCompound.setTag("stack" + dirty, tc);
