@@ -572,6 +572,25 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         return map;
     }
 
+    public IScreenModule getHoveringModule() {
+        if (hoveringModule == -1) {
+            return null;
+        }
+        getScreenModules();
+        if (hoveringModule >= 0 && hoveringModule < screenModules.size()) {
+            return screenModules.get(hoveringModule);
+        }
+        return null;
+    }
+
+    public int getHoveringX() {
+        return hoveringX;
+    }
+
+    public int getHoveringY() {
+        return hoveringY;
+    }
+
     @Override
     public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
         boolean rc = super.execute(playerMP, command, args);

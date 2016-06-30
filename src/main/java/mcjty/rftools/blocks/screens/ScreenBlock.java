@@ -6,6 +6,8 @@ import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IModuleProvider;
+import mcjty.rftools.api.screens.IScreenModule;
+import mcjty.rftools.api.screens.ITooltipInfo;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
@@ -66,6 +68,13 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
             }
             int rfPerTick = screenTileEntity.getTotalRfPerTick();
             probeInfo.text(TextFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
+            IScreenModule module = screenTileEntity.getHoveringModule();
+            if (module instanceof ITooltipInfo) {
+                String[] info = ((ITooltipInfo) module).getInfo(world, screenTileEntity.getHoveringX(), screenTileEntity.getHoveringY(), player);
+                for (String s : info) {
+                    probeInfo.text(s);
+                }
+            }
         }
     }
 
