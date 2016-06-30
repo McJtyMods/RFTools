@@ -26,6 +26,7 @@ import mcjty.rftools.items.creativeonly.PacketGetDelightingInfo;
 import mcjty.rftools.items.netmonitor.PacketConnectedBlocksReady;
 import mcjty.rftools.items.netmonitor.PacketGetConnectedBlocks;
 import mcjty.rftools.items.teleportprobe.*;
+import mcjty.rftools.jei.PacketSendRecipe;
 import mcjty.rftools.playerprops.PacketSendBuffsToClient;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -60,6 +61,7 @@ public class RFToolsMessages {
         net.registerMessage(PacketGetSecurityName.Handler.class, PacketGetSecurityName.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketGetDelightingInfo.Handler.class, PacketGetDelightingInfo.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketGetConnectedBlocks.Handler.class, PacketGetConnectedBlocks.class, PacketHandler.nextID(), Side.SERVER);
+        net.registerMessage(PacketSendRecipe.Handler.class, PacketSendRecipe.class, PacketHandler.nextID(), Side.SERVER);
 
         // Client side
         net.registerMessage(PacketPlayersReady.Handler.class, PacketPlayersReady.class, PacketHandler.nextID(), Side.CLIENT);
