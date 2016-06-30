@@ -1,7 +1,9 @@
 package mcjty.rftools.jei;
 
+import mcjty.rftools.blocks.crafter.CrafterBaseTE;
 import mcjty.rftools.blocks.crafter.CrafterContainer;
 import mcjty.rftools.blocks.crafter.GuiCrafter;
+import mcjty.rftools.network.RFToolsMessages;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
@@ -61,11 +63,7 @@ public class CrafterRecipeTransferHandler implements IRecipeTransferHandler {
         }
 
         if (doTransfer) {
-//            RFToolsMessages.INSTANCE.sendToServer(new PacketSendRecipe(items, ((CrafterBaseTE) inventory).getPos()));
-            GuiScreen screen = Minecraft.getMinecraft().currentScreen;
-            if (screen instanceof GuiCrafter) {
-                ((GuiCrafter) screen).copyRecipeFromJEI(items);
-            }
+            RFToolsMessages.INSTANCE.sendToServer(new PacketSendRecipe(items, ((CrafterBaseTE) inventory).getPos()));
         }
 
         return null;
