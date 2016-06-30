@@ -66,8 +66,10 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
             if (!power) {
                 probeInfo.text(TextFormatting.YELLOW + "[NO POWER]");
             }
-            int rfPerTick = screenTileEntity.getTotalRfPerTick();
-            probeInfo.text(TextFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
+            if (mode == ProbeMode.EXTENDED) {
+                int rfPerTick = screenTileEntity.getTotalRfPerTick();
+                probeInfo.text(TextFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
+            }
             IScreenModule module = screenTileEntity.getHoveringModule();
             if (module instanceof ITooltipInfo) {
                 String[] info = ((ITooltipInfo) module).getInfo(world, screenTileEntity.getHoveringX(), screenTileEntity.getHoveringY(), player);
