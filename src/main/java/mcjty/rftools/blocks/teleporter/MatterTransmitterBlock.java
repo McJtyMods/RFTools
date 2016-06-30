@@ -116,13 +116,18 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock<MatterTransmitte
             MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) te;
             probeInfo.text(TextFormatting.GREEN + "Name: " + matterTransmitterTileEntity.getName());
             if (matterTransmitterTileEntity.isDialed()) {
-                if (System.currentTimeMillis() - lastTime > 500) {
-                    lastTime = System.currentTimeMillis();
-                    RFToolsMessages.INSTANCE.sendToServer(new PacketGetDestinationInfo(matterTransmitterTileEntity.getTeleportId()));
+                Integer teleportId = matterTransmitterTileEntity.getTeleportId();
+                if (teleportId == null) {
+                    ReturnDestinationInfoHelper.id = null;
+                } else {
+                    if (System.currentTimeMillis() - lastTime > 500) {
+                        lastTime = System.currentTimeMillis();
+                        RFToolsMessages.INSTANCE.sendToServer(new PacketGetDestinationInfo(teleportId));
+                    }
                 }
 
                 String name = "?";
-                if (ReturnDestinationInfoHelper.id != null && ReturnDestinationInfoHelper.id == matterTransmitterTileEntity.getTeleportId()) {
+                if (ReturnDestinationInfoHelper.id != null && ReturnDestinationInfoHelper.id.equals(teleportId)) {
                     name = ReturnDestinationInfoHelper.name;
                 }
                 probeInfo.text(TextFormatting.YELLOW + "[DIALED to " + name + "]");
