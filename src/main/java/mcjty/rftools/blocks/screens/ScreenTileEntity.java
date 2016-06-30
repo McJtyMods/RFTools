@@ -6,10 +6,7 @@ import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketServerCommand;
 import mcjty.lib.varia.GlobalCoordinate;
-import mcjty.rftools.api.screens.IClientScreenModule;
-import mcjty.rftools.api.screens.IModuleProvider;
-import mcjty.rftools.api.screens.IScreenDataHelper;
-import mcjty.rftools.api.screens.IScreenModule;
+import mcjty.rftools.api.screens.*;
 import mcjty.rftools.api.screens.data.*;
 import mcjty.rftools.blocks.screens.data.ModuleDataBoolean;
 import mcjty.rftools.blocks.screens.data.ModuleDataInteger;
@@ -144,10 +141,14 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
                 List<IScreenModule> modules = getScreenModules();
                 if (cm.module < modules.size()) {
                     ItemStack itemStack = inventoryHelper.getStackInSlot(cm.module);
-                    NBTTagCompound newCompound = modules.get(cm.module).mouseClick(worldObj, cm.x, cm.y, false, null, this, itemStack.getTagCompound());
-                    if (newCompound != null) {
-                        itemStack.setTagCompound(newCompound);
-                        markDirtyClient();
+                    IScreenModule module = modules.get(cm.module);
+                    module.mouseClick(worldObj, cm.x, cm.y, false, null);
+                    if (module instanceof IScreenModuleUpdater) {
+                        NBTTagCompound newCompound = ((IScreenModuleUpdater) module).update(itemStack.getTagCompound(), worldObj, null);
+                        if (newCompound != null) {
+                            itemStack.setTagCompound(newCompound);
+                            markDirtyClient();
+                        }
                     }
                 }
             }
@@ -321,10 +322,13 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         IScreenModule screenModule = screenModules.get(module);
         if (screenModule != null) {
             ItemStack itemStack = inventoryHelper.getStackInSlot(module);
-            NBTTagCompound newCompound = screenModule.mouseClick(worldObj, x, y, true, player, this, itemStack.getTagCompound());
-            if (newCompound != null) {
-                itemStack.setTagCompound(newCompound);
-                markDirtyClient();
+            screenModule.mouseClick(worldObj, x, y, true, player);
+            if (screenModule instanceof IScreenModuleUpdater) {
+                NBTTagCompound newCompound = ((IScreenModuleUpdater) screenModule).update(itemStack.getTagCompound(), worldObj, player);
+                if (newCompound != null) {
+                    itemStack.setTagCompound(newCompound);
+                    markDirtyClient();
+                }
             }
             clickedModules.add(new ActivatedModule(module, 5, x, y));
         }
