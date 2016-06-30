@@ -1,5 +1,6 @@
 package mcjty.rftools.proxy;
 
+import mcjty.lib.McJtyLibClient;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.RenderGameOverlayEventHandler;
 import mcjty.rftools.RenderWorldLastEventHandler;
@@ -31,6 +32,7 @@ public class ClientProxy extends CommonProxy {
         ModItems.initClient();
         ModBlocks.initClient();
         ElevatorSounds.init();
+        McJtyLibClient.preInit(e);
     }
 
     @Override
