@@ -5,8 +5,10 @@ import mcjty.lib.network.NetworkTools;
 import mcjty.lib.network.clientinfo.InfoPacketClient;
 import mcjty.lib.network.clientinfo.InfoPacketServer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 
@@ -41,13 +43,18 @@ public class StorageInfoPacketServer implements InfoPacketServer {
     public Optional<InfoPacketClient> onMessageServer(EntityPlayerMP player) {
         WorldServer world = DimensionManager.getWorld(dimension);
         int cnt = -1;
+        String nameModule = "";
         if (world != null) {
             TileEntity te = world.getTileEntity(pos);
             if (te instanceof ModularStorageTileEntity) {
                 ModularStorageTileEntity modularStorageTileEntity = (ModularStorageTileEntity) te;
                 cnt = modularStorageTileEntity.getNumStacks();
+                ItemStack storageModule = modularStorageTileEntity.getStackInSlot(ModularStorageContainer.SLOT_STORAGE_MODULE);
+                if (storageModule != null && storageModule.getTagCompound().hasKey("display")) {
+                    nameModule = storageModule.getDisplayName();
+                }
             }
         }
-        return Optional.of(new StorageInfoPacketClient(cnt));
+        return Optional.of(new StorageInfoPacketClient(cnt, nameModule));
     }
 }

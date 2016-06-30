@@ -5,10 +5,14 @@ import mcjty.lib.network.NetworkTools;
 import mcjty.lib.network.clientinfo.InfoPacketClient;
 import mcjty.lib.network.clientinfo.InfoPacketServer;
 import mcjty.rftools.BlockInfo;
+import mcjty.rftools.blocks.storage.ModularStorageBlock;
+import mcjty.rftools.blocks.storage.ModularStorageContainer;
+import mcjty.rftools.blocks.storage.ModularStorageTileEntity;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -90,6 +94,16 @@ public class InventoriesInfoPacketServer implements InfoPacketServer {
             block = null;
         } else {
             displayName = BlockInfo.getReadableName(state);
+            TileEntity storageTe = world.getTileEntity(pos);
+            if (storageTe instanceof ModularStorageTileEntity) {
+                ModularStorageTileEntity storageTileEntity = (ModularStorageTileEntity) storageTe;
+                ItemStack storageModule = storageTileEntity.getStackInSlot(ModularStorageContainer.SLOT_STORAGE_MODULE);
+                if (storageModule != null) {
+                    if (storageModule.getTagCompound().hasKey("display")) {
+                        displayName = storageModule.getDisplayName();
+                    }
+                }
+            }
         }
         return new InventoriesInfoPacketClient.InventoryInfo(pos, displayName, te.isRoutable(pos), block);
     }
