@@ -225,7 +225,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     private static Set<Integer> getOredictMatchers(ItemStack stack, boolean oredict) {
-        Set<Integer> oredictMatches = new HashSet<Integer>();
+        Set<Integer> oredictMatches = new HashSet<>();
         if (oredict) {
             for (int id : OreDictionary.getOreIDs(stack)) {
                 oredictMatches.add(id);
@@ -239,6 +239,9 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     public static boolean isItemEqual(ItemStack thisItem, ItemStack other, Set<Integer> oreDictMatchers) {
+        if (other == null) {
+            return false;
+        }
         if (oreDictMatchers.isEmpty()) {
             return thisItem.isItemEqual(other);
         } else {
