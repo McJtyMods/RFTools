@@ -106,6 +106,10 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
                 }
             }
         }
+        StorageScannerTileEntity te = getStorageScanner();
+        if (te != null) {
+            te.clearCachedCounts();
+        }
     }
 
     protected void setupCoordinateFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
