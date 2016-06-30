@@ -141,10 +141,8 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
         if (te != null) {
             int i = getHighlightedStack(x, y);
             if (i != -1 && stacks[i] != null) {
-                int count = te.countStack(stacks[i], starred, oredict);
                 return new String[]{
-                        TextFormatting.GREEN + "Item: " +
-                                TextFormatting.WHITE + stacks[i].getDisplayName() + " (" + count + ")"};
+                        TextFormatting.GREEN + "Item: " + TextFormatting.WHITE + stacks[i].getDisplayName()};
             }
         }
         return new String[0];
