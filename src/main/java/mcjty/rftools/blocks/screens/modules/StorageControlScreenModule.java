@@ -2,15 +2,18 @@ package mcjty.rftools.blocks.screens.modules;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.lib.varia.SoundTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
+import mcjty.rftools.api.screens.IScreenModuleUpdater;
 import mcjty.rftools.api.screens.ITooltipInfo;
 import mcjty.rftools.api.screens.data.IModuleData;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -20,13 +23,15 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
-public class StorageControlScreenModule implements IScreenModule<StorageControlScreenModule.ModuleDataStacks>, ITooltipInfo {
+public class StorageControlScreenModule implements IScreenModule<StorageControlScreenModule.ModuleDataStacks>, ITooltipInfo,
+        IScreenModuleUpdater {
     private ItemStack[] stacks = new ItemStack[9];
 
     protected int dim = 0;
     protected BlockPos coordinate = BlockPosTools.INVALID;
     private boolean starred = false;
     private boolean oredict = false;
+    private int dirty = -1;
 
     public static class ModuleDataStacks implements IModuleData {
 
@@ -187,17 +192,28 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
         return false;
     }
 
-    @Override
-    public void mouseClick(World world, int x, int y, boolean clicked, EntityPlayer player) {
 
+    @Override
+    public NBTTagCompound update(NBTTagCompound tagCompound, World world, EntityPlayer player) {
+        if (dirty >= 0) {
+            NBTTagCompound newCompound = tagCompound.copy();
+            NBTTagCompound tc = new NBTTagCompound();
+            stacks[dirty].writeToNBT(tc);
+            newCompound.setTag("stack" + dirty, tc);
+            if (player != null) {
+                SoundTools.playSound(player.worldObj, SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP,
+                        player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ(), 1.0f, 1.0f);
+            }
+            return newCompound;
+        }
+        return null;
     }
 
     @Override
-    public NBTTagCompound mouseClick(World world, int hitx, int hity, boolean clicked, EntityPlayer player, TileEntity te,
-                              NBTTagCompound tagCompound) {
+    public void mouseClick(World world, int hitx, int hity, boolean clicked, EntityPlayer player) {
         StorageScannerTileEntity scannerTileEntity = getStorageScanner();
         if (scannerTileEntity == null || (!clicked) || player == null) {
-            return null;
+            return;
         }
         if (hitx >= 0) {
             boolean insertStackActive = hitx >= 0 && hitx < 60 && hity > 98;
@@ -207,7 +223,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
                     player.setHeldItem(EnumHand.MAIN_HAND, stack);
                 }
                 player.openContainer.detectAndSendChanges();
-                return null;
+                return;
             }
 
             boolean insertAllActive = hitx >= 60 && hity > 98;
@@ -219,7 +235,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
                     }
                 }
                 player.openContainer.detectAndSendChanges();
-                return null;
+                return;
             }
 
             int i = getHighlightedStack(hitx, hity);
@@ -229,19 +245,13 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
                     if (heldItem != null) {
                         stacks[i] = heldItem.copy();
                         stacks[i].stackSize = 1;
-                        NBTTagCompound newCompound = tagCompound.copy();
-                        NBTTagCompound tc = new NBTTagCompound();
-                        stacks[i].writeToNBT(tc);
-                        newCompound.setTag("stack" + i, tc);
-//                        SoundTools.playSound(player.worldObj, SoundEvents.ENTITY_ITEM_PICKUP, getPos().getX(), getPos().getY(), getPos().getZ(), 1.0f, 1.0f);
-                        System.out.println("StorageControlScreenModule.mouseClick");
-                        return newCompound;
+                        dirty = i;
                     }
                 } else {
                     scannerTileEntity.giveToPlayer(stacks[i], player.isSneaking(), player, oredict);
                 }
             }
         }
-        return null;
+        return;
     }
 }

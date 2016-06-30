@@ -3,7 +3,6 @@ package mcjty.rftools.api.screens;
 import mcjty.rftools.api.screens.data.IModuleData;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -47,24 +46,5 @@ public interface IScreenModule<T extends IModuleData> {
      * @param clicked
      * @param player
      */
-    @Deprecated
     void mouseClick(World world, int x, int y, boolean clicked, EntityPlayer player);
-
-    /**
-     * New meth
-     * @param world
-     * @param x
-     * @param y
-     * @param clicked
-     * @param player
-     * @param te is the tile entity of the screen
-     * @param tagCompound is the tag for the module
-     * @return the modified tagCompound (or null if no modification is needed0
-     */
-    default NBTTagCompound mouseClick(World world, int x, int y, boolean clicked, EntityPlayer player,
-                               TileEntity te,
-                               NBTTagCompound tagCompound) {
-        mouseClick(world, x, y, clicked, player);
-        return null;
-    }
 }
