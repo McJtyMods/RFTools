@@ -34,6 +34,7 @@ import java.util.Map;
 public class ScreenTileEntity extends GenericTileEntity implements ITickable, DefaultSidedInventory {
 
     public static final String CMD_CLICK = "click";
+    public static final String CMD_HOVER = "hover";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ScreenContainer.factory, ScreenContainer.SCREEN_MODULES);
 
@@ -52,6 +53,12 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     private int size = 0;                   // Size of screen (0 is normal, 1 is large, 2 is huge)
     private boolean transparent = false;    // Transparent screen.
     private int color = 0;                  // Color of the screen.
+
+    // Sever side, the module we are hovering over
+    private int hoveringModule = -1;
+    private int hoveringX = -1;
+    private int hoveringY = -1;
+
 
     public static final int SIZE_NORMAL = 0;
     public static final int SIZE_LARGE = 1;
@@ -218,6 +225,22 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
             }
         }
         return false;
+    }
+
+    public void focusModuleClient(double hitX, double hitY, double hitZ, EnumFacing side) {
+        ModuleRaytraceResult result = getHitModule(hitX, hitY, hitZ, side);
+        if (result == null) {
+            RFToolsMessages.INSTANCE.sendToServer(new PacketServerCommand(getPos(), CMD_HOVER,
+                    new Argument("x", -1),
+                    new Argument("y", -1),
+                    new Argument("module", -1)));
+            return;
+        }
+
+        RFToolsMessages.INSTANCE.sendToServer(new PacketServerCommand(getPos(), CMD_HOVER,
+                new Argument("x", result.getX()),
+                new Argument("y", result.getY() - result.getCurrenty()),
+                new Argument("module", result.getModuleIndex())));
     }
 
     public void hitScreenClient(double hitX, double hitY, double hitZ, EnumFacing side) {
@@ -560,6 +583,11 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
             int y = args.get("y").getInteger();
             int module = args.get("module").getInteger();
             hitScreenServer(playerMP, x, y, module);
+            return true;
+        } else if (CMD_HOVER.equals(command)) {
+            hoveringX = args.get("x").getInteger();
+            hoveringY = args.get("y").getInteger();
+            hoveringModule = args.get("module").getInteger();
             return true;
         }
         return false;
