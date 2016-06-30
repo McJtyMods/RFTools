@@ -160,6 +160,10 @@ public class ModularStorageBlock extends GenericRFToolsBlock<ModularStorageTileE
             if (maxSize == 0) {
                 probeInfo.text(TextFormatting.YELLOW + "No storage module!");
             } else {
+                ItemStack storageModule = modularStorageTileEntity.getStackInSlot(ModularStorageContainer.SLOT_STORAGE_MODULE);
+                if (storageModule != null && storageModule.getTagCompound().hasKey("display")) {
+                    probeInfo.text(TextFormatting.YELLOW + "Module: " + TextFormatting.WHITE + storageModule.getDisplayName());
+                }
                 int stacks = modularStorageTileEntity.getNumStacks();
                 if (stacks == -1) {
                     probeInfo.text(TextFormatting.YELLOW + "Maximum size: " + maxSize);
@@ -185,6 +189,9 @@ public class ModularStorageBlock extends GenericRFToolsBlock<ModularStorageTileE
                     lastTime = System.currentTimeMillis();
                     RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new StorageInfoPacketServer(modularStorageTileEntity.getWorld().provider.getDimension(),
                             modularStorageTileEntity.getPos())));
+                }
+                if (!StorageInfoPacketClient.nameModuleReceived.isEmpty()) {
+                    currenttip.add(TextFormatting.YELLOW + "Module: " + TextFormatting.WHITE + StorageInfoPacketClient.nameModuleReceived);
                 }
                 int stacks = StorageInfoPacketClient.cntReceived;
                 if (stacks == -1) {
