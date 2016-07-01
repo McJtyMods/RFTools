@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.container.*;
+import mcjty.rftools.craftinggrid.CraftingGridInventory;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.items.storage.StorageTypeItem;
 import mcjty.rftools.network.RFToolsMessages;
@@ -18,6 +19,7 @@ import java.util.List;
 
 public class ModularStorageContainer extends GenericContainer {
     public static final String CONTAINER_INVENTORY = "container";
+    public static final String CONTAINER_GRID = "grid";
 
     public static final int SLOT_STORAGE_MODULE = 0;
     public static final int SLOT_TYPE_MODULE = 1;
@@ -35,7 +37,16 @@ public class ModularStorageContainer extends GenericContainer {
             addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, StorageFilterItem.class), CONTAINER_INVENTORY, SLOT_FILTER_MODULE, 5, 193, 1, 18, 1, 18);
             addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), CONTAINER_INVENTORY, SLOT_STORAGE, -500, -500, 30, 0, 10, 0);
             layoutPlayerInventorySlots(91, 157);
+            layoutGridInventorySlots(CraftingGridInventory.GRID_XOFFSET, CraftingGridInventory.GRID_YOFFSET);
         }
+
+        protected void layoutGridInventorySlots(int leftCol, int topRow) {
+            this.addSlotBox(new SlotDefinition(SlotType.SLOT_GHOST), CONTAINER_GRID, CraftingGridInventory.SLOT_GHOSTINPUT, leftCol, topRow, 3, 18, 3, 18);
+            topRow += 58;
+            this.addSlotRange(new SlotDefinition(SlotType.SLOT_GHOSTOUT), CONTAINER_GRID, CraftingGridInventory.SLOT_GHOSTOUTPUT, leftCol, topRow, 1, 18);
+            this.addSlotRange(new SlotDefinition(SlotType.SLOT_CONTAINER), CONTAINER_GRID, CraftingGridInventory.SLOT_OUTPUT, leftCol+18*2, topRow, 1, 18);
+        }
+
     };
 
     public ModularStorageContainer(EntityPlayer player, IInventory containerInventory) {
@@ -44,6 +55,7 @@ public class ModularStorageContainer extends GenericContainer {
 
         addInventory(CONTAINER_INVENTORY, containerInventory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
+        addInventory(CONTAINER_GRID, modularStorageTileEntity.getCraftingGrid().getCraftingGridInventory());
         generateSlots();
     }
 
@@ -51,7 +63,14 @@ public class ModularStorageContainer extends GenericContainer {
     public void generateSlots() {
         for (SlotFactory slotFactory : factory.getSlots()) {
             Slot slot;
-            if (slotFactory.getSlotType() == SlotType.SLOT_SPECIFICITEM) {
+            if (CONTAINER_GRID.equals(slotFactory.getInventoryName())) {
+                SlotType slotType = slotFactory.getSlotType();
+                IInventory inventory = this.inventories.get(slotFactory.getInventoryName());
+                int index = slotFactory.getIndex();
+                int x = slotFactory.getX();
+                int y = slotFactory.getY();
+                slot = this.createSlot(slotFactory, inventory, index, x, y, slotType);
+            } else if (slotFactory.getSlotType() == SlotType.SLOT_SPECIFICITEM) {
                 final SlotDefinition slotDefinition = slotFactory.getSlotDefinition();
                 slot = new Slot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY()) {
                     @Override

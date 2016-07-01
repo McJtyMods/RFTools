@@ -18,6 +18,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.modules.DefaultTypeModule;
 import mcjty.rftools.blocks.storage.modules.TypeModule;
 import mcjty.rftools.blocks.storage.sorters.ItemSorter;
+import mcjty.rftools.craftinggrid.GuiCraftingGrid;
 import mcjty.rftools.items.storage.StorageModuleItem;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
@@ -34,6 +35,7 @@ import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 import java.io.IOException;
@@ -69,6 +71,8 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     private Button cycleButton;
     private Button compactButton;
 
+    private GuiCraftingGrid craftingGrid;
+
     public GuiModularStorage(ModularStorageTileEntity modularStorageTileEntity, ModularStorageContainer container) {
         this(modularStorageTileEntity, (Container) container);
     }
@@ -83,6 +87,9 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
     public GuiModularStorage(ModularStorageTileEntity modularStorageTileEntity, Container container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, modularStorageTileEntity, container, RFTools.GUI_MANUAL_MAIN, "storage");
+
+        craftingGrid = new GuiCraftingGrid();
+
         xSize = STORAGE_WIDTH;
 
         ScaledResolution scaledresolution = new ScaledResolution(Minecraft.getMinecraft());
@@ -139,6 +146,10 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         if (ModularStorageConfiguration.autofocusSearch) {
             window.setTextFocus(filter);
         }
+
+        craftingGrid.initGui(modBase, network, mc, this, tileEntity.getPos(), tileEntity, guiLeft, guiTop, xSize, ySize);
+
+        sendServerCommand(network, ModularStorageTileEntity.CMD_SENDGRID);
     }
 
     private Panel setupModePanel() {
@@ -327,7 +338,19 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             }
         }
         super.mouseClicked(x, y, button);
+        craftingGrid.getWindow().mouseClicked(x, y, button);
+    }
 
+    @Override
+    public void handleMouseInput() throws IOException {
+        super.handleMouseInput();
+        craftingGrid.getWindow().handleMouseInput();
+    }
+
+    @Override
+    protected void mouseReleased(int x, int y, int state) {
+        super.mouseReleased(x, y, state);
+        craftingGrid.getWindow().mouseMovedOrUp(x, y, state);
     }
 
     private void updateList() {
@@ -492,6 +515,8 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             }
             super.keyTyped(typedChar, keyCode);
         }
+
+        craftingGrid.getWindow().keyTyped(typedChar, keyCode);
     }
 
     @Override
@@ -506,5 +531,26 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         }
 
         drawWindow();
+    }
+
+    @Override
+    protected void drawGuiContainerForegroundLayer(int i1, int i2) {
+        int x = Mouse.getEventX() * width / mc.displayWidth;
+        int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
+
+        List<String> tooltips = craftingGrid.getWindow().getTooltips();
+        if (tooltips != null) {
+            drawHoveringText(tooltips, window.getTooltipItems(), x - guiLeft, y - guiTop, mc.fontRendererObj);
+        }
+
+        craftingGrid.updateGui();
+
+        super.drawGuiContainerForegroundLayer(i1, i2);
+    }
+
+    @Override
+    protected void drawWindow() {
+        super.drawWindow();
+        craftingGrid.getWindow().draw();
     }
 }

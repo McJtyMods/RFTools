@@ -2,15 +2,12 @@ package mcjty.rftools.jei;
 
 import mcjty.rftools.blocks.crafter.CrafterBaseTE;
 import mcjty.rftools.blocks.crafter.CrafterContainer;
-import mcjty.rftools.blocks.crafter.GuiCrafter;
 import mcjty.rftools.network.RFToolsMessages;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.gui.ingredients.IGuiIngredient;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -51,14 +48,6 @@ public class CrafterRecipeTransferHandler implements IRecipeTransferHandler {
             List<ItemStack> allIngredients = entry.getValue().getAllIngredients();
             if (!allIngredients.isEmpty()) {
                 items.set(recipeSlot, allIngredients.get(0));
-//                if (recipeSlot == 0) {
-//                    inventory.setInventorySlotContents(CrafterContainer.SLOT_CRAFTOUTPUT, allIngredients.get(0));
-////                    recipeOutputs = allIngredients;
-//                } else {
-//                    ItemStack firstIngredient = allIngredients.get(0);
-////                    inventory.setInventorySlotContents(recipeSlot - 1, firstIngredient);
-//                    inventory.setInventorySlotContents(CrafterContainer.SLOT_CRAFTINPUT + recipeSlot - 1, firstIngredient);
-//                }
             }
         }
 

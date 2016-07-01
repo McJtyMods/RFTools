@@ -6,14 +6,23 @@ import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.rftools.ClientInfo;
 import mcjty.rftools.api.general.IInventoryTracker;
+import mcjty.rftools.blocks.crafter.CraftingRecipe;
+import mcjty.rftools.craftinggrid.CraftingGrid;
+import mcjty.rftools.craftinggrid.CraftingGridProvider;
+import mcjty.rftools.craftinggrid.PacketGridToClient;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.items.storage.StorageModuleItem;
 import mcjty.rftools.items.storage.StorageTypeItem;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
@@ -23,14 +32,18 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.oredict.OreDictionary;
+import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.Map;
+import java.util.*;
 
-public class ModularStorageTileEntity extends GenericTileEntity implements ITickable, DefaultSidedInventory, IInventoryTracker {
+public class ModularStorageTileEntity extends GenericTileEntity implements ITickable, DefaultSidedInventory, IInventoryTracker,
+        CraftingGridProvider {
 
     public static final String CMD_SETTINGS = "settings";
     public static final String CMD_COMPACT = "compact";
     public static final String CMD_CYCLE = "cycle";
+    public static final String CMD_SENDGRID = "sendGrid";
 
     private int[] accessible = null;
     private int maxSize = 0;
@@ -39,6 +52,8 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     private StorageFilterCache filterCache = null;
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ModularStorageContainer.factory, ModularStorageContainer.SLOT_STORAGE + ModularStorageContainer.MAXSIZE_STORAGE);
+
+    private CraftingGrid craftingGrid = new CraftingGrid();
 
     private String sortMode = "";
     private String viewMode = "";
@@ -115,6 +130,122 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     @Override
     public InventoryHelper getInventoryHelper() {
         return inventoryHelper;
+    }
+
+    @Override
+    public void setRecipe(int index, ItemStack[] stacks) {
+        craftingGrid.setRecipe(index, stacks);
+    }
+
+    @Override
+    public CraftingGrid getCraftingGrid() {
+        return craftingGrid;
+    }
+
+    private void craft(EntityPlayerMP player, int n) {
+        CraftingRecipe craftingRecipe = craftingGrid.getActiveRecipe();
+
+        IRecipe recipe = craftingRecipe.getCachedRecipe(worldObj);
+        if (recipe == null) {
+            // @todo give error?
+            return;
+        }
+
+        if (craftingRecipe.getResult() != null) {
+            List<ItemStack> result = testAndConsumeCraftingItems(player, craftingRecipe);
+
+            for (ItemStack stack : result) {
+                if (!player.inventory.addItemStackToInventory(stack)) {
+                    player.entityDropItem(stack, 1.05f);
+                }
+            }
+        }
+    }
+
+    private List<ItemStack> testAndConsumeCraftingItems(EntityPlayerMP player, CraftingRecipe craftingRecipe) {
+        InventoryCrafting workInventory = new InventoryCrafting(new Container() {
+            @Override
+            public boolean canInteractWith(EntityPlayer var1) {
+                return false;
+            }
+        }, 3, 3);
+
+        Map<Pair<IInventory, Integer>,ItemStack> undo = new HashMap<>();
+        List<ItemStack> result = new ArrayList<>();
+        InventoryCrafting inventory = craftingRecipe.getInventory();
+
+        for (int i = 0 ; i < inventory.getSizeInventory() ; i++) {
+            ItemStack stack = inventory.getStackInSlot(i);
+            if (stack != null) {
+                int count = stack.stackSize;
+                count = findMatchingItems(workInventory, undo, result, i, stack, count, player.inventory, 0);
+                if (count > 0) {
+                    count = findMatchingItems(workInventory, undo, result, i, stack, count, this, ModularStorageContainer.SLOT_STORAGE);
+                }
+
+                if (count > 0) {
+                    // Couldn't find all items.
+                    undo(player, undo);
+                    return Collections.emptyList();
+                }
+            } else {
+                workInventory.setInventorySlotContents(i, null);
+            }
+        }
+        IRecipe recipe = craftingRecipe.getCachedRecipe(worldObj);
+        ItemStack stack = recipe.getCraftingResult(workInventory);
+        if (stack != null) {
+            result.add(stack);
+        } else {
+            result.clear();
+            undo(player, undo);
+        }
+        return result;
+    }
+
+    private int findMatchingItems(InventoryCrafting workInventory, Map<Pair<IInventory, Integer>, ItemStack> undo, List<ItemStack> result, int i, ItemStack stack, int count, IInventory iii, int startIndex) {
+        for (int slotIdx = startIndex; slotIdx < iii.getSizeInventory() ; slotIdx++) {
+            ItemStack input = iii.getStackInSlot(slotIdx);
+            if (input != null) {
+                if (OreDictionary.itemMatches(stack, input, false)) {
+                    workInventory.setInventorySlotContents(i, input.copy());
+                    if (input.getItem().hasContainerItem(input)) {
+                        ItemStack containerItem = input.getItem().getContainerItem(input);
+                        if (containerItem != null) {
+                            if ((!containerItem.isItemStackDamageable()) || containerItem.getItemDamage() <= containerItem.getMaxDamage()) {
+                                result.add(containerItem);
+                            }
+                        }
+                    }
+                    int ss = count;
+                    if (input.stackSize - ss < 0) {
+                        ss = input.stackSize;
+                    }
+                    count -= ss;
+                    Pair<IInventory, Integer> key = Pair.of(iii, slotIdx);
+                    if (!undo.containsKey(key)) {
+                        undo.put(key, input.copy());
+                    }
+                    input.splitStack(ss);        // This consumes the items
+                    if (input.stackSize == 0) {
+                        iii.setInventorySlotContents(slotIdx, null);
+                    }
+                }
+            }
+            if (count == 0) {
+                break;
+            }
+        }
+        return count;
+    }
+
+    private void undo(EntityPlayerMP player, Map<Pair<IInventory, Integer>, ItemStack> undo) {
+        for (Map.Entry<Pair<IInventory, Integer>, ItemStack> entry : undo.entrySet()) {
+            IInventory inv = entry.getKey().getLeft();
+            Integer index = entry.getKey().getRight();
+            inv.setInventorySlotContents(index, entry.getValue());
+            player.openContainer.detectAndSendChanges();
+        }
     }
 
     @Override
@@ -602,6 +733,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         inventoryHelper.setNewCount(ModularStorageContainer.SLOT_STORAGE + maxSize);
         accessible = null;
         readBufferFromNBT(tagCompound);
+        craftingGrid.readFromNBT(tagCompound.getCompoundTag("grid"));
 
         if (isServer()) {
             updateStackCount();
@@ -662,6 +794,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         tagCompound.setBoolean("groupMode", groupMode);
         tagCompound.setString("filter", filter);
         tagCompound.setInteger("version", version);
+        tagCompound.setTag("grid", craftingGrid.writeToNBT());
     }
 
     private void writeSlot(NBTTagCompound tagCompound, int index, String name) {
@@ -742,6 +875,12 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             return true;
         } else if (CMD_CYCLE.equals(command)) {
             cycle();
+            return true;
+        } else if (CMD_SENDGRID.equals(command)) {
+            RFToolsMessages.INSTANCE.sendTo(new PacketGridToClient(pos, getCraftingGrid()), playerMP);
+            return true;
+        } else if (CraftingGridProvider.CMD_GRIDCRAFT.equals(command)) {
+            craft(playerMP, args.get("n").getInteger());
             return true;
         }
         return false;
