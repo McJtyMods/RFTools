@@ -2,6 +2,9 @@ package mcjty.rftools.jei;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.rftools.blocks.storage.ModularStorageItemContainer;
+import mcjty.rftools.blocks.storage.ModularStorageSetup;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -29,7 +32,11 @@ public class PacketSendRecipe implements IMessage {
                 stacks.add(null);
             }
         }
-        pos = NetworkTools.readPos(buf);
+        if (buf.readBoolean()) {
+            pos = NetworkTools.readPos(buf);
+        } else {
+            pos = null;
+        }
     }
 
     @Override
@@ -43,7 +50,12 @@ public class PacketSendRecipe implements IMessage {
                 buf.writeBoolean(false);
             }
         }
-        NetworkTools.writePos(buf, pos);
+        if (pos != null) {
+            buf.writeBoolean(true);
+            NetworkTools.writePos(buf, pos);
+        } else {
+            buf.writeBoolean(false);
+        }
     }
 
     public PacketSendRecipe() {
@@ -62,11 +74,23 @@ public class PacketSendRecipe implements IMessage {
         }
 
         private void handle(PacketSendRecipe message, MessageContext ctx) {
-            World world = ctx.getServerHandler().playerEntity.worldObj;
-            TileEntity te = world.getTileEntity(message.pos);
-            if (te instanceof JEIRecipeAcceptor) {
-                JEIRecipeAcceptor acceptor = (JEIRecipeAcceptor) te;
-                acceptor.setRecipe(message.stacks);
+            EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+            World world = player.worldObj;
+            if (message.pos == null) {
+                // Handle tablet version
+                ItemStack mainhand = player.getHeldItemMainhand();
+                if (mainhand != null && mainhand.getItem() == ModularStorageSetup.storageModuleTabletItem) {
+                    if (player.openContainer instanceof ModularStorageItemContainer) {
+                        ModularStorageItemContainer storageItemContainer = (ModularStorageItemContainer) player.openContainer;
+                        storageItemContainer.getJEIRecipeAcceptor().setRecipe(message.stacks);
+                    }
+                }
+            } else {
+                TileEntity te = world.getTileEntity(message.pos);
+                if (te instanceof JEIRecipeAcceptor) {
+                    JEIRecipeAcceptor acceptor = (JEIRecipeAcceptor) te;
+                    acceptor.setRecipe(message.stacks);
+                }
             }
         }
 

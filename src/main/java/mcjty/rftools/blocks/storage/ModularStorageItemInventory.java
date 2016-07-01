@@ -1,9 +1,11 @@
 package mcjty.rftools.blocks.storage;
 
+import mcjty.rftools.blocks.crafter.CrafterContainer;
 import mcjty.rftools.blocks.crafter.CraftingRecipe;
 import mcjty.rftools.craftinggrid.CraftingGrid;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import mcjty.rftools.items.storage.StorageModuleItem;
+import mcjty.rftools.jei.JEIRecipeAcceptor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
@@ -17,7 +19,7 @@ import net.minecraftforge.common.util.Constants;
 
 import java.util.*;
 
-public class ModularStorageItemInventory implements IInventory, CraftingGridProvider {
+public class ModularStorageItemInventory implements IInventory, CraftingGridProvider, JEIRecipeAcceptor {
     private ItemStack stacks[];
     private final EntityPlayer entityPlayer;
     private CraftingGrid craftingGrid = new CraftingGrid();
@@ -37,6 +39,15 @@ public class ModularStorageItemInventory implements IInventory, CraftingGridProv
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
             stacks[i] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
         }
+    }
+
+    @Override
+    public void setRecipe(List<ItemStack> stacks) {
+        setInventorySlotContents(CrafterContainer.SLOT_CRAFTOUTPUT, stacks.get(0));
+        for (int i = 1 ; i < stacks.size() ; i++) {
+            setInventorySlotContents(CrafterContainer.SLOT_CRAFTINPUT + i-1, stacks.get(i));
+        }
+
     }
 
     @Override
