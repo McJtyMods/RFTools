@@ -21,6 +21,8 @@ import mcjty.rftools.blocks.spawner.SpawnerInfoPacketServer;
 import mcjty.rftools.blocks.storage.*;
 import mcjty.rftools.blocks.storagemonitor.*;
 import mcjty.rftools.blocks.teleporter.*;
+import mcjty.rftools.craftinggrid.PacketGridToClient;
+import mcjty.rftools.craftinggrid.PacketGridToServer;
 import mcjty.rftools.items.creativeonly.PacketDelightingInfoReady;
 import mcjty.rftools.items.creativeonly.PacketGetDelightingInfo;
 import mcjty.rftools.items.netmonitor.PacketConnectedBlocksReady;
@@ -62,6 +64,7 @@ public class RFToolsMessages {
         net.registerMessage(PacketGetDelightingInfo.Handler.class, PacketGetDelightingInfo.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketGetConnectedBlocks.Handler.class, PacketGetConnectedBlocks.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketSendRecipe.Handler.class, PacketSendRecipe.class, PacketHandler.nextID(), Side.SERVER);
+        net.registerMessage(PacketGridToServer.Handler.class, PacketGridToServer.class, PacketHandler.nextID(), Side.SERVER);
 
         // Client side
         net.registerMessage(PacketPlayersReady.Handler.class, PacketPlayersReady.class, PacketHandler.nextID(), Side.CLIENT);
@@ -81,6 +84,7 @@ public class RFToolsMessages {
         net.registerMessage(PacketDelightingInfoReady.Handler.class, PacketDelightingInfoReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketConnectedBlocksReady.Handler.class, PacketConnectedBlocksReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketSyncSlotsToClient.Handler.class, PacketSyncSlotsToClient.class, PacketHandler.nextID(), Side.CLIENT);
+        net.registerMessage(PacketGridToClient.Handler.class, PacketGridToClient.class, PacketHandler.nextID(), Side.CLIENT);
 
         PacketHandler.register(PacketHandler.nextPacketID(), StorageInfoPacketServer.class, StorageInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), PowerCellInfoPacketServer.class, PowerCellInfoPacketClient.class);

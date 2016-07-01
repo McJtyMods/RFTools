@@ -33,7 +33,7 @@ import java.awt.*;
 
 public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     public static final int CRAFTER_WIDTH = 256;
-    public static final int CRAFTER_HEIGHT = 224;
+    public static final int CRAFTER_HEIGHT = 238;
 
     private EnergyBar energyBar;
     private WidgetList recipeList;
@@ -123,14 +123,14 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     }
 
     private Slider initRecipeList() {
-        recipeList = new WidgetList(mc, this).
-                addSelectionEvent(new DefaultSelectionEvent() {
+        recipeList = new WidgetList(mc, this)
+                .addSelectionEvent(new DefaultSelectionEvent() {
                     @Override
                     public void select(Widget parent, int index) {
                         selectRecipe();
                     }
-                }).
-                setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 126, 80));
+                })
+                .setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 126, 80));
         populateList();
 
         return new Slider(mc, this).setVertical().setScrollable(recipeList).setLayoutHint(new PositionalLayout.PositionalHint(137, 7, 10, 80));
