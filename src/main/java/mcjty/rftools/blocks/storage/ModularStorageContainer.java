@@ -49,6 +49,10 @@ public class ModularStorageContainer extends GenericContainer {
 
     };
 
+    public ModularStorageTileEntity getModularStorageTileEntity() {
+        return modularStorageTileEntity;
+    }
+
     public ModularStorageContainer(EntityPlayer player, IInventory containerInventory) {
         super(factory);
         modularStorageTileEntity = (ModularStorageTileEntity) containerInventory;

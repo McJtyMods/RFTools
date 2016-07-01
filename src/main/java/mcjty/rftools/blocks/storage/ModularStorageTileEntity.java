@@ -14,6 +14,7 @@ import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.items.storage.StorageModuleItem;
 import mcjty.rftools.items.storage.StorageTypeItem;
+import mcjty.rftools.jei.JEIRecipeAcceptor;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -38,7 +39,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.*;
 
 public class ModularStorageTileEntity extends GenericTileEntity implements ITickable, DefaultSidedInventory, IInventoryTracker,
-        CraftingGridProvider {
+        CraftingGridProvider, JEIRecipeAcceptor {
 
     public static final String CMD_SETTINGS = "settings";
     public static final String CMD_COMPACT = "compact";
@@ -135,6 +136,15 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     @Override
     public void setRecipe(int index, ItemStack[] stacks) {
         craftingGrid.setRecipe(index, stacks);
+        markDirty();
+    }
+
+    @Override
+    public void setRecipe(List<ItemStack> stacks) {
+        for (int i = 0 ; i < stacks.size() ; i++) {
+            craftingGrid.getCraftingGridInventory().setInventorySlotContents(i, stacks.get(i));
+        }
+        markDirty();
     }
 
     @Override

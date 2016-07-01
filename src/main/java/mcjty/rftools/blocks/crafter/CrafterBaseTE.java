@@ -8,6 +8,7 @@ import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
+import mcjty.rftools.jei.JEIRecipeAcceptor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
@@ -22,9 +23,11 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements ITickable, DefaultSidedInventory {
+public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements ITickable, DefaultSidedInventory,
+        JEIRecipeAcceptor {
     public static final int SPEED_SLOW = 0;
     public static final int SPEED_FAST = 1;
 
@@ -69,6 +72,14 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
     public ItemStack[] getGhostSlots() {
         return ghostSlots;
+    }
+
+    @Override
+    public void setRecipe(List<ItemStack> stacks) {
+        setInventorySlotContents(CrafterContainer.SLOT_CRAFTOUTPUT, stacks.get(0));
+        for (int i = 1 ; i < stacks.size() ; i++) {
+            setInventorySlotContents(CrafterContainer.SLOT_CRAFTINPUT + i-1, stacks.get(i));
+        }
     }
 
     public void setSupportedRecipes(int supportedRecipes) {
