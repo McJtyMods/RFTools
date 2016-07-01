@@ -10,7 +10,6 @@ import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.network.Argument;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.crafter.CraftingRecipe;
@@ -101,7 +100,7 @@ public class GuiCraftingGrid {
     }
 
     private void craft(int n) {
-        gui.sendServerCommand(network, CraftingGridProvider.CMD_GRIDCRAFT, new Argument("n", n));
+        RFToolsMessages.INSTANCE.sendToServer(new PacketCraftFromGrid(pos, n));
     }
 
     private void store() {
@@ -110,7 +109,9 @@ public class GuiCraftingGrid {
             return;
         }
         provider.getCraftingGrid().storeRecipe(selected);
-        RFToolsMessages.INSTANCE.sendToServer(new PacketGridToServer(pos, provider.getCraftingGrid()));
+        if (pos != null) {
+            RFToolsMessages.INSTANCE.sendToServer(new PacketGridToServer(pos, provider.getCraftingGrid()));
+        }
     }
 
     private void selectRecipe() {
@@ -120,7 +121,9 @@ public class GuiCraftingGrid {
         }
 
         provider.getCraftingGrid().selectRecipe(selected);
-        RFToolsMessages.INSTANCE.sendToServer(new PacketGridToServer(pos, provider.getCraftingGrid()));
+        if (pos != null) {
+            RFToolsMessages.INSTANCE.sendToServer(new PacketGridToServer(pos, provider.getCraftingGrid()));
+        }
     }
 
     private void populateList() {
