@@ -67,6 +67,7 @@ public class PacketGridToServer extends PacketGridSync implements IMessage {
                 for (int i = 0 ; i < 10 ; i++) {
                     inventory.setInventorySlotContents(i, message.stacks[i]);
                 }
+                provider.markDirty();
             }
         }
     }

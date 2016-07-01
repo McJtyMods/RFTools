@@ -2,8 +2,6 @@ package mcjty.rftools.jei;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.rftools.blocks.crafter.CrafterBaseTE;
-import mcjty.rftools.blocks.crafter.CrafterContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -66,12 +64,9 @@ public class PacketSendRecipe implements IMessage {
         private void handle(PacketSendRecipe message, MessageContext ctx) {
             World world = ctx.getServerHandler().playerEntity.worldObj;
             TileEntity te = world.getTileEntity(message.pos);
-            if (te instanceof CrafterBaseTE) {
-                CrafterBaseTE crafterBaseTE = (CrafterBaseTE) te;
-                crafterBaseTE.setInventorySlotContents(CrafterContainer.SLOT_CRAFTOUTPUT, message.stacks.get(0));
-                for (int i = 1 ; i < message.stacks.size() ; i++) {
-                    crafterBaseTE.setInventorySlotContents(CrafterContainer.SLOT_CRAFTINPUT + i-1, message.stacks.get(i));
-                }
+            if (te instanceof JEIRecipeAcceptor) {
+                JEIRecipeAcceptor acceptor = (JEIRecipeAcceptor) te;
+                acceptor.setRecipe(message.stacks);
             }
         }
 

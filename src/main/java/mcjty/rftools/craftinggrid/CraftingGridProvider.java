@@ -9,4 +9,6 @@ public interface CraftingGridProvider {
     void setRecipe(int index, ItemStack[] stacks);
 
     CraftingGrid getCraftingGrid();
+
+    void markDirty();
 }
