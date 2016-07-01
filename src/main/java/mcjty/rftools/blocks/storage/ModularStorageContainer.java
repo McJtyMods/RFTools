@@ -44,7 +44,6 @@ public class ModularStorageContainer extends GenericContainer {
             this.addSlotBox(new SlotDefinition(SlotType.SLOT_GHOST), CONTAINER_GRID, CraftingGridInventory.SLOT_GHOSTINPUT, leftCol, topRow, 3, 18, 3, 18);
             topRow += 58;
             this.addSlotRange(new SlotDefinition(SlotType.SLOT_GHOSTOUT), CONTAINER_GRID, CraftingGridInventory.SLOT_GHOSTOUTPUT, leftCol, topRow, 1, 18);
-            this.addSlotRange(new SlotDefinition(SlotType.SLOT_CONTAINER), CONTAINER_GRID, CraftingGridInventory.SLOT_OUTPUT, leftCol+18*2, topRow, 1, 18);
         }
 
     };

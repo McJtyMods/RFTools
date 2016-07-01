@@ -33,7 +33,9 @@ public class GuiCraftingGrid {
 
     protected Window craftWindow;
     private Button craft1Button;
-    private Button craft10Button;
+    private Button craft4Button;
+    private Button craft8Button;
+    private Button craftSButton;
     private Button storeButton;
     private WidgetList recipeList;
 
@@ -65,18 +67,26 @@ public class GuiCraftingGrid {
                 selectRecipe();
             }
         });
-        craft1Button = new Button(mc, gui).setText("+").setLayoutHint(new PositionalLayout.PositionalHint(25, 183, 16, 9))
+        craft1Button = new Button(mc, gui).setText("1").setLayoutHint(new PositionalLayout.PositionalHint(29, 183, 14, 10))
                 .setTooltips("Craft one")
-                .addButtonEvent(parent -> craft1());
-        craft10Button = new Button(mc, gui).setText("++").setLayoutHint(new PositionalLayout.PositionalHint(25, 192, 16, 9))
-                .setTooltips("Craft ten")
-                .addButtonEvent(parent -> craft10());
+                .addButtonEvent(parent -> craft(1));
+        craft4Button = new Button(mc, gui).setText("4").setLayoutHint(new PositionalLayout.PositionalHint(45, 183, 14, 10))
+                .setTooltips("Craft four")
+                .addButtonEvent(parent -> craft(4));
+        craft8Button = new Button(mc, gui).setText("8").setLayoutHint(new PositionalLayout.PositionalHint(29, 195, 14, 10))
+                .setTooltips("Craft eight")
+                .addButtonEvent(parent -> craft(8));
+        craftSButton = new Button(mc, gui).setText("*").setLayoutHint(new PositionalLayout.PositionalHint(45, 195, 14, 10))
+                .setTooltips("Craft a stack")
+                .addButtonEvent(parent -> craft(-1));
         storeButton = new Button(mc, gui).setText("Store").setLayoutHint(new PositionalLayout.PositionalHint(5, 109, 56, 14))
                 .setTooltips("Store the current recipe")
                 .addButtonEvent(parent -> store());
         Panel sidePanel = new Panel(mc, gui).setLayout(new PositionalLayout())
                 .addChild(craft1Button)
-                .addChild(craft10Button)
+                .addChild(craft4Button)
+                .addChild(craft8Button)
+                .addChild(craftSButton)
                 .addChild(storeButton)
                 .addChild(recipeList);
         sideLeft = guiLeft - CraftingGridInventory.GRID_WIDTH - 2;
@@ -90,12 +100,8 @@ public class GuiCraftingGrid {
         return craftWindow;
     }
 
-    private void craft1() {
-        gui.sendServerCommand(network, CraftingGridProvider.CMD_GRIDCRAFT, new Argument("n", 1));
-    }
-
-    private void craft10() {
-        gui.sendServerCommand(network, CraftingGridProvider.CMD_GRIDCRAFT, new Argument("n", 10));
+    private void craft(int n) {
+        gui.sendServerCommand(network, CraftingGridProvider.CMD_GRIDCRAFT, new Argument("n", n));
     }
 
     private void store() {

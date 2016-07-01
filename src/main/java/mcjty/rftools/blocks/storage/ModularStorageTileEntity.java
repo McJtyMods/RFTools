@@ -161,12 +161,29 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             return;
         }
 
-        if (craftingRecipe.getResult() != null) {
-            List<ItemStack> result = testAndConsumeCraftingItems(player, craftingRecipe);
+        if (craftingRecipe.getResult() != null && craftingRecipe.getResult().stackSize > 0) {
+            if (n == -1) {
+                n = craftingRecipe.getResult().getMaxStackSize();
+            }
 
-            for (ItemStack stack : result) {
-                if (!player.inventory.addItemStackToInventory(stack)) {
-                    player.entityDropItem(stack, 1.05f);
+            int remainder = n % craftingRecipe.getResult().stackSize;
+            n /= craftingRecipe.getResult().stackSize;
+            if (remainder != 0) {
+                n++;
+            }
+            if (n * craftingRecipe.getResult().stackSize > craftingRecipe.getResult().getMaxStackSize()) {
+                n--;
+            }
+
+            for (int i = 0 ; i < n ; i++) {
+                List<ItemStack> result = testAndConsumeCraftingItems(player, craftingRecipe);
+                if (result.isEmpty()) {
+                    return;
+                }
+                for (ItemStack stack : result) {
+                    if (!player.inventory.addItemStackToInventory(stack)) {
+                        player.entityDropItem(stack, 1.05f);
+                    }
                 }
             }
         }
