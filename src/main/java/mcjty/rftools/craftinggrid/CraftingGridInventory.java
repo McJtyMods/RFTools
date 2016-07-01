@@ -13,14 +13,13 @@ public class CraftingGridInventory implements IInventory {
 
     public static int SLOT_GHOSTOUTPUT = 0;
     public static int SLOT_GHOSTINPUT = 1;
-    public static int SLOT_OUTPUT = 10;
 
     public static int GRID_WIDTH = 66;
     public static int GRID_HEIGHT = 208;
     public static int GRID_XOFFSET = -GRID_WIDTH -2+7;
     public static int GRID_YOFFSET = 127;
 
-    private ItemStack[] stacks = new ItemStack[11];
+    private ItemStack[] stacks = new ItemStack[10];
 
     public ItemStack getResult() {
         return stacks[SLOT_GHOSTOUTPUT];
@@ -34,7 +33,7 @@ public class CraftingGridInventory implements IInventory {
 
     @Override
     public int getSizeInventory() {
-        return 11;
+        return 10;
     }
 
     @Nullable

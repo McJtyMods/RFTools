@@ -82,7 +82,7 @@ public class CraftingGrid {
             return;
         }
         NBTTagList bufferTagList = tagCompound.getTagList("grid", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
+        for (int i = 0 ; i < craftingGridInventory.getSizeInventory() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
             craftingGridInventory.setInventorySlotContents(i, ItemStack.loadItemStackFromNBT(nbtTagCompound));
         }
