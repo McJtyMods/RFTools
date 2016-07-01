@@ -4,6 +4,7 @@ import mcjty.lib.container.*;
 import mcjty.rftools.craftinggrid.CraftingGridInventory;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import mcjty.rftools.items.storage.StorageModuleItem;
+import mcjty.rftools.jei.JEIRecipeAcceptor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
@@ -34,6 +35,10 @@ public class ModularStorageItemContainer extends GenericContainer {
 
     public CraftingGridProvider getCraftingGridProvider() {
         return (CraftingGridProvider) getInventory(CONTAINER_INVENTORY);
+    }
+
+    public JEIRecipeAcceptor getJEIRecipeAcceptor() {
+        return (JEIRecipeAcceptor) getInventory(CONTAINER_INVENTORY);
     }
 
     public ModularStorageItemContainer(EntityPlayer player) {
