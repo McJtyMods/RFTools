@@ -21,6 +21,7 @@ import mcjty.rftools.blocks.spawner.SpawnerInfoPacketServer;
 import mcjty.rftools.blocks.storage.*;
 import mcjty.rftools.blocks.storagemonitor.*;
 import mcjty.rftools.blocks.teleporter.*;
+import mcjty.rftools.craftinggrid.PacketCraftFromGrid;
 import mcjty.rftools.craftinggrid.PacketGridToClient;
 import mcjty.rftools.craftinggrid.PacketGridToServer;
 import mcjty.rftools.items.creativeonly.PacketDelightingInfoReady;
@@ -65,6 +66,7 @@ public class RFToolsMessages {
         net.registerMessage(PacketGetConnectedBlocks.Handler.class, PacketGetConnectedBlocks.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketSendRecipe.Handler.class, PacketSendRecipe.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketGridToServer.Handler.class, PacketGridToServer.class, PacketHandler.nextID(), Side.SERVER);
+        net.registerMessage(PacketCraftFromGrid.Handler.class, PacketCraftFromGrid.class, PacketHandler.nextID(), Side.SERVER);
 
         // Client side
         net.registerMessage(PacketPlayersReady.Handler.class, PacketPlayersReady.class, PacketHandler.nextID(), Side.CLIENT);

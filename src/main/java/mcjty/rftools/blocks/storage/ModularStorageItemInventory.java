@@ -1,18 +1,26 @@
 package mcjty.rftools.blocks.storage;
 
+import mcjty.rftools.blocks.crafter.CraftingRecipe;
+import mcjty.rftools.craftinggrid.CraftingGrid;
+import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import mcjty.rftools.items.storage.StorageModuleItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
 
-public class ModularStorageItemInventory implements IInventory {
+import java.util.*;
+
+public class ModularStorageItemInventory implements IInventory, CraftingGridProvider {
     private ItemStack stacks[];
     private final EntityPlayer entityPlayer;
+    private CraftingGrid craftingGrid = new CraftingGrid();
 
     public ModularStorageItemInventory(EntityPlayer player) {
         this.entityPlayer = player;
@@ -30,6 +38,55 @@ public class ModularStorageItemInventory implements IInventory {
             stacks[i] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
         }
     }
+
+    @Override
+    public void setRecipe(int index, ItemStack[] stacks) {
+
+    }
+
+    @Override
+    public CraftingGrid getCraftingGrid() {
+        return craftingGrid;
+    }
+
+    @Override
+    public void craft(EntityPlayerMP player, int n) {
+        CraftingRecipe craftingRecipe = craftingGrid.getActiveRecipe();
+
+        IRecipe recipe = craftingRecipe.getCachedRecipe(player.worldObj);
+        if (recipe == null) {
+            // @todo give error?
+            return;
+        }
+
+        if (craftingRecipe.getResult() != null && craftingRecipe.getResult().stackSize > 0) {
+            if (n == -1) {
+                n = craftingRecipe.getResult().getMaxStackSize();
+            }
+
+            int remainder = n % craftingRecipe.getResult().stackSize;
+            n /= craftingRecipe.getResult().stackSize;
+            if (remainder != 0) {
+                n++;
+            }
+            if (n * craftingRecipe.getResult().stackSize > craftingRecipe.getResult().getMaxStackSize()) {
+                n--;
+            }
+
+            for (int i = 0 ; i < n ; i++) {
+                List<ItemStack> result = StorageCraftingTools.testAndConsumeCraftingItems(player, craftingRecipe, this, 0);
+                if (result.isEmpty()) {
+                    return;
+                }
+                for (ItemStack stack : result) {
+                    if (!player.inventory.addItemStackToInventory(stack)) {
+                        player.entityDropItem(stack, 1.05f);
+                    }
+                }
+            }
+        }
+    }
+
 
     private int getMaxSize() {
         ItemStack heldItem = entityPlayer.getHeldItem(EnumHand.MAIN_HAND);

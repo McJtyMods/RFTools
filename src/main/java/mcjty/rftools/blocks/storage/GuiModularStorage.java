@@ -18,6 +18,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.modules.DefaultTypeModule;
 import mcjty.rftools.blocks.storage.modules.TypeModule;
 import mcjty.rftools.blocks.storage.sorters.ItemSorter;
+import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import mcjty.rftools.craftinggrid.GuiCraftingGrid;
 import mcjty.rftools.items.storage.StorageModuleItem;
 import mcjty.rftools.network.RFToolsMessages;
@@ -32,6 +33,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.input.Keyboard;
@@ -88,9 +90,9 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     public GuiModularStorage(ModularStorageTileEntity modularStorageTileEntity, Container container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, modularStorageTileEntity, container, RFTools.GUI_MANUAL_MAIN, "storage");
 
-        if (tileEntity != null) {
+//        if (tileEntity != null) {
             craftingGrid = new GuiCraftingGrid();
-        }
+//        }
 
         xSize = STORAGE_WIDTH;
 
@@ -149,9 +151,24 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             window.setTextFocus(filter);
         }
 
+        CraftingGridProvider provider;
+        BlockPos pos = null;
+        if (tileEntity != null) {
+            provider = tileEntity;
+            pos = tileEntity.getPos();
+        } else if (inventorySlots instanceof ModularStorageItemContainer){
+            ModularStorageItemContainer storageItemContainer = (ModularStorageItemContainer) inventorySlots;
+            provider = storageItemContainer.getCraftingGridProvider();
+        } else {
+            craftingGrid = null;
+            provider = null;
+        }
+
         if (craftingGrid != null) {
-            craftingGrid.initGui(modBase, network, mc, this, tileEntity.getPos(), tileEntity, guiLeft, guiTop, xSize, ySize);
-            sendServerCommand(network, ModularStorageTileEntity.CMD_SENDGRID);
+            craftingGrid.initGui(modBase, network, mc, this, pos, provider, guiLeft, guiTop, xSize, ySize);
+            if (pos != null) {
+                sendServerCommand(network, ModularStorageTileEntity.CMD_SENDGRID);
+            }
         }
     }
 
