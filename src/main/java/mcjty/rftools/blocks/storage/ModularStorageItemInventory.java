@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.storage;
 
-import mcjty.rftools.blocks.crafter.CrafterContainer;
 import mcjty.rftools.blocks.crafter.CraftingRecipe;
 import mcjty.rftools.craftinggrid.CraftingGrid;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
@@ -10,7 +9,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumHand;
@@ -44,7 +42,7 @@ public class ModularStorageItemInventory implements IInventory, CraftingGridProv
     }
 
     @Override
-    public void setRecipe(List<ItemStack> stacks) {
+    public void setGridContents(List<ItemStack> stacks) {
         for (int i = 0 ; i < stacks.size() ; i++) {
             craftingGrid.getCraftingGridInventory().setInventorySlotContents(i, stacks.get(i));
         }
@@ -64,40 +62,7 @@ public class ModularStorageItemInventory implements IInventory, CraftingGridProv
 
     @Override
     public void craft(EntityPlayerMP player, int n) {
-        CraftingRecipe craftingRecipe = craftingGrid.getActiveRecipe();
-
-        IRecipe recipe = craftingRecipe.getCachedRecipe(player.worldObj);
-        if (recipe == null) {
-            // @todo give error?
-            return;
-        }
-
-        if (craftingRecipe.getResult() != null && craftingRecipe.getResult().stackSize > 0) {
-            if (n == -1) {
-                n = craftingRecipe.getResult().getMaxStackSize();
-            }
-
-            int remainder = n % craftingRecipe.getResult().stackSize;
-            n /= craftingRecipe.getResult().stackSize;
-            if (remainder != 0) {
-                n++;
-            }
-            if (n * craftingRecipe.getResult().stackSize > craftingRecipe.getResult().getMaxStackSize()) {
-                n--;
-            }
-
-            for (int i = 0 ; i < n ; i++) {
-                List<ItemStack> result = StorageCraftingTools.testAndConsumeCraftingItems(player, craftingRecipe, this, 0);
-                if (result.isEmpty()) {
-                    return;
-                }
-                for (ItemStack stack : result) {
-                    if (!player.inventory.addItemStackToInventory(stack)) {
-                        player.entityDropItem(stack, 1.05f);
-                    }
-                }
-            }
-        }
+        StorageCraftingTools.craftItems(player, n, craftingGrid.getActiveRecipe(), this, 0);
     }
 
 

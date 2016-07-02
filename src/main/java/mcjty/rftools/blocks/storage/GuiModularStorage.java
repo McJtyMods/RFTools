@@ -91,9 +91,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     public GuiModularStorage(ModularStorageTileEntity modularStorageTileEntity, Container container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, modularStorageTileEntity, container, RFTools.GUI_MANUAL_MAIN, "storage");
 
-//        if (tileEntity != null) {
-            craftingGrid = new GuiCraftingGrid();
-//        }
+        craftingGrid = new GuiCraftingGrid();
 
         xSize = STORAGE_WIDTH;
 
@@ -157,8 +155,11 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         if (tileEntity != null) {
             provider = tileEntity;
             pos = tileEntity.getPos();
-        } else if (inventorySlots instanceof ModularStorageItemContainer){
+        } else if (inventorySlots instanceof ModularStorageItemContainer) {
             ModularStorageItemContainer storageItemContainer = (ModularStorageItemContainer) inventorySlots;
+            provider = storageItemContainer.getCraftingGridProvider();
+        } else if (inventorySlots instanceof RemoteStorageItemContainer) {
+            RemoteStorageItemContainer storageItemContainer = (RemoteStorageItemContainer) inventorySlots;
             provider = storageItemContainer.getCraftingGridProvider();
         } else {
             craftingGrid = null;

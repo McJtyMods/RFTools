@@ -174,7 +174,6 @@ public class GuiCraftingGrid {
                 addChild(new mcjty.lib.gui.widgets.Label(mc, gui)
                         .setColor(color)
                         .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
-//                        .setDynamic(true)
                         .setText(readableName)
                         .setLayoutHint(new PositionalLayout.PositionalHint(20, 0, 30, 18)));
 

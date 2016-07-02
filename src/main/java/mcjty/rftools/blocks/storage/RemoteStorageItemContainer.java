@@ -1,6 +1,9 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.container.*;
+import mcjty.rftools.craftinggrid.CraftingGridInventory;
+import mcjty.rftools.craftinggrid.CraftingGridProvider;
+import mcjty.rftools.jei.JEIRecipeAcceptor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -8,6 +11,7 @@ import net.minecraft.util.EnumHand;
 
 public class RemoteStorageItemContainer extends GenericContainer {
     public static final String CONTAINER_INVENTORY = "container";
+    public static final String CONTAINER_GRID = "grid";
 
     public static final int MAXSIZE_STORAGE = 300;
 
@@ -19,8 +23,24 @@ public class RemoteStorageItemContainer extends GenericContainer {
         protected void setup() {
             addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), CONTAINER_INVENTORY, 0, -500, -500, 30, 0, 10, 0);
             layoutPlayerInventorySlots(91, 157);
+            layoutGridInventorySlots(CraftingGridInventory.GRID_XOFFSET, CraftingGridInventory.GRID_YOFFSET);
+        }
+
+        protected void layoutGridInventorySlots(int leftCol, int topRow) {
+            this.addSlotBox(new SlotDefinition(SlotType.SLOT_GHOST), CONTAINER_GRID, CraftingGridInventory.SLOT_GHOSTINPUT, leftCol, topRow, 3, 18, 3, 18);
+            topRow += 58;
+            this.addSlotRange(new SlotDefinition(SlotType.SLOT_GHOSTOUT), CONTAINER_GRID, CraftingGridInventory.SLOT_GHOSTOUTPUT, leftCol, topRow, 1, 18);
         }
     };
+
+    public CraftingGridProvider getCraftingGridProvider() {
+        return (CraftingGridProvider) getInventory(CONTAINER_INVENTORY);
+    }
+
+    public JEIRecipeAcceptor getJEIRecipeAcceptor() {
+        return (JEIRecipeAcceptor) getInventory(CONTAINER_INVENTORY);
+    }
+
 
     public RemoteStorageItemContainer(EntityPlayer player) {
         super(factory);
@@ -38,8 +58,10 @@ public class RemoteStorageItemContainer extends GenericContainer {
             stack.getTagCompound().setInteger("maxSize", maxStacks);
         }
 
-        addInventory(CONTAINER_INVENTORY, new RemoteStorageItemInventory(player));
+        RemoteStorageItemInventory inventory = new RemoteStorageItemInventory(player);
+        addInventory(CONTAINER_INVENTORY, inventory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
+        addInventory(CONTAINER_GRID, inventory.getCraftingGrid().getCraftingGridInventory());
         tabletIndex = player.inventory.currentItem;
         generateSlots();
     }

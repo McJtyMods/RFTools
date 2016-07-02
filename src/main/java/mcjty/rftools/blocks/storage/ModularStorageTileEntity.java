@@ -6,7 +6,6 @@ import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.rftools.ClientInfo;
 import mcjty.rftools.api.general.IInventoryTracker;
-import mcjty.rftools.blocks.crafter.CraftingRecipe;
 import mcjty.rftools.craftinggrid.CraftingGrid;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import mcjty.rftools.items.storage.StorageFilterCache;
@@ -18,7 +17,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
@@ -133,7 +131,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     }
 
     @Override
-    public void setRecipe(List<ItemStack> stacks) {
+    public void setGridContents(List<ItemStack> stacks) {
         for (int i = 0 ; i < stacks.size() ; i++) {
             craftingGrid.getCraftingGridInventory().setInventorySlotContents(i, stacks.get(i));
         }
@@ -147,40 +145,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
 
     @Override
     public void craft(EntityPlayerMP player, int n) {
-        CraftingRecipe craftingRecipe = craftingGrid.getActiveRecipe();
-
-        IRecipe recipe = craftingRecipe.getCachedRecipe(worldObj);
-        if (recipe == null) {
-            // @todo give error?
-            return;
-        }
-
-        if (craftingRecipe.getResult() != null && craftingRecipe.getResult().stackSize > 0) {
-            if (n == -1) {
-                n = craftingRecipe.getResult().getMaxStackSize();
-            }
-
-            int remainder = n % craftingRecipe.getResult().stackSize;
-            n /= craftingRecipe.getResult().stackSize;
-            if (remainder != 0) {
-                n++;
-            }
-            if (n * craftingRecipe.getResult().stackSize > craftingRecipe.getResult().getMaxStackSize()) {
-                n--;
-            }
-
-            for (int i = 0 ; i < n ; i++) {
-                List<ItemStack> result = StorageCraftingTools.testAndConsumeCraftingItems(player, craftingRecipe, this, ModularStorageContainer.SLOT_STORAGE);
-                if (result.isEmpty()) {
-                    return;
-                }
-                for (ItemStack stack : result) {
-                    if (!player.inventory.addItemStackToInventory(stack)) {
-                        player.entityDropItem(stack, 1.05f);
-                    }
-                }
-            }
-        }
+        StorageCraftingTools.craftItems(player, n, craftingGrid.getActiveRecipe(), this, ModularStorageContainer.SLOT_STORAGE);
     }
 
     @Override

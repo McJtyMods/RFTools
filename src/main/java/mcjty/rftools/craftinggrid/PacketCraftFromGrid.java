@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.rftools.blocks.storage.ModularStorageItemContainer;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
+import mcjty.rftools.blocks.storage.RemoteStorageItemContainer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -62,6 +63,9 @@ public class PacketCraftFromGrid implements IMessage {
                 if (mainhand != null && mainhand.getItem() == ModularStorageSetup.storageModuleTabletItem) {
                     if (player.openContainer instanceof ModularStorageItemContainer) {
                         ModularStorageItemContainer storageItemContainer = (ModularStorageItemContainer) player.openContainer;
+                        storageItemContainer.getCraftingGridProvider().craft(player, message.count);
+                    } else if (player.openContainer instanceof RemoteStorageItemContainer) {
+                        RemoteStorageItemContainer storageItemContainer = (RemoteStorageItemContainer) player.openContainer;
                         storageItemContainer.getCraftingGridProvider().craft(player, message.count);
                     }
                 }

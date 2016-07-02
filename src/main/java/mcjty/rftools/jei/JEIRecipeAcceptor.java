@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface JEIRecipeAcceptor {
 
-    void setRecipe(List<ItemStack> stacks);
+    void setGridContents(List<ItemStack> stacks);
 }

@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.rftools.blocks.storage.ModularStorageItemContainer;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
+import mcjty.rftools.blocks.storage.RemoteStorageItemContainer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -82,14 +83,17 @@ public class PacketSendRecipe implements IMessage {
                 if (mainhand != null && mainhand.getItem() == ModularStorageSetup.storageModuleTabletItem) {
                     if (player.openContainer instanceof ModularStorageItemContainer) {
                         ModularStorageItemContainer storageItemContainer = (ModularStorageItemContainer) player.openContainer;
-                        storageItemContainer.getJEIRecipeAcceptor().setRecipe(message.stacks);
+                        storageItemContainer.getJEIRecipeAcceptor().setGridContents(message.stacks);
+                    } else if (player.openContainer instanceof RemoteStorageItemContainer) {
+                        RemoteStorageItemContainer storageItemContainer = (RemoteStorageItemContainer) player.openContainer;
+                        storageItemContainer.getJEIRecipeAcceptor().setGridContents(message.stacks);
                     }
                 }
             } else {
                 TileEntity te = world.getTileEntity(message.pos);
                 if (te instanceof JEIRecipeAcceptor) {
                     JEIRecipeAcceptor acceptor = (JEIRecipeAcceptor) te;
-                    acceptor.setRecipe(message.stacks);
+                    acceptor.setGridContents(message.stacks);
                 }
             }
         }
