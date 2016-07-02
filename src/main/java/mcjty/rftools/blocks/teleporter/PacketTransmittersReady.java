@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.ClientCommandHandler;
 import mcjty.lib.network.PacketListFromServer;
 import mcjty.lib.varia.Logging;
-import net.minecraft.client.Minecraft;
+import mcjty.rftools.RFTools;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -25,12 +25,12 @@ public class PacketTransmittersReady extends PacketListFromServer<PacketTransmit
     public static class Handler implements IMessageHandler<PacketTransmittersReady, IMessage> {
         @Override
         public IMessage onMessage(PacketTransmittersReady message, MessageContext ctx) {
-            Minecraft.getMinecraft().addScheduledTask(() -> handle(message, ctx));
+            RFTools.proxy.addScheduledTaskClient(() -> handle(message, ctx));
             return null;
         }
 
         private void handle(PacketTransmittersReady message, MessageContext ctx) {
-            TileEntity te = Minecraft.getMinecraft().theWorld.getTileEntity(message.pos);
+            TileEntity te = RFTools.proxy.getClientWorld().getTileEntity(message.pos);
             if(!(te instanceof ClientCommandHandler)) {
                 Logging.log("createInventoryReadyPacket: TileEntity is not a ClientCommandHandler!");
                 return;

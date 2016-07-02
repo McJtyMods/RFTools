@@ -2,7 +2,7 @@ package mcjty.rftools.items.creativeonly;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import net.minecraft.client.Minecraft;
+import mcjty.rftools.RFTools;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -70,9 +70,9 @@ public class PacketDelightingInfoReady implements IMessage {
     }
 
     public PacketDelightingInfoReady(List<String> blockClasses, List<String> teClasses, Map<String,DelightingInfoHelper.NBTDescription> nbtData, int metadata) {
-        this.blockClasses = new ArrayList<String>(blockClasses);
-        this.teClasses = new ArrayList<String>(teClasses);
-        this.nbtData = new HashMap<String, DelightingInfoHelper.NBTDescription>(nbtData);
+        this.blockClasses = new ArrayList<>(blockClasses);
+        this.teClasses = new ArrayList<>(teClasses);
+        this.nbtData = new HashMap<>(nbtData);
         this.metadata = metadata;
     }
 
@@ -80,7 +80,7 @@ public class PacketDelightingInfoReady implements IMessage {
     public static class Handler implements IMessageHandler<PacketDelightingInfoReady, IMessage> {
         @Override
         public IMessage onMessage(PacketDelightingInfoReady message, MessageContext ctx) {
-            Minecraft.getMinecraft().addScheduledTask(() -> handle(message, ctx));
+            RFTools.proxy.addScheduledTaskClient(() -> handle(message, ctx));
             return null;
         }
 

@@ -1,5 +1,6 @@
 package mcjty.rftools.proxy;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import mcjty.lib.McJtyLib;
 import mcjty.lib.base.GeneralConfig;
 import mcjty.lib.network.PacketHandler;
@@ -35,8 +36,10 @@ import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.playerprops.PorterProperties;
 import mcjty.rftools.world.ModWorldgen;
 import mcjty.rftools.world.WorldTickHandler;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -50,6 +53,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
+import java.util.concurrent.Callable;
 
 public abstract class CommonProxy {
 
@@ -192,6 +196,22 @@ public abstract class CommonProxy {
 
         mainConfig = null;
         WrenchChecker.init();
+    }
+
+    public World getClientWorld() {
+        throw new IllegalStateException("This should only be called from client side");
+    }
+
+    public EntityPlayer getClientPlayer() {
+        throw new IllegalStateException("This should only be called from client side");
+    }
+
+    public <V> ListenableFuture<V> addScheduledTaskClient(Callable<V> callableToSchedule) {
+        throw new IllegalStateException("This should only be called from client side");
+    }
+
+    public ListenableFuture<Object> addScheduledTaskClient(Runnable runnableToSchedule) {
+        throw new IllegalStateException("This should only be called from client side");
     }
 
 }

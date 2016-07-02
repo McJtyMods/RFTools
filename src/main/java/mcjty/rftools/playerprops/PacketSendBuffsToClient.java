@@ -2,7 +2,7 @@ package mcjty.rftools.playerprops;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.rftools.PlayerBuff;
-import net.minecraft.client.Minecraft;
+import mcjty.rftools.RFTools;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -46,7 +46,7 @@ public class PacketSendBuffsToClient implements IMessage {
     public static class Handler implements IMessageHandler<PacketSendBuffsToClient, IMessage> {
         @Override
         public IMessage onMessage(PacketSendBuffsToClient message, MessageContext ctx) {
-            Minecraft.getMinecraft().addScheduledTask(() -> handle(message, ctx));
+            RFTools.proxy.addScheduledTaskClient(() -> handle(message, ctx));
             return null;
         }
 
