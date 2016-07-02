@@ -1,17 +1,31 @@
 package mcjty.rftools.blocks.storage;
 
+import mcjty.rftools.craftinggrid.CraftingGrid;
+import mcjty.rftools.craftinggrid.CraftingGridProvider;
+import mcjty.rftools.jei.JEIRecipeAcceptor;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.ITextComponent;
 
-public class RemoteStorageItemInventory implements IInventory {
+import java.util.List;
+
+public class RemoteStorageItemInventory implements IInventory, CraftingGridProvider, JEIRecipeAcceptor {
     private ItemStack stacks[] = new ItemStack[RemoteStorageItemContainer.MAXSIZE_STORAGE];
     private final EntityPlayer entityPlayer;
+    private CraftingGrid craftingGrid = new CraftingGrid();
 
     public RemoteStorageItemInventory(EntityPlayer player) {
         this.entityPlayer = player;
+        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
+        if (tagCompound == null) {
+            tagCompound = new NBTTagCompound();
+            entityPlayer.getHeldItem(EnumHand.MAIN_HAND).setTagCompound(tagCompound);
+        }
+        craftingGrid.readFromNBT(tagCompound.getCompoundTag("grid"));
     }
 
     private RemoteStorageTileEntity getRemoteStorage() {
@@ -27,6 +41,31 @@ public class RemoteStorageItemInventory implements IInventory {
             return -1;
         }
         return entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound().getInteger("id");
+    }
+
+
+    @Override
+    public void setRecipe(int index, ItemStack[] stacks) {
+        craftingGrid.setRecipe(index, stacks);
+        markDirty();
+    }
+
+    @Override
+    public CraftingGrid getCraftingGrid() {
+        return craftingGrid;
+    }
+
+    @Override
+    public void craft(EntityPlayerMP player, int n) {
+        StorageCraftingTools.craftItems(player, n, craftingGrid.getActiveRecipe(), this, 0);
+    }
+
+    @Override
+    public void setGridContents(List<ItemStack> stacks) {
+        for (int i = 0 ; i < stacks.size() ; i++) {
+            craftingGrid.getCraftingGridInventory().setInventorySlotContents(i, stacks.get(i));
+        }
+        markDirty();
     }
 
     private boolean isServer() {
@@ -157,6 +196,8 @@ public class RemoteStorageItemInventory implements IInventory {
         if (storage != null) {
             storage.markDirty();
         }
+        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
+        tagCompound.setTag("grid", craftingGrid.writeToNBT());
     }
 
     @Override

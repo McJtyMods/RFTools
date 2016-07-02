@@ -39,5 +39,6 @@ public class RFToolsJeiPlugin extends BlankModPlugin {
         transferRegistry.addRecipeTransferHandler(new CrafterRecipeTransferHandler());
         transferRegistry.addRecipeTransferHandler(new ModularStorageRecipeTransferHandler());
         transferRegistry.addRecipeTransferHandler(new ModularStorageItemRecipeTransferHandler());
+        transferRegistry.addRecipeTransferHandler(new RemoteStorageItemRecipeTransferHandler());
     }
 }

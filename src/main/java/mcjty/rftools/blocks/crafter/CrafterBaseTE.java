@@ -75,7 +75,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     }
 
     @Override
-    public void setRecipe(List<ItemStack> stacks) {
+    public void setGridContents(List<ItemStack> stacks) {
         setInventorySlotContents(CrafterContainer.SLOT_CRAFTOUTPUT, stacks.get(0));
         for (int i = 1 ; i < stacks.size() ; i++) {
             setInventorySlotContents(CrafterContainer.SLOT_CRAFTINPUT + i-1, stacks.get(i));
