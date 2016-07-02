@@ -71,14 +71,6 @@ public class StorageCraftingTools {
             if (input != null) {
                 if (OreDictionary.itemMatches(stack, input, false)) {
                     workInventory.setInventorySlotContents(i, input.copy());
-                    if (input.getItem().hasContainerItem(input)) {
-                        ItemStack containerItem = input.getItem().getContainerItem(input);
-                        if (containerItem != null) {
-                            if ((!containerItem.isItemStackDamageable()) || containerItem.getItemDamage() <= containerItem.getMaxDamage()) {
-                                result.add(containerItem);
-                            }
-                        }
-                    }
                     int ss = count;
                     if (input.stackSize - ss < 0) {
                         ss = input.stackSize;
