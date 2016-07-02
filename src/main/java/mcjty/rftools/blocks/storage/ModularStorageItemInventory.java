@@ -39,20 +39,22 @@ public class ModularStorageItemInventory implements IInventory, CraftingGridProv
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
             stacks[i] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
         }
+        craftingGrid.readFromNBT(tagCompound.getCompoundTag("grid"));
+
     }
 
     @Override
     public void setRecipe(List<ItemStack> stacks) {
-        setInventorySlotContents(CrafterContainer.SLOT_CRAFTOUTPUT, stacks.get(0));
-        for (int i = 1 ; i < stacks.size() ; i++) {
-            setInventorySlotContents(CrafterContainer.SLOT_CRAFTINPUT + i-1, stacks.get(i));
+        for (int i = 0 ; i < stacks.size() ; i++) {
+            craftingGrid.getCraftingGridInventory().setInventorySlotContents(i, stacks.get(i));
         }
-
+        markDirty();
     }
 
     @Override
     public void setRecipe(int index, ItemStack[] stacks) {
-
+        craftingGrid.setRecipe(index, stacks);
+        markDirty();
     }
 
     @Override
@@ -188,6 +190,7 @@ public class ModularStorageItemInventory implements IInventory, CraftingGridProv
         NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
         tagCompound.setTag("Items", bufferTagList);
         tagCompound.setInteger("count", numStacks);
+        tagCompound.setTag("grid", craftingGrid.writeToNBT());
     }
 
     @Override

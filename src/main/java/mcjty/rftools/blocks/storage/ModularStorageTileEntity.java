@@ -9,13 +9,11 @@ import mcjty.rftools.api.general.IInventoryTracker;
 import mcjty.rftools.blocks.crafter.CraftingRecipe;
 import mcjty.rftools.craftinggrid.CraftingGrid;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
-import mcjty.rftools.craftinggrid.PacketGridToClient;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.items.storage.StorageModuleItem;
 import mcjty.rftools.items.storage.StorageTypeItem;
 import mcjty.rftools.jei.JEIRecipeAcceptor;
-import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -40,7 +38,6 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     public static final String CMD_SETTINGS = "settings";
     public static final String CMD_COMPACT = "compact";
     public static final String CMD_CYCLE = "cycle";
-    public static final String CMD_SENDGRID = "sendGrid";
 
     private int[] accessible = null;
     private int maxSize = 0;
@@ -813,9 +810,6 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             return true;
         } else if (CMD_CYCLE.equals(command)) {
             cycle();
-            return true;
-        } else if (CMD_SENDGRID.equals(command)) {
-            RFToolsMessages.INSTANCE.sendTo(new PacketGridToClient(pos, getCraftingGrid()), playerMP);
             return true;
         }
         return false;

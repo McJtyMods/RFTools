@@ -20,6 +20,7 @@ import mcjty.rftools.blocks.storage.modules.TypeModule;
 import mcjty.rftools.blocks.storage.sorters.ItemSorter;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import mcjty.rftools.craftinggrid.GuiCraftingGrid;
+import mcjty.rftools.craftinggrid.PacketRequestGridSync;
 import mcjty.rftools.items.storage.StorageModuleItem;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
@@ -166,9 +167,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
         if (craftingGrid != null) {
             craftingGrid.initGui(modBase, network, mc, this, pos, provider, guiLeft, guiTop, xSize, ySize);
-            if (pos != null) {
-                sendServerCommand(network, ModularStorageTileEntity.CMD_SENDGRID);
-            }
+            network.sendToServer(new PacketRequestGridSync(pos));
         }
     }
 

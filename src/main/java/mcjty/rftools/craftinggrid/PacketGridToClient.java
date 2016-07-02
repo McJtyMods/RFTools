@@ -2,6 +2,7 @@ package mcjty.rftools.craftinggrid;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -31,7 +32,8 @@ public class PacketGridToClient extends PacketGridSync implements IMessage {
         @Override
         public IMessage onMessage(PacketGridToClient message, MessageContext ctx) {
             World world = Minecraft.getMinecraft().theWorld;
-            Minecraft.getMinecraft().addScheduledTask(() -> message.handleMessage(world));
+            EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+            Minecraft.getMinecraft().addScheduledTask(() -> message.handleMessage(world, player));
             return null;
         }
     }
