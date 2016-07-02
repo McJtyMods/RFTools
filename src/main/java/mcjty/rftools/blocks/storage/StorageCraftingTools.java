@@ -32,9 +32,9 @@ public class StorageCraftingTools {
             ItemStack stack = inventory.getStackInSlot(i);
             if (stack != null) {
                 int count = stack.stackSize;
-                count = findMatchingItems(workInventory, undo, result, i, stack, count, player.inventory, 0);
+                count = findMatchingItems(workInventory, undo, i, stack, count, player.inventory, 0);
                 if (count > 0) {
-                    count = findMatchingItems(workInventory, undo, result, i, stack, count, thisInventory, thisInventoryOffset);
+                    count = findMatchingItems(workInventory, undo, i, stack, count, thisInventory, thisInventoryOffset);
                 }
 
                 if (count > 0) {
@@ -65,9 +65,9 @@ public class StorageCraftingTools {
         return result;
     }
 
-    private static int findMatchingItems(InventoryCrafting workInventory, Map<Pair<IInventory, Integer>, ItemStack> undo, List<ItemStack> result, int i, ItemStack stack, int count, IInventory iii, int startIndex) {
-        for (int slotIdx = startIndex; slotIdx < iii.getSizeInventory() ; slotIdx++) {
-            ItemStack input = iii.getStackInSlot(slotIdx);
+    private static int findMatchingItems(InventoryCrafting workInventory, Map<Pair<IInventory, Integer>, ItemStack> undo, int i, ItemStack stack, int count, IInventory inv, int startIndex) {
+        for (int slotIdx = startIndex; slotIdx < inv.getSizeInventory() ; slotIdx++) {
+            ItemStack input = inv.getStackInSlot(slotIdx);
             if (input != null) {
                 if (OreDictionary.itemMatches(stack, input, false)) {
                     workInventory.setInventorySlotContents(i, input.copy());
@@ -76,13 +76,13 @@ public class StorageCraftingTools {
                         ss = input.stackSize;
                     }
                     count -= ss;
-                    Pair<IInventory, Integer> key = Pair.of(iii, slotIdx);
+                    Pair<IInventory, Integer> key = Pair.of(inv, slotIdx);
                     if (!undo.containsKey(key)) {
                         undo.put(key, input.copy());
                     }
                     input.splitStack(ss);        // This consumes the items
                     if (input.stackSize == 0) {
-                        iii.setInventorySlotContents(slotIdx, null);
+                        inv.setInventorySlotContents(slotIdx, null);
                     }
                 }
             }
