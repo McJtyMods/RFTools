@@ -6,7 +6,6 @@ import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.data.IModuleData;
 import mcjty.rftools.api.screens.data.IModuleDataFactory;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -66,7 +65,7 @@ public class PacketReturnScreenData implements IMessage {
     public static class Handler implements IMessageHandler<PacketReturnScreenData, IMessage> {
         @Override
         public IMessage onMessage(PacketReturnScreenData message, MessageContext ctx) {
-            Minecraft.getMinecraft().addScheduledTask(() -> PacketGetScreenDataHelper.setScreenData(message));
+            RFTools.proxy.addScheduledTaskClient(() -> PacketGetScreenDataHelper.setScreenData(message));
             return null;
         }
 

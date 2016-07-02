@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.storage;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import net.minecraft.client.Minecraft;
+import mcjty.rftools.RFTools;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -88,16 +88,16 @@ public class PacketSyncSlotsToClient implements IMessage {
     public static class Handler implements IMessageHandler<PacketSyncSlotsToClient, IMessage> {
         @Override
         public IMessage onMessage(PacketSyncSlotsToClient message, MessageContext ctx) {
-            Minecraft.getMinecraft().addScheduledTask(() -> handle(message, ctx));
+            RFTools.proxy.addScheduledTaskClient(() -> handle(message, ctx));
             return null;
         }
 
         public void handle(PacketSyncSlotsToClient message, MessageContext ctx) {
-            TileEntity te = Minecraft.getMinecraft().theWorld.getTileEntity(message.pos);
+            TileEntity te = RFTools.proxy.getClientWorld().getTileEntity(message.pos);
             if (te instanceof ModularStorageTileEntity) {
                 ModularStorageTileEntity storage = (ModularStorageTileEntity) te;
                 storage.syncInventoryFromServer(message.maxSize, message.numStacks, message.sortMode, message.viewMode, message.groupMode, message.filter);
-                Container container = Minecraft.getMinecraft().thePlayer.openContainer;
+                Container container = RFTools.proxy.getClientPlayer().openContainer;
                 if (container instanceof ModularStorageContainer) {
                     for (Pair<Integer, ItemStack> pair : message.items) {
                         container.putStackInSlot(pair.getLeft(), pair.getRight());

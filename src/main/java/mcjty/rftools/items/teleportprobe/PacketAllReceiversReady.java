@@ -1,9 +1,9 @@
 package mcjty.rftools.items.teleportprobe;
 
 import io.netty.buffer.ByteBuf;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.TeleportDestination;
 import mcjty.rftools.blocks.teleporter.TeleportDestinationClientInfo;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -42,7 +42,7 @@ public class PacketAllReceiversReady implements IMessage {
     public static class Handler implements IMessageHandler<PacketAllReceiversReady, IMessage> {
         @Override
         public IMessage onMessage(PacketAllReceiversReady message, MessageContext ctx) {
-            Minecraft.getMinecraft().addScheduledTask(() -> GuiTeleportProbe.setReceivers(message.destinationList));
+            RFTools.proxy.addScheduledTaskClient(() -> GuiTeleportProbe.setReceivers(message.destinationList));
             return null;
         }
     }

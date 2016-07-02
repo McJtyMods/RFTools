@@ -2,7 +2,7 @@ package mcjty.rftools.items.netmonitor;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.rftools.BlockInfo;
-import net.minecraft.client.Minecraft;
+import mcjty.rftools.RFTools;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -24,7 +24,7 @@ public class PacketConnectedBlocksReady implements IMessage {
         minz = buf.readInt();
 
         int size = buf.readInt();
-        blockInfoMap = new HashMap<BlockPos, BlockInfo>();
+        blockInfoMap = new HashMap<>();
         for (int i = 0 ; i < size ; i++) {
             BlockPos coordinate = new BlockPos(buf.readShort() + minx, buf.readShort() + miny, buf.readShort() + minz);
             BlockInfo blockInfo = new BlockInfo(coordinate, buf.readInt(), buf.readInt());
@@ -53,7 +53,7 @@ public class PacketConnectedBlocksReady implements IMessage {
     }
 
     public PacketConnectedBlocksReady(Map<BlockPos,BlockInfo> blockInfoMap, int minx, int miny, int minz) {
-        this.blockInfoMap = new HashMap<BlockPos, BlockInfo>(blockInfoMap);
+        this.blockInfoMap = new HashMap<>(blockInfoMap);
 
         this.minx = minx;
         this.miny = miny;
@@ -63,7 +63,7 @@ public class PacketConnectedBlocksReady implements IMessage {
     public static class Handler implements IMessageHandler<PacketConnectedBlocksReady, IMessage> {
         @Override
         public IMessage onMessage(PacketConnectedBlocksReady message, MessageContext ctx) {
-            Minecraft.getMinecraft().addScheduledTask(() -> handle(message, ctx));
+            RFTools.proxy.addScheduledTaskClient(() -> handle(message, ctx));
             return null;
         }
 

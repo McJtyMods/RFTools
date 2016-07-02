@@ -341,7 +341,6 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     }
 
     private boolean testAndConsumeCraftingItems(CraftingRecipe craftingRecipe, Map<Integer,ItemStack> undo) {
-        boolean internal = craftingRecipe.isCraftInternal();
         int keep = craftingRecipe.isKeepOne() ? 1 : 0;
         InventoryCrafting inventory = craftingRecipe.getInventory();
 
@@ -355,17 +354,6 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
                     if (input != null && input.stackSize > keep) {
                         if (OreDictionary.itemMatches(stack, input, false)) {
                             workInventory.setInventorySlotContents(i, input.copy());
-//                            if (input.getItem().hasContainerItem(input)) {
-//                                ItemStack containerItem = input.getItem().getContainerItem(input);
-//                                if (containerItem != null) {
-//                                    if ((!containerItem.isItemStackDamageable()) || containerItem.getItemDamage() <= containerItem.getMaxDamage()) {
-//                                        if (!placeResult(internal, containerItem, undo)) {
-//                                            // Not enough room.
-//                                            return false;
-//                                        }
-//                                    }
-//                                }
-//                            }
                             int ss = count;
                             if (input.stackSize - ss < keep) {
                                 ss = input.stackSize - keep;

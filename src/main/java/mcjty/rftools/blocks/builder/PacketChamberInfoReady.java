@@ -3,9 +3,9 @@ package mcjty.rftools.blocks.builder;
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.varia.BlockMeta;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.items.builder.GuiChamberDetails;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -78,7 +78,7 @@ public class PacketChamberInfoReady implements IMessage {
     public static class Handler implements IMessageHandler<PacketChamberInfoReady, IMessage> {
         @Override
         public IMessage onMessage(PacketChamberInfoReady message, MessageContext ctx) {
-            Minecraft.getMinecraft().addScheduledTask(() -> handle(message, ctx));
+            RFTools.proxy.addScheduledTaskClient(() -> handle(message, ctx));
             return null;
         }
 

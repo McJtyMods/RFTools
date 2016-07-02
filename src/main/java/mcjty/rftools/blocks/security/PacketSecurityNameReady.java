@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.security;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import net.minecraft.client.Minecraft;
+import mcjty.rftools.RFTools;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -32,7 +32,7 @@ public class PacketSecurityNameReady implements IMessage {
     public static class Handler implements IMessageHandler<PacketSecurityNameReady, IMessage> {
         @Override
         public IMessage onMessage(PacketSecurityNameReady message, MessageContext ctx) {
-            Minecraft.getMinecraft().addScheduledTask(() -> handle(message, ctx));
+            RFTools.proxy.addScheduledTaskClient(() -> handle(message, ctx));
             return null;
         }
 
