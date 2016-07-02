@@ -5,6 +5,7 @@ import mcjty.rftools.craftinggrid.CraftingGridInventory;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import mcjty.rftools.jei.JEIRecipeAcceptor;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
@@ -83,7 +84,14 @@ public class RemoteStorageItemContainer extends GenericContainer {
     public void generateSlots() {
         for (SlotFactory slotFactory : factory.getSlots()) {
             Slot slot;
-            if (slotFactory.getSlotType() == SlotType.SLOT_PLAYERHOTBAR) {
+            if (CONTAINER_GRID.equals(slotFactory.getInventoryName())) {
+                SlotType slotType = slotFactory.getSlotType();
+                IInventory inventory = this.inventories.get(slotFactory.getInventoryName());
+                int index = slotFactory.getIndex();
+                int x = slotFactory.getX();
+                int y = slotFactory.getY();
+                slot = this.createSlot(slotFactory, inventory, index, x, y, slotType);
+            } else if (slotFactory.getSlotType() == SlotType.SLOT_PLAYERHOTBAR) {
                 if (slotFactory.getIndex() == tabletIndex) {
                     slot = new BaseSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY()) {
                         @Override
