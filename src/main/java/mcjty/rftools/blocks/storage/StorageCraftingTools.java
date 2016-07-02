@@ -50,6 +50,14 @@ public class StorageCraftingTools {
         ItemStack stack = recipe.getCraftingResult(workInventory);
         if (stack != null) {
             result.add(stack);
+            ItemStack[] remaining = recipe.getRemainingItems(workInventory);
+            if (remaining != null) {
+                for (ItemStack s : remaining) {
+                    if (s != null) {
+                        result.add(s);
+                    }
+                }
+            }
         } else {
             result.clear();
             undo(player, undo);
