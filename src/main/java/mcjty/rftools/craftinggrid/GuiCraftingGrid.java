@@ -15,13 +15,16 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.crafter.CraftingRecipe;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 
@@ -45,6 +48,9 @@ public class GuiCraftingGrid {
     private int sideTop;
     private CraftingGridProvider provider;
     private BlockPos pos;
+
+    public static int[] testResultFromServer = null;
+
 
     public void initGui(final ModBase modBase, final SimpleNetworkWrapper network, final Minecraft mc, GenericGuiContainer gui,
                         BlockPos pos, CraftingGridProvider provider,
@@ -100,7 +106,11 @@ public class GuiCraftingGrid {
     }
 
     private void craft(int n) {
-        RFToolsMessages.INSTANCE.sendToServer(new PacketCraftFromGrid(pos, n));
+        RFToolsMessages.INSTANCE.sendToServer(new PacketCraftFromGrid(pos, n, false));
+    }
+
+    private void testCraft(int n) {
+        RFToolsMessages.INSTANCE.sendToServer(new PacketCraftFromGrid(pos, n, true));
     }
 
     private void store() {
@@ -130,11 +140,48 @@ public class GuiCraftingGrid {
         }
     }
 
-    public void updateGui() {
+    public void draw() {
         int selected = recipeList.getSelected();
         storeButton.setEnabled(selected != -1);
         populateList();
         testRecipe();
+
+        int x = Mouse.getEventX() * gui.width / gui.mc.displayWidth;
+        int y = gui.height - Mouse.getEventY() * gui.height / gui.mc.displayHeight - 1;
+        Widget widget = craftWindow.getToplevel().getWidgetAtPosition(x, y);
+        if (widget == craft1Button) {
+            testCraft(1);
+        } else if (widget == craft4Button) {
+            testCraft(4);
+        } else if (widget == craft8Button) {
+            testCraft(8);
+        } else if (widget == craftSButton) {
+            testCraft(-1);
+        } else {
+            testResultFromServer = null;
+        }
+
+        craftWindow.draw();
+
+        if (testResultFromServer != null) {
+            GlStateManager.pushMatrix();
+            GlStateManager.translate((float)gui.guiLeft, (float) gui.guiTop, 0.0F);
+
+            for (int i = 0 ; i < 9 ; i++) {
+                if (testResultFromServer[i] > 0) {
+                    Slot slot = gui.inventorySlots.getSlotFromInventory(provider.getCraftingGrid().getCraftingGridInventory(), CraftingGridInventory.SLOT_GHOSTINPUT + i);
+
+                    if (slot != null) {
+                        GlStateManager.colorMask(true, true, true, false);
+                        gui.drawRect(slot.xDisplayPosition, slot.yDisplayPosition, slot.xDisplayPosition + 16, slot.yDisplayPosition + 16, 0xffff0000);
+                    }
+                }
+            }
+            GlStateManager.popMatrix();
+        }
+    }
+
+    public void updateGui() {
     }
 
     private void testRecipe() {
