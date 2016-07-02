@@ -51,7 +51,8 @@ public class ContainerToItemRecipe extends ShapedRecipes {
                 NBTTagCompound newtag = new NBTTagCompound();
                 for (Object o : tagCompound.getKeySet()) {
                     String tag = (String) o;
-                    if ((!"childDamage".equals(tag)) && (!"Energy".equals(tag))) {
+                    // @todo add a list of blacklisted NBT tags (make this more general)
+                    if ((!"childDamage".equals(tag)) && (!"Energy".equals(tag)) && (!"grid".equals(tag))) {
                         newtag.setTag(tag, tagCompound.getTag(tag));
                     }
                 }

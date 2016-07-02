@@ -76,9 +76,13 @@ public class ContainerAndItemRecipe extends ShapedRecipes {
             if (tagCompound != null) {
                 stack.setTagCompound(tagCompound);
             }
-            NBTTagCompound tagCompoundEnergy = getNBTFromObject(inventoryCrafting, objectToGetEnergyFrom);
-            if (tagCompoundEnergy != null) {
-                getCompound(stack).setInteger("Energy", tagCompoundEnergy.getInteger("Energy"));
+            NBTTagCompound tagCompoundTablet = getNBTFromObject(inventoryCrafting, objectToGetEnergyFrom);
+            if (tagCompoundTablet != null) {
+                getCompound(stack).setInteger("Energy", tagCompoundTablet.getInteger("Energy"));
+                // @todo hardcoded!
+                if (tagCompoundTablet.hasKey("grid")) {
+                    getCompound(stack).setTag("grid", tagCompoundTablet.getTag("grid"));
+                }
             }
 
             Integer damage = getMetaFunction.apply(inventoryCrafting);
