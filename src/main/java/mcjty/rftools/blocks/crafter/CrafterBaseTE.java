@@ -319,6 +319,19 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
         // Try to merge the output. If there is something that doesn't fit we undo everything.
         if (result != null && placeResult(craftingRecipe.isCraftInternal(), result, undo)) {
+            ItemStack[] remaining = recipe.getRemainingItems(workInventory);
+            if (remaining != null) {
+                for (ItemStack s : remaining) {
+                    if (s != null) {
+                        if (!placeResult(craftingRecipe.isCraftInternal(), s, undo)) {
+                            // Not enough room.
+                            undo(undo);
+                            return false;
+                        }
+                    }
+                }
+            }
+
             return true;
         } else {
             // We don't have place. Undo the operation.
@@ -378,6 +391,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
                 workInventory.setInventorySlotContents(i, null);
             }
         }
+
         return true;
     }
 
