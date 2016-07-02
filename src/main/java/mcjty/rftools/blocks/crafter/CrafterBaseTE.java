@@ -303,9 +303,12 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
         Map<Integer,ItemStack> undo = new HashMap<Integer, ItemStack>();
 
-        if (!testAndConsumeCraftingItems(craftingRecipe, undo)) {
+        if (!testAndConsumeCraftingItems(craftingRecipe, undo, true)) {
             undo(undo);
-            return false;
+            if (!testAndConsumeCraftingItems(craftingRecipe, undo, false)) {
+                undo(undo);
+                return false;
+            }
         }
 
 //        ItemStack result = recipe.getCraftingResult(craftingRecipe.getInventory());
@@ -340,7 +343,19 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         }
     }
 
-    private boolean testAndConsumeCraftingItems(CraftingRecipe craftingRecipe, Map<Integer,ItemStack> undo) {
+    private static boolean match(ItemStack target, ItemStack input, boolean strictDamage) {
+        if (strictDamage) {
+            return OreDictionary.itemMatches(target, input, false);
+        } else {
+            if ((input == null && target != null) || (input != null && target == null)) {
+                return false;
+            }
+            return target.getItem() == input.getItem();
+
+        }
+    }
+
+    private boolean testAndConsumeCraftingItems(CraftingRecipe craftingRecipe, Map<Integer, ItemStack> undo, boolean strictDamage) {
         int keep = craftingRecipe.isKeepOne() ? 1 : 0;
         InventoryCrafting inventory = craftingRecipe.getInventory();
 
@@ -352,7 +367,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
                     int slotIdx = CrafterContainer.SLOT_BUFFER + j;
                     ItemStack input = inventoryHelper.getStackInSlot(slotIdx);
                     if (input != null && input.stackSize > keep) {
-                        if (OreDictionary.itemMatches(stack, input, false)) {
+                        if (match(stack, input, strictDamage)) {
                             workInventory.setInventorySlotContents(i, input.copy());
                             int ss = count;
                             if (input.stackSize - ss < keep) {
