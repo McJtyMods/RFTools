@@ -582,7 +582,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     protected void drawWindow() {
         super.drawWindow();
         if (craftingGrid != null) {
-            craftingGrid.getWindow().draw();
+            craftingGrid.draw();
         }
     }
 }

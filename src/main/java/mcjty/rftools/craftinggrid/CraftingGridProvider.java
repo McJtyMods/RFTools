@@ -11,5 +11,5 @@ public interface CraftingGridProvider {
 
     void markDirty();
 
-    void craft(EntityPlayerMP player, int n);
+    int[] craft(EntityPlayerMP player, int n, boolean test);
 }

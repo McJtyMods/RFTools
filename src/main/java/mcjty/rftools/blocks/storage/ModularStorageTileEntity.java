@@ -144,8 +144,13 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     }
 
     @Override
-    public void craft(EntityPlayerMP player, int n) {
-        StorageCraftingTools.craftItems(player, n, craftingGrid.getActiveRecipe(), this, ModularStorageContainer.SLOT_STORAGE);
+    public int[] craft(EntityPlayerMP player, int n, boolean test) {
+        if (test) {
+            return StorageCraftingTools.testCraftItems(player, n, craftingGrid.getActiveRecipe(), this, ModularStorageContainer.SLOT_STORAGE);
+        } else {
+            StorageCraftingTools.craftItems(player, n, craftingGrid.getActiveRecipe(), this, ModularStorageContainer.SLOT_STORAGE);
+            return null;
+        }
     }
 
     @Override

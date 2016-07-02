@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.storage;
 
-import mcjty.rftools.blocks.crafter.CraftingRecipe;
 import mcjty.rftools.craftinggrid.CraftingGrid;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import mcjty.rftools.items.storage.StorageModuleItem;
@@ -15,7 +14,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
 
-import java.util.*;
+import java.util.List;
 
 public class ModularStorageItemInventory implements IInventory, CraftingGridProvider, JEIRecipeAcceptor {
     private ItemStack stacks[];
@@ -61,8 +60,13 @@ public class ModularStorageItemInventory implements IInventory, CraftingGridProv
     }
 
     @Override
-    public void craft(EntityPlayerMP player, int n) {
-        StorageCraftingTools.craftItems(player, n, craftingGrid.getActiveRecipe(), this, 0);
+    public int[] craft(EntityPlayerMP player, int n, boolean test) {
+        if (test) {
+            return StorageCraftingTools.testCraftItems(player, n, craftingGrid.getActiveRecipe(), this, 0);
+        } else {
+            StorageCraftingTools.craftItems(player, n, craftingGrid.getActiveRecipe(), this, 0);
+            return null;
+        }
     }
 
 

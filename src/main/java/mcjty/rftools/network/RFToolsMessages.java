@@ -21,10 +21,7 @@ import mcjty.rftools.blocks.spawner.SpawnerInfoPacketServer;
 import mcjty.rftools.blocks.storage.*;
 import mcjty.rftools.blocks.storagemonitor.*;
 import mcjty.rftools.blocks.teleporter.*;
-import mcjty.rftools.craftinggrid.PacketCraftFromGrid;
-import mcjty.rftools.craftinggrid.PacketGridToClient;
-import mcjty.rftools.craftinggrid.PacketGridToServer;
-import mcjty.rftools.craftinggrid.PacketRequestGridSync;
+import mcjty.rftools.craftinggrid.*;
 import mcjty.rftools.items.creativeonly.PacketDelightingInfoReady;
 import mcjty.rftools.items.creativeonly.PacketGetDelightingInfo;
 import mcjty.rftools.items.netmonitor.PacketConnectedBlocksReady;
@@ -89,6 +86,7 @@ public class RFToolsMessages {
         net.registerMessage(PacketConnectedBlocksReady.Handler.class, PacketConnectedBlocksReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketSyncSlotsToClient.Handler.class, PacketSyncSlotsToClient.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketGridToClient.Handler.class, PacketGridToClient.class, PacketHandler.nextID(), Side.CLIENT);
+        net.registerMessage(PacketCraftTestResultToClient.Handler.class, PacketCraftTestResultToClient.class, PacketHandler.nextID(), Side.CLIENT);
 
         PacketHandler.register(PacketHandler.nextPacketID(), StorageInfoPacketServer.class, StorageInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), PowerCellInfoPacketServer.class, PowerCellInfoPacketClient.class);

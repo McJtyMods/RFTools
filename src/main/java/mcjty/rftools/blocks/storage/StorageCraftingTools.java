@@ -15,6 +15,44 @@ import java.util.*;
 
 public class StorageCraftingTools {
 
+    static int[] tryRecipe(EntityPlayerMP player, CraftingRecipe craftingRecipe, int n,
+                                                       IInventory thisInventory, int thisInventoryOffset) {
+        InventoryCrafting workInventory = new InventoryCrafting(new Container() {
+            @Override
+            public boolean canInteractWith(EntityPlayer var1) {
+                return false;
+            }
+        }, 3, 3);
+
+        Map<Pair<IInventory, Integer>,ItemStack> undo = new HashMap<>();
+        InventoryCrafting inventory = craftingRecipe.getInventory();
+
+        int[] missingCount = new int[9];
+        for (int i = 0 ; i < 9 ; i++) {
+            missingCount[i] = 0;
+        }
+
+        for (int counter = 0 ; counter < n ; counter++) {
+            for (int i = 0; i < inventory.getSizeInventory(); i++) {
+                ItemStack stack = inventory.getStackInSlot(i);
+                if (stack != null) {
+                    int count = stack.stackSize;
+                    count = findMatchingItems(workInventory, undo, i, stack, count, player.inventory, 0, false);
+                    if (count > 0) {
+                        count = findMatchingItems(workInventory, undo, i, stack, count, thisInventory, thisInventoryOffset, false);
+                    }
+                    missingCount[i] += count;
+                } else {
+                    workInventory.setInventorySlotContents(i, null);
+                }
+            }
+        }
+
+        undo(player, undo);
+
+        return missingCount;
+    }
+
     static List<ItemStack> testAndConsumeCraftingItems(EntityPlayerMP player, CraftingRecipe craftingRecipe,
                                                        IInventory thisInventory, int thisInventoryOffset, boolean strictDamage) {
         InventoryCrafting workInventory = new InventoryCrafting(new Container() {
@@ -155,5 +193,31 @@ public class StorageCraftingTools {
                 }
             }
         }
+    }
+
+    public static int[] testCraftItems(EntityPlayerMP player, int n, CraftingRecipe craftingRecipe, IInventory thisInventory, int thisOffset) {
+        IRecipe recipe = craftingRecipe.getCachedRecipe(player.worldObj);
+        if (recipe == null) {
+            // @todo give error?
+            return null;
+        }
+
+        if (craftingRecipe.getResult() != null && craftingRecipe.getResult().stackSize > 0) {
+            if (n == -1) {
+                n = craftingRecipe.getResult().getMaxStackSize();
+            }
+
+            int remainder = n % craftingRecipe.getResult().stackSize;
+            n /= craftingRecipe.getResult().stackSize;
+            if (remainder != 0) {
+                n++;
+            }
+            if (n * craftingRecipe.getResult().stackSize > craftingRecipe.getResult().getMaxStackSize()) {
+                n--;
+            }
+
+            return tryRecipe(player, craftingRecipe, n, thisInventory, thisOffset);
+        }
+        return null;
     }
 }

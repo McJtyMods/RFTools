@@ -56,8 +56,13 @@ public class RemoteStorageItemInventory implements IInventory, CraftingGridProvi
     }
 
     @Override
-    public void craft(EntityPlayerMP player, int n) {
-        StorageCraftingTools.craftItems(player, n, craftingGrid.getActiveRecipe(), this, 0);
+    public int[] craft(EntityPlayerMP player, int n, boolean test) {
+        if (test) {
+            return StorageCraftingTools.testCraftItems(player, n, craftingGrid.getActiveRecipe(), this, 0);
+        } else {
+            StorageCraftingTools.craftItems(player, n, craftingGrid.getActiveRecipe(), this, 0);
+            return null;
+        }
     }
 
     @Override
