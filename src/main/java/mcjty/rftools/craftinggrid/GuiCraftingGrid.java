@@ -109,9 +109,7 @@ public class GuiCraftingGrid {
             return;
         }
         provider.getCraftingGrid().storeRecipe(selected);
-        if (pos != null) {
-            RFToolsMessages.INSTANCE.sendToServer(new PacketGridToServer(pos, provider.getCraftingGrid()));
-        }
+        RFToolsMessages.INSTANCE.sendToServer(new PacketGridToServer(pos, provider.getCraftingGrid()));
     }
 
     private void selectRecipe() {
@@ -121,9 +119,7 @@ public class GuiCraftingGrid {
         }
 
         provider.getCraftingGrid().selectRecipe(selected);
-        if (pos != null) {
-            RFToolsMessages.INSTANCE.sendToServer(new PacketGridToServer(pos, provider.getCraftingGrid()));
-        }
+        RFToolsMessages.INSTANCE.sendToServer(new PacketGridToServer(pos, provider.getCraftingGrid()));
     }
 
     private void populateList() {

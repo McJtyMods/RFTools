@@ -2,8 +2,10 @@ package mcjty.rftools.craftinggrid;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -61,7 +63,9 @@ public class PacketGridToServer extends PacketGridSync implements IMessage {
         }
 
         private void handle(PacketGridToServer message, MessageContext ctx) {
-            CraftingGridProvider provider = message.handleMessage(ctx.getServerHandler().playerEntity.worldObj);
+            EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+            World world = player.worldObj;
+            CraftingGridProvider provider = message.handleMessage(world, player);
             if (provider != null) {
                 CraftingGridInventory inventory = provider.getCraftingGrid().getCraftingGridInventory();
                 for (int i = 0 ; i < 10 ; i++) {
