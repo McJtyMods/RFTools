@@ -147,6 +147,9 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
         if (hasContainerItem(stack) && stack.hasTagCompound()) {
             NBTTagCompound tagCompound = new NBTTagCompound();
             tagCompound.setInteger("Energy", stack.getTagCompound().getInteger("Energy"));
+            if (stack.getTagCompound().hasKey("grid")) {
+                tagCompound.setTag("grid", stack.getTagCompound().getTag("grid"));
+            }
             ItemStack container = new ItemStack(getContainerItem());
             container.setTagCompound(tagCompound);
             return container;
