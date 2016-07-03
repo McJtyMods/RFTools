@@ -9,8 +9,8 @@ import mcjty.lib.varia.SoundTools;
 import mcjty.rftools.api.general.IInventoryTracker;
 import mcjty.rftools.craftinggrid.CraftingGrid;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
-import mcjty.rftools.craftinggrid.InventoriesItemSource;
 import mcjty.rftools.craftinggrid.StorageCraftingTools;
+import mcjty.rftools.craftinggrid.TileEntitiestemSource;
 import mcjty.rftools.jei.JEIRecipeAcceptor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -72,8 +72,14 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     @Override
     public int[] craft(EntityPlayerMP player, int n, boolean test) {
-        InventoriesItemSource itemSource = new InventoriesItemSource()
-                .add(player.inventory, 0).add(this, 0);
+        TileEntitiestemSource itemSource = new TileEntitiestemSource()
+                .addInventory(player.inventory, 0);
+        for (BlockPos p : getInventories()) {
+            if (isRoutable(p)) {
+                itemSource.add(worldObj.getTileEntity(p), 0);
+            }
+        }
+
         if (test) {
             return StorageCraftingTools.testCraftItems(player, n, craftingGrid.getActiveRecipe(), itemSource);
         } else {
@@ -466,6 +472,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         radius = tagCompound.getInteger("radius");
+        craftingGrid.readFromNBT(tagCompound.getCompoundTag("grid"));
     }
 
     @Override
@@ -490,6 +497,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         tagCompound.setInteger("radius", radius);
+        tagCompound.setTag("grid", craftingGrid.writeToNBT());
     }
 
     @Override
