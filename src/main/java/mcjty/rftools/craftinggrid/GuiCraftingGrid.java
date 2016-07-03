@@ -50,7 +50,8 @@ public class GuiCraftingGrid {
     private BlockPos pos;
 
     public static int[] testResultFromServer = null;
-
+    private int lastTestAmount = -2;
+    private int lastTestTimer = 0;
 
     public void initGui(final ModBase modBase, final SimpleNetworkWrapper network, final Minecraft mc, GenericGuiContainer gui,
                         BlockPos pos, CraftingGridProvider provider,
@@ -110,7 +111,12 @@ public class GuiCraftingGrid {
     }
 
     private void testCraft(int n) {
-        RFToolsMessages.INSTANCE.sendToServer(new PacketCraftFromGrid(pos, n, true));
+        if (lastTestAmount != n || lastTestTimer <= 0) {
+            RFToolsMessages.INSTANCE.sendToServer(new PacketCraftFromGrid(pos, n, true));
+            lastTestAmount = n;
+            lastTestTimer = 20;
+        }
+        lastTestTimer--;
     }
 
     private void store() {
@@ -159,6 +165,8 @@ public class GuiCraftingGrid {
             testCraft(-1);
         } else {
             testResultFromServer = null;
+            lastTestAmount = -2;
+            lastTestTimer = 0;
         }
 
         craftWindow.draw();
