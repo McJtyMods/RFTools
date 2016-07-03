@@ -20,7 +20,16 @@ import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.storage.ModularStorageItemContainer;
+import mcjty.rftools.blocks.storage.RemoteStorageItemContainer;
+import mcjty.rftools.craftinggrid.CraftingGridProvider;
+import mcjty.rftools.craftinggrid.GuiCraftingGrid;
+import mcjty.rftools.craftinggrid.PacketRequestGridSync;
 import mcjty.rftools.network.RFToolsMessages;
+import net.minecraft.block.Block;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -28,8 +37,10 @@ import net.minecraft.util.math.BlockPos;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -51,6 +62,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     private Button upButton;
     private Button downButton;
 
+    private GuiCraftingGrid craftingGrid;
+
     private long prevTime = -1;
 
     private int listDirty = 0;
@@ -65,6 +78,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     public GuiStorageScanner(StorageScannerTileEntity storageScannerTileEntity, StorageScannerContainer storageScannerContainer) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, storageScannerTileEntity, storageScannerContainer, RFTools.GUI_MANUAL_MAIN, "stomon");
         GenericEnergyStorageTileEntity.setCurrentRF(storageScannerTileEntity.getEnergyStored(EnumFacing.DOWN));
+
+        craftingGrid = new GuiCraftingGrid();
 
         xSize = STORAGE_MONITOR_WIDTH;
         ySize = STORAGE_MONITOR_HEIGHT;
@@ -181,7 +196,48 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         } else {
             fromServer_inventories.clear();
         }
+
+        CraftingGridProvider provider;
+        BlockPos pos = null;
+        if (tileEntity != null) {
+            provider = tileEntity;
+            pos = tileEntity.getPos();
+//        } else if (inventorySlots instanceof ModularStorageItemContainer) {
+//            ModularStorageItemContainer storageItemContainer = (ModularStorageItemContainer) inventorySlots;
+//            provider = storageItemContainer.getCraftingGridProvider();
+        } else {
+            craftingGrid = null;
+            provider = null;
+        }
+
+        craftingGrid.initGui(modBase, network, mc, this, pos, provider, guiLeft, guiTop, xSize, ySize);
+        network.sendToServer(new PacketRequestGridSync(pos));
     }
+
+    @Override
+    protected void mouseClicked(int x, int y, int button) throws IOException {
+        super.mouseClicked(x, y, button);
+        craftingGrid.getWindow().mouseClicked(x, y, button);
+    }
+
+    @Override
+    public void handleMouseInput() throws IOException {
+        super.handleMouseInput();
+        craftingGrid.getWindow().handleMouseInput();
+    }
+
+    @Override
+    protected void mouseReleased(int x, int y, int state) {
+        super.mouseReleased(x, y, state);
+        craftingGrid.getWindow().mouseMovedOrUp(x, y, state);
+    }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        super.keyTyped(typedChar, keyCode);
+        craftingGrid.getWindow().keyTyped(typedChar, keyCode);
+    }
+
 
     private void moveUp() {
         sendServerCommand(RFToolsMessages.INSTANCE, StorageScannerTileEntity.CMD_UP, new Argument("index", storageList.getSelected()));
@@ -367,4 +423,26 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             tileEntity.requestRfFromServer(RFTools.MODID);
         }
     }
+
+    @Override
+    protected void drawGuiContainerForegroundLayer(int i1, int i2) {
+        int x = Mouse.getEventX() * width / mc.displayWidth;
+        int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
+
+        List<String> tooltips = craftingGrid.getWindow().getTooltips();
+        if (tooltips != null) {
+            drawHoveringText(tooltips, window.getTooltipItems(), x - guiLeft, y - guiTop, mc.fontRendererObj);
+        }
+
+        craftingGrid.updateGui();
+
+        super.drawGuiContainerForegroundLayer(i1, i2);
+    }
+
+    @Override
+    protected void drawWindow() {
+        super.drawWindow();
+        craftingGrid.draw();
+    }
+
 }

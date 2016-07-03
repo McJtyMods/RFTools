@@ -8,6 +8,8 @@ import mcjty.rftools.ClientInfo;
 import mcjty.rftools.api.general.IInventoryTracker;
 import mcjty.rftools.craftinggrid.CraftingGrid;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
+import mcjty.rftools.craftinggrid.InventoriesItemSource;
+import mcjty.rftools.craftinggrid.StorageCraftingTools;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.items.storage.StorageModuleItem;
@@ -145,10 +147,13 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
 
     @Override
     public int[] craft(EntityPlayerMP player, int n, boolean test) {
+        InventoriesItemSource itemSource = new InventoriesItemSource()
+                .add(player.inventory, 0).add(this, ModularStorageContainer.SLOT_STORAGE);
+
         if (test) {
-            return StorageCraftingTools.testCraftItems(player, n, craftingGrid.getActiveRecipe(), this, ModularStorageContainer.SLOT_STORAGE);
+            return StorageCraftingTools.testCraftItems(player, n, craftingGrid.getActiveRecipe(), itemSource);
         } else {
-            StorageCraftingTools.craftItems(player, n, craftingGrid.getActiveRecipe(), this, ModularStorageContainer.SLOT_STORAGE);
+            StorageCraftingTools.craftItems(player, n, craftingGrid.getActiveRecipe(), itemSource);
             return null;
         }
     }

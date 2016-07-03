@@ -7,6 +7,11 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.SoundTools;
 import mcjty.rftools.api.general.IInventoryTracker;
+import mcjty.rftools.craftinggrid.CraftingGrid;
+import mcjty.rftools.craftinggrid.CraftingGridProvider;
+import mcjty.rftools.craftinggrid.InventoriesItemSource;
+import mcjty.rftools.craftinggrid.StorageCraftingTools;
+import mcjty.rftools.jei.JEIRecipeAcceptor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
@@ -28,7 +33,8 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
 
-public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable {
+public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable,
+        CraftingGridProvider, JEIRecipeAcceptor {
 
     public static final String CMD_SETRADIUS = "setRadius";
     public static final String CMD_REQUESTITEM = "requestItem";
@@ -42,6 +48,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     private int radius = 1;
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, StorageScannerContainer.factory, 2);
+    private CraftingGrid craftingGrid = new CraftingGrid();
 
     public StorageScannerTileEntity() {
         super(StorageScannerConfiguration.MAXENERGY, StorageScannerConfiguration.RECEIVEPERTICK);
@@ -50,6 +57,37 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     @Override
     protected boolean needsCustomInvWrapper() {
         return true;
+    }
+
+    @Override
+    public void setRecipe(int index, ItemStack[] stacks) {
+        craftingGrid.setRecipe(index, stacks);
+        markDirty();
+    }
+
+    @Override
+    public CraftingGrid getCraftingGrid() {
+        return craftingGrid;
+    }
+
+    @Override
+    public int[] craft(EntityPlayerMP player, int n, boolean test) {
+        InventoriesItemSource itemSource = new InventoriesItemSource()
+                .add(player.inventory, 0).add(this, 0);
+        if (test) {
+            return StorageCraftingTools.testCraftItems(player, n, craftingGrid.getActiveRecipe(), itemSource);
+        } else {
+            StorageCraftingTools.craftItems(player, n, craftingGrid.getActiveRecipe(), itemSource);
+            return null;
+        }
+    }
+
+    @Override
+    public void setGridContents(List<ItemStack> stacks) {
+        for (int i = 0 ; i < stacks.size() ; i++) {
+            craftingGrid.getCraftingGridInventory().setInventorySlotContents(i, stacks.get(i));
+        }
+        markDirty();
     }
 
     @Override

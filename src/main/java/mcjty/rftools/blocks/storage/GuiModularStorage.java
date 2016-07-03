@@ -162,14 +162,11 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             RemoteStorageItemContainer storageItemContainer = (RemoteStorageItemContainer) inventorySlots;
             provider = storageItemContainer.getCraftingGridProvider();
         } else {
-            craftingGrid = null;
-            provider = null;
+            throw new RuntimeException("Should not happen!");
         }
 
-        if (craftingGrid != null) {
-            craftingGrid.initGui(modBase, network, mc, this, pos, provider, guiLeft, guiTop, xSize, ySize);
-            network.sendToServer(new PacketRequestGridSync(pos));
-        }
+        craftingGrid.initGui(modBase, network, mc, this, pos, provider, guiLeft, guiTop, xSize, ySize);
+        network.sendToServer(new PacketRequestGridSync(pos));
     }
 
     private Panel setupModePanel() {
@@ -358,25 +355,19 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             }
         }
         super.mouseClicked(x, y, button);
-        if (craftingGrid != null) {
-            craftingGrid.getWindow().mouseClicked(x, y, button);
-        }
+        craftingGrid.getWindow().mouseClicked(x, y, button);
     }
 
     @Override
     public void handleMouseInput() throws IOException {
         super.handleMouseInput();
-        if (craftingGrid != null) {
-            craftingGrid.getWindow().handleMouseInput();
-        }
+        craftingGrid.getWindow().handleMouseInput();
     }
 
     @Override
     protected void mouseReleased(int x, int y, int state) {
         super.mouseReleased(x, y, state);
-        if (craftingGrid != null) {
-            craftingGrid.getWindow().mouseMovedOrUp(x, y, state);
-        }
+        craftingGrid.getWindow().mouseMovedOrUp(x, y, state);
     }
 
     private void updateList() {
@@ -542,9 +533,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             super.keyTyped(typedChar, keyCode);
         }
 
-        if (craftingGrid != null) {
-            craftingGrid.getWindow().keyTyped(typedChar, keyCode);
-        }
+        craftingGrid.getWindow().keyTyped(typedChar, keyCode);
     }
 
     @Override
@@ -566,14 +555,12 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         int x = Mouse.getEventX() * width / mc.displayWidth;
         int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
 
-        if (craftingGrid != null) {
-            List<String> tooltips = craftingGrid.getWindow().getTooltips();
-            if (tooltips != null) {
-                drawHoveringText(tooltips, window.getTooltipItems(), x - guiLeft, y - guiTop, mc.fontRendererObj);
-            }
-
-            craftingGrid.updateGui();
+        List<String> tooltips = craftingGrid.getWindow().getTooltips();
+        if (tooltips != null) {
+            drawHoveringText(tooltips, window.getTooltipItems(), x - guiLeft, y - guiTop, mc.fontRendererObj);
         }
+
+        craftingGrid.updateGui();
 
         super.drawGuiContainerForegroundLayer(i1, i2);
     }
@@ -581,8 +568,6 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     @Override
     protected void drawWindow() {
         super.drawWindow();
-        if (craftingGrid != null) {
-            craftingGrid.draw();
-        }
+        craftingGrid.draw();
     }
 }
