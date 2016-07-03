@@ -1,10 +1,9 @@
-package mcjty.rftools.blocks.storage;
+package mcjty.rftools.craftinggrid;
 
 import mcjty.rftools.blocks.crafter.CraftingRecipe;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -15,8 +14,7 @@ import java.util.*;
 
 public class StorageCraftingTools {
 
-    static int[] tryRecipe(EntityPlayerMP player, CraftingRecipe craftingRecipe, int n,
-                                                       IInventory thisInventory, int thisInventoryOffset) {
+    static int[] tryRecipe(EntityPlayerMP player, CraftingRecipe craftingRecipe, int n, IItemSource itemSource) {
         InventoryCrafting workInventory = new InventoryCrafting(new Container() {
             @Override
             public boolean canInteractWith(EntityPlayer var1) {
@@ -24,7 +22,7 @@ public class StorageCraftingTools {
             }
         }, 3, 3);
 
-        Map<Pair<IInventory, Integer>,ItemStack> undo = new HashMap<>();
+        Map<IItemKey, ItemStack> undo = new HashMap<>();
         InventoryCrafting inventory = craftingRecipe.getInventory();
 
         int[] missingCount = new int[9];
@@ -37,10 +35,7 @@ public class StorageCraftingTools {
                 ItemStack stack = inventory.getStackInSlot(i);
                 if (stack != null) {
                     int count = stack.stackSize;
-                    count = findMatchingItems(workInventory, undo, i, stack, count, player.inventory, 0, false);
-                    if (count > 0) {
-                        count = findMatchingItems(workInventory, undo, i, stack, count, thisInventory, thisInventoryOffset, false);
-                    }
+                    count = findMatchingItems(workInventory, undo, i, stack, count, itemSource, false);
                     missingCount[i] += count;
                 } else {
                     workInventory.setInventorySlotContents(i, null);
@@ -48,13 +43,13 @@ public class StorageCraftingTools {
             }
         }
 
-        undo(player, undo);
+        undo(player, itemSource, undo);
 
         return missingCount;
     }
 
-    static List<ItemStack> testAndConsumeCraftingItems(EntityPlayerMP player, CraftingRecipe craftingRecipe,
-                                                       IInventory thisInventory, int thisInventoryOffset, boolean strictDamage) {
+    private static List<ItemStack> testAndConsumeCraftingItems(EntityPlayerMP player, CraftingRecipe craftingRecipe,
+                                                       IItemSource itemSource, boolean strictDamage) {
         InventoryCrafting workInventory = new InventoryCrafting(new Container() {
             @Override
             public boolean canInteractWith(EntityPlayer var1) {
@@ -62,7 +57,7 @@ public class StorageCraftingTools {
             }
         }, 3, 3);
 
-        Map<Pair<IInventory, Integer>,ItemStack> undo = new HashMap<>();
+        Map<IItemKey,ItemStack> undo = new HashMap<>();
         List<ItemStack> result = new ArrayList<>();
         InventoryCrafting inventory = craftingRecipe.getInventory();
 
@@ -70,14 +65,11 @@ public class StorageCraftingTools {
             ItemStack stack = inventory.getStackInSlot(i);
             if (stack != null) {
                 int count = stack.stackSize;
-                count = findMatchingItems(workInventory, undo, i, stack, count, player.inventory, 0, strictDamage);
-                if (count > 0) {
-                    count = findMatchingItems(workInventory, undo, i, stack, count, thisInventory, thisInventoryOffset, strictDamage);
-                }
+                count = findMatchingItems(workInventory, undo, i, stack, count, itemSource, strictDamage);
 
                 if (count > 0) {
                     // Couldn't find all items.
-                    undo(player, undo);
+                    undo(player, itemSource, undo);
                     return Collections.emptyList();
                 }
             } else {
@@ -87,7 +79,7 @@ public class StorageCraftingTools {
         IRecipe recipe = craftingRecipe.getCachedRecipe(player.worldObj);
         if (!recipe.matches(workInventory, player.worldObj)) {
             result.clear();
-            undo(player, undo);
+            undo(player, itemSource, undo);
             return result;
         }
         ItemStack stack = recipe.getCraftingResult(workInventory);
@@ -103,7 +95,7 @@ public class StorageCraftingTools {
             }
         } else {
             result.clear();
-            undo(player, undo);
+            undo(player, itemSource, undo);
         }
         return result;
     }
@@ -120,9 +112,9 @@ public class StorageCraftingTools {
         }
     }
 
-    private static int findMatchingItems(InventoryCrafting workInventory, Map<Pair<IInventory, Integer>, ItemStack> undo, int i, ItemStack stack, int count, IInventory inv, int startIndex, boolean strictDamage) {
-        for (int slotIdx = startIndex; slotIdx < inv.getSizeInventory() ; slotIdx++) {
-            ItemStack input = inv.getStackInSlot(slotIdx);
+    private static int findMatchingItems(InventoryCrafting workInventory, Map<IItemKey, ItemStack> undo, int i, ItemStack stack, int count, IItemSource itemSource, boolean strictDamage) {
+        for (Pair<IItemKey, ItemStack> pair : itemSource.getItems()) {
+            ItemStack input = pair.getValue();
             if (input != null) {
                 if (match(stack, input, strictDamage)) {
                     workInventory.setInventorySlotContents(i, input.copy());
@@ -131,14 +123,11 @@ public class StorageCraftingTools {
                         ss = input.stackSize;
                     }
                     count -= ss;
-                    Pair<IInventory, Integer> key = Pair.of(inv, slotIdx);
+                    IItemKey key = pair.getKey();
                     if (!undo.containsKey(key)) {
                         undo.put(key, input.copy());
                     }
-                    input.splitStack(ss);        // This consumes the items
-                    if (input.stackSize == 0) {
-                        inv.setInventorySlotContents(slotIdx, null);
-                    }
+                    itemSource.decrStackSize(key, ss);
                 }
             }
             if (count == 0) {
@@ -148,16 +137,14 @@ public class StorageCraftingTools {
         return count;
     }
 
-    private static void undo(EntityPlayerMP player, Map<Pair<IInventory, Integer>, ItemStack> undo) {
-        for (Map.Entry<Pair<IInventory, Integer>, ItemStack> entry : undo.entrySet()) {
-            IInventory inv = entry.getKey().getLeft();
-            Integer index = entry.getKey().getRight();
-            inv.setInventorySlotContents(index, entry.getValue());
-            player.openContainer.detectAndSendChanges();
+    private static void undo(EntityPlayerMP player, IItemSource itemSource, Map<IItemKey, ItemStack> undo) {
+        for (Map.Entry<IItemKey, ItemStack> entry : undo.entrySet()) {
+            itemSource.putStack(entry.getKey(), entry.getValue());
         }
+        player.openContainer.detectAndSendChanges();
     }
 
-    public static void craftItems(EntityPlayerMP player, int n, CraftingRecipe craftingRecipe, IInventory thisInventory, int thisOffset) {
+    public static void craftItems(EntityPlayerMP player, int n, CraftingRecipe craftingRecipe, IItemSource itemSource) {
         IRecipe recipe = craftingRecipe.getCachedRecipe(player.worldObj);
         if (recipe == null) {
             // @todo give error?
@@ -179,9 +166,9 @@ public class StorageCraftingTools {
             }
 
             for (int i = 0 ; i < n ; i++) {
-                List<ItemStack> result = testAndConsumeCraftingItems(player, craftingRecipe, thisInventory, thisOffset, true);
+                List<ItemStack> result = testAndConsumeCraftingItems(player, craftingRecipe, itemSource, true);
                 if (result.isEmpty()) {
-                    result = testAndConsumeCraftingItems(player, craftingRecipe, thisInventory, thisOffset, false);
+                    result = testAndConsumeCraftingItems(player, craftingRecipe, itemSource, false);
                     if (result.isEmpty()) {
                         return;
                     }
@@ -195,7 +182,8 @@ public class StorageCraftingTools {
         }
     }
 
-    public static int[] testCraftItems(EntityPlayerMP player, int n, CraftingRecipe craftingRecipe, IInventory thisInventory, int thisOffset) {
+
+    public static int[] testCraftItems(EntityPlayerMP player, int n, CraftingRecipe craftingRecipe, IItemSource itemSource) {
         IRecipe recipe = craftingRecipe.getCachedRecipe(player.worldObj);
         if (recipe == null) {
             // @todo give error?
@@ -216,7 +204,7 @@ public class StorageCraftingTools {
                 n--;
             }
 
-            return tryRecipe(player, craftingRecipe, n, thisInventory, thisOffset);
+            return tryRecipe(player, craftingRecipe, n, itemSource);
         }
         return null;
     }

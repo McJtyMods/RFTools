@@ -2,6 +2,8 @@ package mcjty.rftools.blocks.storage;
 
 import mcjty.rftools.craftinggrid.CraftingGrid;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
+import mcjty.rftools.craftinggrid.InventoriesItemSource;
+import mcjty.rftools.craftinggrid.StorageCraftingTools;
 import mcjty.rftools.jei.JEIRecipeAcceptor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -57,10 +59,12 @@ public class RemoteStorageItemInventory implements IInventory, CraftingGridProvi
 
     @Override
     public int[] craft(EntityPlayerMP player, int n, boolean test) {
+        InventoriesItemSource itemSource = new InventoriesItemSource()
+                .add(player.inventory, 0).add(this, 0);
         if (test) {
-            return StorageCraftingTools.testCraftItems(player, n, craftingGrid.getActiveRecipe(), this, 0);
+            return StorageCraftingTools.testCraftItems(player, n, craftingGrid.getActiveRecipe(), itemSource);
         } else {
-            StorageCraftingTools.craftItems(player, n, craftingGrid.getActiveRecipe(), this, 0);
+            StorageCraftingTools.craftItems(player, n, craftingGrid.getActiveRecipe(), itemSource);
             return null;
         }
     }
