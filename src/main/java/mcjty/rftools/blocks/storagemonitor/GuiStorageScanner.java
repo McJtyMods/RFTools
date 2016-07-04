@@ -116,9 +116,9 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
         Slider storageListSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(storageList);
 
-        Panel topPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(1))
-                .setLayoutHint(new PositionalLayout.PositionalHint(6, 4, 256-12, 86))
-                .setDesiredHeight(88)
+        Panel storagePanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(1))
+                .setLayoutHint(new PositionalLayout.PositionalHint(3, 4, 130, 86+54))
+                .setDesiredHeight(86+54)
                 .addChild(energyPanel)
                 .addChild(storageList).addChild(storageListSlider);
 
@@ -126,7 +126,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         Slider itemListSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(itemList);
         Panel itemPanel = new Panel(mc, this)
                 .setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(1))
-                .setLayoutHint(new PositionalLayout.PositionalHint(6, 88, 256-12, 56))
+                .setLayoutHint(new PositionalLayout.PositionalHint(136, 4, 256-138-4, 86+54))
                 .addChild(itemList).addChild(itemListSlider);
 
         scanButton = new Button(mc, this)
@@ -148,7 +148,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             startSearch(newText);
         });
         Panel searchPanel = new Panel(mc, this)
-                .setLayoutHint(new PositionalLayout.PositionalHint(8, 142, 256-16, 18))
+                .setLayoutHint(new PositionalLayout.PositionalHint(8, 142, 256-12, 18))
                 .setLayout(new HorizontalLayout()).setDesiredHeight(18)
                 .addChild(new Label(mc, this).setText("Search:"))
                 .addChild(textField);
@@ -175,7 +175,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             radiusSlider.setEnabled(false);
         }
 
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(topPanel).addChild(itemPanel).addChild(searchPanel).addChild(scanPanel);
+        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(storagePanel).addChild(itemPanel).addChild(searchPanel).addChild(scanPanel);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -300,7 +300,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         itemList.removeChildren();
 
         Pair<Panel,Integer> currentPos = MutablePair.of(null, 0);
-        int numcolumns = 11;
+        int numcolumns = 5;
         int spacing = 3;
 
         for (Pair<ItemStack,Integer> item : fromServer_inventory) {
@@ -311,7 +311,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     private Pair<Panel,Integer> addItemToList(Pair<ItemStack, Integer> item, WidgetList itemList, Pair<Panel,Integer> currentPos, int numcolumns, int spacing) {
         Panel panel = currentPos.getKey();
         if (panel == null || currentPos.getValue() >= numcolumns) {
-            panel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(spacing)).setDesiredHeight(12).setUserObject(new Integer(-1)).setDesiredHeight(16);
+            panel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(spacing).setHorizontalMargin(1))
+                    .setDesiredHeight(12).setUserObject(new Integer(-1)).setDesiredHeight(16);
             currentPos = MutablePair.of(panel, 0);
             itemList.addChild(panel);
         }
@@ -362,8 +363,12 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             boolean routable = c.isRoutable();
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
             panel.addChild(new BlockRender(mc, this).setRenderItem(c.getBlock()));
-            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(displayName).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(90));
-            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setDynamic(true).setText(BlockPosTools.toString(c.getPos())));
+            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal)
+                    .setText(displayName)
+                    .setDynamic(true)
+                    .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
+                    .setTooltips("Block at: " + BlockPosTools.toString(c.getPos()), "(doubleclick to highlight)")
+                    .setDesiredWidth(58));
             ImageChoiceLabel choiceLabel = new ImageChoiceLabel(mc, this)
                     .addChoiceEvent((parent, newChoice) -> changeRoutable(c.getPos())).setDesiredWidth(13);
             choiceLabel.addChoice("No", "Not routable", guielements, 131, 19);
