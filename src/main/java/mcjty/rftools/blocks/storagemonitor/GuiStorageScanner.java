@@ -138,7 +138,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 .addChild(energyPanel)
                 .addChild(storageList).addChild(storageListSlider);
 
-        itemList = new WidgetList(mc, this).setPropagateEventsToChildren(true);
+        itemList = new WidgetList(mc, this).setPropagateEventsToChildren(true)
+            .setInvisibleSelection(true);
         Slider itemListSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(itemList);
         Panel itemPanel = new Panel(mc, this)
                 .setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(1))
@@ -344,7 +345,12 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             currentPos = MutablePair.of(panel, 0);
             itemList.addChild(panel);
         }
-        BlockRender blockRender = new BlockRender(mc, this).setRenderItem(item.getKey()).setUserObject(item.getValue()).setOffsetX(-1).setOffsetY(-1);
+        BlockRender blockRender = new BlockRender(mc, this)
+                .setRenderItem(item.getKey())
+                .setUserObject(item.getValue())
+                .setOffsetX(-1)
+                .setOffsetY(-1)
+                .setHilightOnHover(true);
         blockRender.addSelectionEvent(new BlockRenderEvent() {
             @Override
             public void select(Widget widget) {
@@ -442,12 +448,13 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             bottomButton.setEnabled(true);
         }
 
-        drawWindow();
         if (!tileEntity.isDummy()) {
             int currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
             energyBar.setValue(currentRF);
             tileEntity.requestRfFromServer(RFTools.MODID);
         }
+
+        drawWindow();
     }
 
     @Override
