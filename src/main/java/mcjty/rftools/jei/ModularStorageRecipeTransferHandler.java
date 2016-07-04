@@ -2,11 +2,11 @@ package mcjty.rftools.jei;
 
 import mcjty.rftools.blocks.storage.ModularStorageContainer;
 import mcjty.rftools.blocks.storage.ModularStorageTileEntity;
+import mezz.jei.api.gui.IGuiIngredient;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
-import mezz.jei.gui.ingredients.IGuiIngredient;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;

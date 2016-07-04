@@ -4,8 +4,8 @@ import mcjty.rftools.network.RFToolsMessages;
 import mezz.jei.api.BlankModPlugin;
 import mezz.jei.api.IModRegistry;
 import mezz.jei.api.JEIPlugin;
+import mezz.jei.api.gui.IGuiIngredient;
 import mezz.jei.api.recipe.transfer.IRecipeTransferRegistry;
-import mezz.jei.gui.ingredients.IGuiIngredient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 
