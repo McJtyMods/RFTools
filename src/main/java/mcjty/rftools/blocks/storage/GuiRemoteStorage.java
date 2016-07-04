@@ -45,7 +45,7 @@ public class GuiRemoteStorage extends GenericGuiContainer<RemoteStorageTileEntit
             global[i] = new ImageChoiceLabel(mc, this);
             final int finalI = i;
             global[i].addChoiceEvent((parent, newChoice) -> changeGlobal(finalI));
-            global[i].addChoice("off" + i, "Inter-dimensional access only", guiElements, 0, 32);
+            global[i].addChoice("off" + i, "Cross-dimension access disabled", guiElements, 0, 32);
             global[i].addChoice("on" + i, "Cross-dimension access enabled", guiElements, 16, 32);
             global[i].setLayoutHint(new PositionalLayout.PositionalHint(i < 2 ? (43 - 18) : (120 - 18), (i % 2) == 0 ? 9 : 36, 16, 16));
             global[i].setCurrentChoice(tileEntity.isGlobal(i) ? 1 : 0);
