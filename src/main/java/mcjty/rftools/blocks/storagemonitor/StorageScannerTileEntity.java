@@ -47,16 +47,34 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     private Set<BlockPos> routable = new HashSet<>();
     private int radius = 1;
 
+    // This is set on a client-side dummy tile entity for a tablet
+    private EntityPlayer entityPlayer;
+    private Integer monitorDim;
+
     private InventoryHelper inventoryHelper = new InventoryHelper(this, StorageScannerContainer.factory, 2);
     private CraftingGrid craftingGrid = new CraftingGrid();
 
     public StorageScannerTileEntity() {
         super(StorageScannerConfiguration.MAXENERGY, StorageScannerConfiguration.RECEIVEPERTICK);
+        monitorDim = null;
+    }
+
+    // This constructor is used for constructing a dummy client-side tile entity when
+    // accessing the storage scanner remotely
+    public StorageScannerTileEntity(EntityPlayer entityPlayer, int monitordim) {
+        super(StorageScannerConfiguration.MAXENERGY, StorageScannerConfiguration.RECEIVEPERTICK);
+        this.entityPlayer = entityPlayer;
+        this.monitorDim = monitordim;
     }
 
     @Override
     protected boolean needsCustomInvWrapper() {
         return true;
+    }
+
+    @Override
+    public void storeRecipe(int index) {
+        getCraftingGrid().storeRecipe(index);
     }
 
     @Override
@@ -532,11 +550,15 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
      * storage scanner in a tablet on the client side.
      */
     public boolean isDummy() {
-        return false;
+        return monitorDim != null;
     }
 
     public int getDimension() {
-        return worldObj.provider.getDimension();
+        if (isDummy()) {
+            return monitorDim;
+        } else {
+            return worldObj.provider.getDimension();
+        }
     }
 
     @Override

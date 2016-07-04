@@ -133,6 +133,11 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     }
 
     @Override
+    public void storeRecipe(int index) {
+        getCraftingGrid().storeRecipe(index);
+    }
+
+    @Override
     public void setGridContents(List<ItemStack> stacks) {
         for (int i = 0 ; i < stacks.size() ; i++) {
             craftingGrid.getCraftingGridInventory().setInventorySlotContents(i, stacks.get(i));
