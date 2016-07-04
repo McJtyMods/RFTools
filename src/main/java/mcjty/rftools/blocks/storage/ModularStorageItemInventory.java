@@ -51,6 +51,11 @@ public class ModularStorageItemInventory implements IInventory, CraftingGridProv
     }
 
     @Override
+    public void storeRecipe(int index) {
+        getCraftingGrid().storeRecipe(index);
+    }
+
+    @Override
     public void setRecipe(int index, ItemStack[] stacks) {
         craftingGrid.setRecipe(index, stacks);
         markDirty();

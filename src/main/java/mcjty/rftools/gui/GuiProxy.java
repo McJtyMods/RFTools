@@ -97,17 +97,7 @@ public class GuiProxy implements IGuiHandler {
             int monitory = tagCompound.getInteger("monitory");
             int monitorz = tagCompound.getInteger("monitorz");
             BlockPos pos = new BlockPos(monitorx, monitory, monitorz);
-            StorageScannerTileEntity te = new StorageScannerTileEntity() {
-                @Override
-                public int getDimension() {
-                    return monitordim;
-                }
-
-                @Override
-                public boolean isDummy() {
-                    return true;
-                }
-            };
+            StorageScannerTileEntity te = new StorageScannerTileEntity(entityPlayer, monitordim);
             te.setPos(pos);
             return new GuiStorageScanner(te, new StorageScannerContainer(entityPlayer, te));
         } else if (guiid == RFTools.GUI_MODULAR_STORAGE_ITEM) {

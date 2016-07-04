@@ -124,7 +124,7 @@ public class GuiCraftingGrid {
         if (selected == -1) {
             return;
         }
-        provider.getCraftingGrid().storeRecipe(selected);
+        provider.storeRecipe(selected);
         RFToolsMessages.INSTANCE.sendToServer(new PacketGridToServer(pos, provider.getCraftingGrid()));
     }
 

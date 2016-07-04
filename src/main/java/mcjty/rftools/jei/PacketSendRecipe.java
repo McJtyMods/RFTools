@@ -87,6 +87,9 @@ public class PacketSendRecipe implements IMessage {
                     } else if (player.openContainer instanceof RemoteStorageItemContainer) {
                         RemoteStorageItemContainer storageItemContainer = (RemoteStorageItemContainer) player.openContainer;
                         storageItemContainer.getJEIRecipeAcceptor().setGridContents(message.stacks);
+//                    } else if (player.openContainer instanceof StorageScannerContainer) {
+//                        StorageScannerContainer storageItemContainer = (StorageScannerContainer) player.openContainer;
+//                        storageItemContainer.getStorageScannerTileEntity().setGridContents(message.stacks);
                     }
                 }
             } else {
