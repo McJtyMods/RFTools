@@ -107,8 +107,12 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 });
 
         Panel energyPanel = new Panel(mc, this).setLayout(new VerticalLayout().setVerticalMargin(0).setSpacing(1))
-                .setDesiredWidth(10)
-                .addChild(energyBar)
+                .setDesiredWidth(10);
+        if (!tileEntity.isDummy()) {
+            energyPanel
+                    .addChild(energyBar);
+        }
+        energyPanel
                 .addChild(topButton)
                 .addChild(upButton)
                 .addChild(downButton)
@@ -183,7 +187,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         if (tileEntity.isDummy()) {
             scanButton.setEnabled(false);
             radiusLabel.setVisible(false);
-            radiusSlider.setEnabled(false);
+            radiusSlider.setVisible(false);
+            energyBar.setVisible(false);
         }
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(storagePanel).addChild(itemPanel).addChild(searchPanel).addChild(scanPanel);
@@ -196,9 +201,10 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         fromServer_foundInventories.clear();
         fromServer_inventory.clear();
 
-        tileEntity.requestRfFromServer(RFTools.MODID);
         if (tileEntity.isDummy()) {
             fromServer_inventories.clear();
+        } else {
+            tileEntity.requestRfFromServer(RFTools.MODID);
         }
 
         CraftingGridProvider provider = tileEntity;
@@ -239,25 +245,25 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
 
     private void moveUp() {
-        sendServerCommand(RFToolsMessages.INSTANCE, StorageScannerTileEntity.CMD_UP, new Argument("index", storageList.getSelected()));
+        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_UP, new Argument("index", storageList.getSelected()));
         storageList.setSelected(storageList.getSelected()-1);
         listDirty = 0;
     }
 
     private void moveTop() {
-        sendServerCommand(RFToolsMessages.INSTANCE, StorageScannerTileEntity.CMD_TOP, new Argument("index", storageList.getSelected()));
+        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_TOP, new Argument("index", storageList.getSelected()));
         storageList.setSelected(0);
         listDirty = 0;
     }
 
     private void moveDown() {
-        sendServerCommand(RFToolsMessages.INSTANCE, StorageScannerTileEntity.CMD_DOWN, new Argument("index", storageList.getSelected()));
+        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_DOWN, new Argument("index", storageList.getSelected()));
         storageList.setSelected(storageList.getSelected()+1);
         listDirty = 0;
     }
 
     private void moveBottom() {
-        sendServerCommand(RFToolsMessages.INSTANCE, StorageScannerTileEntity.CMD_BOTTOM, new Argument("index", storageList.getSelected()));
+        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_BOTTOM, new Argument("index", storageList.getSelected()));
         storageList.setSelected(storageList.getChildCount()-1);
         listDirty = 0;
     }
@@ -362,14 +368,14 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     }
 
     private void requestItem(int slot) {
-        sendServerCommand(RFToolsMessages.INSTANCE, StorageScannerTileEntity.CMD_REQUESTITEM,
+        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_REQUESTITEM,
                           new Argument("inv", getSelectedContainerPos()),
                           new Argument("slot", slot));
         getInventoryOnServer();
     }
 
     private void changeRoutable(BlockPos c) {
-        sendServerCommand(RFToolsMessages.INSTANCE, StorageScannerTileEntity.CMD_TOGGLEROUTABLE,
+        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_TOGGLEROUTABLE,
                 new Argument("pos", c));
         listDirty = 0;
     }
@@ -437,9 +443,11 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         }
 
         drawWindow();
-        int currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
-        energyBar.setValue(currentRF);
-        tileEntity.requestRfFromServer(RFTools.MODID);
+        if (!tileEntity.isDummy()) {
+            int currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
+            energyBar.setValue(currentRF);
+            tileEntity.requestRfFromServer(RFTools.MODID);
+        }
     }
 
     @Override
