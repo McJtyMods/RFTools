@@ -189,9 +189,6 @@ public class GuiCraftingGrid {
         }
     }
 
-    public void updateGui() {
-    }
-
     private void testRecipe() {
         InventoryCrafting inv = new InventoryCrafting(new net.minecraft.inventory.Container() {
             @Override

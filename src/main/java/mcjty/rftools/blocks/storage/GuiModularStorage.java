@@ -291,7 +291,8 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
     @Override
     public boolean isMouseOverSlot(Slot slotIn, int x, int y) {
-        if (slotIn.inventory == tileEntity) {
+        if (slotIn.inventory instanceof ModularStorageTileEntity || slotIn.inventory instanceof ModularStorageItemInventory
+                || slotIn.inventory instanceof RemoteStorageItemInventory) {
             Widget widget = window.getToplevel().getWidgetAtPosition(x, y);
             if (widget instanceof BlockRender) {
                 Object userObject = widget.getUserObject();
@@ -559,8 +560,6 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         if (tooltips != null) {
             drawHoveringText(tooltips, window.getTooltipItems(), x - guiLeft, y - guiTop, mc.fontRendererObj);
         }
-
-        craftingGrid.updateGui();
 
         super.drawGuiContainerForegroundLayer(i1, i2);
     }
