@@ -471,6 +471,20 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     }
 
     @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        super.drawScreen(mouseX, mouseY, partialTicks);
+
+        int x = Mouse.getEventX() * width / mc.displayWidth;
+        int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
+        Widget widget = window.getToplevel().getWidgetAtPosition(x, y);
+        if (widget instanceof BlockRender) {
+            BlockRender blockRender = (BlockRender) widget;
+            ItemStack itemStack = (ItemStack) blockRender.getRenderItem();
+            renderToolTip(itemStack, mouseX, mouseY);
+        }
+    }
+
+    @Override
     protected void drawWindow() {
         super.drawWindow();
         craftingGrid.draw();
