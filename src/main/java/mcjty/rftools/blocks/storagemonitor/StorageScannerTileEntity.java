@@ -39,7 +39,9 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     public static final String CMD_SETRADIUS = "setRadius";
     public static final String CMD_REQUESTITEM = "requestItem";
     public static final String CMD_UP = "up";
+    public static final String CMD_TOP = "top";
     public static final String CMD_DOWN = "down";
+    public static final String CMD_BOTTOM = "bottom";
     public static final String CMD_TOGGLEROUTABLE = "toggleRoutable";
 
     private List<BlockPos> inventories = new ArrayList<>();
@@ -370,6 +372,19 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         markDirty();
     }
 
+    private void moveTop(int index) {
+        if (index <= 0) {
+            return;
+        }
+        if (index >= inventories.size()) {
+            return;
+        }
+        BlockPos p = inventories.get(index);
+        inventories.remove(index);
+        inventories.add(0, p);
+        markDirty();
+    }
+
     private void moveDown(int index) {
         if (index < 0) {
             return;
@@ -381,6 +396,19 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         BlockPos p2 = inventories.get(index+1);
         inventories.set(index, p2);
         inventories.set(index+1, p1);
+        markDirty();
+    }
+
+    private void moveBottom(int index) {
+        if (index < 0) {
+            return;
+        }
+        if (index >= inventories.size()-1) {
+            return;
+        }
+        BlockPos p = inventories.get(index);
+        inventories.remove(index);
+        inventories.add(p);
         markDirty();
     }
 
@@ -535,8 +563,14 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         } else if (CMD_UP.equals(command)) {
             moveUp(args.get("index").getInteger());
             return true;
+        } else if (CMD_TOP.equals(command)) {
+            moveTop(args.get("index").getInteger());
+            return true;
         } else if (CMD_DOWN.equals(command)) {
             moveDown(args.get("index").getInteger());
+            return true;
+        } else if (CMD_BOTTOM.equals(command)) {
+            moveBottom(args.get("index").getInteger());
             return true;
         } else if (CMD_TOGGLEROUTABLE.equals(command)) {
             toggleRoutable(args.get("pos").getCoordinate());

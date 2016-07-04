@@ -53,8 +53,10 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     private EnergyBar energyBar;
     private ScrollableLabel radiusLabel;
     private Button scanButton;
+    private Button topButton;
     private Button upButton;
     private Button downButton;
+    private Button bottomButton;
 
     private GuiCraftingGrid craftingGrid;
 
@@ -88,19 +90,29 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
         upButton = new Button(mc, this).setText("U").setTooltips("Move inventory up")
-            .addButtonEvent(widget -> {
-                moveUp();
-            });
+                .addButtonEvent(widget -> {
+                    moveUp();
+                });
+        topButton = new Button(mc, this).setText("T").setTooltips("Move inventory to the top")
+                .addButtonEvent(widget -> {
+                    moveTop();
+                });
         downButton = new Button(mc, this).setText("D").setTooltips("Move inventory down")
-            .addButtonEvent(widget -> {
-                moveDown();
-            });
+                .addButtonEvent(widget -> {
+                    moveDown();
+                });
+        bottomButton = new Button(mc, this).setText("B").setTooltips("Move inventory to the bottom")
+                .addButtonEvent(widget -> {
+                    moveBottom();
+                });
 
         Panel energyPanel = new Panel(mc, this).setLayout(new VerticalLayout().setVerticalMargin(0).setSpacing(1))
                 .setDesiredWidth(10)
                 .addChild(energyBar)
+                .addChild(topButton)
                 .addChild(upButton)
-                .addChild(downButton);
+                .addChild(downButton)
+                .addChild(bottomButton);
 
         storageList = new WidgetList(mc, this).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
@@ -148,7 +160,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             startSearch(newText);
         });
         Panel searchPanel = new Panel(mc, this)
-                .setLayoutHint(new PositionalLayout.PositionalHint(8, 142, 256-12, 18))
+                .setLayoutHint(new PositionalLayout.PositionalHint(8, 142, 256-11, 18))
                 .setLayout(new HorizontalLayout()).setDesiredHeight(18)
                 .addChild(new Label(mc, this).setText("Search:"))
                 .addChild(textField);
@@ -171,7 +183,6 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         if (tileEntity.isDummy()) {
             scanButton.setEnabled(false);
             radiusLabel.setVisible(false);
-            energyBar.setVisible(false);
             radiusSlider.setEnabled(false);
         }
 
@@ -185,9 +196,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         fromServer_foundInventories.clear();
         fromServer_inventory.clear();
 
-        if (!tileEntity.isDummy()) {
-            tileEntity.requestRfFromServer(RFTools.MODID);
-        } else {
+        tileEntity.requestRfFromServer(RFTools.MODID);
+        if (tileEntity.isDummy()) {
             fromServer_inventories.clear();
         }
 
@@ -234,9 +244,21 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         listDirty = 0;
     }
 
+    private void moveTop() {
+        sendServerCommand(RFToolsMessages.INSTANCE, StorageScannerTileEntity.CMD_TOP, new Argument("index", storageList.getSelected()));
+        storageList.setSelected(0);
+        listDirty = 0;
+    }
+
     private void moveDown() {
         sendServerCommand(RFToolsMessages.INSTANCE, StorageScannerTileEntity.CMD_DOWN, new Argument("index", storageList.getSelected()));
         storageList.setSelected(storageList.getSelected()+1);
+        listDirty = 0;
+    }
+
+    private void moveBottom() {
+        sendServerCommand(RFToolsMessages.INSTANCE, StorageScannerTileEntity.CMD_BOTTOM, new Argument("index", storageList.getSelected()));
+        storageList.setSelected(storageList.getChildCount()-1);
         listDirty = 0;
     }
 
@@ -347,10 +369,6 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     }
 
     private void changeRoutable(BlockPos c) {
-        if (tileEntity.isDummy()) {
-            // Can't change routable info remotely
-            return;
-        }
         sendServerCommand(RFToolsMessages.INSTANCE, StorageScannerTileEntity.CMD_TOGGLEROUTABLE,
                 new Argument("pos", c));
         listDirty = 0;
@@ -396,26 +414,32 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         requestListsIfNeeded();
 
         int selected = storageList.getSelected();
-        if (tileEntity.isDummy() || selected == -1 || storageList.getChildCount() <= 1) {
+        if (selected == -1 || storageList.getChildCount() <= 1) {
             upButton.setEnabled(false);
             downButton.setEnabled(false);
+            topButton.setEnabled(false);
+            bottomButton.setEnabled(false);
         } else if (selected == 0) {
+            topButton.setEnabled(false);
             upButton.setEnabled(false);
             downButton.setEnabled(true);
+            bottomButton.setEnabled(true);
         } else if (selected == storageList.getChildCount()-1) {
+            topButton.setEnabled(true);
             upButton.setEnabled(true);
             downButton.setEnabled(false);
+            bottomButton.setEnabled(false);
         } else {
+            topButton.setEnabled(true);
             upButton.setEnabled(true);
             downButton.setEnabled(true);
+            bottomButton.setEnabled(true);
         }
 
         drawWindow();
         int currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
-        if (!tileEntity.isDummy()) {
-            tileEntity.requestRfFromServer(RFTools.MODID);
-        }
+        tileEntity.requestRfFromServer(RFTools.MODID);
     }
 
     @Override
