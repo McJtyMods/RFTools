@@ -10,7 +10,7 @@ import mcjty.rftools.api.general.IInventoryTracker;
 import mcjty.rftools.craftinggrid.CraftingGrid;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import mcjty.rftools.craftinggrid.StorageCraftingTools;
-import mcjty.rftools.craftinggrid.TileEntitiestemSource;
+import mcjty.rftools.craftinggrid.TileEntityItemSource;
 import mcjty.rftools.jei.JEIRecipeAcceptor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -90,7 +90,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     @Override
     public int[] craft(EntityPlayerMP player, int n, boolean test) {
-        TileEntitiestemSource itemSource = new TileEntitiestemSource()
+        TileEntityItemSource itemSource = new TileEntityItemSource()
                 .addInventory(player.inventory, 0);
         for (BlockPos p : getInventories()) {
             if (isRoutable(p)) {

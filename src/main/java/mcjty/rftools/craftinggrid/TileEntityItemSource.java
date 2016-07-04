@@ -11,11 +11,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class TileEntitiestemSource implements IItemSource {
+public class TileEntityItemSource implements IItemSource {
 
     private List<Pair<Object, Integer>> inventories = new ArrayList<>();
 
-    public TileEntitiestemSource add(TileEntity te, int offset) {
+    public TileEntityItemSource add(TileEntity te, int offset) {
         if (te != null && te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
             IItemHandler capability = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
             inventories.add(Pair.of(capability, offset));
@@ -25,7 +25,7 @@ public class TileEntitiestemSource implements IItemSource {
         return this;
     }
 
-    public TileEntitiestemSource addInventory(IInventory te, int offset) {
+    public TileEntityItemSource addInventory(IInventory te, int offset) {
         inventories.add(Pair.of(te, offset));
         return this;
     }
