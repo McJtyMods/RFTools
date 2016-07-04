@@ -198,12 +198,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
                         setMode(stack, MODE_NONE);
                     } else {
                         Logging.message(player, TextFormatting.GREEN + "New settings copied to the shape card!");
-                        System.out.println("currentBlock = " + currentBlock.getCoordinate());
-                        System.out.println("corner1 = " + c1);
-                        System.out.println("corner2 = " + pos);
-//                        BlockPos center = new BlockPos((int) ((c1.getX() + x) / 2.0f + .55f), (int) ((c1.getY() + y) / 2.0f + .55f), (int) ((c1.getZ() + z) / 2.0f + .55f));
                         BlockPos center = new BlockPos((int) Math.ceil((c1.getX() + pos.getX()) / 2.0f), (int) Math.ceil((c1.getY() + pos.getY()) / 2.0f), (int) Math.ceil((c1.getZ() + pos.getZ()) / 2.0f));
-                        System.out.println("center = " + center);
                         tag.setInteger("dimX", Math.abs(c1.getX() - pos.getX()) + 1);
                         tag.setInteger("dimY", Math.abs(c1.getY() - pos.getY()) + 1);
                         tag.setInteger("dimZ", Math.abs(c1.getZ() - pos.getZ()) + 1);
