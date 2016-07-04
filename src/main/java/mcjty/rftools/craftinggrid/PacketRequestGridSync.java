@@ -2,11 +2,10 @@ package mcjty.rftools.craftinggrid;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.rftools.blocks.monitor.PacketAdjacentBlocksReady;
-import mcjty.rftools.blocks.monitor.RFMonitorBlockTileEntity;
 import mcjty.rftools.blocks.storage.ModularStorageItemContainer;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.storage.RemoteStorageItemContainer;
+import mcjty.rftools.blocks.storagemonitor.StorageScannerContainer;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -69,6 +68,9 @@ public class PacketRequestGridSync implements IMessage {
                     } else if (player.openContainer instanceof RemoteStorageItemContainer) {
                         RemoteStorageItemContainer storageItemContainer = (RemoteStorageItemContainer) player.openContainer;
                         provider = storageItemContainer.getCraftingGridProvider();
+                    } else if (player.openContainer instanceof StorageScannerContainer) {
+                        StorageScannerContainer storageItemContainer = (StorageScannerContainer) player.openContainer;
+                        provider = storageItemContainer.getStorageScannerTileEntity();
                     }
                 }
             } else {

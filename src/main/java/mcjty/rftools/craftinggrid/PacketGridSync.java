@@ -6,6 +6,7 @@ import mcjty.rftools.blocks.crafter.CraftingRecipe;
 import mcjty.rftools.blocks.storage.ModularStorageItemContainer;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.storage.RemoteStorageItemContainer;
+import mcjty.rftools.blocks.storagemonitor.StorageScannerContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -91,6 +92,9 @@ public class PacketGridSync {
                 } else if (player.openContainer instanceof RemoteStorageItemContainer) {
                     RemoteStorageItemContainer storageItemContainer = (RemoteStorageItemContainer) player.openContainer;
                     provider = storageItemContainer.getCraftingGridProvider();
+                } else if (player.openContainer instanceof StorageScannerContainer) {
+                    StorageScannerContainer storageItemContainer = (StorageScannerContainer) player.openContainer;
+                    provider = storageItemContainer.getStorageScannerTileEntity();
                 }
             }
         } else {

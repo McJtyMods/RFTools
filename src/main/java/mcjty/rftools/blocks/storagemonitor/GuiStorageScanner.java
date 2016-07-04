@@ -20,16 +20,10 @@ import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.storage.ModularStorageItemContainer;
-import mcjty.rftools.blocks.storage.RemoteStorageItemContainer;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import mcjty.rftools.craftinggrid.GuiCraftingGrid;
 import mcjty.rftools.craftinggrid.PacketRequestGridSync;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.block.Block;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -197,17 +191,12 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             fromServer_inventories.clear();
         }
 
-        CraftingGridProvider provider;
+        CraftingGridProvider provider = tileEntity;
         BlockPos pos = null;
-        if (tileEntity != null) {
-            provider = tileEntity;
+        if (!tileEntity.isDummy()) {
+            // For a dummy tile entity we use null because we want to get the grid from the item and not the tile
+            // entity.
             pos = tileEntity.getPos();
-//        } else if (inventorySlots instanceof ModularStorageItemContainer) {
-//            ModularStorageItemContainer storageItemContainer = (ModularStorageItemContainer) inventorySlots;
-//            provider = storageItemContainer.getCraftingGridProvider();
-        } else {
-            craftingGrid = null;
-            provider = null;
         }
 
         craftingGrid.initGui(modBase, network, mc, this, pos, provider, guiLeft, guiTop, xSize, ySize);
