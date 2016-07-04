@@ -24,10 +24,13 @@ import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import mcjty.rftools.craftinggrid.GuiCraftingGrid;
 import mcjty.rftools.craftinggrid.PacketRequestGridSync;
 import mcjty.rftools.network.RFToolsMessages;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.input.Keyboard;
@@ -397,7 +400,9 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                     .setText(displayName)
                     .setDynamic(true)
                     .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
-                    .setTooltips("Block at: " + BlockPosTools.toString(c.getPos()), "(doubleclick to highlight)")
+                    .setTooltips(TextFormatting.GREEN + "Block at: " + TextFormatting.WHITE + BlockPosTools.toString(c.getPos()),
+                            TextFormatting.GREEN + "Name: " + TextFormatting.WHITE + displayName,
+                            "(doubleclick to highlight)")
                     .setDesiredWidth(58));
             ImageChoiceLabel choiceLabel = new ImageChoiceLabel(mc, this)
                     .addChoiceEvent((parent, newChoice) -> changeRoutable(c.getPos())).setDesiredWidth(13);
@@ -479,8 +484,20 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         Widget widget = window.getToplevel().getWidgetAtPosition(x, y);
         if (widget instanceof BlockRender) {
             BlockRender blockRender = (BlockRender) widget;
-            ItemStack itemStack = (ItemStack) blockRender.getRenderItem();
-            renderToolTip(itemStack, mouseX, mouseY);
+            Object renderItem = blockRender.getRenderItem();
+            ItemStack itemStack;
+            if (renderItem instanceof ItemStack) {
+                itemStack = (ItemStack) renderItem;
+            } else if (renderItem instanceof Block) {
+                itemStack = new ItemStack((Block) renderItem);
+            } else if (renderItem instanceof Item) {
+                itemStack = new ItemStack((Item) renderItem);
+            } else {
+                itemStack = null;
+            }
+            if (itemStack != null) {
+                renderToolTip(itemStack, mouseX, mouseY);
+            }
         }
     }
 
