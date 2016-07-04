@@ -456,17 +456,22 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
 
-    private void requestItem(BlockPos pos, int slot) {
+    private void requestItem(BlockPos pos, int slot, int amount) {
         if (inventoryHelper.containsItem(StorageScannerContainer.SLOT_OUT)) {
             return;
         }
-        if (getEnergyStored(EnumFacing.DOWN) < StorageScannerConfiguration.rfPerRequest) {
+        int rf = StorageScannerConfiguration.rfPerRequest;
+        if (amount >= 0) {
+            rf /= 10;       // Less RF usage for requesting less items
+        }
+        if (getEnergyStored(EnumFacing.DOWN) < rf) {
             return;
         }
 
         TileEntity tileEntity = worldObj.getTileEntity(pos);
-        InventoryHelper.handleSlot(tileEntity, slot, s -> {
-            consumeEnergy(StorageScannerConfiguration.rfPerRequest);
+        int finalRf = rf;
+        InventoryHelper.handleSlot(tileEntity, slot, amount, s -> {
+            consumeEnergy(finalRf);
             setInventorySlotContents(StorageScannerContainer.SLOT_OUT, s);
         });
     }
@@ -558,7 +563,8 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         } else if (CMD_REQUESTITEM.equals(command)) {
             BlockPos inv = args.get("inv").getCoordinate();
             int slot = args.get("slot").getInteger();
-            requestItem(inv, slot);
+            int amount = args.get("amount").getInteger();
+            requestItem(inv, slot, amount);
             return true;
         } else if (CMD_UP.equals(command)) {
             moveUp(args.get("index").getInteger());

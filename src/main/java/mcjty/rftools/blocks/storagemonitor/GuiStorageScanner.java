@@ -25,6 +25,7 @@ import mcjty.rftools.craftinggrid.GuiCraftingGrid;
 import mcjty.rftools.craftinggrid.PacketRequestGridSync;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -361,7 +362,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 if (prevTime != -1 && (t - prevTime) < 250) {
                     Integer slot = (Integer) widget.getUserObject();
                     if (slot != null) {
-                        requestItem(slot);
+                        boolean shift = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
+                        requestItem(slot, shift ? 1 : -1);
                     }
                 }
                 prevTime = t;
@@ -376,10 +378,11 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         return currentPos;
     }
 
-    private void requestItem(int slot) {
+    private void requestItem(int slot, int amount) {
         sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_REQUESTITEM,
                           new Argument("inv", getSelectedContainerPos()),
-                          new Argument("slot", slot));
+                          new Argument("slot", slot),
+                          new Argument("amount", amount));
         getInventoryOnServer();
     }
 
@@ -496,9 +499,34 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 itemStack = null;
             }
             if (itemStack != null) {
-                renderToolTip(itemStack, mouseX, mouseY);
+                boolean custom = blockRender.getUserObject() instanceof Integer;
+                customRenderToolTip(itemStack, mouseX, mouseY, custom);
             }
         }
+    }
+
+    private void customRenderToolTip(ItemStack stack, int x, int y, boolean custom) {
+        List<String> list = stack.getTooltip(this.mc.thePlayer, this.mc.gameSettings.advancedItemTooltips);
+
+        for (int i = 0; i < list.size(); ++i) {
+            if (i == 0) {
+                list.set(i, stack.getRarity().rarityColor + list.get(i));
+            } else {
+                list.set(i, TextFormatting.GRAY + list.get(i));
+            }
+        }
+
+        if (custom) {
+            List<String> newlist = new ArrayList<>();
+            newlist.add(TextFormatting.GREEN + "Double click: "+ TextFormatting.WHITE + "get full stack");
+            newlist.add(TextFormatting.GREEN + "Shift + Double click: "+ TextFormatting.WHITE + "single item");
+            newlist.add("");
+            newlist.addAll(list);
+            list = newlist;
+        }
+
+        FontRenderer font = stack.getItem().getFontRenderer(stack);
+        this.drawHoveringText(list, x, y, (font == null ? fontRendererObj : font));
     }
 
     @Override
