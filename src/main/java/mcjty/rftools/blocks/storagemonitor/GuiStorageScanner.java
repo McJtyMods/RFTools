@@ -460,8 +460,6 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             drawHoveringText(tooltips, window.getTooltipItems(), x - guiLeft, y - guiTop, mc.fontRendererObj);
         }
 
-        craftingGrid.updateGui();
-
         super.drawGuiContainerForegroundLayer(i1, i2);
     }
 
