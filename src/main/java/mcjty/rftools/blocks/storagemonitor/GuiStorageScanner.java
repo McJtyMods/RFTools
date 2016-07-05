@@ -518,7 +518,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
         if (custom) {
             List<String> newlist = new ArrayList<>();
-            newlist.add(TextFormatting.GREEN + "Double click: "+ TextFormatting.WHITE + "get full stack");
+            newlist.add(TextFormatting.GREEN + "Double click: "+ TextFormatting.WHITE + "full stack");
             newlist.add(TextFormatting.GREEN + "Shift + Double click: "+ TextFormatting.WHITE + "single item");
             newlist.add("");
             newlist.addAll(list);
