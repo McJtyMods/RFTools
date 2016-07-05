@@ -85,6 +85,13 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         }
     }
 
+    public void selectRecipe(int index) {
+        setInventorySlotContents(CrafterContainer.SLOT_CRAFTOUTPUT, recipes[index].getResult());
+        for (int i = 0 ; i < recipes[index].getInventory().getSizeInventory() ; i++) {
+            setInventorySlotContents(CrafterContainer.SLOT_CRAFTINPUT + i, recipes[index].getInventory().getStackInSlot(i));
+        }
+    }
+
     public void setSupportedRecipes(int supportedRecipes) {
         this.supportedRecipes = supportedRecipes;
         recipes =  new CraftingRecipe[supportedRecipes];

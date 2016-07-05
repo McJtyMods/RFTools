@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class PacketCrafter implements IMessage {
+public class PacketSelectRecipe implements IMessage {
     private BlockPos pos;
 
     private int recipeIndex;
@@ -65,10 +65,10 @@ public class PacketCrafter implements IMessage {
         }
     }
 
-    public PacketCrafter() {
+    public PacketSelectRecipe() {
     }
 
-    public PacketCrafter(BlockPos pos, int recipeIndex, InventoryCrafting inv, ItemStack result, boolean keepOne, CraftingRecipe.CraftMode craftInternal) {
+    public PacketSelectRecipe(BlockPos pos, int recipeIndex, InventoryCrafting inv, ItemStack result, boolean keepOne, CraftingRecipe.CraftMode craftInternal) {
         this.pos = pos;
         this.recipeIndex = recipeIndex;
         this.items = new ItemStack[10];
@@ -87,14 +87,14 @@ public class PacketCrafter implements IMessage {
         this.craftInternal = craftInternal;
     }
 
-    public static class Handler implements IMessageHandler<PacketCrafter, IMessage> {
+    public static class Handler implements IMessageHandler<PacketSelectRecipe, IMessage> {
         @Override
-        public IMessage onMessage(PacketCrafter message, MessageContext ctx) {
+        public IMessage onMessage(PacketSelectRecipe message, MessageContext ctx) {
             FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
             return null;
         }
 
-        private void handle(PacketCrafter message, MessageContext ctx) {
+        private void handle(PacketSelectRecipe message, MessageContext ctx) {
             TileEntity te = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.pos);
             if(!(te instanceof CrafterBaseTE)) {
                 Logging.logError("Wrong type of tile entity (expected CrafterBaseTE)!");
@@ -106,7 +106,6 @@ public class PacketCrafter implements IMessage {
                 recipe.setRecipe(message.items, message.items[9]);
                 recipe.setKeepOne(message.keepOne);
                 recipe.setCraftMode(message.craftInternal);
-                crafterBlockTileEntity.selectRecipe(message.recipeIndex);
                 crafterBlockTileEntity.markDirtyClient();
             }
         }
