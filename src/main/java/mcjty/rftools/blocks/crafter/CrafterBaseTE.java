@@ -338,7 +338,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
                 CraftingRecipe.CraftMode remainingMode = mode == EXTC ? INT : mode;
                 for (ItemStack s : remaining) {
                     if (s != null) {
-                        if (!placeResult(mode, s, undo)) {
+                        if (!placeResult(remainingMode, s, undo)) {
                             // Not enough room.
                             undo(undo);
                             return false;
