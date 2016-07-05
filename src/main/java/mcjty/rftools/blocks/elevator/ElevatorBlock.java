@@ -18,6 +18,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -40,6 +41,24 @@ public class ElevatorBlock extends GenericRFToolsBlock<ElevatorTileEntity, Empty
     @Override
     public boolean needsRedstoneCheck() {
         return true;
+    }
+
+    @Override
+    public boolean hasRedstoneOutput() {
+        return true;
+    }
+
+    @Override
+    protected int getRedstoneOutput(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+        EnumFacing direction = state.getValue(FACING_HORIZ);
+        if (side == direction) {
+            TileEntity te = world.getTileEntity(pos);
+            if (te instanceof ElevatorTileEntity) {
+                ElevatorTileEntity elevatorTileEntity = (ElevatorTileEntity) te;
+                return elevatorTileEntity.isPlatformHere() ? 15 : 0;
+            }
+        }
+        return 0;
     }
 
     @SideOnly(Side.CLIENT)

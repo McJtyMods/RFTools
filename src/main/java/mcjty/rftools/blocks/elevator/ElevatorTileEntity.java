@@ -4,6 +4,7 @@ package mcjty.rftools.blocks.elevator;
 import mcjty.lib.container.GenericBlock;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.varia.Broadcaster;
+import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
 import mcjty.rftools.blocks.shield.RelCoordinate;
 import mcjty.rftools.playerprops.BuffProperties;
 import net.minecraft.block.Block;
@@ -51,6 +52,8 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     private int cachedLevels;       // Cached number of levels
     private int cachedCurrent = -1;
 
+    private boolean redstoneOut = false;
+
     // All entities currently on the platform (server side only)
     private Set<Entity> entitiesOnPlatform = new HashSet<>();
     private boolean entitiesOnPlatformComplete = false; // If true then we know entitiesOnPlatform is complete, otherwise it only contains players.
@@ -78,10 +81,24 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     }
 
 
+    protected void setRedstoneState(boolean newout) {
+        markDirty();
+        IBlockState state = worldObj.getBlockState(getPos());
+//        worldObj.setBlockState(getPos(), state.withProperty(LogicSlabBlock.OUTPUTPOWER, newout), 2);
+        worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
+        worldObj.notifyBlockUpdate(this.pos, state, state, 3);
+    }
+
 
     @Override
     public void update() {
         if (!worldObj.isRemote) {
+            boolean newout = isPlatformHere();
+            if (newout != redstoneOut) {
+                redstoneOut = newout;
+                setRedstoneState(redstoneOut);
+            }
+
             if (isMoving()) {
                 markDirty();
 
@@ -554,6 +571,13 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         return 0;
     }
 
+    // Return true if the platform is here (i.e. there is a block in front of the elevator)
+    public boolean isPlatformHere() {
+        EnumFacing side = worldObj.getBlockState(getPos()).getValue(GenericBlock.FACING_HORIZ);
+        BlockPos frontPos = getPos().offset(side);
+        return isValidPlatformBlock(frontPos);
+    }
+
     // Can be called on any elevator block. Not only the contoller (bottom one)
     private void movePlatformHere() {
         // Try to find a platform and move it to this elevator.
@@ -640,6 +664,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         readFromNBTCommon(tagCompound);
+        redstoneOut = tagCompound.getBoolean("rs");
         entitiesOnPlatformComplete = false;
         if (tagCompound.hasKey("players")) {
             entitiesOnPlatform.clear();
@@ -691,6 +716,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
+        tagCompound.setBoolean("rs", redstoneOut);
         tagCompound.setBoolean("prevIn", prevIn);
         tagCompound.setDouble("movingY", movingY);
         tagCompound.setInteger("startY", startY);
