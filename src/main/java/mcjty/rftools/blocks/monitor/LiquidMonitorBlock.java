@@ -24,13 +24,18 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class LiquidMonitorBlock extends GenericRFToolsBlock {
+public class LiquidMonitorBlock extends GenericRFToolsBlock<LiquidMonitorBlockTileEntity, EmptyContainer> {
 
     public static PropertyBool OUTPUTPOWER = PropertyBool.create("output");
     public static PropertyInteger LEVEL = PropertyInteger.create("level", 0, 5);
 
     public LiquidMonitorBlock() {
         super(Material.IRON, LiquidMonitorBlockTileEntity.class, EmptyContainer.class, "liquid_monitor", false);
+    }
+
+    @Override
+    public boolean hasRedstoneOutput() {
+        return true;
     }
 
     @SideOnly(Side.CLIENT)
@@ -52,23 +57,13 @@ public class LiquidMonitorBlock extends GenericRFToolsBlock {
     }
 
     @Override
-    public boolean canProvidePower(IBlockState state) {
-        return true;
-    }
-
-    @Override
-    public int getWeakPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+    protected int getRedstoneOutput(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
         EnumFacing direction = state.getValue(FACING);
         if (side == direction) {
             return state.getValue(OUTPUTPOWER) ? 15 : 0;
         } else {
             return 0;
         }
-    }
-
-    @Override
-    public int getStrongPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
-        return getWeakPower(blockState, blockAccess, pos, side);
     }
 
     @Override
@@ -98,7 +93,7 @@ public class LiquidMonitorBlock extends GenericRFToolsBlock {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
