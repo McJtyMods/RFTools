@@ -29,6 +29,25 @@ public class TeleportDestinations extends WorldSavedData {
         super(identifier);
     }
 
+    public static String getDestinationName(TeleportDestinations destinations, int receiverId) {
+        GlobalCoordinate coordinate = destinations.getCoordinateForId(receiverId);
+        String name;
+        if (coordinate == null) {
+            name = "?";
+        } else {
+            TeleportDestination destination = destinations.getDestination(coordinate);
+            if (destination == null) {
+                name = "?";
+            } else {
+                name = destination.getName();
+                if (name == null || name.isEmpty()) {
+                    name = destination.getCoordinate() + " (" + destination.getDimension() + ")";
+                }
+            }
+        }
+        return name;
+    }
+
     public void save(World world) {
         world.getMapStorage().setData(TPDESTINATIONS_NAME, this);
         markDirty();

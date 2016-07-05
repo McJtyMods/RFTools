@@ -1,8 +1,6 @@
 package mcjty.rftools.network;
 
 import io.netty.buffer.ByteBuf;
-import mcjty.lib.varia.GlobalCoordinate;
-import mcjty.rftools.blocks.teleporter.TeleportDestination;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -40,23 +38,11 @@ public class PacketGetDestinationInfo implements IMessage {
         private void handle(PacketGetDestinationInfo message, MessageContext ctx) {
             World world = ctx.getServerHandler().playerEntity.worldObj;
             TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
-            GlobalCoordinate coordinate = destinations.getCoordinateForId(message.receiverId);
-            String name;
-            if (coordinate == null) {
-                name = "?";
-            } else {
-                TeleportDestination destination = destinations.getDestination(coordinate);
-                if (destination == null) {
-                    name = "?";
-                } else {
-                    name = destination.getName();
-                    if (name == null || name.isEmpty()) {
-                        name = destination.getCoordinate() + " (" + destination.getDimension() + ")";
-                    }
-                }
-            }
-            RFToolsMessages.INSTANCE.sendTo(new PacketReturnDestinationInfo(message.receiverId, name), ctx.getServerHandler().playerEntity);
+            int receiverId = message.receiverId;
+            String name = TeleportDestinations.getDestinationName(destinations, receiverId);
+            RFToolsMessages.INSTANCE.sendTo(new PacketReturnDestinationInfo(receiverId, name), ctx.getServerHandler().playerEntity);
         }
 
     }
+
 }
