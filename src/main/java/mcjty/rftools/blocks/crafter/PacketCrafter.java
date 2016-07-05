@@ -18,13 +18,13 @@ public class PacketCrafter implements IMessage {
     private int recipeIndex;
     private ItemStack items[];
     private boolean keepOne;
-    private boolean craftInternal;
+    private CraftingRecipe.CraftMode craftInternal;
 
     @Override
     public void fromBytes(ByteBuf buf) {
         pos = NetworkTools.readPos(buf);
         keepOne = buf.readBoolean();
-        craftInternal = buf.readBoolean();
+        craftInternal = CraftingRecipe.CraftMode.values()[buf.readByte()];
 
         recipeIndex = buf.readByte();
         int l = buf.readByte();
@@ -47,7 +47,7 @@ public class PacketCrafter implements IMessage {
     public void toBytes(ByteBuf buf) {
         NetworkTools.writePos(buf, pos);
         buf.writeBoolean(keepOne);
-        buf.writeBoolean(craftInternal);
+        buf.writeByte(craftInternal.ordinal());
 
         buf.writeByte(recipeIndex);
         if (items != null) {
@@ -68,7 +68,7 @@ public class PacketCrafter implements IMessage {
     public PacketCrafter() {
     }
 
-    public PacketCrafter(BlockPos pos, int recipeIndex, InventoryCrafting inv, ItemStack result, boolean keepOne, boolean craftInternal) {
+    public PacketCrafter(BlockPos pos, int recipeIndex, InventoryCrafting inv, ItemStack result, boolean keepOne, CraftingRecipe.CraftMode craftInternal) {
         this.pos = pos;
         this.recipeIndex = recipeIndex;
         this.items = new ItemStack[10];
@@ -100,7 +100,7 @@ public class PacketCrafter implements IMessage {
                 CraftingRecipe recipe = crafterBlockTileEntity.getRecipe(message.recipeIndex);
                 recipe.setRecipe(message.items, message.items[9]);
                 recipe.setKeepOne(message.keepOne);
-                recipe.setCraftInternal(message.craftInternal);
+                recipe.setCraftMode(message.craftInternal);
                 crafterBlockTileEntity.markDirtyClient();
 
             }

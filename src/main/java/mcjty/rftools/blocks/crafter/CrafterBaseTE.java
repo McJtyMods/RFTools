@@ -26,6 +26,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static mcjty.rftools.blocks.crafter.CraftingRecipe.CraftMode.EXTC;
+import static mcjty.rftools.blocks.crafter.CraftingRecipe.CraftMode.INT;
+
 public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements ITickable, DefaultSidedInventory,
         JEIRecipeAcceptor {
     public static final int SPEED_SLOW = 0;
@@ -321,12 +324,14 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         }
 
         // Try to merge the output. If there is something that doesn't fit we undo everything.
-        if (result != null && placeResult(craftingRecipe.isCraftInternal(), result, undo)) {
+        CraftingRecipe.CraftMode mode = craftingRecipe.getCraftMode();
+        if (result != null && placeResult(mode, result, undo)) {
             ItemStack[] remaining = recipe.getRemainingItems(workInventory);
             if (remaining != null) {
+                CraftingRecipe.CraftMode remainingMode = mode == EXTC ? INT : mode;
                 for (ItemStack s : remaining) {
                     if (s != null) {
-                        if (!placeResult(craftingRecipe.isCraftInternal(), s, undo)) {
+                        if (!placeResult(mode, s, undo)) {
                             // Not enough room.
                             undo(undo);
                             return false;
@@ -405,13 +410,14 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         }
     }
 
-    private boolean placeResult(boolean internal, ItemStack result, Map<Integer,ItemStack> undo) {
+    private boolean placeResult(CraftingRecipe.CraftMode mode, ItemStack result, Map<Integer,ItemStack> undo) {
         int start;
         int stop;
-        if (internal) {
+        if (mode == INT) {
             start = CrafterContainer.SLOT_BUFFER;
             stop = CrafterContainer.SLOT_BUFFER + CrafterContainer.BUFFER_SIZE;
         } else {
+            // EXT and EXTC are handled the same here
             start = CrafterContainer.SLOT_BUFFEROUT;
             stop = CrafterContainer.SLOT_BUFFEROUT + CrafterContainer.BUFFEROUT_SIZE;
         }
