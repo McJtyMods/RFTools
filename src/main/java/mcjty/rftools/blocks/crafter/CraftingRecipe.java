@@ -27,7 +27,24 @@ public class CraftingRecipe {
     private IRecipe recipe = null;
 
     private boolean keepOne = false;
-    private boolean craftInternal = false;
+
+    enum CraftMode {
+        EXT("Ext"),
+        INT("Int"),
+        EXTC("ExtC");
+
+        private final String description;
+
+        CraftMode(String description) {
+            this.description = description;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+    }
+
+    private CraftMode craftMode = CraftMode.EXT;
 
     public static IRecipe findRecipe(World world, InventoryCrafting inv) {
         List<IRecipe> recipes = new ArrayList<>(CraftingManager.getInstance().getRecipeList());
@@ -52,7 +69,7 @@ public class CraftingRecipe {
             result = null;
         }
         keepOne = tagCompound.getBoolean("Keep");
-        craftInternal = tagCompound.getBoolean("Int");
+        craftMode = CraftMode.values()[tagCompound.getByte("Int")];
         recipePresent = false;
     }
 
@@ -73,7 +90,7 @@ public class CraftingRecipe {
         tagCompound.setTag("Result", resultCompound);
         tagCompound.setTag("Items", nbtTagList);
         tagCompound.setBoolean("Keep", keepOne);
-        tagCompound.setBoolean("Int", craftInternal);
+        tagCompound.setByte("Int", (byte) craftMode.ordinal());
     }
 
     public void setRecipe(ItemStack[] items, ItemStack result) {
@@ -112,11 +129,11 @@ public class CraftingRecipe {
         this.keepOne = keepOne;
     }
 
-    public boolean isCraftInternal() {
-        return craftInternal;
+    public CraftMode getCraftMode() {
+        return craftMode;
     }
 
-    public void setCraftInternal(boolean craftInternal) {
-        this.craftInternal = craftInternal;
+    public void setCraftMode(CraftMode craftMode) {
+        this.craftMode = craftMode;
     }
 }

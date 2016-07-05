@@ -116,7 +116,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         }
 
         selectRecipe();
-        sendChangeToServer(-1, null, null, false, false);
+        sendChangeToServer(-1, null, null, false, CraftingRecipe.CraftMode.EXT);
 
         window = new Window(this, toplevel);
         tileEntity.requestRfFromServer(RFTools.MODID);
@@ -138,11 +138,15 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
 
     private void initInternalRecipe() {
         internalRecipe = new ChoiceLabel(mc, this).
-                addChoices("Ext", "Int").
+                addChoices("Ext", "Int", "ExtC").
                 setTooltips("'Int' will put result of", "crafting operation in", "inventory instead of", "output buffer").
                 addChoiceEvent((parent, newChoice) -> updateRecipe()).
                 setEnabled(false).
                 setLayoutHint(new PositionalLayout.PositionalHint(148, 24, 41, 14));
+        internalRecipe.setChoiceTooltip("Ext", "Result of crafting operation", "will go to output buffer");
+        internalRecipe.setChoiceTooltip("Int", "Result of crafting operation", "will stay in input buffer");
+        internalRecipe.setChoiceTooltip("ExtC", "Result of crafting operation", "will go to output buffer",
+                "but remaining items (like", "buckets) will stay in input");
     }
 
     private void initKeepMode() {
@@ -240,7 +244,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         }
         inventorySlots.getSlot(9).putStack(craftingRecipe.getResult());
         keepItem.setChoice(craftingRecipe.isKeepOne() ? "Keep" : "All");
-        internalRecipe.setChoice(craftingRecipe.isCraftInternal() ? "Int" : "Ext");
+        internalRecipe.setChoice(craftingRecipe.getCraftMode().getDescription());
         keepItem.setEnabled(true);
         internalRecipe.setEnabled(true);
         applyButton.setEnabled(true);
@@ -316,10 +320,17 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         }
         CraftingRecipe craftingRecipe = tileEntity.getRecipe(selected);
         boolean keepOne = "Keep".equals(keepItem.getCurrentChoice());
-        boolean craftInternal = "Int".equals(internalRecipe.getCurrentChoice());
+        CraftingRecipe.CraftMode mode;
+        if ("Int".equals(internalRecipe.getCurrentChoice())) {
+            mode = CraftingRecipe.CraftMode.INT;
+        } else if ("Ext".equals(internalRecipe.getCurrentChoice())) {
+            mode = CraftingRecipe.CraftMode.EXT;
+        } else {
+            mode = CraftingRecipe.CraftMode.EXTC;
+        }
         craftingRecipe.setKeepOne(keepOne);
-        craftingRecipe.setCraftInternal(craftInternal);
-        sendChangeToServer(selected, craftingRecipe.getInventory(), craftingRecipe.getResult(), keepOne, craftInternal);
+        craftingRecipe.setCraftMode(mode);
+        sendChangeToServer(selected, craftingRecipe.getInventory(), craftingRecipe.getResult(), keepOne, mode);
     }
 
     private boolean itemStacksEqual(ItemStack matches, ItemStack oldStack) {
@@ -330,9 +341,10 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         }
     }
 
-    private void sendChangeToServer(int index, InventoryCrafting inv, ItemStack result, boolean keepOne, boolean craftInternal) {
+    private void sendChangeToServer(int index, InventoryCrafting inv, ItemStack result, boolean keepOne,
+                                    CraftingRecipe.CraftMode mode) {
         RFToolsMessages.INSTANCE.sendToServer(new PacketCrafter(tileEntity.getPos(), index, inv,
-                result, keepOne, craftInternal));
+                result, keepOne, mode));
     }
 
     /**
