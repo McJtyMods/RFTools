@@ -415,6 +415,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         for (Map.Entry<Integer, ItemStack> entry : undo.entrySet()) {
             inventoryHelper.setStackInSlot(entry.getKey(), entry.getValue());
         }
+        undo.clear();
     }
 
     private boolean placeResult(CraftingRecipe.CraftMode mode, ItemStack result, Map<Integer,ItemStack> undo) {
