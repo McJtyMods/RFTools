@@ -262,7 +262,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
             return;
         }
         modules.get(module).mouseClick(worldObj, result.getX(), result.getY() - result.getCurrenty(), true);
-        clickedModules.add(new ActivatedModule(module, 5, result.getX(), result.getY()));
+        clickedModules.add(new ActivatedModule(module, 3, result.getX(), result.getY()));
 
         RFToolsMessages.INSTANCE.sendToServer(new PacketServerCommand(getPos(), CMD_CLICK,
                 new Argument("x", result.getX()),
