@@ -97,12 +97,12 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
                 .setText("R")
                 .setTooltips("Remember the current items", "in the internal and", "external buffers")
                 .addButtonEvent(widget -> rememberItems())
-                .setLayoutHint(new PositionalLayout.PositionalHint(148, 70, 18, 16));
+                .setLayoutHint(new PositionalLayout.PositionalHint(148, 74, 18, 16));
         forgetButton = new Button(mc, this)
                 .setText("F")
                 .setTooltips("Forget the remembered layout")
                 .addButtonEvent(widget -> forgetItems())
-                .setLayoutHint(new PositionalLayout.PositionalHint(168, 70, 18, 16));
+                .setLayoutHint(new PositionalLayout.PositionalHint(168, 74, 18, 16));
 
         initRedstoneMode();
         initSpeedMode();
@@ -130,10 +130,10 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
                         selectRecipe();
                     }
                 })
-                .setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 126, 80));
+                .setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 126, 84));
         populateList();
 
-        return new Slider(mc, this).setVertical().setScrollable(recipeList).setLayoutHint(new PositionalLayout.PositionalHint(137, 7, 10, 80));
+        return new Slider(mc, this).setVertical().setScrollable(recipeList).setLayoutHint(new PositionalLayout.PositionalHint(137, 7, 10, 84));
     }
 
     private void initInternalRecipe() {
@@ -248,9 +248,6 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         keepItem.setEnabled(true);
         internalRecipe.setEnabled(true);
         applyButton.setEnabled(true);
-
-
-//        xxx
     }
 
     private void testRecipe() {
