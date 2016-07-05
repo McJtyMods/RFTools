@@ -248,6 +248,9 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         keepItem.setEnabled(true);
         internalRecipe.setEnabled(true);
         applyButton.setEnabled(true);
+
+
+//        xxx
     }
 
     private void testRecipe() {
@@ -343,6 +346,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
 
     private void sendChangeToServer(int index, InventoryCrafting inv, ItemStack result, boolean keepOne,
                                     CraftingRecipe.CraftMode mode) {
+
         RFToolsMessages.INSTANCE.sendToServer(new PacketCrafter(tileEntity.getPos(), index, inv,
                 result, keepOne, mode));
     }
