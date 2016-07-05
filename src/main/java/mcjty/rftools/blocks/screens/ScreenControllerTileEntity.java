@@ -319,7 +319,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
-        for (int y = yCoord - 16 ; y <= yCoord + 16 ; y++) {
+        for (int y = yCoord - radius ; y <= yCoord + radius ; y++) {
             if (y >= 0 && y < 256) {
                 for (int x = xCoord - radius; x <= xCoord + radius; x++) {
                     for (int z = zCoord - radius; z <= zCoord + radius; z++) {
