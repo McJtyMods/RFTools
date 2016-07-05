@@ -28,6 +28,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -457,9 +458,6 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
 
     private void requestItem(BlockPos pos, int slot, int amount) {
-        if (inventoryHelper.containsItem(StorageScannerContainer.SLOT_OUT)) {
-            return;
-        }
         int rf = StorageScannerConfiguration.rfPerRequest;
         if (amount >= 0) {
             rf /= 10;       // Less RF usage for requesting less items
@@ -469,9 +467,25 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         }
 
         TileEntity tileEntity = worldObj.getTileEntity(pos);
+        ItemStack stack = InventoryHelper.getSlot(tileEntity, slot);
+        ItemStack outSlot = inventoryHelper.getStackInSlot(StorageScannerContainer.SLOT_OUT);
+        if (outSlot != null) {
+            // Check if the items are the same and there is room
+            if (!ItemHandlerHelper.canItemStacksStack(outSlot, stack)) {
+                return;
+            }
+            if (outSlot.stackSize + stack.stackSize > outSlot.getMaxStackSize()) {
+                return;
+            }
+        }
+
+
         int finalRf = rf;
         InventoryHelper.handleSlot(tileEntity, slot, amount, s -> {
             consumeEnergy(finalRf);
+            if (outSlot != null) {
+                s.stackSize += outSlot.stackSize;
+            }
             setInventorySlotContents(StorageScannerContainer.SLOT_OUT, s);
         });
     }
