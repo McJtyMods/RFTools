@@ -17,6 +17,8 @@ import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,6 +30,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
@@ -38,6 +41,8 @@ import org.lwjgl.input.Keyboard;
 import java.util.List;
 
 public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEntity, StorageTerminalContainer> {
+
+    public static final PropertyBool MODULE = PropertyBool.create("module");
 
     public StorageTerminalBlock() {
         super(Material.IRON, "storage_terminal", StorageTerminalTileEntity.class, StorageTerminalContainer.class, true);
@@ -221,5 +226,16 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
                 return true;
             }
         }
+    }
+
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+        ItemStack module = getModule(world.getTileEntity(pos));
+        return super.getActualState(state, world, pos).withProperty(MODULE, module != null);
+    }
+
+    @Override
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, LOGIC_FACING, META_INTERMEDIATE, OUTPUTPOWER, MODULE);
     }
 }
