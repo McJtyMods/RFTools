@@ -11,7 +11,7 @@ public interface CraftingGridProvider {
 
     CraftingGrid getCraftingGrid();
 
-    void markDirty();
+    void markInventoryDirty();
 
     int[] craft(EntityPlayerMP player, int n, boolean test);
 }

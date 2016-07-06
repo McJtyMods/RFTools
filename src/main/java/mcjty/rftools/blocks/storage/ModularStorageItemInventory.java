@@ -67,6 +67,11 @@ public class ModularStorageItemInventory implements IInventory, CraftingGridProv
     }
 
     @Override
+    public void markInventoryDirty() {
+        markDirty();
+    }
+
+    @Override
     public int[] craft(EntityPlayerMP player, int n, boolean test) {
         InventoriesItemSource itemSource = new InventoriesItemSource()
                 .add(player.inventory, 0).add(this, 0);
