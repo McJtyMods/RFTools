@@ -7,16 +7,13 @@ import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
-import mcjty.rftools.blocks.screens.modules.ItemStackScreenModule;
 import mcjty.rftools.blocks.screens.modules.StorageControlScreenModule;
-import mcjty.rftools.blocks.screens.modulesclient.ItemStackClientScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.StorageControlClientScreenModule;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -28,7 +25,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.CapabilityItemHandler;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
@@ -133,4 +129,5 @@ public class StorageControlModuleItem extends GenericRFToolsItem implements IMod
     public String getName() {
         return "Stor";
     }
+
 }

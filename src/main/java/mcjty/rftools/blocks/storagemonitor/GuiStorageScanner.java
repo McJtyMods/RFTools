@@ -20,7 +20,6 @@ import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import mcjty.rftools.craftinggrid.GuiCraftingGrid;
 import mcjty.rftools.craftinggrid.PacketRequestGridSync;
 import mcjty.rftools.network.RFToolsMessages;
@@ -155,7 +154,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 .setDesiredWidth(50)
                 .setDesiredHeight(14)
                 .addButtonEvent(parent -> RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID,
-                        new InventoriesInfoPacketServer(tileEntity.getDimension(), tileEntity.getPos(), true))))
+                        new InventoriesInfoPacketServer(tileEntity.getDimension(), tileEntity.getStorageScannerPos(), true))))
                 .setTooltips("Start/stop a scan of", "all storage units", "in radius");
         radiusLabel = new ScrollableLabel(mc, this)
                 .addValueEvent((parent, newValue) -> changeRadius(newValue))
@@ -212,15 +211,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             tileEntity.requestRfFromServer(RFTools.MODID);
         }
 
-        CraftingGridProvider provider = tileEntity;
-        BlockPos pos = null;
-        if (!tileEntity.isDummy()) {
-            // For a dummy tile entity we use null because we want to get the grid from the item and not the tile
-            // entity.
-            pos = tileEntity.getPos();
-        }
-
-        craftingGrid.initGui(modBase, network, mc, this, pos, provider, guiLeft, guiTop, xSize, ySize);
+        BlockPos pos = tileEntity.getCraftingGridContainerPos();
+        craftingGrid.initGui(modBase, network, mc, this, pos, tileEntity.getCraftingGridProvider(), guiLeft, guiTop, xSize, ySize);
         network.sendToServer(new PacketRequestGridSync(pos));
     }
 
@@ -292,7 +284,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     private void startSearch(String text) {
         if (!text.isEmpty()) {
             RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID,
-                    new SearchItemsInfoPacketServer(tileEntity.getDimension(), tileEntity.getPos(), text)));
+                    new SearchItemsInfoPacketServer(tileEntity.getDimension(), tileEntity.getStorageScannerPos(), text)));
         }
     }
 
@@ -300,7 +292,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         BlockPos c = getSelectedContainerPos();
         if (c != null) {
             RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID,
-                    new GetContentsInfoPacketServer(tileEntity.getDimension(), tileEntity.getPos(), c)));
+                    new GetContentsInfoPacketServer(tileEntity.getDimension(), tileEntity.getStorageScannerPos(), c)));
         }
     }
 
@@ -323,7 +315,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         listDirty--;
         if (listDirty <= 0) {
             RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID,
-                    new InventoriesInfoPacketServer(tileEntity.getDimension(), tileEntity.getPos(), false)));
+                    new InventoriesInfoPacketServer(tileEntity.getDimension(), tileEntity.getStorageScannerPos(), false)));
             getInventoryOnServer();
             listDirty = 20;
         }

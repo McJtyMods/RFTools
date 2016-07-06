@@ -7,6 +7,7 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.SoundTools;
 import mcjty.rftools.api.general.IInventoryTracker;
+import mcjty.rftools.blocks.crafter.CraftingRecipe;
 import mcjty.rftools.craftinggrid.CraftingGrid;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import mcjty.rftools.craftinggrid.StorageCraftingTools;
@@ -98,6 +99,11 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     @Override
     public int[] craft(EntityPlayerMP player, int n, boolean test) {
+        CraftingRecipe activeRecipe = craftingGrid.getActiveRecipe();
+        return craft(player, n, test, activeRecipe);
+    }
+
+    public int[] craft(EntityPlayerMP player, int n, boolean test, CraftingRecipe activeRecipe) {
         TileEntityItemSource itemSource = new TileEntityItemSource()
                 .addInventory(player.inventory, 0);
         for (BlockPos p : getInventories()) {
@@ -107,9 +113,9 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         }
 
         if (test) {
-            return StorageCraftingTools.testCraftItems(player, n, craftingGrid.getActiveRecipe(), itemSource);
+            return StorageCraftingTools.testCraftItems(player, n, activeRecipe, itemSource);
         } else {
-            StorageCraftingTools.craftItems(player, n, craftingGrid.getActiveRecipe(), itemSource);
+            StorageCraftingTools.craftItems(player, n, activeRecipe, itemSource);
             return null;
         }
     }
@@ -610,6 +616,36 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
      */
     public boolean isDummy() {
         return monitorDim != null;
+    }
+
+    /**
+     * This is used client side only for the GUI.
+     * Return the position of the crafting grid container. This
+     * is either the position of this tile entity (in case we are just looking
+     * directly at the storage scanner), the position of a 'watching' tile
+     * entity (in case we are a dummy for the storage terminal) or else null
+     * in case we're using a handheld item.
+     * @return
+     */
+    public BlockPos getCraftingGridContainerPos() {
+        return getPos();
+    }
+
+    /**
+     * This is used client side only for the GUI.
+     * Get the real crafting grid provider
+     */
+    public CraftingGridProvider getCraftingGridProvider() {
+        return this;
+    }
+
+    /**
+     * This is used client side only for the GUI.
+     * Return the position of the actual storage scanner
+     * @return
+     */
+    public BlockPos getStorageScannerPos() {
+        return getPos();
     }
 
     public int getDimension() {

@@ -37,6 +37,10 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
         super(material, tileEntityClass, containerClass, LogicItemBlock.class, name, false);
     }
 
+    public LogicSlabBlock(Material material, String name, Class<? extends T> tileEntityClass, Class<? extends C> containerClass, boolean container) {
+        super(material, tileEntityClass, containerClass, LogicItemBlock.class, name, container);
+    }
+
     @Override
     public boolean hasNoRotation() {
         return true;

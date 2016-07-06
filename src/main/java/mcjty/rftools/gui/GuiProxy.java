@@ -17,6 +17,7 @@ import mcjty.rftools.items.storage.GuiStorageFilter;
 import mcjty.rftools.items.storage.StorageFilterContainer;
 import mcjty.rftools.items.teleportprobe.GuiAdvancedPorter;
 import mcjty.rftools.items.teleportprobe.GuiTeleportProbe;
+import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -40,12 +41,8 @@ public class GuiProxy implements IGuiHandler {
         } else if (guiid == RFTools.GUI_REMOTE_STORAGESCANNER_ITEM) {
             // We are in a tablet
             ItemStack tablet = entityPlayer.getHeldItemMainhand();
-            NBTTagCompound tagCompound = tablet.getTagCompound();
-            int monitordim = tagCompound.getInteger("monitordim");
-            int monitorx = tagCompound.getInteger("monitorx");
-            int monitory = tagCompound.getInteger("monitory");
-            int monitorz = tagCompound.getInteger("monitorz");
-            BlockPos pos = new BlockPos(monitorx, monitory, monitorz);
+            int monitordim = RFToolsTools.getDimensionFromModule(tablet);
+            BlockPos pos = RFToolsTools.getPositionFromModule(tablet);
             WorldServer w = DimensionManager.getWorld(monitordim);
             if (w == null) {
                 return null;
@@ -91,13 +88,21 @@ public class GuiProxy implements IGuiHandler {
             return new GuiModularStorage(new RemoteStorageItemContainer(entityPlayer));
         } else if (guiid == RFTools.GUI_REMOTE_STORAGESCANNER_ITEM) {
             ItemStack tablet = entityPlayer.getHeldItemMainhand();
-            NBTTagCompound tagCompound = tablet.getTagCompound();
-            int monitordim = tagCompound.getInteger("monitordim");
-            int monitorx = tagCompound.getInteger("monitorx");
-            int monitory = tagCompound.getInteger("monitory");
-            int monitorz = tagCompound.getInteger("monitorz");
-            BlockPos pos = new BlockPos(monitorx, monitory, monitorz);
-            StorageScannerTileEntity te = new StorageScannerTileEntity(entityPlayer, monitordim);
+            int monitordim = RFToolsTools.getDimensionFromModule(tablet);
+            BlockPos pos = RFToolsTools.getPositionFromModule(tablet);
+            StorageScannerTileEntity te = new StorageScannerTileEntity(entityPlayer, monitordim) {
+                @Override
+                public BlockPos getCraftingGridContainerPos() {
+                    // We are a handheld so we return a null pos for the craftinggrid
+                    return null;
+                }
+
+                @Override
+                public BlockPos getStorageScannerPos() {
+                    return pos;
+                }
+            };
+            // The position of the actual storage scanner is set on the dummy te
             te.setPos(pos);
             return new GuiStorageScanner(te, new StorageScannerContainer(entityPlayer, te));
         } else if (guiid == RFTools.GUI_MODULAR_STORAGE_ITEM) {

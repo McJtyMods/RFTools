@@ -100,6 +100,7 @@ tile.rftools.elevator.name=Elevator
 tile.rftools.relay.name=Power Relay
 tile.rftools.item_filter.name=Item Filter
 tile.rftools.storage_scanner.name=Storage Scanner
+tile.rftools.storage_terminal.name=Storage Terminal
 tile.rftools.rf_monitor.name=RF Monitor
 tile.rftools.liquid_monitor.name=Liquid Monitor
 tile.rftools.machine_frame.name=Machine Frame

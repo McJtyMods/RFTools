@@ -18,6 +18,7 @@ import static mcjty.rftools.items.storage.StorageModuleTabletItem.META_FOR_SCANN
 public class ModularStorageSetup {
     public static ModularStorageBlock modularStorageBlock;
     public static RemoteStorageBlock remoteStorageBlock;
+    public static StorageTerminalBlock storageTerminalBlock;
 
     public static StorageModuleTabletItem storageModuleTabletItem;
 
@@ -29,6 +30,7 @@ public class ModularStorageSetup {
     public static void init() {
         modularStorageBlock = new ModularStorageBlock();
         remoteStorageBlock = new RemoteStorageBlock();
+        storageTerminalBlock = new StorageTerminalBlock();
 
         storageModuleTabletItem = new StorageModuleTabletItem();
         storageModuleItem = new StorageModuleItem();
@@ -41,6 +43,7 @@ public class ModularStorageSetup {
     public static void initClient() {
         modularStorageBlock.initModel();
         remoteStorageBlock.initModel();
+        storageTerminalBlock.initModel();
         storageModuleTabletItem.initModel();
         storageModuleItem.initModel();
         oreDictTypeItem.initModel();
@@ -52,6 +55,7 @@ public class ModularStorageSetup {
     public static void initCrafting() {
         GameRegistry.addRecipe(new ItemStack(modularStorageBlock), "rcr", "qMq", "rqr", 'M', ModBlocks.machineFrame, 'c', Blocks.CHEST, 'r', Items.REDSTONE, 'q', Items.QUARTZ);
         GameRegistry.addRecipe(new ItemStack(remoteStorageBlock), "ece", "qMq", "eqe", 'M', ModBlocks.machineFrame, 'c', Blocks.CHEST, 'e', Items.ENDER_PEARL, 'q', Items.QUARTZ);
+        GameRegistry.addRecipe(new ItemStack(storageTerminalBlock), "pge", "gMg", "egp", 'M', ModBlocks.machineBase, 'g', Blocks.GLASS, 'e', Items.ENDER_PEARL, 'p', Items.PAPER);
 
         GameRegistry.addRecipe(new ItemStack(oreDictTypeItem), " u ", "rir", " p ", 'u', Blocks.IRON_ORE, 'p', Items.PAPER, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT);
         GameRegistry.addRecipe(new ItemStack(genericTypeItem), " p ", "rir", " p ", 'p', Items.PAPER, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT);
