@@ -11,6 +11,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
@@ -88,6 +90,31 @@ public class StorageTerminalTileEntity extends LogicTileEntity implements Defaul
         markDirty();
     }
 
+    @Override
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
+        boolean module = inventoryHelper.getStackInSlot(StorageTerminalContainer.SLOT_MODULE) != null;
+
+        super.onDataPacket(net, packet);
+
+        if (worldObj.isRemote) {
+            // If needed send a render update.
+            boolean newmodule = inventoryHelper.getStackInSlot(StorageTerminalContainer.SLOT_MODULE) != null;
+            if (newmodule != module) {
+                worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
+            }
+        }
+    }
+
+    @Override
+    public void setInventorySlotContents(int index, ItemStack stack) {
+        inventoryHelper.setInventorySlotContents(this.getInventoryStackLimit(), index, stack);
+        if (!worldObj.isRemote) {
+            // Make sure we update client-side
+            markDirtyClient();
+        } else {
+            worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
+        }
+    }
 
     @Override
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {

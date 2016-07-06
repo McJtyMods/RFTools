@@ -37,6 +37,12 @@
       "east_tosouth": { "transform": { "rotation": [ { "z" : 90 }, { "y": 180 }  ] } },
       "east_toup": { "transform": { "rotation": [ { "z" : 90 }, { "y": 270 }  ] } },
       "east_todown": { "transform": { "rotation": [ { "z" : 90 }, { "y": 90 }  ] } }
+    },
+
+    "module": {
+      "false": { "model": "rftools:storage_terminal_empty" },
+      "true": { "model": "rftools:storage_terminal" }
     }
+
   }
 }
