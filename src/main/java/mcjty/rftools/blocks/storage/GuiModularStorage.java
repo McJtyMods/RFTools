@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.base.StyleConfig;
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
@@ -27,6 +28,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -46,6 +48,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static mcjty.rftools.blocks.storage.ModularStorageContainer.CONTAINER_GRID;
 
 
 public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEntity> {
@@ -106,11 +110,13 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             ySize = STORAGE_HEIGHT0;
         }
 
+        IInventory gridInventory = ((GenericContainer) container).getInventory(CONTAINER_GRID);
         for (Object o : container.inventorySlots) {
             Slot slot = (Slot) o;
-            slot.yDisplayPosition += ySize - STORAGE_HEIGHT0;
+            if (slot.inventory != gridInventory) {
+                slot.yDisplayPosition += ySize - STORAGE_HEIGHT0;
+            }
         }
-
     }
 
     @Override
