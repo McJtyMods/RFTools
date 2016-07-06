@@ -35,7 +35,7 @@ public class StorageScannerRecipeTransferHandler implements IRecipeTransferHandl
 
         StorageScannerContainer containerWorktable = (StorageScannerContainer) container;
         StorageScannerTileEntity te = containerWorktable.getStorageScannerTileEntity();
-        BlockPos pos = te.getPos();
+        BlockPos pos = te.getCraftingGridContainerPos();
 
         if (doTransfer) {
             RFToolsJeiPlugin.transferRecipe(guiIngredients, pos);

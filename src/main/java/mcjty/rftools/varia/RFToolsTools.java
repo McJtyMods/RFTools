@@ -1,6 +1,7 @@
 package mcjty.rftools.varia;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -20,6 +21,9 @@ public class RFToolsTools {
     }
 
     public static boolean chunkLoaded(World world, BlockPos pos) {
+        if (world == null || pos == null) {
+            return false;
+        }
         return world.getChunkProvider().getLoadedChunk(pos.getX() >> 4, pos.getZ() >> 4) != null && world.getChunkFromBlockCoords(pos).isLoaded();
     }
 
@@ -72,5 +76,23 @@ public class RFToolsTools {
             return "?";
         }
         return nameForObject.getResourceDomain();
+    }
+
+    public static int getDimensionFromModule(ItemStack stack) {
+        if (!stack.hasTagCompound()) {
+            return 0;
+        }
+        return stack.getTagCompound().getInteger("monitordim");
+    }
+
+    public static BlockPos getPositionFromModule(ItemStack stack) {
+        if (!stack.hasTagCompound()) {
+            return null;
+        }
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        int monitorx = tagCompound.getInteger("monitorx");
+        int monitory = tagCompound.getInteger("monitory");
+        int monitorz = tagCompound.getInteger("monitorz");
+        return new BlockPos(monitorx, monitory, monitorz);
     }
 }

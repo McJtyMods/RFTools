@@ -5,6 +5,7 @@ import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.SlotDefinition;
 import mcjty.lib.container.SlotType;
 import mcjty.rftools.craftinggrid.CraftingGridInventory;
+import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 
@@ -46,6 +47,16 @@ public class StorageScannerContainer extends GenericContainer {
         addInventory(CONTAINER_INVENTORY, containerInventory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
         addInventory(CONTAINER_GRID, storageScannerTileEntity.getCraftingGrid().getCraftingGridInventory());
+        generateSlots();
+    }
+
+    public StorageScannerContainer(EntityPlayer player, IInventory containerInventory, CraftingGridProvider provider) {
+        super(factory);
+        storageScannerTileEntity = (StorageScannerTileEntity) containerInventory;
+
+        addInventory(CONTAINER_INVENTORY, containerInventory);
+        addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
+        addInventory(CONTAINER_GRID, provider.getCraftingGrid().getCraftingGridInventory());
         generateSlots();
     }
 }
