@@ -92,6 +92,11 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     @Override
+    public void markInventoryDirty() {
+        markDirty();
+    }
+
+    @Override
     public int[] craft(EntityPlayerMP player, int n, boolean test) {
         TileEntityItemSource itemSource = new TileEntityItemSource()
                 .addInventory(player.inventory, 0);
