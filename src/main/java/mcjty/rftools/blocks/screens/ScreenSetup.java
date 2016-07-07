@@ -30,6 +30,7 @@ public class ScreenSetup {
     public static CounterModuleItem counterModuleItem;
     public static CounterPlusModuleItem counterPlusModuleItem;
     public static StorageControlModuleItem storageControlModuleItem;
+    public static DumpModuleItem dumpModuleItem;
 
     public static void init() {
         screenBlock = new ScreenBlock();
@@ -51,6 +52,7 @@ public class ScreenSetup {
         counterModuleItem = new CounterModuleItem();
         counterPlusModuleItem = new CounterPlusModuleItem();
         storageControlModuleItem = new StorageControlModuleItem();
+        dumpModuleItem = new DumpModuleItem();
     }
 
     @SideOnly(Side.CLIENT)
@@ -74,6 +76,7 @@ public class ScreenSetup {
         counterModuleItem.initModel();
         counterPlusModuleItem.initModel();
         storageControlModuleItem.initModel();
+        dumpModuleItem.initModel();
     }
 
     public static void initCrafting() {
@@ -113,7 +116,9 @@ public class ScreenSetup {
         GameRegistry.addRecipe(new ItemStack(elevatorButtonModuleItem), "fff", "rir", " b ", 'f', Blocks.STONE_BUTTON, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
                                'b', inkSac);
         GameRegistry.addRecipe(new ItemStack(storageControlModuleItem), " c ", "rir", " b ", 'c', Blocks.CRAFTING_TABLE, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
-                               'b', inkSac);
+                'b', inkSac);
+        GameRegistry.addRecipe(new ItemStack(dumpModuleItem), " c ", "rir", " b ", 'c', Blocks.WOODEN_BUTTON, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
+                'b', inkSac);
 
         GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
                 null, new ItemStack(Items.ENDER_PEARL), null,

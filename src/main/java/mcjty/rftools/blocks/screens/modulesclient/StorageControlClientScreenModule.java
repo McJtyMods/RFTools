@@ -17,7 +17,6 @@ import org.lwjgl.opengl.GL11;
 
 public class StorageControlClientScreenModule implements IClientScreenModule<StorageControlScreenModule.ModuleDataStacks> {
     private ItemStack[] stacks = new ItemStack[9];
-    private boolean oredict = false;
 
     @Override
     public TransformMode getTransformMode() {
