@@ -5,6 +5,7 @@ import mcjty.lib.network.NetworkTools;
 import mcjty.rftools.blocks.storage.ModularStorageItemContainer;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.storage.RemoteStorageItemContainer;
+import mcjty.rftools.blocks.storagemonitor.StorageScannerContainer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -87,9 +88,9 @@ public class PacketSendRecipe implements IMessage {
                     } else if (player.openContainer instanceof RemoteStorageItemContainer) {
                         RemoteStorageItemContainer storageItemContainer = (RemoteStorageItemContainer) player.openContainer;
                         storageItemContainer.getJEIRecipeAcceptor().setGridContents(message.stacks);
-//                    } else if (player.openContainer instanceof StorageScannerContainer) {
-//                        StorageScannerContainer storageItemContainer = (StorageScannerContainer) player.openContainer;
-//                        storageItemContainer.getStorageScannerTileEntity().setGridContents(message.stacks);
+                    } else if (player.openContainer instanceof StorageScannerContainer) {
+                        StorageScannerContainer storageItemContainer = (StorageScannerContainer) player.openContainer;
+                        storageItemContainer.getStorageScannerTileEntity().setGridContents(message.stacks);
                     }
                 }
             } else {
