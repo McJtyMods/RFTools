@@ -72,7 +72,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
 
     @Override
     public ModuleDataStacks getData(IScreenDataHelper helper, World worldObj, long millis) {
-        StorageScannerTileEntity scannerTileEntity = getStorageScanner();
+        StorageScannerTileEntity scannerTileEntity = getStorageScanner(dim, coordinate);
         if (scannerTileEntity == null) {
             return null;
         }
@@ -83,7 +83,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
         return new ModuleDataStacks(amounts);
     }
 
-    private StorageScannerTileEntity getStorageScanner() {
+    public static StorageScannerTileEntity getStorageScanner(int dim, BlockPos coordinate) {
         World world = DimensionManager.getWorld(dim);
         if (world == null) {
             return null;
@@ -115,7 +115,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
                 }
             }
         }
-        StorageScannerTileEntity te = getStorageScanner();
+        StorageScannerTileEntity te = getStorageScanner(dim, coordinate);
         if (te != null) {
             te.clearCachedCounts();
         }
@@ -140,7 +140,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
 
     @Override
     public String[] getInfo(World world, int x, int y, EntityPlayer player) {
-        StorageScannerTileEntity te = getStorageScanner();
+        StorageScannerTileEntity te = getStorageScanner(dim, coordinate);
         if (te != null) {
             int i = getHighlightedStack(x, y);
             if (i != -1 && stacks[i] != null) {
@@ -212,7 +212,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
 
     @Override
     public void mouseClick(World world, int hitx, int hity, boolean clicked, EntityPlayer player) {
-        StorageScannerTileEntity scannerTileEntity = getStorageScanner();
+        StorageScannerTileEntity scannerTileEntity = getStorageScanner(dim, coordinate);
         if (scannerTileEntity == null || (!clicked) || player == null) {
             return;
         }

@@ -8,8 +8,8 @@ import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
-import mcjty.rftools.blocks.screens.modules.StorageControlScreenModule;
-import mcjty.rftools.blocks.screens.modulesclient.StorageControlClientScreenModule;
+import mcjty.rftools.blocks.screens.modules.DumpScreenModule;
+import mcjty.rftools.blocks.screens.modulesclient.DumpClientScreenModule;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.varia.RFToolsTools;
@@ -31,18 +31,37 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class StorageControlModuleItem extends GenericRFToolsItem implements IModuleProvider {
+public class DumpModuleItem extends GenericRFToolsItem implements IModuleProvider {
 
-    public StorageControlModuleItem() {
-        super("storage_control_module");
-        setMaxStackSize(1);
+    public DumpModuleItem() {
+        super("dump_module");
+    }
+
+    @Override
+    public int getMaxItemUseDuration(ItemStack stack) {
+        return 1;
+    }
+
+    @Override
+    public Class<? extends IScreenModule> getServerScreenModule() {
+        return DumpScreenModule.class;
+    }
+
+    @Override
+    public Class<? extends IClientScreenModule> getClientScreenModule() {
+        return DumpClientScreenModule.class;
+    }
+
+    @Override
+    public String getName() {
+        return "Dump";
     }
 
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.STORAGE_CONTROL_RFPERTICK + " RF/tick");
+        list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.DUMP_RFPERTICK + " RF/tick");
         boolean hasTarget = false;
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
@@ -50,14 +69,11 @@ public class StorageControlModuleItem extends GenericRFToolsItem implements IMod
         }
         if (!hasTarget) {
             list.add(TextFormatting.YELLOW + "Sneak right-click on a storage scanner to set the");
-            list.add(TextFormatting.YELLOW + "target for this storage module");
+            list.add(TextFormatting.YELLOW + "target for this dump module");
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(TextFormatting.WHITE + "This screen module allows you to monitor 9 different");
-            list.add(TextFormatting.WHITE + "items through a storage scanner.");
-            list.add(TextFormatting.WHITE + "This module can also be combined with a tablet");
-            list.add(TextFormatting.WHITE + "for remote access to a storage scanner controlled");
-            list.add(TextFormatting.WHITE + "system");
+            list.add(TextFormatting.WHITE + "This screen module allows you to dump");
+            list.add(TextFormatting.WHITE + "a lot of items through a storage scanner");
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
@@ -100,25 +116,4 @@ public class StorageControlModuleItem extends GenericRFToolsItem implements IMod
         }
         return EnumActionResult.SUCCESS;
     }
-
-    @Override
-    public int getMaxItemUseDuration(ItemStack stack) {
-        return 1;
-    }
-
-    @Override
-    public Class<? extends IScreenModule> getServerScreenModule() {
-        return StorageControlScreenModule.class;
-    }
-
-    @Override
-    public Class<? extends IClientScreenModule> getClientScreenModule() {
-        return StorageControlClientScreenModule.class;
-    }
-
-    @Override
-    public String getName() {
-        return "Stor";
-    }
-
 }

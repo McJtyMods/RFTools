@@ -168,7 +168,7 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
                 StorageModuleItem.addModuleInformation(list, max, tagCompound);
             } else if (itemStack.getItemDamage() == DAMAGE_SCANNER) {
                 list.add(TextFormatting.YELLOW + "Storage scanner module installed!");
-                StorageControlModuleItem.addModuleInformation(list, tagCompound);
+                StorageControlModuleItem.addModuleInformation(list, itemStack);
             } else {
                 list.add(TextFormatting.YELLOW + "No storage module installed!");
             }
