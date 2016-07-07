@@ -101,9 +101,16 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         }
         checkCounter = 10;
 
-        boolean newout = false;
+        boolean newout = checkSensor();
 
-        EnumFacing inputSide = getFacing(worldObj.getBlockState(getPos())).getInputSide();
+        if (newout != redstoneOut) {
+            redstoneOut = newout;
+            setRedstoneState(redstoneOut);
+        }
+    }
+
+    public boolean checkSensor() {
+        boolean newout;EnumFacing inputSide = getFacing(worldObj.getBlockState(getPos())).getInputSide();
         BlockPos newpos = getPos().offset(inputSide);
 
         switch (sensorType) {
@@ -125,12 +132,10 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
             case SENSOR_PASSIVE:
                 newout = checkEntitiesPassive(newpos, inputSide);
                 break;
+            default:
+                newout = false;
         }
-
-        if (newout != redstoneOut) {
-            redstoneOut = newout;
-            setRedstoneState(redstoneOut);
-        }
+        return newout;
     }
 
     private boolean checkBlock(BlockPos newpos, EnumFacing dir) {

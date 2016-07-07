@@ -61,6 +61,10 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
         markDirtyClient();
     }
 
+    public int getCurrentStep() {
+        return currentStep;
+    }
+
     public boolean getCycleBit(int bit) {
         return ((cycleBits >> bit) & 1) == 1;
     }
@@ -114,7 +118,7 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
             return;
         }
 
-        boolean newout = currentStep != -1 && getCycleBit(currentStep);
+        boolean newout = checkOutput();
 
         if (newout != redstoneOut) {
             redstoneOut = newout;
@@ -122,6 +126,10 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
         }
 
         handleCycle(powerLevel > 0);
+    }
+
+    public boolean checkOutput() {
+        return currentStep != -1 && getCycleBit(currentStep);
     }
 
     /**

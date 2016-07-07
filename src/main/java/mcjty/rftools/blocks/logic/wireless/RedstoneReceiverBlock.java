@@ -35,7 +35,7 @@ public class RedstoneReceiverBlock extends LogicSlabBlock<RedstoneReceiverTileEn
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
@@ -59,6 +59,8 @@ public class RedstoneReceiverBlock extends LogicSlabBlock<RedstoneReceiverTileEn
         if (te instanceof RedstoneReceiverTileEntity) {
             RedstoneReceiverTileEntity redstoneReceiverTileEntity = (RedstoneReceiverTileEntity) te;
             probeInfo.text(TextFormatting.GREEN + "Channel: " + redstoneReceiverTileEntity.getChannel());
+            boolean rc = redstoneReceiverTileEntity.checkOutput();
+            probeInfo.text(TextFormatting.GREEN + "Output: " + TextFormatting.WHITE + (rc ? "on" : "off"));
         }
     }
 

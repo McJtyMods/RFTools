@@ -12,6 +12,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -63,11 +64,12 @@ public class InvCheckerBlock extends LogicSlabBlock<InvCheckerTileEntity, InvChe
     @Override
     public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
         super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
-//        TileEntity te = world.getTileEntity(data.getPos());
-//        if (te instanceof CounterTileEntity) {
-//            CounterTileEntity counterTileEntity = (CounterTileEntity) te;
-//            probeInfo.text(TextFormatting.GREEN + "Current: " + counterTileEntity.getCurrent());
-//        }
+        TileEntity te = world.getTileEntity(data.getPos());
+        if (te instanceof InvCheckerTileEntity) {
+            InvCheckerTileEntity counterTileEntity = (InvCheckerTileEntity) te;
+            boolean rc = counterTileEntity.checkOutput();
+            probeInfo.text(TextFormatting.GREEN + "Output: " + TextFormatting.WHITE + (rc ? "on" : "off"));
+        }
     }
 
     @SideOnly(Side.CLIENT)

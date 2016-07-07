@@ -29,19 +29,24 @@ public class RedstoneReceiverTileEntity extends LogicTileEntity implements ITick
     }
 
     protected void checkStateServer() {
+        boolean newout = checkOutput();
+
+        if (newout != redstoneOut) {
+            redstoneOut = newout;
+            setRedstoneState(redstoneOut);
+        }
+    }
+
+    public boolean checkOutput() {
+        boolean newout = false;
         if (channel != -1) {
             RedstoneChannels channels = RedstoneChannels.getChannels(worldObj);
             RedstoneChannels.RedstoneChannel ch = channels.getChannel(channel);
-            boolean newout = false;
             if (ch != null) {
                 newout = ch.getValue() != 0;
             }
-
-            if (newout != redstoneOut) {
-                redstoneOut = newout;
-                setRedstoneState(redstoneOut);
-            }
         }
+        return newout;
     }
 
     @Override
