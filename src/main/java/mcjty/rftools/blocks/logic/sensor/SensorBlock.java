@@ -72,6 +72,8 @@ public class SensorBlock extends LogicSlabBlock<SensorTileEntity, SensorContaine
             } else {
                 probeInfo.text("Area: " + blockCount + " blocks");
             }
+            boolean rc = sensor.checkSensor();
+            probeInfo.text(TextFormatting.GREEN + "Output: " + TextFormatting.WHITE + (rc ? "on" : "off"));
         }
     }
 

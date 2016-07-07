@@ -27,6 +27,10 @@ public class TimerTileEntity extends LogicTileEntity implements ITickable {
         return delay;
     }
 
+    public int getTimer() {
+        return timer;
+    }
+
     public void setDelay(int delay) {
         this.delay = delay;
         timer = delay;

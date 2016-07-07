@@ -107,6 +107,15 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
         }
         checkCounter = 10;
 
+        boolean newout = checkOutput();
+
+        if (newout != redstoneOut) {
+            redstoneOut = newout;
+            setRedstoneState(redstoneOut);
+        }
+    }
+
+    public boolean checkOutput() {
         boolean newout = false;
 
         EnumFacing inputSide = getFacing(worldObj.getBlockState(getPos())).getInputSide();
@@ -133,11 +142,7 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
                 newout = nr >= amount;
             }
         }
-
-        if (newout != redstoneOut) {
-            redstoneOut = newout;
-            setRedstoneState(redstoneOut);
-        }
+        return newout;
     }
 
     private int isItemMatching(ItemStack stack) {
