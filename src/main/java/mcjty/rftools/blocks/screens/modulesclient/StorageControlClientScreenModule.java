@@ -121,9 +121,6 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
 
         GlStateManager.popMatrix();
 
-        GlStateManager.disableDepth();
-
-        GlStateManager.depthMask(false);
         RenderHelper.enableStandardItemLighting();
     }
 

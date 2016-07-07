@@ -75,9 +75,6 @@ public class ItemStackClientScreenModule implements IClientScreenModule<ItemStac
         GlStateManager.popMatrix();
 
         GlStateManager.disableLighting();
-        GlStateManager.disableDepth();
-
-        GlStateManager.depthMask(false);
         RenderHelper.enableStandardItemLighting();
     }
 
