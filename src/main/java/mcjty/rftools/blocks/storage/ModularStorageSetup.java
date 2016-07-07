@@ -19,6 +19,7 @@ public class ModularStorageSetup {
     public static ModularStorageBlock modularStorageBlock;
     public static RemoteStorageBlock remoteStorageBlock;
     public static StorageTerminalBlock storageTerminalBlock;
+    public static LevelEmitterBlock levelEmitterBlock;
 
     public static StorageModuleTabletItem storageModuleTabletItem;
 
@@ -31,6 +32,7 @@ public class ModularStorageSetup {
         modularStorageBlock = new ModularStorageBlock();
         remoteStorageBlock = new RemoteStorageBlock();
         storageTerminalBlock = new StorageTerminalBlock();
+        levelEmitterBlock = new LevelEmitterBlock();
 
         storageModuleTabletItem = new StorageModuleTabletItem();
         storageModuleItem = new StorageModuleItem();
@@ -44,6 +46,7 @@ public class ModularStorageSetup {
         modularStorageBlock.initModel();
         remoteStorageBlock.initModel();
         storageTerminalBlock.initModel();
+        levelEmitterBlock.initModel();
         storageModuleTabletItem.initModel();
         storageModuleItem.initModel();
         oreDictTypeItem.initModel();
@@ -56,6 +59,7 @@ public class ModularStorageSetup {
         GameRegistry.addRecipe(new ItemStack(modularStorageBlock), "rcr", "qMq", "rqr", 'M', ModBlocks.machineFrame, 'c', Blocks.CHEST, 'r', Items.REDSTONE, 'q', Items.QUARTZ);
         GameRegistry.addRecipe(new ItemStack(remoteStorageBlock), "ece", "qMq", "eqe", 'M', ModBlocks.machineFrame, 'c', Blocks.CHEST, 'e', Items.ENDER_PEARL, 'q', Items.QUARTZ);
         GameRegistry.addRecipe(new ItemStack(storageTerminalBlock), "pge", "gMg", "egp", 'M', ModBlocks.machineBase, 'g', Blocks.GLASS, 'e', Items.ENDER_PEARL, 'p', Items.PAPER);
+        GameRegistry.addRecipe(new ItemStack(levelEmitterBlock), "pce", "gMg", "egp", 'M', ModBlocks.machineBase, 'g', Blocks.GLASS, 'e', Items.ENDER_PEARL, 'p', Items.PAPER, 'c', Items.COMPARATOR);
 
         GameRegistry.addRecipe(new ItemStack(oreDictTypeItem), " u ", "rir", " p ", 'u', Blocks.IRON_ORE, 'p', Items.PAPER, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT);
         GameRegistry.addRecipe(new ItemStack(genericTypeItem), " p ", "rir", " p ", 'p', Items.PAPER, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT);
