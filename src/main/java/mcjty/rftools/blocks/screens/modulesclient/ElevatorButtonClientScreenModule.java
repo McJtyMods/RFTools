@@ -47,7 +47,7 @@ public class ElevatorButtonClientScreenModule implements IClientScreenModule<IMo
     public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleDataContents screenData, ModuleRenderInfo renderInfo) {
         GlStateManager.disableLighting();
         GlStateManager.enableDepth();
-        GlStateManager.depthMask(true);
+        GlStateManager.depthMask(false);
 
         if (screenData == null) {
             return;

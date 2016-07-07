@@ -34,7 +34,7 @@ public class ButtonClientScreenModule implements IClientScreenModule<IModuleData
     public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleDataBoolean screenData, ModuleRenderInfo renderInfo) {
         GlStateManager.disableLighting();
         GlStateManager.enableDepth();
-        GlStateManager.depthMask(true);
+        GlStateManager.depthMask(false);
         int xoffset;
         if (!line.isEmpty()) {
             fontRenderer.drawString(line, 7, currenty + 2, color);
