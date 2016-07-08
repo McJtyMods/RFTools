@@ -4,6 +4,7 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.varia.NullSidedInvWrapper;
 import mcjty.rftools.ClientInfo;
 import mcjty.rftools.api.general.IInventoryTracker;
 import mcjty.rftools.craftinggrid.CraftingGrid;
@@ -25,9 +26,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.items.CapabilityItemHandler;
 
 import java.util.List;
 import java.util.Map;
@@ -64,8 +67,9 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     private int cachedRemoteStorageId;
 
     @Override
+    /// We don't use the standard McJtyLib inventory wrapper but our own
     protected boolean needsCustomInvWrapper() {
-        return true;
+        return false;
     }
 
     @Override
@@ -831,4 +835,26 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     public int getVersion() {
         return version;
     }
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return true;
+        }
+        return super.hasCapability(capability, facing);
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            // We always use NullSidedInvWrapper because we don't want automation
+            // to access the storage slots
+            if (invHandlerNull == null) {
+                invHandlerNull = new NullSidedInvWrapper(this);
+            }
+            return (T) invHandlerNull;
+        }
+        return super.getCapability(capability, facing);
+    }
+
 }
