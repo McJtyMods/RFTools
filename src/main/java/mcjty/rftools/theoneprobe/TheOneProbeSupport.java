@@ -21,7 +21,7 @@ public class TheOneProbeSupport implements com.google.common.base.Function<ITheO
         return null;
     }
 
-    public static IProbeInfo addSequenceElement(IProbeInfo probeInfo, long bits) {
-        return probeInfo.element(new ElementSequencer(bits));
+    public static IProbeInfo addSequenceElement(IProbeInfo probeInfo, long bits, int current, boolean large) {
+        return probeInfo.element(new ElementSequencer(bits, current, large));
     }
 }

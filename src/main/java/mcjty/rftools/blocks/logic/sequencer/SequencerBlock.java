@@ -68,7 +68,8 @@ public class SequencerBlock extends LogicSlabBlock<SequencerTileEntity, EmptyCon
             SequencerTileEntity tileEntity = (SequencerTileEntity) te;
             IProbeInfo horizontal = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
             horizontal.text(TextFormatting.GREEN + "Mode: " + tileEntity.getMode().getDescription());
-            TheOneProbeSupport.addSequenceElement(horizontal, tileEntity.getCycleBits());
+            TheOneProbeSupport.addSequenceElement(horizontal, tileEntity.getCycleBits(),
+                    tileEntity.getCurrentStep(), mode == ProbeMode.EXTENDED);
             int currentStep = tileEntity.getCurrentStep();
             boolean rc = tileEntity.checkOutput();
             probeInfo.text(TextFormatting.GREEN + "Step: " + TextFormatting.WHITE + currentStep +
