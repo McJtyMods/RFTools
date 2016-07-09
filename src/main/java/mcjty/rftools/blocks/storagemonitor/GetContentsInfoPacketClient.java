@@ -12,30 +12,29 @@ import java.util.List;
 
 public class GetContentsInfoPacketClient implements InfoPacketClient {
 
-    private List<Pair<ItemStack,Integer>> inv;
+    private List<ItemStack> inv;
 
     @Override
     public void fromBytes(ByteBuf byteBuf) {
         int size = byteBuf.readInt();
         inv = new ArrayList<>(size);
         for (int i = 0 ; i < size ; i++) {
-            inv.add(Pair.of(NetworkTools.readItemStack(byteBuf), byteBuf.readInt()));
+            inv.add(NetworkTools.readItemStack(byteBuf));
         }
     }
 
     @Override
     public void toBytes(ByteBuf byteBuf) {
         byteBuf.writeInt(inv.size());
-        for (Pair<ItemStack, Integer> pair : inv) {
-            NetworkTools.writeItemStack(byteBuf, pair.getKey());
-            byteBuf.writeInt(pair.getValue());
+        for (ItemStack stack : inv) {
+            NetworkTools.writeItemStack(byteBuf, stack);
         }
     }
 
     public GetContentsInfoPacketClient() {
     }
 
-    public GetContentsInfoPacketClient(List<Pair<ItemStack,Integer>> inv) {
+    public GetContentsInfoPacketClient(List<ItemStack> inv) {
         this.inv = inv;
     }
 
