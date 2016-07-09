@@ -285,14 +285,23 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        PowerCellTileEntity te = (PowerCellTileEntity) world.getTileEntity(pos);
-        PowerCellTileEntity.Mode north = te.getMode(EnumFacing.NORTH);
-        PowerCellTileEntity.Mode south = te.getMode(EnumFacing.SOUTH);
-        PowerCellTileEntity.Mode west = te.getMode(EnumFacing.WEST);
-        PowerCellTileEntity.Mode east = te.getMode(EnumFacing.EAST);
-        PowerCellTileEntity.Mode up = te.getMode(EnumFacing.UP);
-        PowerCellTileEntity.Mode down = te.getMode(EnumFacing.DOWN);
-        return state.withProperty(NORTH, north).withProperty(SOUTH, south).withProperty(WEST, west).withProperty(EAST, east).withProperty(UP, up).withProperty(DOWN, down);
+        TileEntity tileEntity = world.getTileEntity(pos);
+        if (tileEntity instanceof PowerCellTileEntity) {
+            PowerCellTileEntity te = (PowerCellTileEntity) tileEntity;
+            PowerCellTileEntity.Mode north = te.getMode(EnumFacing.NORTH);
+            PowerCellTileEntity.Mode south = te.getMode(EnumFacing.SOUTH);
+            PowerCellTileEntity.Mode west = te.getMode(EnumFacing.WEST);
+            PowerCellTileEntity.Mode east = te.getMode(EnumFacing.EAST);
+            PowerCellTileEntity.Mode up = te.getMode(EnumFacing.UP);
+            PowerCellTileEntity.Mode down = te.getMode(EnumFacing.DOWN);
+            return state.withProperty(NORTH, north).withProperty(SOUTH, south).withProperty(WEST, west).withProperty(EAST, east).withProperty(UP, up).withProperty(DOWN, down);
+        }
+        return state.withProperty(NORTH, PowerCellTileEntity.Mode.MODE_NONE)
+                .withProperty(SOUTH, PowerCellTileEntity.Mode.MODE_NONE)
+                .withProperty(WEST, PowerCellTileEntity.Mode.MODE_NONE)
+                .withProperty(EAST, PowerCellTileEntity.Mode.MODE_NONE)
+                .withProperty(UP, PowerCellTileEntity.Mode.MODE_NONE)
+                .withProperty(DOWN, PowerCellTileEntity.Mode.MODE_NONE);
     }
 
     @Override
