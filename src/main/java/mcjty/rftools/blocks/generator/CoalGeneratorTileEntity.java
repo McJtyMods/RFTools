@@ -120,6 +120,11 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
         return burning > 0 && isMachineEnabled();
     }
 
+    @Override
+    public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
+        return 0;
+    }
+
     private void handleChargingItem() {
         ItemStack stack = inventoryHelper.getStackInSlot(CoalGeneratorContainer.SLOT_CHARGEITEM);
         if (stack != null && stack.getItem() instanceof IEnergyContainerItem) {
@@ -127,7 +132,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
             int energyStored = getEnergyStored(EnumFacing.DOWN);
             int rfToGive = CoalGeneratorConfiguration.CHARGEITEMPERTICK <= energyStored ? CoalGeneratorConfiguration.CHARGEITEMPERTICK : energyStored;
             int received = energyContainerItem.receiveEnergy(stack, rfToGive, false);
-            extractEnergy(EnumFacing.DOWN, received, false);
+            storage.extractEnergy(received, false);
         }
     }
 
@@ -144,7 +149,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
                     int rfToGive = CoalGeneratorConfiguration.SENDPERTICK <= energyStored ? CoalGeneratorConfiguration.SENDPERTICK : energyStored;
 
                     int received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
-                    energyStored -= extractEnergy(EnumFacing.DOWN, received, false);
+                    energyStored -= storage.extractEnergy(received, false);
                     if (energyStored <= 0) {
                         break;
                     }

@@ -229,7 +229,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
                 log("Server Tick: insufficient energy to hold pearl (" + rfStored + " vs " + rf + ")");
                 discardPearl("Not enough energy to hold pearl");
             } else {
-                int rfExtracted = extractEnergy(EnumFacing.DOWN, rf, false);
+                int rfExtracted = storage.extractEnergy(rf, false);
                 log("Server Tick: holding pearl, consume " + rfExtracted + " RF");
                 rfLost += rfExtracted;
             }
@@ -243,6 +243,11 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
             log("Server Tick: charging mode ends -> idle");
             chargingMode = CHARGE_IDLE;
         }
+    }
+
+    @Override
+    public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
+        return 0;
     }
 
     @Override
@@ -318,7 +323,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
                     }
 
                     int received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
-                    energyStored -= extractEnergy(EnumFacing.DOWN, received, false);
+                    energyStored -= storage.extractEnergy(received, false);
                     if (energyStored <= 0) {
                         break;
                     }

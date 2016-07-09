@@ -71,7 +71,7 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
                         }
 
                         int received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
-                        energyStored -= extractEnergy(EnumFacing.DOWN, received, false);
+                        energyStored -= storage.extractEnergy(received, false);
                         if (energyStored <= 0) {
                             return;
                         }
@@ -79,6 +79,11 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
                 }
             }
         }
+    }
+
+    @Override
+    public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
+        return 0;
     }
 
     @Override

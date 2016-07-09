@@ -224,7 +224,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
                             }
 
                             int received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
-                            energyStored -= extractEnergy(EnumFacing.DOWN, (int) (received * factor), false);
+                            energyStored -= extractEnergyInternal((int) (received * factor), false, PowerCellConfiguration.rfPerTick * getAdvancedFactor());
                             if (energyStored <= 0) {
                                 break;
                             }
@@ -388,7 +388,8 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
     @Override
     public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
-        return extractEnergyInternal(maxExtract, simulate, PowerCellConfiguration.rfPerTick * getAdvancedFactor());
+        return 0;
+//        return extractEnergyInternal(maxExtract, simulate, PowerCellConfiguration.rfPerTick * getAdvancedFactor());
     }
 
     private int extractEnergyInternal(int maxExtract, boolean simulate, int maximum) {
