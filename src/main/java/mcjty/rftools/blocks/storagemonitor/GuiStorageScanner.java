@@ -38,10 +38,8 @@ import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 
 
 public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEntity> {
@@ -72,7 +70,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     // From server: all the positions with inventories matching the search
     public static Set<BlockPos> fromServer_foundInventories = new HashSet<>();
     // From server: the contents of an inventory
-    public static List<Pair<ItemStack,Integer>> fromServer_inventory = new ArrayList<>();
+    public static List<ItemStack> fromServer_inventory = new ArrayList<>();
 
     public GuiStorageScanner(StorageScannerTileEntity storageScannerTileEntity, StorageScannerContainer storageScannerContainer) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, storageScannerTileEntity, storageScannerContainer, RFTools.GUI_MANUAL_MAIN, "stomon");
@@ -328,12 +326,15 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         int numcolumns = 5;
         int spacing = 3;
 
-        for (Pair<ItemStack,Integer> item : fromServer_inventory) {
+//        Collections.sort(fromServer_inventory, (o1, o2) -> o1.stackSize == o2.stackSize ? 0 : o1.stackSize < o2.stackSize ? -1 : 1);
+        Collections.sort(fromServer_inventory, (o1, o2) -> o1.getDisplayName().compareTo(o2.getDisplayName()));
+
+        for (ItemStack item : fromServer_inventory) {
             currentPos = addItemToList(item, itemList, currentPos, numcolumns, spacing);
         }
     }
 
-    private Pair<Panel,Integer> addItemToList(Pair<ItemStack, Integer> item, WidgetList itemList, Pair<Panel,Integer> currentPos, int numcolumns, int spacing) {
+    private Pair<Panel,Integer> addItemToList(ItemStack item, WidgetList itemList, Pair<Panel,Integer> currentPos, int numcolumns, int spacing) {
         Panel panel = currentPos.getKey();
         if (panel == null || currentPos.getValue() >= numcolumns) {
             panel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(spacing).setHorizontalMargin(1))
@@ -342,8 +343,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             itemList.addChild(panel);
         }
         BlockRender blockRender = new BlockRender(mc, this)
-                .setRenderItem(item.getKey())
-                .setUserObject(item.getValue())
+                .setRenderItem(item)
+                .setUserObject(1)       // Mark as a special stack in the renderer (for tooltip)
                 .setOffsetX(-1)
                 .setOffsetY(-1)
                 .setHilightOnHover(true);
@@ -352,10 +353,11 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             public void select(Widget widget) {
                 long t = System.currentTimeMillis();
                 if (prevTime != -1 && (t - prevTime) < 250) {
-                    Integer slot = (Integer) widget.getUserObject();
-                    if (slot != null) {
+                    BlockRender br = (BlockRender) widget;
+                    Object item = br.getRenderItem();
+                    if (item != null) {
                         boolean shift = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
-                        requestItem(slot, shift ? 1 : -1);
+                        requestItem((ItemStack) item, shift ? 1 : -1);
                     }
                 }
                 prevTime = t;
@@ -370,11 +372,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         return currentPos;
     }
 
-    private void requestItem(int slot, int amount) {
-        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_REQUESTITEM,
-                          new Argument("inv", getSelectedContainerPos()),
-                          new Argument("slot", slot),
-                          new Argument("amount", amount));
+    private void requestItem(ItemStack stack, int amount) {
+        network.sendToServer(new PacketRequestItem(tileEntity.getDimension(), tileEntity.getStorageScannerPos(), getSelectedContainerPos(), stack, amount));
         getInventoryOnServer();
     }
 

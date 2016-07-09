@@ -66,6 +66,7 @@ public class RFToolsMessages {
         net.registerMessage(PacketGridToServer.Handler.class, PacketGridToServer.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketCraftFromGrid.Handler.class, PacketCraftFromGrid.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketRequestGridSync.Handler.class, PacketRequestGridSync.class, PacketHandler.nextID(), Side.SERVER);
+        net.registerMessage(PacketRequestItem.Handler.class, PacketRequestItem.class, PacketHandler.nextID(), Side.SERVER);
 
         // Client side
         net.registerMessage(PacketPlayersReady.Handler.class, PacketPlayersReady.class, PacketHandler.nextID(), Side.CLIENT);
