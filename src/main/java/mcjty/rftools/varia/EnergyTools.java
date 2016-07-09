@@ -77,14 +77,6 @@ public class EnergyTools {
         return new EnergyLevel(energyStored, maxEnergyStored);
     }
 
-    public static int extractEnergy(TileEntity tileEntity, EnumFacing from, int maxExtract) {
-        if (tileEntity instanceof IEnergyProvider) {
-            return ((IEnergyProvider) tileEntity).extractEnergy(from, maxExtract, false);
-        } else {
-            return 0;
-        }
-    }
-
     public static int receiveEnergy(TileEntity tileEntity, EnumFacing from, int maxReceive) {
         if (tileEntity instanceof IEnergyReceiver) {
             return ((IEnergyReceiver) tileEntity).receiveEnergy(from, maxReceive, false);
