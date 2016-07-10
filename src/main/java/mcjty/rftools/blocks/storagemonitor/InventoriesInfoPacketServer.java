@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.network.clientinfo.InfoPacketClient;
 import mcjty.lib.network.clientinfo.InfoPacketServer;
+import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.blocks.storage.ModularStorageBlock;
 import mcjty.rftools.blocks.storage.ModularStorageContainer;

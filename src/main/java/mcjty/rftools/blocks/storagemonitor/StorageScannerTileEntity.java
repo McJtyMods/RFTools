@@ -467,8 +467,30 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         return inventories;
     }
 
+    private ItemStack requestStackFromInv(BlockPos invPos, ItemStack requested, Integer[] todo, ItemStack outSlot) {
+        TileEntity tileEntity = worldObj.getTileEntity(invPos);
 
-    public void requestStack(BlockPos pos, ItemStack requested, int amount) {
+        int size = InventoryHelper.getInventorySize(tileEntity);
+
+        for (int i = 0 ; i < size ; i++) {
+            ItemStack stack = InventoryHelper.getSlot(tileEntity, i);
+            if (ItemHandlerHelper.canItemStacksStack(requested, stack)) {
+                ItemStack extracted = InventoryHelper.extractItem(tileEntity, i, todo[0]);
+                todo[0] -= extracted.stackSize;
+                if (outSlot == null) {
+                    outSlot = extracted;
+                } else {
+                    outSlot.stackSize += extracted.stackSize;
+                }
+                if (todo[0] == 0) {
+                    break;
+                }
+            }
+        }
+        return outSlot;
+    }
+
+    public void requestStack(BlockPos invPos, ItemStack requested, int amount) {
         int rf = StorageScannerConfiguration.rfPerRequest;
         if (amount >= 0) {
             rf /= 10;       // Less RF usage for requesting less items
@@ -480,9 +502,8 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             return;
         }
 
-        TileEntity tileEntity = worldObj.getTileEntity(pos);
+        Integer[] todo = new Integer[] { amount };
 
-        int todo = amount;
         ItemStack outSlot = inventoryHelper.getStackInSlot(StorageScannerContainer.SLOT_OUT);
         if (outSlot != null) {
             // Check if the items are the same and there is room
@@ -492,28 +513,23 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             if (outSlot.stackSize >= requested.getMaxStackSize()) {
                 return;
             }
-            todo = Math.min(todo, requested.getMaxStackSize() - outSlot.stackSize);
+            todo[0] = Math.min(todo[0], requested.getMaxStackSize() - outSlot.stackSize);
         }
 
-        int size = InventoryHelper.getInventorySize(tileEntity);
-
-        for (int i = 0 ; i < size ; i++) {
-            ItemStack stack = InventoryHelper.getSlot(tileEntity, i);
-            if (ItemHandlerHelper.canItemStacksStack(requested, stack)) {
-                ItemStack extracted = InventoryHelper.extractItem(tileEntity, i, todo);
-                todo -= extracted.stackSize;
-                if (outSlot == null) {
-                    outSlot = extracted;
-                } else {
-                    outSlot.stackSize += extracted.stackSize;
-                }
-                if (todo == 0) {
-                    break;
+        if (invPos.getY() == -1) {
+            for (BlockPos blockPos : inventories) {
+                if (routable.contains(blockPos)) {
+                    outSlot = requestStackFromInv(blockPos, requested, todo, outSlot);
+                    if (todo[0] == 0) {
+                        break;
+                    }
                 }
             }
+        } else {
+            outSlot = requestStackFromInv(invPos, requested, todo, outSlot);
         }
 
-        if (todo == amount) {
+        if (todo[0] == amount) {
             // Nothing happened
             return;
         }
@@ -544,6 +560,21 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         Set<Item> foundItems = new HashSet<>();
         List<ItemStack> stacks = new ArrayList<>();
 
+        if (cpos.getY() == -1) {
+            // Get all starred inventories
+            for (BlockPos blockPos : inventories) {
+                if (routable.contains(blockPos)) {
+                    addItemsFromInventory(blockPos, foundItems, stacks);
+                }
+            }
+        } else {
+            addItemsFromInventory(cpos, foundItems, stacks);
+        }
+
+        return stacks;
+    }
+
+    private void addItemsFromInventory(BlockPos cpos, Set<Item> foundItems, List<ItemStack> stacks) {
         TileEntity tileEntity = worldObj.getTileEntity(cpos);
 
         if (tileEntity != null && tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
@@ -557,8 +588,6 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                 addItemStack(stacks, foundItems, inventory.getStackInSlot(i));
             }
         }
-
-        return stacks;
     }
 
     @Override
