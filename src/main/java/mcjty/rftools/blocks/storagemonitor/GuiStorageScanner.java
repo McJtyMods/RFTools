@@ -58,6 +58,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     private Button upButton;
     private Button downButton;
     private Button bottomButton;
+    private TextField searchField;
 
     private GuiCraftingGrid craftingGrid;
 
@@ -160,7 +161,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 .setRealMaximum(20);
         radiusLabel.setRealValue(tileEntity.getRadius());
 
-        TextField textField = new TextField(mc, this).addTextEvent((parent, newText) -> {
+        searchField = new TextField(mc, this).addTextEvent((parent, newText) -> {
             storageList.clearHilightedRows();
             fromServer_foundInventories.clear();
             startSearch(newText);
@@ -169,7 +170,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 .setLayoutHint(new PositionalLayout.PositionalHint(8, 142, 256-11, 18))
                 .setLayout(new HorizontalLayout()).setDesiredHeight(18)
                 .addChild(new Label(mc, this).setText("Search:"))
-                .addChild(textField);
+                .addChild(searchField);
 
         Slider radiusSlider = new Slider(mc, this)
                 .setHorizontal()
@@ -337,8 +338,13 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 //        Collections.sort(fromServer_inventory, (o1, o2) -> o1.stackSize == o2.stackSize ? 0 : o1.stackSize < o2.stackSize ? -1 : 1);
         Collections.sort(fromServer_inventory, (o1, o2) -> o1.getDisplayName().compareTo(o2.getDisplayName()));
 
+        String filterText = searchField.getText();
+
         for (ItemStack item : fromServer_inventory) {
-            currentPos = addItemToList(item, itemList, currentPos, numcolumns, spacing);
+            String displayName = item.getDisplayName();
+            if (filterText.isEmpty() || displayName.toLowerCase().contains(filterText)) {
+                currentPos = addItemToList(item, itemList, currentPos, numcolumns, spacing);
+            }
         }
     }
 
