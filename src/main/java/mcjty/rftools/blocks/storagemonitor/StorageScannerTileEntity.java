@@ -495,31 +495,12 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             todo = Math.min(todo, requested.getMaxStackSize() - outSlot.stackSize);
         }
 
-        int size;
-        if (tileEntity != null && tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
-            IItemHandler capability = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-            if (capability == null) {
-                return;
-            }
-            size = capability.getSlots();
-        } else if (tileEntity instanceof IInventory) {
-            IInventory inv = (IInventory) tileEntity;
-            size = inv.getSizeInventory();
-        } else {
-            return;
-        }
+        int size = InventoryHelper.getInventorySize(tileEntity);
 
         for (int i = 0 ; i < size ; i++) {
             ItemStack stack = InventoryHelper.getSlot(tileEntity, i);
             if (ItemHandlerHelper.canItemStacksStack(requested, stack)) {
-                ItemStack extracted;
-                if (tileEntity != null && tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
-                    IItemHandler capability = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-                    extracted = capability.extractItem(i, todo, false);
-                } else {
-                    IInventory inventory = (IInventory) tileEntity;
-                    extracted = inventory.decrStackSize(i, todo);
-                }
+                ItemStack extracted = InventoryHelper.extractItem(tileEntity, i, todo);
                 todo -= extracted.stackSize;
                 if (outSlot == null) {
                     outSlot = extracted;
@@ -537,7 +518,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             return;
         }
 
-        int finalRf = rf;
+        consumeEnergy(rf);
         setInventorySlotContents(StorageScannerContainer.SLOT_OUT, outSlot);
     }
 
