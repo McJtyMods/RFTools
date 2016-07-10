@@ -240,25 +240,25 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
 
     private void moveUp() {
-        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_UP, new Argument("index", storageList.getSelected()));
+        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_UP, new Argument("index", storageList.getSelected()-1));
         storageList.setSelected(storageList.getSelected()-1);
         listDirty = 0;
     }
 
     private void moveTop() {
-        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_TOP, new Argument("index", storageList.getSelected()));
-        storageList.setSelected(0);
+        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_TOP, new Argument("index", storageList.getSelected()-1));
+        storageList.setSelected(1);
         listDirty = 0;
     }
 
     private void moveDown() {
-        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_DOWN, new Argument("index", storageList.getSelected()));
+        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_DOWN, new Argument("index", storageList.getSelected()-1));
         storageList.setSelected(storageList.getSelected()+1);
         listDirty = 0;
     }
 
     private void moveBottom() {
-        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_BOTTOM, new Argument("index", storageList.getSelected()));
+        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_BOTTOM, new Argument("index", storageList.getSelected()-1));
         storageList.setSelected(storageList.getChildCount()-1);
         listDirty = 0;
     }
@@ -267,7 +267,11 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         if (index == -1) {
             return;
         }
-        InventoriesInfoPacketClient.InventoryInfo c = fromServer_inventories.get(index);
+        if (index == 0) {
+            // Starred
+            return;
+        }
+        InventoriesInfoPacketClient.InventoryInfo c = fromServer_inventories.get(index-1);
         if (c != null) {
             RFTools.instance.clientInfo.hilightBlock(c.getPos(), System.currentTimeMillis() + 1000 * StorageScannerConfiguration.hilightTime);
             Logging.message(mc.thePlayer, "The inventory is now highlighted");
@@ -297,6 +301,10 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     private BlockPos getSelectedContainerPos() {
         int selected = storageList.getSelected();
         if (selected != -1) {
+            if (selected == 0) {
+                return new BlockPos(-1, -1, -1);
+            }
+            selected--;
             if (selected < fromServer_inventories.size()) {
                 InventoriesInfoPacketClient.InventoryInfo info = fromServer_inventories.get(selected);
                 if (info == null) {
@@ -385,26 +393,11 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
     private void updateStorageList() {
         storageList.removeChildren();
+        addStorageLine(null, "<Starred>", false);
         for (InventoriesInfoPacketClient.InventoryInfo c : fromServer_inventories) {
             String displayName = c.getName();
             boolean routable = c.isRoutable();
-            Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
-            panel.addChild(new BlockRender(mc, this).setRenderItem(c.getBlock()));
-            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal)
-                    .setText(displayName)
-                    .setDynamic(true)
-                    .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
-                    .setTooltips(TextFormatting.GREEN + "Block at: " + TextFormatting.WHITE + BlockPosTools.toString(c.getPos()),
-                            TextFormatting.GREEN + "Name: " + TextFormatting.WHITE + displayName,
-                            "(doubleclick to highlight)")
-                    .setDesiredWidth(58));
-            ImageChoiceLabel choiceLabel = new ImageChoiceLabel(mc, this)
-                    .addChoiceEvent((parent, newChoice) -> changeRoutable(c.getPos())).setDesiredWidth(13);
-            choiceLabel.addChoice("No", "Not routable", guielements, 131, 19);
-            choiceLabel.addChoice("Yes", "Routable", guielements, 115, 19);
-            choiceLabel.setCurrentChoice(routable ? 1 : 0);
-            panel.addChild(choiceLabel);
-            storageList.addChild(panel);
+            addStorageLine(c, displayName, routable);
         }
 
 
@@ -412,10 +405,37 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         int i = 0;
         for (InventoriesInfoPacketClient.InventoryInfo c : fromServer_inventories) {
             if (fromServer_foundInventories.contains(c.getPos())) {
-                storageList.addHilightedRow(i);
+                storageList.addHilightedRow(i+1);
             }
             i++;
         }
+    }
+
+    private void addStorageLine(InventoriesInfoPacketClient.InventoryInfo c, String displayName, boolean routable) {
+        Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
+        panel.addChild(new BlockRender(mc, this).setRenderItem(c == null ? null : c.getBlock()));
+        AbstractWidget label = new Label(mc, this).setColor(StyleConfig.colorTextInListNormal)
+                .setText(displayName)
+                .setDynamic(true)
+                .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
+                .setDesiredWidth(58);
+        if (c == null) {
+            label.setTooltips(TextFormatting.GREEN + "All routable inventories");
+        } else {
+            label.setTooltips(TextFormatting.GREEN + "Block at: " + TextFormatting.WHITE + BlockPosTools.toString(c.getPos()),
+                    TextFormatting.GREEN + "Name: " + TextFormatting.WHITE + displayName,
+                    "(doubleclick to highlight)");
+        }
+        panel.addChild(label);
+        if (c != null) {
+            ImageChoiceLabel choiceLabel = new ImageChoiceLabel(mc, this)
+                    .addChoiceEvent((parent, newChoice) -> changeRoutable(c.getPos())).setDesiredWidth(13);
+            choiceLabel.addChoice("No", "Not routable", guielements, 131, 19);
+            choiceLabel.addChoice("Yes", "Routable", guielements, 115, 19);
+            choiceLabel.setCurrentChoice(routable ? 1 : 0);
+            panel.addChild(choiceLabel);
+        }
+        storageList.addChild(panel);
     }
 
     @Override
@@ -425,12 +445,12 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         requestListsIfNeeded();
 
         int selected = storageList.getSelected();
-        if (selected == -1 || storageList.getChildCount() <= 1) {
+        if (selected <= 0 || storageList.getChildCount() <= 2) {
             upButton.setEnabled(false);
             downButton.setEnabled(false);
             topButton.setEnabled(false);
             bottomButton.setEnabled(false);
-        } else if (selected == 0) {
+        } else if (selected == 1) {
             topButton.setEnabled(false);
             upButton.setEnabled(false);
             downButton.setEnabled(true);
