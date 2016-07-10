@@ -78,6 +78,10 @@ public class ForgeEventHandlers {
 
     @SubscribeEvent
     public void onPlayerInteractEvent(PlayerInteractEvent event) {
+        if (event instanceof PlayerInteractEvent.LeftClickBlock) {
+            checkCreativeClick(event);
+        }
+
         ItemStack heldItem = event.getEntityPlayer().getHeldItem(event.getHand());
         if (heldItem == null || heldItem.getItem() == null) {
             return;
@@ -100,34 +104,28 @@ public class ForgeEventHandlers {
         int y = event.getPos().getY();
         int z = event.getPos().getZ();
         World world = event.getWorld();
-        if (!world.isRemote) {
-            if (((EntityPlayerMP)event.getPlayer()).interactionManager.isCreative()) {
-                // In creative we don't want our screens to be destroyed by left click unless he/she is sneaking
-                Block block = world.getBlockState(event.getPos()).getBlock();
-                if (block == ScreenSetup.screenBlock || block == ScreenSetup.screenHitBlock) {
-                    if (!event.getPlayer().isSneaking()) {
-                        // If not sneaking while we hit a screen we cancel the destroy. Otherwise we go through.
-                        event.setCanceled(true);
-                        return;
-                    }
-                }
-            }
-//        } else {
-//            if (Minecraft.getMinecraft().playerController.isInCreativeMode()) {
-//                // In creative we don't want our screens to be destroyed by left click unless he/she is sneaking
-//                Block block = world.getBlockState(event.getPos()).getBlock();
-//                if (block == ScreenSetup.screenBlock || block == ScreenSetup.screenHitBlock) {
-//                    if (!event.getPlayer().isSneaking()) {
-//                        // If not sneaking while we hit a screen we cancel the destroy. Otherwise we go through.
-//                        event.setCanceled(true);
-//                        block.onBlockClicked(world, event.getPos(), event.getPlayer());
-//                        return;
-//                    }
-//                }
-//            }
-        }
+
         Collection<GlobalCoordinate> protectors = getProtectors(world, x, y, z);
         checkHarvestProtection(event, x, y, z, world, protectors);
+    }
+
+    private void checkCreativeClick(PlayerInteractEvent event) {
+        if (event.getEntityPlayer().isCreative()) {
+            // In creative we don't want our screens to be destroyed by left click unless he/she is sneaking
+            Block block = event.getWorld().getBlockState(event.getPos()).getBlock();
+            if (block == ScreenSetup.screenBlock || block == ScreenSetup.screenHitBlock) {
+                if (!event.getEntityPlayer().isSneaking()) {
+                    // If not sneaking while we hit a screen we cancel the destroy. Otherwise we go through.
+
+                    if (event.getWorld().isRemote) {
+                        // simulate click because it isn't called in creativemode or when we cancel the event
+                        block.onBlockClicked(event.getWorld(), event.getPos(), event.getEntityPlayer());
+                    }
+
+                    event.setCanceled(true);
+                }
+            }
+        }
     }
 
     private void checkHarvestProtection(Event event, int x, int y, int z, World world, Collection<GlobalCoordinate> protectors) {
