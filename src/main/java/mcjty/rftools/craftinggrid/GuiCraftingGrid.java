@@ -175,6 +175,14 @@ public class GuiCraftingGrid {
             GlStateManager.pushMatrix();
             GlStateManager.translate((float)gui.guiLeft, (float) gui.guiTop, 0.0F);
 
+            if (testResultFromServer[9] > 0) {
+                Slot slot = gui.inventorySlots.getSlotFromInventory(provider.getCraftingGrid().getCraftingGridInventory(), CraftingGridInventory.SLOT_GHOSTOUTPUT);
+
+                if (slot != null) {
+                    GlStateManager.colorMask(true, true, true, false);
+                    gui.drawRect(slot.xDisplayPosition, slot.yDisplayPosition, slot.xDisplayPosition + 16, slot.yDisplayPosition + 16, 0xffff0000);
+                }
+            }
             for (int i = 0 ; i < 9 ; i++) {
                 if (testResultFromServer[i] > 0) {
                     Slot slot = gui.inventorySlots.getSlotFromInventory(provider.getCraftingGrid().getCraftingGridInventory(), CraftingGridInventory.SLOT_GHOSTINPUT + i);
