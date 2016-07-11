@@ -10,6 +10,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 public class DumpScreenModule implements IScreenModule {
@@ -75,8 +77,16 @@ public class DumpScreenModule implements IScreenModule {
 
     @Override
     public void mouseClick(World world, int x, int y, boolean clicked, EntityPlayer player) {
+        if ((!clicked) || player == null) {
+            return;
+        }
+        if (BlockPosTools.INVALID.equals(coordinate)) {
+            player.addChatComponentMessage(new TextComponentString(TextFormatting.RED + "Module is not linked to storage scanner!"));
+            return;
+        }
+
         StorageScannerTileEntity scannerTileEntity = StorageControlScreenModule.getStorageScanner(dim, coordinate);
-        if (scannerTileEntity == null || (!clicked) || player == null) {
+        if (scannerTileEntity == null) {
             return;
         }
         int xoffset = 5;
