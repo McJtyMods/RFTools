@@ -8,6 +8,8 @@ import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 public class ButtonScreenModule implements IScreenModule<IModuleDataBoolean> {
@@ -58,6 +60,10 @@ public class ButtonScreenModule implements IScreenModule<IModuleDataBoolean> {
                     RedstoneChannels.RedstoneChannel ch = channels.getOrCreateChannel(channel);
                     ch.setValue(clicked ? 15 : 0);
                     channels.save(world);
+                }
+            } else {
+                if (player != null) {
+                    player.addChatComponentMessage(new TextComponentString(TextFormatting.RED + "Module is not linked to redstone channel!"));
                 }
             }
         }
