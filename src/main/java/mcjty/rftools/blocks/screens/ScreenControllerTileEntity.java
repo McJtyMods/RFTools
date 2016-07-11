@@ -323,11 +323,14 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
             if (y >= 0 && y < 256) {
                 for (int x = xCoord - radius; x <= xCoord + radius; x++) {
                     for (int z = zCoord - radius; z <= zCoord + radius; z++) {
-                        TileEntity te = worldObj.getTileEntity(new BlockPos(x, y, z));
-                        if (te instanceof ScreenTileEntity) {
-                            if (!((ScreenTileEntity) te).isConnected()) {
-                                connectedScreens.add(new BlockPos(x, y, z));
-                                ((ScreenTileEntity) te).setConnected(true);
+                        BlockPos spos = new BlockPos(x, y, z);
+                        if (worldObj.getBlockState(spos).getBlock() == ScreenSetup.screenBlock) {
+                            TileEntity te = worldObj.getTileEntity(spos);
+                            if (te instanceof ScreenTileEntity) {
+                                if (!((ScreenTileEntity) te).isConnected()) {
+                                    connectedScreens.add(spos);
+                                    ((ScreenTileEntity) te).setConnected(true);
+                                }
                             }
                         }
                     }

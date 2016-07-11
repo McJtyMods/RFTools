@@ -127,6 +127,7 @@ tile.rftools.redstone_receiver_block.name=Redstone Receiver
 tile.rftools.ender_monitor.name=Ender Monitor
 tile.rftools.machine_infuser.name=Machine Infuser
 tile.rftools.screen.name=Screen
+tile.rftools.creative_screen.name=Creative Screen
 tile.rftools.screen_hitblock.name=Screen
 tile.rftools.screen_controller.name=Screen Controller
 tile.rftools.environmental_controller.name=Environmental Controller

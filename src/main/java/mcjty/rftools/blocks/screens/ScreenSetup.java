@@ -12,6 +12,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ScreenSetup {
     public static ScreenBlock screenBlock;
+    public static ScreenBlock creativeScreenBlock;
     public static ScreenHitBlock screenHitBlock;
     public static ScreenControllerBlock screenControllerBlock;
 
@@ -33,7 +34,13 @@ public class ScreenSetup {
     public static DumpModuleItem dumpModuleItem;
 
     public static void init() {
-        screenBlock = new ScreenBlock();
+        screenBlock = new ScreenBlock("screen");
+        creativeScreenBlock = new ScreenBlock("creative_screen") {
+            @Override
+            public boolean isCreative() {
+                return true;
+            }
+        };
         screenHitBlock = new ScreenHitBlock();
         screenControllerBlock = new ScreenControllerBlock();
 
@@ -58,6 +65,7 @@ public class ScreenSetup {
     @SideOnly(Side.CLIENT)
     public static void initClient() {
         screenBlock.initModel();
+        creativeScreenBlock.initModel();
         screenHitBlock.initModel();
         screenControllerBlock.initModel();
 

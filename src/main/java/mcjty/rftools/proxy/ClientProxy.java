@@ -72,7 +72,7 @@ public class ClientProxy extends CommonProxy {
                 return;
             }
             Block block = evt.getPlayer().getEntityWorld().getBlockState(pos).getBlock();
-            if (block == ScreenSetup.screenBlock || block == ScreenSetup.screenHitBlock) {
+            if (block == ScreenSetup.screenBlock || block == ScreenSetup.creativeScreenBlock || block == ScreenSetup.screenHitBlock) {
                 evt.setCanceled(true);
             }
         }

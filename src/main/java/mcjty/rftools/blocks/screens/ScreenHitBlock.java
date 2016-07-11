@@ -72,7 +72,7 @@ public class ScreenHitBlock extends Block implements ITileEntityProvider {
             int dy = screenHitTileEntity.getDy();
             int dz = screenHitTileEntity.getDz();
             Block block = world.getBlockState(pos.add(dx, dy, dz)).getBlock();
-            if (block != ScreenSetup.screenBlock) {
+            if (block != ScreenSetup.screenBlock && block != ScreenSetup.creativeScreenBlock) {
                 return;
             }
 
@@ -89,7 +89,7 @@ public class ScreenHitBlock extends Block implements ITileEntityProvider {
         int dy = screenHitTileEntity.getDy();
         int dz = screenHitTileEntity.getDz();
         Block block = world.getBlockState(pos.add(dx, dy, dz)).getBlock();
-        if (block != ScreenSetup.screenBlock) {
+        if (block != ScreenSetup.screenBlock && block != ScreenSetup.creativeScreenBlock) {
             return false;
         }
         return block.onBlockActivated(world, pos.add(dx, dy, dz), state, player, hand, heldItem, side, sidex, sidey, sidez);

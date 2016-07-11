@@ -434,6 +434,13 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         return powerOn;
     }
 
+    public boolean isRenderable() {
+        if (powerOn) {
+            return true;
+        }
+        return worldObj.getBlockState(getPos()).getBlock() == ScreenSetup.creativeScreenBlock;
+    }
+
     public void setConnected(boolean c) {
         if (connected == c) {
             return;

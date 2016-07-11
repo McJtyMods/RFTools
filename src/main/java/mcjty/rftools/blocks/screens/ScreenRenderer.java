@@ -67,7 +67,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
             renderScreenBoard(tileEntity.getSize(), tileEntity.getColor());
         }
 
-        if (tileEntity != null && tileEntity.isPowerOn()) {
+        if (tileEntity != null && tileEntity.isRenderable()) {
             FontRenderer fontrenderer = this.getFontRenderer();
 
             IClientScreenModule.TransformMode mode = IClientScreenModule.TransformMode.NONE;
@@ -117,7 +117,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         IClientScreenModule hitModule = null;
         ScreenTileEntity.ModuleRaytraceResult hit = null;
         IBlockState blockState = getWorld().getBlockState(pos);
-        if (blockState.getBlock() != ScreenSetup.screenBlock && blockState.getBlock() != ScreenSetup.screenHitBlock) {
+        if (blockState.getBlock() != ScreenSetup.screenBlock && blockState.getBlock() != ScreenSetup.creativeScreenBlock && blockState.getBlock() != ScreenSetup.screenHitBlock) {
             // Safety
             return;
         }
