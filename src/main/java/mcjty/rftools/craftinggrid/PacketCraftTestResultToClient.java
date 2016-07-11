@@ -12,15 +12,15 @@ public class PacketCraftTestResultToClient implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        testResult = new int[9];
-        for (int i = 0 ; i < 9 ; i++) {
+        testResult = new int[10];
+        for (int i = 0 ; i < 10 ; i++) {
             testResult[i] = buf.readInt();
         }
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        for (int i = 0 ; i < 9 ; i++) {
+        for (int i = 0 ; i < 10 ; i++) {
             buf.writeInt(testResult[i]);
         }
     }

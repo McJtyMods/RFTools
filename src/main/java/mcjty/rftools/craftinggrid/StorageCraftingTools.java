@@ -14,7 +14,7 @@ import java.util.*;
 
 public class StorageCraftingTools {
 
-    static int[] tryRecipe(EntityPlayerMP player, CraftingRecipe craftingRecipe, int n, IItemSource itemSource) {
+    static int[] tryRecipe(EntityPlayerMP player, CraftingRecipe craftingRecipe, int n, IItemSource itemSource, boolean strictDamage) {
         InventoryCrafting workInventory = new InventoryCrafting(new Container() {
             @Override
             public boolean canInteractWith(EntityPlayer var1) {
@@ -25,8 +25,8 @@ public class StorageCraftingTools {
         Map<IItemKey, ItemStack> undo = new HashMap<>();
         InventoryCrafting inventory = craftingRecipe.getInventory();
 
-        int[] missingCount = new int[9];
-        for (int i = 0 ; i < 9 ; i++) {
+        int[] missingCount = new int[10];
+        for (int i = 0 ; i < 10 ; i++) {
             missingCount[i] = 0;
         }
 
@@ -35,12 +35,19 @@ public class StorageCraftingTools {
                 ItemStack stack = inventory.getStackInSlot(i);
                 if (stack != null) {
                     int count = stack.stackSize;
-                    count = findMatchingItems(workInventory, undo, i, stack, count, itemSource, false);
+                    count = findMatchingItems(workInventory, undo, i, stack, count, itemSource, strictDamage);
                     missingCount[i] += count;
                 } else {
                     workInventory.setInventorySlotContents(i, null);
                 }
             }
+        }
+
+        IRecipe recipe = craftingRecipe.getCachedRecipe(player.worldObj);
+        if (!recipe.matches(workInventory, player.worldObj)) {
+            missingCount[9] = 1;
+        } else {
+            missingCount[9] = 0;
         }
 
         undo(player, itemSource, undo);
@@ -204,7 +211,24 @@ public class StorageCraftingTools {
                 n--;
             }
 
-            return tryRecipe(player, craftingRecipe, n, itemSource);
+            // First we try the recipe with exact damage. If that works then that's perfect
+            // already. Otherwise we try again with non-exact damage. If that turns out
+            // not to work then we return the missing items from the exact damage crafting
+            // test because that one has more information about what items are really
+            // missing
+            int[] result = tryRecipe(player, craftingRecipe, n, itemSource, true);
+            for (int i = 0 ; i < 10 ; i++) {
+                if (result[i] > 0) {
+                    // Failed
+                    int[] result2 = tryRecipe(player, craftingRecipe, n, itemSource, false);
+                    if (result2[9] == 0) {
+                        return result2;
+                    } else {
+                        return result;
+                    }
+                }
+            }
+            return result;
         }
         return null;
     }
