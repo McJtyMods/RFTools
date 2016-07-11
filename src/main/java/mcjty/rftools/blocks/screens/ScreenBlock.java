@@ -53,8 +53,8 @@ import java.util.List;
 
 public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenContainer> {
 
-    public ScreenBlock() {
-        super(Material.IRON, ScreenTileEntity.class, ScreenContainer.class, ScreenItemBlock.class, "screen", true);
+    public ScreenBlock(String name) {
+        super(Material.IRON, ScreenTileEntity.class, ScreenContainer.class, ScreenItemBlock.class, name, true);
     }
 
     @Override
@@ -63,17 +63,19 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
         TileEntity te = world.getTileEntity(data.getPos());
         if (te instanceof ScreenTileEntity) {
             ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
-            boolean connected = screenTileEntity.isConnected();
-            if (!connected) {
-                probeInfo.text(TextFormatting.YELLOW + "[NOT CONNECTED]");
-            }
-            boolean power = screenTileEntity.isPowerOn();
-            if (!power) {
-                probeInfo.text(TextFormatting.YELLOW + "[NO POWER]");
-            }
-            if (mode == ProbeMode.EXTENDED) {
-                int rfPerTick = screenTileEntity.getTotalRfPerTick();
-                probeInfo.text(TextFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
+            if (!isCreative()) {
+                boolean connected = screenTileEntity.isConnected();
+                if (!connected) {
+                    probeInfo.text(TextFormatting.YELLOW + "[NOT CONNECTED]");
+                }
+                boolean power = screenTileEntity.isPowerOn();
+                if (!power) {
+                    probeInfo.text(TextFormatting.YELLOW + "[NO POWER]");
+                }
+                if (mode == ProbeMode.EXTENDED) {
+                    int rfPerTick = screenTileEntity.getTotalRfPerTick();
+                    probeInfo.text(TextFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
+                }
             }
             IScreenModule module = screenTileEntity.getHoveringModule();
             if (module instanceof ITooltipInfo) {
@@ -93,17 +95,19 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
         super.getWailaBody(itemStack, currenttip, accessor, config);
         NBTTagCompound tagCompound = accessor.getNBTData();
         if (tagCompound != null) {
-            boolean connected = tagCompound.getBoolean("connected");
-            if (!connected) {
-                currenttip.add(TextFormatting.YELLOW + "[NOT CONNECTED]");
-            }
-            boolean power = tagCompound.getBoolean("powerOn");
-            if (!power) {
-                currenttip.add(TextFormatting.YELLOW + "[NO POWER]");
-            }
-            if (accessor.getPlayer().isSneaking()) {
-                int rfPerTick = ((ScreenTileEntity) accessor.getTileEntity()).getTotalRfPerTick();
-                currenttip.add(TextFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
+            if (!isCreative()) {
+                boolean connected = tagCompound.getBoolean("connected");
+                if (!connected) {
+                    currenttip.add(TextFormatting.YELLOW + "[NOT CONNECTED]");
+                }
+                boolean power = tagCompound.getBoolean("powerOn");
+                if (!power) {
+                    currenttip.add(TextFormatting.YELLOW + "[NO POWER]");
+                }
+                if (accessor.getPlayer().isSneaking()) {
+                    int rfPerTick = ((ScreenTileEntity) accessor.getTileEntity()).getTotalRfPerTick();
+                    currenttip.add(TextFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
+                }
             }
             TileEntity te = accessor.getTileEntity();
             if (te instanceof ScreenTileEntity) {
