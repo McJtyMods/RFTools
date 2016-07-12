@@ -114,9 +114,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         if (lastSelected != -1 && lastSelected < tileEntity.getSizeInventory()) {
             recipeList.setSelected(lastSelected);
         }
-
-        selectRecipe();
-        sendChangeToServer(-1, null, null, false, CraftingRecipe.CraftMode.EXT);
+//        sendChangeToServer(-1, null, null, false, CraftingRecipe.CraftMode.EXT);
 
         window = new Window(this, toplevel);
         tileEntity.requestRfFromServer(RFTools.MODID);
@@ -127,6 +125,11 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
                 .addSelectionEvent(new DefaultSelectionEvent() {
                     @Override
                     public void select(Widget parent, int index) {
+                        lastSelected = recipeList.getSelected();
+                    }
+
+                    @Override
+                    public void doubleClick(Widget parent, int index) {
                         selectRecipe();
                     }
                 })
@@ -140,7 +143,6 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         internalRecipe = new ChoiceLabel(mc, this).
                 addChoices("Ext", "Int", "ExtC").
                 setTooltips("'Int' will put result of", "crafting operation in", "inventory instead of", "output buffer").
-                addChoiceEvent((parent, newChoice) -> updateRecipe()).
                 setEnabled(false).
                 setLayoutHint(new PositionalLayout.PositionalHint(148, 24, 41, 14));
         internalRecipe.setChoiceTooltip("Ext", "Result of crafting operation", "will go to output buffer");
@@ -153,7 +155,6 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         keepItem = new ChoiceLabel(mc, this).
                 addChoices("All", "Keep").
                 setTooltips("'Keep' will keep one", "item in every inventory", "slot").
-                addChoiceEvent((parent, newChoice) -> updateRecipe()).
                 setEnabled(false).
                 setLayoutHint(new PositionalLayout.PositionalHint(148, 7, 41, 14));
     }
@@ -179,12 +180,12 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
 
     private void changeRedstoneMode() {
         tileEntity.setRSMode(RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()]);
-        sendChangeToServer();
+//        sendChangeToServer();
     }
 
     private void changeSpeedMode() {
         tileEntity.setSpeedMode(speedMode.getCurrentChoiceIndex());
-        sendChangeToServer();
+//        sendChangeToServer();
     }
 
     private void rememberItems() {
@@ -217,9 +218,16 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
             readableName = "<no recipe>";
             color = 0xFF505050;
         }
-        Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout()).
-                addChild(new BlockRender(mc, this).setRenderItem(craftingResult)).
-                addChild(new Label(mc, this).setColor(color).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDynamic(true).setText(readableName));
+        Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout())
+                .addChild(new BlockRender(mc, this)
+                        .setRenderItem(craftingResult)
+                        .setTooltips("Double click to edit this recipe"))
+                .addChild(new Label(mc, this)
+                        .setColor(color)
+                        .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
+                        .setDynamic(true)
+                        .setText(readableName)
+                        .setTooltips("Double click to edit this recipe"));
         recipeList.addChild(panel);
     }
 
@@ -232,9 +240,6 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
             }
             keepItem.setChoice("All");
             internalRecipe.setChoice("Ext");
-            keepItem.setEnabled(false);
-            internalRecipe.setEnabled(false);
-            applyButton.setEnabled(false);
             return;
         }
         CraftingRecipe craftingRecipe = tileEntity.getRecipe(selected);
@@ -245,9 +250,6 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         inventorySlots.getSlot(9).putStack(craftingRecipe.getResult());
         keepItem.setChoice(craftingRecipe.isKeepOne() ? "Keep" : "All");
         internalRecipe.setChoice(craftingRecipe.getCraftMode().getDescription());
-        keepItem.setEnabled(true);
-        internalRecipe.setEnabled(true);
-        applyButton.setEnabled(true);
     }
 
     private void testRecipe() {
@@ -353,8 +355,16 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
      */
     @Override
     public void drawScreen(int par1, int par2, float par3) {
+        updateButtons();
         super.drawScreen(par1, par2, par3);
         testRecipe();
+    }
+
+    private void updateButtons() {
+        boolean selected = recipeList.getSelected() != -1;
+        keepItem.setEnabled(selected);
+        internalRecipe.setEnabled(selected);
+        applyButton.setEnabled(selected);
     }
 
     @Override
