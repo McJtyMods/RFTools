@@ -30,8 +30,8 @@ public class ModularStorageConfiguration {
     public static int remoteShareLocal = 10;         // RF/tick to share this inventory locally (same dimension).
     public static int remoteShareGlobal = 50;        // RF/tick to share this inventory to other dimensions.
 
-    public static boolean autofocusSearch = true;   // If true we set auto focus on the search field when opening the GUI.
-    public static boolean clearSearchOnOpen = false;// If true we clear the search field when opening the GUI
+    public static boolean autofocusSearch = false;  // If true we set auto focus on the search field when opening the GUI.
+    public static boolean clearSearchOnOpen = true; // If true we clear the search field when opening the GUI
 
     public static int height1 = 236;
     public static int height2 = 320;
