@@ -28,6 +28,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 
 import java.awt.*;
 
@@ -145,18 +146,24 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
                 setTooltips("'Int' will put result of", "crafting operation in", "inventory instead of", "output buffer").
                 setEnabled(false).
                 setLayoutHint(new PositionalLayout.PositionalHint(148, 24, 41, 14));
-        internalRecipe.setChoiceTooltip("Ext", "Result of crafting operation", "will go to output buffer");
-        internalRecipe.setChoiceTooltip("Int", "Result of crafting operation", "will stay in input buffer");
+        internalRecipe.setChoiceTooltip("Ext", "Result of crafting operation", "will go to output buffer",
+                TextFormatting.GREEN + "(press Apply after changing)");
+        internalRecipe.setChoiceTooltip("Int", "Result of crafting operation", "will stay in input buffer",
+                TextFormatting.GREEN + "(press Apply after changing)");
         internalRecipe.setChoiceTooltip("ExtC", "Result of crafting operation", "will go to output buffer",
-                "but remaining items (like", "buckets) will stay in input");
+                "but remaining items (like", "buckets) will stay in input",
+                TextFormatting.GREEN + "(press Apply after changing)");
     }
 
     private void initKeepMode() {
         keepItem = new ChoiceLabel(mc, this).
                 addChoices("All", "Keep").
-                setTooltips("'Keep' will keep one", "item in every inventory", "slot").
                 setEnabled(false).
                 setLayoutHint(new PositionalLayout.PositionalHint(148, 7, 41, 14));
+        keepItem.setChoiceTooltip("All", "All items in input slots are consumed",
+                TextFormatting.GREEN + "(press Apply after changing)");
+        keepItem.setChoiceTooltip("Keep", "Keep one item in every inventory slot",
+                TextFormatting.GREEN + "(press Apply after changing)");
     }
 
     private void initSpeedMode() {
