@@ -407,7 +407,8 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
             }
         }
 
-        return true;
+        IRecipe recipe = craftingRecipe.getCachedRecipe(worldObj);
+        return recipe.matches(workInventory, worldObj);
     }
 
 
