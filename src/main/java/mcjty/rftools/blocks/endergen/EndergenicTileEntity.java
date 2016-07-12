@@ -221,7 +221,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         if (chargingMode == CHARGE_HOLDING) {
             // Consume energy to keep the endergenic pearl.
             int rf = EndergenicConfiguration.rfToHoldPearl;
-            rf = (int) (rf * (4.0f - getInfusedFactor()) / 4.0f);
+            rf = (int) (rf * (3.0f - getInfusedFactor()) / 3.0f);
 
             int rfStored = getEnergyStored(EnumFacing.DOWN);
             if (rfStored < rf) {
@@ -439,7 +439,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
             pearlArrivedAt = chargingMode;
             // Otherwise we get RF and this block goes into holding mode.
             int rf = (int) (rfPerHit[chargingMode] * EndergenicConfiguration.powergenFactor);
-            rf = (int) (rf * (getInfusedFactor() + 3.0f) / 3.0f);
+            rf = (int) (rf * (getInfusedFactor() + 2.0f) / 2.0f);
 
             // Give a bonus for pearls that have been around a bit longer.
             int a = age*5;
