@@ -91,8 +91,8 @@ public class EnergyStorage implements IEnergyStorage {
 	}
 
 	/**
-	 * This function is included to allow for server to client sync. Do not call this externally to the containing Tile Entity, as not all IEnergyHandlers
-	 * are guaranteed to have it.
+	 * This function is included to allow for server to client sync. Do not call this externally to the containing Tile Entity, as not all IEnergyHandlers are
+	 * guaranteed to have it.
 	 *
 	 * @param energy
 	 */
