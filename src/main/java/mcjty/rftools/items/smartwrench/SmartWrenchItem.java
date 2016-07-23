@@ -14,6 +14,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -66,13 +67,38 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
 
 
     @Override
-    public boolean isUsable(ItemStack item, EntityLivingBase user, int x, int y, int z) {
+    public boolean isUsable(ItemStack item, EntityLivingBase user, BlockPos pos) {
         SmartWrenchMode mode = getCurrentMode(item);
         return mode == SmartWrenchMode.MODE_WRENCH;
     }
 
     @Override
-    public void toolUsed(ItemStack item, EntityLivingBase user, int x, int y, int z) {
+    public void toolUsed(ItemStack item, EntityLivingBase user, BlockPos pos) {
+    }
+
+    /**
+     * Called to ensure that the tool can be used on an entity.
+     *
+     * @param item   The ItemStack for the tool. Not required to match equipped item (e.g., multi-tools that contain other tools).
+     * @param user   The entity using the tool.
+     * @param entity The entity the tool is being used on.
+     * @return True if this tool can be used.
+     */
+    @Override
+    public boolean isUsable(ItemStack item, EntityLivingBase user, Entity entity) {
+        return false;
+    }
+
+    /**
+     * Callback for when the tool has been used reactively.
+     *
+     * @param item   The ItemStack for the tool. Not required to match equipped item (e.g., multi-tools that contain other tools).
+     * @param user   The entity using the tool.
+     * @param entity
+     */
+    @Override
+    public void toolUsed(ItemStack item, EntityLivingBase user, Entity entity) {
+
     }
 
     @Override
