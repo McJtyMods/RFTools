@@ -6,7 +6,7 @@ import net.minecraft.util.EnumFacing;
 
 /**
  * Reference implementation of {@link IEnergyReceiver} and {@link IEnergyProvider}. Use/extend this or implement your own.
- * 
+ *
  * This class is really meant to summarize how each interface is properly used.
  *
  * @author King Lemming
