@@ -234,12 +234,12 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
             }
             entityLiving = (EntityLiving) clazz.getConstructor(World.class).newInstance(worldObj);
             if ("WitherSkeleton".equals(mobId)) {
-                ((EntitySkeleton) entityLiving).func_189768_a(SkeletonType.WITHER);
+                ((EntitySkeleton) entityLiving).setSkeletonType(SkeletonType.WITHER);
             } else if ("StraySkeleton".equals(mobId)) {
-                    ((EntitySkeleton) entityLiving).func_189768_a(SkeletonType.STRAY);
+                    ((EntitySkeleton) entityLiving).setSkeletonType(SkeletonType.STRAY);
             } else if (entityLiving instanceof EntitySkeleton) {
                 // Force non-wither otherwise
-                ((EntitySkeleton) entityLiving).func_189768_a(SkeletonType.NORMAL);
+                ((EntitySkeleton) entityLiving).setSkeletonType(SkeletonType.NORMAL);
             }
         } catch (InstantiationException e) {
             Logging.logError("Fail to spawn mob: " + mobId);

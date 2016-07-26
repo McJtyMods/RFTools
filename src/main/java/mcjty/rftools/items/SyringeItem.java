@@ -122,9 +122,9 @@ public class SyringeItem extends GenericRFToolsItem {
     private String findSelectedMobId(Class<? extends Entity> clazz, Entity entity) {
         if (entity instanceof EntitySkeleton) {
             EntitySkeleton skeleton = (EntitySkeleton) entity;
-            if (skeleton.func_189771_df() == SkeletonType.WITHER) {
+            if (skeleton.getSkeletonType() == SkeletonType.WITHER) {
                 return "WitherSkeleton";
-            } else if (skeleton.func_189771_df() == SkeletonType.STRAY) {
+            } else if (skeleton.getSkeletonType() == SkeletonType.STRAY) {
                 return "StraySkeleton";
             }
         }
@@ -143,10 +143,10 @@ public class SyringeItem extends GenericRFToolsItem {
     }
 
     private String findSelectedMobName(Entity entity) {
-        if (entity instanceof EntitySkeleton && ((EntitySkeleton) entity).func_189771_df() == SkeletonType.WITHER) {
+        if (entity instanceof EntitySkeleton && ((EntitySkeleton) entity).getSkeletonType() == SkeletonType.WITHER) {
             return "Wither Skeleton";
         }
-        if (entity instanceof EntitySkeleton && ((EntitySkeleton) entity).func_189771_df() == SkeletonType.STRAY) {
+        if (entity instanceof EntitySkeleton && ((EntitySkeleton) entity).getSkeletonType() == SkeletonType.STRAY) {
             return "Stray Skeleton";
         }
         return entity.getName();
