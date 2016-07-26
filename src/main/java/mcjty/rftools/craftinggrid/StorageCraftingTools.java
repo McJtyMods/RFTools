@@ -132,7 +132,7 @@ public class StorageCraftingTools {
                     count -= ss;
                     IItemKey key = pair.getKey();
                     if (!undo.containsKey(key)) {
-                        undo.put(key, input.copy());
+                        undo.put(key, new ItemStack(input.getItem(), input.stackSize));
                     }
                     itemSource.decrStackSize(key, ss);
                 }
