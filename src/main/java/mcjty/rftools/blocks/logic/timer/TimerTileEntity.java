@@ -18,7 +18,6 @@ public class TimerTileEntity extends LogicTileEntity implements ITickable {
 
     private int delay = 20;
     private int timer = 0;
-    private boolean redstoneOut = false;
 
     public TimerTileEntity() {
     }
@@ -64,17 +63,13 @@ public class TimerTileEntity extends LogicTileEntity implements ITickable {
             newout = false;
         }
 
-        if (newout != redstoneOut) {
-            redstoneOut = newout;
-            setRedstoneState(redstoneOut);
-        }
-
+        setRedstoneState(newout);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        redstoneOut = tagCompound.getBoolean("rs");
+        powered = tagCompound.getBoolean("rs");
         prevIn = tagCompound.getBoolean("prevIn");
         timer = tagCompound.getInteger("timer");
     }
@@ -88,7 +83,7 @@ public class TimerTileEntity extends LogicTileEntity implements ITickable {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("rs", redstoneOut);
+        tagCompound.setBoolean("rs", powered);
         tagCompound.setBoolean("prevIn", prevIn);
         tagCompound.setInteger("timer", timer);
         return tagCompound;

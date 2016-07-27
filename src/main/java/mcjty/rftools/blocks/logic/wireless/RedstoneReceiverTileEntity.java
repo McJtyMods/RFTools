@@ -6,7 +6,6 @@ import net.minecraft.util.ITickable;
 
 public class RedstoneReceiverTileEntity extends LogicTileEntity implements ITickable {
 
-    private boolean redstoneOut = false;
     private int channel = -1;
 
     public RedstoneReceiverTileEntity() {
@@ -29,12 +28,7 @@ public class RedstoneReceiverTileEntity extends LogicTileEntity implements ITick
     }
 
     protected void checkStateServer() {
-        boolean newout = checkOutput();
-
-        if (newout != redstoneOut) {
-            redstoneOut = newout;
-            setRedstoneState(redstoneOut);
-        }
+        setRedstoneState(checkOutput());
     }
 
     public boolean checkOutput() {
@@ -52,7 +46,7 @@ public class RedstoneReceiverTileEntity extends LogicTileEntity implements ITick
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        redstoneOut = tagCompound.getBoolean("rs");
+        powered = tagCompound.getBoolean("rs");
     }
 
     @Override
@@ -64,7 +58,7 @@ public class RedstoneReceiverTileEntity extends LogicTileEntity implements ITick
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("rs", redstoneOut);
+        tagCompound.setBoolean("rs", powered);
         return tagCompound;
     }
 

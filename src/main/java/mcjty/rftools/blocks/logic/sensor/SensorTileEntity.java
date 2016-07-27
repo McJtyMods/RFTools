@@ -38,7 +38,6 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     private AreaType areaType = AreaType.AREA_1;
     private GroupType groupType = GroupType.GROUP_ONE;
 
-    private boolean redstoneOut = false;
     private int checkCounter = 0;
 
 
@@ -101,12 +100,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         }
         checkCounter = 10;
 
-        boolean newout = checkSensor();
-
-        if (newout != redstoneOut) {
-            redstoneOut = newout;
-            setRedstoneState(redstoneOut);
-        }
+        setRedstoneState(checkSensor());
     }
 
     public boolean checkSensor() {
@@ -266,7 +260,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        redstoneOut = tagCompound.getBoolean("rs");
+        powered = tagCompound.getBoolean("rs");
     }
 
     @Override
@@ -282,7 +276,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("rs", redstoneOut);
+        tagCompound.setBoolean("rs", powered);
         return tagCompound;
     }
 

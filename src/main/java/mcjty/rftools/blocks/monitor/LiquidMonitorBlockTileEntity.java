@@ -39,6 +39,10 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
         return alarmLevel;
     }
 
+    public boolean isPowered() {
+        return inAlarm;
+    }
+
     public void setAlarm(RFMonitorMode mode, int level) {
         alarmMode = mode;
         alarmLevel = level;
@@ -172,10 +176,7 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
     }
 
     private void setRedstoneOut(boolean a) {
-        IBlockState state = worldObj.getBlockState(getPos());
-        worldObj.setBlockState(getPos(), state.withProperty(RFMonitorBlock.OUTPUTPOWER, a), 2);
         worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
-        worldObj.notifyBlockUpdate(this.pos, state, state, 3);
     }
 
     @Override

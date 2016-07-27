@@ -17,7 +17,6 @@ public class CounterTileEntity extends LogicTileEntity {
 
     private int counter = 1;
     private int current = 0;
-    private boolean redstoneOut = false;
 
     public CounterTileEntity() {
     }
@@ -58,18 +57,14 @@ public class CounterTileEntity extends LogicTileEntity {
             }
 
             markDirty();
-
-            if (newout != redstoneOut) {
-                redstoneOut = newout;
-                setRedstoneState(redstoneOut);
-            }
+            setRedstoneState(newout);
         }
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        redstoneOut = tagCompound.getBoolean("rs");
+        powered = tagCompound.getBoolean("rs");
         prevIn = tagCompound.getBoolean("prevIn");
     }
 
@@ -86,7 +81,7 @@ public class CounterTileEntity extends LogicTileEntity {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("rs", redstoneOut);
+        tagCompound.setBoolean("rs", powered);
         tagCompound.setBoolean("prevIn", prevIn);
         return tagCompound;
     }

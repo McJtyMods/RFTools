@@ -8,6 +8,8 @@ public class LogicTileEntity extends GenericTileEntity {
 
     private LogicFacing facing = LogicFacing.DOWN_TONORTH;
 
+    protected boolean powered = false;
+
     public LogicFacing getFacing(IBlockState state) {
         Integer meta = state.getValue(LogicSlabBlock.META_INTERMEDIATE);
         return LogicFacing.getFacingWithMeta(facing, meta);
@@ -18,12 +20,17 @@ public class LogicTileEntity extends GenericTileEntity {
         markDirty();
     }
 
+    public boolean isPowered() {
+        return powered;
+    }
+
     protected void setRedstoneState(boolean newout) {
+        if (powered == newout) {
+            return;
+        }
+        powered = newout;
         markDirty();
-        IBlockState state = worldObj.getBlockState(getPos());
-        worldObj.setBlockState(getPos(), state.withProperty(LogicSlabBlock.OUTPUTPOWER, newout), 2);
         worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
-        worldObj.notifyBlockUpdate(this.pos, state, state, 3);
     }
 
     @Override

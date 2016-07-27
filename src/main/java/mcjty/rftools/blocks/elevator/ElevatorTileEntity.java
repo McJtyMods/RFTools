@@ -4,7 +4,6 @@ package mcjty.rftools.blocks.elevator;
 import mcjty.lib.container.GenericBlock;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.varia.Broadcaster;
-import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
 import mcjty.rftools.blocks.shield.RelCoordinate;
 import mcjty.rftools.playerprops.BuffProperties;
 import net.minecraft.block.Block;
@@ -83,10 +82,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
 
     protected void setRedstoneState(boolean newout) {
         markDirty();
-        IBlockState state = worldObj.getBlockState(getPos());
-//        worldObj.setBlockState(getPos(), state.withProperty(LogicSlabBlock.OUTPUTPOWER, newout), 2);
         worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
-        worldObj.notifyBlockUpdate(this.pos, state, state, 3);
     }
 
 

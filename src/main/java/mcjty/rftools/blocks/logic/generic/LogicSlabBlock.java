@@ -29,7 +29,9 @@ import static net.minecraft.util.EnumFacing.*;
  */
 public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Container> extends GenericRFToolsBlock<T, C> {
 
+    @Deprecated
     public static PropertyBool OUTPUTPOWER = PropertyBool.create("output");
+
     public static PropertyInteger META_INTERMEDIATE = PropertyInteger.create("intermediate", 0, 3);
     public static PropertyEnum<LogicFacing> LOGIC_FACING = PropertyEnum.create("logic_facing", LogicFacing.class);
 
@@ -180,7 +182,7 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
         if (state.getBlock() instanceof LogicSlabBlock && te instanceof LogicTileEntity) {
             LogicTileEntity logicTileEntity = (LogicTileEntity) te;
             if (side == logicTileEntity.getFacing(state).getInputSide()) {
-                return state.getValue(OUTPUTPOWER) ? 15 : 0;
+                return logicTileEntity.isPowered() ? 15 : 0;
             } else {
                 return 0;
             }
