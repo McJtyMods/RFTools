@@ -7,7 +7,9 @@ public interface IItemSource {
 
     Iterable<Pair<IItemKey, ItemStack>> getItems();
 
-    void decrStackSize(IItemKey key, int amount);
+    // Return the actually removed items
+    ItemStack decrStackSize(IItemKey key, int amount);
 
-    void putStack(IItemKey key, ItemStack stack);
+    // Insert the itemstack in the specific slot. This does not check if the items are identical!
+    void insertStack(IItemKey key, ItemStack stack);
 }

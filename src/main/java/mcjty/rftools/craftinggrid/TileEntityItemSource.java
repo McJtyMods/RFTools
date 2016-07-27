@@ -39,16 +39,21 @@ public class TileEntityItemSource implements IItemSource {
         return null;
     }
 
-    private static void putStackInSlot(Object inv, int slot, ItemStack stack) {
+    private static void insertStackInSlot(Object inv, int slot, ItemStack stack) {
         if (inv instanceof IItemHandler) {
             IItemHandler handler = (IItemHandler) inv;
-            ItemStack oldSlot = handler.getStackInSlot(slot);
-            if (oldSlot != null) {
-                handler.extractItem(slot, oldSlot.stackSize, false);
-            }
+//            ItemStack oldSlot = handler.getStackInSlot(slot);
+//            if (oldSlot != null) {
+//                handler.extractItem(slot, oldSlot.stackSize, false);
+//            }
             handler.insertItem(slot, stack, false);
         } else if (inv instanceof IInventory) {
-            ((IInventory) inv).setInventorySlotContents(slot, stack);
+            IInventory inventory = (IInventory) inv;
+            ItemStack oldStack = inventory.getStackInSlot(slot);
+            if (oldStack != null) {
+                stack.stackSize += oldStack.stackSize;
+            }
+            inventory.setInventorySlotContents(slot, stack);
         }
     }
 
@@ -95,26 +100,28 @@ public class TileEntityItemSource implements IItemSource {
     }
 
     @Override
-    public void decrStackSize(IItemKey key, int amount) {
+    public ItemStack decrStackSize(IItemKey key, int amount) {
         ItemKey realKey = (ItemKey) key;
         Object te = realKey.getInventory();
         if (te instanceof IItemHandler) {
             IItemHandler handler = (IItemHandler) te;
-            handler.extractItem(realKey.getSlot(), amount, false);
+            return handler.extractItem(realKey.getSlot(), amount, false);
         } else if (te instanceof IInventory) {
             IInventory inventory = (IInventory) te;
             ItemStack stack = inventory.getStackInSlot(realKey.getSlot());
-            stack.splitStack(amount);
+            ItemStack result = stack.splitStack(amount);
             if (stack.stackSize == 0) {
                 inventory.setInventorySlotContents(realKey.getSlot(), null);
             }
+            return result;
         }
+        return null;
     }
 
     @Override
-    public void putStack(IItemKey key, ItemStack stack) {
+    public void insertStack(IItemKey key, ItemStack stack) {
         ItemKey realKey = (ItemKey) key;
-        putStackInSlot(realKey.getInventory(), realKey.getSlot(), stack);
+        insertStackInSlot(realKey.getInventory(), realKey.getSlot(), stack);
     }
 
     private static class ItemKey implements IItemKey {
