@@ -10,7 +10,9 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class StorageCraftingTools {
 
@@ -22,7 +24,7 @@ public class StorageCraftingTools {
             }
         }, 3, 3);
 
-        Map<IItemKey, ItemStack> undo = new HashMap<>();
+        List<Pair<IItemKey, ItemStack>> undo = new ArrayList<>();
         InventoryCrafting inventory = craftingRecipe.getInventory();
 
         int[] missingCount = new int[10];
@@ -64,7 +66,7 @@ public class StorageCraftingTools {
             }
         }, 3, 3);
 
-        Map<IItemKey,ItemStack> undo = new HashMap<>();
+        List<Pair<IItemKey,ItemStack>> undo = new ArrayList<>();
         List<ItemStack> result = new ArrayList<>();
         InventoryCrafting inventory = craftingRecipe.getInventory();
 
@@ -119,7 +121,7 @@ public class StorageCraftingTools {
         }
     }
 
-    private static int findMatchingItems(InventoryCrafting workInventory, Map<IItemKey, ItemStack> undo, int i, ItemStack stack, int count, IItemSource itemSource, boolean strictDamage) {
+    private static int findMatchingItems(InventoryCrafting workInventory, List<Pair<IItemKey, ItemStack>> undo, int i, ItemStack stack, int count, IItemSource itemSource, boolean strictDamage) {
         for (Pair<IItemKey, ItemStack> pair : itemSource.getItems()) {
             ItemStack input = pair.getValue();
             if (input != null) {
@@ -131,10 +133,8 @@ public class StorageCraftingTools {
                     }
                     count -= ss;
                     IItemKey key = pair.getKey();
-                    if (!undo.containsKey(key)) {
-                        undo.put(key, input.copy());
-                    }
-                    itemSource.decrStackSize(key, ss);
+                    ItemStack actuallyExtracted = itemSource.decrStackSize(key, ss);
+                    undo.add(Pair.of(key, actuallyExtracted));
                 }
             }
             if (count == 0) {
@@ -144,9 +144,9 @@ public class StorageCraftingTools {
         return count;
     }
 
-    private static void undo(EntityPlayerMP player, IItemSource itemSource, Map<IItemKey, ItemStack> undo) {
-        for (Map.Entry<IItemKey, ItemStack> entry : undo.entrySet()) {
-            itemSource.putStack(entry.getKey(), entry.getValue());
+    private static void undo(EntityPlayerMP player, IItemSource itemSource, List<Pair<IItemKey, ItemStack>> undo) {
+        for (Pair<IItemKey, ItemStack> pair : undo) {
+            itemSource.insertStack(pair.getKey(), pair.getValue());
         }
         player.openContainer.detectAndSendChanges();
     }
