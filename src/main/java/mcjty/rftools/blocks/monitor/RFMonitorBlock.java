@@ -26,7 +26,9 @@ import java.util.List;
 
 public class RFMonitorBlock extends GenericRFToolsBlock<RFMonitorBlockTileEntity, EmptyContainer> {
 
+    @Deprecated
     public static PropertyBool OUTPUTPOWER = PropertyBool.create("output");
+
     public static PropertyInteger LEVEL = PropertyInteger.create("level", 0, 5);
 
     public RFMonitorBlock() {
@@ -60,10 +62,13 @@ public class RFMonitorBlock extends GenericRFToolsBlock<RFMonitorBlockTileEntity
     protected int getRedstoneOutput(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
         EnumFacing direction = state.getValue(FACING);
         if (side == direction) {
-            return state.getValue(OUTPUTPOWER) ? 15 : 0;
-        } else {
-            return 0;
+            TileEntity te = world.getTileEntity(pos);
+            if (state.getBlock() instanceof RFMonitorBlock && te instanceof RFMonitorBlockTileEntity) {
+                RFMonitorBlockTileEntity monitorTileEntity = (RFMonitorBlockTileEntity) te;
+                return monitorTileEntity.isPowered() ? 15 : 0;
+            }
         }
+        return 0;
     }
 
     @Override

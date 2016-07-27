@@ -32,7 +32,6 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
     private int amount = 1;
     private boolean oreDict = false;
     private boolean starred = false;
-    private boolean redstoneOut = false;
     private TIntSet set1 = null;
 
     private int checkCounter = 0;
@@ -50,12 +49,7 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
         checkCounter = 10;
 
         int count = getCurrentCount();
-        boolean newout = count >= amount;
-
-        if (newout != redstoneOut) {
-            redstoneOut = newout;
-            setRedstoneState(redstoneOut);
-        }
+        setRedstoneState(count >= amount);
     }
 
     public int getCurrentCount() {
@@ -114,7 +108,7 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        redstoneOut = tagCompound.getBoolean("rs");
+        powered = tagCompound.getBoolean("rs");
     }
 
     @Override
@@ -129,7 +123,7 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("rs", redstoneOut);
+        tagCompound.setBoolean("rs", powered);
         return tagCompound;
     }
 

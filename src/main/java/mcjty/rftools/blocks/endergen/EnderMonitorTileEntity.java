@@ -19,8 +19,6 @@ public class EnderMonitorTileEntity extends LogicTileEntity implements ITickable
 
     private boolean needpulse = false;
 
-    private boolean redstoneOut = false;
-
     public EnderMonitorTileEntity() {
     }
 
@@ -62,20 +60,20 @@ public class EnderMonitorTileEntity extends LogicTileEntity implements ITickable
             needpulse = false;
         }
 
-        if (newout != redstoneOut) {
-            redstoneOut = newout;
+        if (newout != powered) {
+            powered = newout;
             Logging.log(worldObj, this, "Ender Monitor output to " + newout);
-            IBlockState state = worldObj.getBlockState(getPos());
-            worldObj.setBlockState(getPos(), state.withProperty(LogicSlabBlock.OUTPUTPOWER, redstoneOut), 2);
+//            IBlockState state = worldObj.getBlockState(getPos());
+//            worldObj.setBlockState(getPos(), state.withProperty(LogicSlabBlock.OUTPUTPOWER, redstoneOut), 1);
             worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
-            worldObj.notifyBlockUpdate(this.pos, state, state, 3);
+//            worldObj.notifyBlockUpdate(this.pos, state, state, 3);
         }
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        redstoneOut = tagCompound.getBoolean("rs");
+        powered = tagCompound.getBoolean("rs");
 
         needpulse = tagCompound.getBoolean("needPulse");
     }
@@ -90,7 +88,7 @@ public class EnderMonitorTileEntity extends LogicTileEntity implements ITickable
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("rs", redstoneOut);
+        tagCompound.setBoolean("rs", powered);
         tagCompound.setBoolean("needPulse", needpulse);
         return tagCompound;
     }

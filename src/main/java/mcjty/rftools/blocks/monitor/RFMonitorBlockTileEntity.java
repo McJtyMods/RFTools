@@ -3,7 +3,6 @@ package mcjty.rftools.blocks.monitor;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.rftools.varia.EnergyTools;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
@@ -35,6 +34,10 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
 
     public int getAlarmLevel() {
         return alarmLevel;
+    }
+
+    public boolean isPowered() {
+        return inAlarm;
     }
 
     public void setAlarm(RFMonitorMode mode, int level) {
@@ -165,11 +168,7 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
     }
 
     private void setRedstoneOut(boolean a) {
-        IBlockState state = worldObj.getBlockState(getPos());
-        IBlockState newState = state.withProperty(RFMonitorBlock.OUTPUTPOWER, a);
-        worldObj.setBlockState(getPos(), newState, 2);
         worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
-        worldObj.notifyBlockUpdate(this.pos, state, newState, 3);
     }
 
 
