@@ -10,6 +10,9 @@ public interface IItemSource {
     // Return the actually removed items
     ItemStack decrStackSize(IItemKey key, int amount);
 
-    // Insert the itemstack in the specific slot. This does not check if the items are identical!
-    void insertStack(IItemKey key, ItemStack stack);
+    // Insert the itemstack in the specific slot. This returns true on success
+    boolean insertStack(IItemKey key, ItemStack stack);
+
+    // Insert the itemstack in any slot. Return number of items that could not be inserted
+    int insertStackAnySlot(IItemKey key, ItemStack stack);
 }

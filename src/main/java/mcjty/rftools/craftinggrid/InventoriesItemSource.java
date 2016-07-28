@@ -1,8 +1,9 @@
 package mcjty.rftools.craftinggrid;
 
+import mcjty.lib.container.InventoryHelper;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.ItemHandlerHelper;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -58,14 +59,29 @@ public class InventoriesItemSource implements IItemSource {
     }
 
     @Override
-    public void insertStack(IItemKey key, ItemStack stack) {
+    public boolean insertStack(IItemKey key, ItemStack stack) {
         ItemKey realKey = (ItemKey) key;
         IInventory inventory = realKey.getInventory();
         ItemStack origStack = inventory.removeStackFromSlot(realKey.getSlot());
         if (origStack != null) {
-            stack.stackSize += origStack.stackSize;
+            if (ItemHandlerHelper.canItemStacksStack(origStack, stack)) {
+                if ((stack.stackSize + origStack.stackSize) > stack.getMaxStackSize()) {
+                    return false;
+                }
+                stack.stackSize += origStack.stackSize;
+            } else {
+                return false;
+            }
         }
         inventory.setInventorySlotContents(realKey.getSlot(), stack);
+        return true;
+    }
+
+    @Override
+    public int insertStackAnySlot(IItemKey key, ItemStack stack) {
+        ItemKey realKey = (ItemKey) key;
+        IInventory inventory = realKey.getInventory();
+        return InventoryHelper.mergeItemStack(inventory, true, stack, 0, inventory.getSizeInventory(), null);
     }
 
     private static class ItemKey implements IItemKey {

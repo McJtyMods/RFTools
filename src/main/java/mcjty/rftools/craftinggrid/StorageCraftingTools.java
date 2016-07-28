@@ -7,6 +7,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -146,7 +147,17 @@ public class StorageCraftingTools {
 
     private static void undo(EntityPlayerMP player, IItemSource itemSource, List<Pair<IItemKey, ItemStack>> undo) {
         for (Pair<IItemKey, ItemStack> pair : undo) {
-            itemSource.insertStack(pair.getKey(), pair.getValue());
+            ItemStack stack = pair.getValue();
+            if (!itemSource.insertStack(pair.getKey(), stack)) {
+                // Insertion in original slot failed. Let's just try to insert it in any slot
+                int amountLeft = itemSource.insertStackAnySlot(pair.getKey(), stack);
+                if (amountLeft > 0) {
+                    // We still have left-overs. Spawn them in the player inventory
+                    ItemStack copy = stack.copy();
+                    copy.stackSize = amountLeft;
+                    ItemHandlerHelper.giveItemToPlayer(player, copy);
+                }
+            }
         }
         player.openContainer.detectAndSendChanges();
     }

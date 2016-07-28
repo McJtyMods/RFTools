@@ -1,10 +1,12 @@
 package mcjty.rftools.craftinggrid;
 
+import mcjty.lib.container.InventoryHelper;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -39,22 +41,38 @@ public class TileEntityItemSource implements IItemSource {
         return null;
     }
 
-    private static void insertStackInSlot(Object inv, int slot, ItemStack stack) {
+    private static boolean insertStackInSlot(Object inv, int slot, ItemStack stack) {
         if (inv instanceof IItemHandler) {
             IItemHandler handler = (IItemHandler) inv;
-//            ItemStack oldSlot = handler.getStackInSlot(slot);
-//            if (oldSlot != null) {
-//                handler.extractItem(slot, oldSlot.stackSize, false);
-//            }
-            handler.insertItem(slot, stack, false);
+            if (handler.insertItem(slot, stack, true) != null) {
+                return false;
+            }
+            return handler.insertItem(slot, stack, false) == null;
         } else if (inv instanceof IInventory) {
             IInventory inventory = (IInventory) inv;
             ItemStack oldStack = inventory.getStackInSlot(slot);
             if (oldStack != null) {
+                if ((stack.stackSize + oldStack.stackSize) > stack.getMaxStackSize()) {
+                    return false;
+                }
                 stack.stackSize += oldStack.stackSize;
             }
             inventory.setInventorySlotContents(slot, stack);
+            return true;
         }
+        return false;
+    }
+
+    private static int insertStackInAnySlot(Object inv, ItemStack stack) {
+        if (inv instanceof IItemHandler) {
+            IItemHandler handler = (IItemHandler) inv;
+            ItemStack leftOver = ItemHandlerHelper.insertItem(handler, stack, false);
+            return leftOver == null ? 0 : leftOver.stackSize;
+        } else if (inv instanceof IInventory) {
+            IInventory inventory = (IInventory) inv;
+            return InventoryHelper.mergeItemStack(inventory, true, stack, 0, inventory.getSizeInventory(), null);
+        }
+        return stack.stackSize;
     }
 
     private static int getSizeInventory(Object inv) {
@@ -119,9 +137,15 @@ public class TileEntityItemSource implements IItemSource {
     }
 
     @Override
-    public void insertStack(IItemKey key, ItemStack stack) {
+    public boolean insertStack(IItemKey key, ItemStack stack) {
         ItemKey realKey = (ItemKey) key;
-        insertStackInSlot(realKey.getInventory(), realKey.getSlot(), stack);
+        return insertStackInSlot(realKey.getInventory(), realKey.getSlot(), stack);
+    }
+
+    @Override
+    public int insertStackAnySlot(IItemKey key, ItemStack stack) {
+        ItemKey realKey = (ItemKey) key;
+        return insertStackInAnySlot(realKey.getInventory(), stack);
     }
 
     private static class ItemKey implements IItemKey {
