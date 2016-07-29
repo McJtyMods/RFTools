@@ -7,6 +7,7 @@ import mcjty.rftools.blocks.logic.sensor.SensorBlock;
 import mcjty.rftools.blocks.logic.sequencer.SequencerBlock;
 import mcjty.rftools.blocks.logic.threelogic.ThreeLogicBlock;
 import mcjty.rftools.blocks.logic.timer.TimerBlock;
+import mcjty.rftools.blocks.logic.wire.WireBlock;
 import mcjty.rftools.blocks.logic.wireless.RedstoneReceiverBlock;
 import mcjty.rftools.blocks.logic.wireless.RedstoneTransmitterBlock;
 import net.minecraft.block.Block;
@@ -26,6 +27,7 @@ public class LogicBlockSetup {
     public static ThreeLogicBlock threeLogicBlock;
     public static InvCheckerBlock invCheckerBlock;
     public static SensorBlock sensorBlock;
+    public static WireBlock wireBlock;
 
     public static void init() {
         sequencerBlock = new SequencerBlock();
@@ -36,6 +38,7 @@ public class LogicBlockSetup {
         threeLogicBlock = new ThreeLogicBlock();
         invCheckerBlock = new InvCheckerBlock();
         sensorBlock = new SensorBlock();
+        wireBlock = new WireBlock();
     }
 
     @SideOnly(Side.CLIENT)
@@ -48,6 +51,7 @@ public class LogicBlockSetup {
         threeLogicBlock.initModel();
         invCheckerBlock.initModel();
         sensorBlock.initModel();
+        wireBlock.initModel();
     }
 
     public static void initCrafting() {
@@ -61,5 +65,6 @@ public class LogicBlockSetup {
         GameRegistry.addRecipe(new ItemStack(redstoneTransmitterBlock), "r", 'r', redstoneTransmitterBlock);    // To clear it
         GameRegistry.addRecipe(new ItemStack(invCheckerBlock), " c ", "rMr", " C ", 'M', ModBlocks.machineBase, 'c', Items.COMPARATOR, 'C', Blocks.CHEST, 'r', Items.REDSTONE);
         GameRegistry.addRecipe(new ItemStack(sensorBlock), "xcx", "rMr", "xcx", 'M', ModBlocks.machineBase, 'c', Items.COMPARATOR, 'x', Items.QUARTZ, 'r', Items.REDSTONE);
+        GameRegistry.addRecipe(new ItemStack(wireBlock), "   ", "rMr", "   ", 'M', ModBlocks.machineBase, 'r', Items.REDSTONE);
     }
 }

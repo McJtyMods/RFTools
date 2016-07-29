@@ -117,6 +117,7 @@ tile.rftools.matter_booster.name=Matter Booster
 tile.rftools.endergenic.name=Endergenic Generator
 tile.rftools.pearl_injector.name=Pearl Injector
 tile.rftools.sequencer_block.name=Sequencer
+tile.rftools.wire_block.name=Wire
 tile.rftools.counter_block.name=Counter
 tile.rftools.invchecker_block.name=Inventory Checker
 tile.rftools.sensor_block.name=Sensor
