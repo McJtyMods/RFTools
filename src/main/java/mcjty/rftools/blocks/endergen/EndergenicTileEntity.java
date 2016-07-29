@@ -10,7 +10,6 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.varia.EnergyTools;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -353,9 +352,16 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     private void markDirtyClientNoRender() {
         markDirty();
         if (worldObj != null) {
-            IBlockState state = worldObj.getBlockState(getPos());
-            worldObj.notifyBlockUpdate(getPos(), state, state, 6); // Send to client and don't force rerender
+            worldObj.getPlayers(EntityPlayer.class, p -> getPos().distanceSq(p.posX, p.posY, p.posZ) < 32*32)
+                    .stream()
+                    .forEach(p -> RFToolsMessages.INSTANCE.sendTo(
+                            new PacketEndergenicFlash(getPos(), goodCounter, badCounter), (EntityPlayerMP) p));
         }
+    }
+
+    public void syncCountersFromServer(int goodCounter, int badCounter) {
+        this.goodCounter = goodCounter;
+        this.badCounter = badCounter;
     }
 
     private void discardPearl(String reason) {

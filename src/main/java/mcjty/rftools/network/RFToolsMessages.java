@@ -4,6 +4,7 @@ import mcjty.lib.network.PacketHandler;
 import mcjty.rftools.blocks.builder.PacketChamberInfoReady;
 import mcjty.rftools.blocks.builder.PacketGetChamberInfo;
 import mcjty.rftools.blocks.crafter.PacketCrafter;
+import mcjty.rftools.blocks.endergen.PacketEndergenicFlash;
 import mcjty.rftools.blocks.logic.counter.CounterInfoPacketClient;
 import mcjty.rftools.blocks.logic.counter.CounterInfoPacketServer;
 import mcjty.rftools.blocks.monitor.*;
@@ -88,6 +89,7 @@ public class RFToolsMessages {
         net.registerMessage(PacketSyncSlotsToClient.Handler.class, PacketSyncSlotsToClient.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketGridToClient.Handler.class, PacketGridToClient.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketCraftTestResultToClient.Handler.class, PacketCraftTestResultToClient.class, PacketHandler.nextID(), Side.CLIENT);
+        net.registerMessage(PacketEndergenicFlash.Handler.class, PacketEndergenicFlash.class, PacketHandler.nextID(), Side.CLIENT);
 
         PacketHandler.register(PacketHandler.nextPacketID(), StorageInfoPacketServer.class, StorageInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), PowerCellInfoPacketServer.class, PowerCellInfoPacketClient.class);
