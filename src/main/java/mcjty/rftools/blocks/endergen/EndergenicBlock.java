@@ -133,7 +133,6 @@ public class EndergenicBlock extends GenericRFToolsBlock<EndergenicTileEntity, E
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
-        System.out.println("EndergenicBlock.getActualState");
         return super.getActualState(state, worldIn, pos);
     }
 //    @Override
