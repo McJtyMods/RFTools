@@ -538,6 +538,10 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             return true;
         }
         AxisAlignedBB playerBB = player.getEntityBoundingBox();
+        // Should not be possible but at BTM it was
+        if (playerBB == null) {
+            return true;
+        }
         if (!playerBB.intersectsWith(beamBox)) {
             Logging.message(player, "Teleportation was interrupted!");
             return true;
