@@ -534,6 +534,9 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
 
     private boolean isPlayerOutsideBeam() {
         EntityPlayer player = worldObj.getPlayerEntityByName(teleportingPlayer);
+        if (player == null) {
+            return true;
+        }
         AxisAlignedBB playerBB = player.getEntityBoundingBox();
         if (!playerBB.intersectsWith(beamBox)) {
             Logging.message(player, "Teleportation was interrupted!");
