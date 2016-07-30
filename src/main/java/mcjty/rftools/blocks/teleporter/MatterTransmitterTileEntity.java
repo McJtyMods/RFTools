@@ -455,8 +455,9 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             cooldownTimer = 5;
             return;
         }
+
         AxisAlignedBB playerBB = nearestPlayer.getEntityBoundingBox();
-        if (playerBB.intersectsWith(beamBox)) {
+        if (playerBB != null && playerBB.intersectsWith(beamBox)) {
             startTeleportation(nearestPlayer);
         } else {
             cooldownTimer = 5;
@@ -538,7 +539,9 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             return true;
         }
         AxisAlignedBB playerBB = player.getEntityBoundingBox();
-        if (!playerBB.intersectsWith(beamBox)) {
+        if (playerBB == null) {
+            return true;
+        } else if (!playerBB.intersectsWith(beamBox)) {
             Logging.message(player, "Teleportation was interrupted!");
             return true;
         }
