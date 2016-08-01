@@ -52,6 +52,13 @@ public class ScreenHitTileEntity extends TileEntity {
         return tagCompound;
     }
 
+    @Override
+    public NBTTagCompound getUpdateTag() {
+        NBTTagCompound updateTag = super.getUpdateTag();
+        writeToNBT(updateTag);
+        return updateTag;
+    }
+
     @Nullable
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
