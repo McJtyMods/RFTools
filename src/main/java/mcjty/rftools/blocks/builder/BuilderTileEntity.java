@@ -6,6 +6,8 @@ import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketRequestIntegerFromServer;
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.lib.varia.Broadcaster;
+import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.SoundTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
@@ -926,7 +928,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                         drops = block.getDrops(worldObj, srcPos, srcState, 0);
                         net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, worldObj, pos, srcState, 0, 1.0f, false, fakePlayer);
                     }
-                    if (checkAndInsertItems(drops)) {
+                    if (checkAndInsertItems(block, drops)) {
                         clearOrDirtBlock(rfNeeded, sx, sy, sz, block, clear);
                     } else {
                         return true;    // Not enough room. Wait
@@ -971,7 +973,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     int fortune = (getCardType() == ShapeCardItem.CARD_QUARRY_FORTUNE || getCardType() == ShapeCardItem.CARD_QUARRY_CLEAR_FORTUNE) ? 3 : 0;
                     List<ItemStack> drops = block.getDrops(worldObj, srcPos, srcState, fortune);
                     net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, worldObj, pos, srcState, fortune, 1.0f, false, fakePlayer);
-                    if (checkAndInsertItems(drops)) {
+                    if (checkAndInsertItems(block, drops)) {
                         clearOrDirtBlock(rfNeeded, sx, sy, sz, block, clear);
                     } else {
                         return true;    // Not enough room. Wait
@@ -1115,8 +1117,26 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return null;
     }
 
-    private boolean checkAndInsertItems(List<ItemStack> items) {
+    // To protect against mods doing bad things we have to check
+    // the items that we try to insert.
+    private boolean checkValidItems(Block block, List<ItemStack> items) {
+        for (ItemStack stack : items) {
+            if (stack.getItem() == null) {
+                Logging.logError("Builder tried to quarry " + block.getRegistryName().toString() + " and it returned null item!");
+                Broadcaster.broadcast(worldObj, pos.getX(), pos.getY(), pos.getZ(), "Builder tried to quarry "
+                        + block.getRegistryName().toString() + " and it returned null item!\nPlease report to mod author!",
+                        10);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean checkAndInsertItems(Block block, List<ItemStack> items) {
         TileEntity te = worldObj.getTileEntity(getPos().up());
+        if (!checkValidItems(block, items)) {
+            return false;
+        }
         boolean ok = InventoryHelper.insertItemsAtomic(items, te, EnumFacing.DOWN);
         if (!ok) {
             te = worldObj.getTileEntity(getPos().down());
