@@ -7,6 +7,7 @@ import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -20,7 +21,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PacketGetChamberInfo implements IMessage {
     @Override
@@ -67,8 +70,51 @@ public class PacketGetChamberInfo implements IMessage {
 
             Counter<BlockMeta> blocks = new Counter<>();
             Counter<BlockMeta> costs = new Counter<>();
+            Map<BlockMeta,ItemStack> stacks = new HashMap<>();
+
             BlockPos minCorner = chamberChannel.getMinCorner();
             BlockPos maxCorner = chamberChannel.getMaxCorner();
+            findBlocks(world, blocks, costs, stacks, minCorner, maxCorner);
+
+            Counter<String> entitiesWithCount = new Counter<>();
+            Counter<String> entitiesWithCost = new Counter<>();
+            Map<String,Entity> firstEntity = new HashMap<>();
+            findEntities(world, minCorner, maxCorner, entitiesWithCount, entitiesWithCost, firstEntity);
+
+            RFToolsMessages.INSTANCE.sendTo(new PacketChamberInfoReady(blocks, costs, stacks,
+                    entitiesWithCount, entitiesWithCost, firstEntity), ctx.getServerHandler().playerEntity);
+        }
+
+        private void findEntities(World world, BlockPos minCorner, BlockPos maxCorner,
+                                  Counter<String> entitiesWithCount, Counter<String> entitiesWithCost, Map<String, Entity> firstEntity) {
+            List entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(
+                    minCorner.getX(), minCorner.getY(), minCorner.getZ(), maxCorner.getX() + 1, maxCorner.getY() + 1, maxCorner.getZ() + 1));
+            for (Object o : entities) {
+                Entity entity = (Entity) o;
+                String canonicalName = entity.getClass().getCanonicalName();
+                if (entity instanceof EntityItem) {
+                    EntityItem entityItem = (EntityItem) entity;
+                    if (entityItem.getEntityItem() != null) {
+                        String displayName = entityItem.getEntityItem().getDisplayName();
+                        canonicalName += " (" + displayName + ")";
+                    }
+                }
+
+                entitiesWithCount.increment(canonicalName);
+
+                if (!firstEntity.containsKey(canonicalName)) {
+                    firstEntity.put(canonicalName, entity);
+                }
+
+                if (entity instanceof EntityPlayer) {
+                    entitiesWithCost.increment(canonicalName, BuilderConfiguration.builderRfPerPlayer);
+                } else {
+                    entitiesWithCost.increment(canonicalName, BuilderConfiguration.builderRfPerEntity);
+                }
+            }
+        }
+
+        private void findBlocks(World world, Counter<BlockMeta> blocks, Counter<BlockMeta> costs, Map<BlockMeta, ItemStack> stacks, BlockPos minCorner, BlockPos maxCorner) {
             for (int x = minCorner.getX() ; x <= maxCorner.getX() ; x++) {
                 for (int y = minCorner.getY() ; y <= maxCorner.getY() ; y++) {
                     for (int z = minCorner.getZ() ; z <= maxCorner.getZ() ; z++) {
@@ -79,6 +125,13 @@ public class PacketGetChamberInfo implements IMessage {
                             int meta = block.getMetaFromState(state);
                             BlockMeta bm = new BlockMeta(block, meta);
                             blocks.increment(bm);
+
+                            if (!stacks.containsKey(bm)) {
+                                ItemStack item = block.getItem(world, p, state);
+                                if (item != null) {
+                                    stacks.put(bm, item);
+                                }
+                            }
 
                             TileEntity te = world.getTileEntity(p);
                             BuilderSetup.BlockInformation info = BuilderTileEntity.getBlockInformation(world, p, block, te);
@@ -91,23 +144,6 @@ public class PacketGetChamberInfo implements IMessage {
                     }
                 }
             }
-
-            Counter<String> entitiesWithCount = new Counter<>();
-            Counter<String> entitiesWithCost = new Counter<>();
-            List entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(
-                    minCorner.getX(), minCorner.getY(), minCorner.getZ(), maxCorner.getX() + 1, maxCorner.getY() + 1, maxCorner.getZ() + 1));
-            for (Object o : entities) {
-                Entity entity = (Entity) o;
-                String canonicalName = entity.getClass().getCanonicalName();
-                entitiesWithCount.increment(canonicalName);
-                if (entity instanceof EntityPlayer) {
-                    entitiesWithCost.increment(canonicalName, BuilderConfiguration.builderRfPerPlayer);
-                } else {
-                    entitiesWithCost.increment(canonicalName, BuilderConfiguration.builderRfPerEntity);
-                }
-            }
-
-            RFToolsMessages.INSTANCE.sendTo(new PacketChamberInfoReady(blocks, costs, entitiesWithCount, entitiesWithCost), ctx.getServerHandler().playerEntity);
         }
 
     }

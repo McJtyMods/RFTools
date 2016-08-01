@@ -15,6 +15,8 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.builder.PacketGetChamberInfo;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
@@ -30,8 +32,11 @@ public class GuiChamberDetails extends GuiItemScreen {
 
     private static Map<BlockMeta,Integer> items = null;
     private static Map<BlockMeta,Integer> costs = null;
+    private static Map<BlockMeta,ItemStack> stacks = null;
     private static Map<String,Integer> entities = null;
     private static Map<String,Integer> entityCosts = null;
+    private static Map<String,Entity> realEntities = null;
+    private static Map<String,String> playerNames = null;
 
     private WidgetList blockList;
     private Label infoLabel;
@@ -42,11 +47,18 @@ public class GuiChamberDetails extends GuiItemScreen {
         requestChamberInfoFromServer();
     }
 
-    public static void setItemsWithCount(Map<BlockMeta,Integer> items, Map<BlockMeta,Integer> costs, Map<String,Integer> entities, Map<String,Integer> entityCosts) {
+    public static void setItemsWithCount(Map<BlockMeta,Integer> items, Map<BlockMeta,Integer> costs,
+                                         Map<BlockMeta,ItemStack> stacks,
+                                         Map<String,Integer> entities, Map<String,Integer> entityCosts,
+                                         Map<String,Entity> realEntities,
+                                         Map<String,String> playerNames) {
         GuiChamberDetails.items = new HashMap<>(items);
         GuiChamberDetails.costs = new HashMap<>(costs);
+        GuiChamberDetails.stacks = new HashMap<>(stacks);
         GuiChamberDetails.entities = new HashMap<>(entities);
         GuiChamberDetails.entityCosts = new HashMap<>(entityCosts);
+        GuiChamberDetails.realEntities = new HashMap<>(realEntities);
+        GuiChamberDetails.playerNames = new HashMap<>(playerNames);
     }
 
     private void requestChamberInfoFromServer() {
@@ -84,7 +96,12 @@ public class GuiChamberDetails extends GuiItemScreen {
             int count = entry.getValue();
             int cost = costs.get(bm);
             Panel panel = new Panel(mc,this).setLayout(new HorizontalLayout()).setDesiredHeight(16);
-            ItemStack stack = new ItemStack(bm.getBlock(), 0, bm.getMeta());
+            ItemStack stack;
+            if (stacks.containsKey(bm)) {
+                stack = stacks.get(bm);
+            } else {
+                stack = new ItemStack(bm.getBlock(), 0, bm.getMeta());
+            }
             BlockRender blockRender = new BlockRender(mc, this).setRenderItem(stack).setOffsetX(-1).setOffsetY(-1);
 
             Label nameLabel = new Label(mc,this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setColor(StyleConfig.colorTextInListNormal);
@@ -114,26 +131,43 @@ public class GuiChamberDetails extends GuiItemScreen {
         RenderHelper.rot += .5f;
         for (Map.Entry<String, Integer> entry : entities.entrySet()) {
             String className = entry.getKey();
-            Class<?> aClass = null;
-            try {
-                aClass = Class.forName(className);
-            } catch (ClassNotFoundException e) {
-            }
             int count = entry.getValue();
             int cost = entityCosts.get(className);
             Panel panel = new Panel(mc,this).setLayout(new HorizontalLayout()).setDesiredHeight(16);
+
+            String entityName = "<?>";
             Entity entity = null;
-            try {
-                entity = (Entity) aClass.getConstructor(World.class).newInstance(mc.theWorld);
-            } catch (InstantiationException e) {
-            } catch (IllegalAccessException e) {
-            } catch (InvocationTargetException e) {
-            } catch (NoSuchMethodException e) {
+            if (realEntities.containsKey(className)) {
+                entity = realEntities.get(className);
+                entityName = EntityList.getEntityString(entity);
+                if (entity instanceof EntityItem) {
+                    EntityItem entityItem = (EntityItem) entity;
+                    if (entityItem.getEntityItem() != null) {
+                        String displayName = entityItem.getEntityItem().getDisplayName();
+                        entityName += " (" + displayName + ")";
+                    }
+                }
+            } else {
+                try {
+                    Class<?> aClass = Class.forName(className);
+                    entity = (Entity) aClass.getConstructor(World.class).newInstance(mc.theWorld);
+                    entityName = aClass.getSimpleName();
+                } catch (ClassNotFoundException e) {
+                } catch (InstantiationException e) {
+                } catch (IllegalAccessException e) {
+                } catch (InvocationTargetException e) {
+                } catch (NoSuchMethodException e) {
+                }
             }
+
+            if (playerNames.containsKey(className)) {
+                entityName = playerNames.get(className);
+            }
+
             BlockRender blockRender = new BlockRender(mc, this).setRenderItem(entity).setOffsetX(-1).setOffsetY(-1);
 
             Label nameLabel = new Label(mc,this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
-            nameLabel.setText(aClass.getSimpleName()).setDesiredWidth(160);
+            nameLabel.setText(entityName).setDesiredWidth(160);
 
             Label countLabel = new Label(mc, this).setText(String.valueOf(count));
             countLabel.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(50);
