@@ -323,6 +323,24 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         return its;
     }
 
+    public ItemStack removeStackFromSlotRemote(int si, int index) {
+        if (index >= slots[si].length) {
+            return null;
+        }
+        ItemStack[] stacks = slots[si];
+        if (stacks[index] == null) {
+            return null;
+        }
+        ItemStack old = stacks[index];
+        stacks[index] = null;
+
+        numStacks[si]--;
+        StorageModuleItem.updateStackSize(getStackInSlot(si), numStacks[si]);
+
+        markDirty();
+        return old;
+    }
+
     public boolean updateRemoteSlot(int si, int limit, int index, ItemStack stack) {
         if (index >= slots[si].length) {
             return false;

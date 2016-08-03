@@ -326,7 +326,22 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     @Override
     public ItemStack removeStackFromSlot(int index) {
         version++;
-        return inventoryHelper.removeStackFromSlot(index);
+        if (isStorageAvailableRemotely(index)) {
+            index -= ModularStorageContainer.SLOT_STORAGE;
+            RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
+            if (storageTileEntity == null) {
+                return null;
+            }
+
+            int si = storageTileEntity.findRemoteIndex(remoteId);
+            if (si == -1) {
+                return null;
+            }
+            return storageTileEntity.removeStackFromSlotRemote(si, index);
+
+        } else {
+            return inventoryHelper.removeStackFromSlot(index);
+        }
     }
 
     private ItemStack decrStackSizeHelper(int index, int amount) {
