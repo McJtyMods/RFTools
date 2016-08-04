@@ -1,10 +1,7 @@
 package mcjty.rftools.blocks.endergen;
 
 import mcjty.lib.network.Argument;
-import mcjty.lib.varia.Logging;
-import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
 import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
@@ -33,7 +30,7 @@ public class EnderMonitorTileEntity extends LogicTileEntity implements ITickable
 
     /**
      * Callback from the endergenic in case something happens.
-     * @param mode is the new mode to set
+     * @param mode is the mode to fire
      */
     public void fireFromEndergenic(EnderMonitorMode mode) {
         if (this.mode != mode) {
@@ -60,14 +57,7 @@ public class EnderMonitorTileEntity extends LogicTileEntity implements ITickable
             needpulse = false;
         }
 
-        if (newout != powered) {
-            powered = newout;
-            Logging.log(worldObj, this, "Ender Monitor output to " + newout);
-//            IBlockState state = worldObj.getBlockState(getPos());
-//            worldObj.setBlockState(getPos(), state.withProperty(LogicSlabBlock.OUTPUTPOWER, redstoneOut), 1);
-            worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
-//            worldObj.notifyBlockUpdate(this.pos, state, state, 3);
-        }
+        setRedstoneState(newout);
     }
 
     @Override
