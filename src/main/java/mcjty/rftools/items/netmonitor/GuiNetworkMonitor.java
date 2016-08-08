@@ -196,8 +196,14 @@ public class GuiNetworkMonitor extends GuiItemScreen {
                 String displayName = BlockInfo.getReadableName(block, coordinate, meta, mc.theWorld);
 
                 if (filter != null) {
-                    if (!displayName.toLowerCase().contains(filter)) {
-                        continue;
+                    try {
+                        if (!Pattern.matches(filter, displayName.toLowerCase())) {
+                            continue;
+                        }
+                    } catch (Exception e) {
+                        if (!displayName.contains(filter)) {
+                            continue;
+                        }
                     }
                 }
 
