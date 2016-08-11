@@ -365,16 +365,12 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         blockRender.addSelectionEvent(new BlockRenderEvent() {
             @Override
             public void select(Widget widget) {
-                long t = System.currentTimeMillis();
-                if (prevTime != -1 && (t - prevTime) < 250) {
-                    BlockRender br = (BlockRender) widget;
-                    Object item = br.getRenderItem();
-                    if (item != null) {
-                        boolean shift = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
-                        requestItem((ItemStack) item, shift ? 1 : -1);
-                    }
+                BlockRender br = (BlockRender) widget;
+                Object item = br.getRenderItem();
+                if (item != null) {
+                    boolean shift = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
+                    requestItem((ItemStack) item, shift ? 1 : -1);
                 }
-                prevTime = t;
             }
 
             @Override
@@ -535,8 +531,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
         if (custom) {
             List<String> newlist = new ArrayList<>();
-            newlist.add(TextFormatting.GREEN + "Double click: "+ TextFormatting.WHITE + "full stack");
-            newlist.add(TextFormatting.GREEN + "Shift + Double click: "+ TextFormatting.WHITE + "single item");
+            newlist.add(TextFormatting.GREEN + "Click: "+ TextFormatting.WHITE + "full stack");
+            newlist.add(TextFormatting.GREEN + "Shift + click: "+ TextFormatting.WHITE + "single item");
             newlist.add("");
             newlist.addAll(list);
             list = newlist;
