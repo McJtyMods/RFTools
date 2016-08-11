@@ -24,6 +24,7 @@ import mcjty.rftools.craftinggrid.GuiCraftingGrid;
 import mcjty.rftools.craftinggrid.PacketRequestGridSync;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -59,6 +60,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     private Button downButton;
     private Button bottomButton;
     private TextField searchField;
+    private ImageChoiceLabel exportToStarred;
 
     private GuiCraftingGrid craftingGrid;
 
@@ -119,6 +121,12 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 .addChild(upButton)
                 .addChild(downButton)
                 .addChild(bottomButton);
+
+        exportToStarred = new ImageChoiceLabel(mc, this)
+                .setLayoutHint(new PositionalLayout.PositionalHint(12, 223, 13, 13))
+                .addChoiceEvent((parent, newChoice) -> changeExportMode());
+        exportToStarred.addChoice("No", "Export to current container", guielements, 131, 19);
+        exportToStarred.addChoice("Yes", "Export to first routable container", guielements, 115, 19);
 
         storageList = new WidgetList(mc, this).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
@@ -194,7 +202,12 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             energyBar.setVisible(false);
         }
 
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(storagePanel).addChild(itemPanel).addChild(searchPanel).addChild(scanPanel);
+        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout())
+                .addChild(storagePanel)
+                .addChild(itemPanel)
+                .addChild(searchPanel)
+                .addChild(scanPanel)
+                .addChild(exportToStarred);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -262,6 +275,10 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_BOTTOM, new Argument("index", storageList.getSelected()-1));
         storageList.setSelected(storageList.getChildCount()-1);
         listDirty = 0;
+    }
+
+    private void changeExportMode() {
+        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_TOGGLEEXPORT);
     }
 
     private void hilightSelectedContainer(int index) {
@@ -544,6 +561,12 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
     @Override
     protected void drawWindow() {
+        if (tileEntity.isDummy()) {
+            exportToStarred.setCurrentChoice(tileEntity.isExportToCurrent() ? 0 : 1);
+        } else {
+            // @todo
+            exportToStarred.setCurrentChoice(tileEntity.isExportToCurrent() ? 0 : 1);
+        }
         super.drawWindow();
         craftingGrid.draw();
     }

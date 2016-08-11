@@ -44,6 +44,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     public static final String CMD_DOWN = "down";
     public static final String CMD_BOTTOM = "bottom";
     public static final String CMD_TOGGLEROUTABLE = "toggleRoutable";
+    public static final String CMD_TOGGLEEXPORT = "toggleExport";
 
     private List<BlockPos> inventories = new ArrayList<>();
     private Map<CachedItemKey, CachedItemCount> cachedCounts = new HashMap<>();
@@ -53,6 +54,8 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     // This is set on a client-side dummy tile entity for a tablet
     private EntityPlayer entityPlayer;
     private Integer monitorDim;
+
+    private boolean exportToCurrent = false;
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, StorageScannerContainer.factory, 2);
     private CraftingGrid craftingGrid = new CraftingGrid();
@@ -353,6 +356,20 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         markDirtyClient();
     }
 
+    public boolean isExportToCurrent() {
+        return exportToCurrent;
+    }
+
+    public void setExportToCurrent(boolean exportToCurrent) {
+        this.exportToCurrent = exportToCurrent;
+        markDirty();
+    }
+
+    private void toggleExportRoutable() {
+        exportToCurrent = !exportToCurrent;
+        markDirtyClient();
+    }
+
     public boolean isRoutable(BlockPos p) {
         return routable.contains(p);
     }
@@ -613,6 +630,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         radius = tagCompound.getInteger("radius");
+        exportToCurrent = tagCompound.getBoolean("exportC");
         craftingGrid.readFromNBT(tagCompound.getCompoundTag("grid"));
     }
 
@@ -638,6 +656,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         tagCompound.setInteger("radius", radius);
+        tagCompound.setBoolean("exportC", exportToCurrent);
         tagCompound.setTag("grid", craftingGrid.writeToNBT());
     }
 
@@ -664,6 +683,9 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             return true;
         } else if (CMD_TOGGLEROUTABLE.equals(command)) {
             toggleRoutable(args.get("pos").getCoordinate());
+            return true;
+        } else if (CMD_TOGGLEEXPORT.equals(command)) {
+            toggleExportRoutable();
             return true;
         }
         return false;
