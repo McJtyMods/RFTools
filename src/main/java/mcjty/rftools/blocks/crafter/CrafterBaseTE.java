@@ -144,6 +144,9 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
+        if (index >= CrafterContainer.SLOT_CRAFTINPUT && index <= CrafterContainer.SLOT_CRAFTOUTPUT) {
+            return false;
+        }
         if (index >= CrafterContainer.SLOT_BUFFER && index < CrafterContainer.SLOT_BUFFEROUT) {
             ItemStack ghostSlot = ghostSlots[index - CrafterContainer.SLOT_BUFFER];
             if (ghostSlot != null) {
