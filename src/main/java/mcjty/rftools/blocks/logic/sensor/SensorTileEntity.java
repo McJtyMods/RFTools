@@ -39,7 +39,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     private GroupType groupType = GroupType.GROUP_ONE;
 
     private int checkCounter = 0;
-
+    private AxisAlignedBB cachedBox = null;
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, SensorContainer.factory, 1);
 
@@ -58,6 +58,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
 
     public void setNumber(int number) {
         this.number = number;
+        cachedBox = null;
         markDirty();
     }
 
@@ -67,6 +68,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
 
     public void setSensorType(SensorType sensorType) {
         this.sensorType = sensorType;
+        cachedBox = null;
         markDirty();
     }
 
@@ -76,6 +78,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
 
     public void setAreaType(AreaType areaType) {
         this.areaType = areaType;
+        cachedBox = null;
         markDirty();
     }
 
@@ -85,6 +88,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
 
     public void setGroupType(GroupType groupType) {
         this.groupType = groupType;
+        cachedBox = null;
         markDirty();
     }
 
@@ -196,31 +200,26 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         return pct >= number;
     }
 
-    private boolean checkEntities(BlockPos newpos, EnumFacing dir, Class<? extends Entity> clazz) {
-        int n = areaType.getBlockCount();
-        BlockPos extendPos = newpos.offset(dir, n).add(1, 1, 1);
-        AxisAlignedBB box = new AxisAlignedBB(newpos.getX(), newpos.getY(), newpos.getZ(),
-                extendPos.getX(), extendPos.getY(), extendPos.getZ());
-        System.out.println("box = " + box);
-        System.out.println("dir = " + dir);
-        System.out.println("n = " + n);
-//        AxisAlignedBB box = new AxisAlignedBB(newpos.getX(), newpos.getY(), newpos.getZ(),
-//                newpos.getX() + 1 + dir.getFrontOffsetZ() * (n-1),
-//                newpos.getY() + 1 + dir.getFrontOffsetZ() * (n-1),
-//                newpos.getZ() + 1 + dir.getFrontOffsetZ() * (n-1));
-        box = box.expand(.1, .1, .1);
-        List<Entity> entities = worldObj.getEntitiesWithinAABB(clazz, box);
+    private AxisAlignedBB getCachedBox(BlockPos pos1, EnumFacing dir) {
+        if (cachedBox == null) {
+            int n = areaType.getBlockCount();
+            cachedBox = new AxisAlignedBB(pos1);
+            if (n > 1) {
+                BlockPos pos2 = pos1.offset(dir, n-1);
+                cachedBox = cachedBox.union(new AxisAlignedBB(pos2));
+            }
+            cachedBox = cachedBox.expand(.1, .1, .1);
+        }
+        return cachedBox;
+    }
+
+    private boolean checkEntities(BlockPos pos1, EnumFacing dir, Class<? extends Entity> clazz) {
+        List<Entity> entities = worldObj.getEntitiesWithinAABB(clazz, getCachedBox(pos1, dir));
         return entities.size() >= number;
     }
 
-    private boolean checkEntitiesHostile(BlockPos newpos, EnumFacing dir) {
-        int n = areaType.getBlockCount();
-        AxisAlignedBB box = new AxisAlignedBB(newpos.getX(), newpos.getY(), newpos.getZ(),
-                newpos.getX() + 1 + dir.getFrontOffsetZ() * (n-1),
-                newpos.getY() + 1 + dir.getFrontOffsetZ() * (n-1),
-                newpos.getZ() + 1 + dir.getFrontOffsetZ() * (n-1));
-        box = box.expand(.1, .1, .1);
-        List<Entity> entities = worldObj.getEntitiesWithinAABB(EntityCreature.class, box);
+    private boolean checkEntitiesHostile(BlockPos pos1, EnumFacing dir) {
+        List<Entity> entities = worldObj.getEntitiesWithinAABB(EntityCreature.class, getCachedBox(pos1, dir));
         int cnt = 0;
         for (Entity entity : entities) {
             if (entity instanceof IMob) {
@@ -233,14 +232,8 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         return false;
     }
 
-    private boolean checkEntitiesPassive(BlockPos newpos, EnumFacing dir) {
-        int n = areaType.getBlockCount();
-        AxisAlignedBB box = new AxisAlignedBB(newpos.getX(), newpos.getY(), newpos.getZ(),
-                newpos.getX() + 1 + dir.getFrontOffsetZ() * (n-1),
-                newpos.getY() + 1 + dir.getFrontOffsetZ() * (n-1),
-                newpos.getZ() + 1 + dir.getFrontOffsetZ() * (n-1));
-        box = box.expand(.1, .1, .1);
-        List<Entity> entities = worldObj.getEntitiesWithinAABB(EntityCreature.class, box);
+    private boolean checkEntitiesPassive(BlockPos pos1, EnumFacing dir) {
+        List<Entity> entities = worldObj.getEntitiesWithinAABB(EntityCreature.class, getCachedBox(pos1, dir));
         int cnt = 0;
         for (Entity entity : entities) {
             if (entity instanceof IAnimals && !(entity instanceof IMob)) {
