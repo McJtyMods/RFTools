@@ -238,7 +238,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
 
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return true;
+        return stack.getItem() == ModularStorageSetup.storageModuleItem;
     }
 
     public int findRemoteIndex(int id) {
