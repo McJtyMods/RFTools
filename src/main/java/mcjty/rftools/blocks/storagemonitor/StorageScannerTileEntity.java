@@ -46,6 +46,8 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     public static final String CMD_TOGGLEROUTABLE = "toggleRoutable";
     public static final String CMD_TOGGLEEXPORT = "toggleExport";
 
+    private static final int[] SLOTS = new int[]{0, 1, 2};
+
     private List<BlockPos> inventories = new ArrayList<>();
     private Map<CachedItemKey, CachedItemCount> cachedCounts = new HashMap<>();
     private Set<BlockPos> routable = new HashSet<>();
@@ -654,6 +656,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     @Override
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
+        readBufferFromNBT(tagCompound, inventoryHelper);
         radius = tagCompound.getInteger("radius");
         exportToCurrent = tagCompound.getBoolean("exportC");
         craftingGrid.readFromNBT(tagCompound.getCompoundTag("grid"));
@@ -680,6 +683,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     @Override
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
+        writeBufferToNBT(tagCompound, inventoryHelper);
         tagCompound.setInteger("radius", radius);
         tagCompound.setBoolean("exportC", exportToCurrent);
         tagCompound.setTag("grid", craftingGrid.writeToNBT());
@@ -770,6 +774,12 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     @Override
+    public boolean isItemValidForSlot(int index, ItemStack stack) {
+        // We only allow insertion in the auto slot for the storage scanner (for automation)
+        return index == StorageScannerContainer.SLOT_IN_AUTO;
+    }
+
+    @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
         // @todo
         return true;
@@ -783,11 +793,11 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     @Override
     public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
-        return StorageScannerContainer.factory.isInputSlot(index);
+        return isItemValidForSlot(index, itemStackIn);
     }
 
     @Override
     public int[] getSlotsForFace(EnumFacing side) {
-        return StorageScannerContainer.factory.getAccessibleSlots();
+        return SLOTS;
     }
 }
