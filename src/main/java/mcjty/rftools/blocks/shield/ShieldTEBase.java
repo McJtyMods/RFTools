@@ -8,6 +8,7 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.RedstoneMode;
+import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.blocks.shield.filters.*;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import net.minecraft.block.Block;
@@ -354,6 +355,14 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         }
 
         markDirtyClient();
+    }
+
+    @Override
+    public boolean isItemValidForSlot(int index, ItemStack stack) {
+        if (index == ShieldContainer.SLOT_SHAPE && stack.getItem() != BuilderSetup.shapeCardItem) {
+            return false;
+        }
+        return true;
     }
 
     private int[] calculateCamoId() {

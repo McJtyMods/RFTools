@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.storage;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
+import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import mcjty.rftools.craftinggrid.*;
 import mcjty.rftools.jei.JEIRecipeAcceptor;
@@ -138,6 +139,14 @@ public class StorageTerminalTileEntity extends LogicTileEntity implements Defaul
     @Override
     public InventoryHelper getInventoryHelper() {
         return inventoryHelper;
+    }
+
+    @Override
+    public boolean isItemValidForSlot(int index, ItemStack stack) {
+        if (index == StorageTerminalContainer.SLOT_MODULE && stack.getItem() != ScreenSetup.storageControlModuleItem) {
+            return false;
+        }
+        return true;
     }
 
     @Override

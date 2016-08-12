@@ -192,6 +192,11 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
     }
 
     @Override
+    public boolean isItemValidForSlot(int index, ItemStack stack) {
+        return false;
+    }
+
+    @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);
     }

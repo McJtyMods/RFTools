@@ -459,6 +459,18 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
                 network.getAdvancedBlockCount() * PowerCellConfiguration.rfPerNormalCell * PowerCellConfiguration.advancedFactor;
     }
 
+
+    @Override
+    public boolean isItemValidForSlot(int index, ItemStack stack) {
+        if (index == PowerCellContainer.SLOT_CARD && stack.getItem() != PowerCellSetup.powerCellCardItem) {
+            return false;
+        }
+        if (index == PowerCellContainer.SLOT_CARDCOPY && stack.getItem() != PowerCellSetup.powerCellCardItem) {
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public boolean canConnectEnergy(EnumFacing from) {
         return true;

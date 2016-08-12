@@ -140,6 +140,14 @@ public class MachineInfuserTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     @Override
+    public boolean isItemValidForSlot(int index, ItemStack stack) {
+        if (index == MachineInfuserContainer.SLOT_SHARDINPUT && stack.getItem() != ModItems.dimensionalShardItem) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);
     }

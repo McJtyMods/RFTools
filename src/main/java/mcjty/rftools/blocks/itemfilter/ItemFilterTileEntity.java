@@ -103,7 +103,7 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
         if (index < ItemFilterContainer.SLOT_BUFFER) {
-            return true;
+            return false;
         }
         ItemStack ghostStack = inventoryHelper.getStackInSlot(index - ItemFilterContainer.SLOT_BUFFER);
         return ghostStack == null || ghostStack.isItemEqual(stack);

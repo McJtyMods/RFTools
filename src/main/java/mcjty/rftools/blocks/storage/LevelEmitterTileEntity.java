@@ -5,6 +5,7 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.network.Argument;
 import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
+import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.player.EntityPlayer;
@@ -139,6 +140,17 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
 
     @Override
     protected boolean needsCustomInvWrapper() {
+        return true;
+    }
+
+    @Override
+    public boolean isItemValidForSlot(int index, ItemStack stack) {
+        if (index == LevelEmitterContainer.SLOT_MODULE && stack.getItem() != ScreenSetup.storageControlModuleItem) {
+            return false;
+        }
+        if (index == LevelEmitterContainer.SLOT_ITEMMATCH) {
+            return false;
+        }
         return true;
     }
 

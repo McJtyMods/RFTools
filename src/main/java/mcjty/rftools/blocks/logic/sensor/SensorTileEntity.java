@@ -253,6 +253,11 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     }
 
     @Override
+    public boolean isItemValidForSlot(int index, ItemStack stack) {
+        return false;
+    }
+
+    @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);
     }
