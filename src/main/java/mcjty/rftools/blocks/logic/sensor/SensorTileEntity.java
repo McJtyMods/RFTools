@@ -198,10 +198,16 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
 
     private boolean checkEntities(BlockPos newpos, EnumFacing dir, Class<? extends Entity> clazz) {
         int n = areaType.getBlockCount();
+        BlockPos extendPos = newpos.offset(dir, n).add(1, 1, 1);
         AxisAlignedBB box = new AxisAlignedBB(newpos.getX(), newpos.getY(), newpos.getZ(),
-                newpos.getX() + 1 + dir.getFrontOffsetX() * (n-1),
-                newpos.getY() + 1 + dir.getFrontOffsetX() * (n-1),
-                newpos.getZ() + 1 + dir.getFrontOffsetX() * (n-1));
+                extendPos.getX(), extendPos.getY(), extendPos.getZ());
+        System.out.println("box = " + box);
+        System.out.println("dir = " + dir);
+        System.out.println("n = " + n);
+//        AxisAlignedBB box = new AxisAlignedBB(newpos.getX(), newpos.getY(), newpos.getZ(),
+//                newpos.getX() + 1 + dir.getFrontOffsetZ() * (n-1),
+//                newpos.getY() + 1 + dir.getFrontOffsetZ() * (n-1),
+//                newpos.getZ() + 1 + dir.getFrontOffsetZ() * (n-1));
         box = box.expand(.1, .1, .1);
         List<Entity> entities = worldObj.getEntitiesWithinAABB(clazz, box);
         return entities.size() >= number;
@@ -210,9 +216,9 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     private boolean checkEntitiesHostile(BlockPos newpos, EnumFacing dir) {
         int n = areaType.getBlockCount();
         AxisAlignedBB box = new AxisAlignedBB(newpos.getX(), newpos.getY(), newpos.getZ(),
-                newpos.getX() + 1 + dir.getFrontOffsetX() * (n-1),
-                newpos.getY() + 1 + dir.getFrontOffsetX() * (n-1),
-                newpos.getZ() + 1 + dir.getFrontOffsetX() * (n-1));
+                newpos.getX() + 1 + dir.getFrontOffsetZ() * (n-1),
+                newpos.getY() + 1 + dir.getFrontOffsetZ() * (n-1),
+                newpos.getZ() + 1 + dir.getFrontOffsetZ() * (n-1));
         box = box.expand(.1, .1, .1);
         List<Entity> entities = worldObj.getEntitiesWithinAABB(EntityCreature.class, box);
         int cnt = 0;
@@ -230,9 +236,9 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     private boolean checkEntitiesPassive(BlockPos newpos, EnumFacing dir) {
         int n = areaType.getBlockCount();
         AxisAlignedBB box = new AxisAlignedBB(newpos.getX(), newpos.getY(), newpos.getZ(),
-                newpos.getX() + 1 + dir.getFrontOffsetX() * (n-1),
-                newpos.getY() + 1 + dir.getFrontOffsetX() * (n-1),
-                newpos.getZ() + 1 + dir.getFrontOffsetX() * (n-1));
+                newpos.getX() + 1 + dir.getFrontOffsetZ() * (n-1),
+                newpos.getY() + 1 + dir.getFrontOffsetZ() * (n-1),
+                newpos.getZ() + 1 + dir.getFrontOffsetZ() * (n-1));
         box = box.expand(.1, .1, .1);
         List<Entity> entities = worldObj.getEntitiesWithinAABB(EntityCreature.class, box);
         int cnt = 0;
