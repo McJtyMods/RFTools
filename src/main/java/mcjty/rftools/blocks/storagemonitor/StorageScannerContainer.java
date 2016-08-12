@@ -14,8 +14,9 @@ public class StorageScannerContainer extends GenericContainer {
     public static final String CONTAINER_INVENTORY = "container";
     public static final String CONTAINER_GRID = "grid";
 
-    public static final int SLOT_IN = 0;
+    public static final int SLOT_IN = 0;            // This slot is input for the user interface
     public static final int SLOT_OUT = 1;
+    public static final int SLOT_IN_AUTO = 2;       // This slot is not shown in the user interface but is for automation
     public static final int SLOT_PLAYERINV = 2;
 
     private StorageScannerTileEntity storageScannerTileEntity;

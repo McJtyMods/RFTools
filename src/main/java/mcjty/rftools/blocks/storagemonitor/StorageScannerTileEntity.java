@@ -56,8 +56,9 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     private Integer monitorDim;
 
     private boolean exportToCurrent = false;
+    private BlockPos lastSelectedInventory = null;
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, StorageScannerContainer.factory, 2);
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, StorageScannerContainer.factory, 3);    // 1 extra slot for automation is at index 2
     private CraftingGrid craftingGrid = new CraftingGrid();
 
     public StorageScannerTileEntity() {
@@ -139,8 +140,19 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                 }
 
                 ItemStack stack = inventoryHelper.getStackInSlot(StorageScannerContainer.SLOT_IN);
-                stack = injectStackInternal(stack);
+                stack = injectStackInternal(stack, exportToCurrent);
                 inventoryHelper.setInventorySlotContents(64, StorageScannerContainer.SLOT_IN, stack);
+
+                consumeEnergy(StorageScannerConfiguration.rfPerInsert);
+            }
+            if (inventoryHelper.containsItem(StorageScannerContainer.SLOT_IN_AUTO)) {
+                if (getEnergyStored(EnumFacing.DOWN) < StorageScannerConfiguration.rfPerInsert) {
+                    return;
+                }
+
+                ItemStack stack = inventoryHelper.getStackInSlot(StorageScannerContainer.SLOT_IN_AUTO);
+                stack = injectStackInternal(stack, false);
+                inventoryHelper.setInventorySlotContents(64, StorageScannerContainer.SLOT_IN_AUTO, stack);
 
                 consumeEnergy(StorageScannerConfiguration.rfPerInsert);
             }
@@ -157,7 +169,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             player.addChatComponentMessage(new TextComponentString(TextFormatting.RED + "There are no routable inventories!"));
             return stack;
         }
-        stack = injectStackInternal(stack);
+        stack = injectStackInternal(stack, false);
         if (stack == null) {
             consumeEnergy(StorageScannerConfiguration.rfPerInsert);
             SoundTools.playSound(worldObj, SoundEvents.ENTITY_ITEM_PICKUP, getPos().getX(), getPos().getY(), getPos().getZ(), 1.0f, 3.0f);
@@ -177,14 +189,25 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         return false;
     }
 
-    private ItemStack injectStackInternal(ItemStack stack) {
+    private ItemStack injectStackInternal(ItemStack stack, boolean toSelected) {
+        if (toSelected && lastSelectedInventory != null && lastSelectedInventory.getY() != -1) {
+            // Try to insert into the selected inventory
+            TileEntity te = worldObj.getTileEntity(lastSelectedInventory);
+            if (te != null) {
+                stack = InventoryHelper.insertItem(worldObj, lastSelectedInventory, null, stack);
+                if (stack == null) {
+                    return stack;
+                }
+            }
+            return stack;
+        }
         for (BlockPos blockPos : inventories) {
             if (!blockPos.equals(getPos()) && routable.contains(blockPos)) {
                 TileEntity te = worldObj.getTileEntity(blockPos);
                 if (te != null) {
                     stack = InventoryHelper.insertItem(worldObj, blockPos, null, stack);
                     if (stack == null) {
-                        break;
+                        return stack;
                     }
                 }
             }
@@ -576,6 +599,8 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     public List<ItemStack> getInventoryForBlock(BlockPos cpos) {
         Set<Item> foundItems = new HashSet<>();
         List<ItemStack> stacks = new ArrayList<>();
+
+        lastSelectedInventory = cpos;
 
         if (cpos.getY() == -1) {
             // Get all starred inventories
