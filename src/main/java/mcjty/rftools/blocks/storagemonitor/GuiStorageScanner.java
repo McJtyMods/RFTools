@@ -24,7 +24,6 @@ import mcjty.rftools.craftinggrid.GuiCraftingGrid;
 import mcjty.rftools.craftinggrid.PacketRequestGridSync;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -112,11 +111,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
         Panel energyPanel = new Panel(mc, this).setLayout(new VerticalLayout().setVerticalMargin(0).setSpacing(1))
                 .setDesiredWidth(10);
-        if (!tileEntity.isDummy()) {
-            energyPanel
-                    .addChild(energyBar);
-        }
         energyPanel
+                .addChild(energyBar)
                 .addChild(topButton)
                 .addChild(upButton)
                 .addChild(downButton)
@@ -199,7 +195,6 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             scanButton.setEnabled(false);
             radiusLabel.setVisible(false);
             radiusSlider.setVisible(false);
-            energyBar.setVisible(false);
         }
 
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout())
@@ -487,9 +482,19 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         }
 
         if (!tileEntity.isDummy()) {
-            int currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
-            energyBar.setValue(currentRF);
             tileEntity.requestRfFromServer(RFTools.MODID);
+            int currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
+
+            energyBar.setValue(currentRF);
+            exportToStarred.setCurrentChoice(tileEntity.isExportToCurrent() ? 0 : 1);
+        } else {
+            if (System.currentTimeMillis() - lastTime > 300) {
+                lastTime = System.currentTimeMillis();
+                RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new ScannerInfoPacketServer(tileEntity.getDimension(),
+                        tileEntity.getPos())));
+            }
+            energyBar.setValue(ScannerInfoPacketClient.rfReceived);
+            exportToStarred.setCurrentChoice(ScannerInfoPacketClient.exportToCurrentReceived ? 0 : 1);
         }
 
         drawWindow();
@@ -559,14 +564,10 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         this.drawHoveringText(list, x, y, (font == null ? fontRendererObj : font));
     }
 
+    private static long lastTime = 0;
+
     @Override
     protected void drawWindow() {
-        if (tileEntity.isDummy()) {
-            exportToStarred.setCurrentChoice(tileEntity.isExportToCurrent() ? 0 : 1);
-        } else {
-            // @todo
-            exportToStarred.setCurrentChoice(tileEntity.isExportToCurrent() ? 0 : 1);
-        }
         super.drawWindow();
         craftingGrid.draw();
     }
