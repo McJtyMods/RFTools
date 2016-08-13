@@ -4,8 +4,8 @@ import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.api.screens.data.IModuleDataContents;
-import mcjty.rftools.varia.RFToolsTools;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
+import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -15,6 +15,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 public class FluidBarScreenModule implements IScreenModule<IModuleDataContents> {
     protected int dim = 0;
@@ -32,19 +34,30 @@ public class FluidBarScreenModule implements IScreenModule<IModuleDataContents> 
             return null;
         }
 
-        TileEntity te = world.getTileEntity(coordinate);
-        if (!(te instanceof IFluidHandler)) {
-            return null;
-        }
-        IFluidHandler tank = (IFluidHandler) te;
-        FluidTankInfo[] tankInfo = tank.getTankInfo(EnumFacing.DOWN);
         int contents = 0;
         int maxContents = 0;
-        if (tankInfo != null && tankInfo.length > 0) {
-            if (tankInfo[0].fluid != null) {
-                contents = tankInfo[0].fluid.amount;
+
+        TileEntity te = world.getTileEntity(coordinate);
+        if (te != null && te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null)) {
+            net.minecraftforge.fluids.capability.IFluidHandler handler = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
+            IFluidTankProperties[] properties = handler.getTankProperties();
+            if (properties != null && properties.length > 0) {
+                if (properties[0].getContents() != null) {
+                    contents = properties[0].getContents().amount;
+                }
+                maxContents = properties[0].getCapacity();
             }
-            maxContents = tankInfo[0].capacity;
+        } else if (te instanceof IFluidHandler) {
+            IFluidHandler tank = (IFluidHandler) te;
+            FluidTankInfo[] tankInfo = tank.getTankInfo(EnumFacing.DOWN);
+            if (tankInfo != null && tankInfo.length > 0) {
+                if (tankInfo[0].fluid != null) {
+                    contents = tankInfo[0].fluid.amount;
+                }
+                maxContents = tankInfo[0].capacity;
+            }
+        } else {
+            return null;
         }
 
         return helper.getContentsValue(millis, contents, maxContents);

@@ -134,8 +134,10 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
         if (tileEntity != null && tileEntity.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null)) {
             net.minecraftforge.fluids.capability.IFluidHandler fluidHandler = tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
             IFluidTankProperties[] properties = fluidHandler.getTankProperties();
-            if (properties != null && properties.length > 0 && properties[0].getContents() != null) {
-                stored = properties[0].getContents().amount;
+            if (properties != null && properties.length > 0) {
+                if (properties[0].getContents() != null) {
+                    stored = properties[0].getContents().amount;
+                }
                 maxContents = properties[0].getCapacity();
             }
         } else if (tileEntity instanceof IFluidHandler) {
