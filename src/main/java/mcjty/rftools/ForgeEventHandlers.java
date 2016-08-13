@@ -186,8 +186,6 @@ public class ForgeEventHandlers {
         }
 
         affectedBlocks.removeAll(toremove);
-
-        Logging.logDebug("RF Needed for one explosion:" + rf);
     }
 
     @SubscribeEvent
@@ -199,12 +197,10 @@ public class ForgeEventHandlers {
         BlockPos coordinate = new BlockPos((int) entity.posX, (int) entity.posY, (int) entity.posZ);
         if (NoTeleportAreaManager.isTeleportPrevented(entity, new GlobalCoordinate(coordinate, id))) {
             event.setCanceled(true);
-            Logging.logDebug("No Teleport manager: Prevented teleport of " + entity.getClass().getName());
         } else {
             coordinate = new BlockPos((int) event.getTargetX(), (int) event.getTargetY(), (int) event.getTargetZ());
             if (NoTeleportAreaManager.isTeleportPrevented(entity, new GlobalCoordinate(coordinate, id))) {
                 event.setCanceled(true);
-                Logging.logDebug("No Teleport manager: Prevented teleport of " + entity.getClass().getName());
             }
         }
     }
@@ -220,7 +216,6 @@ public class ForgeEventHandlers {
             BlockPos coordinate = new BlockPos((int) entity.posX, (int) entity.posY, (int) entity.posZ);
             if (PeacefulAreaManager.isPeaceful(new GlobalCoordinate(coordinate, id))) {
                 event.setResult(Event.Result.DENY);
-                Logging.logDebug("Peaceful manager: Prevented a spawn of " + entity.getClass().getName());
             }
         }
     }
