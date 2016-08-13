@@ -1,5 +1,7 @@
 package mcjty.rftools.varia;
 
+import mcjty.lib.varia.BlockPosTools;
+import mcjty.lib.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
@@ -12,6 +14,12 @@ import net.minecraftforge.fml.common.registry.GameData;
 import org.apache.commons.lang3.StringUtils;
 
 public class RFToolsTools {
+
+    public static void logDebug(String name, BlockPos pos, String info) {
+        if (Logging.debugMode) {
+            Logging.logDebug(BlockPosTools.toString(pos) + ": " + name + " -> " + info);
+        }
+    }
 
     public static boolean safeEquals(Object a, Object b) {
         if (a == null) {
