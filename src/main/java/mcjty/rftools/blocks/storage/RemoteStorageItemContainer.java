@@ -117,7 +117,7 @@ public class RemoteStorageItemContainer extends GenericContainer {
                             }
                             if (si != -1) {
                                 entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound().setInteger("maxSize", storage.getMaxStacks(si));
-                                return storage.isItemValidForSlot(getSlotIndex(), stack);
+                                return true;
                             } else {
                                 entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound().setInteger("maxSize", 0);
                                 return false;
