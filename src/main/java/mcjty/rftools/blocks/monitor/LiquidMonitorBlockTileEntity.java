@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.monitor;
 
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -10,6 +9,8 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,7 +95,9 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
                         int xx = x + dx;
                         if (dx != 0 || dy != 0 || dz != 0) {
                             TileEntity tileEntity = worldObj.getTileEntity(new BlockPos(xx, yy, zz));
-                            if (tileEntity instanceof IFluidHandler) {
+                            if (tileEntity != null && tileEntity.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null)) {
+                                adjacentBlocks.add(new BlockPos(xx, yy, zz));
+                            } else if (tileEntity instanceof IFluidHandler) {
                                 adjacentBlocks.add(new BlockPos(xx, yy, zz));
                             }
                         }
@@ -124,20 +127,29 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
         }
         counter = 20;
 
-        TileEntity tileEntity = worldObj.getTileEntity(monitor);
-        if (!(tileEntity instanceof IFluidHandler)) {
-            setInvalid();
-            return;
-        }
-        IFluidHandler handler = (IFluidHandler) tileEntity;
-        FluidTankInfo[] tankInfo = handler.getTankInfo(EnumFacing.DOWN);
         long stored = 0;
         long maxContents = 0;
-        if (tankInfo != null && tankInfo.length > 0) {
-            if (tankInfo[0].fluid != null) {
-                stored = tankInfo[0].fluid.amount;
+
+        TileEntity tileEntity = worldObj.getTileEntity(monitor);
+        if (tileEntity != null && tileEntity.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null)) {
+            net.minecraftforge.fluids.capability.IFluidHandler fluidHandler = tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
+            IFluidTankProperties[] properties = fluidHandler.getTankProperties();
+            if (properties != null && properties.length > 0 && properties[0].getContents() != null) {
+                stored = properties[0].getContents().amount;
+                maxContents = properties[0].getCapacity();
             }
-            maxContents = tankInfo[0].capacity;
+        } else if (tileEntity instanceof IFluidHandler) {
+            IFluidHandler handler = (IFluidHandler) tileEntity;
+            FluidTankInfo[] tankInfo = handler.getTankInfo(EnumFacing.DOWN);
+            if (tankInfo != null && tankInfo.length > 0) {
+                if (tankInfo[0].fluid != null) {
+                    stored = tankInfo[0].fluid.amount;
+                }
+                maxContents = tankInfo[0].capacity;
+            }
+        } else {
+            setInvalid();
+            return;
         }
 
         int ratio = 0;  // Will be set as metadata;
