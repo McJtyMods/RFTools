@@ -6,7 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 public class RedstoneTransmitterTileEntity extends LogicTileEntity {
 
     private int channel = -1;
-    private boolean prevValue = false;
+    private boolean prevIn = false;
 
     public RedstoneTransmitterTileEntity() {
     }
@@ -29,13 +29,28 @@ public class RedstoneTransmitterTileEntity extends LogicTileEntity {
             return;
         }
 
-        if ((powerLevel > 0) != prevValue) {
-            prevValue = powerLevel > 0;
+        boolean powered = powerLevel > 0;
+        if (powered != prevIn) {
+            prevIn = powered;
+            markDirty();
             RedstoneChannels channels = RedstoneChannels.getChannels(worldObj);
             RedstoneChannels.RedstoneChannel ch = channels.getOrCreateChannel(channel);
-            ch.setValue(powerLevel > 0 ? 15 : 0);
+            ch.setValue(powered ? 15 : 0);
             channels.save(worldObj);
         }
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound tagCompound) {
+        super.readFromNBT(tagCompound);
+        prevIn = tagCompound.getBoolean("prevIn");
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+        super.writeToNBT(tagCompound);
+        tagCompound.setBoolean("prevIn", prevIn);
+        return tagCompound;
     }
 
     @Override
