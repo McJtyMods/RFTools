@@ -187,12 +187,12 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
 
     private void changeRedstoneMode() {
         tileEntity.setRSMode(RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()]);
-//        sendChangeToServer();
+        sendChangeToServer();
     }
 
     private void changeSpeedMode() {
         tileEntity.setSpeedMode(speedMode.getCurrentChoiceIndex());
-//        sendChangeToServer();
+        sendChangeToServer();
     }
 
     private void rememberItems() {
