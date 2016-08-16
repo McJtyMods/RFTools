@@ -53,6 +53,8 @@ public class TeleportConfiguration {
     public static int matterTransmitterLoadChunk = -1;
     public static int matterTransmitterLoadWorld = -1;
 
+    public static boolean whooshMessage = true;
+
     // Prevent inter-dimensional teleportation.
     public static boolean preventInterdimensionalTeleports = false;
     // Blacklist the following dimensions to be able to teleport from.
@@ -123,6 +125,9 @@ public class TeleportConfiguration {
                 "The base time used for a teleportation to another dimension. The 'timeTeleportDist' value is not used").getInt();
         timeTeleportDist = cfg.get(CATEGORY_TELEPORTER, "timeTeleportDist", timeTeleportDist,
                 "The amount of time that is added depending on distance for a local teleport. This value is in militicks which means that 1000 is one tick and one tick is 1/20 of a second").getInt();
+
+        whooshMessage = cfg.get(CATEGORY_TELEPORTER, "whooshMessage", whooshMessage,
+                "Set this to false to disable the 'whoosh' message on teleport").getBoolean();
 
         teleportVolume = (float) cfg.get(CATEGORY_TELEPORTER, "volumeTeleport", teleportVolume,
                 "The volume for the teleporting sound (1.0 is default)").getDouble();

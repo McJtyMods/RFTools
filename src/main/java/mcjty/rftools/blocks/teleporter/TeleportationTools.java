@@ -152,7 +152,9 @@ public class TeleportationTools {
             player.setPositionAndUpdate(c.getX()+0.5, c.getY()+1, c.getZ()+0.5);
         }
 
-        Logging.message(player, "Whoosh!");
+        if (TeleportConfiguration.whooshMessage) {
+            Logging.message(player, "Whoosh!");
+        }
         Achievements.trigger(player, Achievements.firstTeleport);
 
         boolean boostNeeded = false;
