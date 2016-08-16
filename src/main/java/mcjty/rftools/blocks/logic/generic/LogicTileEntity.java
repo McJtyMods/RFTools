@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.logic.generic;
 import mcjty.lib.entity.GenericTileEntity;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 
 public class LogicTileEntity extends GenericTileEntity {
 
@@ -30,7 +31,9 @@ public class LogicTileEntity extends GenericTileEntity {
         }
         powered = newout;
         markDirty();
-        worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
+        EnumFacing outputSide = getFacing(worldObj.getBlockState(this.pos)).getInputSide().getOpposite();
+        worldObj.notifyBlockOfStateChange(this.pos.offset(outputSide), this.getBlockType());
+//        worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
     }
 
     @Override
