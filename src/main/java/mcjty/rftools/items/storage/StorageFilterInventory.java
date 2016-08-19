@@ -90,6 +90,11 @@ public class StorageFilterInventory implements IInventory {
 
     @Override
     public void markDirty() {
+        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
+        convertItemsToNBT(tagCompound, stacks);
+    }
+
+    public static void convertItemsToNBT(NBTTagCompound tagCompound, ItemStack[] stacks) {
         NBTTagList bufferTagList = new NBTTagList();
         for (ItemStack stack : stacks) {
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
@@ -98,7 +103,6 @@ public class StorageFilterInventory implements IInventory {
             }
             bufferTagList.appendTag(nbtTagCompound);
         }
-        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
         tagCompound.setTag("Items", bufferTagList);
     }
 

@@ -363,7 +363,6 @@ appropriate slot next to the item.
 You can then use the remote storage module by combining it with a tablet
 or you can insert the module in a modular chest block.
 {-------------------------------------------------------------}
-{n:storfilter}
 Offline access with the Tablet:
 {ri:storage_module_tablet}
 With this item you can open the contents of a remote or normal storage
@@ -374,19 +373,21 @@ storage module and empty tablet back you just put the tablet in your
 crafting grid.
 
 The tablet can also be combined with a storage screen module
-to remotely access a storage scanner.
+to remotely access a storage scanner. This is a very powerful combination
+as it allows full access to your entire storage network.
 {-------------------------------------------------------------}
+{n:storfilter}
 Filtering items for your storage:
 {ri:filter_module}
 With this item you can control what is allowed in the chest and what not.
-You can whitelist or blacklist and also filter with NBT, damage, ore
-dictionary or even based on mod.
+You can white or blacklist, filter with NBT, damage, ore dictionary or mod.
 
 This filter module is also usable in the crafter to control what goes into
 the crafter buffer.
 
-The storage filter item has its own GUI which you can only access
-by having the filter in your hand (outside of the machine).
+The storage filter item has its own GUI which you can only access by having
+the filter in your hand or you can sneak right click on any inventory will
+configure the filter to the current contents of that inventory.
 {-------------------------------------------------------------}
 {b}Elevator
 {n:elevator}
