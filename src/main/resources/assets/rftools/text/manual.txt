@@ -577,12 +577,11 @@ The Charged Porter is an item that you set to some target receiver (with
 sneak-right click) and charge up. Right clicking the porter will teleport
 you. Note that this requires more power compared to normal teleportation.
 Also note that the receiver still needs power! To craft this use:
-
 {ri:charged_porter}
-
-The advanced version that can store more power, teleports faster and
-allows 4 destinations (sneak right click to add receiver and sneak right
-click in the air to edit the four possible destinations).
+The advanced version stores more power, teleports faster and allows 8
+destinations (sneak right click to add receiver and sneak right click in
+the air to edit the destinations).
+There are also hotkeys (default ( and )) to cycle destinations.
 {-------------------------------------------------------------}
 {b}Simple Dialer
 {n:simdial}

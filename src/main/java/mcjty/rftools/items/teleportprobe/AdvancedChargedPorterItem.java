@@ -10,7 +10,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 public class AdvancedChargedPorterItem extends ChargedPorterItem {
-    public static final int MAXTARGETS = 4;
+    public static final int MAXTARGETS = 8;
 
     public AdvancedChargedPorterItem() {
         super("advanced_charged_porter");
