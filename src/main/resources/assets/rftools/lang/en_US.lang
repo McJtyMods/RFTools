@@ -158,3 +158,8 @@ tile.rftools.notick_solid_shield_block.name=Solid Shield Block
 
 # Creative Tabs
 itemGroup.RfTools=RFTools
+
+# Keys
+key.categories.rftools=RFTools
+key.porterNextDestination=Next Destination for Porter
+key.porterPrevDestination=Previous Destination for Porter

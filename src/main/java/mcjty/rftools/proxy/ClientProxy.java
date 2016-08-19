@@ -9,6 +9,8 @@ import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.elevator.ElevatorSounds;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.items.ModItems;
+import mcjty.rftools.keys.KeyBindings;
+import mcjty.rftools.keys.KeyInputHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -46,6 +48,8 @@ public class ClientProxy extends CommonProxy {
         super.init(e);
         MinecraftForge.EVENT_BUS.register(this);
         ModBlocks.initClientPost();
+        MinecraftForge.EVENT_BUS.register(new KeyInputHandler());
+        KeyBindings.init();
     }
 
     @Override
