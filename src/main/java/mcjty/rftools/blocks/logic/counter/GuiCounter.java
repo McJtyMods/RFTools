@@ -11,6 +11,7 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.gui.widgets.Widget;
 import mcjty.lib.network.Argument;
+import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 
@@ -66,6 +67,8 @@ public class GuiCounter extends GenericGuiContainer<CounterTileEntity> {
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, COUNTER_WIDTH, COUNTER_HEIGHT));
         window = new Window(this, toplevel);
+
+        requestCurrentCounter();
     }
 
     private void setCounter() {
@@ -92,8 +95,23 @@ public class GuiCounter extends GenericGuiContainer<CounterTileEntity> {
         sendServerCommand(RFToolsMessages.INSTANCE, CounterTileEntity.CMD_SETCURRENT, new Argument("current", current));
     }
 
+    private static long lastTime = 0;
+
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
+        if (System.currentTimeMillis() - lastTime > 500) {
+            requestCurrentCounter();
+        }
+
+        currentField.setText(String.valueOf(CounterInfoPacketClient.cntReceived));
+
         drawWindow();
+    }
+
+    private void requestCurrentCounter() {
+        lastTime = System.currentTimeMillis();
+        RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new CounterInfoPacketServer(
+                tileEntity.getWorld().provider.getDimension(),
+                tileEntity.getPos())));
     }
 }
