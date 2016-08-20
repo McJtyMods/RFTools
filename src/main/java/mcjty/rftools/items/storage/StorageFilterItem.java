@@ -1,6 +1,5 @@
 package mcjty.rftools.items.storage;
 
-import com.sun.istack.internal.NotNull;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageTileEntity;
@@ -86,7 +85,7 @@ public class StorageFilterItem extends GenericRFToolsItem {
         return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
     }
 
-    private void addItem(TileEntity te, List<ItemStack> stacks, Set<ResourceLocation> registeredItems, @NotNull ItemStack s) {
+    private void addItem(TileEntity te, List<ItemStack> stacks, Set<ResourceLocation> registeredItems, ItemStack s) {
         if (registeredItems.contains(s.getItem().getRegistryName())) {
             return;
         }
