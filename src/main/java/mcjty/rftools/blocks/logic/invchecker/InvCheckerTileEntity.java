@@ -8,6 +8,7 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
+import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -18,7 +19,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -117,8 +117,8 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
         TileEntity te = worldObj.getTileEntity(inputPos);
         if (InventoryHelper.isInventory(te)) {
             ItemStack stack = null;
-            if (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
-                IItemHandler capability = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+            if (RFToolsTools.hasItemCapabilitySafe(te)) {
+                IItemHandler capability = RFToolsTools.getItemCapabilitySafe(te);
                 if (capability == null) {
                     Block errorBlock = worldObj.getBlockState(inputPos).getBlock();
                     Logging.logError("Block: " + errorBlock.getLocalizedName() + " at " + BlockPosTools.toString(inputPos) + " returns null for getCapability(). Report to mod author");

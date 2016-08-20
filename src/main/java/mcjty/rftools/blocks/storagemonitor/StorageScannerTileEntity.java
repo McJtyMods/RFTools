@@ -13,6 +13,7 @@ import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import mcjty.rftools.craftinggrid.StorageCraftingTools;
 import mcjty.rftools.craftinggrid.TileEntityItemSource;
 import mcjty.rftools.jei.JEIRecipeAcceptor;
+import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
@@ -28,7 +29,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.oredict.OreDictionary;
@@ -240,8 +240,8 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         boolean given = false;
         for (BlockPos c : inventories) {
             TileEntity tileEntity = worldObj.getTileEntity(c);
-            if (tileEntity != null && tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
-                IItemHandler capability = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+            if (RFToolsTools.hasItemCapabilitySafe(tileEntity)) {
+                IItemHandler capability = RFToolsTools.getItemCapabilitySafe(tileEntity);
                 for (int i = 0; i < capability.getSlots(); i++) {
                     ItemStack itemStack = capability.getStackInSlot(i);
                     if (isItemEqual(stack, itemStack, oredictMatches)) {
@@ -621,8 +621,8 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     private void addItemsFromInventory(BlockPos cpos, Set<Item> foundItems, List<ItemStack> stacks) {
         TileEntity tileEntity = worldObj.getTileEntity(cpos);
 
-        if (tileEntity != null && tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
-            IItemHandler capability = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        if (RFToolsTools.hasItemCapabilitySafe(tileEntity)) {
+            IItemHandler capability = RFToolsTools.getItemCapabilitySafe(tileEntity);
             for (int i = 0; i < capability.getSlots(); i++) {
                 addItemStack(stacks, foundItems, capability.getStackInSlot(i));
             }

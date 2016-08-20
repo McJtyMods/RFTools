@@ -15,7 +15,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 public class FluidBarScreenModule implements IScreenModule<IModuleDataContents> {
@@ -38,8 +37,8 @@ public class FluidBarScreenModule implements IScreenModule<IModuleDataContents> 
         int maxContents = 0;
 
         TileEntity te = world.getTileEntity(coordinate);
-        if (te != null && te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null)) {
-            net.minecraftforge.fluids.capability.IFluidHandler handler = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
+        if (RFToolsTools.hasFluidCapabilitySafe(te)) {
+            net.minecraftforge.fluids.capability.IFluidHandler handler = RFToolsTools.getFluidCapabilitySafe(te);
             IFluidTankProperties[] properties = handler.getTankProperties();
             if (properties != null && properties.length > 0) {
                 if (properties[0].getContents() != null) {

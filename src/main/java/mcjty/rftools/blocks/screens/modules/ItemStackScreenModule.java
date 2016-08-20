@@ -7,8 +7,8 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.api.screens.data.IModuleData;
-import mcjty.rftools.varia.RFToolsTools;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
+import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -17,7 +17,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModule.ModuleDataStacks> {
@@ -99,8 +98,8 @@ public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModul
         ItemStack stack2;
         ItemStack stack3;
         ItemStack stack4;
-        if (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
-            IItemHandler itemHandler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        if (RFToolsTools.hasItemCapabilitySafe(te)) {
+            IItemHandler itemHandler = RFToolsTools.getItemCapabilitySafe(te);
             stack1 = getItemStack(itemHandler, slot1);
             stack2 = getItemStack(itemHandler, slot2);
             stack3 = getItemStack(itemHandler, slot3);

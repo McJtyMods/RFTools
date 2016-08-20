@@ -9,6 +9,7 @@ import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.FluidBarScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.FluidBarClientScreenModule;
 import mcjty.rftools.items.GenericRFToolsItem;
+import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -85,7 +86,7 @@ public class FluidModuleItem extends GenericRFToolsItem implements IModuleProvid
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
         }
-        if (te instanceof IFluidHandler) {
+        if (te instanceof IFluidHandler || RFToolsTools.hasFluidCapabilitySafe(te)) {
             tagCompound.setInteger("monitordim", world.provider.getDimension());
             tagCompound.setInteger("monitorx", pos.getX());
             tagCompound.setInteger("monitory", pos.getY());
