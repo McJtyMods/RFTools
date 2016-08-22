@@ -40,6 +40,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private float matter[] = new float[] { 0, 0, 0 };
     private boolean checkSyringe = true;
+    private String prevMobId = null;
     private String mobId = "";
 
     private AxisAlignedBB entityCheckBox = null;
@@ -111,6 +112,9 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         if (level < GeneralConfiguration.maxMobInjections) {
             clearMatter();
             return;
+        }
+        if (prevMobId != null && !prevMobId.equals(mobId)) {
+            clearMatter();
         }
     }
 
@@ -330,7 +334,6 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         matter[0] = tagCompound.getFloat("matter0");
         matter[1] = tagCompound.getFloat("matter1");
         matter[2] = tagCompound.getFloat("matter2");
-        checkSyringe = tagCompound.getBoolean("checkSyringe");
         if (tagCompound.hasKey("mobId")) {
             mobId = tagCompound.getString("mobId");
         } else {
@@ -351,7 +354,6 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         tagCompound.setFloat("matter0", matter[0]);
         tagCompound.setFloat("matter1", matter[1]);
         tagCompound.setFloat("matter2", matter[2]);
-        tagCompound.setBoolean("checkSyringe", checkSyringe);
         if (mobId != null && !mobId.isEmpty()) {
             tagCompound.setString("mobId", mobId);
         }
@@ -375,12 +377,14 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
     @Override
     public ItemStack decrStackSize(int index, int amount) {
         checkSyringe = true;
+        prevMobId = mobId;
         return inventoryHelper.decrStackSize(index, amount);
     }
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
         checkSyringe = true;
+        prevMobId = mobId;
         inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
     }
 
