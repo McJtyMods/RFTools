@@ -90,13 +90,24 @@ public class TileEntityItemSource implements IItemSource {
             private int inventoryIndex = 0;
             private int slotIndex = 0;
 
+            private boolean firstValidItem() {
+                while (true) {
+                    if (inventoryIndex >= inventories.size()) {
+                        return false;
+                    }
+                    Object inventory = inventories.get(inventoryIndex).getLeft();
+                    if (slotIndex < getSizeInventory(inventory)) {
+                        return true;
+                    } else {
+                        slotIndex = 0;
+                        inventoryIndex++;
+                    }
+                }
+            }
+
             @Override
             public boolean hasNext() {
-                if (inventoryIndex >= inventories.size()) {
-                    return false;
-                }
-                Object te = inventories.get(inventoryIndex).getLeft();
-                return slotIndex < getSizeInventory(te);
+                return firstValidItem();
             }
 
             @Override
@@ -106,12 +117,6 @@ public class TileEntityItemSource implements IItemSource {
                 ItemKey key = new ItemKey(te, slotIndex);
                 Pair<IItemKey, ItemStack> result = Pair.of(key, getStackInSlot(te, slotIndex));
                 slotIndex++;
-                if (slotIndex >= getSizeInventory(te)) {
-                    inventoryIndex++;
-                    if (inventoryIndex < inventories.size()) {
-                        slotIndex = inventories.get(inventoryIndex).getRight();
-                    }
-                }
                 return result;
             }
         };

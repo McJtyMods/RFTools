@@ -25,9 +25,24 @@ public class InventoriesItemSource implements IItemSource {
             private int inventoryIndex = 0;
             private int slotIndex = 0;
 
+            private boolean firstValidItem() {
+                while (true) {
+                    if (inventoryIndex >= inventories.size()) {
+                        return false;
+                    }
+                    IInventory inventory = inventories.get(inventoryIndex).getLeft();
+                    if (slotIndex < inventory.getSizeInventory()) {
+                        return true;
+                    } else {
+                        slotIndex = 0;
+                        inventoryIndex++;
+                    }
+                }
+            }
+
             @Override
             public boolean hasNext() {
-                return inventoryIndex < inventories.size() && slotIndex < inventories.get(inventoryIndex).getLeft().getSizeInventory();
+                return firstValidItem();
             }
 
             @Override
@@ -36,12 +51,6 @@ public class InventoriesItemSource implements IItemSource {
                 ItemKey key = new ItemKey(inventory, slotIndex);
                 Pair<IItemKey, ItemStack> result = Pair.of(key, inventory.getStackInSlot(slotIndex));
                 slotIndex++;
-                if (slotIndex >= inventory.getSizeInventory()) {
-                    inventoryIndex++;
-                    if (inventoryIndex < inventories.size()) {
-                        slotIndex = inventories.get(inventoryIndex).getRight();
-                    }
-                }
                 return result;
             }
         };
