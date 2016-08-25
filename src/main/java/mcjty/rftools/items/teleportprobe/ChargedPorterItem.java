@@ -6,11 +6,10 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.*;
 import mcjty.rftools.items.GenericRFToolsItem;
-import mcjty.rftools.playerprops.PlayerExtendedProperties;
-import mcjty.rftools.playerprops.PorterProperties;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -43,6 +42,40 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyCont
         capacity = TeleportConfiguration.CHARGEDPORTER_MAXENERGY;
         maxReceive = TeleportConfiguration.CHARGEDPORTER_RECEIVEPERTICK;
         maxExtract = 0;
+    }
+
+    @Override
+    public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+        if (!worldIn.isRemote) {
+            NBTTagCompound tagCompound = stack.getTagCompound();
+            if (tagCompound == null) {
+                return;
+            }
+            if (!tagCompound.hasKey("tpTimer")) {
+                return;
+            }
+            if (!(entityIn instanceof EntityPlayer)) {
+                return;
+            }
+            EntityPlayer player = (EntityPlayer) entityIn;
+            int timer = tagCompound.getInteger("tpTimer");
+            timer--;
+            if (timer <= 0) {
+                tagCompound.removeTag("tpTimer");
+                TeleportDestinations destinations = TeleportDestinations.getDestinations(worldIn);
+                int target = tagCompound.getInteger("target");
+                GlobalCoordinate coordinate = destinations.getCoordinateForId(target);
+                if (coordinate == null) {
+                    Logging.message(player, TextFormatting.RED + "Something went wrong! The target has disappeared!");
+                    TeleportationTools.applyEffectForSeverity(player, 3, false);
+                    return;
+                }
+                TeleportDestination destination = destinations.getDestination(coordinate);
+                TeleportationTools.performTeleport(player, destination, 0, 10, false);
+            } else {
+                tagCompound.setInteger("tpTimer", timer);
+            }
+        }
     }
 
     @Override
@@ -119,14 +152,19 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyCont
         }
 
         if (!world.isRemote) {
-            PorterProperties porterProperties = PlayerExtendedProperties.getPorterProperties(player);
-            if (porterProperties != null) {
-                if (porterProperties.isTeleporting()) {
-                    Logging.message(player, TextFormatting.RED + "Already teleporting!");
-                    return;
-                }
-
+            if (tagCompound.hasKey("tpTimer")) {
+                Logging.message(player, TextFormatting.RED + "Already teleporting!");
+                return;
             }
+
+//            PorterProperties porterProperties = PlayerExtendedProperties.getPorterProperties(player);
+//            if (porterProperties != null) {
+//                if (porterProperties.isTeleporting()) {
+//                    Logging.message(player, TextFormatting.RED + "Already teleporting!");
+//                    return;
+//                }
+//
+//            }
 
             int target = tagCompound.getInteger("target");
 
@@ -155,9 +193,10 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyCont
 
             int ticks = TeleportationTools.calculateTime(world, playerCoordinate, destination);
             ticks /= getSpeedBonus();
-            if (porterProperties != null) {
-                porterProperties.startTeleport(target, ticks);
-            }
+//            if (porterProperties != null) {
+//                porterProperties.startTeleport(target, ticks);
+//            }
+            tagCompound.setInteger("tpTimer", ticks);
             Logging.message(player, TextFormatting.YELLOW + "Start teleportation!");
         }
     }

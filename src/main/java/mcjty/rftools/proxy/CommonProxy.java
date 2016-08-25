@@ -4,7 +4,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 import mcjty.lib.McJtyLib;
 import mcjty.lib.base.GeneralConfig;
 import mcjty.lib.network.PacketHandler;
-import mcjty.lib.preferences.PreferencesProperties;
 import mcjty.lib.varia.WrenchChecker;
 import mcjty.rftools.ForgeEventHandlers;
 import mcjty.rftools.GeneralConfiguration;
@@ -33,7 +32,6 @@ import mcjty.rftools.items.netmonitor.NetworkMonitorConfiguration;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.playerprops.BuffProperties;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
-import mcjty.rftools.playerprops.PorterProperties;
 import mcjty.rftools.world.ModWorldgen;
 import mcjty.rftools.world.WorldTickHandler;
 import net.minecraft.entity.player.EntityPlayer;
@@ -76,21 +74,6 @@ public abstract class CommonProxy {
 
             @Override
             public void readNBT(Capability<BuffProperties> capability, BuffProperties instance, EnumFacing side, NBTBase nbt) {
-                throw new UnsupportedOperationException();
-            }
-
-        }, () -> {
-            throw new UnsupportedOperationException();
-        });
-
-        CapabilityManager.INSTANCE.register(PorterProperties.class, new Capability.IStorage<PorterProperties>() {
-            @Override
-            public NBTBase writeNBT(Capability<PorterProperties> capability, PorterProperties instance, EnumFacing side) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void readNBT(Capability<PorterProperties> capability, PorterProperties instance, EnumFacing side, NBTBase nbt) {
                 throw new UnsupportedOperationException();
             }
 
