@@ -348,7 +348,9 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     private void stopMoving() {
         movingY = stopY;
         for (BlockPos pos : positions) {
-            worldObj.setBlockState(getPosAtY(pos, (int) stopY), movingState, 3);
+            if (worldObj.getBlockState(pos).getBlock().isReplaceable(worldObj, pos)) {
+                worldObj.setBlockState(getPosAtY(pos, (int) stopY), movingState, 3);
+            }
         }
         // Current level will have to be recalculated
         cachedCurrent = -1;
