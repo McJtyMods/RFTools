@@ -42,11 +42,15 @@ public class PorterProperties {
                 return;
             }
             TeleportDestination destination = destinations.getDestination(coordinate);
-            TeleportationTools.performTeleport(player, destination, 0, 10, false);
+            player.worldObj.getMinecraftServer().addScheduledTask(() -> doActualTeleport(player, destination));
 
             teleportTimeout = -1;
             target = -1;
         }
+    }
+
+    private boolean doActualTeleport(EntityPlayer player, TeleportDestination destination) {
+        return TeleportationTools.performTeleport(player, destination, 0, 10, false);
     }
 
     public void saveNBTData(NBTTagCompound compound) {
