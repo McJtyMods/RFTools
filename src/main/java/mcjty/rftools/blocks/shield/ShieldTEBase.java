@@ -577,6 +577,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         int zCoord = getPos().getZ();
         for (BlockPos c : coordinates) {
             shieldBlocks.add(new RelCoordinate(c.getX() - xCoord, c.getY() - yCoord, c.getZ() - zCoord));
+            worldObj.setBlockToAir(c);
         }
 
         shieldComposed = true;
@@ -666,7 +667,11 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         int zCoord = getPos().getZ();
         for (RelCoordinate c : shieldBlocks) {
             if (Blocks.AIR.equals(block)) {
-                worldObj.setBlockToAir(new BlockPos(xCoord + c.getDx(), yCoord + c.getDy(), zCoord + c.getDz()));
+                BlockPos pos = new BlockPos(xCoord + c.getDx(), yCoord + c.getDy(), zCoord + c.getDz());
+                IBlockState oldState = worldObj.getBlockState(pos);
+                if (oldState.getBlock() instanceof AbstractShieldBlock) {
+                    worldObj.setBlockToAir(pos);
+                }
             } else {
                 updateShieldBlock(camoId, cddata, damageBits, block, c);
             }
@@ -679,6 +684,10 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
         BlockPos pp = new BlockPos(xCoord + c.getDx(), yCoord + c.getDy(), zCoord + c.getDz());
+        IBlockState oldState = worldObj.getBlockState(pp);
+        if (!oldState.getBlock().isReplaceable(worldObj, pp)) {
+            return;
+        }
         worldObj.setBlockState(pp, block.getStateFromMeta(camoId[1]), 2);
         TileEntity te = worldObj.getTileEntity(pp);
         if (te instanceof NoTickShieldBlockTileEntity) {
