@@ -80,7 +80,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     }
 
 
-    protected void setRedstoneState(boolean newout) {
+    private void setRedstoneState() {
         markDirty();
         worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
     }
@@ -92,7 +92,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
             boolean newout = isPlatformHere();
             if (newout != redstoneOut) {
                 redstoneOut = newout;
-                setRedstoneState(redstoneOut);
+                setRedstoneState();
             }
 
             if (isMoving()) {

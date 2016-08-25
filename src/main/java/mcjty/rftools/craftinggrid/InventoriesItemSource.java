@@ -31,6 +31,10 @@ public class InventoriesItemSource implements IItemSource {
                         return false;
                     }
                     IInventory inventory = inventories.get(inventoryIndex).getLeft();
+                    int offset = inventories.get(inventoryIndex).getRight();
+                    if (slotIndex < offset) {
+                        slotIndex = offset;
+                    }
                     if (slotIndex < inventory.getSizeInventory()) {
                         return true;
                     } else {
