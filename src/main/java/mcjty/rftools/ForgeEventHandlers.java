@@ -10,16 +10,20 @@ import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.playerprops.BuffProperties;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
+import mcjty.rftools.playerprops.PropertiesDispatcher;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -43,6 +47,15 @@ public class ForgeEventHandlers {
             BuffProperties buffProperties = PlayerExtendedProperties.getBuffProperties(event.player);
             if (buffProperties != null) {
                 buffProperties.tickBuffs((EntityPlayerMP) event.player);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onEntityConstructing(AttachCapabilitiesEvent.Entity event){
+        if (event.getEntity() instanceof EntityPlayer) {
+            if (!event.getEntity().hasCapability(PlayerExtendedProperties.BUFF_CAPABILITY, null)) {
+                event.addCapability(new ResourceLocation(RFTools.MODID, "Properties"), new PropertiesDispatcher());
             }
         }
     }
