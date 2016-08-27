@@ -3,6 +3,7 @@ package mcjty.rftools.items.teleportprobe;
 import cofh.api.energy.IEnergyContainerItem;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.ForgeEventHandlers;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.*;
 import mcjty.rftools.items.GenericRFToolsItem;
@@ -11,13 +12,16 @@ import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -71,7 +75,8 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyCont
                     return;
                 }
                 TeleportDestination destination = destinations.getDestination(coordinate);
-                TeleportationTools.performTeleport(player, destination, 0, 10, false);
+                ForgeEventHandlers.addPlayerToTeleportHere(destination, player);
+//                    TeleportationTools.performTeleport(player, destination, 0, 10, false);
             } else {
                 tagCompound.setInteger("tpTimer", timer);
             }

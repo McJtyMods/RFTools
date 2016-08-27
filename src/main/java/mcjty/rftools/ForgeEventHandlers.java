@@ -7,6 +7,8 @@ import mcjty.rftools.blocks.blockprotector.BlockProtectors;
 import mcjty.rftools.blocks.environmental.NoTeleportAreaManager;
 import mcjty.rftools.blocks.environmental.PeacefulAreaManager;
 import mcjty.rftools.blocks.screens.ScreenSetup;
+import mcjty.rftools.blocks.teleporter.TeleportDestination;
+import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.playerprops.BuffProperties;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
@@ -33,6 +35,7 @@ import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,6 +43,32 @@ import java.util.Collections;
 import java.util.List;
 
 public class ForgeEventHandlers {
+
+    // Workaround for the charged porter so that the teleport can be done outside
+    // of the entity tick loop
+    private static List<Pair<TeleportDestination,EntityPlayer>> playersToTeleportHere = new ArrayList<>();
+
+    public static void addPlayerToTeleportHere(TeleportDestination destination, EntityPlayer player) {
+        playersToTeleportHere.add(Pair.of(destination, player));
+    }
+
+    private static void performDelayedTeleports() {
+        if (!playersToTeleportHere.isEmpty()) {
+            // Teleport players here
+            for (Pair<TeleportDestination, EntityPlayer> pair : playersToTeleportHere) {
+                TeleportationTools.performTeleport(pair.getRight(), pair.getLeft(), 0, 10, false);
+            }
+            playersToTeleportHere.clear();
+        }
+    }
+
+    @SubscribeEvent
+    public void onWorldTick(TickEvent.WorldTickEvent event) {
+        if (event.phase == TickEvent.Phase.START && event.world.provider.getDimension() == 0) {
+            performDelayedTeleports();
+        }
+    }
+
 
     @SubscribeEvent
     public void onPlayerTickEvent(TickEvent.PlayerTickEvent event) {
