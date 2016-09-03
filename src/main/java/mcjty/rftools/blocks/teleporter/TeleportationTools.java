@@ -316,6 +316,9 @@ public class TeleportationTools {
     }
 
     public static int applyBadEffectIfNeeded(EntityPlayer player, int severity, int bad, int total, boolean boostNeeded) {
+        if (player == null) {
+            return 0;
+        }
         severity += calculateSeverity(bad, total);
         if (severity > 10) {
             severity = 10;
