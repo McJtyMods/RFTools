@@ -99,7 +99,10 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
         });
         row.add(textField);
         if (currentData != null) {
-            textField.setText(Integer.toString(currentData.getInteger(tagname)));
+            if (currentData.hasKey(tagname)) {
+                int dd = currentData.getInteger(tagname);
+                textField.setText(Integer.toString(dd));
+            }
         }
         return this;
     }
