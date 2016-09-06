@@ -69,8 +69,7 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
                 TileEntity te = world.getTileEntity(scannerPos);
                 if (te instanceof StorageScannerTileEntity) {
                     StorageScannerTileEntity scannerTE = (StorageScannerTileEntity) te;
-                    count = scannerTE.countStack(matcher,
-                            starred, oreDict);
+                    count = scannerTE.countItems(matcher, starred, oreDict);
                 }
             }
         }
@@ -159,6 +158,7 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
         return inventoryHelper;
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);

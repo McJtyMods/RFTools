@@ -79,7 +79,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
         }
         int[] amounts = new int[stacks.length];
         for (int i = 0; i < stacks.length; i++) {
-            amounts[i] = scannerTileEntity.countStack(stacks[i], starred, oredict);
+            amounts[i] = scannerTileEntity.countItems(stacks[i], starred, oredict);
         }
         return new ModuleDataStacks(amounts);
     }

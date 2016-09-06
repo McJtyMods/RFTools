@@ -7,6 +7,7 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.SoundTools;
 import mcjty.rftools.api.general.IInventoryTracker;
+import mcjty.rftools.api.storage.IStorageScanner;
 import mcjty.rftools.blocks.crafter.CraftingRecipe;
 import mcjty.rftools.craftinggrid.CraftingGrid;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
@@ -36,7 +37,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import java.util.*;
 
 public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable,
-        CraftingGridProvider, JEIRecipeAcceptor {
+        CraftingGridProvider, JEIRecipeAcceptor, IStorageScanner {
 
     public static final String CMD_SETRADIUS = "setRadius";
     public static final String CMD_UP = "up";
@@ -295,7 +296,8 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         return true;
     }
 
-    public int countStack(ItemStack stack, boolean starred, boolean oredict) {
+    @Override
+    public int countItems(ItemStack stack, boolean starred, boolean oredict) {
         if (stack == null) {
             return 0;
         }
@@ -520,6 +522,94 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             }
         }
         return inventories;
+    }
+
+    @Override
+    public ItemStack requestItem(ItemStack match, int amount, boolean doRoutable, boolean oredict) {
+        if (match == null) {
+            return null;
+        }
+        if (getEnergyStored(EnumFacing.DOWN) < StorageScannerConfiguration.rfPerRequest) {
+            return null;
+        }
+
+        Set<Integer> oredictMatches = getOredictMatchers(match, oredict);
+        List<BlockPos> inventories = getInventories();
+        ItemStack result = null;
+        final int[] cnt = {match.getMaxStackSize() < amount ? match.getMaxStackSize() : amount};
+        for (BlockPos c : inventories) {
+            if (cnt[0] <= 0) {
+                break;
+            }
+            if (doRoutable && !routable.contains(c)) {
+                continue;
+            }
+            TileEntity tileEntity = worldObj.getTileEntity(c);
+            if (tileEntity instanceof StorageScannerTileEntity) {
+                continue;
+            }
+            if (RFToolsTools.hasItemCapabilitySafe(tileEntity)) {
+                IItemHandler capability = RFToolsTools.getItemCapabilitySafe(tileEntity);
+                for (int i = 0; i < capability.getSlots(); i++) {
+                    ItemStack itemStack = capability.getStackInSlot(i);
+                    if (isItemEqual(match, itemStack, oredictMatches)) {
+                        ItemStack received = capability.extractItem(i, cnt[0], false);
+                        if (received != null) {
+                            if (result == null) {
+                                result = received;
+                            } else {
+                                result.stackSize += received.stackSize;
+                            }
+                            cnt[0] -= received.stackSize;
+                        }
+                    }
+                }
+            } else if (tileEntity instanceof IInventory) {
+                IInventory inventory = (IInventory) tileEntity;
+                for (int i = 0; i < inventory.getSizeInventory(); i++) {
+                    ItemStack itemStack = inventory.getStackInSlot(i);
+                    if (isItemEqual(match, itemStack, oredictMatches)) {
+                        ItemStack received = inventory.decrStackSize(i, cnt[0]);
+                        if (received != null) {
+                            if (result == null) {
+                                result = received;
+                            } else {
+                                result.stackSize += received.stackSize;
+                            }
+                            cnt[0] -= received.stackSize;
+                        }
+                    }
+                }
+            }
+        }
+        if (result != null) {
+            consumeEnergy(StorageScannerConfiguration.rfPerRequest);
+        }
+        return result;
+    }
+
+    @Override
+    public int insertItem(ItemStack stack) {
+        if (getEnergyStored(EnumFacing.DOWN) < StorageScannerConfiguration.rfPerInsert) {
+            return stack.stackSize;
+        }
+
+        ItemStack toInsert = stack.copy();
+
+        for (BlockPos blockPos : inventories) {
+            if (!blockPos.equals(getPos()) && routable.contains(blockPos)) {
+                TileEntity te = worldObj.getTileEntity(blockPos);
+                if (te != null && !(te instanceof StorageScannerTileEntity)) {
+                    toInsert = InventoryHelper.insertItem(worldObj, blockPos, null, toInsert);
+                    if (toInsert == null) {
+                        return 0;
+                    }
+                }
+            }
+        }
+
+        consumeEnergy(StorageScannerConfiguration.rfPerInsert);
+        return toInsert.stackSize;
     }
 
     private ItemStack requestStackFromInv(BlockPos invPos, ItemStack requested, Integer[] todo, ItemStack outSlot) {
@@ -795,6 +885,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         return index == StorageScannerContainer.SLOT_IN_AUTO;
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
         // @todo
