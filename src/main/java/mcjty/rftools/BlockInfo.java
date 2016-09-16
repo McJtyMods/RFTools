@@ -1,6 +1,6 @@
 package mcjty.rftools;
 
-import mcjty.rftools.varia.EnergyTools;
+import mcjty.lib.varia.EnergyTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;

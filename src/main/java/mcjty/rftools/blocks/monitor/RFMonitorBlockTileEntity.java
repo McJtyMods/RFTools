@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.monitor;
 
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.rftools.varia.EnergyTools;
+import mcjty.lib.varia.EnergyTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;

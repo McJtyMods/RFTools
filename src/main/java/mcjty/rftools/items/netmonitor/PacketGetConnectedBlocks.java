@@ -2,9 +2,9 @@ package mcjty.rftools.items.netmonitor;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.lib.varia.EnergyTools;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.rftools.varia.EnergyTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;

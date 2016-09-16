@@ -7,8 +7,8 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyProviderTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.RedstoneMode;
-import mcjty.rftools.varia.EnergyTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
@@ -143,16 +143,24 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
             BlockPos pos = getPos().offset(facing);
             TileEntity te = worldObj.getTileEntity(pos);
             if (EnergyTools.isEnergyTE(te)) {
-                IEnergyConnection connection = (IEnergyConnection) te;
                 EnumFacing opposite = facing.getOpposite();
-                if (connection.canConnectEnergy(opposite)) {
-                    int rfToGive = CoalGeneratorConfiguration.SENDPERTICK <= energyStored ? CoalGeneratorConfiguration.SENDPERTICK : energyStored;
+                int rfToGive = CoalGeneratorConfiguration.SENDPERTICK <= energyStored ? CoalGeneratorConfiguration.SENDPERTICK : energyStored;
+                int received;
 
-                    int received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
-                    energyStored -= storage.extractEnergy(received, false);
-                    if (energyStored <= 0) {
-                        break;
+                if (te instanceof IEnergyConnection) {
+                    IEnergyConnection connection = (IEnergyConnection) te;
+                    if (connection.canConnectEnergy(opposite)) {
+                        received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
+                    } else {
+                        received = 0;
                     }
+                } else {
+                    // Forge unit
+                    received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
+                }
+                energyStored -= storage.extractEnergy(received, false);
+                if (energyStored <= 0) {
+                    break;
                 }
             }
         }
@@ -188,6 +196,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
         return false;
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);

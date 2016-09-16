@@ -1,5 +1,6 @@
 package mcjty.rftools.items.screenmodules;
 
+import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.api.screens.IClientScreenModule;
@@ -9,7 +10,6 @@ import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.EnergyBarScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.EnergyBarClientScreenModule;
 import mcjty.rftools.items.GenericRFToolsItem;
-import mcjty.rftools.varia.EnergyTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;

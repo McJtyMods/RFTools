@@ -10,11 +10,11 @@ import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.items.powercell.PowerCellCardItem;
-import mcjty.rftools.varia.EnergyTools;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -210,24 +210,33 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
                 if (EnergyTools.isEnergyTE(te)) {
                     // If the adjacent block is also a powercell then we only send energy if this cell is local or the other cell has a different id
                     if ((!(te instanceof PowerCellTileEntity)) || getNetworkId() == -1 || ((PowerCellTileEntity) te).getNetworkId() != getNetworkId()) {
-                        IEnergyConnection connection = (IEnergyConnection) te;
                         EnumFacing opposite = face.getOpposite();
-                        if (connection.canConnectEnergy(opposite)) {
-                            float factor = getCostFactor();
-                            int rfPerTick = getRfPerTickPerSide();
+                        float factor = getCostFactor();
+                        int rfPerTick = getRfPerTickPerSide();
+                        int received;
 
-                            int rfToGive;
-                            if (rfPerTick <= ((int) (energyStored / factor))) {
-                                rfToGive = rfPerTick;
+                        int rfToGive;
+                        if (rfPerTick <= ((int) (energyStored / factor))) {
+                            rfToGive = rfPerTick;
+                        } else {
+                            rfToGive = (int) (energyStored / factor);
+                        }
+
+                        if (te instanceof IEnergyConnection) {
+                            IEnergyConnection connection = (IEnergyConnection) te;
+                            if (connection.canConnectEnergy(opposite)) {
+                                received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
                             } else {
-                                rfToGive = (int) (energyStored / factor);
+                                received = 0;
                             }
+                        } else {
+                            // Forge unit
+                            received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
+                        }
 
-                            int received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
-                            energyStored -= extractEnergyInternal((int) (received * factor), false, PowerCellConfiguration.rfPerTick * getAdvancedFactor());
-                            if (energyStored <= 0) {
-                                break;
-                            }
+                        energyStored -= extractEnergyInternal((int) (received * factor), false, PowerCellConfiguration.rfPerTick * getAdvancedFactor());
+                        if (energyStored <= 0) {
+                            break;
                         }
                     }
                 }
@@ -481,6 +490,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         return inventoryHelper;
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);

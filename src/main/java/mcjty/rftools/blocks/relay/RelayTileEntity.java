@@ -4,7 +4,7 @@ import cofh.api.energy.IEnergyConnection;
 import mcjty.lib.entity.GenericEnergyHandlerTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.BlockTools;
-import mcjty.rftools.varia.EnergyTools;
+import mcjty.lib.varia.EnergyTools;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -60,21 +60,30 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
             if (rf[side] > 0 && !inputMode[side]) {
                 TileEntity te = worldObj.getTileEntity(getPos().offset(facing));
                 if (EnergyTools.isEnergyTE(te)) {
-                    IEnergyConnection connection = (IEnergyConnection) te;
                     EnumFacing opposite = facing.getOpposite();
-                    if (connection.canConnectEnergy(opposite)) {
-                        int rfToGive;
-                        if (rf[side] <= energyStored) {
-                            rfToGive = rf[side];
-                        } else {
-                            rfToGive = energyStored;
-                        }
+                    int rfToGive;
+                    if (rf[side] <= energyStored) {
+                        rfToGive = rf[side];
+                    } else {
+                        rfToGive = energyStored;
+                    }
+                    int received;
 
-                        int received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
-                        energyStored -= storage.extractEnergy(received, false);
-                        if (energyStored <= 0) {
-                            return;
+                    if (te instanceof IEnergyConnection) {
+                        IEnergyConnection connection = (IEnergyConnection) te;
+                        if (connection.canConnectEnergy(opposite)) {
+                            received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
+                        } else {
+                            received = 0;
                         }
+                    } else {
+                        // Forge unit
+                        received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
+                    }
+
+                    energyStored -= storage.extractEnergy(received, false);
+                    if (energyStored <= 0) {
+                        return;
                     }
                 }
             }
