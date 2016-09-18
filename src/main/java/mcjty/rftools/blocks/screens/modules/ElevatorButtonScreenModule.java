@@ -61,9 +61,8 @@ public class ElevatorButtonScreenModule implements IScreenModule<IModuleDataCont
                 if (dim == this.dim) {
                     BlockPos c = new BlockPos(tagCompound.getInteger("elevatorx"), tagCompound.getInteger("elevatory"), tagCompound.getInteger("elevatorz"));
                     int dx = Math.abs(c.getX() - pos.getX());
-                    int dy = Math.abs(c.getY() - pos.getY());
                     int dz = Math.abs(c.getZ() - pos.getZ());
-                    if (dx <= 64 && dy <= 64 && dz <= 64) {
+                    if (dx <= 64 && dz <= 64) {
                         coordinate = c;
                     }
                 }
