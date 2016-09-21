@@ -46,6 +46,11 @@ public class PacketCycleStorage implements IMessage {
             if (remoteStorage != null) {
                 id = remoteStorage.cycle(id);
                 tagCompound.setInteger("id", id);
+                int si = remoteStorage.findRemoteIndex(id);
+                if (si != -1) {
+                    int maxStacks = remoteStorage.getMaxStacks(si);
+                    tagCompound.setInteger("maxSize", maxStacks);
+                }
                 remoteStorage.markDirty();
             } else {
                 Logging.message(playerEntity, TextFormatting.YELLOW + "Remote storage it not available (out of power or out of reach)!");
