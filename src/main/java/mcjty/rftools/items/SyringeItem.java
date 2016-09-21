@@ -103,17 +103,19 @@ public class SyringeItem extends GenericRFToolsItem {
                 stack.setTagCompound(tagCompound);
             }
             String id = findSelectedMobId(clazz, entity);
-            if (prevMobId == null || !prevMobId.equals(id)) {
-                tagCompound.setString("mobName", findSelectedMobName(entity));
-                tagCompound.setString("mobId", id);
-                tagCompound.setInteger("level", 1);
-            } else {
-                int level = tagCompound.getInteger("level");
-                level++;
-                if (level > GeneralConfiguration.maxMobInjections) {
-                    level = GeneralConfiguration.maxMobInjections;
+            if (id != null && !id.isEmpty()) {
+                if (prevMobId == null || !prevMobId.equals(id)) {
+                    tagCompound.setString("mobName", findSelectedMobName(entity));
+                    tagCompound.setString("mobId", id);
+                    tagCompound.setInteger("level", 1);
+                } else {
+                    int level = tagCompound.getInteger("level");
+                    level++;
+                    if (level > GeneralConfiguration.maxMobInjections) {
+                        level = GeneralConfiguration.maxMobInjections;
+                    }
+                    tagCompound.setInteger("level", level);
                 }
-                tagCompound.setInteger("level", level);
             }
         }
         return super.onLeftClickEntity(stack, player, entity);
