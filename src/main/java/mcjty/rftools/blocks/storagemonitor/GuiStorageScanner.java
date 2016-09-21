@@ -350,7 +350,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 //        Collections.sort(fromServer_inventory, (o1, o2) -> o1.stackSize == o2.stackSize ? 0 : o1.stackSize < o2.stackSize ? -1 : 1);
         Collections.sort(fromServer_inventory, (o1, o2) -> o1.getDisplayName().compareTo(o2.getDisplayName()));
 
-        String filterText = searchField.getText();
+        String filterText = searchField.getText().toLowerCase();
 
         for (ItemStack item : fromServer_inventory) {
             String displayName = item.getDisplayName();
