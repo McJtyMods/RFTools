@@ -38,7 +38,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
 
     @Override
     public void renderTileEntityAt(ScreenTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
-        GlStateManager.pushAttrib();
+//        GlStateManager.pushAttrib();
         GlStateManager.pushMatrix();
         float f3;
 
@@ -84,7 +84,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         GlStateManager.depthMask(true);
 
         GlStateManager.popMatrix();
-        GlStateManager.popAttrib();
+//        GlStateManager.popAttrib();
     }
 
     private Map<Integer, IModuleData> updateScreenData(ScreenTileEntity screenTileEntity) {

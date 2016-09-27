@@ -22,8 +22,6 @@ public class EnvironmentalTESR extends TileEntitySpecialRenderer<EnvironmentalCo
 
     @Override
     public void renderTileEntityAt(EnvironmentalControllerTileEntity te, double x, double y, double z, float time, int breakTime) {
-        GlStateManager.pushAttrib();
-
         if (te.isActive()) {
             GlStateManager.depthMask(false);
             GlStateManager.enableBlend();
@@ -36,7 +34,5 @@ public class EnvironmentalTESR extends TileEntitySpecialRenderer<EnvironmentalCo
             RenderHelper.renderBillboardQuadBright(0.3f + random.nextFloat() * .05f);
             GlStateManager.popMatrix();
         }
-
-        GlStateManager.popAttrib();
     }
 }

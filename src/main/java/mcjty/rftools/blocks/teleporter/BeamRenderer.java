@@ -25,7 +25,7 @@ public class BeamRenderer extends TileEntitySpecialRenderer<MatterTransmitterTil
     public void renderTileEntityAt(MatterTransmitterTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
         if (tileEntity.isDialed() && !tileEntity.isBeamHidden()) {
             Tessellator tessellator = Tessellator.getInstance();
-            GlStateManager.pushAttrib();
+//            GlStateManager.pushAttrib();
             GlStateManager.pushMatrix();
             GlStateManager.translate(x, y + 1.0, z);
 
@@ -82,7 +82,7 @@ public class BeamRenderer extends TileEntitySpecialRenderer<MatterTransmitterTil
             GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
 
             GlStateManager.popMatrix();
-            GlStateManager.popAttrib();
+//            GlStateManager.popAttrib();
         }
 
     }

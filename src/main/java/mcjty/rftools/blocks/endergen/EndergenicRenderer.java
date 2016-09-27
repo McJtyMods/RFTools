@@ -31,7 +31,7 @@ public class EndergenicRenderer extends TileEntitySpecialRenderer<EndergenicTile
             RenderGlowEffect.renderGlow(tessellator, x, y, z);
         }
 
-        GlStateManager.pushAttrib();
+//        GlStateManager.pushAttrib();
 
 //        if (te.isActive()) {
         GlStateManager.depthMask(false);
@@ -63,7 +63,7 @@ public class EndergenicRenderer extends TileEntitySpecialRenderer<EndergenicTile
         GlStateManager.popMatrix();
 //        }
 
-        GlStateManager.popAttrib();
+//        GlStateManager.popAttrib();
 
     }
 }
