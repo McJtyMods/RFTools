@@ -44,6 +44,13 @@ public class PacketForceTeleport implements IMessage {
         private void handle(PacketForceTeleport message, MessageContext ctx) {
             EntityPlayer player = ctx.getServerHandler().playerEntity;
 
+
+            boolean probeInMainHand = player.getHeldItemMainhand() != null && player.getHeldItemMainhand().getItem() instanceof TeleportProbeItem;
+            boolean probeInOffHand = player.getHeldItemOffhand() != null && player.getHeldItemOffhand().getItem() instanceof TeleportProbeItem;
+            if ((!probeInMainHand) && (!probeInOffHand)) {
+                return;
+            }
+
             int x = message.pos.getX();
             int y = message.pos.getY();
             int z = message.pos.getZ();
