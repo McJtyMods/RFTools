@@ -38,8 +38,8 @@ public class PowerCellSetup {
     }
 
     public static void initCrafting() {
-        GameRegistry.addRecipe(new ItemStack(simplePowerCellBlock), "rdr", "bMb", "rer", 'M', ModBlocks.machineFrame, 'r', Blocks.REDSTONE_BLOCK,
-                'b', Items.QUARTZ, 'e', Items.DIAMOND, 'd', Items.DIAMOND);
+        GameRegistry.addRecipe(new ItemStack(simplePowerCellBlock), "rdr", "bMb", "rdr", 'M', ModBlocks.machineFrame, 'r', Blocks.REDSTONE_BLOCK,
+                'b', Items.QUARTZ, 'd', Items.DIAMOND);
         GameRegistry.addRecipe(new ItemStack(powerCellBlock), "rdr", "bMb", "rer", 'M', ModBlocks.machineFrame, 'r', Blocks.REDSTONE_BLOCK,
                 'b', Items.PRISMARINE_SHARD, 'e', Items.EMERALD, 'd', Items.DIAMOND);
         GameRegistry.addRecipe(new ItemStack(powerCellCardItem), "rgr", "gPg", "rgr", 'P', Items.PAPER, 'r', Items.REDSTONE, 'g', Items.GOLD_NUGGET);
