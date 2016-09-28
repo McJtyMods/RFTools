@@ -16,6 +16,7 @@ public class PowerCellSetup {
     public static PowerCellBlock powerCellBlock;
     public static PowerCellBlock advancedPowerCellBlock;
     public static PowerCellBlock creativePowerCellBlock;
+    public static PowerCellBlock simplePowerCellBlock;
 
     public static PowerCellCardItem powerCellCardItem;
 
@@ -23,6 +24,7 @@ public class PowerCellSetup {
         powerCellBlock = new PowerCellBlock("powercell");
         advancedPowerCellBlock = new PowerCellBlock("powercell_advanced");
         creativePowerCellBlock = new PowerCellBlock("powercell_creative");
+        simplePowerCellBlock = new PowerCellBlock("powercell_simple");
         powerCellCardItem = new PowerCellCardItem();
     }
 
@@ -32,9 +34,12 @@ public class PowerCellSetup {
         powerCellCardItem.initModel();
         advancedPowerCellBlock.initModel();
         creativePowerCellBlock.initModel();
+        simplePowerCellBlock.initModel();
     }
 
     public static void initCrafting() {
+        GameRegistry.addRecipe(new ItemStack(simplePowerCellBlock), "rdr", "bMb", "rer", 'M', ModBlocks.machineFrame, 'r', Blocks.REDSTONE_BLOCK,
+                'b', Items.QUARTZ, 'e', Items.DIAMOND, 'd', Items.DIAMOND);
         GameRegistry.addRecipe(new ItemStack(powerCellBlock), "rdr", "bMb", "rer", 'M', ModBlocks.machineFrame, 'r', Blocks.REDSTONE_BLOCK,
                 'b', Items.PRISMARINE_SHARD, 'e', Items.EMERALD, 'd', Items.DIAMOND);
         GameRegistry.addRecipe(new ItemStack(powerCellCardItem), "rgr", "gPg", "rgr", 'P', Items.PAPER, 'r', Items.REDSTONE, 'g', Items.GOLD_NUGGET);
@@ -46,6 +51,11 @@ public class PowerCellSetup {
                 new ItemStack(ind), new ItemStack(powerCellBlock), new ItemStack(ind),
                 new ItemStack(Blocks.REDSTONE_BLOCK), new ItemStack(ind), new ItemStack(Blocks.REDSTONE_BLOCK)
         }, new ItemStack(advancedPowerCellBlock), 4));
+        GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
+                new ItemStack(Items.REDSTONE), new ItemStack(Items.DIAMOND), new ItemStack(Items.REDSTONE),
+                new ItemStack(Items.PRISMARINE_SHARD), new ItemStack(simplePowerCellBlock), new ItemStack(Items.PRISMARINE_SHARD),
+                new ItemStack(Items.REDSTONE), new ItemStack(Items.EMERALD), new ItemStack(Items.REDSTONE)
+        }, new ItemStack(powerCellBlock), 4));
 
     }
 }

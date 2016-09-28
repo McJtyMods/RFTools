@@ -8,6 +8,7 @@ public class PowerCellInfoPacketClient implements InfoPacketClient {
 
     private int energy;
     private int blocks;
+    private int simpleBlocks;
     private int advancedBlocks;
     private int totalInserted;
     private int totalExtracted;
@@ -16,6 +17,7 @@ public class PowerCellInfoPacketClient implements InfoPacketClient {
 
     public static int tooltipEnergy = 0;
     public static int tooltipBlocks = 0;
+    public static int tooltipSimpleBlocks = 0;
     public static int tooltipAdvancedBlocks = 0;
     public static int tooltipInserted = 0;
     public static int tooltipExtracted = 0;
@@ -25,9 +27,10 @@ public class PowerCellInfoPacketClient implements InfoPacketClient {
     public PowerCellInfoPacketClient() {
     }
 
-    public PowerCellInfoPacketClient(int energy, int blocks, int advancedBlocks, int totalInserted, int totalExtracted, int rfPerTick, float costFactor) {
+    public PowerCellInfoPacketClient(int energy, int blocks, int simpleBlocks, int advancedBlocks, int totalInserted, int totalExtracted, int rfPerTick, float costFactor) {
         this.energy = energy;
         this.blocks = blocks;
+        this.simpleBlocks = simpleBlocks;
         this.advancedBlocks = advancedBlocks;
         this.totalInserted = totalInserted;
         this.totalExtracted = totalExtracted;
@@ -39,6 +42,7 @@ public class PowerCellInfoPacketClient implements InfoPacketClient {
     public void fromBytes(ByteBuf buf) {
         energy = buf.readInt();
         blocks = buf.readInt();
+        simpleBlocks = buf.readInt();
         advancedBlocks = buf.readInt();
         totalInserted = buf.readInt();
         totalExtracted = buf.readInt();
@@ -50,6 +54,7 @@ public class PowerCellInfoPacketClient implements InfoPacketClient {
     public void toBytes(ByteBuf buf) {
         buf.writeInt(energy);
         buf.writeInt(blocks);
+        buf.writeInt(simpleBlocks);
         buf.writeInt(advancedBlocks);
         buf.writeInt(totalInserted);
         buf.writeInt(totalExtracted);
@@ -61,6 +66,7 @@ public class PowerCellInfoPacketClient implements InfoPacketClient {
     public void onMessageClient(EntityPlayerSP player) {
         tooltipEnergy = energy;
         tooltipBlocks = blocks;
+        tooltipSimpleBlocks = simpleBlocks;
         tooltipAdvancedBlocks = advancedBlocks;
         tooltipInserted= totalInserted;
         tooltipExtracted = totalExtracted;

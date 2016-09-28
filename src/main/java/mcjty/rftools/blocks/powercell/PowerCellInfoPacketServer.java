@@ -44,10 +44,12 @@ public class PowerCellInfoPacketServer implements InfoPacketServer {
         if (id == -1) {
             if (te instanceof PowerCellTileEntity) {
                 PowerCellTileEntity powerCellTileEntity = (PowerCellTileEntity) te;
-                return Optional.of(new PowerCellInfoPacketClient(powerCellTileEntity.getEnergy(), 1,
-                                                                 PowerCellBlock.isAdvanced(world.getBlockState(pos).getBlock()) ? 1 : 0,
+                return Optional.of(new PowerCellInfoPacketClient(
+                        powerCellTileEntity.getEnergy(), 1,
+                        PowerCellBlock.isSimple(world.getBlockState(pos).getBlock()) ? 1 : 0,
+                        PowerCellBlock.isAdvanced(world.getBlockState(pos).getBlock()) ? 1 : 0,
                         powerCellTileEntity.getTotalInserted(), powerCellTileEntity.getTotalExtracted(),
-                                                                 powerCellTileEntity.getRfPerTickPerSide(), 1.0f));
+                        powerCellTileEntity.getRfPerTickPerSide(), 1.0f));
             } else {
                 return Optional.empty();
             }
@@ -67,7 +69,9 @@ public class PowerCellInfoPacketServer implements InfoPacketServer {
                 costFactor = powerCellTileEntity.getCostFactor();
             }
 
-            return Optional.of(new PowerCellInfoPacketClient(network.getEnergy(), network.getBlockCount(), network.getAdvancedBlockCount(),
+            return Optional.of(new PowerCellInfoPacketClient(network.getEnergy(), network.getBlockCount(),
+                    network.getSimpleBlockCount(),
+                    network.getAdvancedBlockCount(),
                     totInserted, totExtracted, rfPerTick, costFactor));
         }
     }

@@ -7,6 +7,7 @@ public class PowerCellConfiguration {
     public static final String CATEGORY_POWERCELL = "powercell";
     public static int rfPerNormalCell = 1000000;
     public static int advancedFactor = 4;
+    public static int simpleFactor = 4;
     public static int rfPerTick = 5000;
 
     public static double powerCellCostFactor = 1.10;
@@ -21,6 +22,7 @@ public class PowerCellConfiguration {
         rfPerNormalCell = cfg.get(CATEGORY_POWERCELL, "rfPerNormalCell", rfPerNormalCell, "Maximum RF storage that a single cell can hold").getInt();
 
         advancedFactor = cfg.get(CATEGORY_POWERCELL, "advancedFactor", advancedFactor, "How much better is the advanced cell with RF and RF/t").getInt();
+        simpleFactor = cfg.get(CATEGORY_POWERCELL, "simpleFactor", simpleFactor, "How much worse is the simple cell with RF and RF/t").getInt();
 
         powerCellCostFactor = cfg.get(CATEGORY_POWERCELL, "powerCellCostFactor", powerCellCostFactor,
                                       "The maximum cost factor for extracting energy out of a powercell for blocks in other dimensions or farther away then 10000 blocks").getDouble();

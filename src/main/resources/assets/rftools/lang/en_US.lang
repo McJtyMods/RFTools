@@ -144,6 +144,7 @@ tile.rftools.support_block.name=Support Block
 tile.rftools.space_chamber.name=Space Chamber Corner Block
 tile.rftools.space_chamber_controller.name=Space Chamber Controller Block
 tile.rftools.powercell.name=Powercell
+tile.rftools.powercell_simple.name=Simple Powercell
 tile.rftools.powercell_advanced.name=Advanced Powercell
 tile.rftools.powercell_creative.name=Creative Powercell
 tile.rftools.shield_template_block.name=Shield Template

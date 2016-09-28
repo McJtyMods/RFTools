@@ -42,6 +42,9 @@ import org.lwjgl.input.Keyboard;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import static mcjty.rftools.blocks.powercell.PowerCellConfiguration.advancedFactor;
+import static mcjty.rftools.blocks.powercell.PowerCellConfiguration.simpleFactor;
+
 public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, PowerCellContainer> implements Infusable {
 
     public static final PropertyEnum<PowerCellTileEntity.Mode> NORTH = PropertyEnum.create("north", PowerCellTileEntity.Mode.class);
@@ -84,7 +87,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            int totpower = PowerCellConfiguration.rfPerNormalCell * getAdvancedFactor();
+            int totpower = PowerCellConfiguration.rfPerNormalCell * getPowerFactory() / simpleFactor;
             list.add(TextFormatting.WHITE + "This block can store power (" + totpower + " RF)");
             list.add(TextFormatting.WHITE + "Optionally in a big multi dimensional structure");
             list.add(TextFormatting.YELLOW + "Infusing bonus: reduced long distance power");
@@ -108,16 +111,27 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
         return isAdvanced(this);
     }
 
+    private boolean isSimple() {
+        return isSimple(this);
+    }
+
     public static boolean isAdvanced(Block block) {
         return block == PowerCellSetup.advancedPowerCellBlock || block == PowerCellSetup.creativePowerCellBlock;
+    }
+
+    public static boolean isSimple(Block block) {
+        return block == PowerCellSetup.simplePowerCellBlock;
     }
 
     public static boolean isCreative(Block block) {
         return block == PowerCellSetup.creativePowerCellBlock;
     }
 
-    private int getAdvancedFactor() {
-        return isAdvanced() ? PowerCellConfiguration.advancedFactor : 1;
+    private int getPowerFactory() {
+        if (isSimple()) {
+            return 1;
+        }
+        return isAdvanced() ? (advancedFactor * simpleFactor) : simpleFactor;
     }
 
     @Override
@@ -168,8 +182,9 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
                 lastTime = System.currentTimeMillis();
                 RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new PowerCellInfoPacketServer(powerCellTileEntity)));
             }
-            int total = (PowerCellInfoPacketClient.tooltipBlocks - PowerCellInfoPacketClient.tooltipAdvancedBlocks) * PowerCellConfiguration.rfPerNormalCell +
-                    PowerCellInfoPacketClient.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerNormalCell * PowerCellConfiguration.advancedFactor;
+            int total = (PowerCellInfoPacketClient.tooltipBlocks - PowerCellInfoPacketClient.tooltipAdvancedBlocks - PowerCellInfoPacketClient.tooltipSimpleBlocks) * PowerCellConfiguration.rfPerNormalCell;
+            total += PowerCellInfoPacketClient.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerNormalCell * advancedFactor;
+            total += PowerCellInfoPacketClient.tooltipSimpleBlocks * PowerCellConfiguration.rfPerNormalCell / PowerCellConfiguration.simpleFactor;
             currenttip.add(TextFormatting.GREEN + "Energy: " + PowerCellInfoPacketClient.tooltipEnergy + "/" + total + " RF (" +
                 PowerCellInfoPacketClient.tooltipRfPerTick + " RF/t)");
             PowerCellTileEntity.Mode mode = powerCellTileEntity.getMode(accessor.getSide());
@@ -225,7 +240,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
                     PowerCellNetwork.Network network = powerCellNetwork.getChannel(networkId);
                     network.setEnergy(energy + network.getEnergy());
                     Block block = world.getBlockState(pos).getBlock();
-                    network.add(world, powerCellTileEntity.getGlobalPos(), isAdvanced(block));
+                    network.add(world, powerCellTileEntity.getGlobalPos(), isAdvanced(block), isSimple(block));
                     powerCellNetwork.save(world);
                 }
             }
@@ -250,7 +265,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
             if (te instanceof PowerCellTileEntity) {
                 PowerCellNetwork.Network network = ((PowerCellTileEntity) te).getNetwork();
                 if (network != null) {
-                    int energy = network.getEnergySingleBlock(isAdvanced());
+                    int energy = network.getEnergySingleBlock(isAdvanced(), isSimple());
                     if (!drops.isEmpty()) {
                         NBTTagCompound tagCompound = drops.get(0).getTagCompound();
                         if (tagCompound == null) {
@@ -273,9 +288,9 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
                 PowerCellTileEntity cellTileEntity = (PowerCellTileEntity) te;
                 PowerCellNetwork.Network network = cellTileEntity.getNetwork();
                 if (network != null) {
-                    int a = network.extractEnergySingleBlock(isAdvanced());
+                    int a = network.extractEnergySingleBlock(isAdvanced(), isSimple());
                     Block block = world.getBlockState(pos).getBlock();
-                    network.remove(world, cellTileEntity.getGlobalPos(), PowerCellBlock.isAdvanced(block));
+                    network.remove(world, cellTileEntity.getGlobalPos(), PowerCellBlock.isAdvanced(block), PowerCellBlock.isSimple(block));
                     PowerCellNetwork.getChannels(world).save(world);
                 }
             }

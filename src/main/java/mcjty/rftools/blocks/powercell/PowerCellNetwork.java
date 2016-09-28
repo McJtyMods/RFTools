@@ -16,6 +16,9 @@ import net.minecraftforge.common.util.Constants;
 
 import java.util.*;
 
+import static mcjty.rftools.blocks.powercell.PowerCellConfiguration.advancedFactor;
+import static mcjty.rftools.blocks.powercell.PowerCellConfiguration.simpleFactor;
+
 public class PowerCellNetwork extends WorldSavedData {
 
     public static final String POWERCELL_NETWORK_NAME = "RFToolsPowerCellNetwork";
@@ -112,6 +115,7 @@ public class PowerCellNetwork extends WorldSavedData {
     public static class Network {
         private int energy = 0;
         private Set<GlobalCoordinate> blocks = new HashSet<>();
+        private int simpleBlocks = 0;
         private int advancedBlocks = 0;
 
         // Connectivity information that calculates the cost of extracting energy depending
@@ -131,8 +135,13 @@ public class PowerCellNetwork extends WorldSavedData {
             return advancedBlocks;
         }
 
+        public int getSimpleBlockCount() {
+            return simpleBlocks;
+        }
+
         public void updateNetwork(World w) {
             advancedBlocks = 0;
+            simpleBlocks = 0;
             Iterable<GlobalCoordinate> copy = new HashSet<GlobalCoordinate>(blocks);
             blocks.clear();
             for (GlobalCoordinate c : copy) {
@@ -143,6 +152,9 @@ public class PowerCellNetwork extends WorldSavedData {
                 } else if (PowerCellBlock.isAdvanced(state.getBlock())) {
                     blocks.add(c);
                     advancedBlocks++;
+                } else if (PowerCellBlock.isSimple(state.getBlock())) {
+                    blocks.add(c);
+                    simpleBlocks++;
                 } else {
                     Logging.log("Warning! Powercell network data was not up-to-date!");
                 }
@@ -150,23 +162,29 @@ public class PowerCellNetwork extends WorldSavedData {
 
         }
 
-        public void add(World world, GlobalCoordinate g, boolean advanced) {
+        public void add(World world, GlobalCoordinate g, boolean advanced, boolean simple) {
             if (!blocks.contains(g)) {
                 blocks.add(g);
                 costFactor = null;
                 if (advanced) {
                     advancedBlocks++;
                 }
+                if (simple) {
+                    simpleBlocks++;
+                }
                 updateNetwork(world);
             }
         }
 
-        public void remove(World world, GlobalCoordinate g, boolean advanced) {
+        public void remove(World world, GlobalCoordinate g, boolean advanced, boolean simple) {
             if (blocks.contains(g)) {
                 blocks.remove(g);
                 costFactor = null;
                 if (advanced) {
                     advancedBlocks--;
+                }
+                if (simple) {
+                    simpleBlocks--;
                 }
                 updateNetwork(world);
             }
@@ -268,19 +286,32 @@ public class PowerCellNetwork extends WorldSavedData {
             return f == null ? 1.0f : f;
         }
 
-        public int getEnergySingleBlock(boolean advanced) {
-            int rc = energy / Math.max(1, (blocks.size() - advancedBlocks) + advancedBlocks * PowerCellConfiguration.advancedFactor);
+        public int getEnergySingleBlock(boolean advanced, boolean simple) {
+            // Count how many blocks there would be if all powercells would be simple blocks:
+            int simpleBlockCount = Math.max(1,
+                    (blocks.size() - advancedBlocks - simpleBlocks) * simpleFactor
+                    + advancedBlocks * advancedFactor * simpleFactor
+                    + simpleBlocks);
+            int rc = energy / simpleBlockCount;
             if (advanced) {
-                rc *= PowerCellConfiguration.advancedFactor;
+                rc *= advancedFactor * simpleFactor;
+            } else if (!simple) {
+                rc *= simpleFactor;
             }
             return rc;
         }
 
-        public int extractEnergySingleBlock(boolean advanced) {
-            // Calculate the average energy with advanced blocks seen as the equivalent number of normal blocks
-            int rc = energy / Math.max(1, (blocks.size() - advancedBlocks) + advancedBlocks * PowerCellConfiguration.advancedFactor);
+        public int extractEnergySingleBlock(boolean advanced, boolean simple) {
+            // Calculate the average energy with advanced, normal, and simple blocks seen as the equivalent number of simple blocks
+            int simpleBlockCount = Math.max(1,
+                    (blocks.size() - advancedBlocks - simpleBlocks) * simpleFactor
+                            + advancedBlocks * advancedFactor * simpleFactor
+                            + simpleBlocks);
+            int rc = energy / simpleBlockCount;
             if (advanced) {
-                rc *= PowerCellConfiguration.advancedFactor;
+                rc *= advancedFactor * simpleFactor;
+            } else if (!simple) {
+                rc *= simpleFactor;
             }
             energy -= rc;
             return rc;
@@ -297,6 +328,7 @@ public class PowerCellNetwork extends WorldSavedData {
         public void writeToNBT(NBTTagCompound tagCompound){
             tagCompound.setInteger("energy", energy);
             tagCompound.setInteger("advanced", advancedBlocks);
+            tagCompound.setInteger("simple", simpleBlocks);
             NBTTagList list = new NBTTagList();
             for (GlobalCoordinate block : blocks) {
                 NBTTagCompound tag = new NBTTagCompound();
@@ -313,6 +345,7 @@ public class PowerCellNetwork extends WorldSavedData {
         public void readFromNBT(NBTTagCompound tagCompound){
             this.energy = tagCompound.getInteger("energy");
             this.advancedBlocks = tagCompound.getInteger("advanced");
+            this.simpleBlocks = tagCompound.getInteger("simple");
             blocks.clear();
             NBTTagList list = tagCompound.getTagList("blocks", Constants.NBT.TAG_COMPOUND);
             for (int i = 0 ; i < list.tagCount() ; i++) {
