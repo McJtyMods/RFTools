@@ -395,7 +395,11 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     }
 
     private void requestItem(ItemStack stack, int amount) {
-        network.sendToServer(new PacketRequestItem(tileEntity.getDimension(), tileEntity.getStorageScannerPos(), getSelectedContainerPos(), stack, amount));
+        BlockPos selectedContainerPos = getSelectedContainerPos();
+        if (selectedContainerPos == null) {
+            return;
+        }
+        network.sendToServer(new PacketRequestItem(tileEntity.getDimension(), tileEntity.getStorageScannerPos(), selectedContainerPos, stack, amount));
         getInventoryOnServer();
     }
 
