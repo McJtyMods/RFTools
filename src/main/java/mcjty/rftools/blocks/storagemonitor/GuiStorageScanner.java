@@ -411,7 +411,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
     private void updateStorageList() {
         storageList.removeChildren();
-        addStorageLine(null, "<Starred>", false);
+        addStorageLine(null, "All routable", false);
         for (InventoriesInfoPacketClient.InventoryInfo c : fromServer_inventories) {
             String displayName = c.getName();
             boolean routable = c.isRoutable();
@@ -430,15 +430,22 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     }
 
     private void addStorageLine(InventoriesInfoPacketClient.InventoryInfo c, String displayName, boolean routable) {
-        Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
-        panel.addChild(new BlockRender(mc, this).setRenderItem(c == null ? null : c.getBlock()));
+        Panel panel;
+        if (c == null) {
+            panel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(8).setHorizontalMargin(5));
+            panel.addChild(new ImageLabel(mc, this).setImage(guielements, 115, 19).setDesiredWidth(13).setDesiredHeight(13));
+        } else {
+            panel = new Panel(mc, this).setLayout(new HorizontalLayout());
+            panel.addChild(new BlockRender(mc, this).setRenderItem(c.getBlock()));
+        }
         AbstractWidget label = new Label(mc, this).setColor(StyleConfig.colorTextInListNormal)
                 .setText(displayName)
                 .setDynamic(true)
                 .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
                 .setDesiredWidth(58);
         if (c == null) {
-            label.setTooltips(TextFormatting.GREEN + "All routable inventories");
+            label.setTooltips(TextFormatting.GREEN + "All routable inventories")
+                .setDesiredWidth(74);
         } else {
             label.setTooltips(TextFormatting.GREEN + "Block at: " + TextFormatting.WHITE + BlockPosTools.toString(c.getPos()),
                     TextFormatting.GREEN + "Name: " + TextFormatting.WHITE + displayName,
