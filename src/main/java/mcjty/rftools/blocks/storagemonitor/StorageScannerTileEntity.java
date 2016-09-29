@@ -638,7 +638,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         return outSlot;
     }
 
-    public void requestStack(BlockPos invPos, ItemStack requested, int amount) {
+    public void requestStack(BlockPos invPos, ItemStack requested, int amount, EntityPlayer player) {
         int rf = StorageScannerConfiguration.rfPerRequest;
         if (amount >= 0) {
             rf /= 10;       // Less RF usage for requesting less items
@@ -684,6 +684,12 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
         consumeEnergy(rf);
         setInventorySlotContents(StorageScannerContainer.SLOT_OUT, outSlot);
+
+        if (StorageScannerConfiguration.requestStraightToInventory) {
+            if (player.inventory.addItemStackToInventory(outSlot)) {
+                setInventorySlotContents(StorageScannerContainer.SLOT_OUT, null);
+            }
+        }
     }
 
     private void addItemStack(List<ItemStack> stacks, Set<Item> foundItems, ItemStack stack) {

@@ -11,6 +11,7 @@ public class StorageScannerConfiguration {
     public static int hilightTime = 5;
 
     public static boolean hilightStarredOnGuiOpen = true;
+    public static boolean requestStraightToInventory = true;
 
     public static void init(Configuration cfg) {
         rfPerRequest = cfg.get(CATEGORY_STORAGE_MONITOR, "rfPerRequest", rfPerRequest, "Amount of RF used to request an item").getInt();
@@ -21,5 +22,6 @@ public class StorageScannerConfiguration {
         RECEIVEPERTICK = cfg.get(CATEGORY_STORAGE_MONITOR, "scannerRFPerTick", RECEIVEPERTICK,
                 "RF per tick that the storage scanner can receive").getInt();
         hilightStarredOnGuiOpen = cfg.get(CATEGORY_STORAGE_MONITOR, "hilightStarredOnGuiOpen", hilightStarredOnGuiOpen, "If this is true then opening the storage scanner GUI will automatically select the starred inventory view").getBoolean();
+        requestStraightToInventory = cfg.get(CATEGORY_STORAGE_MONITOR, "requestStraightToInventory", requestStraightToInventory, "If this is true then requesting items from the storage scanner will go straight into the player inventory and not the output slot").getBoolean();
     }
 }

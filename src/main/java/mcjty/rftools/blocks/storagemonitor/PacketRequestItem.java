@@ -69,7 +69,7 @@ public class PacketRequestItem implements IMessage {
             TileEntity te = world.getTileEntity(message.pos);
             if (te instanceof StorageScannerTileEntity) {
                 StorageScannerTileEntity tileEntity = (StorageScannerTileEntity) te;
-                tileEntity.requestStack(message.inventoryPos, message.item, message.amount);
+                tileEntity.requestStack(message.inventoryPos, message.item, message.amount, ctx.getServerHandler().playerEntity);
             }
         }
 
