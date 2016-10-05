@@ -2,12 +2,19 @@ package mcjty.rftools;
 
 import mcjty.lib.api.smartwrench.SmartWrenchMode;
 import mcjty.lib.gui.RenderGlowEffect;
+import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorTileEntity;
 import mcjty.rftools.blocks.builder.BuilderSetup;
+import mcjty.rftools.hud.HudRenderer;
+import mcjty.rftools.hud.IHudSupport;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.builder.ShapeCardItem;
+import mcjty.rftools.items.netmonitor.NetworkMonitorItem;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
+import mcjty.rftools.network.PacketGetRfInRange;
+import mcjty.rftools.network.PacketReturnRfInRange;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.GlStateManager;
@@ -20,21 +27,23 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @SideOnly(Side.CLIENT)
 public class RenderWorldLastEventHandler {
 
+    private static long lastTime = 0;
 
     public static void tick(RenderWorldLastEvent evt) {
         renderHilightedBlock(evt);
         renderProtectedBlocks(evt);
+        renderPower(evt);
     }
 
     private static void renderProtectedBlocks(RenderWorldLastEvent evt) {
@@ -208,6 +217,80 @@ public class RenderWorldLastEventHandler {
         tessellator.draw();
 
         GlStateManager.enableTexture2D();
+        GlStateManager.popMatrix();
+    }
+
+    static void renderPower(RenderWorldLastEvent evt) {
+        EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
+
+        double doubleX = player.lastTickPosX + (player.posX - player.lastTickPosX) * evt.getPartialTicks();
+        double doubleY = player.lastTickPosY + (player.posY - player.lastTickPosY) * evt.getPartialTicks();
+        double doubleZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * evt.getPartialTicks();
+
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(-doubleX, -doubleY, -doubleZ);
+
+        GlStateManager.disableDepth();
+        GlStateManager.enableTexture2D();
+
+        ItemStack mainItem = player.getHeldItemMainhand();
+        ItemStack offItem = player.getHeldItemOffhand();
+        if ((mainItem != null && mainItem.getItem() instanceof NetworkMonitorItem) || (offItem != null && offItem.getItem() instanceof NetworkMonitorItem)) {
+            if (System.currentTimeMillis() - lastTime > 500) {
+                lastTime = System.currentTimeMillis();
+                RFToolsMessages.INSTANCE.sendToServer(new PacketGetRfInRange(player.getPosition()));
+            }
+
+            if (PacketReturnRfInRange.clientLevels == null) {
+                return;
+            }
+            for (Map.Entry<BlockPos, EnergyTools.EnergyLevel> entry : PacketReturnRfInRange.clientLevels.entrySet()) {
+                BlockPos pos = entry.getKey();
+                HudRenderer.renderHud(new IHudSupport() {
+                    @Override
+                    public EnumFacing getBlockOrientation() {
+                        return null;
+                    }
+
+                    @Override
+                    public boolean isBlockAboveAir() {
+                        return Minecraft.getMinecraft().theWorld.isAirBlock(pos.up());
+                    }
+
+                    @Override
+                    public List<String> getClientLog() {
+                        List<String> result = new ArrayList<String>();
+//                        result.add("");
+//                        result.add("");
+//                        result.add("");
+//                        result.add("");
+//                        result.add("");
+//                        result.add("");
+//                        result.add("");
+//                        result.add("");
+//                        result.add("");
+                        result.add(TextFormatting.GREEN + "RF:  " + TextFormatting.WHITE + entry.getValue().getEnergy());
+                        result.add(TextFormatting.GREEN + "Max: " + TextFormatting.WHITE + entry.getValue().getMaxEnergy());
+                        return result;
+                    }
+
+                    @Override
+                    public long getLastUpdateTime() {
+                        return System.currentTimeMillis();  // We don't want to get info here
+                    }
+
+                    @Override
+                    public void setLastUpdateTime(long t) {
+
+                    }
+
+                    @Override
+                    public BlockPos getPos() {
+                        return pos;
+                    }
+                }, pos.getX(), pos.getY(), pos.getZ(), 0.7f, true);
+            }
+        }
         GlStateManager.popMatrix();
     }
 }

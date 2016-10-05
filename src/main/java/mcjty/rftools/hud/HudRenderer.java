@@ -14,6 +14,10 @@ import java.util.List;
 public class HudRenderer {
 
     public static void renderHud(IHudSupport hudSupport, double x, double y, double z) {
+        renderHud(hudSupport, x, y, z, 1.0f, false);
+    }
+
+    public static void renderHud(IHudSupport hudSupport, double x, double y, double z, float scale, boolean faceVert) {
         GlStateManager.pushMatrix();
         float f3 = 0.0f;
 
@@ -34,14 +38,23 @@ public class HudRenderer {
             }
         }
 
-        GlStateManager.translate((float) x + 0.5F, (float) y + 1.75F, (float) z + 0.5F);
+        if (faceVert) {
+            GlStateManager.translate((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
+        } else {
+            GlStateManager.translate((float) x + 0.5F, (float) y + 1.75F, (float) z + 0.5F);
+        }
         if (orientation == null) {
             GlStateManager.rotate(-Minecraft.getMinecraft().getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
+            if (faceVert) {
+                GlStateManager.rotate(Minecraft.getMinecraft().getRenderManager().playerViewX, 1.0F, 0.0F, 0.0F);
+            }
             GlStateManager.rotate(180, 0.0F, 1.0F, 0.0F);
         } else {
             GlStateManager.rotate(-f3, 0.0F, 1.0F, 0.0F);
         }
-        if (hudSupport.isBlockAboveAir()) {
+        if (faceVert) {
+//            GlStateManager.translate(0.0F, -0.2500F, -0.4375F + .4);
+        } else if (hudSupport.isBlockAboveAir()) {
             GlStateManager.translate(0.0F, -0.2500F, -0.4375F + .4);
         } else {
             GlStateManager.translate(0.0F, -0.2500F, -0.4375F + .9);
@@ -52,7 +65,7 @@ public class HudRenderer {
         GlStateManager.disableBlend();
         GlStateManager.disableLighting();
 
-        renderText(Minecraft.getMinecraft().fontRendererObj, hudSupport);
+        renderText(Minecraft.getMinecraft().fontRendererObj, hudSupport, scale);
         Minecraft.getMinecraft().entityRenderer.enableLightmap();
 
 //        RenderHelper.enableStandardItemLighting();
@@ -63,9 +76,9 @@ public class HudRenderer {
         GlStateManager.popMatrix();
     }
 
-    private static void renderText(FontRenderer fontrenderer, IHudSupport support) {
+    private static void renderText(FontRenderer fontrenderer, IHudSupport support, float scale) {
         float f3;
-        float factor = 0 + 1.0f;
+        float factor = scale + 1.0f;
         int currenty = 7;
 
         GlStateManager.translate(-0.5F, 0.5F, 0.07F);
