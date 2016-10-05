@@ -22,6 +22,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -50,6 +51,14 @@ public class BuilderBlock extends GenericRFToolsBlock<BuilderTileEntity, Builder
 //    public boolean shouldRedstoneConduitConnect(World world, int x, int y, int z, EnumFacing from) {
 //        return true;
 //    }
+
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void initModel() {
+        super.initModel();
+        ClientRegistry.bindTileEntitySpecialRenderer(BuilderTileEntity.class, new BuilderRenderer());
+    }
 
     @SideOnly(Side.CLIENT)
     @Override

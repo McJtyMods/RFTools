@@ -5,13 +5,12 @@ import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketRequestIntegerFromServer;
-import mcjty.lib.varia.BlockPosTools;
-import mcjty.lib.varia.Broadcaster;
-import mcjty.lib.varia.Logging;
-import mcjty.lib.varia.SoundTools;
+import mcjty.lib.varia.*;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
+import mcjty.rftools.hud.IHudSupport;
 import mcjty.rftools.items.builder.ShapeCardItem;
+import mcjty.rftools.network.PacketGetHudLog;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
@@ -37,17 +36,21 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.*;
 
-public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable {
+public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable,
+        IHudSupport {
 
     public static final String COMPONENT_NAME = "builder";
 
@@ -103,6 +106,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private int projDy;
     private int projDz;
 
+    private long lastHudTime = 0;
+    private List<String> clientHudLog = new ArrayList<>();
+
     private int cardType = ShapeCardItem.CARD_UNKNOWN; // One of the card types out of ShapeCardItem.CARD_...
 
     // For chunkloading with the quarry.
@@ -124,6 +130,90 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     @Override
     protected boolean needsCustomInvWrapper() {
         return true;
+    }
+
+    @Override
+    public EnumFacing getBlockOrientation() {
+        return BlockTools.getOrientationHoriz(getBlockMetadata());
+    }
+
+    @Override
+    public boolean isBlockAboveAir() {
+        return worldObj.isAirBlock(pos.up());
+    }
+
+    @Override
+    public List<String> getClientLog() {
+        return clientHudLog;
+    }
+
+    public List<String> getHudLog() {
+        List<String> list = new ArrayList<>();
+        list.add(TextFormatting.BLUE + "Mode:");
+        if (isShapeCard()) {
+            switch (getCardType()) {
+                case ShapeCardItem.CARD_VOID:
+                    list.add("    Void mode");
+                    break;
+                case ShapeCardItem.CARD_QUARRY_FORTUNE:
+                    list.add("    Fortune quarry");
+                    break;
+                case ShapeCardItem.CARD_QUARRY_CLEAR_FORTUNE:
+                    list.add("    Fortune quarry");
+                    list.add("    (clearing)");
+                    break;
+                case ShapeCardItem.CARD_QUARRY_SILK:
+                    list.add("    Silktouch quarry");
+                    break;
+                case ShapeCardItem.CARD_QUARRY_CLEAR_SILK:
+                    list.add("    Silktouch quarry");
+                    list.add("    (clearing)");
+                    break;
+                case ShapeCardItem.CARD_QUARRY:
+                    list.add("    Normal quarry");
+                    break;
+                case ShapeCardItem.CARD_QUARRY_CLEAR:
+                    list.add("    Normal quarry");
+                    list.add("    (clearing)");
+                    break;
+                case ShapeCardItem.CARD_SHAPE:
+                    list.add("    Shape card");
+                    ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
+                    if (shapeCard != null) {
+                        ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
+                        if (shape != null) {
+                            list.add("    " + shape.getDescription());
+                        }
+                    }
+                    break;
+            }
+        } else {
+            list.add("    Space card: " + new String[]{"copy", "move", "swap", "back", "collect"}[mode]);
+        }
+        if (scan != null) {
+            list.add(TextFormatting.BLUE + "Progress:");
+            list.add("    Y level: " + scan.getY());
+            int minChunkX = minBox.getX() >> 4;
+            int minChunkZ = minBox.getZ() >> 4;
+            int maxChunkX = maxBox.getX() >> 4;
+            int maxChunkZ = maxBox.getZ() >> 4;
+            int curX = scan.getX() >> 4;
+            int curZ = scan.getZ() >> 4;
+            int totChunks = (maxChunkX-minChunkX+1) * (maxChunkZ-minChunkZ+1);
+            int curChunk = (curZ-minChunkZ) * (maxChunkX-minChunkX) + curX-minChunkX;
+            list.add("    Chunk:  " + curChunk + " of " + totChunks);
+        }
+        return list;
+    }
+
+    @Override
+    public long getLastUpdateTime() {
+        return lastHudTime;
+    }
+
+    @Override
+    public void setLastUpdateTime(long t) {
+        lastHudTime = t;
     }
 
     private boolean isShapeCard() {
@@ -1833,6 +1923,32 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     @Override
+    public List executeWithResultList(String command, Map<String, Argument> args) {
+        List rc = super.executeWithResultList(command, args);
+        if (rc != null) {
+            return rc;
+        }
+        if (PacketGetHudLog.CMD_GETHUDLOG.equals(command)) {
+            return getHudLog();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean execute(String command, List list) {
+        boolean rc = super.execute(command, list);
+        if (rc) {
+            return true;
+        }
+        if (PacketGetHudLog.CLIENTCMD_GETHUDLOG.equals(command)) {
+            clientHudLog = list;
+            return true;
+        }
+        return false;
+    }
+
+
+    @Override
     public Integer executeWithResultInteger(String command, Map<String, Argument> args) {
         Integer rc = super.executeWithResultInteger(command, args);
         if (rc != null) {
@@ -1855,5 +1971,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return true;
         }
         return false;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public AxisAlignedBB getRenderBoundingBox() {
+        return new AxisAlignedBB(pos, pos.add(1, 2, 1));
     }
 }

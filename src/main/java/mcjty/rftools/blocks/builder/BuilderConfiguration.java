@@ -19,6 +19,8 @@ public class BuilderConfiguration {
 
     public static BuilderTileEntityMode teMode = BuilderTileEntityMode.MOVE_WHITELIST;
 
+    public static boolean showProgressHud = true;
+
     public static int maxSpaceChamberDimension = 128;
 
     public static double voidShapeCardFactor = 0.5;
@@ -111,5 +113,7 @@ public class BuilderConfiguration {
 
         oldSphereCylinderShape = cfg.get(CATEGORY_BUILDER, "oldSphereCylinderShape", oldSphereCylinderShape,
                 "If true we go back to the old (wrong) sphere/cylinder calculation for the builder/shield").getBoolean();
+        showProgressHud = cfg.get(CATEGORY_BUILDER, "showProgressHud", showProgressHud,
+                "If true a holo hud with current progress is shown above the builder").getBoolean();
     }
 }

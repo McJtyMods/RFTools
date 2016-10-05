@@ -69,6 +69,7 @@ public class RFToolsMessages {
         net.registerMessage(PacketCraftFromGrid.Handler.class, PacketCraftFromGrid.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketRequestGridSync.Handler.class, PacketRequestGridSync.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketRequestItem.Handler.class, PacketRequestItem.class, PacketHandler.nextID(), Side.SERVER);
+        net.registerMessage(PacketGetHudLog.Handler.class, PacketGetHudLog.class, PacketHandler.nextID(), Side.SERVER);
 
         // Client side
         net.registerMessage(PacketPlayersReady.Handler.class, PacketPlayersReady.class, PacketHandler.nextID(), Side.CLIENT);
@@ -91,6 +92,7 @@ public class RFToolsMessages {
         net.registerMessage(PacketGridToClient.Handler.class, PacketGridToClient.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketCraftTestResultToClient.Handler.class, PacketCraftTestResultToClient.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketEndergenicFlash.Handler.class, PacketEndergenicFlash.class, PacketHandler.nextID(), Side.CLIENT);
+        net.registerMessage(PacketHudLogReady.Handler.class, PacketHudLogReady.class, PacketHandler.nextID(), Side.CLIENT);
 
         PacketHandler.register(PacketHandler.nextPacketID(), StorageInfoPacketServer.class, StorageInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), PowerCellInfoPacketServer.class, PowerCellInfoPacketClient.class);
