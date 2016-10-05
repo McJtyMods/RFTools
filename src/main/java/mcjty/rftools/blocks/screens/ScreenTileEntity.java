@@ -97,7 +97,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
-        return new AxisAlignedBB(xCoord - 1, yCoord - 1, zCoord - 1, xCoord + size + 1, yCoord + size + 1, zCoord + size + 1);
+        return new AxisAlignedBB(xCoord - 1, yCoord - size - 1, zCoord - 1, xCoord + size + 1, yCoord + 1, zCoord + size + 1);
     }
 
     @Override
