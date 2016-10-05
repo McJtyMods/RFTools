@@ -14,7 +14,7 @@ import java.util.List;
 public class HudRenderer {
 
     public static void renderHud(IHudSupport hudSupport, double x, double y, double z) {
-        renderHud(hudSupport, x, y, z, 1.0f, false);
+        renderHud(hudSupport, x, y, z, 0.0f, false);
     }
 
     public static void renderHud(IHudSupport hudSupport, double x, double y, double z, float scale, boolean faceVert) {

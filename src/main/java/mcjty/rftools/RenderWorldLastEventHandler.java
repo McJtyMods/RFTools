@@ -18,6 +18,7 @@ import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -176,6 +177,36 @@ public class RenderWorldLastEventHandler {
         buffer.pos(mx, my+1, mz+1).endVertex();
     }
 
+    private static void renderHighLightedBlocksOutlineColor(VertexBuffer buffer, float mx, float my, float mz, float r, float g, float b, float a) {
+        buffer.pos(mx, my, mz).color(r, g, b, a).endVertex();
+        buffer.pos(mx+1, my, mz).color(r, g, b, a).endVertex();
+        buffer.pos(mx, my, mz).color(r, g, b, a).endVertex();
+        buffer.pos(mx, my+1, mz).color(r, g, b, a).endVertex();
+        buffer.pos(mx, my, mz).color(r, g, b, a).endVertex();
+        buffer.pos(mx, my, mz+1).color(r, g, b, a).endVertex();
+        buffer.pos(mx+1, my+1, mz+1).color(r, g, b, a).endVertex();
+        buffer.pos(mx, my+1, mz+1).color(r, g, b, a).endVertex();
+        buffer.pos(mx+1, my+1, mz+1).color(r, g, b, a).endVertex();
+        buffer.pos(mx+1, my, mz+1).color(r, g, b, a).endVertex();
+        buffer.pos(mx+1, my+1, mz+1).color(r, g, b, a).endVertex();
+        buffer.pos(mx+1, my+1, mz).color(r, g, b, a).endVertex();
+
+        buffer.pos(mx, my+1, mz).color(r, g, b, a).endVertex();
+        buffer.pos(mx, my+1, mz+1).color(r, g, b, a).endVertex();
+        buffer.pos(mx, my+1, mz).color(r, g, b, a).endVertex();
+        buffer.pos(mx+1, my+1, mz).color(r, g, b, a).endVertex();
+
+        buffer.pos(mx+1, my, mz).color(r, g, b, a).endVertex();
+        buffer.pos(mx+1, my, mz+1).color(r, g, b, a).endVertex();
+        buffer.pos(mx+1, my, mz).color(r, g, b, a).endVertex();
+        buffer.pos(mx+1, my+1, mz).color(r, g, b, a).endVertex();
+
+        buffer.pos(mx, my, mz+1).color(r, g, b, a).endVertex();
+        buffer.pos(mx+1, my, mz+1).color(r, g, b, a).endVertex();
+        buffer.pos(mx, my, mz+1).color(r, g, b, a).endVertex();
+        buffer.pos(mx, my+1, mz+1).color(r, g, b, a).endVertex();
+    }
+
     private static void renderHilightedBlock(RenderWorldLastEvent evt) {
         BlockPos c = RFTools.instance.clientInfo.getHilightedBlock();
         if (c == null) {
@@ -220,7 +251,7 @@ public class RenderWorldLastEventHandler {
         GlStateManager.popMatrix();
     }
 
-    static void renderPower(RenderWorldLastEvent evt) {
+    private static void renderPower(RenderWorldLastEvent evt) {
         EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
 
         double doubleX = player.lastTickPosX + (player.posX - player.lastTickPosX) * evt.getPartialTicks();
@@ -246,51 +277,71 @@ public class RenderWorldLastEventHandler {
             }
             for (Map.Entry<BlockPos, EnergyTools.EnergyLevel> entry : PacketReturnRfInRange.clientLevels.entrySet()) {
                 BlockPos pos = entry.getKey();
-                HudRenderer.renderHud(new IHudSupport() {
-                    @Override
-                    public EnumFacing getBlockOrientation() {
-                        return null;
-                    }
-
-                    @Override
-                    public boolean isBlockAboveAir() {
-                        return Minecraft.getMinecraft().theWorld.isAirBlock(pos.up());
-                    }
-
-                    @Override
-                    public List<String> getClientLog() {
-                        List<String> result = new ArrayList<String>();
-//                        result.add("");
-//                        result.add("");
-//                        result.add("");
-//                        result.add("");
-//                        result.add("");
-//                        result.add("");
-//                        result.add("");
-//                        result.add("");
-//                        result.add("");
-                        result.add(TextFormatting.GREEN + "RF:  " + TextFormatting.WHITE + entry.getValue().getEnergy());
-                        result.add(TextFormatting.GREEN + "Max: " + TextFormatting.WHITE + entry.getValue().getMaxEnergy());
-                        return result;
-                    }
-
-                    @Override
-                    public long getLastUpdateTime() {
-                        return System.currentTimeMillis();  // We don't want to get info here
-                    }
-
-                    @Override
-                    public void setLastUpdateTime(long t) {
-
-                    }
-
-                    @Override
-                    public BlockPos getPos() {
-                        return pos;
-                    }
-                }, pos.getX(), pos.getY(), pos.getZ(), 0.7f, true);
+                HudRenderer.renderHud(getHudSupport(entry, pos), pos.getX(), pos.getY(), pos.getZ(), 1.0f, true);
+                renderBoxOutline(pos);
             }
         }
         GlStateManager.popMatrix();
+    }
+
+    private static void renderBoxOutline(BlockPos pos) {
+        RenderHelper.disableStandardItemLighting();
+        Minecraft.getMinecraft().entityRenderer.disableLightmap();
+        GlStateManager.disableTexture2D();
+        GlStateManager.disableBlend();
+        GlStateManager.disableLighting();
+        GlStateManager.disableAlpha();
+        GlStateManager.glLineWidth(2);
+        GlStateManager.color(1, 1, 1);
+
+        Tessellator tessellator = Tessellator.getInstance();
+        VertexBuffer buffer = tessellator.getBuffer();
+        float mx = pos.getX();
+        float my = pos.getY();
+        float mz = pos.getZ();
+        buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+        renderHighLightedBlocksOutlineColor(buffer, mx, my, mz, 1, 0, 0, 1);
+
+        tessellator.draw();
+
+        Minecraft.getMinecraft().entityRenderer.enableLightmap();
+        GlStateManager.enableTexture2D();
+    }
+
+    private static IHudSupport getHudSupport(final Map.Entry<BlockPos, EnergyTools.EnergyLevel> entry, final BlockPos pos) {
+        return new IHudSupport() {
+            @Override
+            public EnumFacing getBlockOrientation() {
+                return null;
+            }
+
+            @Override
+            public boolean isBlockAboveAir() {
+                return Minecraft.getMinecraft().theWorld.isAirBlock(pos.up());
+            }
+
+            @Override
+            public List<String> getClientLog() {
+                List<String> result = new ArrayList<>();
+                result.add(TextFormatting.GREEN + "RF:  " + TextFormatting.WHITE + entry.getValue().getEnergy());
+                result.add(TextFormatting.GREEN + "Max: " + TextFormatting.WHITE + entry.getValue().getMaxEnergy());
+                return result;
+            }
+
+            @Override
+            public long getLastUpdateTime() {
+                return System.currentTimeMillis();  // We don't want to get info here
+            }
+
+            @Override
+            public void setLastUpdateTime(long t) {
+
+            }
+
+            @Override
+            public BlockPos getPos() {
+                return pos;
+            }
+        };
     }
 }
