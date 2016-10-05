@@ -7,6 +7,7 @@ import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.ToggleButton;
 import mcjty.lib.gui.widgets.Widget;
+import mcjty.lib.network.Argument;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
@@ -31,6 +32,8 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
     private Panel modulePanels[] = new Panel[ScreenContainer.SCREEN_MODULES];
     private IClientScreenModule[] clientScreenModules = new IClientScreenModule[ScreenContainer.SCREEN_MODULES];
 
+    private ToggleButton bright;
+
     private int selected = -1;
 
     public GuiScreen(ScreenTileEntity screenTileEntity, ScreenContainer container) {
@@ -49,16 +52,22 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
         for (int i = 0 ; i < ScreenContainer.SCREEN_MODULES ; i++) {
             buttons[i] = new ToggleButton(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(30, 7 + i * 18 + 1, 40, 16)).setEnabled(false).setTooltips("Open the gui for this", "module");
             final int finalI = i;
-            buttons[i].addButtonEvent(new ButtonEvent() {
-                @Override
-                public void buttonClicked(Widget parent) {
-                    selectPanel(finalI);
-                }
-            });
+            buttons[i].addButtonEvent(parent -> selectPanel(finalI));
             toplevel.addChild(buttons[i]);
             modulePanels[i] = null;
             clientScreenModules[i] = null;
         }
+
+        bright = new ToggleButton(mc, this)
+                .setText("Bright")
+                .setCheckMarker(true)
+                .setTooltips("Toggle full brightness")
+                .setLayoutHint(new PositionalLayout.PositionalHint(7, 208, 63, 14));
+        bright.setPressed(tileEntity.isBright());
+        bright.addButtonEvent(parent -> {
+            sendServerCommand(RFToolsMessages.INSTANCE, ScreenTileEntity.CMD_SETBRIGHT, new Argument("b", bright.isPressed()));
+        });
+        toplevel.addChild(bright);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 

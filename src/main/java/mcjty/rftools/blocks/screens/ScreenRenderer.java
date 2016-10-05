@@ -134,6 +134,10 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
             }
         }
 
+        if (tileEntity.isBright()) {
+            Minecraft.getMinecraft().entityRenderer.disableLightmap();
+        }
+
         for (IClientScreenModule module : modules) {
             if (module != null) {
                 int height = module.getHeight();
@@ -185,6 +189,10 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
                 }
             }
             moduleIndex++;
+        }
+
+        if (tileEntity.isBright()) {
+            Minecraft.getMinecraft().entityRenderer.enableLightmap();
         }
 
         if (mode != IClientScreenModule.TransformMode.NONE) {

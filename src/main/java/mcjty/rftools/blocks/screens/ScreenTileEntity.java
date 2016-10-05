@@ -32,6 +32,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
 
     public static final String CMD_CLICK = "click";
     public static final String CMD_HOVER = "hover";
+    public static final String CMD_SETBRIGHT = "setBright";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ScreenContainer.factory, ScreenContainer.SCREEN_MODULES);
 
@@ -50,6 +51,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     private int size = 0;                   // Size of screen (0 is normal, 1 is large, 2 is huge)
     private boolean transparent = false;    // Transparent screen.
     private int color = 0;                  // Color of the screen.
+    private boolean bright = false;         // True if the screen contents is full bright
 
     // Sever side, the module we are hovering over
     private int hoveringModule = -1;
@@ -375,6 +377,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         }
         transparent = tagCompound.getBoolean("transparent");
         color = tagCompound.getInteger("color");
+        bright = tagCompound.getBoolean("bright");
     }
 
     @Override
@@ -393,6 +396,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         tagCompound.setInteger("size", size);
         tagCompound.setBoolean("transparent", transparent);
         tagCompound.setInteger("color", color);
+        tagCompound.setBoolean("bright", bright);
     }
 
     public int getColor() {
@@ -406,6 +410,15 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
 
     public void setSize(int size) {
         this.size = size;
+        markDirtyClient();
+    }
+
+    public boolean isBright() {
+        return bright;
+    }
+
+    public void setBright(boolean bright) {
+        this.bright = bright;
         markDirtyClient();
     }
 
@@ -628,6 +641,10 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
             hoveringX = args.get("x").getInteger();
             hoveringY = args.get("y").getInteger();
             hoveringModule = args.get("module").getInteger();
+            return true;
+        } else if (CMD_SETBRIGHT.equals(command)) {
+            boolean b = args.get("b").getBoolean();
+            setBright(b);
             return true;
         }
         return false;
