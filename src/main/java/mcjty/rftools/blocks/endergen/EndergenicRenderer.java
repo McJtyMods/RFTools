@@ -3,9 +3,13 @@ package mcjty.rftools.blocks.endergen;
 import mcjty.lib.gui.RenderGlowEffect;
 import mcjty.lib.gui.RenderHelper;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.hud.HudRenderer;
+import mcjty.rftools.items.smartwrench.SmartWrenchItem;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import org.lwjgl.opengl.GL11;
@@ -31,9 +35,7 @@ public class EndergenicRenderer extends TileEntitySpecialRenderer<EndergenicTile
             RenderGlowEffect.renderGlow(tessellator, x, y, z);
         }
 
-//        GlStateManager.pushAttrib();
 
-//        if (te.isActive()) {
         GlStateManager.depthMask(false);
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE);
@@ -48,7 +50,6 @@ public class EndergenicRenderer extends TileEntitySpecialRenderer<EndergenicTile
         }
         RenderHelper.renderBillboardQuadBright(0.2f + s * 0.3f);// + random.nextFloat() * .05f);
 
-//        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
 
         if (tileEntity.getGoodCounter() > 0) {
@@ -61,9 +62,13 @@ public class EndergenicRenderer extends TileEntitySpecialRenderer<EndergenicTile
         }
 
         GlStateManager.popMatrix();
-//        }
 
-//        GlStateManager.popAttrib();
-
+        ItemStack mainHand = Minecraft.getMinecraft().thePlayer.getHeldItemMainhand();
+        ItemStack offHand = Minecraft.getMinecraft().thePlayer.getHeldItemOffhand();
+        boolean showOverlay = (mainHand != null && mainHand.getItem() instanceof SmartWrenchItem) ||
+                (offHand != null && offHand.getItem() instanceof SmartWrenchItem);
+        if (showOverlay) {
+            HudRenderer.renderHud(tileEntity, x, y, z);
+        }
     }
 }

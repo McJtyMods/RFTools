@@ -18,22 +18,29 @@ public class HudRenderer {
         float f3 = 0.0f;
 
         EnumFacing orientation = hudSupport.getBlockOrientation();
-        switch (orientation) {
-            case NORTH:
-                f3 = 180.0F;
-                break;
-            case WEST:
-                f3 = 90.0F;
-                break;
-            case EAST:
-                f3 = -90.0F;
-                break;
-            default:
-                f3 = 0.0f;
+        if (orientation != null) {
+            switch (orientation) {
+                case NORTH:
+                    f3 = 180.0F;
+                    break;
+                case WEST:
+                    f3 = 90.0F;
+                    break;
+                case EAST:
+                    f3 = -90.0F;
+                    break;
+                default:
+                    f3 = 0.0f;
+            }
         }
 
         GlStateManager.translate((float) x + 0.5F, (float) y + 1.75F, (float) z + 0.5F);
-        GlStateManager.rotate(-f3, 0.0F, 1.0F, 0.0F);
+        if (orientation == null) {
+            GlStateManager.rotate(-Minecraft.getMinecraft().getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
+            GlStateManager.rotate(180, 0.0F, 1.0F, 0.0F);
+        } else {
+            GlStateManager.rotate(-f3, 0.0F, 1.0F, 0.0F);
+        }
         if (hudSupport.isBlockAboveAir()) {
             GlStateManager.translate(0.0F, -0.2500F, -0.4375F + .4);
         } else {

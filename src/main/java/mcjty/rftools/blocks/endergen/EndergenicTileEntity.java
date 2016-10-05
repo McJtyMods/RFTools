@@ -9,6 +9,8 @@ import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.hud.IHudSupport;
+import mcjty.rftools.network.PacketGetHudLog;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -19,6 +21,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
@@ -26,7 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implements ITickable, MachineInformation {
+public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implements ITickable, MachineInformation,
+        IHudSupport {
 
     private static Random random = new Random();
 
@@ -90,6 +94,9 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     // Current traveling pearls.
     private List<EndergenicPearl> pearls = new ArrayList<EndergenicPearl>();
 
+    private long lastHudTime = 0;
+    private List<String> clientHudLog = new ArrayList<>();
+
     // Used for rendering a 'bad' and 'good' effect client-side
     private int badCounter = 0;
     private int goodCounter = 0;
@@ -119,6 +126,50 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         if (!worldObj.isRemote) {
             checkStateServer();
         }
+    }
+
+    @Override
+    public EnumFacing getBlockOrientation() {
+        return null;
+    }
+
+    @Override
+    public boolean isBlockAboveAir() {
+        return worldObj.isAirBlock(pos.up());
+    }
+
+    public List<String> getHudLog() {
+        List<String> list = new ArrayList<>();
+        list.add(TextFormatting.BLUE + "Last 5 seconds:");
+        list.add("    Charged: " + getLastChargeCounter());
+        list.add("    Fired: " + getLastPearlsLaunched());
+        list.add("    Lost: " + getLastPearlsLost());
+        if (getLastPearlsLost() > 0) {
+            list.add(TextFormatting.RED + "    " + getLastPearlsLostReason());
+        }
+        if (getLastPearlArrivedAt() > -2) {
+            list.add("    Last pearl at " + getLastPearlArrivedAt());
+        }
+        list.add(TextFormatting.BLUE + "Power:");
+        list.add(TextFormatting.GREEN + "    RF Gain " + getLastRfGained());
+        list.add(TextFormatting.RED + "    RF Lost " + getLastRfLost());
+        list.add(TextFormatting.GREEN + "    RF/t " + getLastRfPerTick());
+        return list;
+    }
+
+    @Override
+    public List<String> getClientLog() {
+        return clientHudLog;
+    }
+
+    @Override
+    public long getLastUpdateTime() {
+        return lastHudTime;
+    }
+
+    @Override
+    public void setLastUpdateTime(long t) {
+        lastHudTime = t;
     }
 
     public int getBadCounter() {
@@ -646,4 +697,30 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         }
         return false;
     }
+
+    @Override
+    public List executeWithResultList(String command, Map<String, Argument> args) {
+        List rc = super.executeWithResultList(command, args);
+        if (rc != null) {
+            return rc;
+        }
+        if (PacketGetHudLog.CMD_GETHUDLOG.equals(command)) {
+            return getHudLog();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean execute(String command, List list) {
+        boolean rc = super.execute(command, list);
+        if (rc) {
+            return true;
+        }
+        if (PacketGetHudLog.CLIENTCMD_GETHUDLOG.equals(command)) {
+            clientHudLog = list;
+            return true;
+        }
+        return false;
+    }
+
 }
