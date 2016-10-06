@@ -45,6 +45,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
     public static final int CARD_QUARRY_CLEAR = 5;
     public static final int CARD_QUARRY_CLEAR_SILK = 6;
     public static final int CARD_QUARRY_CLEAR_FORTUNE = 7;
+    public static final int CARD_PUMP = 8;
 
     public static final int MAXIMUM_COUNT = 50000000;
     
@@ -143,6 +144,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
         ModelLoader.setCustomModelResourceLocation(this, CARD_QUARRY_CLEAR, new ModelResourceLocation(RFTools.MODID + ":shape_card_quarry_clear", "inventory"));
         ModelLoader.setCustomModelResourceLocation(this, CARD_QUARRY_CLEAR_SILK, new ModelResourceLocation(RFTools.MODID + ":shape_card_quarry_clear_silk", "inventory"));
         ModelLoader.setCustomModelResourceLocation(this, CARD_QUARRY_CLEAR_FORTUNE, new ModelResourceLocation(RFTools.MODID + ":shape_card_quarry_clear_fortune", "inventory"));
+        ModelLoader.setCustomModelResourceLocation(this, CARD_PUMP, new ModelResourceLocation(RFTools.MODID + ":shape_card_pump", "inventory"));
     }
 
     @Override
@@ -321,6 +323,13 @@ public class ShapeCardItem extends GenericRFToolsItem {
             list.add(TextFormatting.YELLOW + "Sneak right click on builder to start mark mode");
             list.add(TextFormatting.YELLOW + "Then right click to mark two corners of wanted area");
             switch (type) {
+                case CARD_PUMP:
+                    list.add(TextFormatting.WHITE + "This item will cause the builder to collect");
+                    list.add(TextFormatting.WHITE + "all liquids in the configured space.");
+                    list.add(TextFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
+                    list.add(TextFormatting.GREEN + "Base cost: " + (int)(BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.voidShapeCardFactor) + " RF/t per block");
+                    list.add(TextFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
+                    break;
                 case CARD_VOID:
                     list.add(TextFormatting.WHITE + "This item will cause the builder to void");
                     list.add(TextFormatting.WHITE + "all blocks in the configured space.");
@@ -962,7 +971,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
 
     @Override
     public void getSubItems(Item item, CreativeTabs creativeTabs, List<ItemStack> list) {
-        for (int i = 0 ; i <= 7 ; i++) {
+        for (int i = 0 ; i <= 8 ; i++) {
             list.add(new ItemStack(this, 1, i));
         }
     }

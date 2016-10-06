@@ -12,6 +12,7 @@ public class BuilderConfiguration {
     public static int BUILDER_RECEIVEPERTICK = 50000;
 
     public static int builderRfPerOperation = 500;
+    public static int builderRfPerLiquid = 300;
     public static int builderRfPerQuarry = 300;
     public static int builderRfPerEntity = 5000;
     public static int builderRfPerPlayer = 40000;

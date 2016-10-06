@@ -42,6 +42,11 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -154,6 +159,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             switch (getCardType()) {
                 case ShapeCardItem.CARD_VOID:
                     list.add("    Void mode");
+                    break;
+                case ShapeCardItem.CARD_PUMP:
+                    list.add("    Pump");
                     break;
                 case ShapeCardItem.CARD_QUARRY_FORTUNE:
                     list.add("    Fortune quarry");
@@ -863,6 +871,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         int rfNeeded;
 
         switch (getCardType()) {
+            case ShapeCardItem.CARD_PUMP:
+                rfNeeded = (int) (BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.voidShapeCardFactor);
+                break;
             case ShapeCardItem.CARD_VOID:
                 rfNeeded = (int) (BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.voidShapeCardFactor);
                 break;
@@ -913,6 +924,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         switch (getCardType()) {
+            case ShapeCardItem.CARD_PUMP:
+                return pumpBlock(rfNeeded, srcPos, block);
             case ShapeCardItem.CARD_VOID:
                 return voidBlock(rfNeeded, srcPos, block);
             case ShapeCardItem.CARD_QUARRY:
@@ -1079,6 +1092,32 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return false;
     }
 
+    private boolean pumpBlock(int rfNeeded, BlockPos srcPos, Block block) {
+        IBlockState srcState = worldObj.getBlockState(srcPos);
+        Fluid fluid = FluidRegistry.lookupFluidForBlock(srcState.getBlock());
+        if (fluid == null) {
+            return false;
+        }
+
+        int xCoord = getPos().getX();
+        int yCoord = getPos().getY();
+        int zCoord = getPos().getZ();
+        if (block.getBlockHardness(srcState, worldObj, srcPos) >= 0) {
+            FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
+            if (block.canEntityDestroy(srcState, worldObj, srcPos, fakePlayer)) {
+                if (checkAndInsertFluids(fluid)) {
+                    worldObj.setBlockToAir(srcPos);
+                    if (!silent) {
+                        SoundTools.playSound(worldObj, block.getSoundType().breakSound, srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
+                    }
+                }
+                // We never wait when pumping fluids
+                return false;
+            }
+        }
+        return false;
+    }
+
     private boolean voidBlock(int rfNeeded, BlockPos srcPos, Block block) {
         IBlockState srcState = worldObj.getBlockState(srcPos);
         int xCoord = getPos().getX();
@@ -1225,6 +1264,30 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
         }
         return true;
+    }
+
+    private boolean checkAndInsertFluids(Fluid fluid) {
+        if (checkFluidTank(fluid, getPos().up(), EnumFacing.DOWN)) {
+            return true;
+        }
+        if (checkFluidTank(fluid, getPos().down(), EnumFacing.UP)) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkFluidTank(Fluid fluid, BlockPos up, EnumFacing side) {
+        TileEntity te = worldObj.getTileEntity(up);
+        if (te != null && te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null)) {
+            IFluidHandler handler = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
+            FluidStack fluidStack = new FluidStack(fluid, 1000);
+            int amount = handler.fill(fluidStack, false);
+            if (amount == 1000) {
+                handler.fill(fluidStack, true);
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean checkAndInsertItems(Block block, List<ItemStack> items) {

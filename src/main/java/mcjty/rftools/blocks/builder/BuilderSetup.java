@@ -87,6 +87,11 @@ public class BuilderSetup {
                         inkSac, new ItemStack(Blocks.OBSIDIAN), inkSac
                 }, new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_VOID), 4));
                 GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
+                        new ItemStack(Items.REDSTONE), new ItemStack(Items.WATER_BUCKET), new ItemStack(Items.REDSTONE),
+                        new ItemStack(Items.BUCKET), new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_SHAPE), new ItemStack(Items.BUCKET),
+                        new ItemStack(Items.REDSTONE), new ItemStack(Items.LAVA_BUCKET), new ItemStack(Items.REDSTONE)
+                }, new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_PUMP), 4));
+                GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
                         new ItemStack(Items.REDSTONE), new ItemStack(Items.DIAMOND_PICKAXE), new ItemStack(Items.REDSTONE),
                         new ItemStack(Items.IRON_INGOT), new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_SHAPE), new ItemStack(Items.IRON_INGOT),
                         new ItemStack(Items.REDSTONE), new ItemStack(Items.DIAMOND_SHOVEL), new ItemStack(Items.REDSTONE)
