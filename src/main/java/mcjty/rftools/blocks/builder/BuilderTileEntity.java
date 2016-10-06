@@ -207,6 +207,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     @Override
+    public BlockPos getBlockPos() {
+        return getPos();
+    }
+
+    @Override
     public long getLastUpdateTime() {
         return lastHudTime;
     }

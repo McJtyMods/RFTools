@@ -158,6 +158,11 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     }
 
     @Override
+    public BlockPos getBlockPos() {
+        return getPos();
+    }
+
+    @Override
     public List<String> getClientLog() {
         return clientHudLog;
     }

@@ -339,7 +339,7 @@ public class RenderWorldLastEventHandler {
             }
 
             @Override
-            public BlockPos getPos() {
+            public BlockPos getBlockPos() {
                 return pos;
             }
         };

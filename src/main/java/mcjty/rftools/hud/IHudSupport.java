@@ -20,5 +20,5 @@ public interface IHudSupport {
 
     void setLastUpdateTime(long t);
 
-    BlockPos getPos();
+    BlockPos getBlockPos();
 }
