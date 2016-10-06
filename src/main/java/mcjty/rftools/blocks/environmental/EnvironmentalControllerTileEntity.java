@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.environmental;
 
+import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
@@ -21,12 +22,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.common.util.Constants;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 //@Optional.InterfaceList({
 //        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"),
 //        @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")})
-public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable /*, SimpleComponent, IPeripheral*/ {
+public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable,
+        IMachineInformation /*, SimpleComponent, IPeripheral*/ {
 
     public static final String CMD_SETRADIUS = "setRadius";
     public static final String CMD_SETBOUNDS = "setBounds";
@@ -65,6 +68,33 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
 
     public EnvironmentalControllerTileEntity() {
         super(EnvironmentalConfiguration.ENVIRONMENTAL_MAXENERGY, EnvironmentalConfiguration.ENVIRONMENTAL_RECEIVEPERTICK);
+    }
+
+    @Override
+    public int getEnergyDiffPerTick() {
+        return isActive() ? -getTotalRfPerTick() : 0;
+    }
+
+    @Nullable
+    @Override
+    public String getEnergyUnitName() {
+        return "RF";
+    }
+
+    @Override
+    public boolean isMachineActive() {
+        return isActive();
+    }
+
+    @Override
+    public boolean isMachineRunning() {
+        return isActive();
+    }
+
+    @Nullable
+    @Override
+    public String getMachineStatus() {
+        return isActive() ? "active" : "idle";
     }
 
     @Override

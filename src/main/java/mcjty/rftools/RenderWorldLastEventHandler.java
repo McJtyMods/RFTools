@@ -1,13 +1,12 @@
 package mcjty.rftools;
 
+import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.api.smartwrench.SmartWrenchMode;
+import mcjty.lib.gui.HudRenderHelper;
 import mcjty.lib.gui.RenderGlowEffect;
-import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorTileEntity;
 import mcjty.rftools.blocks.builder.BuilderSetup;
-import mcjty.rftools.hud.HudRenderer;
-import mcjty.rftools.hud.IHudSupport;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.netmonitor.NetworkMonitorItem;
@@ -136,75 +135,17 @@ public class RenderWorldLastEventHandler {
         GlStateManager.color(.5f, .3f, 0);
         GlStateManager.glLineWidth(2);
 
-        buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
+        buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
 
         for (BlockPos coordinate : coordinates) {
-            renderHighLightedBlocksOutline(buffer, base.getX() + coordinate.getX(), base.getY() + coordinate.getY(), base.getZ() + coordinate.getZ());
+            mcjty.lib.gui.RenderHelper.renderHighLightedBlocksOutline(buffer,
+                    base.getX() + coordinate.getX(), base.getY() + coordinate.getY(), base.getZ() + coordinate.getZ(),
+                    .5f, .3f, 0f, 1.0f);
         }
         tessellator.draw();
 
         GlStateManager.enableTexture2D();
         GlStateManager.popMatrix();
-    }
-
-    private static void renderHighLightedBlocksOutline(VertexBuffer buffer, float mx, float my, float mz) {
-        buffer.pos(mx, my, mz).endVertex();
-        buffer.pos(mx+1, my, mz).endVertex();
-        buffer.pos(mx, my, mz).endVertex();
-        buffer.pos(mx, my+1, mz).endVertex();
-        buffer.pos(mx, my, mz).endVertex();
-        buffer.pos(mx, my, mz+1).endVertex();
-        buffer.pos(mx+1, my+1, mz+1).endVertex();
-        buffer.pos(mx, my+1, mz+1).endVertex();
-        buffer.pos(mx+1, my+1, mz+1).endVertex();
-        buffer.pos(mx+1, my, mz+1).endVertex();
-        buffer.pos(mx+1, my+1, mz+1).endVertex();
-        buffer.pos(mx+1, my+1, mz).endVertex();
-
-        buffer.pos(mx, my+1, mz).endVertex();
-        buffer.pos(mx, my+1, mz+1).endVertex();
-        buffer.pos(mx, my+1, mz).endVertex();
-        buffer.pos(mx+1, my+1, mz).endVertex();
-
-        buffer.pos(mx+1, my, mz).endVertex();
-        buffer.pos(mx+1, my, mz+1).endVertex();
-        buffer.pos(mx+1, my, mz).endVertex();
-        buffer.pos(mx+1, my+1, mz).endVertex();
-
-        buffer.pos(mx, my, mz+1).endVertex();
-        buffer.pos(mx+1, my, mz+1).endVertex();
-        buffer.pos(mx, my, mz+1).endVertex();
-        buffer.pos(mx, my+1, mz+1).endVertex();
-    }
-
-    private static void renderHighLightedBlocksOutlineColor(VertexBuffer buffer, float mx, float my, float mz, float r, float g, float b, float a) {
-        buffer.pos(mx, my, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx+1, my, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my+1, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my, mz+1).color(r, g, b, a).endVertex();
-        buffer.pos(mx+1, my+1, mz+1).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my+1, mz+1).color(r, g, b, a).endVertex();
-        buffer.pos(mx+1, my+1, mz+1).color(r, g, b, a).endVertex();
-        buffer.pos(mx+1, my, mz+1).color(r, g, b, a).endVertex();
-        buffer.pos(mx+1, my+1, mz+1).color(r, g, b, a).endVertex();
-        buffer.pos(mx+1, my+1, mz).color(r, g, b, a).endVertex();
-
-        buffer.pos(mx, my+1, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my+1, mz+1).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my+1, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx+1, my+1, mz).color(r, g, b, a).endVertex();
-
-        buffer.pos(mx+1, my, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx+1, my, mz+1).color(r, g, b, a).endVertex();
-        buffer.pos(mx+1, my, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx+1, my+1, mz).color(r, g, b, a).endVertex();
-
-        buffer.pos(mx, my, mz+1).color(r, g, b, a).endVertex();
-        buffer.pos(mx+1, my, mz+1).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my, mz+1).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my+1, mz+1).color(r, g, b, a).endVertex();
     }
 
     private static void renderHilightedBlock(RenderWorldLastEvent evt) {
@@ -242,8 +183,8 @@ public class RenderWorldLastEventHandler {
         float mx = c.getX();
         float my = c.getY();
         float mz = c.getZ();
-        buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
-        renderHighLightedBlocksOutline(buffer, mx, my, mz);
+        buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+        mcjty.lib.gui.RenderHelper.renderHighLightedBlocksOutline(buffer, mx, my, mz, 1.0f, 0.0f, 0.0f, 1.0f);
 
         tessellator.draw();
 
@@ -275,9 +216,31 @@ public class RenderWorldLastEventHandler {
             if (PacketReturnRfInRange.clientLevels == null) {
                 return;
             }
-            for (Map.Entry<BlockPos, EnergyTools.EnergyLevel> entry : PacketReturnRfInRange.clientLevels.entrySet()) {
+            for (Map.Entry<BlockPos, PacketGetRfInRange.MachineInfo> entry : PacketReturnRfInRange.clientLevels.entrySet()) {
                 BlockPos pos = entry.getKey();
-                HudRenderer.renderHud(getHudSupport(entry, pos), pos.getX(), pos.getY(), pos.getZ(), 1.0f, true);
+                List<String> log = new ArrayList<>();
+                PacketGetRfInRange.MachineInfo info = entry.getValue();
+                log.add(TextFormatting.BLUE + "RF:  " + TextFormatting.WHITE + info.getEnergy());
+                log.add(TextFormatting.BLUE + "Max: " + TextFormatting.WHITE + info.getMaxEnergy());
+                if (info.getEnergyPerTick() != null) {
+                    TileEntity te = player.getEntityWorld().getTileEntity(pos);
+                    String unit = "";
+                    if (te instanceof IMachineInformation) {
+                        unit = ((IMachineInformation) te).getEnergyUnitName();
+                        if (unit == null) {
+                            unit = "";
+                        }
+                    }
+                    int usage = info.getEnergyPerTick();
+                    if (usage < 0) {
+                        log.add(TextFormatting.RED + "" + usage + unit + "/t");
+                    } else if (usage > 0) {
+                        log.add(TextFormatting.GREEN + "" + usage + unit + "/t");
+                    }
+                }
+
+                HudRenderHelper.renderHud(log, HudRenderHelper.HudPlacement.HUD_CENTER, HudRenderHelper.HudOrientation.HUD_TOPLAYER,
+                        null, pos.getX(), pos.getY(), pos.getZ(), 2.0f);
                 renderBoxOutline(pos);
             }
         }
@@ -300,48 +263,11 @@ public class RenderWorldLastEventHandler {
         float my = pos.getY();
         float mz = pos.getZ();
         buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-        renderHighLightedBlocksOutlineColor(buffer, mx, my, mz, 1, 0, 0, 1);
+        mcjty.lib.gui.RenderHelper.renderHighLightedBlocksOutline(buffer, mx, my, mz, 1, 0, 0, 1);
 
         tessellator.draw();
 
         Minecraft.getMinecraft().entityRenderer.enableLightmap();
         GlStateManager.enableTexture2D();
-    }
-
-    private static IHudSupport getHudSupport(final Map.Entry<BlockPos, EnergyTools.EnergyLevel> entry, final BlockPos pos) {
-        return new IHudSupport() {
-            @Override
-            public EnumFacing getBlockOrientation() {
-                return null;
-            }
-
-            @Override
-            public boolean isBlockAboveAir() {
-                return Minecraft.getMinecraft().theWorld.isAirBlock(pos.up());
-            }
-
-            @Override
-            public List<String> getClientLog() {
-                List<String> result = new ArrayList<>();
-                result.add(TextFormatting.GREEN + "RF:  " + TextFormatting.WHITE + entry.getValue().getEnergy());
-                result.add(TextFormatting.GREEN + "Max: " + TextFormatting.WHITE + entry.getValue().getMaxEnergy());
-                return result;
-            }
-
-            @Override
-            public long getLastUpdateTime() {
-                return System.currentTimeMillis();  // We don't want to get info here
-            }
-
-            @Override
-            public void setLastUpdateTime(long t) {
-
-            }
-
-            @Override
-            public BlockPos getBlockPos() {
-                return pos;
-            }
-        };
     }
 }

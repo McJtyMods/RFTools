@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.generator;
 
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyContainerItem;
+import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyProviderTileEntity;
@@ -21,9 +22,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
-public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity implements ITickable, DefaultSidedInventory {
+public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity implements ITickable, DefaultSidedInventory,
+        IMachineInformation {
 
     public static final String CMD_RSMODE = "rsMode";
 
@@ -33,6 +36,33 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
 
     public CoalGeneratorTileEntity() {
         super(CoalGeneratorConfiguration.MAXENERGY, CoalGeneratorConfiguration.SENDPERTICK);
+    }
+
+    @Override
+    public int getEnergyDiffPerTick() {
+        return burning > 0 ? getRfPerTick() : 0;
+    }
+
+    @Nullable
+    @Override
+    public String getEnergyUnitName() {
+        return "RF";
+    }
+
+    @Override
+    public boolean isMachineActive() {
+        return isMachineEnabled();
+    }
+
+    @Override
+    public boolean isMachineRunning() {
+        return isMachineEnabled();
+    }
+
+    @Nullable
+    @Override
+    public String getMachineStatus() {
+        return burning > 0 ? "generating power" : "idle";
     }
 
     @Override

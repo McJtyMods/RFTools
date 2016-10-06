@@ -1,6 +1,7 @@
 package mcjty.rftools.network;
 
 import io.netty.buffer.ByteBuf;
+import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.varia.EnergyTools;
 import net.minecraft.tileentity.TileEntity;
@@ -15,6 +16,32 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PacketGetRfInRange implements IMessage {
+
+    public static class MachineInfo {
+        private final int energy;
+        private final int maxEnergy;
+        private final Integer energyPerTick;
+
+        public MachineInfo(int energy, int maxEnergy, Integer energyPerTick) {
+            this.energy = energy;
+            this.maxEnergy = maxEnergy;
+            this.energyPerTick = energyPerTick;
+        }
+
+        public int getEnergy() {
+            return energy;
+        }
+
+        public int getMaxEnergy() {
+            return maxEnergy;
+        }
+
+        public Integer getEnergyPerTick() {
+            return energyPerTick;
+        }
+    }
+
+
     private BlockPos pos;
 
     @Override
@@ -43,7 +70,7 @@ public class PacketGetRfInRange implements IMessage {
 
         private void handle(PacketGetRfInRange message, MessageContext ctx) {
             World world = ctx.getServerHandler().playerEntity.worldObj;
-            Map<BlockPos, EnergyTools.EnergyLevel> result = new HashMap<>();
+            Map<BlockPos, MachineInfo> result = new HashMap<>();
             int range = 12;
             for (int x = -range; x <= range; x++) {
                 for (int y = -range; y <= range; y++) {
@@ -52,7 +79,11 @@ public class PacketGetRfInRange implements IMessage {
                         TileEntity te = world.getTileEntity(p);
                         if (EnergyTools.isEnergyTE(te)) {
                             EnergyTools.EnergyLevel level = EnergyTools.getEnergyLevel(te);
-                            result.put(p, level);
+                            Integer usage = null;
+                            if (te instanceof IMachineInformation) {
+                                usage = ((IMachineInformation) te).getEnergyDiffPerTick();
+                            }
+                            result.put(p, new MachineInfo(level.getEnergy(), level.getMaxEnergy(), usage));
                         }
                     }
                 }

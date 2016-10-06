@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.endergen;
 
 import cofh.api.energy.IEnergyConnection;
 import mcjty.lib.api.MachineInformation;
+import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.entity.GenericEnergyProviderTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketServerCommand;
@@ -24,13 +25,14 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.Constants;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implements ITickable, MachineInformation,
-        IHudSupport {
+        IHudSupport, IMachineInformation {
 
     private static Random random = new Random();
 
@@ -109,6 +111,33 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
 
     public EndergenicTileEntity() {
         super(5000000, 20000);
+    }
+
+    @Override
+    public int getEnergyDiffPerTick() {
+        return rfGained - rfLost;
+    }
+
+    @Nullable
+    @Override
+    public String getEnergyUnitName() {
+        return "RF";
+    }
+
+    @Override
+    public boolean isMachineActive() {
+        return true;
+    }
+
+    @Override
+    public boolean isMachineRunning() {
+        return true;
+    }
+
+    @Nullable
+    @Override
+    public String getMachineStatus() {
+        return null;
     }
 
     @Override

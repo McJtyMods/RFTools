@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.blockprotector;
 
+import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.api.smartwrench.SmartWrenchSelector;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
@@ -19,6 +20,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.Constants;
 
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -26,7 +28,8 @@ import java.util.Set;
 //@Optional.InterfaceList({
 //        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"),
 //        @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")})
-public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity implements SmartWrenchSelector, ITickable /*, SimpleComponent, IPeripheral*/ {
+public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity implements SmartWrenchSelector, ITickable,
+        IMachineInformation /*, SimpleComponent, IPeripheral*/ {
 
     public static final String CMD_RSMODE = "rsMode";
     public static final String COMPONENT_NAME = "block_protector";
@@ -101,6 +104,33 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     @Override
+    public int getEnergyDiffPerTick() {
+        return active ? -getRfPerTick() : 0;
+    }
+
+    @Nullable
+    @Override
+    public String getEnergyUnitName() {
+        return "RF";
+    }
+
+    @Override
+    public boolean isMachineActive() {
+        return active;
+    }
+
+    @Override
+    public boolean isMachineRunning() {
+        return active;
+    }
+
+    @Nullable
+    @Override
+    public String getMachineStatus() {
+        return active ? "protecting blocks" : "idle";
+    }
+
+    @Override
     public void update() {
         if (!worldObj.isRemote) {
             checkStateServer();
@@ -120,7 +150,11 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
             setActive(true);
         }
 
-        consumeEnergy(protectedBlocks.size() * BlockProtectorConfiguration.rfPerProtectedBlock);
+        consumeEnergy(getRfPerTick());
+    }
+
+    private int getRfPerTick() {
+        return protectedBlocks.size() * BlockProtectorConfiguration.rfPerProtectedBlock;
     }
 
     @Override

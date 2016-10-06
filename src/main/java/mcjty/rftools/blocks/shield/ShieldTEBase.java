@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.shield;
 
+import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.api.smartwrench.SmartWrenchSelector;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
@@ -32,12 +33,14 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 //@Optional.InterfaceList({
 //        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"),
 //        @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")})
-public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, SmartWrenchSelector, ITickable { // @todo }, SimpleComponent, IPeripheral {
+public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, SmartWrenchSelector, ITickable,
+        IMachineInformation { // @todo }, SimpleComponent, IPeripheral {
 
     public static final String CMD_SHIELDVISMODE = "shieldVisMode";
     public static final String CMD_APPLYCAMO = "applyCamo";
@@ -497,6 +500,33 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     }
 
     @Override
+    public int getEnergyDiffPerTick() {
+        return shieldActive ? getRfPerTick() : 0;
+    }
+
+    @Nullable
+    @Override
+    public String getEnergyUnitName() {
+        return "RF";
+    }
+
+    @Override
+    public boolean isMachineActive() {
+        return shieldActive;
+    }
+
+    @Override
+    public boolean isMachineRunning() {
+        return shieldActive;
+    }
+
+    @Nullable
+    @Override
+    public String getMachineStatus() {
+        return shieldActive ? "active" : "idle";
+    }
+
+    @Override
     public void update() {
         if (!worldObj.isRemote) {
             checkStateServer();
@@ -517,8 +547,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
 
         boolean needsUpdate = false;
 
-        int rf = calculateRfPerTick();
-        rf = (int) (rf * (2.0f - getInfusedFactor()) / 2.0f);
+        int rf = getRfPerTick();
 
         if (rf > 0) {
             if (getEnergyStored(EnumFacing.DOWN) < rf) {
@@ -542,6 +571,12 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             updateShield();
             markDirty();
         }
+    }
+
+    private int getRfPerTick() {
+        int rf = calculateRfPerTick();
+        rf = (int) (rf * (2.0f - getInfusedFactor()) / 2.0f);
+        return rf;
     }
 
     public void composeDecomposeShield(boolean ctrl) {

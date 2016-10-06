@@ -2,7 +2,6 @@ package mcjty.rftools.network;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.lib.varia.EnergyTools;
 import mcjty.rftools.RFTools;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -13,10 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PacketReturnRfInRange implements IMessage {
-    private Map<BlockPos, EnergyTools.EnergyLevel> levels;
+    private Map<BlockPos, PacketGetRfInRange.MachineInfo> levels;
 
     // Clientside
-    public static Map<BlockPos, EnergyTools.EnergyLevel> clientLevels;
+    public static Map<BlockPos, PacketGetRfInRange.MachineInfo> clientLevels;
 
     @Override
     public void fromBytes(ByteBuf buf) {
@@ -26,28 +25,39 @@ public class PacketReturnRfInRange implements IMessage {
             BlockPos pos = NetworkTools.readPos(buf);
             int e = buf.readInt();
             int m = buf.readInt();
-            levels.put(pos, new EnergyTools.EnergyLevel(e, m));
+            Integer usage = null;
+            if (buf.readBoolean()) {
+                usage = buf.readInt();
+            }
+            levels.put(pos, new PacketGetRfInRange.MachineInfo(e, m, usage));
         }
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(levels.size());
-        for (Map.Entry<BlockPos, EnergyTools.EnergyLevel> entry : levels.entrySet()) {
+        for (Map.Entry<BlockPos, PacketGetRfInRange.MachineInfo> entry : levels.entrySet()) {
             NetworkTools.writePos(buf, entry.getKey());
-            buf.writeInt(entry.getValue().getEnergy());
-            buf.writeInt(entry.getValue().getMaxEnergy());
+            PacketGetRfInRange.MachineInfo info = entry.getValue();
+            buf.writeInt(info.getEnergy());
+            buf.writeInt(info.getMaxEnergy());
+            if (info.getEnergyPerTick() != null) {
+                buf.writeBoolean(true);
+                buf.writeInt(info.getEnergyPerTick());
+            } else {
+                buf.writeBoolean(false);
+            }
         }
     }
 
-    public Map<BlockPos, EnergyTools.EnergyLevel> getLevels() {
+    public Map<BlockPos, PacketGetRfInRange.MachineInfo> getLevels() {
         return levels;
     }
 
     public PacketReturnRfInRange() {
     }
 
-    public PacketReturnRfInRange(Map<BlockPos, EnergyTools.EnergyLevel> levels) {
+    public PacketReturnRfInRange(Map<BlockPos, PacketGetRfInRange.MachineInfo> levels) {
         this.levels = levels;
     }
 
