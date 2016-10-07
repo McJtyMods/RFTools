@@ -14,6 +14,7 @@ public class BuilderConfiguration {
     public static int builderRfPerOperation = 500;
     public static int builderRfPerLiquid = 300;
     public static int builderRfPerQuarry = 300;
+    public static int builderRfPerSkipped = 50;
     public static int builderRfPerEntity = 5000;
     public static int builderRfPerPlayer = 40000;
     public static double dimensionCostFactor = 5.0f;
@@ -62,6 +63,8 @@ public class BuilderConfiguration {
                 "RF per block operation for the builder when used to build").getInt();
         builderRfPerQuarry = cfg.get(CATEGORY_BUILDER, "builderRfPerQuarry", builderRfPerQuarry,
                 "Base RF per block operation for the builder when used as a quarry or voider (actual cost depends on hardness of block)").getInt();
+        builderRfPerSkipped = cfg.get(CATEGORY_BUILDER, "builderRfPerSkipped", builderRfPerSkipped,
+                "RF per block that is skipped (used when a filter is added to the builder)").getInt();
         builderRfPerEntity = cfg.get(CATEGORY_BUILDER, "builderRfPerEntity", builderRfPerEntity,
                 "RF per entity move operation for the builder").getInt();
         builderRfPerPlayer = cfg.get(CATEGORY_BUILDER, "builderRfPerPlayer", builderRfPerPlayer,

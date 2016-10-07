@@ -54,7 +54,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         energyBar.setValue(getCurrentRF());
 
         currentLevel = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
-        currentLevel.setText("Y:").setTooltips("Current level the builder is at").setLayoutHint(new PositionalLayout.PositionalHint(75, 40, 40, 15));
+        currentLevel.setText("Y:").setTooltips("Current level the builder is at").setLayoutHint(new PositionalLayout.PositionalHint(75, 31, 40, 15));
 
         Panel positionPanel = setupPositionPanel();
         Panel modePanel = setupModePanel();

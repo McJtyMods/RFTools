@@ -872,7 +872,7 @@ The Builder is one of the most versatile machine in RFTools. It can do:
     - Collect items and XP an in area
     - Pump liquids
 {-------------------------------------------------------------}
-A chest ot tank on top or below is sometimes needed to supply or collect.
+A chest or tank on top or below is sometimes needed to supply or collect.
 Using the GUI you can control where the builder should place the blocks
 (always at the back of the builder). This only works for space cards.
 
@@ -885,6 +885,13 @@ Help to identify what will happen and help with gravity affected blocks.
 In this mode the builder will keep running as long as it has a redstone
 signal and keep on moving or copying if there is room to do so. If
 this is off the builder will do one pass and stop.
+{-------------------------------------------------------------}
+The builder also supports a standard RFTools filter. If that filter is
+inserted then it will only quarry or void blocks that match the filter.
+Note that this works only on the block in the world, not the end result
+of the block. i.e. to filter on diamonds you need to insert the diamond
+ore block in the filter. All filter options like whitelist/blacklist
+and filter by mod are supported.
 {-------------------------------------------------------------}
 For moving, swapping and copying structures you need a space card
 linked to a space chamber.

@@ -130,6 +130,13 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
     }
 
+    @Override
+    public ItemStack decrStackSize(int index, int count) {
+        if (index == CrafterContainer.SLOT_FILTER_MODULE) {
+            filterCache = null;
+        }
+        return getInventoryHelper().decrStackSize(index, count);
+    }
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {

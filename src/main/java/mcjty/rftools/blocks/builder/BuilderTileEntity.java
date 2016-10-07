@@ -10,6 +10,8 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.hud.IHudSupport;
 import mcjty.rftools.items.builder.ShapeCardItem;
+import mcjty.rftools.items.storage.StorageFilterCache;
+import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.network.PacketGetHudLog;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.varia.RFToolsTools;
@@ -69,7 +71,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public static final String CMD_GETLEVEL = "getLevel";
     public static final String CLIENTCMD_GETLEVEL = "getLevel";
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, BuilderContainer.factory, 1);
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, BuilderContainer.factory, 2);
 
     public static final int MODE_COPY = 0;
     public static final int MODE_MOVE = 1;
@@ -115,6 +117,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private List<String> clientHudLog = new ArrayList<>();
 
     private int cardType = ShapeCardItem.CARD_UNKNOWN; // One of the card types out of ShapeCardItem.CARD_...
+
+    private StorageFilterCache filterCache = null;
 
     // For chunkloading with the quarry.
     private ForgeChunkManager.Ticket ticket = null;
@@ -1047,6 +1051,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return false;
     }
 
+    private void getFilterCache() {
+        if (filterCache == null) {
+            filterCache = StorageFilterItem.getCache(inventoryHelper.getStackInSlot(BuilderContainer.SLOT_FILTER));
+        }
+    }
+
     private boolean quarryBlock(int rfNeeded, BlockPos srcPos, Block block) {
         IBlockState srcState = worldObj.getBlockState(srcPos);
         int xCoord = getPos().getX();
@@ -1075,6 +1085,17 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
             FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
             if (block.canEntityDestroy(srcState, worldObj, srcPos, fakePlayer)) {
+                ItemStack filter = getStackInSlot(BuilderContainer.SLOT_FILTER);
+                if (filter != null) {
+                    getFilterCache();
+                    if (filterCache != null) {
+                        boolean match = filterCache.match(block.getItem(worldObj, srcPos, srcState));
+                        if (!match) {
+                            consumeEnergy(Math.min(rfNeeded, BuilderConfiguration.builderRfPerSkipped));
+                            return false;   // Skip this
+                        }
+                    }
+                }
                 if (getCachedVoidableBlocks().contains(block)) {
                     clearOrDirtBlock(rfNeeded, sx, sy, sz, block, clear);
                 } else {
@@ -1131,6 +1152,18 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return false;
         }
         if (block.getBlockHardness(srcState, worldObj, srcPos) >= 0) {
+            ItemStack filter = getStackInSlot(BuilderContainer.SLOT_FILTER);
+            if (filter != null) {
+                getFilterCache();
+                if (filterCache != null) {
+                    boolean match = filterCache.match(block.getItem(worldObj, srcPos, srcState));
+                    if (!match) {
+                        consumeEnergy(Math.min(rfNeeded, BuilderConfiguration.builderRfPerSkipped));
+                        return false;   // Skip this
+                    }
+                }
+            }
+
             if (!silent) {
                 SoundTools.playSound(worldObj, block.getSoundType().breakSound, sx, sy, sz, 1.0f, 1.0f);
             }
@@ -1879,6 +1912,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             // Restart if we go from having a stack to not having stack or the other way around.
             refreshSettings();
         }
+        if (index == BuilderContainer.SLOT_FILTER) {
+            filterCache = null;
+        }
         return inventoryHelper.decrStackSize(index, amount);
     }
 
@@ -1887,6 +1923,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (index == BuilderContainer.SLOT_TAB && ((stack == null && inventoryHelper.getStackInSlot(index) != null) || (stack != null && inventoryHelper.getStackInSlot(index) == null))) {
             // Restart if we go from having a stack to not having stack or the other way around.
             refreshSettings();
+        }
+        if (index == BuilderContainer.SLOT_FILTER) {
+            filterCache = null;
         }
         inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
     }
