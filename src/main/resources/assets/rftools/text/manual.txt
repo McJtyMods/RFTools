@@ -381,13 +381,13 @@ Filtering items for your storage:
 {ri:filter_module}
 With this item you can control what is allowed in the chest and what not.
 You can white or blacklist, filter with NBT, damage, ore dictionary or mod.
-
 This filter module is also usable in the crafter to control what goes into
-the crafter buffer.
+the crafter buffer and in the builder to control what to quarry or void.
 
 The storage filter item has its own GUI which you can only access by having
 the filter in your hand or you can sneak right click on any inventory will
-configure the filter to the current contents of that inventory.
+configure the filter to the current contents of that inventory. Sneak right
+click on another block in the world will add that to the filter.
 {-------------------------------------------------------------}
 {b}Elevator
 {n:elevator}

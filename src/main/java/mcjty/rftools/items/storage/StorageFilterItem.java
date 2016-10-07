@@ -4,15 +4,18 @@ import mcjty.lib.container.InventoryHelper;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageTileEntity;
 import mcjty.rftools.items.GenericRFToolsItem;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -21,6 +24,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static mcjty.rftools.items.storage.StorageFilterContainer.FILTER_SLOTS;
 
 public class StorageFilterItem extends GenericRFToolsItem {
 
@@ -74,10 +79,31 @@ public class StorageFilterItem extends GenericRFToolsItem {
                     if (!stack.hasTagCompound()) {
                         stack.setTagCompound(new NBTTagCompound());
                     }
-                    StorageFilterInventory.convertItemsToNBT(stack.getTagCompound(),stacks.toArray(new ItemStack[stacks.size()]) );
+                    StorageFilterInventory.convertItemsToNBT(stack.getTagCompound(), stacks.toArray(new ItemStack[stacks.size()]));
                     playerIn.addChatComponentMessage(new TextComponentString(TextFormatting.GREEN + "Stored inventory contents in filter"));
                 } else {
-                    playerIn.addChatComponentMessage(new TextComponentString(TextFormatting.RED + "This is not an inventory"));
+                    IBlockState state = worldIn.getBlockState(pos);
+                    ItemStack blockStack = state.getBlock().getItem(worldIn, pos, state);
+                    if (blockStack != null) {
+                        if (!stack.hasTagCompound()) {
+                            stack.setTagCompound(new NBTTagCompound());
+                        }
+                        Set<ResourceLocation> registeredItems = new HashSet<>();
+                        ItemStack[] stacks = new ItemStack[FILTER_SLOTS];
+                        NBTTagList bufferTagList = stack.getTagCompound().getTagList("Items", Constants.NBT.TAG_COMPOUND);
+                        for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
+                            NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
+                            stacks[i] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+                        }
+                        for (int i = 0 ; i < FILTER_SLOTS ; i++) {
+                            if (stacks[i] == null) {
+                                stacks[i] = blockStack;
+                                playerIn.addChatComponentMessage(new TextComponentString(TextFormatting.GREEN + "Added " + blockStack.getDisplayName() + " to the filter!"));
+                                StorageFilterInventory.convertItemsToNBT(stack.getTagCompound(), stacks);
+                                break;
+                            }
+                        }
+                    }
                 }
             }
             return EnumActionResult.SUCCESS;
@@ -94,7 +120,7 @@ public class StorageFilterItem extends GenericRFToolsItem {
                 return;
             }
         }
-        if (stacks.size() < StorageFilterContainer.FILTER_SLOTS) {
+        if (stacks.size() < FILTER_SLOTS) {
             ItemStack copy = s.copy();
             copy.stackSize = 1;
             stacks.add(copy);
