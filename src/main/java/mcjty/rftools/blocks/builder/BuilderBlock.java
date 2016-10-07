@@ -65,11 +65,11 @@ public class BuilderBlock extends GenericRFToolsBlock<BuilderTileEntity, Builder
     public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(TextFormatting.WHITE + "This block is linked to a space chamber and");
-            list.add(TextFormatting.WHITE + "can move/copy/swap the blocks from the space chamber");
-            list.add(TextFormatting.WHITE + "to here. Insert a chamber card to make a link.");
-            list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption and");
-            list.add(TextFormatting.YELLOW + "increased building speed.");
+            list.add(TextFormatting.WHITE + "This block can quarry areas, pump liquids,");
+            list.add(TextFormatting.WHITE + "move/copy/swap structures, collect items");
+            list.add(TextFormatting.WHITE + "and XP, move entities, build structures, ...");
+            list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption");
+            list.add(TextFormatting.YELLOW + "and increased speed.");
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
