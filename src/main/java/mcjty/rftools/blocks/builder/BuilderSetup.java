@@ -124,6 +124,11 @@ public class BuilderSetup {
                             new ItemStack(Blocks.GLASS), new ItemStack(Blocks.GLASS), new ItemStack(Blocks.GLASS)
                     }, new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_CLEAR_FORTUNE), 4));
                     GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
+                            new ItemStack(Blocks.GLASS), new ItemStack(Blocks.GLASS), new ItemStack(Blocks.GLASS),
+                            new ItemStack(Blocks.GLASS), new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_PUMP), new ItemStack(Blocks.GLASS),
+                            new ItemStack(Blocks.GLASS), new ItemStack(Blocks.GLASS), new ItemStack(Blocks.GLASS)
+                    }, new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_PUMP_CLEAR), 4));
+                    GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
                             new ItemStack(Blocks.DIRT), new ItemStack(Blocks.DIRT), new ItemStack(Blocks.DIRT),
                             new ItemStack(Blocks.DIRT), new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_CLEAR), new ItemStack(Blocks.DIRT),
                             new ItemStack(Blocks.DIRT), new ItemStack(Blocks.DIRT), new ItemStack(Blocks.DIRT)
@@ -138,6 +143,11 @@ public class BuilderSetup {
                             new ItemStack(Blocks.DIRT), new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_CLEAR_FORTUNE), new ItemStack(Blocks.DIRT),
                             new ItemStack(Blocks.DIRT), new ItemStack(Blocks.DIRT), new ItemStack(Blocks.DIRT)
                     }, new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_FORTUNE), 4));
+                    GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
+                            new ItemStack(Blocks.DIRT), new ItemStack(Blocks.DIRT), new ItemStack(Blocks.DIRT),
+                            new ItemStack(Blocks.DIRT), new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_PUMP_CLEAR), new ItemStack(Blocks.DIRT),
+                            new ItemStack(Blocks.DIRT), new ItemStack(Blocks.DIRT), new ItemStack(Blocks.DIRT)
+                    }, new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_PUMP), 4));
                 }
             }
         }

@@ -167,6 +167,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 case ShapeCardItem.CARD_PUMP:
                     list.add("    Pump");
                     break;
+                case ShapeCardItem.CARD_PUMP_CLEAR:
+                    list.add("    Pump");
+                    list.add("    (clearing)");
+                    break;
                 case ShapeCardItem.CARD_QUARRY_FORTUNE:
                     list.add("    Fortune quarry");
                     break;
@@ -876,6 +880,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         switch (getCardType()) {
             case ShapeCardItem.CARD_PUMP:
+            case ShapeCardItem.CARD_PUMP_CLEAR:
                 rfNeeded = (int) (BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.voidShapeCardFactor);
                 break;
             case ShapeCardItem.CARD_VOID:
@@ -929,6 +934,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         switch (getCardType()) {
             case ShapeCardItem.CARD_PUMP:
+            case ShapeCardItem.CARD_PUMP_CLEAR:
                 return pumpBlock(rfNeeded, srcPos, block);
             case ShapeCardItem.CARD_VOID:
                 return voidBlock(rfNeeded, srcPos, block);
@@ -1127,7 +1133,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
             if (block.canEntityDestroy(srcState, worldObj, srcPos, fakePlayer)) {
                 if (checkAndInsertFluids(fluid)) {
-                    worldObj.setBlockToAir(srcPos);
+                    boolean clear = getCardType() == ShapeCardItem.CARD_PUMP_CLEAR;
+                    if (clear) {
+                        worldObj.setBlockToAir(srcPos);
+                    } else {
+                        worldObj.setBlockState(srcPos, getDirtOrCobble().getDefaultState(), 2);       // No block update!
+                    }
                     if (!silent) {
                         SoundTools.playSound(worldObj, block.getSoundType().breakSound, srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
                     }
