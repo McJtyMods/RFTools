@@ -195,19 +195,19 @@ public class RenderWorldLastEventHandler {
     private static void renderPower(RenderWorldLastEvent evt) {
         EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
 
-        double doubleX = player.lastTickPosX + (player.posX - player.lastTickPosX) * evt.getPartialTicks();
-        double doubleY = player.lastTickPosY + (player.posY - player.lastTickPosY) * evt.getPartialTicks();
-        double doubleZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * evt.getPartialTicks();
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(-doubleX, -doubleY, -doubleZ);
-
-        GlStateManager.disableDepth();
-        GlStateManager.enableTexture2D();
-
         ItemStack mainItem = player.getHeldItemMainhand();
         ItemStack offItem = player.getHeldItemOffhand();
         if ((mainItem != null && mainItem.getItem() instanceof NetworkMonitorItem) || (offItem != null && offItem.getItem() instanceof NetworkMonitorItem)) {
+            double doubleX = player.lastTickPosX + (player.posX - player.lastTickPosX) * evt.getPartialTicks();
+            double doubleY = player.lastTickPosY + (player.posY - player.lastTickPosY) * evt.getPartialTicks();
+            double doubleZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * evt.getPartialTicks();
+
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(-doubleX, -doubleY, -doubleZ);
+
+            GlStateManager.disableDepth();
+            GlStateManager.enableTexture2D();
+
             if (System.currentTimeMillis() - lastTime > 500) {
                 lastTime = System.currentTimeMillis();
                 RFToolsMessages.INSTANCE.sendToServer(new PacketGetRfInRange(player.getPosition()));
@@ -243,8 +243,11 @@ public class RenderWorldLastEventHandler {
                         null, pos.getX(), pos.getY(), pos.getZ(), 2.0f);
                 renderBoxOutline(pos);
             }
+
+            GlStateManager.enableDepth();
+
+            GlStateManager.popMatrix();
         }
-        GlStateManager.popMatrix();
     }
 
     private static void renderBoxOutline(BlockPos pos) {
