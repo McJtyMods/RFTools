@@ -125,7 +125,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     }
 
-    public boolean addMatter(ItemStack stack, int m) {
+    public boolean addMatter(ItemStack stack, int m, float beamerInfusionFactor) {
         testSyringe();
         if (mobId == null || mobId.isEmpty()) {
             return false;       // No matter was added.
@@ -146,7 +146,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         float mm = matter[materialType];
-        mm += m * factor;
+        mm += m * factor * 3.0f / (3.0f - beamerInfusionFactor);
         if (mm > SpawnerConfiguration.maxMatterStorage) {
             mm = SpawnerConfiguration.maxMatterStorage;
         }

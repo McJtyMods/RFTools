@@ -73,7 +73,7 @@ public class MatterBeamerBlock extends GenericRFToolsBlock<MatterBeamerTileEntit
             list.add(TextFormatting.WHITE + "of energy. It can then send that beam to");
             list.add(TextFormatting.WHITE + "a connected spawner. Connect by using a wrench.");
             list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power usage");
-            list.add(TextFormatting.YELLOW + "and increased speed.");
+            list.add(TextFormatting.YELLOW + "increased speed and less material needed");
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
