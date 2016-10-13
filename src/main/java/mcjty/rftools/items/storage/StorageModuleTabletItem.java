@@ -6,6 +6,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.items.GenericRFToolsItem;
+import mcjty.rftools.items.ItemCapabilityProvider;
 import mcjty.rftools.items.screenmodules.StorageControlModuleItem;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.client.renderer.block.model.ModelBakery;
@@ -24,6 +25,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -49,6 +51,12 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
         maxReceive = ModularStorageConfiguration.TABLET_RECEIVEPERTICK;
         maxExtract = ModularStorageConfiguration.TABLET_CONSUMEPERUSE;
     }
+
+    @Override
+    public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
+        return new ItemCapabilityProvider(stack, this);
+    }
+
 
     @Override
     public int getMaxItemUseDuration(ItemStack stack) {

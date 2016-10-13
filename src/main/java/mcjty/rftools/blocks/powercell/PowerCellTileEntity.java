@@ -197,7 +197,17 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
     private void handleChargingItem() {
         ItemStack stack = inventoryHelper.getStackInSlot(PowerCellContainer.SLOT_CHARGEITEM);
-        if (stack != null && stack.getItem() instanceof IEnergyContainerItem) {
+        if (stack == null) {
+            return;
+        }
+
+        if (stack.hasCapability(CapabilityEnergy.ENERGY, null)) {
+            IEnergyStorage capability = stack.getCapability(CapabilityEnergy.ENERGY, null);
+            int energyStored = getEnergyStored(EnumFacing.DOWN);
+            int rfToGive = PowerCellConfiguration.CHARGEITEMPERTICK <= energyStored ? PowerCellConfiguration.CHARGEITEMPERTICK : energyStored;
+            int received = capability.receiveEnergy(rfToGive, false);
+            extractEnergyInternal(received, false, PowerCellConfiguration.CHARGEITEMPERTICK);
+        } else if (stack.getItem() instanceof IEnergyContainerItem) {
             IEnergyContainerItem energyContainerItem = (IEnergyContainerItem) stack.getItem();
             int energyStored = getEnergyStored(EnumFacing.DOWN);
             int rfToGive = PowerCellConfiguration.CHARGEITEMPERTICK <= energyStored ? PowerCellConfiguration.CHARGEITEMPERTICK : energyStored;
