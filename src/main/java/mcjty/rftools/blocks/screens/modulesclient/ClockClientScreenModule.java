@@ -12,6 +12,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import java.util.Locale;
+
 public class ClockClientScreenModule implements IClientScreenModule {
     private int color = 0xffffff;
     private String line = "";
@@ -31,31 +33,11 @@ public class ClockClientScreenModule implements IClientScreenModule {
     public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleData screenData, ModuleRenderInfo renderInfo) {
         GlStateManager.disableLighting();
         Minecraft minecraft = Minecraft.getMinecraft();
-        double time = 0.0D;
 
-        if (minecraft.theWorld != null && minecraft.thePlayer != null) {
-            if (minecraft.theWorld.provider.isSurfaceWorld()) {
-                time = minecraft.theWorld.getCelestialAngle(1.0F);
-            } else {
-                time = Math.random();
-            }
-        }
-        int minutes = (int) (time * ((24 * 60) - 0.1f));
-        int hours = minutes / 60;
-        hours = (hours + 12) % 24;
-        minutes = minutes % 60;
-        String timeString;
-        if (hours < 10) {
-            timeString = "0" + hours;
-        } else {
-            timeString = Integer.toString(hours);
-        }
-        timeString += ':';
-        if (minutes < 10) {
-            timeString += "0" + minutes;
-        } else {
-            timeString += Integer.toString(minutes);
-        }
+        final long time = minecraft.theWorld.getWorldTime();
+        long hour = (time / 1000 + 6) % 24;
+        final long minute = (time % 1000) * 60 / 1000;
+        String timeString = String.format(Locale.ENGLISH, "%02d:%02d", hour, minute);
 
         if (large) {
             fontRenderer.drawString(line + " " + timeString, 4, currenty / 2 + 1, color);
