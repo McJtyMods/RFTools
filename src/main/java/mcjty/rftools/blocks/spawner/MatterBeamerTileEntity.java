@@ -102,9 +102,10 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
         }
         consumeEnergy(rf);
 
-        spawnerTileEntity.addMatter(itemStack, numblocks);
-        inventoryHelper.decrStackSize(0, numblocks);
-        enableBlockGlow();
+        if (spawnerTileEntity.addMatter(itemStack, numblocks)) {
+            inventoryHelper.decrStackSize(0, numblocks);
+            enableBlockGlow();
+        }
     }
 
     private void disableBlockGlow() {

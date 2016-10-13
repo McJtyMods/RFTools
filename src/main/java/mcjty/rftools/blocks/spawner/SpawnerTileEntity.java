@@ -125,10 +125,10 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     }
 
-    public void addMatter(ItemStack stack, int m) {
+    public boolean addMatter(ItemStack stack, int m) {
         testSyringe();
         if (mobId == null || mobId.isEmpty()) {
-            return;       // No matter was added.
+            return false;       // No matter was added.
         }
         int materialType = 0;
         Float factor = null;
@@ -142,7 +142,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         if (factor == null) {
             // This type of material is not supported by the spawner.
-            return;
+            return false;
         }
 
         float mm = matter[materialType];
@@ -152,6 +152,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         matter[materialType] = mm;
         markDirty();
+        return true;
     }
 
     private List<SpawnerConfiguration.MobSpawnAmount> getSpawnAmounts() {
