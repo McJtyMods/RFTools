@@ -28,6 +28,9 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 
 import java.util.Map;
 import java.util.Set;
@@ -580,4 +583,101 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         });
     }
 
+    // Forge energy
+    private IEnergyStorage[] sidedHandlers = new IEnergyStorage[6];
+    private IEnergyStorage nullHandler;
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        if (capability == CapabilityEnergy.ENERGY) {
+            return true;
+        }
+        return super.hasCapability(capability, facing);
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        if (capability == CapabilityEnergy.ENERGY) {
+            if (facing == null) {
+                if (nullHandler == null) {
+                    createNullHandler();
+                }
+                return (T) nullHandler;
+            } else {
+                if (sidedHandlers[facing.ordinal()] == null) {
+                    createSidedHandler(facing);
+                }
+                return (T) sidedHandlers[facing.ordinal()];
+            }
+        }
+        return super.getCapability(capability, facing);
+    }
+
+    private void createSidedHandler(EnumFacing facing) {
+        sidedHandlers[facing.ordinal()] = new IEnergyStorage() {
+            @Override
+            public int receiveEnergy(int maxReceive, boolean simulate) {
+                return PowerCellTileEntity.this.receiveEnergy(facing, maxReceive, simulate);
+            }
+
+            @Override
+            public int extractEnergy(int maxExtract, boolean simulate) {
+                return 0;
+            }
+
+            @Override
+            public int getEnergyStored() {
+                return PowerCellTileEntity.this.getEnergyStored(facing);
+            }
+
+            @Override
+            public int getMaxEnergyStored() {
+                return PowerCellTileEntity.this.getMaxEnergyStored(facing);
+            }
+
+            @Override
+            public boolean canExtract() {
+                return false;
+            }
+
+            @Override
+            public boolean canReceive() {
+                return true;
+            }
+        };
+    }
+
+    private void createNullHandler() {
+        nullHandler = new IEnergyStorage() {
+            @Override
+            public int receiveEnergy(int maxReceive, boolean simulate) {
+                return 0;
+            }
+
+            @Override
+            public int extractEnergy(int maxExtract, boolean simulate) {
+                return 0;
+            }
+
+            @Override
+            public int getEnergyStored() {
+                return PowerCellTileEntity.this.getEnergyStored(EnumFacing.DOWN);
+            }
+
+            @Override
+            public int getMaxEnergyStored() {
+                return PowerCellTileEntity.this.getMaxEnergyStored(EnumFacing.DOWN);
+            }
+
+            @Override
+            public boolean canExtract() {
+                return false;
+            }
+
+            @Override
+            public boolean canReceive() {
+                return false;
+            }
+        };
+    }
 }
