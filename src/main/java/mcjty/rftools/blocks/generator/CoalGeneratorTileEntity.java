@@ -21,6 +21,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -157,7 +159,16 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
 
     private void handleChargingItem() {
         ItemStack stack = inventoryHelper.getStackInSlot(CoalGeneratorContainer.SLOT_CHARGEITEM);
-        if (stack != null && stack.getItem() instanceof IEnergyContainerItem) {
+        if (stack == null) {
+            return;
+        }
+        if (stack.hasCapability(CapabilityEnergy.ENERGY, null)) {
+            IEnergyStorage capability = stack.getCapability(CapabilityEnergy.ENERGY, null);
+            int energyStored = getEnergyStored(EnumFacing.DOWN);
+            int rfToGive = CoalGeneratorConfiguration.CHARGEITEMPERTICK <= energyStored ? CoalGeneratorConfiguration.CHARGEITEMPERTICK : energyStored;
+            int received = capability.receiveEnergy(rfToGive, false);
+            storage.extractEnergy(received, false);
+        } else if (stack.getItem() instanceof IEnergyContainerItem) {
             IEnergyContainerItem energyContainerItem = (IEnergyContainerItem) stack.getItem();
             int energyStored = getEnergyStored(EnumFacing.DOWN);
             int rfToGive = CoalGeneratorConfiguration.CHARGEITEMPERTICK <= energyStored ? CoalGeneratorConfiguration.CHARGEITEMPERTICK : energyStored;
