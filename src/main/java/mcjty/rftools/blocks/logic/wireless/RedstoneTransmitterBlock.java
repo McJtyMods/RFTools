@@ -70,9 +70,9 @@ public class RedstoneTransmitterBlock extends LogicSlabBlock<RedstoneTransmitter
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         super.getWailaBody(itemStack, currenttip, accessor, config);
-        NBTTagCompound tagCompound = accessor.getNBTData();
-        if (tagCompound != null) {
-            int channel = tagCompound.getInteger("channel");
+        TileEntity te = accessor.getTileEntity();
+        if (te instanceof RedstoneTransmitterTileEntity) {
+            int channel = ((RedstoneTransmitterTileEntity) te).getChannel();
             currenttip.add(TextFormatting.GREEN + "Channel: " + channel);
         }
         return currenttip;
