@@ -1027,6 +1027,17 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
             FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
             if (block.canEntityDestroy(srcState, worldObj, srcPos, fakePlayer)) {
+                ItemStack filter = getStackInSlot(BuilderContainer.SLOT_FILTER);
+                if (filter != null) {
+                    getFilterCache();
+                    if (filterCache != null) {
+                        boolean match = filterCache.match(block.getItem(worldObj, srcPos, srcState));
+                        if (!match) {
+                            consumeEnergy(Math.min(rfNeeded, BuilderConfiguration.builderRfPerSkipped));
+                            return false;   // Skip this
+                        }
+                    }
+                }
                 if (getCachedVoidableBlocks().contains(block)) {
                     clearOrDirtBlock(rfNeeded, sx, sy, sz, block, clear);
                 } else {
