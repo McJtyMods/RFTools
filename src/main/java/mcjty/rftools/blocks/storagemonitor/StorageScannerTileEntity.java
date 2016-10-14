@@ -44,6 +44,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     public static final String CMD_TOP = "top";
     public static final String CMD_DOWN = "down";
     public static final String CMD_BOTTOM = "bottom";
+    public static final String CMD_REMOVE = "remove";
     public static final String CMD_TOGGLEROUTABLE = "toggleRoutable";
     public static final String CMD_TOGGLEEXPORT = "toggleExport";
 
@@ -479,6 +480,18 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         markDirty();
     }
 
+    private void removeInventory(int index) {
+        if (index < 0) {
+            return;
+        }
+        if (index >= inventories.size()) {
+            return;
+        }
+        BlockPos p = inventories.get(index);
+        inventories.remove(index);
+        markDirty();
+    }
+
     public void clearCachedCounts() {
         cachedCounts.clear();
     }
@@ -821,6 +834,9 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             return true;
         } else if (CMD_BOTTOM.equals(command)) {
             moveBottom(args.get("index").getInteger());
+            return true;
+        } else if (CMD_REMOVE.equals(command)) {
+            removeInventory(args.get("index").getInteger());
             return true;
         } else if (CMD_TOGGLEROUTABLE.equals(command)) {
             toggleRoutable(args.get("pos").getCoordinate());

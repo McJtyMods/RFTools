@@ -58,6 +58,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     private Button upButton;
     private Button downButton;
     private Button bottomButton;
+    private Button removeButton;
     private TextField searchField;
     private ImageChoiceLabel exportToStarred;
 
@@ -93,21 +94,15 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
         upButton = new Button(mc, this).setText("U").setTooltips("Move inventory up")
-                .addButtonEvent(widget -> {
-                    moveUp();
-                });
+                .addButtonEvent(widget -> moveUp());
         topButton = new Button(mc, this).setText("T").setTooltips("Move inventory to the top")
-                .addButtonEvent(widget -> {
-                    moveTop();
-                });
+                .addButtonEvent(widget -> moveTop());
         downButton = new Button(mc, this).setText("D").setTooltips("Move inventory down")
-                .addButtonEvent(widget -> {
-                    moveDown();
-                });
+                .addButtonEvent(widget -> moveDown());
         bottomButton = new Button(mc, this).setText("B").setTooltips("Move inventory to the bottom")
-                .addButtonEvent(widget -> {
-                    moveBottom();
-                });
+                .addButtonEvent(widget -> moveBottom());
+        removeButton = new Button(mc, this).setText("R").setTooltips("Remove inventory from list")
+                .addButtonEvent(widget -> removeFromList());
 
         Panel energyPanel = new Panel(mc, this).setLayout(new VerticalLayout().setVerticalMargin(0).setSpacing(1))
                 .setDesiredWidth(10);
@@ -116,7 +111,9 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 .addChild(topButton)
                 .addChild(upButton)
                 .addChild(downButton)
-                .addChild(bottomButton);
+                .addChild(bottomButton)
+                .addChild(new Label(mc, this).setText(" "))
+                .addChild(removeButton);
 
         exportToStarred = new ImageChoiceLabel(mc, this)
                 .setLayoutHint(new PositionalLayout.PositionalHint(12, 223, 13, 13))
@@ -273,6 +270,11 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     private void moveBottom() {
         sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_BOTTOM, new Argument("index", storageList.getSelected()-1));
         storageList.setSelected(storageList.getChildCount()-1);
+        listDirty = 0;
+    }
+
+    private void removeFromList() {
+        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_REMOVE, new Argument("index", storageList.getSelected()-1));
         listDirty = 0;
     }
 
@@ -474,6 +476,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         requestListsIfNeeded();
 
         int selected = storageList.getSelected();
+        removeButton.setEnabled(selected != -1);
         if (selected <= 0 || storageList.getChildCount() <= 2) {
             upButton.setEnabled(false);
             downButton.setEnabled(false);
