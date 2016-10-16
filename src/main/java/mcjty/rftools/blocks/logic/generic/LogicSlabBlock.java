@@ -109,7 +109,20 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
      * Returns the signal strength at one input of the block
      */
     protected int getInputStrength(World world, BlockPos pos, EnumFacing side) {
-        return world.getRedstonePower(pos.offset(side), side);
+        // @todo
+        int power = world.getRedstonePower(pos.offset(side), side);
+        if (power == 0) {
+            // Check if there is no redstone wire there. If there is a 'bend' in the redstone wire it is
+            // not detected with world.getRedstonePower().
+            // @todo this is a bit of a hack. Don't know how to do it better right now
+            IBlockState blockState = world.getBlockState(pos.offset(side));
+            Block b = blockState.getBlock();
+            if (b == Blocks.REDSTONE_WIRE) {
+                power = world.isBlockPowered(pos.offset(side)) ? 15 : 0;
+            }
+        }
+
+        return power;
     }
 
     @Override
@@ -118,18 +131,7 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
         if (te instanceof LogicTileEntity) {
             LogicTileEntity logicTileEntity = (LogicTileEntity)te;
             EnumFacing inputSide = logicTileEntity.getFacing(world.getBlockState(pos)).getInputSide();
-            // @todo
             int power = getInputStrength(world, pos, inputSide);
-            if (power == 0) {
-                // Check if there is no redstone wire there. If there is a 'bend' in the redstone wire it is
-                // not detected with getInputStrength().
-                // @todo this is a bit of a hack. Don't know how to do it better right now
-                IBlockState blockState = world.getBlockState(pos.offset(inputSide));
-                Block b = blockState.getBlock();
-                if (b == Blocks.REDSTONE_WIRE) {
-                    power = world.isBlockPowered(pos.offset(inputSide)) ? 15 : 0;
-                }
-            }
             logicTileEntity.setPowerInput(power);
         }
     }
