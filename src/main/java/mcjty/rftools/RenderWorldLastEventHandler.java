@@ -251,6 +251,11 @@ public class RenderWorldLastEventHandler {
     }
 
     private static void renderBoxOutline(BlockPos pos) {
+        BlockPos c = RFTools.instance.clientInfo.getHilightedBlock();
+        if (c != null && c.equals(pos)) {
+            return;
+        }
+
         RenderHelper.disableStandardItemLighting();
         Minecraft.getMinecraft().entityRenderer.disableLightmap();
         GlStateManager.disableTexture2D();
@@ -266,7 +271,7 @@ public class RenderWorldLastEventHandler {
         float my = pos.getY();
         float mz = pos.getZ();
         buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-        mcjty.lib.gui.RenderHelper.renderHighLightedBlocksOutline(buffer, mx, my, mz, 1, 0, 0, 1);
+        mcjty.lib.gui.RenderHelper.renderHighLightedBlocksOutline(buffer, mx, my, mz, .9f, .7f, 0, 1);
 
         tessellator.draw();
 
