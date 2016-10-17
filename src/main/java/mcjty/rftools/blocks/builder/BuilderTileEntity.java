@@ -955,7 +955,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private boolean buildBlock(int rfNeeded, BlockPos srcPos) {
         if (isEmptyOrReplacable(worldObj, srcPos)) {
-            IBlockState state = consumeBlock(null);
+            IBlockState state = consumeBlock(worldObj, srcPos, null);
             if (state == null) {
                 return true;    // We could not find a block. Wait
             }
@@ -1235,7 +1235,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private static Random random = new Random();
 
     // Also works if block is null and just picks the first available block.
-    private IBlockState findAndConsumeBlock(IItemHandler inventory, IBlockState state) {
+    private IBlockState findAndConsumeBlock(IItemHandler inventory, World srcWorld, BlockPos srcPos, IBlockState state) {
         if (state == null) {
             // We are not looking for a specific block. Pick a random one out of the chest.
             List<Integer> slots = new ArrayList<>();
@@ -1257,6 +1257,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return itemBlock.getBlock().getStateFromMeta(extracted.getItemDamage());
         } else {
             Block block = state.getBlock();
+            ItemStack srcItem = block.getItem(srcWorld, srcPos, state);
             int meta = block.getMetaFromState(state);
             for (int i = 0; i < inventory.getSlots(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
@@ -1277,7 +1278,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     // Also works if block is null and just picks the first available block.
-    private IBlockState findAndConsumeBlock(IInventory inventory, IBlockState state) {
+    private IBlockState findAndConsumeBlock(IInventory inventory, World srcWorld, BlockPos srcPos, IBlockState state) {
         if (state == null) {
             // We are not looking for a specific block. Pick a random one out of the chest.
             List<Integer> slots = new ArrayList<>();
@@ -1385,23 +1386,23 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
      * If the given blockstate parameter is null then a random block will be
      * returned. Otherwise the returned block has to match.
      */
-    private IBlockState consumeBlock(EnumFacing direction, IBlockState state) {
+    private IBlockState consumeBlock(EnumFacing direction, World srcWorld, BlockPos srcPos, IBlockState state) {
         TileEntity te = worldObj.getTileEntity(getPos().offset(direction));
         if (te != null) {
             if (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite())) {
                 IItemHandler capability = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite());
-                return findAndConsumeBlock(capability, state);
+                return findAndConsumeBlock(capability, srcWorld, srcPos, state);
             } else if (te instanceof IInventory) {
-                return findAndConsumeBlock((IInventory) te, state);
+                return findAndConsumeBlock((IInventory) te, srcWorld, srcPos, state);
             }
         }
         return null;
     }
 
-    private IBlockState consumeBlock(IBlockState state) {
-        IBlockState b = consumeBlock(EnumFacing.UP, state);
+    private IBlockState consumeBlock(World srcWorld, BlockPos srcPos, IBlockState state) {
+        IBlockState b = consumeBlock(EnumFacing.UP, srcWorld, srcPos, state);
         if (b == null) {
-            b = consumeBlock(EnumFacing.UP, state);
+            b = consumeBlock(EnumFacing.DOWN, srcWorld, srcPos, state);
         }
         return b;
 
@@ -1537,7 +1538,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 return;
             }
             IBlockState state = world.getBlockState(srcPos);
-            if (consumeBlock(state) == null) {
+            if (consumeBlock(world, srcPos, state) == null) {
                 return;
             }
 
