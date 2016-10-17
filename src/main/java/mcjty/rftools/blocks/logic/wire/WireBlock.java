@@ -50,18 +50,7 @@ public class WireBlock extends LogicSlabBlock<WireTileEntity, EmptyContainer> {
         if (te instanceof WireTileEntity) {
             WireTileEntity logicTileEntity = (WireTileEntity)te;
             EnumFacing inputSide = logicTileEntity.getFacing(world.getBlockState(pos)).getInputSide();
-            // @todo
             int power = getInputStrength(world, pos, inputSide);
-            if (power == 0) {
-                // Check if there is no redstone wire there. If there is a 'bend' in the redstone wire it is
-                // not detected with getInputStrength().
-                // @todo this is a bit of a hack. Don't know how to do it better right now
-                IBlockState blockState = world.getBlockState(pos.offset(inputSide));
-                Block b = blockState.getBlock();
-                if (b == Blocks.REDSTONE_WIRE) {
-                    power = world.isBlockPowered(pos.offset(inputSide)) ? 15 : 0;
-                }
-            }
             int oldPower = logicTileEntity.getPowerLevel();
             logicTileEntity.setPowerInput(power);
             if (oldPower != power) {
