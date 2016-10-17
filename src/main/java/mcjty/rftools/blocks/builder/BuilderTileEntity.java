@@ -1694,18 +1694,27 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             int origMeta = origBlock.getMetaFromState(state);
             origMeta = rotateMeta(origBlock, origMeta, information, rotMode);
 
-            world.removeTileEntity(srcPos);
+            NBTTagCompound tc = null;
+            if (origTileEntity != null) {
+                tc = new NBTTagCompound();
+                origTileEntity.writeToNBT(tc);
+                world.removeTileEntity(srcPos);
+            }
             clearBlock(world, srcPos);
 
             BlockPos destpos = destPos;
             IBlockState newDestState = origBlock.getStateFromMeta(origMeta);
             destWorld.setBlockState(destpos, newDestState, 3);
-//            destWorld.setBlockMetadataWithNotify(destX, destY, destZ, origMeta, 3);
-            if (origTileEntity != null) {
-                origTileEntity.validate();
-                destWorld.setTileEntity(destpos, origTileEntity);
-                origTileEntity.markDirty();
-                destWorld.notifyBlockUpdate(destpos, newDestState, newDestState, 3);
+            if (origTileEntity != null && tc != null) {
+                tc.setInteger("x", destpos.getX());
+                tc.setInteger("y", destpos.getY());
+                tc.setInteger("z", destpos.getZ());
+                TileEntity tileEntity = TileEntity.create(destWorld, tc);
+                if (tileEntity != null) {
+                    world.getChunkFromBlockCoords(destpos).addTileEntity(tileEntity);
+                    tileEntity.markDirty();
+                    world.notifyBlockUpdate(destpos, newDestState, newDestState, 3);
+                }
             }
             if (!silent) {
                 SoundTools.playSound(world, origBlock.getSoundType().breakSound, srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
