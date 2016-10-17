@@ -2,6 +2,11 @@
     "movables": [
         [ "minecraft:mob_spawner","+",50.0 ],
         [ "minecraft:furnace","+",1.0 ],
+        [ "minecraft:anvil","+",1.0 ],
+        [ "minecraft:dropper","+",1.0 ],
+        [ "minecraft:hopper","+",1.0 ],
+        [ "minecraft:dispenser","+",1.0 ],
+        [ "minecraft:noteblock","+",1.0 ],
         [ "rftools:screen","w",1.0 ],
         [ "rftools:screen_controller","w",1.0 ],
         [ "rftools:matter_beamer","w",1.0 ],
@@ -15,14 +20,7 @@
         [ "minecraft:end_portal_frame","-",1.0 ],
 
         [ "modid:rftools","+",1.0 ],
-        [ "modid:ExtraUtilities","+",1.0 ],
-        [ "modid:RotaryCraft","+",1.0 ],
-        [ "modid:appliedenergistics2","+",1.0 ],
-        [ "modid:ThermalExpansion","+",1.0 ],
-        [ "modid:ThermalDynamics","w",1.0 ],
-        [ "modid:MineFactoryReloaded","+",1.0 ],
-        [ "modid:BigReactors","+",1.0 ],
-        [ "modid:EnderIO","+",1.0 ]
+        [ "modid:enderio","+",1.0 ]
     ],
     "rotatables": [
         [ "minecraft:chest","mfff" ],

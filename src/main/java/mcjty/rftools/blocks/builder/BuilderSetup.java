@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.builder;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
@@ -11,7 +12,9 @@ import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.builder.SpaceChamberCardItem;
 import mcjty.rftools.proxy.CommonProxy;
+import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockTallGrass;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -32,7 +35,7 @@ public class BuilderSetup {
     public static SpaceChamberCardItem spaceChamberCardItem;
     public static ShapeCardItem shapeCardItem;
 
-    private static Map<String,BlockInformation> blockInformationMap = new HashMap<String, BlockInformation>();
+    private static Map<String,BlockInformation> blockInformationMap = new HashMap<>();
 
     public static void init() {
         spaceChamberBlock = new SpaceChamberBlock();
@@ -222,7 +225,12 @@ public class BuilderSetup {
     }
 
     public static BlockInformation getBlockInformation(Block block) {
-        return blockInformationMap.get(block.getRegistryName());
+        BlockInformation information = blockInformationMap.get(block.getRegistryName().toString());
+        if (information == null) {
+            String modid = RFToolsTools.getModidForBlock(block);
+            information = blockInformationMap.get("modid:" + modid);
+        }
+        return information;
     }
 
     public static class BlockInformation {
