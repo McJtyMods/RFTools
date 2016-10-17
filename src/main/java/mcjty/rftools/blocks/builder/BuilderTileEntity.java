@@ -955,14 +955,17 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private boolean buildBlock(int rfNeeded, BlockPos srcPos) {
         if (isEmptyOrReplacable(worldObj, srcPos)) {
-            IBlockState state = consumeBlock(worldObj, srcPos, null);
-            if (state == null) {
+            ItemStack stack = consumeBlock(worldObj, srcPos, null);
+            if (stack == null) {
                 return true;    // We could not find a block. Wait
             }
 
-            worldObj.setBlockState(srcPos, state, 3);
+            ItemBlock itemBlock = (ItemBlock) stack.getItem();
+            IBlockState newState = itemBlock.block.getStateFromMeta(stack.getItemDamage());
+            worldObj.setBlockState(srcPos, newState, 3);
+            itemBlock.setTileEntityNBT(worldObj, null, srcPos, stack);
             if (!silent) {
-                SoundTools.playSound(worldObj, state.getBlock().getSoundType().breakSound, srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
+                SoundTools.playSound(worldObj, newState.getBlock().getSoundType().breakSound, srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
             }
 
             consumeEnergy(rfNeeded);
@@ -1235,7 +1238,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private static Random random = new Random();
 
     // Also works if block is null and just picks the first available block.
-    private IBlockState findAndConsumeBlock(IItemHandler inventory, World srcWorld, BlockPos srcPos, IBlockState state) {
+    private ItemStack findAndConsumeBlock(IItemHandler inventory, World srcWorld, BlockPos srcPos, IBlockState state) {
         if (state == null) {
             // We are not looking for a specific block. Pick a random one out of the chest.
             List<Integer> slots = new ArrayList<>();
@@ -1249,12 +1252,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 return null;
             }
             int randomSlot = slots.get(random.nextInt(slots.size()));
-            ItemStack extracted = inventory.extractItem(randomSlot, 1, false);
-            if (extracted == null) {
-                return null;
-            }
-            ItemBlock itemBlock = (ItemBlock) extracted.getItem();
-            return itemBlock.getBlock().getStateFromMeta(extracted.getItemDamage());
+            return inventory.extractItem(randomSlot, 1, false);
         } else {
             Block block = state.getBlock();
             ItemStack srcItem = block.getItem(srcWorld, srcPos, state);
@@ -1262,12 +1260,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             for (int i = 0; i < inventory.getSlots(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
                 if (stack != null && stack.stackSize > 0 && stack.isItemEqual(srcItem)) {
-                    ItemStack extracted = inventory.extractItem(i, 1, false);
-                    if (extracted == null) {
-                        return null;
-                    }
-                    ItemBlock itemBlock = (ItemBlock) extracted.getItem();
-                    return itemBlock.getBlock().getStateFromMeta(meta);
+                    return inventory.extractItem(i, 1, false);
                 }
             }
         }
@@ -1275,7 +1268,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     // Also works if block is null and just picks the first available block.
-    private IBlockState findAndConsumeBlock(IInventory inventory, World srcWorld, BlockPos srcPos, IBlockState state) {
+    private ItemStack findAndConsumeBlock(IInventory inventory, World srcWorld, BlockPos srcPos, IBlockState state) {
         if (state == null) {
             // We are not looking for a specific block. Pick a random one out of the chest.
             List<Integer> slots = new ArrayList<>();
@@ -1289,12 +1282,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 return null;
             }
             int randomSlot = slots.get(random.nextInt(slots.size()));
-            ItemStack extracted = inventory.decrStackSize(randomSlot, 1);
-            if (extracted == null) {
-                return null;
-            }
-            ItemBlock itemBlock = (ItemBlock) extracted.getItem();
-            return itemBlock.getBlock().getStateFromMeta(extracted.getItemDamage());
+            return inventory.decrStackSize(randomSlot, 1);
         } else {
             Block block = state.getBlock();
             ItemStack srcItem = block.getItem(srcWorld, srcPos, state);
@@ -1302,12 +1290,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             for (int i = 0; i < inventory.getSizeInventory(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
                 if (stack != null && stack.stackSize > 0 && stack.isItemEqual(srcItem)) {
-                    ItemStack extracted = inventory.decrStackSize(i, 1);
-                    if (extracted == null) {
-                        return null;
-                    }
-                    ItemBlock itemBlock = (ItemBlock) extracted.getItem();
-                    return itemBlock.getBlock().getStateFromMeta(meta);
+                    return inventory.decrStackSize(i, 1);
                 }
             }
         }
@@ -1381,7 +1364,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
      * If the given blockstate parameter is null then a random block will be
      * returned. Otherwise the returned block has to match.
      */
-    private IBlockState consumeBlock(EnumFacing direction, World srcWorld, BlockPos srcPos, IBlockState state) {
+    private ItemStack consumeBlock(EnumFacing direction, World srcWorld, BlockPos srcPos, IBlockState state) {
         TileEntity te = worldObj.getTileEntity(getPos().offset(direction));
         if (te != null) {
             if (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite())) {
@@ -1394,8 +1377,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return null;
     }
 
-    private IBlockState consumeBlock(World srcWorld, BlockPos srcPos, IBlockState state) {
-        IBlockState b = consumeBlock(EnumFacing.UP, srcWorld, srcPos, state);
+    private ItemStack consumeBlock(World srcWorld, BlockPos srcPos, IBlockState state) {
+        ItemStack b = consumeBlock(EnumFacing.UP, srcWorld, srcPos, state);
         if (b == null) {
             b = consumeBlock(EnumFacing.DOWN, srcWorld, srcPos, state);
         }
@@ -1528,7 +1511,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 return;
             }
             IBlockState state = world.getBlockState(srcPos);
-            if (consumeBlock(world, srcPos, state) == null) {
+            ItemStack consumedStack = consumeBlock(world, srcPos, state);
+            if (consumedStack == null) {
                 return;
             }
 
@@ -1537,7 +1521,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             BuilderSetup.BlockInformation information = getBlockInformation(world, srcPos, origBlock, null);
             origMeta = rotateMeta(origBlock, origMeta, information, rotate);
 
-            destWorld.setBlockState(destPos, origBlock.getStateFromMeta(origMeta), 3);
+
+            ItemBlock itemBlock = (ItemBlock) consumedStack.getItem();
+            IBlockState newState = itemBlock.block.getStateFromMeta(origMeta);
+            destWorld.setBlockState(destPos, newState, 3);
+            itemBlock.setTileEntityNBT(destWorld, null, destPos, consumedStack);
+
+//            destWorld.setBlockState(destPos, origBlock.getStateFromMeta(origMeta), 3);
             if (!silent) {
                 SoundTools.playSound(destWorld, origBlock.getSoundType().breakSound, destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
             }
