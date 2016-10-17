@@ -1261,16 +1261,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             int meta = block.getMetaFromState(state);
             for (int i = 0; i < inventory.getSlots(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
-                if (stack != null && stack.stackSize > 0 && stack.getItem() instanceof ItemBlock) {
-                    ItemBlock itemBlock = (ItemBlock) stack.getItem();
-                    if (itemBlock.getBlock() == block && (stack.getItemDamage() == meta)) {
-                        ItemStack extracted = inventory.extractItem(i, 1, false);
-                        if (extracted == null) {
-                            return null;
-                        }
-                        itemBlock = (ItemBlock) extracted.getItem();
-                        return itemBlock.getBlock().getStateFromMeta(extracted.getItemDamage());
+                if (stack != null && stack.stackSize > 0 && stack.isItemEqual(srcItem)) {
+                    ItemStack extracted = inventory.extractItem(i, 1, false);
+                    if (extracted == null) {
+                        return null;
                     }
+                    ItemBlock itemBlock = (ItemBlock) extracted.getItem();
+                    return itemBlock.getBlock().getStateFromMeta(meta);
                 }
             }
         }
@@ -1300,19 +1297,17 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return itemBlock.getBlock().getStateFromMeta(extracted.getItemDamage());
         } else {
             Block block = state.getBlock();
+            ItemStack srcItem = block.getItem(srcWorld, srcPos, state);
             int meta = block.getMetaFromState(state);
             for (int i = 0; i < inventory.getSizeInventory(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
-                if (stack != null && stack.stackSize > 0 && stack.getItem() instanceof ItemBlock) {
-                    ItemBlock itemBlock = (ItemBlock) stack.getItem();
-                    if (itemBlock.getBlock() == block && (stack.getItemDamage() == meta)) {
-                        ItemStack extracted = inventory.decrStackSize(i, 1);
-                        if (extracted == null) {
-                            return null;
-                        }
-                        itemBlock = (ItemBlock) extracted.getItem();
-                        return itemBlock.getBlock().getStateFromMeta(extracted.getItemDamage());
+                if (stack != null && stack.stackSize > 0 && stack.isItemEqual(srcItem)) {
+                    ItemStack extracted = inventory.decrStackSize(i, 1);
+                    if (extracted == null) {
+                        return null;
                     }
+                    ItemBlock itemBlock = (ItemBlock) extracted.getItem();
+                    return itemBlock.getBlock().getStateFromMeta(meta);
                 }
             }
         }
@@ -1405,11 +1400,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             b = consumeBlock(EnumFacing.DOWN, srcWorld, srcPos, state);
         }
         return b;
-
-//        if (meta != -1) {
-            // Try a second time with meta equal to -1 (which means to ignore meta).
-//            return consumeBlock(block, -1);
-//        }
     }
 
     public static BuilderSetup.BlockInformation getBlockInformation(World world, BlockPos pos, Block block, TileEntity tileEntity) {
@@ -1548,7 +1538,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             origMeta = rotateMeta(origBlock, origMeta, information, rotate);
 
             destWorld.setBlockState(destPos, origBlock.getStateFromMeta(origMeta), 3);
-//            destWorld.setBlockMetadataWithNotify(destX, destY, destZ, origMeta, 3);
             if (!silent) {
                 SoundTools.playSound(destWorld, origBlock.getSoundType().breakSound, destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
             }
