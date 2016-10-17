@@ -1249,10 +1249,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 return null;
             }
             int randomSlot = slots.get(random.nextInt(slots.size()));
-            ItemStack stack = inventory.getStackInSlot(randomSlot);
-            ItemBlock itemBlock = (ItemBlock) stack.getItem();
-            inventory.extractItem(randomSlot, 1, false);
-            return itemBlock.getBlock().getStateFromMeta(stack.getItemDamage());
+            ItemStack extracted = inventory.extractItem(randomSlot, 1, false);
+            if (extracted == null) {
+                return null;
+            }
+            ItemBlock itemBlock = (ItemBlock) extracted.getItem();
+            return itemBlock.getBlock().getStateFromMeta(extracted.getItemDamage());
         } else {
             Block block = state.getBlock();
             int meta = block.getMetaFromState(state);
@@ -1261,8 +1263,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 if (stack != null && stack.stackSize > 0 && stack.getItem() instanceof ItemBlock) {
                     ItemBlock itemBlock = (ItemBlock) stack.getItem();
                     if (itemBlock.getBlock() == block && (stack.getItemDamage() == meta)) {
-                        inventory.extractItem(i, 1, false);
-                        return itemBlock.getBlock().getStateFromMeta(stack.getItemDamage());
+                        ItemStack extracted = inventory.extractItem(i, 1, false);
+                        if (extracted == null) {
+                            return null;
+                        }
+                        itemBlock = (ItemBlock) extracted.getItem();
+                        return itemBlock.getBlock().getStateFromMeta(extracted.getItemDamage());
                     }
                 }
             }
@@ -1285,10 +1291,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 return null;
             }
             int randomSlot = slots.get(random.nextInt(slots.size()));
-            ItemStack stack = inventory.getStackInSlot(randomSlot);
-            ItemBlock itemBlock = (ItemBlock) stack.getItem();
-            inventory.decrStackSize(randomSlot, 1);
-            return itemBlock.getBlock().getStateFromMeta(stack.getItemDamage());
+            ItemStack extracted = inventory.decrStackSize(randomSlot, 1);
+            if (extracted == null) {
+                return null;
+            }
+            ItemBlock itemBlock = (ItemBlock) extracted.getItem();
+            return itemBlock.getBlock().getStateFromMeta(extracted.getItemDamage());
         } else {
             Block block = state.getBlock();
             int meta = block.getMetaFromState(state);
@@ -1297,8 +1305,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 if (stack != null && stack.stackSize > 0 && stack.getItem() instanceof ItemBlock) {
                     ItemBlock itemBlock = (ItemBlock) stack.getItem();
                     if (itemBlock.getBlock() == block && (stack.getItemDamage() == meta)) {
-                        inventory.decrStackSize(i, 1);
-                        return itemBlock.getBlock().getStateFromMeta(stack.getItemDamage());
+                        ItemStack extracted = inventory.decrStackSize(i, 1);
+                        if (extracted == null) {
+                            return null;
+                        }
+                        itemBlock = (ItemBlock) extracted.getItem();
+                        return itemBlock.getBlock().getStateFromMeta(extracted.getItemDamage());
                     }
                 }
             }
