@@ -392,7 +392,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         if (!shieldActive || powerTimeout > 0) {
             return Blocks.AIR;
         }
-        if (ShieldRenderingMode.MODE_INVISIBLE.equals(shieldRenderingMode)) {
+        if (ShieldConfiguration.allowInvisibleShield && ShieldRenderingMode.MODE_INVISIBLE.equals(shieldRenderingMode)) {
             if (damageBits == 0) {
                 return ShieldSetup.noTickInvisibleShieldBlock;
             } else {

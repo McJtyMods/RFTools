@@ -30,6 +30,9 @@ public class ShieldConfiguration {
     // Set to true to temporarily remove the shield blocks to make your world loadable again.
     public static boolean disableShieldBlocksToUncorruptWorld = false;
 
+    // If false invisible shield rendering mode is not allowed
+    public static boolean allowInvisibleShield = true;
+
     public static void init(Configuration cfg) {
         MAXENERGY = cfg.get(CATEGORY_SHIELD, "shieldMaxRF", MAXENERGY,
                 "Maximum RF storage that the shield block can hold").getInt();
@@ -57,5 +60,7 @@ public class ShieldConfiguration {
                 "The amount of damage to do for a single spike on one entity").getDouble();
         disableShieldBlocksToUncorruptWorld = cfg.get(CATEGORY_SHIELD, "disableShieldBlocksToUncorruptWorld", disableShieldBlocksToUncorruptWorld,
                 "Set this to true if you have a corrupted world due to a bad camo block in the shield system. Load your world, remove the offending block from the shield, exit MC and then set this back to false").getBoolean();
+        allowInvisibleShield = cfg.get(CATEGORY_SHIELD, "allowInvisibleShield", allowInvisibleShield,
+                "Set this to false if you don't want invisible shield rendering mode to be possible").getBoolean();
     }
 }

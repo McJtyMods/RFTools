@@ -320,11 +320,16 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
     private void initVisibilityMode() {
         visibilityOptions = new ChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(31, 161, 48, 14));
         for (ShieldRenderingMode m : ShieldRenderingMode.values()) {
+            if ((!ShieldConfiguration.allowInvisibleShield) && m == ShieldRenderingMode.MODE_INVISIBLE) {
+                continue;
+            }
             if (m != ShieldRenderingMode.MODE_MIMIC) {  // @todo
                 visibilityOptions.addChoices(m.getDescription());
             }
         }
-        visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_INVISIBLE.getDescription(), "Shield is completely invisible");
+        if (ShieldConfiguration.allowInvisibleShield) {
+            visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_INVISIBLE.getDescription(), "Shield is completely invisible");
+        }
         visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_SHIELD.getDescription(), "Default shield texture");
         visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_TRANSP.getDescription(), "Transparent shield texture");
         visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_SOLID.getDescription(), "Solid shield texture");
