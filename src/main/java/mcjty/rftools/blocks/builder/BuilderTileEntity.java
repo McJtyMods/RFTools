@@ -1144,7 +1144,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         IBlockState srcState = worldObj.getBlockState(srcPos);
-        if (block.getMetaFromState(srcState) != 0) {
+        if (srcState.getValue(BlockLiquid.LEVEL) != 0) {
             return false;
         }
 
