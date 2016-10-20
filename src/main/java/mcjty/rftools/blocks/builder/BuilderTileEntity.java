@@ -962,9 +962,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
 
             ItemBlock itemBlock = (ItemBlock) stack.getItem();
-            IBlockState newState = itemBlock.block.getStateFromMeta(stack.getItemDamage());
-            worldObj.setBlockState(srcPos, newState, 3);
-            itemBlock.setTileEntityNBT(worldObj, null, srcPos, stack);
+            IBlockState newState = itemBlock.block.getStateFromMeta(itemBlock.getDamage(stack));
+            FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
+            itemBlock.placeBlockAt(stack, fakePlayer, worldObj, srcPos, EnumFacing.UP, 0, 0, 0, newState);
             if (!silent) {
                 SoundTools.playSound(worldObj, newState.getBlock().getSoundType().breakSound, srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
             }
@@ -1526,15 +1526,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             Block origBlock = state.getBlock();
             int origMeta = origBlock.getMetaFromState(state);
             BuilderSetup.BlockInformation information = getBlockInformation(world, srcPos, origBlock, null);
-            origMeta = rotateMeta(origBlock, origMeta, information, rotate);
+//            origMeta = rotateMeta(origBlock, origMeta, information, rotate);
 
             ItemBlock itemBlock = (ItemBlock) consumedStack.getItem();
-            IBlockState newState = itemBlock.block.getStateFromMeta(origMeta);
+            IBlockState newState = itemBlock.block.getStateFromMeta(itemBlock.getDamage(consumedStack));
             FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
             itemBlock.placeBlockAt(consumedStack, fakePlayer, destWorld, destPos, EnumFacing.UP, 0, 0, 0, newState);
-
-//            destWorld.setBlockState(destPos, newState, 3);
-//            itemBlock.setTileEntityNBT(destWorld, null, destPos, consumedStack);
+            destWorld.setBlockState(destPos, newState, 3);  // placeBlockAt can reset the orientation. Restore it here
 
             if (!silent) {
                 SoundTools.playSound(destWorld, origBlock.getSoundType().breakSound, destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
@@ -1976,6 +1974,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return 1;
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);
@@ -2111,6 +2110,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return false;
     }
 
+    @SuppressWarnings("NullableProblems")
     @SideOnly(Side.CLIENT)
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
