@@ -1528,13 +1528,14 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             BuilderSetup.BlockInformation information = getBlockInformation(world, srcPos, origBlock, null);
             origMeta = rotateMeta(origBlock, origMeta, information, rotate);
 
-
             ItemBlock itemBlock = (ItemBlock) consumedStack.getItem();
             IBlockState newState = itemBlock.block.getStateFromMeta(origMeta);
-            destWorld.setBlockState(destPos, newState, 3);
-            itemBlock.setTileEntityNBT(destWorld, null, destPos, consumedStack);
+            FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
+            itemBlock.placeBlockAt(consumedStack, fakePlayer, destWorld, destPos, EnumFacing.UP, 0, 0, 0, newState);
 
-//            destWorld.setBlockState(destPos, origBlock.getStateFromMeta(origMeta), 3);
+//            destWorld.setBlockState(destPos, newState, 3);
+//            itemBlock.setTileEntityNBT(destWorld, null, destPos, consumedStack);
+
             if (!silent) {
                 SoundTools.playSound(destWorld, origBlock.getSoundType().breakSound, destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
             }
