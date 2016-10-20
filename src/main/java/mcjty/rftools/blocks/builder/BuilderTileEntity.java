@@ -1526,12 +1526,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             Block origBlock = state.getBlock();
             int origMeta = origBlock.getMetaFromState(state);
             BuilderSetup.BlockInformation information = getBlockInformation(world, srcPos, origBlock, null);
-//            origMeta = rotateMeta(origBlock, origMeta, information, rotate);
+            origMeta = rotateMeta(origBlock, origMeta, information, rotate);
 
             ItemBlock itemBlock = (ItemBlock) consumedStack.getItem();
-            IBlockState newState = itemBlock.block.getStateFromMeta(itemBlock.getDamage(consumedStack));
+            IBlockState newState = itemBlock.block.getStateFromMeta(origMeta);
             FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
             itemBlock.placeBlockAt(consumedStack, fakePlayer, destWorld, destPos, EnumFacing.UP, 0, 0, 0, newState);
+
             destWorld.setBlockState(destPos, newState, 3);  // placeBlockAt can reset the orientation. Restore it here
 
             if (!silent) {
@@ -1692,20 +1693,24 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             IBlockState newDestState = origBlock.getStateFromMeta(origMeta);
             destWorld.setBlockState(destpos, newDestState, 3);
             if (origTileEntity != null && tc != null) {
-                tc.setInteger("x", destpos.getX());
-                tc.setInteger("y", destpos.getY());
-                tc.setInteger("z", destpos.getZ());
-                TileEntity tileEntity = TileEntity.create(destWorld, tc);
-                if (tileEntity != null) {
-                    world.getChunkFromBlockCoords(destpos).addTileEntity(tileEntity);
-                    tileEntity.markDirty();
-                    world.notifyBlockUpdate(destpos, newDestState, newDestState, 3);
-                }
+                setTileEntityNBT(destWorld, tc, destpos, newDestState);
             }
             if (!silent) {
                 SoundTools.playSound(world, origBlock.getSoundType().breakSound, srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
                 SoundTools.playSound(destWorld, origBlock.getSoundType().breakSound, destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
             }
+        }
+    }
+
+    private void setTileEntityNBT(World destWorld, NBTTagCompound tc, BlockPos destpos, IBlockState newDestState) {
+        tc.setInteger("x", destpos.getX());
+        tc.setInteger("y", destpos.getY());
+        tc.setInteger("z", destpos.getZ());
+        TileEntity tileEntity = TileEntity.create(destWorld, tc);
+        if (tileEntity != null) {
+            destWorld.getChunkFromBlockCoords(destpos).addTileEntity(tileEntity);
+            tileEntity.markDirty();
+            destWorld.notifyBlockUpdate(destpos, newDestState, newDestState, 3);
         }
     }
 
