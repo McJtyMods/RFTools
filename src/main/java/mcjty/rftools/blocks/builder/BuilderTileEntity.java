@@ -17,6 +17,7 @@ import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDynamicLiquid;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockStaticLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -881,7 +882,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         switch (getCardType()) {
             case ShapeCardItem.CARD_PUMP:
             case ShapeCardItem.CARD_PUMP_CLEAR:
-                rfNeeded = (int) (BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.voidShapeCardFactor);
+                rfNeeded = (int) (BuilderConfiguration.builderRfPerLiquid);
                 break;
             case ShapeCardItem.CARD_VOID:
                 rfNeeded = (int) (BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.voidShapeCardFactor);
@@ -1134,19 +1135,25 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private boolean pumpBlock(int rfNeeded, BlockPos srcPos, Block block) {
-        IBlockState srcState = worldObj.getBlockState(srcPos);
-        Fluid fluid = FluidRegistry.lookupFluidForBlock(srcState.getBlock());
+        Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
         if (fluid == null) {
             return false;
         }
+        if (!(block instanceof BlockStaticLiquid)) {
+            return false;
+        }
 
-        int xCoord = getPos().getX();
-        int yCoord = getPos().getY();
-        int zCoord = getPos().getZ();
+        IBlockState srcState = worldObj.getBlockState(srcPos);
+        if (block.getMetaFromState(srcState) != 0) {
+            return false;
+        }
+
+
         if (block.getBlockHardness(srcState, worldObj, srcPos) >= 0) {
             FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
             if (block.canEntityDestroy(srcState, worldObj, srcPos, fakePlayer)) {
                 if (checkAndInsertFluids(fluid)) {
+                    consumeEnergy(rfNeeded);
                     boolean clear = getCardType() == ShapeCardItem.CARD_PUMP_CLEAR;
                     if (clear) {
                         worldObj.setBlockToAir(srcPos);
