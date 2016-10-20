@@ -37,7 +37,7 @@ public class BuilderConfiguration {
 
     public static int quarryBaseSpeed = 8;
     public static int quarryInfusionSpeedFactor = 20;
-    public static boolean quarrySkipTileEntities = true;
+    public static boolean quarryTileEntities = true;
 
     public static int maxBuilderOffset = 260;
     public static int maxBuilderDimension = 512;
@@ -94,8 +94,8 @@ public class BuilderConfiguration {
 
         quarryCobble = cfg.get(CATEGORY_BUILDER, "quarryCobble", quarryCobble,
                 "If true the quarry replace with cobblestone instead of dirt").getBoolean();
-        quarrySkipTileEntities = cfg.get(CATEGORY_BUILDER, "quarrySkipTileEntities", quarrySkipTileEntities,
-                "If true the quarry will skip all tile entities. Set this to false to allow harvesting ores that are tile entities. Be careful with this!").getBoolean();
+        quarryTileEntities = cfg.get(CATEGORY_BUILDER, "quarryTileEntities", quarryTileEntities,
+                "If true the quarry will also quarry tile entities. Otherwise it just ignores them").getBoolean();
         quarryChunkloads = cfg.get(CATEGORY_BUILDER, "quarryChunkloads", quarryChunkloads,
                 "If true the quarry will chunkload a chunk at a time. If false the quarry will stop if a chunk is not loaded").getBoolean();
         shapeCardAllowed = cfg.get(CATEGORY_BUILDER, "shapeCardAllowed", shapeCardAllowed,
