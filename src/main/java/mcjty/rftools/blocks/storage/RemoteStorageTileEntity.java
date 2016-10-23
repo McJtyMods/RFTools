@@ -33,6 +33,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
     private int[] maxsize = { 0, 0, 0, 0 };
     private int[] numStacks = { 0, 0, 0, 0 };
     private boolean[] global = { false, false, false, false };
+    private int version = 0;
 
     public RemoteStorageTileEntity() {
         super(ModularStorageConfiguration.REMOTE_MAXENERGY, ModularStorageConfiguration.REMOTE_RECEIVEPERTICK);
@@ -115,6 +116,15 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
     @Override
     public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
         return RemoteStorageContainer.factory.isOutputSlot(index);
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void updateVersion() {
+        version++;
+        markDirty();
     }
 
     public boolean hasStorage(int index) {
@@ -460,6 +470,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
+        version = tagCompound.getInteger("version");
         for (int i = 0 ; i < 4 ; i++) {
             int max = tagCompound.getInteger("maxSize" + i);
             setMaxSize(i, max);
@@ -488,6 +499,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
+        tagCompound.setInteger("version", version);
         for (int i = 0 ; i < 4 ; i++) {
             writeSlotsToNBT(tagCompound, "Slots" + i, i);
             tagCompound.setInteger("maxSize" + i, maxsize[i]);

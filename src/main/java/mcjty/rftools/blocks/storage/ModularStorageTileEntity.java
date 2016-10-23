@@ -337,6 +337,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             if (si == -1) {
                 return null;
             }
+            storageTileEntity.updateVersion();
             return storageTileEntity.removeStackFromSlotRemote(si, index);
 
         } else {
@@ -356,6 +357,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             if (si == -1) {
                 return null;
             }
+            storageTileEntity.updateVersion();
             return storageTileEntity.decrStackSizeRemote(si, index, amount);
         } else {
             return inventoryHelper.decrStackSize(index, amount);
@@ -395,6 +397,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             if (si == -1) {
                 return;
             }
+            storageTileEntity.updateVersion();
             storageTileEntity.updateRemoteSlot(si, limit, index, stack);
         } else {
             inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
@@ -848,7 +851,15 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
 
     @Override
     public int getVersion() {
-        return version;
+        if (isRemote()) {
+            RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
+            if (storageTileEntity == null) {
+                return version;
+            }
+            return storageTileEntity.getVersion();
+        } else {
+            return version;
+        }
     }
 
     @Override
