@@ -102,7 +102,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
 
     @Override
     public int getTagCount() {
-        return 3;
+        return TAGS.length;
     }
 
     @Override

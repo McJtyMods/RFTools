@@ -4,6 +4,9 @@ import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
@@ -14,6 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -62,6 +66,20 @@ public class RelayBlock extends GenericRFToolsBlock<RelayTileEntity, EmptyContai
             list.add(TextFormatting.WHITE + "machines in case power is low.");
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+        }
+    }
+
+    @Override
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        TileEntity te = world.getTileEntity(data.getPos());
+        if (te instanceof RelayTileEntity) {
+            if (mode == ProbeMode.EXTENDED) {
+                int rfPerTickIn = ((RelayTileEntity) te).getLastRfPerTickIn();
+                int rfPerTickOut = ((RelayTileEntity) te).getLastRfPerTickOut();
+                probeInfo.text(TextFormatting.GREEN + "In:  " + rfPerTickIn + "RF/t");
+                probeInfo.text(TextFormatting.GREEN + "Out: " + rfPerTickOut + "RF/t");
+            }
         }
     }
 

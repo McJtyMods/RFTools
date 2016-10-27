@@ -336,7 +336,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
 
     @Override
     public int getTagCount() {
-        return 4;
+        return TAGS.length;
     }
 
     @Override

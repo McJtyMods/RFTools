@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.relay;
 
 import cofh.api.energy.IEnergyConnection;
+import mcjty.lib.api.MachineInformation;
 import mcjty.lib.entity.GenericEnergyHandlerTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.BlockTools;
@@ -11,21 +12,34 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.energy.CapabilityEnergy;
 
 import java.util.Map;
 
-public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements ITickable {
+public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements ITickable, MachineInformation {
 
     public static final int MAXENERGY = 50000;
     public static final int RECEIVEPERTICK = 50000;
 
     public static final String CMD_SETTINGS = "settings";
 
+    private static final String[] TAGS = new String[]{"rfpertick_out", "rfpertick_in"};
+    private static final String[] TAG_DESCRIPTIONS = new String[] {
+            "The current RF/t output given by this block (last 2 seconds)",
+            "The current RF/t input received by this block (last 2 seconds)"};
+
     private boolean[] inputModeOn = new boolean[] { false, false, false, false, false, false };
     private boolean[] inputModeOff = new boolean[] { false, false, false, false, false, false };
     private int rfOn[] = new int[] { 1000, 1000, 1000, 1000, 1000, 1000 };
     private int rfOff[] = new int[] { 0, 0, 0, 0, 0, 0 };
     public static final String DUNSWE = "DUNSWE";
+
+    private int lastRfPerTickIn = 0;
+    private int lastRfPerTickOut = 0;
+    private int powerIn = 0;
+    private int powerOut = 0;
+    private long lastTime = 0;
 
     public RelayTileEntity() {
         super(MAXENERGY, RECEIVEPERTICK);
@@ -38,11 +52,54 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
         }
     }
 
+    public int getLastRfPerTickIn() {
+        return lastRfPerTickIn;
+    }
+
+    public int getLastRfPerTickOut() {
+        return lastRfPerTickOut;
+    }
+
+    @Override
+    public int getTagCount() {
+        return TAGS.length;
+    }
+
+    @Override
+    public String getTagName(int index) {
+        return TAGS[index];
+    }
+
+    @Override
+    public String getTagDescription(int index) {
+        return TAG_DESCRIPTIONS[index];
+    }
+
+    @Override
+    public String getData(int index, long millis) {
+        switch (index) {
+            case 0: return lastRfPerTickOut + "RF/t";
+            case 1: return lastRfPerTickIn + "RF/t";
+        }
+        return null;
+    }
+
     public boolean isPowered() {
         return powerLevel > 0;
     }
 
     private void checkStateServer() {
+        long time = System.currentTimeMillis();
+        if (lastTime == 0) {
+            lastTime = time;
+        } else if (time > lastTime + 2000) {
+            lastRfPerTickIn = (int) (50 * powerIn / (time - lastTime));
+            lastRfPerTickOut = (int) (50 * powerOut / (time - lastTime));
+            lastTime = time;
+            powerIn = 0;
+            powerOut = 0;
+        }
+
         boolean redstoneSignal = powerLevel > 0;
         int[] rf = redstoneSignal ? rfOn : rfOff;
         boolean[] inputMode = redstoneSignal ? inputModeOn : inputModeOff;
@@ -81,6 +138,7 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
                         received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
                     }
 
+                    powerOut += received;
                     energyStored -= storage.extractEnergy(received, false);
                     if (energyStored <= 0) {
                         return;
@@ -102,11 +160,14 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
         boolean[] inputMode = redstoneSignal ? inputModeOn : inputModeOff;
         IBlockState state = worldObj.getBlockState(getPos());
         int meta = state.getBlock().getMetaFromState(state);
-//        int side = from.ordinal();
         int side = BlockTools.reorient(from, meta).ordinal();
         if (inputMode[side]) {
             int[] rf = redstoneSignal ? rfOn : rfOff;
-            return super.receiveEnergy(from, Math.min(maxReceive, rf[side]), simulate);
+            int actual = super.receiveEnergy(from, Math.min(maxReceive, rf[side]), simulate);
+            if (!simulate) {
+                powerIn += actual;
+            }
+            return actual;
         }
         return 0;
     }
@@ -191,4 +252,26 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
         }
         return false;
     }
+
+    private RelayEnergyStorage facingStorage[] = new RelayEnergyStorage[6];
+    private RelayEnergyStorage nullStorage;
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        if (capability == CapabilityEnergy.ENERGY) {
+            if (facing == null) {
+                if (nullStorage == null) {
+                    nullStorage = new RelayEnergyStorage(this, null);
+                }
+                return (T) nullStorage;
+            } else {
+                if (facingStorage[facing.ordinal()] == null) {
+                    facingStorage[facing.ordinal()] = new RelayEnergyStorage(this, facing);
+                }
+                return (T) facingStorage[facing.ordinal()];
+            }
+        }
+        return super.getCapability(capability, facing);
+    }
+
 }

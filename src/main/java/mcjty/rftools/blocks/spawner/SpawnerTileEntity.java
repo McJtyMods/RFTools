@@ -61,7 +61,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public int getTagCount() {
-        return 4;
+        return TAGS.length;
     }
 
     @Override
