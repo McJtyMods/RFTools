@@ -35,7 +35,12 @@ public class MachineInformationScreenModule implements IScreenModule<IModuleData
             return null;
         }
         MachineInformation information = (MachineInformation) te;
-        String info = information.getData(tag, millis);
+        String info;
+        if (tag < 0 || tag >= information.getTagCount()) {
+            info = "[BAD TAG]";
+        } else {
+            info = information.getData(tag, millis);
+        }
         return helper.createString(info);
     }
 

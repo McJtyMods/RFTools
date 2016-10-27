@@ -97,7 +97,7 @@ public class MachineInformationClientScreenModule implements IClientScreenModule
     private void addOptionPanel(Minecraft mc, Gui gui, final NBTTagCompound currentData, final IModuleGuiChanged moduleGuiChanged, Panel panel) {
         Panel optionPanel = new Panel(mc, gui).setLayout(new HorizontalLayout()).setDesiredHeight(16);
 
-        final Map<String,Integer> choiceToIndex = new HashMap<String, Integer>();
+        final Map<String,Integer> choiceToIndex = new HashMap<>();
         final ChoiceLabel tagButton = new ChoiceLabel(mc, gui).setDesiredHeight(16).setDesiredWidth(80);
         optionPanel.addChild(tagButton);
 
@@ -125,16 +125,13 @@ public class MachineInformationClientScreenModule implements IClientScreenModule
             }
         }
 
-        tagButton.addChoiceEvent(new ChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, String newChoice) {
-                String choice = tagButton.getCurrentChoice();
-                Integer index = choiceToIndex.get(choice);
-                if (index != null) {
-                    currentData.setInteger("monitorTag", index);
-                }
-                moduleGuiChanged.updateData();
+        tagButton.addChoiceEvent((parent, newChoice) -> {
+            String choice = tagButton.getCurrentChoice();
+            Integer index = choiceToIndex.get(choice);
+            if (index != null) {
+                currentData.setInteger("monitorTag", index);
             }
+            moduleGuiChanged.updateData();
         });
 
 
