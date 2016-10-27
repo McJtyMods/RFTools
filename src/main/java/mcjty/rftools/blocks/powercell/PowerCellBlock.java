@@ -10,6 +10,7 @@ import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.rftools.blocks.relay.RelayTileEntity;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -159,6 +160,12 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
             } else if (powermode == PowerCellTileEntity.Mode.MODE_OUTPUT) {
                 int cost = (int) ((costFactor - 1.0f) * 1000.0f);
                 probeInfo.text(TextFormatting.YELLOW + "Side: output (cost " + cost / 10 + "." + cost % 10 + "%)");
+            }
+            if (mode == ProbeMode.EXTENDED) {
+                int rfPerTickIn = powerCellTileEntity.getLastRfPerTickIn();
+                int rfPerTickOut = powerCellTileEntity.getLastRfPerTickOut();
+                probeInfo.text(TextFormatting.GREEN + "In:  " + rfPerTickIn + "RF/t");
+                probeInfo.text(TextFormatting.GREEN + "Out: " + rfPerTickOut + "RF/t");
             }
         }
     }

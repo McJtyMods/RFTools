@@ -4,6 +4,7 @@ import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyContainerItem;
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
+import mcjty.lib.api.MachineInformation;
 import mcjty.lib.api.smartwrench.SmartWrenchSelector;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
@@ -38,12 +39,20 @@ import java.util.Set;
 import static mcjty.rftools.blocks.powercell.PowerCellConfiguration.advancedFactor;
 import static mcjty.rftools.blocks.powercell.PowerCellConfiguration.simpleFactor;
 
-public class PowerCellTileEntity extends GenericTileEntity implements IEnergyProvider, IEnergyReceiver, DefaultSidedInventory, ITickable, SmartWrenchSelector {
+public class PowerCellTileEntity extends GenericTileEntity implements IEnergyProvider, IEnergyReceiver,
+        DefaultSidedInventory, ITickable, SmartWrenchSelector, MachineInformation {
 
     public static String CMD_SETNONE = "setNone";
     public static String CMD_SETINPUT = "setInput";
     public static String CMD_SETOUTPUT = "setOutput";
     public static String CMD_CLEARSTATS = "clearStats";
+
+    private static final String[] TAGS = new String[]{"rfpertick_out", "rfpertick_in", "rftotal_in", "rftotal_out"};
+    private static final String[] TAG_DESCRIPTIONS = new String[] {
+            "The current RF/t output given by this block (last 2 seconds)",
+            "The current RF/t input received by this block (last 2 seconds)",
+            "The total RF/t output given by this block",
+            "The current RF/t input received by this block"};
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, PowerCellContainer.factory, 3);
 
@@ -56,6 +65,12 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     private int totalExtracted = 0;
     // Total amount of energy inserted in this block (local or not)
     private int totalInserted = 0;
+
+    private int lastRfPerTickIn = 0;
+    private int lastRfPerTickOut = 0;
+    private int powerIn = 0;
+    private int powerOut = 0;
+    private long lastTime = 0;
 
     public enum Mode implements IStringSerializable {
         MODE_NONE("none"),
@@ -77,6 +92,40 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
     public PowerCellTileEntity() {
         super();
+    }
+
+    @Override
+    public int getTagCount() {
+        return TAGS.length;
+    }
+
+    @Override
+    public String getTagName(int index) {
+        return TAGS[index];
+    }
+
+    @Override
+    public String getTagDescription(int index) {
+        return TAG_DESCRIPTIONS[index];
+    }
+
+    @Override
+    public String getData(int index, long millis) {
+        switch (index) {
+            case 0: return lastRfPerTickOut + "RF/t";
+            case 1: return lastRfPerTickIn + "RF/t";
+            case 2: return totalExtracted + "RF";
+            case 3: return totalInserted + "RF";
+        }
+        return null;
+    }
+
+    public int getLastRfPerTickIn() {
+        return lastRfPerTickIn;
+    }
+
+    public int getLastRfPerTickOut() {
+        return lastRfPerTickOut;
     }
 
     @Override
@@ -174,6 +223,17 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     @Override
     public void update() {
         if (!worldObj.isRemote) {
+            long time = System.currentTimeMillis();
+            if (lastTime == 0) {
+                lastTime = time;
+            } else if (time > lastTime + 2000) {
+                lastRfPerTickIn = (int) (50 * powerIn / (time - lastTime));
+                lastRfPerTickOut = (int) (50 * powerOut / (time - lastTime));
+                lastTime = time;
+                powerIn = 0;
+                powerOut = 0;
+            }
+
             if (isCreative()) {
                 // A creative powercell automatically generates 1000000 RF/tick
                 int gain = 1000000;
@@ -391,6 +451,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         }
         if (!simulate) {
             totalInserted += received;
+            powerIn += received;
             markDirty();
         }
         return received;
@@ -438,6 +499,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         }
         if (!simulate) {
             totalExtracted += extracted;
+            powerOut += extracted;
             markDirty();
         }
         return extracted;
