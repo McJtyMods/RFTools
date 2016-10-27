@@ -465,7 +465,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         int maxInsert = Math.min(totEnergy - network.getEnergy(), maxReceive);
         if (maxInsert > 0) {
             if (!simulate) {
-                network.setEnergy(network.getEnergy() + maxInsert);
+                network.receiveEnergy(maxInsert);
                 PowerCellNetwork.getChannels(worldObj).save(worldObj);
             }
         }
@@ -515,7 +515,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
             maxExtract = maximum;
         }
         if (!simulate) {
-            network.setEnergy(energy - maxExtract);
+            network.extractEnergy(maxExtract);
             PowerCellNetwork.getChannels(worldObj).save(worldObj);
         }
         return maxExtract;

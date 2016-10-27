@@ -321,6 +321,14 @@ public class PowerCellNetwork extends WorldSavedData {
             return energy;
         }
 
+        public void extractEnergy(int amount) {
+            energy -= amount;
+        }
+
+        public void receiveEnergy(int amount) {
+            energy += amount;
+        }
+
         public void setEnergy(int energy) {
             this.energy = energy;
         }
