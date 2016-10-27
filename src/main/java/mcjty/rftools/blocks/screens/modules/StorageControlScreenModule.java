@@ -168,9 +168,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
                 int dx = Math.abs(c.getX() - pos.getX());
                 int dy = Math.abs(c.getY() - pos.getY());
                 int dz = Math.abs(c.getZ() - pos.getZ());
-                if (dx <= 64 && dy <= 64 && dz <= 64) {
-                    coordinate = c;
-                }
+                coordinate = c;
             }
         }
     }
