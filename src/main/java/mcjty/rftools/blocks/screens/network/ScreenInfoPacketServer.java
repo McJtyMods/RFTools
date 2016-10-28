@@ -50,7 +50,6 @@ public class ScreenInfoPacketServer implements InfoPacketServer {
             if (te instanceof ScreenTileEntity) {
                 ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
                 IScreenModule module = screenTileEntity.getHoveringModule();
-                System.out.println("module = " + module);
                 if (module instanceof ITooltipInfo) {
                     info = ((ITooltipInfo) module).getInfo(world, screenTileEntity.getHoveringX(), screenTileEntity.getHoveringY(), player);
                 }

@@ -87,7 +87,7 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
                 ((ScreenBlock) block).getWailaBodyScreen(currenttip, accessor.getPlayer(), (ScreenTileEntity) te);
             }
         }
-        return Collections.emptyList();
+        return currenttip;
     }
 
     @Override
