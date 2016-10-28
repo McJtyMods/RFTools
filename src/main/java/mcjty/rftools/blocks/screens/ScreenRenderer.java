@@ -9,6 +9,7 @@ import mcjty.rftools.api.screens.data.IModuleData;
 import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModuleHelper;
 import mcjty.rftools.blocks.screens.network.PacketGetScreenData;
 import mcjty.rftools.network.RFToolsMessages;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -117,7 +118,8 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         IClientScreenModule hitModule = null;
         ScreenTileEntity.ModuleRaytraceResult hit = null;
         IBlockState blockState = getWorld().getBlockState(pos);
-        if (blockState.getBlock() != ScreenSetup.screenBlock && blockState.getBlock() != ScreenSetup.creativeScreenBlock && blockState.getBlock() != ScreenSetup.screenHitBlock) {
+        Block block = blockState.getBlock();
+        if (block != ScreenSetup.screenBlock && block != ScreenSetup.creativeScreenBlock && block != ScreenSetup.screenHitBlock) {
             // Safety
             return;
         }

@@ -1,14 +1,10 @@
 package mcjty.rftools.blocks.screens;
 
+import mcjty.lib.entity.GenericTileEntity;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
 
-import javax.annotation.Nullable;
-
-public class ScreenHitTileEntity extends TileEntity {
+public class ScreenHitTileEntity extends GenericTileEntity {
 
     private int dx;
     private int dy;
@@ -52,23 +48,23 @@ public class ScreenHitTileEntity extends TileEntity {
         return tagCompound;
     }
 
-    @Override
-    public NBTTagCompound getUpdateTag() {
-        NBTTagCompound updateTag = super.getUpdateTag();
-        writeToNBT(updateTag);
-        return updateTag;
-    }
-
-    @Nullable
-    @Override
-    public SPacketUpdateTileEntity getUpdatePacket() {
-        NBTTagCompound nbtTag = new NBTTagCompound();
-        this.writeToNBT(nbtTag);
-        return new SPacketUpdateTileEntity(getPos(), 1, nbtTag);
-    }
-
-    @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
-        readFromNBT(packet.getNbtCompound());
-    }
+//    @Override
+//    public NBTTagCompound getUpdateTag() {
+//        NBTTagCompound updateTag = super.getUpdateTag();
+//        writeToNBT(updateTag);
+//        return updateTag;
+//    }
+//
+//    @Nullable
+//    @Override
+//    public SPacketUpdateTileEntity getUpdatePacket() {
+//        NBTTagCompound nbtTag = new NBTTagCompound();
+//        this.writeToNBT(nbtTag);
+//        return new SPacketUpdateTileEntity(getPos(), 1, nbtTag);
+//    }
+//
+//    @Override
+//    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
+//        readFromNBT(packet.getNbtCompound());
+//    }
 }

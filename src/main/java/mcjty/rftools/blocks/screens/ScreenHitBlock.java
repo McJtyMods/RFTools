@@ -1,18 +1,22 @@
 package mcjty.rftools.blocks.screens;
 
+import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.GenericBlock;
+import mcjty.rftools.RFTools;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
@@ -26,25 +30,64 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
-public class ScreenHitBlock extends Block implements ITileEntityProvider {
-
-    public static final PropertyDirection FACING = PropertyDirection.create("facing");
+public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyContainer> {
 
     public ScreenHitBlock() {
-        super(Material.GLASS);
+        super(RFTools.instance, Material.GLASS, ScreenHitTileEntity.class, EmptyContainer.class, "screen_hitblock", false);
         setBlockUnbreakable();
         setResistance(6000000.0F);
-        setUnlocalizedName("rftools.screen_hitblock");
-        setRegistryName("screen_hitblock");
-        GameRegistry.register(this);
-        GameRegistry.register(new ItemBlock(this), getRegistryName());
-        GameRegistry.registerTileEntity(ScreenHitTileEntity.class, "screen_hitblock");
+//        setUnlocalizedName("rftools.screen_hitblock");
+//        setRegistryName("screen_hitblock");
+//        GameRegistry.register(this);
+//        GameRegistry.register(new ItemBlock(this), getRegistryName());
+//        GameRegistry.registerTileEntity(ScreenHitTileEntity.class, "screen_hitblock");
+    }
+
+    @Override
+    public int getGuiID() {
+        return -1;
+    }
+
+    @Override
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        BlockPos pos = data.getPos();
+        ScreenHitTileEntity screenHitTileEntity = (ScreenHitTileEntity) world.getTileEntity(pos);
+        int dx = screenHitTileEntity.getDx();
+        int dy = screenHitTileEntity.getDy();
+        int dz = screenHitTileEntity.getDz();
+        Block block = world.getBlockState(pos.add(dx, dy, dz)).getBlock();
+        if (block instanceof ScreenBlock) {
+            ((ScreenBlock) block).addProbeInfoScreen(mode, probeInfo, player, world, pos.add(dx, dy, dz));
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public List<String> getWailaBody(ItemStack itemStack, List currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.getWailaBody(itemStack, currenttip, accessor, config);
+        BlockPos pos = accessor.getPosition();
+        World world = accessor.getWorld();
+        ScreenHitTileEntity screenHitTileEntity = (ScreenHitTileEntity) world.getTileEntity(pos);
+        int dx = screenHitTileEntity.getDx();
+        int dy = screenHitTileEntity.getDy();
+        int dz = screenHitTileEntity.getDz();
+        BlockPos rpos = pos.add(dx, dy, dz);
+        Block block = world.getBlockState(rpos).getBlock();
+        if (block instanceof ScreenBlock) {
+            TileEntity te = world.getTileEntity(rpos);
+            if (te instanceof ScreenTileEntity) {
+                ((ScreenBlock) block).getWailaBodyScreen(currenttip, accessor.getPlayer(), (ScreenTileEntity) te);
+            }
+        }
+        return Collections.emptyList();
     }
 
     @Override
@@ -165,24 +208,5 @@ public class ScreenHitBlock extends Block implements ITileEntityProvider {
     @Override
     public EnumPushReaction getMobilityFlag(IBlockState state) {
         return EnumPushReaction.BLOCK;
-    }
-
-    @Override
-    public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(FACING, getFacing(meta));
-    }
-
-    public static EnumFacing getFacing(int meta) {
-        return EnumFacing.values()[meta & 7];
-    }
-
-    @Override
-    public int getMetaFromState(IBlockState state) {
-        return state.getValue(FACING).getIndex();
-    }
-
-    @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, FACING);
     }
 }

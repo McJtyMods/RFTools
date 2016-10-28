@@ -60,7 +60,12 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
     @Override
     public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
         super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
-        TileEntity te = world.getTileEntity(data.getPos());
+        BlockPos pos = data.getPos();
+        addProbeInfoScreen(mode, probeInfo, player, world, pos);
+    }
+
+    public void addProbeInfoScreen(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, BlockPos pos) {
+        TileEntity te = world.getTileEntity(pos);
         if (te instanceof ScreenTileEntity) {
             ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
             if (!isCreative()) {
@@ -93,34 +98,36 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         super.getWailaBody(itemStack, currenttip, accessor, config);
-        NBTTagCompound tagCompound = accessor.getNBTData();
-        if (tagCompound != null) {
-            if (!isCreative()) {
-                boolean connected = tagCompound.getBoolean("connected");
-                if (!connected) {
-                    currenttip.add(TextFormatting.YELLOW + "[NOT CONNECTED]");
-                }
-                boolean power = tagCompound.getBoolean("powerOn");
-                if (!power) {
-                    currenttip.add(TextFormatting.YELLOW + "[NO POWER]");
-                }
-                if (accessor.getPlayer().isSneaking()) {
-                    int rfPerTick = ((ScreenTileEntity) accessor.getTileEntity()).getTotalRfPerTick();
-                    currenttip.add(TextFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
-                }
-            }
-            TileEntity te = accessor.getTileEntity();
-            if (te instanceof ScreenTileEntity) {
-                ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
-                if (System.currentTimeMillis() - lastTime > 500) {
-                    lastTime = System.currentTimeMillis();
-                    RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new ScreenInfoPacketServer(screenTileEntity.getWorld().provider.getDimension(),
-                            screenTileEntity.getPos())));
-                }
-                Collections.addAll(currenttip, ScreenInfoPacketClient.infoReceived);
+        TileEntity te = accessor.getTileEntity();
+        if (te instanceof ScreenTileEntity) {
+            return getWailaBodyScreen(currenttip, accessor.getPlayer(), (ScreenTileEntity) te);
+        } else {
+            return Collections.emptyList();
+        }
+    }
 
+    @SideOnly(Side.CLIENT)
+    public List<String> getWailaBodyScreen(List<String> currenttip, EntityPlayer player, ScreenTileEntity te) {
+        if (!isCreative()) {
+            boolean connected = te.isConnected();
+            if (!connected) {
+                currenttip.add(TextFormatting.YELLOW + "[NOT CONNECTED]");
+            }
+            boolean power = te.isPowerOn();
+            if (!power) {
+                currenttip.add(TextFormatting.YELLOW + "[NO POWER]");
+            }
+            if (player.isSneaking()) {
+                int rfPerTick = te.getTotalRfPerTick();
+                currenttip.add(TextFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
             }
         }
+        if (System.currentTimeMillis() - lastTime > 500) {
+            lastTime = System.currentTimeMillis();
+            RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new ScreenInfoPacketServer(te.getWorld().provider.getDimension(),
+                    te.getPos())));
+        }
+        Collections.addAll(currenttip, ScreenInfoPacketClient.infoReceived);
         return currenttip;
     }
 
