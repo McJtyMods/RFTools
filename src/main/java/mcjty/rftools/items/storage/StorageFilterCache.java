@@ -81,7 +81,7 @@ public class StorageFilterCache {
             }
             return match != blacklistMode;
         }
-        return true;
+        return false;
     }
 
     private boolean itemMatches(ItemStack stack, String modName) {
