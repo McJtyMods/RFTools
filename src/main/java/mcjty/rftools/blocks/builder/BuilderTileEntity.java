@@ -1263,11 +1263,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         } else {
             Block block = state.getBlock();
             ItemStack srcItem = block.getItem(srcWorld, srcPos, state);
-            int meta = block.getMetaFromState(state);
-            for (int i = 0; i < inventory.getSlots(); i++) {
-                ItemStack stack = inventory.getStackInSlot(i);
-                if (stack != null && stack.stackSize > 0 && stack.isItemEqual(srcItem)) {
-                    return inventory.extractItem(i, 1, false);
+            if (srcItem.getItem() instanceof ItemBlock) {
+                for (int i = 0; i < inventory.getSlots(); i++) {
+                    ItemStack stack = inventory.getStackInSlot(i);
+                    if (stack != null && stack.stackSize > 0 && stack.isItemEqual(srcItem)) {
+                        return inventory.extractItem(i, 1, false);
+                    }
                 }
             }
         }
