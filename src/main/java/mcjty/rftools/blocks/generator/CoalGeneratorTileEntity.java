@@ -12,7 +12,9 @@ import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.RedstoneMode;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -111,8 +113,11 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
             }
 
             if (inventoryHelper.containsItem(CoalGeneratorContainer.SLOT_COALINPUT)) {
-                inventoryHelper.decrStackSize(CoalGeneratorContainer.SLOT_COALINPUT, 1);
+                ItemStack extracted = inventoryHelper.decrStackSize(CoalGeneratorContainer.SLOT_COALINPUT, 1);
                 burning = CoalGeneratorConfiguration.ticksPerCoal;
+                if (extracted.getItem() == Item.getItemFromBlock(Blocks.COAL_BLOCK)) {
+                    burning *= 9;
+                }
                 burning += (int) (burning * getInfusedFactor() / 2.0f);
                 if (working) {
                     markDirty();
