@@ -453,6 +453,22 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
                     dogroups && (prevItem == null || !itemSorter.isSameGroup(prevItem, item)), itemSorter.getGroupName(item));
             prevItem = item;
         }
+
+        int newfirst = -1;
+        if (itemList.getCountSelected() == 0) {
+            if (itemList.getBounds() != null) {
+                itemList.setFirstSelected(0);
+                newfirst = itemList.getChildCount() - itemList.getCountSelected();
+                if (newfirst < 0) {
+                    newfirst = 0;
+                }
+            }
+        } else if (itemList.getFirstSelected() > (itemList.getChildCount() - itemList.getCountSelected())) {
+            newfirst = itemList.getChildCount() - itemList.getCountSelected();
+        }
+        if (newfirst >= 0) {
+            itemList.setFirstSelected(newfirst);
+        }
     }
 
     private boolean isRemote() {
