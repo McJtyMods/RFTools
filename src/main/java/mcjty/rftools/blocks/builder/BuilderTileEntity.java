@@ -29,12 +29,11 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -43,6 +42,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
+import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.fluids.Fluid;
@@ -55,6 +55,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable,
@@ -961,10 +962,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 return true;    // We could not find a block. Wait
             }
 
-            ItemBlock itemBlock = (ItemBlock) stack.getItem();
-            IBlockState newState = itemBlock.block.getStateFromMeta(itemBlock.getDamage(stack));
             FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
-            itemBlock.placeBlockAt(stack, fakePlayer, worldObj, srcPos, EnumFacing.UP, 0, 0, 0, newState);
+            IBlockState newState = placeBlockAt(worldObj, srcPos, stack, null, fakePlayer);
+
             if (!silent) {
                 SoundTools.playSound(worldObj, newState.getBlock().getSoundType().breakSound, srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
             }
@@ -972,6 +972,22 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             consumeEnergy(rfNeeded);
         }
         return false;
+    }
+
+    private IBlockState placeBlockAt(World world, BlockPos pos, ItemStack stack, @Nullable Integer origMeta, FakePlayer fakePlayer) {
+        Item item = stack.getItem();
+        if (item instanceof ItemBlock) {
+            ItemBlock itemBlock = (ItemBlock) item;
+            if (origMeta == null) {
+                origMeta = itemBlock.getDamage(stack);
+            }
+            IBlockState newState = itemBlock.block.getStateFromMeta(origMeta);
+            itemBlock.placeBlockAt(stack, fakePlayer, world, pos, EnumFacing.UP, 0, 0, 0, newState);
+            return newState;
+        } else {
+            item.onItemUse(stack, fakePlayer, world, pos.down(), EnumHand.MAIN_HAND, EnumFacing.UP, 0, 0, 0);
+            return world.getBlockState(pos);
+        }
     }
 
     private Set<Block> getCachedVoidableBlocks() {
@@ -1251,7 +1267,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             List<Integer> slots = new ArrayList<>();
             for (int i = 0; i < inventory.getSlots(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
-                if (stack != null && stack.stackSize > 0 && stack.getItem() instanceof ItemBlock) {
+                if (isPlacable(stack)) {
                     slots.add(i);
                 }
             }
@@ -1263,7 +1279,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         } else {
             Block block = state.getBlock();
             ItemStack srcItem = block.getItem(srcWorld, srcPos, state);
-            if (srcItem.getItem() instanceof ItemBlock) {
+            if (isPlacable(srcItem)) {
                 for (int i = 0; i < inventory.getSlots(); i++) {
                     ItemStack stack = inventory.getStackInSlot(i);
                     if (stack != null && stack.stackSize > 0 && stack.isItemEqual(srcItem)) {
@@ -1275,6 +1291,15 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return null;
     }
 
+    private boolean isPlacable(ItemStack stack) {
+        if (stack == null || stack.stackSize <= 0) {
+            return false;
+        }
+        Item item = stack.getItem();
+        return item instanceof ItemBlock || item instanceof ItemSkull || item instanceof ItemBlockSpecial
+                || item instanceof IPlantable;
+    }
+
     // Also works if block is null and just picks the first available block.
     private ItemStack findAndConsumeBlock(IInventory inventory, World srcWorld, BlockPos srcPos, IBlockState state) {
         if (state == null) {
@@ -1282,7 +1307,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             List<Integer> slots = new ArrayList<>();
             for (int i = 0; i < inventory.getSizeInventory(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
-                if (stack != null && stack.stackSize > 0 && stack.getItem() instanceof ItemBlock) {
+                if (isPlacable(stack)) {
                     slots.add(i);
                 }
             }
@@ -1529,11 +1554,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             BuilderSetup.BlockInformation information = getBlockInformation(world, srcPos, origBlock, null);
             origMeta = rotateMeta(origBlock, origMeta, information, rotate);
 
-            ItemBlock itemBlock = (ItemBlock) consumedStack.getItem();
-            IBlockState newState = itemBlock.block.getStateFromMeta(origMeta);
             FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
-            itemBlock.placeBlockAt(consumedStack, fakePlayer, destWorld, destPos, EnumFacing.UP, 0, 0, 0, newState);
-
+            IBlockState newState = placeBlockAt(destWorld, destPos, consumedStack, origMeta, fakePlayer);
             destWorld.setBlockState(destPos, newState, 3);  // placeBlockAt can reset the orientation. Restore it here
 
             if (!silent) {
