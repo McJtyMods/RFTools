@@ -168,13 +168,21 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         ItemStack stack = block.getItem(worldObj, newpos, state);
         Item matcherItem = matcher.getItem();
         
-    	FluidBucketWrapper wrapper = new FluidBucketWrapper(matcher);
-    	FluidStack fluidStack = wrapper.getFluid();
-	    if (fluidStack != null) {
-	    	Fluid fluid = fluidStack.getFluid();
-			Block fluidBlock = fluid.getBlock();
-			boolean isSameFluid = fluidBlock != null && fluidBlock.getUnlocalizedName().equals(block.getUnlocalizedName());
-			return isSameFluid;
+    	FluidStack matcherFluidStack = new FluidBucketWrapper(matcher).getFluid();
+	    if (matcherFluidStack != null) {
+	    	Fluid matcherFluid = matcherFluidStack.getFluid();
+	    	if (matcherFluid == null) {
+	    		return false;
+	    	}
+	    	
+    		Block matcherFluidBlock = matcherFluid.getBlock();
+    		if (matcherFluidBlock == null) {
+    			return false;
+    		}
+    		
+			String matcherBlockName = matcherFluidBlock.getUnlocalizedName();
+			String blockName = block.getUnlocalizedName();
+			return blockName.equals(matcherBlockName);
 	    } else if (stack != null) {
         	Item stackItem = stack.getItem();
             return matcherItem == stackItem;
