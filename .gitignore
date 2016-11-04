@@ -4,3 +4,4 @@
 *.iws
 eclipse/
 out/
+/bin/
