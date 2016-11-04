@@ -6,6 +6,7 @@ import mcjty.lib.network.Argument;
 import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockNetherWart;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -158,16 +159,15 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         ItemStack matcher = inventoryHelper.getStackInSlot(0);
         Block block = state.getBlock();
         if (matcher == null) {
+        	if (block instanceof BlockLiquid || block instanceof BlockFluidBase) {
+        		return !block.isAir(state, worldObj, newpos);
+        	}
+        	
             return block.isFullBlock(state);
         }
         ItemStack stack = block.getItem(worldObj, newpos, state);
         Item matcherItem = matcher.getItem();
         
-    	// We could test whether the fluid is a liquid or a gas.
-    	// There doesn't seem to be a downside to allowing this method to match gases, though.
-    	// Gases can't be placed as blocks and so this code shouldn't be called anyway.
-    	// Even if someone does manage to do it, it would make sense for them to be able to match the gas
-    	// if they manage to store a bucket containing a gas in the sensor's filter slot.
     	FluidBucketWrapper wrapper = new FluidBucketWrapper(matcher);
     	FluidStack fluidStack = wrapper.getFluid();
 	    if (fluidStack != null) {
