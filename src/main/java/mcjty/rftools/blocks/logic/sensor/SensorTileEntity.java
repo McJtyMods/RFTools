@@ -21,6 +21,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fluids.*;
+import net.minecraftforge.fluids.capability.wrappers.*;
 
 import java.util.List;
 import java.util.Map;
@@ -154,14 +156,31 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     private boolean checkBlock(BlockPos newpos) {
         IBlockState state = worldObj.getBlockState(newpos);
         ItemStack matcher = inventoryHelper.getStackInSlot(0);
+        Block block = state.getBlock();
         if (matcher == null) {
-            return state.getBlock().isFullBlock(state);
+            return block.isFullBlock(state);
         }
-        ItemStack stack = state.getBlock().getItem(worldObj, newpos, state);
-        if (stack != null) {
-            return matcher.getItem() == stack.getItem();
+        ItemStack stack = block.getItem(worldObj, newpos, state);
+        Item matcherItem = matcher.getItem();
+        
+    	// We could test whether the fluid is a liquid or a gas.
+    	// There doesn't seem to be a downside to allowing this method to match gases, though.
+    	// Gases can't be placed as blocks and so this code shouldn't be called anyway.
+    	// Even if someone does manage to do it, it would make sense for them to be able to match the gas
+    	// if they manage to store a bucket containing a gas in the sensor's filter slot.
+    	FluidBucketWrapper wrapper = new FluidBucketWrapper(matcher);
+    	FluidStack fluidStack = wrapper.getFluid();
+	    if (fluidStack != null) {
+	    	Fluid fluid = fluidStack.getFluid();
+			Block fluidBlock = fluid.getBlock();
+			boolean isSameFluid = fluidBlock != null && fluidBlock.getUnlocalizedName().equals(block.getUnlocalizedName());
+			return isSameFluid;
+	    } else if (stack != null) {
+        	Item stackItem = stack.getItem();
+            return matcherItem == stackItem;
         } else {
-            return matcher.getItem() == Item.getItemFromBlock(state.getBlock());
+        	Item blockItem = Item.getItemFromBlock(block);
+            return matcherItem == blockItem;
         }
     }
 
