@@ -16,6 +16,7 @@ import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -27,6 +28,8 @@ import net.minecraftforge.fluids.capability.wrappers.*;
 
 import java.util.List;
 import java.util.Map;
+
+import ic2.core.item.ItemFluidCell;
 
 public class SensorTileEntity extends LogicTileEntity implements ITickable, DefaultSidedInventory {
 
@@ -159,7 +162,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         ItemStack matcher = inventoryHelper.getStackInSlot(0);
         Block block = state.getBlock();
         if (matcher == null) {
-        	if (block instanceof BlockLiquid || block instanceof BlockFluidBase) {
+        	if (block instanceof BlockLiquid || block instanceof IFluidBlock) {
         		return !block.isAir(state, worldObj, newpos);
         	}
         	
@@ -168,21 +171,13 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         ItemStack stack = block.getItem(worldObj, newpos, state);
         Item matcherItem = matcher.getItem();
         
-    	FluidStack matcherFluidStack = new FluidBucketWrapper(matcher).getFluid();
-	    if (matcherFluidStack != null) {
-	    	Fluid matcherFluid = matcherFluidStack.getFluid();
-	    	if (matcherFluid == null) {
-	    		return false;
-	    	}
-	    	
-    		Block matcherFluidBlock = matcherFluid.getBlock();
-    		if (matcherFluidBlock == null) {
-    			return false;
-    		}
-    		
-			String matcherBlockName = matcherFluidBlock.getUnlocalizedName();
-			String blockName = block.getUnlocalizedName();
-			return blockName.equals(matcherBlockName);
+        FluidStack matcherFluidStack = null;
+        if (matcherItem instanceof IFluidContainerItem) {
+	    	matcherFluidStack = ((IFluidContainerItem)matcherItem).getFluid(matcher);
+	    	return checkFluid(block, matcherFluidStack);
+        } else if (matcherItem instanceof ItemBucket || matcherItem instanceof UniversalBucket) {
+	    	matcherFluidStack = new FluidBucketWrapper(matcher).getFluid();
+	    	return checkFluid(block, matcherFluidStack);
 	    } else if (stack != null) {
         	Item stackItem = stack.getItem();
             return matcherItem == stackItem;
@@ -191,6 +186,26 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
             return matcherItem == blockItem;
         }
     }
+
+	private boolean checkFluid(Block block, FluidStack matcherFluidStack) {
+	    if (matcherFluidStack == null) {
+    		return false;
+	    }
+
+	    Fluid matcherFluid = matcherFluidStack.getFluid();
+    	if (matcherFluid == null) {
+    		return false;
+    	}
+	    	
+		Block matcherFluidBlock = matcherFluid.getBlock();
+		if (matcherFluidBlock == null) {
+			return false;
+		}
+		
+		String matcherBlockName = matcherFluidBlock.getUnlocalizedName();
+		String blockName = block.getUnlocalizedName();
+		return blockName.equals(matcherBlockName);
+	}
 
     private boolean checkGrowthLevel(BlockPos newpos, EnumFacing dir) {
         int blockCount = areaType.getBlockCount();
