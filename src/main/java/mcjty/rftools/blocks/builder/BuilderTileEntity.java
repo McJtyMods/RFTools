@@ -16,9 +16,7 @@ import mcjty.rftools.network.PacketGetHudLog;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockLiquid;
-import net.minecraft.block.BlockStaticLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -45,6 +43,7 @@ import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
+import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -915,7 +914,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             block = state.getBlock();
             if (!isEmpty(state, block)) {
                 float hardness;
-                if (block instanceof BlockDynamicLiquid || block instanceof BlockStaticLiquid) {
+                if (isFluidBlock(block)) {
                     hardness = 1.0f;
                 } else {
                     if (getCachedVoidableBlocks().contains(block)) {
@@ -1150,17 +1149,31 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return false;
     }
 
+    private static boolean isFluidBlock(Block block) {
+        return block instanceof BlockLiquid || block instanceof BlockFluidBase;
+    }
+
+    private static int getFluidLevel(IBlockState srcState) {
+        if (srcState.getBlock() instanceof BlockLiquid) {
+            return srcState.getValue(BlockLiquid.LEVEL);
+        }
+        if (srcState.getBlock() instanceof BlockFluidBase) {
+            return srcState.getValue(BlockFluidBase.LEVEL);
+        }
+        return -1;
+    }
+
     private boolean pumpBlock(int rfNeeded, BlockPos srcPos, Block block) {
         Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
         if (fluid == null) {
             return false;
         }
-        if (!(block instanceof BlockStaticLiquid)) {
+        if (!isFluidBlock(block)) {
             return false;
         }
 
         IBlockState srcState = worldObj.getBlockState(srcPos);
-        if (srcState.getValue(BlockLiquid.LEVEL) != 0) {
+        if (getFluidLevel(srcState) != 0) {
             return false;
         }
 
