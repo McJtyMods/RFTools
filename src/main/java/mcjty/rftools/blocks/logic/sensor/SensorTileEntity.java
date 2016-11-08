@@ -174,10 +174,10 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         FluidStack matcherFluidStack = null;
         if (matcherItem instanceof IFluidContainerItem) {
 	    	matcherFluidStack = ((IFluidContainerItem)matcherItem).getFluid(matcher);
-	    	return checkFluid(block, matcherFluidStack);
+	    	return checkFluid(block, matcherFluidStack, state, newpos);
         } else if (matcherItem instanceof ItemBucket || matcherItem instanceof UniversalBucket) {
 	    	matcherFluidStack = new FluidBucketWrapper(matcher).getFluid();
-	    	return checkFluid(block, matcherFluidStack);
+	    	return checkFluid(block, matcherFluidStack, state, newpos);
 	    } else if (stack != null) {
         	Item stackItem = stack.getItem();
             return matcherItem == stackItem;
@@ -187,9 +187,9 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         }
     }
 
-	private boolean checkFluid(Block block, FluidStack matcherFluidStack) {
+	private boolean checkFluid(Block block, FluidStack matcherFluidStack, IBlockState state, BlockPos newpos) {
 	    if (matcherFluidStack == null) {
-    		return false;
+    		return block.isAir(state,  worldObj, newpos);
 	    }
 
 	    Fluid matcherFluid = matcherFluidStack.getFluid();
