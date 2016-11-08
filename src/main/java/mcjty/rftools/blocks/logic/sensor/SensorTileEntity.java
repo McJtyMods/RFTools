@@ -119,12 +119,12 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         BlockPos newpos = getPos().offset(inputSide);
 
         switch (sensorType) {
-	        case SENSOR_BLOCK:
-	            newout = checkBlockOrFluid(newpos, inputSide, (pos) -> checkBlock(pos));
-	            break;
-	        case SENSOR_FLUID:
-	            newout = checkBlockOrFluid(newpos, inputSide, (pos) -> checkFluid(pos));
-	            break;
+            case SENSOR_BLOCK:
+                newout = checkBlockOrFluid(newpos, inputSide, (pos) -> checkBlock(pos));
+                break;
+            case SENSOR_FLUID:
+                newout = checkBlockOrFluid(newpos, inputSide, (pos) -> checkFluid(pos));
+                break;
             case SENSOR_GROWTHLEVEL:
                 newout = checkGrowthLevel(newpos, inputSide);
                 break;
@@ -180,46 +180,46 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         ItemStack matcher = inventoryHelper.getStackInSlot(0);
         Block block = state.getBlock();
         if (matcher == null) {
-        	if (block instanceof BlockLiquid || block instanceof IFluidBlock) {
-        		return !block.isAir(state, worldObj, newpos);
-        	}
-        	
+            if (block instanceof BlockLiquid || block instanceof IFluidBlock) {
+                return !block.isAir(state, worldObj, newpos);
+            }
+
             return false;
         }
         ItemStack stack = block.getItem(worldObj, newpos, state);
         Item matcherItem = matcher.getItem();
-        
+
         FluidStack matcherFluidStack = null;
         if (matcherItem instanceof IFluidContainerItem) {
-	    	matcherFluidStack = ((IFluidContainerItem)matcherItem).getFluid(matcher);
-	    	return checkFluid(block, matcherFluidStack, state, newpos);
+            matcherFluidStack = ((IFluidContainerItem)matcherItem).getFluid(matcher);
+            return checkFluid(block, matcherFluidStack, state, newpos);
         } else if (matcherItem instanceof ItemBucket || matcherItem instanceof UniversalBucket) {
-	    	matcherFluidStack = new FluidBucketWrapper(matcher).getFluid();
-	    	return checkFluid(block, matcherFluidStack, state, newpos);
-	    }
+            matcherFluidStack = new FluidBucketWrapper(matcher).getFluid();
+            return checkFluid(block, matcherFluidStack, state, newpos);
+        }
 
         return false;
     }
 
-	private boolean checkFluid(Block block, FluidStack matcherFluidStack, IBlockState state, BlockPos newpos) {
-	    if (matcherFluidStack == null) {
-    		return block.isAir(state,  worldObj, newpos);
-	    }
+    private boolean checkFluid(Block block, FluidStack matcherFluidStack, IBlockState state, BlockPos newpos) {
+        if (matcherFluidStack == null) {
+            return block.isAir(state,  worldObj, newpos);
+        }
 
-	    Fluid matcherFluid = matcherFluidStack.getFluid();
-    	if (matcherFluid == null) {
-    		return false;
-    	}
-	    	
-		Block matcherFluidBlock = matcherFluid.getBlock();
-		if (matcherFluidBlock == null) {
-			return false;
-		}
-		
-		String matcherBlockName = matcherFluidBlock.getUnlocalizedName();
-		String blockName = block.getUnlocalizedName();
-		return blockName.equals(matcherBlockName);
-	}
+        Fluid matcherFluid = matcherFluidStack.getFluid();
+        if (matcherFluid == null) {
+            return false;
+        }
+
+        Block matcherFluidBlock = matcherFluid.getBlock();
+        if (matcherFluidBlock == null) {
+            return false;
+        }
+
+        String matcherBlockName = matcherFluidBlock.getUnlocalizedName();
+        String blockName = block.getUnlocalizedName();
+        return blockName.equals(matcherBlockName);
+    }
 
     private boolean checkGrowthLevel(BlockPos newpos, EnumFacing dir) {
         int blockCount = areaType.getBlockCount();
