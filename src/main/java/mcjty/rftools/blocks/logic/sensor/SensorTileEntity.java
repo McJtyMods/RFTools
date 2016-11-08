@@ -26,6 +26,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.wrappers.*;
 
+import java.util.function.Function;
 import java.util.List;
 import java.util.Map;
 
@@ -118,9 +119,12 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         BlockPos newpos = getPos().offset(inputSide);
 
         switch (sensorType) {
-            case SENSOR_BLOCK:
-                newout = checkBlock(newpos, inputSide);
-                break;
+	        case SENSOR_BLOCK:
+	            newout = checkBlockOrFluid(newpos, inputSide, (pos) -> checkBlock(pos));
+	            break;
+	        case SENSOR_FLUID:
+	            newout = checkBlockOrFluid(newpos, inputSide, (pos) -> checkFluid(pos));
+	            break;
             case SENSOR_GROWTHLEVEL:
                 newout = checkGrowthLevel(newpos, inputSide);
                 break;
@@ -142,10 +146,10 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         return newout;
     }
 
-    private boolean checkBlock(BlockPos newpos, EnumFacing dir) {
+    private boolean checkBlockOrFluid(BlockPos newpos, EnumFacing dir, Function<BlockPos, Boolean> blockChecker) {
         int blockCount = areaType.getBlockCount();
         for (int i = 0 ; i < blockCount ; i++) {
-            boolean result = checkBlock(newpos);
+            boolean result = blockChecker.apply(newpos);
             if (result && groupType == GroupType.GROUP_ONE) {
                 return true;
             }
@@ -160,13 +164,27 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     private boolean checkBlock(BlockPos newpos) {
         IBlockState state = worldObj.getBlockState(newpos);
         ItemStack matcher = inventoryHelper.getStackInSlot(0);
+        if (matcher == null) {
+            return state.getBlock().isFullBlock(state);
+        }
+        ItemStack stack = state.getBlock().getItem(worldObj, newpos, state);
+        if (stack != null) {
+            return matcher.getItem() == stack.getItem();
+        } else {
+            return matcher.getItem() == Item.getItemFromBlock(state.getBlock());
+        }
+    }
+
+    private boolean checkFluid(BlockPos newpos) {
+        IBlockState state = worldObj.getBlockState(newpos);
+        ItemStack matcher = inventoryHelper.getStackInSlot(0);
         Block block = state.getBlock();
         if (matcher == null) {
         	if (block instanceof BlockLiquid || block instanceof IFluidBlock) {
         		return !block.isAir(state, worldObj, newpos);
         	}
         	
-            return block.isFullBlock(state);
+            return false;
         }
         ItemStack stack = block.getItem(worldObj, newpos, state);
         Item matcherItem = matcher.getItem();
@@ -178,13 +196,9 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         } else if (matcherItem instanceof ItemBucket || matcherItem instanceof UniversalBucket) {
 	    	matcherFluidStack = new FluidBucketWrapper(matcher).getFluid();
 	    	return checkFluid(block, matcherFluidStack, state, newpos);
-	    } else if (stack != null) {
-        	Item stackItem = stack.getItem();
-            return matcherItem == stackItem;
-        } else {
-        	Item blockItem = Item.getItemFromBlock(block);
-            return matcherItem == blockItem;
-        }
+	    }
+
+        return false;
     }
 
 	private boolean checkFluid(Block block, FluidStack matcherFluidStack, IBlockState state, BlockPos newpos) {
