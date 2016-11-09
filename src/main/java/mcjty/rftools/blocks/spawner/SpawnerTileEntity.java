@@ -15,6 +15,7 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.SkeletonType;
+import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -245,7 +246,13 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
             } else if (entityLiving instanceof EntitySkeleton) {
                 // Force non-wither otherwise
                 ((EntitySkeleton) entityLiving).setSkeletonType(SkeletonType.NORMAL);
-            }
+            } else if (entityLiving instanceof EntityDragon) {
+		// Ender dragon needs to be spawned with an additional NBT key set
+		NBTTagCompound dragonTag = new NBTTagCompound();
+		entityLiving.writeEntityToNBT(dragonTag);
+		dragonTag.setShort("DragonPhase", (short)0);
+		entityLiving.readEntityFromNBT(dragonTag);
+	    }
         } catch (InstantiationException e) {
             Logging.logError("Fail to spawn mob: " + mobId);
             return;
