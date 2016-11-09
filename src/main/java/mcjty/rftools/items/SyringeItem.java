@@ -10,6 +10,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityDragonPart;
+import net.minecraft.entity.monster.EntityPigZombie;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.SkeletonType;
 import net.minecraft.entity.player.EntityPlayer;
@@ -150,6 +151,9 @@ public class SyringeItem extends GenericRFToolsItem {
         }
         if (entity instanceof EntitySkeleton && ((EntitySkeleton) entity).getSkeletonType() == SkeletonType.STRAY) {
             return "Stray Skeleton";
+        }
+        if (entity instanceof EntityPigZombie) {
+            return "Zombie Pigman";
         }
         return entity.getName();
     }
