@@ -1,7 +1,9 @@
 .gradle
-*.iml
 *.ipr
 *.iws
 eclipse/
 out/
-/bin/
+bin/
+.idea/
+build/
+run/
