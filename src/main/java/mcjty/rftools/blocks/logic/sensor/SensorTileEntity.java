@@ -6,6 +6,7 @@ import mcjty.lib.network.Argument;
 import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockNetherWart;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -15,15 +16,21 @@ import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fluids.*;
+import net.minecraftforge.fluids.capability.wrappers.*;
 
+import java.util.function.Function;
 import java.util.List;
 import java.util.Map;
+
+import ic2.core.item.ItemFluidCell;
 
 public class SensorTileEntity extends LogicTileEntity implements ITickable, DefaultSidedInventory {
 
@@ -113,7 +120,10 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
 
         switch (sensorType) {
             case SENSOR_BLOCK:
-                newout = checkBlock(newpos, inputSide);
+                newout = checkBlockOrFluid(newpos, inputSide, (pos) -> checkBlock(pos));
+                break;
+            case SENSOR_FLUID:
+                newout = checkBlockOrFluid(newpos, inputSide, (pos) -> checkFluid(pos));
                 break;
             case SENSOR_GROWTHLEVEL:
                 newout = checkGrowthLevel(newpos, inputSide);
@@ -136,10 +146,10 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         return newout;
     }
 
-    private boolean checkBlock(BlockPos newpos, EnumFacing dir) {
+    private boolean checkBlockOrFluid(BlockPos newpos, EnumFacing dir, Function<BlockPos, Boolean> blockChecker) {
         int blockCount = areaType.getBlockCount();
         for (int i = 0 ; i < blockCount ; i++) {
-            boolean result = checkBlock(newpos);
+            boolean result = blockChecker.apply(newpos);
             if (result && groupType == GroupType.GROUP_ONE) {
                 return true;
             }
@@ -163,6 +173,52 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         } else {
             return matcher.getItem() == Item.getItemFromBlock(state.getBlock());
         }
+    }
+
+    private boolean checkFluid(BlockPos newpos) {
+        IBlockState state = worldObj.getBlockState(newpos);
+        ItemStack matcher = inventoryHelper.getStackInSlot(0);
+        Block block = state.getBlock();
+        if (matcher == null) {
+            if (block instanceof BlockLiquid || block instanceof IFluidBlock) {
+                return !block.isAir(state, worldObj, newpos);
+            }
+
+            return false;
+        }
+        ItemStack stack = block.getItem(worldObj, newpos, state);
+        Item matcherItem = matcher.getItem();
+
+        FluidStack matcherFluidStack = null;
+        if (matcherItem instanceof IFluidContainerItem) {
+            matcherFluidStack = ((IFluidContainerItem)matcherItem).getFluid(matcher);
+            return checkFluid(block, matcherFluidStack, state, newpos);
+        } else if (matcherItem instanceof ItemBucket || matcherItem instanceof UniversalBucket) {
+            matcherFluidStack = new FluidBucketWrapper(matcher).getFluid();
+            return checkFluid(block, matcherFluidStack, state, newpos);
+        }
+
+        return false;
+    }
+
+    private boolean checkFluid(Block block, FluidStack matcherFluidStack, IBlockState state, BlockPos newpos) {
+        if (matcherFluidStack == null) {
+            return block.isAir(state,  worldObj, newpos);
+        }
+
+        Fluid matcherFluid = matcherFluidStack.getFluid();
+        if (matcherFluid == null) {
+            return false;
+        }
+
+        Block matcherFluidBlock = matcherFluid.getBlock();
+        if (matcherFluidBlock == null) {
+            return false;
+        }
+
+        String matcherBlockName = matcherFluidBlock.getUnlocalizedName();
+        String blockName = block.getUnlocalizedName();
+        return blockName.equals(matcherBlockName);
     }
 
     private boolean checkGrowthLevel(BlockPos newpos, EnumFacing dir) {
