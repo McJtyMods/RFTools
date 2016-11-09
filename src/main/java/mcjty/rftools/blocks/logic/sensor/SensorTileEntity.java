@@ -24,13 +24,11 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.*;
-import net.minecraftforge.fluids.capability.wrappers.*;
+import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 
-import java.util.function.Function;
 import java.util.List;
 import java.util.Map;
-
-import ic2.core.item.ItemFluidCell;
+import java.util.function.Function;
 
 public class SensorTileEntity extends LogicTileEntity implements ITickable, DefaultSidedInventory {
 
