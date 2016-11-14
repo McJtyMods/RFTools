@@ -33,7 +33,7 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
     private boolean[] inputModeOff = new boolean[] { false, false, false, false, false, false };
     private int rfOn[] = new int[] { 1000, 1000, 1000, 1000, 1000, 1000 };
     private int rfOff[] = new int[] { 0, 0, 0, 0, 0, 0 };
-    public static final String DUNSWE = "DUNSWE";
+    public static final String DUNSWE = "DUBFLR";
 
     private int lastRfPerTickIn = 0;
     private int lastRfPerTickOut = 0;
