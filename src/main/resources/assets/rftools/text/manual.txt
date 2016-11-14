@@ -730,13 +730,17 @@ will consume more energy but you will get XP orbs as well
 as loot that you normally only get when a mob is killed
 by the player.
 
+If you select 'player' damage then you can also enable looting
+by inserting dimensional shards. These are used up for every
+looting kill.
+{-------------------------------------------------------------}
 If you hit the shield projector with your left mouse instead of
 the right mouse it will also scan on the corners for template
 blocks. Additionally using the smart wrench it is possible
 to add or remove shield templates to an already formed shield.
 Note that doing this will not be remembered if you decompose
 the shield again.
-{-------------------------------------------------------------}
+
 Note that the shield also supports space cards. In that case you
 don't have to use shield template blocks but instead you can
 insert the appropriate space card to define the shape of

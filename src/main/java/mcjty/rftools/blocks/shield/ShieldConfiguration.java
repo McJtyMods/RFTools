@@ -27,6 +27,11 @@ public class ShieldConfiguration {
     // Maximum distance at which you can add disjoint shield sections to a composed shield
     public static int maxDisjointShieldDistance = 64;
 
+    // Amount of dimensional shards needed to do a looting kill
+    public static int shardsPerLootingKill = 2;
+    // Amount of looting that is done then.
+    public static int lootingKillBonus = 3;
+
     // Set to true to temporarily remove the shield blocks to make your world loadable again.
     public static boolean disableShieldBlocksToUncorruptWorld = false;
 
@@ -62,5 +67,9 @@ public class ShieldConfiguration {
                 "Set this to true if you have a corrupted world due to a bad camo block in the shield system. Load your world, remove the offending block from the shield, exit MC and then set this back to false").getBoolean();
         allowInvisibleShield = cfg.get(CATEGORY_SHIELD, "allowInvisibleShield", allowInvisibleShield,
                 "Set this to false if you don't want invisible shield rendering mode to be possible").getBoolean();
+        shardsPerLootingKill = cfg.get(CATEGORY_SHIELD, "shardsPerLootingKill", shardsPerLootingKill,
+                "Amount of dimensional shards per looting kill. Remember that this is per block that does damage").getInt();
+        lootingKillBonus = cfg.get(CATEGORY_SHIELD, "lootingKillBonus", lootingKillBonus,
+                "The looting kill bonus").getInt();
     }
 }

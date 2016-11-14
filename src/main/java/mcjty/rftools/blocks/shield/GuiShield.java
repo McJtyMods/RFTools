@@ -104,16 +104,16 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         initRedstoneMode();
         initDamageType();
 
-        filterList = new WidgetList(mc, this).setDesiredHeight(115).
+        filterList = new WidgetList(mc, this).setDesiredHeight(120).
                 addSelectionEvent(new DefaultSelectionEvent() {
                     @Override
                     public void select(Widget parent, int index) {
                         selectFilter();
                     }
                 });
-        Slider filterSlider = new Slider(mc, this).setVertical().setScrollable(filterList).setDesiredWidth(11).setDesiredHeight(115);
+        Slider filterSlider = new Slider(mc, this).setVertical().setScrollable(filterList).setDesiredWidth(11).setDesiredHeight(120);
         Panel filterPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3))
-                .setLayoutHint(new PositionalLayout.PositionalHint(12, 10, 154, 119)).addChild(filterList).addChild(filterSlider)
+                .setLayoutHint(new PositionalLayout.PositionalHint(12, 10, 154, 124)).addChild(filterList).addChild(filterSlider)
                 .setFilledBackground(0xff9e9e9e);
 
         Button applyCamo = new Button(mc, this).setText("Set").setTooltips("Set the camouflage block").
@@ -141,15 +141,20 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         downFilter = new Button(mc, this).setText("Down").setTooltips("Move filter down").setLayoutHint(new PositionalLayout.PositionalHint(39, 22, 36, 14)).
                 addButtonEvent(parent -> moveFilterDown());
 
-        Panel controlPanel = new Panel(mc, this).setLayout(new PositionalLayout()).setLayoutHint(new PositionalLayout.PositionalHint(170, 60, 80, 43))
+        Panel controlPanel = new Panel(mc, this).setLayout(new PositionalLayout()).setLayoutHint(new PositionalLayout.PositionalHint(170, 58, 80, 43))
                 .addChild(addFilter).addChild(delFilter).addChild(upFilter).addChild(downFilter)
                 .setFilledRectThickness(-2)
                 .setFilledBackground(StyleConfig.colorListBackground);
 
+        Label lootingBonus = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT)
+                .setText("Looting:");
+        lootingBonus.setTooltips("Insert dimensional shards", "for looting bonus")
+                .setLayoutHint(new PositionalLayout.PositionalHint(160, 118, 60, 18));
+
         Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
                 addChild(visibilityOptions).addChild(applyCamo).addChild(redstoneMode).addChild(filterPanel).addChild(actionOptions).
                 addChild(typeOptions).addChild(player).addChild(controlPanel).addChild(damageType).
-                addChild(colorSelector);
+                addChild(colorSelector).addChild(lootingBonus);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -358,7 +363,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
     }
 
     private void initDamageType() {
-        damageType = new ChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(170, 106, 80, 14));
+        damageType = new ChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(170, 102, 80, 14));
         damageType.addChoices(DAMAGETYPE_GENERIC, DAMAGETYPE_PLAYER);
         damageType.setChoiceTooltip(DAMAGETYPE_GENERIC, "Generic damage type");
         damageType.setChoiceTooltip(DAMAGETYPE_PLAYER, "Damage as done by a player");

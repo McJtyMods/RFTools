@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.shield;
 
+import com.mojang.authlib.GameProfile;
 import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.api.smartwrench.SmartWrenchSelector;
 import mcjty.lib.container.DefaultSidedInventory;
@@ -10,7 +11,9 @@ import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.blocks.builder.BuilderSetup;
+import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
 import mcjty.rftools.blocks.shield.filters.*;
+import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -18,6 +21,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Enchantments;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,6 +30,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -361,11 +367,21 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     }
 
     @Override
+    public int[] getSlotsForFace(EnumFacing side) {
+        return new int[] { ShieldContainer.SLOT_SHARD };
+    }
+
+    @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
         if (index == ShieldContainer.SLOT_SHAPE && stack.getItem() != BuilderSetup.shapeCardItem) {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
+        return index == ShieldContainer.SLOT_SHARD && itemStackIn.getItem() == ModItems.dimensionalShardItem;
     }
 
     private int[] calculateCamoId() {
@@ -472,6 +488,9 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         return shieldActive;
     }
 
+    private FakePlayer killer = null;
+    private ItemStack lootingSword = null;
+
     public void applyDamageToEntity(Entity entity) {
         DamageSource source;
         int rf;
@@ -480,7 +499,22 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             source = DamageSource.generic;
         } else {
             rf = ShieldConfiguration.rfDamagePlayer;
-            FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
+            FakePlayer fakePlayer3 = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
+            if (killer == null) {
+                killer = FakePlayerFactory.get(DimensionManager.getWorld(0), new GameProfile(new UUID(111, 222), "rftools_shield"));
+            }
+            FakePlayer fakePlayer = killer;
+            ItemStack shards = getStackInSlot(ShieldContainer.SLOT_SHARD);
+            if (shards != null && shards.stackSize >= ShieldConfiguration.shardsPerLootingKill) {
+                decrStackSize(ShieldContainer.SLOT_SHARD, ShieldConfiguration.shardsPerLootingKill);
+                if (lootingSword == null) {
+                    lootingSword = EnvironmentalSetup.createEnchantedItem(Items.DIAMOND_SWORD, Enchantments.LOOTING, ShieldConfiguration.lootingKillBonus);
+                }
+                lootingSword.setItemDamage(0);
+                fakePlayer.setHeldItem(EnumHand.MAIN_HAND, lootingSword);
+            } else {
+                fakePlayer.setHeldItem(EnumHand.MAIN_HAND, null);
+            }
             source = DamageSource.causePlayerDamage(fakePlayer);
         }
 
