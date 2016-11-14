@@ -499,7 +499,6 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             source = DamageSource.generic;
         } else {
             rf = ShieldConfiguration.rfDamagePlayer;
-            FakePlayer fakePlayer3 = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
             if (killer == null) {
                 killer = FakePlayerFactory.get(DimensionManager.getWorld(0), new GameProfile(new UUID(111, 222), "rftools_shield"));
             }
