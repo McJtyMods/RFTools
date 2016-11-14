@@ -47,15 +47,19 @@ public class RFToolsTools {
         }
     }
 
-    public static boolean hasFluidCapabilitySafe(TileEntity tileEntity) {
+    public static IFluidHandler hasFluidCapabilitySafe(TileEntity tileEntity) {
         try {
             if (tileEntity != null && tileEntity.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null)) {
-                return true;
+                IFluidHandler capability = tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
+                if (capability == null) {
+                    reportWrongBlock(tileEntity, null);
+                }
+                return capability;
             }
-            return false;
+            return null;
         } catch (Exception e) {
             reportWrongBlock(tileEntity, e);
-            return false;
+            return null;
         }
     }
 
@@ -74,7 +78,9 @@ public class RFToolsTools {
             Logging.logError("Block " + name.toString() + " at " + BlockPosTools.toString(tileEntity.getPos()) + " does not respect the capability API and crashes on null side.");
             Logging.logError("Please report to the corresponding mod. This is not a bug in RFTools!");
         }
-        e.printStackTrace();
+        if (e != null) {
+            e.printStackTrace();
+        }
     }
 
 

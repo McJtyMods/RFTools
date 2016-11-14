@@ -37,8 +37,8 @@ public class FluidBarScreenModule implements IScreenModule<IModuleDataContents> 
         int maxContents = 0;
 
         TileEntity te = world.getTileEntity(coordinate);
-        if (RFToolsTools.hasFluidCapabilitySafe(te)) {
-            net.minecraftforge.fluids.capability.IFluidHandler handler = RFToolsTools.getFluidCapabilitySafe(te);
+        net.minecraftforge.fluids.capability.IFluidHandler handler = RFToolsTools.hasFluidCapabilitySafe(te);
+        if (handler != null) {
             IFluidTankProperties[] properties = handler.getTankProperties();
             if (properties != null && properties.length > 0) {
                 if (properties[0].getContents() != null) {

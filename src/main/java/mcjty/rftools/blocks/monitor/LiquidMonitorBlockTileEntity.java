@@ -132,8 +132,8 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
         long maxContents = 0;
 
         TileEntity tileEntity = worldObj.getTileEntity(monitor);
-        if (RFToolsTools.hasFluidCapabilitySafe(tileEntity)) {
-            net.minecraftforge.fluids.capability.IFluidHandler fluidHandler = RFToolsTools.getFluidCapabilitySafe(tileEntity);
+        net.minecraftforge.fluids.capability.IFluidHandler fluidHandler = RFToolsTools.hasFluidCapabilitySafe(tileEntity);
+        if (fluidHandler != null) {
             IFluidTankProperties[] properties = fluidHandler.getTankProperties();
             if (properties != null && properties.length > 0) {
                 if (properties[0].getContents() != null) {

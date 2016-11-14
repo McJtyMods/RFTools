@@ -86,7 +86,7 @@ public class FluidModuleItem extends GenericRFToolsItem implements IModuleProvid
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
         }
-        if (te instanceof IFluidHandler || RFToolsTools.hasFluidCapabilitySafe(te)) {
+        if (te instanceof IFluidHandler || RFToolsTools.hasFluidCapabilitySafe(te) != null) {
             tagCompound.setInteger("monitordim", world.provider.getDimension());
             tagCompound.setInteger("monitorx", pos.getX());
             tagCompound.setInteger("monitory", pos.getY());
