@@ -38,7 +38,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
         acceptedMinecraftVersions = "[1.10,1.11)")
 public class RFTools implements ModBase {
     public static final String MODID = "rftools";
-    public static final String VERSION = "5.59";
+    public static final String VERSION = "5.60";
     public static final String MIN_FORGE_VER = "12.18.1.2082";
     public static final String MIN_MCJTYLIB_VER = "1.10-2.1.4";
 
