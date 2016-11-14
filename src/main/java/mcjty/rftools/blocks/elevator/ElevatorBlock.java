@@ -4,9 +4,13 @@ package mcjty.rftools.blocks.elevator;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericBlock;
+import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
@@ -70,7 +74,13 @@ public class ElevatorBlock extends GenericRFToolsBlock<ElevatorTileEntity, Empty
 
     @Override
     public int getGuiID() {
-        return -1;
+        return RFTools.GUI_ELEVATOR;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public Class<? extends GenericGuiContainer> getGuiClass() {
+        return GuiElevator.class;
     }
 
     @SideOnly(Side.CLIENT)
@@ -111,6 +121,16 @@ public class ElevatorBlock extends GenericRFToolsBlock<ElevatorTileEntity, Empty
         super.breakBlock(world, pos, state);
     }
 
+    @Override
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        TileEntity te = world.getTileEntity(data.getPos());
+        if (te instanceof ElevatorTileEntity) {
+            ElevatorTileEntity elevatorTileEntity = (ElevatorTileEntity) te;
+            probeInfo.text(TextFormatting.BLUE + "Name: " + elevatorTileEntity.getName());
+        }
+    }
+
     @SideOnly(Side.CLIENT)
     @Override
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
@@ -118,6 +138,9 @@ public class ElevatorBlock extends GenericRFToolsBlock<ElevatorTileEntity, Empty
         ElevatorTileEntity te = (ElevatorTileEntity) accessor.getTileEntity();
         int energy = te.getEnergyStored(EnumFacing.DOWN);
         currenttip.add(TextFormatting.GREEN + "RF: " + energy);
+        if (te.getName() != null && !te.getName().isEmpty()) {
+            currenttip.add(TextFormatting.BLUE + "Name: " + te.getName());
+        }
 
         return currenttip;
     }

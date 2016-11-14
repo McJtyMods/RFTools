@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.elevator;
 
 import mcjty.lib.container.GenericBlock;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.network.Argument;
 import mcjty.lib.varia.Broadcaster;
 import mcjty.rftools.blocks.shield.RelCoordinate;
 import mcjty.rftools.playerprops.BuffProperties;
@@ -34,11 +35,15 @@ import java.util.*;
 
 public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implements ITickable {
 
+    public static String CMD_SETNAME = "setName";
+
     private boolean prevIn = false;
 
     private double movingY = -1;
     private int startY;
     private int stopY;
+
+    private String name;
 
     // The positions of the blocks we are currently moving (with 'y' set to the height of the controller)
     private List<BlockPos> positions = new ArrayList<>();
@@ -79,6 +84,14 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         }
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+        markDirtyClient();
+    }
 
     private void setRedstoneState() {
         markDirty();
@@ -284,7 +297,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     }
 
     // Find the position of the bottom elevator.
-    private BlockPos findBottomElevator() {
+    public BlockPos findBottomElevator() {
         if (cachedControllerPos != null) {
             return cachedControllerPos;
         }
@@ -514,31 +527,45 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         }
     }
 
-    public int getCurrentLevel() {
+    public void findElevatorBlocks(List<Integer> heights) {
         BlockPos controllerPos = findBottomElevator();
+        if (controllerPos == null) {
+            // Cannot happen
+            return;
+        }
         IBlockState blockState = worldObj.getBlockState(getPos());
         if (blockState.getBlock() != ElevatorSetup.elevatorBlock) {
-            return 0;
+            return;
         }
         EnumFacing side = blockState.getValue(GenericBlock.FACING_HORIZ);
+        for (int y = controllerPos.getY() ; y < worldObj.getHeight() ; y++) {
+            BlockPos pos2 = getPosAtY(controllerPos, y);
+            TileEntity te2 = worldObj.getTileEntity(pos2);
+            if (te2 instanceof ElevatorTileEntity) {
+                EnumFacing side2 = worldObj.getBlockState(pos2).getValue(GenericBlock.FACING_HORIZ);
+                if (side == side2) {
+                    heights.add(y);
+                }
+            }
+        }
+    }
+
+
+    public int getCurrentLevel(List<Integer> heights) {
+        BlockPos controllerPos = findBottomElevator();
         TileEntity te = worldObj.getTileEntity(controllerPos);
         if (te instanceof ElevatorTileEntity) {
+            EnumFacing side = worldObj.getBlockState(controllerPos).getValue(GenericBlock.FACING_HORIZ);
             ElevatorTileEntity controller = (ElevatorTileEntity) te;
             if (controller.cachedCurrent == -1) {
                 int level = 0;
-                for (int y = controllerPos.getY() ; y < worldObj.getHeight() ; y++) {
+                for (Integer y : heights) {
                     BlockPos pos2 = getPosAtY(controllerPos, y);
-                    TileEntity te2 = worldObj.getTileEntity(pos2);
-                    if (te2 instanceof ElevatorTileEntity) {
-                        EnumFacing side2 = worldObj.getBlockState(pos2).getValue(GenericBlock.FACING_HORIZ);
-                        if (side == side2) {
-                            BlockPos frontPos = pos2.offset(side);
-                            if (isValidPlatformBlock(frontPos)) {
-                                controller.cachedCurrent = level;
-                            }
-                            level++;
-                        }
+                    BlockPos frontPos = pos2.offset(side);
+                    if (isValidPlatformBlock(frontPos)) {
+                        controller.cachedCurrent = level;
                     }
+                    level++;
                 }
             }
             return controller.cachedCurrent;
@@ -546,27 +573,8 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         return 0;
     }
 
-    public int getLevelCount() {
-        BlockPos controllerPos = findBottomElevator();
-        EnumFacing side = worldObj.getBlockState(getPos()).getValue(GenericBlock.FACING_HORIZ);
-        TileEntity te = worldObj.getTileEntity(controllerPos);
-        if (te instanceof ElevatorTileEntity) {
-            ElevatorTileEntity controller = (ElevatorTileEntity) te;
-            if (controller.cachedLevels == 0) {
-                for (int y = controllerPos.getY() ; y < worldObj.getHeight() ; y++) {
-                    BlockPos pos2 = getPosAtY(controllerPos, y);
-                    TileEntity te2 = worldObj.getTileEntity(pos2);
-                    if (te2 instanceof ElevatorTileEntity) {
-                        EnumFacing side2 = worldObj.getBlockState(pos2).getValue(GenericBlock.FACING_HORIZ);
-                        if (side == side2) {
-                            controller.cachedLevels++;
-                        }
-                    }
-                }
-            }
-            return controller.cachedLevels;
-        }
-        return 0;
+    public int getLevelCount(List<Integer> heights) {
+        return heights.size();
     }
 
     // Return true if the platform is here (i.e. there is a block in front of the elevator)
@@ -616,7 +624,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         controller.startMoving(platformPos, getPos(), worldObj.getBlockState(platformPos.offset(side)));
     }
 
-    private BlockPos getPosAtY(BlockPos p, int y) {
+    public static BlockPos getPosAtY(BlockPos p, int y) {
         return new BlockPos(p.getX(), y, p.getZ());
     }
 
@@ -765,10 +773,26 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     @Override
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
+        name = tagCompound.getString("levelName");
     }
 
     @Override
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
+        tagCompound.setString("levelName", name);
     }
+
+    @Override
+    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
+        boolean rc = super.execute(playerMP, command, args);
+        if (rc) {
+            return true;
+        }
+        if (CMD_SETNAME.equals(command)) {
+            setName(args.get("name").getString());
+            return true;
+        }
+        return false;
+    }
+
 }
