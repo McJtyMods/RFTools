@@ -39,7 +39,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public class ForgeEventHandlers {
@@ -89,18 +88,6 @@ public class ForgeEventHandlers {
         }
     }
 
-    private Collection<GlobalCoordinate> getProtectors(World world, int x, int y, int z) {
-        Collection<GlobalCoordinate> protectors;
-        BlockProtectors blockProtectors = BlockProtectors.getProtectors(world);
-        if (blockProtectors == null) {
-            protectors = Collections.emptyList();
-        } else {
-            int id = world.provider.getDimension();
-            protectors = blockProtectors.findProtectors(x, y, z, id, 2);
-        }
-        return protectors;
-    }
-
 
     @SubscribeEvent
     public void onPlayerInteractEvent(PlayerInteractEvent event) {
@@ -118,8 +105,10 @@ public class ForgeEventHandlers {
             int x = event.getPos().getX();
             int y = event.getPos().getY();
             int z = event.getPos().getZ();
-            Collection<GlobalCoordinate> protectors = getProtectors(world, x, y, z);
-            checkHarvestProtection(event, x, y, z, world, protectors);
+            Collection<GlobalCoordinate> protectors = BlockProtectors.getProtectors(world.provider.getDimension(), x, y, z);
+            if (BlockProtectors.checkHarvestProtection(x, y, z, world, protectors)) {
+                event.setCanceled(true);
+            }
         }
 
     }
@@ -131,8 +120,10 @@ public class ForgeEventHandlers {
         int z = event.getPos().getZ();
         World world = event.getWorld();
 
-        Collection<GlobalCoordinate> protectors = getProtectors(world, x, y, z);
-        checkHarvestProtection(event, x, y, z, world, protectors);
+        Collection<GlobalCoordinate> protectors = BlockProtectors.getProtectors(world.provider.getDimension(), x, y, z);
+        if (BlockProtectors.checkHarvestProtection(x, y, z, world, protectors)) {
+            event.setCanceled(true);
+        }
     }
 
     private void checkCreativeClick(PlayerInteractEvent event) {
@@ -154,31 +145,12 @@ public class ForgeEventHandlers {
         }
     }
 
-    private void checkHarvestProtection(Event event, int x, int y, int z, World world, Collection<GlobalCoordinate> protectors) {
-        for (GlobalCoordinate protector : protectors) {
-            TileEntity te = world.getTileEntity(protector.getCoordinate());
-            if (te instanceof BlockProtectorTileEntity) {
-                BlockProtectorTileEntity blockProtectorTileEntity = (BlockProtectorTileEntity) te;
-                BlockPos relative = blockProtectorTileEntity.absoluteToRelative(x, y, z);
-                boolean b = blockProtectorTileEntity.isProtected(relative);
-                if (b) {
-                    if (blockProtectorTileEntity.attemptHarvestProtection()) {
-                        event.setCanceled(true);
-                    } else {
-                        blockProtectorTileEntity.removeProtection(relative);
-                    }
-                    return;
-                }
-            }
-        }
-    }
-
 
     @SubscribeEvent
     public void onDetonate(ExplosionEvent.Detonate event) {
         Explosion explosion = event.getExplosion();
         Vec3d explosionVector = explosion.getPosition();
-        Collection<GlobalCoordinate> protectors = getProtectors(event.getWorld(), (int) explosionVector.xCoord, (int) explosionVector.yCoord, (int) explosionVector.zCoord);
+        Collection<GlobalCoordinate> protectors = BlockProtectors.getProtectors(event.getWorld().provider.getDimension(), (int) explosionVector.xCoord, (int) explosionVector.yCoord, (int) explosionVector.zCoord);
 
         if (protectors.isEmpty()) {
             return;

@@ -3,9 +3,12 @@ package mcjty.rftools.blocks.blockprotector;
 import mcjty.lib.varia.GlobalCoordinate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.*;
@@ -20,6 +23,36 @@ public class BlockProtectors extends WorldSavedData {
 
     public BlockProtectors(String identifier) {
         super(identifier);
+    }
+
+    public static Collection<GlobalCoordinate> getProtectors(int dimension, int x, int y, int z) {
+        Collection<GlobalCoordinate> protectors;
+        BlockProtectors blockProtectors = getProtectors(DimensionManager.getWorld(0));
+        if (blockProtectors == null) {
+            protectors = Collections.emptyList();
+        } else {
+            protectors = blockProtectors.findProtectors(x, y, z, dimension, 2);
+        }
+        return protectors;
+    }
+
+    public static boolean checkHarvestProtection(int x, int y, int z, IBlockAccess world, Collection<GlobalCoordinate> protectors) {
+        for (GlobalCoordinate protector : protectors) {
+            TileEntity te = world.getTileEntity(protector.getCoordinate());
+            if (te instanceof BlockProtectorTileEntity) {
+                BlockProtectorTileEntity blockProtectorTileEntity = (BlockProtectorTileEntity) te;
+                BlockPos relative = blockProtectorTileEntity.absoluteToRelative(x, y, z);
+                boolean b = blockProtectorTileEntity.isProtected(relative);
+                if (b) {
+                    if (blockProtectorTileEntity.attemptHarvestProtection()) {
+                        return true;
+                    } else {
+                        blockProtectorTileEntity.removeProtection(relative);
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public void save(World world) {
