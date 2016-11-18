@@ -43,7 +43,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     private int startY;
     private int stopY;
 
-    private String name;
+    private String name = "";
 
     // The positions of the blocks we are currently moving (with 'y' set to the height of the controller)
     private List<BlockPos> positions = new ArrayList<>();
@@ -779,7 +779,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     @Override
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
-        tagCompound.setString("levelName", name);
+        tagCompound.setString("levelName", name == null ? "" : name);
     }
 
     @Override
