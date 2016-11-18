@@ -163,13 +163,11 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
                 // Compatibility reasons
                 this.dim = tagCompound.getInteger("dim");
             }
-            if (dim == this.dim) {
-                BlockPos c = new BlockPos(tagCompound.getInteger("monitorx"), tagCompound.getInteger("monitory"), tagCompound.getInteger("monitorz"));
-                int dx = Math.abs(c.getX() - pos.getX());
-                int dy = Math.abs(c.getY() - pos.getY());
-                int dz = Math.abs(c.getZ() - pos.getZ());
-                coordinate = c;
-            }
+            BlockPos c = new BlockPos(tagCompound.getInteger("monitorx"), tagCompound.getInteger("monitory"), tagCompound.getInteger("monitorz"));
+            int dx = Math.abs(c.getX() - pos.getX());
+            int dy = Math.abs(c.getY() - pos.getY());
+            int dz = Math.abs(c.getZ() - pos.getZ());
+            coordinate = c;
         }
     }
 
