@@ -72,7 +72,7 @@ public class ShieldBlock extends GenericRFToolsBlock<ShieldTEBase, ShieldContain
             list.add(TextFormatting.WHITE + "template blocks. It can filter based on type of");
             list.add(TextFormatting.WHITE + "mob and do various things (damage, solid, ...)");
             list.add(TextFormatting.WHITE + "Use the Smart Wrench to add sections to the shield");
-            list.add(TextFormatting.RED + "Note: block mimic and colored shields not implemented yet!");
+            list.add(TextFormatting.RED + "Note: block mimic is not implemented yet!");
             list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption and");
             list.add(TextFormatting.YELLOW + "increased damage.");
         } else {
