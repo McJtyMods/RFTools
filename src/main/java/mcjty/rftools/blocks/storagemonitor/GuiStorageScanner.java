@@ -559,7 +559,13 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     }
 
     private void customRenderToolTip(ItemStack stack, int x, int y, boolean custom) {
-        List<String> list = stack.getTooltip(this.mc.thePlayer, this.mc.gameSettings.advancedItemTooltips);
+        List<String> list;
+        if (stack.getItem() == null) {
+            // Protection for bad itemstacks
+            list = new ArrayList<>();
+        } else {
+            list = stack.getTooltip(this.mc.thePlayer, this.mc.gameSettings.advancedItemTooltips);
+        }
 
         for (int i = 0; i < list.size(); ++i) {
             if (i == 0) {
