@@ -20,7 +20,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 
 import java.util.Collection;
 
@@ -47,7 +46,7 @@ public abstract class GenericRFToolsBlock<T extends GenericTileEntity, C extends
     public boolean canEntityDestroy(IBlockState state, IBlockAccess world, BlockPos pos, Entity entity) {
         boolean b = super.canEntityDestroy(state, world, pos, entity);
         if (b) {
-            Collection<GlobalCoordinate> protectors = BlockProtectors.getProtectors(entity.dimension, pos.getX(), pos.getY(), pos.getZ());
+            Collection<GlobalCoordinate> protectors = BlockProtectors.getProtectors(entity.getEntityWorld(), pos.getX(), pos.getY(), pos.getZ());
             if (BlockProtectors.checkHarvestProtection(pos.getX(), pos.getY(), pos.getZ(), world, protectors)) {
                 return false;
             }

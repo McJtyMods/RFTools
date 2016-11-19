@@ -8,7 +8,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.*;
@@ -25,13 +24,13 @@ public class BlockProtectors extends WorldSavedData {
         super(identifier);
     }
 
-    public static Collection<GlobalCoordinate> getProtectors(int dimension, int x, int y, int z) {
+    public static Collection<GlobalCoordinate> getProtectors(World world, int x, int y, int z) {
         Collection<GlobalCoordinate> protectors;
-        BlockProtectors blockProtectors = getProtectors(DimensionManager.getWorld(0));
+        BlockProtectors blockProtectors = getProtectors(world);
         if (blockProtectors == null) {
             protectors = Collections.emptyList();
         } else {
-            protectors = blockProtectors.findProtectors(x, y, z, dimension, 2);
+            protectors = blockProtectors.findProtectors(x, y, z, world.provider.getDimension(), 2);
         }
         return protectors;
     }

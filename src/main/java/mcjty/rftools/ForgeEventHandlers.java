@@ -105,7 +105,7 @@ public class ForgeEventHandlers {
             int x = event.getPos().getX();
             int y = event.getPos().getY();
             int z = event.getPos().getZ();
-            Collection<GlobalCoordinate> protectors = BlockProtectors.getProtectors(world.provider.getDimension(), x, y, z);
+            Collection<GlobalCoordinate> protectors = BlockProtectors.getProtectors(world, x, y, z);
             if (BlockProtectors.checkHarvestProtection(x, y, z, world, protectors)) {
                 event.setCanceled(true);
             }
@@ -120,7 +120,7 @@ public class ForgeEventHandlers {
         int z = event.getPos().getZ();
         World world = event.getWorld();
 
-        Collection<GlobalCoordinate> protectors = BlockProtectors.getProtectors(world.provider.getDimension(), x, y, z);
+        Collection<GlobalCoordinate> protectors = BlockProtectors.getProtectors(world, x, y, z);
         if (BlockProtectors.checkHarvestProtection(x, y, z, world, protectors)) {
             event.setCanceled(true);
         }
@@ -150,7 +150,7 @@ public class ForgeEventHandlers {
     public void onDetonate(ExplosionEvent.Detonate event) {
         Explosion explosion = event.getExplosion();
         Vec3d explosionVector = explosion.getPosition();
-        Collection<GlobalCoordinate> protectors = BlockProtectors.getProtectors(event.getWorld().provider.getDimension(), (int) explosionVector.xCoord, (int) explosionVector.yCoord, (int) explosionVector.zCoord);
+        Collection<GlobalCoordinate> protectors = BlockProtectors.getProtectors(event.getWorld(), (int) explosionVector.xCoord, (int) explosionVector.yCoord, (int) explosionVector.zCoord);
 
         if (protectors.isEmpty()) {
             return;
