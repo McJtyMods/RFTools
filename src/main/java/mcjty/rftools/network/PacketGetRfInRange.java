@@ -69,7 +69,7 @@ public class PacketGetRfInRange implements IMessage {
         }
 
         private void handle(PacketGetRfInRange message, MessageContext ctx) {
-            World world = ctx.getServerHandler().playerEntity.worldObj;
+            World world = ctx.getServerHandler().playerEntity.getEntityWorld();
             Map<BlockPos, MachineInfo> result = new HashMap<>();
             int range = 12;
             for (int x = -range; x <= range; x++) {

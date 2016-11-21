@@ -41,9 +41,9 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
 
     private void markDirtyClient() {
         markDirty();
-        if (worldObj != null) {
-            IBlockState state = worldObj.getBlockState(getPos());
-            worldObj.notifyBlockUpdate(getPos(), state, state, 3);
+        if (getWorld() != null) {
+            IBlockState state = getWorld().getBlockState(getPos());
+            getWorld().notifyBlockUpdate(getPos(), state, state, 3);
         }
     }
 
@@ -149,9 +149,9 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
         int sz = tagCompound.getInteger("shieldZ");
         shieldBlock = new BlockPos(sx, sy, sz);
 
-        if (worldObj != null && worldObj.isRemote) {
+        if (getWorld() != null && getWorld().isRemote) {
             // For some reason this is needed to force rendering on the client when apply is pressed.
-            worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
+            getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
         }
     }
 

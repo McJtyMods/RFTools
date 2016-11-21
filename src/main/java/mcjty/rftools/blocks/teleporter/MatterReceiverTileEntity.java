@@ -42,11 +42,11 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
 
     public int getOrCalculateID() {
         if (id == -1) {
-            TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
-            GlobalCoordinate gc = new GlobalCoordinate(getPos(), worldObj.provider.getDimension());
+            TeleportDestinations destinations = TeleportDestinations.getDestinations(getWorld());
+            GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().provider.getDimension());
             id = destinations.getNewId(gc);
 
-            destinations.save(worldObj);
+            destinations.save(getWorld());
             setId(id);
         }
         return id;
@@ -63,11 +63,11 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
 
     public void setName(String name) {
         this.name = name;
-        TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
-        TeleportDestination destination = destinations.getDestination(getPos(), worldObj.provider.getDimension());
+        TeleportDestinations destinations = TeleportDestinations.getDestinations(getWorld());
+        TeleportDestination destination = destinations.getDestination(getPos(), getWorld().provider.getDimension());
         if (destination != null) {
             destination.setName(name);
-            destinations.save(worldObj);
+            destinations.save(getWorld());
         }
 
         markDirtyClient();
@@ -75,20 +75,20 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
 
     private void checkStateServer() {
         if (!getPos().equals(cachedPos)) {
-            TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
+            TeleportDestinations destinations = TeleportDestinations.getDestinations(getWorld());
 
-            destinations.removeDestination(cachedPos, worldObj.provider.getDimension());
+            destinations.removeDestination(cachedPos, getWorld().provider.getDimension());
 
             cachedPos = getPos();
 
-            GlobalCoordinate gc = new GlobalCoordinate(getPos(), worldObj.provider.getDimension());
+            GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().provider.getDimension());
 
             if (id == -1) {
                 id = destinations.getNewId(gc);
@@ -96,7 +96,7 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
                 destinations.assignId(gc, id);
             }
             destinations.addDestination(gc);
-            destinations.save(worldObj);
+            destinations.save(getWorld());
 
             markDirty();
         }
@@ -107,9 +107,9 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
      * the destination.
      */
     public void updateDestination() {
-        TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
+        TeleportDestinations destinations = TeleportDestinations.getDestinations(getWorld());
 
-        GlobalCoordinate gc = new GlobalCoordinate(getPos(), worldObj.provider.getDimension());
+        GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().provider.getDimension());
         TeleportDestination destination = destinations.getDestination(gc.getCoordinate(), gc.getDimension());
         if (destination != null) {
             destination.setName(name);
@@ -121,7 +121,7 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
                 destinations.assignId(gc, id);
             }
 
-            destinations.save(worldObj);
+            destinations.save(getWorld());
         }
         markDirtyClient();
     }
@@ -165,13 +165,13 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     public int checkStatus() {
-        IBlockState state = worldObj.getBlockState(getPos().up());
+        IBlockState state = getWorld().getBlockState(getPos().up());
         Block block = state.getBlock();
-        if (!block.isAir(state, worldObj, getPos().up())) {
+        if (!block.isAir(state, getWorld(), getPos().up())) {
             return DialingDeviceTileEntity.DIAL_RECEIVER_BLOCKED_MASK;
         }
-        block = worldObj.getBlockState(getPos().up(2)).getBlock();
-        if (!block.isAir(state, worldObj, getPos().up(2))) {
+        block = getWorld().getBlockState(getPos().up(2)).getBlock();
+        if (!block.isAir(state, getWorld(), getPos().up(2))) {
             return DialingDeviceTileEntity.DIAL_RECEIVER_BLOCKED_MASK;
         }
 

@@ -1,5 +1,7 @@
 package mcjty.rftools.blocks.screens.modules;
 
+import mcjty.lib.tools.ChatTools;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
@@ -35,7 +37,7 @@ public class DumpScreenModule implements IScreenModule {
             setupCoordinateFromNBT(tagCompound, dim, pos);
             for (int i = 0; i < stacks.length; i++) {
                 if (tagCompound.hasKey("stack" + i)) {
-                    stacks[i] = ItemStack.loadItemStackFromNBT(tagCompound.getCompoundTag("stack" + i));
+                    stacks[i] = ItemStackTools.loadFromNBT(tagCompound.getCompoundTag("stack" + i));
                 }
             }
         }
@@ -81,7 +83,7 @@ public class DumpScreenModule implements IScreenModule {
             return;
         }
         if (BlockPosTools.INVALID.equals(coordinate)) {
-            player.addChatComponentMessage(new TextComponentString(TextFormatting.RED + "Module is not linked to storage scanner!"));
+            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Module is not linked to storage scanner!"));
             return;
         }
 

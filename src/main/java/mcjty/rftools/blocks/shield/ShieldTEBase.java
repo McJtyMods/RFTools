@@ -488,7 +488,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         return shieldActive;
     }
 
-    private FakePlayer killer = null;
+    private static FakePlayer killer = null;
     private ItemStack lootingSword = null;
 
     public void applyDamageToEntity(Entity entity) {
@@ -561,7 +561,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
@@ -632,7 +632,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             BlockPos dimension = ShapeCardItem.getClampedDimension(inventoryHelper.getStackInSlot(ShieldContainer.SLOT_SHAPE), ShieldConfiguration.maxShieldDimension);
             BlockPos offset = ShapeCardItem.getClampedOffset(inventoryHelper.getStackInSlot(ShieldContainer.SLOT_SHAPE), ShieldConfiguration.maxShieldOffset);
             coordinates = new ArrayList<>();
-            ShapeCardItem.composeShape(shape, worldObj, getPos(), dimension, offset, coordinates, supportedBlocks, false, null);
+            ShapeCardItem.composeShape(shape, getWorld(), getPos(), dimension, offset, coordinates, supportedBlocks, false, null);
         } else {
             templateMeta = findTemplateMeta();
 
@@ -645,7 +645,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         int zCoord = getPos().getZ();
         for (BlockPos c : coordinates) {
             shieldBlocks.add(new RelCoordinate(c.getX() - xCoord, c.getY() - yCoord, c.getZ() - zCoord));
-            worldObj.setBlockToAir(c);
+            getWorld().setBlockToAir(c);
         }
 
         shieldComposed = true;
@@ -660,8 +660,8 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         int meta = -1;
         for (EnumFacing dir : EnumFacing.VALUES) {
             BlockPos p = getPos().offset(dir);
-            if (p.getY() >= 0 && p.getY() < worldObj.getHeight()) {
-                IBlockState state = worldObj.getBlockState(p);
+            if (p.getY() >= 0 && p.getY() < getWorld().getHeight()) {
+                IBlockState state = getWorld().getBlockState(p);
                 if (ShieldSetup.shieldTemplateBlock.equals(state.getBlock())) {
                     meta = state.getBlock().getMetaFromState(state);
                     break;
@@ -688,7 +688,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
 
-        Block origBlock = worldObj.getBlockState(pos).getBlock();
+        Block origBlock = getWorld().getBlockState(pos).getBlock();
         BlockPos c = pos;
         if (origBlock == ShieldSetup.shieldTemplateBlock) {
             if (isShapedShield()) {
@@ -696,7 +696,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
                 return;
             }
             Set<BlockPos> templateBlocks = new HashSet<>();
-            IBlockState state = worldObj.getBlockState(c);
+            IBlockState state = getWorld().getBlockState(c);
             findTemplateBlocks(templateBlocks, state.getBlock().getMetaFromState(state), false, c);
 
             int[] camoId = calculateCamoId();
@@ -711,9 +711,9 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         } else if (origBlock instanceof AbstractShieldBlock) {
             shieldBlocks.remove(new RelCoordinate(c.getX() - xCoord, c.getY() - yCoord, c.getZ() - zCoord));
             if (isShapedShield()) {
-                worldObj.setBlockToAir(c);
+                getWorld().setBlockToAir(c);
             } else {
-                worldObj.setBlockState(c, ShieldSetup.shieldTemplateBlock.getStateFromMeta(templateMeta), 2);
+                getWorld().setBlockState(c, ShieldSetup.shieldTemplateBlock.getStateFromMeta(templateMeta), 2);
             }
         } else {
             Logging.message(player, TextFormatting.YELLOW + "The selected shield can't do anything with this block!");
@@ -736,9 +736,9 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         for (RelCoordinate c : shieldBlocks) {
             if (Blocks.AIR.equals(block)) {
                 BlockPos pos = new BlockPos(xCoord + c.getDx(), yCoord + c.getDy(), zCoord + c.getDz());
-                IBlockState oldState = worldObj.getBlockState(pos);
+                IBlockState oldState = getWorld().getBlockState(pos);
                 if (oldState.getBlock() instanceof AbstractShieldBlock) {
-                    worldObj.setBlockToAir(pos);
+                    getWorld().setBlockToAir(pos);
                 }
             } else {
                 updateShieldBlock(camoId, cddata, damageBits, block, c);
@@ -752,12 +752,12 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
         BlockPos pp = new BlockPos(xCoord + c.getDx(), yCoord + c.getDy(), zCoord + c.getDz());
-        IBlockState oldState = worldObj.getBlockState(pp);
-        if (!oldState.getBlock().isReplaceable(worldObj, pp)) {
+        IBlockState oldState = getWorld().getBlockState(pp);
+        if (!oldState.getBlock().isReplaceable(getWorld(), pp)) {
             return;
         }
-        worldObj.setBlockState(pp, block.getStateFromMeta(camoId[1]), 2);
-        TileEntity te = worldObj.getTileEntity(pp);
+        getWorld().setBlockState(pp, block.getStateFromMeta(camoId[1]), 2);
+        TileEntity te = getWorld().getTileEntity(pp);
         if (te instanceof NoTickShieldBlockTileEntity) {
             NoTickShieldBlockTileEntity shieldBlockTileEntity = (NoTickShieldBlockTileEntity) te;
             shieldBlockTileEntity.setCamoBlock(camoId[0], camoId[2]);
@@ -778,17 +778,17 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             int cy = yCoord + c.getDy();
             int cz = zCoord + c.getDz();
             BlockPos pp = new BlockPos(cx, cy, cz);
-            Block block = worldObj.getBlockState(pp).getBlock();
-            if (worldObj.isAirBlock(pp) || block instanceof AbstractShieldBlock) {
+            Block block = getWorld().getBlockState(pp).getBlock();
+            if (getWorld().isAirBlock(pp) || block instanceof AbstractShieldBlock) {
                 if (isShapedShield()) {
-                    worldObj.setBlockToAir(pp);
+                    getWorld().setBlockToAir(pp);
                 } else {
-                    worldObj.setBlockState(pp, ShieldSetup.shieldTemplateBlock.getStateFromMeta(templateMeta), 2);
+                    getWorld().setBlockState(pp, ShieldSetup.shieldTemplateBlock.getStateFromMeta(templateMeta), 2);
                 }
             } else {
                 if (!isShapedShield()) {
                     // No room, just spawn the block
-                    BlockTools.spawnItemStack(worldObj, cx, cy, cz, new ItemStack(ShieldSetup.shieldTemplateBlock, 1, templateMeta));
+                    BlockTools.spawnItemStack(getWorld(), cx, cy, cz, new ItemStack(ShieldSetup.shieldTemplateBlock, 1, templateMeta));
                 }
             }
         }
@@ -827,9 +827,9 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     private void addToTodoStraight(Set<BlockPos> coordinateSet, Deque<BlockPos> todo, BlockPos coordinate, int meta) {
         for (EnumFacing dir : EnumFacing.VALUES) {
             BlockPos pp = coordinate.offset(dir);
-            if (pp.getY() >= 0 && pp.getY() < worldObj.getHeight()) {
+            if (pp.getY() >= 0 && pp.getY() < getWorld().getHeight()) {
                 if (!coordinateSet.contains(pp)) {
-                    IBlockState state = worldObj.getBlockState(pp);
+                    IBlockState state = getWorld().getBlockState(pp);
                     if (ShieldSetup.shieldTemplateBlock.equals(state.getBlock())) {
                         int m = state.getBlock().getMetaFromState(state);
                         if (m == meta) {
@@ -851,10 +851,10 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             for (int yy = y-1 ; yy <= y+1 ; yy++) {
                 for (int zz = z-1 ; zz <= z+1 ; zz++) {
                     if (xx != x || yy != y || zz != z) {
-                        if (yy >= 0 && yy < worldObj.getHeight()) {
+                        if (yy >= 0 && yy < getWorld().getHeight()) {
                             BlockPos c = new BlockPos(xx, yy, zz);
                             if (!coordinateSet.contains(c)) {
-                                IBlockState state = worldObj.getBlockState(c);
+                                IBlockState state = getWorld().getBlockState(c);
                                 if (ShieldSetup.shieldTemplateBlock.equals(state.getBlock())) {
                                     int m = state.getBlock().getMetaFromState(state);
                                     if (m == meta) {

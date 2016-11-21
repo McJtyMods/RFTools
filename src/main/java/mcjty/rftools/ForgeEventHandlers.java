@@ -71,7 +71,7 @@ public class ForgeEventHandlers {
 
     @SubscribeEvent
     public void onPlayerTickEvent(TickEvent.PlayerTickEvent event) {
-        if (event.phase == TickEvent.Phase.START && !event.player.worldObj.isRemote) {
+        if (event.phase == TickEvent.Phase.START && !event.player.getEntityWorld().isRemote) {
             BuffProperties buffProperties = PlayerExtendedProperties.getBuffProperties(event.player);
             if (buffProperties != null) {
                 buffProperties.tickBuffs((EntityPlayerMP) event.player);

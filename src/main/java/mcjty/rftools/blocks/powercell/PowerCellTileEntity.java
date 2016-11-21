@@ -142,7 +142,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         if (networkId == -1) {
             return null;
         }
-        PowerCellNetwork generatorNetwork = PowerCellNetwork.getChannels(worldObj);
+        PowerCellNetwork generatorNetwork = PowerCellNetwork.getChannels(getWorld());
         return generatorNetwork.getOrCreateNetwork(networkId);
     }
 
@@ -152,7 +152,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         super.onDataPacket(net, packet);
         for (int i = 0 ; i < 6 ; i++) {
             if (old[i] != modes[i]) {
-                worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
+                getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
                 return;
             }
         }
@@ -222,7 +222,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             long time = System.currentTimeMillis();
             if (lastTime == 0) {
                 lastTime = time;
@@ -282,7 +282,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         for (EnumFacing face : EnumFacing.values()) {
             if (modes[face.ordinal()] == Mode.MODE_OUTPUT) {
                 BlockPos pos = getPos().offset(face);
-                TileEntity te = worldObj.getTileEntity(pos);
+                TileEntity te = getWorld().getTileEntity(pos);
                 if (EnergyTools.isEnergyTE(te)) {
                     // If the adjacent block is also a powercell then we only send energy if this cell is local or the other cell has a different id
                     if ((!(te instanceof PowerCellTileEntity)) || getNetworkId() == -1 || ((PowerCellTileEntity) te).getNetworkId() != getNetworkId()) {
@@ -328,7 +328,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         if (getNetworkId() == -1) {
             factor = 1.0f; // Local energy
         } else {
-            factor = getNetwork().calculateCostFactor(worldObj, getGlobalPos());
+            factor = getNetwork().calculateCostFactor(getWorld(), getGlobalPos());
             factor = (factor - 1) * (1-infusedFactor/2) + 1;
         }
         return factor;
@@ -339,12 +339,12 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     }
 
     private void handleCardRemoval() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             PowerCellNetwork.Network network = getNetwork();
             if (network != null) {
                 energy = network.extractEnergySingleBlock(isAdvanced(), isSimple());
-                network.remove(worldObj, getGlobalPos(), isAdvanced(), isSimple());
-                PowerCellNetwork.getChannels(worldObj).save(worldObj);
+                network.remove(getWorld(), getGlobalPos(), isAdvanced(), isSimple());
+                PowerCellNetwork.getChannels(getWorld()).save(getWorld());
             }
         }
         networkId = -1;
@@ -354,17 +354,17 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     private void handleCardInsertion() {
         ItemStack stack = inventoryHelper.getStackInSlot(PowerCellContainer.SLOT_CARD);
         int id = PowerCellCardItem.getId(stack);
-        if (!worldObj.isRemote) {
-            PowerCellNetwork channels = PowerCellNetwork.getChannels(worldObj);
+        if (!getWorld().isRemote) {
+            PowerCellNetwork channels = PowerCellNetwork.getChannels(getWorld());
             if (id == -1) {
                 id = channels.newChannel();
                 PowerCellCardItem.setId(stack, id);
             }
             networkId = id;
             PowerCellNetwork.Network network = getNetwork();
-            network.add(worldObj, getGlobalPos(), isAdvanced(), isSimple());
+            network.add(getWorld(), getGlobalPos(), isAdvanced(), isSimple());
             network.setEnergy(network.getEnergy() + energy);
-            channels.save(worldObj);
+            channels.save(getWorld());
         } else {
             networkId = id;
         }
@@ -372,15 +372,15 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     }
 
     private boolean isAdvanced() {
-        return PowerCellBlock.isAdvanced(worldObj.getBlockState(getPos()).getBlock());
+        return PowerCellBlock.isAdvanced(getWorld().getBlockState(getPos()).getBlock());
     }
 
     private boolean isSimple() {
-        return PowerCellBlock.isSimple(worldObj.getBlockState(getPos()).getBlock());
+        return PowerCellBlock.isSimple(getWorld().getBlockState(getPos()).getBlock());
     }
 
     private boolean isCreative() {
-        return PowerCellBlock.isCreative(worldObj.getBlockState(getPos()).getBlock());
+        return PowerCellBlock.isCreative(getWorld().getBlockState(getPos()).getBlock());
     }
 
     // Get the power factor relative to the simple powercell
@@ -396,7 +396,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     }
 
     public GlobalCoordinate getGlobalPos() {
-        return new GlobalCoordinate(getPos(), worldObj.provider.getDimension());
+        return new GlobalCoordinate(getPos(), getWorld().provider.getDimension());
     }
 
     @Override
@@ -466,7 +466,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         if (maxInsert > 0) {
             if (!simulate) {
                 network.receiveEnergy(maxInsert);
-                PowerCellNetwork.getChannels(worldObj).save(worldObj);
+                PowerCellNetwork.getChannels(getWorld()).save(getWorld());
             }
         }
         return maxInsert;
@@ -516,7 +516,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         }
         if (!simulate) {
             network.extractEnergy(maxExtract);
-            PowerCellNetwork.getChannels(worldObj).save(worldObj);
+            PowerCellNetwork.getChannels(getWorld()).save(getWorld());
         }
         return maxExtract;
     }
@@ -630,7 +630,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         System.out.println("blocks.size() = " + blocks.size());
         blocks.forEach(b -> {
             String msg;
-            World w = TeleportationTools.getWorldForDimension(player.worldObj, b.getDimension());
+            World w = TeleportationTools.getWorldForDimension(player.getEntityWorld(), b.getDimension());
             if (w == null) {
                 msg = "dimension missing!";
             } else {

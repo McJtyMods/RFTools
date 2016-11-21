@@ -74,7 +74,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
@@ -368,7 +368,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     public ItemStack decrStackSize(int index, int amount) {
         version++;
         if (index == ModularStorageContainer.SLOT_STORAGE_MODULE) {
-            if (!worldObj.isRemote) {
+            if (!getWorld().isRemote) {
                 copyToModule();
             }
         }
@@ -413,8 +413,8 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             }
         } else if (index == ModularStorageContainer.SLOT_TYPE_MODULE) {
             // Make sure front side is updated.
-            IBlockState state = worldObj.getBlockState(getPos());
-            worldObj.notifyBlockUpdate(getPos(), state, state, 3);
+            IBlockState state = getWorld().getBlockState(getPos());
+            getWorld().notifyBlockUpdate(getPos(), state, state, 3);
         } else if (index == ModularStorageContainer.SLOT_FILTER_MODULE) {
             filterCache = null;
         }
@@ -594,15 +594,15 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     }
 
     private boolean isServer() {
-        if (worldObj != null) {
-            return !worldObj.isRemote;
+        if (getWorld() != null) {
+            return !getWorld().isRemote;
         } else {
             return FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER;
         }
     }
 
     private World getWorldSafe() {
-        World world = worldObj;
+        World world = getWorld();
         if (world == null) {
             if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
                 world = ClientInfo.getWorld();

@@ -35,7 +35,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
     }
 
     private void updateCard(ItemStack cardStack) {
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             return;
         }
         if (cardStack == null) {
@@ -43,16 +43,16 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
         }
         NBTTagCompound tagCompound = getOrCreateNBT(cardStack);
         if (!tagCompound.hasKey("channel")) {
-            SecurityChannels securityChannels = SecurityChannels.getChannels(worldObj);
+            SecurityChannels securityChannels = SecurityChannels.getChannels(getWorld());
             int id = securityChannels.newChannel();
             tagCompound.setInteger("channel", id);
-            securityChannels.save(worldObj);
+            securityChannels.save(getWorld());
             markDirtyClient();
         }
     }
 
     private void updateLinkedCard() {
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             return;
         }
         ItemStack masterCard = inventoryHelper.getStackInSlot(SecurityManagerContainer.SLOT_CARD);
@@ -77,11 +77,11 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
         NBTTagCompound tagCompound = getCardInfo();
         if (tagCompound == null) return;
         if (tagCompound.hasKey("channel")) {
-            SecurityChannels securityChannels = SecurityChannels.getChannels(worldObj);
+            SecurityChannels securityChannels = SecurityChannels.getChannels(getWorld());
             int id = tagCompound.getInteger("channel");
             SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
             channel.addPlayer(player);
-            securityChannels.save(worldObj);
+            securityChannels.save(getWorld());
             markDirtyClient();
         }
     }
@@ -90,11 +90,11 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
         NBTTagCompound tagCompound = getCardInfo();
         if (tagCompound == null) return;
         if (tagCompound.hasKey("channel")) {
-            SecurityChannels securityChannels = SecurityChannels.getChannels(worldObj);
+            SecurityChannels securityChannels = SecurityChannels.getChannels(getWorld());
             int id = tagCompound.getInteger("channel");
             SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
             channel.delPlayer(player);
-            securityChannels.save(worldObj);
+            securityChannels.save(getWorld());
             markDirtyClient();
         }
     }
@@ -103,11 +103,11 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
         NBTTagCompound tagCompound = getCardInfo();
         if (tagCompound == null) return;
         if (tagCompound.hasKey("channel")) {
-            SecurityChannels securityChannels = SecurityChannels.getChannels(worldObj);
+            SecurityChannels securityChannels = SecurityChannels.getChannels(getWorld());
             int id = tagCompound.getInteger("channel");
             SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
             channel.setWhitelist(whitelist);
-            securityChannels.save(worldObj);
+            securityChannels.save(getWorld());
             markDirtyClient();
         }
     }
@@ -116,11 +116,11 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
         NBTTagCompound tagCompound = getCardInfo();
         if (tagCompound == null) return;
         if (tagCompound.hasKey("channel")) {
-            SecurityChannels securityChannels = SecurityChannels.getChannels(worldObj);
+            SecurityChannels securityChannels = SecurityChannels.getChannels(getWorld());
             int id = tagCompound.getInteger("channel");
             SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
             channel.setName(name);
-            securityChannels.save(worldObj);
+            securityChannels.save(getWorld());
             markDirtyClient();
         }
     }
@@ -155,7 +155,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isUsable(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 

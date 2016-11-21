@@ -35,7 +35,7 @@ public class RemoteStorageItemInventory implements IInventory, CraftingGridProvi
         if (id == -1) {
             return null;
         }
-        return RemoteStorageIdRegistry.getRemoteStorage(entityPlayer.worldObj, id);
+        return RemoteStorageIdRegistry.getRemoteStorage(entityPlayer.getEntityWorld(), id);
     }
 
     private int getStorageID() {
@@ -88,7 +88,7 @@ public class RemoteStorageItemInventory implements IInventory, CraftingGridProvi
     }
 
     private boolean isServer() {
-        return !entityPlayer.worldObj.isRemote;
+        return !entityPlayer.getEntityWorld().isRemote;
     }
 
     private ItemStack[] getStacks() {

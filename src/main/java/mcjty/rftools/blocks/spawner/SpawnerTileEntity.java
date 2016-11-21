@@ -4,6 +4,8 @@ import mcjty.lib.api.MachineInformation;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.tools.ItemStackTools;
+import mcjty.lib.tools.WorldTools;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.GeneralConfiguration;
@@ -11,25 +13,26 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.items.ModItems;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntitySkeleton;
-import net.minecraft.entity.monster.SkeletonType;
-import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+
+//import net.minecraft.entity.monster.SkeletonType;
 
 public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, MachineInformation, ITickable {
 
@@ -39,7 +42,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
     private static final String[] TAG_DESCRIPTIONS = new String[]{"The amount of matter in the first slot", "The amount of matter in the second slot",
             "The amount of matter in the third slot", "The name of the mob being spawned"};
 
-    private float matter[] = new float[] { 0, 0, 0 };
+    private float matter[] = new float[]{0, 0, 0};
     private boolean checkSyringe = true;
     private String prevMobId = null;
     private String mobId = "";
@@ -78,10 +81,14 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
     @Override
     public String getData(int index, long millis) {
         switch (index) {
-            case 0: return Float.toString(matter[0]);
-            case 1: return Float.toString(matter[1]);
-            case 2: return Float.toString(matter[2]);
-            case 3: return mobId;
+            case 0:
+                return Float.toString(matter[0]);
+            case 1:
+                return Float.toString(matter[1]);
+            case 2:
+                return Float.toString(matter[2]);
+            case 3:
+                return mobId;
         }
         return null;
     }
@@ -93,7 +100,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         checkSyringe = false;
         mobId = null;
         ItemStack itemStack = inventoryHelper.getStackInSlot(0);
-        if (itemStack == null || itemStack.stackSize == 0) {
+        if (ItemStackTools.isEmpty(itemStack)) {
             clearMatter();
             return;
         }
@@ -170,7 +177,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
@@ -182,7 +189,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         List<SpawnerConfiguration.MobSpawnAmount> spawnAmounts = getSpawnAmounts();
-        for (int i = 0 ; i < 3 ; i++) {
+        for (int i = 0; i < 3; i++) {
             if (matter[i] < spawnAmounts.get(i).getAmount()) {
                 return;     // Not enough material yet.
             }
@@ -200,13 +207,13 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         consumeEnergy(rf);
 
-        for (int i = 0 ; i < 3 ; i++) {
+        for (int i = 0; i < 3; i++) {
             matter[i] -= spawnAmounts.get(i).getAmount();
         }
 
         markDirty();
 
-        IBlockState state = worldObj.getBlockState(getPos());
+        IBlockState state = getWorld().getBlockState(getPos());
         int meta = state.getBlock().getMetaFromState(state);
         EnumFacing k = BlockTools.getOrientation(meta);
         int sx = getPos().getX();
@@ -236,23 +243,27 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
             } else if ("StraySkeleton".equals(mobId)) {
                 clazz = EntitySkeleton.class;
             } else {
-                clazz = EntityList.NAME_TO_CLASS.get(mobId);
+                // @todo @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                // Check for null and check compat with 1.10
+                clazz = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(mobId)).getEntityClass();
+//                clazz = EntityList.NAME_TO_CLASS.get(mobId);
             }
-            entityLiving = (EntityLiving) clazz.getConstructor(World.class).newInstance(worldObj);
-            if ("WitherSkeleton".equals(mobId)) {
-                ((EntitySkeleton) entityLiving).setSkeletonType(SkeletonType.WITHER);
-            } else if ("StraySkeleton".equals(mobId)) {
-                    ((EntitySkeleton) entityLiving).setSkeletonType(SkeletonType.STRAY);
-            } else if (entityLiving instanceof EntitySkeleton) {
-                // Force non-wither otherwise
-                ((EntitySkeleton) entityLiving).setSkeletonType(SkeletonType.NORMAL);
-            } else if (entityLiving instanceof EntityDragon) {
-		// Ender dragon needs to be spawned with an additional NBT key set
-		NBTTagCompound dragonTag = new NBTTagCompound();
-		entityLiving.writeEntityToNBT(dragonTag);
-		dragonTag.setShort("DragonPhase", (short)0);
-		entityLiving.readEntityFromNBT(dragonTag);
-	    }
+            entityLiving = (EntityLiving) clazz.getConstructor(World.class).newInstance(getWorld());
+            // @toco @@@@@@@@@@@
+//            if ("WitherSkeleton".equals(mobId)) {
+//                ((EntitySkeleton) entityLiving).setSkeletonType(SkeletonType.WITHER);
+//            } else if ("StraySkeleton".equals(mobId)) {
+//                ((EntitySkeleton) entityLiving).setSkeletonType(SkeletonType.STRAY);
+//            } else if (entityLiving instanceof EntitySkeleton) {
+//                // Force non-wither otherwise
+//                ((EntitySkeleton) entityLiving).setSkeletonType(SkeletonType.NORMAL);
+//            } else if (entityLiving instanceof EntityDragon) {
+//                // Ender dragon needs to be spawned with an additional NBT key set
+//                NBTTagCompound dragonTag = new NBTTagCompound();
+//                entityLiving.writeEntityToNBT(dragonTag);
+//                dragonTag.setShort("DragonPhase", (short) 0);
+//                entityLiving.readEntityFromNBT(dragonTag);
+//            }
         } catch (InstantiationException e) {
             Logging.logError("Fail to spawn mob: " + mobId);
             return;
@@ -272,7 +283,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         entityLiving.setLocationAndAngles(sx + 0.5D, (double) sy, sz + 0.5D, 0.0F, 0.0F);
-        worldObj.spawnEntityInWorld(entityLiving);
+        WorldTools.spawnEntity(getWorld(), entityLiving);
     }
 
 //    private int countEntitiesWithinAABB(AxisAlignedBB aabb) {
@@ -284,8 +295,8 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 //        int cnt = 0;
 //        for (int i1 = i; i1 <= j; ++i1) {
 //            for (int j1 = k; j1 <= l; ++j1) {
-//                if (worldObj.getChunkProvider().chunkExists(i1, j1)) {
-//                    cnt += countEntitiesWithinChunkAABB(worldObj.getChunkFromChunkCoords(i1, j1), aabb);
+//                if (getWorld().getChunkProvider().chunkExists(i1, j1)) {
+//                    cnt += countEntitiesWithinChunkAABB(getWorld().getChunkFromChunkCoords(i1, j1), aabb);
 //                }
 //            }
 //        }
@@ -314,7 +325,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         if (coord == null) {
             return; // Nothing to do.
         }
-        TileEntity tileEntity = worldObj.getTileEntity(coord);
+        TileEntity tileEntity = getWorld().getTileEntity(coord);
 
         double d = new Vec3d(coord).distanceTo(new Vec3d(getPos()));
         if (d > SpawnerConfiguration.maxBeamDistance) {
@@ -369,7 +380,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public int[] getSlotsForFace(EnumFacing side) {
-        return new int[] { SpawnerContainer.SLOT_SYRINGE };
+        return new int[]{SpawnerContainer.SLOT_SYRINGE};
     }
 
     @Override
@@ -403,7 +414,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isUsable(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 

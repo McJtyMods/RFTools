@@ -45,7 +45,7 @@ public class CmdTeleport extends AbstractRfToolsCommand {
         if (sender instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) sender;
 
-            int currentId = player.worldObj.provider.getDimension();
+            int currentId = player.getEntityWorld().provider.getDimension();
             if (currentId != dim) {
                 TeleportationTools.teleportToDimension(player, dim, x, y, z);
             } else {

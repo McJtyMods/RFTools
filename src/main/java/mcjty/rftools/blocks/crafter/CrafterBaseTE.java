@@ -142,7 +142,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isUsable(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 
@@ -272,7 +272,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
@@ -319,7 +319,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     }
 
     private boolean craftOneItemNew(CraftingRecipe craftingRecipe) {
-        IRecipe recipe = craftingRecipe.getCachedRecipe(worldObj);
+        IRecipe recipe = craftingRecipe.getCachedRecipe(getWorld());
         if (recipe == null) {
             return false;
         }
@@ -420,8 +420,8 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
             }
         }
 
-        IRecipe recipe = craftingRecipe.getCachedRecipe(worldObj);
-        return recipe.matches(workInventory, worldObj);
+        IRecipe recipe = craftingRecipe.getCachedRecipe(getWorld());
+        return recipe.matches(workInventory, getWorld());
     }
 
 

@@ -77,7 +77,7 @@ public class PacketSendRecipe implements IMessage {
 
         private void handle(PacketSendRecipe message, MessageContext ctx) {
             EntityPlayerMP player = ctx.getServerHandler().playerEntity;
-            World world = player.worldObj;
+            World world = player.getEntityWorld();
             if (message.pos == null) {
                 // Handle tablet version
                 ItemStack mainhand = player.getHeldItemMainhand();

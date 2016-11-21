@@ -15,8 +15,8 @@ public class ScreenHitTileEntity extends GenericTileEntity {
         this.dy = dy;
         this.dz = dz;
         markDirty();
-        IBlockState state = worldObj.getBlockState(getPos());
-        worldObj.notifyBlockUpdate(getPos(), state, state, 3);
+        IBlockState state = getWorld().getBlockState(getPos());
+        getWorld().notifyBlockUpdate(getPos(), state, state, 3);
     }
 
     @Override

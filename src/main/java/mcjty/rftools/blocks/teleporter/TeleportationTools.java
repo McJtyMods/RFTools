@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.teleporter;
 
+import mcjty.lib.tools.WorldTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.SoundTools;
@@ -140,7 +141,7 @@ public class TeleportationTools {
         BlockPos c = dest.getCoordinate();
 
         BlockPos old = new BlockPos((int)player.posX, (int)player.posY, (int)player.posZ);
-        int oldId = player.worldObj.provider.getDimension();
+        int oldId = player.getEntityWorld().provider.getDimension();
 
         if (!TeleportationTools.allowTeleport(player, oldId, old, dest.getDimension(), dest.getCoordinate())) {
             return false;
@@ -168,7 +169,7 @@ public class TeleportationTools {
         if (severity <= 0) {
             if (TeleportConfiguration.teleportVolume >= 0.01) {
                 SoundEvent sound = SoundEvent.REGISTRY.getObject(new ResourceLocation(RFTools.MODID + ":teleport_whoosh"));
-                SoundTools.playSound(player.worldObj, sound, player.posX, player.posY, player.posZ, TeleportConfiguration.teleportVolume, 1.0f);
+                SoundTools.playSound(player.getEntityWorld(), sound, player.posX, player.posY, player.posZ, TeleportConfiguration.teleportVolume, 1.0f);
             }
         }
         if (TeleportConfiguration.logTeleportUsages) {
@@ -329,7 +330,7 @@ public class TeleportationTools {
 
         if (TeleportConfiguration.teleportErrorVolume >= 0.01) {
             SoundEvent sound = SoundEvent.REGISTRY.getObject(new ResourceLocation(RFTools.MODID + ":teleport_error"));
-            SoundTools.playSound(player.worldObj, sound, player.posX, player.posY, player.posZ, TeleportConfiguration.teleportVolume, 1.0f);
+            SoundTools.playSound(player.getEntityWorld(), sound, player.posX, player.posY, player.posZ, TeleportConfiguration.teleportVolume, 1.0f);
         }
 
         applyEffectForSeverity(player, severity, boostNeeded);
@@ -351,9 +352,9 @@ public class TeleportationTools {
     }
 
     public static void teleportToDimension(EntityPlayer player, int dimension, double x, double y, double z) {
-        int oldDimension = player.worldObj.provider.getDimension();
+        int oldDimension = player.getEntityWorld().provider.getDimension();
         EntityPlayerMP entityPlayerMP = (EntityPlayerMP) player;
-        MinecraftServer server = ((EntityPlayerMP) player).worldObj.getMinecraftServer();
+        MinecraftServer server = ((EntityPlayerMP) player).getEntityWorld().getMinecraftServer();
         WorldServer worldServer = server.worldServerForDimension(dimension);
         player.addExperienceLevel(0);
 
@@ -363,7 +364,7 @@ public class TeleportationTools {
         if (oldDimension == 1) {
             // For some reason teleporting out of the end does weird things.
             player.setPositionAndUpdate(x, y, z);
-            worldServer.spawnEntityInWorld(player);
+            WorldTools.spawnEntity(worldServer, player);
             worldServer.updateEntityWithOptionalForce(player, false);
         }
     }

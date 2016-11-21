@@ -46,7 +46,7 @@ public class PacketGetConnectedBlocks implements IMessage {
         private void handle(PacketGetConnectedBlocks message, MessageContext ctx) {
             EntityPlayer player = ctx.getServerHandler().playerEntity;
             Map<BlockPos,BlockInfo> connectedBlocks = new HashMap<>();
-            findConnectedBlocks(connectedBlocks, player.worldObj, message.pos);
+            findConnectedBlocks(connectedBlocks, player.getEntityWorld(), message.pos);
 
             if (connectedBlocks.size() > NetworkMonitorConfiguration.maximumBlocks) {
                 connectedBlocks = compactConnectedBlocks(connectedBlocks, message.pos, NetworkMonitorConfiguration.maximumBlocks);

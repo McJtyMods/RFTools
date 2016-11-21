@@ -22,7 +22,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -86,7 +85,7 @@ public class FluidModuleItem extends GenericRFToolsItem implements IModuleProvid
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
         }
-        if (te instanceof IFluidHandler || RFToolsTools.hasFluidCapabilitySafe(te) != null) {
+        if (RFToolsTools.hasFluidCapabilitySafe(te) != null) {
             tagCompound.setInteger("monitordim", world.provider.getDimension());
             tagCompound.setInteger("monitorx", pos.getX());
             tagCompound.setInteger("monitory", pos.getY());

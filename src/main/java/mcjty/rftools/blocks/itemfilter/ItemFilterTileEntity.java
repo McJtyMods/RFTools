@@ -96,7 +96,7 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isUsable(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 

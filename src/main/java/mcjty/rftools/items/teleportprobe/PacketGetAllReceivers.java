@@ -39,10 +39,10 @@ public class PacketGetAllReceivers implements IMessage {
 
         private void handle(PacketGetAllReceivers message, MessageContext ctx) {
             EntityPlayerMP player = ctx.getServerHandler().playerEntity;
-            TeleportDestinations destinations = TeleportDestinations.getDestinations(player.worldObj);
-            List<TeleportDestinationClientInfo> destinationList = new ArrayList<> (destinations.getValidDestinations(player.worldObj, null));
+            TeleportDestinations destinations = TeleportDestinations.getDestinations(player.getEntityWorld());
+            List<TeleportDestinationClientInfo> destinationList = new ArrayList<> (destinations.getValidDestinations(player.getEntityWorld(), null));
             addDimensions(destinationList);
-            addRfToolsDimensions(player.worldObj, destinationList);
+            addRfToolsDimensions(player.getEntityWorld(), destinationList);
             PacketAllReceiversReady msg = new PacketAllReceiversReady(destinationList);
             RFToolsMessages.INSTANCE.sendTo(msg, player);
         }

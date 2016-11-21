@@ -128,7 +128,7 @@ public class TeleportDestinations extends WorldSavedData {
             }
 
             // @todo
-//            DimensionInformation information = RfToolsDimensionManager.getDimensionManager(worldObj).getDimensionInformation(destination.getDimension());
+//            DimensionInformation information = RfToolsDimensionManager.getDimensionManager(getWorld()).getDimensionInformation(destination.getDimension());
 //            if (information != null) {
 //                dimName = information.getName();
 //            }

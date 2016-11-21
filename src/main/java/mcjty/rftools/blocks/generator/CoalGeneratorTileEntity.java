@@ -90,7 +90,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             handleChargingItem();
             handleSendingEnergy();
 
@@ -144,11 +144,11 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
 
         super.onDataPacket(net, packet);
 
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             // If needed send a render update.
             boolean newWorking = isWorking();
             if (newWorking != working) {
-                worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
+                getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
             }
         }
     }
@@ -187,7 +187,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
 
         for (EnumFacing facing : EnumFacing.values()) {
             BlockPos pos = getPos().offset(facing);
-            TileEntity te = worldObj.getTileEntity(pos);
+            TileEntity te = getWorld().getTileEntity(pos);
             if (EnergyTools.isEnergyTE(te)) {
                 EnumFacing opposite = facing.getOpposite();
                 int rfToGive = CoalGeneratorConfiguration.SENDPERTICK <= energyStored ? CoalGeneratorConfiguration.SENDPERTICK : energyStored;
@@ -242,9 +242,8 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
         return false;
     }
 
-    @SuppressWarnings("NullableProblems")
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isUsable(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 

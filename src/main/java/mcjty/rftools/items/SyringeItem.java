@@ -12,7 +12,6 @@ import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityDragonPart;
 import net.minecraft.entity.monster.EntityPigZombie;
 import net.minecraft.entity.monster.EntitySkeleton;
-import net.minecraft.entity.monster.SkeletonType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,6 +28,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
+
+//import net.minecraft.entity.monster.SkeletonType;
 
 public class SyringeItem extends GenericRFToolsItem {
 
@@ -74,7 +75,8 @@ public class SyringeItem extends GenericRFToolsItem {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+    protected ActionResult<ItemStack> clOnItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+        ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
             NBTTagCompound tagCompound = stack.getTagCompound();
             if (tagCompound != null) {
@@ -125,13 +127,16 @@ public class SyringeItem extends GenericRFToolsItem {
     private String findSelectedMobId(Class<? extends Entity> clazz, Entity entity) {
         if (entity instanceof EntitySkeleton) {
             EntitySkeleton skeleton = (EntitySkeleton) entity;
-            if (skeleton.getSkeletonType() == SkeletonType.WITHER) {
-                return "WitherSkeleton";
-            } else if (skeleton.getSkeletonType() == SkeletonType.STRAY) {
-                return "StraySkeleton";
-            }
+            // @todo @@@@@@@@@@@@@@@@@@
+//            if (skeleton.getSkeletonType() == SkeletonType.WITHER) {
+//                return "WitherSkeleton";
+//            } else if (skeleton.getSkeletonType() == SkeletonType.STRAY) {
+//                return "StraySkeleton";
+//            }
         }
-        return EntityList.CLASS_TO_NAME.get(clazz);
+        // @todo @@@@@@@@@@@@@@@@@
+        return EntityList.getKey(clazz).toString();
+//        return EntityList.CLASS_TO_NAME.get(clazz);
     }
 
     private Class<? extends Entity> findSelectedMobClass(Entity entity) {
@@ -182,7 +187,8 @@ public class SyringeItem extends GenericRFToolsItem {
     }
 
     public static ItemStack createMobSyringe(Class<? extends Entity> mobClass) {
-        String id = EntityList.getEntityStringFromClass(mobClass);
+        // @todo @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        String id = "";// EntityList.getEntityStringFromClass(mobClass);
         String name = I18n.translateToLocal("entity." + id + ".name");
         return createMobSyringe(id, name);
     }

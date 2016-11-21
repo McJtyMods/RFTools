@@ -14,7 +14,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 public class FluidBarScreenModule implements IScreenModule<IModuleDataContents> {
@@ -45,15 +44,6 @@ public class FluidBarScreenModule implements IScreenModule<IModuleDataContents> 
                     contents = properties[0].getContents().amount;
                 }
                 maxContents = properties[0].getCapacity();
-            }
-        } else if (te instanceof IFluidHandler) {
-            IFluidHandler tank = (IFluidHandler) te;
-            FluidTankInfo[] tankInfo = tank.getTankInfo(EnumFacing.DOWN);
-            if (tankInfo != null && tankInfo.length > 0) {
-                if (tankInfo[0].fluid != null) {
-                    contents = tankInfo[0].fluid.amount;
-                }
-                maxContents = tankInfo[0].capacity;
             }
         } else {
             return null;

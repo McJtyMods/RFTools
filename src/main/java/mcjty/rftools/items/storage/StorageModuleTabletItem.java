@@ -118,7 +118,7 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
                     if (w == null || !RFToolsTools.chunkLoaded(w, pos)) {
                         player.addChatComponentMessage(new TextComponentString(TextFormatting.RED + "Storage scanner is out of range!"));
                     } else {
-                        player.openGui(RFTools.instance, RFTools.GUI_REMOTE_STORAGESCANNER_ITEM, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+                        player.openGui(RFTools.instance, RFTools.GUI_REMOTE_STORAGESCANNER_ITEM, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
                     }
                 } else {
                     player.addChatComponentMessage(new TextComponentString(TextFormatting.RED + "Storage module is not linked to a storage scanner!"));
@@ -128,9 +128,9 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
                     Logging.message(player, TextFormatting.YELLOW + "This remote storage module is not linked!");
                     return new ActionResult<>(EnumActionResult.FAIL, stack);
                 }
-                player.openGui(RFTools.instance, RFTools.GUI_REMOTE_STORAGE_ITEM, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+                player.openGui(RFTools.instance, RFTools.GUI_REMOTE_STORAGE_ITEM, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
             } else {
-                player.openGui(RFTools.instance, RFTools.GUI_MODULAR_STORAGE_ITEM, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+                player.openGui(RFTools.instance, RFTools.GUI_MODULAR_STORAGE_ITEM, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
             }
             return new ActionResult<>(EnumActionResult.SUCCESS, stack);
         }

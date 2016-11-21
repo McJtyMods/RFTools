@@ -37,7 +37,7 @@ public class TeleportProbeItem extends Item {
     @Override
     public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
         if (world.isRemote) {
-            player.openGui(RFTools.instance, RFTools.GUI_TELEPORTPROBE, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+            player.openGui(RFTools.instance, RFTools.GUI_TELEPORTPROBE, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
             return new ActionResult<>(EnumActionResult.SUCCESS, stack);
         }
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);
@@ -46,7 +46,7 @@ public class TeleportProbeItem extends Item {
 //    @Override
 //    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float sx, float sy, float sz) {
 //        if (world.isRemote) {
-//            player.openGui(RFTools.instance, RFTools.GUI_TELEPORTPROBE, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+//            player.openGui(RFTools.instance, RFTools.GUI_TELEPORTPROBE, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
 //            return true;
 //        }
 //        return true;

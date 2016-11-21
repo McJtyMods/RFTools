@@ -53,7 +53,7 @@ public class PacketCompact implements IMessage {
             int moduleDamage = tagCompound.getInteger("childDamage");
             if (moduleDamage == StorageModuleItem.STORAGE_REMOTE) {
                 int id = tagCompound.getInteger("id");
-                RemoteStorageTileEntity remoteStorage = RemoteStorageIdRegistry.getRemoteStorage(playerEntity.worldObj, id);
+                RemoteStorageTileEntity remoteStorage = RemoteStorageIdRegistry.getRemoteStorage(playerEntity.getEntityWorld(), id);
                 if (remoteStorage != null) {
                     remoteStorage.compact(id);
                     remoteStorage.markDirty();

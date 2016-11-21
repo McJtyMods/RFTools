@@ -132,7 +132,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
@@ -163,10 +163,10 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
 
         super.onDataPacket(net, packet);
 
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             // If needed send a render update.
             if (active != oldActive) {
-                worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
+                getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
             }
         }
     }
@@ -233,7 +233,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
 
     // Toggle a coordinate to be protected or not. The coordinate given here is absolute.
     public void toggleCoordinate(GlobalCoordinate c) {
-        if (c.getDimension() != worldObj.provider.getDimension()) {
+        if (c.getDimension() != getWorld().provider.getDimension()) {
             // Wrong dimension. Don't do anything.
             return;
         }
@@ -258,17 +258,17 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
             Logging.message(player, TextFormatting.RED + "Block out of range of the block protector!");
             return;
         }
-        GlobalCoordinate gc = new GlobalCoordinate(pos, worldObj.provider.getDimension());
+        GlobalCoordinate gc = new GlobalCoordinate(pos, getWorld().provider.getDimension());
         toggleCoordinate(gc);
     }
 
     public int getOrCalculateID() {
         if (id == -1) {
-            BlockProtectors protectors = BlockProtectors.getProtectors(worldObj);
-            GlobalCoordinate gc = new GlobalCoordinate(getPos(), worldObj.provider.getDimension());
+            BlockProtectors protectors = BlockProtectors.getProtectors(getWorld());
+            GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().provider.getDimension());
             id = protectors.getNewId(gc);
 
-            protectors.save(worldObj);
+            protectors.save(getWorld());
             setId(id);
         }
         return id;
@@ -288,9 +288,9 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
      * the destination.
      */
     public void updateDestination() {
-        BlockProtectors protectors = BlockProtectors.getProtectors(worldObj);
+        BlockProtectors protectors = BlockProtectors.getProtectors(getWorld());
 
-        GlobalCoordinate gc = new GlobalCoordinate(getPos(), worldObj.provider.getDimension());
+        GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().provider.getDimension());
 
         if (id == -1) {
             id = protectors.getNewId(gc);
@@ -299,7 +299,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
             protectors.assignId(gc, id);
         }
 
-        protectors.save(worldObj);
+        protectors.save(getWorld());
         markDirtyClient();
     }
 

@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.endergen;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockTools;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,7 +28,7 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
     }
 
     private EndergenicTileEntity findEndergenicTileEntity() {
-        IBlockState state = worldObj.getBlockState(getPos());
+        IBlockState state = getWorld().getBlockState(getPos());
         int meta = state.getBlock().getMetaFromState(state);
         EnumFacing k = BlockTools.getOrientation(meta);
         EndergenicTileEntity te = getEndergenicGeneratorAt(k.getOpposite());
@@ -39,7 +40,7 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
 
     private EndergenicTileEntity getEndergenicGeneratorAt(EnumFacing k) {
         BlockPos o = getPos().offset(k);
-        TileEntity te = worldObj.getTileEntity(o);
+        TileEntity te = getWorld().getTileEntity(o);
         if (te instanceof EndergenicTileEntity) {
             return (EndergenicTileEntity) te;
         }
@@ -48,7 +49,7 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
@@ -69,7 +70,7 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
     private boolean takePearl() {
         for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
             ItemStack stack = inventoryHelper.getStackInSlot(i);
-            if (stack != null && Items.ENDER_PEARL.equals(stack.getItem()) && stack.stackSize > 0) {
+            if (stack != null && Items.ENDER_PEARL.equals(stack.getItem()) && ItemStackTools.getStackSize(stack) > 0) {
                 decrStackSize(i, 1);
                 return true;
             }
@@ -124,7 +125,7 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isUsable(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 

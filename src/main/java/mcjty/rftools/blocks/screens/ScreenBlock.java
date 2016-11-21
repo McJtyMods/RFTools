@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.screens;
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
@@ -429,8 +430,8 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
             for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
                 NBTTagCompound tag = bufferTagList.getCompoundTagAt(i);
                 if (tag != null) {
-                    ItemStack stack = ItemStack.loadItemStackFromNBT(tag);
-                    if (stack != null) {
+                    ItemStack stack = ItemStackTools.loadFromNBT(tag);
+                    if (ItemStackTools.isValid(stack)) {
                         rc++;
                     }
                 }

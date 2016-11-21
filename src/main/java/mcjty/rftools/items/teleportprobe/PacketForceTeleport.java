@@ -54,7 +54,7 @@ public class PacketForceTeleport implements IMessage {
             int x = message.pos.getX();
             int y = message.pos.getY();
             int z = message.pos.getZ();
-            int currentId = player.worldObj.provider.getDimension();
+            int currentId = player.getEntityWorld().provider.getDimension();
             if (currentId != message.dim) {
                 TeleportationTools.teleportToDimension(player, message.dim, x + .5, y + 1, z + .5);
             } else {

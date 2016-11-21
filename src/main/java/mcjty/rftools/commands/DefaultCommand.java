@@ -1,14 +1,17 @@
 package mcjty.rftools.commands;
 
+import mcjty.lib.tools.ChatTools;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 public abstract class DefaultCommand implements ICommand {
@@ -23,9 +26,10 @@ public abstract class DefaultCommand implements ICommand {
     }
 
     public void showHelp(ICommandSender sender) {
-        sender.addChatMessage(new TextComponentString(TextFormatting.BLUE + getCommandName() + " <subcommand> <args>"));
+        // @todo @@@@@@@@@@@@@@@@@@@@@@@@@@@ getCommandName()? getName()?
+        ChatTools.addChatMessage((EntityPlayer) sender, new TextComponentString(TextFormatting.BLUE + getName() + " <subcommand> <args>"));
         for (Map.Entry<String,RfToolsCommand> me : commands.entrySet()) {
-            sender.addChatMessage(new TextComponentString("    " + me.getKey() + " " + me.getValue().getHelp()));
+            ChatTools.addChatMessage((EntityPlayer) sender, new TextComponentString("    " + me.getKey() + " " + me.getValue().getHelp()));
         }
     }
 
@@ -56,15 +60,26 @@ public abstract class DefaultCommand implements ICommand {
         }
     }
 
+    // @todo @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     @Override
-    public String getCommandUsage(ICommandSender sender) {
-        return getCommandName() + " <subcommand> <args> (try '" + getCommandName() + " help' for more info)";
+    public String getUsage(ICommandSender sender) {
+        return getName() + " <subcommand> <args> (try '" + getName() + " help' for more info)";
     }
+//    @Override
+//    public String getCommandUsage(ICommandSender sender) {
+//        return getCommandName() + " <subcommand> <args> (try '" + getCommandName() + " help' for more info)";
+//    }
 
+
+    // @todo @@@@@@@@@@@
     @Override
-    public List getCommandAliases() {
+    public List<String> getAliases() {
         return Collections.emptyList();
     }
+//    @Override
+//    public List getCommandAliases() {
+//        return Collections.emptyList();
+//    }
 
 
     @Override
@@ -78,7 +93,7 @@ public abstract class DefaultCommand implements ICommand {
             RfToolsCommand command = commands.get(args[0]);
             if (command == null) {
                 if (!world.isRemote) {
-                    sender.addChatMessage(new TextComponentString(TextFormatting.RED + "Unknown RfTools command: " + args[0]));
+                    ChatTools.addChatMessage((EntityPlayer) sender, new TextComponentString(TextFormatting.RED + "Unknown RfTools command: " + args[0]));
                 }
             } else {
                 if (world.isRemote) {
@@ -88,20 +103,31 @@ public abstract class DefaultCommand implements ICommand {
                     }
                 } else {
                     // Server-side.
-                    if (!sender.canCommandSenderUseCommand(command.getPermissionLevel(), getCommandName())) {
-                        sender.addChatMessage(new TextComponentString(TextFormatting.RED + "Command is not allowed!"));
+                    // @todo @@@@@@@@@@@@@@@@
+                    if (!sender.canUseCommand(command.getPermissionLevel(), getName())) {
+                        ChatTools.addChatMessage((EntityPlayer) sender, new TextComponentString(TextFormatting.RED + "Command is not allowed!"));
                     } else {
                         command.execute(sender, args);
                     }
+//                    if (!sender.canCommandSenderUseCommand(command.getPermissionLevel(), getCommandName())) {
+//                        sender.addChatMessage(new TextComponentString(TextFormatting.RED + "Command is not allowed!"));
+//                    } else {
+//                        command.execute(sender, args);
+//                    }
                 }
             }
         }
     }
 
+    // @todo @@@@@@@@
     @Override
-    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos pos) {
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos) {
         return new ArrayList<>();
     }
+//    @Override
+//    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos pos) {
+//        return new ArrayList<>();
+//    }
 
     @Override
     public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
@@ -118,8 +144,13 @@ public abstract class DefaultCommand implements ICommand {
         return super.equals(obj);
     }
 
+    // @todo @@@@@@@@@@@@@
     @Override
     public int compareTo(ICommand o) {
-        return getCommandName().compareTo(((ICommand)o).getCommandName());
+        return getName().compareTo(((ICommand)o).getName());
     }
+//    @Override
+//    public int compareTo(ICommand o) {
+//        return getCommandName().compareTo(((ICommand)o).getCommandName());
+//    }
 }

@@ -80,7 +80,7 @@ public class PacketCraftFromGrid implements IMessage {
                     }
                 }
             } else {
-                TileEntity te = player.worldObj.getTileEntity(message.pos);
+                TileEntity te = player.getEntityWorld().getTileEntity(message.pos);
                 if (te instanceof CraftingGridProvider) {
                     testResult = ((CraftingGridProvider) te).craft(player, message.count, message.test);
                 }

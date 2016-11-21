@@ -88,7 +88,7 @@ public class ElevatorButtonModuleItem extends GenericRFToolsItem implements IMod
             tagCompound.setInteger("elevatorx", pos.getX());
             tagCompound.setInteger("elevatory", pos.getY());
             tagCompound.setInteger("elevatorz", pos.getZ());
-            IBlockState state = player.worldObj.getBlockState(pos);
+            IBlockState state = player.getEntityWorld().getBlockState(pos);
             Block block = state.getBlock();
             String name = "<invalid>";
             if (block != null && !block.isAir(state, world, pos)) {

@@ -63,15 +63,16 @@ public class SpaceChamberCardItem extends GenericRFToolsItem {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+    protected ActionResult<ItemStack> clOnItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         if (!player.isSneaking()) {
-            showDetails(world, player, stack);
+            showDetails(world, player, player.getHeldItem(hand));
         }
-        return super.onItemRightClick(stack, world, player, hand);
+        return super.clOnItemRightClick(world, player, hand);
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    protected EnumActionResult clOnItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        ItemStack stack = player.getHeldItem(hand);
         TileEntity te = world.getTileEntity(pos);
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
@@ -108,7 +109,7 @@ public class SpaceChamberCardItem extends GenericRFToolsItem {
 
     private void showDetailsGui(World world, EntityPlayer player) {
         if (world.isRemote) {
-            player.openGui(RFTools.instance, RFTools.GUI_CHAMBER_DETAILS, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+            player.openGui(RFTools.instance, RFTools.GUI_CHAMBER_DETAILS, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
         }
     }
 

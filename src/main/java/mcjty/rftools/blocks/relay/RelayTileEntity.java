@@ -47,7 +47,7 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
@@ -109,13 +109,13 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
             return;
         }
 
-        IBlockState state = worldObj.getBlockState(getPos());
+        IBlockState state = getWorld().getBlockState(getPos());
         int meta = state.getBlock().getMetaFromState(state);
         for (EnumFacing facing : EnumFacing.VALUES) {
             int side = BlockTools.reorient(facing, meta).ordinal();
 //            int side = facing.ordinal();
             if (rf[side] > 0 && !inputMode[side]) {
-                TileEntity te = worldObj.getTileEntity(getPos().offset(facing));
+                TileEntity te = getWorld().getTileEntity(getPos().offset(facing));
                 if (EnergyTools.isEnergyTE(te)) {
                     EnumFacing opposite = facing.getOpposite();
                     int rfToGive;
@@ -158,7 +158,7 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
         boolean redstoneSignal = powerLevel > 0;
 
         boolean[] inputMode = redstoneSignal ? inputModeOn : inputModeOff;
-        IBlockState state = worldObj.getBlockState(getPos());
+        IBlockState state = getWorld().getBlockState(getPos());
         int meta = state.getBlock().getMetaFromState(state);
         int side = BlockTools.reorient(from, meta).ordinal();
         if (inputMode[side]) {

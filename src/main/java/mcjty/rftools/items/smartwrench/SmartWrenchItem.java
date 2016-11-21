@@ -4,6 +4,7 @@ import cofh.api.item.IToolHammer;
 import mcjty.lib.api.smartwrench.SmartWrench;
 import mcjty.lib.api.smartwrench.SmartWrenchMode;
 import mcjty.lib.api.smartwrench.SmartWrenchSelector;
+import mcjty.lib.block.CompatItem;
 import mcjty.lib.container.GenericBlock;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
@@ -35,7 +36,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
+public class SmartWrenchItem extends CompatItem implements IToolHammer, SmartWrench {
 
     public SmartWrenchItem() {
         setUnlocalizedName("smartwrench");
@@ -88,7 +89,8 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+    protected ActionResult<ItemStack> clOnItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+        ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
             SmartWrenchMode mode = getCurrentMode(stack);
             if (mode == SmartWrenchMode.MODE_WRENCH) {
@@ -104,20 +106,25 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
             tagCompound.setString("mode", mode.getCode());
             Logging.message(player, TextFormatting.YELLOW + "Smart wrench is now in " + mode.getName() + " mode.");
         }
-        return super.onItemRightClick(stack, world, player, hand);
+        return super.clOnItemRightClick(world, player, hand);
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    protected EnumActionResult clOnItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
             if (player.isSneaking()) {
                 // Make sure the block get activated if it is a GenericBlock
                 IBlockState state = world.getBlockState(pos);
                 Block block = state.getBlock();
                 if (block instanceof GenericBlock) {
-                    if (block.onBlockActivated(world, pos, state, player, hand, player.getHeldItem(hand), facing, hitX, hitY, hitZ)) {
+                    // @todo @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                    if (block.onBlockActivated(world, pos, state, player, hand, facing, hitX, hitY, hitZ)) {
                         return EnumActionResult.SUCCESS;
                     }
+//                    if (block.onBlockActivated(world, pos, state, player, hand, stack, facing, hitX, hitY, hitZ)) {
+//                        return EnumActionResult.SUCCESS;
+//                    }
                 }
             }
             SmartWrenchMode mode = getCurrentMode(stack);

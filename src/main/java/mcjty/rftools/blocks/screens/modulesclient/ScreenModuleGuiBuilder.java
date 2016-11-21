@@ -5,6 +5,8 @@ import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
+import mcjty.lib.tools.ItemStackTools;
+import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.api.screens.FormatStyle;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.blocks.screens.IModuleGuiChanged;
@@ -182,7 +184,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
                 // For compatibility reasons.
                 dim = currentData.getInteger("dim");
             }
-            World world = mc.thePlayer.worldObj;
+            World world = MinecraftTools.getPlayer(mc).getEntityWorld();
             if (dim == world.provider.getDimension()) {
                 int x = currentData.getInteger(tagnamePos+"x");
                 int y = currentData.getInteger(tagnamePos+"y");
@@ -206,7 +208,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
     public IModuleGuiBuilder ghostStack(String tagname) {
         ItemStack stack = null;
         if (currentData.hasKey(tagname)) {
-            stack = ItemStack.loadItemStackFromNBT(currentData.getCompoundTag(tagname));
+            stack = ItemStackTools.loadFromNBT(currentData.getCompoundTag(tagname));
         }
 
         BlockRender blockRender = new BlockRender(mc, gui).setRenderItem(stack).setDesiredWidth(18).setDesiredHeight(18).setFilledRectThickness(1).setFilledBackground(0xff555555);
@@ -214,13 +216,13 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
         blockRender.addSelectionEvent(new BlockRenderEvent() {
             @Override
             public void select(Widget widget) {
-                ItemStack holding = Minecraft.getMinecraft().thePlayer.inventory.getItemStack();
-                if (holding == null) {
+                ItemStack holding = MinecraftTools.getPlayer(Minecraft.getMinecraft()).inventory.getItemStack();
+                if (ItemStackTools.isEmpty(holding)) {
                     currentData.removeTag(tagname);
                     blockRender.setRenderItem(null);
                 } else {
                     ItemStack copy = holding.copy();
-                    copy.stackSize = 1;
+                    ItemStackTools.setStackSize(copy, 1);
                     blockRender.setRenderItem(copy);
                     NBTTagCompound tc = new NBTTagCompound();
                     copy.writeToNBT(tc);

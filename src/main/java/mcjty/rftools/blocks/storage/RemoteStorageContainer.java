@@ -44,7 +44,7 @@ public class RemoteStorageContainer extends GenericContainer {
 
     @Override
     public ItemStack slotClick(int index, int button, ClickType mode, EntityPlayer player) {
-        if (index >= 0 && index < SLOT_LINKER && !player.worldObj.isRemote) {
+        if (index >= 0 && index < SLOT_LINKER && !player.getEntityWorld().isRemote) {
             remoteStorageTileEntity.copyToModule(index);
         }
         return super.slotClick(index, button, mode, player);

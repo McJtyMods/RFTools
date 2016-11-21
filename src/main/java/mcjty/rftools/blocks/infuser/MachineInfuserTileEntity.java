@@ -5,6 +5,7 @@ import mcjty.lib.base.GeneralConfig;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.items.ModItems;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -37,7 +38,7 @@ public class MachineInfuserTileEntity extends GenericEnergyReceiverTileEntity im
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
@@ -72,11 +73,11 @@ public class MachineInfuserTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     private NBTTagCompound getTagCompound(ItemStack stack) {
-        if (stack == null) {
+        if (ItemStackTools.isEmpty(stack)) {
             return null;
         }
 
-        if (stack.stackSize != 1) {
+        if (ItemStackTools.getStackSize(stack) != 1) {
             return null;
         }
 
@@ -117,8 +118,8 @@ public class MachineInfuserTileEntity extends GenericEnergyReceiverTileEntity im
         consumeEnergy(rf);
 
         inventoryHelper.getStackInSlot(0).splitStack(1);
-        if (inventoryHelper.getStackInSlot(0).stackSize == 0) {
-            inventoryHelper.setStackInSlot(0, null);
+        if (ItemStackTools.isEmpty(inventoryHelper.getStackInSlot(0))) {
+            inventoryHelper.setStackInSlot(0, ItemStackTools.getEmptyStack());
         }
         infusing = 5;
         markDirty();
@@ -148,7 +149,7 @@ public class MachineInfuserTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isUsable(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 

@@ -21,7 +21,7 @@ public class RedstoneTransmitterTileEntity extends LogicTileEntity {
     }
 
     public void update() {
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             return;
         }
 
@@ -33,10 +33,10 @@ public class RedstoneTransmitterTileEntity extends LogicTileEntity {
         if (powered != prevIn) {
             prevIn = powered;
             markDirty();
-            RedstoneChannels channels = RedstoneChannels.getChannels(worldObj);
+            RedstoneChannels channels = RedstoneChannels.getChannels(getWorld());
             RedstoneChannels.RedstoneChannel ch = channels.getOrCreateChannel(channel);
             ch.setValue(powered ? 15 : 0);
-            channels.save(worldObj);
+            channels.save(getWorld());
         }
     }
 

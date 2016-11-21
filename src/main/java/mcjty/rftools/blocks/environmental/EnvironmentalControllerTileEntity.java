@@ -312,7 +312,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
@@ -344,7 +344,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
             consumeEnergy(rfNeeded);
             for (EnvironmentModule module : environmentModules) {
                 module.activate(true);
-                module.tick(worldObj, getPos(), radius, miny, maxy, this);
+                module.tick(getWorld(), getPos(), radius, miny, maxy, this);
             }
             if (!active) {
                 active = true;
@@ -433,7 +433,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isUsable(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 

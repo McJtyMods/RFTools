@@ -58,7 +58,7 @@ public class PacketModuleUpdate implements IMessage {
         }
 
         private void handle(PacketModuleUpdate message, MessageContext ctx) {
-            TileEntity te = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.pos);
+            TileEntity te = ctx.getServerHandler().playerEntity.getEntityWorld().getTileEntity(message.pos);
             if(!(te instanceof ScreenTileEntity)) {
                 Logging.logError("PacketModuleUpdate: TileEntity is not a SimpleScreenTileEntity!");
                 return;

@@ -149,7 +149,7 @@ public class MachineInformationClientScreenModule implements IClientScreenModule
                 // Compatibility reasons
                 this.dim = currentData.getInteger("dim");
             }
-            World world = mc.thePlayer.worldObj;
+            World world = mc.thePlayer.getEntityWorld();
             if (dim == world.provider.getDimension()) {
                 int x = currentData.getInteger("monitorx");
                 int y = currentData.getInteger("monitory");

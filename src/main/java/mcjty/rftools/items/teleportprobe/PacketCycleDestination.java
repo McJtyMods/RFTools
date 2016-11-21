@@ -50,7 +50,7 @@ public class PacketCycleDestination implements IMessage {
                 if (tagCompound == null) {
                     return;
                 }
-                TeleportDestinations destinations = TeleportDestinations.getDestinations(playerEntity.worldObj);
+                TeleportDestinations destinations = TeleportDestinations.getDestinations(playerEntity.getEntityWorld());
 
                 int curtarget = tagCompound.getInteger("target");
 

@@ -115,7 +115,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                 .addInventory(player.inventory, 0);
         for (BlockPos p : getInventories()) {
             if (isRoutable(p)) {
-                TileEntity tileEntity = worldObj.getTileEntity(p);
+                TileEntity tileEntity = getWorld().getTileEntity(p);
                 if (!(tileEntity instanceof StorageScannerTileEntity)) {
                     itemSource.add(tileEntity, 0);
                 }
@@ -140,7 +140,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             if (inventoryHelper.containsItem(StorageScannerContainer.SLOT_IN)) {
                 if (getEnergyStored(EnumFacing.DOWN) < StorageScannerConfiguration.rfPerInsert) {
                     return;
@@ -179,7 +179,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         stack = injectStackInternal(stack, false);
         if (stack == null) {
             consumeEnergy(StorageScannerConfiguration.rfPerInsert);
-            SoundTools.playSound(worldObj, SoundEvents.ENTITY_ITEM_PICKUP, getPos().getX(), getPos().getY(), getPos().getZ(), 1.0f, 3.0f);
+            SoundTools.playSound(getWorld(), SoundEvents.ENTITY_ITEM_PICKUP, getPos().getX(), getPos().getY(), getPos().getZ(), 1.0f, 3.0f);
         }
         return stack;
     }
@@ -187,7 +187,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     private boolean checkForRoutableInventories() {
         for (BlockPos blockPos : inventories) {
             if (!blockPos.equals(getPos()) && routable.contains(blockPos)) {
-                TileEntity te = worldObj.getTileEntity(blockPos);
+                TileEntity te = getWorld().getTileEntity(blockPos);
                 if (te != null) {
                     return true;
                 }
@@ -199,9 +199,9 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     private ItemStack injectStackInternal(ItemStack stack, boolean toSelected) {
         if (toSelected && lastSelectedInventory != null && lastSelectedInventory.getY() != -1) {
             // Try to insert into the selected inventory
-            TileEntity te = worldObj.getTileEntity(lastSelectedInventory);
+            TileEntity te = getWorld().getTileEntity(lastSelectedInventory);
             if (te != null && !(te instanceof StorageScannerTileEntity)) {
-                stack = InventoryHelper.insertItem(worldObj, lastSelectedInventory, null, stack);
+                stack = InventoryHelper.insertItem(getWorld(), lastSelectedInventory, null, stack);
                 if (stack == null) {
                     return stack;
                 }
@@ -210,9 +210,9 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         }
         for (BlockPos blockPos : inventories) {
             if (!blockPos.equals(getPos()) && routable.contains(blockPos)) {
-                TileEntity te = worldObj.getTileEntity(blockPos);
+                TileEntity te = getWorld().getTileEntity(blockPos);
                 if (te != null && !(te instanceof StorageScannerTileEntity)) {
-                    stack = InventoryHelper.insertItem(worldObj, blockPos, null, stack);
+                    stack = InventoryHelper.insertItem(getWorld(), blockPos, null, stack);
                     if (stack == null) {
                         return stack;
                     }
@@ -244,7 +244,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         final int[] cnt = {single ? 1 : stack.getMaxStackSize()};
         boolean given = false;
         for (BlockPos c : inventories) {
-            TileEntity tileEntity = worldObj.getTileEntity(c);
+            TileEntity tileEntity = getWorld().getTileEntity(c);
             if (tileEntity instanceof StorageScannerTileEntity) {
                 continue;
             }
@@ -274,7 +274,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         }
         if (given) {
             consumeEnergy(StorageScannerConfiguration.rfPerRequest);
-            SoundTools.playSound(worldObj, SoundEvents.ENTITY_ITEM_PICKUP, getPos().getX(), getPos().getY(), getPos().getZ(), 1.0f, 1.0f);
+            SoundTools.playSound(getWorld(), SoundEvents.ENTITY_ITEM_PICKUP, getPos().getX(), getPos().getY(), getPos().getZ(), 1.0f, 1.0f);
         }
     }
 
@@ -307,7 +307,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         List<BlockPos> inventories = getInventories();
         for (BlockPos c : inventories) {
             if ((!starred) || routable.contains(c)) {
-                TileEntity tileEntity = worldObj.getTileEntity(c);
+                TileEntity tileEntity = getWorld().getTileEntity(c);
                 if (tileEntity instanceof StorageScannerTileEntity) {
                     continue;
                 }
@@ -377,7 +377,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         search = search.toLowerCase();
         Set<BlockPos> output = new HashSet<>();
         for (BlockPos c : inventories) {
-            TileEntity tileEntity = worldObj.getTileEntity(c);
+            TileEntity tileEntity = getWorld().getTileEntity(c);
             if (!(tileEntity instanceof StorageScannerTileEntity)) {
                 final String finalSearch = search;
                 InventoryHelper.getItems(tileEntity, s -> s.getDisplayName().toLowerCase().contains(finalSearch)).forEach(s -> output.add(c));
@@ -510,7 +510,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             if (p.getX() >= getPos().getX() - radius && p.getX() <= getPos().getX() + radius) {
                 if (p.getY() >= getPos().getY() - radius && p.getY() <= getPos().getY() + radius) {
                     if (p.getZ() >= getPos().getZ() - radius && p.getZ() <= getPos().getZ() + radius) {
-                        TileEntity te = worldObj.getTileEntity(p);
+                        TileEntity te = getWorld().getTileEntity(p);
                         if (InventoryHelper.isInventory(te) && !(te instanceof StorageScannerTileEntity)) {
                             inventories.add(p);
                             oldAdded.add(p);
@@ -526,7 +526,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                 for (int y = getPos().getY() - radius; y <= getPos().getY() + radius; y++) {
                     BlockPos p = new BlockPos(x, y, z);
                     if (!oldAdded.contains(p)) {
-                        TileEntity te = worldObj.getTileEntity(p);
+                        TileEntity te = getWorld().getTileEntity(p);
                         if (InventoryHelper.isInventory(te) && !(te instanceof StorageScannerTileEntity)) {
                             inventories.add(p);
                         }
@@ -557,7 +557,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             if (doRoutable && !routable.contains(c)) {
                 continue;
             }
-            TileEntity tileEntity = worldObj.getTileEntity(c);
+            TileEntity tileEntity = getWorld().getTileEntity(c);
             if (tileEntity instanceof StorageScannerTileEntity) {
                 continue;
             }
@@ -611,9 +611,9 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
         for (BlockPos blockPos : inventories) {
             if (!blockPos.equals(getPos()) && routable.contains(blockPos)) {
-                TileEntity te = worldObj.getTileEntity(blockPos);
+                TileEntity te = getWorld().getTileEntity(blockPos);
                 if (te != null && !(te instanceof StorageScannerTileEntity)) {
-                    toInsert = InventoryHelper.insertItem(worldObj, blockPos, null, toInsert);
+                    toInsert = InventoryHelper.insertItem(getWorld(), blockPos, null, toInsert);
                     if (toInsert == null) {
                         return 0;
                     }
@@ -626,7 +626,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     private ItemStack requestStackFromInv(BlockPos invPos, ItemStack requested, Integer[] todo, ItemStack outSlot) {
-        TileEntity tileEntity = worldObj.getTileEntity(invPos);
+        TileEntity tileEntity = getWorld().getTileEntity(invPos);
         if (tileEntity instanceof StorageScannerTileEntity) {
             return outSlot;
         }
@@ -744,7 +744,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     private void addItemsFromInventory(BlockPos cpos, Set<Item> foundItems, List<ItemStack> stacks) {
-        TileEntity tileEntity = worldObj.getTileEntity(cpos);
+        TileEntity tileEntity = getWorld().getTileEntity(cpos);
 
         if (RFToolsTools.hasItemCapabilitySafe(tileEntity)) {
             IItemHandler capability = RFToolsTools.getItemCapabilitySafe(tileEntity);
@@ -892,7 +892,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         if (isDummy()) {
             return monitorDim;
         } else {
-            return worldObj.provider.getDimension();
+            return getWorld().provider.getDimension();
         }
     }
 

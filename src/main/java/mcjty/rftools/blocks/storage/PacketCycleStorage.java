@@ -42,7 +42,7 @@ public class PacketCycleStorage implements IMessage {
                 return;
             }
             int id = tagCompound.getInteger("id");
-            RemoteStorageTileEntity remoteStorage = RemoteStorageIdRegistry.getRemoteStorage(playerEntity.worldObj, id);
+            RemoteStorageTileEntity remoteStorage = RemoteStorageIdRegistry.getRemoteStorage(playerEntity.getEntityWorld(), id);
             if (remoteStorage != null) {
                 id = remoteStorage.cycle(id);
                 tagCompound.setInteger("id", id);

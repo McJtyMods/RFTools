@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.endergen;
 
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.material.Material;
@@ -47,7 +48,7 @@ public class PearlInjectorBlock extends GenericRFToolsBlock<PearlInjectorTileEnt
             for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
                 NBTTagCompound itemTag = bufferTagList.getCompoundTagAt(i);
                 if (itemTag != null) {
-                    ItemStack stack = ItemStack.loadItemStackFromNBT(itemTag);
+                    ItemStack stack = ItemStackTools.loadFromNBT(itemTag);
                     if (stack != null) {
                         rc++;
                     }

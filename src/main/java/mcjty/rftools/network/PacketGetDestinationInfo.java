@@ -36,7 +36,7 @@ public class PacketGetDestinationInfo implements IMessage {
         }
 
         private void handle(PacketGetDestinationInfo message, MessageContext ctx) {
-            World world = ctx.getServerHandler().playerEntity.worldObj;
+            World world = ctx.getServerHandler().playerEntity.getEntityWorld();
             TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
             int receiverId = message.receiverId;
             String name = TeleportDestinations.getDestinationName(destinations, receiverId);

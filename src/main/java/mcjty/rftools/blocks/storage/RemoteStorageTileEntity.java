@@ -57,7 +57,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
@@ -70,13 +70,13 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         timer = 5;
 
         int hasPower = isPowerLow() ? 0 : 8;
-//        int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+//        int meta = getWorld().getBlockMetadata(xCoord, yCoord, zCoord);
 //        int newmeta = (meta & 0x7) | hasPower;
 //        if (newmeta != meta) {
-//            worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, newmeta, 2);
+//            getWorld().setBlockMetadataWithNotify(xCoord, yCoord, zCoord, newmeta, 2);
 //        }
 
-        RemoteStorageIdRegistry registry = RemoteStorageIdRegistry.getRegistry(worldObj);
+        RemoteStorageIdRegistry registry = RemoteStorageIdRegistry.getRegistry(getWorld());
         for (int i = 0 ; i < 4 ; i++) {
             if (inventoryHelper.containsItem(i)) {
                 ItemStack stack = inventoryHelper.getStackInSlot(i);
@@ -97,7 +97,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
                     markDirty();
 
                     int id = tagCompound.getInteger("id");
-                    registry.publishStorage(id, new GlobalCoordinate(getPos(), worldObj.provider.getDimension()));
+                    registry.publishStorage(id, new GlobalCoordinate(getPos(), getWorld().provider.getDimension()));
                 }
             }
         }
@@ -143,8 +143,8 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
-        IBlockState state = worldObj.getBlockState(getPos());
-        worldObj.notifyBlockUpdate(getPos(), state, state, 3);
+        IBlockState state = getWorld().getBlockState(getPos());
+        getWorld().notifyBlockUpdate(getPos(), state, state, 3);
         return inventoryHelper.decrStackSize(index, amount);
     }
 
@@ -207,9 +207,9 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         if (tagCompound.hasKey("id")) {
             id = tagCompound.getInteger("id");
         } else {
-            RemoteStorageIdRegistry registry = RemoteStorageIdRegistry.getRegistry(worldObj);
+            RemoteStorageIdRegistry registry = RemoteStorageIdRegistry.getRegistry(getWorld());
             id = registry.getNewId();
-            registry.save(worldObj);
+            registry.save(getWorld());
             tagCompound.setInteger("id", id);
         }
 
@@ -229,9 +229,9 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
             copyFromModule(stack, index);
         }
 
-        IBlockState state = worldObj.getBlockState(getPos());
-        worldObj.notifyBlockUpdate(getPos(), state, state, 3);
-        if (!worldObj.isRemote) {
+        IBlockState state = getWorld().getBlockState(getPos());
+        getWorld().notifyBlockUpdate(getPos(), state, state, 3);
+        if (!getWorld().isRemote) {
             link(index);
         }
     }

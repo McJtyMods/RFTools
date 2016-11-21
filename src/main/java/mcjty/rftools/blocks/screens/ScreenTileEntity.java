@@ -104,7 +104,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
 
     @Override
     public void update() {
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             checkStateClient();
         } else {
             checkStateServer();
@@ -123,7 +123,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
             } else {
                 List<IClientScreenModule> modules = getClientScreenModules();
                 if (cm.module < modules.size()) {
-                    modules.get(cm.module).mouseClick(worldObj, cm.x, cm.y, false);
+                    modules.get(cm.module).mouseClick(getWorld(), cm.x, cm.y, false);
                 }
             }
         }
@@ -144,9 +144,9 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
                 if (cm.module < modules.size()) {
                     ItemStack itemStack = inventoryHelper.getStackInSlot(cm.module);
                     IScreenModule module = modules.get(cm.module);
-                    module.mouseClick(worldObj, cm.x, cm.y, false, null);
+                    module.mouseClick(getWorld(), cm.x, cm.y, false, null);
                     if (module instanceof IScreenModuleUpdater) {
-                        NBTTagCompound newCompound = ((IScreenModuleUpdater) module).update(itemStack.getTagCompound(), worldObj, null);
+                        NBTTagCompound newCompound = ((IScreenModuleUpdater) module).update(itemStack.getTagCompound(), getWorld(), null);
                         if (newCompound != null) {
                             itemStack.setTagCompound(newCompound);
                             markDirtyClient();
@@ -263,7 +263,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
             // We are getting a hit twice. Module is already activated. Do nothing
             return;
         }
-        modules.get(module).mouseClick(worldObj, result.getX(), result.getY() - result.getCurrenty(), true);
+        modules.get(module).mouseClick(getWorld(), result.getX(), result.getY() - result.getCurrenty(), true);
         clickedModules.add(new ActivatedModule(module, 3, result.getX(), result.getY()));
 
         RFToolsMessages.INSTANCE.sendToServer(new PacketServerCommand(getPos(), CMD_CLICK,
@@ -324,9 +324,9 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         IScreenModule screenModule = screenModules.get(module);
         if (screenModule != null) {
             ItemStack itemStack = inventoryHelper.getStackInSlot(module);
-            screenModule.mouseClick(worldObj, x, y, true, player);
+            screenModule.mouseClick(getWorld(), x, y, true, player);
             if (screenModule instanceof IScreenModuleUpdater) {
-                NBTTagCompound newCompound = ((IScreenModuleUpdater) screenModule).update(itemStack.getTagCompound(), worldObj, player);
+                NBTTagCompound newCompound = ((IScreenModuleUpdater) screenModule).update(itemStack.getTagCompound(), getWorld(), player);
                 if (newCompound != null) {
                     itemStack.setTagCompound(newCompound);
                     markDirtyClient();
@@ -353,7 +353,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isUsable(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 
@@ -451,7 +451,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         if (powerOn) {
             return true;
         }
-        return worldObj.getBlockState(getPos()).getBlock() == ScreenSetup.creativeScreenBlock;
+        return getWorld().getBlockState(getPos()).getBlock() == ScreenSetup.creativeScreenBlock;
     }
 
     public void setConnected(boolean c) {
@@ -494,7 +494,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
                         e.printStackTrace();
                         continue;
                     }
-                    clientScreenModule.setupFromNBT(itemStack.getTagCompound(), worldObj.provider.getDimension(), getPos());
+                    clientScreenModule.setupFromNBT(itemStack.getTagCompound(), getWorld().provider.getDimension(), getPos());
                     clientScreenModules.add(clientScreenModule);
                     if (clientScreenModule.needsServerData()) {
                         needsServerData = true;
@@ -538,7 +538,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
                         e.printStackTrace();
                         continue;
                     }
-                    screenModule.setupFromNBT(itemStack.getTagCompound(), worldObj.provider.getDimension(), getPos());
+                    screenModule.setupFromNBT(itemStack.getTagCompound(), getWorld().provider.getDimension(), getPos());
                     screenModules.add(screenModule);
                     totalRfPerTick += screenModule.getRfPerTick();
 
@@ -596,7 +596,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         int moduleIndex = 0;
         for (IScreenModule module : screenModules) {
             if (module != null) {
-                IModuleData data = module.getData(screenDataHelper, worldObj, millis);
+                IModuleData data = module.getData(screenDataHelper, getWorld(), millis);
                 if (data != null) {
                     map.put(moduleIndex, data);
                 }

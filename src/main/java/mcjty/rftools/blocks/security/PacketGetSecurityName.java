@@ -38,7 +38,7 @@ public class PacketGetSecurityName implements IMessage {
 
         private void handle(PacketGetSecurityName message, MessageContext ctx) {
             EntityPlayer player = ctx.getServerHandler().playerEntity;
-            SecurityChannels channels = SecurityChannels.getChannels(player.worldObj);
+            SecurityChannels channels = SecurityChannels.getChannels(player.getEntityWorld());
             SecurityChannels.SecurityChannel channel = channels.getChannel(message.id);
             if (channel == null) {
                 return;

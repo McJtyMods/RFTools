@@ -68,7 +68,7 @@ public class RemoteStorageItemContainer extends GenericContainer {
     }
 
     private RemoteStorageTileEntity getRemoteStorage() {
-        return RemoteStorageIdRegistry.getRemoteStorage(entityPlayer.worldObj, getStorageID());
+        return RemoteStorageIdRegistry.getRemoteStorage(entityPlayer.getEntityWorld(), getStorageID());
     }
 
     private int getStorageID() {
@@ -77,7 +77,7 @@ public class RemoteStorageItemContainer extends GenericContainer {
     }
 
     private boolean isServer() {
-        return !entityPlayer.worldObj.isRemote;
+        return !entityPlayer.getEntityWorld().isRemote;
     }
 
     @Override

@@ -38,7 +38,7 @@ public class PowerCellInfoPacketServer implements InfoPacketServer {
 
     @Override
     public Optional<InfoPacketClient> onMessageServer(EntityPlayerMP player) {
-        World world = player.worldObj;
+        World world = player.getEntityWorld();
 
         TileEntity te = world.getTileEntity(pos);
         if (id == -1) {

@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.storage.sorters;
 
+import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -31,8 +32,8 @@ public class CountItemSorter implements ItemSorter {
         return new Comparator<Pair<ItemStack, Integer>>() {
             @Override
             public int compare(Pair<ItemStack, Integer> o1, Pair<ItemStack, Integer> o2) {
-                Integer c1 = o1.getLeft().stackSize;
-                Integer c2 = o2.getLeft().stackSize;
+                Integer c1 = ItemStackTools.getStackSize(o1.getLeft());
+                Integer c2 = ItemStackTools.getStackSize(o2.getLeft());
                 return c2.compareTo(c1);
             }
         };
@@ -40,13 +41,14 @@ public class CountItemSorter implements ItemSorter {
 
     @Override
     public boolean isSameGroup(Pair<ItemStack, Integer> o1, Pair<ItemStack, Integer> o2) {
-        Integer c1 = o1.getLeft().stackSize;
-        Integer c2 = o2.getLeft().stackSize;
+        Integer c1 = ItemStackTools.getStackSize(o1.getLeft());
+        Integer c2 = ItemStackTools.getStackSize(o2.getLeft());
         return c2.compareTo(c1) == 0;
     }
 
     @Override
     public String getGroupName(Pair<ItemStack, Integer> object) {
-        return "Count " + object.getKey().stackSize;
+        return "Count " +
+                ItemStackTools.getStackSize(object.getKey());
     }
 }

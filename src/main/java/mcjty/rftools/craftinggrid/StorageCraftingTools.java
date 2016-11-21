@@ -46,8 +46,8 @@ public class StorageCraftingTools {
             }
         }
 
-        IRecipe recipe = craftingRecipe.getCachedRecipe(player.worldObj);
-        if (!recipe.matches(workInventory, player.worldObj)) {
+        IRecipe recipe = craftingRecipe.getCachedRecipe(player.getEntityWorld());
+        if (!recipe.matches(workInventory, player.getEntityWorld())) {
             missingCount[9] = 1;
         } else {
             missingCount[9] = 0;
@@ -86,8 +86,8 @@ public class StorageCraftingTools {
                 workInventory.setInventorySlotContents(i, null);
             }
         }
-        IRecipe recipe = craftingRecipe.getCachedRecipe(player.worldObj);
-        if (!recipe.matches(workInventory, player.worldObj)) {
+        IRecipe recipe = craftingRecipe.getCachedRecipe(player.getEntityWorld());
+        if (!recipe.matches(workInventory, player.getEntityWorld())) {
             result.clear();
             undo(player, itemSource, undo);
             return result;
@@ -163,7 +163,7 @@ public class StorageCraftingTools {
     }
 
     public static void craftItems(EntityPlayerMP player, int n, CraftingRecipe craftingRecipe, IItemSource itemSource) {
-        IRecipe recipe = craftingRecipe.getCachedRecipe(player.worldObj);
+        IRecipe recipe = craftingRecipe.getCachedRecipe(player.getEntityWorld());
         if (recipe == null) {
             // @todo give error?
             return;
@@ -202,7 +202,7 @@ public class StorageCraftingTools {
 
 
     public static int[] testCraftItems(EntityPlayerMP player, int n, CraftingRecipe craftingRecipe, IItemSource itemSource) {
-        IRecipe recipe = craftingRecipe.getCachedRecipe(player.worldObj);
+        IRecipe recipe = craftingRecipe.getCachedRecipe(player.getEntityWorld());
         if (recipe == null) {
             // @todo give error?
             return null;

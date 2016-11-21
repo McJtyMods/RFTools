@@ -29,7 +29,7 @@ public class SimpleDialerTileEntity extends LogicTileEntity {
         markDirty();
 
         if (powerLevel > 0) {
-            TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
+            TeleportDestinations destinations = TeleportDestinations.getDestinations(getWorld());
             BlockPos coordinate = null;
             int dim = 0;
             if (receiver != null) {
@@ -40,7 +40,7 @@ public class SimpleDialerTileEntity extends LogicTileEntity {
                 }
             }
 
-            int dial = TeleportationTools.dial(worldObj, null, null, transmitter.getCoordinate(), transmitter.getDimension(), coordinate, dim, onceMode);
+            int dial = TeleportationTools.dial(getWorld(), null, null, transmitter.getCoordinate(), transmitter.getDimension(), coordinate, dim, onceMode);
             if (dial != DialingDeviceTileEntity.DIAL_OK) {
                 // @todo some way to report error
             }

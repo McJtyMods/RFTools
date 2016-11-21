@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.screens.modules;
 
+import mcjty.lib.tools.ChatTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.api.screens.data.IModuleDataBoolean;
@@ -63,7 +64,7 @@ public class ButtonScreenModule implements IScreenModule<IModuleDataBoolean> {
                 }
             } else {
                 if (player != null) {
-                    player.addChatComponentMessage(new TextComponentString(TextFormatting.RED + "Module is not linked to redstone channel!"));
+                    ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Module is not linked to redstone channel!"));
                 }
             }
         }

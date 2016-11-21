@@ -9,7 +9,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
@@ -89,13 +88,13 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
         List<BlockPos> adjacentBlocks = new ArrayList<>();
         for (int dy = -1 ; dy <= 1 ; dy++) {
             int yy = y + dy;
-            if (yy >= 0 && yy < worldObj.getHeight()) {
+            if (yy >= 0 && yy < getWorld().getHeight()) {
                 for (int dz = -1 ; dz <= 1 ; dz++) {
                     int zz = z + dz;
                     for (int dx = -1 ; dx <= 1 ; dx++) {
                         int xx = x + dx;
                         if (dx != 0 || dy != 0 || dz != 0) {
-                            TileEntity tileEntity = worldObj.getTileEntity(new BlockPos(xx, yy, zz));
+                            TileEntity tileEntity = getWorld().getTileEntity(new BlockPos(xx, yy, zz));
                             if (tileEntity != null && tileEntity.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null)) {
                                 adjacentBlocks.add(new BlockPos(xx, yy, zz));
                             } else if (tileEntity instanceof IFluidHandler) {
@@ -111,7 +110,7 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
@@ -131,7 +130,7 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
         long stored = 0;
         long maxContents = 0;
 
-        TileEntity tileEntity = worldObj.getTileEntity(monitor);
+        TileEntity tileEntity = getWorld().getTileEntity(monitor);
         net.minecraftforge.fluids.capability.IFluidHandler fluidHandler = RFToolsTools.hasFluidCapabilitySafe(tileEntity);
         if (fluidHandler != null) {
             IFluidTankProperties[] properties = fluidHandler.getTankProperties();
@@ -191,7 +190,7 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
     }
 
     private void setRedstoneOut(boolean a) {
-        worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
+        getWorld().notifyNeighborsOfStateChange(this.pos, this.getBlockType());
     }
 
     @Override

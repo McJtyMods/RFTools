@@ -30,16 +30,16 @@ public class SpaceChamberControllerTileEntity extends GenericTileEntity {
         int z2 = z1;
         for (int i = 1 ; i < BuilderConfiguration.maxSpaceChamberDimension; i++) {
             if (x2 == x1) {
-                if (worldObj.getBlockState(new BlockPos(x1 - i, y1, z1)).getBlock() == BuilderSetup.spaceChamberBlock) {
+                if (getWorld().getBlockState(new BlockPos(x1 - i, y1, z1)).getBlock() == BuilderSetup.spaceChamberBlock) {
                     x2 = x1-i;
-                } else if (worldObj.getBlockState(new BlockPos(x1 + i, y1, z1)).getBlock() == BuilderSetup.spaceChamberBlock) {
+                } else if (getWorld().getBlockState(new BlockPos(x1 + i, y1, z1)).getBlock() == BuilderSetup.spaceChamberBlock) {
                     x2 = x1+i;
                 }
             }
             if (z2 == z1) {
-                if (worldObj.getBlockState(new BlockPos(x1, y1, z1 - i)).getBlock() == BuilderSetup.spaceChamberBlock) {
+                if (getWorld().getBlockState(new BlockPos(x1, y1, z1 - i)).getBlock() == BuilderSetup.spaceChamberBlock) {
                     z2 = z1-i;
-                } else if (worldObj.getBlockState(new BlockPos(x1, y1, z1 + i)).getBlock() == BuilderSetup.spaceChamberBlock) {
+                } else if (getWorld().getBlockState(new BlockPos(x1, y1, z1 + i)).getBlock() == BuilderSetup.spaceChamberBlock) {
                     z2 = z1+i;
                 }
             }
@@ -50,17 +50,17 @@ public class SpaceChamberControllerTileEntity extends GenericTileEntity {
             return;
         }
 
-        if (worldObj.getBlockState(new BlockPos(x2, y1, z2)).getBlock() != BuilderSetup.spaceChamberBlock) {
+        if (getWorld().getBlockState(new BlockPos(x2, y1, z2)).getBlock() != BuilderSetup.spaceChamberBlock) {
             Logging.message(player, TextFormatting.RED + "Not a valid chamber shape!");
             return;
         }
 
         for (int i = 1 ; i < BuilderConfiguration.maxSpaceChamberDimension; i++) {
-            if (worldObj.getBlockState(new BlockPos(x1, y1 - i, z1)).getBlock() == BuilderSetup.spaceChamberBlock) {
+            if (getWorld().getBlockState(new BlockPos(x1, y1 - i, z1)).getBlock() == BuilderSetup.spaceChamberBlock) {
                 y2 = y1-i;
                 break;
             }
-            if (worldObj.getBlockState(new BlockPos(x1, y1 + i, z1)).getBlock() == BuilderSetup.spaceChamberBlock) {
+            if (getWorld().getBlockState(new BlockPos(x1, y1 + i, z1)).getBlock() == BuilderSetup.spaceChamberBlock) {
                 y2 = y1+i;
                 break;
             }
@@ -71,17 +71,17 @@ public class SpaceChamberControllerTileEntity extends GenericTileEntity {
             return;
         }
 
-        if (worldObj.getBlockState(new BlockPos(x2, y2, z2)).getBlock() != BuilderSetup.spaceChamberBlock) {
+        if (getWorld().getBlockState(new BlockPos(x2, y2, z2)).getBlock() != BuilderSetup.spaceChamberBlock) {
             Logging.message(player, TextFormatting.RED + "Not a valid chamber shape!");
             return;
         }
 
-        if (worldObj.getBlockState(new BlockPos(x1, y2, z2)).getBlock() != BuilderSetup.spaceChamberBlock) {
+        if (getWorld().getBlockState(new BlockPos(x1, y2, z2)).getBlock() != BuilderSetup.spaceChamberBlock) {
             Logging.message(player, TextFormatting.RED + "Not a valid chamber shape!");
             return;
         }
 
-        if (worldObj.getBlockState(new BlockPos(x2, y2, z1)).getBlock() != BuilderSetup.spaceChamberBlock) {
+        if (getWorld().getBlockState(new BlockPos(x2, y2, z1)).getBlock() != BuilderSetup.spaceChamberBlock) {
             Logging.message(player, TextFormatting.RED + "Not a valid chamber shape!");
             return;
         }
@@ -98,12 +98,12 @@ public class SpaceChamberControllerTileEntity extends GenericTileEntity {
 
         Logging.message(player, TextFormatting.WHITE + "Chamber succesfully created!");
 
-        SpaceChamberRepository chamberRepository = SpaceChamberRepository.getChannels(worldObj);
+        SpaceChamberRepository chamberRepository = SpaceChamberRepository.getChannels(getWorld());
         SpaceChamberRepository.SpaceChamberChannel chamberChannel = chamberRepository.getOrCreateChannel(channel);
-        chamberChannel.setDimension(worldObj.provider.getDimension());
+        chamberChannel.setDimension(getWorld().provider.getDimension());
         chamberChannel.setMinCorner(minCorner);
         chamberChannel.setMaxCorner(maxCorner);
-        chamberRepository.save(worldObj);
+        chamberRepository.save(getWorld());
 
         markDirtyClient();
     }

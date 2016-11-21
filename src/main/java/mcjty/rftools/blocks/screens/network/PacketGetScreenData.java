@@ -54,7 +54,7 @@ public class PacketGetScreenData implements IMessage {
         }
 
         private void handle(PacketGetScreenData message, MessageContext ctx) {
-            World world = ctx.getServerHandler().playerEntity.worldObj;
+            World world = ctx.getServerHandler().playerEntity.getEntityWorld();
             if (message.pos.getDimension() != world.provider.getDimension()) {
                 return;
             }

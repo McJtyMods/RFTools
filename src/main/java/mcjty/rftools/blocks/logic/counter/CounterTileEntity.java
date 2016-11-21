@@ -41,7 +41,7 @@ public class CounterTileEntity extends LogicTileEntity {
     }
 
     protected void update() {
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             return;
         }
         boolean pulse = (powerLevel > 0) && !prevIn;

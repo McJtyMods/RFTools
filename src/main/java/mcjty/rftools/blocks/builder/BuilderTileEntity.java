@@ -1,10 +1,13 @@
 package mcjty.rftools.blocks.builder;
 
+import com.mojang.authlib.GameProfile;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.inventory.InventoryTools;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketRequestIntegerFromServer;
+import mcjty.lib.tools.*;
 import mcjty.lib.varia.*;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
@@ -133,6 +136,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     // Cached set of blocks that we want to void with the quarry.
     private Set<Block> cachedVoidableBlocks = null;
 
+    private static FakePlayer harvester = null;
+
     public BuilderTileEntity() {
         super(BuilderConfiguration.BUILDER_MAXENERGY, BuilderConfiguration.BUILDER_RECEIVEPERTICK);
     }
@@ -142,6 +147,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return true;
     }
 
+    private static FakePlayer getHarvester() {
+        if (harvester == null) {
+            harvester = FakePlayerFactory.get(DimensionManager.getWorld(0), new GameProfile(new UUID(111, 333), "rftools_builder"));
+        }
+        return harvester;
+    }
+
     @Override
     public EnumFacing getBlockOrientation() {
         return BlockTools.getOrientationHoriz(getBlockMetadata());
@@ -149,7 +161,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public boolean isBlockAboveAir() {
-        return worldObj.isAirBlock(pos.up());
+        return getWorld().isAirBlock(pos.up());
     }
 
     @Override
@@ -240,7 +252,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private boolean isShapeCard() {
         ItemStack itemStack = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
-        if (itemStack == null || itemStack.stackSize == 0) {
+        if (ItemStackTools.isEmpty(itemStack)) {
             return false;
         }
         return itemStack.getItem() == BuilderSetup.shapeCardItem;
@@ -248,7 +260,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private NBTTagCompound hasCard() {
         ItemStack itemStack = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
-        if (itemStack == null || itemStack.stackSize == 0) {
+        if (ItemStackTools.isEmpty(itemStack)) {
             return null;
         }
 
@@ -261,11 +273,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
         ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
         List<BlockPos> blocks = new ArrayList<>();
-        ShapeCardItem.composeShape(shape.makeHollow(), worldObj, getPos(), dimension, offset, blocks,
+        ShapeCardItem.composeShape(shape.makeHollow(), getWorld(), getPos(), dimension, offset, blocks,
                 BuilderConfiguration.maxBuilderDimension*256* BuilderConfiguration.maxBuilderDimension, false, null);
         for (BlockPos p : blocks) {
-            if (worldObj.isAirBlock(p)) {
-                worldObj.setBlockState(p, BuilderSetup.supportBlock.getDefaultState().withProperty(SupportBlock.STATUS, SupportBlock.STATUS_OK), 3);
+            if (getWorld().isAirBlock(p)) {
+                getWorld().setBlockState(p, BuilderSetup.supportBlock.getDefaultState().withProperty(SupportBlock.STATUS, SupportBlock.STATUS_OK), 3);
             }
         }
     }
@@ -296,17 +308,17 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                         int error = SupportBlock.STATUS_OK;
                         if (mode != MODE_COPY) {
                             TileEntity srcTileEntity = world.getTileEntity(src);
-                            TileEntity dstTileEntity = worldObj.getTileEntity(dest);
+                            TileEntity dstTileEntity = getWorld().getTileEntity(dest);
 
                             int error1 = isMovable(world, src, srcBlock, srcTileEntity);
-                            int error2 = isMovable(worldObj, dest, dstBlock, dstTileEntity);
+                            int error2 = isMovable(getWorld(), dest, dstBlock, dstTileEntity);
                             error = Math.max(error1, error2);
                         }
                         if (isEmpty(srcState, srcBlock) && !isEmpty(dstState, dstBlock)) {
-                            worldObj.setBlockState(src, BuilderSetup.supportBlock.getDefaultState().withProperty(SupportBlock.STATUS, error), 3);
+                            getWorld().setBlockState(src, BuilderSetup.supportBlock.getDefaultState().withProperty(SupportBlock.STATUS, error), 3);
                         }
                         if (isEmpty(dstState, dstBlock) && !isEmpty(srcState, srcBlock)) {
-                            worldObj.setBlockState(dest, BuilderSetup.supportBlock.getDefaultState().withProperty(SupportBlock.STATUS, error), 3);
+                            getWorld().setBlockState(dest, BuilderSetup.supportBlock.getDefaultState().withProperty(SupportBlock.STATUS, error), 3);
                         }
                     }
                 }
@@ -320,16 +332,16 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
         ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
         List<BlockPos> blocks = new ArrayList<BlockPos>();
-        ShapeCardItem.composeShape(shape.makeHollow(), worldObj, getPos(), dimension, offset, blocks, BuilderConfiguration.maxSpaceChamberDimension* BuilderConfiguration.maxSpaceChamberDimension* BuilderConfiguration.maxSpaceChamberDimension, false, null);
+        ShapeCardItem.composeShape(shape.makeHollow(), getWorld(), getPos(), dimension, offset, blocks, BuilderConfiguration.maxSpaceChamberDimension* BuilderConfiguration.maxSpaceChamberDimension* BuilderConfiguration.maxSpaceChamberDimension, false, null);
         for (BlockPos block : blocks) {
-            if (worldObj.getBlockState(block).getBlock() == BuilderSetup.supportBlock) {
-                worldObj.setBlockToAir(block);
+            if (getWorld().getBlockState(block).getBlock() == BuilderSetup.supportBlock) {
+                getWorld().setBlockToAir(block);
             }
         }
     }
 
     public void clearSupportBlocks() {
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             // Don't do anything on the client.
             return;
         }
@@ -355,9 +367,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                             }
                         }
                         BlockPos dest = sourceToDest(src);
-                        Block dstBlock = worldObj.getBlockState(dest).getBlock();
+                        Block dstBlock = getWorld().getBlockState(dest).getBlock();
                         if (dstBlock == BuilderSetup.supportBlock) {
-                            worldObj.setBlockToAir(dest);
+                            getWorld().setBlockToAir(dest);
                         }
                     }
                 }
@@ -462,7 +474,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     // Give a dimension, return a min coordinate of the box right in front of the builder
     private BlockPos positionBox(BlockPos dimension) {
-        IBlockState state = worldObj.getBlockState(getPos());
+        IBlockState state = getWorld().getBlockState(getPos());
         EnumFacing direction = state.getValue(BuilderSetup.builderBlock.FACING_HORIZ);
         int spanX = dimension.getX();
         int spanY = dimension.getY();
@@ -541,7 +553,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         BlockPos minCorner = new BlockPos(Math.min(minC.getX(), maxC.getX()), Math.min(minC.getY(), maxC.getY()), Math.min(minC.getZ(), maxC.getZ()));
         BlockPos maxCorner = new BlockPos(Math.max(minC.getX(), maxC.getX()), Math.max(minC.getY(), maxC.getY()), Math.max(minC.getZ(), maxC.getZ()));
 
-        IBlockState state = worldObj.getBlockState(getPos());
+        IBlockState state = getWorld().getBlockState(getPos());
         EnumFacing direction = state.getValue(BuilderSetup.builderBlock.FACING_HORIZ);
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
@@ -577,7 +589,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private void calculateBox(NBTTagCompound cardCompound) {
         int channel = cardCompound.getInteger("channel");
 
-        SpaceChamberRepository repository = SpaceChamberRepository.getChannels(worldObj);
+        SpaceChamberRepository repository = SpaceChamberRepository.getChannels(getWorld());
         SpaceChamberRepository.SpaceChamberChannel chamberChannel = repository.getChannel(channel);
         BlockPos minCorner = chamberChannel.getMinCorner();
         BlockPos maxCorner = chamberChannel.getMaxCorner();
@@ -619,7 +631,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
@@ -740,7 +752,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         ItemStack stack = item.getEntityItem();
 
         rf = getEnergyStored(EnumFacing.DOWN);
-        rfNeeded = (int) (BuilderConfiguration.collectRFPerItem * infusedFactor) * stack.stackSize;
+        rfNeeded = (int) (BuilderConfiguration.collectRFPerItem * infusedFactor) * ItemStackTools.getStackSize(stack);
         if (rfNeeded > rf) {
             // Not enough energy.
             return true;
@@ -751,8 +763,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         stack = insertItem(stack);
         if (stack != null) {
             BlockPos position = item.getPosition();
-            EntityItem entityItem = new EntityItem(worldObj, position.getX(), position.getY(), position.getZ(), stack);
-            worldObj.spawnEntityInWorld(entityItem);
+            EntityItem entityItem = new EntityItem(getWorld(), position.getX(), position.getY(), position.getZ(), stack);
+            mcjty.lib.tools.WorldTools.spawnEntity(getWorld(), entityItem);
         }
         return false;
     }
@@ -807,7 +819,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return null;
         }
 
-        SpaceChamberRepository repository = SpaceChamberRepository.getChannels(worldObj);
+        SpaceChamberRepository repository = SpaceChamberRepository.getChannels(getWorld());
         SpaceChamberRepository.SpaceChamberChannel chamberChannel = repository.getChannel(channel);
         if (chamberChannel == null) {
             return null;
@@ -832,7 +844,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
             BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
             BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
-            ShapeCardItem.composeShape(shape, worldObj, getPos(), dimension, offset, cachedBlocks,
+            ShapeCardItem.composeShape(shape, getWorld(), getPos(), dimension, offset, cachedBlocks,
                     BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension,
                     !ShapeCardItem.isNormalShapeCard(shapeCard), chunk);
             cachedChunk = chunk;
@@ -910,7 +922,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         Block block = null;
         if (getCardType() != ShapeCardItem.CARD_SHAPE) {
             BlockPos spos = new BlockPos(sx, sy, sz);
-            IBlockState state = worldObj.getBlockState(spos);
+            IBlockState state = getWorld().getBlockState(spos);
             block = state.getBlock();
             if (!isEmpty(state, block)) {
                 float hardness;
@@ -920,7 +932,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     if (getCachedVoidableBlocks().contains(block)) {
                         rfNeeded = (int) (BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.voidShapeCardFactor);
                     }
-                    hardness = block.getBlockHardness(state, worldObj, spos);
+                    hardness = block.getBlockHardness(state, getWorld(), spos);
                 }
                 rfNeeded *= (int) ((hardness + 1) * 2);
             }
@@ -955,17 +967,17 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private boolean buildBlock(int rfNeeded, BlockPos srcPos) {
-        if (isEmptyOrReplacable(worldObj, srcPos)) {
-            ItemStack stack = consumeBlock(worldObj, srcPos, null);
+        if (isEmptyOrReplacable(getWorld(), srcPos)) {
+            ItemStack stack = consumeBlock(getWorld(), srcPos, null);
             if (stack == null) {
                 return true;    // We could not find a block. Wait
             }
 
-            FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
-            IBlockState newState = placeBlockAt(worldObj, srcPos, stack, null, fakePlayer);
+            FakePlayer fakePlayer = getHarvester();
+            IBlockState newState = placeBlockAt(getWorld(), srcPos, stack, null, fakePlayer);
 
             if (!silent) {
-                SoundTools.playSound(worldObj, newState.getBlock().getSoundType().breakSound, srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
+                SoundTools.playSound(getWorld(), newState.getBlock().getSoundType().breakSound, srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
             }
 
             consumeEnergy(rfNeeded);
@@ -984,7 +996,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             itemBlock.placeBlockAt(stack, fakePlayer, world, pos, EnumFacing.UP, 0, 0, 0, newState);
             return newState;
         } else {
-            item.onItemUse(stack, fakePlayer, world, pos.down(), EnumHand.MAIN_HAND, EnumFacing.UP, 0, 0, 0);
+            InventoryTools.onItemUseWithStack(item, stack, fakePlayer, world, pos.down(), EnumHand.MAIN_HAND, EnumFacing.UP, 0, 0, 0);
             return world.getBlockState(pos);
         }
     }
@@ -1004,13 +1016,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private void clearOrDirtBlock(int rfNeeded, int sx, int sy, int sz, Block block, boolean clear) {
         BlockPos spos = new BlockPos(sx, sy, sz);
         if (clear) {
-            worldObj.setBlockToAir(spos);
+            getWorld().setBlockToAir(spos);
         } else {
-            worldObj.setBlockState(spos, getDirtOrCobble().getDefaultState(), 2);       // No block update!
+            getWorld().setBlockState(spos, getDirtOrCobble().getDefaultState(), 2);       // No block update!
         }
         consumeEnergy(rfNeeded);
         if (!silent) {
-            SoundTools.playSound(worldObj, block.getSoundType().breakSound, sx, sy, sz, 1.0f, 1.0f);
+            SoundTools.playSound(getWorld(), block.getSoundType().breakSound, sx, sy, sz, 1.0f, 1.0f);
         }
     }
 
@@ -1019,7 +1031,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private boolean silkQuarryBlock(int rfNeeded, BlockPos srcPos, Block block) {
-        IBlockState srcState = worldObj.getBlockState(srcPos);
+        IBlockState srcState = getWorld().getBlockState(srcPos);
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
@@ -1033,24 +1045,24 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (isEmpty(srcState, block)) {
             return false;
         }
-        if (block.getBlockHardness(srcState, worldObj, srcPos) >= 0) {
+        if (block.getBlockHardness(srcState, getWorld(), srcPos) >= 0) {
             boolean clear = ShapeCardItem.isClearingQuarry(getCardType());
             if ((!clear) && block == getDirtOrCobble()) {
                 // We can skip dirt if we are not clearing.
                 return false;
             }
-            if ((!BuilderConfiguration.quarryTileEntities) && worldObj.getTileEntity(srcPos) != null) {
+            if ((!BuilderConfiguration.quarryTileEntities) && getWorld().getTileEntity(srcPos) != null) {
                 // Skip tile entities
                 return false;
             }
 
-            FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
-            if (block.canEntityDestroy(srcState, worldObj, srcPos, fakePlayer)) {
+            FakePlayer fakePlayer = getHarvester();
+            if (block.canEntityDestroy(srcState, getWorld(), srcPos, fakePlayer)) {
                 ItemStack filter = getStackInSlot(BuilderContainer.SLOT_FILTER);
                 if (filter != null) {
                     getFilterCache();
                     if (filterCache != null) {
-                        boolean match = filterCache.match(block.getItem(worldObj, srcPos, srcState));
+                        boolean match = filterCache.match(block.getItem(getWorld(), srcPos, srcState));
                         if (!match) {
                             consumeEnergy(Math.min(rfNeeded, BuilderConfiguration.builderRfPerSkipped));
                             return false;   // Skip this
@@ -1061,7 +1073,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     clearOrDirtBlock(rfNeeded, sx, sy, sz, block, clear);
                 } else {
                     List<ItemStack> drops;
-                    if (block.canSilkHarvest(worldObj, srcPos, srcState, fakePlayer)) {
+                    if (block.canSilkHarvest(getWorld(), srcPos, srcState, fakePlayer)) {
                         Item item = Item.getItemFromBlock(block);
                         drops = new ArrayList<>();
                         if (item != null) {
@@ -1071,10 +1083,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                             }
                             drops.add(new ItemStack(item, 1, m));
                         }
-                        net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, worldObj, pos, srcState, 0, 1.0f, true, fakePlayer);
+                        net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, getWorld(), pos, srcState, 0, 1.0f, true, fakePlayer);
                     } else {
-                        drops = block.getDrops(worldObj, srcPos, srcState, 0);
-                        net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, worldObj, pos, srcState, 0, 1.0f, false, fakePlayer);
+                        drops = block.getDrops(getWorld(), srcPos, srcState, 0);
+                        net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, getWorld(), pos, srcState, 0, 1.0f, false, fakePlayer);
                     }
                     if (checkAndInsertItems(block, drops)) {
                         clearOrDirtBlock(rfNeeded, sx, sy, sz, block, clear);
@@ -1094,7 +1106,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private boolean quarryBlock(int rfNeeded, BlockPos srcPos, Block block) {
-        IBlockState srcState = worldObj.getBlockState(srcPos);
+        IBlockState srcState = getWorld().getBlockState(srcPos);
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
@@ -1108,24 +1120,24 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (isEmpty(srcState, block)) {
             return false;
         }
-        if (block.getBlockHardness(srcState, worldObj, srcPos) >= 0) {
+        if (block.getBlockHardness(srcState, getWorld(), srcPos) >= 0) {
             boolean clear = ShapeCardItem.isClearingQuarry(getCardType());
             if ((!clear) && block == getDirtOrCobble()) {
                 // We can skip dirt if we are not clearing.
                 return false;
             }
-            if ((!BuilderConfiguration.quarryTileEntities) && worldObj.getTileEntity(srcPos) != null) {
+            if ((!BuilderConfiguration.quarryTileEntities) && getWorld().getTileEntity(srcPos) != null) {
                 // Skip tile entities
                 return false;
             }
 
-            FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
-            if (block.canEntityDestroy(srcState, worldObj, srcPos, fakePlayer)) {
+            FakePlayer fakePlayer = getHarvester();
+            if (block.canEntityDestroy(srcState, getWorld(), srcPos, fakePlayer)) {
                 ItemStack filter = getStackInSlot(BuilderContainer.SLOT_FILTER);
                 if (filter != null) {
                     getFilterCache();
                     if (filterCache != null) {
-                        boolean match = filterCache.match(block.getItem(worldObj, srcPos, srcState));
+                        boolean match = filterCache.match(block.getItem(getWorld(), srcPos, srcState));
                         if (!match) {
                             consumeEnergy(Math.min(rfNeeded, BuilderConfiguration.builderRfPerSkipped));
                             return false;   // Skip this
@@ -1136,8 +1148,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     clearOrDirtBlock(rfNeeded, sx, sy, sz, block, clear);
                 } else {
                     int fortune = (getCardType() == ShapeCardItem.CARD_QUARRY_FORTUNE || getCardType() == ShapeCardItem.CARD_QUARRY_CLEAR_FORTUNE) ? 3 : 0;
-                    List<ItemStack> drops = block.getDrops(worldObj, srcPos, srcState, fortune);
-                    net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, worldObj, pos, srcState, fortune, 1.0f, false, fakePlayer);
+                    List<ItemStack> drops = block.getDrops(getWorld(), srcPos, srcState, fortune);
+                    net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, getWorld(), pos, srcState, fortune, 1.0f, false, fakePlayer);
                     if (checkAndInsertItems(block, drops)) {
                         clearOrDirtBlock(rfNeeded, sx, sy, sz, block, clear);
                     } else {
@@ -1172,25 +1184,25 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return false;
         }
 
-        IBlockState srcState = worldObj.getBlockState(srcPos);
+        IBlockState srcState = getWorld().getBlockState(srcPos);
         if (getFluidLevel(srcState) != 0) {
             return false;
         }
 
 
-        if (block.getBlockHardness(srcState, worldObj, srcPos) >= 0) {
-            FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
-            if (block.canEntityDestroy(srcState, worldObj, srcPos, fakePlayer)) {
+        if (block.getBlockHardness(srcState, getWorld(), srcPos) >= 0) {
+            FakePlayer fakePlayer = getHarvester();
+            if (block.canEntityDestroy(srcState, getWorld(), srcPos, fakePlayer)) {
                 if (checkAndInsertFluids(fluid)) {
                     consumeEnergy(rfNeeded);
                     boolean clear = getCardType() == ShapeCardItem.CARD_PUMP_CLEAR;
                     if (clear) {
-                        worldObj.setBlockToAir(srcPos);
+                        getWorld().setBlockToAir(srcPos);
                     } else {
-                        worldObj.setBlockState(srcPos, getDirtOrCobble().getDefaultState(), 2);       // No block update!
+                        getWorld().setBlockState(srcPos, getDirtOrCobble().getDefaultState(), 2);       // No block update!
                     }
                     if (!silent) {
-                        SoundTools.playSound(worldObj, block.getSoundType().breakSound, srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
+                        SoundTools.playSound(getWorld(), block.getSoundType().breakSound, srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
                     }
                 }
                 // We never wait when pumping fluids
@@ -1201,7 +1213,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private boolean voidBlock(int rfNeeded, BlockPos srcPos, Block block) {
-        IBlockState srcState = worldObj.getBlockState(srcPos);
+        IBlockState srcState = getWorld().getBlockState(srcPos);
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
@@ -1212,12 +1224,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             // Skip a 3x3x3 block around the builder.
             return false;
         }
-        if (block.getBlockHardness(srcState, worldObj, srcPos) >= 0) {
+        if (block.getBlockHardness(srcState, getWorld(), srcPos) >= 0) {
             ItemStack filter = getStackInSlot(BuilderContainer.SLOT_FILTER);
             if (filter != null) {
                 getFilterCache();
                 if (filterCache != null) {
-                    boolean match = filterCache.match(block.getItem(worldObj, srcPos, srcState));
+                    boolean match = filterCache.match(block.getItem(getWorld(), srcPos, srcState));
                     if (!match) {
                         consumeEnergy(Math.min(rfNeeded, BuilderConfiguration.builderRfPerSkipped));
                         return false;   // Skip this
@@ -1226,9 +1238,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
 
             if (!silent) {
-                SoundTools.playSound(worldObj, block.getSoundType().breakSound, sx, sy, sz, 1.0f, 1.0f);
+                SoundTools.playSound(getWorld(), block.getSoundType().breakSound, sx, sy, sz, 1.0f, 1.0f);
             }
-            worldObj.setBlockToAir(srcPos);
+            getWorld().setBlockToAir(srcPos);
             consumeEnergy(rfNeeded);
         }
         return false;
@@ -1246,25 +1258,25 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         switch (mode) {
             case MODE_COPY:
-                copyBlock(world, srcPos, worldObj, destPos);
+                copyBlock(world, srcPos, getWorld(), destPos);
                 break;
             case MODE_MOVE:
                 if (entityMode) {
-                    moveEntities(world, x, y, z, worldObj, destX, destY, destZ);
+                    moveEntities(world, x, y, z, getWorld(), destX, destY, destZ);
                 }
-                moveBlock(world, srcPos, worldObj, destPos, rotate);
+                moveBlock(world, srcPos, getWorld(), destPos, rotate);
                 break;
             case MODE_BACK:
                 if (entityMode) {
-                    moveEntities(worldObj, destX, destY, destZ, world, x, y, z);
+                    moveEntities(getWorld(), destX, destY, destZ, world, x, y, z);
                 }
-                moveBlock(worldObj, destPos, world, srcPos, oppositeRotate());
+                moveBlock(getWorld(), destPos, world, srcPos, oppositeRotate());
                 break;
             case MODE_SWAP:
                 if (entityMode) {
-                    swapEntities(world, x, y, z, worldObj, destX, destY, destZ);
+                    swapEntities(world, x, y, z, getWorld(), destX, destY, destZ);
                 }
-                swapBlock(world, srcPos, worldObj, destPos);
+                swapBlock(world, srcPos, getWorld(), destPos);
                 break;
         }
 
@@ -1295,7 +1307,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             if (isPlacable(srcItem)) {
                 for (int i = 0; i < inventory.getSlots(); i++) {
                     ItemStack stack = inventory.getStackInSlot(i);
-                    if (stack != null && stack.stackSize > 0 && stack.isItemEqual(srcItem)) {
+                    if (ItemStackTools.isValid(stack) && stack.isItemEqual(srcItem)) {
                         return inventory.extractItem(i, 1, false);
                     }
                 }
@@ -1305,7 +1317,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private boolean isPlacable(ItemStack stack) {
-        if (stack == null || stack.stackSize <= 0) {
+        if (ItemStackTools.isEmpty(stack)) {
             return false;
         }
         Item item = stack.getItem();
@@ -1335,7 +1347,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             int meta = block.getMetaFromState(state);
             for (int i = 0; i < inventory.getSizeInventory(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
-                if (stack != null && stack.stackSize > 0 && stack.isItemEqual(srcItem)) {
+                if (ItemStackTools.isValid(stack) && stack.isItemEqual(srcItem)) {
                     return inventory.decrStackSize(i, 1);
                 }
             }
@@ -1347,9 +1359,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     // the items that we try to insert.
     private boolean checkValidItems(Block block, List<ItemStack> items) {
         for (ItemStack stack : items) {
-            if (stack.getItem() == null) {
+            if (ItemStackTools.isEmpty(stack) || stack.getItem() == null) {
                 Logging.logError("Builder tried to quarry " + block.getRegistryName().toString() + " and it returned null item!");
-                Broadcaster.broadcast(worldObj, pos.getX(), pos.getY(), pos.getZ(), "Builder tried to quarry "
+                Broadcaster.broadcast(getWorld(), pos.getX(), pos.getY(), pos.getZ(), "Builder tried to quarry "
                         + block.getRegistryName().toString() + " and it returned null item!\nPlease report to mod author!",
                         10);
                 return false;
@@ -1369,7 +1381,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private boolean checkFluidTank(Fluid fluid, BlockPos up, EnumFacing side) {
-        TileEntity te = worldObj.getTileEntity(up);
+        TileEntity te = getWorld().getTileEntity(up);
         if (te != null && te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null)) {
             IFluidHandler handler = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
             FluidStack fluidStack = new FluidStack(fluid, 1000);
@@ -1383,13 +1395,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private boolean checkAndInsertItems(Block block, List<ItemStack> items) {
-        TileEntity te = worldObj.getTileEntity(getPos().up());
+        TileEntity te = getWorld().getTileEntity(getPos().up());
         if (!checkValidItems(block, items)) {
             return false;
         }
         boolean ok = InventoryHelper.insertItemsAtomic(items, te, EnumFacing.DOWN);
         if (!ok) {
-            te = worldObj.getTileEntity(getPos().down());
+            te = getWorld().getTileEntity(getPos().down());
             ok = InventoryHelper.insertItemsAtomic(items, te, EnumFacing.UP);
         }
         return ok;
@@ -1397,9 +1409,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     // Return what could not be inserted
     private ItemStack insertItem(ItemStack s) {
-        s = InventoryHelper.insertItem(worldObj, getPos(), EnumFacing.UP, s);
+        s = InventoryHelper.insertItem(getWorld(), getPos(), EnumFacing.UP, s);
         if (s != null) {
-            s = InventoryHelper.insertItem(worldObj, getPos(), EnumFacing.DOWN, s);
+            s = InventoryHelper.insertItem(getWorld(), getPos(), EnumFacing.DOWN, s);
         }
         return s;
     }
@@ -1411,7 +1423,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
      * returned. Otherwise the returned block has to match.
      */
     private ItemStack consumeBlock(EnumFacing direction, World srcWorld, BlockPos srcPos, IBlockState state) {
-        TileEntity te = worldObj.getTileEntity(getPos().offset(direction));
+        TileEntity te = getWorld().getTileEntity(getPos().offset(direction));
         if (te != null) {
             if (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite())) {
                 IItemHandler capability = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite());
@@ -1437,7 +1449,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return BuilderSetup.BlockInformation.FREE;
         }
 
-        FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
+        FakePlayer fakePlayer = getHarvester();
         if (!block.canEntityDestroy(state, world, pos, fakePlayer)) {
             return BuilderSetup.BlockInformation.INVALID;
         }
@@ -1567,7 +1579,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             BuilderSetup.BlockInformation information = getBlockInformation(world, srcPos, origBlock, null);
             origMeta = rotateMeta(origBlock, origMeta, information, rotate);
 
-            FakePlayer fakePlayer = FakePlayerFactory.getMinecraft(DimensionManager.getWorld(0));
+            FakePlayer fakePlayer = getHarvester();
             IBlockState newState = placeBlockAt(destWorld, destPos, consumedStack, origMeta, fakePlayer);
             destWorld.setBlockState(destPos, newState, 3);  // placeBlockAt can reset the orientation. Restore it here
 
@@ -1672,7 +1684,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     Entity newEntity = entityClass.getConstructor(World.class).newInstance(destWorld);
                     newEntity.readFromNBT(tagCompound);
                     newEntity.setLocationAndAngles(newX, newY, newZ, rotationYaw, rotationPitch);
-                    destWorld.spawnEntityInWorld(newEntity);
+                    mcjty.lib.tools.WorldTools.spawnEntity(destWorld, newEntity);
                 } catch (Exception e) {
                 }
             } else {
@@ -1863,7 +1875,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         int cx = x >> 4;
         int cz = z >> 4;
 
-        if (RFToolsTools.chunkLoaded(worldObj, new BlockPos(x, 0, z))) {
+        if (RFToolsTools.chunkLoaded(getWorld(), new BlockPos(x, 0, z))) {
             return true;
         }
 
@@ -1875,7 +1887,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
                     }
                 });
-                ticket = ForgeChunkManager.requestTicket(RFTools.instance, worldObj, ForgeChunkManager.Type.NORMAL);
+                ticket = ForgeChunkManager.requestTicket(RFTools.instance, getWorld(), ForgeChunkManager.Type.NORMAL);
                 if (ticket == null) {
                     // Chunk is not loaded and we can't get a ticket.
                     return false;
@@ -2015,9 +2027,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return 1;
     }
 
-    @SuppressWarnings("NullableProblems")
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isUsable(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 

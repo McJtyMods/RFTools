@@ -96,7 +96,7 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
 
     @Override
     public void update() {
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             return;
         }
 
@@ -112,15 +112,15 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
     public boolean checkOutput() {
         boolean newout = false;
 
-        EnumFacing inputSide = getFacing(worldObj.getBlockState(getPos())).getInputSide();
+        EnumFacing inputSide = getFacing(getWorld().getBlockState(getPos())).getInputSide();
         BlockPos inputPos = getPos().offset(inputSide);
-        TileEntity te = worldObj.getTileEntity(inputPos);
+        TileEntity te = getWorld().getTileEntity(inputPos);
         if (InventoryHelper.isInventory(te)) {
             ItemStack stack = null;
             if (RFToolsTools.hasItemCapabilitySafe(te)) {
                 IItemHandler capability = RFToolsTools.getItemCapabilitySafe(te);
                 if (capability == null) {
-                    Block errorBlock = worldObj.getBlockState(inputPos).getBlock();
+                    Block errorBlock = getWorld().getBlockState(inputPos).getBlock();
                     Logging.logError("Block: " + errorBlock.getLocalizedName() + " at " + BlockPosTools.toString(inputPos) + " returns null for getCapability(). Report to mod author");
                 } else if (slot >= 0 && slot < capability.getSlots()) {
                     stack = capability.getStackInSlot(slot);

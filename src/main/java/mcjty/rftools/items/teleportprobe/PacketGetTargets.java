@@ -44,7 +44,7 @@ public class PacketGetTargets implements IMessage {
             int target = -1;
             int targets[] = new int[AdvancedChargedPorterItem.MAXTARGETS];
             String names[] = new String[AdvancedChargedPorterItem.MAXTARGETS];
-            TeleportDestinations destinations = TeleportDestinations.getDestinations(player.worldObj);
+            TeleportDestinations destinations = TeleportDestinations.getDestinations(player.getEntityWorld());
 
             if (tagCompound != null) {
                 if (tagCompound.hasKey("target")) {

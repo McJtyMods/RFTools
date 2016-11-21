@@ -56,7 +56,7 @@ public class PacketGetChamberInfo implements IMessage {
                 return;
             }
 
-            SpaceChamberRepository repository = SpaceChamberRepository.getChannels(player.worldObj);
+            SpaceChamberRepository repository = SpaceChamberRepository.getChannels(player.getEntityWorld());
             SpaceChamberRepository.SpaceChamberChannel chamberChannel = repository.getChannel(channel);
             if (chamberChannel == null) {
                 return;

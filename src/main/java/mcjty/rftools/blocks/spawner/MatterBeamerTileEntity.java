@@ -49,7 +49,7 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
@@ -76,7 +76,7 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
 
         TileEntity te = null;
         if (destination != null) {
-            te = worldObj.getTileEntity(destination);
+            te = getWorld().getTileEntity(destination);
             if (!(te instanceof SpawnerTileEntity)) {
                 setDestination(null);
                 return;
@@ -128,10 +128,10 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
 
         super.onDataPacket(net, packet);
 
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             // If needed send a render update.
             if (oldglowing != glowing) {
-                worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
+                getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
             }
         }
     }
@@ -157,7 +157,7 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
         BlockPos coord = RFTools.instance.clientInfo.getSelectedTE();
         TileEntity tileEntity = null;
         if (coord != null) {
-            tileEntity = worldObj.getTileEntity(coord);
+            tileEntity = getWorld().getTileEntity(coord);
         }
 
         if (!(tileEntity instanceof MatterBeamerTileEntity)) {
@@ -184,7 +184,7 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
         disableBlockGlow();
         markDirty();
 
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             // We're on the client. Send change to server.
             RFToolsMessages.INSTANCE.sendToServer(new PacketServerCommand(getPos(),
                     MatterBeamerTileEntity.CMD_SETDESTINATION,
@@ -207,7 +207,7 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
         if (destination == null) {
             return null;
         }
-        TileEntity te = worldObj.getTileEntity(destination);
+        TileEntity te = getWorld().getTileEntity(destination);
         if (te instanceof SpawnerTileEntity) {
             return (SpawnerTileEntity) te;
         } else {

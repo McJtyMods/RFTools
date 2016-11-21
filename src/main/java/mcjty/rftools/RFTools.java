@@ -192,6 +192,6 @@ public class RFTools implements ModBase {
     @Override
     public void openManual(EntityPlayer player, int bookIndex, String page) {
         GuiRFToolsManual.locatePage = page;
-        player.openGui(RFTools.instance, bookIndex, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+        player.openGui(RFTools.instance, bookIndex, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
     }
 }

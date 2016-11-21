@@ -90,7 +90,7 @@ public class EnergyModuleItem extends GenericRFToolsItem implements IModuleProvi
             tagCompound.setInteger("monitorx", pos.getX());
             tagCompound.setInteger("monitory", pos.getY());
             tagCompound.setInteger("monitorz", pos.getZ());
-            IBlockState state = player.worldObj.getBlockState(pos);
+            IBlockState state = player.getEntityWorld().getBlockState(pos);
             Block block = state.getBlock();
             String name = "<invalid>";
             if (block != null && !block.isAir(state, world, pos)) {

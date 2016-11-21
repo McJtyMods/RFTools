@@ -1,6 +1,7 @@
 package mcjty.rftools.craftinggrid;
 
 import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -65,8 +66,8 @@ public class InventoriesItemSource implements IItemSource {
         ItemKey realKey = (ItemKey) key;
         ItemStack stack = realKey.getInventory().getStackInSlot(realKey.getSlot());
         ItemStack result = stack.splitStack(amount);
-        if (stack.stackSize == 0) {
-            realKey.getInventory().setInventorySlotContents(realKey.getSlot(), null);
+        if (ItemStackTools.isEmpty(stack)) {
+            realKey.getInventory().setInventorySlotContents(realKey.getSlot(), ItemStackTools.getEmptyStack());
         }
         return result;
     }

@@ -68,7 +68,7 @@ public class PacketContentsMonitor implements IMessage {
         }
 
         private void handle(PacketContentsMonitor message, MessageContext ctx) {
-            TileEntity te = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.pos);
+            TileEntity te = ctx.getServerHandler().playerEntity.getEntityWorld().getTileEntity(message.pos);
             if (te instanceof RFMonitorBlockTileEntity) {
                 RFMonitorBlockTileEntity monitorBlockTileEntity = (RFMonitorBlockTileEntity) te;
                 if (message.monitor != null) {

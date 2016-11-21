@@ -198,7 +198,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
             stacks[dirty].writeToNBT(tc);
             newCompound.setTag("stack" + dirty, tc);
             if (player != null) {
-                SoundTools.playSound(player.worldObj, SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP,
+                SoundTools.playSound(player.getEntityWorld(), SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP,
                         player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ(), 1.0f, 1.0f);
             }
             dirty = -1;

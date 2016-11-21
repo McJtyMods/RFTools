@@ -39,7 +39,7 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
 
     @Override
     public void update() {
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             return;
         }
 
@@ -83,11 +83,11 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
 
         super.onDataPacket(net, packet);
 
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             // If needed send a render update.
             boolean newmodule = inventoryHelper.getStackInSlot(LevelEmitterContainer.SLOT_MODULE) != null;
             if (newmodule != module) {
-                worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
+                getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
             }
         }
     }
@@ -97,11 +97,11 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
         // Clear the oredict cache
         set1 = null;
         inventoryHelper.setInventorySlotContents(this.getInventoryStackLimit(), index, stack);
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             // Make sure we update client-side
             markDirtyClient();
         } else {
-            worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
+            getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
         }
     }
 

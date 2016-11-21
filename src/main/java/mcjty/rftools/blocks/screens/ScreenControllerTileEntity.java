@@ -169,7 +169,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
 //
 //    private Object[] addText(String tag, String text, int color) {
 //        for (Coordinate screen : connectedScreens) {
-//            TileEntity te = worldObj.getTileEntity(screen.getX(), screen.getY(), screen.getZ());
+//            TileEntity te = getWorld().getTileEntity(screen.getX(), screen.getY(), screen.getZ());
 //            if (te instanceof ScreenTileEntity) {
 //                ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
 //                List<ComputerScreenModule> computerScreenModules = screenTileEntity.getComputerModules(tag);
@@ -193,7 +193,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
 //
 //    private Object[] clearText(String tag) {
 //        for (Coordinate screen : connectedScreens) {
-//            TileEntity te = worldObj.getTileEntity(screen.getX(), screen.getY(), screen.getZ());
+//            TileEntity te = getWorld().getTileEntity(screen.getX(), screen.getY(), screen.getZ());
 //            if (te instanceof ScreenTileEntity) {
 //                ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
 //                List<ComputerScreenModule> computerScreenModules = screenTileEntity.getComputerModules(tag);
@@ -212,7 +212,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
 //    public Object[] getTags(Context context, Arguments args) throws Exception {
 //        List<String> tags = new ArrayList<String>();
 //        for (Coordinate screen : connectedScreens) {
-//            TileEntity te = worldObj.getTileEntity(screen.getX(), screen.getY(), screen.getZ());
+//            TileEntity te = getWorld().getTileEntity(screen.getX(), screen.getY(), screen.getZ());
 //            if (te instanceof ScreenTileEntity) {
 //                ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
 //                tags.addAll(screenTileEntity.getTags());
@@ -264,7 +264,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
@@ -279,7 +279,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
         int rememberRf = rf;
         boolean fixesAreNeeded = false;
         for (BlockPos c : connectedScreens) {
-            TileEntity te = worldObj.getTileEntity(c);
+            TileEntity te = getWorld().getTileEntity(c);
             if (te instanceof ScreenTileEntity) {
                 ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
                 int rfModule = screenTileEntity.getTotalRfPerTick() * 20;
@@ -302,7 +302,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
         if (fixesAreNeeded) {
             List<BlockPos> newScreens = new ArrayList<>();
             for (BlockPos c : connectedScreens) {
-                TileEntity te = worldObj.getTileEntity(c);
+                TileEntity te = getWorld().getTileEntity(c);
                 if (te instanceof ScreenTileEntity) {
                     newScreens.add(c);
                 }
@@ -324,8 +324,8 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
                 for (int x = xCoord - radius; x <= xCoord + radius; x++) {
                     for (int z = zCoord - radius; z <= zCoord + radius; z++) {
                         BlockPos spos = new BlockPos(x, y, z);
-                        if (worldObj.getBlockState(spos).getBlock() == ScreenSetup.screenBlock) {
-                            TileEntity te = worldObj.getTileEntity(spos);
+                        if (getWorld().getBlockState(spos).getBlock() == ScreenSetup.screenBlock) {
+                            TileEntity te = getWorld().getTileEntity(spos);
                             if (te instanceof ScreenTileEntity) {
                                 if (!((ScreenTileEntity) te).isConnected()) {
                                     connectedScreens.add(spos);
@@ -342,7 +342,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
 
     public void detach() {
         for (BlockPos c : connectedScreens) {
-            TileEntity te = worldObj.getTileEntity(c);
+            TileEntity te = getWorld().getTileEntity(c);
             if (te instanceof ScreenTileEntity) {
                 ((ScreenTileEntity) te).setPower(false);
                 ((ScreenTileEntity) te).setConnected(false);

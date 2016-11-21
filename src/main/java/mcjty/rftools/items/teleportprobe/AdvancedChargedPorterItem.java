@@ -53,7 +53,7 @@ public class AdvancedChargedPorterItem extends ChargedPorterItem {
     @Override
     protected void selectReceiver(ItemStack stack, World world, EntityPlayer player) {
         if (world.isRemote) {
-            player.openGui(RFTools.instance, RFTools.GUI_ADVANCEDPORTER, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+            player.openGui(RFTools.instance, RFTools.GUI_ADVANCEDPORTER, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
         }
     }
 

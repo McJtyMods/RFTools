@@ -97,11 +97,11 @@ public class StorageTerminalTileEntity extends LogicTileEntity implements Defaul
 
         super.onDataPacket(net, packet);
 
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             // If needed send a render update.
             boolean newmodule = inventoryHelper.getStackInSlot(StorageTerminalContainer.SLOT_MODULE) != null;
             if (newmodule != module) {
-                worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
+                getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
             }
         }
     }
@@ -109,11 +109,11 @@ public class StorageTerminalTileEntity extends LogicTileEntity implements Defaul
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
         inventoryHelper.setInventorySlotContents(this.getInventoryStackLimit(), index, stack);
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             // Make sure we update client-side
             markDirtyClient();
         } else {
-            worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
+            getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
         }
     }
 

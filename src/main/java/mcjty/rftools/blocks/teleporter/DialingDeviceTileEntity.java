@@ -122,8 +122,8 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
     }
 
     private List<TeleportDestinationClientInfo> searchReceivers(String playerName) {
-        TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
-        return new ArrayList<>(destinations.getValidDestinations(worldObj, playerName));
+        TeleportDestinations destinations = TeleportDestinations.getDestinations(getWorld());
+        return new ArrayList<>(destinations.getValidDestinations(getWorld(), playerName));
     }
 
     public List<TransmitterInfo> searchTransmitters() {
@@ -137,14 +137,14 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
         List<TransmitterInfo> transmitters = new ArrayList<TransmitterInfo>();
         for (int dy = -vrange ; dy <= vrange ; dy++) {
             int yy = y + dy;
-            if (yy >= 0 && yy < worldObj.getHeight()) {
+            if (yy >= 0 && yy < getWorld().getHeight()) {
                 for (int dz = -hrange ; dz <= hrange; dz++) {
                     int zz = z + dz;
                     for (int dx = -hrange ; dx <= hrange ; dx++) {
                         int xx = x + dx;
                         if (dx != 0 || dy != 0 || dz != 0) {
                             BlockPos c = new BlockPos(xx, yy, zz);
-                            TileEntity tileEntity = worldObj.getTileEntity(c);
+                            TileEntity tileEntity = getWorld().getTileEntity(c);
                             if (tileEntity != null) {
                                 if (tileEntity instanceof MatterTransmitterTileEntity) {
                                     MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) tileEntity;
@@ -161,7 +161,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
 
     // Server side only.
     private void changeFavorite(String playerName, BlockPos receiver, int dimension, boolean favorite) {
-        PlayerList playerList = worldObj.getMinecraftServer().getPlayerList();
+        PlayerList playerList = getWorld().getMinecraftServer().getPlayerList();
         List<EntityPlayerMP> list = playerList.getPlayerList();
         for (EntityPlayerMP entityplayermp : list) {
             if (playerName.equals(entityplayermp.getName())) {
@@ -175,7 +175,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
 
     // Server side only
     private int dial(String player, BlockPos transmitter, int transDim, BlockPos coordinate, int dimension, boolean once) {
-        return TeleportationTools.dial(worldObj, this, player, transmitter, transDim, coordinate, dimension, once);
+        return TeleportationTools.dial(getWorld(), this, player, transmitter, transDim, coordinate, dimension, once);
     }
 
     // Server side only
@@ -188,17 +188,17 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
         }
         consumeEnergy(cost);
 
-        World w = TeleportationTools.getWorldForDimension(worldObj, dim);
+        World w = TeleportationTools.getWorldForDimension(getWorld(), dim);
         if (w == null) {
-            TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
-            destinations.cleanupInvalid(worldObj);
+            TeleportDestinations destinations = TeleportDestinations.getDestinations(getWorld());
+            destinations.cleanupInvalid(getWorld());
             return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
         }
 
         TileEntity tileEntity = w.getTileEntity(c);
         if (!(tileEntity instanceof MatterReceiverTileEntity)) {
-            TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
-            destinations.cleanupInvalid(worldObj);
+            TeleportDestinations destinations = TeleportDestinations.getDestinations(getWorld());
+            destinations.cleanupInvalid(getWorld());
             return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
         }
 

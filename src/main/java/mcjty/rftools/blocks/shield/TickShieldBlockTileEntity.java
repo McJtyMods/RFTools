@@ -17,7 +17,7 @@ public class TickShieldBlockTileEntity extends NoTickShieldBlockTileEntity imple
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             if (damageBits != 0) {
                 handleDamage();
             }
@@ -38,9 +38,9 @@ public class TickShieldBlockTileEntity extends NoTickShieldBlockTileEntity imple
         }
 
         if (shieldBlock != null) {
-            ShieldTEBase shieldTileEntity = (ShieldTEBase) worldObj.getTileEntity(shieldBlock);
+            ShieldTEBase shieldTileEntity = (ShieldTEBase) getWorld().getTileEntity(shieldBlock);
             if (shieldTileEntity != null) {
-                List<Entity> l = worldObj.getEntitiesWithinAABB(Entity.class, beamBox);
+                List<Entity> l = getWorld().getEntitiesWithinAABB(Entity.class, beamBox);
                 for (Entity entity : l) {
                     if ((damageBits & AbstractShieldBlock.META_HOSTILE) != 0 && entity instanceof IMob) {
                         if (checkEntityDamage(shieldTileEntity, HostileFilter.HOSTILE)) {

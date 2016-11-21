@@ -45,7 +45,7 @@ public class PacketGetDelightingInfo implements IMessage {
 
         private void handle(PacketGetDelightingInfo message, MessageContext ctx) {
             EntityPlayer player = ctx.getServerHandler().playerEntity;
-            World world = player.worldObj;
+            World world = player.getEntityWorld();
 
             List<String> blockClasses = new ArrayList<>();
             List<String> teClasses = new ArrayList<>();

@@ -132,7 +132,7 @@ public class ModularStorageContainer extends GenericContainer {
 
     @Override
     public ItemStack slotClick(int index, int button, ClickType mode, EntityPlayer player) {
-        if (index == SLOT_STORAGE_MODULE && !player.worldObj.isRemote) {
+        if (index == SLOT_STORAGE_MODULE && !player.getEntityWorld().isRemote) {
             modularStorageTileEntity.copyToModule();
         }
         return super.slotClick(index, button, mode, player);

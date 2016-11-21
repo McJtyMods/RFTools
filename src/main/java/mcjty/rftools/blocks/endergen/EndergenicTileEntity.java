@@ -152,7 +152,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
             markDirty();
         }
 
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
@@ -164,7 +164,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
 
     @Override
     public boolean isBlockAboveAir() {
-        return worldObj.isAirBlock(pos.up());
+        return getWorld().isAirBlock(pos.up());
     }
 
     public List<String> getHudLog() {
@@ -361,7 +361,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     }
 
     private void log(String message) {
-        /* RFTools.log(worldObj, this, message);*/
+        /* RFTools.log(getWorld(), this, message);*/
     }
 
     public static final EnumFacing[] HORIZ_DIRECTIONS = {EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.EAST};
@@ -374,10 +374,10 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         BlockPos pos = getPos();
         for (EnumFacing dir : EnumFacing.VALUES) {
             BlockPos c = pos.offset(dir);
-            TileEntity te = worldObj.getTileEntity(c);
+            TileEntity te = getWorld().getTileEntity(c);
             if (te instanceof EnderMonitorTileEntity) {
                 EnderMonitorTileEntity enderMonitorTileEntity = (EnderMonitorTileEntity) te;
-                EnumFacing inputSide = enderMonitorTileEntity.getFacing(worldObj.getBlockState(c)).getInputSide();
+                EnumFacing inputSide = enderMonitorTileEntity.getFacing(getWorld().getBlockState(c)).getInputSide();
                 if (inputSide == dir.getOpposite()) {
                     enderMonitorTileEntity.fireFromEndergenic(mode);
                 }
@@ -394,7 +394,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
 
         for (EnumFacing dir : EnumFacing.values()) {
             BlockPos o = getPos().offset(dir);
-            TileEntity te = worldObj.getTileEntity(o);
+            TileEntity te = getWorld().getTileEntity(o);
             if (EnergyTools.isEnergyTE(te)) {
                 EnumFacing opposite = dir.getOpposite();
                 int rfToGive;
@@ -431,7 +431,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         List<EndergenicPearl> newlist = new ArrayList<EndergenicPearl>();
         for (EndergenicPearl pearl : pearls) {
             log("Pearls: age=" + pearl.getAge() + ", ticks left=" + pearl.getTicksLeft());
-            if (!pearl.handleTick(worldObj)) {
+            if (!pearl.handleTick(getWorld())) {
                 // Keep the pearl. It has not arrived yet.
                 newlist.add(pearl);
             }
@@ -443,8 +443,8 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
 
     private void markDirtyClientNoRender() {
         markDirty();
-        if (worldObj != null) {
-            worldObj.getPlayers(EntityPlayer.class, p -> getPos().distanceSq(p.posX, p.posY, p.posZ) < 32*32)
+        if (getWorld() != null) {
+            getWorld().getPlayers(EntityPlayer.class, p -> getPos().distanceSq(p.posX, p.posY, p.posZ) < 32*32)
                     .stream()
                     .forEach(p -> RFToolsMessages.INSTANCE.sendTo(
                             new PacketEndergenicFlash(getPos(), goodCounter, badCounter), (EntityPlayerMP) p));
@@ -474,7 +474,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         if (destination == null) {
             return null;
         }
-        TileEntity te = worldObj.getTileEntity(destination);
+        TileEntity te = getWorld().getTileEntity(destination);
         if (te instanceof EndergenicTileEntity) {
             return (EndergenicTileEntity) te;
         } else {
@@ -569,7 +569,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         BlockPos coord = RFTools.instance.clientInfo.getSelectedTE();
         TileEntity tileEntity = null;
         if (coord != null) {
-            tileEntity = worldObj.getTileEntity(coord);
+            tileEntity = getWorld().getTileEntity(coord);
         }
 
         if (!(tileEntity instanceof EndergenicTileEntity)) {
@@ -627,7 +627,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         this.destination = destination;
         distance = calculateDistance(destination);
 
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             // We're on the client. Send change to server.
             RFToolsMessages.INSTANCE.sendToServer(new PacketServerCommand(getPos(),
                     EndergenicTileEntity.CMD_SETDESTINATION,

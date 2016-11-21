@@ -84,13 +84,13 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
         List<BlockPos> adjacentBlocks = new ArrayList<>();
         for (int dy = -1 ; dy <= 1 ; dy++) {
             int yy = y + dy;
-            if (yy >= 0 && yy < worldObj.getHeight()) {
+            if (yy >= 0 && yy < getWorld().getHeight()) {
                 for (int dz = -1 ; dz <= 1 ; dz++) {
                     int zz = z + dz;
                     for (int dx = -1 ; dx <= 1 ; dx++) {
                         int xx = x + dx;
                         if (dx != 0 || dy != 0 || dz != 0) {
-                            TileEntity tileEntity = worldObj.getTileEntity(new BlockPos(xx, yy, zz));
+                            TileEntity tileEntity = getWorld().getTileEntity(new BlockPos(xx, yy, zz));
                             if (tileEntity != null) {
                                 if (EnergyTools.isEnergyTE(tileEntity)) {
                                     adjacentBlocks.add(new BlockPos(xx, yy, zz));
@@ -106,7 +106,7 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
@@ -123,7 +123,7 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
         }
         counter = 20;
 
-        TileEntity tileEntity = worldObj.getTileEntity(monitor);
+        TileEntity tileEntity = getWorld().getTileEntity(monitor);
         if (!EnergyTools.isEnergyTE(tileEntity)) {
             setInvalid();
             return;
@@ -168,7 +168,7 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
     }
 
     private void setRedstoneOut(boolean a) {
-        worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
+        getWorld().notifyNeighborsOfStateChange(this.pos, this.getBlockType());
     }
 
 
