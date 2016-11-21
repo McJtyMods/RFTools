@@ -72,7 +72,7 @@ public class MachineInfuserTileEntity extends GenericEnergyReceiverTileEntity im
         return true;
     }
 
-    private NBTTagCompound getTagCompound(ItemStack stack) {
+    public static NBTTagCompound getTagCompound(ItemStack stack) {
         if (ItemStackTools.isEmpty(stack)) {
             return null;
         }
