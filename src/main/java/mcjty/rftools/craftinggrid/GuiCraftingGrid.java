@@ -10,6 +10,7 @@ import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.crafter.CraftingRecipe;
@@ -180,7 +181,9 @@ public class GuiCraftingGrid {
 
                 if (slot != null) {
                     GlStateManager.colorMask(true, true, true, false);
-                    gui.drawRect(slot.xDisplayPosition, slot.yDisplayPosition, slot.xDisplayPosition + 16, slot.yDisplayPosition + 16, 0xffff0000);
+                    // @todo @@@@@@@@@@@@
+                    gui.drawRect(slot.xPos, slot.yPos, slot.xPos + 16, slot.yPos + 16, 0xffff0000);
+//                    gui.drawRect(slot.xDisplayPosition, slot.yDisplayPosition, slot.xDisplayPosition + 16, slot.yDisplayPosition + 16, 0xffff0000);
                 }
             }
             for (int i = 0 ; i < 9 ; i++) {
@@ -189,7 +192,9 @@ public class GuiCraftingGrid {
 
                     if (slot != null) {
                         GlStateManager.colorMask(true, true, true, false);
-                        gui.drawRect(slot.xDisplayPosition, slot.yDisplayPosition, slot.xDisplayPosition + 16, slot.yDisplayPosition + 16, 0xffff0000);
+                        // @todo @@@@@@@@@@@@
+                        gui.drawRect(slot.xPos, slot.yPos, slot.xPos + 16, slot.yPos + 16, 0xffff0000);
+//                        gui.drawRect(slot.xDisplayPosition, slot.yDisplayPosition, slot.xDisplayPosition + 16, slot.yDisplayPosition + 16, 0xffff0000);
                     }
                 }
             }
@@ -210,7 +215,7 @@ public class GuiCraftingGrid {
         }
 
         // Compare current contents to avoid unneeded slot update.
-        IRecipe recipe = CraftingRecipe.findRecipe(mc.theWorld, inv);
+        IRecipe recipe = CraftingRecipe.findRecipe(MinecraftTools.getWorld(mc), inv);
         ItemStack newResult;
         if (recipe == null) {
             newResult = null;

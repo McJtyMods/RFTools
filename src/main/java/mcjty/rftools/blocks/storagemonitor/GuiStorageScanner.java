@@ -17,6 +17,7 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
+import mcjty.lib.tools.MinecraftTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
@@ -293,8 +294,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         InventoriesInfoPacketClient.InventoryInfo c = fromServer_inventories.get(index-1);
         if (c != null) {
             RFTools.instance.clientInfo.hilightBlock(c.getPos(), System.currentTimeMillis() + 1000 * StorageScannerConfiguration.hilightTime);
-            Logging.message(mc.thePlayer, "The inventory is now highlighted");
-            mc.thePlayer.closeScreen();
+            Logging.message(MinecraftTools.getPlayer(mc), "The inventory is now highlighted");
+            MinecraftTools.getPlayer(mc).closeScreen();
         }
     }
 
@@ -564,7 +565,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             // Protection for bad itemstacks
             list = new ArrayList<>();
         } else {
-            list = stack.getTooltip(this.mc.thePlayer, this.mc.gameSettings.advancedItemTooltips);
+            list = stack.getTooltip(MinecraftTools.getPlayer(this.mc), this.mc.gameSettings.advancedItemTooltips);
         }
 
         for (int i = 0; i < list.size(); ++i) {

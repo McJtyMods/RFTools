@@ -1,6 +1,8 @@
 package mcjty.rftools.items.storage;
 
 import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.tools.ChatTools;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageTileEntity;
 import mcjty.rftools.items.GenericRFToolsItem;
@@ -68,7 +70,8 @@ public class StorageFilterItem extends GenericRFToolsItem {
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    protected EnumActionResult clOnItemUse(EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        ItemStack stack = playerIn.getHeldItem(hand);
         if (playerIn.isSneaking()) {
             if (!worldIn.isRemote) {
                 TileEntity te = worldIn.getTileEntity(pos);
@@ -80,7 +83,7 @@ public class StorageFilterItem extends GenericRFToolsItem {
                         stack.setTagCompound(new NBTTagCompound());
                     }
                     StorageFilterInventory.convertItemsToNBT(stack.getTagCompound(), stacks.toArray(new ItemStack[stacks.size()]));
-                    playerIn.addChatComponentMessage(new TextComponentString(TextFormatting.GREEN + "Stored inventory contents in filter"));
+                    ChatTools.addChatMessage(playerIn, new TextComponentString(TextFormatting.GREEN + "Stored inventory contents in filter"));
                 } else {
                     IBlockState state = worldIn.getBlockState(pos);
                     ItemStack blockStack = state.getBlock().getItem(worldIn, pos, state);
@@ -93,12 +96,12 @@ public class StorageFilterItem extends GenericRFToolsItem {
                         NBTTagList bufferTagList = stack.getTagCompound().getTagList("Items", Constants.NBT.TAG_COMPOUND);
                         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
                             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-                            stacks[i] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+                            stacks[i] = ItemStackTools.loadFromNBT(nbtTagCompound);
                         }
                         for (int i = 0 ; i < FILTER_SLOTS ; i++) {
                             if (stacks[i] == null) {
                                 stacks[i] = blockStack;
-                                playerIn.addChatComponentMessage(new TextComponentString(TextFormatting.GREEN + "Added " + blockStack.getDisplayName() + " to the filter!"));
+                                ChatTools.addChatMessage(playerIn, new TextComponentString(TextFormatting.GREEN + "Added " + blockStack.getDisplayName() + " to the filter!"));
                                 StorageFilterInventory.convertItemsToNBT(stack.getTagCompound(), stacks);
                                 break;
                             }
@@ -108,7 +111,7 @@ public class StorageFilterItem extends GenericRFToolsItem {
             }
             return EnumActionResult.SUCCESS;
         }
-        return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+        return super.clOnItemUse(playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
     }
 
     private void addItem(TileEntity te, List<ItemStack> stacks, Set<ResourceLocation> registeredItems, ItemStack s) {
@@ -122,14 +125,15 @@ public class StorageFilterItem extends GenericRFToolsItem {
         }
         if (stacks.size() < FILTER_SLOTS) {
             ItemStack copy = s.copy();
-            copy.stackSize = 1;
+            ItemStackTools.setStackSize(copy, 1);
             stacks.add(copy);
             registeredItems.add(s.getItem().getRegistryName());
         }
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+    protected ActionResult<ItemStack> clOnItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+        ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
             player.openGui(RFTools.instance, RFTools.GUI_STORAGE_FILTER, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
             return new ActionResult<>(EnumActionResult.SUCCESS, stack);

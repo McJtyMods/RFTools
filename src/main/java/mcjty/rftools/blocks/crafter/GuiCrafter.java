@@ -14,6 +14,7 @@ import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.network.Argument;
+import mcjty.lib.tools.MinecraftTools;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
@@ -277,7 +278,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         }
 
         // Compare current contents to avoid unneeded slot update.
-        IRecipe recipe = CraftingRecipe.findRecipe(mc.theWorld, inv);
+        IRecipe recipe = CraftingRecipe.findRecipe(MinecraftTools.getWorld(mc), inv);
         ItemStack newResult;
         if (recipe == null) {
             newResult = null;
@@ -305,7 +306,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         }
 
         // Compare current contents to avoid unneeded slot update.
-        IRecipe recipe = CraftingRecipe.findRecipe(mc.theWorld, inv);
+        IRecipe recipe = CraftingRecipe.findRecipe(MinecraftTools.getWorld(mc), inv);
         ItemStack newResult;
         if (recipe == null) {
             newResult = null;
@@ -411,13 +412,17 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
                 }
                 Slot slot = inventorySlots.getSlot(slotIdx);
                 if (!slot.getHasStack()) {
-                    itemRender.renderItemAndEffectIntoGUI(stack, slot.xDisplayPosition, slot.yDisplayPosition);
+                    // @todo @@@@@@@@
+                    itemRender.renderItemAndEffectIntoGUI(stack, slot.xPos, slot.yPos);
+//                    itemRender.renderItemAndEffectIntoGUI(stack, slot.xDisplayPosition, slot.yDisplayPosition);
 
                     GlStateManager.disableLighting();
                     GlStateManager.enableBlend();
                     GlStateManager.disableDepth();
                     this.mc.getTextureManager().bindTexture(iconGuiElements);
-                    RenderHelper.drawTexturedModalRect(slot.xDisplayPosition, slot.yDisplayPosition, 14 * 16, 3 * 16, 16, 16);
+                    // @todo @@@@@@@@
+                    RenderHelper.drawTexturedModalRect(slot.xPos, slot.yPos, 14 * 16, 3 * 16, 16, 16);
+//                    RenderHelper.drawTexturedModalRect(slot.xDisplayPosition, slot.yDisplayPosition, 14 * 16, 3 * 16, 16, 16);
                     GlStateManager.enableDepth();
                     GlStateManager.disableBlend();
                     GlStateManager.enableLighting();

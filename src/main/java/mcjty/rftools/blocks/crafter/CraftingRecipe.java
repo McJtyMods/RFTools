@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.crafter;
 
+import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
@@ -60,11 +61,11 @@ public class CraftingRecipe {
         NBTTagList nbtTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < nbtTagList.tagCount(); i++) {
             NBTTagCompound nbtTagCompound = nbtTagList.getCompoundTagAt(i);
-            inv.setInventorySlotContents(i, ItemStack.loadItemStackFromNBT(nbtTagCompound));
+            inv.setInventorySlotContents(i, ItemStackTools.loadFromNBT(nbtTagCompound));
         }
         NBTTagCompound resultCompound = tagCompound.getCompoundTag("Result");
         if (resultCompound != null) {
-            result = ItemStack.loadItemStackFromNBT(resultCompound);
+            result = ItemStackTools.loadFromNBT(resultCompound);
         } else {
             result = null;
         }
@@ -78,7 +79,7 @@ public class CraftingRecipe {
         for (int i = 0 ; i < 9 ; i++) {
             ItemStack stack = inv.getStackInSlot(i);
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
-            if (stack != null) {
+            if (ItemStackTools.isValid(stack)) {
                 stack.writeToNBT(nbtTagCompound);
             }
             nbtTagList.appendTag(nbtTagCompound);

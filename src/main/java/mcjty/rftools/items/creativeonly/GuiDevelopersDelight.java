@@ -11,6 +11,7 @@ import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
+import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -88,7 +89,7 @@ public class GuiDevelopersDelight extends GuiScreen {
         teClasses = new ArrayList<String>();
         nbtData = new HashMap<String, DelightingInfoHelper.NBTDescription>();
 
-        server_metadata = DelightingInfoHelper.fillDelightingData(selected.getX(), selected.getY(), selected.getZ(), mc.theWorld, blockClasses, teClasses, nbtData);
+        server_metadata = DelightingInfoHelper.fillDelightingData(selected.getX(), selected.getY(), selected.getZ(), MinecraftTools.getWorld(mc), blockClasses, teClasses, nbtData);
     }
 
     @Override
@@ -107,12 +108,7 @@ public class GuiDevelopersDelight extends GuiScreen {
         ToggleButton tab1Button = createToggleButton("Block");
         ToggleButton tab2Button = createToggleButton("TE");
         ToggleButton tab3Button = createToggleButton("NBT");
-        clientServerMode = new ChoiceLabel(mc, this).setDesiredWidth(60).addChoices("Server", "Client").setChoice("Server").addChoiceEvent(new ChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, String newChoice) {
-                requestNewLists();
-            }
-        }).setDesiredHeight(16).setTooltips("Switch between client", "and server information");
+        clientServerMode = new ChoiceLabel(mc, this).setDesiredWidth(60).addChoices("Server", "Client").setChoice("Server").addChoiceEvent((parent, newChoice) -> requestNewLists()).setDesiredHeight(16).setTooltips("Switch between client", "and server information");
         metaData = new TextField(mc, this).setDesiredHeight(14).setTooltips("Metadata for this block");
 
         Panel buttonPanel = new Panel(mc, this).setLayout(new VerticalLayout()).setDesiredWidth(62).addChild(tab1Button).addChild(tab2Button).addChild(tab3Button).
@@ -191,7 +187,7 @@ public class GuiDevelopersDelight extends GuiScreen {
 
         blockClassList.removeChildren();
 
-        IBlockState state = Minecraft.getMinecraft().theWorld.getBlockState(selected);
+        IBlockState state = MinecraftTools.getWorld(Minecraft.getMinecraft()).getBlockState(selected);
         Block block = state.getBlock();
 
         blockClassList.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText("Loc Name: " + block.getLocalizedName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));

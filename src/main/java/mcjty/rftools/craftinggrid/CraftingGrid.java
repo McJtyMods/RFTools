@@ -1,5 +1,6 @@
 package mcjty.rftools.craftinggrid;
 
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.crafter.CraftingRecipe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -84,7 +85,7 @@ public class CraftingGrid {
         NBTTagList bufferTagList = tagCompound.getTagList("grid", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < craftingGridInventory.getSizeInventory() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            craftingGridInventory.setInventorySlotContents(i, ItemStack.loadItemStackFromNBT(nbtTagCompound));
+            craftingGridInventory.setInventorySlotContents(i, ItemStackTools.loadFromNBT(nbtTagCompound));
         }
 
         NBTTagList recipeTagList = tagCompound.getTagList("recipes", Constants.NBT.TAG_COMPOUND);

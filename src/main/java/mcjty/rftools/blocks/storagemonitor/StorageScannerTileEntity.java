@@ -4,6 +4,8 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.tools.ChatTools;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.SoundTools;
 import mcjty.rftools.api.general.IInventoryTracker;
@@ -169,11 +171,11 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     public ItemStack injectStack(ItemStack stack, EntityPlayer player) {
         if (getEnergyStored(EnumFacing.DOWN) < StorageScannerConfiguration.rfPerInsert) {
-            player.addChatComponentMessage(new TextComponentString(TextFormatting.RED + "Not enough power to insert items!"));
+            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Not enough power to insert items!"));
             return stack;
         }
         if (!checkForRoutableInventories()) {
-            player.addChatComponentMessage(new TextComponentString(TextFormatting.RED + "There are no routable inventories!"));
+            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "There are no routable inventories!"));
             return stack;
         }
         stack = injectStackInternal(stack, false);
@@ -235,7 +237,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             return;
         }
         if (getEnergyStored(EnumFacing.DOWN) < StorageScannerConfiguration.rfPerRequest) {
-            player.addChatComponentMessage(new TextComponentString(TextFormatting.RED + "Not enough power to request items!"));
+            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Not enough power to request items!"));
             return;
         }
 
@@ -280,7 +282,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     private boolean giveItemToPlayer(EntityPlayer player, int[] cnt, ItemStack received) {
         if (received != null && cnt[0] > 0) {
-            cnt[0] -= received.stackSize;
+            cnt[0] -= ItemStackTools.getStackSize(received);
             giveToPlayer(received, player);
             return true;
         }
@@ -327,7 +329,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                 } else {
                     final int[] cc = {0};
                     InventoryHelper.getItems(tileEntity, s -> isItemEqual(stack, s, oredictMatches)).forEach(s -> {
-                        cc[0] += s.stackSize;
+                        cc[0] += ItemStackTools.getStackSize(s);
                     });
                     cnt += cc[0];
                     if (tileEntity instanceof IInventoryTracker) {
@@ -571,9 +573,9 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                             if (result == null) {
                                 result = received;
                             } else {
-                                result.stackSize += received.stackSize;
+                                ItemStackTools.incStackSize(result, ItemStackTools.getStackSize(received));
                             }
-                            cnt[0] -= received.stackSize;
+                            cnt[0] -= ItemStackTools.getStackSize(received);
                         }
                     }
                 }
@@ -587,9 +589,9 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                             if (result == null) {
                                 result = received;
                             } else {
-                                result.stackSize += received.stackSize;
+                                ItemStackTools.incStackSize(result, ItemStackTools.getStackSize(received));
                             }
-                            cnt[0] -= received.stackSize;
+                            cnt[0] -= ItemStackTools.getStackSize(received);
                         }
                     }
                 }
@@ -604,7 +606,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     @Override
     public int insertItem(ItemStack stack) {
         if (getEnergyStored(EnumFacing.DOWN) < StorageScannerConfiguration.rfPerInsert) {
-            return stack.stackSize;
+            return ItemStackTools.getStackSize(stack);
         }
 
         ItemStack toInsert = stack.copy();
@@ -622,7 +624,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         }
 
         consumeEnergy(StorageScannerConfiguration.rfPerInsert);
-        return toInsert.stackSize;
+        return ItemStackTools.getStackSize(toInsert);
     }
 
     private ItemStack requestStackFromInv(BlockPos invPos, ItemStack requested, Integer[] todo, ItemStack outSlot) {
@@ -637,11 +639,11 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             ItemStack stack = InventoryHelper.getSlot(tileEntity, i);
             if (ItemHandlerHelper.canItemStacksStack(requested, stack)) {
                 ItemStack extracted = InventoryHelper.extractItem(tileEntity, i, todo[0]);
-                todo[0] -= extracted.stackSize;
+                todo[0] -= ItemStackTools.getStackSize(extracted);
                 if (outSlot == null) {
                     outSlot = extracted;
                 } else {
-                    outSlot.stackSize += extracted.stackSize;
+                    ItemStackTools.incStackSize(outSlot, ItemStackTools.getStackSize(extracted));
                 }
                 if (todo[0] == 0) {
                     break;
@@ -671,10 +673,10 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             if (!ItemHandlerHelper.canItemStacksStack(outSlot, requested)) {
                 return;
             }
-            if (outSlot.stackSize >= requested.getMaxStackSize()) {
+            if (ItemStackTools.getStackSize(outSlot) >= requested.getMaxStackSize()) {
                 return;
             }
-            todo[0] = Math.min(todo[0], requested.getMaxStackSize() - outSlot.stackSize);
+            todo[0] = Math.min(todo[0], requested.getMaxStackSize() - ItemStackTools.getStackSize(outSlot));
         }
 
         if (invPos.getY() == -1) {
@@ -712,7 +714,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         if (foundItems.contains(stack.getItem())) {
             for (ItemStack s : stacks) {
                 if (ItemHandlerHelper.canItemStacksStack(s, stack)) {
-                    s.stackSize += stack.stackSize;
+                    ItemStackTools.incStackSize(s, ItemStackTools.getStackSize(stack));
                     return;
                 }
             }
@@ -907,9 +909,8 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         return index == StorageScannerContainer.SLOT_IN_AUTO;
     }
 
-    @SuppressWarnings("NullableProblems")
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isUsable(EntityPlayer player) {
         // @todo
         return true;
 //        return canPlayerAccess(player);

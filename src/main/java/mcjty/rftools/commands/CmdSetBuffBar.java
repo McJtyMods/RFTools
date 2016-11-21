@@ -2,6 +2,7 @@ package mcjty.rftools.commands;
 
 import mcjty.lib.McJtyLib;
 import mcjty.lib.preferences.PreferencesProperties;
+import mcjty.lib.tools.ChatTools;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentString;
@@ -26,12 +27,13 @@ public class CmdSetBuffBar extends AbstractRfToolsCommand {
     @Override
     public void execute(ICommandSender sender, String[] args) {
         if (args.length > 3) {
-            sender.addChatMessage(new TextComponentString(TextFormatting.RED + "Too many parameters!"));
+            ChatTools.addChatMessage((EntityPlayer)sender, new TextComponentString(TextFormatting.RED + "Too many parameters!"));
             return;
         }
 
         if (!(sender instanceof EntityPlayer)) {
-            sender.addChatMessage(new TextComponentString(TextFormatting.RED + "This command only works as a player!"));
+            // @todo @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+            ChatTools.addChatMessage((EntityPlayer)sender, new TextComponentString(TextFormatting.RED + "This command only works as a player!"));
             return;
         }
 
@@ -41,7 +43,7 @@ public class CmdSetBuffBar extends AbstractRfToolsCommand {
         if (args.length < 3) {
             int buffX = properties.getBuffX();
             int buffY = properties.getBuffY();
-            ((EntityPlayer) sender).addChatComponentMessage(new TextComponentString(TextFormatting.YELLOW + "Current buffbar location: " + buffX + "," + buffY));
+            ChatTools.addChatMessage((EntityPlayer) sender, new TextComponentString(TextFormatting.YELLOW + "Current buffbar location: " + buffX + "," + buffY));
             return;
         }
 

@@ -1,15 +1,17 @@
 package mcjty.rftools.craftinggrid;
 
+import mcjty.lib.inventory.CompatInventory;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
-public class CraftingGridInventory implements IInventory {
+public class CraftingGridInventory implements CompatInventory {
 
     public static int SLOT_GHOSTOUTPUT = 0;
     public static int SLOT_GHOSTINPUT = 1;
@@ -19,14 +21,15 @@ public class CraftingGridInventory implements IInventory {
     public static int GRID_XOFFSET = -GRID_WIDTH -2+7;
     public static int GRID_YOFFSET = 127;
 
-    private ItemStack[] stacks = new ItemStack[10];
+    private List<ItemStack> stacks = new ArrayList<>(10);
 
     public ItemStack getResult() {
-        return stacks[SLOT_GHOSTOUTPUT];
+        return stacks.get(SLOT_GHOSTOUTPUT);
     }
 
     public ItemStack[] getIngredients() {
         ItemStack[] ing = new ItemStack[9];
+        // @todo @@@@@@@@@@@@@@@@@@
         System.arraycopy(stacks, SLOT_GHOSTINPUT, ing, 0, ing.length);
         return ing;
     }
@@ -36,13 +39,11 @@ public class CraftingGridInventory implements IInventory {
         return 10;
     }
 
-    @Nullable
     @Override
     public ItemStack getStackInSlot(int index) {
-        return stacks[index];
+        return stacks.get(index);
     }
 
-    @Nullable
     @Override
     public ItemStack decrStackSize(int index, int count) {
         return ItemStackHelper.getAndSplit(stacks, index, count);
@@ -55,8 +56,8 @@ public class CraftingGridInventory implements IInventory {
     }
 
     @Override
-    public void setInventorySlotContents(int index, @Nullable ItemStack stack) {
-        stacks[index] = stack;
+    public void setInventorySlotContents(int index, ItemStack stack) {
+        stacks.set(index, stack);
     }
 
     @Override
@@ -70,7 +71,7 @@ public class CraftingGridInventory implements IInventory {
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isUsable(EntityPlayer player) {
         return true;
     }
 

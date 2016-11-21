@@ -151,15 +151,15 @@ public class SyringeItem extends GenericRFToolsItem {
     }
 
     private String findSelectedMobName(Entity entity) {
-        if (entity instanceof EntitySkeleton && ((EntitySkeleton) entity).getSkeletonType() == SkeletonType.WITHER) {
-            return "Wither Skeleton";
-        }
-        if (entity instanceof EntitySkeleton && ((EntitySkeleton) entity).getSkeletonType() == SkeletonType.STRAY) {
-            return "Stray Skeleton";
-        }
-        if (entity instanceof EntityPigZombie) {
-            return "Zombie Pigman";
-        }
+//        if (entity instanceof EntitySkeleton && ((EntitySkeleton) entity).getSkeletonType() == SkeletonType.WITHER) {
+//            return "Wither Skeleton";
+//        }
+//        if (entity instanceof EntitySkeleton && ((EntitySkeleton) entity).getSkeletonType() == SkeletonType.STRAY) {
+//            return "Stray Skeleton";
+//        }
+//        if (entity instanceof EntityPigZombie) {
+//            return "Zombie Pigman";
+//        }
         return entity.getName();
     }
 

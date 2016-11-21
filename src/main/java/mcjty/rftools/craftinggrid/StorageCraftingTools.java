@@ -1,5 +1,6 @@
 package mcjty.rftools.craftinggrid;
 
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.crafter.CraftingRecipe;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -7,6 +8,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
@@ -36,12 +38,12 @@ public class StorageCraftingTools {
         for (int counter = 0 ; counter < n ; counter++) {
             for (int i = 0; i < inventory.getSizeInventory(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
-                if (stack != null) {
-                    int count = stack.stackSize;
+                if (ItemStackTools.isValid(stack)) {
+                    int count = ItemStackTools.getStackSize(stack);
                     count = findMatchingItems(workInventory, undo, i, stack, count, itemSource, strictDamage);
                     missingCount[i] += count;
                 } else {
-                    workInventory.setInventorySlotContents(i, null);
+                    workInventory.setInventorySlotContents(i, ItemStackTools.getEmptyStack());
                 }
             }
         }
@@ -73,8 +75,8 @@ public class StorageCraftingTools {
 
         for (int i = 0 ; i < inventory.getSizeInventory() ; i++) {
             ItemStack stack = inventory.getStackInSlot(i);
-            if (stack != null) {
-                int count = stack.stackSize;
+            if (ItemStackTools.isValid(stack)) {
+                int count = ItemStackTools.getStackSize(stack);
                 count = findMatchingItems(workInventory, undo, i, stack, count, itemSource, strictDamage);
 
                 if (count > 0) {
@@ -83,7 +85,7 @@ public class StorageCraftingTools {
                     return Collections.emptyList();
                 }
             } else {
-                workInventory.setInventorySlotContents(i, null);
+                workInventory.setInventorySlotContents(i, ItemStackTools.getEmptyStack());
             }
         }
         IRecipe recipe = craftingRecipe.getCachedRecipe(player.getEntityWorld());
@@ -93,12 +95,14 @@ public class StorageCraftingTools {
             return result;
         }
         ItemStack stack = recipe.getCraftingResult(workInventory);
-        if (stack != null) {
+        if (ItemStackTools.isValid(stack)) {
             result.add(stack);
-            ItemStack[] remaining = recipe.getRemainingItems(workInventory);
+            // @todo @@@@@@@@@@@@@@@@@@@@
+            NonNullList<ItemStack> remaining = recipe.getRemainingItems(workInventory);
+//            ItemStack[] remaining = recipe.getRemainingItems(workInventory);
             if (remaining != null) {
                 for (ItemStack s : remaining) {
-                    if (s != null) {
+                    if (ItemStackTools.isValid(s)) {
                         result.add(s);
                     }
                 }
@@ -114,7 +118,7 @@ public class StorageCraftingTools {
         if (strictDamage) {
             return OreDictionary.itemMatches(target, input, false);
         } else {
-            if ((input == null && target != null) || (input != null && target == null)) {
+            if ((ItemStackTools.isEmpty(input) && ItemStackTools.isValid(target)) || (ItemStackTools.isValid(input) && ItemStackTools.isEmpty(target))) {
                 return false;
             }
             return target.getItem() == input.getItem();
@@ -125,12 +129,12 @@ public class StorageCraftingTools {
     private static int findMatchingItems(InventoryCrafting workInventory, List<Pair<IItemKey, ItemStack>> undo, int i, ItemStack stack, int count, IItemSource itemSource, boolean strictDamage) {
         for (Pair<IItemKey, ItemStack> pair : itemSource.getItems()) {
             ItemStack input = pair.getValue();
-            if (input != null) {
+            if (ItemStackTools.isValid(input)) {
                 if (match(stack, input, strictDamage)) {
                     workInventory.setInventorySlotContents(i, input.copy());
                     int ss = count;
-                    if (input.stackSize - ss < 0) {
-                        ss = input.stackSize;
+                    if (ItemStackTools.getStackSize(input) - ss < 0) {
+                        ss = ItemStackTools.getStackSize(input);
                     }
                     count -= ss;
                     IItemKey key = pair.getKey();
@@ -154,7 +158,7 @@ public class StorageCraftingTools {
                 if (amountLeft > 0) {
                     // We still have left-overs. Spawn them in the player inventory
                     ItemStack copy = stack.copy();
-                    copy.stackSize = amountLeft;
+                    ItemStackTools.setStackSize(copy, amountLeft);
                     ItemHandlerHelper.giveItemToPlayer(player, copy);
                 }
             }
@@ -169,17 +173,17 @@ public class StorageCraftingTools {
             return;
         }
 
-        if (craftingRecipe.getResult() != null && craftingRecipe.getResult().stackSize > 0) {
+        if (ItemStackTools.isValid(craftingRecipe.getResult()) && ItemStackTools.getStackSize(craftingRecipe.getResult()) > 0) {
             if (n == -1) {
                 n = craftingRecipe.getResult().getMaxStackSize();
             }
 
-            int remainder = n % craftingRecipe.getResult().stackSize;
-            n /= craftingRecipe.getResult().stackSize;
+            int remainder = n % ItemStackTools.getStackSize(craftingRecipe.getResult());
+            n /= ItemStackTools.getStackSize(craftingRecipe.getResult());
             if (remainder != 0) {
                 n++;
             }
-            if (n * craftingRecipe.getResult().stackSize > craftingRecipe.getResult().getMaxStackSize()) {
+            if (n * ItemStackTools.getStackSize(craftingRecipe.getResult()) > craftingRecipe.getResult().getMaxStackSize()) {
                 n--;
             }
 
@@ -208,17 +212,17 @@ public class StorageCraftingTools {
             return null;
         }
 
-        if (craftingRecipe.getResult() != null && craftingRecipe.getResult().stackSize > 0) {
+        if (craftingRecipe.getResult() != null && ItemStackTools.getStackSize(craftingRecipe.getResult()) > 0) {
             if (n == -1) {
                 n = craftingRecipe.getResult().getMaxStackSize();
             }
 
-            int remainder = n % craftingRecipe.getResult().stackSize;
-            n /= craftingRecipe.getResult().stackSize;
+            int remainder = n % ItemStackTools.getStackSize(craftingRecipe.getResult());
+            n /= ItemStackTools.getStackSize(craftingRecipe.getResult());
             if (remainder != 0) {
                 n++;
             }
-            if (n * craftingRecipe.getResult().stackSize > craftingRecipe.getResult().getMaxStackSize()) {
+            if (n * ItemStackTools.getStackSize(craftingRecipe.getResult()) > craftingRecipe.getResult().getMaxStackSize()) {
                 n--;
             }
 
