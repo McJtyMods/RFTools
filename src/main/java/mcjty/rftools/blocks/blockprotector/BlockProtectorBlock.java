@@ -115,8 +115,8 @@ public class BlockProtectorBlock extends GenericRFToolsBlock<BlockProtectorTileE
     }
 
     @Override
-    public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing side, float sx, float sy, float sz, int meta, EntityLivingBase placer) {
-        IBlockState rc = super.onBlockPlaced(world, pos, side, sx, sy, sz, meta, placer);
+    protected IBlockState clGetStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+        IBlockState rc = super.clGetStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer);
         if (world.isRemote) {
             return rc;
         }

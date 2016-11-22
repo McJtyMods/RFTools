@@ -1,7 +1,8 @@
 package mcjty.rftools.items.storage;
 
+import mcjty.lib.compat.CompatInventory;
+import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -9,7 +10,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
 
-public class StorageFilterInventory implements IInventory {
+public class StorageFilterInventory implements CompatInventory {
     private ItemStack stacks[] = new ItemStack[StorageFilterContainer.FILTER_SLOTS];
     private final EntityPlayer entityPlayer;
 
@@ -40,18 +41,18 @@ public class StorageFilterInventory implements IInventory {
     @Override
     public ItemStack decrStackSize(int index, int amount) {
         if (index >= stacks.length) {
-            return null;
+            return ItemStackTools.getEmptyStack();
         }
-        if (stacks[index] != null) {
-            if (stacks[index].stackSize <= amount) {
+        if (ItemStackTools.isValid(stacks[index])) {
+            if (ItemStackTools.getStackSize(stacks[index]) <= amount) {
                 ItemStack old = stacks[index];
-                stacks[index] = null;
+                stacks[index] = ItemStackTools.getEmptyStack();
                 markDirty();
                 return old;
             }
             ItemStack its = stacks[index].splitStack(amount);
-            if (stacks[index].stackSize == 0) {
-                stacks[index] = null;
+            if (ItemStackTools.isEmpty(stacks[index])) {
+                stacks[index] = ItemStackTools.getEmptyStack();
             }
             markDirty();
             return its;
@@ -66,18 +67,18 @@ public class StorageFilterInventory implements IInventory {
         }
 
         if (StorageFilterContainer.factory.isGhostSlot(index)) {
-            if (stack != null) {
+            if (ItemStackTools.isValid(stack)) {
                 stacks[index] = stack.copy();
                 if (index < 9) {
-                    stacks[index].stackSize = 1;
+                    ItemStackTools.setStackSize(stacks[index], 1);
                 }
             } else {
                 stacks[index] = null;
             }
         } else {
             stacks[index] = stack;
-            if (stack != null && stack.stackSize > getInventoryStackLimit()) {
-                stack.stackSize = getInventoryStackLimit();
+            if (ItemStackTools.isValid(stack) && ItemStackTools.getStackSize(stack) > getInventoryStackLimit()) {
+                ItemStackTools.setStackSize(stack, getInventoryStackLimit());
             }
         }
         markDirty();
@@ -119,7 +120,7 @@ public class StorageFilterInventory implements IInventory {
     @Override
     public ItemStack removeStackFromSlot(int index) {
         ItemStack stack = getStackInSlot(index);
-        setInventorySlotContents(index, null);
+        setInventorySlotContents(index, ItemStackTools.getEmptyStack());
         return stack;
     }
 

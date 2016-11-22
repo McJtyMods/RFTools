@@ -21,7 +21,8 @@ public class SimpleDialerItemBlock extends LogicItemBlock {
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    protected EnumActionResult clOnItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        ItemStack stack = player.getHeldItem(hand);
         TileEntity te = world.getTileEntity(pos);
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
@@ -71,7 +72,7 @@ public class SimpleDialerItemBlock extends LogicItemBlock {
                 Logging.message(player, TextFormatting.YELLOW + "Receiver set!");
             }
         } else {
-            return super.onItemUse(stack, player, world, pos, hand, facing, hitX, hitY, hitZ);
+            return super.clOnItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
         }
 
         stack.setTagCompound(tagCompound);

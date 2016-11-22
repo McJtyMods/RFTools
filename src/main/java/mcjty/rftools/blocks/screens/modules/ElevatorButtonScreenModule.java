@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.screens.modules;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.lib.tools.ChatTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
@@ -147,7 +148,7 @@ public class ElevatorButtonScreenModule implements IScreenModule<ElevatorButtonS
     public void mouseClick(World world, int x, int y, boolean clicked, EntityPlayer player) {
         if (BlockPosTools.INVALID.equals(coordinate)) {
             if (player != null) {
-                player.addChatComponentMessage(new TextComponentString(TextFormatting.RED + "Module is not linked to elevator!"));
+                ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Module is not linked to elevator!"));
             }
             return;
         }

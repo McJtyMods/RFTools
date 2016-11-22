@@ -1,6 +1,7 @@
 package mcjty.rftools.items.teleportprobe;
 
 import io.netty.buffer.ByteBuf;
+import mcjty.lib.tools.ChatTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.blocks.teleporter.TeleportDestination;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
@@ -81,7 +82,7 @@ public class PacketCycleDestination implements IMessage {
                         if (donext == 1) {
                             String name = destination.getName() + " (dimension " + destination.getDimension() + ")";
                             tagCompound.setInteger("target", target);
-                            playerEntity.addChatComponentMessage(new TextComponentString(TextFormatting.GREEN + "Target: "+
+                            ChatTools.addChatMessage(playerEntity, new TextComponentString(TextFormatting.GREEN + "Target: "+
                             TextFormatting.WHITE + name));
                             donext = 2;
                         } else if (target == curtarget) {

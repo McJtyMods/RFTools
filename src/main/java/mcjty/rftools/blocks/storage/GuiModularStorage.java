@@ -14,6 +14,8 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketUpdateNBTItem;
+import mcjty.lib.tools.ItemStackTools;
+import mcjty.lib.tools.MinecraftTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.modules.DefaultTypeModule;
@@ -114,7 +116,9 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         for (Object o : container.inventorySlots) {
             Slot slot = (Slot) o;
             if (slot.inventory != gridInventory) {
-                slot.yDisplayPosition += ySize - STORAGE_HEIGHT0;
+                // @todo @@@@@@@@@@@@@@@@
+                slot.yPos += ySize - STORAGE_HEIGHT0;
+//                slot.yDisplayPosition += ySize - STORAGE_HEIGHT0;
             }
         }
     }
@@ -213,7 +217,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             setSortMode(tileEntity.getSortMode());
             groupMode.setCurrentChoice(tileEntity.isGroupMode() ? 1 : 0);
         } else {
-            NBTTagCompound tagCompound = Minecraft.getMinecraft().thePlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
+            NBTTagCompound tagCompound = MinecraftTools.getPlayer(Minecraft.getMinecraft()).getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
             filter.setText(ModularStorageConfiguration.clearSearchOnOpen ? "" : tagCompound.getString("filter"));
             setViewMode(tagCompound.getString("viewMode"));
             setSortMode(tagCompound.getString("sortMode"));
@@ -288,7 +292,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             if (tileEntity != null && slot.getSlotIndex() < ModularStorageContainer.SLOT_STORAGE) {
                 continue;
             }
-            if ((!slot.getHasStack()) || slot.getStack().stackSize == 0) {
+            if ((!slot.getHasStack()) || ItemStackTools.getStackSize(slot.getStack()) == 0) {
                 return slot;
             }
         }
@@ -414,7 +418,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         if (tileEntity != null) {
             for (int i = ModularStorageContainer.SLOT_STORAGE; i < tileEntity.getSizeInventory(); i++) {
                 ItemStack stack = tileEntity.getStackInSlot(i);
-                if (stack != null && stack.stackSize > 0) {
+                if (ItemStackTools.isValid(stack)) {
                     String displayName = stack.getDisplayName();
                     if (filterText.isEmpty() || displayName.toLowerCase().contains(filterText)) {
                         items.add(Pair.of(stack, i));
@@ -427,14 +431,14 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             for (int i = 0; i < RemoteStorageItemContainer.MAXSIZE_STORAGE ; i++) {
                 Slot slot = inventorySlots.getSlot(i);
                 ItemStack stack = slot.getStack();
-                if (stack != null && stack.stackSize > 0) {
+                if (ItemStackTools.isValid(stack)) {
                     String displayName = stack.getDisplayName();
                     if (filterText.isEmpty() || displayName.toLowerCase().contains(filterText)) {
                         items.add(Pair.of(stack, i));
                     }
                 }
             }
-            max = mc.thePlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound().getInteger("maxSize");
+            max = MinecraftTools.getPlayer(mc).getHeldItem(EnumHand.MAIN_HAND).getTagCompound().getInteger("maxSize");
         }
         amountLabel.setText(items.size() + "/" + max);
         compactButton.setEnabled(max > 0);
@@ -483,7 +487,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         if (tileEntity != null) {
             return false;
         }
-        int storageType = mc.thePlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound().getInteger("childDamage");
+        int storageType = MinecraftTools.getPlayer(mc).getHeldItem(EnumHand.MAIN_HAND).getTagCompound().getInteger("childDamage");
         return storageType == StorageModuleItem.STORAGE_REMOTE;
     }
 
@@ -505,7 +509,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     private void updateTypeModule() {
         if (tileEntity != null) {
             ItemStack typeStack = tileEntity.getStackInSlot(ModularStorageContainer.SLOT_TYPE_MODULE);
-            if (typeStack == null || typeStack.stackSize == 0 || !(typeStack.getItem() instanceof TypeModule)) {
+            if (ItemStackTools.isEmpty(typeStack) || !(typeStack.getItem() instanceof TypeModule)) {
                 typeModule = new DefaultTypeModule();
             } else {
                 typeModule = (TypeModule) typeStack.getItem();

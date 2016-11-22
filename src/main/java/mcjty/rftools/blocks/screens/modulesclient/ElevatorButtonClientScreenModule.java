@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
 import mcjty.lib.gui.RenderHelper;
+import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
@@ -145,7 +146,7 @@ public class ElevatorButtonClientScreenModule implements IClientScreenModule<Ele
         } else {
             if (level < heights.size()) {
                 BlockPos posY = ElevatorTileEntity.getPosAtY(pos, heights.get(level));
-                TileEntity te = Minecraft.getMinecraft().theWorld.getTileEntity(posY);
+                TileEntity te = MinecraftTools.getWorld(Minecraft.getMinecraft()).getTileEntity(posY);
                 if (te instanceof ElevatorTileEntity) {
                     return ((ElevatorTileEntity) te).getName();
                 }

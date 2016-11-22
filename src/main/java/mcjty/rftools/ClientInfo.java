@@ -1,5 +1,6 @@
 package mcjty.rftools;
 
+import mcjty.lib.tools.MinecraftTools;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -47,6 +48,6 @@ public class ClientInfo {
 
     @SideOnly(Side.CLIENT)
     public static World getWorld() {
-        return Minecraft.getMinecraft().theWorld;
+        return MinecraftTools.getWorld(Minecraft.getMinecraft());
     }
 }

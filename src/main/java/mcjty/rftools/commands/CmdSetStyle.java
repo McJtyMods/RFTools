@@ -3,6 +3,7 @@ package mcjty.rftools.commands;
 import mcjty.lib.McJtyLib;
 import mcjty.lib.gui.GuiStyle;
 import mcjty.lib.preferences.PreferencesProperties;
+import mcjty.lib.tools.ChatTools;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentString;
@@ -27,12 +28,12 @@ public class CmdSetStyle extends AbstractRfToolsCommand {
     @Override
     public void execute(ICommandSender sender, String[] args) {
         if (args.length > 2) {
-            sender.addChatMessage(new TextComponentString(TextFormatting.RED + "Too many parameters!"));
+            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "Too many parameters!"));
             return;
         }
 
         if (!(sender instanceof EntityPlayer)) {
-            sender.addChatMessage(new TextComponentString(TextFormatting.RED + "This command only works as a player!"));
+            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "This command only works as a player!"));
             return;
         }
 
@@ -41,7 +42,7 @@ public class CmdSetStyle extends AbstractRfToolsCommand {
 
         if (args.length < 2) {
             GuiStyle style = properties.getStyle();
-            ((EntityPlayer) sender).addChatComponentMessage(new TextComponentString(TextFormatting.YELLOW + "Current GUI style: " + style.getStyle()));
+            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.YELLOW + "Current GUI style: " + style.getStyle()));
             return;
         }
 
@@ -53,7 +54,7 @@ public class CmdSetStyle extends AbstractRfToolsCommand {
                 buf = buf + " " + style.getStyle();
             }
 
-            sender.addChatMessage(new TextComponentString(TextFormatting.RED + "Unknown style! Options:" + buf));
+            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "Unknown style! Options:" + buf));
         }
     }
 }

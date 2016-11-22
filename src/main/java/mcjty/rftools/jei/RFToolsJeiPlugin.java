@@ -5,6 +5,7 @@ import mezz.jei.api.BlankModPlugin;
 import mezz.jei.api.IModRegistry;
 import mezz.jei.api.JEIPlugin;
 import mezz.jei.api.gui.IGuiIngredient;
+import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
 import mezz.jei.api.recipe.transfer.IRecipeTransferRegistry;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -36,10 +37,11 @@ public class RFToolsJeiPlugin extends BlankModPlugin {
     @Override
     public void register(@Nonnull IModRegistry registry) {
         IRecipeTransferRegistry transferRegistry = registry.getRecipeTransferRegistry();
-        transferRegistry.addRecipeTransferHandler(new CrafterRecipeTransferHandler());
-        transferRegistry.addRecipeTransferHandler(new ModularStorageRecipeTransferHandler());
-        transferRegistry.addRecipeTransferHandler(new ModularStorageItemRecipeTransferHandler());
-        transferRegistry.addRecipeTransferHandler(new RemoteStorageItemRecipeTransferHandler());
-        transferRegistry.addRecipeTransferHandler(new StorageScannerRecipeTransferHandler());
+        // @todo @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        transferRegistry.addRecipeTransferHandler(new CrafterRecipeTransferHandler(), VanillaRecipeCategoryUid.CRAFTING);
+        transferRegistry.addRecipeTransferHandler(new ModularStorageRecipeTransferHandler(), VanillaRecipeCategoryUid.CRAFTING);
+        transferRegistry.addRecipeTransferHandler(new ModularStorageItemRecipeTransferHandler(), VanillaRecipeCategoryUid.CRAFTING);
+        transferRegistry.addRecipeTransferHandler(new RemoteStorageItemRecipeTransferHandler(), VanillaRecipeCategoryUid.CRAFTING);
+        transferRegistry.addRecipeTransferHandler(new StorageScannerRecipeTransferHandler(), VanillaRecipeCategoryUid.CRAFTING);
     }
 }

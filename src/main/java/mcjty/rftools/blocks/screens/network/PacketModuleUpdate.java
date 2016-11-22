@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.screens.network;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.lib.tools.PacketBufferTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.screens.ScreenTileEntity;
 import net.minecraft.nbt.NBTTagCompound;
@@ -27,7 +28,7 @@ public class PacketModuleUpdate implements IMessage {
         slotIndex = buf.readInt();
         PacketBuffer buffer = new PacketBuffer(buf);
         try {
-            tagCompound = buffer.readNBTTagCompoundFromBuffer();
+            tagCompound = PacketBufferTools.readCompoundTag(buffer);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -38,7 +39,7 @@ public class PacketModuleUpdate implements IMessage {
         NetworkTools.writePos(buf, pos);
         buf.writeInt(slotIndex);
         PacketBuffer buffer = new PacketBuffer(buf);
-        buffer.writeNBTTagCompoundToBuffer(tagCompound);
+        PacketBufferTools.writeCompoundTag(buffer, tagCompound);
     }
 
     public PacketModuleUpdate() {

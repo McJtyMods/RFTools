@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.security;
 
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.material.Material;

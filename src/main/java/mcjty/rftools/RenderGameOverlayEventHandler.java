@@ -3,6 +3,7 @@ package mcjty.rftools;
 import mcjty.lib.McJtyLib;
 import mcjty.lib.gui.RenderHelper;
 import mcjty.lib.preferences.PreferencesProperties;
+import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -33,7 +34,7 @@ public class RenderGameOverlayEventHandler {
             return;
         }
 
-        EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
+        EntityPlayerSP player = MinecraftTools.getPlayer(Minecraft.getMinecraft());
         PreferencesProperties preferences = McJtyLib.getPreferencesProperties(player);
 
         int x = preferences.getBuffX();

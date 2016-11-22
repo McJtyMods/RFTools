@@ -3,6 +3,7 @@ package mcjty.rftools;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import mcjty.lib.base.ModBase;
+import mcjty.lib.compat.CompatCreativeTabs;
 import mcjty.lib.compat.MainCompatHandler;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.api.screens.IScreenModuleRegistry;
@@ -31,11 +32,12 @@ import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-@Mod(modid = RFTools.MODID, name="RFTools", dependencies =
-        "required-after:Forge@["+RFTools.MIN_FORGE_VER+
-        ",);required-after:McJtyLib@["+RFTools.MIN_MCJTYLIB_VER+",)",
+@Mod(modid = RFTools.MODID, name="RFTools",
+//        dependencies =
+//        "required-after:Forge@["+RFTools.MIN_FORGE_VER+",);" +
+//        "required-after:McJtyLib@["+RFTools.MIN_MCJTYLIB_VER+",)",
         version = RFTools.VERSION,
-        acceptedMinecraftVersions = "[1.10,1.11)")
+        acceptedMinecraftVersions = "[1.10,1.12)")
 public class RFTools implements ModBase {
     public static final String MODID = "rftools";
     public static final String VERSION = "5.62";
@@ -63,10 +65,10 @@ public class RFTools implements ModBase {
         return MODID;
     }
 
-    public static CreativeTabs tabRfTools = new CreativeTabs("RfTools") {
+    public static CreativeTabs tabRfTools = new CompatCreativeTabs("RfTools") {
         @Override
         @SideOnly(Side.CLIENT)
-        public Item getTabIconItem() {
+        public Item getItem() {
             return ModItems.rfToolsManualItem;
         }
     };

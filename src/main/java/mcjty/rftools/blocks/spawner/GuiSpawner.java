@@ -9,6 +9,7 @@ import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.SyringeItem;
 import mcjty.rftools.network.RFToolsMessages;
@@ -85,7 +86,7 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
         rfTick.setText("");
 
         ItemStack stack = tileEntity.getStackInSlot(SpawnerContainer.SLOT_SYRINGE);
-        if (stack == null || stack.stackSize == 0) {
+        if (ItemStackTools.isEmpty(stack)) {
             return;
         }
 

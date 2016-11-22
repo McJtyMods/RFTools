@@ -1,5 +1,7 @@
 package mcjty.rftools.blocks.storage;
 
+import mcjty.lib.compat.CompatInventory;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.craftinggrid.CraftingGrid;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import mcjty.rftools.craftinggrid.InventoriesItemSource;
@@ -8,7 +10,6 @@ import mcjty.rftools.items.storage.StorageModuleItem;
 import mcjty.rftools.jei.JEIRecipeAcceptor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -18,7 +19,7 @@ import net.minecraftforge.common.util.Constants;
 
 import java.util.List;
 
-public class ModularStorageItemInventory implements IInventory, CraftingGridProvider, JEIRecipeAcceptor {
+public class ModularStorageItemInventory implements CompatInventory, CraftingGridProvider, JEIRecipeAcceptor {
     private ItemStack stacks[];
     private final EntityPlayer entityPlayer;
     private CraftingGrid craftingGrid = new CraftingGrid();
@@ -119,18 +120,18 @@ public class ModularStorageItemInventory implements IInventory, CraftingGridProv
     @Override
     public ItemStack decrStackSize(int index, int amount) {
         if (index >= stacks.length) {
-            return null;
+            return ItemStackTools.getEmptyStack();
         }
-        if (stacks[index] != null) {
-            if (stacks[index].stackSize <= amount) {
+        if (ItemStackTools.isValid(stacks[index])) {
+            if (ItemStackTools.getStackSize(stacks[index]) <= amount) {
                 ItemStack old = stacks[index];
-                stacks[index] = null;
+                stacks[index] = ItemStackTools.getEmptyStack();
                 markDirty();
                 return old;
             }
             ItemStack its = stacks[index].splitStack(amount);
-            if (stacks[index].stackSize == 0) {
-                stacks[index] = null;
+            if (ItemStackTools.isEmpty(stacks[index])) {
+                stacks[index] = ItemStackTools.getEmptyStack();
             }
             markDirty();
             return its;
@@ -144,8 +145,8 @@ public class ModularStorageItemInventory implements IInventory, CraftingGridProv
             return;
         }
         stacks[index] = stack;
-        if (stack != null && stack.stackSize > getInventoryStackLimit()) {
-            stack.stackSize = getInventoryStackLimit();
+        if (ItemStackTools.isValid(stack) && ItemStackTools.getStackSize(stack) > getInventoryStackLimit()) {
+            ItemStackTools.setStackSize(stack, getInventoryStackLimit());
         }
         markDirty();
     }
@@ -162,9 +163,9 @@ public class ModularStorageItemInventory implements IInventory, CraftingGridProv
         for (int i = 0 ; i < getMaxSize() ; i++) {
             ItemStack stack = stacks[i];
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
-            if (stack != null) {
+            if (ItemStackTools.isValid(stack)) {
                 stack.writeToNBT(nbtTagCompound);
-                if (stack.stackSize > 0) {
+                if (ItemStackTools.getStackSize(stack) > 0) {
                     numStacks++;
                 }
             }
@@ -189,7 +190,7 @@ public class ModularStorageItemInventory implements IInventory, CraftingGridProv
     @Override
     public ItemStack removeStackFromSlot(int index) {
         ItemStack stack = getStackInSlot(index);
-        setInventorySlotContents(index, null);
+        setInventorySlotContents(index, ItemStackTools.getEmptyStack());
         return stack;
     }
 

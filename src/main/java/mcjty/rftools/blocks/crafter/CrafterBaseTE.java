@@ -4,6 +4,7 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.tools.InventoryTools;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.NullSidedInvWrapper;
@@ -21,7 +22,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -348,9 +348,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         // Try to merge the output. If there is something that doesn't fit we undo everything.
         CraftingRecipe.CraftMode mode = craftingRecipe.getCraftMode();
         if (result != null && placeResult(mode, result, undo)) {
-            // @todo @@@@@@@@@@@@@
-            NonNullList<ItemStack> remaining = recipe.getRemainingItems(workInventory);
-//            ItemStack[] remaining = recipe.getRemainingItems(workInventory);
+            List<ItemStack> remaining = InventoryTools.getRemainingItems(recipe, workInventory);
             if (remaining != null) {
                 CraftingRecipe.CraftMode remainingMode = mode == EXTC ? INT : mode;
                 for (ItemStack s : remaining) {

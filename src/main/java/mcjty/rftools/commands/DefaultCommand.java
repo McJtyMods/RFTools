@@ -1,5 +1,6 @@
 package mcjty.rftools.commands;
 
+import mcjty.lib.compat.CompatCommand;
 import mcjty.lib.tools.ChatTools;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
@@ -14,7 +15,7 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public abstract class DefaultCommand implements ICommand {
+public abstract class DefaultCommand implements CompatCommand {
     protected final Map<String,RfToolsCommand> commands = new HashMap<String, RfToolsCommand>();
 
     public DefaultCommand() {

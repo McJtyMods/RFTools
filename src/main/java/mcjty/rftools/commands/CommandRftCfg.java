@@ -9,7 +9,7 @@ public class CommandRftCfg extends DefaultCommand {
     }
 
     @Override
-    public String getCommandName() {
+    public String getName() {
         return "rftcfg";
     }
 }

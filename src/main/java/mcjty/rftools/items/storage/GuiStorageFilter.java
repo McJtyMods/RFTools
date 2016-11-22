@@ -9,6 +9,7 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.Widget;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketUpdateNBTItem;
+import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageTileEntity;
 import mcjty.rftools.network.RFToolsMessages;
@@ -88,7 +89,7 @@ public class GuiStorageFilter extends GenericGuiContainer<ModularStorageTileEnti
         modMode.addChoice("Off", "Don't match on mod", guiElements, 12 * 16, 32);
         modMode.addChoice("On", "Only mod must match", guiElements, 13 * 16, 32);
 
-        NBTTagCompound tagCompound = Minecraft.getMinecraft().thePlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
+        NBTTagCompound tagCompound = MinecraftTools.getPlayer(Minecraft.getMinecraft()).getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
         if (tagCompound != null) {
             setBlacklistMode(tagCompound.getString("blacklistMode"));
             oredictMode.setCurrentChoice(tagCompound.getBoolean("oredictMode") ? 1 : 0);

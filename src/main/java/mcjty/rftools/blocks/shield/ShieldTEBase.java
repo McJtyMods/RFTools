@@ -7,6 +7,8 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.tools.DamageSourceTools;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.RedstoneMode;
@@ -496,7 +498,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         int rf;
         if (DamageTypeMode.DAMAGETYPE_GENERIC.equals(damageMode)) {
             rf = ShieldConfiguration.rfDamage;
-            source = DamageSource.generic;
+            source = DamageSourceTools.getGenericSource();
         } else {
             rf = ShieldConfiguration.rfDamagePlayer;
             if (killer == null) {
@@ -504,7 +506,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             }
             FakePlayer fakePlayer = killer;
             ItemStack shards = getStackInSlot(ShieldContainer.SLOT_SHARD);
-            if (shards != null && shards.stackSize >= ShieldConfiguration.shardsPerLootingKill) {
+            if (shards != null && ItemStackTools.getStackSize(shards) >= ShieldConfiguration.shardsPerLootingKill) {
                 decrStackSize(ShieldContainer.SLOT_SHARD, ShieldConfiguration.shardsPerLootingKill);
                 if (lootingSword == null) {
                     lootingSword = EnvironmentalSetup.createEnchantedItem(Items.DIAMOND_SWORD, Enchantments.LOOTING, ShieldConfiguration.lootingKillBonus);
@@ -1118,16 +1120,16 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         }
 
         ItemStack stackInSlot = inventoryHelper.getStackInSlot(index);
-        if (stackInSlot != null) {
-            if (stackInSlot.stackSize <= amount) {
+        if (ItemStackTools.isValid(stackInSlot)) {
+            if (ItemStackTools.getStackSize(stackInSlot) <= amount) {
                 ItemStack old = stackInSlot;
-                inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, null);
+                inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, ItemStackTools.getEmptyStack());
                 markDirty();
                 return old;
             }
             ItemStack its = stackInSlot.splitStack(amount);
-            if (stackInSlot.stackSize == 0) {
-                inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, null);
+            if (ItemStackTools.isEmpty(stackInSlot)) {
+                inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, ItemStackTools.getEmptyStack());
             }
             markDirty();
             return its;
@@ -1143,8 +1145,8 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         }
 
         inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
-        if (stack != null && stack.stackSize > getInventoryStackLimit()) {
-            stack.stackSize = getInventoryStackLimit();
+        if (ItemStackTools.isValid(stack) && ItemStackTools.getStackSize(stack) > getInventoryStackLimit()) {
+            ItemStackTools.setStackSize(stack, getInventoryStackLimit());
         }
         markDirty();
     }

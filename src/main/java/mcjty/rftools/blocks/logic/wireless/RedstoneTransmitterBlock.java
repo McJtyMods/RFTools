@@ -79,8 +79,8 @@ public class RedstoneTransmitterBlock extends LogicSlabBlock<RedstoneTransmitter
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn) {
-        super.neighborChanged(state, world, pos, blockIn);
+    protected void clOnNeighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn) {
+        super.clOnNeighborChanged(state, world, pos, blockIn);
         RedstoneTransmitterTileEntity te = (RedstoneTransmitterTileEntity) world.getTileEntity(pos);
         te.update();
     }

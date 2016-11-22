@@ -10,6 +10,7 @@ import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.tools.MinecraftTools;
 import mcjty.lib.varia.BlockMeta;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.builder.PacketGetChamberInfo;
@@ -150,7 +151,7 @@ public class GuiChamberDetails extends GuiItemScreen {
             } else {
                 try {
                     Class<?> aClass = Class.forName(className);
-                    entity = (Entity) aClass.getConstructor(World.class).newInstance(mc.theWorld);
+                    entity = (Entity) aClass.getConstructor(World.class).newInstance(MinecraftTools.getWorld(mc));
                     entityName = aClass.getSimpleName();
                 } catch (ClassNotFoundException e) {
                 } catch (InstantiationException e) {

@@ -299,7 +299,9 @@ public class SpawnerConfiguration {
     }
 
     public static void addMobSpawnRF(Configuration cfg, Class<? extends EntityLiving> clazz, int rf) {
-        String name = EntityList.CLASS_TO_NAME.get(clazz);
+        // @todo @@@@@@@@@@@@@@
+        String name = EntityList.getKey(clazz).toString();
+//        String name = EntityList.CLASS_TO_NAME.get(clazz);
         addMobSpawnRF(cfg, name, rf);
     }
 
@@ -309,7 +311,9 @@ public class SpawnerConfiguration {
     }
 
     public static void addMobSpawnAmount(Configuration cfg, Class<? extends EntityLiving> clazz, int materialType, Object object, int meta, float amount) {
-        String name = EntityList.CLASS_TO_NAME.get(clazz);
+        // @todo @@@@@@@@@@@@@@
+        String name = EntityList.getKey(clazz).toString();
+//        String name = EntityList.CLASS_TO_NAME.get(clazz);
         addMobSpawnAmount(cfg, name, materialType, object, meta, amount);
     }
 

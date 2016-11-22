@@ -128,20 +128,22 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyCont
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+    protected ActionResult<ItemStack> clOnItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+        ItemStack stack = player.getHeldItem(hand);
         if (!player.isSneaking()) {
             startTeleport(stack, player, world);
         } else {
             selectReceiver(stack, world, player);
         }
-        return super.onItemRightClick(stack, world, player, hand);
+        return super.clOnItemRightClick(world, player, hand);
     }
 
     protected void selectReceiver(ItemStack stack, World world, EntityPlayer player) {
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    protected EnumActionResult clOnItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        ItemStack stack = player.getHeldItem(hand);
         if (player.isSneaking()) {
             TileEntity te = world.getTileEntity(pos);
             setTarget(stack, player, world, te);

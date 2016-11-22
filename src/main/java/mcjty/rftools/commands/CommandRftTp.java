@@ -8,13 +8,8 @@ public class CommandRftTp extends DefaultCommand {
 //        registerCommand(new CmdCleanupReceivers());
     }
 
-    // @todo @@@@@@@@@@@@@@@
     @Override
     public String getName() {
         return "rfttp";
     }
-//    @Override
-//    public String getCommandName() {
-//        return "rfttp";
-//    }
 }

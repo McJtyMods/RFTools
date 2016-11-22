@@ -76,13 +76,14 @@ public class ShieldTemplateBlock extends Block {
         return state.getValue(COLOR).ordinal();
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list) {
-        for (TemplateColor enumdyecolor : TemplateColor.values()) {
-            list.add(new ItemStack(itemIn, 1, enumdyecolor.ordinal()));
-        }
-    }
+    // @todo @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+//    @Override
+//    @SideOnly(Side.CLIENT)
+//    public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list) {
+//        for (TemplateColor enumdyecolor : TemplateColor.values()) {
+//            list.add(new ItemStack(itemIn, 1, enumdyecolor.ordinal()));
+//        }
+//    }
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {

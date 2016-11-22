@@ -14,6 +14,7 @@ import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketRequestIntegerFromServer;
+import mcjty.lib.tools.MinecraftTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
@@ -100,7 +101,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(dialButton).addChild(dialOnceButton).addChild(interruptButton).
                 addChild(favoriteButton).setDesiredHeight(16);
 
-        analyzerAvailable =  DialingDeviceTileEntity.isDestinationAnalyzerAvailable(mc.theWorld, tileEntity.getPos());
+        analyzerAvailable =  DialingDeviceTileEntity.isDestinationAnalyzerAvailable(MinecraftTools.getWorld(mc), tileEntity.getPos());
         statusButton = new Button(mc, this).setText("Check").
                 setDesiredHeight(14).setDesiredWidth(65).
                 setEnabled(analyzerAvailable).
@@ -177,7 +178,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         }
         BlockPos c = transmitterInfo.getCoordinate();
         RFTools.instance.clientInfo.hilightBlock(c, System.currentTimeMillis() + 1000 * 5);//@todo StorageScannerConfiguration.hilightTime);
-        mc.getMinecraft().thePlayer.closeScreen();
+        MinecraftTools.getPlayer(mc.getMinecraft()).closeScreen();
     }
 
     private void hilightSelectedReceiver(int index) {
@@ -187,16 +188,16 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         }
 
         BlockPos c = destination.getCoordinate();
-        double distance = new Vec3d(c.getX(), c.getY(), c.getZ()).distanceTo(mc.thePlayer.getPositionVector());
+        double distance = new Vec3d(c.getX(), c.getY(), c.getZ()).distanceTo(MinecraftTools.getPlayer(mc).getPositionVector());
 
-        if (destination.getDimension() != mc.theWorld.provider.getDimension() || distance > 150) {
-            Logging.warn(mc.thePlayer, "Receiver is too far to hilight!");
-            mc.getMinecraft().thePlayer.closeScreen();
+        if (destination.getDimension() != MinecraftTools.getWorld(mc).provider.getDimension() || distance > 150) {
+            Logging.warn(MinecraftTools.getPlayer(mc), "Receiver is too far to hilight!");
+            MinecraftTools.getPlayer(mc.getMinecraft()).closeScreen();
             return;
         }
         RFTools.instance.clientInfo.hilightBlock(c, System.currentTimeMillis()+1000*5);// @todo StorageScannerConfiguration.hilightTime);
-        Logging.message(mc.thePlayer, "The receiver is now highlighted");
-        mc.getMinecraft().thePlayer.closeScreen();
+        Logging.message(MinecraftTools.getPlayer(mc), "The receiver is now highlighted");
+        MinecraftTools.getPlayer(mc.getMinecraft()).closeScreen();
     }
 
     private void setStatusError(String message) {
@@ -306,8 +307,8 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(RFTools.MODID, tileEntity.getPos(),
                 once ? DialingDeviceTileEntity.CMD_DIALONCE : DialingDeviceTileEntity.CMD_DIAL,
                 DialingDeviceTileEntity.CLIENTCMD_DIAL,
-                new Argument("player", mc.thePlayer.getName()),
-                new Argument("trans", transmitterInfo.getCoordinate()), new Argument("transDim", mc.theWorld.provider.getDimension()),
+                new Argument("player", MinecraftTools.getPlayer(mc).getName()),
+                new Argument("trans", transmitterInfo.getCoordinate()), new Argument("transDim", MinecraftTools.getWorld(mc).provider.getDimension()),
                 new Argument("c", destination.getCoordinate()), new Argument("dim", destination.getDimension())));
 
         lastDialedTransmitter = true;
@@ -332,8 +333,8 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         }
         RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(RFTools.MODID, tileEntity.getPos(), DialingDeviceTileEntity.CMD_DIAL,
                 DialingDeviceTileEntity.CLIENTCMD_DIAL,
-                new Argument("player", mc.thePlayer.getName()),
-                new Argument("trans", transmitterInfo.getCoordinate()), new Argument("transDim", mc.theWorld.provider.getDimension()),
+                new Argument("player", MinecraftTools.getPlayer(mc).getName()),
+                new Argument("trans", transmitterInfo.getCoordinate()), new Argument("transDim", MinecraftTools.getWorld(mc).provider.getDimension()),
                 new Argument("c", (BlockPos) null), new Argument("dim", 0)));
 
         lastDialedTransmitter = true;
@@ -341,7 +342,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
     }
 
     private void requestReceivers() {
-        RFToolsMessages.INSTANCE.sendToServer(new PacketGetReceivers(tileEntity.getPos(), mc.thePlayer.getName()));
+        RFToolsMessages.INSTANCE.sendToServer(new PacketGetReceivers(tileEntity.getPos(), MinecraftTools.getPlayer(mc).getName()));
     }
 
     private void requestTransmitters() {
@@ -366,7 +367,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         boolean favorite = destination.isFavorite();
         destination.setFavorite(!favorite);
         sendServerCommand(RFToolsMessages.INSTANCE, DialingDeviceTileEntity.CMD_FAVORITE,
-                new Argument("player", mc.thePlayer.getName()),
+                new Argument("player", MinecraftTools.getPlayer(mc).getName()),
                 new Argument("receiver", destination.getCoordinate()),
                 new Argument("dimension", destination.getDimension()),
                 new Argument("favorite", !favorite));
@@ -508,7 +509,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             return "?";
         }
 
-        return DialingDeviceTileEntity.calculateDistance(mc.theWorld, transmitterInfo, teleportDestination);
+        return DialingDeviceTileEntity.calculateDistance(MinecraftTools.getWorld(mc), transmitterInfo, teleportDestination);
     }
 
     private TransmitterInfo getSelectedTransmitter(int transmitterSelected) {

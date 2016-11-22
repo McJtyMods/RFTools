@@ -162,7 +162,9 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
     // Server side only.
     private void changeFavorite(String playerName, BlockPos receiver, int dimension, boolean favorite) {
         PlayerList playerList = getWorld().getMinecraftServer().getPlayerList();
-        List<EntityPlayerMP> list = playerList.getPlayerList();
+        // @todo @@@@@@@@@@@
+        List<EntityPlayerMP> list = playerList.getPlayers();
+//        List<EntityPlayerMP> list = playerList.getPlayerList();
         for (EntityPlayerMP entityplayermp : list) {
             if (playerName.equals(entityplayermp.getName())) {
                 FavoriteDestinationsProperties favoriteDestinations = PlayerExtendedProperties.getFavoriteDestinations(entityplayermp);

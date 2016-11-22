@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.builder;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.lib.tools.PacketBufferTools;
 import mcjty.lib.varia.BlockMeta;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.builder.GuiChamberDetails;
@@ -127,7 +128,7 @@ public class PacketChamberInfoReady implements IMessage {
     private static NBTTagCompound readNBT(ByteBuf dataIn) {
         PacketBuffer buf = new PacketBuffer(dataIn);
         try {
-            return buf.readNBTTagCompoundFromBuffer();
+            return PacketBufferTools.readCompoundTag(buf);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -137,7 +138,7 @@ public class PacketChamberInfoReady implements IMessage {
     private static void writeNBT(ByteBuf dataOut, NBTTagCompound nbt) {
         PacketBuffer buf = new PacketBuffer(dataOut);
         try {
-            buf.writeNBTTagCompoundToBuffer(nbt);
+            PacketBufferTools.writeCompoundTag(buf, nbt);
         } catch (Exception e) {
             e.printStackTrace();
         }

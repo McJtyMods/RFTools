@@ -4,6 +4,7 @@ import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.api.smartwrench.SmartWrenchMode;
 import mcjty.lib.gui.HudRenderHelper;
 import mcjty.lib.gui.RenderGlowEffect;
+import mcjty.lib.tools.MinecraftTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorTileEntity;
 import mcjty.rftools.blocks.builder.BuilderSetup;
@@ -48,7 +49,7 @@ public class RenderWorldLastEventHandler {
 
     private static void renderProtectedBlocks(RenderWorldLastEvent evt) {
         Minecraft mc = Minecraft.getMinecraft();
-        EntityPlayerSP p = mc.thePlayer;
+        EntityPlayerSP p = MinecraftTools.getPlayer(mc);
         ItemStack heldItem = p.getHeldItem(EnumHand.MAIN_HAND);
         if (heldItem == null) {
             return;
@@ -57,8 +58,8 @@ public class RenderWorldLastEventHandler {
             if (SmartWrenchItem.getCurrentMode(heldItem) == SmartWrenchMode.MODE_SELECT) {
                 GlobalCoordinate current = SmartWrenchItem.getCurrentBlock(heldItem);
                 if (current != null) {
-                    if (current.getDimension() == mc.theWorld.provider.getDimension()) {
-                        TileEntity te = mc.theWorld.getTileEntity(current.getCoordinate());
+                    if (current.getDimension() == MinecraftTools.getWorld(mc).provider.getDimension()) {
+                        TileEntity te = MinecraftTools.getWorld(mc).getTileEntity(current.getCoordinate());
                         if (te instanceof BlockProtectorTileEntity) {
                             BlockProtectorTileEntity blockProtectorTileEntity = (BlockProtectorTileEntity) te;
                             Set<BlockPos> coordinates = blockProtectorTileEntity.getProtectedBlocks();
@@ -73,7 +74,7 @@ public class RenderWorldLastEventHandler {
             int mode = ShapeCardItem.getMode(heldItem);
             if (mode == ShapeCardItem.MODE_CORNER1 || mode == ShapeCardItem.MODE_CORNER2) {
                 GlobalCoordinate current = ShapeCardItem.getCurrentBlock(heldItem);
-                if (current != null && current.getDimension() == mc.theWorld.provider.getDimension()) {
+                if (current != null && current.getDimension() == MinecraftTools.getWorld(mc).provider.getDimension()) {
                     Set<BlockPos> coordinates = new HashSet<>();
                     coordinates.add(new BlockPos(0, 0, 0));
                     if (mode == ShapeCardItem.MODE_CORNER2) {
@@ -165,7 +166,7 @@ public class RenderWorldLastEventHandler {
             return;
         }
 
-        EntityPlayerSP p = mc.thePlayer;
+        EntityPlayerSP p = MinecraftTools.getPlayer(mc);
         double doubleX = p.lastTickPosX + (p.posX - p.lastTickPosX) * evt.getPartialTicks();
         double doubleY = p.lastTickPosY + (p.posY - p.lastTickPosY) * evt.getPartialTicks();
         double doubleZ = p.lastTickPosZ + (p.posZ - p.lastTickPosZ) * evt.getPartialTicks();
@@ -193,7 +194,7 @@ public class RenderWorldLastEventHandler {
     }
 
     private static void renderPower(RenderWorldLastEvent evt) {
-        EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
+        EntityPlayerSP player = MinecraftTools.getPlayer(Minecraft.getMinecraft());
 
         ItemStack mainItem = player.getHeldItemMainhand();
         ItemStack offItem = player.getHeldItemOffhand();

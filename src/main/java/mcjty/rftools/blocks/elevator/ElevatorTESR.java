@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.elevator;
 
+import mcjty.lib.tools.MinecraftTools;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
@@ -25,7 +26,7 @@ public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> 
         if (te.isMoving()) {
             // Correction in the y translation to avoid jitter when both player and platform are moving
             AxisAlignedBB aabb = te.getAABBAboveElevator(0);
-            boolean on = Minecraft.getMinecraft().thePlayer.getEntityBoundingBox().intersectsWith(aabb);
+            boolean on = MinecraftTools.getPlayer(Minecraft.getMinecraft()).getEntityBoundingBox().intersectsWith(aabb);
 
             double diff = on ? (te.getPos().getY() - (y+te.getMovingY()) - 1) : 0;
 

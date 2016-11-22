@@ -108,7 +108,9 @@ public class TeleportDestinations extends WorldSavedData {
     public Collection<TeleportDestinationClientInfo> getValidDestinations(World worldObj, String playerName) {
         FavoriteDestinationsProperties properties = null;
         if (playerName != null) {
-            List<EntityPlayerMP> list = worldObj.getMinecraftServer().getPlayerList().getPlayerList();
+            // @todo @@@@@@@@@@@@@
+            List<EntityPlayerMP> list = worldObj.getMinecraftServer().getPlayerList().getPlayers();
+//            List<EntityPlayerMP> list = worldObj.getMinecraftServer().getPlayerList().getPlayerList();
             for (EntityPlayerMP entityplayermp : list) {
                 if (playerName.equals(entityplayermp.getName())) {
                     properties = PlayerExtendedProperties.getFavoriteDestinations(entityplayermp);
