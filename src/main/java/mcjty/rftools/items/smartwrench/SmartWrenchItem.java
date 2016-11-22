@@ -4,7 +4,7 @@ import cofh.api.item.IToolHammer;
 import mcjty.lib.api.smartwrench.SmartWrench;
 import mcjty.lib.api.smartwrench.SmartWrenchMode;
 import mcjty.lib.api.smartwrench.SmartWrenchSelector;
-import mcjty.lib.block.CompatItem;
+import mcjty.lib.compat.CompatItem;
 import mcjty.lib.container.GenericBlock;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;

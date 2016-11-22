@@ -1,6 +1,6 @@
 package mcjty.rftools.craftinggrid;
 
-import mcjty.lib.inventory.CompatInventory;
+import mcjty.lib.compat.CompatInventory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;

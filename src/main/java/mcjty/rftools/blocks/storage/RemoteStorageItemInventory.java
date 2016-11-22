@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.storage;
 
-import mcjty.lib.inventory.CompatInventory;
+import mcjty.lib.compat.CompatInventory;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.craftinggrid.CraftingGrid;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;

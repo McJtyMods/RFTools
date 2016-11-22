@@ -19,9 +19,9 @@ public class RedstoneReceiverItemBlock extends LogicItemBlock {
         super(block);
     }
 
-
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    protected EnumActionResult clOnItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        ItemStack stack = player.getHeldItem(hand);
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof RedstoneTransmitterTileEntity) {
             RedstoneTransmitterTileEntity redstoneTransmitterTileEntity = (RedstoneTransmitterTileEntity) te;
@@ -59,7 +59,7 @@ public class RedstoneReceiverItemBlock extends LogicItemBlock {
                 }
             }
         } else {
-            return super.onItemUse(stack, player, world, pos, hand, side, hitX, hitY, hitZ);
+            return super.clOnItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
         }
         return EnumActionResult.SUCCESS;
     }

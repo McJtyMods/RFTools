@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.builder;
 
-import mcjty.lib.block.CompatBlock;
+import mcjty.lib.compat.CompatBlock;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
