@@ -40,7 +40,7 @@ public class SecurityManagerBlock extends GenericRFToolsBlock<SecurityManagerTil
             for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
                 NBTTagCompound itemTag = bufferTagList.getCompoundTagAt(i);
                 if (itemTag != null) {
-                    ItemStack stack = ItemStack.loadItemStackFromNBT(itemTag);
+                    ItemStack stack = ItemStackTools.loadFromNBT(itemTag);
                     if (stack != null) {
                         rc++;
                     }

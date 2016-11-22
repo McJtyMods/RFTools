@@ -5,6 +5,7 @@ import gnu.trove.set.hash.TIntHashSet;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.network.Argument;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
@@ -146,22 +147,22 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
             if (oreDict) {
                 if (isEqualForOredict(matcher, stack)) {
                     if ((!useMeta) || matcher.getItemDamage() == stack.getItemDamage()) {
-                        nr = stack.stackSize;
+                        nr = ItemStackTools.getStackSize(stack);
                     }
                 }
             } else {
                 if (useMeta) {
                     if (matcher.isItemEqual(stack)) {
-                        nr = stack.stackSize;
+                        nr = ItemStackTools.getStackSize(stack);
                     }
                 } else {
                     if (matcher.getItem() == stack.getItem()) {
-                        nr = stack.stackSize;
+                        nr = ItemStackTools.getStackSize(stack);
                     }
                 }
             }
         } else {
-            nr = stack.stackSize;
+            nr = ItemStackTools.getStackSize(stack);
         }
         return nr;
     }
@@ -197,7 +198,7 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isUsable(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 

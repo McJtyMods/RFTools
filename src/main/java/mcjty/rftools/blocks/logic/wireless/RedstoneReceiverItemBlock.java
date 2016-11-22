@@ -19,6 +19,7 @@ public class RedstoneReceiverItemBlock extends LogicItemBlock {
         super(block);
     }
 
+
     @Override
     public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         TileEntity te = world.getTileEntity(pos);

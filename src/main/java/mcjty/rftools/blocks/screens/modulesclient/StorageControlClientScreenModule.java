@@ -205,7 +205,7 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
         if (tagCompound != null) {
             for (int i = 0 ; i < stacks.length ; i++) {
                 if (tagCompound.hasKey("stack"+i)) {
-                    stacks[i] = ItemStack.loadItemStackFromNBT(tagCompound.getCompoundTag("stack"+i));
+                    stacks[i] = ItemStackTools.loadFromNBT(tagCompound.getCompoundTag("stack"+i));
                 }
             }
         }

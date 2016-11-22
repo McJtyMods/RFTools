@@ -150,7 +150,7 @@ public class StorageTerminalTileEntity extends LogicTileEntity implements Defaul
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isUsable(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 }

@@ -22,7 +22,8 @@ public class RFToolsManualItem extends GenericRFToolsItem {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+    protected ActionResult<ItemStack> clOnItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+        ItemStack stack = player.getHeldItem(hand);
         if (world.isRemote) {
             player.openGui(RFTools.instance, RFTools.GUI_MANUAL_MAIN, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
             return new ActionResult<>(EnumActionResult.SUCCESS, stack);

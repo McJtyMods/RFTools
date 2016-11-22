@@ -23,7 +23,7 @@ public class StorageFilterInventory implements IInventory {
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            stacks[i] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+            stacks[i] = ItemStackTools.loadFromNBT(nbtTagCompound);
         }
     }
 
@@ -107,7 +107,7 @@ public class StorageFilterInventory implements IInventory {
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isUsable(EntityPlayer player) {
         return true;
     }
 

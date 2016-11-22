@@ -1,5 +1,7 @@
 package mcjty.rftools.blocks.storage;
 
+import mcjty.lib.inventory.CompatInventory;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.craftinggrid.CraftingGrid;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import mcjty.rftools.craftinggrid.InventoriesItemSource;
@@ -15,7 +17,7 @@ import net.minecraft.util.text.ITextComponent;
 
 import java.util.List;
 
-public class RemoteStorageItemInventory implements IInventory, CraftingGridProvider, JEIRecipeAcceptor {
+public class RemoteStorageItemInventory implements CompatInventory, CraftingGridProvider, JEIRecipeAcceptor {
     private ItemStack stacks[] = new ItemStack[RemoteStorageItemContainer.MAXSIZE_STORAGE];
     private final EntityPlayer entityPlayer;
     private CraftingGrid craftingGrid = new CraftingGrid();
@@ -152,32 +154,32 @@ public class RemoteStorageItemInventory implements IInventory, CraftingGridProvi
         if (isServer()) {
             RemoteStorageTileEntity storage = getRemoteStorage();
             if (storage == null) {
-                return null;
+                return ItemStackTools.getEmptyStack();
             }
             int si = storage.findRemoteIndex(getStorageID());
             if (si == -1) {
-                return null;
+                return ItemStackTools.getEmptyStack();
             }
             return storage.decrStackSizeRemote(si, index, amount);
         } else {
             if (index >= stacks.length) {
-                return null;
+                return ItemStackTools.getEmptyStack();
             }
-            if (stacks[index] != null) {
+            if (ItemStackTools.isValid(stacks[index])) {
                 markDirty();
-                if (stacks[index].stackSize <= amount) {
+                if (ItemStackTools.getStackSize(stacks[index]) <= amount) {
                     ItemStack old = stacks[index];
-                    stacks[index] = null;
+                    stacks[index] = ItemStackTools.getEmptyStack();
                     return old;
                 }
                 ItemStack its = stacks[index].splitStack(amount);
-                if (stacks[index].stackSize == 0) {
-                    stacks[index] = null;
+                if (ItemStackTools.isEmpty(stacks[index])) {
+                    stacks[index] = ItemStackTools.getEmptyStack();
                 }
                 return its;
             }
         }
-        return null;
+        return ItemStackTools.getEmptyStack();
     }
 
     @Override
@@ -197,8 +199,8 @@ public class RemoteStorageItemInventory implements IInventory, CraftingGridProvi
                 return;
             }
             stacks[index] = stack;
-            if (stack != null && stack.stackSize > getInventoryStackLimit()) {
-                stack.stackSize = getInventoryStackLimit();
+            if (ItemStackTools.isValid(stack) && ItemStackTools.getStackSize(stack) > getInventoryStackLimit()) {
+                ItemStackTools.setStackSize(stack, getInventoryStackLimit());
             }
             markDirty();
         }
@@ -220,7 +222,7 @@ public class RemoteStorageItemInventory implements IInventory, CraftingGridProvi
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isUsable(EntityPlayer player) {
         return true;
     }
 

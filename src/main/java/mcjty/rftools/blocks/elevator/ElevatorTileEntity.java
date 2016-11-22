@@ -4,6 +4,8 @@ package mcjty.rftools.blocks.elevator;
 import mcjty.lib.container.GenericBlock;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.tools.MinecraftTools;
+import mcjty.lib.tools.WorldTools;
 import mcjty.lib.varia.Broadcaster;
 import mcjty.rftools.blocks.shield.RelCoordinate;
 import mcjty.rftools.playerprops.BuffProperties;
@@ -95,7 +97,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
 
     private void setRedstoneState() {
         markDirty();
-        getWorld().notifyNeighborsOfStateChange(this.pos, this.getBlockType());
+        WorldTools.notifyNeighborsOfStateChange(getWorld(), this.pos, this.getBlockType());
     }
 
 
@@ -188,9 +190,9 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         double d = calculateSpeed();
         handlePlatformMovement(d);
         if (bounds != null) {
-            EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
+            EntityPlayerSP player = MinecraftTools.getPlayer(Minecraft.getMinecraft());
             AxisAlignedBB aabb = getAABBAboveElevator(d);
-            boolean on = Minecraft.getMinecraft().thePlayer.getEntityBoundingBox().intersectsWith(aabb);
+            boolean on = player.getEntityBoundingBox().intersectsWith(aabb);
             if (on) {
                 player.setPosition(player.posX, movingY + 1, player.posZ);
             }
@@ -675,7 +677,9 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         if (tagCompound.hasKey("players")) {
             entitiesOnPlatform.clear();
             WorldServer world = DimensionManager.getWorld(0);
-            List<EntityPlayerMP> serverPlayers = world.getMinecraftServer().getPlayerList().getPlayerList();
+            // @todo @@@@@@@@@@@@@@
+            List<EntityPlayerMP> serverPlayers = world.getMinecraftServer().getPlayerList().getPlayers();
+//            List<EntityPlayerMP> serverPlayers = world.getMinecraftServer().getPlayerList().getPlayerList();
             NBTTagList playerList = tagCompound.getTagList("players", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < playerList.tagCount(); i++) {
                 NBTTagCompound p = playerList.getCompoundTagAt(i);

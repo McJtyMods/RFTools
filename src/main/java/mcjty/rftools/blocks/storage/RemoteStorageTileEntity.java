@@ -4,6 +4,7 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.items.storage.StorageModuleItem;
 import net.minecraft.block.state.IBlockState;
@@ -242,7 +243,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isUsable(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 
@@ -303,25 +304,25 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
 
     public ItemStack decrStackSizeRemote(int si, int index, int amount) {
         if (index >= slots[si].length) {
-            return null;
+            return ItemStackTools.getEmptyStack();
         }
         ItemStack[] stacks = slots[si];
-        boolean hasOld = stacks[index] != null;
-        ItemStack its = null;
-        if (stacks[index] != null) {
-            if (stacks[index].stackSize <= amount) {
+        boolean hasOld = ItemStackTools.isValid(stacks[index]);
+        ItemStack its = ItemStackTools.getEmptyStack();
+        if (ItemStackTools.isValid(stacks[index])) {
+            if (ItemStackTools.getStackSize(stacks[index]) <= amount) {
                 ItemStack old = stacks[index];
-                stacks[index] = null;
+                stacks[index] = ItemStackTools.getEmptyStack();
                 its = old;
             } else {
                 its = stacks[index].splitStack(amount);
-                if (stacks[index].stackSize == 0) {
-                    stacks[index] = null;
+                if (ItemStackTools.isEmpty(stacks[index])) {
+                    stacks[index] = ItemStackTools.getEmptyStack();
                 }
             }
         }
 
-        boolean hasNew = stacks[index] != null;
+        boolean hasNew = ItemStackTools.isValid(stacks[index]);
         if (hasOld && !hasNew) {
             numStacks[si]--;
         } else if (hasNew && !hasOld) {
@@ -335,14 +336,14 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
 
     public ItemStack removeStackFromSlotRemote(int si, int index) {
         if (index >= slots[si].length) {
-            return null;
+            return ItemStackTools.getEmptyStack();
         }
         ItemStack[] stacks = slots[si];
         if (stacks[index] == null) {
-            return null;
+            return ItemStackTools.getEmptyStack();
         }
         ItemStack old = stacks[index];
-        stacks[index] = null;
+        stacks[index] = ItemStackTools.getEmptyStack();
 
         numStacks[si]--;
         StorageModuleItem.updateStackSize(getStackInSlot(si), numStacks[si]);
@@ -357,8 +358,8 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         }
         boolean hasOld = slots[si][index] != null;
         slots[si][index] = stack;
-        if (stack != null && stack.stackSize > limit) {
-            stack.stackSize = limit;
+        if (stack != null && ItemStackTools.getStackSize(stack) > limit) {
+            ItemStackTools.setStackSize(stack, limit);
         }
         boolean hasNew = stack != null;
         if (hasOld && !hasNew) {
@@ -484,7 +485,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         NBTTagList bufferTagList = tagCompound.getTagList(tagname, Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < Math.min(bufferTagList.tagCount(), slots[index].length) ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            slots[index][i] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+            slots[index][i] = ItemStackTools.loadFromNBT(nbtTagCompound);
         }
     }
 
@@ -513,9 +514,10 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         for (int i = 0 ; i < slots[index].length ; i++) {
             ItemStack stack = slots[index][i];
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
-            if (stack != null) {
+            if (ItemStackTools.isValid(stack)) {
                 stack.writeToNBT(nbtTagCompound);
-                if (stack.stackSize > 0) {
+                // @todo check?
+                if (ItemStackTools.getStackSize(stack) > 0) {
                     cnt++;
                 }
             }

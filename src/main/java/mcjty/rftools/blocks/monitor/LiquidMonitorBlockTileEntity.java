@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.monitor;
 
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.tools.WorldTools;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -97,8 +98,8 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
                             TileEntity tileEntity = getWorld().getTileEntity(new BlockPos(xx, yy, zz));
                             if (tileEntity != null && tileEntity.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null)) {
                                 adjacentBlocks.add(new BlockPos(xx, yy, zz));
-                            } else if (tileEntity instanceof IFluidHandler) {
-                                adjacentBlocks.add(new BlockPos(xx, yy, zz));
+//                            } else if (tileEntity instanceof IFluidHandler) {
+//                                adjacentBlocks.add(new BlockPos(xx, yy, zz));
                             }
                         }
                     }
@@ -140,15 +141,15 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
                 }
                 maxContents = properties[0].getCapacity();
             }
-        } else if (tileEntity instanceof IFluidHandler) {
-            IFluidHandler handler = (IFluidHandler) tileEntity;
-            FluidTankInfo[] tankInfo = handler.getTankInfo(EnumFacing.DOWN);
-            if (tankInfo != null && tankInfo.length > 0) {
-                if (tankInfo[0].fluid != null) {
-                    stored = tankInfo[0].fluid.amount;
-                }
-                maxContents = tankInfo[0].capacity;
-            }
+//        } else if (tileEntity instanceof IFluidHandler) {
+//            IFluidHandler handler = (IFluidHandler) tileEntity;
+//            FluidTankInfo[] tankInfo = handler.getTankInfo(EnumFacing.DOWN);
+//            if (tankInfo != null && tankInfo.length > 0) {
+//                if (tankInfo[0].fluid != null) {
+//                    stored = tankInfo[0].fluid.amount;
+//                }
+//                maxContents = tankInfo[0].capacity;
+//            }
         } else {
             setInvalid();
             return;
@@ -190,7 +191,7 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
     }
 
     private void setRedstoneOut(boolean a) {
-        getWorld().notifyNeighborsOfStateChange(this.pos, this.getBlockType());
+        WorldTools.notifyNeighborsOfStateChange(getWorld(), this.pos, this.getBlockType());
     }
 
     @Override

@@ -102,8 +102,8 @@ public class MatterReceiverBlock extends GenericRFToolsBlock<MatterReceiverTileE
     }
 
     @Override
-    public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing facing, float sx, float sy, float sz, int meta, EntityLivingBase placer) {
-        IBlockState state = super.onBlockPlaced(world, pos, facing, sx, sy, sz, meta, placer);
+    protected IBlockState clGetStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+        IBlockState state = super.clGetStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer);
         if (world.isRemote) {
             return state;
         }

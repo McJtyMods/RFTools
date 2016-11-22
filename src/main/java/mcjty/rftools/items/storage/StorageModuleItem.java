@@ -1,5 +1,6 @@
 package mcjty.rftools.items.storage;
 
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
@@ -46,7 +47,8 @@ public class StorageModuleItem extends GenericRFToolsItem {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+    protected ActionResult<ItemStack> clOnItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+        ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
             Logging.message(player, TextFormatting.YELLOW + "Place this module in a storage module tablet to access contents");
             return new ActionResult<>(EnumActionResult.SUCCESS, stack);
@@ -56,7 +58,7 @@ public class StorageModuleItem extends GenericRFToolsItem {
 
     // Called from the Remote or Modular store TE's to update the stack size for this item while it is inside that TE.
     public static void updateStackSize(ItemStack stack, int numStacks) {
-        if (stack == null || stack.stackSize == 0) {
+        if (ItemStackTools.isEmpty(stack)) {
             return;
         }
         NBTTagCompound tagCompound = stack.getTagCompound();
@@ -114,10 +116,10 @@ public class StorageModuleItem extends GenericRFToolsItem {
     }
 
     @Override
-    public void getSubItems(Item item, CreativeTabs creativeTabs, List list) {
+    protected void clGetSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
         for (int i = 0 ; i < 7 ; i++) {
             if (MAXSIZE[i] != 0) {
-                list.add(new ItemStack(ModularStorageSetup.storageModuleItem, 1, i));
+                subItems.add(new ItemStack(ModularStorageSetup.storageModuleItem, 1, i));
             }
         }
     }

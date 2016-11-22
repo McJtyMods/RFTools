@@ -160,7 +160,7 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
 
     @SuppressWarnings("NullableProblems")
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isUsable(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 

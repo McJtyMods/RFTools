@@ -4,6 +4,7 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.NullSidedInvWrapper;
 import mcjty.rftools.ClientInfo;
 import mcjty.rftools.api.general.IInventoryTracker;
@@ -433,7 +434,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isUsable(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 
@@ -686,7 +687,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            inventoryHelper.setStackInSlot(i+ModularStorageContainer.SLOT_STORAGE, ItemStack.loadItemStackFromNBT(nbtTagCompound));
+            inventoryHelper.setStackInSlot(i+ModularStorageContainer.SLOT_STORAGE, ItemStackTools.loadFromNBT(nbtTagCompound));
         }
     }
 
@@ -696,17 +697,17 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             // This is a new TE with separate NBT tags for the three special slots.
             for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
                 NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-                inventoryHelper.setStackInSlot(i+ModularStorageContainer.SLOT_STORAGE, ItemStack.loadItemStackFromNBT(nbtTagCompound));
+                inventoryHelper.setStackInSlot(i+ModularStorageContainer.SLOT_STORAGE, ItemStackTools.loadFromNBT(nbtTagCompound));
             }
-            inventoryHelper.setStackInSlot(ModularStorageContainer.SLOT_STORAGE_MODULE, ItemStack.loadItemStackFromNBT(tagCompound.getCompoundTag("SlotStorage")));
-            inventoryHelper.setStackInSlot(ModularStorageContainer.SLOT_TYPE_MODULE, ItemStack.loadItemStackFromNBT(tagCompound.getCompoundTag("SlotType")));
-            inventoryHelper.setStackInSlot(ModularStorageContainer.SLOT_FILTER_MODULE, ItemStack.loadItemStackFromNBT(tagCompound.getCompoundTag("SlotFilter")));
+            inventoryHelper.setStackInSlot(ModularStorageContainer.SLOT_STORAGE_MODULE, ItemStackTools.loadFromNBT(tagCompound.getCompoundTag("SlotStorage")));
+            inventoryHelper.setStackInSlot(ModularStorageContainer.SLOT_TYPE_MODULE, ItemStackTools.loadFromNBT(tagCompound.getCompoundTag("SlotType")));
+            inventoryHelper.setStackInSlot(ModularStorageContainer.SLOT_FILTER_MODULE, ItemStackTools.loadFromNBT(tagCompound.getCompoundTag("SlotFilter")));
         } else {
             // This is an old TE so we have to convert this to the new format.
             int index = 0;
             for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
                 NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-                inventoryHelper.setStackInSlot(index, ItemStack.loadItemStackFromNBT(nbtTagCompound));
+                inventoryHelper.setStackInSlot(index, ItemStackTools.loadFromNBT(nbtTagCompound));
                 index++;
                 if (index == ModularStorageContainer.SLOT_FILTER_MODULE) {
                     index++;    // Skip this slot since this TE will not have that.
@@ -787,9 +788,10 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         for (int i = ModularStorageContainer.SLOT_STORAGE; i < inventoryHelper.getCount(); i++) {
             ItemStack stack = inventoryHelper.getStackInSlot(i);
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
-            if (stack != null) {
+            if (ItemStackTools.isValid(stack)) {
                 stack.writeToNBT(nbtTagCompound);
-                if (stack.stackSize > 0) {
+                // @todo check?
+                if (ItemStackTools.getStackSize(stack) > 0) {
                     cnt++;
                 }
             }

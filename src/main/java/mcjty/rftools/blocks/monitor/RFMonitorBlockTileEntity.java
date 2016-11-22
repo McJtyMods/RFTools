@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.monitor;
 
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.tools.WorldTools;
 import mcjty.lib.varia.EnergyTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -168,7 +169,7 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
     }
 
     private void setRedstoneOut(boolean a) {
-        getWorld().notifyNeighborsOfStateChange(this.pos, this.getBlockType());
+        WorldTools.notifyNeighborsOfStateChange(getWorld(), this.pos, this.getBlockType());
     }
 
 

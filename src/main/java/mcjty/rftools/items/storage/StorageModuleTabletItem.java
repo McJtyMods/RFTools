@@ -1,6 +1,7 @@
 package mcjty.rftools.items.storage;
 
 import cofh.api.energy.IEnergyContainerItem;
+import mcjty.lib.tools.ChatTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
@@ -75,7 +76,8 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+    protected ActionResult<ItemStack> clOnItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+        ItemStack stack = player.getHeldItem(hand);
         // Make sure the tablet only works in main hand to avoid problems later
         if (hand != EnumHand.MAIN_HAND) {
             return new ActionResult<>(EnumActionResult.PASS, stack);
@@ -116,12 +118,12 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
                     BlockPos pos = new BlockPos(monitorx, monitory, monitorz);
                     WorldServer w = DimensionManager.getWorld(monitordim);
                     if (w == null || !RFToolsTools.chunkLoaded(w, pos)) {
-                        player.addChatComponentMessage(new TextComponentString(TextFormatting.RED + "Storage scanner is out of range!"));
+                        ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Storage scanner is out of range!"));
                     } else {
                         player.openGui(RFTools.instance, RFTools.GUI_REMOTE_STORAGESCANNER_ITEM, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
                     }
                 } else {
-                    player.addChatComponentMessage(new TextComponentString(TextFormatting.RED + "Storage module is not linked to a storage scanner!"));
+                    ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Storage module is not linked to a storage scanner!"));
                 }
             } else if (moduleDamage == StorageModuleItem.STORAGE_REMOTE) {
                 if (!tagCompound.hasKey("id")) {

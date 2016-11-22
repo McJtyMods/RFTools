@@ -1,6 +1,8 @@
 package mcjty.rftools.blocks.screens.modules;
 
 import io.netty.buffer.ByteBuf;
+import mcjty.lib.tools.ChatTools;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.SoundTools;
 import mcjty.rftools.RFTools;
@@ -112,7 +114,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
             setupCoordinateFromNBT(tagCompound, dim, pos);
             for (int i = 0; i < stacks.length; i++) {
                 if (tagCompound.hasKey("stack" + i)) {
-                    stacks[i] = ItemStack.loadItemStackFromNBT(tagCompound.getCompoundTag("stack" + i));
+                    stacks[i] = ItemStackTools.loadFromNBT(tagCompound.getCompoundTag("stack" + i));
                 }
             }
         }
@@ -213,7 +215,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
             return;
         }
         if (BlockPosTools.INVALID.equals(coordinate)) {
-            player.addChatComponentMessage(new TextComponentString(TextFormatting.RED + "Module is not linked to storage scanner!"));
+            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Module is not linked to storage scanner!"));
             return;
         }
         StorageScannerTileEntity scannerTileEntity = getStorageScanner(dim, coordinate);
@@ -247,9 +249,9 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
             if (i != -1) {
                 if (stacks[i] == null) {
                     ItemStack heldItem = player.getHeldItemMainhand();
-                    if (heldItem != null) {
+                    if (ItemStackTools.isValid(heldItem)) {
                         stacks[i] = heldItem.copy();
-                        stacks[i].stackSize = 1;
+                        ItemStackTools.setStackSize(stacks[i], 1);
                         dirty = i;
                     }
                 } else {
@@ -257,6 +259,5 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
                 }
             }
         }
-        return;
     }
 }

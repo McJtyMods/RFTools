@@ -33,7 +33,9 @@ public class PowerCellNetwork extends WorldSavedData {
     }
 
     public void save(World world) {
-        world.setItemData(POWERCELL_NETWORK_NAME, this);
+        // @todo @@@@@@@@@@@@@@
+        world.setData(POWERCELL_NETWORK_NAME, this);
+//        world.setItemData(POWERCELL_NETWORK_NAME, this);
         markDirty();
     }
 
@@ -55,7 +57,9 @@ public class PowerCellNetwork extends WorldSavedData {
         if (instance != null) {
             return instance;
         }
-        instance = (PowerCellNetwork) world.loadItemData(PowerCellNetwork.class, POWERCELL_NETWORK_NAME);
+        // @todo @@@@@@@@
+        instance = (PowerCellNetwork) world.loadData(PowerCellNetwork.class, POWERCELL_NETWORK_NAME);
+//        instance = (PowerCellNetwork) world.loadItemData(PowerCellNetwork.class, POWERCELL_NETWORK_NAME);
         if (instance == null) {
             instance = new PowerCellNetwork(POWERCELL_NETWORK_NAME);
         }

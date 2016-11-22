@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.tools.ChatTools;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
@@ -137,12 +138,12 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
                     BlockPos pos = RFToolsTools.getPositionFromModule(module);
                     WorldServer world = DimensionManager.getWorld(dimension);
                     if (!RFToolsTools.chunkLoaded(world, pos)) {
-                        entityPlayer.addChatComponentMessage(new TextComponentString(TextFormatting.YELLOW + "Storage scanner out of range!"));
+                        ChatTools.addChatMessage(entityPlayer, new TextComponentString(TextFormatting.YELLOW + "Storage scanner out of range!"));
                         return null;
                     }
                     TileEntity scannerTE = world.getTileEntity(pos);
                     if (!(scannerTE instanceof StorageScannerTileEntity)) {
-                        entityPlayer.addChatComponentMessage(new TextComponentString(TextFormatting.YELLOW + "Storage scanner is missing!"));
+                        ChatTools.addChatMessage(entityPlayer, new TextComponentString(TextFormatting.YELLOW + "Storage scanner is missing!"));
                         return null;
                     }
 
@@ -200,7 +201,7 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
                     if (!player.inventory.addItemStackToInventory(module)) {
                         player.entityDropItem(module, 1.05f);
                     }
-                    player.addChatComponentMessage(new TextComponentString("Removed module"));
+                    ChatTools.addChatMessage(player, new TextComponentString("Removed module"));
                 }
             }
         }

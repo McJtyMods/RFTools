@@ -1,6 +1,7 @@
 package mcjty.rftools.craftinggrid;
 
 import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -51,11 +52,11 @@ public class TileEntityItemSource implements IItemSource {
         } else if (inv instanceof IInventory) {
             IInventory inventory = (IInventory) inv;
             ItemStack oldStack = inventory.getStackInSlot(slot);
-            if (oldStack != null) {
-                if ((stack.stackSize + oldStack.stackSize) > stack.getMaxStackSize()) {
+            if (ItemStackTools.isValid(oldStack)) {
+                if ((ItemStackTools.getStackSize(stack) + ItemStackTools.getStackSize(oldStack)) > stack.getMaxStackSize()) {
                     return false;
                 }
-                stack.stackSize += oldStack.stackSize;
+                ItemStackTools.incStackSize(stack, ItemStackTools.getStackSize(oldStack));
             }
             inventory.setInventorySlotContents(slot, stack);
             return true;
@@ -67,12 +68,12 @@ public class TileEntityItemSource implements IItemSource {
         if (inv instanceof IItemHandler) {
             IItemHandler handler = (IItemHandler) inv;
             ItemStack leftOver = ItemHandlerHelper.insertItem(handler, stack, false);
-            return leftOver == null ? 0 : leftOver.stackSize;
+            return ItemStackTools.getStackSize(leftOver);
         } else if (inv instanceof IInventory) {
             IInventory inventory = (IInventory) inv;
             return InventoryHelper.mergeItemStack(inventory, true, stack, 0, inventory.getSizeInventory(), null);
         }
-        return stack.stackSize;
+        return ItemStackTools.getStackSize(stack);
     }
 
     private static int getSizeInventory(Object inv) {
@@ -133,8 +134,8 @@ public class TileEntityItemSource implements IItemSource {
             IInventory inventory = (IInventory) te;
             ItemStack stack = inventory.getStackInSlot(realKey.getSlot());
             ItemStack result = stack.splitStack(amount);
-            if (stack.stackSize == 0) {
-                inventory.setInventorySlotContents(realKey.getSlot(), null);
+            if (ItemStackTools.isEmpty(stack)) {
+                inventory.setInventorySlotContents(realKey.getSlot(), ItemStackTools.getEmptyStack());
             }
             return result;
         }

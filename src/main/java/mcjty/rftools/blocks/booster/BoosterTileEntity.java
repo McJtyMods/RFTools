@@ -142,7 +142,7 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isUsable(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 

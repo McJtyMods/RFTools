@@ -188,10 +188,11 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         Item matcherItem = matcher.getItem();
 
         FluidStack matcherFluidStack = null;
-        if (matcherItem instanceof IFluidContainerItem) {
-            matcherFluidStack = ((IFluidContainerItem)matcherItem).getFluid(matcher);
-            return checkFluid(block, matcherFluidStack, state, newpos);
-        } else if (matcherItem instanceof ItemBucket || matcherItem instanceof UniversalBucket) {
+//        if (matcherItem instanceof IFluidContainerItem) {
+//            matcherFluidStack = ((IFluidContainerItem)matcherItem).getFluid(matcher);
+//            return checkFluid(block, matcherFluidStack, state, newpos);
+//        }
+        if (matcherItem instanceof ItemBucket || matcherItem instanceof UniversalBucket) {
             matcherFluidStack = new FluidBucketWrapper(matcher).getFluid();
             return checkFluid(block, matcherFluidStack, state, newpos);
         }
@@ -311,7 +312,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isUsable(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 

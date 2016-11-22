@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
@@ -114,7 +115,7 @@ public class ItemStackClientScreenModule implements IClientScreenModule<ItemStac
 
     private static void renderItemOverlayIntoGUI(FontRenderer fontRenderer, ItemStack itemStack, int x, int y) {
         if (itemStack != null) {
-            int size = itemStack.stackSize;
+            int size = ItemStackTools.getStackSize(itemStack);
             if (size > 1) {
                 String s1;
                 if (size < 10000) {

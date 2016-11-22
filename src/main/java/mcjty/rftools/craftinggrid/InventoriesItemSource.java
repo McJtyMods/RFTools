@@ -77,12 +77,12 @@ public class InventoriesItemSource implements IItemSource {
         ItemKey realKey = (ItemKey) key;
         IInventory inventory = realKey.getInventory();
         ItemStack origStack = inventory.removeStackFromSlot(realKey.getSlot());
-        if (origStack != null) {
+        if (ItemStackTools.isValid(origStack)) {
             if (ItemHandlerHelper.canItemStacksStack(origStack, stack)) {
-                if ((stack.stackSize + origStack.stackSize) > stack.getMaxStackSize()) {
+                if ((ItemStackTools.getStackSize(stack) + ItemStackTools.getStackSize(origStack)) > stack.getMaxStackSize()) {
                     return false;
                 }
-                stack.stackSize += origStack.stackSize;
+                ItemStackTools.incStackSize(stack, ItemStackTools.getStackSize(origStack));
             } else {
                 return false;
             }

@@ -36,7 +36,7 @@ public class ModularStorageItemInventory implements IInventory, CraftingGridProv
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < Math.min(bufferTagList.tagCount(), maxSize) ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            stacks[i] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+            stacks[i] = ItemStackTools.loadFromNBT(nbtTagCompound);
         }
         craftingGrid.readFromNBT(tagCompound.getCompoundTag("grid"));
 
@@ -177,7 +177,7 @@ public class ModularStorageItemInventory implements IInventory, CraftingGridProv
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isUsable(EntityPlayer player) {
         return true;
     }
 
