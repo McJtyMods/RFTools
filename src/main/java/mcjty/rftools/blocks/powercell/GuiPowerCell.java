@@ -28,8 +28,24 @@ public class GuiPowerCell extends GenericGuiContainer<PowerCellTileEntity> {
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/powercell.png");
 
-    public GuiPowerCell(PowerCellTileEntity PowerCellTileEntity, PowerCellContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, PowerCellTileEntity, container, RFTools.GUI_MANUAL_MAIN, "powercell");
+    public GuiPowerCell(PowerCellAdvancedTileEntity te, PowerCellContainer container) {
+        this((PowerCellTileEntity) te, container);
+    }
+
+    public GuiPowerCell(PowerCellNormalTileEntity te, PowerCellContainer container) {
+        this((PowerCellTileEntity) te, container);
+    }
+
+    public GuiPowerCell(PowerCellSimpleTileEntity te, PowerCellContainer container) {
+        this((PowerCellTileEntity) te, container);
+    }
+
+    public GuiPowerCell(PowerCellCreativeTileEntity te, PowerCellContainer container) {
+        this((PowerCellTileEntity) te, container);
+    }
+
+    public GuiPowerCell(PowerCellTileEntity te, PowerCellContainer container) {
+        super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, RFTools.GUI_MANUAL_MAIN, "powercell");
 
         xSize = POWERCELL_WIDTH;
         ySize = POWERCELL_HEIGHT;

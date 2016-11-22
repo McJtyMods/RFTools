@@ -2,11 +2,9 @@ package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
-import mcjty.lib.gui.events.ButtonEvent;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.ToggleButton;
-import mcjty.lib.gui.widgets.Widget;
 import mcjty.lib.network.Argument;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IClientScreenModule;
@@ -35,6 +33,10 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
     private ToggleButton bright;
 
     private int selected = -1;
+
+    public GuiScreen(CreativeScreenTileEntity te, ScreenContainer container) {
+        this((ScreenTileEntity) te, container);
+    }
 
     public GuiScreen(ScreenTileEntity screenTileEntity, ScreenContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, screenTileEntity, container, RFTools.GUI_MANUAL_MAIN, "screens");
