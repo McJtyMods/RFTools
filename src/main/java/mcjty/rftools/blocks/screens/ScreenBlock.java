@@ -54,8 +54,8 @@ import java.util.List;
 
 public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenContainer> {
 
-    public ScreenBlock(String name) {
-        super(Material.IRON, ScreenTileEntity.class, ScreenContainer.class, ScreenItemBlock.class, name, true);
+    public ScreenBlock(String name, Class<? extends ScreenTileEntity> clazz) {
+        super(Material.IRON, clazz, ScreenContainer.class, ScreenItemBlock.class, name, true);
     }
 
     @Override

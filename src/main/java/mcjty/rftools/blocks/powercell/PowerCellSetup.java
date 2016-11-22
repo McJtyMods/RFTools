@@ -21,10 +21,10 @@ public class PowerCellSetup {
     public static PowerCellCardItem powerCellCardItem;
 
     public static void init() {
-        powerCellBlock = new PowerCellBlock("powercell");
-        advancedPowerCellBlock = new PowerCellBlock("powercell_advanced");
-        creativePowerCellBlock = new PowerCellBlock("powercell_creative");
-        simplePowerCellBlock = new PowerCellBlock("powercell_simple");
+        powerCellBlock = new PowerCellBlock("powercell", PowerCellNormalTileEntity.class);
+        advancedPowerCellBlock = new PowerCellBlock("powercell_advanced", PowerCellAdvancedTileEntity.class);
+        creativePowerCellBlock = new PowerCellBlock("powercell_creative", PowerCellCreativeTileEntity.class);
+        simplePowerCellBlock = new PowerCellBlock("powercell_simple", PowerCellSimpleTileEntity.class);
         powerCellCardItem = new PowerCellCardItem();
     }
 

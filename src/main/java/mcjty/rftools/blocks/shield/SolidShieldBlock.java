@@ -47,12 +47,12 @@ public class SolidShieldBlock extends AbstractShieldBlock {
 
     @Override
     protected void initTE() {
-        GameRegistry.registerTileEntity(TickShieldBlockTileEntity.class, RFTools.MODID + "_" + getRegistryName());
+        GameRegistry.registerTileEntity(TickShieldSolidBlockTileEntity.class, RFTools.MODID + "_" + getRegistryName());
     }
 
     @Override
     public TileEntity createNewTileEntity(World world, int metadata) {
-        return new TickShieldBlockTileEntity();
+        return new TickShieldSolidBlockTileEntity();
     }
 
     @Override

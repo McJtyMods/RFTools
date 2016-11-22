@@ -34,8 +34,8 @@ public class ScreenSetup {
     public static DumpModuleItem dumpModuleItem;
 
     public static void init() {
-        screenBlock = new ScreenBlock("screen");
-        creativeScreenBlock = new ScreenBlock("creative_screen") {
+        screenBlock = new ScreenBlock("screen", ScreenTileEntity.class);
+        creativeScreenBlock = new ScreenBlock("creative_screen", CreativeScreenTileEntity.class) {
             @Override
             public boolean isCreative() {
                 return true;
