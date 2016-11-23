@@ -10,5 +10,6 @@ public class OpenComputersIntegration {
         Driver.add(new DialingDeviceDriver.OCDriver());
         Driver.add(new MatterReceiverDriver.OCDriver());
         Driver.add(new MatterTransmitterDriver.OCDriver());
+        Driver.add(new CoalGeneratorDriver.OCDriver());
     }
 }
