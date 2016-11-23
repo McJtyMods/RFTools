@@ -8,5 +8,6 @@ public class OpenComputersIntegration {
     public static void init() {
         Driver.add(new MachineInfuserDriver.OCDriver());
         Driver.add(new DialingDeviceDriver.OCDriver());
+        Driver.add(new MatterReceiverDriver.OCDriver());
     }
 }
