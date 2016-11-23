@@ -281,7 +281,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     private boolean giveItemToPlayer(EntityPlayer player, int[] cnt, ItemStack received) {
-        if (received != null && cnt[0] > 0) {
+        if (ItemStackTools.isValid(received) && cnt[0] > 0) {
             cnt[0] -= ItemStackTools.getStackSize(received);
             giveToPlayer(received, player);
             return true;
@@ -668,7 +668,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         Integer[] todo = new Integer[] { amount };
 
         ItemStack outSlot = inventoryHelper.getStackInSlot(StorageScannerContainer.SLOT_OUT);
-        if (outSlot != null) {
+        if (ItemStackTools.isValid(outSlot)) {
             // Check if the items are the same and there is room
             if (!ItemHandlerHelper.canItemStacksStack(outSlot, requested)) {
                 return;

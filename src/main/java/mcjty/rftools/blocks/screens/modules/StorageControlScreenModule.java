@@ -146,7 +146,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
         StorageScannerTileEntity te = getStorageScanner(dim, coordinate);
         if (te != null) {
             int i = getHighlightedStack(x, y);
-            if (i != -1 && stacks[i] != null) {
+            if (i != -1 && ItemStackTools.isValid(stacks[i])) {
                 return new String[]{
                         TextFormatting.GREEN + "Item: " + TextFormatting.WHITE + stacks[i].getDisplayName()};
             }

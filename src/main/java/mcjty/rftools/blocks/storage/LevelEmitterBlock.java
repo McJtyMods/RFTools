@@ -80,7 +80,7 @@ public class LevelEmitterBlock extends LogicSlabBlock<LevelEmitterTileEntity, Le
                 LevelEmitterTileEntity emitterTileEntity = (LevelEmitterTileEntity) te;
                 int count = emitterTileEntity.getCurrentCount();
                 ItemStack toCount = emitterTileEntity.getInventoryHelper().getStackInSlot(LevelEmitterContainer.SLOT_ITEMMATCH);
-                if (toCount != null) {
+                if (ItemStackTools.isValid(toCount)) {
                     probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER))
                             .item(toCount)
                             .text(TextFormatting.BLUE + "Count: " + TextFormatting.WHITE + count);
@@ -122,7 +122,7 @@ public class LevelEmitterBlock extends LogicSlabBlock<LevelEmitterTileEntity, Le
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
         ItemStack module = getModule(world.getTileEntity(pos));
-        return super.getActualState(state, world, pos).withProperty(MODULE, module != null);
+        return super.getActualState(state, world, pos).withProperty(MODULE, ItemStackTools.isValid(module));
     }
 
     @Override

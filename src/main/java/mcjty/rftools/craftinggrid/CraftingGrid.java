@@ -60,7 +60,7 @@ public class CraftingGrid {
         for (int i = 0 ; i < craftingGridInventory.getSizeInventory() ; i++) {
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
             ItemStack stack = craftingGridInventory.getStackInSlot(i);
-            if (stack != null) {
+            if (ItemStackTools.isValid(stack)) {
                 stack.writeToNBT(nbtTagCompound);
             }
             bufferTagList.appendTag(nbtTagCompound);

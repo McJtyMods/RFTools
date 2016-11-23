@@ -132,7 +132,7 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
                     stack = inventory.getStackInSlot(slot);
                 }
             }
-            if (stack != null) {
+            if (ItemStackTools.isValid(stack)) {
                 int nr = isItemMatching(stack);
                 newout = nr >= amount;
             }
@@ -143,7 +143,7 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
     private int isItemMatching(ItemStack stack) {
         int nr = 0;
         ItemStack matcher = inventoryHelper.getStackInSlot(0);
-        if (matcher != null) {
+        if (ItemStackTools.isValid(matcher)) {
             if (oreDict) {
                 if (isEqualForOredict(matcher, stack)) {
                     if ((!useMeta) || matcher.getItemDamage() == stack.getItemDamage()) {

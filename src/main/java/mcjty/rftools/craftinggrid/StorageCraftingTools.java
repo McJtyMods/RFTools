@@ -210,7 +210,7 @@ public class StorageCraftingTools {
             return null;
         }
 
-        if (craftingRecipe.getResult() != null && ItemStackTools.getStackSize(craftingRecipe.getResult()) > 0) {
+        if (ItemStackTools.isValid(craftingRecipe.getResult()) && ItemStackTools.getStackSize(craftingRecipe.getResult()) > 0) {
             if (n == -1) {
                 n = craftingRecipe.getResult().getMaxStackSize();
             }

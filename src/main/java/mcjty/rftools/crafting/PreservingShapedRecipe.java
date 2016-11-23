@@ -1,5 +1,6 @@
 package mcjty.rftools.crafting;
 
+import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -28,7 +29,7 @@ public class PreservingShapedRecipe extends ShapedRecipes {
     private NBTTagCompound getNBTFromObject(InventoryCrafting inventoryCrafting) {
         for (int i = 0 ; i < inventoryCrafting.getSizeInventory() ; i++) {
             ItemStack stack = inventoryCrafting.getStackInSlot(i);
-            if (stack != null && stack.getItem() != null) {
+            if (ItemStackTools.isValid(stack) && stack.getItem() != null) {
                 Object o = getObjectFromStack(stack.getItem());
                 if (objectToInheritFrom.equals(o)) {
                     return stack.getTagCompound();
@@ -41,7 +42,7 @@ public class PreservingShapedRecipe extends ShapedRecipes {
     @Override
     public ItemStack getCraftingResult(InventoryCrafting inventoryCrafting) {
         ItemStack stack = super.getCraftingResult(inventoryCrafting);
-        if (stack != null) {
+        if (ItemStackTools.isValid(stack)) {
             NBTTagCompound tagCompound = getNBTFromObject(inventoryCrafting);
             if (tagCompound != null) {
                 stack.setTagCompound(tagCompound);

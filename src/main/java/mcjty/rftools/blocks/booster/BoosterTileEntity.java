@@ -4,6 +4,7 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.blocks.environmental.EnvModuleProvider;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
@@ -66,7 +67,7 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
             }
             if (cachedModule == null) {
                 ItemStack stack = inventoryHelper.getStackInSlot(BoosterContainer.SLOT_MODULE);
-                if (stack != null) {
+                if (ItemStackTools.isValid(stack)) {
                     if (stack.getItem() instanceof EnvModuleProvider) {
                         EnvModuleProvider provider = (EnvModuleProvider) stack.getItem();
                         Class<? extends EnvironmentModule> clazz = provider.getServerEnvironmentModule();

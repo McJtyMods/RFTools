@@ -49,7 +49,7 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
 
             for (int yy = 0 ; yy < 3 ; yy++) {
                 for (int xx = 0 ; xx < 3 ; xx++) {
-                    if (stacks[i] != null) {
+                    if (ItemStackTools.isValid(stacks[i])) {
                         int x = xx * 40;
                         boolean hilighted = renderInfo.hitx >= x+8 && renderInfo.hitx <= x + 38 && renderInfo.hity >= y-7 && renderInfo.hity <= y + 22;
                         if (hilighted) {
@@ -83,7 +83,7 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
 
         for (int yy = 0 ; yy < 3 ; yy++) {
             for (int xx = 0 ; xx < 3 ; xx++) {
-                if (stacks[i] != null) {
+                if (ItemStackTools.isValid(stacks[i])) {
                     int x = 7 + xx * 30;
                     renderSlot(y, stacks[i], x);
                 }
@@ -104,7 +104,7 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
 
         for (int yy = 0 ; yy < 3 ; yy++) {
             for (int xx = 0 ; xx < 3 ; xx++) {
-                if (stacks[i] != null) {
+                if (ItemStackTools.isValid(stacks[i])) {
                     renderSlotOverlay(fontRenderer, y, stacks[i], screenData.getAmount(i), 42 + xx * 64);
                 }
                 i++;
@@ -140,7 +140,7 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
     }
 
     private static void renderItemOverlayIntoGUI(FontRenderer fontRenderer, ItemStack itemStack, int size, int x, int y) {
-        if (itemStack != null) {
+        if (ItemStackTools.isValid(itemStack)) {
             String s1;
             if (size < 10000) {
                 s1 = String.valueOf(size);

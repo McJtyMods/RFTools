@@ -134,7 +134,7 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
             if (tileEntity instanceof StorageTerminalTileEntity) {
                 StorageTerminalTileEntity terminalTileEntity = (StorageTerminalTileEntity) tileEntity;
                 ItemStack module = terminalTileEntity.getStackInSlot(StorageTerminalContainer.SLOT_MODULE);
-                if (module != null) {
+                if (ItemStackTools.isValid(module)) {
                     int dimension = RFToolsTools.getDimensionFromModule(module);
                     BlockPos pos = RFToolsTools.getPositionFromModule(module);
                     WorldServer world = DimensionManager.getWorld(dimension);
@@ -160,7 +160,7 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
     public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
         if (!entityPlayer.isSneaking()) {
             ItemStack module = getModule(tileEntity);
-            if (module != null) {
+            if (ItemStackTools.isValid(module)) {
                 int monitordim = RFToolsTools.getDimensionFromModule(module);
                 BlockPos pos = RFToolsTools.getPositionFromModule(module);
                 StorageScannerTileEntity te = new StorageScannerTileEntity(entityPlayer, monitordim) {
@@ -196,7 +196,7 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
             if (te instanceof StorageTerminalTileEntity) {
                 StorageTerminalTileEntity storageTerminalTileEntity = (StorageTerminalTileEntity) te;
                 ItemStack module = storageTerminalTileEntity.getStackInSlot(StorageTerminalContainer.SLOT_MODULE);
-                if (module != null) {
+                if (ItemStackTools.isValid(module)) {
                     storageTerminalTileEntity.setInventorySlotContents(StorageTerminalContainer.SLOT_MODULE, null);
                     storageTerminalTileEntity.markDirtyClient();
                     if (!player.inventory.addItemStackToInventory(module)) {
@@ -233,7 +233,7 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
         ItemStack module = getModule(world.getTileEntity(pos));
-        return super.getActualState(state, world, pos).withProperty(MODULE, module != null);
+        return super.getActualState(state, world, pos).withProperty(MODULE, ItemStackTools.isValid(module));
     }
 
     @Override

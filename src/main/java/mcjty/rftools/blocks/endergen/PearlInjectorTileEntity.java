@@ -70,7 +70,7 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
     private boolean takePearl() {
         for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
             ItemStack stack = inventoryHelper.getStackInSlot(i);
-            if (stack != null && Items.ENDER_PEARL.equals(stack.getItem()) && ItemStackTools.getStackSize(stack) > 0) {
+            if (ItemStackTools.isValid(stack) && Items.ENDER_PEARL.equals(stack.getItem()) && ItemStackTools.getStackSize(stack) > 0) {
                 decrStackSize(i, 1);
                 return true;
             }

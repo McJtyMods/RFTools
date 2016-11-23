@@ -2,6 +2,7 @@ package mcjty.rftools.items.teleportprobe;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
@@ -45,8 +46,8 @@ public class PacketForceTeleport implements IMessage {
             EntityPlayer player = ctx.getServerHandler().playerEntity;
 
 
-            boolean probeInMainHand = player.getHeldItemMainhand() != null && player.getHeldItemMainhand().getItem() instanceof TeleportProbeItem;
-            boolean probeInOffHand = player.getHeldItemOffhand() != null && player.getHeldItemOffhand().getItem() instanceof TeleportProbeItem;
+            boolean probeInMainHand = ItemStackTools.isValid(player.getHeldItemMainhand()) && player.getHeldItemMainhand().getItem() instanceof TeleportProbeItem;
+            boolean probeInOffHand = ItemStackTools.isValid(player.getHeldItemOffhand()) && player.getHeldItemOffhand().getItem() instanceof TeleportProbeItem;
             if ((!probeInMainHand) && (!probeInOffHand)) {
                 return;
             }

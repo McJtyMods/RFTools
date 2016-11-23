@@ -506,7 +506,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             }
             FakePlayer fakePlayer = killer;
             ItemStack shards = getStackInSlot(ShieldContainer.SLOT_SHARD);
-            if (shards != null && ItemStackTools.getStackSize(shards) >= ShieldConfiguration.shardsPerLootingKill) {
+            if (ItemStackTools.isValid(shards) && ItemStackTools.getStackSize(shards) >= ShieldConfiguration.shardsPerLootingKill) {
                 decrStackSize(ShieldContainer.SLOT_SHARD, ShieldConfiguration.shardsPerLootingKill);
                 if (lootingSword == null) {
                     lootingSword = EnvironmentalSetup.createEnchantedItem(Items.DIAMOND_SWORD, Enchantments.LOOTING, ShieldConfiguration.lootingKillBonus);

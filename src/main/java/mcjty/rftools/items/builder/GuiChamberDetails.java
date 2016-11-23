@@ -10,6 +10,7 @@ import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.tools.MinecraftTools;
 import mcjty.lib.varia.BlockMeta;
 import mcjty.rftools.RFTools;
@@ -143,7 +144,7 @@ public class GuiChamberDetails extends GuiItemScreen {
                 entityName = EntityList.getEntityString(entity);
                 if (entity instanceof EntityItem) {
                     EntityItem entityItem = (EntityItem) entity;
-                    if (entityItem.getEntityItem() != null) {
+                    if (ItemStackTools.isValid(entityItem.getEntityItem())) {
                         String displayName = entityItem.getEntityItem().getDisplayName();
                         entityName += " (" + displayName + ")";
                     }

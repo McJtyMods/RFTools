@@ -85,7 +85,7 @@ public class CraftingRecipe {
             nbtTagList.appendTag(nbtTagCompound);
         }
         NBTTagCompound resultCompound = new NBTTagCompound();
-        if (result != null) {
+        if (ItemStackTools.isValid(result)) {
             result.writeToNBT(resultCompound);
         }
         tagCompound.setTag("Result", resultCompound);

@@ -5,6 +5,7 @@ import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketServerCommand;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.api.screens.*;
 import mcjty.rftools.api.screens.data.*;
@@ -482,7 +483,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
             clientScreenModules = new ArrayList<>();
             for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
                 ItemStack itemStack = inventoryHelper.getStackInSlot(i);
-                if (itemStack != null && itemStack.getItem() instanceof IModuleProvider) {
+                if (ItemStackTools.isValid(itemStack) && itemStack.getItem() instanceof IModuleProvider) {
                     IModuleProvider moduleProvider = (IModuleProvider) itemStack.getItem();
                     IClientScreenModule clientScreenModule;
                     try {
@@ -526,7 +527,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
             screenModules = new ArrayList<IScreenModule>();
             for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
                 ItemStack itemStack = inventoryHelper.getStackInSlot(i);
-                if (itemStack != null && itemStack.getItem() instanceof IModuleProvider) {
+                if (ItemStackTools.isValid(itemStack) && itemStack.getItem() instanceof IModuleProvider) {
                     IModuleProvider moduleProvider = (IModuleProvider) itemStack.getItem();
                     IScreenModule screenModule;
                     try {

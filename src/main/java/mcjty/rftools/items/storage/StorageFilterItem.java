@@ -87,7 +87,7 @@ public class StorageFilterItem extends GenericRFToolsItem {
                 } else {
                     IBlockState state = worldIn.getBlockState(pos);
                     ItemStack blockStack = state.getBlock().getItem(worldIn, pos, state);
-                    if (blockStack != null) {
+                    if (ItemStackTools.isValid(blockStack)) {
                         if (!stack.hasTagCompound()) {
                             stack.setTagCompound(new NBTTagCompound());
                         }

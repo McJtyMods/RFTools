@@ -94,13 +94,13 @@ public class StorageTerminalTileEntity extends LogicTileEntity implements Defaul
 
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
-        boolean module = inventoryHelper.getStackInSlot(StorageTerminalContainer.SLOT_MODULE) != null;
+        boolean module = ItemStackTools.isValid(inventoryHelper.getStackInSlot(StorageTerminalContainer.SLOT_MODULE));
 
         super.onDataPacket(net, packet);
 
         if (getWorld().isRemote) {
             // If needed send a render update.
-            boolean newmodule = inventoryHelper.getStackInSlot(StorageTerminalContainer.SLOT_MODULE) != null;
+            boolean newmodule = ItemStackTools.isValid(inventoryHelper.getStackInSlot(StorageTerminalContainer.SLOT_MODULE));
             if (newmodule != module) {
                 getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
             }

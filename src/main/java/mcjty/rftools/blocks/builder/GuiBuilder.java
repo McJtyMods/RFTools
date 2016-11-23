@@ -223,7 +223,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
 
     private boolean isShapeCard() {
         ItemStack card = tileEntity.getStackInSlot(BuilderContainer.SLOT_TAB);
-        return card != null && card.getItem() == BuilderSetup.shapeCardItem;
+        return ItemStackTools.isValid(card) && card.getItem() == BuilderSetup.shapeCardItem;
     }
 
     @Override

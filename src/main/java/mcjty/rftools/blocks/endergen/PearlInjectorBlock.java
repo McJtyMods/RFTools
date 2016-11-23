@@ -49,7 +49,7 @@ public class PearlInjectorBlock extends GenericRFToolsBlock<PearlInjectorTileEnt
                 NBTTagCompound itemTag = bufferTagList.getCompoundTagAt(i);
                 if (itemTag != null) {
                     ItemStack stack = ItemStackTools.loadFromNBT(itemTag);
-                    if (stack != null) {
+                    if (ItemStackTools.isValid(stack)) {
                         rc++;
                     }
                 }

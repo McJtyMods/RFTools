@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.network.clientinfo.InfoPacketClient;
 import mcjty.lib.network.clientinfo.InfoPacketServer;
+import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -50,7 +51,7 @@ public class StorageInfoPacketServer implements InfoPacketServer {
                 ModularStorageTileEntity modularStorageTileEntity = (ModularStorageTileEntity) te;
                 cnt = modularStorageTileEntity.getNumStacks();
                 ItemStack storageModule = modularStorageTileEntity.getStackInSlot(ModularStorageContainer.SLOT_STORAGE_MODULE);
-                if (storageModule != null && storageModule.getTagCompound().hasKey("display")) {
+                if (ItemStackTools.isValid(storageModule) && storageModule.getTagCompound().hasKey("display")) {
                     nameModule = storageModule.getDisplayName();
                 }
             }

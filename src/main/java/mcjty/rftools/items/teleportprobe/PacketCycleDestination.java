@@ -2,6 +2,7 @@ package mcjty.rftools.items.teleportprobe;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.tools.ChatTools;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.blocks.teleporter.TeleportDestination;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
@@ -46,7 +47,7 @@ public class PacketCycleDestination implements IMessage {
         private void handle(PacketCycleDestination message, MessageContext ctx) {
             EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
             ItemStack stack = playerEntity.getHeldItemMainhand();
-            if (stack != null && stack.getItem() instanceof AdvancedChargedPorterItem) {
+            if (ItemStackTools.isValid(stack) && stack.getItem() instanceof AdvancedChargedPorterItem) {
                 NBTTagCompound tagCompound = stack.getTagCompound();
                 if (tagCompound == null) {
                     return;

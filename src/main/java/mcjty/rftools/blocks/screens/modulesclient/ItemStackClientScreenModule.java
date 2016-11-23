@@ -92,7 +92,7 @@ public class ItemStackClientScreenModule implements IClientScreenModule<ItemStac
             } catch (Exception e) {
                 // Ignore this.
             }
-            if (itm != null) {
+            if (ItemStackTools.isValid(itm)) {
                 RenderItem itemRender = Minecraft.getMinecraft().getRenderItem();
                 itemRender.renderItemAndEffectIntoGUI(itm, x, currenty);
             }
@@ -104,7 +104,7 @@ public class ItemStackClientScreenModule implements IClientScreenModule<ItemStac
     private int renderSlotOverlay(FontRenderer fontRenderer, int currenty, ItemStackScreenModule.ModuleDataStacks screenData, int slot, int index, int x) {
         if (slot != -1) {
             ItemStack itm = screenData.getStack(index);
-            if (itm != null) {
+            if (ItemStackTools.isValid(itm)) {
 //                itemRender.renderItemOverlayIntoGUI(fontRenderer, Minecraft.getMinecraft().getTextureManager(), itm, x, currenty);
                 renderItemOverlayIntoGUI(fontRenderer, itm, x, currenty);
             }
@@ -114,7 +114,7 @@ public class ItemStackClientScreenModule implements IClientScreenModule<ItemStac
     }
 
     private static void renderItemOverlayIntoGUI(FontRenderer fontRenderer, ItemStack itemStack, int x, int y) {
-        if (itemStack != null) {
+        if (ItemStackTools.isValid(itemStack)) {
             int size = ItemStackTools.getStackSize(itemStack);
             if (size > 1) {
                 String s1;

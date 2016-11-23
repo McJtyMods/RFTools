@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.screens.modules;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
@@ -69,7 +70,7 @@ public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModul
         }
 
         private void writeStack(ByteBuf buf, ItemStack stack) {
-            if (stack != null) {
+            if (ItemStackTools.isValid(stack)) {
                 buf.writeBoolean(true);
                 NetworkTools.writeItemStack(buf, stack);
             } else {

@@ -99,7 +99,7 @@ public class StorageFilterInventory implements CompatInventory {
         NBTTagList bufferTagList = new NBTTagList();
         for (ItemStack stack : stacks) {
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
-            if (stack != null) {
+            if (ItemStackTools.isValid(stack)) {
                 stack.writeToNBT(nbtTagCompound);
             }
             bufferTagList.appendTag(nbtTagCompound);

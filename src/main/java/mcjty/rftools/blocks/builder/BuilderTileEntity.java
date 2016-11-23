@@ -1990,7 +1990,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
-        if (index == BuilderContainer.SLOT_TAB && inventoryHelper.getStackInSlot(index) != null && amount > 0) {
+        if (index == BuilderContainer.SLOT_TAB && ItemStackTools.isValid(inventoryHelper.getStackInSlot(index)) && amount > 0) {
             // Restart if we go from having a stack to not having stack or the other way around.
             refreshSettings();
         }
@@ -2002,7 +2002,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-        if (index == BuilderContainer.SLOT_TAB && ((stack == null && inventoryHelper.getStackInSlot(index) != null) || (stack != null && inventoryHelper.getStackInSlot(index) == null))) {
+        if (index == BuilderContainer.SLOT_TAB && ((ItemStackTools.isEmpty(stack)
+                && ItemStackTools.isValid(inventoryHelper.getStackInSlot(index)))
+                || (ItemStackTools.isValid(stack) && ItemStackTools.isEmpty(inventoryHelper.getStackInSlot(index))))) {
             // Restart if we go from having a stack to not having stack or the other way around.
             refreshSettings();
         }

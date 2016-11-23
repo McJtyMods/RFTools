@@ -58,7 +58,7 @@ public class StorageFilterCache {
     }
 
     public boolean match(ItemStack stack) {
-        if (stack != null) {
+        if (ItemStackTools.isValid(stack)) {
             boolean match = false;
             String modName = "";
             if (modMode) {

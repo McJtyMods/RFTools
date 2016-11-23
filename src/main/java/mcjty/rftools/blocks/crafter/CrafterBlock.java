@@ -51,7 +51,7 @@ public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterCont
                 NBTTagCompound itemTag = bufferTagList.getCompoundTagAt(i);
                 if (itemTag != null) {
                     ItemStack stack = ItemStackTools.loadFromNBT(itemTag);
-                    if (stack != null) {
+                    if (ItemStackTools.isValid(stack)) {
                         rc++;
                     }
                 }
@@ -65,7 +65,7 @@ public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterCont
                 NBTTagCompound resultCompound = tagRecipe.getCompoundTag("Result");
                 if (resultCompound != null) {
                     ItemStack stack = ItemStackTools.loadFromNBT(resultCompound);
-                    if (stack != null) {
+                    if (ItemStackTools.isValid(stack)) {
                         rc++;
                     }
                 }

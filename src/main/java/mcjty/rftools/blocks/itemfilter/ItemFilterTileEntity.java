@@ -134,7 +134,7 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
             int im = inputMode[side.ordinal()];
             for (int i = ItemFilterContainer.SLOT_GHOST ; i < ItemFilterContainer.SLOT_GHOST + ItemFilterContainer.GHOST_SIZE ; i++) {
                 ItemStack g = inventoryHelper.getStackInSlot(i);
-                if (g != null && ((im & (1<<i)) != 0) && g.isItemEqual(stack)) {
+                if (ItemStackTools.isValid(g) && ((im & (1<<i)) != 0) && g.isItemEqual(stack)) {
                     return false;
                 }
             }

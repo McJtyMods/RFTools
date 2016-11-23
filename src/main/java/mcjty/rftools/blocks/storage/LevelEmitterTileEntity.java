@@ -57,7 +57,7 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
     public int getCurrentCount() {
         ItemStack module = inventoryHelper.getStackInSlot(LevelEmitterContainer.SLOT_MODULE);
         int count = -1;
-        if (module != null) {
+        if (ItemStackTools.isValid(module)) {
             ItemStack matcher = inventoryHelper.getStackInSlot(LevelEmitterContainer.SLOT_ITEMMATCH);
             if (ItemStackTools.isEmpty(matcher)) {
                 return count;
@@ -80,13 +80,13 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
 
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
-        boolean module = inventoryHelper.getStackInSlot(LevelEmitterContainer.SLOT_MODULE) != null;
+        boolean module = ItemStackTools.isValid(inventoryHelper.getStackInSlot(LevelEmitterContainer.SLOT_MODULE));
 
         super.onDataPacket(net, packet);
 
         if (getWorld().isRemote) {
             // If needed send a render update.
-            boolean newmodule = inventoryHelper.getStackInSlot(LevelEmitterContainer.SLOT_MODULE) != null;
+            boolean newmodule = ItemStackTools.isValid(inventoryHelper.getStackInSlot(LevelEmitterContainer.SLOT_MODULE));
             if (newmodule != module) {
                 getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
             }

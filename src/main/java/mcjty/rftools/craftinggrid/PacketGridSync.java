@@ -2,6 +2,7 @@ package mcjty.rftools.craftinggrid;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.crafter.CraftingRecipe;
 import mcjty.rftools.blocks.storage.ModularStorageItemContainer;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
@@ -55,7 +56,7 @@ public class PacketGridSync {
         for (ItemStack[] recipe : recipes) {
             buf.writeInt(recipe.length);
             for (ItemStack stack : recipe) {
-                if (stack != null) {
+                if (ItemStackTools.isValid(stack)) {
                     buf.writeBoolean(true);
                     NetworkTools.writeItemStack(buf, stack);
                 } else {
@@ -85,7 +86,7 @@ public class PacketGridSync {
         if (pos == null) {
             // Handle tablet version
             ItemStack mainhand = player.getHeldItemMainhand();
-            if (mainhand != null && mainhand.getItem() == ModularStorageSetup.storageModuleTabletItem) {
+            if (ItemStackTools.isValid(mainhand) && mainhand.getItem() == ModularStorageSetup.storageModuleTabletItem) {
                 if (player.openContainer instanceof ModularStorageItemContainer) {
                     ModularStorageItemContainer storageItemContainer = (ModularStorageItemContainer) player.openContainer;
                     provider = storageItemContainer.getCraftingGridProvider();

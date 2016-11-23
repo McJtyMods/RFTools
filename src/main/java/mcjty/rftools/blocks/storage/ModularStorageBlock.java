@@ -162,7 +162,7 @@ public class ModularStorageBlock extends GenericRFToolsBlock<ModularStorageTileE
                 probeInfo.text(TextFormatting.YELLOW + "No storage module!");
             } else {
                 ItemStack storageModule = modularStorageTileEntity.getStackInSlot(ModularStorageContainer.SLOT_STORAGE_MODULE);
-                if (storageModule != null && storageModule.getTagCompound().hasKey("display")) {
+                if (ItemStackTools.isValid(storageModule) && storageModule.getTagCompound().hasKey("display")) {
                     probeInfo.text(TextFormatting.YELLOW + "Module: " + TextFormatting.WHITE + storageModule.getDisplayName());
                 }
                 int stacks = modularStorageTileEntity.getNumStacks();

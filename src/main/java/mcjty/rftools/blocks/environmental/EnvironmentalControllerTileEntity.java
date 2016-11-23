@@ -5,6 +5,7 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
@@ -378,7 +379,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
             environmentModules = new ArrayList<EnvironmentModule>();
             for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
                 ItemStack itemStack = inventoryHelper.getStackInSlot(i);
-                if (itemStack != null && itemStack.getItem() instanceof EnvModuleProvider) {
+                if (ItemStackTools.isValid(itemStack) && itemStack.getItem() instanceof EnvModuleProvider) {
                     EnvModuleProvider moduleProvider = (EnvModuleProvider) itemStack.getItem();
                     Class<? extends EnvironmentModule> moduleClass = moduleProvider.getServerEnvironmentModule();
                     EnvironmentModule environmentModule;

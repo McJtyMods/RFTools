@@ -17,6 +17,7 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.tools.MinecraftTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
@@ -550,9 +551,9 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             } else if (renderItem instanceof Item) {
                 itemStack = new ItemStack((Item) renderItem);
             } else {
-                itemStack = null;
+                itemStack = ItemStackTools.getEmptyStack();
             }
-            if (itemStack != null) {
+            if (ItemStackTools.isValid(itemStack)) {
                 boolean custom = blockRender.getUserObject() instanceof Integer;
                 customRenderToolTip(itemStack, mouseX, mouseY, custom);
             }

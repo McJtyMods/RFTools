@@ -167,7 +167,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         if (si == -1) {
             for (int i = 0 ; i < 4 ; i++) {
                 ItemStack stack = getStackInSlot(i);
-                if (stack != null && stack.getTagCompound() != null && stack.getTagCompound().hasKey("id")) {
+                if (ItemStackTools.isValid(stack) && stack.getTagCompound() != null && stack.getTagCompound().hasKey("id")) {
                     return stack.getTagCompound().getInteger("id");
                 }
             }
@@ -176,7 +176,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         for (int i = si+1 ; i < si + 4 ; i++) {
             int ii = i % 4;
             ItemStack stack = getStackInSlot(ii);
-            if (stack != null && stack.getTagCompound() != null && stack.getTagCompound().hasKey("id")) {
+            if (ItemStackTools.isValid(stack) && stack.getTagCompound() != null && stack.getTagCompound().hasKey("id")) {
                 return stack.getTagCompound().getInteger("id");
             }
         }
@@ -356,12 +356,12 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         if (index >= slots[si].length) {
             return false;
         }
-        boolean hasOld = slots[si][index] != null;
+        boolean hasOld = ItemStackTools.isValid(slots[si][index]);
         slots[si][index] = stack;
-        if (stack != null && ItemStackTools.getStackSize(stack) > limit) {
+        if (ItemStackTools.isValid(stack) && ItemStackTools.getStackSize(stack) > limit) {
             ItemStackTools.setStackSize(stack, limit);
         }
-        boolean hasNew = stack != null;
+        boolean hasNew = ItemStackTools.isValid(stack);
         if (hasOld && !hasNew) {
             numStacks[si]--;
         } else if (hasNew && !hasOld) {
@@ -456,7 +456,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         numStacks[si] = 0;
         ItemStack[] stacks = slots[si];
         for (ItemStack stack : stacks) {
-            if (stack != null) {
+            if (ItemStackTools.isValid(stack)) {
                 numStacks[si]++;
             }
         }

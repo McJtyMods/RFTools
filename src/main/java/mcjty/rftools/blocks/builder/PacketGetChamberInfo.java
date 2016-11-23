@@ -95,7 +95,7 @@ public class PacketGetChamberInfo implements IMessage {
                 String canonicalName = entity.getClass().getCanonicalName();
                 if (entity instanceof EntityItem) {
                     EntityItem entityItem = (EntityItem) entity;
-                    if (entityItem.getEntityItem() != null) {
+                    if (ItemStackTools.isValid(entityItem.getEntityItem())) {
                         String displayName = entityItem.getEntityItem().getDisplayName();
                         canonicalName += " (" + displayName + ")";
                     }
@@ -129,7 +129,7 @@ public class PacketGetChamberInfo implements IMessage {
 
                             if (!stacks.containsKey(bm)) {
                                 ItemStack item = block.getItem(world, p, state);
-                                if (item != null) {
+                                if (ItemStackTools.isValid(item)) {
                                     stacks.put(bm, item);
                                 }
                             }

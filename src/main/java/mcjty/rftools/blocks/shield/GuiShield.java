@@ -14,6 +14,7 @@ import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.RFTools;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.blocks.shield.filters.*;
@@ -393,7 +394,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         ItemStack stack = tileEntity.getStackInSlot(0);
 
         int pass = 0;
-        if (stack != null) {
+        if (ItemStackTools.isValid(stack)) {
             Block block = Block.getBlockFromItem(stack.getItem());
             if (block != null) {
                 pass = block.getBlockLayer().ordinal();

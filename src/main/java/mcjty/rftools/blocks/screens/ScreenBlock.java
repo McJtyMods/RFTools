@@ -323,7 +323,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
     @Override
     protected boolean openGui(World world, int x, int y, int z, EntityPlayer player) {
         ItemStack itemStack = player.getHeldItem(EnumHand.MAIN_HAND);
-        if (itemStack != null && itemStack.getItem() == Items.DYE) {
+        if (ItemStackTools.isValid(itemStack) && itemStack.getItem() == Items.DYE) {
             int damage = itemStack.getItemDamage();
             if (damage < 0) {
                 damage = 0;

@@ -2,6 +2,7 @@ package mcjty.rftools.craftinggrid;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.storage.ModularStorageItemContainer;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.storage.RemoteStorageItemContainer;
@@ -67,7 +68,7 @@ public class PacketCraftFromGrid implements IMessage {
             if (message.pos == null) {
                 // Handle tablet version
                 ItemStack mainhand = player.getHeldItemMainhand();
-                if (mainhand != null && mainhand.getItem() == ModularStorageSetup.storageModuleTabletItem) {
+                if (ItemStackTools.isValid(mainhand) && mainhand.getItem() == ModularStorageSetup.storageModuleTabletItem) {
                     if (player.openContainer instanceof ModularStorageItemContainer) {
                         ModularStorageItemContainer storageItemContainer = (ModularStorageItemContainer) player.openContainer;
                         testResult = storageItemContainer.getCraftingGridProvider().craft(player, message.count, message.test);

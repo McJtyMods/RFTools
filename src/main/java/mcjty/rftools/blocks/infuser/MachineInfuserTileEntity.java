@@ -54,7 +54,7 @@ public class MachineInfuserTileEntity extends GenericEnergyReceiverTileEntity im
         } else {
             ItemStack inputStack = inventoryHelper.getStackInSlot(0);
             ItemStack outputStack = inventoryHelper.getStackInSlot(1);
-            if (inputStack != null && inputStack.getItem() == ModItems.dimensionalShardItem && isInfusable(outputStack)) {
+            if (ItemStackTools.isValid(inputStack) && inputStack.getItem() == ModItems.dimensionalShardItem && isInfusable(outputStack)) {
                 startInfusing();
             }
         }
