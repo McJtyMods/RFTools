@@ -23,6 +23,8 @@ public class CraftingGridInventory implements CompatInventory {
 
     private List<ItemStack> stacks = new ArrayList<>(10);
 
+
+
     public ItemStack getResult() {
         return stacks.get(SLOT_GHOSTOUTPUT);
     }

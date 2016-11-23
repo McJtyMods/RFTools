@@ -53,9 +53,7 @@ public class WireBlock extends LogicSlabBlock<WireTileEntity, EmptyContainer> {
             int oldPower = logicTileEntity.getPowerLevel();
             logicTileEntity.setPowerInput(power);
             if (oldPower != power) {
-                // @todo @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-                world.notifyNeighborsOfStateChange(pos, this, false);
-//                world.notifyNeighborsOfStateChange(pos, this);
+                WorldTools.notifyNeighborsOfStateChange(world, pos, this);
             }
         }
     }

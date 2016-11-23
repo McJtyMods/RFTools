@@ -27,13 +27,12 @@ public class CmdSetBuffBar extends AbstractRfToolsCommand {
     @Override
     public void execute(ICommandSender sender, String[] args) {
         if (args.length > 3) {
-            ChatTools.addChatMessage((EntityPlayer)sender, new TextComponentString(TextFormatting.RED + "Too many parameters!"));
+            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "Too many parameters!"));
             return;
         }
 
         if (!(sender instanceof EntityPlayer)) {
-            // @todo @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-            ChatTools.addChatMessage((EntityPlayer)sender, new TextComponentString(TextFormatting.RED + "This command only works as a player!"));
+            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "This command only works as a player!"));
             return;
         }
 
@@ -43,7 +42,7 @@ public class CmdSetBuffBar extends AbstractRfToolsCommand {
         if (args.length < 3) {
             int buffX = properties.getBuffX();
             int buffY = properties.getBuffY();
-            ChatTools.addChatMessage((EntityPlayer) sender, new TextComponentString(TextFormatting.YELLOW + "Current buffbar location: " + buffX + "," + buffY));
+            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.YELLOW + "Current buffbar location: " + buffX + "," + buffY));
             return;
         }
 

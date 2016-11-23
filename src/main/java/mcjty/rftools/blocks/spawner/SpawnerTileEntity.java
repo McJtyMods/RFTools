@@ -14,6 +14,7 @@ import mcjty.rftools.items.ModItems;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -249,7 +250,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 //                clazz = EntityList.NAME_TO_CLASS.get(mobId);
             }
             entityLiving = (EntityLiving) clazz.getConstructor(World.class).newInstance(getWorld());
-            // @toco @@@@@@@@@@@
+            // @todo @@@@@@@@@@@
 //            if ("WitherSkeleton".equals(mobId)) {
 //                ((EntitySkeleton) entityLiving).setSkeletonType(SkeletonType.WITHER);
 //            } else if ("StraySkeleton".equals(mobId)) {
@@ -257,13 +258,14 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 //            } else if (entityLiving instanceof EntitySkeleton) {
 //                // Force non-wither otherwise
 //                ((EntitySkeleton) entityLiving).setSkeletonType(SkeletonType.NORMAL);
-//            } else if (entityLiving instanceof EntityDragon) {
-//                // Ender dragon needs to be spawned with an additional NBT key set
-//                NBTTagCompound dragonTag = new NBTTagCompound();
-//                entityLiving.writeEntityToNBT(dragonTag);
-//                dragonTag.setShort("DragonPhase", (short) 0);
-//                entityLiving.readEntityFromNBT(dragonTag);
 //            }
+            if (entityLiving instanceof EntityDragon) {
+                // Ender dragon needs to be spawned with an additional NBT key set
+                NBTTagCompound dragonTag = new NBTTagCompound();
+                entityLiving.writeEntityToNBT(dragonTag);
+                dragonTag.setShort("DragonPhase", (short) 0);
+                entityLiving.readEntityFromNBT(dragonTag);
+            }
         } catch (InstantiationException e) {
             Logging.logError("Fail to spawn mob: " + mobId);
             return;

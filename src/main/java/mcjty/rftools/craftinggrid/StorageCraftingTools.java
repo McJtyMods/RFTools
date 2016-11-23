@@ -1,5 +1,6 @@
 package mcjty.rftools.craftinggrid;
 
+import mcjty.lib.tools.InventoryTools;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.crafter.CraftingRecipe;
 import net.minecraft.entity.player.EntityPlayer;
@@ -8,7 +9,6 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.util.NonNullList;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
@@ -97,9 +97,7 @@ public class StorageCraftingTools {
         ItemStack stack = recipe.getCraftingResult(workInventory);
         if (ItemStackTools.isValid(stack)) {
             result.add(stack);
-            // @todo @@@@@@@@@@@@@@@@@@@@
-            NonNullList<ItemStack> remaining = recipe.getRemainingItems(workInventory);
-//            ItemStack[] remaining = recipe.getRemainingItems(workInventory);
+            List<ItemStack> remaining = InventoryTools.getRemainingItems(recipe, workInventory);
             if (remaining != null) {
                 for (ItemStack s : remaining) {
                     if (ItemStackTools.isValid(s)) {
