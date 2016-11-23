@@ -9,5 +9,6 @@ public class OpenComputersIntegration {
         Driver.add(new MachineInfuserDriver.OCDriver());
         Driver.add(new DialingDeviceDriver.OCDriver());
         Driver.add(new MatterReceiverDriver.OCDriver());
+        Driver.add(new MatterTransmitterDriver.OCDriver());
     }
 }
