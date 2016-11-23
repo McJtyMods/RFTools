@@ -206,7 +206,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
 
     @Override
     public IModuleGuiBuilder ghostStack(String tagname) {
-        ItemStack stack = null;
+        ItemStack stack = ItemStackTools.getEmptyStack();
         if (currentData.hasKey(tagname)) {
             stack = ItemStackTools.loadFromNBT(currentData.getCompoundTag(tagname));
         }

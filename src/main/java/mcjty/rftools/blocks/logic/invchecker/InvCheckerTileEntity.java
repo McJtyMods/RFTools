@@ -117,7 +117,7 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
         BlockPos inputPos = getPos().offset(inputSide);
         TileEntity te = getWorld().getTileEntity(inputPos);
         if (InventoryHelper.isInventory(te)) {
-            ItemStack stack = null;
+            ItemStack stack = ItemStackTools.getEmptyStack();
             if (RFToolsTools.hasItemCapabilitySafe(te)) {
                 IItemHandler capability = RFToolsTools.getItemCapabilitySafe(te);
                 if (capability == null) {

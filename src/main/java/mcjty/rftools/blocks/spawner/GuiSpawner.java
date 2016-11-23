@@ -113,7 +113,7 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
                 for (SpawnerConfiguration.MobSpawnAmount spawnAmount : list) {
                     ItemStack b = spawnAmount.getObject();
                     float amount = spawnAmount.getAmount();
-                    if (b == null) {
+                    if (ItemStackTools.isEmpty(b)) {
                         Object[] blocks = {Blocks.LEAVES, Blocks.PUMPKIN, Items.WHEAT, Items.POTATO, Items.BEEF};
                         int index = (int) ((System.currentTimeMillis() / 500) % blocks.length);
                         if (blocks[index] instanceof Block) {

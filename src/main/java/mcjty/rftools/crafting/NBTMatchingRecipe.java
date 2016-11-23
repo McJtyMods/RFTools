@@ -47,7 +47,7 @@ public class NBTMatchingRecipe extends ShapedRecipes {
             for (int row = 0; row < 3; ++row) {
                 int i1 = col - x;
                 int j1 = row - y;
-                ItemStack itemstack = null;
+                ItemStack itemstack = ItemStackTools.getEmptyStack();
                 String[] nbt = null;
 
                 if (i1 >= 0 && j1 >= 0 && i1 < this.recipeWidth && j1 < this.recipeHeight) {

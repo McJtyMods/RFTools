@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.spawner;
 
 import mcjty.lib.tools.EntityTools;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
@@ -352,7 +353,7 @@ public class SpawnerConfiguration {
             return;
         }
 
-        ItemStack stack = null;
+        ItemStack stack = ItemStackTools.getEmptyStack();
         if ("I".equals(type)) {
             Item item = Item.REGISTRY.getObject(itemname);
             stack = new ItemStack(item, 1, meta);
@@ -382,7 +383,7 @@ public class SpawnerConfiguration {
         }
 
         public Float match(ItemStack stack) {
-            if (object == null) {
+            if (ItemStackTools.isEmpty(object)) {
                 // Living?
                 Item item = stack.getItem();
                 if (item instanceof ItemBlock) {
