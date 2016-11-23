@@ -702,7 +702,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
         if (StorageScannerConfiguration.requestStraightToInventory) {
             if (player.inventory.addItemStackToInventory(outSlot)) {
-                setInventorySlotContents(StorageScannerContainer.SLOT_OUT, null);
+                setInventorySlotContents(StorageScannerContainer.SLOT_OUT, ItemStackTools.getEmptyStack());
             }
         }
     }

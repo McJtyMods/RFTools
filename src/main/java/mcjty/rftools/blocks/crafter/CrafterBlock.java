@@ -105,9 +105,9 @@ public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterCont
     @Override
     public Container createServerContainer(EntityPlayer entityPlayer, TileEntity tileEntity) {
         CrafterBaseTE crafterBaseTE = (CrafterBaseTE) tileEntity;
-        crafterBaseTE.getInventoryHelper().setStackInSlot(CrafterContainer.SLOT_CRAFTOUTPUT, null);
+        crafterBaseTE.getInventoryHelper().setStackInSlot(CrafterContainer.SLOT_CRAFTOUTPUT, ItemStackTools.getEmptyStack());
         for (int i = CrafterContainer.SLOT_CRAFTINPUT ; i < CrafterContainer.SLOT_CRAFTINPUT + 9 ; i++) {
-            crafterBaseTE.getInventoryHelper().setStackInSlot(i, null);
+            crafterBaseTE.getInventoryHelper().setStackInSlot(i, ItemStackTools.getEmptyStack());
         }
         return super.createServerContainer(entityPlayer, tileEntity);
     }

@@ -4,6 +4,7 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.tools.ItemStackList;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.NullSidedInvWrapper;
 import mcjty.rftools.ClientInfo;
@@ -122,7 +123,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         setMaxSize(0);
         numStacks = -1;
         for (int i = ModularStorageContainer.SLOT_STORAGE; i < ModularStorageContainer.MAXSIZE_STORAGE ; i++) {
-            inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), i, null);
+            inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), i, ItemStackTools.getEmptyStack());
         }
     }
 
@@ -246,11 +247,11 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             if (storageTileEntity == null) {
                 return false;
             }
-            ItemStack[] slots = storageTileEntity.findStacksForId(remoteId);
-            if (slots == null || index >= slots.length) {
+            ItemStackList slots = storageTileEntity.findStacksForId(remoteId);
+            if (slots == null || index >= slots.size()) {
                 return false;
             }
-            return ItemStackTools.isValid(slots[index]);
+            return ItemStackTools.isValid(slots.get(index));
         } else {
             return inventoryHelper.containsItem(index);
         }
@@ -280,11 +281,11 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             if (storageTileEntity == null) {
                 return ItemStackTools.getEmptyStack();
             }
-            ItemStack[] slots = storageTileEntity.findStacksForId(remoteId);
-            if (slots == null || index >= slots.length) {
+            ItemStackList slots = storageTileEntity.findStacksForId(remoteId);
+            if (slots == null || index >= slots.size()) {
                 return ItemStackTools.getEmptyStack();
             }
-            return slots[index];
+            return slots.get(index);
         }
         return inventoryHelper.getStackInSlot(index);
     }
@@ -464,8 +465,8 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
                 return false;
             }
 
-            ItemStack[] stacks = storageTileEntity.findStacksForId(remoteId);
-            if (stacks == null || index >= stacks.length) {
+            ItemStackList stacks = storageTileEntity.findStacksForId(remoteId);
+            if (stacks == null || index >= stacks.size()) {
                 return false;
             }
         }
@@ -508,7 +509,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
 
     public void copyFromModule(ItemStack stack) {
         for (int i = ModularStorageContainer.SLOT_STORAGE ; i < inventoryHelper.getCount() ; i++) {
-            inventoryHelper.setInventorySlotContents(0, i, null);
+            inventoryHelper.setInventorySlotContents(0, i, ItemStackTools.getEmptyStack());
         }
 
         if (ItemStackTools.isEmpty(stack)) {
@@ -577,9 +578,9 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             if (si == -1) {
                 return;
             }
-            ItemStack[] stacks = storageTileEntity.getRemoteStacks(si);
-            for (int i = 0 ; i < Math.min(maxSize, stacks.length) ; i++) {
-                if (ItemStackTools.isValid(stacks[i])) {
+            ItemStackList stacks = storageTileEntity.getRemoteStacks(si);
+            for (int i = 0 ; i < Math.min(maxSize, stacks.size()) ; i++) {
+                if (ItemStackTools.isValid(stacks.get(i))) {
                     numStacks++;
                 }
             }
@@ -758,7 +759,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         if (sendToClient) {
             RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
             if (storageTileEntity != null) {
-                ItemStack[] slots = storageTileEntity.findStacksForId(remoteId);
+                ItemStackList slots = storageTileEntity.findStacksForId(remoteId);
                 if (slots != null) {
                     for (ItemStack stack : slots) {
                         NBTTagCompound nbtTagCompound = new NBTTagCompound();

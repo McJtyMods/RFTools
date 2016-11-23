@@ -197,7 +197,7 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
                 StorageTerminalTileEntity storageTerminalTileEntity = (StorageTerminalTileEntity) te;
                 ItemStack module = storageTerminalTileEntity.getStackInSlot(StorageTerminalContainer.SLOT_MODULE);
                 if (ItemStackTools.isValid(module)) {
-                    storageTerminalTileEntity.setInventorySlotContents(StorageTerminalContainer.SLOT_MODULE, null);
+                    storageTerminalTileEntity.setInventorySlotContents(StorageTerminalContainer.SLOT_MODULE, ItemStackTools.getEmptyStack());
                     storageTerminalTileEntity.markDirtyClient();
                     if (!player.inventory.addItemStackToInventory(module)) {
                         player.entityDropItem(module, 1.05f);

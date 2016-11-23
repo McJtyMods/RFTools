@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.compat.CompatInventory;
+import mcjty.lib.tools.ItemStackList;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.craftinggrid.CraftingGrid;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
@@ -9,7 +10,6 @@ import mcjty.rftools.craftinggrid.StorageCraftingTools;
 import mcjty.rftools.jei.JEIRecipeAcceptor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
@@ -18,7 +18,7 @@ import net.minecraft.util.text.ITextComponent;
 import java.util.List;
 
 public class RemoteStorageItemInventory implements CompatInventory, CraftingGridProvider, JEIRecipeAcceptor {
-    private ItemStack stacks[] = new ItemStack[RemoteStorageItemContainer.MAXSIZE_STORAGE];
+    private ItemStackList stacks = ItemStackList.create(RemoteStorageItemContainer.MAXSIZE_STORAGE);
     private final EntityPlayer entityPlayer;
     private CraftingGrid craftingGrid = new CraftingGrid();
 
@@ -94,21 +94,21 @@ public class RemoteStorageItemInventory implements CompatInventory, CraftingGrid
         return !entityPlayer.getEntityWorld().isRemote;
     }
 
-    private ItemStack[] getStacks() {
+    private ItemStackList getStacks() {
         if (isServer()) {
             RemoteStorageTileEntity storage = getRemoteStorage();
             if (storage == null) {
-                return new ItemStack[0];
+                return ItemStackList.create(0);
             }
             int si = storage.findRemoteIndex(getStorageID());
             if (si == -1) {
-                return new ItemStack[0];
+                return ItemStackList.create(0);
             }
             return storage.getRemoteStacks(si);
         } else {
             int maxSize = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound().getInteger("maxSize");
-            if (maxSize != stacks.length) {
-                stacks = new ItemStack[maxSize];
+            if (maxSize != stacks.size()) {
+                stacks = ItemStackList.create(maxSize);
             }
             return stacks;
         }
@@ -146,7 +146,7 @@ public class RemoteStorageItemInventory implements CompatInventory, CraftingGrid
             }
             return storage.getRemoteSlot(si, index);
         } else {
-            return stacks[index];
+            return stacks.get(index);
         }
     }
 
@@ -163,19 +163,19 @@ public class RemoteStorageItemInventory implements CompatInventory, CraftingGrid
             }
             return storage.decrStackSizeRemote(si, index, amount);
         } else {
-            if (index >= stacks.length) {
+            if (index >= stacks.size()) {
                 return ItemStackTools.getEmptyStack();
             }
-            if (ItemStackTools.isValid(stacks[index])) {
+            if (ItemStackTools.isValid(stacks.get(index))) {
                 markDirty();
-                if (ItemStackTools.getStackSize(stacks[index]) <= amount) {
-                    ItemStack old = stacks[index];
-                    stacks[index] = ItemStackTools.getEmptyStack();
+                if (ItemStackTools.getStackSize(stacks.get(index)) <= amount) {
+                    ItemStack old = stacks.get(index);
+                    stacks.set(index, ItemStackTools.getEmptyStack());
                     return old;
                 }
-                ItemStack its = stacks[index].splitStack(amount);
-                if (ItemStackTools.isEmpty(stacks[index])) {
-                    stacks[index] = ItemStackTools.getEmptyStack();
+                ItemStack its = stacks.get(index).splitStack(amount);
+                if (ItemStackTools.isEmpty(stacks.get(index))) {
+                    stacks.set(index, ItemStackTools.getEmptyStack());
                 }
                 return its;
             }
@@ -196,10 +196,10 @@ public class RemoteStorageItemInventory implements CompatInventory, CraftingGrid
             }
             storage.updateRemoteSlot(si, getInventoryStackLimit(), index, stack);
         } else {
-            if (index >= stacks.length) {
+            if (index >= stacks.size()) {
                 return;
             }
-            stacks[index] = stack;
+            stacks.set(index, stack);
             if (ItemStackTools.isValid(stack) && ItemStackTools.getStackSize(stack) > getInventoryStackLimit()) {
                 ItemStackTools.setStackSize(stack, getInventoryStackLimit());
             }
@@ -229,8 +229,8 @@ public class RemoteStorageItemInventory implements CompatInventory, CraftingGrid
 
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
-        ItemStack[] s = getStacks();
-        if (index >= s.length) {
+        ItemStackList s = getStacks();
+        if (index >= s.size()) {
             return false;
         }
         if (isServer()) {
@@ -252,7 +252,7 @@ public class RemoteStorageItemInventory implements CompatInventory, CraftingGrid
     @Override
     public ItemStack removeStackFromSlot(int index) {
         ItemStack stack = getStackInSlot(index);
-        setInventorySlotContents(index, null);
+        setInventorySlotContents(index, ItemStackTools.getEmptyStack());
         return stack;
     }
 
