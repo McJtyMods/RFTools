@@ -180,7 +180,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
 
 
     private boolean isShown(ItemStack stack) {
-        if (stack == null) {
+        if (ItemStackTools.isEmpty(stack)) {
             return false;
         }
         for (ItemStack s : stacks) {
@@ -247,7 +247,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
 
             int i = getHighlightedStack(hitx, hity);
             if (i != -1) {
-                if (stacks[i] == null) {
+                if (ItemStackTools.isEmpty(stacks[i])) {
                     ItemStack heldItem = player.getHeldItemMainhand();
                     if (ItemStackTools.isValid(heldItem)) {
                         stacks[i] = heldItem.copy();

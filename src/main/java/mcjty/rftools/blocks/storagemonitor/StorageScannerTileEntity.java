@@ -179,7 +179,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             return stack;
         }
         stack = injectStackInternal(stack, false);
-        if (stack == null) {
+        if (ItemStackTools.isEmpty(stack)) {
             consumeEnergy(StorageScannerConfiguration.rfPerInsert);
             SoundTools.playSound(getWorld(), SoundEvents.ENTITY_ITEM_PICKUP, getPos().getX(), getPos().getY(), getPos().getZ(), 1.0f, 3.0f);
         }
@@ -204,7 +204,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             TileEntity te = getWorld().getTileEntity(lastSelectedInventory);
             if (te != null && !(te instanceof StorageScannerTileEntity)) {
                 stack = InventoryHelper.insertItem(getWorld(), lastSelectedInventory, null, stack);
-                if (stack == null) {
+                if (ItemStackTools.isEmpty(stack)) {
                     return stack;
                 }
             }
@@ -215,7 +215,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                 TileEntity te = getWorld().getTileEntity(blockPos);
                 if (te != null && !(te instanceof StorageScannerTileEntity)) {
                     stack = InventoryHelper.insertItem(getWorld(), blockPos, null, stack);
-                    if (stack == null) {
+                    if (ItemStackTools.isEmpty(stack)) {
                         return stack;
                     }
                 }
@@ -233,7 +233,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
      * @param player
      */
     public void giveToPlayer(ItemStack stack, boolean single, EntityPlayer player, boolean oredict) {
-        if (stack == null) {
+        if (ItemStackTools.isEmpty(stack)) {
             return;
         }
         if (getEnergyStored(EnumFacing.DOWN) < StorageScannerConfiguration.rfPerRequest) {
@@ -290,7 +290,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     private boolean giveToPlayer(ItemStack stack, EntityPlayer player) {
-        if (stack == null) {
+        if (ItemStackTools.isEmpty(stack)) {
             return false;
         }
         if (!player.inventory.addItemStackToInventory(stack)) {
@@ -301,7 +301,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     @Override
     public int countItems(ItemStack stack, boolean starred, boolean oredict) {
-        if (stack == null) {
+        if (ItemStackTools.isEmpty(stack)) {
             return 0;
         }
         int cnt = 0;
@@ -357,7 +357,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     public static boolean isItemEqual(ItemStack thisItem, ItemStack other, Set<Integer> oreDictMatchers) {
-        if (other == null) {
+        if (ItemStackTools.isEmpty(other)) {
             return false;
         }
         if (oreDictMatchers.isEmpty()) {
@@ -541,7 +541,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     @Override
     public ItemStack requestItem(ItemStack match, int amount, boolean doRoutable, boolean oredict) {
-        if (match == null) {
+        if (ItemStackTools.isEmpty(match)) {
             return null;
         }
         if (getEnergyStored(EnumFacing.DOWN) < StorageScannerConfiguration.rfPerRequest) {
@@ -550,7 +550,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
         Set<Integer> oredictMatches = getOredictMatchers(match, oredict);
         List<BlockPos> inventories = getInventories();
-        ItemStack result = null;
+        ItemStack result = ItemStackTools.getEmptyStack();
         final int[] cnt = {match.getMaxStackSize() < amount ? match.getMaxStackSize() : amount};
         for (BlockPos c : inventories) {
             if (cnt[0] <= 0) {
@@ -569,8 +569,8 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                     ItemStack itemStack = capability.getStackInSlot(i);
                     if (isItemEqual(match, itemStack, oredictMatches)) {
                         ItemStack received = capability.extractItem(i, cnt[0], false);
-                        if (received != null) {
-                            if (result == null) {
+                        if (ItemStackTools.isValid(received)) {
+                            if (ItemStackTools.isEmpty(result)) {
                                 result = received;
                             } else {
                                 ItemStackTools.incStackSize(result, ItemStackTools.getStackSize(received));
@@ -585,8 +585,8 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                     ItemStack itemStack = inventory.getStackInSlot(i);
                     if (isItemEqual(match, itemStack, oredictMatches)) {
                         ItemStack received = inventory.decrStackSize(i, cnt[0]);
-                        if (received != null) {
-                            if (result == null) {
+                        if (ItemStackTools.isValid(received)) {
+                            if (ItemStackTools.isEmpty(result)) {
                                 result = received;
                             } else {
                                 ItemStackTools.incStackSize(result, ItemStackTools.getStackSize(received));
@@ -597,7 +597,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                 }
             }
         }
-        if (result != null) {
+        if (ItemStackTools.isValid(result)) {
             consumeEnergy(StorageScannerConfiguration.rfPerRequest);
         }
         return result;
@@ -616,7 +616,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                 TileEntity te = getWorld().getTileEntity(blockPos);
                 if (te != null && !(te instanceof StorageScannerTileEntity)) {
                     toInsert = InventoryHelper.insertItem(getWorld(), blockPos, null, toInsert);
-                    if (toInsert == null) {
+                    if (ItemStackTools.isEmpty(toInsert)) {
                         return 0;
                     }
                 }
@@ -640,7 +640,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             if (ItemHandlerHelper.canItemStacksStack(requested, stack)) {
                 ItemStack extracted = InventoryHelper.extractItem(tileEntity, i, todo[0]);
                 todo[0] -= ItemStackTools.getStackSize(extracted);
-                if (outSlot == null) {
+                if (ItemStackTools.isEmpty(outSlot)) {
                     outSlot = extracted;
                 } else {
                     ItemStackTools.incStackSize(outSlot, ItemStackTools.getStackSize(extracted));
@@ -708,7 +708,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     private void addItemStack(List<ItemStack> stacks, Set<Item> foundItems, ItemStack stack) {
-        if (stack == null) {
+        if (ItemStackTools.isEmpty(stack)) {
             return;
         }
         if (foundItems.contains(stack.getItem())) {

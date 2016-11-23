@@ -339,7 +339,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
             return ItemStackTools.getEmptyStack();
         }
         ItemStack[] stacks = slots[si];
-        if (stacks[index] == null) {
+        if (ItemStackTools.isEmpty(stacks[index])) {
             return ItemStackTools.getEmptyStack();
         }
         ItemStack old = stacks[index];
@@ -410,7 +410,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
 
     public void copyToModule(int si) {
         ItemStack stack = inventoryHelper.getStackInSlot(si);
-        if (stack == null) {
+        if (ItemStackTools.isEmpty(stack)) {
             // Should be impossible.
             return;
         }
@@ -427,7 +427,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
     }
 
     public void copyFromModule(ItemStack stack, int si) {
-        if (stack == null) {
+        if (ItemStackTools.isEmpty(stack)) {
             setMaxSize(si, 0);
             return;
         }

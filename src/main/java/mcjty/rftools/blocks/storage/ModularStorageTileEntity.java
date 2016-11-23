@@ -488,7 +488,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
 
     public void copyToModule() {
         ItemStack stack = inventoryHelper.getStackInSlot(ModularStorageContainer.SLOT_STORAGE_MODULE);
-        if (stack == null) {
+        if (ItemStackTools.isEmpty(stack)) {
             // Should be impossible.
             return;
         }
@@ -511,7 +511,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             inventoryHelper.setInventorySlotContents(0, i, null);
         }
 
-        if (stack == null) {
+        if (ItemStackTools.isEmpty(stack)) {
             clearInventory();
             return;
         }
@@ -530,7 +530,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
                 return;
             }
             ItemStack storageStack = remoteStorageTileEntity.findStorageWithId(remoteId);
-            if (storageStack == null) {
+            if (ItemStackTools.isEmpty(storageStack)) {
                 clearInventory();
                 return;
             }

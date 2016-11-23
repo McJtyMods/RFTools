@@ -99,7 +99,7 @@ public class StorageFilterItem extends GenericRFToolsItem {
                             stacks[i] = ItemStackTools.loadFromNBT(nbtTagCompound);
                         }
                         for (int i = 0 ; i < FILTER_SLOTS ; i++) {
-                            if (stacks[i] == null) {
+                            if (ItemStackTools.isEmpty(stacks[i])) {
                                 stacks[i] = blockStack;
                                 ChatTools.addChatMessage(playerIn, new TextComponentString(TextFormatting.GREEN + "Added " + blockStack.getDisplayName() + " to the filter!"));
                                 StorageFilterInventory.convertItemsToNBT(stack.getTagCompound(), stacks);
@@ -142,7 +142,7 @@ public class StorageFilterItem extends GenericRFToolsItem {
     }
 
     public static StorageFilterCache getCache(ItemStack stack) {
-        if (stack == null) {
+        if (ItemStackTools.isEmpty(stack)) {
             return null;
         }
         return new StorageFilterCache(stack);

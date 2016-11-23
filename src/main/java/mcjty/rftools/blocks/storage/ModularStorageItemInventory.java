@@ -87,7 +87,7 @@ public class ModularStorageItemInventory implements CompatInventory, CraftingGri
 
     private int getMaxSize() {
         ItemStack heldItem = entityPlayer.getHeldItem(EnumHand.MAIN_HAND);
-        if (heldItem == null) {
+        if (ItemStackTools.isEmpty(heldItem)) {
             return 0;
         }
         if (heldItem.getItem() != ModularStorageSetup.storageModuleTabletItem) {

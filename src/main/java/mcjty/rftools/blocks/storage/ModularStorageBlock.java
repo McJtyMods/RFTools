@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.storage;
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
@@ -120,7 +121,7 @@ public class ModularStorageBlock extends GenericRFToolsBlock<ModularStorageTileE
 
         IBlockState newstate = state.withProperty(AMOUNT, p);
 
-        if (stack == null) {
+        if (ItemStackTools.isEmpty(stack)) {
             return newstate.withProperty(TYPEMODULE, TYPE_NONE);
         } else if (stack.getItem() == ModularStorageSetup.genericTypeItem) {
             return newstate.withProperty(TYPEMODULE, TYPE_GENERIC);

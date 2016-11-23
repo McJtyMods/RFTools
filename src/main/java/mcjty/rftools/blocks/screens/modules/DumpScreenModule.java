@@ -66,7 +66,7 @@ public class DumpScreenModule implements IScreenModule {
     }
 
     private boolean isShown(ItemStack stack) {
-        if (stack == null) {
+        if (ItemStackTools.isEmpty(stack)) {
             return false;
         }
         for (ItemStack s : stacks) {

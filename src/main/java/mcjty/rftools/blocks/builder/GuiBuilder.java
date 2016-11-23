@@ -9,6 +9,7 @@ import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.network.Argument;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.item.ItemStack;
@@ -232,7 +233,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
 
         ItemStack card = tileEntity.getStackInSlot(BuilderContainer.SLOT_TAB);
         boolean enabled;
-        if (card == null) {
+        if (ItemStackTools.isEmpty(card)) {
             enabled = false;
         } else if (card.getItem() == BuilderSetup.shapeCardItem) {
             enabled = false;

@@ -4,6 +4,7 @@ import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.api.smartwrench.SmartWrenchMode;
 import mcjty.lib.gui.HudRenderHelper;
 import mcjty.lib.gui.RenderGlowEffect;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.tools.MinecraftTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorTileEntity;
@@ -51,7 +52,7 @@ public class RenderWorldLastEventHandler {
         Minecraft mc = Minecraft.getMinecraft();
         EntityPlayerSP p = MinecraftTools.getPlayer(mc);
         ItemStack heldItem = p.getHeldItem(EnumHand.MAIN_HAND);
-        if (heldItem == null) {
+        if (ItemStackTools.isEmpty(heldItem)) {
             return;
         }
         if (heldItem.getItem() == ModItems.smartWrenchItem) {

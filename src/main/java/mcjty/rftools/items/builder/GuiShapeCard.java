@@ -14,6 +14,7 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketUpdateNBTItem;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
@@ -97,7 +98,7 @@ public class GuiShapeCard extends GuiScreen {
             }
         });
         ItemStack heldItem = MinecraftTools.getPlayer(mc).getHeldItem(EnumHand.MAIN_HAND);
-        if (heldItem == null) {
+        if (ItemStackTools.isEmpty(heldItem)) {
             // Cannot happen!
             return;
         }

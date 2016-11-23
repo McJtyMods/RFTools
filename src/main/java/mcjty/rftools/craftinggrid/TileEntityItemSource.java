@@ -45,10 +45,10 @@ public class TileEntityItemSource implements IItemSource {
     private static boolean insertStackInSlot(Object inv, int slot, ItemStack stack) {
         if (inv instanceof IItemHandler) {
             IItemHandler handler = (IItemHandler) inv;
-            if (handler.insertItem(slot, stack, true) != null) {
+            if (ItemStackTools.isValid(handler.insertItem(slot, stack, true))) {
                 return false;
             }
-            return handler.insertItem(slot, stack, false) == null;
+            return ItemStackTools.isEmpty(handler.insertItem(slot, stack, false));
         } else if (inv instanceof IInventory) {
             IInventory inventory = (IInventory) inv;
             ItemStack oldStack = inventory.getStackInSlot(slot);

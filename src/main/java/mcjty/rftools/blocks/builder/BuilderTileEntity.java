@@ -208,7 +208,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 case ShapeCardItem.CARD_SHAPE:
                     list.add("    Shape card");
                     ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
-                    if (shapeCard != null) {
+                    if (ItemStackTools.isValid(shapeCard)) {
                         ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
                         if (shape != null) {
                             list.add("    " + shape.getDescription());
@@ -761,7 +761,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         world.removeEntity(item);
         stack = insertItem(stack);
-        if (stack != null) {
+        if (ItemStackTools.isValid(stack)) {
             BlockPos position = item.getPosition();
             EntityItem entityItem = new EntityItem(getWorld(), position.getX(), position.getY(), position.getZ(), stack);
             mcjty.lib.tools.WorldTools.spawnEntity(getWorld(), entityItem);
@@ -771,7 +771,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void calculateBoxShaped() {
         ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
-        if (shapeCard == null) {
+        if (ItemStackTools.isEmpty(shapeCard)) {
             return;
         }
         BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
@@ -871,7 +871,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private int getCardType() {
         if (cardType == ShapeCardItem.CARD_UNKNOWN) {
             ItemStack card = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
-            if (card != null) {
+            if (ItemStackTools.isValid(card)) {
                 cardType = card.getItemDamage();
             }
         }
@@ -969,7 +969,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private boolean buildBlock(int rfNeeded, BlockPos srcPos) {
         if (isEmptyOrReplacable(getWorld(), srcPos)) {
             ItemStack stack = consumeBlock(getWorld(), srcPos, null);
-            if (stack == null) {
+            if (ItemStackTools.isEmpty(stack)) {
                 return true;    // We could not find a block. Wait
             }
 
@@ -1004,7 +1004,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private Set<Block> getCachedVoidableBlocks() {
         if (cachedVoidableBlocks == null) {
             ItemStack card = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
-            if (card != null && card.getItem() == BuilderSetup.shapeCardItem) {
+            if (ItemStackTools.isValid(card) && card.getItem() == BuilderSetup.shapeCardItem) {
                 cachedVoidableBlocks = ShapeCardItem.getVoidedBlocks(card);
             } else {
                 cachedVoidableBlocks = Collections.emptySet();
@@ -1059,7 +1059,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             FakePlayer fakePlayer = getHarvester();
             if (block.canEntityDestroy(srcState, getWorld(), srcPos, fakePlayer)) {
                 ItemStack filter = getStackInSlot(BuilderContainer.SLOT_FILTER);
-                if (filter != null) {
+                if (ItemStackTools.isValid(filter)) {
                     getFilterCache();
                     if (filterCache != null) {
                         boolean match = filterCache.match(block.getItem(getWorld(), srcPos, srcState));
@@ -1134,7 +1134,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             FakePlayer fakePlayer = getHarvester();
             if (block.canEntityDestroy(srcState, getWorld(), srcPos, fakePlayer)) {
                 ItemStack filter = getStackInSlot(BuilderContainer.SLOT_FILTER);
-                if (filter != null) {
+                if (ItemStackTools.isValid(filter)) {
                     getFilterCache();
                     if (filterCache != null) {
                         boolean match = filterCache.match(block.getItem(getWorld(), srcPos, srcState));
@@ -1226,7 +1226,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         if (block.getBlockHardness(srcState, getWorld(), srcPos) >= 0) {
             ItemStack filter = getStackInSlot(BuilderContainer.SLOT_FILTER);
-            if (filter != null) {
+            if (ItemStackTools.isValid(filter)) {
                 getFilterCache();
                 if (filterCache != null) {
                     boolean match = filterCache.match(block.getItem(getWorld(), srcPos, srcState));
@@ -1297,7 +1297,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 }
             }
             if (slots.isEmpty()) {
-                return null;
+                return ItemStackTools.getEmptyStack();
             }
             int randomSlot = slots.get(random.nextInt(slots.size()));
             return inventory.extractItem(randomSlot, 1, false);
@@ -1313,7 +1313,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 }
             }
         }
-        return null;
+        return ItemStackTools.getEmptyStack();
     }
 
     private boolean isPlacable(ItemStack stack) {
@@ -1410,7 +1410,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     // Return what could not be inserted
     private ItemStack insertItem(ItemStack s) {
         s = InventoryHelper.insertItem(getWorld(), getPos(), EnumFacing.UP, s);
-        if (s != null) {
+        if (ItemStackTools.isValid(s)) {
             s = InventoryHelper.insertItem(getWorld(), getPos(), EnumFacing.DOWN, s);
         }
         return s;
@@ -1432,12 +1432,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 return findAndConsumeBlock((IInventory) te, srcWorld, srcPos, state);
             }
         }
-        return null;
+        return ItemStackTools.getEmptyStack();
     }
 
     private ItemStack consumeBlock(World srcWorld, BlockPos srcPos, IBlockState state) {
         ItemStack b = consumeBlock(EnumFacing.UP, srcWorld, srcPos, state);
-        if (b == null) {
+        if (ItemStackTools.isEmpty(b)) {
             b = consumeBlock(EnumFacing.DOWN, srcWorld, srcPos, state);
         }
         return b;
@@ -1570,7 +1570,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
             IBlockState state = world.getBlockState(srcPos);
             ItemStack consumedStack = consumeBlock(world, srcPos, state);
-            if (consumedStack == null) {
+            if (ItemStackTools.isEmpty(consumedStack)) {
                 return;
             }
 

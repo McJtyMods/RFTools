@@ -258,7 +258,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
     private void handleChargingItem() {
         ItemStack stack = inventoryHelper.getStackInSlot(PowerCellContainer.SLOT_CHARGEITEM);
-        if (stack == null) {
+        if (ItemStackTools.isEmpty(stack)) {
             return;
         }
 

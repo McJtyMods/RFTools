@@ -1,5 +1,6 @@
 package mcjty.rftools;
 
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.WrenchChecker;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorTileEntity;
@@ -96,7 +97,7 @@ public class ForgeEventHandlers {
         }
 
         ItemStack heldItem = event.getEntityPlayer().getHeldItem(event.getHand());
-        if (heldItem == null || heldItem.getItem() == null) {
+        if (ItemStackTools.isEmpty(heldItem) || heldItem.getItem() == null) {
             return;
         }
         if (event.getEntityPlayer().isSneaking() && WrenchChecker.isAWrench(heldItem.getItem())) {

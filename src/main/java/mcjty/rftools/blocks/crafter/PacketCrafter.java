@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.crafter;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.Logging;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -53,7 +54,7 @@ public class PacketCrafter implements IMessage {
         if (items != null) {
             buf.writeByte(items.length);
             for (ItemStack item : items) {
-                if (item == null) {
+                if (ItemStackTools.isEmpty(item)) {
                     buf.writeBoolean(false);
                 } else {
                     buf.writeBoolean(true);
@@ -75,14 +76,14 @@ public class PacketCrafter implements IMessage {
         if (inv != null) {
             for (int i = 0 ; i < 9 ; i++) {
                 ItemStack slot = inv.getStackInSlot(i);
-                if (slot != null) {
+                if (ItemStackTools.isValid(slot)) {
                     items[i] = slot.copy();
                 } else {
-                    items[i] = null;
+                    items[i] = ItemStackTools.getEmptyStack();
                 }
             }
         }
-        items[9] = result == null ? null : result.copy();
+        items[9] = ItemStackTools.isEmpty(result) ? ItemStackTools.getEmptyStack() : result.copy();
         this.keepOne = keepOne;
         this.craftInternal = craftInternal;
     }

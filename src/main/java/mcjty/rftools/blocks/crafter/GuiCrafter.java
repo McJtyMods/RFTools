@@ -15,6 +15,8 @@ import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.network.Argument;
+import mcjty.lib.tools.ItemStackList;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.tools.MinecraftTools;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.BlockInfo;
@@ -215,15 +217,14 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         recipeList.removeChildren();
         for (int i = 0 ; i < tileEntity.getSupportedRecipes() ; i++) {
             CraftingRecipe recipe = tileEntity.getRecipe(i);
-            ItemStack stack = recipe.getResult();
-            addRecipeLine(stack);
+            addRecipeLine(recipe.getResult());
         }
     }
 
-    private void addRecipeLine(Object craftingResult) {
+    private void addRecipeLine(ItemStack craftingResult) {
         String readableName = BlockInfo.getReadableName(craftingResult, 0);
         int color = StyleConfig.colorTextInListNormal;
-        if (craftingResult == null) {
+        if (ItemStackTools.isEmpty(craftingResult)) {
             readableName = "<no recipe>";
             color = 0xFF505050;
         }
@@ -282,7 +283,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         IRecipe recipe = CraftingRecipe.findRecipe(MinecraftTools.getWorld(mc), inv);
         ItemStack newResult;
         if (recipe == null) {
-            newResult = null;
+            newResult = ItemStackTools.getEmptyStack();
         } else {
             newResult = recipe.getCraftingResult(inv);
         }
@@ -310,7 +311,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         IRecipe recipe = CraftingRecipe.findRecipe(MinecraftTools.getWorld(mc), inv);
         ItemStack newResult;
         if (recipe == null) {
-            newResult = null;
+            newResult = ItemStackTools.getEmptyStack();
         } else {
             newResult = recipe.getCraftingResult(inv);
         }
@@ -345,10 +346,10 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     }
 
     private boolean itemStacksEqual(ItemStack matches, ItemStack oldStack) {
-        if (matches == null) {
-            return oldStack == null;
+        if (ItemStackTools.isEmpty(matches)) {
+            return ItemStackTools.isEmpty(oldStack);
         } else {
-            return oldStack != null && matches.isItemEqual(oldStack);
+            return ItemStackTools.isValid(oldStack) && matches.isItemEqual(oldStack);
         }
     }
 
@@ -393,18 +394,18 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         GlStateManager.translate((float) guiLeft, (float) guiTop, 0.0F);
         GlStateManager.color(1.0F, 0.0F, 0.0F, 1.0F);
         GlStateManager.enableRescaleNormal();
-        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) (short) 240 / 1.0F, (float) (short) 240 / 1.0F);
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (short) 240 / 1.0F, 240.0f);
 
-        ItemStack[] ghostSlots = tileEntity.getGhostSlots();
+        ItemStackList ghostSlots = tileEntity.getGhostSlots();
         zLevel = 100.0F;
         itemRender.zLevel = 100.0F;
         GlStateManager.enableDepth();
         GlStateManager.disableBlend();
         GlStateManager.enableLighting();
 
-        for (int i = 0 ; i < ghostSlots.length ; i++) {
-            ItemStack stack = ghostSlots[i];
-            if (stack != null) {
+        for (int i = 0 ; i < ghostSlots.size() ; i++) {
+            ItemStack stack = ghostSlots.get(i);
+            if (ItemStackTools.isValid(stack)) {
                 int slotIdx;
                 if (i < CrafterContainer.BUFFER_SIZE) {
                     slotIdx = i + CrafterContainer.SLOT_BUFFER;

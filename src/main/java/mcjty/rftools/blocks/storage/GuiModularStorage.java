@@ -477,7 +477,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
     private boolean isRemote() {
         ItemStack stack = inventorySlots.getSlot(ModularStorageContainer.SLOT_STORAGE_MODULE).getStack();
-        if (stack == null) {
+        if (ItemStackTools.isEmpty(stack)) {
             return false;
         }
         return stack.getItemDamage() == StorageModuleItem.STORAGE_REMOTE;

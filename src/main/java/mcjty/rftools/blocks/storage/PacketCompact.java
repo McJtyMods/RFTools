@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.storage;
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.items.storage.StorageModuleItem;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -38,7 +39,7 @@ public class PacketCompact implements IMessage {
         public void handle(PacketCompact message, MessageContext ctx) {
             EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
             ItemStack heldItem = playerEntity.getHeldItem(EnumHand.MAIN_HAND);
-            if (heldItem == null) {
+            if (ItemStackTools.isEmpty(heldItem)) {
                 return;
             }
             NBTTagCompound tagCompound = heldItem.getTagCompound();

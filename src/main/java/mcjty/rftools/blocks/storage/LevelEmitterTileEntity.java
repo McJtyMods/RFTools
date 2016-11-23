@@ -4,6 +4,7 @@ import gnu.trove.set.TIntSet;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.network.Argument;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
@@ -58,7 +59,7 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
         int count = -1;
         if (module != null) {
             ItemStack matcher = inventoryHelper.getStackInSlot(LevelEmitterContainer.SLOT_ITEMMATCH);
-            if (matcher == null) {
+            if (ItemStackTools.isEmpty(matcher)) {
                 return count;
             }
             int dimension = RFToolsTools.getDimensionFromModule(module);

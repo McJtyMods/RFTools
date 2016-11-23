@@ -5,6 +5,7 @@ import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.tools.InventoryTools;
+import mcjty.lib.tools.ItemStackList;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.NullSidedInvWrapper;
@@ -46,7 +47,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     private InventoryHelper inventoryHelper = new InventoryHelper(this, CrafterContainer.factory,
             10 + CrafterContainer.BUFFER_SIZE + CrafterContainer.BUFFEROUT_SIZE + 1);
 
-    private ItemStack[] ghostSlots = new ItemStack[CrafterContainer.BUFFER_SIZE + CrafterContainer.BUFFEROUT_SIZE];
+    private ItemStackList ghostSlots = ItemStackList.create(CrafterContainer.BUFFER_SIZE + CrafterContainer.BUFFEROUT_SIZE);
 
     private CraftingRecipe recipes[];
     private int supportedRecipes;
@@ -56,6 +57,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     private int speedMode = SPEED_SLOW;
 
     private InventoryCrafting workInventory = new InventoryCrafting(new Container() {
+        @SuppressWarnings("NullableProblems")
         @Override
         public boolean canInteractWith(EntityPlayer var1) {
             return false;
@@ -78,7 +80,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         return true;
     }
 
-    public ItemStack[] getGhostSlots() {
+    public ItemStackList getGhostSlots() {
         return ghostSlots;
     }
 
@@ -160,8 +162,8 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
             return false;
         }
         if (index >= CrafterContainer.SLOT_BUFFER && index < CrafterContainer.SLOT_BUFFEROUT) {
-            ItemStack ghostSlot = ghostSlots[index - CrafterContainer.SLOT_BUFFER];
-            if (ghostSlot != null) {
+            ItemStack ghostSlot = ghostSlots.get(index - CrafterContainer.SLOT_BUFFER);
+            if (ItemStackTools.isValid(ghostSlot)) {
                 if (!ghostSlot.isItemEqual(stack)) {
                     return false;
                 }
@@ -173,8 +175,8 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
                 }
             }
         } else if (index >= CrafterContainer.SLOT_BUFFEROUT && index < CrafterContainer.SLOT_FILTER_MODULE) {
-            ItemStack ghostSlot = ghostSlots[index - CrafterContainer.SLOT_BUFFEROUT + CrafterContainer.BUFFER_SIZE];
-            if (ghostSlot != null) {
+            ItemStack ghostSlot = ghostSlots.get(index - CrafterContainer.SLOT_BUFFEROUT + CrafterContainer.BUFFER_SIZE);
+            if (ItemStackTools.isValid(ghostSlot)) {
                 if (!ghostSlot.isItemEqual(stack)) {
                     return false;
                 }
@@ -222,7 +224,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         NBTTagList bufferTagList = tagCompound.getTagList("GItems", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            ghostSlots[i] = ItemStackTools.loadFromNBT(nbtTagCompound);
+            ghostSlots.set(i, ItemStackTools.loadFromNBT(nbtTagCompound));
         }
     }
 
@@ -251,10 +253,10 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
     private void writeGhostBufferToNBT(NBTTagCompound tagCompound) {
         NBTTagList bufferTagList = new NBTTagList();
-        for (int i = 0 ; i < ghostSlots.length ; i++) {
-            ItemStack stack = ghostSlots[i];
+        for (int i = 0 ; i < ghostSlots.size() ; i++) {
+            ItemStack stack = ghostSlots.get(i);
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
-            if (stack != null) {
+            if (ItemStackTools.isValid(stack)) {
                 stack.writeToNBT(nbtTagCompound);
             }
             bufferTagList.appendTag(nbtTagCompound);
@@ -326,7 +328,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
             return false;
         }
 
-        Map<Integer,ItemStack> undo = new HashMap<Integer, ItemStack>();
+        Map<Integer,ItemStack> undo = new HashMap<>();
 
         if (!testAndConsumeCraftingItems(craftingRecipe, undo, true)) {
             undo(undo);
@@ -337,7 +339,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         }
 
 //        ItemStack result = recipe.getCraftingResult(craftingRecipe.getInventory());
-        ItemStack result = null;
+        ItemStack result = ItemStackTools.getEmptyStack();
         try {
             result = recipe.getCraftingResult(workInventory);
         } catch (Exception e) {
@@ -347,7 +349,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
         // Try to merge the output. If there is something that doesn't fit we undo everything.
         CraftingRecipe.CraftMode mode = craftingRecipe.getCraftMode();
-        if (result != null && placeResult(mode, result, undo)) {
+        if (ItemStackTools.isValid(result) && placeResult(mode, result, undo)) {
             List<ItemStack> remaining = InventoryTools.getRemainingItems(recipe, workInventory);
             if (remaining != null) {
                 CraftingRecipe.CraftMode remainingMode = mode == EXTC ? INT : mode;
@@ -374,11 +376,11 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         if (strictDamage) {
             return OreDictionary.itemMatches(target, input, false);
         } else {
-            if ((input == null && target != null) || (input != null && target == null)) {
+            if ((ItemStackTools.isEmpty(input) && ItemStackTools.isValid(target))
+                    || (ItemStackTools.isValid(input) && ItemStackTools.isEmpty(target))) {
                 return false;
             }
             return target.getItem() == input.getItem();
-
         }
     }
 
@@ -449,7 +451,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     }
 
     private void rememberItems() {
-        for (int i = 0 ; i < ghostSlots.length ; i++) {
+        for (int i = 0 ; i < ghostSlots.size() ; i++) {
             int slotIdx;
             if (i < CrafterContainer.BUFFER_SIZE) {
                 slotIdx = i + CrafterContainer.SLOT_BUFFER;
@@ -458,16 +460,16 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
             }
             if (inventoryHelper.containsItem(slotIdx)) {
                 ItemStack stack = inventoryHelper.getStackInSlot(slotIdx);
-                ghostSlots[i] = stack.copy();
-                ItemStackTools.setStackSize(ghostSlots[i], 1);
+                ghostSlots.set(i, stack.copy());
+                ItemStackTools.setStackSize(ghostSlots.get(i), 1);
             }
         }
         markDirtyClient();
     }
 
     private void forgetItems() {
-        for (int i = 0 ; i < ghostSlots.length ; i++) {
-            ghostSlots[i] = null;
+        for (int i = 0 ; i < ghostSlots.size() ; i++) {
+            ghostSlots.set(i, ItemStackTools.getEmptyStack());
         }
         markDirtyClient();
     }

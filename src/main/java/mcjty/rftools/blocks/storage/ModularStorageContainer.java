@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.container.*;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.craftinggrid.CraftingGridInventory;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.items.storage.StorageTypeItem;
@@ -146,7 +147,7 @@ public class ModularStorageContainer extends GenericContainer {
             ItemStack itemstack1 = this.inventoryItemStacks.get(i);
 
             if (!ItemStack.areItemStacksEqual(itemstack1, itemstack)) {
-                itemstack1 = itemstack == null ? null : itemstack.copy();
+                itemstack1 = ItemStackTools.isEmpty(itemstack) ? ItemStackTools.getEmptyStack() : itemstack.copy();
                 this.inventoryItemStacks.set(i, itemstack1);
                 differentSlots.add(Pair.of(i, itemstack));
                 if (differentSlots.size() >= 30) {

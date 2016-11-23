@@ -11,6 +11,7 @@ import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
@@ -219,7 +220,7 @@ public class GuiCraftingGrid {
         IRecipe recipe = CraftingRecipe.findRecipe(MinecraftTools.getWorld(mc), inv);
         ItemStack newResult;
         if (recipe == null) {
-            newResult = null;
+            newResult = ItemStackTools.getEmptyStack();
         } else {
             newResult = recipe.getCraftingResult(inv);
         }
@@ -229,7 +230,7 @@ public class GuiCraftingGrid {
     private void addRecipeLine(ItemStack craftingResult) {
         String readableName = BlockInfo.getReadableName(craftingResult, 0);
         int color = StyleConfig.colorTextInListNormal;
-        if (craftingResult == null) {
+        if (ItemStackTools.isEmpty(craftingResult)) {
             readableName = "<recipe>";
             color = 0xFF505050;
         }

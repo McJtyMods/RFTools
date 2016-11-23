@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
@@ -51,7 +52,7 @@ public class StorageTerminalTileEntity extends LogicTileEntity implements Defaul
     @Override
     public int[] craft(EntityPlayerMP player, int n, boolean test) {
         ItemStack module = inventoryHelper.getStackInSlot(StorageTerminalContainer.SLOT_MODULE);
-        if (module == null) {
+        if (ItemStackTools.isEmpty(module)) {
             // No module. Should not be possible
             return new int[0];
         }

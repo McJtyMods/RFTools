@@ -1139,7 +1139,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-        if (index == ShieldContainer.SLOT_SHAPE && ((stack == null && inventoryHelper.getStackInSlot(index) != null) || (stack != null && inventoryHelper.getStackInSlot(index) == null))) {
+        if (index == ShieldContainer.SLOT_SHAPE && ((ItemStackTools.isEmpty(stack) && ItemStackTools.isValid(inventoryHelper.getStackInSlot(index))) || (ItemStackTools.isValid(stack) && ItemStackTools.isEmpty(inventoryHelper.getStackInSlot(index))))) {
             // Restart if we go from having a stack to not having stack or the other way around.
             decomposeShield();
         }

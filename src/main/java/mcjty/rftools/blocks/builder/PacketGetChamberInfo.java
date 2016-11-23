@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.builder;
 
 import io.netty.buffer.ByteBuf;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockMeta;
 import mcjty.lib.varia.Counter;
 import mcjty.rftools.network.RFToolsMessages;
@@ -47,7 +48,7 @@ public class PacketGetChamberInfo implements IMessage {
         private void handle(MessageContext ctx) {
             EntityPlayer player = ctx.getServerHandler().playerEntity;
             ItemStack cardItem = player.getHeldItem(EnumHand.MAIN_HAND);
-            if (cardItem == null || cardItem.getTagCompound() == null) {
+            if (ItemStackTools.isEmpty(cardItem) || cardItem.getTagCompound() == null) {
                 return;
             }
 

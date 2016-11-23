@@ -1,5 +1,6 @@
 package mcjty.rftools.crafting;
 
+import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapedRecipes;
@@ -62,8 +63,8 @@ public class NBTMatchingRecipe extends ShapedRecipes {
 
                 ItemStack itemstack1 = inventoryCrafting.getStackInRowAndColumn(col, row);
 
-                if (itemstack1 != null || itemstack != null) {
-                    if (itemstack1 == null || itemstack == null) {
+                if (ItemStackTools.isValid(itemstack1) || ItemStackTools.isValid(itemstack)) {
+                    if (ItemStackTools.isEmpty(itemstack1) || ItemStackTools.isEmpty(itemstack)) {
                         return false;
                     }
 

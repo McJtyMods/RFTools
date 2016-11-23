@@ -41,10 +41,11 @@ public class RemoteStorageItemInventory implements CompatInventory, CraftingGrid
     }
 
     private int getStorageID() {
-        if (entityPlayer.getHeldItem(EnumHand.MAIN_HAND) == null || entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound() == null) {
+        ItemStack heldItem = entityPlayer.getHeldItem(EnumHand.MAIN_HAND);
+        if (ItemStackTools.isEmpty(heldItem) || heldItem.getTagCompound() == null) {
             return -1;
         }
-        return entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound().getInteger("id");
+        return heldItem.getTagCompound().getInteger("id");
     }
 
 

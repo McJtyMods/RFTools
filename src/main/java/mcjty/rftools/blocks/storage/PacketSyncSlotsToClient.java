@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.storage;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.RFTools;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
@@ -60,7 +61,7 @@ public class PacketSyncSlotsToClient implements IMessage {
         buf.writeInt(numStacks);
         buf.writeInt(items.size());
         for (Pair<Integer, ItemStack> pair : items) {
-            if (pair.getRight() == null) {
+            if (ItemStackTools.isEmpty(pair.getRight())) {
                 buf.writeInt(-pair.getLeft()-1);  // Negative index to indicate a null stack
             } else {
                 buf.writeInt(pair.getLeft());
