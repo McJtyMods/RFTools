@@ -97,7 +97,7 @@ public class ModularStorageContainer extends GenericContainer {
                     @Override
                     public ItemStack getStack() {
                         if (getSlotIndex() >= (modularStorageTileEntity.getMaxSize() + SLOT_STORAGE)) {
-                            return null;
+                            return ItemStackTools.getEmptyStack();
                         }
                         return super.getStack();
                     }

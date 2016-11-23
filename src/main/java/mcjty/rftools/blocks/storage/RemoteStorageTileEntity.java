@@ -284,7 +284,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
 
     public ItemStack getRemoteSlot(int si, int index) {
         if (index >= slots[si].length) {
-            return null;
+            return ItemStackTools.getEmptyStack();
         }
         return slots[si][index];
     }
@@ -387,7 +387,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
                 }
             }
         }
-        return null;
+        return ItemStackTools.getEmptyStack();
     }
 
     public ItemStack[] findStacksForId(int id) {

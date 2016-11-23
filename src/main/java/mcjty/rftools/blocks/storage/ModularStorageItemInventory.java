@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.compat.CompatInventory;
+import mcjty.lib.tools.ItemStackList;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.craftinggrid.CraftingGrid;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
@@ -20,14 +21,14 @@ import net.minecraftforge.common.util.Constants;
 import java.util.List;
 
 public class ModularStorageItemInventory implements CompatInventory, CraftingGridProvider, JEIRecipeAcceptor {
-    private ItemStack stacks[];
+    private ItemStackList stacks;
     private final EntityPlayer entityPlayer;
     private CraftingGrid craftingGrid = new CraftingGrid();
 
     public ModularStorageItemInventory(EntityPlayer player) {
         this.entityPlayer = player;
         int maxSize = getMaxSize();
-        stacks = new ItemStack[maxSize];
+        stacks = ItemStackList.create(maxSize);
         NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
@@ -37,7 +38,7 @@ public class ModularStorageItemInventory implements CompatInventory, CraftingGri
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < Math.min(bufferTagList.tagCount(), maxSize) ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            stacks[i] = ItemStackTools.loadFromNBT(nbtTagCompound);
+            stacks.set(i, ItemStackTools.loadFromNBT(nbtTagCompound));
         }
         craftingGrid.readFromNBT(tagCompound.getCompoundTag("grid"));
 
@@ -99,7 +100,7 @@ public class ModularStorageItemInventory implements CompatInventory, CraftingGri
         return StorageModuleItem.MAXSIZE[heldItem.getTagCompound().getInteger("childDamage")];
     }
 
-    public ItemStack[] getStacks() {
+    public ItemStackList getStacks() {
         return stacks;
     }
 
@@ -111,40 +112,40 @@ public class ModularStorageItemInventory implements CompatInventory, CraftingGri
     @Override
     public ItemStack getStackInSlot(int index) {
         if (index >= getMaxSize()) {
-            return null;
+            return ItemStackTools.getEmptyStack();
         } else {
-            return stacks[index];
+            return stacks.get(index);
         }
     }
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
-        if (index >= stacks.length) {
+        if (index >= stacks.size()) {
             return ItemStackTools.getEmptyStack();
         }
-        if (ItemStackTools.isValid(stacks[index])) {
-            if (ItemStackTools.getStackSize(stacks[index]) <= amount) {
-                ItemStack old = stacks[index];
-                stacks[index] = ItemStackTools.getEmptyStack();
+        if (ItemStackTools.isValid(stacks.get(index))) {
+            if (ItemStackTools.getStackSize(stacks.get(index)) <= amount) {
+                ItemStack old = stacks.get(index);
+                stacks.set(index, ItemStackTools.getEmptyStack());
                 markDirty();
                 return old;
             }
-            ItemStack its = stacks[index].splitStack(amount);
-            if (ItemStackTools.isEmpty(stacks[index])) {
-                stacks[index] = ItemStackTools.getEmptyStack();
+            ItemStack its = stacks.get(index).splitStack(amount);
+            if (ItemStackTools.isEmpty(stacks.get(index))) {
+                stacks.set(index, ItemStackTools.getEmptyStack());
             }
             markDirty();
             return its;
         }
-        return null;
+        return ItemStackTools.getEmptyStack();
     }
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-        if (index >= stacks.length) {
+        if (index >= stacks.size()) {
             return;
         }
-        stacks[index] = stack;
+        stacks.set(index, stack);
         if (ItemStackTools.isValid(stack) && ItemStackTools.getStackSize(stack) > getInventoryStackLimit()) {
             ItemStackTools.setStackSize(stack, getInventoryStackLimit());
         }
@@ -161,7 +162,7 @@ public class ModularStorageItemInventory implements CompatInventory, CraftingGri
         NBTTagList bufferTagList = new NBTTagList();
         int numStacks = 0;
         for (int i = 0 ; i < getMaxSize() ; i++) {
-            ItemStack stack = stacks[i];
+            ItemStack stack = stacks.get(i);
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
             if (ItemStackTools.isValid(stack)) {
                 stack.writeToNBT(nbtTagCompound);

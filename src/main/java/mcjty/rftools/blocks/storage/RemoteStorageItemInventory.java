@@ -138,11 +138,11 @@ public class RemoteStorageItemInventory implements CompatInventory, CraftingGrid
         if (isServer()) {
             RemoteStorageTileEntity storage = getRemoteStorage();
             if (storage == null) {
-                return null;
+                return ItemStackTools.getEmptyStack();
             }
             int si = storage.findRemoteIndex(getStorageID());
             if (si == -1) {
-                return null;
+                return ItemStackTools.getEmptyStack();
             }
             return storage.getRemoteSlot(si, index);
         } else {

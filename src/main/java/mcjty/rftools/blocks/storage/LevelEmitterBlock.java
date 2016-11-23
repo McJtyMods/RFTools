@@ -116,7 +116,7 @@ public class LevelEmitterBlock extends LogicSlabBlock<LevelEmitterTileEntity, Le
             LevelEmitterTileEntity emitterTileEntity = (LevelEmitterTileEntity) tileEntity;
             return emitterTileEntity.getStackInSlot(LevelEmitterContainer.SLOT_MODULE);
         }
-        return null;
+        return ItemStackTools.getEmptyStack();
     }
 
     @Override

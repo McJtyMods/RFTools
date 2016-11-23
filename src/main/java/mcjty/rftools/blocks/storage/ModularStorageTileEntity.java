@@ -272,17 +272,17 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     @Override
     public ItemStack getStackInSlot(int index) {
         if (index >= getSizeInventory()) {
-            return null;
+            return ItemStackTools.getEmptyStack();
         }
         if (isStorageAvailableRemotely(index)) {
             index -= ModularStorageContainer.SLOT_STORAGE;
             RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
             if (storageTileEntity == null) {
-                return null;
+                return ItemStackTools.getEmptyStack();
             }
             ItemStack[] slots = storageTileEntity.findStacksForId(remoteId);
             if (slots == null || index >= slots.length) {
-                return null;
+                return ItemStackTools.getEmptyStack();
             }
             return slots[index];
         }
@@ -331,12 +331,12 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             index -= ModularStorageContainer.SLOT_STORAGE;
             RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
             if (storageTileEntity == null) {
-                return null;
+                return ItemStackTools.getEmptyStack();
             }
 
             int si = storageTileEntity.findRemoteIndex(remoteId);
             if (si == -1) {
-                return null;
+                return ItemStackTools.getEmptyStack();
             }
             storageTileEntity.updateVersion();
             return storageTileEntity.removeStackFromSlotRemote(si, index);
@@ -351,12 +351,12 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             index -= ModularStorageContainer.SLOT_STORAGE;
             RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
             if (storageTileEntity == null) {
-                return null;
+                return ItemStackTools.getEmptyStack();
             }
 
             int si = storageTileEntity.findRemoteIndex(remoteId);
             if (si == -1) {
-                return null;
+                return ItemStackTools.getEmptyStack();
             }
             storageTileEntity.updateVersion();
             return storageTileEntity.decrStackSizeRemote(si, index, amount);
