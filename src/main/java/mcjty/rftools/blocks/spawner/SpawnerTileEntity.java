@@ -4,6 +4,7 @@ import mcjty.lib.api.MachineInformation;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.tools.EntityTools;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.tools.WorldTools;
 import mcjty.lib.varia.BlockTools;
@@ -12,25 +13,19 @@ import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.ModItems;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.boss.EntityDragon;
-import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 //import net.minecraft.entity.monster.SkeletonType;
@@ -236,48 +231,18 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 //        }
 
 
-        EntityLiving entityLiving;
-        try {
-            Class<? extends Entity> clazz;
-            if ("WitherSkeleton".equals(mobId)) {
-                clazz = EntitySkeleton.class;
-            } else if ("StraySkeleton".equals(mobId)) {
-                clazz = EntitySkeleton.class;
-            } else {
-                // @todo @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-                // Check for null and check compat with 1.10
-                clazz = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(mobId)).getEntityClass();
-//                clazz = EntityList.NAME_TO_CLASS.get(mobId);
-            }
-            entityLiving = (EntityLiving) clazz.getConstructor(World.class).newInstance(getWorld());
-            // @todo @@@@@@@@@@@
-//            if ("WitherSkeleton".equals(mobId)) {
-//                ((EntitySkeleton) entityLiving).setSkeletonType(SkeletonType.WITHER);
-//            } else if ("StraySkeleton".equals(mobId)) {
-//                ((EntitySkeleton) entityLiving).setSkeletonType(SkeletonType.STRAY);
-//            } else if (entityLiving instanceof EntitySkeleton) {
-//                // Force non-wither otherwise
-//                ((EntitySkeleton) entityLiving).setSkeletonType(SkeletonType.NORMAL);
-//            }
-            if (entityLiving instanceof EntityDragon) {
-                // Ender dragon needs to be spawned with an additional NBT key set
-                NBTTagCompound dragonTag = new NBTTagCompound();
-                entityLiving.writeEntityToNBT(dragonTag);
-                dragonTag.setShort("DragonPhase", (short) 0);
-                entityLiving.readEntityFromNBT(dragonTag);
-            }
-        } catch (InstantiationException e) {
+        EntityLiving entityLiving = EntityTools.createEntity(getWorld(), mobId);
+        if (entityLiving == null) {
             Logging.logError("Fail to spawn mob: " + mobId);
             return;
-        } catch (IllegalAccessException e) {
-            Logging.logError("Fail to spawn mob: " + mobId);
-            return;
-        } catch (InvocationTargetException e) {
-            Logging.logError("Fail to spawn mob: " + mobId);
-            return;
-        } catch (NoSuchMethodException e) {
-            Logging.logError("Fail to spawn mob: " + mobId);
-            return;
+        }
+
+        if (entityLiving instanceof EntityDragon) {
+            // Ender dragon needs to be spawned with an additional NBT key set
+            NBTTagCompound dragonTag = new NBTTagCompound();
+            entityLiving.writeEntityToNBT(dragonTag);
+            dragonTag.setShort("DragonPhase", (short) 0);
+            entityLiving.readEntityFromNBT(dragonTag);
         }
 
         if (k == EnumFacing.DOWN) {

@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.blockprotector;
 
+import mcjty.lib.tools.WorldTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -55,7 +56,7 @@ public class BlockProtectors extends WorldSavedData {
     }
 
     public void save(World world) {
-        world.getMapStorage().setData(PROTECTORS_NAME, this);
+        WorldTools.saveData(world, PROTECTORS_NAME, this);
         markDirty();
     }
 
@@ -74,7 +75,7 @@ public class BlockProtectors extends WorldSavedData {
         if (instance != null) {
             return instance;
         }
-        instance = (BlockProtectors) world.getMapStorage().getOrLoadData(BlockProtectors.class, PROTECTORS_NAME);
+        instance = WorldTools.loadData(world, BlockProtectors.class, PROTECTORS_NAME);
         if (instance == null) {
             instance = new BlockProtectors(PROTECTORS_NAME);
         }

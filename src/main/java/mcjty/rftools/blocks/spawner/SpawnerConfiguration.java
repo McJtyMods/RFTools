@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.spawner;
 
+import mcjty.lib.tools.EntityTools;
 import mcjty.lib.varia.Logging;
 import net.minecraft.block.Block;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
@@ -299,9 +299,7 @@ public class SpawnerConfiguration {
     }
 
     public static void addMobSpawnRF(Configuration cfg, Class<? extends EntityLiving> clazz, int rf) {
-        // @todo @@@@@@@@@@@@@@
-        String name = EntityList.getKey(clazz).toString();
-//        String name = EntityList.CLASS_TO_NAME.get(clazz);
+        String name = EntityTools.findEntityNameByClass(clazz);
         addMobSpawnRF(cfg, name, rf);
     }
 
@@ -311,9 +309,7 @@ public class SpawnerConfiguration {
     }
 
     public static void addMobSpawnAmount(Configuration cfg, Class<? extends EntityLiving> clazz, int materialType, Object object, int meta, float amount) {
-        // @todo @@@@@@@@@@@@@@
-        String name = EntityList.getKey(clazz).toString();
-//        String name = EntityList.CLASS_TO_NAME.get(clazz);
+        String name = EntityTools.findEntityNameByClass(clazz);
         addMobSpawnAmount(cfg, name, materialType, object, meta, amount);
     }
 

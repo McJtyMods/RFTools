@@ -677,9 +677,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         if (tagCompound.hasKey("players")) {
             entitiesOnPlatform.clear();
             WorldServer world = DimensionManager.getWorld(0);
-            // @todo @@@@@@@@@@@@@@
-            List<EntityPlayerMP> serverPlayers = world.getMinecraftServer().getPlayerList().getPlayers();
-//            List<EntityPlayerMP> serverPlayers = world.getMinecraftServer().getPlayerList().getPlayerList();
+            List<EntityPlayerMP> serverPlayers = WorldTools.getPlayerList(world);
             NBTTagList playerList = tagCompound.getTagList("players", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < playerList.tagCount(); i++) {
                 NBTTagCompound p = playerList.getCompoundTagAt(i);

@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.teleporter;
 
+import mcjty.lib.tools.WorldTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
@@ -11,6 +12,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 
@@ -49,7 +51,7 @@ public class TeleportDestinations extends WorldSavedData {
     }
 
     public void save(World world) {
-        world.getMapStorage().setData(TPDESTINATIONS_NAME, this);
+        WorldTools.saveData(world, TPDESTINATIONS_NAME, this);
         markDirty();
     }
 
@@ -96,7 +98,7 @@ public class TeleportDestinations extends WorldSavedData {
         if (instance != null) {
             return instance;
         }
-        instance = (TeleportDestinations) world.getMapStorage().getOrLoadData(TeleportDestinations.class, TPDESTINATIONS_NAME);
+        instance = WorldTools.loadData(world, TeleportDestinations.class, TPDESTINATIONS_NAME);
         if (instance == null) {
             instance = new TeleportDestinations(TPDESTINATIONS_NAME);
         }
@@ -108,9 +110,7 @@ public class TeleportDestinations extends WorldSavedData {
     public Collection<TeleportDestinationClientInfo> getValidDestinations(World worldObj, String playerName) {
         FavoriteDestinationsProperties properties = null;
         if (playerName != null) {
-            // @todo @@@@@@@@@@@@@
-            List<EntityPlayerMP> list = worldObj.getMinecraftServer().getPlayerList().getPlayers();
-//            List<EntityPlayerMP> list = worldObj.getMinecraftServer().getPlayerList().getPlayerList();
+            List<EntityPlayerMP> list = WorldTools.getPlayerList((WorldServer) worldObj);
             for (EntityPlayerMP entityplayermp : list) {
                 if (playerName.equals(entityplayermp.getName())) {
                     properties = PlayerExtendedProperties.getFavoriteDestinations(entityplayermp);

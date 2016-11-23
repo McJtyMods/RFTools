@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.shield;
 
+import mcjty.lib.compat.CompatBlock;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -23,7 +24,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class ShieldTemplateBlock extends Block {
+public class ShieldTemplateBlock extends CompatBlock {
 
     public static enum TemplateColor implements IStringSerializable {
         BLUE("blue"), RED("red"), GREEN("green"), YELLOW("yellow");
@@ -76,14 +77,13 @@ public class ShieldTemplateBlock extends Block {
         return state.getValue(COLOR).ordinal();
     }
 
-    // @todo @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-//    @Override
-//    @SideOnly(Side.CLIENT)
-//    public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list) {
-//        for (TemplateColor enumdyecolor : TemplateColor.values()) {
-//            list.add(new ItemStack(itemIn, 1, enumdyecolor.ordinal()));
-//        }
-//    }
+    @SideOnly(Side.CLIENT)
+    @Override
+    protected void clGetSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
+        for (TemplateColor enumdyecolor : TemplateColor.values()) {
+            subItems.add(new ItemStack(itemIn, 1, enumdyecolor.ordinal()));
+        }
+    }
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {

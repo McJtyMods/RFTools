@@ -1,5 +1,6 @@
 package mcjty.rftools.items;
 
+import mcjty.lib.tools.EntityTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
@@ -7,11 +8,9 @@ import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityDragonPart;
-import net.minecraft.entity.monster.EntityPigZombie;
-import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -125,18 +124,7 @@ public class SyringeItem extends GenericRFToolsItem {
     }
 
     private String findSelectedMobId(Class<? extends Entity> clazz, Entity entity) {
-        if (entity instanceof EntitySkeleton) {
-            EntitySkeleton skeleton = (EntitySkeleton) entity;
-            // @todo @@@@@@@@@@@@@@@@@@
-//            if (skeleton.getSkeletonType() == SkeletonType.WITHER) {
-//                return "WitherSkeleton";
-//            } else if (skeleton.getSkeletonType() == SkeletonType.STRAY) {
-//                return "StraySkeleton";
-//            }
-        }
-        // @todo @@@@@@@@@@@@@@@@@
-        return EntityList.getKey(clazz).toString();
-//        return EntityList.CLASS_TO_NAME.get(clazz);
+        return EntityTools.findName(clazz, entity);
     }
 
     private Class<? extends Entity> findSelectedMobClass(Entity entity) {
@@ -187,8 +175,7 @@ public class SyringeItem extends GenericRFToolsItem {
     }
 
     public static ItemStack createMobSyringe(Class<? extends Entity> mobClass) {
-        // @todo @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        String id = "";// EntityList.getEntityStringFromClass(mobClass);
+        String id = EntityTools.findEntityNameByClass((Class<? extends EntityLiving>) mobClass);
         String name = I18n.translateToLocal("entity." + id + ".name");
         return createMobSyringe(id, name);
     }

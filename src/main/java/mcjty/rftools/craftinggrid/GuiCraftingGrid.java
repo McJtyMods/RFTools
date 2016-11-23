@@ -2,6 +2,7 @@ package mcjty.rftools.craftinggrid;
 
 import mcjty.lib.base.ModBase;
 import mcjty.lib.base.StyleConfig;
+import mcjty.lib.compat.CompatSlot;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.DefaultSelectionEvent;
@@ -181,9 +182,9 @@ public class GuiCraftingGrid {
 
                 if (slot != null) {
                     GlStateManager.colorMask(true, true, true, false);
-                    // @todo @@@@@@@@@@@@
-                    gui.drawRect(slot.xPos, slot.yPos, slot.xPos + 16, slot.yPos + 16, 0xffff0000);
-//                    gui.drawRect(slot.xDisplayPosition, slot.yDisplayPosition, slot.xDisplayPosition + 16, slot.yDisplayPosition + 16, 0xffff0000);
+                    int xPos = CompatSlot.getX(slot);
+                    int yPos = CompatSlot.getY(slot);
+                    gui.drawRect(xPos, yPos, xPos + 16, yPos + 16, 0xffff0000);
                 }
             }
             for (int i = 0 ; i < 9 ; i++) {
@@ -192,9 +193,9 @@ public class GuiCraftingGrid {
 
                     if (slot != null) {
                         GlStateManager.colorMask(true, true, true, false);
-                        // @todo @@@@@@@@@@@@
-                        gui.drawRect(slot.xPos, slot.yPos, slot.xPos + 16, slot.yPos + 16, 0xffff0000);
-//                        gui.drawRect(slot.xDisplayPosition, slot.yDisplayPosition, slot.xDisplayPosition + 16, slot.yDisplayPosition + 16, 0xffff0000);
+                        int xPos = CompatSlot.getX(slot);
+                        int yPos = CompatSlot.getY(slot);
+                        gui.drawRect(xPos, yPos, xPos + 16, yPos + 16, 0xffff0000);
                     }
                 }
             }

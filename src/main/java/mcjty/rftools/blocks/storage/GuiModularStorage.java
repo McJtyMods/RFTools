@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.base.StyleConfig;
+import mcjty.lib.compat.CompatSlot;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
@@ -116,9 +117,8 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         for (Object o : container.inventorySlots) {
             Slot slot = (Slot) o;
             if (slot.inventory != gridInventory) {
-                // @todo @@@@@@@@@@@@@@@@
-                slot.yPos += ySize - STORAGE_HEIGHT0;
-//                slot.yDisplayPosition += ySize - STORAGE_HEIGHT0;
+                CompatSlot.setY(slot, CompatSlot.getY(slot) + ySize - STORAGE_HEIGHT0);
+//                slot.yPos += ySize - STORAGE_HEIGHT0;
             }
         }
     }

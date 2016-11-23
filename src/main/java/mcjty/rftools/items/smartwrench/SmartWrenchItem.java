@@ -4,6 +4,7 @@ import cofh.api.item.IToolHammer;
 import mcjty.lib.api.smartwrench.SmartWrench;
 import mcjty.lib.api.smartwrench.SmartWrenchMode;
 import mcjty.lib.api.smartwrench.SmartWrenchSelector;
+import mcjty.lib.compat.CompatBlock;
 import mcjty.lib.compat.CompatItem;
 import mcjty.lib.container.GenericBlock;
 import mcjty.lib.varia.BlockPosTools;
@@ -18,7 +19,6 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -118,13 +118,9 @@ public class SmartWrenchItem extends CompatItem implements IToolHammer, SmartWre
                 IBlockState state = world.getBlockState(pos);
                 Block block = state.getBlock();
                 if (block instanceof GenericBlock) {
-                    // @todo @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-                    if (block.onBlockActivated(world, pos, state, player, hand, facing, hitX, hitY, hitZ)) {
+                    if (CompatBlock.activateBlock(block, world, pos, state, player, hand, facing, hitX, hitY, hitZ)) {
                         return EnumActionResult.SUCCESS;
                     }
-//                    if (block.onBlockActivated(world, pos, state, player, hand, stack, facing, hitX, hitY, hitZ)) {
-//                        return EnumActionResult.SUCCESS;
-//                    }
                 }
             }
             SmartWrenchMode mode = getCurrentMode(stack);

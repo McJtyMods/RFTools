@@ -2,17 +2,18 @@ package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.tools.WorldTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.management.PlayerList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -161,10 +162,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
 
     // Server side only.
     private void changeFavorite(String playerName, BlockPos receiver, int dimension, boolean favorite) {
-        PlayerList playerList = getWorld().getMinecraftServer().getPlayerList();
-        // @todo @@@@@@@@@@@
-        List<EntityPlayerMP> list = playerList.getPlayers();
-//        List<EntityPlayerMP> list = playerList.getPlayerList();
+        List<EntityPlayerMP> list = WorldTools.getPlayerList((WorldServer) getWorld());
         for (EntityPlayerMP entityplayermp : list) {
             if (playerName.equals(entityplayermp.getName())) {
                 FavoriteDestinationsProperties favoriteDestinations = PlayerExtendedProperties.getFavoriteDestinations(entityplayermp);

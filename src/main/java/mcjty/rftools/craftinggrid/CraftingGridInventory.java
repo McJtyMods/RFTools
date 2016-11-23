@@ -1,6 +1,8 @@
 package mcjty.rftools.craftinggrid;
 
 import mcjty.lib.compat.CompatInventory;
+import mcjty.lib.tools.ItemStackList;
+import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
@@ -21,9 +23,7 @@ public class CraftingGridInventory implements CompatInventory {
     public static int GRID_XOFFSET = -GRID_WIDTH -2+7;
     public static int GRID_YOFFSET = 127;
 
-    private List<ItemStack> stacks = new ArrayList<>(10);
-
-
+    private ItemStackList stacks = (ItemStackList) ItemStackList.withSize(10, ItemStackTools.getEmptyStack());
 
     public ItemStack getResult() {
         return stacks.get(SLOT_GHOSTOUTPUT);
@@ -31,8 +31,9 @@ public class CraftingGridInventory implements CompatInventory {
 
     public ItemStack[] getIngredients() {
         ItemStack[] ing = new ItemStack[9];
-        // @todo @@@@@@@@@@@@@@@@@@
-        System.arraycopy(stacks, SLOT_GHOSTINPUT, ing, 0, ing.length);
+        for (int i = 0 ; i < ing.length ; i++) {
+            ing[i] = stacks.get(i + SLOT_GHOSTINPUT);
+        }
         return ing;
     }
 

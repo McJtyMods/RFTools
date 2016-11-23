@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.crafter;
 
 import mcjty.lib.base.StyleConfig;
+import mcjty.lib.compat.CompatSlot;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.entity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.RenderHelper;
@@ -412,17 +413,13 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
                 }
                 Slot slot = inventorySlots.getSlot(slotIdx);
                 if (!slot.getHasStack()) {
-                    // @todo @@@@@@@@
-                    itemRender.renderItemAndEffectIntoGUI(stack, slot.xPos, slot.yPos);
-//                    itemRender.renderItemAndEffectIntoGUI(stack, slot.xDisplayPosition, slot.yDisplayPosition);
+                    itemRender.renderItemAndEffectIntoGUI(stack, CompatSlot.getX(slot), CompatSlot.getY(slot));
 
                     GlStateManager.disableLighting();
                     GlStateManager.enableBlend();
                     GlStateManager.disableDepth();
                     this.mc.getTextureManager().bindTexture(iconGuiElements);
-                    // @todo @@@@@@@@
-                    RenderHelper.drawTexturedModalRect(slot.xPos, slot.yPos, 14 * 16, 3 * 16, 16, 16);
-//                    RenderHelper.drawTexturedModalRect(slot.xDisplayPosition, slot.yDisplayPosition, 14 * 16, 3 * 16, 16, 16);
+                    RenderHelper.drawTexturedModalRect(CompatSlot.getX(slot), CompatSlot.getY(slot), 14 * 16, 3 * 16, 16, 16);
                     GlStateManager.enableDepth();
                     GlStateManager.disableBlend();
                     GlStateManager.enableLighting();
