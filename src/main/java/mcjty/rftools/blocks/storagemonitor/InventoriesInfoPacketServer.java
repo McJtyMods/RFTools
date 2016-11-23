@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.network.clientinfo.InfoPacketClient;
 import mcjty.lib.network.clientinfo.InfoPacketServer;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.blocks.storage.ModularStorageBlock;
@@ -99,7 +100,7 @@ public class InventoriesInfoPacketServer implements InfoPacketServer {
             if (storageTe instanceof ModularStorageTileEntity) {
                 ModularStorageTileEntity storageTileEntity = (ModularStorageTileEntity) storageTe;
                 ItemStack storageModule = storageTileEntity.getStackInSlot(ModularStorageContainer.SLOT_STORAGE_MODULE);
-                if (storageModule != null) {
+                if (ItemStackTools.isValid(storageModule)) {
                     if (storageModule.getTagCompound().hasKey("display")) {
                         displayName = storageModule.getDisplayName();
                     }

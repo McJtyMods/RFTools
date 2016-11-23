@@ -38,7 +38,7 @@ public class PacketGridSync {
                 if (buf.readBoolean()) {
                     stacks[j] = NetworkTools.readItemStack(buf);
                 } else {
-                    stacks[j] = null;
+                    stacks[j] = ItemStackTools.getEmptyStack();
                 }
             }
             recipes.add(stacks);
