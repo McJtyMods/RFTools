@@ -23,7 +23,7 @@ public class CraftingGridInventory implements CompatInventory {
     public static int GRID_XOFFSET = -GRID_WIDTH -2+7;
     public static int GRID_YOFFSET = 127;
 
-    private ItemStackList stacks = (ItemStackList) ItemStackList.withSize(10, ItemStackTools.getEmptyStack());
+    private ItemStackList stacks = ItemStackList.create(10);
 
     public ItemStack getResult() {
         return stacks.get(SLOT_GHOSTOUTPUT);
