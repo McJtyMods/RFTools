@@ -22,7 +22,7 @@ public abstract class AbstractRfToolsCommand implements RfToolsCommand {
             value = Boolean.valueOf(args[index]);
         } catch (NumberFormatException e) {
             value = false;
-            ChatTools.addChatMessage((EntityPlayer) sender, new TextComponentString(TextFormatting.RED + "Parameter is not a valid boolean!"));
+            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "Parameter is not a valid boolean!"));
         } catch (ArrayIndexOutOfBoundsException e) {
             return defaultValue;
         }
@@ -35,7 +35,7 @@ public abstract class AbstractRfToolsCommand implements RfToolsCommand {
             value = Integer.parseInt(args[index]);
         } catch (NumberFormatException e) {
             value = 0;
-            ChatTools.addChatMessage((EntityPlayer)sender, new TextComponentString(TextFormatting.RED + "Parameter is not a valid integer!"));
+            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "Parameter is not a valid integer!"));
         } catch (ArrayIndexOutOfBoundsException e) {
             return defaultValue;
         }
@@ -48,7 +48,7 @@ public abstract class AbstractRfToolsCommand implements RfToolsCommand {
             value = Float.parseFloat(args[index]);
         } catch (NumberFormatException e) {
             value = 0.0f;
-            ChatTools.addChatMessage((EntityPlayer)sender, new TextComponentString(TextFormatting.RED + "Parameter is not a valid real number!"));
+            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "Parameter is not a valid real number!"));
         } catch (ArrayIndexOutOfBoundsException e) {
             return defaultValue;
         }

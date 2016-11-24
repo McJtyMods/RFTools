@@ -99,7 +99,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         GlobalCoordinate key = new GlobalCoordinate(screenTileEntity.getPos(), screenTileEntity.getWorld().provider.getDimension());
         Map<Integer,IModuleData> screenData = ScreenTileEntity.screenData.get(key);
         if (screenData == null) {
-            screenData = Collections.EMPTY_MAP;
+            screenData = Collections.emptyMap();
         }
         return screenData;
     }
@@ -228,7 +228,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         }
         float r = (float)((color & 16711680) >> 16) / 255.0F;
         float g = (float)((color & 65280) >> 8) / 255.0F;
-        float b = (float)((color & 255) >> 0) / 255.0F;
+        float b = (float)((color & 255)) / 255.0F;
         renderer.pos(-.46f, dim, -0.08f).color(r, g, b, 1f).endVertex();
         renderer.pos(dim, dim, -0.08f).color(r, g, b, 1f).endVertex();
         renderer.pos(dim, -.46f, -0.08f).color(r, g, b, 1f).endVertex();

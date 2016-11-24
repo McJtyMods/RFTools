@@ -46,9 +46,6 @@ public class GuiCraftingGrid {
 
     private Minecraft mc;
     private GenericGuiContainer gui;
-    private SimpleNetworkWrapper network;
-    private int sideLeft;
-    private int sideTop;
     private CraftingGridProvider provider;
     private BlockPos pos;
 
@@ -61,7 +58,7 @@ public class GuiCraftingGrid {
                         int guiLeft, int guiTop, int xSize, int ySize) {
         this.mc = mc;
         this.gui = gui;
-        this.network = network;
+        SimpleNetworkWrapper network1 = network;
         this.provider = provider;
         this.pos = pos;
 
@@ -98,8 +95,8 @@ public class GuiCraftingGrid {
                 .addChild(craftSButton)
                 .addChild(storeButton)
                 .addChild(recipeList);
-        sideLeft = guiLeft - CraftingGridInventory.GRID_WIDTH - 2;
-        sideTop = guiTop;
+        int sideLeft = guiLeft - CraftingGridInventory.GRID_WIDTH - 2;
+        int sideTop = guiTop;
         sidePanel.setBounds(new Rectangle(sideLeft, sideTop, CraftingGridInventory.GRID_WIDTH, CraftingGridInventory.GRID_HEIGHT));
         sidePanel.setBackground(iconLocation);
         craftWindow = new Window(gui, sidePanel);

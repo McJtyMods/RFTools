@@ -128,8 +128,9 @@ public class DimensionDictionary
         }
         dTypes.addAll(types);
 
-        for (String type : types)
+        for (String type : types) {
             registerType(type);
+        }
     }
 
     /**
@@ -144,10 +145,11 @@ public class DimensionDictionary
         Set<String> dTypes = dimensionTypes.get(dimensionID);
         if (dTypes != null)
         {
-            if (types == null)
+            if (types == null) {
                 dTypes.clear();
-            else
+            } else {
                 dTypes.removeAll(types);
+            }
         }
     }
 
@@ -158,8 +160,9 @@ public class DimensionDictionary
      */
     public static void registerType(String type)
     {
-        if (!types.containsKey(type))
+        if (!types.containsKey(type)) {
             types.put(type, new Type());
+        }
     }
 
     /**
@@ -169,8 +172,9 @@ public class DimensionDictionary
      */
     public static void registerTypes(Collection<String> types)
     {
-        for (String type : types)
+        for (String type : types) {
             registerType(type);
+        }
     }
 
     /**
@@ -184,8 +188,9 @@ public class DimensionDictionary
     {
         registerGetType(type).subtypes.addAll(subtypes);
 
-        for (String sub : subtypes)
+        for (String sub : subtypes) {
             registerGetType(sub).supertypes.add(type);
+        }
     }
 
     /**
@@ -199,8 +204,9 @@ public class DimensionDictionary
     {
         registerGetType(type).supertypes.addAll(supertypes);
 
-        for (String supertype : supertypes)
+        for (String supertype : supertypes) {
             registerGetType(supertype).subtypes.add(type);
+        }
     }
 
     /**
@@ -211,8 +217,9 @@ public class DimensionDictionary
      */
     public static Set<String> getDimensionTypes(WorldProvider provider)
     {
-        if (provider instanceof Handler)
+        if (provider instanceof Handler) {
             return ((Handler) provider).getDimensionTypes();
+        }
 
         Set<String> types = dimensionTypes.get(provider.getDimension());
         return types != null ? types : SET_UNCATEGORIZED;
@@ -229,8 +236,9 @@ public class DimensionDictionary
     {
         for (String type : types)
         {
-            if (!dimensionMatchesType(provider, type))
+            if (!dimensionMatchesType(provider, type)) {
                 return false;
+            }
         }
 
         return true;
@@ -252,12 +260,14 @@ public class DimensionDictionary
 
         do
         {
-            if (dimTypes.contains(type))
+            if (dimTypes.contains(type)) {
                 return true;
+            }
 
             Type curT = types.get(type);
-            if (curT != null)
+            if (curT != null) {
                 curTypes.addAll(curT.subtypes);
+            }
         }
         while ((type = curTypes.poll()) != null);
 

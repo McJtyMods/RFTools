@@ -26,7 +26,6 @@ public class GuiBooster extends GenericGuiContainer<BoosterTileEntity> {
 
     private EnergyBar energyBar;
 
-    private Panel toplevel;
     private ImageChoiceLabel redstoneMode;
 
     public GuiBooster(BoosterTileEntity boosterTileEntity, BoosterContainer container) {
@@ -44,7 +43,7 @@ public class GuiBooster extends GenericGuiContainer<BoosterTileEntity> {
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(8, 101, 10, 76)).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
-        toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
+        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
         initRedstoneMode();
 

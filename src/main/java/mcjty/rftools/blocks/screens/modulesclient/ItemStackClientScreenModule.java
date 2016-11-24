@@ -86,7 +86,7 @@ public class ItemStackClientScreenModule implements IClientScreenModule<ItemStac
 
     private int renderSlot(int currenty, ItemStackScreenModule.ModuleDataStacks screenData, int slot, int index, int x) {
         if (slot != -1) {
-            ItemStack itm = null;
+            ItemStack itm = ItemStackTools.getEmptyStack();
             try {
                 itm = screenData.getStack(index);
             } catch (Exception e) {

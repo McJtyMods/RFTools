@@ -354,7 +354,7 @@ public class TeleportationTools {
     public static void teleportToDimension(EntityPlayer player, int dimension, double x, double y, double z) {
         int oldDimension = player.getEntityWorld().provider.getDimension();
         EntityPlayerMP entityPlayerMP = (EntityPlayerMP) player;
-        MinecraftServer server = ((EntityPlayerMP) player).getEntityWorld().getMinecraftServer();
+        MinecraftServer server = player.getEntityWorld().getMinecraftServer();
         WorldServer worldServer = server.worldServerForDimension(dimension);
         player.addExperienceLevel(0);
 

@@ -34,7 +34,6 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
     private int amount = 1;
     private boolean oreDict = false;
     private boolean starred = false;
-    private TIntSet set1 = null;
 
     private int checkCounter = 0;
 
@@ -96,7 +95,6 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
         // Clear the oredict cache
-        set1 = null;
         inventoryHelper.setInventorySlotContents(this.getInventoryStackLimit(), index, stack);
         if (!getWorld().isRemote) {
             // Make sure we update client-side

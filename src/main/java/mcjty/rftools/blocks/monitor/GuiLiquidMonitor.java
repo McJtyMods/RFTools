@@ -136,7 +136,8 @@ public class GuiLiquidMonitor extends GenericGuiContainer<LiquidMonitorBlockTile
         adjacentBlocks = new ArrayList<>(newAdjacentBlocks);
         list.removeChildren();
 
-        int index = 0, sel = -1;
+        int index = 0;
+        int sel = -1;
         for (BlockPos coordinate : adjacentBlocks) {
             IBlockState state = MinecraftTools.getWorld(mc).getBlockState(coordinate);
             Block block = state.getBlock();

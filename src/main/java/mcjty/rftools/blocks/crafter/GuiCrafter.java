@@ -47,8 +47,6 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     private Button applyButton;
     private ImageChoiceLabel redstoneMode;
     private ImageChoiceLabel speedMode;
-    private Button rememberButton;
-    private Button forgetButton;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/crafter.png");
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
@@ -98,12 +96,12 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
                 setEnabled(false).
                 setLayoutHint(new PositionalLayout.PositionalHint(212, 65, 34, 16));
 
-        rememberButton = new Button(mc, this)
+        Button rememberButton = new Button(mc, this)
                 .setText("R")
                 .setTooltips("Remember the current items", "in the internal and", "external buffers")
                 .addButtonEvent(widget -> rememberItems())
                 .setLayoutHint(new PositionalLayout.PositionalHint(148, 74, 18, 16));
-        forgetButton = new Button(mc, this)
+        Button forgetButton = new Button(mc, this)
                 .setText("F")
                 .setTooltips("Forget the remembered layout")
                 .addButtonEvent(widget -> forgetItems())
@@ -246,7 +244,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         lastSelected = selected;
         if (selected == -1) {
             for (int i = 0 ; i < 10 ; i++) {
-                inventorySlots.getSlot(i).putStack(null);
+                inventorySlots.getSlot(i).putStack(ItemStackTools.getEmptyStack());
             }
             keepItem.setChoice("All");
             internalRecipe.setChoice("Ext");

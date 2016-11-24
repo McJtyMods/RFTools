@@ -16,8 +16,8 @@ import java.awt.*;
 
 public class GuiAdvancedPorter extends GuiItemScreen {
 
-    private final static int xSize = 340;
-    private final static int ySize = 136;
+    private static final int xSize = 340;
+    private static final int ySize = 136;
 
     private Panel[] panels = new Panel[AdvancedChargedPorterItem.MAXTARGETS];
     private TextField[] destinations = new TextField[AdvancedChargedPorterItem.MAXTARGETS];

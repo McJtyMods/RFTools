@@ -2,6 +2,8 @@ package mcjty.rftools.jei;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.lib.tools.ItemStackList;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.storage.ModularStorageItemContainer;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.storage.RemoteStorageItemContainer;
@@ -20,18 +22,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PacketSendRecipe implements IMessage {
-    private List<ItemStack> stacks;
+    private ItemStackList stacks;
     private BlockPos pos;
 
     @Override
     public void fromBytes(ByteBuf buf) {
         int l = buf.readInt();
-        stacks = new ArrayList<>(l);
+        stacks = ItemStackList.create(l);
         for (int i = 0 ; i < l ; i++) {
             if (buf.readBoolean()) {
                 stacks.add(NetworkTools.readItemStack(buf));
             } else {
-                stacks.add(null);
+                stacks.add(ItemStackTools.getEmptyStack());
             }
         }
         if (buf.readBoolean()) {
@@ -45,7 +47,7 @@ public class PacketSendRecipe implements IMessage {
     public void toBytes(ByteBuf buf) {
         buf.writeInt(stacks.size());
         for (ItemStack stack : stacks) {
-            if (stack != null) {
+            if (ItemStackTools.isValid(stack)) {
                 buf.writeBoolean(true);
                 NetworkTools.writeItemStack(buf, stack);
             } else {
@@ -63,7 +65,7 @@ public class PacketSendRecipe implements IMessage {
     public PacketSendRecipe() {
     }
 
-    public PacketSendRecipe(List<ItemStack> stacks, BlockPos pos) {
+    public PacketSendRecipe(ItemStackList stacks, BlockPos pos) {
         this.stacks = stacks;
         this.pos = pos;
     }
@@ -81,7 +83,7 @@ public class PacketSendRecipe implements IMessage {
             if (message.pos == null) {
                 // Handle tablet version
                 ItemStack mainhand = player.getHeldItemMainhand();
-                if (mainhand != null && mainhand.getItem() == ModularStorageSetup.storageModuleTabletItem) {
+                if (ItemStackTools.isValid(mainhand) && mainhand.getItem() == ModularStorageSetup.storageModuleTabletItem) {
                     if (player.openContainer instanceof ModularStorageItemContainer) {
                         ModularStorageItemContainer storageItemContainer = (ModularStorageItemContainer) player.openContainer;
                         storageItemContainer.getJEIRecipeAcceptor().setGridContents(message.stacks);

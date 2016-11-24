@@ -67,8 +67,8 @@ public class ShapeCardItem extends GenericRFToolsItem {
         private final int index;
         private final String description;
 
-        private static Map<Integer,Shape> shapes;
-        private static Map<String,Shape> shapesByDescription;
+        private static final Map<Integer,Shape> shapes;
+        private static final Map<String,Shape> shapesByDescription;
 
         static {
             shapesByDescription = new HashMap<>();

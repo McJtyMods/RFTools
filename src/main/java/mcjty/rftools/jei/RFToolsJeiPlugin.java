@@ -1,6 +1,7 @@
 package mcjty.rftools.jei;
 
 import mcjty.lib.jei.CompatRecipeTransferHandler;
+import mcjty.lib.tools.ItemStackList;
 import mcjty.rftools.network.RFToolsMessages;
 import mezz.jei.api.BlankModPlugin;
 import mezz.jei.api.IModRegistry;
@@ -11,7 +12,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -19,10 +19,7 @@ import java.util.Map;
 public class RFToolsJeiPlugin extends BlankModPlugin {
 
     public static void transferRecipe(Map<Integer, ? extends IGuiIngredient<ItemStack>> guiIngredients, BlockPos pos) {
-        List<ItemStack> items = new ArrayList<>(10);
-        for (int i = 0 ; i < 10 ; i++) {
-            items.add(null);
-        }
+        ItemStackList items = ItemStackList.create(10);
         for (Map.Entry<Integer, ? extends IGuiIngredient<ItemStack>> entry : guiIngredients.entrySet()) {
             int recipeSlot = entry.getKey();
             List<ItemStack> allIngredients = entry.getValue().getAllIngredients();

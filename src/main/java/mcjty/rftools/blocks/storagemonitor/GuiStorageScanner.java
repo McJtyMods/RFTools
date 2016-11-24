@@ -54,8 +54,6 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     private WidgetList storageList;
     private WidgetList itemList;
     private EnergyBar energyBar;
-    private ScrollableLabel radiusLabel;
-    private Button scanButton;
     private Button topButton;
     private Button upButton;
     private Button downButton;
@@ -151,14 +149,14 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 .setLayoutHint(new PositionalLayout.PositionalHint(136, 4, 256-138-4, 86+54))
                 .addChild(itemList).addChild(itemListSlider);
 
-        scanButton = new Button(mc, this)
+        Button scanButton = new Button(mc, this)
                 .setText("Scan")
                 .setDesiredWidth(50)
                 .setDesiredHeight(14)
                 .addButtonEvent(parent -> RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID,
                         new InventoriesInfoPacketServer(tileEntity.getDimension(), tileEntity.getStorageScannerPos(), true))))
                 .setTooltips("Start/stop a scan of", "all storage units", "in radius");
-        radiusLabel = new ScrollableLabel(mc, this)
+        ScrollableLabel radiusLabel = new ScrollableLabel(mc, this)
                 .addValueEvent((parent, newValue) -> changeRadius(newValue))
                 .setRealMinimum(1)
                 .setRealMaximum(20);

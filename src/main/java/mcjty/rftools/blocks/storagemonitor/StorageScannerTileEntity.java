@@ -58,7 +58,6 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     private int radius = 1;
 
     // This is set on a client-side dummy tile entity for a tablet
-    private EntityPlayer entityPlayer;
     private Integer monitorDim;
 
     private boolean exportToCurrent = false;
@@ -76,7 +75,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     // accessing the storage scanner remotely
     public StorageScannerTileEntity(EntityPlayer entityPlayer, int monitordim) {
         super(StorageScannerConfiguration.MAXENERGY, StorageScannerConfiguration.RECEIVEPERTICK);
-        this.entityPlayer = entityPlayer;
+//        this.entityPlayer = entityPlayer;
         this.monitorDim = monitordim;
     }
 

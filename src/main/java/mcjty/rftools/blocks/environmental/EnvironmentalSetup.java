@@ -234,7 +234,7 @@ public class EnvironmentalSetup {
 
     public static ItemStack createEnchantedItem(Item item, Enchantment effectId, int amount) {
         ItemStack stack = new ItemStack(item);
-        Map enchant = new HashMap();
+        Map<Enchantment, Integer> enchant = new HashMap<>();
         enchant.put(effectId, amount);
         EnchantmentHelper.setEnchantments(enchant, stack);
         return stack;

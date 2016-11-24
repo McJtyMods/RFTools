@@ -61,21 +61,19 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
         redstoneOff.setDesiredWidth(16).setDesiredHeight(16).setTooltips("Redstone signal off").setLayoutHint(new PositionalLayout.PositionalHint(70, 0, 16, 16));
         ImageLabel redstoneOn = new ImageLabel(mc, this).setImage(iconGuiElements, 32, 0);
         redstoneOn.setDesiredWidth(16).setDesiredHeight(16).setTooltips("Redstone signal on").setLayoutHint(new PositionalLayout.PositionalHint(190, 0, 16, 16));
-        Panel panel = new Panel(mc, this).setLayout(new PositionalLayout()).
+        return new Panel(mc, this).setLayout(new PositionalLayout()).
                 addChild(redstoneOff).
                 addChild(redstoneOn);
-        return panel;
     }
 
     private Panel createSidePanel(int side) {
         String labelText = String.valueOf(RelayTileEntity.DUNSWE.charAt(side));
         Label label = new Label(mc, this).setText(labelText);
         label.setDesiredWidth(14).setDesiredHeight(14);
-        Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(1)).
+        return new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(1)).
                 addChild(label).
                 addChild(createSubPanel(side, "Off").setDesiredWidth(115)).
                 addChild(createSubPanel(side, "On").setDesiredWidth(115));
-        return panel;
     }
 
     private Panel createSubPanel(int side, String redstoneState) {

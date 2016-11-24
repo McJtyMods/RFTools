@@ -38,7 +38,7 @@ public class CmdListReceivers extends AbstractRfToolsCommand {
         Collection<TeleportDestinationClientInfo> validDestinations = destinations.getValidDestinations(sender.getEntityWorld(), null);
         for (TeleportDestinationClientInfo clientInfo : validDestinations) {
             int id = clientInfo.getDimension();
-            ChatTools.addChatMessage((EntityPlayer) sender, new TextComponentString("    Receiver: dimension=" + id + ", location=" + BlockPosTools.toString(clientInfo.getCoordinate())));
+            ChatTools.addChatMessage(sender, new TextComponentString("    Receiver: dimension=" + id + ", location=" + BlockPosTools.toString(clientInfo.getCoordinate())));
         }
     }
 }

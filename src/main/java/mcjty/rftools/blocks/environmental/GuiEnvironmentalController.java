@@ -54,7 +54,6 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
         fromServer_players = p;
     }
 
-    private Panel toplevel;
     private TextField minyTextField;
     private TextField maxyTextField;
     private TextField nameField;
@@ -78,7 +77,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(8, 141, 10, 76)).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
-        toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
+        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
         Panel areaPanel = initAreaPanel();
         Panel playersPanel = initPlayerPanel();

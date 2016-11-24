@@ -29,8 +29,8 @@ import java.util.Map;
 
 public class GuiChamberDetails extends GuiItemScreen {
 
-    private final static int CHAMBER_XSIZE = 390;
-    private final static int CHAMBER_YSIZE = 210;
+    private static final int CHAMBER_XSIZE = 390;
+    private static final int CHAMBER_YSIZE = 210;
 
     private static Map<BlockMeta,Integer> items = null;
     private static Map<BlockMeta,Integer> costs = null;

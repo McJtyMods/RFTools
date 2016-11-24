@@ -78,13 +78,12 @@ public class ElevatorButtonClientScreenModule implements IClientScreenModule<Ele
             buttons = max;
         }
         for (int i = 0; i < buttons; i++) {
-            int level = i;
-            String text = getLevelText(level, pos, heights);
+            String text = getLevelText(i, pos, heights);
             boolean hasText = text != null;
             if (text == null) {
-                text = String.valueOf(level + (start1 ? 1 : 0));
+                text = String.valueOf(i + (start1 ? 1 : 0));
             }
-            int col = level == currentLevel ? this.currentLevelButtonColor : this.buttonColor;
+            int col = i == currentLevel ? this.currentLevelButtonColor : this.buttonColor;
             int textoffset = large ? 3 : 0;
             if (lights) {
                 RenderHelper.drawBeveledBox(xoffset, currenty, xoffset + getDimension() - 4, currenty + getDimension() - 2, 0xffffffff, 0xffffffff, 0xff000000 + col);

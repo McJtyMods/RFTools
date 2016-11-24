@@ -72,7 +72,6 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     private static final ResourceLocation guiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     private WidgetList itemList;
-    private Slider slider;
     private TextField filter;
     private ImageChoiceLabel viewMode;
     private ImageChoiceLabel sortMode;
@@ -129,7 +128,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
         itemList = new WidgetList(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(5, 3, 235, ySize-89)).setNoSelectionMode(true).setUserObject(new Integer(-1)).
                 setLeftMargin(0).setRowheight(-1);
-        slider = new Slider(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(241, 3, 11, ySize-89)).setDesiredWidth(11).setVertical().setScrollable(itemList);
+        Slider slider = new Slider(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(241, 3, 11, ySize - 89)).setDesiredWidth(11).setVertical().setScrollable(itemList);
 
 
         Panel modePanel = setupModePanel();

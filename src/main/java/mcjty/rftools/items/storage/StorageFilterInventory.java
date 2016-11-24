@@ -57,7 +57,7 @@ public class StorageFilterInventory implements CompatInventory {
             markDirty();
             return its;
         }
-        return null;
+        return ItemStackTools.getEmptyStack();
     }
 
     @Override
@@ -73,7 +73,7 @@ public class StorageFilterInventory implements CompatInventory {
                     ItemStackTools.setStackSize(stacks[index], 1);
                 }
             } else {
-                stacks[index] = null;
+                stacks[index] = ItemStackTools.getEmptyStack();
             }
         } else {
             stacks[index] = stack;

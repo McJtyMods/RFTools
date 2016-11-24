@@ -2,6 +2,7 @@ package mcjty.rftools.items.storage;
 
 import cofh.api.energy.IEnergyContainerItem;
 import mcjty.lib.tools.ChatTools;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
@@ -164,7 +165,7 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
             container.setTagCompound(tagCompound);
             return container;
         }
-        return null;
+        return ItemStackTools.getEmptyStack();
     }
 
     @Override

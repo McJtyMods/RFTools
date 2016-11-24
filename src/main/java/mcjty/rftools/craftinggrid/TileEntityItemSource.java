@@ -173,12 +173,18 @@ public class TileEntityItemSource implements IItemSource {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
 
             ItemKey itemKey = (ItemKey) o;
 
-            if (slot != itemKey.slot) return false;
+            if (slot != itemKey.slot) {
+                return false;
+            }
             return inventory.equals(itemKey.inventory);
 
         }

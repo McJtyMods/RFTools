@@ -22,7 +22,7 @@ public class WaterBreathingEModuleItem extends GenericRFToolsItem implements Env
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add("This module gives water breathing bonus");
         list.add("when used in the environmental controller.");

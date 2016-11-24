@@ -155,7 +155,7 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
     }
 
     private int getCardID() {
-        Slot slot = (Slot) inventorySlots.inventorySlots.get(SecurityManagerContainer.SLOT_CARD);
+        Slot slot = inventorySlots.inventorySlots.get(SecurityManagerContainer.SLOT_CARD);
         if (slot.getHasStack()) {
             NBTTagCompound tagCompound = slot.getStack().getTagCompound();
             if (tagCompound == null) {

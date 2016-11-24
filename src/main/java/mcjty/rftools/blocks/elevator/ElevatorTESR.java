@@ -78,7 +78,6 @@ public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> 
                     try {
                         state = state.getActualState(blockAccess, pos);
                     } catch (Exception var8) {
-                        ;
                     }
                 }
 

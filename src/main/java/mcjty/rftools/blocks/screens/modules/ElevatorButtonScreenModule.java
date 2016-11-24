@@ -178,7 +178,7 @@ public class ElevatorButtonScreenModule implements IScreenModule<ElevatorButtonS
 
             int yoffset = 0;
             if (y >= yoffset) {
-                level = (y - yoffset) / (large ? (LARGESIZE - 2) : (SMALLSIZE - 2));
+                level = (y - yoffset) / (((large ? LARGESIZE : SMALLSIZE) - 2));
                 if (level < 0) {
                     return;
                 }
@@ -200,7 +200,7 @@ public class ElevatorButtonScreenModule implements IScreenModule<ElevatorButtonS
         } else {
             int xoffset = 5;
             if (x >= xoffset) {
-                level = (x - xoffset) / (large ? (LARGESIZE - 2) : (SMALLSIZE - 2));
+                level = (x - xoffset) / (((large ? LARGESIZE : SMALLSIZE) - 2));
             }
         }
         if (level >= 0 && level < levelCount) {

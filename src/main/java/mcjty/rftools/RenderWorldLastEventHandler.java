@@ -199,7 +199,8 @@ public class RenderWorldLastEventHandler {
 
         ItemStack mainItem = player.getHeldItemMainhand();
         ItemStack offItem = player.getHeldItemOffhand();
-        if ((mainItem != null && mainItem.getItem() instanceof NetworkMonitorItem) || (offItem != null && offItem.getItem() instanceof NetworkMonitorItem)) {
+        if ((ItemStackTools.isValid(mainItem) && mainItem.getItem() instanceof NetworkMonitorItem)
+                || (ItemStackTools.isValid(offItem) && offItem.getItem() instanceof NetworkMonitorItem)) {
             double doubleX = player.lastTickPosX + (player.posX - player.lastTickPosX) * evt.getPartialTicks();
             double doubleY = player.lastTickPosY + (player.posY - player.lastTickPosY) * evt.getPartialTicks();
             double doubleZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * evt.getPartialTicks();

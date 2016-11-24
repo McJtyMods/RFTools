@@ -894,7 +894,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         switch (getCardType()) {
             case ShapeCardItem.CARD_PUMP:
             case ShapeCardItem.CARD_PUMP_CLEAR:
-                rfNeeded = (int) (BuilderConfiguration.builderRfPerLiquid);
+                rfNeeded = BuilderConfiguration.builderRfPerLiquid;
                 break;
             case ShapeCardItem.CARD_VOID:
                 rfNeeded = (int) (BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.voidShapeCardFactor);
@@ -1621,7 +1621,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         for (Object o : entities) {
             Entity entity = (Entity) o;
 
-            if (consumeEntityEnergy(rfNeeded, rfNeededPlayer, entity)) return;
+            if (consumeEntityEnergy(rfNeeded, rfNeededPlayer, entity)) {
+                return;
+            }
 
             double newX = destX + (entity.posX - x);
             double newY = destY + (entity.posY - y);
@@ -1641,7 +1643,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         for (Object o : entitiesSrc) {
             Entity entity = (Entity) o;
             if (isEntityInBlock(x, y, z, entity)) {
-                if (consumeEntityEnergy(rfNeeded, rfNeededPlayer, entity)) return;
+                if (consumeEntityEnergy(rfNeeded, rfNeededPlayer, entity)) {
+                    return;
+                }
 
                 double newX = destX + (entity.posX - x);
                 double newY = destY + (entity.posY - y);
@@ -1652,7 +1656,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         for (Object o : entitiesDst) {
             Entity entity = (Entity) o;
             if (isEntityInBlock(destX, destY, destZ, entity)) {
-                if (consumeEntityEnergy(rfNeeded, rfNeededPlayer, entity)) return;
+                if (consumeEntityEnergy(rfNeeded, rfNeededPlayer, entity)) {
+                    return;
+                }
 
                 double newX = x + (entity.posX - destX);
                 double newY = y + (entity.posY - destY);
@@ -1737,11 +1743,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
             clearBlock(world, srcPos);
 
-            BlockPos destpos = destPos;
             IBlockState newDestState = origBlock.getStateFromMeta(origMeta);
-            destWorld.setBlockState(destpos, newDestState, 3);
+            destWorld.setBlockState(destPos, newDestState, 3);
             if (origTileEntity != null && tc != null) {
-                setTileEntityNBT(destWorld, tc, destpos, newDestState);
+                setTileEntityNBT(destWorld, tc, destPos, newDestState);
             }
             if (!silent) {
                 SoundTools.playSound(world, origBlock.getSoundType().breakSound, srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);

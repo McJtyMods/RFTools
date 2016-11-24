@@ -71,10 +71,9 @@ public class WorldTickHandler {
             if (features == null) {
                 generatedFeatures = emptySet;
             } else {
-                int i = 0;
                 int e = features.tagCount();
                 generatedFeatures = new THashSet<String>(e);
-                for (; i < e; ++i) {
+                for (int i = 0 ; i < e; ++i) {
                     generatedFeatures.add(features.getStringTagAt(i));
                 }
             }

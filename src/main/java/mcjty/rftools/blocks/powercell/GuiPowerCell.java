@@ -19,9 +19,6 @@ public class GuiPowerCell extends GenericGuiContainer<PowerCellTileEntity> {
     public static final int POWERCELL_HEIGHT = 152;
 
     private EnergyBar energyBar;
-    private Button allNone;
-    private Button allInput;
-    private Button allOutput;
     private Button stats;
 
     private static long lastTime = 0;
@@ -58,13 +55,13 @@ public class GuiPowerCell extends GenericGuiContainer<PowerCellTileEntity> {
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(1000).setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 8, 54)).setShowText(false);
         energyBar.setValue(0);
 
-        allNone = new Button(mc, this).setText("None").setTooltips("Set all sides to 'none'")
+        Button allNone = new Button(mc, this).setText("None").setTooltips("Set all sides to 'none'")
                 .setLayoutHint(new PositionalLayout.PositionalHint(140, 10, 32, 15))
                 .addButtonEvent(e -> sendServerCommand(RFToolsMessages.INSTANCE, PowerCellTileEntity.CMD_SETNONE));
-        allInput = new Button(mc, this).setText("In").setTooltips("Set all sides to", "accept energy")
+        Button allInput = new Button(mc, this).setText("In").setTooltips("Set all sides to", "accept energy")
                 .setLayoutHint(new PositionalLayout.PositionalHint(140, 27, 32, 15))
                 .addButtonEvent(e -> sendServerCommand(RFToolsMessages.INSTANCE, PowerCellTileEntity.CMD_SETINPUT));
-        allOutput = new Button(mc, this).setText("Out").setTooltips("Set all sides to", "send energy")
+        Button allOutput = new Button(mc, this).setText("Out").setTooltips("Set all sides to", "send energy")
                 .setLayoutHint(new PositionalLayout.PositionalHint(140, 44, 32, 15))
                 .addButtonEvent(e -> sendServerCommand(RFToolsMessages.INSTANCE, PowerCellTileEntity.CMD_SETOUTPUT));
 

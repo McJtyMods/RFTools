@@ -64,7 +64,7 @@ public class ItemFilterInvWrapper implements IItemHandlerModifiable {
     @Override
     public ItemStack getStackInSlot(int slot) {
         int i = getSlot(inv, slot, side);
-        return i == -1 ? null : inv.getStackInSlot(i);
+        return i == -1 ? ItemStackTools.getEmptyStack() : inv.getStackInSlot(i);
     }
 
     @Override

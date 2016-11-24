@@ -182,7 +182,9 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
 
 
     public boolean attemptHarvestProtection() {
-        if (!isMachineEnabled()) return false;
+        if (!isMachineEnabled()) {
+            return false;
+        }
         int rf = getEnergyStored(EnumFacing.DOWN);
         if (BlockProtectorConfiguration.rfForHarvestAttempt > rf) {
             return false;
@@ -193,7 +195,9 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
 
     // Distance is relative with 0 being closes to the explosion and 1 being furthest away.
     public int attemptExplosionProtection(float distance, float radius) {
-        if (!isMachineEnabled()) return -1;
+        if (!isMachineEnabled()) {
+            return -1;
+        }
         int rf = getEnergyStored(EnumFacing.DOWN);
         int rfneeded = (int) (BlockProtectorConfiguration.rfForExplosionProtection * (1.0 - distance) * radius / 8.0f) + 1;
         rfneeded = (int) (rfneeded * (2.0f - getInfusedFactor()) / 2.0f);

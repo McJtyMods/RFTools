@@ -52,7 +52,6 @@ public class CraftingGridInventory implements CompatInventory {
         return ItemStackHelper.getAndSplit(stacks, index, count);
     }
 
-    @Nullable
     @Override
     public ItemStack removeStackFromSlot(int index) {
         return ItemStackHelper.getAndRemove(stacks, index);

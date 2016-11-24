@@ -392,7 +392,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         int meta = 0;
         int te = 0;
 
-        if (ShieldRenderingMode.MODE_MIMIC.equals(shieldRenderingMode) && stack != null && stack.getItem() != null) {
+        if (ShieldRenderingMode.MODE_MIMIC.equals(shieldRenderingMode) && ItemStackTools.isValid(stack) && stack.getItem() != null) {
             if (!(stack.getItem() instanceof ItemBlock)) {
                 return new int[] { camoId, meta, te };
             }
@@ -514,7 +514,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
                 lootingSword.setItemDamage(0);
                 fakePlayer.setHeldItem(EnumHand.MAIN_HAND, lootingSword);
             } else {
-                fakePlayer.setHeldItem(EnumHand.MAIN_HAND, null);
+                fakePlayer.setHeldItem(EnumHand.MAIN_HAND, ItemStackTools.getEmptyStack());
             }
             source = DamageSource.causePlayerDamage(fakePlayer);
         }
@@ -691,15 +691,14 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         int zCoord = getPos().getZ();
 
         Block origBlock = getWorld().getBlockState(pos).getBlock();
-        BlockPos c = pos;
         if (origBlock == ShieldSetup.shieldTemplateBlock) {
             if (isShapedShield()) {
                 Logging.message(player, TextFormatting.YELLOW + "You cannot add template blocks to a shaped shield (using a shape card)!");
                 return;
             }
             Set<BlockPos> templateBlocks = new HashSet<>();
-            IBlockState state = getWorld().getBlockState(c);
-            findTemplateBlocks(templateBlocks, state.getBlock().getMetaFromState(state), false, c);
+            IBlockState state = getWorld().getBlockState(pos);
+            findTemplateBlocks(templateBlocks, state.getBlock().getMetaFromState(state), false, pos);
 
             int[] camoId = calculateCamoId();
             int cddata = calculateShieldCollisionData();
@@ -711,11 +710,11 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
                 updateShieldBlock(camoId, cddata, damageBits, block, relc);
             }
         } else if (origBlock instanceof AbstractShieldBlock) {
-            shieldBlocks.remove(new RelCoordinate(c.getX() - xCoord, c.getY() - yCoord, c.getZ() - zCoord));
+            shieldBlocks.remove(new RelCoordinate(pos.getX() - xCoord, pos.getY() - yCoord, pos.getZ() - zCoord));
             if (isShapedShield()) {
-                getWorld().setBlockToAir(c);
+                getWorld().setBlockToAir(pos);
             } else {
-                getWorld().setBlockState(c, ShieldSetup.shieldTemplateBlock.getStateFromMeta(templateMeta), 2);
+                getWorld().setBlockState(pos, ShieldSetup.shieldTemplateBlock.getStateFromMeta(templateMeta), 2);
             }
         } else {
             Logging.message(player, TextFormatting.YELLOW + "The selected shield can't do anything with this block!");
@@ -950,7 +949,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         powerTimeout = tagCompound.getInteger("powerTimeout");
         templateMeta = tagCompound.getInteger("templateMeta");
 
-        shieldBlocks.clear();;
+        shieldBlocks.clear();
         byte[] byteArray = tagCompound.getByteArray("relcoords");
         int j = 0;
         for (int i = 0 ; i < byteArray.length / 6 ; i++) {
@@ -1122,7 +1121,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         ItemStack stackInSlot = inventoryHelper.getStackInSlot(index);
         if (ItemStackTools.isValid(stackInSlot)) {
             if (ItemStackTools.getStackSize(stackInSlot) <= amount) {
-                ItemStack old = stackInSlot;
+                ItemStack old = ItemStackTools.safeCopy(stackInSlot);
                 inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, ItemStackTools.getEmptyStack());
                 markDirty();
                 return old;

@@ -10,10 +10,7 @@ import mcjty.rftools.blocks.screens.modules.ItemStackScreenModule;
 import mcjty.rftools.blocks.screens.modules.ScreenModuleHelper;
 import mcjty.rftools.blocks.screens.modules.StorageControlScreenModule;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ScreenModuleRegistry implements IScreenModuleRegistry {
 
@@ -56,7 +53,7 @@ public class ScreenModuleRegistry implements IScreenModuleRegistry {
         if (idToIntMap == null) {
             idToIntMap = new HashMap<>();
             inttoIdMap = new HashMap<>();
-            ArrayList<String> strings = new ArrayList<>(dataFactoryMap.keySet());
+            List<String> strings = new ArrayList<>(dataFactoryMap.keySet());
             strings.sort(Comparator.<String>naturalOrder());
             int idx = 0;
             for (String s : strings) {

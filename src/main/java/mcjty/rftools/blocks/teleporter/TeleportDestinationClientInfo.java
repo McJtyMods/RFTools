@@ -58,15 +58,24 @@ public class TeleportDestinationClientInfo extends TeleportDestination implement
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         TeleportDestinationClientInfo that = (TeleportDestinationClientInfo) o;
 
-        if (favorite != that.favorite) return false;
-        if (dimensionName != null ? !dimensionName.equals(that.dimensionName) : that.dimensionName != null)
+        if (favorite != that.favorite) {
             return false;
+        }
+        if (dimensionName != null ? !dimensionName.equals(that.dimensionName) : that.dimensionName != null) {
+            return false;
+        }
 
         return true;
     }

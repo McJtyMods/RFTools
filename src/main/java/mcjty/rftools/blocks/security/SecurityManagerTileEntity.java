@@ -76,7 +76,9 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
 
     private void addPlayer(String player) {
         NBTTagCompound tagCompound = getCardInfo();
-        if (tagCompound == null) return;
+        if (tagCompound == null) {
+            return;
+        }
         if (tagCompound.hasKey("channel")) {
             SecurityChannels securityChannels = SecurityChannels.getChannels(getWorld());
             int id = tagCompound.getInteger("channel");
@@ -89,7 +91,9 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
 
     private void delPlayer(String player) {
         NBTTagCompound tagCompound = getCardInfo();
-        if (tagCompound == null) return;
+        if (tagCompound == null) {
+            return;
+        }
         if (tagCompound.hasKey("channel")) {
             SecurityChannels securityChannels = SecurityChannels.getChannels(getWorld());
             int id = tagCompound.getInteger("channel");
@@ -102,7 +106,9 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
 
     private void setWhiteListMode(boolean whitelist) {
         NBTTagCompound tagCompound = getCardInfo();
-        if (tagCompound == null) return;
+        if (tagCompound == null) {
+            return;
+        }
         if (tagCompound.hasKey("channel")) {
             SecurityChannels securityChannels = SecurityChannels.getChannels(getWorld());
             int id = tagCompound.getInteger("channel");
@@ -115,7 +121,9 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
 
     private void setChannelName(String name) {
         NBTTagCompound tagCompound = getCardInfo();
-        if (tagCompound == null) return;
+        if (tagCompound == null) {
+            return;
+        }
         if (tagCompound.hasKey("channel")) {
             SecurityChannels securityChannels = SecurityChannels.getChannels(getWorld());
             int id = tagCompound.getInteger("channel");

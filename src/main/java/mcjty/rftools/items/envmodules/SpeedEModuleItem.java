@@ -22,7 +22,7 @@ public class SpeedEModuleItem extends GenericRFToolsItem implements EnvModulePro
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add("This module gives speed bonus when");
         list.add("used in the environmental controller.");
