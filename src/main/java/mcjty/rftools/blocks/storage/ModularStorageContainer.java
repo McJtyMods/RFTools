@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.container.*;
+import mcjty.lib.tools.InventoryTools;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.craftinggrid.CraftingGridInventory;
 import mcjty.rftools.items.storage.StorageFilterItem;
@@ -144,11 +145,11 @@ public class ModularStorageContainer extends GenericContainer {
         List<Pair<Integer, ItemStack>> differentSlots = new ArrayList<>();
         for (int i = 0; i < this.inventorySlots.size(); ++i) {
             ItemStack itemstack = this.inventorySlots.get(i).getStack();
-            ItemStack itemstack1 = this.inventoryItemStacks.get(i);
+            ItemStack itemstack1 = InventoryTools.getContainerItemStacks(this).get(i);
 
             if (!ItemStack.areItemStacksEqual(itemstack1, itemstack)) {
                 itemstack1 = ItemStackTools.isEmpty(itemstack) ? ItemStackTools.getEmptyStack() : itemstack.copy();
-                this.inventoryItemStacks.set(i, itemstack1);
+                InventoryTools.getContainerItemStacks(this).set(i, itemstack1);
                 differentSlots.add(Pair.of(i, itemstack));
                 if (differentSlots.size() >= 30) {
                     syncSlotsToListeners(differentSlots);
