@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
+import mcjty.lib.tools.ItemStackList;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
@@ -17,7 +18,7 @@ import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 public class StorageControlClientScreenModule implements IClientScreenModule<StorageControlScreenModule.ModuleDataStacks> {
-    private ItemStack[] stacks = new ItemStack[9];
+    private ItemStackList stacks = ItemStackList.create(9);
 
     @Override
     public TransformMode getTransformMode() {
@@ -49,7 +50,7 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
 
             for (int yy = 0 ; yy < 3 ; yy++) {
                 for (int xx = 0 ; xx < 3 ; xx++) {
-                    if (ItemStackTools.isValid(stacks[i])) {
+                    if (ItemStackTools.isValid(stacks.get(i))) {
                         int x = xx * 40;
                         boolean hilighted = renderInfo.hitx >= x+8 && renderInfo.hitx <= x + 38 && renderInfo.hity >= y-7 && renderInfo.hity <= y + 22;
                         if (hilighted) {
@@ -83,9 +84,9 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
 
         for (int yy = 0 ; yy < 3 ; yy++) {
             for (int xx = 0 ; xx < 3 ; xx++) {
-                if (ItemStackTools.isValid(stacks[i])) {
+                if (ItemStackTools.isValid(stacks.get(i))) {
                     int x = 7 + xx * 30;
-                    renderSlot(y, stacks[i], x);
+                    renderSlot(y, stacks.get(i), x);
                 }
                 i++;
             }
@@ -104,8 +105,8 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
 
         for (int yy = 0 ; yy < 3 ; yy++) {
             for (int xx = 0 ; xx < 3 ; xx++) {
-                if (ItemStackTools.isValid(stacks[i])) {
-                    renderSlotOverlay(fontRenderer, y, stacks[i], screenData.getAmount(i), 42 + xx * 64);
+                if (ItemStackTools.isValid(stacks.get(i))) {
+                    renderSlotOverlay(fontRenderer, y, stacks.get(i), screenData.getAmount(i), 42 + xx * 64);
                 }
                 i++;
             }
@@ -204,9 +205,9 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
     @Override
     public void setupFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
-            for (int i = 0 ; i < stacks.length ; i++) {
+            for (int i = 0 ; i < stacks.size() ; i++) {
                 if (tagCompound.hasKey("stack"+i)) {
-                    stacks[i] = ItemStackTools.loadFromNBT(tagCompound.getCompoundTag("stack"+i));
+                    stacks.set(i, ItemStackTools.loadFromNBT(tagCompound.getCompoundTag("stack"+i)));
                 }
             }
         }
