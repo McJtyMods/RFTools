@@ -1,6 +1,6 @@
 {
   "parent": "rftools:block/rftoolsblock",
   "textures": {
-    "front": "rftools:blocks/machineCoalGenerator"
+    "front": "rftools:blocks/machinecoalgenerator"
   }
 }

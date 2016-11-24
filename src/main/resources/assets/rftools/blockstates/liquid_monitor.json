@@ -3,8 +3,8 @@
   "defaults": {
     "model": "rftools:rftoolsbackblock",
     "textures": {
-      "front": "rftools:blocks/machineFront",
-      "back": "rftools:blocks/machineRedstoneOut"
+      "front": "rftools:blocks/machinefront",
+      "back": "rftools:blocks/machineredstoneout"
     }
   },
   "variants": {
@@ -19,12 +19,12 @@
       "down": {"x": 90}
     },
     "level": {
-      "0": { "textures": { "front": "rftools:blocks/machineFrontLiquid" } },
-      "1": { "textures": { "front": "rftools:blocks/machineFrontLiquid_0" } },
-      "2": { "textures": { "front": "rftools:blocks/machineFrontLiquid_1" } },
-      "3": { "textures": { "front": "rftools:blocks/machineFrontLiquid_2" } },
-      "4": { "textures": { "front": "rftools:blocks/machineFrontLiquid_3" } },
-      "5": { "textures": { "front": "rftools:blocks/machineFrontLiquid_4" } }
+      "0": { "textures": { "front": "rftools:blocks/machinefrontliquid" } },
+      "1": { "textures": { "front": "rftools:blocks/machinefrontliquid_0" } },
+      "2": { "textures": { "front": "rftools:blocks/machinefrontliquid_1" } },
+      "3": { "textures": { "front": "rftools:blocks/machinefrontliquid_2" } },
+      "4": { "textures": { "front": "rftools:blocks/machinefrontliquid_3" } },
+      "5": { "textures": { "front": "rftools:blocks/machinefrontliquid_4" } }
     }
   }
 }

@@ -38,7 +38,7 @@ public class PacketCrafter implements IMessage {
                 if (b) {
                     items[i] = NetworkTools.readItemStack(buf);
                 } else {
-                    items[i] = null;
+                    items[i] = ItemStackTools.getEmptyStack();
                 }
             }
         }
@@ -81,6 +81,10 @@ public class PacketCrafter implements IMessage {
                 } else {
                     items[i] = ItemStackTools.getEmptyStack();
                 }
+            }
+        } else {
+            for (int i = 0 ; i < 9 ; i++) {
+                items[i] = ItemStackTools.getEmptyStack();
             }
         }
         items[9] = ItemStackTools.isEmpty(result) ? ItemStackTools.getEmptyStack() : result.copy();

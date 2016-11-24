@@ -1,6 +1,6 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "all": "rftools:blocks/machineBeamer"
+    "all": "rftools:blocks/machinebeamer"
   }
 }

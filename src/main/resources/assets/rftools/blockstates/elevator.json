@@ -3,8 +3,8 @@
   "defaults": {
     "model": "rftools:rftoolsbackblock",
     "textures": {
-      "front": "rftools:blocks/machineElevator",
-      "back": "rftools:blocks/machineRedstoneOut"
+      "front": "rftools:blocks/machineelevator",
+      "back": "rftools:blocks/machineredstoneout"
     }
   },
   "variants": {

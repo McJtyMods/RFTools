@@ -2,11 +2,11 @@
   "parent": "block/cube",
   "textures": {
     "particle": "#particle",
-    "down": "rftools:blocks/machineBottom",
+    "down": "rftools:blocks/machinebottom",
     "up": "#up",
-    "north": "rftools:blocks/machineSide",
-    "east": "rftools:blocks/machineSide",
-    "south": "rftools:blocks/machineSide",
-    "west": "rftools:blocks/machineSide"
+    "north": "rftools:blocks/machineside",
+    "east": "rftools:blocks/machineside",
+    "south": "rftools:blocks/machineside",
+    "west": "rftools:blocks/machineside"
   }
 }

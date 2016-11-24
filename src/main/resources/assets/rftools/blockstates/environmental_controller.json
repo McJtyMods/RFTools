@@ -17,7 +17,7 @@
       "model": "rftools:environmental.obj"
     }],
     "window": [{
-      "model": "rftools:environmental_windows", "textures": { "overlay": "rftools:blocks/machineEnvironmentalController" }
+      "model": "rftools:environmental_windows", "textures": { "overlay": "rftools:blocks/machineenvironmentalcontroller" }
     }]
   }
 }

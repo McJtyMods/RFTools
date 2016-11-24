@@ -1,6 +1,6 @@
 {
   "parent": "rftools:block/rftoolsblock",
   "textures": {
-    "front": "rftools:blocks/machineDialingDevice"
+    "front": "rftools:blocks/machinedialingdevice"
   }
 }
