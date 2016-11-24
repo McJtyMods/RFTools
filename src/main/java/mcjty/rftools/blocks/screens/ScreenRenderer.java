@@ -32,7 +32,7 @@ import java.util.Map;
 @SideOnly(Side.CLIENT)
 public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> {
 
-    private static final ResourceLocation texture = new ResourceLocation(RFTools.MODID, "textures/blocks/screenFrame.png");
+    private static final ResourceLocation texture = new ResourceLocation(RFTools.MODID, "textures/blocks/screenframe.png");
     private final ModelScreen screenModel = new ModelScreen(ScreenTileEntity.SIZE_NORMAL);
     private final ModelScreen screenModelLarge = new ModelScreen(ScreenTileEntity.SIZE_LARGE);
     private final ModelScreen screenModelHuge = new ModelScreen(ScreenTileEntity.SIZE_HUGE);

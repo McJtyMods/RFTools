@@ -14,7 +14,7 @@ import java.util.Random;
 @SideOnly(Side.CLIENT)
 public class EnvironmentalTESR extends TileEntitySpecialRenderer<EnvironmentalControllerTileEntity> {
 
-    private ResourceLocation halo = new ResourceLocation(RFTools.MODID, "textures/entities/floatingSphere.png");
+    private ResourceLocation halo = new ResourceLocation(RFTools.MODID, "textures/entities/floatingsphere.png");
     private Random random = new Random();
 
     public EnvironmentalTESR() {

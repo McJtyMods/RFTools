@@ -18,7 +18,7 @@ import org.lwjgl.opengl.GL11;
 
 public class EndergenicRenderer extends TileEntitySpecialRenderer<EndergenicTileEntity> {
 
-    private ResourceLocation halo = new ResourceLocation(RFTools.MODID, "textures/entities/floatingPearl.png");
+    private ResourceLocation halo = new ResourceLocation(RFTools.MODID, "textures/entities/floatingpearl.png");
     private ResourceLocation whiteflash = new ResourceLocation(RFTools.MODID, "textures/entities/whiteflash.png");
     private ResourceLocation blackflash = new ResourceLocation(RFTools.MODID, "textures/entities/redflash.png");
 

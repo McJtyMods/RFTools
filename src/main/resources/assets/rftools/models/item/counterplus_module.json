@@ -1,5 +1,5 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "rftools:items/modules/counterPlusModuleItem"
+    "layer0": "rftools:items/modules/counterplusmoduleitem"
   }}

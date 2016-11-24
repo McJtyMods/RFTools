@@ -1,5 +1,5 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "rftools:items/storage/genericModule"
+    "layer0": "rftools:items/storage/genericmodule"
   }}

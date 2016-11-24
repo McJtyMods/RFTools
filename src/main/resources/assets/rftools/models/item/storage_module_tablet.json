@@ -1,6 +1,6 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "layer0": "rftools:items/storage/storageModuleTablet"
+    "layer0": "rftools:items/storage/storagemoduletablet"
   }
 }

@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "rftools:items/spaceChamberCardItem"
+    "layer0": "rftools:items/spacechambercarditem"
   }
 }

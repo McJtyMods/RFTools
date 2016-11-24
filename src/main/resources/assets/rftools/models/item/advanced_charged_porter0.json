@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "rftools:items/advChargedPorterItemL0"
+    "layer0": "rftools:items/advchargedporteriteml0"
   }
 }

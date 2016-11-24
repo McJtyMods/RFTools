@@ -13,9 +13,9 @@ import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
 public class BeamRenderer extends TileEntitySpecialRenderer<MatterTransmitterTileEntity> {
-    private static final ResourceLocation textureOk = new ResourceLocation(RFTools.MODID, "textures/blocks/machineTeleporter.png");
-    private static final ResourceLocation textureWarn = new ResourceLocation(RFTools.MODID, "textures/blocks/machineTeleporterWarn.png");
-    private static final ResourceLocation textureUnknown = new ResourceLocation(RFTools.MODID, "textures/blocks/machineTeleporterUnknown.png");
+    private static final ResourceLocation textureOk = new ResourceLocation(RFTools.MODID, "textures/blocks/machineteleporter.png");
+    private static final ResourceLocation textureWarn = new ResourceLocation(RFTools.MODID, "textures/blocks/machineteleporterwarn.png");
+    private static final ResourceLocation textureUnknown = new ResourceLocation(RFTools.MODID, "textures/blocks/machineteleporterunknown.png");
 
     private void p(VertexBuffer renderer, double x, double y, double z, double u, double v) {
         renderer.pos(x, y, z).tex(u, v).color(1.0f, 1.0f, 1.0f, 1.0f).lightmap(0, 240).endVertex();
