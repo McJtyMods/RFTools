@@ -2,6 +2,7 @@ package mcjty.rftools.items.storage;
 
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.tools.ChatTools;
+import mcjty.lib.tools.ItemStackList;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageTileEntity;
@@ -22,7 +23,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -76,13 +76,13 @@ public class StorageFilterItem extends GenericRFToolsItem {
             if (!worldIn.isRemote) {
                 TileEntity te = worldIn.getTileEntity(pos);
                 if (InventoryHelper.isInventory(te)) {
-                    List<ItemStack> stacks = new ArrayList<>();
+                    ItemStackList stacks = ItemStackList.create(0);
                     Set<ResourceLocation> registeredItems = new HashSet<>();
                     InventoryHelper.getItems(te, s -> true).forEach(s -> addItem(te, stacks, registeredItems, s));
                     if (!stack.hasTagCompound()) {
                         stack.setTagCompound(new NBTTagCompound());
                     }
-                    StorageFilterInventory.convertItemsToNBT(stack.getTagCompound(), stacks.toArray(new ItemStack[stacks.size()]));
+                    StorageFilterInventory.convertItemsToNBT(stack.getTagCompound(), stacks);
                     ChatTools.addChatMessage(playerIn, new TextComponentString(TextFormatting.GREEN + "Stored inventory contents in filter"));
                 } else {
                     IBlockState state = worldIn.getBlockState(pos);
@@ -92,15 +92,15 @@ public class StorageFilterItem extends GenericRFToolsItem {
                             stack.setTagCompound(new NBTTagCompound());
                         }
                         Set<ResourceLocation> registeredItems = new HashSet<>();
-                        ItemStack[] stacks = new ItemStack[FILTER_SLOTS];
+                        ItemStackList stacks = ItemStackList.create(FILTER_SLOTS);
                         NBTTagList bufferTagList = stack.getTagCompound().getTagList("Items", Constants.NBT.TAG_COMPOUND);
                         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
                             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-                            stacks[i] = ItemStackTools.loadFromNBT(nbtTagCompound);
+                            stacks.set(i, ItemStackTools.loadFromNBT(nbtTagCompound));
                         }
                         for (int i = 0 ; i < FILTER_SLOTS ; i++) {
-                            if (ItemStackTools.isEmpty(stacks[i])) {
-                                stacks[i] = blockStack;
+                            if (ItemStackTools.isEmpty(stacks.get(i))) {
+                                stacks.set(i, blockStack);
                                 ChatTools.addChatMessage(playerIn, new TextComponentString(TextFormatting.GREEN + "Added " + blockStack.getDisplayName() + " to the filter!"));
                                 StorageFilterInventory.convertItemsToNBT(stack.getTagCompound(), stacks);
                                 break;

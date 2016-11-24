@@ -65,6 +65,6 @@ public class StorageFilterContainer extends GenericContainer {
 
 		}
 
-		return null;
+		return ItemStackTools.getEmptyStack();
 	}
 }

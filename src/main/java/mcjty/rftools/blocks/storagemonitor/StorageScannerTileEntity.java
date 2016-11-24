@@ -541,10 +541,10 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     @Override
     public ItemStack requestItem(ItemStack match, int amount, boolean doRoutable, boolean oredict) {
         if (ItemStackTools.isEmpty(match)) {
-            return null;
+            return ItemStackTools.getEmptyStack();
         }
         if (getEnergyStored(EnumFacing.DOWN) < StorageScannerConfiguration.rfPerRequest) {
-            return null;
+            return ItemStackTools.getEmptyStack();
         }
 
         Set<Integer> oredictMatches = getOredictMatchers(match, oredict);

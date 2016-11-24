@@ -1,6 +1,7 @@
 package mcjty.rftools.items.storage;
 
 import mcjty.lib.compat.CompatInventory;
+import mcjty.lib.tools.ItemStackList;
 import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -11,7 +12,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
 
 public class StorageFilterInventory implements CompatInventory {
-    private ItemStack stacks[] = new ItemStack[StorageFilterContainer.FILTER_SLOTS];
+    private ItemStackList stacks = ItemStackList.create(StorageFilterContainer.FILTER_SLOTS);
     private final EntityPlayer entityPlayer;
 
     public StorageFilterInventory(EntityPlayer player) {
@@ -24,7 +25,7 @@ public class StorageFilterInventory implements CompatInventory {
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            stacks[i] = ItemStackTools.loadFromNBT(nbtTagCompound);
+            stacks.set(i, ItemStackTools.loadFromNBT(nbtTagCompound));
         }
     }
 
@@ -35,24 +36,24 @@ public class StorageFilterInventory implements CompatInventory {
 
     @Override
     public ItemStack getStackInSlot(int index) {
-        return stacks[index];
+        return stacks.get(index);
     }
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
-        if (index >= stacks.length) {
+        if (index >= stacks.size()) {
             return ItemStackTools.getEmptyStack();
         }
-        if (ItemStackTools.isValid(stacks[index])) {
-            if (ItemStackTools.getStackSize(stacks[index]) <= amount) {
-                ItemStack old = stacks[index];
-                stacks[index] = ItemStackTools.getEmptyStack();
+        if (ItemStackTools.isValid(stacks.get(index))) {
+            if (ItemStackTools.getStackSize(stacks.get(index)) <= amount) {
+                ItemStack old = stacks.get(index);
+                stacks.set(index, ItemStackTools.getEmptyStack());
                 markDirty();
                 return old;
             }
-            ItemStack its = stacks[index].splitStack(amount);
-            if (ItemStackTools.isEmpty(stacks[index])) {
-                stacks[index] = ItemStackTools.getEmptyStack();
+            ItemStack its = stacks.get(index).splitStack(amount);
+            if (ItemStackTools.isEmpty(stacks.get(index))) {
+                stacks.set(index, ItemStackTools.getEmptyStack());
             }
             markDirty();
             return its;
@@ -62,21 +63,21 @@ public class StorageFilterInventory implements CompatInventory {
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-        if (index >= stacks.length) {
+        if (index >= stacks.size()) {
             return;
         }
 
         if (StorageFilterContainer.factory.isGhostSlot(index)) {
             if (ItemStackTools.isValid(stack)) {
-                stacks[index] = stack.copy();
+                stacks.set(index, stack.copy());
                 if (index < 9) {
-                    ItemStackTools.setStackSize(stacks[index], 1);
+                    ItemStackTools.setStackSize(stacks.get(index), 1);
                 }
             } else {
-                stacks[index] = ItemStackTools.getEmptyStack();
+                stacks.set(index, ItemStackTools.getEmptyStack());
             }
         } else {
-            stacks[index] = stack;
+            stacks.set(index, stack);
             if (ItemStackTools.isValid(stack) && ItemStackTools.getStackSize(stack) > getInventoryStackLimit()) {
                 ItemStackTools.setStackSize(stack, getInventoryStackLimit());
             }
@@ -95,7 +96,7 @@ public class StorageFilterInventory implements CompatInventory {
         convertItemsToNBT(tagCompound, stacks);
     }
 
-    public static void convertItemsToNBT(NBTTagCompound tagCompound, ItemStack[] stacks) {
+    public static void convertItemsToNBT(NBTTagCompound tagCompound, ItemStackList stacks) {
         NBTTagList bufferTagList = new NBTTagList();
         for (ItemStack stack : stacks) {
             NBTTagCompound nbtTagCompound = new NBTTagCompound();

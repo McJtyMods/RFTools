@@ -1337,7 +1337,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 }
             }
             if (slots.isEmpty()) {
-                return null;
+                return ItemStackTools.getEmptyStack();
             }
             int randomSlot = slots.get(random.nextInt(slots.size()));
             return inventory.decrStackSize(randomSlot, 1);
@@ -1352,7 +1352,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 }
             }
         }
-        return null;
+        return ItemStackTools.getEmptyStack();
     }
 
     // To protect against mods doing bad things we have to check

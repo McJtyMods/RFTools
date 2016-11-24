@@ -65,7 +65,6 @@ public class SupportBlock extends CompatBlock {
         return false;
     }
 
-    @Nullable
     @Override
     public Item getItemDropped(IBlockState state, Random rand, int fortune) {
         return null;

@@ -22,7 +22,7 @@ public class CraftingRecipe {
             return false;
         }
     }, 3, 3);
-    private ItemStack result;
+    private ItemStack result = ItemStackTools.getEmptyStack();
 
     private boolean recipePresent = false;
     private IRecipe recipe = null;

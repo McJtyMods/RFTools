@@ -39,7 +39,7 @@ public class TileEntityItemSource implements IItemSource {
         } else if (inv instanceof IInventory) {
             return ((IInventory) inv).getStackInSlot(slot);
         }
-        return null;
+        return ItemStackTools.getEmptyStack();
     }
 
     private static boolean insertStackInSlot(Object inv, int slot, ItemStack stack) {
@@ -139,7 +139,7 @@ public class TileEntityItemSource implements IItemSource {
             }
             return result;
         }
-        return null;
+        return ItemStackTools.getEmptyStack();
     }
 
     @Override
