@@ -6,7 +6,7 @@ Ka 0.000000 0.000000 0.000000
 Kd 0.8 0.8 0.8
 Ks 0.8 0.8 0.8
 d 1
-map_Kd rftools:blocks/powercellWindows
+map_Kd rftools:blocks/powercellwindows
 
 newmtl None_powercellD.png
 Ka 0.000000 0.000000 0.000000

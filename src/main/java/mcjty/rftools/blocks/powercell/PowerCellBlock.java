@@ -10,7 +10,6 @@ import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
-import mcjty.rftools.blocks.relay.RelayTileEntity;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.theoneprobe.api.IProbeHitData;
