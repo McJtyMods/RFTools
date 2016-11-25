@@ -13,6 +13,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.hud.IHudSupport;
 import mcjty.rftools.network.PacketGetHudLog;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.typed.Type;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,6 +26,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.Constants;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,15 +38,15 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
 
     private static Random random = new Random();
 
-    public static String CMD_SETDESTINATION = "setDest";
-    public static String CMD_GETSTAT_RF = "getStatRF";
-    public static String CLIENTCMD_GETSTAT_RF = "getStatRF";
-    public static String CMD_GETSTAT_LOST = "getStatLost";
-    public static String CLIENTCMD_GETSTAT_LOST = "getStatLost";
-    public static String CMD_GETSTAT_LAUNCHED = "getStatLaunched";
-    public static String CLIENTCMD_GETSTAT_LAUNCHED = "getStatLaunched";
-    public static String CMD_GETSTAT_OPPORTUNITIES = "getStatOpp";
-    public static String CLIENTCMD_GETSTAT_OPPORTUNITIES = "getStatOpp";
+    public static final String CMD_SETDESTINATION = "setDest";
+    public static final String CMD_GETSTAT_RF = "getStatRF";
+    public static final String CLIENTCMD_GETSTAT_RF = "getStatRF";
+    public static final String CMD_GETSTAT_LOST = "getStatLost";
+    public static final String CLIENTCMD_GETSTAT_LOST = "getStatLost";
+    public static final String CMD_GETSTAT_LAUNCHED = "getStatLaunched";
+    public static final String CLIENTCMD_GETSTAT_LAUNCHED = "getStatLaunched";
+    public static final String CMD_GETSTAT_OPPORTUNITIES = "getStatOpp";
+    public static final String CLIENTCMD_GETSTAT_OPPORTUNITIES = "getStatOpp";
 
     private static final String[] TAGS = new String[]{"rftick", "lost", "launched", "opportunities"};
     private static final String[] TAG_DESCRIPTIONS = new String[]{"Average RF/tick for the last 5 seconds", "Amount of pearls that were lost during the last 5 seconds",
@@ -732,16 +734,17 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         return false;
     }
 
+    @Nonnull
     @Override
-    public List executeWithResultList(String command, Map<String, Argument> args) {
-        List rc = super.executeWithResultList(command, args);
-        if (rc != null) {
-            return rc;
+    public <T> List<T> executeWithResultList(String command, Map<String, Argument> args, Type<T> type) {
+        List<T> list = super.executeWithResultList(command, args, type);
+        if (!list.isEmpty()) {
+            return list;
         }
         if (PacketGetHudLog.CMD_GETHUDLOG.equals(command)) {
-            return getHudLog();
+            return type.convert(getHudLog());
         }
-        return null;
+        return list;
     }
 
     @Override

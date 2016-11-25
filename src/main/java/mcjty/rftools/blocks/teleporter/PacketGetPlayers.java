@@ -7,6 +7,7 @@ import mcjty.lib.network.PacketRequestListFromServer;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.typed.Type;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -53,11 +54,7 @@ public class PacketGetPlayers extends PacketRequestListFromServer<PlayerName, Pa
                 return;
             }
             CommandHandler commandHandler = (CommandHandler) te;
-            List<PlayerName> list = (List<PlayerName>) commandHandler.executeWithResultList(message.command, message.args);
-            if (list == null) {
-                Logging.log("Command " + message.command + " was not handled!");
-                return;
-            }
+            List<PlayerName> list = commandHandler.executeWithResultList(message.command, message.args, Type.create(PlayerName.class));
             RFToolsMessages.INSTANCE.sendTo(new PacketPlayersReady(message.pos, message.clientcmd, list), ctx.getServerHandler().playerEntity);
         }
     }

@@ -10,6 +10,7 @@ import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
 import mcjty.rftools.blocks.teleporter.PlayerName;
+import mcjty.typed.Type;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
@@ -23,6 +24,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.common.util.Constants;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
@@ -541,16 +543,17 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         return false;
     }
 
+    @Nonnull
     @Override
-    public List executeWithResultList(String command, Map<String, Argument> args) {
-        List rc = super.executeWithResultList(command, args);
-        if (rc != null) {
+    public <T> List<T> executeWithResultList(String command, Map<String, Argument> args, Type<T> type) {
+        List<T> rc = super.executeWithResultList(command, args, type);
+        if (!rc.isEmpty()) {
             return rc;
         }
         if (CMD_GETPLAYERS.equals(command)) {
-            return getPlayersAsList();
+            return type.convert(getPlayersAsList());
         }
-        return null;
+        return Collections.emptyList();
     }
 
     @Override

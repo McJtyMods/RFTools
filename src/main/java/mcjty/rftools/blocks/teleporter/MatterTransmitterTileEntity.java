@@ -7,6 +7,7 @@ import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.varia.RFToolsTools;
+import mcjty.typed.Type;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -24,6 +25,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity implements MachineInformation, ITickable {
@@ -644,16 +646,17 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         return false;
     }
 
+    @Nonnull
     @Override
-    public List executeWithResultList(String command, Map<String, Argument> args) {
-        List rc = super.executeWithResultList(command, args);
-        if (rc != null) {
+    public <T> List<T> executeWithResultList(String command, Map<String, Argument> args, Type<T> type) {
+        List<T> rc = super.executeWithResultList(command, args, type);
+        if (!rc.isEmpty()) {
             return rc;
         }
         if (CMD_GETPLAYERS.equals(command)) {
-            return getAllowedPlayers();
+            return type.convert(getAllowedPlayers());
         }
-        return null;
+        return Collections.emptyList();
     }
 
     @Override

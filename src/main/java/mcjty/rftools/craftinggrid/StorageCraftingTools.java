@@ -13,12 +13,14 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class StorageCraftingTools {
 
+    @Nonnull
     static int[] tryRecipe(EntityPlayerMP player, CraftingRecipe craftingRecipe, int n, IItemSource itemSource, boolean strictDamage) {
         InventoryCrafting workInventory = new InventoryCrafting(new Container() {
             @Override
@@ -203,11 +205,12 @@ public class StorageCraftingTools {
     }
 
 
+    @Nonnull
     public static int[] testCraftItems(EntityPlayerMP player, int n, CraftingRecipe craftingRecipe, IItemSource itemSource) {
         IRecipe recipe = craftingRecipe.getCachedRecipe(player.getEntityWorld());
         if (recipe == null) {
             // @todo give error?
-            return null;
+            return new int[0];
         }
 
         if (ItemStackTools.isValid(craftingRecipe.getResult()) && ItemStackTools.getStackSize(craftingRecipe.getResult()) > 0) {
@@ -243,6 +246,6 @@ public class StorageCraftingTools {
             }
             return result;
         }
-        return null;
+        return new int[0];
     }
 }

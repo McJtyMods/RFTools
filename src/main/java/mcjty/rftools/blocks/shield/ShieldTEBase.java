@@ -17,6 +17,7 @@ import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
 import mcjty.rftools.blocks.shield.filters.*;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.builder.ShapeCardItem;
+import mcjty.typed.Type;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -41,6 +42,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
@@ -1085,16 +1087,17 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         return false;
     }
 
+    @Nonnull
     @Override
-    public List executeWithResultList(String command, Map<String, Argument> args) {
-        List rc = super.executeWithResultList(command, args);
-        if (rc != null) {
+    public <T> List<T> executeWithResultList(String command, Map<String, Argument> args, Type<T> type) {
+        List<T> rc = super.executeWithResultList(command, args, type);
+        if (!rc.isEmpty()) {
             return rc;
         }
         if (CMD_GETFILTERS.equals(command)) {
-            return getFilters();
+            return type.convert(getFilters());
         }
-        return null;
+        return Collections.emptyList();
     }
 
     @Override

@@ -20,6 +20,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class StorageTerminalTileEntity extends LogicTileEntity implements DefaultSidedInventory, CraftingGridProvider, JEIRecipeAcceptor {
@@ -50,6 +51,7 @@ public class StorageTerminalTileEntity extends LogicTileEntity implements Defaul
     }
 
     @Override
+    @Nonnull
     public int[] craft(EntityPlayerMP player, int n, boolean test) {
         ItemStack module = inventoryHelper.getStackInSlot(StorageTerminalContainer.SLOT_MODULE);
         if (ItemStackTools.isEmpty(module)) {
@@ -76,7 +78,7 @@ public class StorageTerminalTileEntity extends LogicTileEntity implements Defaul
                 return StorageCraftingTools.testCraftItems(player, n, craftingGrid.getActiveRecipe(), itemSource);
             } else {
                 StorageCraftingTools.craftItems(player, n, craftingGrid.getActiveRecipe(), itemSource);
-                return null;
+                return new int[0];
             }
         } else {
             // Delegate crafting to scanner

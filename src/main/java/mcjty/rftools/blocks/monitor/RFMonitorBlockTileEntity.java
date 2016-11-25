@@ -4,12 +4,15 @@ import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.tools.WorldTools;
 import mcjty.lib.varia.EnergyTools;
+import mcjty.typed.Type;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -212,16 +215,17 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
         tagCompound.setByte("alarmLevel", (byte) alarmLevel);
     }
 
+    @Nonnull
     @Override
-    public List executeWithResultList(String command, Map<String, Argument> args) {
-        List rc = super.executeWithResultList(command, args);
-        if (rc != null) {
+    public <T> List<T> executeWithResultList(String command, Map<String, Argument> args, Type<T> type) {
+        List<T> rc = super.executeWithResultList(command, args, type);
+        if (!rc.isEmpty()) {
             return rc;
         }
         if (CMD_GETADJACENTBLOCKS.equals(command)) {
-            return findAdjacentBlocks();
+            return type.convert(findAdjacentBlocks());
         }
-        return null;
+        return Collections.emptyList();
     }
 
     @Override

@@ -34,6 +34,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.items.CapabilityItemHandler;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
 
@@ -162,6 +163,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     }
 
     @Override
+    @Nonnull
     public int[] craft(EntityPlayerMP player, int n, boolean test) {
         InventoriesItemSource itemSource = new InventoriesItemSource()
                 .add(player.inventory, 0).add(this, ModularStorageContainer.SLOT_STORAGE);
@@ -170,7 +172,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             return StorageCraftingTools.testCraftItems(player, n, craftingGrid.getActiveRecipe(), itemSource);
         } else {
             StorageCraftingTools.craftItems(player, n, craftingGrid.getActiveRecipe(), itemSource);
-            return null;
+            return new int[0];
         }
     }
 

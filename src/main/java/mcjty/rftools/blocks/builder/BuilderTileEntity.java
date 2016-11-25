@@ -4,10 +4,10 @@ import com.mojang.authlib.GameProfile;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
-import mcjty.lib.tools.InventoryTools;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketRequestIntegerFromServer;
-import mcjty.lib.tools.*;
+import mcjty.lib.tools.InventoryTools;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.*;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
@@ -18,6 +18,7 @@ import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.network.PacketGetHudLog;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.varia.RFToolsTools;
+import mcjty.typed.Type;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
@@ -57,6 +58,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
@@ -733,7 +735,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         int bottles = collectXP / 7;
         if (bottles > 0) {
-            if (insertItem(new ItemStack(Items.EXPERIENCE_BOTTLE, bottles)) == null) {
+            if (ItemStackTools.isEmpty(insertItem(new ItemStack(Items.EXPERIENCE_BOTTLE, bottles)))) {
                 collectXP = collectXP % 7;
                 world.removeEntity(orb);
                 consumeEnergy(rfNeeded);
@@ -2118,16 +2120,17 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return false;
     }
 
+    @Nonnull
     @Override
-    public List executeWithResultList(String command, Map<String, Argument> args) {
-        List rc = super.executeWithResultList(command, args);
-        if (rc != null) {
+    public <T> List<T> executeWithResultList(String command, Map<String, Argument> args, Type<T> type) {
+        List<T> rc = super.executeWithResultList(command, args, type);
+        if (!rc.isEmpty()) {
             return rc;
         }
         if (PacketGetHudLog.CMD_GETHUDLOG.equals(command)) {
-            return getHudLog();
+            return type.convert(getHudLog());
         }
-        return null;
+        return rc;
     }
 
     @Override

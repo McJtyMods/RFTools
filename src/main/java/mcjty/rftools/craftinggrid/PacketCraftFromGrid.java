@@ -64,7 +64,7 @@ public class PacketCraftFromGrid implements IMessage {
 
         private void handle(PacketCraftFromGrid message, MessageContext ctx) {
             EntityPlayerMP player = ctx.getServerHandler().playerEntity;
-            int[] testResult = null;
+            int[] testResult = new int[0];
             if (message.pos == null) {
                 // Handle tablet version
                 ItemStack mainhand = player.getHeldItemMainhand();
@@ -86,7 +86,7 @@ public class PacketCraftFromGrid implements IMessage {
                     testResult = ((CraftingGridProvider) te).craft(player, message.count, message.test);
                 }
             }
-            if (testResult != null) {
+            if (testResult.length > 0) {
                 RFToolsMessages.INSTANCE.sendTo(new PacketCraftTestResultToClient(testResult), player);
             }
         }

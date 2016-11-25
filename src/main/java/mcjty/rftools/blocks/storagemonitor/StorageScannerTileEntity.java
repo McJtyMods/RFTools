@@ -36,6 +36,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.oredict.OreDictionary;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable,
@@ -106,11 +107,13 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     @Override
+    @Nonnull
     public int[] craft(EntityPlayerMP player, int n, boolean test) {
         CraftingRecipe activeRecipe = craftingGrid.getActiveRecipe();
         return craft(player, n, test, activeRecipe);
     }
 
+    @Nonnull
     public int[] craft(EntityPlayerMP player, int n, boolean test, CraftingRecipe activeRecipe) {
         TileEntityItemSource itemSource = new TileEntityItemSource()
                 .addInventory(player.inventory, 0);
@@ -127,7 +130,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             return StorageCraftingTools.testCraftItems(player, n, activeRecipe, itemSource);
         } else {
             StorageCraftingTools.craftItems(player, n, activeRecipe, itemSource);
-            return null;
+            return new int[0];
         }
     }
 
@@ -635,9 +638,9 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         int size = InventoryHelper.getInventorySize(tileEntity);
 
         for (int i = 0 ; i < size ; i++) {
-            ItemStack stack = InventoryHelper.getSlot(tileEntity, i);
+            ItemStack stack = ItemStackTools.getStack(tileEntity, i);
             if (ItemHandlerHelper.canItemStacksStack(requested, stack)) {
-                ItemStack extracted = InventoryHelper.extractItem(tileEntity, i, todo[0]);
+                ItemStack extracted = ItemStackTools.extractItem(tileEntity, i, todo[0]);
                 todo[0] -= ItemStackTools.getStackSize(extracted);
                 if (ItemStackTools.isEmpty(outSlot)) {
                     outSlot = extracted;

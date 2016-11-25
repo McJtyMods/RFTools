@@ -6,6 +6,7 @@ import mcjty.lib.tools.WorldTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
+import mcjty.typed.Type;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -15,7 +16,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -217,19 +220,20 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
         return matterReceiverTileEntity.checkStatus();
     }
 
+    @Nonnull
     @Override
-    public List executeWithResultList(String command, Map<String, Argument> args) {
-        List rc = super.executeWithResultList(command, args);
-        if (rc != null) {
+    public <T> List<T> executeWithResultList(String command, Map<String, Argument> args, Type<T> type) {
+        List<T> rc = super.executeWithResultList(command, args, type);
+        if (!rc.isEmpty()) {
             return rc;
         }
         if (CMD_GETRECEIVERS.equals(command)) {
             String playerName = args.get("player").getString();
-            return searchReceivers(playerName);
+            return type.convert(searchReceivers(playerName));
         } else if (CMD_GETTRANSMITTERS.equals(command)) {
-            return searchTransmitters();
+            return type.convert(searchTransmitters());
         }
-        return null;
+        return Collections.emptyList();
     }
 
 

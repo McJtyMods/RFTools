@@ -15,6 +15,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.ITextComponent;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class RemoteStorageItemInventory implements CompatInventory, CraftingGridProvider, JEIRecipeAcceptor {
@@ -71,6 +72,7 @@ public class RemoteStorageItemInventory implements CompatInventory, CraftingGrid
     }
 
     @Override
+    @Nonnull
     public int[] craft(EntityPlayerMP player, int n, boolean test) {
         InventoriesItemSource itemSource = new InventoriesItemSource()
                 .add(player.inventory, 0).add(this, 0);
@@ -78,7 +80,7 @@ public class RemoteStorageItemInventory implements CompatInventory, CraftingGrid
             return StorageCraftingTools.testCraftItems(player, n, craftingGrid.getActiveRecipe(), itemSource);
         } else {
             StorageCraftingTools.craftItems(player, n, craftingGrid.getActiveRecipe(), itemSource);
-            return null;
+            return new int[0];
         }
     }
 

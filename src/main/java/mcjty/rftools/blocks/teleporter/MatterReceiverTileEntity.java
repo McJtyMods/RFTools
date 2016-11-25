@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.teleporter;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.GlobalCoordinate;
+import mcjty.typed.Type;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -14,6 +15,7 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity implements ITickable {
@@ -260,16 +262,17 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
         return false;
     }
 
+    @Nonnull
     @Override
-    public List executeWithResultList(String command, Map<String, Argument> args) {
-        List rc = super.executeWithResultList(command, args);
-        if (rc != null) {
+    public <T> List<T> executeWithResultList(String command, Map<String, Argument> args, Type<T> type) {
+        List<T> rc = super.executeWithResultList(command, args, type);
+        if (!rc.isEmpty()) {
             return rc;
         }
         if (CMD_GETPLAYERS.equals(command)) {
-            return getAllowedPlayers();
+            return type.convert(getAllowedPlayers());
         }
-        return null;
+        return Collections.emptyList();
     }
 
     @Override

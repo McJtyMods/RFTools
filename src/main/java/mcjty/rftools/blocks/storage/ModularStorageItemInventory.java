@@ -18,6 +18,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class ModularStorageItemInventory implements CompatInventory, CraftingGridProvider, JEIRecipeAcceptor {
@@ -74,6 +75,7 @@ public class ModularStorageItemInventory implements CompatInventory, CraftingGri
     }
 
     @Override
+    @Nonnull
     public int[] craft(EntityPlayerMP player, int n, boolean test) {
         InventoriesItemSource itemSource = new InventoriesItemSource()
                 .add(player.inventory, 0).add(this, 0);
@@ -81,7 +83,7 @@ public class ModularStorageItemInventory implements CompatInventory, CraftingGri
             return StorageCraftingTools.testCraftItems(player, n, craftingGrid.getActiveRecipe(), itemSource);
         } else {
             StorageCraftingTools.craftItems(player, n, craftingGrid.getActiveRecipe(), itemSource);
-            return null;
+            return new int[0];
         }
     }
 
