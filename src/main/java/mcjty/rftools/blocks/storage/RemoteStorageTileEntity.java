@@ -18,6 +18,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.common.util.Constants;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 
 public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity implements ITickable, DefaultSidedInventory {
@@ -391,6 +392,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         return ItemStackTools.getEmptyStack();
     }
 
+    @Nonnull
     public ItemStackList findStacksForId(int id) {
         for (int i = 0 ; i < 4 ; i++) {
             if (inventoryHelper.containsItem(i)) {
@@ -405,7 +407,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
                 }
             }
         }
-        return null;
+        return ItemStackList.EMPTY;
     }
 
 

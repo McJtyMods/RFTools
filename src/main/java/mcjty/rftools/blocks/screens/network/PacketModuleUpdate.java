@@ -30,7 +30,7 @@ public class PacketModuleUpdate implements IMessage {
         try {
             tagCompound = PacketBufferTools.readCompoundTag(buffer);
         } catch (IOException e) {
-            e.printStackTrace();
+            Logging.logError("Error updating module", e);
         }
     }
 

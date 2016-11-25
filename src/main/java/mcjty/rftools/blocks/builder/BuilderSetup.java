@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.builder;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
@@ -14,7 +13,6 @@ import mcjty.rftools.items.builder.SpaceChamberCardItem;
 import mcjty.rftools.proxy.CommonProxy;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockTallGrass;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -162,7 +160,7 @@ public class BuilderSetup {
             InputStream inputstream = RFTools.class.getResourceAsStream("/assets/rftools/text/builder.json");
             parseBuilderJson(inputstream);
         } catch (IOException e) {
-            e.printStackTrace();
+            Logging.logError("Error reading builder.json", e);
         }
     }
 

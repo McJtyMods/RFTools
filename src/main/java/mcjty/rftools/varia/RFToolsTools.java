@@ -79,7 +79,7 @@ public class RFToolsTools {
             Logging.logError("Please report to the corresponding mod. This is not a bug in RFTools!");
         }
         if (e != null) {
-            e.printStackTrace();
+            Logging.logError("Exception", e);
         }
     }
 

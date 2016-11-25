@@ -7,6 +7,7 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketServerCommand;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.GlobalCoordinate;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.api.screens.*;
 import mcjty.rftools.api.screens.data.*;
 import mcjty.rftools.blocks.screens.data.ModuleDataBoolean;
@@ -489,10 +490,10 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
                     try {
                         clientScreenModule = moduleProvider.getClientScreenModule().newInstance();
                     } catch (InstantiationException e) {
-                        e.printStackTrace();
+                        Logging.logError("Internal error with screen modules!", e);
                         continue;
                     } catch (IllegalAccessException e) {
-                        e.printStackTrace();
+                        Logging.logError("Internal error with screen modules!", e);
                         continue;
                     }
                     clientScreenModule.setupFromNBT(itemStack.getTagCompound(), getWorld().provider.getDimension(), getPos());
@@ -533,10 +534,10 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
                     try {
                         screenModule = moduleProvider.getServerScreenModule().newInstance();
                     } catch (InstantiationException e) {
-                        e.printStackTrace();
+                        Logging.logError("Internal error with screen modules!", e);
                         continue;
                     } catch (IllegalAccessException e) {
-                        e.printStackTrace();
+                        Logging.logError("Internal error with screen modules!", e);
                         continue;
                     }
                     screenModule.setupFromNBT(itemStack.getTagCompound(), getWorld().provider.getDimension(), getPos());

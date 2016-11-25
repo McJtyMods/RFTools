@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.tools.PacketBufferTools;
 import mcjty.lib.varia.BlockMeta;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.builder.GuiChamberDetails;
 import net.minecraft.block.Block;
@@ -130,7 +131,7 @@ public class PacketChamberInfoReady implements IMessage {
         try {
             return PacketBufferTools.readCompoundTag(buf);
         } catch (IOException e) {
-            e.printStackTrace();
+            Logging.logError("Error parsing packet chamber info", e);
         }
         return null;
     }
@@ -140,7 +141,7 @@ public class PacketChamberInfoReady implements IMessage {
         try {
             PacketBufferTools.writeCompoundTag(buf, nbt);
         } catch (Exception e) {
-            e.printStackTrace();
+            Logging.logError("Error writing packet chamber info", e);
         }
     }
 

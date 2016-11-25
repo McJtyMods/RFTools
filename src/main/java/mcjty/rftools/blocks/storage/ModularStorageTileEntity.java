@@ -250,7 +250,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
                 return false;
             }
             ItemStackList slots = storageTileEntity.findStacksForId(remoteId);
-            if (slots == null || index >= slots.size()) {
+            if (index >= slots.size()) {
                 return false;
             }
             return ItemStackTools.isValid(slots.get(index));
@@ -284,7 +284,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
                 return ItemStackTools.getEmptyStack();
             }
             ItemStackList slots = storageTileEntity.findStacksForId(remoteId);
-            if (slots == null || index >= slots.size()) {
+            if (index >= slots.size()) {
                 return ItemStackTools.getEmptyStack();
             }
             return slots.get(index);
@@ -468,7 +468,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             }
 
             ItemStackList stacks = storageTileEntity.findStacksForId(remoteId);
-            if (stacks == null || index >= stacks.size()) {
+            if (index >= stacks.size()) {
                 return false;
             }
         }
@@ -762,14 +762,12 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             RemoteStorageTileEntity storageTileEntity = getRemoteStorage(remoteId);
             if (storageTileEntity != null) {
                 ItemStackList slots = storageTileEntity.findStacksForId(remoteId);
-                if (slots != null) {
-                    for (ItemStack stack : slots) {
-                        NBTTagCompound nbtTagCompound = new NBTTagCompound();
-                        if (ItemStackTools.isValid(stack)) {
-                            stack.writeToNBT(nbtTagCompound);
-                        }
-                        bufferTagList.appendTag(nbtTagCompound);
+                for (ItemStack stack : slots) {
+                    NBTTagCompound nbtTagCompound = new NBTTagCompound();
+                    if (ItemStackTools.isValid(stack)) {
+                        stack.writeToNBT(nbtTagCompound);
                     }
+                    bufferTagList.appendTag(nbtTagCompound);
                 }
             }
         } else {

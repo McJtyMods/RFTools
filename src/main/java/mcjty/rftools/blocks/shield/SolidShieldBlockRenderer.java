@@ -10,6 +10,7 @@ package mcjty.rftools.blocks.shield;
 //import net.minecraftforge.common.util.ForgeDirection;
 //
 
+@SuppressWarnings("EmptyClass")
 public class SolidShieldBlockRenderer {}
 //public class SolidShieldBlockRenderer extends DefaultISBRH {
 //    @Override
