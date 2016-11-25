@@ -1101,13 +1101,13 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     }
 
     @Override
-    public boolean execute(String command, List list) {
-        boolean rc = super.execute(command, list);
+    public <T> boolean execute(String command, List<T> list, Type<T> type) {
+        boolean rc = super.execute(command, list, type);
         if (rc) {
             return true;
         }
         if (CLIENTCMD_GETFILTERS.equals(command)) {
-            GuiShield.storeFiltersForClient(list);
+            GuiShield.storeFiltersForClient(Type.create(ShieldFilter.class).convert(list));
             return true;
         }
         return false;

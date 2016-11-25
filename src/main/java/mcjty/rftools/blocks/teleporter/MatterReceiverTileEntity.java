@@ -276,13 +276,13 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     @Override
-    public boolean execute(String command, List list) {
-        boolean rc = super.execute(command, list);
+    public <T> boolean execute(String command, List<T> list, Type<T> type) {
+        boolean rc = super.execute(command, list, type);
         if (rc) {
             return true;
         }
         if (CLIENTCMD_GETPLAYERS.equals(command)) {
-            GuiMatterReceiver.storeAllowedPlayersForClient(list);
+            GuiMatterReceiver.storeAllowedPlayersForClient(Type.create(PlayerName.class).convert(list));
             return true;
         }
         return false;

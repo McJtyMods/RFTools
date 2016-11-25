@@ -290,16 +290,16 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
     }
 
     @Override
-    public boolean execute(String command, List list) {
-        boolean rc = super.execute(command, list);
+    public <T> boolean execute(String command, List<T> list, Type<T> type) {
+        boolean rc = super.execute(command, list, type);
         if (rc) {
             return true;
         }
         if (CLIENTCMD_GETRECEIVERS.equals(command)) {
-            GuiDialingDevice.fromServer_receivers = new ArrayList<>(list);
+            GuiDialingDevice.fromServer_receivers = Type.create(TeleportDestinationClientInfo.class).convert(list);
             return true;
         } else if (CLIENTCMD_GETTRANSMITTERS.equals(command)) {
-            GuiDialingDevice.fromServer_transmitters = new ArrayList<>(list);
+            GuiDialingDevice.fromServer_transmitters = Type.create(TransmitterInfo.class).convert(list);
             return true;
         }
         return false;

@@ -7,6 +7,7 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.shield.filters.AbstractShieldFilter;
 import mcjty.rftools.blocks.shield.filters.ShieldFilter;
+import mcjty.typed.Type;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -38,7 +39,7 @@ public class PacketFiltersReady extends PacketListFromServer<PacketFiltersReady,
                 return;
             }
             ClientCommandHandler clientCommandHandler = (ClientCommandHandler) te;
-            if (!clientCommandHandler.execute(message.command, message.list)) {
+            if (!clientCommandHandler.execute(message.command, message.list, Type.create(ShieldFilter.class))) {
                 Logging.log("Command " + message.command + " was not handled!");
             }
         }

@@ -6,6 +6,7 @@ import mcjty.lib.network.NetworkTools;
 import mcjty.lib.network.PacketListToClient;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
+import mcjty.typed.Type;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -37,7 +38,7 @@ public class PacketHudLogReady extends PacketListToClient<String> {
                 return;
             }
             ClientCommandHandler clientCommandHandler = (ClientCommandHandler) te;
-            if (!clientCommandHandler.execute(message.command, message.list)) {
+            if (!clientCommandHandler.execute(message.command, message.list, Type.STRING)) {
                 Logging.log("Command " + message.command + " was not handled!");
             }
         }

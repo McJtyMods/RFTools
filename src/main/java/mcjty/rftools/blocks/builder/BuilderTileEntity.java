@@ -2134,13 +2134,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     @Override
-    public boolean execute(String command, List list) {
-        boolean rc = super.execute(command, list);
+    public <T> boolean execute(String command, List<T> list, Type<T> type) {
+        boolean rc = super.execute(command, list, type);
         if (rc) {
             return true;
         }
         if (PacketGetHudLog.CLIENTCMD_GETHUDLOG.equals(command)) {
-            clientHudLog = list;
+            clientHudLog = Type.STRING.convert(list);
             return true;
         }
         return false;

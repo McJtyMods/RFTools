@@ -229,13 +229,13 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
     }
 
     @Override
-    public boolean execute(String command, List list) {
-        boolean rc = super.execute(command, list);
+    public <T> boolean execute(String command, List<T> list, Type<T> type) {
+        boolean rc = super.execute(command, list, type);
         if (rc) {
             return true;
         }
         if (CLIENTCMD_ADJACENTBLOCKSREADY.equals(command)) {
-            GuiRFMonitor.fromServer_clientAdjacentBlocks = (List<BlockPos>) list.stream().map(o -> ((BlockPosNet)o).getPos()).collect(Collectors.toList());
+            GuiRFMonitor.fromServer_clientAdjacentBlocks = list.stream().map(o -> ((BlockPosNet)o).getPos()).collect(Collectors.toList());
             return true;
         }
         return false;
