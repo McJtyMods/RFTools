@@ -60,35 +60,15 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
 
         nameField = new TextField(mc, this).setDesiredHeight(15);
         addButton = new Button(mc, this).setText("Add").setDesiredHeight(14).setDesiredWidth(34).setTooltips("Add a player to the access list").
-                addButtonEvent(new ButtonEvent() {
-                    @Override
-                    public void buttonClicked(Widget parent) {
-                        addPlayer();
-                    }
-                });
+                addButtonEvent(parent -> addPlayer());
         delButton = new Button(mc, this).setText("Del").setDesiredHeight(14).setDesiredWidth(34).setTooltips("Remove the selected player", "from the access list").
-                addButtonEvent(new ButtonEvent() {
-                    @Override
-                    public void buttonClicked(Widget parent) {
-                        delPlayer();
-                    }
-                });
+                addButtonEvent(parent -> delPlayer());
         Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChild(nameField).addChild(addButton).addChild(delButton).setDesiredHeight(16).
                 setLayoutHint(new PositionalLayout.PositionalHint(72, 100, SECURITYMANAGER_WIDTH - 76, 14));
 
-        channelNameField = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(8, 27, 60, 14)).addTextEvent(new TextEvent() {
-            @Override
-            public void textChanged(Widget parent, String newText) {
-                updateChannelName();
-            }
-        });
+        channelNameField = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(8, 27, 60, 14)).addTextEvent((parent, newText) -> updateChannelName());
 
-        blacklistMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(10, 44, 16, 16)).setTooltips("Black or whitelist mode").addChoiceEvent(new ChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, String newChoice) {
-                updateSettings();
-            }
-        });
+        blacklistMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(10, 44, 16, 16)).setTooltips("Black or whitelist mode").addChoiceEvent((parent, newChoice) -> updateSettings());
         blacklistMode.addChoice("White", "Whitelist players", guiElements, 15 * 16, 32);
         blacklistMode.addChoice("Black", "Blacklist players", guiElements, 14 * 16, 32);
 

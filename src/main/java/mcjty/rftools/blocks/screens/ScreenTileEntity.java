@@ -70,10 +70,10 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     private List<ActivatedModule> clickedModules = new ArrayList<ActivatedModule>();
 
     private static class ActivatedModule {
-        int module;
-        int ticks;
-        int x;
-        int y;
+        private int module;
+        private int ticks;
+        private int x;
+        private int y;
 
         public ActivatedModule(int module, int ticks, int x, int y) {
             this.module = module;

@@ -173,7 +173,7 @@ public class GuiCraftingGrid {
 
         if (testResultFromServer != null) {
             GlStateManager.pushMatrix();
-            GlStateManager.translate((float)gui.guiLeft, (float) gui.guiTop, 0.0F);
+            GlStateManager.translate(gui.guiLeft, gui.guiTop, 0.0F);
 
             if (testResultFromServer[9] > 0) {
                 Slot slot = gui.inventorySlots.getSlotFromInventory(provider.getCraftingGrid().getCraftingGridInventory(), CraftingGridInventory.SLOT_GHOSTOUTPUT);

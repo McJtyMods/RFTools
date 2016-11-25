@@ -226,9 +226,9 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         } else {
             dim = .46f;
         }
-        float r = (float)((color & 16711680) >> 16) / 255.0F;
-        float g = (float)((color & 65280) >> 8) / 255.0F;
-        float b = (float)((color & 255)) / 255.0F;
+        float r = ((color & 16711680) >> 16) / 255.0F;
+        float g = ((color & 65280) >> 8) / 255.0F;
+        float b = ((color & 255)) / 255.0F;
         renderer.pos(-.46f, dim, -0.08f).color(r, g, b, 1f).endVertex();
         renderer.pos(dim, dim, -0.08f).color(r, g, b, 1f).endVertex();
         renderer.pos(dim, -.46f, -0.08f).color(r, g, b, 1f).endVertex();

@@ -2,7 +2,6 @@ package mcjty.rftools.commands;
 
 import mcjty.lib.tools.ChatTools;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 

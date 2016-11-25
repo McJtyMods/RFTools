@@ -3,7 +3,6 @@ package mcjty.rftools.items.creativeonly;
 import mcjty.lib.base.StyleConfig;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.ButtonEvent;
-import mcjty.lib.gui.events.ChoiceEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
@@ -135,13 +134,10 @@ public class GuiDevelopersDelight extends GuiScreen {
     }
 
     private ToggleButton createToggleButton(final String pagename) {
-        ToggleButton toggleButton = new ToggleButton(mc, this).setText(pagename).addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget parent) {
-                ToggleButton tb = (ToggleButton) parent;
-                if (tb.isPressed()) {
-                    activatePage(tb, pagename);
-                }
+        ToggleButton toggleButton = new ToggleButton(mc, this).setText(pagename).addButtonEvent(parent -> {
+            ToggleButton tb = (ToggleButton) parent;
+            if (tb.isPressed()) {
+                activatePage(tb, pagename);
             }
         }).setDynamic(true).setDesiredHeight(18);
         pageButtons.add(toggleButton);

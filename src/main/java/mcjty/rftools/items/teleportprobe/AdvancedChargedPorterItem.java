@@ -13,8 +13,7 @@ public class AdvancedChargedPorterItem extends ChargedPorterItem {
     public static final int MAXTARGETS = 8;
 
     public AdvancedChargedPorterItem() {
-        super("advanced_charged_porter");
-        capacity = TeleportConfiguration.ADVANCED_CHARGEDPORTER_MAXENERGY;
+        super("advanced_charged_porter", TeleportConfiguration.ADVANCED_CHARGEDPORTER_MAXENERGY);
     }
 
     @Override

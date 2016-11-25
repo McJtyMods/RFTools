@@ -36,24 +36,14 @@ public class GuiCounter extends GenericGuiContainer<CounterTileEntity> {
 
         Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout());
 
-        counterField = new TextField(mc, this).setTooltips("Set the counter in pulses").addTextEvent(new TextEvent() {
-            @Override
-            public void textChanged(Widget parent, String newText) {
-                setCounter();
-            }
-        });
+        counterField = new TextField(mc, this).setTooltips("Set the counter in pulses").addTextEvent((parent, newText) -> setCounter());
         int delay = tileEntity.getCounter();
         if (delay <= 0) {
             delay = 1;
         }
         counterField.setText(String.valueOf(delay));
 
-        currentField = new TextField(mc, this).setTooltips("Set the current value", "(fires when it reaches counter)").addTextEvent(new TextEvent() {
-            @Override
-            public void textChanged(Widget parent, String newText) {
-                setCurrent();
-            }
-        });
+        currentField = new TextField(mc, this).setTooltips("Set the current value", "(fires when it reaches counter)").addTextEvent((parent, newText) -> setCurrent());
         int current = tileEntity.getCurrent();
         if (current < 0) {
             current = 0;

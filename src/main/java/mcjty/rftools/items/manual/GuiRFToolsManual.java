@@ -56,22 +56,16 @@ public class GuiRFToolsManual extends GuiScreen {
 
         textPage = new TextPage(RFTools.instance, mc, this).setText(manualText).setArrowImage(iconGuiElements, 144, 0).setCraftingGridImage(iconGuiElements, 0, 192);
 
-        prevButton = new Button(mc, this).setText("<").addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget parent) {
-                System.out.println("GuiRFToolsManual.buttonClicked: <");
-                textPage.prevPage();
-                window.setTextFocus(textPage);
-            }
+        prevButton = new Button(mc, this).setText("<").addButtonEvent(parent -> {
+            System.out.println("GuiRFToolsManual.buttonClicked: <");
+            textPage.prevPage();
+            window.setTextFocus(textPage);
         });
         pageLabel = new Label(mc, this).setText("0 / 0");
-        nextButton = new Button(mc, this).setText(">").addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget parent) {
-                System.out.println("GuiRFToolsManual.buttonClicked: >");
-                textPage.nextPage();
-                window.setTextFocus(textPage);
-            }
+        nextButton = new Button(mc, this).setText(">").addButtonEvent(parent -> {
+            System.out.println("GuiRFToolsManual.buttonClicked: >");
+            textPage.nextPage();
+            window.setTextFocus(textPage);
         });
         Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(16).addChild(prevButton).addChild(pageLabel).addChild(nextButton);
 

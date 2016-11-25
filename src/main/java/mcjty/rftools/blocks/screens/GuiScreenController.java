@@ -41,19 +41,9 @@ public class GuiScreenController extends GenericGuiContainer<ScreenControllerTil
         energyBar.setValue(tileEntity.getCurrentRF());
 
         Button scanButton = new Button(mc, this).setText("Scan").setTooltips("Find all nearby screens", "and connect to them").setLayoutHint(new PositionalLayout.PositionalHint(30, 7, 50, 14));
-        scanButton.addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget parent) {
-                sendServerCommand(RFToolsMessages.INSTANCE, ScreenControllerTileEntity.CMD_SCAN);
-            }
-        });
+        scanButton.addButtonEvent(parent -> sendServerCommand(RFToolsMessages.INSTANCE, ScreenControllerTileEntity.CMD_SCAN));
         Button detachButton = new Button(mc, this).setText("Detach").setTooltips("Detach from all screens").setLayoutHint(new PositionalLayout.PositionalHint(90, 7, 50, 14));
-        detachButton.addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget parent) {
-                sendServerCommand(RFToolsMessages.INSTANCE, ScreenControllerTileEntity.CMD_DETACH);
-            }
-        });
+        detachButton.addButtonEvent(parent -> sendServerCommand(RFToolsMessages.INSTANCE, ScreenControllerTileEntity.CMD_DETACH));
         infoLabel = new Label(mc, this);
         infoLabel.setLayoutHint(new PositionalLayout.PositionalHint(30, 25, 140, 14));
 

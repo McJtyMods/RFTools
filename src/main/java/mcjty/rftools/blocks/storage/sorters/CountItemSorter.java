@@ -29,13 +29,10 @@ public class CountItemSorter implements ItemSorter {
 
     @Override
     public Comparator<Pair<ItemStack, Integer>> getComparator() {
-        return new Comparator<Pair<ItemStack, Integer>>() {
-            @Override
-            public int compare(Pair<ItemStack, Integer> o1, Pair<ItemStack, Integer> o2) {
-                Integer c1 = ItemStackTools.getStackSize(o1.getLeft());
-                Integer c2 = ItemStackTools.getStackSize(o2.getLeft());
-                return c2.compareTo(c1);
-            }
+        return (o1, o2) -> {
+            Integer c1 = ItemStackTools.getStackSize(o1.getLeft());
+            Integer c2 = ItemStackTools.getStackSize(o2.getLeft());
+            return c2.compareTo(c1);
         };
     }
 

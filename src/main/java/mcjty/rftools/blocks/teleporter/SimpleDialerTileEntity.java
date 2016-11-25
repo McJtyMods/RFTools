@@ -7,8 +7,8 @@ import net.minecraft.util.math.BlockPos;
 
 public class SimpleDialerTileEntity extends LogicTileEntity {
 
-    GlobalCoordinate transmitter;
-    Integer receiver;
+    private GlobalCoordinate transmitter;
+    private Integer receiver;
     private boolean onceMode = false;
 
     private boolean prevIn = false;

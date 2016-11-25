@@ -47,34 +47,19 @@ public class GuiInvChecker extends GenericGuiContainer<InvCheckerTileEntity> {
 
         amountField = new TextField(mc, this).setTooltips("Set the amount of items in slot")
                 .setLayoutHint(new PositionalLayout.PositionalHint(60, 19, 80, 14))
-                .addTextEvent(new TextEvent() {
-                    @Override
-                    public void textChanged(Widget parent, String newText) {
-                        setAmount();
-                    }
-                });
+                .addTextEvent((parent, newText) -> setAmount());
         int amount = tileEntity.getAmount();
         amountField.setText(String.valueOf(amount));
 
         slotField = new TextField(mc, this).setTooltips("Set the slot index")
                 .setLayoutHint(new PositionalLayout.PositionalHint(60, 3, 80, 14))
-                .addTextEvent(new TextEvent() {
-                    @Override
-                    public void textChanged(Widget parent, String newText) {
-                        setSlot();
-                    }
-                });
+                .addTextEvent((parent, newText) -> setSlot());
         int current = tileEntity.getSlot();
         slotField.setText(String.valueOf(current));
 
         metaLabel = new ChoiceLabel(mc, this)
                 .addChoices(META_IGNORE, META_MATCH)
-                .addChoiceEvent(new ChoiceEvent() {
-                    @Override
-                    public void choiceChanged(Widget parent, String newChoice) {
-                        setMetaUsage();
-                    }
-                })
+                .addChoiceEvent((parent, newChoice) -> setMetaUsage())
                 .setChoiceTooltip(META_IGNORE, "Ignore meta/damage on item")
                 .setChoiceTooltip(META_MATCH, "Meta/damage on item must match");
         metaLabel.setLayoutHint(new PositionalLayout.PositionalHint(60, 35, 80, 14));
@@ -82,12 +67,7 @@ public class GuiInvChecker extends GenericGuiContainer<InvCheckerTileEntity> {
 
         oreDictLabel = new ChoiceLabel(mc, this)
                 .addChoices(OREDICT_IGNORE, OREDICT_USE)
-                .addChoiceEvent(new ChoiceEvent() {
-                    @Override
-                    public void choiceChanged(Widget parent, String newChoice) {
-                        setOredictUsage();
-                    }
-                })
+                .addChoiceEvent((parent, newChoice) -> setOredictUsage())
                 .setChoiceTooltip(OREDICT_IGNORE, "Ingore ore dictionary")
                 .setChoiceTooltip(OREDICT_USE, "Use ore dictionary matching");
         oreDictLabel.setLayoutHint(new PositionalLayout.PositionalHint(60, 51, 80, 14));

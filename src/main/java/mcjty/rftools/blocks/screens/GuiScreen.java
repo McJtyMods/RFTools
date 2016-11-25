@@ -67,9 +67,7 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
                 .setTooltips("Toggle full brightness")
                 .setLayoutHint(new PositionalLayout.PositionalHint(7, 208, 63, 14));
         bright.setPressed(tileEntity.isBright());
-        bright.addButtonEvent(parent -> {
-            sendServerCommand(RFToolsMessages.INSTANCE, ScreenTileEntity.CMD_SETBRIGHT, new Argument("b", bright.isPressed()));
-        });
+        bright.addButtonEvent(parent -> sendServerCommand(RFToolsMessages.INSTANCE, ScreenTileEntity.CMD_SETBRIGHT, new Argument("b", bright.isPressed())));
         toplevel.addChild(bright);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));

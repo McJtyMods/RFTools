@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.screens;
 
-import mcjty.lib.compat.CompatBlock;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericBlock;
 import mcjty.rftools.RFTools;
@@ -34,7 +33,6 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -101,6 +99,7 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
         return new ScreenHitTileEntity();
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public void initModel() {
         ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(this), 0, ScreenTileEntity.class);

@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.environmental.modules;
 
 import mcjty.rftools.PlayerBuff;
 import mcjty.rftools.blocks.environmental.EnvironmentalConfiguration;
-import net.minecraft.potion.Potion;
 
 public class SpeedEModule extends PotionEffectModule {
 

@@ -103,12 +103,7 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
         inputOutputs.put(key, inputOutput);
         TextField energyField = new TextField(mc, this).setTooltips("Amount of RF to input/output", "when redstone is " + redstoneState).
                 setDesiredWidth(42).setDesiredHeight(14).
-                addTextEvent(new TextEvent() {
-                    @Override
-                    public void textChanged(Widget parent, String newText) {
-                        adjustEnergy((TextField) parent, 0);
-                    }
-                });
+                addTextEvent((parent, newText) -> adjustEnergy((TextField) parent, 0));
         energyField.setText(String.valueOf(rf));
         Button sub100 = createEnergyOffsetButton(energyField, "-", -500);
         Button add100 = createEnergyOffsetButton(energyField, "+", 500);
@@ -122,12 +117,7 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
     }
 
     private Button createEnergyOffsetButton(final TextField energyField, String label, final int amount) {
-        return new Button(mc, this).setText(label).setDesiredHeight(14).setDesiredWidth(16).addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget parent) {
-                adjustEnergy(energyField, amount);
-            }
-        });
+        return new Button(mc, this).setText(label).setDesiredHeight(14).setDesiredWidth(16).addButtonEvent(parent -> adjustEnergy(energyField, amount));
     }
 
     private void adjustEnergy(TextField energyField, int amount) {

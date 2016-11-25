@@ -330,9 +330,8 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                     cnt += cachedCount;
                 } else {
                     final int[] cc = {0};
-                    InventoryHelper.getItems(tileEntity, s -> isItemEqual(stack, s, oredictMatches)).forEach(s -> {
-                        cc[0] += ItemStackTools.getStackSize(s);
-                    });
+                    InventoryHelper.getItems(tileEntity, s -> isItemEqual(stack, s, oredictMatches))
+                            .forEach(s -> cc[0] += ItemStackTools.getStackSize(s));
                     cnt += cc[0];
                     if (tileEntity instanceof IInventoryTracker) {
                         IInventoryTracker tracker = (IInventoryTracker) tileEntity;

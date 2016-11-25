@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.environmental;
 
-import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
 import mcjty.rftools.blocks.environmental.modules.NoTeleportEModule;

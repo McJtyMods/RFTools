@@ -119,10 +119,10 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
 
         switch (sensorType) {
             case SENSOR_BLOCK:
-                newout = checkBlockOrFluid(newpos, inputSide, (pos) -> checkBlock(pos));
+                newout = checkBlockOrFluid(newpos, inputSide, this::checkBlock);
                 break;
             case SENSOR_FLUID:
-                newout = checkBlockOrFluid(newpos, inputSide, (pos) -> checkFluid(pos));
+                newout = checkBlockOrFluid(newpos, inputSide, this::checkFluid);
                 break;
             case SENSOR_GROWTHLEVEL:
                 newout = checkGrowthLevel(newpos, inputSide);

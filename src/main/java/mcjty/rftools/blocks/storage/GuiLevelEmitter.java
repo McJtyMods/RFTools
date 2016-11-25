@@ -49,23 +49,13 @@ public class GuiLevelEmitter extends GenericGuiContainer<LevelEmitterTileEntity>
 
         amountField = new mcjty.lib.gui.widgets.TextField(mc, this).setTooltips("Set the amount of items in slot")
                 .setLayoutHint(new PositionalLayout.PositionalHint(60, 3, 80, 14))
-                .addTextEvent(new TextEvent() {
-                    @Override
-                    public void textChanged(Widget parent, String newText) {
-                        setAmount();
-                    }
-                });
+                .addTextEvent((parent, newText) -> setAmount());
         int amount = tileEntity.getAmount();
         amountField.setText(String.valueOf(amount));
 
         starredLabel = new ChoiceLabel(mc, this)
                 .addChoices(NOTSTARRED, STARRED)
-                .addChoiceEvent(new ChoiceEvent() {
-                    @Override
-                    public void choiceChanged(Widget parent, String newChoice) {
-                        setMetaUsage();
-                    }
-                })
+                .addChoiceEvent((parent, newChoice) -> setMetaUsage())
                 .setChoiceTooltip(NOTSTARRED, "All inventories are considered")
                 .setChoiceTooltip(STARRED, "Only routable inventories are considered");
         starredLabel.setLayoutHint(new PositionalLayout.PositionalHint(60, 19, 80, 14));
@@ -73,12 +63,7 @@ public class GuiLevelEmitter extends GenericGuiContainer<LevelEmitterTileEntity>
 
         oreDictLabel = new ChoiceLabel(mc, this)
                 .addChoices(OREDICT_IGNORE, OREDICT_USE)
-                .addChoiceEvent(new ChoiceEvent() {
-                    @Override
-                    public void choiceChanged(Widget parent, String newChoice) {
-                        setOredictUsage();
-                    }
-                })
+                .addChoiceEvent((parent, newChoice) -> setOredictUsage())
                 .setChoiceTooltip(OREDICT_IGNORE, "Ingore ore dictionary")
                 .setChoiceTooltip(OREDICT_USE, "Use ore dictionary matching");
         oreDictLabel.setLayoutHint(new PositionalLayout.PositionalHint(60, 35, 80, 14));

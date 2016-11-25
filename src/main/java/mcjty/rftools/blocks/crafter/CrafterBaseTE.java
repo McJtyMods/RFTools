@@ -253,8 +253,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
     private void writeGhostBufferToNBT(NBTTagCompound tagCompound) {
         NBTTagList bufferTagList = new NBTTagList();
-        for (int i = 0 ; i < ghostSlots.size() ; i++) {
-            ItemStack stack = ghostSlots.get(i);
+        for (ItemStack stack : ghostSlots) {
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
             if (ItemStackTools.isValid(stack)) {
                 stack.writeToNBT(nbtTagCompound);

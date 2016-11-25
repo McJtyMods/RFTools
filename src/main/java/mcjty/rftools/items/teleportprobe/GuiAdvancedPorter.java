@@ -61,24 +61,18 @@ public class GuiAdvancedPorter extends GuiItemScreen {
     private Panel createPanel(final TextField destination, final int i) {
         return new Panel(mc, this).setLayout(new HorizontalLayout())
                     .addChild(destination)
-                    .addChild(new Button(mc, this).setText("Set").setDesiredWidth(30).setDesiredHeight(16).addButtonEvent(new ButtonEvent() {
-                        @Override
-                        public void buttonClicked(Widget parent) {
-                            if (targets[i] != -1) {
-                                RFToolsMessages.INSTANCE.sendToServer(new PacketSetTarget(targets[i]));
-                                target = targets[i];
-                            }
+                    .addChild(new Button(mc, this).setText("Set").setDesiredWidth(30).setDesiredHeight(16).addButtonEvent(parent -> {
+                        if (targets[i] != -1) {
+                            RFToolsMessages.INSTANCE.sendToServer(new PacketSetTarget(targets[i]));
+                            target = targets[i];
                         }
                     }))
-                    .addChild(new Button(mc, this).setText("Clear").setDesiredWidth(40).setDesiredHeight(16).addButtonEvent(new ButtonEvent() {
-                        @Override
-                        public void buttonClicked(Widget parent) {
-                            if (targets[i] != -1 && targets[i] == target) {
-                                target = -1;
-                            }
-                            RFToolsMessages.INSTANCE.sendToServer(new PacketClearTarget(i));
-                            targets[i] = -1;
+                    .addChild(new Button(mc, this).setText("Clear").setDesiredWidth(40).setDesiredHeight(16).addButtonEvent(parent -> {
+                        if (targets[i] != -1 && targets[i] == target) {
+                            target = -1;
                         }
+                        RFToolsMessages.INSTANCE.sendToServer(new PacketClearTarget(i));
+                        targets[i] = -1;
                     })).setDesiredHeight(16);
     }
 

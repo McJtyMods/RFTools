@@ -249,7 +249,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
             sy -= entityLiving.getEyeHeight() - 1;  // @todo right? (used to be height)
         }
 
-        entityLiving.setLocationAndAngles(sx + 0.5D, (double) sy, sz + 0.5D, 0.0F, 0.0F);
+        entityLiving.setLocationAndAngles(sx + 0.5D, sy, sz + 0.5D, 0.0F, 0.0F);
         WorldTools.spawnEntity(getWorld(), entityLiving);
     }
 

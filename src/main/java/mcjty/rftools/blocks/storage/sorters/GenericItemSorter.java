@@ -32,12 +32,7 @@ public class GenericItemSorter implements ItemSorter {
 
     @Override
     public Comparator<Pair<ItemStack, Integer>> getComparator() {
-        return new Comparator<Pair<ItemStack, Integer>>() {
-            @Override
-            public int compare(Pair<ItemStack, Integer> o1, Pair<ItemStack, Integer> o2) {
-                return compareCategory(o1, o2);
-            }
-        };
+        return (o1, o2) -> compareCategory(o1, o2);
     }
 
     @Override

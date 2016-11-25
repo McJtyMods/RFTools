@@ -65,22 +65,12 @@ public class GuiLiquidMonitor extends GenericGuiContainer<LiquidMonitorBlockTile
                 RFMonitorMode.MODE_OFF.getDescription(), RFMonitorMode.MODE_LESS.getDescription(), RFMonitorMode.MODE_MORE.getDescription()).
                 setDesiredWidth(60).setDesiredHeight(15).
                 setTooltips("Control when a redstone", "signal should be sent").
-                addChoiceEvent(new ChoiceEvent() {
-                    @Override
-                    public void choiceChanged(Widget parent, String newChoice) {
-                        changeAlarmMode(RFMonitorMode.getModeFromDescription(newChoice));
-                    }
-                });
+                addChoiceEvent((parent, newChoice) -> changeAlarmMode(RFMonitorMode.getModeFromDescription(newChoice)));
         alarmModeChoiceLabel.setChoice(tileEntity.getAlarmMode().getDescription());
 
         alarmLabel = new ScrollableLabel(mc, this).setSuffix("%").setDesiredWidth(30).setRealMinimum(0).setRealMaximum(100).
                 setRealValue(tileEntity.getAlarmLevel()).
-                addValueEvent(new ValueEvent() {
-                    @Override
-                    public void valueChanged(Widget parent, int newValue) {
-                        changeAlarmValue(newValue);
-                    }
-                });
+                addValueEvent((parent, newValue) -> changeAlarmValue(newValue));
         Slider alarmSlider = new Slider(mc, this).
                 setDesiredHeight(15).
                 setMinimumKnobSize(15).

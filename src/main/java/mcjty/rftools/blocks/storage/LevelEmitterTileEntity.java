@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.storage;
 
-import gnu.trove.set.TIntSet;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.network.Argument;
@@ -157,7 +156,6 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
         return inventoryHelper;
     }
 
-    @SuppressWarnings("NullableProblems")
     @Override
     public boolean isUsable(EntityPlayer player) {
         return canPlayerAccess(player);

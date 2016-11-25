@@ -20,12 +20,7 @@ public class ContainerAndItemRecipe extends ShapedRecipes {
         super(2, 1, new ItemStack[] { container, item }, output);
         objectToInheritFrom = getObjectFromStack(item.getItem());
         objectToGetEnergyFrom = getObjectFromStack(container.getItem());
-        this.getMetaFunction = getMetaFunction == null ? new Function<InventoryCrafting, Integer>() {
-            @Override
-            public Integer apply(InventoryCrafting inventoryCrafting) {
-                return getDamageFromObject(inventoryCrafting);
-            }
-        } : getMetaFunction;
+        this.getMetaFunction = getMetaFunction == null ? inventoryCrafting -> getDamageFromObject(inventoryCrafting) : getMetaFunction;
     }
 
     private Object getObjectFromStack(Item item) {

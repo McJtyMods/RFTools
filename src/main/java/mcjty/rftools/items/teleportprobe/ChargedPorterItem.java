@@ -30,7 +30,7 @@ import java.util.List;
 
 public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyContainerItem {
 
-    protected int capacity;
+    private int capacity;
     private int maxReceive;
     private int maxExtract;
 
@@ -39,10 +39,13 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyCont
     }
 
     protected ChargedPorterItem(String name) {
+        this(name, TeleportConfiguration.CHARGEDPORTER_MAXENERGY);
+    }
+
+    protected ChargedPorterItem(String name, int capacity) {
         super(name);
         setMaxStackSize(1);
 
-        capacity = TeleportConfiguration.CHARGEDPORTER_MAXENERGY;
         maxReceive = TeleportConfiguration.CHARGEDPORTER_RECEIVEPERTICK;
         maxExtract = 0;
     }

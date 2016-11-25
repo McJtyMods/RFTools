@@ -55,12 +55,7 @@ public class GuiEnderMonitor extends GenericGuiContainer<EnderMonitorTileEntity>
         mode.setChoiceTooltip(EnderMonitorMode.MODE_PEARLFIRED.getDescription(), "Send a redstone pulse when a", "pearl is fired");
         mode.setChoiceTooltip(EnderMonitorMode.MODE_PEARLARRIVED.getDescription(), "Send a redstone pulse when a", "pearl arrives");
         mode.setChoice(tileEntity.getMode().getDescription());
-        mode.addChoiceEvent(new ChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, String newChoice) {
-                changeMode();
-            }
-        });
+        mode.addChoiceEvent((parent, newChoice) -> changeMode());
     }
 
     private void changeMode() {

@@ -159,12 +159,12 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
         return (outputMode[side.ordinal()] & (1<<slot)) != 0;
     }
 
-    IItemHandler invHandlerN = new ItemFilterInvWrapper(this, EnumFacing.NORTH);
-    IItemHandler invHandlerS = new ItemFilterInvWrapper(this, EnumFacing.SOUTH);
-    IItemHandler invHandlerW = new ItemFilterInvWrapper(this, EnumFacing.WEST);
-    IItemHandler invHandlerE = new ItemFilterInvWrapper(this, EnumFacing.EAST);
-    IItemHandler invHandlerD = new ItemFilterInvWrapper(this, EnumFacing.DOWN);
-    IItemHandler invHandlerU = new ItemFilterInvWrapper(this, EnumFacing.UP);
+    private IItemHandler invHandlerN = new ItemFilterInvWrapper(this, EnumFacing.NORTH);
+    private IItemHandler invHandlerS = new ItemFilterInvWrapper(this, EnumFacing.SOUTH);
+    private IItemHandler invHandlerW = new ItemFilterInvWrapper(this, EnumFacing.WEST);
+    private IItemHandler invHandlerE = new ItemFilterInvWrapper(this, EnumFacing.EAST);
+    private IItemHandler invHandlerD = new ItemFilterInvWrapper(this, EnumFacing.DOWN);
+    private IItemHandler invHandlerU = new ItemFilterInvWrapper(this, EnumFacing.UP);
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {

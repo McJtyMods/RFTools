@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
 import mcjty.lib.api.MachineInformation;
-import mcjty.lib.gui.events.ChoiceEvent;
 import mcjty.lib.gui.events.ColorChoiceEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
@@ -181,12 +180,9 @@ public class MachineInformationClientScreenModule implements IClientScreenModule
 
 
     private ColorChoiceLabel addColorSelector(Minecraft mc, Gui gui, final NBTTagCompound currentData, final IModuleGuiChanged moduleGuiChanged, final String tagName) {
-        ColorChoiceLabel colorChoiceLabel = new ColorChoiceLabel(mc, gui).addColors(0xffffff, 0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(26).setDesiredHeight(14).addChoiceEvent(new ColorChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, Integer newColor) {
-                currentData.setInteger(tagName, newColor);
-                moduleGuiChanged.updateData();
-            }
+        ColorChoiceLabel colorChoiceLabel = new ColorChoiceLabel(mc, gui).addColors(0xffffff, 0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(26).setDesiredHeight(14).addChoiceEvent((parent, newColor) -> {
+            currentData.setInteger(tagName, newColor);
+            moduleGuiChanged.updateData();
         });
         if (currentData != null) {
             int currentColor = currentData.getInteger(tagName);

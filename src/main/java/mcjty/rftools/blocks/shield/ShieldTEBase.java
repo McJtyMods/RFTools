@@ -969,7 +969,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         readBufferFromNBT(tagCompound, inventoryHelper);
 
         shieldRenderingMode = ShieldRenderingMode.values()[tagCompound.getInteger("visMode")];
-        damageMode = DamageTypeMode.values()[((int) tagCompound.getByte("damageMode"))];
+        damageMode = DamageTypeMode.values()[(tagCompound.getByte("damageMode"))];
         camoRenderPass = tagCompound.getInteger("camoRenderPass");
 
         shieldColor = tagCompound.getInteger("shieldColor");

@@ -91,12 +91,7 @@ public class GuiShapeCard extends GuiScreen {
                 ShapeCardItem.Shape.SHAPE_SOLIDCYLINDER.getDescription(),
                 ShapeCardItem.Shape.SHAPE_SOLIDTORUS.getDescription(),
                 ShapeCardItem.Shape.SHAPE_SOLIDTOPDOME.getDescription(),
-                ShapeCardItem.Shape.SHAPE_SOLIDBOTTOMDOME.getDescription()).addChoiceEvent(new ChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, String newChoice) {
-                updateSettings();
-            }
-        });
+                ShapeCardItem.Shape.SHAPE_SOLIDBOTTOMDOME.getDescription()).addChoiceEvent((parent, newChoice) -> updateSettings());
         ItemStack heldItem = MinecraftTools.getPlayer(mc).getHeldItem(EnumHand.MAIN_HAND);
         if (ItemStackTools.isEmpty(heldItem)) {
             // Cannot happen!
@@ -159,51 +154,16 @@ public class GuiShapeCard extends GuiScreen {
                 .setFilledRectThickness(-2)
                 .setFilledBackground(StyleConfig.colorListBackground);
         Label label = new Label(mc, this).setText("Void:");
-        stone = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void stone").addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget widget) {
-                updateVoidSettings();
-            }
-        });
-        cobble = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void cobble").addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget widget) {
-                updateVoidSettings();
-            }
-        });
-        dirt = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void dirt").addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget widget) {
-                updateVoidSettings();
-            }
-        });
-        gravel = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void gravel").addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget widget) {
-                updateVoidSettings();
-            }
-        });
-        sand = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void sand").addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget widget) {
-                updateVoidSettings();
-            }
-        });
-        netherrack = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void netherrack").addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget widget) {
-                updateVoidSettings();
-            }
-        });
+        stone = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void stone").addButtonEvent(widget -> updateVoidSettings());
+        cobble = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void cobble").addButtonEvent(widget -> updateVoidSettings());
+        dirt = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void dirt").addButtonEvent(widget -> updateVoidSettings());
+        gravel = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void gravel").addButtonEvent(widget -> updateVoidSettings());
+        sand = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void sand").addButtonEvent(widget -> updateVoidSettings());
+        netherrack = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void netherrack").addButtonEvent(widget -> updateVoidSettings());
         oredict = new ToggleButton(mc, this).setDesiredWidth(60).setDesiredHeight(15).setTooltips("Enable ore dictionary matching")
                 .setText("Oredict")
                 .setCheckMarker(true)
-                .addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget widget) {
-                updateVoidSettings();
-            }
-        });
+                .addButtonEvent(widget -> updateVoidSettings());
 
         stone.setPressed(ShapeCardItem.isVoiding(heldItem, "stone"));
         cobble.setPressed(ShapeCardItem.isVoiding(heldItem, "cobble"));

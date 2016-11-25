@@ -70,7 +70,7 @@ public class MatterReceiverBlock extends GenericRFToolsBlock<MatterReceiverTileE
             MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
             String name = matterReceiverTileEntity.getName();
             int id = matterReceiverTileEntity.getId();
-            if (name == null || "".equals(name)) {
+            if (name == null || name.isEmpty()) {
                 probeInfo.text(TextFormatting.GREEN + (id == -1 ? "" : ("Id: " + id)));
             } else {
                 probeInfo.text(TextFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
@@ -87,7 +87,7 @@ public class MatterReceiverBlock extends GenericRFToolsBlock<MatterReceiverTileE
             MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
             String name = matterReceiverTileEntity.getName();
             int id = matterReceiverTileEntity.getId();
-            if (name == null || "".equals(name)) {
+            if (name == null || name.isEmpty()) {
                 currenttip.add(TextFormatting.GREEN + (id == -1 ? "" : ("Id: " + id)));
             } else {
                 currenttip.add(TextFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));

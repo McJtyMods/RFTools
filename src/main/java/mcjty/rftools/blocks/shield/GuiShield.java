@@ -305,12 +305,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
 
     private void initRedstoneMode() {
         redstoneMode = new ImageChoiceLabel(mc, this).
-                addChoiceEvent(new ChoiceEvent() {
-                    @Override
-                    public void choiceChanged(Widget parent, String newChoice) {
-                        changeRedstoneMode();
-                    }
-                }).
+                addChoiceEvent((parent, newChoice) -> changeRedstoneMode()).
                 addChoice(RedstoneMode.REDSTONE_IGNORED.getDescription(), "Redstone mode:\nIgnored", iconGuiElements, 0, 0).
                 addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
                 addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
@@ -368,12 +363,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         damageType.addChoices(DAMAGETYPE_GENERIC, DAMAGETYPE_PLAYER);
         damageType.setChoiceTooltip(DAMAGETYPE_GENERIC, "Generic damage type");
         damageType.setChoiceTooltip(DAMAGETYPE_PLAYER, "Damage as done by a player");
-        damageType.addChoiceEvent(new ChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, String newChoice) {
-                changeDamageType();
-            }
-        });
+        damageType.addChoiceEvent((parent, newChoice) -> changeDamageType());
         damageType.setChoice(tileEntity.getDamageMode().getDescription());
     }
 

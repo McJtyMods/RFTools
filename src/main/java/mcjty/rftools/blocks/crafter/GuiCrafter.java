@@ -389,7 +389,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     private void drawGhostSlots() {
         net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
         GlStateManager.pushMatrix();
-        GlStateManager.translate((float) guiLeft, (float) guiTop, 0.0F);
+        GlStateManager.translate(guiLeft, guiTop, 0.0F);
         GlStateManager.color(1.0F, 0.0F, 0.0F, 1.0F);
         GlStateManager.enableRescaleNormal();
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (short) 240 / 1.0F, 240.0f);
