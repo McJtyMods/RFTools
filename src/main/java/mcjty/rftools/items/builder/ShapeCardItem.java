@@ -1,6 +1,7 @@
 package mcjty.rftools.items.builder;
 
 import com.google.common.collect.AbstractIterator;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
@@ -438,7 +439,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
             int[] iDs = OreDictionary.getOreIDs(new ItemStack(block));
             for (int id : iDs) {
                 String oreName = OreDictionary.getOreName(id);
-                List<ItemStack> ores = OreDictionary.getOres(oreName);
+                List<ItemStack> ores = ItemStackTools.getOres(oreName);
                 for (ItemStack ore : ores) {
                     if (ore.getItem() instanceof ItemBlock) {
                         blocks.add(((ItemBlock)ore.getItem()).getBlock());
