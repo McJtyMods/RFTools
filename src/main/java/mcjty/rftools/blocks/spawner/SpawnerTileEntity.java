@@ -112,6 +112,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
             clearMatter();
             return;
         }
+        mobId = EntityTools.fixEntityId(mobId);
         int level = tagCompound.getInteger("level");
         if (level < GeneralConfiguration.maxMobInjections) {
             clearMatter();
@@ -321,7 +322,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         matter[1] = tagCompound.getFloat("matter1");
         matter[2] = tagCompound.getFloat("matter2");
         if (tagCompound.hasKey("mobId")) {
-            mobId = tagCompound.getString("mobId");
+            mobId = EntityTools.fixEntityId(tagCompound.getString("mobId"));
         } else {
             mobId = null;
         }

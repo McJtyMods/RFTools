@@ -300,8 +300,8 @@ public class SpawnerConfiguration {
     }
 
     public static void addMobSpawnRF(Configuration cfg, Class<? extends EntityLiving> clazz, int rf) {
-        String name = EntityTools.findEntityNameByClass(clazz);
-        addMobSpawnRF(cfg, name, rf);
+        String id = EntityTools.findEntityIdByClass(clazz);
+        addMobSpawnRF(cfg, id, rf);
     }
 
     private static void addMobSpawnRF(Configuration cfg, String name, int rf) {
@@ -310,18 +310,18 @@ public class SpawnerConfiguration {
     }
 
     public static void addMobSpawnAmount(Configuration cfg, Class<? extends EntityLiving> clazz, int materialType, Object object, int meta, float amount) {
-        String name = EntityTools.findEntityNameByClass(clazz);
-        addMobSpawnAmount(cfg, name, materialType, object, meta, amount);
+        String id = EntityTools.findEntityIdByClass(clazz);
+        addMobSpawnAmount(cfg, id, materialType, object, meta, amount);
     }
 
-    private static void addMobSpawnAmount(Configuration cfg, String name, int materialType, Object object, int meta, float amount) {
-        List<MobSpawnAmount> list = mobSpawnAmounts.get(name);
+    private static void addMobSpawnAmount(Configuration cfg, String id, int materialType, Object object, int meta, float amount) {
+        List<MobSpawnAmount> list = mobSpawnAmounts.get(id);
         if (list == null) {
             list = new ArrayList<>(3);
             list.add(null);
             list.add(null);
             list.add(null);
-            mobSpawnAmounts.put(name, list);
+            mobSpawnAmounts.put(id, list);
         }
 
         String type;
@@ -336,7 +336,7 @@ public class SpawnerConfiguration {
             type = "L";
             itemname = null;
         }
-        String[] splitted = cfg.get(CATEGORY_MOBSPAWNAMOUNTS, name + ".spawnamount." + materialType,
+        String[] splitted = cfg.get(CATEGORY_MOBSPAWNAMOUNTS, id + ".spawnamount." + materialType,
                 new String[] { type, itemname == null ? "" : itemname.toString(), Integer.toString(meta), Float.toString(amount) }).getStringList();
         try {
             type = splitted[0];
@@ -349,7 +349,7 @@ public class SpawnerConfiguration {
             meta = Integer.parseInt(splitted[2]);
             amount = Float.parseFloat(splitted[3]);
         } catch (NumberFormatException e) {
-            Logging.logError("Something went wrong parsing the spawnamount setting for '" + name + "'!");
+            Logging.logError("Something went wrong parsing the spawnamount setting for '" + id + "'!");
             return;
         }
 
