@@ -44,6 +44,7 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyCont
 
     protected ChargedPorterItem(String name, int capacity) {
         super(name);
+        this.capacity = capacity;
         setMaxStackSize(1);
 
         maxReceive = TeleportConfiguration.CHARGEDPORTER_RECEIVEPERTICK;
