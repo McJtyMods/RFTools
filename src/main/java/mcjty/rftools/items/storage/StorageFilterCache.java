@@ -1,5 +1,6 @@
 package mcjty.rftools.items.storage;
 
+import mcjty.lib.tools.ItemStackList;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.storage.sorters.ModItemSorter;
 import net.minecraft.item.ItemStack;
@@ -17,7 +18,7 @@ public class StorageFilterCache {
     private boolean blacklistMode = true;
     private boolean nbtMode = false;
     private boolean modMode = false;
-    private ItemStack stacks[];
+    private ItemStackList stacks;
     private Set<Integer> oredictMatches = new HashSet<>();
 
     // Parameter is the filter item.
@@ -38,13 +39,13 @@ public class StorageFilterCache {
                     cnt++;
                 }
             }
-            stacks = new ItemStack[cnt];
+            stacks = ItemStackList.create(cnt);
             cnt = 0;
             for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
                 NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
                 ItemStack s = ItemStackTools.loadFromNBT(nbtTagCompound);
                 if (ItemStackTools.isValid(s)) {
-                    stacks[cnt++] = s;
+                    stacks.set(cnt++, s);
                     if (oredictMode) {
                         for (int id : OreDictionary.getOreIDs(s)) {
                             oredictMatches.add(id);
@@ -53,7 +54,7 @@ public class StorageFilterCache {
                 }
             }
         } else {
-            stacks = new ItemStack[0];
+            stacks = ItemStackList.EMPTY;
         }
     }
 
