@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import java.util.List;
 
-public class PacketGetAdjacentBlocks extends PacketRequestListFromServer<BlockPosNet, PacketGetAdjacentBlocks, PacketAdjacentBlocksReady> {
+public class PacketGetAdjacentBlocks extends PacketRequestListFromServer<BlockPos, PacketGetAdjacentBlocks, PacketAdjacentBlocksReady> {
 
     public PacketGetAdjacentBlocks() {
 

@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.teleporter;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.ClientCommandHandler;
+import mcjty.lib.network.NetworkTools;
 import mcjty.lib.network.PacketListFromServer;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
@@ -14,12 +15,12 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import java.util.List;
 
-public class PacketPlayersReady extends PacketListFromServer<PacketPlayersReady,PlayerName> {
+public class PacketPlayersReady extends PacketListFromServer<PacketPlayersReady,String> {
 
     public PacketPlayersReady() {
     }
 
-    public PacketPlayersReady(BlockPos pos, String command, List<PlayerName> list) {
+    public PacketPlayersReady(BlockPos pos, String command, List<String> list) {
         super(pos, command, list);
     }
 
@@ -37,14 +38,19 @@ public class PacketPlayersReady extends PacketListFromServer<PacketPlayersReady,
                 return;
             }
             ClientCommandHandler clientCommandHandler = (ClientCommandHandler) te;
-            if (!clientCommandHandler.execute(message.command, message.list, Type.create(PlayerName.class))) {
+            if (!clientCommandHandler.execute(message.command, message.list, Type.STRING)) {
                 Logging.log("Command " + message.command + " was not handled!");
             }
         }
     }
 
     @Override
-    protected PlayerName createItem(ByteBuf buf) {
-        return new PlayerName(buf);
+    protected String createItem(ByteBuf buf) {
+        return NetworkTools.readString(buf);
+    }
+
+    @Override
+    protected void writeItemToBuf(ByteBuf buf, String item) {
+        NetworkTools.writeString(buf, item);
     }
 }

@@ -9,7 +9,6 @@ import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
-import mcjty.rftools.blocks.teleporter.PlayerName;
 import mcjty.typed.Type;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.IMob;
@@ -233,12 +232,8 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         }
     }
 
-    private List<PlayerName> getPlayersAsList() {
-        List<PlayerName> p = new ArrayList<PlayerName>();
-        for (String player : players) {
-            p.add(new PlayerName(player));
-        }
-        return p;
+    private List<String> getPlayersAsList() {
+        return new ArrayList<>(players);
     }
 
     private void addPlayer(String player) {
@@ -563,7 +558,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
             return true;
         }
         if (CLIENTCMD_GETPLAYERS.equals(command)) {
-            GuiEnvironmentalController.storePlayersForClient(Type.create(PlayerName.class).convert(list));
+            GuiEnvironmentalController.storePlayersForClient(Type.STRING.convert(list));
             return true;
         }
         return false;

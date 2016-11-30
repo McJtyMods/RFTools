@@ -47,4 +47,9 @@ public class PacketReceiversReady extends PacketListFromServer<PacketReceiversRe
     protected TeleportDestinationClientInfo createItem(ByteBuf buf) {
         return new TeleportDestinationClientInfo(buf);
     }
+
+    @Override
+    protected void writeItemToBuf(ByteBuf buf, TeleportDestinationClientInfo item) {
+        item.toBytes(buf);
+    }
 }

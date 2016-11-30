@@ -33,7 +33,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Mod(modid = RFTools.MODID, name="RFTools",
-//        dependencies =
+        dependencies =
+                "required-after:mcjtylib_ng@[" + RFTools.MIN_MCJTYLIB_VER +",)",
 //        "required-after:Forge@["+RFTools.MIN_FORGE_VER+",);" +
 //        "required-after:McJtyLib@["+RFTools.MIN_MCJTYLIB_VER+",)",
         version = RFTools.VERSION,
@@ -42,7 +43,7 @@ public class RFTools implements ModBase {
     public static final String MODID = "rftools";
     public static final String VERSION = "5.62alpha4";
     public static final String MIN_FORGE_VER = "12.18.1.2082";
-    public static final String MIN_MCJTYLIB_VER = "1.11-2.2.0";
+    public static final String MIN_MCJTYLIB_VER = "1.11-2.2.0alpha13";
 
     @SidedProxy(clientSide="mcjty.rftools.proxy.ClientProxy", serverSide="mcjty.rftools.proxy.ServerProxy")
     public static CommonProxy proxy;

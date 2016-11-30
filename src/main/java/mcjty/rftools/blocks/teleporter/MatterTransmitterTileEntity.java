@@ -142,12 +142,8 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         return status;
     }
 
-    public List<PlayerName> getAllowedPlayers() {
-        List<PlayerName> p = new ArrayList<PlayerName>();
-        for (String player : allowedPlayers) {
-            p.add(new PlayerName(player));
-        }
-        return p;
+    public List<String> getAllowedPlayers() {
+        return new ArrayList<>(allowedPlayers);
     }
 
     public void addPlayer(String player) {
@@ -666,7 +662,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             return true;
         }
         if (CLIENTCMD_GETPLAYERS.equals(command)) {
-            GuiMatterTransmitter.storeAllowedPlayersForClient(Type.create(PlayerName.class).convert(list));
+            GuiMatterTransmitter.storeAllowedPlayersForClient(Type.STRING.convert(list));
             return true;
         }
         return false;

@@ -49,4 +49,9 @@ public class PacketFiltersReady extends PacketListFromServer<PacketFiltersReady,
     protected ShieldFilter createItem(ByteBuf buf) {
         return AbstractShieldFilter.createFilter(buf);
     }
+
+    @Override
+    protected void writeItemToBuf(ByteBuf buf, ShieldFilter item) {
+        item.toBytes(buf);
+    }
 }

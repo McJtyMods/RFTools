@@ -17,7 +17,6 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.PacketGetPlayers;
-import mcjty.rftools.blocks.teleporter.PlayerName;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -46,12 +45,8 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
     private EnergyBar energyBar;
 
     private static Set<String> fromServer_players = new HashSet<>();
-    public static void storePlayersForClient(List<PlayerName> players) {
-        Set<String> p = new HashSet<>();
-        for (PlayerName n : players) {
-            p.add(n.getName());
-        }
-        fromServer_players = p;
+    public static void storePlayersForClient(List<String> players) {
+        fromServer_players = new HashSet<>(players);
     }
 
     private TextField minyTextField;

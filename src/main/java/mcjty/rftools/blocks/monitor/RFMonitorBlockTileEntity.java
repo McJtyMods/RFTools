@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITickable {
     // Data that is saved
@@ -235,7 +234,7 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
             return true;
         }
         if (CLIENTCMD_ADJACENTBLOCKSREADY.equals(command)) {
-            GuiRFMonitor.fromServer_clientAdjacentBlocks = list.stream().map(o -> ((BlockPosNet)o).getPos()).collect(Collectors.toList());
+            GuiRFMonitor.fromServer_clientAdjacentBlocks = new ArrayList<>(Type.create(BlockPos.class).convert(list));
             return true;
         }
         return false;

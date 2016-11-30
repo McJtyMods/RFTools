@@ -47,4 +47,9 @@ public class PacketTransmittersReady extends PacketListFromServer<PacketTransmit
     protected TransmitterInfo createItem(ByteBuf buf) {
         return new TransmitterInfo(buf);
     }
+
+    @Override
+    protected void writeItemToBuf(ByteBuf buf, TransmitterInfo item) {
+        item.toBytes(buf);
+    }
 }

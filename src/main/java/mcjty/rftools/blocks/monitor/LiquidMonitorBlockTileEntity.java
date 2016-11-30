@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements ITickable {
     // Data that is saved
@@ -254,7 +253,7 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
             return true;
         }
         if (CLIENTCMD_ADJACENTBLOCKSREADY.equals(command)) {
-            GuiLiquidMonitor.fromServer_clientAdjacentBlocks = list.stream().map(o -> ((BlockPosNet)o).getPos()).collect(Collectors.toList());
+            GuiLiquidMonitor.fromServer_clientAdjacentBlocks = new ArrayList<>(Type.create(BlockPos.class).convert(list));
             return true;
         }
         return false;

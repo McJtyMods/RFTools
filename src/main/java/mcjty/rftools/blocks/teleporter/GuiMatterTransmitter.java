@@ -41,13 +41,9 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
     private List<String> players = null;
     private int listDirty = 0;
 
-    private static Set<String> fromServer_allowedPlayers = new HashSet<String>();
-    public static void storeAllowedPlayersForClient(List<PlayerName> players) {
-        Set<String> p = new HashSet<String>();
-        for (PlayerName n : players) {
-            p.add(n.getName());
-        }
-        fromServer_allowedPlayers = p;
+    private static Set<String> fromServer_allowedPlayers = new HashSet<>();
+    public static void storeAllowedPlayersForClient(List<String> players) {
+        fromServer_allowedPlayers = new HashSet<>(players);
     }
 
 

@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import java.util.List;
 
-public class PacketGetPlayers extends PacketRequestListFromServer<PlayerName, PacketGetPlayers, PacketPlayersReady> {
+public class PacketGetPlayers extends PacketRequestListFromServer<String, PacketGetPlayers, PacketPlayersReady> {
     private String clientcmd;
 
     @Override
@@ -54,7 +54,7 @@ public class PacketGetPlayers extends PacketRequestListFromServer<PlayerName, Pa
                 return;
             }
             CommandHandler commandHandler = (CommandHandler) te;
-            List<PlayerName> list = commandHandler.executeWithResultList(message.command, message.args, Type.create(PlayerName.class));
+            List<String> list = commandHandler.executeWithResultList(message.command, message.args, Type.STRING);
             RFToolsMessages.INSTANCE.sendTo(new PacketPlayersReady(message.pos, message.clientcmd, list), ctx.getServerHandler().playerEntity);
         }
     }
