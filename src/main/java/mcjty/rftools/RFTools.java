@@ -35,7 +35,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @Mod(modid = RFTools.MODID, name = "RFTools",
         dependencies =
                         "required-after:mcjtylib_ng@[" + RFTools.MIN_MCJTYLIB_VER + ",);" +
-                        "after:compatlayer@[" + RFTools.COMPATLAYER_VER + ",);" +
+                        "required-after:compatlayer@[" + RFTools.COMPATLAYER_VER + ",);" +
                         "after:Forge@[" + RFTools.MIN_FORGE10_VER + ",);" +
                         "after:forge@[" + RFTools.MIN_FORGE11_VER + ",)",
         version = RFTools.VERSION,
