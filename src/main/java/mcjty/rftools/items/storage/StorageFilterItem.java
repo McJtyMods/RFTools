@@ -76,7 +76,7 @@ public class StorageFilterItem extends GenericRFToolsItem {
             if (!worldIn.isRemote) {
                 TileEntity te = worldIn.getTileEntity(pos);
                 if (InventoryHelper.isInventory(te)) {
-                    ItemStackList stacks = ItemStackList.create(0);
+                    ItemStackList stacks = ItemStackList.create();
                     Set<ResourceLocation> registeredItems = new HashSet<>();
                     InventoryHelper.getItems(te, s -> true).forEach(s -> addItem(te, stacks, registeredItems, s));
                     if (!stack.hasTagCompound()) {

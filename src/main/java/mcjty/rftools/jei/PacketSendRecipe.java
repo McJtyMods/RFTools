@@ -28,9 +28,9 @@ public class PacketSendRecipe implements IMessage {
         stacks = ItemStackList.create(l);
         for (int i = 0 ; i < l ; i++) {
             if (buf.readBoolean()) {
-                stacks.add(NetworkTools.readItemStack(buf));
+                stacks.set(i, NetworkTools.readItemStack(buf));
             } else {
-                stacks.add(ItemStackTools.getEmptyStack());
+                stacks.set(i, ItemStackTools.getEmptyStack());
             }
         }
         if (buf.readBoolean()) {
