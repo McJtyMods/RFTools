@@ -35,8 +35,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @Mod(modid = RFTools.MODID, name = "RFTools",
         dependencies =
                         "required-after:mcjtylib_ng@[" + RFTools.MIN_MCJTYLIB_VER + ",);" +
-                        "after:compatlayer@[1.10-" + RFTools.COMPATLAYER_VER + ",);" +
-                        "after:compatlayer@[1.11-" + RFTools.COMPATLAYER_VER + ",);" +
+                        "required-after:compatlayer@[" + RFTools.COMPATLAYER_VER + ",);" +
                         "after:Forge@[" + RFTools.MIN_FORGE10_VER + ",);" +
                         "after:forge@[" + RFTools.MIN_FORGE11_VER + ",)",
         version = RFTools.VERSION,
@@ -46,8 +45,8 @@ public class RFTools implements ModBase {
     public static final String VERSION = "5.62alpha4";
     public static final String MIN_FORGE10_VER = "12.18.1.2082";
     public static final String MIN_FORGE11_VER = "13.19.0.2157";
-    public static final String MIN_MCJTYLIB_VER = "1.11-2.2.0alpha13";
-    public static final String COMPATLAYER_VER = "0.0.34alpha";
+    public static final String MIN_MCJTYLIB_VER = "2.2.0alpha14";
+    public static final String COMPATLAYER_VER = "0.0.35alpha";
 
     @SidedProxy(clientSide = "mcjty.rftools.proxy.ClientProxy", serverSide = "mcjty.rftools.proxy.ServerProxy")
     public static CommonProxy proxy;
