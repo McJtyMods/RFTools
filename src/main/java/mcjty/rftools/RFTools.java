@@ -32,20 +32,24 @@ import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-@Mod(modid = RFTools.MODID, name="RFTools",
+@Mod(modid = RFTools.MODID, name = "RFTools",
         dependencies =
-                "required-after:mcjtylib_ng@[" + RFTools.MIN_MCJTYLIB_VER +",)",
-//        "required-after:Forge@["+RFTools.MIN_FORGE_VER+",);" +
-//        "required-after:McJtyLib@["+RFTools.MIN_MCJTYLIB_VER+",)",
+                        "required-after:mcjtylib_ng@[" + RFTools.MIN_MCJTYLIB_VER + ",);" +
+                        "after:compatlayer@[1.10-" + RFTools.COMPATLAYER_VER + ",);" +
+                        "after:compatlayer@[1.11-" + RFTools.COMPATLAYER_VER + ",);" +
+                        "after:Forge@[" + RFTools.MIN_FORGE10_VER + ",);" +
+                        "after:forge@[" + RFTools.MIN_FORGE11_VER + ",)",
         version = RFTools.VERSION,
         acceptedMinecraftVersions = "[1.10,1.12)")
 public class RFTools implements ModBase {
     public static final String MODID = "rftools";
     public static final String VERSION = "5.62alpha4";
-    public static final String MIN_FORGE_VER = "12.18.1.2082";
+    public static final String MIN_FORGE10_VER = "12.18.1.2082";
+    public static final String MIN_FORGE11_VER = "13.19.0.2157";
     public static final String MIN_MCJTYLIB_VER = "1.11-2.2.0alpha13";
+    public static final String COMPATLAYER_VER = "0.0.34alpha";
 
-    @SidedProxy(clientSide="mcjty.rftools.proxy.ClientProxy", serverSide="mcjty.rftools.proxy.ServerProxy")
+    @SidedProxy(clientSide = "mcjty.rftools.proxy.ClientProxy", serverSide = "mcjty.rftools.proxy.ServerProxy")
     public static CommonProxy proxy;
 
     @Mod.Instance("rftools")
@@ -56,7 +60,9 @@ public class RFTools implements ModBase {
 
     public static ScreenModuleRegistry screenModuleRegistry = new ScreenModuleRegistry();
 
-    /** This is used to keep track of GUIs that we make*/
+    /**
+     * This is used to keep track of GUIs that we make
+     */
     private static int modGuiIndex = 0;
 
     public ClientInfo clientInfo = new ClientInfo();
@@ -76,7 +82,9 @@ public class RFTools implements ModBase {
 
     public static final String SHIFT_MESSAGE = "<Press Shift>";
 
-    /** Set our custom inventory Gui index to the next available Gui index */
+    /**
+     * Set our custom inventory Gui index to the next available Gui index
+     */
     public static final int GUI_MANUAL_MAIN = modGuiIndex++;
     public static final int GUI_COALGENERATOR = modGuiIndex++;
     public static final int GUI_CRAFTER = modGuiIndex++;
@@ -135,6 +143,7 @@ public class RFTools implements ModBase {
         MainCompatHandler.registerWaila();
         MainCompatHandler.registerTOP();
     }
+
     /**
      * Do your mod setup. Build whatever data structures you care about. Register recipes.
      */
