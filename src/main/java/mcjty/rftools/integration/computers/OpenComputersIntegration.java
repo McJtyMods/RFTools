@@ -12,5 +12,6 @@ public class OpenComputersIntegration {
         Driver.add(new MatterTransmitterDriver.OCDriver());
         Driver.add(new CoalGeneratorDriver.OCDriver());
         Driver.add(new RFMonitorDriver.OCDriver());
+        Driver.add(new LiquidMonitorDriver.OCDriver());
     }
 }
