@@ -67,7 +67,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
     private TypeModule typeModule;
 
-    private static final ResourceLocation iconLocationTop = new ResourceLocation(RFTools.MODID, "textures/gui/modularstorageTop.png");
+    private static final ResourceLocation iconLocationTop = new ResourceLocation(RFTools.MODID, "textures/gui/modularstoragetop.png");
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/modularstorage.png");
     private static final ResourceLocation guiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
