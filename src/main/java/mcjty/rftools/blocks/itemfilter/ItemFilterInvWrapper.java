@@ -1,13 +1,13 @@
 package mcjty.rftools.blocks.itemfilter;
 
+import mcjty.lib.compat.CompatItemHandlerModifiable;
 import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class ItemFilterInvWrapper implements IItemHandlerModifiable {
+public class ItemFilterInvWrapper implements CompatItemHandlerModifiable {
     private final ISidedInventory inv;
     private final EnumFacing side;
 
@@ -176,5 +176,10 @@ public class ItemFilterInvWrapper implements IItemHandlerModifiable {
             int m = Math.min(ItemStackTools.getStackSize(stackInSlot), amount);
             return inv.decrStackSize(slot1, m);
         }
+    }
+
+    @Override
+    public int getSlotMaxLimit() {
+        return 64;
     }
 }
