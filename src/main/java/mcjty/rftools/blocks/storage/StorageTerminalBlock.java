@@ -125,7 +125,7 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
             StorageTerminalTileEntity terminalTileEntity = (StorageTerminalTileEntity) tileEntity;
             return terminalTileEntity.getStackInSlot(StorageTerminalContainer.SLOT_MODULE);
         }
-        return null;
+        return ItemStackTools.getEmptyStack();
     }
 
     @Override

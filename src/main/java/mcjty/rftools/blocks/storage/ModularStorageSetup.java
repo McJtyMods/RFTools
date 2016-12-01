@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.storage;
 
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.crafting.ContainerAndItemRecipe;
@@ -84,12 +85,12 @@ public class ModularStorageSetup {
         GameRegistry.addRecipe(new ItemStack(storageModuleItem, 1, StorageModuleItem.STORAGE_TIER1), " c ", "gig", "qrq", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
                 'g', Items.GOLD_NUGGET, 'c', Blocks.CHEST, 'q', Items.QUARTZ);
         GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-                null, new ItemStack(Blocks.CHEST), null,
+                ItemStackTools.getEmptyStack(), new ItemStack(Blocks.CHEST), ItemStackTools.getEmptyStack(),
                 new ItemStack(Items.GOLD_INGOT), new ItemStack(storageModuleItem, 1, StorageModuleItem.STORAGE_TIER1), new ItemStack(Items.GOLD_INGOT),
                 new ItemStack(Items.QUARTZ), new ItemStack(Items.REDSTONE), new ItemStack(Items.QUARTZ)},
                 new ItemStack(storageModuleItem, 1, StorageModuleItem.STORAGE_TIER2), 4));
         GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-                null, new ItemStack(Blocks.CHEST), null,
+                ItemStackTools.getEmptyStack(), new ItemStack(Blocks.CHEST), ItemStackTools.getEmptyStack(),
                 new ItemStack(Blocks.GOLD_BLOCK), new ItemStack(storageModuleItem, 1, StorageModuleItem.STORAGE_TIER2), new ItemStack(Blocks.GOLD_BLOCK),
                 new ItemStack(Blocks.QUARTZ_BLOCK), new ItemStack(Blocks.REDSTONE_BLOCK), new ItemStack(Blocks.QUARTZ_BLOCK)},
                 new ItemStack(storageModuleItem, 1, StorageModuleItem.STORAGE_TIER3), 4));
