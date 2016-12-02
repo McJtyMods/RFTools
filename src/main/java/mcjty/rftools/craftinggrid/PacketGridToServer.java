@@ -25,7 +25,7 @@ public class PacketGridToServer extends PacketGridSync implements IMessage {
             if (buf.readBoolean()) {
                 stacks[i] = NetworkTools.readItemStack(buf);
             } else {
-                stacks[i] = null;
+                stacks[i] = ItemStackTools.getEmptyStack();
             }
         }
     }

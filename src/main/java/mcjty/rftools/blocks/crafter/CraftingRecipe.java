@@ -67,7 +67,7 @@ public class CraftingRecipe {
         if (resultCompound != null) {
             result = ItemStackTools.loadFromNBT(resultCompound);
         } else {
-            result = null;
+            result = ItemStackTools.getEmptyStack();
         }
         keepOne = tagCompound.getBoolean("Keep");
         craftMode = CraftMode.values()[tagCompound.getByte("Int")];
