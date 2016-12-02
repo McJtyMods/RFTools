@@ -15,5 +15,6 @@ public class OpenComputersIntegration {
         Driver.add(new LiquidMonitorDriver.OCDriver());
         Driver.add(new PowercellDriver.OCDriver());
         Driver.add(new PearlInjectorDriver.OCDriver());
+        Driver.add(new EndergenicDriver.OCDriver());
     }
 }
