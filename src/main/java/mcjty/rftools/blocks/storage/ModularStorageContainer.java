@@ -137,10 +137,6 @@ public class ModularStorageContainer extends GenericContainer {
         if (index == SLOT_STORAGE_MODULE && !player.getEntityWorld().isRemote) {
             modularStorageTileEntity.copyToModule();
         }
-        System.out.println("index = " + index);
-        if (index == 347) {
-            System.out.println("ModularStorageContainer.slotClick");
-        }
         return super.slotClick(index, button, mode, player);
     }
 
