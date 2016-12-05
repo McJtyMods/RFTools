@@ -8,6 +8,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 
+import java.util.List;
+
 public class CraftingGridInventory implements CompatInventory {
 
     public static int SLOT_GHOSTOUTPUT = 0;
@@ -44,12 +46,12 @@ public class CraftingGridInventory implements CompatInventory {
 
     @Override
     public ItemStack decrStackSize(int index, int count) {
-        return ItemStackHelper.getAndSplit(stacks, index, count);
+        return ItemStackHelper.getAndSplit((List<ItemStack>)stacks, index, count);
     }
 
     @Override
     public ItemStack removeStackFromSlot(int index) {
-        return ItemStackHelper.getAndRemove(stacks, index);
+        return ItemStackHelper.getAndRemove((List<ItemStack>)stacks, index);
     }
 
     @Override

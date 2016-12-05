@@ -1,6 +1,7 @@
 package mcjty.rftools.commands;
 
 import mcjty.lib.compat.CompatCommand;
+import mcjty.lib.compat.CompatCommandBase;
 import mcjty.lib.tools.ChatTools;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
@@ -92,7 +93,7 @@ public abstract class DefaultCommand implements CompatCommand {
                     }
                 } else {
                     // Server-side.
-                    if (!sender.canUseCommand(command.getPermissionLevel(), getName())) {
+                    if (!CompatCommandBase.canUseCommand(sender, command.getPermissionLevel(), getName())) {
                         ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "Command is not allowed!"));
                     } else {
                         command.execute(sender, args);
