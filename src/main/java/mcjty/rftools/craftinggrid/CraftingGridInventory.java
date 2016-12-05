@@ -2,13 +2,11 @@ package mcjty.rftools.craftinggrid;
 
 import mcjty.lib.compat.CompatInventory;
 import mcjty.lib.tools.ItemStackList;
+import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
-
-import java.util.List;
 
 public class CraftingGridInventory implements CompatInventory {
 
@@ -17,7 +15,7 @@ public class CraftingGridInventory implements CompatInventory {
 
     public static int GRID_WIDTH = 66;
     public static int GRID_HEIGHT = 208;
-    public static int GRID_XOFFSET = -GRID_WIDTH -2+7;
+    public static int GRID_XOFFSET = -GRID_WIDTH - 2 + 7;
     public static int GRID_YOFFSET = 127;
 
     private ItemStackList stacks = ItemStackList.create(10);
@@ -28,7 +26,7 @@ public class CraftingGridInventory implements CompatInventory {
 
     public ItemStack[] getIngredients() {
         ItemStack[] ing = new ItemStack[9];
-        for (int i = 0 ; i < ing.length ; i++) {
+        for (int i = 0; i < ing.length; i++) {
             ing[i] = stacks.get(i + SLOT_GHOSTINPUT);
         }
         return ing;
@@ -46,12 +44,20 @@ public class CraftingGridInventory implements CompatInventory {
 
     @Override
     public ItemStack decrStackSize(int index, int count) {
-        return ItemStackHelper.getAndSplit((List<ItemStack>)stacks, index, count);
+        return index >= 0 && index < stacks.size()
+                && !ItemStackTools.isEmpty(stacks.get(index))
+                && count > 0
+                ? stacks.get(index).splitStack(count)
+                : ItemStackTools.getEmptyStack();
+//        return ItemStackHelper.getAndSplit(stacks, index, count);
     }
 
     @Override
     public ItemStack removeStackFromSlot(int index) {
-        return ItemStackHelper.getAndRemove((List<ItemStack>)stacks, index);
+        return index >= 0 && index < stacks.size()
+                ? stacks.set(index, ItemStackTools.getEmptyStack())
+                : ItemStackTools.getEmptyStack();
+//        return ItemStackHelper.getAndRemove(stacks, index);
     }
 
     @Override
