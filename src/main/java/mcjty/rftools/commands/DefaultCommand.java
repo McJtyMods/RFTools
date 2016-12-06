@@ -130,6 +130,6 @@ public abstract class DefaultCommand implements CompatCommand {
 
     @Override
     public int compareTo(ICommand o) {
-        return getName().compareTo(o.getName());
+        return getName().compareTo(CompatCommandBase.getCommandName(o));
     }
 }
