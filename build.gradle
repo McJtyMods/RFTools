@@ -78,7 +78,7 @@ dependencies {
     deobfCompile "mezz.jei:jei_1.11:4.0.2.194"
     deobfCompile "mcjty.theoneprobe:TheOneProbe:1.11-1.3.3-46"
     deobfCompile "com.github.mcjty:compatlayer:1.11-0.1.1"
-    deobfCompile "com.github.mcjty:mcjtylib:1.1x-2.3.0-SNAPSHOT"
+    deobfCompile "com.github.mcjty:mcjtylib:1.1x-2.3.1-SNAPSHOT"
 
     //compile "li.cil.oc:OpenComputers:MC1.7.10-1.5.+:api"
 }
@@ -106,5 +106,51 @@ processResources
     // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
+    }
+}
+
+task("uploadJars", dependsOn: "reobf") {
+    description = "uploads JARs"
+    if (System.getenv("local_maven") != null) {
+        apply plugin: 'maven'
+        uploadArchives {
+            repositories {
+                mavenDeployer {
+                    repository(url: "file://" + System.getenv("local_maven"))
+                    pom {
+                        groupId = project.group
+                        version = project.version
+                        artifactId = project.archivesBaseName
+                        project {
+                            name project.archivesBaseName
+                            packaging 'jar'
+                            description 'RFTools'
+                            scm {
+                                url 'https://github.com/McJty/RFTools'
+                                connection 'scm:git:git@github.com:McJty/RFTools.git'
+                                developerConnection 'scm:git:git@github.com:McJty/RFTools.git'
+                            }
+                            issueManagement {
+                                system 'github'
+                                url 'https://github.com/McJty/RFTools/issues'
+                            }
+                            licenses {
+                                license {
+                                    name 'MIT'
+                                    distribution 'repo'
+                                }
+                            }
+                            developers {
+                                developer {
+                                    id 'McJty'
+                                    name 'McJty'
+                                    roles { role 'developer' }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
