@@ -13,6 +13,10 @@ public class LogicTileEntity extends GenericTileEntity {
     protected boolean powered = false;
 
     public LogicFacing getFacing(IBlockState state) {
+        // Should not be needed but apparently it sometimes is
+        if (!(state.getBlock() instanceof LogicSlabBlock)) {
+            return LogicFacing.DOWN_TOEAST;
+        }
         Integer meta = state.getValue(LogicSlabBlock.META_INTERMEDIATE);
         return LogicFacing.getFacingWithMeta(facing, meta);
     }
