@@ -273,19 +273,26 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     }
     
     private boolean checkItems(BlockPos pos1, EnumFacing dir) {
-        List<EntityItem> items = worldObj.getEntitiesWithinAABB(EntityItem.class, getCachedBox(pos1, dir));
-        int entityCount = items.stream().mapToInt(item -> getEntityItemStackSize(item)).sum();
+        ItemStack matcher = inventoryHelper.getStackInSlot(0);
+        Item matcherItem = (matcher == null) ? null : matcher.getItem();
 
+        List<EntityItem> items = worldObj.getEntitiesWithinAABB(EntityItem.class, getCachedBox(pos1, dir));
+        int entityCount = items.stream().mapToInt(item -> getEntityItemStackSize(item, matcherItem)).sum();
+        
         return entityCount >= number;
     }
     
-    private int getEntityItemStackSize(EntityItem entityItem) {
+    private int getEntityItemStackSize(EntityItem entityItem, Item matcherItem) {
         if (entityItem == null) {
             return 0;
         }
         
         ItemStack stack = entityItem.getEntityItem();
         if (stack == null) {
+            return 0;
+        }
+        
+        if (matcherItem != null && matcherItem != stack.getItem()) {
             return 0;
         }
 
