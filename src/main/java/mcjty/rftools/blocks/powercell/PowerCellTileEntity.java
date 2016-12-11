@@ -311,8 +311,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
                             received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
                         }
 
-                        energyStored -= extractEnergyInternal((int) (received * factor), false,
-                                PowerCellConfiguration.rfPerTick * getPowerFactor() / simpleFactor);
+                        energyStored -= extractEnergyInternal(received, false, Integer.MAX_VALUE);
                         if (energyStored <= 0) {
                             break;
                         }
