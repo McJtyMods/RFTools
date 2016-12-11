@@ -27,7 +27,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
