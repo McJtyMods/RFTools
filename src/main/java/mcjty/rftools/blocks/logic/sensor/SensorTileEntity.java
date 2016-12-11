@@ -11,6 +11,7 @@ import net.minecraft.block.BlockNetherWart;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,6 +27,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -128,6 +130,9 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
                 break;
             case SENSOR_ENTITIES:
                 newout = checkEntities(newpos, inputSide, Entity.class);
+                break;
+            case SENSOR_ITEMS:
+                newout = checkItems(newpos, inputSide);
                 break;
             case SENSOR_PLAYERS:
                 newout = checkEntities(newpos, inputSide, EntityPlayer.class);
@@ -266,7 +271,27 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         }
         return cachedBox;
     }
+    
+    private boolean checkItems(BlockPos pos1, EnumFacing dir) {
+        List<EntityItem> items = worldObj.getEntitiesWithinAABB(EntityItem.class, getCachedBox(pos1, dir));
+        int entityCount = items.stream().mapToInt(item -> getEntityItemStackSize(item)).sum();
 
+        return entityCount >= number;
+    }
+    
+    private int getEntityItemStackSize(EntityItem entityItem) {
+        if (entityItem == null) {
+            return 0;
+        }
+        
+        ItemStack stack = entityItem.getEntityItem();
+        if (stack == null) {
+            return 0;
+        }
+
+        return stack.stackSize;
+    }
+    
     private boolean checkEntities(BlockPos pos1, EnumFacing dir, Class<? extends Entity> clazz) {
         List<Entity> entities = worldObj.getEntitiesWithinAABB(clazz, getCachedBox(pos1, dir));
         return entities.size() >= number;

@@ -7,6 +7,7 @@ public enum SensorType implements NamedEnum {
     SENSOR_FLUID("Fluid", false, true, "Detect if a certain type", "of fluid is present"),
     SENSOR_GROWTHLEVEL("Growth", true, true, "Detect the growth percentage", "of a crop"),
     SENSOR_ENTITIES("Entities", true, false, "Count the amount of entities"),
+    SENSOR_ITEMS("Items", true, false, "Count the amount of items"),
     SENSOR_PLAYERS("Players", true, false, "Count the amount of players"),
     SENSOR_HOSTILE("Hostile", true, false, "Count the amount of hostile mobs"),
     SENSOR_PASSIVE("Passive", true, false, "Count the amount of passive mobs");
