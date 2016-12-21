@@ -493,7 +493,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     }
 
     private static FakePlayer killer = null;
-    private ItemStack lootingSword = null;
+    private ItemStack lootingSword = ItemStackTools.getEmptyStack();
 
     public void applyDamageToEntity(Entity entity) {
         DamageSource source;
@@ -510,7 +510,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             ItemStack shards = getStackInSlot(ShieldContainer.SLOT_SHARD);
             if (ItemStackTools.isValid(shards) && ItemStackTools.getStackSize(shards) >= ShieldConfiguration.shardsPerLootingKill) {
                 decrStackSize(ShieldContainer.SLOT_SHARD, ShieldConfiguration.shardsPerLootingKill);
-                if (lootingSword == null) {
+                if (ItemStackTools.isEmpty(lootingSword)) {
                     lootingSword = EnvironmentalSetup.createEnchantedItem(Items.DIAMOND_SWORD, Enchantments.LOOTING, ShieldConfiguration.lootingKillBonus);
                 }
                 lootingSword.setItemDamage(0);
@@ -657,7 +657,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     }
 
     private boolean isShapedShield() {
-        return inventoryHelper.getStackInSlot(ShieldContainer.SLOT_SHAPE) != null;
+        return ItemStackTools.isValid(inventoryHelper.getStackInSlot(ShieldContainer.SLOT_SHAPE));
     }
 
     private int findTemplateMeta() {
@@ -1116,7 +1116,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
-        if (index == ShieldContainer.SLOT_SHAPE && inventoryHelper.getStackInSlot(index) != null && amount > 0) {
+        if (index == ShieldContainer.SLOT_SHAPE && ItemStackTools.isValid(inventoryHelper.getStackInSlot(index)) && amount > 0) {
             // Restart if we go from having a stack to not having stack or the other way around.
             decomposeShield();
         }
@@ -1136,7 +1136,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             markDirty();
             return its;
         }
-        return null;
+        return ItemStackTools.getEmptyStack();
     }
 
     @Override
