@@ -7,6 +7,7 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.tools.MinecraftTools;
 import mcjty.lib.tools.WorldTools;
 import mcjty.lib.varia.Broadcaster;
+import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.shield.RelCoordinate;
 import mcjty.rftools.playerprops.BuffProperties;
 import net.minecraft.block.Block;
@@ -305,7 +306,11 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         }
 
         // The orientation of this elevator.
-        EnumFacing side = getWorld().getBlockState(getPos()).getValue(GenericBlock.FACING_HORIZ);
+        IBlockState blockState = getWorld().getBlockState(getPos());
+        if (blockState.getBlock() != ElevatorSetup.elevatorBlock) {
+            return null;
+        }
+        EnumFacing side = blockState.getValue(GenericBlock.FACING_HORIZ);
 
         for (int y = 0; y < getWorld().getHeight(); y++) {
             BlockPos elevatorPos = getPosAtY(getPos(), y);
@@ -581,7 +586,11 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
 
     // Return true if the platform is here (i.e. there is a block in front of the elevator)
     public boolean isPlatformHere() {
-        EnumFacing side = getWorld().getBlockState(getPos()).getValue(GenericBlock.FACING_HORIZ);
+        IBlockState blockState = getWorld().getBlockState(getPos());
+        if (blockState.getBlock() != ElevatorSetup.elevatorBlock) {
+            return false;
+        }
+        EnumFacing side = blockState.getValue(GenericBlock.FACING_HORIZ);
         BlockPos frontPos = getPos().offset(side);
         return isValidPlatformBlock(frontPos);
     }
@@ -592,7 +601,11 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         // What about TE blocks in front of platform?
 
         // First check if the platform is here already:
-        EnumFacing side = getWorld().getBlockState(getPos()).getValue(GenericBlock.FACING_HORIZ);
+        IBlockState blockState = getWorld().getBlockState(getPos());
+        if (blockState.getBlock() != ElevatorSetup.elevatorBlock) {
+            return;
+        }
+        EnumFacing side = blockState.getValue(GenericBlock.FACING_HORIZ);
         BlockPos frontPos = getPos().offset(side);
         if (isValidPlatformBlock(frontPos)) {
             // Platform is already here (or something is blocking here)
