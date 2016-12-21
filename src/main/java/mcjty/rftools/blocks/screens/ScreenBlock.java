@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.container.WrenchUsage;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.ModuleSupport;
@@ -334,9 +335,21 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
             ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(new BlockPos(x, y, z));
             screenTileEntity.setColor(color);
             return true;
-        } else {
-            return super.openGui(world, x, y, z, player);
         }
+        if (player.isSneaking()) {
+            return super.openGui(world, x, y, z, player);
+        } else {
+            if (world.isRemote) {
+                activateOnClient(world, new BlockPos(x, y, z));
+            }
+            return true;
+        }
+    }
+
+    private void activateOnClient(World world, BlockPos pos) {
+        RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
+        ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos);
+        screenTileEntity.hitScreenClient(mouseOver.hitVec.xCoord - pos.getX(), mouseOver.hitVec.yCoord - pos.getY(), mouseOver.hitVec.zCoord - pos.getZ(), mouseOver.sideHit);
     }
 
     public static final AxisAlignedBB BLOCK_AABB = new AxisAlignedBB(0.5F - 0.5F, 0.0F, 0.5F - 0.5F, 0.5F + 0.5F, 1.0F, 0.5F + 0.5F);

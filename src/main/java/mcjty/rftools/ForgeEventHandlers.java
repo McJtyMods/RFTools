@@ -7,6 +7,8 @@ import mcjty.rftools.blocks.blockprotector.BlockProtectorTileEntity;
 import mcjty.rftools.blocks.blockprotector.BlockProtectors;
 import mcjty.rftools.blocks.environmental.NoTeleportAreaManager;
 import mcjty.rftools.blocks.environmental.PeacefulAreaManager;
+import mcjty.rftools.blocks.screens.ScreenBlock;
+import mcjty.rftools.blocks.screens.ScreenHitBlock;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.teleporter.TeleportDestination;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
@@ -15,6 +17,7 @@ import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import mcjty.rftools.playerprops.PropertiesDispatcher;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
@@ -92,15 +95,35 @@ public class ForgeEventHandlers {
 
     @SubscribeEvent
     public void onPlayerInteractEvent(PlayerInteractEvent event) {
+        EntityPlayer player = event.getEntityPlayer();
+
         if (event instanceof PlayerInteractEvent.LeftClickBlock) {
             checkCreativeClick(event);
+        } else if (event instanceof PlayerInteractEvent.RightClickBlock) {
+            if (player.isSneaking()) {
+                World world = event.getWorld();
+                IBlockState state = world.getBlockState(event.getPos());
+                Block block = state.getBlock();
+                if (block instanceof ScreenBlock) {
+                    Vec3d vec = ((PlayerInteractEvent.RightClickBlock) event).getHitVec();
+                    ((ScreenBlock) block).activate(world, event.getPos(), state, player, event.getHand(), event.getFace(), (float) vec.xCoord, (float) vec.yCoord, (float) vec.zCoord);
+                    event.setCanceled(true);
+                    return;
+                } else if (block instanceof ScreenHitBlock) {
+                    Vec3d vec = ((PlayerInteractEvent.RightClickBlock) event).getHitVec();
+                    ((ScreenHitBlock) block).activate(world, event.getPos(), state, player, event.getHand(), event.getFace(), (float) vec.xCoord, (float) vec.yCoord, (float) vec.zCoord);
+                    event.setCanceled(true);
+                    return;
+
+                }
+            }
         }
 
-        ItemStack heldItem = event.getEntityPlayer().getHeldItem(event.getHand());
+        ItemStack heldItem = player.getHeldItem(event.getHand());
         if (ItemStackTools.isEmpty(heldItem) || heldItem.getItem() == null) {
             return;
         }
-        if (event.getEntityPlayer().isSneaking() && WrenchChecker.isAWrench(heldItem.getItem())) {
+        if (player.isSneaking() && WrenchChecker.isAWrench(heldItem.getItem())) {
             // If the block is protected we prevent sneak-wrenching it.
             World world = event.getWorld();
             int x = event.getPos().getX();

@@ -782,10 +782,10 @@ screens will receive power from this controller.
 You can craft a screen as follows:
 {rb:screen}
 
-A screen with no modules is just black. So to make things interesting you
-should add one or more module.
+A screen with no modules shows some basic help. So to make things
+interesting you should add one or more module.
 
-Note that even with modules a screen will be black if it is
+Note that with modules a screen will be black if it is
 not getting power. Make sure you have a screen controller
 nearby and press 'Scan' on that so that it finds all screens.
 {-------------------------------------------------------------}
