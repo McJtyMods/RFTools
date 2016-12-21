@@ -49,7 +49,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
 //    private final Map<String,List<ComputerScreenModule>> computerModules = new HashMap<String, List<ComputerScreenModule>>();
 
     private boolean needsServerData = false;
-    private boolean showHelp = false;
+    private boolean showHelp = true;
     private boolean powerOn = false;        // True if screen is powered.
     private boolean connected = false;      // True if screen is connected to a controller.
     private int size = 0;                   // Size of screen (0 is normal, 1 is large, 2 is huge)
@@ -197,6 +197,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         clientScreenModules = null;
         screenModules = null;
         clickedModules.clear();
+        showHelp = true;
 //        computerModules.clear();
     }
 
@@ -455,9 +456,13 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         if (powerOn) {
             return true;
         }
-        if (getClientScreenModules().isEmpty()) {
+        if (isShowHelp()) {
             return true;    // True because then we give help
         }
+        return isCreative();
+    }
+
+    private boolean isCreative() {
         return getWorld().getBlockState(getPos()).getBlock() == ScreenSetup.creativeScreenBlock;
     }
 
@@ -487,11 +492,25 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     public static List<IClientScreenModule> getHelpingScreenModules() {
         if (helpingScreenModules == null) {
             helpingScreenModules = new ArrayList<>();
-            TextClientScreenModule t1 = new TextClientScreenModule();
-            t1.setLine("Help me!");
-            helpingScreenModules.add(t1);
+            addLine("Read me", 0x7799ff, true);
+            addLine("", 0xffffff, false);
+            addLine("Sneak-right click for", 0xffffff, false);
+            addLine("GUI and insertion of", 0xffffff, false);
+            addLine("modules", 0xffffff, false);
+            addLine("", 0xffffff, false);
+            addLine("Use Screen Controller", 0xffffff, false);
+            addLine("to power screens", 0xffffff, false);
+            addLine("remotely", 0xffffff, false);
         }
         return helpingScreenModules;
+    }
+
+    private static void addLine(String s, int color, boolean large) {
+        TextClientScreenModule t1 = new TextClientScreenModule();
+        t1.setLine(s);
+        t1.setColor(color);
+        t1.setLarge(large);
+        helpingScreenModules.add(t1);
     }
 
 
