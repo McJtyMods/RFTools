@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.crafter;
 
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.crafting.PreservingShapedRecipe;
 import net.minecraft.block.Block;
@@ -33,14 +34,14 @@ public class CrafterSetup {
 
         GameRegistry.addRecipe(new ItemStack(crafterBlock1), " T ", "cMc", " T ", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'c', Blocks.CRAFTING_TABLE);
         GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
-                null, new ItemStack(redstoneTorch), null,
+                ItemStackTools.getEmptyStack(), new ItemStack(redstoneTorch), ItemStackTools.getEmptyStack(),
                 new ItemStack(Blocks.CRAFTING_TABLE), new ItemStack(crafterBlock1), new ItemStack(Blocks.CRAFTING_TABLE),
-                null, new ItemStack(redstoneTorch), null
+                ItemStackTools.getEmptyStack(), new ItemStack(redstoneTorch), ItemStackTools.getEmptyStack()
         }, new ItemStack(crafterBlock2), 4));
         GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
-                null, new ItemStack(redstoneTorch), null,
+                ItemStackTools.getEmptyStack(), new ItemStack(redstoneTorch), ItemStackTools.getEmptyStack(),
                 new ItemStack(Blocks.CRAFTING_TABLE), new ItemStack(crafterBlock2), new ItemStack(Blocks.CRAFTING_TABLE),
-                null, new ItemStack(redstoneTorch), null
+                ItemStackTools.getEmptyStack(), new ItemStack(redstoneTorch), ItemStackTools.getEmptyStack()
         }, new ItemStack(crafterBlock3), 4));
     }
 }
