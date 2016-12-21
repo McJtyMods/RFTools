@@ -14,6 +14,7 @@ import mcjty.rftools.blocks.screens.data.ModuleDataBoolean;
 import mcjty.rftools.blocks.screens.data.ModuleDataInteger;
 import mcjty.rftools.blocks.screens.data.ModuleDataString;
 import mcjty.rftools.blocks.screens.modules.ScreenModuleHelper;
+import mcjty.rftools.blocks.screens.modulesclient.TextClientScreenModule;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -48,6 +49,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
 //    private final Map<String,List<ComputerScreenModule>> computerModules = new HashMap<String, List<ComputerScreenModule>>();
 
     private boolean needsServerData = false;
+    private boolean showHelp = false;
     private boolean powerOn = false;        // True if screen is powered.
     private boolean connected = false;      // True if screen is connected to a controller.
     private int size = 0;                   // Size of screen (0 is normal, 1 is large, 2 is huge)
@@ -453,6 +455,9 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         if (powerOn) {
             return true;
         }
+        if (getClientScreenModules().isEmpty()) {
+            return true;    // True because then we give help
+        }
         return getWorld().getBlockState(getPos()).getBlock() == ScreenSetup.creativeScreenBlock;
     }
 
@@ -477,10 +482,24 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         markDirty();
     }
 
+    private static List<IClientScreenModule> helpingScreenModules = null;
+
+    public static List<IClientScreenModule> getHelpingScreenModules() {
+        if (helpingScreenModules == null) {
+            helpingScreenModules = new ArrayList<>();
+            TextClientScreenModule t1 = new TextClientScreenModule();
+            t1.setLine("Help me!");
+            helpingScreenModules.add(t1);
+        }
+        return helpingScreenModules;
+    }
+
+
     // This is called client side.
     public List<IClientScreenModule> getClientScreenModules() {
         if (clientScreenModules == null) {
             needsServerData = false;
+            showHelp = true;
             clientScreenModules = new ArrayList<>();
             for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
                 ItemStack itemStack = inventoryHelper.getStackInSlot(i);
@@ -501,13 +520,18 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
                     if (clientScreenModule.needsServerData()) {
                         needsServerData = true;
                     }
+                    showHelp = false;
                 } else {
                     clientScreenModules.add(null);        // To keep the indexing correct so that the modules correspond with there slot number.
                 }
             }
-
         }
         return clientScreenModules;
+    }
+
+    // Called client side only
+    public boolean isShowHelp() {
+        return showHelp;
     }
 
     public boolean isNeedsServerData() {

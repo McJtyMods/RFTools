@@ -48,6 +48,18 @@ public class TextClientScreenModule implements IClientScreenModule {
                 toggle("large", "Large", "Large or small font").nl();
     }
 
+    public void setLine(String line) {
+        this.line = line;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+
+    public void setLarge(boolean large) {
+        this.large = large;
+    }
+
     @Override
     public void setupFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {

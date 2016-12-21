@@ -78,6 +78,9 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
             Map<Integer, IModuleData> screenData = updateScreenData(tileEntity);
 
             List<IClientScreenModule> modules = tileEntity.getClientScreenModules();
+            if (tileEntity.isShowHelp()) {
+                modules = ScreenTileEntity.getHelpingScreenModules();
+            }
             renderModules(fontrenderer, tileEntity, mode, modules, screenData, tileEntity.getSize());
         }
 
