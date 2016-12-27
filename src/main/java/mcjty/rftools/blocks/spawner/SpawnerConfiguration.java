@@ -289,6 +289,14 @@ public class SpawnerConfiguration {
         addMobSpawnAmount(cfg, EntityPolarBear.class, MATERIALTYPE_KEY, Items.FISH, 0, 0.1f);
         addMobSpawnAmount(cfg, EntityPolarBear.class, MATERIALTYPE_BULK, Blocks.DIRT, 0, .2f);
         addMobSpawnAmount(cfg, EntityPolarBear.class, MATERIALTYPE_LIVING, null, 0, 20);
+        addMobSpawnRF(cfg, EntityWitherSkeleton.class, 1500);
+        addMobSpawnAmount(cfg, EntityWitherSkeleton.class, MATERIALTYPE_KEY, Items.BONE, 0, 0.1f);
+        addMobSpawnAmount(cfg, EntityWitherSkeleton.class, MATERIALTYPE_BULK, Blocks.NETHERRACK, 0, .5f);
+        addMobSpawnAmount(cfg, EntityWitherSkeleton.class, MATERIALTYPE_LIVING, null, 0, 30);
+        addMobSpawnRF(cfg, EntityStray.class, 800);
+        addMobSpawnAmount(cfg, EntityStray.class, MATERIALTYPE_KEY, Items.BONE, 0, 0.1f);
+        addMobSpawnAmount(cfg, EntityStray.class, MATERIALTYPE_BULK, Blocks.NETHERRACK, 0, .5f);
+        addMobSpawnAmount(cfg, EntityStray.class, MATERIALTYPE_LIVING, null, 0, 20);
         addMobSpawnRF(cfg, "WitherSkeleton", 1500);
         addMobSpawnAmount(cfg, "WitherSkeleton", MATERIALTYPE_KEY, Items.BONE, 0, 0.1f);
         addMobSpawnAmount(cfg, "WitherSkeleton", MATERIALTYPE_BULK, Blocks.NETHERRACK, 0, .5f);
