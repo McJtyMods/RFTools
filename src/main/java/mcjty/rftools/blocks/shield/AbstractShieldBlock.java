@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.shield;
 
+import mcjty.lib.compat.CompatBlock;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.shield.filters.*;
 import net.minecraft.block.Block;
@@ -30,7 +31,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.List;
 import java.util.Random;
 
-public abstract class AbstractShieldBlock extends Block implements ITileEntityProvider {
+public abstract class AbstractShieldBlock extends CompatBlock implements ITileEntityProvider {
 
     public static final int META_ITEMS = 1;             // If set then blocked for items
     public static final int META_PASSIVE = 2;           // If set the blocked for passive mobs
@@ -78,7 +79,7 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
     }
 
     @Override
-    public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> list, Entity entity) {
+    public void clAddCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> list, Entity entity) {
         NoTickShieldBlockTileEntity shieldBlockTileEntity = (NoTickShieldBlockTileEntity) world.getTileEntity(pos);
         int cdData = shieldBlockTileEntity.getCollisionData();
 
@@ -89,7 +90,7 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
         if ((cdData & META_HOSTILE) != 0) {
             if (entity instanceof IMob) {
                 if (checkEntityCD(world, pos, HostileFilter.HOSTILE)) {
-                    super.addCollisionBoxToList(state, world, pos, entityBox, list, entity);
+                    super.clAddCollisionBoxToList(state, world, pos, entityBox, list, entity);
                 }
                 return;
             }
@@ -97,7 +98,7 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
         if ((cdData & META_PASSIVE) != 0) {
             if (entity instanceof IAnimals && !(entity instanceof IMob)) {
                 if (checkEntityCD(world, pos, AnimalFilter.ANIMAL)) {
-                    super.addCollisionBoxToList(state, world, pos, entityBox, list, entity);
+                    super.clAddCollisionBoxToList(state, world, pos, entityBox, list, entity);
                 }
                 return;
             }
@@ -105,14 +106,14 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
         if ((cdData & META_PLAYERS) != 0) {
             if (entity instanceof EntityPlayer) {
                 if (checkPlayerCD(world, pos, (EntityPlayer) entity)) {
-                    super.addCollisionBoxToList(state, world, pos, entityBox, list, entity);
+                    super.clAddCollisionBoxToList(state, world, pos, entityBox, list, entity);
                 }
             }
         }
         if ((cdData & META_ITEMS) != 0) {
             if (!(entity instanceof EntityLivingBase)) {
                 if (checkEntityCD(world, pos, ItemFilter.ITEM)) {
-                    super.addCollisionBoxToList(state, world, pos, entityBox, list, entity);
+                    super.clAddCollisionBoxToList(state, world, pos, entityBox, list, entity);
                 }
                 return;
             }
