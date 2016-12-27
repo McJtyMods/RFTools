@@ -155,7 +155,7 @@ public class SpawnerConfiguration {
         defaultMobSpawnRf = 10000;
         defaultSpawnAmounts.add(new MobSpawnAmount(new ItemStack(Items.DIAMOND), 1.0f));
         defaultSpawnAmounts.add(new MobSpawnAmount(new ItemStack(Blocks.DIRT), 20));
-        defaultSpawnAmounts.add(new MobSpawnAmount(null, 120.0f));
+        defaultSpawnAmounts.add(new MobSpawnAmount(ItemStackTools.getEmptyStack(), 120.0f));
 
         addMobSpawnRF(cfg, EntityBat.class, 100);
         addMobSpawnAmount(cfg, EntityBat.class, MATERIALTYPE_KEY, Items.FEATHER, 0, .1f);
