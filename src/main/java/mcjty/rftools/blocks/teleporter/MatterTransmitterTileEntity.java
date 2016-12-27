@@ -475,6 +475,10 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         for (Entity entity : l) {
             if (entity instanceof EntityPlayer) {
                 EntityPlayer entityPlayer = (EntityPlayer) entity;
+                if (entityPlayer.isRiding() || entityPlayer.isBeingRidden()) {
+                    // Ignore players that are riding a horse
+                    continue;
+                }
 
                 if (entityPlayer.getName() != null) {
                     if ((!isPrivateAccess()) || allowedPlayers.contains(entityPlayer.getName())) {
@@ -576,6 +580,10 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             return;
         }
         EntityPlayer player = (EntityPlayer) entity;
+        if (player.isRiding() || player.isBeingRidden()) {
+            cooldownTimer = 80;
+            return;
+        }
 
         TeleportDestination dest = teleportDestination;
         if (teleportId != null) {
