@@ -584,7 +584,10 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             list = newlist;
         }
 
-        FontRenderer font = stack.getItem().getFontRenderer(stack);
+        FontRenderer font = null;
+        if (stack.getItem() != null) {
+            font = stack.getItem().getFontRenderer(stack);
+        }
         this.drawHoveringText(list, x, y, (font == null ? fontRendererObj : font));
     }
 
