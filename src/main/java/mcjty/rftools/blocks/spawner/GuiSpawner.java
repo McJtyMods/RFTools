@@ -22,6 +22,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -124,7 +125,9 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
                     } else {
                         blocks[i].setRenderItem(b);
                     }
-                    String mf = new DecimalFormat("#.##").format(matter[i]);
+                    DecimalFormat format = new DecimalFormat("#.##");
+                    format.setRoundingMode(RoundingMode.UNNECESSARY);
+                    String mf = format.format(matter[i]);
                     labels[i].setText(mf + "/" + Float.toString(amount));
                     i++;
                 }

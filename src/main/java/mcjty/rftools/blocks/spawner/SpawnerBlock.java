@@ -30,6 +30,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -49,12 +50,6 @@ public class SpawnerBlock extends GenericRFToolsBlock<SpawnerTileEntity, Spawner
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-//        NBTTagCompound tagCompound = itemStack.getTagCompound();
-//        if (tagCompound != null) {
-//            String name = tagCompound.getString("tpName");
-//            int id = tagCompound.getInteger("destinationId");
-//            list.add(EnumChatFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
-//        }
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(TextFormatting.WHITE + "This block can spawn creatures. It needs a syringe");
             list.add(TextFormatting.WHITE + "of the appropriate type, RF power and also it");
@@ -83,6 +78,7 @@ public class SpawnerBlock extends GenericRFToolsBlock<SpawnerTileEntity, Spawner
             SpawnerTileEntity spawnerTileEntity = (SpawnerTileEntity) te;
             float[] matter = spawnerTileEntity.getMatter();
             DecimalFormat fmt = new DecimalFormat("#.##");
+            fmt.setRoundingMode(RoundingMode.UNNECESSARY);
             probeInfo.text(TextFormatting.GREEN + "Key Matter: " + fmt.format(matter[0]));
             probeInfo.text(TextFormatting.GREEN + "Bulk Matter: " + fmt.format(matter[1]));
             probeInfo.text(TextFormatting.GREEN + "Living Matter: " + fmt.format(matter[2]));
@@ -108,6 +104,7 @@ public class SpawnerBlock extends GenericRFToolsBlock<SpawnerTileEntity, Spawner
             float[] matter = SpawnerInfoPacketClient.matterReceived;
             if (matter != null && matter.length == 3) {
                 DecimalFormat fmt = new DecimalFormat("#.##");
+                fmt.setRoundingMode(RoundingMode.UNNECESSARY);
                 currenttip.add(TextFormatting.GREEN + "Key Matter: " + fmt.format(matter[0]));
                 currenttip.add(TextFormatting.GREEN + "Bulk Matter: " + fmt.format(matter[1]));
                 currenttip.add(TextFormatting.GREEN + "Living Matter: " + fmt.format(matter[2]));
