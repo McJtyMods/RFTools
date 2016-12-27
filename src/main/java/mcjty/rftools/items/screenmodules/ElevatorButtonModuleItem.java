@@ -71,7 +71,7 @@ public class ElevatorButtonModuleItem extends GenericRFToolsItem implements IMod
             }
         }
         if (!hasTarget) {
-            list.add(TextFormatting.YELLOW + "Sneak right-click on an elector block to set the");
+            list.add(TextFormatting.YELLOW + "Sneak right-click on an elevator block to set the");
             list.add(TextFormatting.YELLOW + "target for this module");
         }
     }

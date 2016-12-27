@@ -195,7 +195,6 @@ public class ElevatorButtonScreenModule implements IScreenModule<ElevatorButtonS
                 } else {
                     level = levelCount - level - 1;
                 }
-                System.out.println("level = " + level);
             }
         } else {
             int xoffset = 5;
