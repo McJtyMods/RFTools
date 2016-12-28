@@ -78,7 +78,7 @@ public class SpawnerBlock extends GenericRFToolsBlock<SpawnerTileEntity, Spawner
             SpawnerTileEntity spawnerTileEntity = (SpawnerTileEntity) te;
             float[] matter = spawnerTileEntity.getMatter();
             DecimalFormat fmt = new DecimalFormat("#.##");
-            fmt.setRoundingMode(RoundingMode.UNNECESSARY);
+            fmt.setRoundingMode(RoundingMode.DOWN);
             probeInfo.text(TextFormatting.GREEN + "Key Matter: " + fmt.format(matter[0]));
             probeInfo.text(TextFormatting.GREEN + "Bulk Matter: " + fmt.format(matter[1]));
             probeInfo.text(TextFormatting.GREEN + "Living Matter: " + fmt.format(matter[2]));
@@ -104,7 +104,7 @@ public class SpawnerBlock extends GenericRFToolsBlock<SpawnerTileEntity, Spawner
             float[] matter = SpawnerInfoPacketClient.matterReceived;
             if (matter != null && matter.length == 3) {
                 DecimalFormat fmt = new DecimalFormat("#.##");
-                fmt.setRoundingMode(RoundingMode.UNNECESSARY);
+                fmt.setRoundingMode(RoundingMode.DOWN);
                 currenttip.add(TextFormatting.GREEN + "Key Matter: " + fmt.format(matter[0]));
                 currenttip.add(TextFormatting.GREEN + "Bulk Matter: " + fmt.format(matter[1]));
                 currenttip.add(TextFormatting.GREEN + "Living Matter: " + fmt.format(matter[2]));

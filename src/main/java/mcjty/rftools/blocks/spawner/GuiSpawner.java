@@ -126,7 +126,7 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
                         blocks[i].setRenderItem(b);
                     }
                     DecimalFormat format = new DecimalFormat("#.##");
-                    format.setRoundingMode(RoundingMode.UNNECESSARY);
+                    format.setRoundingMode(RoundingMode.DOWN);
                     String mf = format.format(matter[i]);
                     labels[i].setText(mf + "/" + Float.toString(amount));
                     i++;
