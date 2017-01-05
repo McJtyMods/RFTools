@@ -157,7 +157,6 @@ public class SyringeItem extends GenericRFToolsItem {
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(TextFormatting.WHITE + "Use this to extract essence from mobs");
-            list.add(TextFormatting.WHITE + "Workbench. Be careful!");
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
