@@ -22,7 +22,7 @@ public class ToggleScreenTransparentAction implements IWheelAction {
 
     @Override
     public WheelActionElement createElement() {
-        return new WheelActionElement(ACTION_TOGGLESCREENTRANSPARENT).description("Toggle screen transparency", null).texture("rftools:textures/gui/wheel_actions.png", 0, 0, 0, 0+32, 128, 128);
+        return new WheelActionElement(ACTION_TOGGLESCREENTRANSPARENT).description("Toggle screen transparency", null).texture("rftools:textures/gui/wheel_actions.png", 64, 0, 64, 0+32, 128, 128);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class ToggleScreenTransparentAction implements IWheelAction {
                 if (screenPos != null) {
                     block = world.getBlockState(screenPos).getBlock();
                     if (block instanceof ScreenBlock) {
-                        ((ScreenBlock) block).cycleTranspMode(world, pos);
+                        ((ScreenBlock) block).cycleTranspMode(world, screenPos);
                     }
                 }
             }

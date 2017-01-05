@@ -22,7 +22,7 @@ public class ResizeScreenAction implements IWheelAction {
 
     @Override
     public WheelActionElement createElement() {
-        return new WheelActionElement(ACTION_RESIZESCREEN).description("Resize the screen", null).texture("rftools:textures/gui/wheel_actions.png", 0, 0, 0, 0+32, 128, 128);
+        return new WheelActionElement(ACTION_RESIZESCREEN).description("Resize the screen", null).texture("rftools:textures/gui/wheel_actions.png", 32, 0, 32, 0+32, 128, 128);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class ResizeScreenAction implements IWheelAction {
                 if (screenPos != null) {
                     block = world.getBlockState(screenPos).getBlock();
                     if (block instanceof ScreenBlock) {
-                        ((ScreenBlock) block).cycleSizeMode(world, pos);
+                        ((ScreenBlock) block).cycleSizeMode(world, screenPos);
                     }
                 }
             }

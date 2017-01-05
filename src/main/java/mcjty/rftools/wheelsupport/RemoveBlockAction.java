@@ -11,7 +11,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
-public class BreakBlockAction implements IWheelAction {
+public class RemoveBlockAction implements IWheelAction {
 
     public static final String ACTION_REMOVEBLOCK = "rftools.removeblock";
 

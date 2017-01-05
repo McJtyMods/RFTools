@@ -50,7 +50,7 @@ public class WheelCompatibility {
                     if (pos != null) {
                         Block block = world.getBlockState(pos).getBlock();
                         if (block instanceof GenericBlock) {
-                            actions.add(BreakBlockAction.ACTION_REMOVEBLOCK);
+                            actions.add(RemoveBlockAction.ACTION_REMOVEBLOCK);
                         }
                         if (block instanceof ScreenBlock || block instanceof ScreenHitBlock) {
                             actions.add(ResizeScreenAction.ACTION_RESIZESCREEN);
@@ -59,7 +59,7 @@ public class WheelCompatibility {
                     }
                 }
             });
-            wheel.getRegistry().register(new BreakBlockAction());
+            wheel.getRegistry().register(new RemoveBlockAction());
             wheel.getRegistry().register(new ResizeScreenAction());
             wheel.getRegistry().register(new ToggleScreenTransparentAction());
             return null;
