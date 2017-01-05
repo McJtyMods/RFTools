@@ -20,10 +20,38 @@ public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDa
     private int yescolor = 0xffffff;
     private int nocolor = 0xffffff;
     private int dim = 0;
+    private int align = 0;  // 0 == left, 1 == center, 2 == right
+
+    private boolean dirty = true;
+    private int labelx;
+    private String labelLine;
 
     @Override
     public TransformMode getTransformMode() {
         return TransformMode.TEXT;
+    }
+
+    private void setup(FontRenderer fontRenderer) {
+        if (!dirty) {
+            return;
+        }
+        dirty = false;
+
+        if (!line.isEmpty()) {
+            int w = 36;
+            labelx = 7;
+            labelLine = fontRenderer.trimStringToWidth(line, w);
+            switch (align) {
+                case 0:
+                    break;
+                case 1:
+                    labelx += (w - fontRenderer.getStringWidth(labelLine)) / 2;
+                    break;
+                case 2:
+                    labelx += w - fontRenderer.getStringWidth(labelLine);
+                    break;
+            }
+        }
     }
 
     @Override
@@ -34,9 +62,11 @@ public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDa
     @Override
     public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleDataBoolean screenData, ModuleRenderInfo renderInfo) {
         GlStateManager.disableLighting();
+        setup(fontRenderer);
+
         int xoffset;
         if (!line.isEmpty()) {
-            fontRenderer.drawString(line, 7, currenty, color);
+            fontRenderer.drawString(labelLine, labelx, currenty, color);
             xoffset = 7 + 40;
         } else {
             xoffset = 7;
@@ -57,11 +87,12 @@ public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDa
 
     @Override
     public void createGui(IModuleGuiBuilder guiBuilder) {
-        guiBuilder.
-                label("Label:").text("text", "Label text").color("color", "Color for the label").nl().
-                label("Yes:").text("yestext", "Positive text").color("yescolor", "Color for the positive text").nl().
-                label("No:").text("notext", "Negative text").color("nocolor", "Color for the negative text").nl().
-                label("Block:").block("monitor").nl();
+        guiBuilder
+                .label("Label:").text("text", "Label text").color("color", "Color for the label").nl()
+                .label("Yes:").text("yestext", "Positive text").color("yescolor", "Color for the positive text").nl()
+                .label("No:").text("notext", "Negative text").color("nocolor", "Color for the negative text").nl()
+                .choices("align", "Label alignment", "Left", "Center", "Right").nl()
+                .label("Block:").block("monitor").nl();
     }
 
     @Override
@@ -89,6 +120,13 @@ public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDa
             } else {
                 nocolor = 0xffffff;
             }
+            if (tagCompound.hasKey("align")) {
+                String alignment = tagCompound.getString("align");
+                align = "Left".equals(alignment) ? 0 : ("Right".equals(alignment) ? 2 : 1);
+            } else {
+                align = 0;
+            }
+            dirty = true;
         }
     }
 

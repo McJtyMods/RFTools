@@ -19,6 +19,12 @@ public class ButtonClientScreenModule implements IClientScreenModule<IModuleData
     private int color = 0xffffff;
     private int buttonColor = 0xffffff;
     private boolean activated = false;
+    private int align = 0;  // 0 == left, 1 == center, 2 == right
+
+    private boolean dirty = true;
+    private int labelx;
+    private String labelLine;
+    private String buttonLine;
 
     @Override
     public TransformMode getTransformMode() {
@@ -30,14 +36,45 @@ public class ButtonClientScreenModule implements IClientScreenModule<IModuleData
         return 14;
     }
 
+    private void setup(FontRenderer fontRenderer) {
+        if (!dirty) {
+            return;
+        }
+        dirty = false;
+
+        int xoffset;
+        if (!line.isEmpty()) {
+            int w = 74;
+            labelx = 7;
+            labelLine = fontRenderer.trimStringToWidth(line, w);
+            switch (align) {
+                case 0:
+                    break;
+                case 1:
+                    labelx += (w - fontRenderer.getStringWidth(labelLine)) / 2;
+                    break;
+                case 2:
+                    labelx += w - fontRenderer.getStringWidth(labelLine);
+                    break;
+            }
+            xoffset = 7 + 80;
+        } else {
+            xoffset = 7 + 5;
+        }
+        buttonLine = fontRenderer.trimStringToWidth(button, 130 - 7 - xoffset);
+    }
+
+
     @Override
     public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleDataBoolean screenData, ModuleRenderInfo renderInfo) {
         GlStateManager.disableLighting();
         GlStateManager.enableDepth();
         GlStateManager.depthMask(false);
+        setup(fontRenderer);
+
         int xoffset;
         if (!line.isEmpty()) {
-            fontRenderer.drawString(line, 7, currenty + 2, color);
+            fontRenderer.drawString(labelLine, labelx, currenty + 2, color);
             xoffset = 7 + 80;
         } else {
             xoffset = 7 + 5;
@@ -53,7 +90,7 @@ public class ButtonClientScreenModule implements IClientScreenModule<IModuleData
         }
 
         RenderHelper.drawBeveledBox(xoffset - 5, currenty, 130 - 7, currenty + 12, act ? 0xff333333 : 0xffeeeeee, act ? 0xffeeeeee : 0xff333333, 0xff666666);
-        fontRenderer.drawString(fontRenderer.trimStringToWidth(button, 130 - 7 - xoffset), xoffset + (act ? 1 : 0), currenty + 2 + (act ? 1 : 0), buttonColor);
+        fontRenderer.drawString(buttonLine, xoffset + (act ? 1 : 0), currenty + 2 + (act ? 1 : 0), buttonColor);
     }
 
     @Override
@@ -72,10 +109,12 @@ public class ButtonClientScreenModule implements IClientScreenModule<IModuleData
 
     @Override
     public void createGui(IModuleGuiBuilder guiBuilder) {
-        guiBuilder.
-                label("Label:").text("text", "Label text").color("color", "Label color").nl().
-                label("Button:").text("button", "Button text").color("buttonColor", "Button color").nl().
-                toggle("toggle", "Toggle", "Toggle button mode").nl();
+        guiBuilder
+                .label("Label:").text("text", "Label text").color("color", "Label color").nl()
+                .label("Button:").text("button", "Button text").color("buttonColor", "Button color").nl()
+                .toggle("toggle", "Toggle", "Toggle button mode")
+                .choices("align", "Label alignment", "Left", "Center", "Right").nl();
+
     }
 
     @Override
@@ -94,6 +133,13 @@ public class ButtonClientScreenModule implements IClientScreenModule<IModuleData
                 buttonColor = 0xffffff;
             }
             toggle = tagCompound.getBoolean("toggle");
+            if (tagCompound.hasKey("align")) {
+                String alignment = tagCompound.getString("align");
+                align = "Left".equals(alignment) ? 0 : ("Right".equals(alignment) ? 2 : 1);
+            } else {
+                align = 0;
+            }
+            dirty = true;
         }
     }
 

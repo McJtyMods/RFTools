@@ -15,6 +15,11 @@ public class TextClientScreenModule implements IClientScreenModule {
     private String line = "";
     private int color = 0xffffff;
     private boolean large = false;
+    private int align = 0;  // 0 == left, 1 == center, 2 == right
+
+    private boolean dirty = true;
+    private int textx;
+    private String text;
 
     @Override
     public TransformMode getTransformMode() {
@@ -26,14 +31,27 @@ public class TextClientScreenModule implements IClientScreenModule {
         return large ? 20 : 10;
     }
 
+    private void setup(FontRenderer fontRenderer) {
+        if (!dirty) {
+            return;
+        }
+        dirty = false;
+        int w = large ? 60 : 115;
+        textx = large ? 4 : 7;
+        text = fontRenderer.trimStringToWidth(line, w);
+        switch (align) {
+            case 0: break;
+            case 1: textx += (w-fontRenderer.getStringWidth(text))/2; break;
+            case 2: textx += w-fontRenderer.getStringWidth(text); break;
+        }
+    }
+
     @Override
     public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleData screenData, ModuleRenderInfo renderInfo) {
         GlStateManager.disableLighting();
-        if (large) {
-            fontRenderer.drawString(fontRenderer.trimStringToWidth(line, 60), 4, currenty / 2 + 1, color);
-        } else {
-            fontRenderer.drawString(fontRenderer.trimStringToWidth(line, 115), 7, currenty, color);
-        }
+        setup(fontRenderer);
+        int y = large ? (currenty / 2 + 1) : currenty;
+        fontRenderer.drawString(text, textx, y, color);
     }
 
     @Override
@@ -43,21 +61,26 @@ public class TextClientScreenModule implements IClientScreenModule {
 
     @Override
     public void createGui(IModuleGuiBuilder guiBuilder) {
-        guiBuilder.
-                label("Text:").text("text", "Text to show").color("color", "Color for the text").nl().
-                toggle("large", "Large", "Large or small font").nl();
+        guiBuilder
+                .label("Text:").text("text", "Text to show").color("color", "Color for the text").nl()
+                .toggle("large", "Large", "Large or small font")
+                .choices("align", "Text alignment", "Left", "Center", "Right").nl();
+
     }
 
     public void setLine(String line) {
         this.line = line;
+        dirty = true;
     }
 
     public void setColor(int color) {
         this.color = color;
+        dirty = true;
     }
 
     public void setLarge(boolean large) {
         this.large = large;
+        dirty = true;
     }
 
     @Override
@@ -70,6 +93,13 @@ public class TextClientScreenModule implements IClientScreenModule {
                 color = 0xffffff;
             }
             large = tagCompound.getBoolean("large");
+            if (tagCompound.hasKey("align")) {
+                String alignment = tagCompound.getString("align");
+                align = "Left".equals(alignment) ? 0 : ("Right".equals(alignment) ? 2 : 1);
+            } else {
+                align = 0;
+            }
+            dirty = true;
         }
     }
 

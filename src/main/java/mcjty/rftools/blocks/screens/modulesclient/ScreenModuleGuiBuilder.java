@@ -160,6 +160,27 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
     }
 
     @Override
+    public IModuleGuiBuilder choices(String tagname, String tooltip, String... choices) {
+        ChoiceLabel choiceLabel = new ChoiceLabel(mc, gui).setTooltips(tooltip)
+                .setDesiredWidth(50).setDesiredHeight(14);
+        for (String s : choices) {
+            choiceLabel.addChoices(s);
+        }
+        choiceLabel.addChoiceEvent((parent, newChoice) -> {
+            currentData.setString(tagname, newChoice);
+            moduleGuiChanged.updateData();
+        });
+        row.add(choiceLabel);
+        if (currentData != null) {
+            String currentChoice = currentData.getString(tagname);
+            if (!currentChoice.isEmpty()) {
+                choiceLabel.setChoice(currentChoice);
+            }
+        }
+        return this;
+    }
+
+    @Override
     public ScreenModuleGuiBuilder format(String tagname) {
         ChoiceLabel label = setupFormatCombo(mc, gui, tagname, currentData, moduleGuiChanged);
         row.add(label);

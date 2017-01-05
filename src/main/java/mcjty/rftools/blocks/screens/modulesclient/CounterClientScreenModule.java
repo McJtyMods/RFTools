@@ -17,11 +17,40 @@ public class CounterClientScreenModule implements IClientScreenModule<IModuleDat
     protected int dim = 0;
     private FormatStyle format = FormatStyle.MODE_FULL;
     protected BlockPos coordinate = BlockPosTools.INVALID;
+    private int align = 0;  // 0 == left, 1 == center, 2 == right
+
+    private boolean dirty = true;
+    private int labelx;
+    private String labelLine;
 
     @Override
     public TransformMode getTransformMode() {
         return TransformMode.TEXT;
     }
+
+    private void setup(FontRenderer fontRenderer) {
+        if (!dirty) {
+            return;
+        }
+        dirty = false;
+
+        if (!line.isEmpty()) {
+            int w = 36;
+            labelx = 7;
+            labelLine = fontRenderer.trimStringToWidth(line, w);
+            switch (align) {
+                case 0:
+                    break;
+                case 1:
+                    labelx += (w - fontRenderer.getStringWidth(labelLine)) / 2;
+                    break;
+                case 2:
+                    labelx += w - fontRenderer.getStringWidth(labelLine);
+                    break;
+            }
+        }
+    }
+
 
     @Override
     public int getHeight() {
@@ -31,9 +60,11 @@ public class CounterClientScreenModule implements IClientScreenModule<IModuleDat
     @Override
     public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleDataInteger screenData, ModuleRenderInfo renderInfo) {
         GlStateManager.disableLighting();
+        setup(fontRenderer);
+
         int xoffset;
         if (!line.isEmpty()) {
-            fontRenderer.drawString(line, 7, currenty, color);
+            fontRenderer.drawString(labelLine, labelx, currenty, color);
             xoffset = 7 + 40;
         } else {
             xoffset = 7;
@@ -59,11 +90,12 @@ public class CounterClientScreenModule implements IClientScreenModule<IModuleDat
 
     @Override
     public void createGui(IModuleGuiBuilder guiBuilder) {
-        guiBuilder.
-                label("Label:").text("text", "Label text").nl().
-                label("L:").color("color", "Color for the label").label("C:").color("cntcolor", "Color for the counter").nl().
-                format("format").nl().
-                label("Block:").block("monitor").nl();
+        guiBuilder
+                .label("Label:").text("text", "Label text").nl()
+                .label("L:").color("color", "Color for the label").label("C:").color("cntcolor", "Color for the counter").nl()
+                .format("format")
+                .choices("align", "Label alignment", "Left", "Center", "Right").nl()
+                .label("Block:").block("monitor").nl();
     }
 
     @Override
@@ -80,6 +112,13 @@ public class CounterClientScreenModule implements IClientScreenModule<IModuleDat
             } else {
                 cntcolor = 0xffffff;
             }
+            if (tagCompound.hasKey("align")) {
+                String alignment = tagCompound.getString("align");
+                align = "Left".equals(alignment) ? 0 : ("Right".equals(alignment) ? 2 : 1);
+            } else {
+                align = 0;
+            }
+            dirty = true;
 
             format = FormatStyle.values()[tagCompound.getInteger("format")];
 
