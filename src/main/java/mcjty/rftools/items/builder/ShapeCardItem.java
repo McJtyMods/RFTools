@@ -211,6 +211,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
 
                         setMode(stack, MODE_NONE);
                         setCorner1(stack, null);
+                        setShape(stack, Shape.SHAPE_SOLIDBOX);
                     }
                 }
             }
@@ -493,6 +494,9 @@ public class ShapeCardItem extends GenericRFToolsItem {
     public static Shape getShape(ItemStack stack) {
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
+            return Shape.SHAPE_SOLIDBOX;
+        }
+        if (!tagCompound.hasKey("shape")) {
             return Shape.SHAPE_SOLIDBOX;
         }
         int shape = tagCompound.getInteger("shape");
