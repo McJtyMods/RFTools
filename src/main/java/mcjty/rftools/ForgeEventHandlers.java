@@ -12,6 +12,7 @@ import mcjty.rftools.blocks.screens.ScreenHitBlock;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.teleporter.TeleportDestination;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
+import mcjty.rftools.items.ModItems;
 import mcjty.rftools.playerprops.BuffProperties;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
@@ -26,9 +27,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
@@ -94,6 +97,29 @@ public class ForgeEventHandlers {
 
 
     @SubscribeEvent
+    public void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
+        if (event.getWorld().isRemote) {
+            return;
+        }
+        EntityPlayer player = event.getEntityPlayer();
+        ItemStack heldItem = player.getHeldItemMainhand();
+        if (ItemStackTools.isEmpty(heldItem) || heldItem.getItem() != ModItems.smartWrenchItem) {
+            double blockReachDistance = ((EntityPlayerMP) player).interactionManager.getBlockReachDistance();
+            RayTraceResult rayTrace = ForgeHooks.rayTraceEyes(player, blockReachDistance + 1);
+            if (rayTrace != null && rayTrace.typeOfHit == RayTraceResult.Type.BLOCK) {
+                Block block = event.getWorld().getBlockState(rayTrace.getBlockPos()).getBlock();
+                if (block instanceof ScreenBlock) {
+                    event.setCanceled(true);
+                    return;
+                } else if (block instanceof ScreenHitBlock) {
+                    event.setCanceled(true);
+                    return;
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
     public void onPlayerInteractEvent(PlayerInteractEvent event) {
         EntityPlayer player = event.getEntityPlayer();
 
@@ -101,20 +127,22 @@ public class ForgeEventHandlers {
             checkCreativeClick(event);
         } else if (event instanceof PlayerInteractEvent.RightClickBlock) {
             if (player.isSneaking()) {
-                World world = event.getWorld();
-                IBlockState state = world.getBlockState(event.getPos());
-                Block block = state.getBlock();
-                if (block instanceof ScreenBlock) {
-                    Vec3d vec = ((PlayerInteractEvent.RightClickBlock) event).getHitVec();
-                    ((ScreenBlock) block).activate(world, event.getPos(), state, player, event.getHand(), event.getFace(), (float) vec.xCoord, (float) vec.yCoord, (float) vec.zCoord);
-                    event.setCanceled(true);
-                    return;
-                } else if (block instanceof ScreenHitBlock) {
-                    Vec3d vec = ((PlayerInteractEvent.RightClickBlock) event).getHitVec();
-                    ((ScreenHitBlock) block).activate(world, event.getPos(), state, player, event.getHand(), event.getFace(), (float) vec.xCoord, (float) vec.yCoord, (float) vec.zCoord);
-                    event.setCanceled(true);
-                    return;
-
+                ItemStack heldItem = player.getHeldItemMainhand();
+                if (ItemStackTools.isEmpty(heldItem) || heldItem.getItem() != ModItems.smartWrenchItem) {
+                    World world = event.getWorld();
+                    IBlockState state = world.getBlockState(event.getPos());
+                    Block block = state.getBlock();
+                    if (block instanceof ScreenBlock) {
+                        Vec3d vec = ((PlayerInteractEvent.RightClickBlock) event).getHitVec();
+                        ((ScreenBlock) block).activate(world, event.getPos(), state, player, event.getHand(), event.getFace(), (float) vec.xCoord, (float) vec.yCoord, (float) vec.zCoord);
+                        ((PlayerInteractEvent.RightClickBlock) event).setUseItem(Event.Result.DENY);
+                        return;
+                    } else if (block instanceof ScreenHitBlock) {
+                        Vec3d vec = ((PlayerInteractEvent.RightClickBlock) event).getHitVec();
+                        ((ScreenHitBlock) block).activate(world, event.getPos(), state, player, event.getHand(), event.getFace(), (float) vec.xCoord, (float) vec.yCoord, (float) vec.zCoord);
+                        ((PlayerInteractEvent.RightClickBlock) event).setUseItem(Event.Result.DENY);
+                        return;
+                    }
                 }
             }
         }
