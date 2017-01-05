@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.container.GenericGuiContainer;
-import mcjty.lib.container.WrenchUsage;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.ModuleSupport;
@@ -304,6 +303,11 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
 
     @Override
     protected boolean wrenchUse(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
+        cycleSizeTranspMode(world, pos);
+        return true;
+    }
+
+    public void cycleSizeTranspMode(World world, BlockPos pos) {
         ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos);
         IBlockState state = world.getBlockState(pos);
         int meta = state.getBlock().getMetaFromState(state);
@@ -318,7 +322,40 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
                 break;
             }
         }
-        return true;
+    }
+
+    public void cycleSizeMode(World world, BlockPos pos) {
+        ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos);
+        IBlockState state = world.getBlockState(pos);
+        int meta = state.getBlock().getMetaFromState(state);
+        clearInvisibleBlocks(world, pos, meta, screenTileEntity.getSize());
+        for (int i = 0 ; i < transitions.length ; i++) {
+            Setup setup = transitions[i];
+            if (setup.isTransparent() == screenTileEntity.isTransparent() && setup.getSize() == screenTileEntity.getSize()) {
+                Setup next = transitions[(i+2) % transitions.length];
+                screenTileEntity.setTransparent(next.isTransparent());
+                screenTileEntity.setSize(next.getSize());
+                setInvisibleBlocks(world, pos, screenTileEntity.getSize());
+                break;
+            }
+        }
+    }
+
+    public void cycleTranspMode(World world, BlockPos pos) {
+        ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos);
+        IBlockState state = world.getBlockState(pos);
+        int meta = state.getBlock().getMetaFromState(state);
+        clearInvisibleBlocks(world, pos, meta, screenTileEntity.getSize());
+        for (int i = 0 ; i < transitions.length ; i++) {
+            Setup setup = transitions[i];
+            if (setup.isTransparent() == screenTileEntity.isTransparent() && setup.getSize() == screenTileEntity.getSize()) {
+                Setup next = transitions[(i % 2) == 0 ? (i+1) : (i-1)];
+                screenTileEntity.setTransparent(next.isTransparent());
+                screenTileEntity.setSize(next.getSize());
+                setInvisibleBlocks(world, pos, screenTileEntity.getSize());
+                break;
+            }
+        }
     }
 
     @Override

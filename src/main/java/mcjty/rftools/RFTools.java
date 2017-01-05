@@ -22,6 +22,7 @@ import mcjty.rftools.commands.CommandRftTp;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.manual.GuiRFToolsManual;
 import mcjty.rftools.proxy.CommonProxy;
+import mcjty.rftools.wheelsupport.WheelSupport;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -141,6 +142,7 @@ public class RFTools implements ModBase {
         this.proxy.preInit(e);
         MainCompatHandler.registerWaila();
         MainCompatHandler.registerTOP();
+        WheelSupport.registerWheel();
     }
 
     /**

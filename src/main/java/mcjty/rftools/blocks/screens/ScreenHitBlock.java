@@ -131,15 +131,25 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
     }
 
     public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+        pos = getScreenBlockPos(world, pos);
+        if (pos == null) {
+            return false;
+        }
+        Block block = world.getBlockState(pos).getBlock();
+        return ((ScreenBlock) block).activate(world, pos, state, player, hand, side, hitX, hitY, hitZ);
+    }
+
+    public BlockPos getScreenBlockPos(World world, BlockPos pos) {
         ScreenHitTileEntity screenHitTileEntity = (ScreenHitTileEntity) world.getTileEntity(pos);
         int dx = screenHitTileEntity.getDx();
         int dy = screenHitTileEntity.getDy();
         int dz = screenHitTileEntity.getDz();
-        Block block = world.getBlockState(pos.add(dx, dy, dz)).getBlock();
+        pos = pos.add(dx, dy, dz);
+        Block block = world.getBlockState(pos).getBlock();
         if (block != ScreenSetup.screenBlock && block != ScreenSetup.creativeScreenBlock) {
-            return false;
+            return null;
         }
-        return ((ScreenBlock) block).activate(world, pos.add(dx, dy, dz), state, player, hand, side, hitX, hitY, hitZ);
+        return pos;
     }
 
     public static final AxisAlignedBB BLOCK_AABB = new AxisAlignedBB(0.5F - 0.5F, 0.0F, 0.5F - 0.5F, 0.5F + 0.5F, 1.0F, 0.5F + 0.5F);
