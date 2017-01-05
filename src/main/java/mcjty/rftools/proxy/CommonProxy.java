@@ -38,6 +38,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -51,6 +52,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 public abstract class CommonProxy {
@@ -108,6 +110,12 @@ public abstract class CommonProxy {
         ModSounds.init();
 
         RFTools.screenModuleRegistry.registerBuiltins();
+
+        ForgeChunkManager.setForcedChunkLoadingCallback(RFTools.instance, new ForgeChunkManager.LoadingCallback() {
+            @Override
+            public void ticketsLoaded(List<ForgeChunkManager.Ticket> tickets, World world) {
+            }
+        });
     }
 
     private void readMainConfig() {

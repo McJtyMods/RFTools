@@ -1888,12 +1888,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         if (BuilderConfiguration.quarryChunkloads) {
             if (ticket == null) {
-                ForgeChunkManager.setForcedChunkLoadingCallback(RFTools.instance, new ForgeChunkManager.LoadingCallback() {
-                    @Override
-                    public void ticketsLoaded(List<ForgeChunkManager.Ticket> tickets, World world) {
-
-                    }
-                });
                 ticket = ForgeChunkManager.requestTicket(RFTools.instance, getWorld(), ForgeChunkManager.Type.NORMAL);
                 if (ticket == null) {
                     // Chunk is not loaded and we can't get a ticket.
