@@ -29,7 +29,6 @@ public class ScreenConfiguration {
     public static boolean useTruetype = true;
     public static String font = "rftools:fonts/ubuntu.ttf";
     public static float fontSize = 40;
-    public static boolean fontAntialias = false;
 
     public static void init(Configuration cfg) {
         CONTROLLER_MAXENERGY = cfg.get(CATEGORY_SCREEN, "screenControllerMaxRF", CONTROLLER_MAXENERGY,
@@ -78,8 +77,6 @@ public class ScreenConfiguration {
                 "The default truetype font to use").getString();
         fontSize = (float) cfg.get(CATEGORY_SCREEN, "fontSize", fontSize,
                 "The size of the font").getDouble();
-        fontAntialias = cfg.get(CATEGORY_SCREEN, "fontAntialias", fontAntialias,
-                "Set to true for antialiased font").getBoolean();
     }
 
 }

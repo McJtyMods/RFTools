@@ -7,7 +7,7 @@ import net.minecraft.client.gui.FontRenderer;
 public class ScreenTextCache {
 
     private boolean large = false;
-    private int align = 0;
+    private int align = 0;  // 0 == left, 1 == center, 2 == right
 
     private boolean dirty = true;
     private int textx;
@@ -20,6 +20,26 @@ public class ScreenTextCache {
 
     public String getText() {
         return text;
+    }
+
+    public void setDirty() {
+        this.dirty = true;
+    }
+
+    public boolean isLarge() {
+        return large;
+    }
+
+    public void setLarge(boolean large) {
+        this.large = large;
+    }
+
+    public int getAlign() {
+        return align;
+    }
+
+    public void setAlign(int align) {
+        this.align = align;
     }
 
     public void setup(FontRenderer fontRenderer, String line) {
@@ -36,10 +56,10 @@ public class ScreenTextCache {
                 case 0:
                     break;
                 case 1:
-                    textx += ((w-24 -textx - ClientProxy.font.getWidth(text)) / 2) / 4;
+                    textx += ((w-40 -textx - ClientProxy.font.getWidth(text)) / 2) / 4;
                     break;
                 case 2:
-                    textx += (w-24 -textx - ClientProxy.font.getWidth(text)) / 4;
+                    textx += (w-40 -textx - ClientProxy.font.getWidth(text)) / 4;
                     break;
             }
         } else {

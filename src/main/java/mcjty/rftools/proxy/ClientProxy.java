@@ -58,7 +58,7 @@ public class ClientProxy extends CommonProxy {
         MinecraftForge.EVENT_BUS.register(new KeyInputHandler());
         KeyBindings.init();
 
-        font = FontLoader.createFont(new ResourceLocation(ScreenConfiguration.font), ScreenConfiguration.fontSize, ScreenConfiguration.fontAntialias);
+        font = FontLoader.createFont(new ResourceLocation(ScreenConfiguration.font), ScreenConfiguration.fontSize, false);
     }
 
     @Override
