@@ -8,6 +8,7 @@ import mcjty.rftools.RenderGameOverlayEventHandler;
 import mcjty.rftools.RenderWorldLastEventHandler;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.elevator.ElevatorSounds;
+import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.font.FontLoader;
 import mcjty.rftools.font.TrueTypeFont;
@@ -57,7 +58,7 @@ public class ClientProxy extends CommonProxy {
         MinecraftForge.EVENT_BUS.register(new KeyInputHandler());
         KeyBindings.init();
 
-        font = FontLoader.createFont(new ResourceLocation(RFTools.MODID, "fonts/ubuntu.ttf"), 40, false);
+        font = FontLoader.createFont(new ResourceLocation(ScreenConfiguration.font), ScreenConfiguration.fontSize, ScreenConfiguration.fontAntialias);
     }
 
     @Override

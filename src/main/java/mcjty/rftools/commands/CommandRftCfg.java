@@ -7,6 +7,7 @@ public class CommandRftCfg extends DefaultCommand {
         registerCommand(new CmdSetStyle());
         registerCommand(new CmdReset());
         registerCommand(new CmdToggleTrueType());
+        registerCommand(new CmdFont());
     }
 
     @Override
