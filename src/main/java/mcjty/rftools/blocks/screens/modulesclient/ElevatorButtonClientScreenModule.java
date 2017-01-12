@@ -7,7 +7,9 @@ import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
 import mcjty.rftools.api.screens.ModuleRenderInfo;
 import mcjty.rftools.blocks.elevator.ElevatorTileEntity;
+import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ElevatorButtonScreenModule;
+import mcjty.rftools.proxy.ClientProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -85,14 +87,31 @@ public class ElevatorButtonClientScreenModule implements IClientScreenModule<Ele
             }
             int col = i == currentLevel ? this.currentLevelButtonColor : this.buttonColor;
             int textoffset = large ? 3 : 0;
+            int x = xoffset + 3 + textoffset;
+            int y = currenty + 2 + textoffset;
             if (lights) {
                 RenderHelper.drawBeveledBox(xoffset, currenty, xoffset + getDimension() - 4, currenty + getDimension() - 2, 0xffffffff, 0xffffffff, 0xff000000 + col);
                 if (hasText) {
-                    fontRenderer.drawString(fontRenderer.trimStringToWidth(text, 120), xoffset + 3 + textoffset, currenty + 2 + textoffset, 0xffffff);
+                    if (ScreenConfiguration.useTruetype) {
+                        String trimmed = ClientProxy.font.trimStringToWidth(text, 480);
+                        ClientProxy.font.drawString(x, 128 - y, trimmed, 0.25f, 0.25f, -512f-40f, 1.0f, 1.0f, 1.0f, 1.0f);
+                    } else {
+                        String trimmed = fontRenderer.trimStringToWidth(text, 120);
+                        fontRenderer.drawString(trimmed, x, y, 0xffffff);
+                    }
                 }
             } else {
                 RenderHelper.drawBeveledBox(xoffset, currenty, xoffset + getDimension() - 4, currenty + getDimension() - 2, 0xffeeeeee, 0xff333333, 0xff666666);
-                fontRenderer.drawString(fontRenderer.trimStringToWidth(text, getDimension() - 4), xoffset + 3 + textoffset, currenty + 2 + textoffset, col);
+                if (ScreenConfiguration.useTruetype) {
+                    String trimmed = ClientProxy.font.trimStringToWidth(text, (getDimension() - 4) * 4);
+                    float r = (col >> 16 & 255) / 255.0f;
+                    float g = (col >> 8 & 255) / 255.0f;
+                    float b = (col & 255) / 255.0f;
+                    ClientProxy.font.drawString(x, 128 - y, trimmed, 0.25f, 0.25f, -512f-40f, r, g, b, 1.0f);
+                } else {
+                    String trimmed = fontRenderer.trimStringToWidth(text, getDimension() - 4);
+                    fontRenderer.drawString(trimmed, x, y, col);
+                }
             }
             xoffset += getDimension() - 2;
         }
@@ -123,14 +142,31 @@ public class ElevatorButtonClientScreenModule implements IClientScreenModule<Ele
 
             int col = level == currentLevel ? this.currentLevelButtonColor : this.buttonColor;
             int textoffset = large ? 3 : 0;
+            int x = xoffset + 3 + textoffset;
+            int yy = y + 2 + textoffset;
             if (lights) {
                 RenderHelper.drawBeveledBox(xoffset, y, xoffset + w, y + getDimension() - 2, 0xffffffff, 0xffffffff, 0xff000000 + col);
                 if (hasText) {
-                    fontRenderer.drawString(fontRenderer.trimStringToWidth(text, w), xoffset + 3 + textoffset, y + 2 + textoffset, 0xffffff);
+                    if (ScreenConfiguration.useTruetype) {
+                        String trimmed = ClientProxy.font.trimStringToWidth(text, w * 4);
+                        ClientProxy.font.drawString(x, 128 - yy, trimmed, 0.25f, 0.25f, -512f-40f, 1.0f, 1.0f, 1.0f, 1.0f);
+                    } else {
+                        String trimmed = fontRenderer.trimStringToWidth(text, w);
+                        fontRenderer.drawString(trimmed, x, yy, 0xffffff);
+                    }
                 }
             } else {
                 RenderHelper.drawBeveledBox(xoffset, y, xoffset + w, y + getDimension() - 2, 0xffeeeeee, 0xff333333, 0xff666666);
-                fontRenderer.drawString(fontRenderer.trimStringToWidth(text, w), xoffset + 3 + textoffset, y + 2 + textoffset, col);
+                if (ScreenConfiguration.useTruetype) {
+                    String trimmed = ClientProxy.font.trimStringToWidth(text, w * 4);
+                    float r = (col >> 16 & 255) / 255.0f;
+                    float g = (col >> 8 & 255) / 255.0f;
+                    float b = (col & 255) / 255.0f;
+                    ClientProxy.font.drawString(x, 128 - yy, trimmed, 0.25f, 0.25f, -512f-40f, r, g, b, 1.0f);
+                } else {
+                    String trimmed = fontRenderer.trimStringToWidth(text, w);
+                    fontRenderer.drawString(trimmed, x, yy, col);
+                }
             }
             y += getDimension() - 2;
             if (level == max) {

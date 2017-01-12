@@ -42,30 +42,32 @@ public class ScreenTextCache {
         this.align = align;
     }
 
-    public void setup(FontRenderer fontRenderer, String line) {
+    public void setup(FontRenderer fontRenderer, String line, int width) {
         if ((!dirty) && truetype == ScreenConfiguration.useTruetype) {
             return;
         }
         dirty = false;
         truetype = ScreenConfiguration.useTruetype;
         if (ScreenConfiguration.useTruetype) {
-            int w = large ? 270 : 512;
             textx = large ? 3 : 7;
-            text = ClientProxy.font.trimStringToWidth(line, w);
+            text = ClientProxy.font.trimStringToWidth(line, (large ? (width/2) : width)-textx);
+//            int w = large ? 240 : 472;
+            int w = large ? (int) (width / 2.13f) : (int) (width / 1.084f);
             switch (align) {
                 case 0:
                     break;
                 case 1:
-                    textx += ((w-40 -textx - ClientProxy.font.getWidth(text)) / 2) / 4;
+                    textx += (int)((w -textx - ClientProxy.font.getWidth(text)) / 2) / 4;
                     break;
                 case 2:
-                    textx += (w-40 -textx - ClientProxy.font.getWidth(text)) / 4;
+                    textx += (int)(w -textx - ClientProxy.font.getWidth(text)) / 4;
                     break;
             }
         } else {
-            int w = large ? 60 : 115;
             textx = large ? 4 : 7;
-            text = fontRenderer.trimStringToWidth(line, w);
+            text = fontRenderer.trimStringToWidth(line, (large ? (width/8) : (width/4))-textx);
+//            int w = large ? 58 : 115;
+            int w = large ? (int) (width / 8.8f) : (int) (width / 4.45f);
             switch (align) {
                 case 0:
                     break;
@@ -77,6 +79,18 @@ public class ScreenTextCache {
                     break;
             }
         }
+    }
+
+    public void renderText(FontRenderer fontRenderer, int color, int x, int y) {
+        if (ScreenConfiguration.useTruetype) {
+            float r = (color >> 16 & 255) / 255.0f;
+            float g = (color >> 8 & 255) / 255.0f;
+            float b = (color & 255) / 255.0f;
+            ClientProxy.font.drawString(textx + x, 128 - y, text, 0.25f, 0.25f, -512f-40f, r, g, b, 1.0f);
+        } else {
+            fontRenderer.drawString(text, textx + x, y, color);
+        }
+
     }
 
 }

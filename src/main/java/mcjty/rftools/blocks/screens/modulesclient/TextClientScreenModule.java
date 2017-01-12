@@ -5,8 +5,6 @@ import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
 import mcjty.rftools.api.screens.ModuleRenderInfo;
 import mcjty.rftools.api.screens.data.IModuleData;
-import mcjty.rftools.blocks.screens.ScreenConfiguration;
-import mcjty.rftools.proxy.ClientProxy;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
@@ -32,17 +30,9 @@ public class TextClientScreenModule implements IClientScreenModule {
     @Override
     public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleData screenData, ModuleRenderInfo renderInfo) {
         GlStateManager.disableLighting();
-        cache.setup(fontRenderer, line);
+        cache.setup(fontRenderer, line, 512);
         int y = cache.isLarge() ? (currenty / 2 + 1) : currenty;
-
-        if (ScreenConfiguration.useTruetype) {
-            float r = (color >> 16 & 255) / 255.0f;
-            float g = (color >> 8 & 255) / 255.0f;
-            float b = (color & 255) / 255.0f;
-            ClientProxy.font.drawString(cache.getTextx(), 128 - y, cache.getText(), 0.25f, 0.25f, -512f-40f, r, g, b, 1.0f);
-        } else {
-            fontRenderer.drawString(cache.getText(), cache.getTextx(), y, color);
-        }
+        cache.renderText(fontRenderer, color, 0, y);
     }
 
     @Override

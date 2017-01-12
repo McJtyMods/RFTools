@@ -3,6 +3,8 @@ package mcjty.rftools.blocks.screens.modulesclient;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.api.screens.*;
 import mcjty.rftools.api.screens.data.IModuleDataContents;
+import mcjty.rftools.blocks.screens.ScreenConfiguration;
+import mcjty.rftools.proxy.ClientProxy;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,38 +24,12 @@ public class EnergyBarClientScreenModule implements IClientScreenModule<IModuleD
     private boolean showpct = false;
     private FormatStyle format = FormatStyle.MODE_FULL;
     protected BlockPos coordinate = BlockPosTools.INVALID;
-    private int align = 0;  // 0 == left, 1 == center, 2 == right
 
-    private boolean dirty = true;
-    private int labelx;
-    private String labelLine;
+    private ScreenTextCache labelCache = new ScreenTextCache();
 
     @Override
     public TransformMode getTransformMode() {
         return TransformMode.TEXT;
-    }
-
-    private void setup(FontRenderer fontRenderer) {
-        if (!dirty) {
-            return;
-        }
-        dirty = false;
-
-        if (!line.isEmpty()) {
-            int w = 36;
-            labelx = 7;
-            labelLine = fontRenderer.trimStringToWidth(line, w);
-            switch (align) {
-                case 0:
-                    break;
-                case 1:
-                    labelx += (w - fontRenderer.getStringWidth(labelLine)) / 2;
-                    break;
-                case 2:
-                    labelx += w - fontRenderer.getStringWidth(labelLine);
-                    break;
-            }
-        }
     }
 
     @Override
@@ -64,11 +40,11 @@ public class EnergyBarClientScreenModule implements IClientScreenModule<IModuleD
     @Override
     public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleDataContents screenData, ModuleRenderInfo renderInfo) {
         GlStateManager.disableLighting();
-        setup(fontRenderer);
 
         int xoffset;
         if (!line.isEmpty()) {
-            fontRenderer.drawString(labelLine, labelx, currenty, color);
+            labelCache.setup(fontRenderer, line, 160);
+            labelCache.renderText(fontRenderer, color, 0, currenty);
             xoffset = 7 + 40;
         } else {
             xoffset = 7;
@@ -77,7 +53,11 @@ public class EnergyBarClientScreenModule implements IClientScreenModule<IModuleD
         if (!BlockPosTools.INVALID.equals(coordinate)) {
             renderHelper.renderLevel(fontRenderer, xoffset, currenty, screenData, "RF", hidebar, hidetext, showpct, showdiff, rfcolor, rfcolorNeg, 0xffff0000, 0xff333300, format);
         } else {
-            fontRenderer.drawString("<invalid>", xoffset, currenty, 0xff0000);
+            if (ScreenConfiguration.useTruetype) {
+                ClientProxy.font.drawString(xoffset, 128 - currenty, "<invalid>", 0.25f, 0.25f, -512f-40f, 1.0f, 0, 0, 1.0f);
+            } else {
+                fontRenderer.drawString("<invalid>", xoffset, currenty, 0xff0000);
+            }
         }
     }
 
@@ -117,11 +97,11 @@ public class EnergyBarClientScreenModule implements IClientScreenModule<IModuleD
             }
             if (tagCompound.hasKey("align")) {
                 String alignment = tagCompound.getString("align");
-                align = "Left".equals(alignment) ? 0 : ("Right".equals(alignment) ? 2 : 1);
+                labelCache.setAlign("Left".equals(alignment) ? 0 : ("Right".equals(alignment) ? 2 : 1));
             } else {
-                align = 0;
+                labelCache.setAlign(0);
             }
-            dirty = true;
+            labelCache.setDirty();
 
             hidebar = tagCompound.getBoolean("hidebar");
             hidetext = tagCompound.getBoolean("hidetext");

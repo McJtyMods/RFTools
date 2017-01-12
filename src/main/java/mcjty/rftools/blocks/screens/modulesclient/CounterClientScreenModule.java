@@ -3,6 +3,8 @@ package mcjty.rftools.blocks.screens.modulesclient;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.api.screens.*;
 import mcjty.rftools.api.screens.data.IModuleDataInteger;
+import mcjty.rftools.blocks.screens.ScreenConfiguration;
+import mcjty.rftools.proxy.ClientProxy;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,40 +19,13 @@ public class CounterClientScreenModule implements IClientScreenModule<IModuleDat
     protected int dim = 0;
     private FormatStyle format = FormatStyle.MODE_FULL;
     protected BlockPos coordinate = BlockPosTools.INVALID;
-    private int align = 0;  // 0 == left, 1 == center, 2 == right
 
-    private boolean dirty = true;
-    private int labelx;
-    private String labelLine;
+    private ScreenTextCache labelCache = new ScreenTextCache();
 
     @Override
     public TransformMode getTransformMode() {
         return TransformMode.TEXT;
     }
-
-    private void setup(FontRenderer fontRenderer) {
-        if (!dirty) {
-            return;
-        }
-        dirty = false;
-
-        if (!line.isEmpty()) {
-            int w = 36;
-            labelx = 7;
-            labelLine = fontRenderer.trimStringToWidth(line, w);
-            switch (align) {
-                case 0:
-                    break;
-                case 1:
-                    labelx += (w - fontRenderer.getStringWidth(labelLine)) / 2;
-                    break;
-                case 2:
-                    labelx += w - fontRenderer.getStringWidth(labelLine);
-                    break;
-            }
-        }
-    }
-
 
     @Override
     public int getHeight() {
@@ -60,16 +35,18 @@ public class CounterClientScreenModule implements IClientScreenModule<IModuleDat
     @Override
     public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleDataInteger screenData, ModuleRenderInfo renderInfo) {
         GlStateManager.disableLighting();
-        setup(fontRenderer);
 
         int xoffset;
         if (!line.isEmpty()) {
-            fontRenderer.drawString(labelLine, labelx, currenty, color);
+            labelCache.setup(fontRenderer, line, 160);
+            labelCache.renderText(fontRenderer, color, 0, currenty);
             xoffset = 7 + 40;
         } else {
             xoffset = 7;
         }
 
+        String output;
+        int col;
         if (!BlockPosTools.INVALID.equals(coordinate)) {
             int counter;
             if (screenData != null) {
@@ -77,9 +54,19 @@ public class CounterClientScreenModule implements IClientScreenModule<IModuleDat
             } else {
                 counter = 0;
             }
-            fontRenderer.drawString(renderHelper.format(String.valueOf(counter), format), xoffset, currenty, cntcolor);
+            output = renderHelper.format(String.valueOf(counter), format);
+            col = cntcolor;
         } else {
-            fontRenderer.drawString("<invalid>", xoffset, currenty, 0xff0000);
+            output = "<invalid>";
+            col = 0xff0000;
+        }
+        if (ScreenConfiguration.useTruetype) {
+            float r = (col >> 16 & 255) / 255.0f;
+            float g = (col >> 8 & 255) / 255.0f;
+            float b = (col & 255) / 255.0f;
+            ClientProxy.font.drawString(xoffset, 128 - currenty, output, 0.25f, 0.25f, -512f-40f, r, g, b, 1.0f);
+        } else {
+            fontRenderer.drawString(output, xoffset, currenty, col);
         }
     }
 
@@ -114,11 +101,11 @@ public class CounterClientScreenModule implements IClientScreenModule<IModuleDat
             }
             if (tagCompound.hasKey("align")) {
                 String alignment = tagCompound.getString("align");
-                align = "Left".equals(alignment) ? 0 : ("Right".equals(alignment) ? 2 : 1);
+                labelCache.setAlign("Left".equals(alignment) ? 0 : ("Right".equals(alignment) ? 2 : 1));
             } else {
-                align = 0;
+                labelCache.setAlign(0);
             }
-            dirty = true;
+            labelCache.setDirty();
 
             format = FormatStyle.values()[tagCompound.getInteger("format")];
 

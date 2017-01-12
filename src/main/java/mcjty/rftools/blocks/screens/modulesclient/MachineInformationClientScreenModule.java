@@ -14,6 +14,8 @@ import mcjty.rftools.api.screens.IModuleRenderHelper;
 import mcjty.rftools.api.screens.ModuleRenderInfo;
 import mcjty.rftools.api.screens.data.IModuleDataString;
 import mcjty.rftools.blocks.screens.IModuleGuiChanged;
+import mcjty.rftools.blocks.screens.ScreenConfiguration;
+import mcjty.rftools.proxy.ClientProxy;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -35,6 +37,8 @@ public class MachineInformationClientScreenModule implements IClientScreenModule
     protected int dim = 0;
     protected BlockPos coordinate = BlockPosTools.INVALID;
 
+    private ScreenTextCache labelCache = new ScreenTextCache();
+
     @Override
     public TransformMode getTransformMode() {
         return TransformMode.TEXT;
@@ -50,16 +54,29 @@ public class MachineInformationClientScreenModule implements IClientScreenModule
         GlStateManager.disableLighting();
         int xoffset;
         if (!line.isEmpty()) {
-            fontRenderer.drawString(line, 7, currenty, labcolor);
+            labelCache.setup(fontRenderer, line, 160);
+            labelCache.renderText(fontRenderer, labcolor, 0, currenty);
             xoffset = 7 + 40;
         } else {
             xoffset = 7;
         }
 
+        String text;
+        int col;
         if ((!BlockPosTools.INVALID.equals(coordinate)) && screenData != null) {
-            fontRenderer.drawString(screenData.get(), xoffset, currenty, txtcolor);
+            text = screenData.get();
+            col = txtcolor;
         } else {
-            fontRenderer.drawString("<invalid>", xoffset, currenty, 0xff0000);
+            text = "<invalid>";
+            col = 0xff0000;
+        }
+        if (ScreenConfiguration.useTruetype) {
+            float r = (col >> 16 & 255) / 255.0f;
+            float g = (col >> 8 & 255) / 255.0f;
+            float b = (col & 255) / 255.0f;
+            ClientProxy.font.drawString(xoffset, 128 - currenty, text, 0.25f, 0.25f, -512f-40f, r, g, b, 1.0f);
+        } else {
+            fontRenderer.drawString(text, xoffset, currenty, col);
         }
     }
 

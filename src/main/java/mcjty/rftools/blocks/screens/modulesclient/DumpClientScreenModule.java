@@ -19,6 +19,7 @@ public class DumpClientScreenModule implements IClientScreenModule {
     private String line = "";
     private int color = 0xffffff;
     private ItemStack[] stacks = new ItemStack[DumpScreenModule.COLS * DumpScreenModule.ROWS];
+    private ScreenTextCache buttonCache = new ScreenTextCache();
 
     @Override
     public TransformMode getTransformMode() {
@@ -38,7 +39,8 @@ public class DumpClientScreenModule implements IClientScreenModule {
         int xoffset = 7 + 5;
 
         RenderHelper.drawBeveledBox(xoffset - 5, currenty, 130 - 7, currenty + 12, 0xffeeeeee, 0xff333333, 0xff448866);
-        fontRenderer.drawString(fontRenderer.trimStringToWidth(line, 130 - 7 - xoffset), xoffset + 0, currenty + 2 + 0, color);
+        buttonCache.setup(fontRenderer, line, 490);
+        buttonCache.renderText(fontRenderer, color, xoffset -10, currenty + 2);
     }
 
     @Override

@@ -19,12 +19,9 @@ public class ButtonClientScreenModule implements IClientScreenModule<IModuleData
     private int color = 0xffffff;
     private int buttonColor = 0xffffff;
     private boolean activated = false;
-    private int align = 0;  // 0 == left, 1 == center, 2 == right
 
-    private boolean dirty = true;
-    private int labelx;
-    private String labelLine;
-    private String buttonLine;
+    private ScreenTextCache labelCache = new ScreenTextCache();
+    private ScreenTextCache buttonCache = new ScreenTextCache();
 
     @Override
     public TransformMode getTransformMode() {
@@ -36,48 +33,22 @@ public class ButtonClientScreenModule implements IClientScreenModule<IModuleData
         return 14;
     }
 
-    private void setup(FontRenderer fontRenderer) {
-        if (!dirty) {
-            return;
-        }
-        dirty = false;
-
-        int xoffset;
-        if (!line.isEmpty()) {
-            int w = 74;
-            labelx = 7;
-            labelLine = fontRenderer.trimStringToWidth(line, w);
-            switch (align) {
-                case 0:
-                    break;
-                case 1:
-                    labelx += (w - fontRenderer.getStringWidth(labelLine)) / 2;
-                    break;
-                case 2:
-                    labelx += w - fontRenderer.getStringWidth(labelLine);
-                    break;
-            }
-            xoffset = 7 + 80;
-        } else {
-            xoffset = 7 + 5;
-        }
-        buttonLine = fontRenderer.trimStringToWidth(button, 130 - 7 - xoffset);
-    }
-
-
     @Override
     public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleDataBoolean screenData, ModuleRenderInfo renderInfo) {
         GlStateManager.disableLighting();
         GlStateManager.enableDepth();
         GlStateManager.depthMask(false);
-        setup(fontRenderer);
 
         int xoffset;
+        int buttonWidth;
         if (!line.isEmpty()) {
-            fontRenderer.drawString(labelLine, labelx, currenty + 2, color);
+            labelCache.setup(fontRenderer, line, 316);
+            labelCache.renderText(fontRenderer, color, 0, currenty + 2);
             xoffset = 7 + 80;
+            buttonWidth = 170;
         } else {
             xoffset = 7 + 5;
+            buttonWidth = 490;
         }
 
         boolean act = false;
@@ -90,7 +61,8 @@ public class ButtonClientScreenModule implements IClientScreenModule<IModuleData
         }
 
         RenderHelper.drawBeveledBox(xoffset - 5, currenty, 130 - 7, currenty + 12, act ? 0xff333333 : 0xffeeeeee, act ? 0xffeeeeee : 0xff333333, 0xff666666);
-        fontRenderer.drawString(buttonLine, xoffset + (act ? 1 : 0), currenty + 2 + (act ? 1 : 0), buttonColor);
+        buttonCache.setup(fontRenderer, button, buttonWidth);
+        buttonCache.renderText(fontRenderer, buttonColor, xoffset -10 + (act ? 1 : 0), currenty + 2);
     }
 
     @Override
@@ -135,11 +107,12 @@ public class ButtonClientScreenModule implements IClientScreenModule<IModuleData
             toggle = tagCompound.getBoolean("toggle");
             if (tagCompound.hasKey("align")) {
                 String alignment = tagCompound.getString("align");
-                align = "Left".equals(alignment) ? 0 : ("Right".equals(alignment) ? 2 : 1);
+                labelCache.setAlign("Left".equals(alignment) ? 0 : ("Right".equals(alignment) ? 2 : 1));
             } else {
-                align = 0;
+                labelCache.setAlign(0);
             }
-            dirty = true;
+            buttonCache.setDirty();
+            labelCache.setDirty();
         }
     }
 

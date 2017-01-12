@@ -4,6 +4,8 @@ import mcjty.lib.gui.RenderHelper;
 import mcjty.rftools.api.screens.FormatStyle;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
 import mcjty.rftools.api.screens.data.IModuleDataContents;
+import mcjty.rftools.blocks.screens.ScreenConfiguration;
+import mcjty.rftools.proxy.ClientProxy;
 import net.minecraft.client.gui.FontRenderer;
 
 import java.text.DecimalFormat;
@@ -34,14 +36,16 @@ public class ClientScreenModuleHelper implements IModuleRenderHelper {
             }
         }
         if (!hidetext) {
+            String diffTxt = null;
+            int col = poscolor;
             if (showdiff) {
                 long diff = screenData.getLastPerTick();
                 if (diff < 0) {
-                    fontRenderer.drawString(diff + " " + label + "/t", xoffset, currenty, negcolor);
+                    col = negcolor;
+                    diffTxt = diff + " " + label + "/t";
                 } else {
-                    fontRenderer.drawString("+" + diff + " " + label + "/t", xoffset, currenty, poscolor);
+                    diffTxt = "+" + diff + " " + label + "/t";
                 }
-
             } else if (maxContents > 0) {
                 long contents = screenData.getContents();
                 if (showpct) {
@@ -51,9 +55,19 @@ public class ClientScreenModuleHelper implements IModuleRenderHelper {
                     } else if (value > 100) {
                         value = 100;
                     }
-                    fontRenderer.drawString(value + "%", xoffset, currenty, poscolor);
+                    diffTxt = value + "%";
                 } else {
-                    fontRenderer.drawString(format(String.valueOf(contents), formatStyle) + label, xoffset, currenty, poscolor);
+                    diffTxt = format(String.valueOf(contents), formatStyle) + label;
+                }
+            }
+            if (diffTxt != null) {
+                if (ScreenConfiguration.useTruetype) {
+                    float r = (col >> 16 & 255) / 255.0f;
+                    float g = (col >> 8 & 255) / 255.0f;
+                    float b = (col & 255) / 255.0f;
+                    ClientProxy.font.drawString(xoffset, 128 - currenty, diffTxt, 0.25f, 0.25f, -512f-40f, r, g, b, 1.0f);
+                } else {
+                    fontRenderer.drawString(diffTxt, xoffset, currenty, col);
                 }
             }
         }
