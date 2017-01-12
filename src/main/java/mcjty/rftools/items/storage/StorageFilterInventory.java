@@ -92,8 +92,11 @@ public class StorageFilterInventory implements CompatInventory {
 
     @Override
     public void markDirty() {
-        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
-        convertItemsToNBT(tagCompound, stacks);
+        ItemStack heldItem = entityPlayer.getHeldItem(EnumHand.MAIN_HAND);
+        if (ItemStackTools.isValid((heldItem))) {
+            NBTTagCompound tagCompound = heldItem.getTagCompound();
+            convertItemsToNBT(tagCompound, stacks);
+        }
     }
 
     public static void convertItemsToNBT(NBTTagCompound tagCompound, ItemStackList stacks) {
