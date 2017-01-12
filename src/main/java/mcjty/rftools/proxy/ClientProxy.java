@@ -9,6 +9,8 @@ import mcjty.rftools.RenderWorldLastEventHandler;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.elevator.ElevatorSounds;
 import mcjty.rftools.blocks.screens.ScreenSetup;
+import mcjty.rftools.font.FontLoader;
+import mcjty.rftools.font.TrueTypeFont;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.keys.KeyBindings;
 import mcjty.rftools.keys.KeyInputHandler;
@@ -32,7 +34,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import java.util.concurrent.Callable;
 
 public class ClientProxy extends CommonProxy {
+
     private static final ResourceLocation VILLAGER_TEXTURE = new ResourceLocation(RFTools.MODID, "textures/entities/rftoolsvillager.png");
+
+    public static TrueTypeFont font;
 
     @Override
     public void preInit(FMLPreInitializationEvent e) {
@@ -51,6 +56,8 @@ public class ClientProxy extends CommonProxy {
         ModBlocks.initClientPost();
         MinecraftForge.EVENT_BUS.register(new KeyInputHandler());
         KeyBindings.init();
+
+        font = FontLoader.createFont(new ResourceLocation(RFTools.MODID, "fonts/ubuntu.ttf"), 40, false);
     }
 
     @Override

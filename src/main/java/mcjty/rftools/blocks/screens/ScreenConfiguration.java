@@ -26,6 +26,8 @@ public class ScreenConfiguration {
     public static int TEXT_RFPERTICK = 0;
     public static int STORAGE_CONTROL_RFPERTICK = 6;
 
+    public static boolean useTruetype = true;
+
     public static void init(Configuration cfg) {
         CONTROLLER_MAXENERGY = cfg.get(CATEGORY_SCREEN, "screenControllerMaxRF", CONTROLLER_MAXENERGY,
                 "Maximum RF storage that the screen controller can hold").getInt();
@@ -66,6 +68,9 @@ public class ScreenConfiguration {
                 "RF per tick/per block for the redstone module").getInt();
         TEXT_RFPERTICK = cfg.get(CATEGORY_SCREEN, "textRFPerTick", TEXT_RFPERTICK,
                 "RF per tick/per block for the text module").getInt();
+
+        useTruetype = cfg.get(CATEGORY_SCREEN, "useTruetype", useTruetype,
+                "Set to true for TrueType font, set to false for vanilla font").getBoolean();
     }
 
 }

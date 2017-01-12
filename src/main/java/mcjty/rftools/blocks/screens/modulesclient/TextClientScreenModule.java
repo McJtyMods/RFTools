@@ -5,6 +5,8 @@ import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
 import mcjty.rftools.api.screens.ModuleRenderInfo;
 import mcjty.rftools.api.screens.data.IModuleData;
+import mcjty.rftools.blocks.screens.ScreenConfiguration;
+import mcjty.rftools.proxy.ClientProxy;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,9 +19,11 @@ public class TextClientScreenModule implements IClientScreenModule {
     private boolean large = false;
     private int align = 0;  // 0 == left, 1 == center, 2 == right
 
+    private ScreenTextCache cache = new ScreenTextCache();
     private boolean dirty = true;
     private int textx;
     private String text;
+    private boolean truetype = false;
 
     @Override
     public TransformMode getTransformMode() {
@@ -32,17 +36,39 @@ public class TextClientScreenModule implements IClientScreenModule {
     }
 
     private void setup(FontRenderer fontRenderer) {
-        if (!dirty) {
+        if ((!dirty) && truetype == ScreenConfiguration.useTruetype) {
             return;
         }
         dirty = false;
-        int w = large ? 60 : 115;
-        textx = large ? 4 : 7;
-        text = fontRenderer.trimStringToWidth(line, w);
-        switch (align) {
-            case 0: break;
-            case 1: textx += (w-fontRenderer.getStringWidth(text))/2; break;
-            case 2: textx += w-fontRenderer.getStringWidth(text); break;
+        truetype = ScreenConfiguration.useTruetype;
+        if (ScreenConfiguration.useTruetype) {
+            int w = large ? 270 : 512;
+            textx = large ? 3 : 7;
+            text = ClientProxy.font.trimStringToWidth(line, w);
+            switch (align) {
+                case 0:
+                    break;
+                case 1:
+                    textx += ((w-24 -textx - ClientProxy.font.getWidth(text)) / 2) / 4;
+                    break;
+                case 2:
+                    textx += (w-24 -textx - ClientProxy.font.getWidth(text)) / 4;
+                    break;
+            }
+        } else {
+            int w = large ? 60 : 115;
+            textx = large ? 4 : 7;
+            text = fontRenderer.trimStringToWidth(line, w);
+            switch (align) {
+                case 0:
+                    break;
+                case 1:
+                    textx += (w - fontRenderer.getStringWidth(text)) / 2;
+                    break;
+                case 2:
+                    textx += w - fontRenderer.getStringWidth(text);
+                    break;
+            }
         }
     }
 
@@ -51,7 +77,15 @@ public class TextClientScreenModule implements IClientScreenModule {
         GlStateManager.disableLighting();
         setup(fontRenderer);
         int y = large ? (currenty / 2 + 1) : currenty;
-        fontRenderer.drawString(text, textx, y, color);
+
+        if (ScreenConfiguration.useTruetype) {
+            float r = (color >> 16 & 255) / 255.0f;
+            float g = (color >> 8 & 255) / 255.0f;
+            float b = (color & 255) / 255.0f;
+            ClientProxy.font.drawString(textx, (large ? 128 : 128) - y, text, 0.25f, 0.25f, large ? (-512f-44f) : (-512f-48f), r, g, b, 1.0f);
+        } else {
+            fontRenderer.drawString(text, textx, y, color);
+        }
     }
 
     @Override
