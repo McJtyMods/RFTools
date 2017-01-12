@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.screens.modulesclient;
 import mcjty.lib.gui.RenderHelper;
 import mcjty.rftools.api.screens.FormatStyle;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
+import mcjty.rftools.api.screens.ModuleRenderInfo;
 import mcjty.rftools.api.screens.data.IModuleDataContents;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.proxy.ClientProxy;
@@ -14,8 +15,15 @@ public class ClientScreenModuleHelper implements IModuleRenderHelper {
 
     @Override
     public void renderLevel(FontRenderer fontRenderer, int xoffset, int currenty, IModuleDataContents screenData, String label, boolean hidebar, boolean hidetext, boolean showpct, boolean showdiff,
-                                   int poscolor, int negcolor,
-                                   int gradient1, int gradient2, FormatStyle formatStyle) {
+                            int poscolor, int negcolor,
+                            int gradient1, int gradient2, FormatStyle formatStyle) {
+
+        renderLevel(fontRenderer, xoffset, currenty, screenData, label, hidebar, hidetext, showpct, showdiff, poscolor, negcolor,
+                gradient1, gradient2, formatStyle, null);
+    }
+
+    @Override
+    public void renderLevel(FontRenderer fontRenderer, int xoffset, int currenty, IModuleDataContents screenData, String label, boolean hidebar, boolean hidetext, boolean showpct, boolean showdiff, int poscolor, int negcolor, int gradient1, int gradient2, FormatStyle formatStyle, ModuleRenderInfo renderInfo) {
         if (screenData == null) {
             return;
         }
@@ -61,7 +69,7 @@ public class ClientScreenModuleHelper implements IModuleRenderHelper {
                 }
             }
             if (diffTxt != null) {
-                if (ScreenConfiguration.useTruetype) {
+                if (renderInfo == null ? ScreenConfiguration.useTruetype : renderInfo.truetype) {
                     float r = (col >> 16 & 255) / 255.0f;
                     float g = (col >> 8 & 255) / 255.0f;
                     float b = (col & 255) / 255.0f;

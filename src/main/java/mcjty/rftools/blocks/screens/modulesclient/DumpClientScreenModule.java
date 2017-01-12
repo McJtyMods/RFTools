@@ -39,8 +39,8 @@ public class DumpClientScreenModule implements IClientScreenModule {
         int xoffset = 7 + 5;
 
         RenderHelper.drawBeveledBox(xoffset - 5, currenty, 130 - 7, currenty + 12, 0xffeeeeee, 0xff333333, 0xff448866);
-        buttonCache.setup(fontRenderer, line, 490);
-        buttonCache.renderText(fontRenderer, color, xoffset -10, currenty + 2);
+        buttonCache.setup(fontRenderer, line, 490, renderInfo);
+        buttonCache.renderText(fontRenderer, color, xoffset -10, currenty + 2, renderInfo);
     }
 
     @Override

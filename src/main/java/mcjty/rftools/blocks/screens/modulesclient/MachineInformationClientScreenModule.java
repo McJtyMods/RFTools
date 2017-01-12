@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
 import mcjty.lib.api.MachineInformation;
-import mcjty.lib.gui.events.ColorChoiceEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
@@ -54,8 +53,8 @@ public class MachineInformationClientScreenModule implements IClientScreenModule
         GlStateManager.disableLighting();
         int xoffset;
         if (!line.isEmpty()) {
-            labelCache.setup(fontRenderer, line, 160);
-            labelCache.renderText(fontRenderer, labcolor, 0, currenty);
+            labelCache.setup(fontRenderer, line, 160, renderInfo);
+            labelCache.renderText(fontRenderer, labcolor, 0, currenty, renderInfo);
             xoffset = 7 + 40;
         } else {
             xoffset = 7;

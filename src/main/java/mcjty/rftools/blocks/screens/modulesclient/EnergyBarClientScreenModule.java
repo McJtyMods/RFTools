@@ -43,15 +43,15 @@ public class EnergyBarClientScreenModule implements IClientScreenModule<IModuleD
 
         int xoffset;
         if (!line.isEmpty()) {
-            labelCache.setup(fontRenderer, line, 160);
-            labelCache.renderText(fontRenderer, color, 0, currenty);
+            labelCache.setup(fontRenderer, line, 160, renderInfo);
+            labelCache.renderText(fontRenderer, color, 0, currenty, renderInfo);
             xoffset = 7 + 40;
         } else {
             xoffset = 7;
         }
 
         if (!BlockPosTools.INVALID.equals(coordinate)) {
-            renderHelper.renderLevel(fontRenderer, xoffset, currenty, screenData, "RF", hidebar, hidetext, showpct, showdiff, rfcolor, rfcolorNeg, 0xffff0000, 0xff333300, format);
+            renderHelper.renderLevel(fontRenderer, xoffset, currenty, screenData, "RF", hidebar, hidetext, showpct, showdiff, rfcolor, rfcolorNeg, 0xffff0000, 0xff333300, format, renderInfo);
         } else {
             if (ScreenConfiguration.useTruetype) {
                 ClientProxy.font.drawString(xoffset, 128 - currenty, "<invalid>", 0.25f, 0.25f, -512f-40f, 1.0f, 0, 0, 1.0f);

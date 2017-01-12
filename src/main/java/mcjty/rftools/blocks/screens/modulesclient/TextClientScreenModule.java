@@ -30,9 +30,9 @@ public class TextClientScreenModule implements IClientScreenModule {
     @Override
     public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleData screenData, ModuleRenderInfo renderInfo) {
         GlStateManager.disableLighting();
-        cache.setup(fontRenderer, line, 512);
+        cache.setup(fontRenderer, line, 512, renderInfo);
         int y = cache.isLarge() ? (currenty / 2 + 1) : currenty;
-        cache.renderText(fontRenderer, color, 0, y);
+        cache.renderText(fontRenderer, color, 0, y, renderInfo);
     }
 
     @Override

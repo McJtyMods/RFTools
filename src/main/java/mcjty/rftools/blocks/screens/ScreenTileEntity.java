@@ -36,6 +36,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     public static final String CMD_CLICK = "click";
     public static final String CMD_HOVER = "hover";
     public static final String CMD_SETBRIGHT = "setBright";
+    public static final String CMD_SETTRUETYPE = "setTruetype";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ScreenContainer.factory, ScreenContainer.SCREEN_MODULES);
 
@@ -56,6 +57,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     private boolean transparent = false;    // Transparent screen.
     private int color = 0;                  // Color of the screen.
     private boolean bright = false;         // True if the screen contents is full bright
+    private boolean truetypeDiffersFromDefault = false;
 
     // Sever side, the module we are hovering over
     private int hoveringModule = -1;
@@ -383,6 +385,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         transparent = tagCompound.getBoolean("transparent");
         color = tagCompound.getInteger("color");
         bright = tagCompound.getBoolean("bright");
+        truetypeDiffersFromDefault = tagCompound.getBoolean("truetype");
     }
 
     @Override
@@ -402,6 +405,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         tagCompound.setBoolean("transparent", transparent);
         tagCompound.setInteger("color", color);
         tagCompound.setBoolean("bright", bright);
+        tagCompound.setBoolean("truetype", truetypeDiffersFromDefault);
     }
 
     public int getColor() {
@@ -424,6 +428,15 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
 
     public void setBright(boolean bright) {
         this.bright = bright;
+        markDirtyClient();
+    }
+
+    public boolean isTruetypeDiffersFromDefault() {
+        return truetypeDiffersFromDefault;
+    }
+
+    public void setTruetypeDiffersFromDefault(boolean truetypeDiffersFromDefault) {
+        this.truetypeDiffersFromDefault = truetypeDiffersFromDefault;
         markDirtyClient();
     }
 
@@ -690,6 +703,10 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         } else if (CMD_SETBRIGHT.equals(command)) {
             boolean b = args.get("b").getBoolean();
             setBright(b);
+            return true;
+        } else if (CMD_SETTRUETYPE.equals(command)) {
+            boolean b = args.get("b").getBoolean();
+            setTruetypeDiffersFromDefault(b);
             return true;
         }
         return false;

@@ -42,8 +42,8 @@ public class FluidBarClientScreenModule implements IClientScreenModule<IModuleDa
 
         int xoffset;
         if (!line.isEmpty()) {
-            labelCache.setup(fontRenderer, line, 160);
-            labelCache.renderText(fontRenderer, color, 0, currenty);
+            labelCache.setup(fontRenderer, line, 160, renderInfo);
+            labelCache.renderText(fontRenderer, color, 0, currenty, renderInfo);
             xoffset = 7 + 40;
         } else {
             xoffset = 7;
@@ -51,7 +51,7 @@ public class FluidBarClientScreenModule implements IClientScreenModule<IModuleDa
 
         if (!BlockPosTools.INVALID.equals(coordinate)) {
             int mbcolorNeg = 0xffffff;
-            renderHelper.renderLevel(fontRenderer, xoffset, currenty, screenData, "mb", hidebar, hidetext, showpct, showdiff, mbcolor, mbcolorNeg, 0xff0088ff, 0xff003333, format);
+            renderHelper.renderLevel(fontRenderer, xoffset, currenty, screenData, "mb", hidebar, hidetext, showpct, showdiff, mbcolor, mbcolorNeg, 0xff0088ff, 0xff003333, format, renderInfo);
         } else {
             if (ScreenConfiguration.useTruetype) {
                 ClientProxy.font.drawString(xoffset, 128 - currenty, "<invalid>", 0.25f, 0.25f, -512f-40f, 1.0f, 0, 0, 1.0f);

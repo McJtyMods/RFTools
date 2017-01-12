@@ -42,8 +42,8 @@ public class ButtonClientScreenModule implements IClientScreenModule<IModuleData
         int xoffset;
         int buttonWidth;
         if (!line.isEmpty()) {
-            labelCache.setup(fontRenderer, line, 316);
-            labelCache.renderText(fontRenderer, color, 0, currenty + 2);
+            labelCache.setup(fontRenderer, line, 316, renderInfo);
+            labelCache.renderText(fontRenderer, color, 0, currenty + 2, renderInfo);
             xoffset = 7 + 80;
             buttonWidth = 170;
         } else {
@@ -61,8 +61,8 @@ public class ButtonClientScreenModule implements IClientScreenModule<IModuleData
         }
 
         RenderHelper.drawBeveledBox(xoffset - 5, currenty, 130 - 7, currenty + 12, act ? 0xff333333 : 0xffeeeeee, act ? 0xffeeeeee : 0xff333333, 0xff666666);
-        buttonCache.setup(fontRenderer, button, buttonWidth);
-        buttonCache.renderText(fontRenderer, buttonColor, xoffset -10 + (act ? 1 : 0), currenty + 2);
+        buttonCache.setup(fontRenderer, button, buttonWidth, renderInfo);
+        buttonCache.renderText(fontRenderer, buttonColor, xoffset -10 + (act ? 1 : 0), currenty + 2, renderInfo);
     }
 
     @Override

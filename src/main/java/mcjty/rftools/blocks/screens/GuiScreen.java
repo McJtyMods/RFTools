@@ -32,6 +32,7 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
     private IClientScreenModule[] clientScreenModules = new IClientScreenModule[ScreenContainer.SCREEN_MODULES];
 
     private ToggleButton bright;
+    private ToggleButton trueType;
 
     private int selected = -1;
 
@@ -65,10 +66,20 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
                 .setText("Bright")
                 .setCheckMarker(true)
                 .setTooltips("Toggle full brightness")
-                .setLayoutHint(new PositionalLayout.PositionalHint(7, 208, 63, 14));
+                .setLayoutHint(new PositionalLayout.PositionalHint(85, 123, 64, 14));
+//        .setLayoutHint(new PositionalLayout.PositionalHint(7, 208, 63, 14));
         bright.setPressed(tileEntity.isBright());
         bright.addButtonEvent(parent -> sendServerCommand(RFToolsMessages.INSTANCE, ScreenTileEntity.CMD_SETBRIGHT, new Argument("b", bright.isPressed())));
         toplevel.addChild(bright);
+
+        trueType = new ToggleButton(mc, this)
+                .setText(ScreenConfiguration.useTruetype ? "Font" : "Truetype")
+                .setCheckMarker(true)
+                .setTooltips("Toggle truetype mode", "If pressed mode differs", "from default")
+                .setLayoutHint(new PositionalLayout.PositionalHint(85+60+9, 123, 64, 14));
+        trueType.setPressed(tileEntity.isTruetypeDiffersFromDefault());
+        trueType.addButtonEvent(parent -> sendServerCommand(RFToolsMessages.INSTANCE, ScreenTileEntity.CMD_SETTRUETYPE, new Argument("b", trueType.isPressed())));
+        toplevel.addChild(trueType);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
@@ -143,7 +154,7 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
         });
         clientScreenModules[i].createGui(guiBuilder);
         modulePanels[i] = guiBuilder.build();
-        modulePanels[i].setLayoutHint(new PositionalLayout.PositionalHint(80, 8, 170, 130));
+        modulePanels[i].setLayoutHint(new PositionalLayout.PositionalHint(80, 8, 170, 114));
         modulePanels[i].setFilledRectThickness(-2).setFilledBackground(0xff8b8b8b);
 
         toplevel.addChild(modulePanels[i]);

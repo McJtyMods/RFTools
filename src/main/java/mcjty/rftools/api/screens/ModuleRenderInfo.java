@@ -1,5 +1,6 @@
 package mcjty.rftools.api.screens;
 
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
 /**
@@ -20,10 +21,14 @@ public class ModuleRenderInfo {
     // If the mouse is pointing at this module then this is the relative y inside the module
     public final int hity;
 
-    public ModuleRenderInfo(float factor, BlockPos pos, int hitx, int hity) {
+    // True if this should be rendered with truetype
+    public final boolean truetype;
+
+    public ModuleRenderInfo(float factor, BlockPos pos, int hitx, int hity, boolean truetype) {
         this.factor = factor;
         this.pos = pos;
         this.hitx = hitx;
         this.hity = hity;
+        this.truetype = truetype;
     }
 }

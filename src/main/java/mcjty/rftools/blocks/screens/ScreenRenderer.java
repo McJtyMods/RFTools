@@ -186,7 +186,8 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
                             hitx = hit.getX();
                             hity = hit.getY() - hit.getCurrenty();
                         }
-                        ModuleRenderInfo renderInfo = new ModuleRenderInfo(factor, pos, hitx, hity);
+                        boolean truetype = tileEntity.isTruetypeDiffersFromDefault() ? !ScreenConfiguration.useTruetype : ScreenConfiguration.useTruetype;
+                        ModuleRenderInfo renderInfo = new ModuleRenderInfo(factor, pos, hitx, hity, truetype);
                         module.render(clientScreenModuleHelper, fontrenderer, currenty, data, renderInfo);
                     } catch (ClassCastException e) {
                     }

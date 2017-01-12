@@ -38,8 +38,8 @@ public class CounterClientScreenModule implements IClientScreenModule<IModuleDat
 
         int xoffset;
         if (!line.isEmpty()) {
-            labelCache.setup(fontRenderer, line, 160);
-            labelCache.renderText(fontRenderer, color, 0, currenty);
+            labelCache.setup(fontRenderer, line, 160, renderInfo);
+            labelCache.renderText(fontRenderer, color, 0, currenty, renderInfo);
             xoffset = 7 + 40;
         } else {
             xoffset = 7;
