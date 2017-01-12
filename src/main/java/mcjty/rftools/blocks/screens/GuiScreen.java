@@ -2,7 +2,10 @@ package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
+import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
+import mcjty.lib.gui.widgets.ChoiceLabel;
+import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.ToggleButton;
 import mcjty.lib.network.Argument;
@@ -32,7 +35,7 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
     private IClientScreenModule[] clientScreenModules = new IClientScreenModule[ScreenContainer.SCREEN_MODULES];
 
     private ToggleButton bright;
-    private ToggleButton trueType;
+    private ChoiceLabel trueType;
 
     private int selected = -1;
 
@@ -66,19 +69,20 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
                 .setText("Bright")
                 .setCheckMarker(true)
                 .setTooltips("Toggle full brightness")
-                .setLayoutHint(new PositionalLayout.PositionalHint(85, 123, 64, 14));
+                .setLayoutHint(new PositionalLayout.PositionalHint(85, 123, 55, 14));
 //        .setLayoutHint(new PositionalLayout.PositionalHint(7, 208, 63, 14));
         bright.setPressed(tileEntity.isBright());
         bright.addButtonEvent(parent -> sendServerCommand(RFToolsMessages.INSTANCE, ScreenTileEntity.CMD_SETBRIGHT, new Argument("b", bright.isPressed())));
         toplevel.addChild(bright);
 
-        trueType = new ToggleButton(mc, this)
-                .setText(ScreenConfiguration.useTruetype ? "Font" : "Truetype")
-                .setCheckMarker(true)
-                .setTooltips("Toggle truetype mode", "If pressed mode differs", "from default")
-                .setLayoutHint(new PositionalLayout.PositionalHint(85+60+9, 123, 64, 14));
-        trueType.setPressed(tileEntity.isTruetypeDiffersFromDefault());
-        trueType.addButtonEvent(parent -> sendServerCommand(RFToolsMessages.INSTANCE, ScreenTileEntity.CMD_SETTRUETYPE, new Argument("b", trueType.isPressed())));
+        toplevel.addChild(new Label(mc, this).setText("Font:").setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT).setLayoutHint(new PositionalLayout.PositionalHint(85+50+9, 123, 30, 14)));
+        trueType = new ChoiceLabel(mc, this)
+                .addChoices("Default", "Truetype", "Vanilla")
+                .setTooltips("Set truetype font mode", "for the screen")
+                .setLayoutHint(new PositionalLayout.PositionalHint(85+50+14+30, 123, 68, 14));
+        int trueTypeMode = tileEntity.getTrueTypeMode();
+        trueType.setChoice(trueTypeMode == 0 ? "Default" : (trueTypeMode == -1 ? "Vanilla" : "Truetype"));
+        trueType.addChoiceEvent((a, b) -> sendServerCommand(RFToolsMessages.INSTANCE, ScreenTileEntity.CMD_SETTRUETYPE, new Argument("b", getCurrentTruetypeChoice())));
         toplevel.addChild(trueType);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
@@ -87,6 +91,17 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
         Keyboard.enableRepeatEvents(true);
 
         selected = -1;
+    }
+
+    private int getCurrentTruetypeChoice() {
+        String c = trueType.getCurrentChoice();
+        if ("Default".equals(c)) {
+            return 0;
+        }
+        if ("Truetype".equals(c)) {
+            return 1;
+        }
+        return -1;
     }
 
     private void selectPanel(int i) {
