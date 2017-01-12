@@ -294,6 +294,11 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
             return;
         }
 
+        if (selected >= tileEntity.getSupportedRecipes()) {
+            recipeList.setSelected(-1);
+            return;
+        }
+
         CraftingRecipe craftingRecipe = tileEntity.getRecipe(selected);
         InventoryCrafting inv = craftingRecipe.getInventory();
 
