@@ -2,7 +2,10 @@ package mcjty.rftools.commands;
 
 import mcjty.lib.tools.ChatTools;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
+import mcjty.rftools.font.FontLoader;
+import mcjty.rftools.proxy.ClientProxy;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 
@@ -35,6 +38,7 @@ public class CmdFont extends AbstractRfToolsCommand {
         ScreenConfiguration.font = fetchString(sender, args, 1, "rftools:fonts/ubuntu.ttf");
         ScreenConfiguration.fontSize = fetchFloat(sender, args, 2, 40);
         ScreenConfiguration.fontAntialias = fetchBool(sender, args, 3, false);
+        ClientProxy.font = FontLoader.createFont(new ResourceLocation(ScreenConfiguration.font), ScreenConfiguration.fontSize, ScreenConfiguration.fontAntialias);
     }
 
     @Override
