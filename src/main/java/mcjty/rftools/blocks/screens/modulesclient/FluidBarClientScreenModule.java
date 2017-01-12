@@ -3,7 +3,6 @@ package mcjty.rftools.blocks.screens.modulesclient;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.api.screens.*;
 import mcjty.rftools.api.screens.data.IModuleDataContents;
-import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.proxy.ClientProxy;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -53,7 +52,7 @@ public class FluidBarClientScreenModule implements IClientScreenModule<IModuleDa
             int mbcolorNeg = 0xffffff;
             renderHelper.renderLevel(fontRenderer, xoffset, currenty, screenData, "mb", hidebar, hidetext, showpct, showdiff, mbcolor, mbcolorNeg, 0xff0088ff, 0xff003333, format, renderInfo);
         } else {
-            if (ScreenConfiguration.useTruetype) {
+            if (renderInfo.truetype) {
                 ClientProxy.font.drawString(xoffset, 128 - currenty, "<invalid>", 0.25f, 0.25f, -512f-40f, 1.0f, 0, 0, 1.0f);
             } else {
                 fontRenderer.drawString("<invalid>", xoffset, currenty, 0xff0000);

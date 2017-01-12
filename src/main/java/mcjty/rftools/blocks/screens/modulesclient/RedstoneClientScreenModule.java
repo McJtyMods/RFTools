@@ -5,7 +5,6 @@ import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
 import mcjty.rftools.api.screens.ModuleRenderInfo;
 import mcjty.rftools.api.screens.data.IModuleDataBoolean;
-import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.proxy.ClientProxy;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -58,7 +57,7 @@ public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDa
             text = "<invalid>";
             col = 0xff0000;
         }
-        if (ScreenConfiguration.useTruetype) {
+        if (renderInfo.truetype) {
             float r = (col >> 16 & 255) / 255.0f;
             float g = (col >> 8 & 255) / 255.0f;
             float b = (col & 255) / 255.0f;

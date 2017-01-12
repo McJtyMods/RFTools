@@ -13,7 +13,6 @@ import mcjty.rftools.api.screens.IModuleRenderHelper;
 import mcjty.rftools.api.screens.ModuleRenderInfo;
 import mcjty.rftools.api.screens.data.IModuleDataString;
 import mcjty.rftools.blocks.screens.IModuleGuiChanged;
-import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.proxy.ClientProxy;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -69,7 +68,7 @@ public class MachineInformationClientScreenModule implements IClientScreenModule
             text = "<invalid>";
             col = 0xff0000;
         }
-        if (ScreenConfiguration.useTruetype) {
+        if (renderInfo.truetype) {
             float r = (col >> 16 & 255) / 255.0f;
             float g = (col >> 8 & 255) / 255.0f;
             float b = (col & 255) / 255.0f;

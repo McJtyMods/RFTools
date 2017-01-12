@@ -6,7 +6,6 @@ import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
 import mcjty.rftools.api.screens.ModuleRenderInfo;
 import mcjty.rftools.api.screens.data.IModuleData;
-import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.proxy.ClientProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -53,7 +52,7 @@ public class ClockClientScreenModule implements IClientScreenModule {
         }
 
         String output = line + " " + timeString;
-        if (ScreenConfiguration.useTruetype) {
+        if (renderInfo.truetype) {
             float r = (color >> 16 & 255) / 255.0f;
             float g = (color >> 8 & 255) / 255.0f;
             float b = (color & 255) / 255.0f;

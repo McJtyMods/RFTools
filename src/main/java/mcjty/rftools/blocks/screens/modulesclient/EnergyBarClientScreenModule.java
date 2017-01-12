@@ -3,7 +3,6 @@ package mcjty.rftools.blocks.screens.modulesclient;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.api.screens.*;
 import mcjty.rftools.api.screens.data.IModuleDataContents;
-import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.proxy.ClientProxy;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -53,7 +52,7 @@ public class EnergyBarClientScreenModule implements IClientScreenModule<IModuleD
         if (!BlockPosTools.INVALID.equals(coordinate)) {
             renderHelper.renderLevel(fontRenderer, xoffset, currenty, screenData, "RF", hidebar, hidetext, showpct, showdiff, rfcolor, rfcolorNeg, 0xffff0000, 0xff333300, format, renderInfo);
         } else {
-            if (ScreenConfiguration.useTruetype) {
+            if (renderInfo.truetype) {
                 ClientProxy.font.drawString(xoffset, 128 - currenty, "<invalid>", 0.25f, 0.25f, -512f-40f, 1.0f, 0, 0, 1.0f);
             } else {
                 fontRenderer.drawString("<invalid>", xoffset, currenty, 0xff0000);

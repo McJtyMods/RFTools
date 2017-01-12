@@ -3,7 +3,6 @@ package mcjty.rftools.blocks.screens.modulesclient;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.api.screens.*;
 import mcjty.rftools.api.screens.data.IModuleDataInteger;
-import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.proxy.ClientProxy;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -60,7 +59,7 @@ public class CounterClientScreenModule implements IClientScreenModule<IModuleDat
             output = "<invalid>";
             col = 0xff0000;
         }
-        if (ScreenConfiguration.useTruetype) {
+        if (renderInfo.truetype) {
             float r = (col >> 16 & 255) / 255.0f;
             float g = (col >> 8 & 255) / 255.0f;
             float b = (col & 255) / 255.0f;

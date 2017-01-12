@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
 import mcjty.rftools.api.screens.ModuleRenderInfo;
-import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.proxy.ClientProxy;
 import net.minecraft.client.gui.FontRenderer;
 
@@ -44,12 +43,12 @@ public class ScreenTextCache {
     }
 
     public void setup(FontRenderer fontRenderer, String line, int width, ModuleRenderInfo renderInfo) {
-        if ((!dirty) && truetype == ScreenConfiguration.useTruetype) {
+        if ((!dirty) && truetype == renderInfo.truetype) {
             return;
         }
         dirty = false;
-        truetype = ScreenConfiguration.useTruetype;
-        if (ScreenConfiguration.useTruetype) {
+        truetype = renderInfo.truetype;
+        if (renderInfo.truetype) {
             textx = large ? 3 : 7;
             text = ClientProxy.font.trimStringToWidth(line, (large ? (width/2) : width)-textx);
 //            int w = large ? 240 : 472;
