@@ -61,7 +61,7 @@ public class ElevatorButtonScreenModule implements IScreenModule<ElevatorButtonS
             int s = buf.readByte();
             heights = new ArrayList<>(s);
             for (int i = 0; i < s; i++) {
-                heights.add((int) buf.readByte());
+                heights.add((int) buf.readShort());
             }
         }
 
@@ -88,7 +88,7 @@ public class ElevatorButtonScreenModule implements IScreenModule<ElevatorButtonS
             NetworkTools.writePos(buf, pos);
             buf.writeByte(heights.size());
             for (Integer height : heights) {
-                buf.writeByte(height);
+                buf.writeShort(height);
             }
         }
     }
