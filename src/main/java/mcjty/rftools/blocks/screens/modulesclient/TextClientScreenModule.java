@@ -1,10 +1,8 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
-import mcjty.rftools.api.screens.IClientScreenModule;
-import mcjty.rftools.api.screens.IModuleGuiBuilder;
-import mcjty.rftools.api.screens.IModuleRenderHelper;
-import mcjty.rftools.api.screens.ModuleRenderInfo;
+import mcjty.rftools.api.screens.*;
 import mcjty.rftools.api.screens.data.IModuleData;
+import mcjty.rftools.blocks.screens.modulesclient.helper.ScreenTextHelper;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,7 +13,7 @@ public class TextClientScreenModule implements IClientScreenModule {
     private String line = "";
     private int color = 0xffffff;
 
-    private ScreenTextCache cache = new ScreenTextCache();
+    private ITextRenderHelper cache = new ScreenTextHelper();
 
     @Override
     public TransformMode getTransformMode() {
@@ -30,9 +28,9 @@ public class TextClientScreenModule implements IClientScreenModule {
     @Override
     public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleData screenData, ModuleRenderInfo renderInfo) {
         GlStateManager.disableLighting();
-        cache.setup(fontRenderer, line, 512, renderInfo);
+        cache.setup(line, 512, renderInfo);
         int y = cache.isLarge() ? (currenty / 2 + 1) : currenty;
-        cache.renderText(fontRenderer, color, 0, y, renderInfo);
+        cache.renderText(0, y, color, renderInfo);
     }
 
     @Override
@@ -60,7 +58,7 @@ public class TextClientScreenModule implements IClientScreenModule {
     }
 
     public void setLarge(boolean large) {
-        cache.setLarge(large);
+        cache.large(large);
         cache.setDirty();
     }
 
@@ -73,14 +71,13 @@ public class TextClientScreenModule implements IClientScreenModule {
             } else {
                 color = 0xffffff;
             }
-            cache.setLarge(tagCompound.getBoolean("large"));
+            cache.large(tagCompound.getBoolean("large"));
             if (tagCompound.hasKey("align")) {
                 String alignment = tagCompound.getString("align");
-                cache.setAlign("Left".equals(alignment) ? 0 : ("Right".equals(alignment) ? 2 : 1));
+                cache.align(TextAlign.get(alignment));
             } else {
-                cache.setAlign(0);
+                cache.align(TextAlign.ALIGN_LEFT);
             }
-            cache.setDirty();
         }
     }
 

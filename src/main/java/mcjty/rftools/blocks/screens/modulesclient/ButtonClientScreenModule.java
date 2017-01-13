@@ -1,11 +1,9 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
 import mcjty.lib.gui.RenderHelper;
-import mcjty.rftools.api.screens.IClientScreenModule;
-import mcjty.rftools.api.screens.IModuleGuiBuilder;
-import mcjty.rftools.api.screens.IModuleRenderHelper;
-import mcjty.rftools.api.screens.ModuleRenderInfo;
+import mcjty.rftools.api.screens.*;
 import mcjty.rftools.api.screens.data.IModuleDataBoolean;
+import mcjty.rftools.blocks.screens.modulesclient.helper.ScreenTextHelper;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,8 +18,8 @@ public class ButtonClientScreenModule implements IClientScreenModule<IModuleData
     private int buttonColor = 0xffffff;
     private boolean activated = false;
 
-    private ScreenTextCache labelCache = new ScreenTextCache();
-    private ScreenTextCache buttonCache = new ScreenTextCache();
+    private ITextRenderHelper labelCache = new ScreenTextHelper();
+    private ITextRenderHelper buttonCache = new ScreenTextHelper();
 
     @Override
     public TransformMode getTransformMode() {
@@ -42,8 +40,8 @@ public class ButtonClientScreenModule implements IClientScreenModule<IModuleData
         int xoffset;
         int buttonWidth;
         if (!line.isEmpty()) {
-            labelCache.setup(fontRenderer, line, 316, renderInfo);
-            labelCache.renderText(fontRenderer, color, 0, currenty + 2, renderInfo);
+            labelCache.setup(line, 316, renderInfo);
+            labelCache.renderText(0, currenty + 2, color, renderInfo);
             xoffset = 7 + 80;
             buttonWidth = 170;
         } else {
@@ -61,8 +59,8 @@ public class ButtonClientScreenModule implements IClientScreenModule<IModuleData
         }
 
         RenderHelper.drawBeveledBox(xoffset - 5, currenty, 130 - 7, currenty + 12, act ? 0xff333333 : 0xffeeeeee, act ? 0xffeeeeee : 0xff333333, 0xff666666);
-        buttonCache.setup(fontRenderer, button, buttonWidth, renderInfo);
-        buttonCache.renderText(fontRenderer, buttonColor, xoffset -10 + (act ? 1 : 0), currenty + 2, renderInfo);
+        buttonCache.setup(button, buttonWidth, renderInfo);
+        buttonCache.renderText(xoffset -10 + (act ? 1 : 0), currenty + 2, buttonColor, renderInfo);
     }
 
     @Override
@@ -107,12 +105,11 @@ public class ButtonClientScreenModule implements IClientScreenModule<IModuleData
             toggle = tagCompound.getBoolean("toggle");
             if (tagCompound.hasKey("align")) {
                 String alignment = tagCompound.getString("align");
-                labelCache.setAlign("Left".equals(alignment) ? 0 : ("Right".equals(alignment) ? 2 : 1));
+                labelCache.align(TextAlign.get(alignment));
             } else {
-                labelCache.setAlign(0);
+                labelCache.align(TextAlign.ALIGN_LEFT);
             }
             buttonCache.setDirty();
-            labelCache.setDirty();
         }
     }
 

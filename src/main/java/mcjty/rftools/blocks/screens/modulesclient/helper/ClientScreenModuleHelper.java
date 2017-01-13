@@ -1,14 +1,14 @@
-package mcjty.rftools.blocks.screens.modulesclient;
+package mcjty.rftools.blocks.screens.modulesclient.helper;
 
 import mcjty.lib.gui.RenderHelper;
-import mcjty.rftools.api.screens.FormatStyle;
-import mcjty.rftools.api.screens.IModuleRenderHelper;
-import mcjty.rftools.api.screens.ModuleRenderInfo;
+import mcjty.rftools.api.screens.*;
 import mcjty.rftools.api.screens.data.IModuleDataContents;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.proxy.ClientProxy;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 
+import javax.annotation.Nonnull;
 import java.text.DecimalFormat;
 
 public class ClientScreenModuleHelper implements IModuleRenderHelper {
@@ -22,8 +22,7 @@ public class ClientScreenModuleHelper implements IModuleRenderHelper {
                 gradient1, gradient2, formatStyle, null);
     }
 
-    @Override
-    public void renderLevel(FontRenderer fontRenderer, int xoffset, int currenty, IModuleDataContents screenData, String label, boolean hidebar, boolean hidetext, boolean showpct, boolean showdiff, int poscolor, int negcolor, int gradient1, int gradient2, FormatStyle formatStyle, ModuleRenderInfo renderInfo) {
+    private void renderLevel(FontRenderer fontRenderer, int xoffset, int currenty, IModuleDataContents screenData, String label, boolean hidebar, boolean hidetext, boolean showpct, boolean showdiff, int poscolor, int negcolor, int gradient1, int gradient2, FormatStyle formatStyle, ModuleRenderInfo renderInfo) {
         if (screenData == null) {
             return;
         }
@@ -69,7 +68,7 @@ public class ClientScreenModuleHelper implements IModuleRenderHelper {
                 }
             }
             if (diffTxt != null) {
-                if (renderInfo == null ? ScreenConfiguration.useTruetype : renderInfo.truetype) {
+                if (ScreenConfiguration.useTruetype) {
                     float r = (col >> 16 & 255) / 255.0f;
                     float g = (col >> 8 & 255) / 255.0f;
                     float b = (col & 255) / 255.0f;
@@ -79,6 +78,45 @@ public class ClientScreenModuleHelper implements IModuleRenderHelper {
                 }
             }
         }
+    }
+
+    @Override
+    public ITextRenderHelper createTextRenderHelper() {
+        return new ScreenTextHelper();
+    }
+
+    @Override
+    public ILevelRenderHelper createLevelRenderHelper() {
+        return new ScreenLevelHelper();
+    }
+
+    @Override
+    public void renderText(int x, int y, int color, @Nonnull ModuleRenderInfo renderInfo, String text) {
+        if (renderInfo.font != null) {
+            float r = (color >> 16 & 255) / 255.0f;
+            float g = (color >> 8 & 255) / 255.0f;
+            float b = (color & 255) / 255.0f;
+            renderInfo.font.drawString(x, 128 - y, text, 0.25f, 0.25f, -512f-40f, r, g, b, 1.0f);
+        } else {
+            FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
+            fontRenderer.drawString(text, x, y, color);
+        }
+    }
+
+    @Override
+    public void renderTextTrimmed(int x, int y, int color, @Nonnull ModuleRenderInfo renderInfo, String text, int maxwidth) {
+        if (renderInfo.font != null) {
+            String trimmed = renderInfo.font.trimStringToWidth(text, maxwidth);
+            float r = (color >> 16 & 255) / 255.0f;
+            float g = (color >> 8 & 255) / 255.0f;
+            float b = (color & 255) / 255.0f;
+            renderInfo.font.drawString(x, 128 - y, trimmed, 0.25f, 0.25f, -512f-40f, r, g, b, 1.0f);
+        } else {
+            FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
+            String trimmed = fontRenderer.trimStringToWidth(text, maxwidth / 4);
+            fontRenderer.drawString(trimmed, x, y, color);
+        }
+
     }
 
     private static DecimalFormat dfCommas = new DecimalFormat("###,###");
