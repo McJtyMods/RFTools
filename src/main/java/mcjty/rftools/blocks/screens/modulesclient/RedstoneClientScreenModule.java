@@ -54,14 +54,7 @@ public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDa
             text = "<invalid>";
             col = 0xff0000;
         }
-        if (renderInfo.font != null) {
-            float r = (col >> 16 & 255) / 255.0f;
-            float g = (col >> 8 & 255) / 255.0f;
-            float b = (col & 255) / 255.0f;
-            renderInfo.font.drawString(xoffset, 128 - currenty, text, 0.25f, 0.25f, -512f-40f, r, g, b, 1.0f);
-        } else {
-            fontRenderer.drawString(text, xoffset, currenty, col);
-        }
+        renderHelper.renderText(xoffset, currenty, col, renderInfo, text);
     }
 
     @Override
