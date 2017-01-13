@@ -979,7 +979,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             IBlockState newState = placeBlockAt(getWorld(), srcPos, stack, null, fakePlayer);
 
             if (!silent) {
-                SoundTools.playSound(getWorld(), newState.getBlock().getSoundType().breakSound, srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
+                SoundTools.playSound(getWorld(), newState.getBlock().getSoundType().getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
             }
 
             consumeEnergy(rfNeeded);
@@ -1024,7 +1024,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         consumeEnergy(rfNeeded);
         if (!silent) {
-            SoundTools.playSound(getWorld(), block.getSoundType().breakSound, sx, sy, sz, 1.0f, 1.0f);
+            SoundTools.playSound(getWorld(), block.getSoundType().getBreakSound(), sx, sy, sz, 1.0f, 1.0f);
         }
     }
 
@@ -1204,7 +1204,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                         getWorld().setBlockState(srcPos, getDirtOrCobble().getDefaultState(), 2);       // No block update!
                     }
                     if (!silent) {
-                        SoundTools.playSound(getWorld(), block.getSoundType().breakSound, srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
+                        SoundTools.playSound(getWorld(), block.getSoundType().getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
                     }
                 }
                 // We never wait when pumping fluids
@@ -1240,7 +1240,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
 
             if (!silent) {
-                SoundTools.playSound(getWorld(), block.getSoundType().breakSound, sx, sy, sz, 1.0f, 1.0f);
+                SoundTools.playSound(getWorld(), block.getSoundType().getBreakSound(), sx, sy, sz, 1.0f, 1.0f);
             }
             getWorld().setBlockToAir(srcPos);
             consumeEnergy(rfNeeded);
@@ -1586,7 +1586,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             destWorld.setBlockState(destPos, newState, 3);  // placeBlockAt can reset the orientation. Restore it here
 
             if (!silent) {
-                SoundTools.playSound(destWorld, origBlock.getSoundType().breakSound, destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
+                SoundTools.playSound(destWorld, origBlock.getSoundType().getBreakSound(), destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
             }
 
             consumeEnergy(rfNeeded);
@@ -1751,8 +1751,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 setTileEntityNBT(destWorld, tc, destPos, newDestState);
             }
             if (!silent) {
-                SoundTools.playSound(world, origBlock.getSoundType().breakSound, srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
-                SoundTools.playSound(destWorld, origBlock.getSoundType().breakSound, destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
+                SoundTools.playSound(world, origBlock.getSoundType().getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
+                SoundTools.playSound(destWorld, origBlock.getSoundType().getBreakSound(), destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
             }
         }
     }
@@ -1834,10 +1834,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         if (!silent) {
             if (!isEmpty(srcState, srcBlock)) {
-                SoundTools.playSound(world, srcBlock.getSoundType().breakSound, srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
+                SoundTools.playSound(world, srcBlock.getSoundType().getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
             }
             if (!isEmpty(dstState, dstBlock)) {
-                SoundTools.playSound(destWorld, dstBlock.getSoundType().breakSound, dstPos.getX(), dstPos.getY(), dstPos.getZ(), 1.0f, 1.0f);
+                SoundTools.playSound(destWorld, dstBlock.getSoundType().getBreakSound(), dstPos.getX(), dstPos.getY(), dstPos.getZ(), 1.0f, 1.0f);
             }
         }
     }
