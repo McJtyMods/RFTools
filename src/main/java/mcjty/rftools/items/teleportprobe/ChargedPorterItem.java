@@ -52,6 +52,11 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyCont
     }
 
     @Override
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+        return false;
+    }
+
+    @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
         return new ItemCapabilityProvider(stack, this);
     }

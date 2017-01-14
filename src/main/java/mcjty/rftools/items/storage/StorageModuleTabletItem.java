@@ -55,6 +55,11 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
     }
 
     @Override
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+        return false;
+    }
+
+    @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
         return new ItemCapabilityProvider(stack, this);
     }
