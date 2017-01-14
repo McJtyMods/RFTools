@@ -2,12 +2,10 @@ package mcjty.rftools.blocks.screens.modulesclient;
 
 import mcjty.lib.gui.RenderHelper;
 import mcjty.lib.tools.ItemStackTools;
-import mcjty.rftools.api.screens.IClientScreenModule;
-import mcjty.rftools.api.screens.IModuleGuiBuilder;
-import mcjty.rftools.api.screens.IModuleRenderHelper;
-import mcjty.rftools.api.screens.ModuleRenderInfo;
+import mcjty.rftools.api.screens.*;
 import mcjty.rftools.api.screens.data.IModuleData;
 import mcjty.rftools.blocks.screens.modules.DumpScreenModule;
+import mcjty.rftools.blocks.screens.modulesclient.helper.ScreenTextHelper;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
@@ -19,7 +17,7 @@ public class DumpClientScreenModule implements IClientScreenModule {
     private String line = "";
     private int color = 0xffffff;
     private ItemStack[] stacks = new ItemStack[DumpScreenModule.COLS * DumpScreenModule.ROWS];
-    private ScreenTextCache buttonCache = new ScreenTextCache();
+    private ITextRenderHelper buttonCache = new ScreenTextHelper();
 
     @Override
     public TransformMode getTransformMode() {
@@ -39,8 +37,8 @@ public class DumpClientScreenModule implements IClientScreenModule {
         int xoffset = 7 + 5;
 
         RenderHelper.drawBeveledBox(xoffset - 5, currenty, 130 - 7, currenty + 12, 0xffeeeeee, 0xff333333, 0xff448866);
-        buttonCache.setup(fontRenderer, line, 490, renderInfo);
-        buttonCache.renderText(fontRenderer, color, xoffset -10, currenty + 2, renderInfo);
+        buttonCache.setup(line, 490, renderInfo);
+        buttonCache.renderText(xoffset -10, currenty + 2, color, renderInfo);
     }
 
     @Override

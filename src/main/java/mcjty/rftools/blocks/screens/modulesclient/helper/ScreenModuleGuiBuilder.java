@@ -1,4 +1,4 @@
-package mcjty.rftools.blocks.screens.modulesclient;
+package mcjty.rftools.blocks.screens.modulesclient.helper;
 
 import mcjty.lib.gui.events.BlockRenderEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;

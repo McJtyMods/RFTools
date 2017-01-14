@@ -1,7 +1,9 @@
 package mcjty.rftools.api.screens;
 
-import net.minecraft.tileentity.TileEntity;
+import mcjty.lib.font.TrueTypeFont;
 import net.minecraft.util.math.BlockPos;
+
+import javax.annotation.Nullable;
 
 /**
  * Class containing various things useful for rendering your module. You get an instance of this
@@ -21,14 +23,14 @@ public class ModuleRenderInfo {
     // If the mouse is pointing at this module then this is the relative y inside the module
     public final int hity;
 
-    // True if this should be rendered with truetype
-    public final boolean truetype;
+    // Non null if this should be rendered with truetype
+    public final TrueTypeFont font;
 
-    public ModuleRenderInfo(float factor, BlockPos pos, int hitx, int hity, boolean truetype) {
+    public ModuleRenderInfo(float factor, BlockPos pos, int hitx, int hity, @Nullable TrueTypeFont font) {
         this.factor = factor;
         this.pos = pos;
         this.hitx = hitx;
         this.hity = hity;
-        this.truetype = truetype;
+        this.font = font;
     }
 }

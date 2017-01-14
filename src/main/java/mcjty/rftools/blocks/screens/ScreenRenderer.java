@@ -1,14 +1,16 @@
 package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.container.GenericBlock;
+import mcjty.lib.font.TrueTypeFont;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.ModuleRenderInfo;
 import mcjty.rftools.api.screens.data.IModuleData;
-import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModuleHelper;
+import mcjty.rftools.blocks.screens.modulesclient.helper.ClientScreenModuleHelper;
 import mcjty.rftools.blocks.screens.network.PacketGetScreenData;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.proxy.ClientProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -186,13 +188,13 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
                             hitx = hit.getX();
                             hity = hit.getY() - hit.getCurrenty();
                         }
-                        boolean truetype = false;
+                        TrueTypeFont font = null;
                         switch (tileEntity.getTrueTypeMode()) {
-                            case -1: truetype = false; break;
-                            case 1: truetype = true; break;
-                            case 0: truetype = ScreenConfiguration.useTruetype; break;
+                            case -1: break;
+                            case 1: font = ClientProxy.font; break;
+                            case 0: font = ScreenConfiguration.useTruetype ? ClientProxy.font : null; break;
                         }
-                        ModuleRenderInfo renderInfo = new ModuleRenderInfo(factor, pos, hitx, hity, truetype);
+                        ModuleRenderInfo renderInfo = new ModuleRenderInfo(factor, pos, hitx, hity, font);
                         module.render(clientScreenModuleHelper, fontrenderer, currenty, data, renderInfo);
                     } catch (ClassCastException e) {
                     }

@@ -43,11 +43,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
         acceptedMinecraftVersions = "[1.10,1.12)")
 public class RFTools implements ModBase {
     public static final String MODID = "rftools";
-    public static final String VERSION = "5.80";
+    public static final String VERSION = "5.81";
     public static final String MIN_FORGE10_VER = "12.18.1.2082";
     public static final String MIN_FORGE11_VER = "13.19.0.2176";
-    public static final String MIN_MCJTYLIB_VER = "2.3.0";
-    public static final String COMPATLAYER_VER = "0.1.6";
+    public static final String MIN_MCJTYLIB_VER = "2.3.2";
+    public static final String COMPATLAYER_VER = "0.1.7";
 
     @SidedProxy(clientSide = "mcjty.rftools.proxy.ClientProxy", serverSide = "mcjty.rftools.proxy.ServerProxy")
     public static CommonProxy proxy;

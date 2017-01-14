@@ -2,6 +2,8 @@ package mcjty.rftools.proxy;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import mcjty.lib.McJtyLibClient;
+import mcjty.lib.font.FontLoader;
+import mcjty.lib.font.TrueTypeFont;
 import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.RenderGameOverlayEventHandler;
@@ -10,8 +12,6 @@ import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.elevator.ElevatorSounds;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.ScreenSetup;
-import mcjty.rftools.font.FontLoader;
-import mcjty.rftools.font.TrueTypeFont;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.keys.KeyBindings;
 import mcjty.rftools.keys.KeyInputHandler;

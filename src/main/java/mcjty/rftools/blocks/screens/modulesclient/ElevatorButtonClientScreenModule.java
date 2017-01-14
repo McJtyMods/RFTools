@@ -8,7 +8,6 @@ import mcjty.rftools.api.screens.IModuleRenderHelper;
 import mcjty.rftools.api.screens.ModuleRenderInfo;
 import mcjty.rftools.blocks.elevator.ElevatorTileEntity;
 import mcjty.rftools.blocks.screens.modules.ElevatorButtonScreenModule;
-import mcjty.rftools.proxy.ClientProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -64,13 +63,13 @@ public class ElevatorButtonClientScreenModule implements IClientScreenModule<Ele
         BlockPos pos = screenData.getPos();
         List<Integer> heights = screenData.getHeights();
         if (vertical) {
-            renderButtonsVertical(fontRenderer, currenty, currentLevel, buttons, pos, heights, renderInfo);
+            renderButtonsVertical(renderHelper, currenty, currentLevel, buttons, pos, heights, renderInfo);
         } else {
-            renderButtonsHorizontal(fontRenderer, currenty, currentLevel, buttons, pos, heights, renderInfo);
+            renderButtonsHorizontal(renderHelper, currenty, currentLevel, buttons, pos, heights, renderInfo);
         }
     }
 
-    private void renderButtonsHorizontal(FontRenderer fontRenderer, int currenty, int currentLevel, int buttons,
+    private void renderButtonsHorizontal(IModuleRenderHelper renderHelper, int currenty, int currentLevel, int buttons,
                                          BlockPos pos,
                                          List<Integer> heights, ModuleRenderInfo renderInfo) {
         int xoffset = 5;
@@ -91,32 +90,17 @@ public class ElevatorButtonClientScreenModule implements IClientScreenModule<Ele
             if (lights) {
                 RenderHelper.drawBeveledBox(xoffset, currenty, xoffset + getDimension() - 4, currenty + getDimension() - 2, 0xffffffff, 0xffffffff, 0xff000000 + col);
                 if (hasText) {
-                    if (renderInfo.truetype) {
-                        String trimmed = ClientProxy.font.trimStringToWidth(text, 480);
-                        ClientProxy.font.drawString(x, 128 - y, trimmed, 0.25f, 0.25f, -512f-40f, 1.0f, 1.0f, 1.0f, 1.0f);
-                    } else {
-                        String trimmed = fontRenderer.trimStringToWidth(text, 120);
-                        fontRenderer.drawString(trimmed, x, y, 0xffffff);
-                    }
+                    renderHelper.renderTextTrimmed(x, y, 0xffffff, renderInfo, text, 480);
                 }
             } else {
                 RenderHelper.drawBeveledBox(xoffset, currenty, xoffset + getDimension() - 4, currenty + getDimension() - 2, 0xffeeeeee, 0xff333333, 0xff666666);
-                if (renderInfo.truetype) {
-                    String trimmed = ClientProxy.font.trimStringToWidth(text, (getDimension() - 4) * 4);
-                    float r = (col >> 16 & 255) / 255.0f;
-                    float g = (col >> 8 & 255) / 255.0f;
-                    float b = (col & 255) / 255.0f;
-                    ClientProxy.font.drawString(x, 128 - y, trimmed, 0.25f, 0.25f, -512f-40f, r, g, b, 1.0f);
-                } else {
-                    String trimmed = fontRenderer.trimStringToWidth(text, getDimension() - 4);
-                    fontRenderer.drawString(trimmed, x, y, col);
-                }
+                renderHelper.renderTextTrimmed(x, y, col, renderInfo, text, (getDimension() - 4) * 4);
             }
             xoffset += getDimension() - 2;
         }
     }
 
-    private void renderButtonsVertical(FontRenderer fontRenderer, int currenty, int currentLevel, int buttons,
+    private void renderButtonsVertical(IModuleRenderHelper renderHelper, int currenty, int currentLevel, int buttons,
                                        BlockPos pos, List<Integer> heights, ModuleRenderInfo renderInfo) {
         int max = large ? 6 : 8;
 
@@ -146,26 +130,11 @@ public class ElevatorButtonClientScreenModule implements IClientScreenModule<Ele
             if (lights) {
                 RenderHelper.drawBeveledBox(xoffset, y, xoffset + w, y + getDimension() - 2, 0xffffffff, 0xffffffff, 0xff000000 + col);
                 if (hasText) {
-                    if (renderInfo.truetype) {
-                        String trimmed = ClientProxy.font.trimStringToWidth(text, w * 4);
-                        ClientProxy.font.drawString(x, 128 - yy, trimmed, 0.25f, 0.25f, -512f-40f, 1.0f, 1.0f, 1.0f, 1.0f);
-                    } else {
-                        String trimmed = fontRenderer.trimStringToWidth(text, w);
-                        fontRenderer.drawString(trimmed, x, yy, 0xffffff);
-                    }
+                    renderHelper.renderTextTrimmed(x, yy, 0xffffff, renderInfo, text, w * 4);
                 }
             } else {
                 RenderHelper.drawBeveledBox(xoffset, y, xoffset + w, y + getDimension() - 2, 0xffeeeeee, 0xff333333, 0xff666666);
-                if (renderInfo.truetype) {
-                    String trimmed = ClientProxy.font.trimStringToWidth(text, w * 4);
-                    float r = (col >> 16 & 255) / 255.0f;
-                    float g = (col >> 8 & 255) / 255.0f;
-                    float b = (col & 255) / 255.0f;
-                    ClientProxy.font.drawString(x, 128 - yy, trimmed, 0.25f, 0.25f, -512f-40f, r, g, b, 1.0f);
-                } else {
-                    String trimmed = fontRenderer.trimStringToWidth(text, w);
-                    fontRenderer.drawString(trimmed, x, yy, col);
-                }
+                renderHelper.renderTextTrimmed(x, yy, col, renderInfo, text, w * 4);
             }
             y += getDimension() - 2;
             if (level == max) {

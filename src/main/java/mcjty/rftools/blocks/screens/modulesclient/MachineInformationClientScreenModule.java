@@ -7,13 +7,11 @@ import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.tools.MinecraftTools;
 import mcjty.lib.varia.BlockPosTools;
-import mcjty.rftools.api.screens.IClientScreenModule;
-import mcjty.rftools.api.screens.IModuleGuiBuilder;
-import mcjty.rftools.api.screens.IModuleRenderHelper;
-import mcjty.rftools.api.screens.ModuleRenderInfo;
+import mcjty.rftools.api.screens.*;
 import mcjty.rftools.api.screens.data.IModuleDataString;
 import mcjty.rftools.blocks.screens.IModuleGuiChanged;
-import mcjty.rftools.proxy.ClientProxy;
+import mcjty.rftools.blocks.screens.modulesclient.helper.ScreenModuleGuiBuilder;
+import mcjty.rftools.blocks.screens.modulesclient.helper.ScreenTextHelper;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -35,7 +33,7 @@ public class MachineInformationClientScreenModule implements IClientScreenModule
     protected int dim = 0;
     protected BlockPos coordinate = BlockPosTools.INVALID;
 
-    private ScreenTextCache labelCache = new ScreenTextCache();
+    private ITextRenderHelper labelCache = new ScreenTextHelper();
 
     @Override
     public TransformMode getTransformMode() {
@@ -52,29 +50,17 @@ public class MachineInformationClientScreenModule implements IClientScreenModule
         GlStateManager.disableLighting();
         int xoffset;
         if (!line.isEmpty()) {
-            labelCache.setup(fontRenderer, line, 160, renderInfo);
-            labelCache.renderText(fontRenderer, labcolor, 0, currenty, renderInfo);
+            labelCache.setup(line, 160, renderInfo);
+            labelCache.renderText(0, currenty, labcolor, renderInfo);
             xoffset = 7 + 40;
         } else {
             xoffset = 7;
         }
 
-        String text;
-        int col;
         if ((!BlockPosTools.INVALID.equals(coordinate)) && screenData != null) {
-            text = screenData.get();
-            col = txtcolor;
+            renderHelper.renderText(xoffset, currenty, txtcolor, renderInfo, screenData.get());
         } else {
-            text = "<invalid>";
-            col = 0xff0000;
-        }
-        if (renderInfo.truetype) {
-            float r = (col >> 16 & 255) / 255.0f;
-            float g = (col >> 8 & 255) / 255.0f;
-            float b = (col & 255) / 255.0f;
-            ClientProxy.font.drawString(xoffset, 128 - currenty, text, 0.25f, 0.25f, -512f-40f, r, g, b, 1.0f);
-        } else {
-            fontRenderer.drawString(text, xoffset, currenty, col);
+            renderHelper.renderText(xoffset, currenty, 0xff0000, renderInfo, "<invalid>");
         }
     }
 

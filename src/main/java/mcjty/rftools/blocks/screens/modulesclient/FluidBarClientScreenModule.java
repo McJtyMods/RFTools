@@ -3,7 +3,8 @@ package mcjty.rftools.blocks.screens.modulesclient;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.api.screens.*;
 import mcjty.rftools.api.screens.data.IModuleDataContents;
-import mcjty.rftools.proxy.ClientProxy;
+import mcjty.rftools.blocks.screens.modulesclient.helper.ScreenLevelHelper;
+import mcjty.rftools.blocks.screens.modulesclient.helper.ScreenTextHelper;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,16 +15,11 @@ public class FluidBarClientScreenModule implements IClientScreenModule<IModuleDa
 
     private String line = "";
     private int color = 0xffffff;
-    private int mbcolor = 0xffffff;
     protected int dim = 0;
-    private boolean hidebar = false;
-    private boolean hidetext = false;
-    private boolean showdiff = false;
-    private boolean showpct = false;
-    private FormatStyle format = FormatStyle.MODE_FULL;
     protected BlockPos coordinate = BlockPosTools.INVALID;
 
-    private ScreenTextCache labelCache = new ScreenTextCache();
+    private ITextRenderHelper labelCache = new ScreenTextHelper();
+    private ILevelRenderHelper mbRenderer = new ScreenLevelHelper().gradient(0xff0088ff, 0xff003333);
 
     @Override
     public TransformMode getTransformMode() {
@@ -41,22 +37,17 @@ public class FluidBarClientScreenModule implements IClientScreenModule<IModuleDa
 
         int xoffset;
         if (!line.isEmpty()) {
-            labelCache.setup(fontRenderer, line, 160, renderInfo);
-            labelCache.renderText(fontRenderer, color, 0, currenty, renderInfo);
+            labelCache.setup(line, 160, renderInfo);
+            labelCache.renderText(0, currenty, color, renderInfo);
             xoffset = 7 + 40;
         } else {
             xoffset = 7;
         }
 
         if (!BlockPosTools.INVALID.equals(coordinate)) {
-            int mbcolorNeg = 0xffffff;
-            renderHelper.renderLevel(fontRenderer, xoffset, currenty, screenData, "mb", hidebar, hidetext, showpct, showdiff, mbcolor, mbcolorNeg, 0xff0088ff, 0xff003333, format, renderInfo);
+            mbRenderer.render(xoffset, currenty, screenData, renderInfo);
         } else {
-            if (renderInfo.truetype) {
-                ClientProxy.font.drawString(xoffset, 128 - currenty, "<invalid>", 0.25f, 0.25f, -512f-40f, 1.0f, 0, 0, 1.0f);
-            } else {
-                fontRenderer.drawString("<invalid>", xoffset, currenty, 0xff0000);
-            }
+            renderHelper.renderText(xoffset, currenty, 0xff0000, renderInfo, "<invalid>");
         }
     }
 
@@ -84,24 +75,30 @@ public class FluidBarClientScreenModule implements IClientScreenModule<IModuleDa
             } else {
                 color = 0xffffff;
             }
+
+            int mbcolor;
+            int mbcolorNeg = 0xffffff;
             if (tagCompound.hasKey("mbcolor")) {
                 mbcolor = tagCompound.getInteger("mbcolor");
             } else {
                 mbcolor = 0xffffff;
             }
+            mbRenderer.color(mbcolor, mbcolorNeg);
+
             if (tagCompound.hasKey("align")) {
                 String alignment = tagCompound.getString("align");
-                labelCache.setAlign("Left".equals(alignment) ? 0 : ("Right".equals(alignment) ? 2 : 1));
+                labelCache.align(TextAlign.get(alignment));
             } else {
-                labelCache.setAlign(0);
+                labelCache.align(TextAlign.ALIGN_LEFT);
             }
-            labelCache.setDirty();
 
-            hidebar = tagCompound.getBoolean("hidebar");
-            hidetext = tagCompound.getBoolean("hidetext");
-            showdiff = tagCompound.getBoolean("showdiff");
-            showpct = tagCompound.getBoolean("showpct");
-            format = FormatStyle.values()[tagCompound.getInteger("format")];
+            boolean hidebar = tagCompound.getBoolean("hidebar");
+            boolean hidetext = tagCompound.getBoolean("hidetext");
+            boolean showdiff = tagCompound.getBoolean("showdiff");
+            boolean showpct = tagCompound.getBoolean("showpct");
+            mbRenderer.settings(hidebar, hidetext, showpct, showdiff);
+
+            mbRenderer.format(FormatStyle.values()[tagCompound.getInteger("format")]);
 
             setupCoordinateFromNBT(tagCompound, dim, pos);
         }

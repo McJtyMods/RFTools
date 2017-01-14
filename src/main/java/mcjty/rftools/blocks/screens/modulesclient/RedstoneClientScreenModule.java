@@ -1,11 +1,8 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
-import mcjty.rftools.api.screens.IClientScreenModule;
-import mcjty.rftools.api.screens.IModuleGuiBuilder;
-import mcjty.rftools.api.screens.IModuleRenderHelper;
-import mcjty.rftools.api.screens.ModuleRenderInfo;
+import mcjty.rftools.api.screens.*;
 import mcjty.rftools.api.screens.data.IModuleDataBoolean;
-import mcjty.rftools.proxy.ClientProxy;
+import mcjty.rftools.blocks.screens.modulesclient.helper.ScreenTextHelper;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,7 +19,7 @@ public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDa
     private int nocolor = 0xffffff;
     private int dim = 0;
 
-    private ScreenTextCache labelCache = new ScreenTextCache();
+    private ITextRenderHelper labelCache = new ScreenTextHelper();
 
     @Override
     public TransformMode getTransformMode() {
@@ -40,8 +37,8 @@ public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDa
 
         int xoffset;
         if (!line.isEmpty()) {
-            labelCache.setup(fontRenderer, line, 160, renderInfo);
-            labelCache.renderText(fontRenderer, color, 0, currenty, renderInfo);
+            labelCache.setup(line, 160, renderInfo);
+            labelCache.renderText(0, currenty, color, renderInfo);
             xoffset = 7 + 40;
         } else {
             xoffset = 7;
@@ -57,14 +54,7 @@ public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDa
             text = "<invalid>";
             col = 0xff0000;
         }
-        if (renderInfo.truetype) {
-            float r = (col >> 16 & 255) / 255.0f;
-            float g = (col >> 8 & 255) / 255.0f;
-            float b = (col & 255) / 255.0f;
-            ClientProxy.font.drawString(xoffset, 128 - currenty, text, 0.25f, 0.25f, -512f-40f, r, g, b, 1.0f);
-        } else {
-            fontRenderer.drawString(text, xoffset, currenty, col);
-        }
+        renderHelper.renderText(xoffset, currenty, col, renderInfo, text);
     }
 
     @Override
@@ -109,11 +99,10 @@ public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDa
             }
             if (tagCompound.hasKey("align")) {
                 String alignment = tagCompound.getString("align");
-                labelCache.setAlign("Left".equals(alignment) ? 0 : ("Right".equals(alignment) ? 2 : 1));
+                labelCache.align(TextAlign.get(alignment));
             } else {
-                labelCache.setAlign(0);
+                labelCache.align(TextAlign.ALIGN_LEFT);
             }
-            labelCache.setDirty();
         }
     }
 

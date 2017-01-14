@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.screens.modulesclient;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.api.screens.*;
 import mcjty.rftools.api.screens.data.IModuleDataInteger;
-import mcjty.rftools.proxy.ClientProxy;
+import mcjty.rftools.blocks.screens.modulesclient.helper.ScreenTextHelper;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,7 +19,7 @@ public class CounterClientScreenModule implements IClientScreenModule<IModuleDat
     private FormatStyle format = FormatStyle.MODE_FULL;
     protected BlockPos coordinate = BlockPosTools.INVALID;
 
-    private ScreenTextCache labelCache = new ScreenTextCache();
+    private ITextRenderHelper labelCache = new ScreenTextHelper();
 
     @Override
     public TransformMode getTransformMode() {
@@ -37,15 +37,13 @@ public class CounterClientScreenModule implements IClientScreenModule<IModuleDat
 
         int xoffset;
         if (!line.isEmpty()) {
-            labelCache.setup(fontRenderer, line, 160, renderInfo);
-            labelCache.renderText(fontRenderer, color, 0, currenty, renderInfo);
+            labelCache.setup(line, 160, renderInfo);
+            labelCache.renderText(0, currenty, color, renderInfo);
             xoffset = 7 + 40;
         } else {
             xoffset = 7;
         }
 
-        String output;
-        int col;
         if (!BlockPosTools.INVALID.equals(coordinate)) {
             int counter;
             if (screenData != null) {
@@ -53,19 +51,10 @@ public class CounterClientScreenModule implements IClientScreenModule<IModuleDat
             } else {
                 counter = 0;
             }
-            output = renderHelper.format(String.valueOf(counter), format);
-            col = cntcolor;
+            String output = renderHelper.format(String.valueOf(counter), format);
+            renderHelper.renderText(xoffset, currenty, cntcolor, renderInfo, output);
         } else {
-            output = "<invalid>";
-            col = 0xff0000;
-        }
-        if (renderInfo.truetype) {
-            float r = (col >> 16 & 255) / 255.0f;
-            float g = (col >> 8 & 255) / 255.0f;
-            float b = (col & 255) / 255.0f;
-            ClientProxy.font.drawString(xoffset, 128 - currenty, output, 0.25f, 0.25f, -512f-40f, r, g, b, 1.0f);
-        } else {
-            fontRenderer.drawString(output, xoffset, currenty, col);
+            renderHelper.renderText(xoffset, currenty, 0xff0000, renderInfo, "<invalid>");
         }
     }
 
@@ -100,11 +89,10 @@ public class CounterClientScreenModule implements IClientScreenModule<IModuleDat
             }
             if (tagCompound.hasKey("align")) {
                 String alignment = tagCompound.getString("align");
-                labelCache.setAlign("Left".equals(alignment) ? 0 : ("Right".equals(alignment) ? 2 : 1));
+                labelCache.align(TextAlign.get(alignment));
             } else {
-                labelCache.setAlign(0);
+                labelCache.align(TextAlign.ALIGN_LEFT);
             }
-            labelCache.setDirty();
 
             format = FormatStyle.values()[tagCompound.getInteger("format")];
 

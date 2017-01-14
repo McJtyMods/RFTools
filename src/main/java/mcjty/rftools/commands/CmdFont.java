@@ -1,9 +1,9 @@
 package mcjty.rftools.commands;
 
+import mcjty.lib.font.FontLoader;
+import mcjty.lib.font.TrueTypeFont;
 import mcjty.lib.tools.ChatTools;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
-import mcjty.rftools.font.FontLoader;
-import mcjty.rftools.font.TrueTypeFont;
 import mcjty.rftools.proxy.ClientProxy;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ResourceLocation;

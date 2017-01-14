@@ -6,7 +6,6 @@ import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
 import mcjty.rftools.api.screens.ModuleRenderInfo;
 import mcjty.rftools.api.screens.data.IModuleData;
-import mcjty.rftools.proxy.ClientProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -51,15 +50,7 @@ public class ClockClientScreenModule implements IClientScreenModule {
             y = currenty;
         }
 
-        String output = line + " " + timeString;
-        if (renderInfo.truetype) {
-            float r = (color >> 16 & 255) / 255.0f;
-            float g = (color >> 8 & 255) / 255.0f;
-            float b = (color & 255) / 255.0f;
-            ClientProxy.font.drawString(xoffset, 128 - y, output, 0.25f, 0.25f, -512f-40f, r, g, b, 1.0f);
-        } else {
-            fontRenderer.drawString(output, xoffset, y, color);
-        }
+        renderHelper.renderText(xoffset, y, color, renderInfo, line + " " + timeString);
     }
 
     @Override
