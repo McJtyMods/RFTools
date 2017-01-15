@@ -17,7 +17,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -131,10 +130,6 @@ public class EndergenicBlock extends GenericRFToolsBlock<EndergenicTileEntity, E
         return true;
     }
 
-    @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
-        return super.getActualState(state, worldIn, pos);
-    }
 //    @Override
 //    public boolean shouldRedstoneConduitConnect(World world, int x, int y, int z, ForgeDirection from) {
 //        return true;

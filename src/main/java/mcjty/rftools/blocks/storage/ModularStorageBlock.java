@@ -28,8 +28,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -86,49 +88,90 @@ public class ModularStorageBlock extends GenericRFToolsBlock<ModularStorageTileE
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        ModularStorageTileEntity te = (ModularStorageTileEntity) world.getTileEntity(pos);
-        ItemStack stack = te.getInventoryHelper().getStackInSlot(ModularStorageContainer.SLOT_TYPE_MODULE);
+        TileEntity tileEntity = world instanceof ChunkCache ? ((ChunkCache)world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) : world.getTileEntity(pos);
+        if (tileEntity instanceof ModularStorageTileEntity) {
+            ModularStorageTileEntity te = (ModularStorageTileEntity) tileEntity;
+            ItemStack stack = te.getInventoryHelper().getStackInSlot(ModularStorageContainer.SLOT_TYPE_MODULE);
 
-        int level = te.getRenderLevel();
-        int remoteId = te.getRemoteId();
+            int level = te.getRenderLevel();
+            int remoteId = te.getRemoteId();
 
-        ModularAmountOverlay p = AMOUNT_NONE;
-        if (remoteId > 0) {
-            switch (level) {
-                case -1: p = AMOUNT_NONE; break;
-                case 0: p = AMOUNT_R0; break;
-                case 1: p = AMOUNT_R1; break;
-                case 2: p = AMOUNT_R2; break;
-                case 3: p = AMOUNT_R3; break;
-                case 4: p = AMOUNT_R4; break;
-                case 5: p = AMOUNT_R5; break;
-                case 6: p = AMOUNT_R6; break;
-                case 7: p = AMOUNT_R7; break;
+            ModularAmountOverlay p = AMOUNT_NONE;
+            if (remoteId > 0) {
+                switch (level) {
+                    case -1:
+                        p = AMOUNT_NONE;
+                        break;
+                    case 0:
+                        p = AMOUNT_R0;
+                        break;
+                    case 1:
+                        p = AMOUNT_R1;
+                        break;
+                    case 2:
+                        p = AMOUNT_R2;
+                        break;
+                    case 3:
+                        p = AMOUNT_R3;
+                        break;
+                    case 4:
+                        p = AMOUNT_R4;
+                        break;
+                    case 5:
+                        p = AMOUNT_R5;
+                        break;
+                    case 6:
+                        p = AMOUNT_R6;
+                        break;
+                    case 7:
+                        p = AMOUNT_R7;
+                        break;
+                }
+            } else {
+                switch (level) {
+                    case -1:
+                        p = AMOUNT_NONE;
+                        break;
+                    case 0:
+                        p = AMOUNT_G0;
+                        break;
+                    case 1:
+                        p = AMOUNT_G1;
+                        break;
+                    case 2:
+                        p = AMOUNT_G2;
+                        break;
+                    case 3:
+                        p = AMOUNT_G3;
+                        break;
+                    case 4:
+                        p = AMOUNT_G4;
+                        break;
+                    case 5:
+                        p = AMOUNT_G5;
+                        break;
+                    case 6:
+                        p = AMOUNT_G6;
+                        break;
+                    case 7:
+                        p = AMOUNT_G7;
+                        break;
+                }
             }
-        } else {
-            switch (level) {
-                case -1: p = AMOUNT_NONE; break;
-                case 0: p = AMOUNT_G0; break;
-                case 1: p = AMOUNT_G1; break;
-                case 2: p = AMOUNT_G2; break;
-                case 3: p = AMOUNT_G3; break;
-                case 4: p = AMOUNT_G4; break;
-                case 5: p = AMOUNT_G5; break;
-                case 6: p = AMOUNT_G6; break;
-                case 7: p = AMOUNT_G7; break;
+
+            IBlockState newstate = state.withProperty(AMOUNT, p);
+
+            if (ItemStackTools.isEmpty(stack)) {
+                return newstate.withProperty(TYPEMODULE, TYPE_NONE);
+            } else if (stack.getItem() == ModularStorageSetup.genericTypeItem) {
+                return newstate.withProperty(TYPEMODULE, TYPE_GENERIC);
+            } else if (stack.getItem() == ModularStorageSetup.oreDictTypeItem) {
+                return newstate.withProperty(TYPEMODULE, TYPE_ORE);
             }
-        }
-
-        IBlockState newstate = state.withProperty(AMOUNT, p);
-
-        if (ItemStackTools.isEmpty(stack)) {
             return newstate.withProperty(TYPEMODULE, TYPE_NONE);
-        } else if (stack.getItem() == ModularStorageSetup.genericTypeItem) {
-            return newstate.withProperty(TYPEMODULE, TYPE_GENERIC);
-        } else if (stack.getItem() == ModularStorageSetup.oreDictTypeItem) {
-            return newstate.withProperty(TYPEMODULE, TYPE_ORE);
+        } else {
+            return super.getActualState(state, world, pos);
         }
-        return newstate.withProperty(TYPEMODULE, TYPE_NONE);
     }
 
     @Override
