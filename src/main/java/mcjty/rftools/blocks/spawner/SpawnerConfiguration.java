@@ -238,7 +238,7 @@ public class SpawnerConfiguration {
         addMobSpawnAmount(cfg, EntitySpider.class, MATERIALTYPE_BULK, Blocks.DIRT, 0, .2f);
         addMobSpawnAmount(cfg, EntitySpider.class, MATERIALTYPE_LIVING, null, 0, 15);
         addMobSpawnRF(cfg, EntitySquid.class, 500);
-        addMobSpawnAmount(cfg, EntitySquid.class, MATERIALTYPE_KEY, 351, 0, 0.1f);     // Ink sac
+        addMobSpawnAmount(cfg, EntitySquid.class, MATERIALTYPE_KEY, Items.DYE, 0, 0.1f);     // Ink sac
         addMobSpawnAmount(cfg, EntitySquid.class, MATERIALTYPE_BULK, Blocks.DIRT, 0, .5f);
         addMobSpawnAmount(cfg, EntitySquid.class, MATERIALTYPE_LIVING, null, 0, 10);
         addMobSpawnRF(cfg, EntityVillager.class, 2000);
