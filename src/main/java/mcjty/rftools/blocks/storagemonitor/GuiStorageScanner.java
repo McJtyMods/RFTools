@@ -53,6 +53,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
     private WidgetList storageList;
     private WidgetList itemList;
+    private ToggleButton openViewButton;
     private EnergyBar energyBar;
     private Button topButton;
     private Button upButton;
@@ -61,6 +62,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     private Button removeButton;
     private TextField searchField;
     private ImageChoiceLabel exportToStarred;
+    private Panel storagePanel;
+    private Panel itemPanel;
 
     private GuiCraftingGrid craftingGrid;
 
@@ -90,9 +93,13 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         super.initGui();
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored(EnumFacing.DOWN);
-        energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setVertical().setDesiredWidth(10).setDesiredHeight(56).setMaxValue(maxEnergyStored).setShowText(false);
+        energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setVertical().setDesiredWidth(10).setDesiredHeight(50).setMaxValue(maxEnergyStored).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
+        openViewButton = new ToggleButton(mc, this).setCheckMarker(false).setText("V")
+                .setTooltips("Toggle wide storage list");
+        openViewButton.setPressed(tileEntity.isOpenWideView());
+        openViewButton.addButtonEvent(widget -> toggleView());
         upButton = new Button(mc, this).setText("U").setTooltips("Move inventory up")
                 .addButtonEvent(widget -> moveUp());
         topButton = new Button(mc, this).setText("T").setTooltips("Move inventory to the top")
@@ -107,6 +114,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         Panel energyPanel = new Panel(mc, this).setLayout(new VerticalLayout().setVerticalMargin(0).setSpacing(1))
                 .setDesiredWidth(10);
         energyPanel
+                .addChild(openViewButton)
                 .addChild(energyBar)
                 .addChild(topButton)
                 .addChild(upButton)
@@ -121,33 +129,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         exportToStarred.addChoice("No", "Export to current container", guielements, 131, 19);
         exportToStarred.addChoice("Yes", "Export to first routable container", guielements, 115, 19);
 
-        storageList = new WidgetList(mc, this).addSelectionEvent(new DefaultSelectionEvent() {
-            @Override
-            public void select(Widget parent, int index) {
-                getInventoryOnServer();
-            }
-
-            @Override
-            public void doubleClick(Widget parent, int index) {
-                hilightSelectedContainer(index);
-            }
-        }).setPropagateEventsToChildren(true);
-
-        Slider storageListSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(storageList);
-
-        Panel storagePanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(1))
-                .setLayoutHint(new PositionalLayout.PositionalHint(3, 4, 130, 86+54))
-                .setDesiredHeight(86+54)
-                .addChild(energyPanel)
-                .addChild(storageList).addChild(storageListSlider);
-
-        itemList = new WidgetList(mc, this).setPropagateEventsToChildren(true)
-            .setInvisibleSelection(true);
-        Slider itemListSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(itemList);
-        Panel itemPanel = new Panel(mc, this)
-                .setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(1))
-                .setLayoutHint(new PositionalLayout.PositionalHint(136, 4, 256-138-4, 86+54))
-                .addChild(itemList).addChild(itemListSlider);
+        storagePanel = makeStoragePanel(energyPanel);
+        itemPanel = makeItemPanel();
 
         Button scanButton = new Button(mc, this)
                 .setText("Scan")
@@ -222,6 +205,53 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         if (StorageScannerConfiguration.hilightStarredOnGuiOpen) {
             storageList.setSelected(0);
         }
+    }
+
+    private int getStoragePanelWidth() {
+        return openViewButton.isPressed() ? 130 : 50;
+    }
+
+    private Panel makeItemPanel() {
+        itemList = new WidgetList(mc, this).setPropagateEventsToChildren(true)
+            .setInvisibleSelection(true);
+        Slider itemListSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(itemList);
+        return new Panel(mc, this)
+                .setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(1))
+                .setLayoutHint(new PositionalLayout.PositionalHint(getStoragePanelWidth() + 6, 4, 256-getStoragePanelWidth()-12, 86+54))
+                .addChild(itemList).addChild(itemListSlider);
+    }
+
+    private Panel makeStoragePanel(Panel energyPanel) {
+        storageList = new WidgetList(mc, this).addSelectionEvent(new DefaultSelectionEvent() {
+            @Override
+            public void select(Widget parent, int index) {
+                getInventoryOnServer();
+            }
+
+            @Override
+            public void doubleClick(Widget parent, int index) {
+                hilightSelectedContainer(index);
+            }
+        }).setPropagateEventsToChildren(true);
+
+        Slider storageListSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(storageList);
+
+        return new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(1))
+                .setLayoutHint(new PositionalLayout.PositionalHint(3, 4, getStoragePanelWidth(), 86+54))
+                .setDesiredHeight(86+54)
+                .addChild(energyPanel)
+                .addChild(storageList).addChild(storageListSlider);
+    }
+
+    private void toggleView() {
+        storagePanel.setLayoutHint(new PositionalLayout.PositionalHint(3, 4, getStoragePanelWidth(), 86+54));
+        itemPanel.setLayoutHint(new PositionalLayout.PositionalHint(getStoragePanelWidth() + 6, 4, 256-getStoragePanelWidth()-12, 86+54));
+        // Force layout dirty:
+        window.getToplevel().setBounds(window.getToplevel().getBounds());
+        listDirty = 0;
+        requestListsIfNeeded();
+        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_SETVIEW,
+                new Argument("b", openViewButton.isPressed()));
     }
 
     @Override
@@ -350,7 +380,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         itemList.removeChildren();
 
         Pair<Panel,Integer> currentPos = MutablePair.of(null, 0);
-        int numcolumns = 5;
+        int numcolumns = openViewButton.isPressed() ? 5 : 9;
         int spacing = 3;
 
 //        Collections.sort(fromServer_inventory, (o1, o2) -> o1.stackSize == o2.stackSize ? 0 : o1.stackSize < o2.stackSize ? -1 : 1);
@@ -441,30 +471,37 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             panel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(8).setHorizontalMargin(5));
             panel.addChild(new ImageLabel(mc, this).setImage(guielements, 115, 19).setDesiredWidth(13).setDesiredHeight(13));
         } else {
-            panel = new Panel(mc, this).setLayout(new HorizontalLayout());
+            HorizontalLayout layout = new HorizontalLayout();
+            if (!openViewButton.isPressed()) {
+                layout.setHorizontalMargin(2);
+            }
+            panel = new Panel(mc, this).setLayout(layout);
             panel.addChild(new BlockRender(mc, this).setRenderItem(c.getBlock()));
         }
-        AbstractWidget label = new Label(mc, this).setColor(StyleConfig.colorTextInListNormal)
-                .setText(displayName)
-                .setDynamic(true)
-                .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
-                .setDesiredWidth(58);
-        if (c == null) {
-            label.setTooltips(TextFormatting.GREEN + "All routable inventories")
-                .setDesiredWidth(74);
-        } else {
-            label.setTooltips(TextFormatting.GREEN + "Block at: " + TextFormatting.WHITE + BlockPosTools.toString(c.getPos()),
-                    TextFormatting.GREEN + "Name: " + TextFormatting.WHITE + displayName,
-                    "(doubleclick to highlight)");
-        }
-        panel.addChild(label);
-        if (c != null) {
-            ImageChoiceLabel choiceLabel = new ImageChoiceLabel(mc, this)
-                    .addChoiceEvent((parent, newChoice) -> changeRoutable(c.getPos())).setDesiredWidth(13);
-            choiceLabel.addChoice("No", "Not routable", guielements, 131, 19);
-            choiceLabel.addChoice("Yes", "Routable", guielements, 115, 19);
-            choiceLabel.setCurrentChoice(routable ? 1 : 0);
-            panel.addChild(choiceLabel);
+        if (openViewButton.isPressed()) {
+            AbstractWidget label;
+            label = new Label(mc, this).setColor(StyleConfig.colorTextInListNormal)
+                    .setText(displayName)
+                    .setDynamic(true)
+                    .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
+                    .setDesiredWidth(58);
+            if (c == null) {
+                label.setTooltips(TextFormatting.GREEN + "All routable inventories")
+                        .setDesiredWidth(74);
+            } else {
+                label.setTooltips(TextFormatting.GREEN + "Block at: " + TextFormatting.WHITE + BlockPosTools.toString(c.getPos()),
+                        TextFormatting.GREEN + "Name: " + TextFormatting.WHITE + displayName,
+                        "(doubleclick to highlight)");
+            }
+            panel.addChild(label);
+            if (c != null) {
+                ImageChoiceLabel choiceLabel = new ImageChoiceLabel(mc, this)
+                        .addChoiceEvent((parent, newChoice) -> changeRoutable(c.getPos())).setDesiredWidth(13);
+                choiceLabel.addChoice("No", "Not routable", guielements, 131, 19);
+                choiceLabel.addChoice("Yes", "Routable", guielements, 115, 19);
+                choiceLabel.setCurrentChoice(routable ? 1 : 0);
+                panel.addChild(choiceLabel);
+            }
         }
         storageList.addChild(panel);
     }

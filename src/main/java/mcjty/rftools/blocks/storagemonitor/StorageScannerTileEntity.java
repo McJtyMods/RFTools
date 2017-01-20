@@ -50,6 +50,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     public static final String CMD_REMOVE = "remove";
     public static final String CMD_TOGGLEROUTABLE = "toggleRoutable";
     public static final String CMD_TOGGLEEXPORT = "toggleExport";
+    public static final String CMD_SETVIEW = "setView";
 
     private static final int[] SLOTS = new int[]{0, 1, 2};
 
@@ -63,6 +64,9 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     private boolean exportToCurrent = false;
     private BlockPos lastSelectedInventory = null;
+
+    // Indicates if for this storage scanner the inventories should be shown wide
+    private boolean openWideView = true;
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, StorageScannerContainer.factory, 3);    // 1 extra slot for automation is at index 2
     private CraftingGrid craftingGrid = new CraftingGrid();
@@ -395,6 +399,15 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     public void setRadius(int v) {
         radius = v;
+        markDirtyClient();
+    }
+
+    public boolean isOpenWideView() {
+        return openWideView;
+    }
+
+    public void setOpenWideView(boolean openWideView) {
+        this.openWideView = openWideView;
         markDirtyClient();
     }
 
@@ -787,6 +800,11 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         readBufferFromNBT(tagCompound, inventoryHelper);
         radius = tagCompound.getInteger("radius");
         exportToCurrent = tagCompound.getBoolean("exportC");
+        if (tagCompound.hasKey("wideview")) {
+            openWideView = tagCompound.getBoolean("wideview");
+        } else {
+            openWideView = true;
+        }
         craftingGrid.readFromNBT(tagCompound.getCompoundTag("grid"));
     }
 
@@ -814,6 +832,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         writeBufferToNBT(tagCompound, inventoryHelper);
         tagCompound.setInteger("radius", radius);
         tagCompound.setBoolean("exportC", exportToCurrent);
+        tagCompound.setBoolean("wideview", openWideView);
         tagCompound.setTag("grid", craftingGrid.writeToNBT());
     }
 
@@ -846,6 +865,9 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             return true;
         } else if (CMD_TOGGLEEXPORT.equals(command)) {
             toggleExportRoutable();
+            return true;
+        } else if (CMD_SETVIEW.equals(command)) {
+            setOpenWideView(args.get("b").getBoolean());
             return true;
         }
         return false;

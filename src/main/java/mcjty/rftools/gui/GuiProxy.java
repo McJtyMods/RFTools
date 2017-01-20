@@ -97,6 +97,15 @@ public class GuiProxy implements IGuiHandler {
                 }
 
                 @Override
+                public boolean isOpenWideView() {
+                    TileEntity realTe = RFTools.proxy.getClientWorld().getTileEntity(pos);
+                    if (realTe instanceof StorageScannerTileEntity) {
+                        return ((StorageScannerTileEntity) realTe).isOpenWideView();
+                    }
+                    return true;
+                }
+
+                @Override
                 public BlockPos getStorageScannerPos() {
                     return pos;
                 }
