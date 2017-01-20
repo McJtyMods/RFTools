@@ -706,6 +706,8 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             int cddata = calculateShieldCollisionData();
             int damageBits = calculateDamageBits();
             Block block = calculateShieldBlock(damageBits);
+
+
             for (BlockPos templateBlock : templateBlocks) {
                 RelCoordinate relc = new RelCoordinate(templateBlock.getX() - xCoord, templateBlock.getY() - yCoord, templateBlock.getZ() - zCoord);
                 shieldBlocks.add(relc);
