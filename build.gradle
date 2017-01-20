@@ -79,7 +79,7 @@ dependencies {
     deobfCompile "mcjty.theoneprobe:TheOneProbe:1.11-1.3.4-47"
     deobfCompile "com.github.mcjty:compatlayer:1.11.2-0.1.7"
     deobfCompile "com.github.mcjty:intwheel:1.1x-1.2.0"
-    deobfCompile "com.github.mcjty:mcjtylib:1.1x-2.3.3-SNAPSHOT"
+    deobfCompile "com.github.mcjty:mcjtylib:1.1x-2.3.4-SNAPSHOT"
 
     //compile "li.cil.oc:OpenComputers:MC1.7.10-1.5.+:api"
 }
