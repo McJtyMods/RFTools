@@ -700,6 +700,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             }
             Set<BlockPos> templateBlocks = new HashSet<>();
             IBlockState state = getWorld().getBlockState(pos);
+            templateBlocks.add(pos);
             findTemplateBlocks(templateBlocks, state.getBlock().getMetaFromState(state), false, pos);
 
             int[] camoId = calculateCamoId();
