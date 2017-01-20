@@ -1,5 +1,6 @@
 package mcjty.rftools.craftinggrid;
 
+import gnu.trove.set.hash.TIntHashSet;
 import mcjty.lib.tools.InventoryTools;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.crafter.CraftingRecipe;
@@ -33,11 +34,11 @@ public class StorageCraftingTools {
         InventoryCrafting inventory = craftingRecipe.getInventory();
 
         int[] missingCount = new int[10];
-        for (int i = 0 ; i < 10 ; i++) {
+        for (int i = 0; i < 10; i++) {
             missingCount[i] = 0;
         }
 
-        for (int counter = 0 ; counter < n ; counter++) {
+        for (int counter = 0; counter < n; counter++) {
             for (int i = 0; i < inventory.getSizeInventory(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
                 if (ItemStackTools.isValid(stack)) {
@@ -63,7 +64,7 @@ public class StorageCraftingTools {
     }
 
     private static List<ItemStack> testAndConsumeCraftingItems(EntityPlayerMP player, CraftingRecipe craftingRecipe,
-                                                       IItemSource itemSource, boolean strictDamage) {
+                                                               IItemSource itemSource, boolean strictDamage) {
         InventoryCrafting workInventory = new InventoryCrafting(new Container() {
             @Override
             public boolean canInteractWith(EntityPlayer var1) {
@@ -71,11 +72,11 @@ public class StorageCraftingTools {
             }
         }, 3, 3);
 
-        List<Pair<IItemKey,ItemStack>> undo = new ArrayList<>();
+        List<Pair<IItemKey, ItemStack>> undo = new ArrayList<>();
         List<ItemStack> result = new ArrayList<>();
         InventoryCrafting inventory = craftingRecipe.getInventory();
 
-        for (int i = 0 ; i < inventory.getSizeInventory() ; i++) {
+        for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack stack = inventory.getStackInSlot(i);
             if (ItemStackTools.isValid(stack)) {
                 int count = ItemStackTools.getStackSize(stack);
@@ -114,23 +115,38 @@ public class StorageCraftingTools {
         return result;
     }
 
-    private static boolean match(ItemStack target, ItemStack input, boolean strictDamage) {
+    private static boolean match(@Nonnull ItemStack target, @Nonnull TIntHashSet targetIDs, @Nonnull ItemStack input, boolean strictDamage) {
         if (strictDamage) {
-            return OreDictionary.itemMatches(target, input, false);
+            return (target.getItem() == input.getItem() && ((target.getItemDamage() == OreDictionary.WILDCARD_VALUE) || target.getItemDamage() == input.getItemDamage()));
         } else {
-            if ((ItemStackTools.isEmpty(input) && ItemStackTools.isValid(target)) || (ItemStackTools.isValid(input) && ItemStackTools.isEmpty(target))) {
+            if (target.getItem() == input.getItem()) {
+                return true;
+            }
+
+            if (targetIDs.isEmpty()) {
                 return false;
             }
-            return target.getItem() == input.getItem();
 
+            // Try OreDictionary
+            int[] inputIDs = OreDictionary.getOreIDs(input);
+            for (int id : inputIDs) {
+                if (targetIDs.contains(id)) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
-    private static int findMatchingItems(InventoryCrafting workInventory, List<Pair<IItemKey, ItemStack>> undo, int i, ItemStack stack, int count, IItemSource itemSource, boolean strictDamage) {
+    private static int findMatchingItems(InventoryCrafting workInventory, List<Pair<IItemKey, ItemStack>> undo, int i,
+                                         @Nonnull ItemStack stack,
+                                         int count, IItemSource itemSource, boolean strictDamage) {
+        TIntHashSet stackIDs = new TIntHashSet(OreDictionary.getOreIDs(stack));
+
         for (Pair<IItemKey, ItemStack> pair : itemSource.getItems()) {
             ItemStack input = pair.getValue();
             if (ItemStackTools.isValid(input)) {
-                if (match(stack, input, strictDamage)) {
+                if (match(stack, stackIDs, input, strictDamage)) {
                     workInventory.setInventorySlotContents(i, input.copy());
                     int ss = count;
                     if (ItemStackTools.getStackSize(input) - ss < 0) {
@@ -187,7 +203,7 @@ public class StorageCraftingTools {
                 n--;
             }
 
-            for (int i = 0 ; i < n ; i++) {
+            for (int i = 0; i < n; i++) {
                 List<ItemStack> result = testAndConsumeCraftingItems(player, craftingRecipe, itemSource, true);
                 if (result.isEmpty()) {
                     result = testAndConsumeCraftingItems(player, craftingRecipe, itemSource, false);
@@ -233,7 +249,7 @@ public class StorageCraftingTools {
             // test because that one has more information about what items are really
             // missing
             int[] result = tryRecipe(player, craftingRecipe, n, itemSource, true);
-            for (int i = 0 ; i < 10 ; i++) {
+            for (int i = 0; i < 10; i++) {
                 if (result[i] > 0) {
                     // Failed
                     int[] result2 = tryRecipe(player, craftingRecipe, n, itemSource, false);
