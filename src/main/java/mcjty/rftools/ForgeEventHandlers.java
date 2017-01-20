@@ -1,5 +1,6 @@
 package mcjty.rftools;
 
+import mcjty.lib.api.smartwrench.SmartWrenchMode;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.WrenchChecker;
@@ -13,6 +14,7 @@ import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.teleporter.TeleportDestination;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.items.ModItems;
+import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import mcjty.rftools.playerprops.BuffProperties;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
@@ -153,6 +155,12 @@ public class ForgeEventHandlers {
         }
         if (player.isSneaking() && WrenchChecker.isAWrench(heldItem.getItem())) {
             // If the block is protected we prevent sneak-wrenching it.
+            if (heldItem.getItem() instanceof SmartWrenchItem) {
+                // But if it is a smart wrench in select mode we allow it
+                if (SmartWrenchItem.getCurrentMode(heldItem) == SmartWrenchMode.MODE_SELECT) {
+                    return;
+                }
+            }
             World world = event.getWorld();
             int x = event.getPos().getX();
             int y = event.getPos().getY();
