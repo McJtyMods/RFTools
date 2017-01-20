@@ -756,7 +756,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         int zCoord = getPos().getZ();
         BlockPos pp = new BlockPos(xCoord + c.getDx(), yCoord + c.getDy(), zCoord + c.getDz());
         IBlockState oldState = getWorld().getBlockState(pp);
-        if (!oldState.getBlock().isReplaceable(getWorld(), pp)) {
+        if ((!oldState.getBlock().isReplaceable(getWorld(), pp)) && oldState.getBlock() != ShieldSetup.shieldTemplateBlock) {
             return;
         }
         getWorld().setBlockState(pp, block.getStateFromMeta(camoId[1]), 2);
