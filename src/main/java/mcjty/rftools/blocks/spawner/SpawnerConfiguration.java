@@ -157,6 +157,37 @@ public class SpawnerConfiguration {
         defaultSpawnAmounts.add(new MobSpawnAmount(new ItemStack(Blocks.DIRT), 20));
         defaultSpawnAmounts.add(new MobSpawnAmount(ItemStackTools.getEmptyStack(), 120.0f));
 
+        ConfigCategory category = cfg.getCategory(CATEGORY_MOBSPAWNAMOUNTS);
+        if (category.isEmpty()) {
+            setupInitialMobSpawnConfig(cfg);
+        } else {
+            for (Map.Entry<String, Property> entry : category.entrySet()) {
+                String key = entry.getKey();
+
+                String[] splitted = entry.getValue().getStringList();
+
+                int materialType;
+                if (key.endsWith(".spawnamount.0")) {
+                    materialType = MATERIALTYPE_KEY;
+                } else if (key.endsWith(".spawnamount.1")) {
+                    materialType = MATERIALTYPE_BULK;
+                } else {
+                    materialType = MATERIALTYPE_LIVING;
+                }
+                String id = key.substring(0, key.indexOf(".spawnamount"));
+                setSpawnAmounts(id, materialType, splitted);
+            }
+
+            category = cfg.getCategory(CATEGORY_MOBSPAWNRF);
+            for (Map.Entry<String, Property> entry : category.entrySet()) {
+                String key = entry.getKey();
+                int rf = entry.getValue().getInt();
+                mobSpawnRf.put(key, rf);
+            }
+        }
+    }
+
+    private static void setupInitialMobSpawnConfig(Configuration cfg) {
         addMobSpawnRF(cfg, EntityBat.class, 100);
         addMobSpawnAmount(cfg, EntityBat.class, MATERIALTYPE_KEY, Items.FEATHER, 0, .1f);
         addMobSpawnAmount(cfg, EntityBat.class, MATERIALTYPE_BULK, Blocks.DIRT, 0, .2f);
@@ -323,15 +354,6 @@ public class SpawnerConfiguration {
     }
 
     private static void addMobSpawnAmount(Configuration cfg, String id, int materialType, Object object, int meta, float amount) {
-        List<MobSpawnAmount> list = mobSpawnAmounts.get(id);
-        if (list == null) {
-            list = new ArrayList<>(3);
-            list.add(null);
-            list.add(null);
-            list.add(null);
-            mobSpawnAmounts.put(id, list);
-        }
-
         String type;
         ResourceLocation itemname;
         if (object instanceof Item) {
@@ -346,6 +368,14 @@ public class SpawnerConfiguration {
         }
         String[] splitted = cfg.get(CATEGORY_MOBSPAWNAMOUNTS, id + ".spawnamount." + materialType,
                 new String[] { type, itemname == null ? "" : itemname.toString(), Integer.toString(meta), Float.toString(amount) }).getStringList();
+        setSpawnAmounts(id, materialType, splitted);
+    }
+
+    private static void setSpawnAmounts(String id, int materialType, String[] splitted) {
+        String type;
+        ResourceLocation itemname;
+        int meta;
+        float amount;
         try {
             type = splitted[0];
             String n = splitted[1];
@@ -370,6 +400,15 @@ public class SpawnerConfiguration {
             stack = new ItemStack(block, 1, meta);
         } else if ("S".equals(type)) {
         }
+        List<MobSpawnAmount> list = mobSpawnAmounts.get(id);
+        if (list == null) {
+            list = new ArrayList<>(3);
+            list.add(null);
+            list.add(null);
+            list.add(null);
+            mobSpawnAmounts.put(id, list);
+        }
+
         list.set(materialType, new MobSpawnAmount(stack, amount));
     }
 
