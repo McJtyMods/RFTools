@@ -1,6 +1,7 @@
 package mcjty.rftools.items.teleportprobe;
 
 import cofh.api.energy.IEnergyContainerItem;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.ForgeEventHandlers;
@@ -53,7 +54,10 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyCont
 
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-        return false;
+        if (ItemStackTools.isEmpty(oldStack) != ItemStackTools.isEmpty(newStack)) {
+            return true;
+        }
+        return oldStack.getItem() != newStack.getItem();
     }
 
     @Override

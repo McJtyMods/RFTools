@@ -56,7 +56,10 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
 
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-        return false;
+        if (ItemStackTools.isEmpty(oldStack) != ItemStackTools.isEmpty(newStack)) {
+            return true;
+        }
+        return oldStack.getItem() != newStack.getItem();
     }
 
     @Override
