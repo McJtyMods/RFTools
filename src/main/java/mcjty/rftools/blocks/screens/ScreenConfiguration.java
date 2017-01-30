@@ -29,6 +29,7 @@ public class ScreenConfiguration {
     public static boolean useTruetype = true;
     public static String font = "rftools:fonts/ubuntu.ttf";
     public static float fontSize = 40;
+    public static String additionalCharacters = "";
 
     public static void init(Configuration cfg) {
         CONTROLLER_MAXENERGY = cfg.get(CATEGORY_SCREEN, "screenControllerMaxRF", CONTROLLER_MAXENERGY,
@@ -77,6 +78,8 @@ public class ScreenConfiguration {
                 "The default truetype font to use").getString();
         fontSize = (float) cfg.get(CATEGORY_SCREEN, "fontSize", fontSize,
                 "The size of the font").getDouble();
+        additionalCharacters = cfg.get(CATEGORY_SCREEN, "additionalCharacters", additionalCharacters,
+                "Additional characters that should be supported by the truetype system").getString();
     }
 
 }
