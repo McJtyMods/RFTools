@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.container.*;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.craftinggrid.CraftingGridInventory;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import mcjty.rftools.items.storage.StorageModuleItem;
@@ -35,6 +36,13 @@ public class ModularStorageItemContainer extends GenericContainer {
 
     public CraftingGridProvider getCraftingGridProvider() {
         return (CraftingGridProvider) getInventory(CONTAINER_INVENTORY);
+    }
+
+    public void clearGrid() {
+        IInventory inventory = inventories.get(CONTAINER_GRID);
+        for (int i = 0 ; i < inventory.getSizeInventory() ; i++) {
+            inventory.setInventorySlotContents(i, ItemStackTools.getEmptyStack());
+        }
     }
 
     public JEIRecipeAcceptor getJEIRecipeAcceptor() {

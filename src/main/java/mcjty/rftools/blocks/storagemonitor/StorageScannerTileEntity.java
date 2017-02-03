@@ -11,10 +11,7 @@ import mcjty.lib.varia.SoundTools;
 import mcjty.rftools.api.general.IInventoryTracker;
 import mcjty.rftools.api.storage.IStorageScanner;
 import mcjty.rftools.blocks.crafter.CraftingRecipe;
-import mcjty.rftools.craftinggrid.CraftingGrid;
-import mcjty.rftools.craftinggrid.CraftingGridProvider;
-import mcjty.rftools.craftinggrid.StorageCraftingTools;
-import mcjty.rftools.craftinggrid.TileEntityItemSource;
+import mcjty.rftools.craftinggrid.*;
 import mcjty.rftools.jei.JEIRecipeAcceptor;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.player.EntityPlayer;
@@ -51,6 +48,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     public static final String CMD_TOGGLEROUTABLE = "toggleRoutable";
     public static final String CMD_TOGGLEEXPORT = "toggleExport";
     public static final String CMD_SETVIEW = "setView";
+    public static final String CMD_CLEARGRID = "clearGrid";
 
     private static final int[] SLOTS = new int[]{0, 1, 2};
 
@@ -836,6 +834,14 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         tagCompound.setTag("grid", craftingGrid.writeToNBT());
     }
 
+    private void clearGrid() {
+        CraftingGridInventory inventory = craftingGrid.getCraftingGridInventory();
+        for (int i = 0; i < inventory.getSizeInventory(); i++) {
+            inventory.setInventorySlotContents(i, ItemStackTools.getEmptyStack());
+        }
+        markDirty();
+    }
+
     @Override
     public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
         boolean rc = super.execute(playerMP, command, args);
@@ -868,6 +874,9 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             return true;
         } else if (CMD_SETVIEW.equals(command)) {
             setOpenWideView(args.get("b").getBoolean());
+            return true;
+        } else if (CMD_CLEARGRID.equals(command)) {
+            clearGrid();
             return true;
         }
         return false;
