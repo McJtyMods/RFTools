@@ -34,6 +34,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.ChunkCache;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -286,6 +287,25 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
             }
         }
         return drops;
+    }
+
+    @Override
+    public void onBlockExploded(World world, BlockPos pos, Explosion explosion) {
+        if (!world.isRemote) {
+            TileEntity te = world.getTileEntity(pos);
+            if (te instanceof PowerCellTileEntity) {
+                PowerCellTileEntity cellTileEntity = (PowerCellTileEntity) te;
+                PowerCellNetwork.Network network = cellTileEntity.getNetwork();
+                if (network != null) {
+                    int a = network.extractEnergySingleBlock(isAdvanced(), isSimple());
+                    Block block = world.getBlockState(pos).getBlock();
+                    network.remove(world, cellTileEntity.getGlobalPos(), PowerCellBlock.isAdvanced(block), PowerCellBlock.isSimple(block));
+                    PowerCellNetwork.getChannels(world).save(world);
+                    cellTileEntity.setNetworkId(-1);
+                }
+            }
+        }
+        super.onBlockExploded(world, pos, explosion);
     }
 
     @Override
