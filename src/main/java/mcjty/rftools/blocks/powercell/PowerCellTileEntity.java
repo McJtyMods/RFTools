@@ -138,6 +138,11 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         return networkId;
     }
 
+    public void setNetworkId(int networkId) {
+        this.networkId = networkId;
+        markDirty();
+    }
+
     public PowerCellNetwork.Network getNetwork() {
         int networkId = getNetworkId();
         if (networkId == -1) {

@@ -4,6 +4,7 @@ import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.SlotDefinition;
 import mcjty.lib.container.SlotType;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.craftinggrid.CraftingGridInventory;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,6 +37,13 @@ public class StorageScannerContainer extends GenericContainer {
             this.addSlotRange(new SlotDefinition(SlotType.SLOT_GHOSTOUT), CONTAINER_GRID, CraftingGridInventory.SLOT_GHOSTOUTPUT, leftCol, topRow, 1, 18);
         }
     };
+
+    public void clearGrid() {
+        IInventory inventory = inventories.get(CONTAINER_GRID);
+        for (int i = 0 ; i < inventory.getSizeInventory() ; i++) {
+            inventory.setInventorySlotContents(i, ItemStackTools.getEmptyStack());
+        }
+    }
 
     public StorageScannerTileEntity getStorageScannerTileEntity() {
         return storageScannerTileEntity;

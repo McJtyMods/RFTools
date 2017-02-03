@@ -9,10 +9,7 @@ import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.NullSidedInvWrapper;
 import mcjty.rftools.ClientInfo;
 import mcjty.rftools.api.general.IInventoryTracker;
-import mcjty.rftools.craftinggrid.CraftingGrid;
-import mcjty.rftools.craftinggrid.CraftingGridProvider;
-import mcjty.rftools.craftinggrid.InventoriesItemSource;
-import mcjty.rftools.craftinggrid.StorageCraftingTools;
+import mcjty.rftools.craftinggrid.*;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.items.storage.StorageModuleItem;
@@ -44,6 +41,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     public static final String CMD_SETTINGS = "settings";
     public static final String CMD_COMPACT = "compact";
     public static final String CMD_CYCLE = "cycle";
+    public static final String CMD_CLEARGRID = "clearGrid";
 
     private int[] accessible = null;
     private int maxSize = 0;
@@ -821,8 +819,19 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         } else if (CMD_CYCLE.equals(command)) {
             cycle();
             return true;
+        } else if (CMD_CLEARGRID.equals(command)) {
+            clearGrid();
+            return true;
         }
         return false;
+    }
+
+    private void clearGrid() {
+        CraftingGridInventory inventory = craftingGrid.getCraftingGridInventory();
+        for (int i = 0; i < inventory.getSizeInventory(); i++) {
+            inventory.setInventorySlotContents(i, ItemStackTools.getEmptyStack());
+        }
+        markDirty();
     }
 
     private void cycle() {

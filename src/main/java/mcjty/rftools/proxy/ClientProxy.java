@@ -32,6 +32,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import java.awt.*;
 import java.util.concurrent.Callable;
 
 public class ClientProxy extends CommonProxy {
@@ -58,7 +59,8 @@ public class ClientProxy extends CommonProxy {
         MinecraftForge.EVENT_BUS.register(new KeyInputHandler());
         KeyBindings.init();
 
-        font = FontLoader.createFont(new ResourceLocation(ScreenConfiguration.font), ScreenConfiguration.fontSize, false);
+        font = FontLoader.createFont(new ResourceLocation(ScreenConfiguration.font), ScreenConfiguration.fontSize, false, Font.TRUETYPE_FONT,
+                ScreenConfiguration.additionalCharacters.toCharArray());
     }
 
     @Override

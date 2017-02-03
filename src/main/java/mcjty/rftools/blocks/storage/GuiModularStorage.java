@@ -4,6 +4,7 @@ import mcjty.lib.base.StyleConfig;
 import mcjty.lib.compat.CompatSlot;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.container.GhostOutputSlot;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
@@ -366,6 +367,16 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         }
         super.mouseClicked(x, y, button);
         craftingGrid.getWindow().mouseClicked(x, y, button);
+        if (button == 1) {
+            Slot slot = getSlotAtPosition(x, y);
+            if (slot instanceof GhostOutputSlot) {
+                if (tileEntity != null) {
+                    sendServerCommand(RFToolsMessages.INSTANCE, ModularStorageTileEntity.CMD_CLEARGRID);
+                } else {
+                    RFToolsMessages.INSTANCE.sendToServer(new PacketClearGrid());
+                }
+            }
+        }
     }
 
     @Override

@@ -25,6 +25,7 @@ import mcjty.rftools.blocks.shield.ShieldConfiguration;
 import mcjty.rftools.blocks.spawner.SpawnerConfiguration;
 import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerConfiguration;
+import mcjty.rftools.blocks.teleporter.TeleportConfiguration;
 import mcjty.rftools.crafting.ModCrafting;
 import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.ModItems;
@@ -161,6 +162,7 @@ public abstract class CommonProxy {
             StorageScannerConfiguration.init(cfg);
             ElevatorConfiguration.init(cfg);
             BoosterConfiguration.init(cfg);
+            TeleportConfiguration.init(cfg);
 
         } catch (Exception e1) {
             FMLLog.log(Level.ERROR, e1, "Problem loading config file!");

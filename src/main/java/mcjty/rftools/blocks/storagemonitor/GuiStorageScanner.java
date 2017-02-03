@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.storagemonitor;
 
 import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.container.GhostOutputSlot;
 import mcjty.lib.entity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.BlockRenderEvent;
@@ -27,6 +28,7 @@ import mcjty.rftools.craftinggrid.PacketRequestGridSync;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -258,6 +260,12 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     protected void mouseClicked(int x, int y, int button) throws IOException {
         super.mouseClicked(x, y, button);
         craftingGrid.getWindow().mouseClicked(x, y, button);
+        if (button == 1) {
+            Slot slot = getSlotAtPosition(x, y);
+            if (slot instanceof GhostOutputSlot) {
+                sendServerCommand(RFToolsMessages.INSTANCE, StorageScannerTileEntity.CMD_CLEARGRID);
+            }
+        }
     }
 
     @Override
