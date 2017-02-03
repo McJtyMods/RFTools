@@ -50,7 +50,7 @@ public class CraftingRecipe {
     public static IRecipe findRecipe(World world, InventoryCrafting inv) {
         List<IRecipe> recipes = new ArrayList<>(CraftingManager.getInstance().getRecipeList());
         for (IRecipe r : recipes) {
-            if (r.matches(inv, world)) {
+            if (r != null && r.matches(inv, world)) {
                 return r;
             }
         }
