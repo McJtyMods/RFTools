@@ -497,8 +497,13 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         if (tileEntity != null) {
             return false;
         }
-        int storageType = MinecraftTools.getPlayer(mc).getHeldItem(EnumHand.MAIN_HAND).getTagCompound().getInteger("childDamage");
-        return storageType == StorageModuleItem.STORAGE_REMOTE;
+        ItemStack heldItem = MinecraftTools.getPlayer(mc).getHeldItem(EnumHand.MAIN_HAND);
+        if (ItemStackTools.isValid(heldItem) && heldItem.hasTagCompound()) {
+            int storageType = heldItem.getTagCompound().getInteger("childDamage");
+            return storageType == StorageModuleItem.STORAGE_REMOTE;
+        } else {
+            return false;
+        }
     }
 
     private int getCurrentSortMode() {
