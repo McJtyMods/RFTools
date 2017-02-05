@@ -31,6 +31,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class StorageModuleTabletItem extends GenericRFToolsItem implements IEnergyContainerItem {
@@ -159,6 +160,20 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
     @Override
     public Item getContainerItem() {
         return ModularStorageSetup.storageModuleTabletItem;
+    }
+
+    @Nullable
+    @Override
+    public NBTTagCompound getNBTShareTag(ItemStack stack) {
+        if (!stack.hasTagCompound()) {
+            return stack.getTagCompound();
+        }
+        NBTTagCompound tagCompound = new NBTTagCompound();
+        NBTTagCompound tc = stack.getTagCompound();
+        tagCompound.setInteger("Energy", tc.getInteger("Energy"));
+        tagCompound.setInteger("childDamage", tc.getInteger("childDamage"));
+        tagCompound.setTag("grid", tc.getTag("grid"));
+        return tagCompound;
     }
 
     @Override
