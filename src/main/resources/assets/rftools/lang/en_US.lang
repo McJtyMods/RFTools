@@ -166,3 +166,5 @@ itemGroup.RfTools=RFTools
 key.categories.rftools=RFTools
 key.porterNextDestination=Next Destination for Porter
 key.porterPrevDestination=Previous Destination for Porter
+key.debugDumpNBTItem=Dump NBT for Held Item
+key.debugDumpNBTBlock=Dump NBT for Selected Block
