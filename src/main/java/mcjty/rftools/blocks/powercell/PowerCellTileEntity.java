@@ -464,6 +464,9 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
     private int receiveEnergyMulti(int maxReceive, boolean simulate) {
         PowerCellNetwork.Network network = getNetwork();
+        if (getWorld().isRemote) {
+            throw new RuntimeException("Some mod is trying to receive energy from an RFTools powercell at the client side. That is illegal!");
+        }
         int totEnergy = PowerCellConfiguration.rfPerNormalCell * (network.getBlockCount() - network.getAdvancedBlockCount() - network.getSimpleBlockCount())
                 + PowerCellConfiguration.rfPerNormalCell * advancedFactor * network.getAdvancedBlockCount() +
                 + PowerCellConfiguration.rfPerNormalCell * network.getSimpleBlockCount() / simpleFactor;
@@ -511,6 +514,9 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     }
 
     private int extractEnergyMulti(int maxExtract, boolean simulate, int maximum) {
+        if (getWorld().isRemote) {
+            throw new RuntimeException("Some mod is trying to extract energy from an RFTools powercell at the client side. That is illegal!");
+        }
         PowerCellNetwork.Network network = getNetwork();
         int energy = network.getEnergy();
         if (maxExtract > energy) {
