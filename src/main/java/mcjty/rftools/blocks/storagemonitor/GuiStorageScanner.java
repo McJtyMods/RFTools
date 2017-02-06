@@ -570,7 +570,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
         List<String> tooltips = craftingGrid.getWindow().getTooltips();
         if (tooltips != null) {
-            drawHoveringText(tooltips, window.getTooltipItems(), x - guiLeft, y - guiTop, mc.fontRendererObj);
+            drawHoveringText(tooltips, window.getTooltipItems(), x - guiLeft, y - guiTop, mc.fontRenderer);
         }
 
         super.drawGuiContainerForegroundLayer(i1, i2);
@@ -633,7 +633,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         if (stack.getItem() != null) {
             font = stack.getItem().getFontRenderer(stack);
         }
-        this.drawHoveringText(list, x, y, (font == null ? fontRendererObj : font));
+        this.drawHoveringText(list, x, y, (font == null ? fontRenderer : font));
     }
 
     private static long lastTime = 0;

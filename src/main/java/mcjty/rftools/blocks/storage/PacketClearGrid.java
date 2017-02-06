@@ -30,7 +30,7 @@ public class PacketClearGrid implements IMessage {
         }
 
         public void handle(PacketClearGrid message, MessageContext ctx) {
-            EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+            EntityPlayerMP player = ctx.getServerHandler().player;
             ItemStack mainhand = player.getHeldItemMainhand();
             if (ItemStackTools.isValid(mainhand) && mainhand.getItem() == ModularStorageSetup.storageModuleTabletItem) {
                 if (player.openContainer instanceof ModularStorageItemContainer) {

@@ -33,7 +33,7 @@ public class PacketGetTransmitters extends PacketRequestListFromServer<Transmitt
         }
 
         private void handle(PacketGetTransmitters message, MessageContext ctx) {
-            TileEntity te = ctx.getServerHandler().playerEntity.getEntityWorld().getTileEntity(message.pos);
+            TileEntity te = ctx.getServerHandler().player.getEntityWorld().getTileEntity(message.pos);
             if(!(te instanceof CommandHandler)) {
                 Logging.log("createStartScanPacket: TileEntity is not a CommandHandler!");
                 return;
@@ -42,7 +42,7 @@ public class PacketGetTransmitters extends PacketRequestListFromServer<Transmitt
             List<TransmitterInfo> list = commandHandler.executeWithResultList(message.command, message.args, Type.create(TransmitterInfo.class));
             SimpleNetworkWrapper wrapper = PacketHandler.modNetworking.get(message.modid);
             PacketTransmittersReady msg = new PacketTransmittersReady(message.pos, DialingDeviceTileEntity.CLIENTCMD_GETTRANSMITTERS, list);
-            wrapper.sendTo(msg, ctx.getServerHandler().playerEntity);
+            wrapper.sendTo(msg, ctx.getServerHandler().player);
         }
 
     }

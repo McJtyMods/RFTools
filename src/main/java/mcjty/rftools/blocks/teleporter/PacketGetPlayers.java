@@ -48,14 +48,14 @@ public class PacketGetPlayers extends PacketRequestListFromServer<String, Packet
         }
 
         private void handle(PacketGetPlayers message, MessageContext ctx) {
-            TileEntity te = ctx.getServerHandler().playerEntity.getEntityWorld().getTileEntity(message.pos);
+            TileEntity te = ctx.getServerHandler().player.getEntityWorld().getTileEntity(message.pos);
             if(!(te instanceof CommandHandler)) {
                 Logging.log("createStartScanPacket: TileEntity is not a CommandHandler!");
                 return;
             }
             CommandHandler commandHandler = (CommandHandler) te;
             List<String> list = commandHandler.executeWithResultList(message.command, message.args, Type.STRING);
-            RFToolsMessages.INSTANCE.sendTo(new PacketPlayersReady(message.pos, message.clientcmd, list), ctx.getServerHandler().playerEntity);
+            RFToolsMessages.INSTANCE.sendTo(new PacketPlayersReady(message.pos, message.clientcmd, list), ctx.getServerHandler().player);
         }
     }
 }

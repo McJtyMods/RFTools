@@ -46,7 +46,7 @@ public class PacketGetChamberInfo implements IMessage {
         }
 
         private void handle(MessageContext ctx) {
-            EntityPlayer player = ctx.getServerHandler().playerEntity;
+            EntityPlayer player = ctx.getServerHandler().player;
             ItemStack cardItem = player.getHeldItem(EnumHand.MAIN_HAND);
             if (ItemStackTools.isEmpty(cardItem) || cardItem.getTagCompound() == null) {
                 return;
@@ -83,7 +83,7 @@ public class PacketGetChamberInfo implements IMessage {
             findEntities(world, minCorner, maxCorner, entitiesWithCount, entitiesWithCost, firstEntity);
 
             RFToolsMessages.INSTANCE.sendTo(new PacketChamberInfoReady(blocks, costs, stacks,
-                    entitiesWithCount, entitiesWithCost, firstEntity), ctx.getServerHandler().playerEntity);
+                    entitiesWithCount, entitiesWithCost, firstEntity), ctx.getServerHandler().player);
         }
 
         private void findEntities(World world, BlockPos minCorner, BlockPos maxCorner,

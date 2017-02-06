@@ -33,14 +33,14 @@ public class PacketGetFilters extends PacketRequestListFromServer<ShieldFilter, 
         }
 
         private void handle(PacketGetFilters message, MessageContext ctx) {
-            TileEntity te = ctx.getServerHandler().playerEntity.getEntityWorld().getTileEntity(message.pos);
+            TileEntity te = ctx.getServerHandler().player.getEntityWorld().getTileEntity(message.pos);
             if(!(te instanceof CommandHandler)) {
                 Logging.log("createStartScanPacket: TileEntity is not a CommandHandler!");
                 return;
             }
             CommandHandler commandHandler = (CommandHandler) te;
             List<ShieldFilter> list = commandHandler.executeWithResultList(message.command, message.args, Type.create(ShieldFilter.class));
-            RFToolsMessages.INSTANCE.sendTo(new PacketFiltersReady(message.pos, ShieldTEBase.CLIENTCMD_GETFILTERS, list), ctx.getServerHandler().playerEntity);
+            RFToolsMessages.INSTANCE.sendTo(new PacketFiltersReady(message.pos, ShieldTEBase.CLIENTCMD_GETFILTERS, list), ctx.getServerHandler().player);
         }
     }
 }

@@ -69,7 +69,7 @@ public class PacketGetRfInRange implements IMessage {
         }
 
         private void handle(PacketGetRfInRange message, MessageContext ctx) {
-            World world = ctx.getServerHandler().playerEntity.getEntityWorld();
+            World world = ctx.getServerHandler().player.getEntityWorld();
             Map<BlockPos, MachineInfo> result = new HashMap<>();
             int range = 12;
             for (int x = -range; x <= range; x++) {
@@ -89,7 +89,7 @@ public class PacketGetRfInRange implements IMessage {
                 }
             }
 
-            RFToolsMessages.INSTANCE.sendTo(new PacketReturnRfInRange(result), ctx.getServerHandler().playerEntity);
+            RFToolsMessages.INSTANCE.sendTo(new PacketReturnRfInRange(result), ctx.getServerHandler().player);
         }
 
     }

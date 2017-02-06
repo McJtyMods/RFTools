@@ -36,11 +36,11 @@ public class PacketGetDestinationInfo implements IMessage {
         }
 
         private void handle(PacketGetDestinationInfo message, MessageContext ctx) {
-            World world = ctx.getServerHandler().playerEntity.getEntityWorld();
+            World world = ctx.getServerHandler().player.getEntityWorld();
             TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
             int receiverId = message.receiverId;
             String name = TeleportDestinations.getDestinationName(destinations, receiverId);
-            RFToolsMessages.INSTANCE.sendTo(new PacketReturnDestinationInfo(receiverId, name), ctx.getServerHandler().playerEntity);
+            RFToolsMessages.INSTANCE.sendTo(new PacketReturnDestinationInfo(receiverId, name), ctx.getServerHandler().player);
         }
 
     }

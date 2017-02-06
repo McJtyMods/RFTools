@@ -43,7 +43,7 @@ public class PacketForceTeleport implements IMessage {
         }
 
         private void handle(PacketForceTeleport message, MessageContext ctx) {
-            EntityPlayer player = ctx.getServerHandler().playerEntity;
+            EntityPlayer player = ctx.getServerHandler().player;
 
 
             boolean probeInMainHand = ItemStackTools.isValid(player.getHeldItemMainhand()) && player.getHeldItemMainhand().getItem() instanceof TeleportProbeItem;

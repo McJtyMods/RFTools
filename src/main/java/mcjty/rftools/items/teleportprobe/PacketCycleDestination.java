@@ -45,7 +45,7 @@ public class PacketCycleDestination implements IMessage {
         }
 
         private void handle(PacketCycleDestination message, MessageContext ctx) {
-            EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
+            EntityPlayerMP playerEntity = ctx.getServerHandler().player;
             ItemStack stack = playerEntity.getHeldItemMainhand();
             if (ItemStackTools.isValid(stack) && stack.getItem() instanceof AdvancedChargedPorterItem) {
                 NBTTagCompound tagCompound = stack.getTagCompound();

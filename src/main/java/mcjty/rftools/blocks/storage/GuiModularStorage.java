@@ -599,7 +599,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
         List<String> tooltips = craftingGrid.getWindow().getTooltips();
         if (tooltips != null) {
-            drawHoveringText(tooltips, window.getTooltipItems(), x - guiLeft, y - guiTop, mc.fontRendererObj);
+            drawHoveringText(tooltips, window.getTooltipItems(), x - guiLeft, y - guiTop, mc.fontRenderer);
         }
 
         super.drawGuiContainerForegroundLayer(i1, i2);

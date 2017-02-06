@@ -30,7 +30,7 @@ public class PacketGetHudLog extends PacketRequestServerList<String> {
 
         @Override
         protected void sendToClient(BlockPos pos, @Nonnull List<String> list, MessageContext messageContext) {
-            RFToolsMessages.INSTANCE.sendTo(new PacketHudLogReady(pos, CLIENTCMD_GETHUDLOG, list), messageContext.getServerHandler().playerEntity);
+            RFToolsMessages.INSTANCE.sendTo(new PacketHudLogReady(pos, CLIENTCMD_GETHUDLOG, list), messageContext.getServerHandler().player);
         }
     }
 }

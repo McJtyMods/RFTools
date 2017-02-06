@@ -33,7 +33,7 @@ public class PacketCycleStorage implements IMessage {
         }
 
         public void handle(PacketCycleStorage message, MessageContext ctx) {
-            EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
+            EntityPlayerMP playerEntity = ctx.getServerHandler().player;
             ItemStack heldItem = playerEntity.getHeldItem(EnumHand.MAIN_HAND);
             if (ItemStackTools.isEmpty(heldItem)) {
                 return;

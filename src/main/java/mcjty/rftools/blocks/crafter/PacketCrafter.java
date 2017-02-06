@@ -100,7 +100,7 @@ public class PacketCrafter implements IMessage {
         }
 
         private void handle(PacketCrafter message, MessageContext ctx) {
-            TileEntity te = ctx.getServerHandler().playerEntity.getEntityWorld().getTileEntity(message.pos);
+            TileEntity te = ctx.getServerHandler().player.getEntityWorld().getTileEntity(message.pos);
             if(!(te instanceof CrafterBaseTE)) {
                 Logging.logError("Wrong type of tile entity (expected CrafterBaseTE)!");
                 return;

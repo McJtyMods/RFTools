@@ -63,7 +63,7 @@ public class PacketCraftFromGrid implements IMessage {
         }
 
         private void handle(PacketCraftFromGrid message, MessageContext ctx) {
-            EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+            EntityPlayerMP player = ctx.getServerHandler().player;
             int[] testResult = new int[0];
             if (message.pos == null) {
                 // Handle tablet version

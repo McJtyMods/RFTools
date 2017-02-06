@@ -34,7 +34,7 @@ public class PacketGetReceivers extends PacketRequestListFromServer<TeleportDest
         }
 
         private void handle(PacketGetReceivers message, MessageContext ctx) {
-            TileEntity te = ctx.getServerHandler().playerEntity.getEntityWorld().getTileEntity(message.pos);
+            TileEntity te = ctx.getServerHandler().player.getEntityWorld().getTileEntity(message.pos);
             if(!(te instanceof CommandHandler)) {
                 Logging.log("createStartScanPacket: TileEntity is not a CommandHandler!");
                 return;
@@ -43,7 +43,7 @@ public class PacketGetReceivers extends PacketRequestListFromServer<TeleportDest
             List<TeleportDestinationClientInfo> list = commandHandler.executeWithResultList(message.command, message.args, Type.create(TeleportDestinationClientInfo.class));
             SimpleNetworkWrapper wrapper = PacketHandler.modNetworking.get(message.modid);
             PacketReceiversReady msg = new PacketReceiversReady(message.pos, DialingDeviceTileEntity.CLIENTCMD_GETRECEIVERS, list);
-            wrapper.sendTo(msg, ctx.getServerHandler().playerEntity);
+            wrapper.sendTo(msg, ctx.getServerHandler().player);
         }
 
     }

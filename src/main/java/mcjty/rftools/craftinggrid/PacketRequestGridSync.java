@@ -56,7 +56,7 @@ public class PacketRequestGridSync implements IMessage {
         }
 
         private void handle(PacketRequestGridSync message, MessageContext ctx) {
-            EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+            EntityPlayerMP player = ctx.getServerHandler().player;
             World world = player.getEntityWorld();
             CraftingGridProvider provider = null;
             if (message.pos == null) {

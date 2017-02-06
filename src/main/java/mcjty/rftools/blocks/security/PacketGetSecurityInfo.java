@@ -37,13 +37,13 @@ public class PacketGetSecurityInfo implements IMessage {
         }
 
         private void handle(PacketGetSecurityInfo message, MessageContext ctx) {
-            EntityPlayer player = ctx.getServerHandler().playerEntity;
+            EntityPlayer player = ctx.getServerHandler().player;
             SecurityChannels channels = SecurityChannels.getChannels(player.getEntityWorld());
             SecurityChannels.SecurityChannel channel = channels.getChannel(message.id);
             if (channel == null) {
                 return;
             }
-            RFToolsMessages.INSTANCE.sendTo(new PacketSecurityInfoReady(channel), ctx.getServerHandler().playerEntity);
+            RFToolsMessages.INSTANCE.sendTo(new PacketSecurityInfoReady(channel), ctx.getServerHandler().player);
         }
     }
 }

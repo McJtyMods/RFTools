@@ -33,14 +33,14 @@ public class PacketGetAdjacentBlocks extends PacketRequestListFromServer<BlockPo
         }
 
         private void handle(PacketGetAdjacentBlocks message, MessageContext ctx) {
-            TileEntity te = ctx.getServerHandler().playerEntity.getEntityWorld().getTileEntity(message.pos);
+            TileEntity te = ctx.getServerHandler().player.getEntityWorld().getTileEntity(message.pos);
             if(!(te instanceof CommandHandler)) {
                 Logging.log("createStartScanPacket: TileEntity is not a CommandHandler!");
                 return;
             }
             CommandHandler commandHandler = (CommandHandler) te;
             List<BlockPos> list = commandHandler.executeWithResultList(message.command, message.args, Type.create(BlockPos.class));
-            RFToolsMessages.INSTANCE.sendTo(new PacketAdjacentBlocksReady(message.pos, RFMonitorBlockTileEntity.CLIENTCMD_ADJACENTBLOCKSREADY, list), ctx.getServerHandler().playerEntity);
+            RFToolsMessages.INSTANCE.sendTo(new PacketAdjacentBlocksReady(message.pos, RFMonitorBlockTileEntity.CLIENTCMD_ADJACENTBLOCKSREADY, list), ctx.getServerHandler().player);
         }
     }
 

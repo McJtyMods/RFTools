@@ -71,7 +71,7 @@ public class GuiEnderMonitor extends GenericGuiContainer<EnderMonitorTileEntity>
         if (tooltips != null) {
             int x = Mouse.getEventX() * width / mc.displayWidth;
             int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
-            drawHoveringText(tooltips, x, y, mc.fontRendererObj);
+            drawHoveringText(tooltips, x, y, mc.fontRenderer);
         }
     }
 }

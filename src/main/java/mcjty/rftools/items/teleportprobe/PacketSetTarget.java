@@ -39,7 +39,7 @@ public class PacketSetTarget implements IMessage {
         }
 
         private void handle(PacketSetTarget message, MessageContext ctx) {
-            EntityPlayer player = ctx.getServerHandler().playerEntity;
+            EntityPlayer player = ctx.getServerHandler().player;
             ItemStack heldItem = player.getHeldItem(EnumHand.MAIN_HAND);
             if (ItemStackTools.isEmpty(heldItem)) {
                 return;

@@ -35,7 +35,7 @@ public class PacketGetTargets implements IMessage {
         }
 
         private void handle(PacketGetTargets message, MessageContext ctx) {
-            EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+            EntityPlayerMP player = ctx.getServerHandler().player;
             ItemStack heldItem = player.getHeldItem(EnumHand.MAIN_HAND);
             if (ItemStackTools.isEmpty(heldItem)) {
                 return;

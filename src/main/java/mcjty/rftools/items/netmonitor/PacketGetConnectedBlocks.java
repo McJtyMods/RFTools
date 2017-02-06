@@ -44,7 +44,7 @@ public class PacketGetConnectedBlocks implements IMessage {
         }
 
         private void handle(PacketGetConnectedBlocks message, MessageContext ctx) {
-            EntityPlayer player = ctx.getServerHandler().playerEntity;
+            EntityPlayer player = ctx.getServerHandler().player;
             Map<BlockPos,BlockInfo> connectedBlocks = new HashMap<>();
             findConnectedBlocks(connectedBlocks, player.getEntityWorld(), message.pos);
 
@@ -60,7 +60,7 @@ public class PacketGetConnectedBlocks implements IMessage {
                 miny = Math.min(miny, coordinate.getY());
                 minz = Math.min(minz, coordinate.getZ());
             }
-            RFToolsMessages.INSTANCE.sendTo(new PacketConnectedBlocksReady(connectedBlocks, minx, miny, minz), ctx.getServerHandler().playerEntity);
+            RFToolsMessages.INSTANCE.sendTo(new PacketConnectedBlocksReady(connectedBlocks, minx, miny, minz), ctx.getServerHandler().player);
         }
 
         private Map<BlockPos,BlockInfo> compactConnectedBlocks(Map<BlockPos,BlockInfo> old, final BlockPos pos, int max) {
