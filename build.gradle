@@ -74,7 +74,7 @@ artifacts {
 
 
 dependencies {
-    deobfCompile "mcp.mobius.waila:Hwyla:1.8.3-B15_1.11"
+    deobfCompile "mcp.mobius.waila:Hwyla:1.8.3-B15_1.11:api"
     deobfCompile "mezz.jei:jei_1.11.2:4.2.0.210"
     deobfCompile "mcjty.theoneprobe:TheOneProbe:1.1x-1.4.1-51"
     deobfCompile "com.github.mcjty:compatlayer:1.11.2-0.2.1"

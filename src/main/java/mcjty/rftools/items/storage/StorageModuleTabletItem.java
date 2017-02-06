@@ -31,7 +31,6 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class StorageModuleTabletItem extends GenericRFToolsItem implements IEnergyContainerItem {
@@ -162,19 +161,31 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
         return ModularStorageSetup.storageModuleTabletItem;
     }
 
-    @Nullable
     @Override
-    public NBTTagCompound getNBTShareTag(ItemStack stack) {
-        if (!stack.hasTagCompound()) {
-            return stack.getTagCompound();
-        }
-        NBTTagCompound tagCompound = new NBTTagCompound();
-        NBTTagCompound tc = stack.getTagCompound();
-        tagCompound.setInteger("Energy", tc.getInteger("Energy"));
-        tagCompound.setInteger("childDamage", tc.getInteger("childDamage"));
-        tagCompound.setTag("grid", tc.getTag("grid"));
-        return tagCompound;
+    public boolean isDamageable() {
+        return super.isDamageable();
     }
+
+//    @Override
+//    public boolean getShareTag() {
+//        return true;
+//    }
+//
+//    @Nullable
+//    @Override
+//    public NBTTagCompound getNBTShareTag(ItemStack stack) {
+//        if (!stack.hasTagCompound()) {
+//            return stack.getTagCompound();
+//        }
+//        NBTTagCompound tagCompound = new NBTTagCompound();
+//        NBTTagCompound tc = stack.getTagCompound();
+//        tagCompound.setInteger("Energy", tc.getInteger("Energy"));
+//        tagCompound.setInteger("childDamage", tc.getInteger("childDamage"));
+//        if (tc.hasKey("grid")) {
+//            tagCompound.setTag("grid", tc.getTag("grid"));
+//        }
+//        return tagCompound;
+//    }
 
     @Override
     public ItemStack getContainerItem(ItemStack stack) {
