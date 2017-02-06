@@ -62,7 +62,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
     // A copy of the transmitters we're currently showing.
     private List<TransmitterInfo> transmitters = null;
 
-    private int listDirty = 0;
+    private int listDirty = 10;
 
 
     public GuiDialingDevice(DialingDeviceTileEntity dialingDeviceTileEntity, EmptyContainer container) {
@@ -122,6 +122,9 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, DIALER_WIDTH, DIALER_HEIGHT));
         window = new mcjty.lib.gui.Window(this, toplevel);
         Keyboard.enableRepeatEvents(true);
+
+        fromServer_receivers = null;
+        fromServer_transmitters = null;
 
         listDirty = 0;
         clearSelectedStatus();
@@ -491,11 +494,14 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
     }
 
     private void requestListsIfNeeded() {
+        if (fromServer_receivers != null && fromServer_transmitters != null) {
+            return;
+        }
         listDirty--;
         if (listDirty <= 0) {
             requestReceivers();
             requestTransmitters();
-            listDirty = 20;
+            listDirty = 10;
         }
     }
 
