@@ -217,11 +217,14 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             setSortMode(tileEntity.getSortMode());
             groupMode.setCurrentChoice(tileEntity.isGroupMode() ? 1 : 0);
         } else {
-            NBTTagCompound tagCompound = MinecraftTools.getPlayer(Minecraft.getMinecraft()).getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
-            filter.setText(ModularStorageConfiguration.clearSearchOnOpen ? "" : tagCompound.getString("filter"));
-            setViewMode(tagCompound.getString("viewMode"));
-            setSortMode(tagCompound.getString("sortMode"));
-            groupMode.setCurrentChoice(tagCompound.getBoolean("groupMode") ? 1 : 0);
+            ItemStack heldItem = MinecraftTools.getPlayer(Minecraft.getMinecraft()).getHeldItem(EnumHand.MAIN_HAND);
+            if (ItemStackTools.isValid(heldItem) && heldItem.hasTagCompound()) {
+                NBTTagCompound tagCompound = heldItem.getTagCompound();
+                filter.setText(ModularStorageConfiguration.clearSearchOnOpen ? "" : tagCompound.getString("filter"));
+                setViewMode(tagCompound.getString("viewMode"));
+                setSortMode(tagCompound.getString("sortMode"));
+                groupMode.setCurrentChoice(tagCompound.getBoolean("groupMode") ? 1 : 0);
+            }
         }
 
         return new Panel(mc, this).setLayout(new PositionalLayout()).setLayoutHint(new PositionalLayout.PositionalHint(24, ySize-80, 64, 77))
@@ -448,7 +451,12 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
                     }
                 }
             }
-            max = MinecraftTools.getPlayer(mc).getHeldItem(EnumHand.MAIN_HAND).getTagCompound().getInteger("maxSize");
+            ItemStack heldItem = MinecraftTools.getPlayer(mc).getHeldItem(EnumHand.MAIN_HAND);
+            if (ItemStackTools.isValid(heldItem) && heldItem.hasTagCompound()) {
+                max = heldItem.getTagCompound().getInteger("maxSize");
+            } else {
+                max = 0;
+            }
         }
         amountLabel.setText(items.size() + "/" + max);
         compactButton.setEnabled(max > 0);
