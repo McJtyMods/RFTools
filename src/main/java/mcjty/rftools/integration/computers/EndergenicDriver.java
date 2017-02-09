@@ -95,7 +95,9 @@ public class EndergenicDriver {
             @Callback(doc="function():int; Returns how far into the charging cycle the generator currently is")
             public Object[] getChargeCycle(Context c, Arguments a) {
                 int ret = tile.getChargingMode();
-                if (ret < 0) ret = 0;
+                if (ret < 0) {
+                    ret = 0;
+                }
                 return new Object[]{ret};
             }
 

@@ -1,6 +1,5 @@
 package mcjty.rftools.integration.computers;
 
-import com.sun.istack.internal.NotNull;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
@@ -11,8 +10,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +47,7 @@ public class DialingDeviceDriver {
                     boolean dialed = false;
 
                     TileEntity transmitterTE = tile.getWorld().getTileEntity(info.getCoordinate());
-                    if (transmitterTE != null && transmitterTE instanceof MatterTransmitterTileEntity) {
+                    if (transmitterTE instanceof MatterTransmitterTileEntity) {
                         MatterTransmitterTileEntity transmitter = (MatterTransmitterTileEntity)transmitterTE;
                         dialed = true;
                     }
@@ -92,11 +91,11 @@ public class DialingDeviceDriver {
                 TileEntity transmitterTE = tile.getWorld().getTileEntity(fromCoordinateMap(transmitterSPos));
                 TileEntity receiverTE = tile.getWorld().getTileEntity(fromCoordinateMap(receiverSPos));
 
-                if (transmitterTE == null || !(transmitterTE instanceof MatterTransmitterTileEntity)) {
+                if (!(transmitterTE instanceof MatterTransmitterTileEntity)) {
                     return new Object[]{null, "Invalid matter transmitter"};
                 }
 
-                if (receiverTE == null || !(receiverTE instanceof MatterReceiverTileEntity)) {
+                if (!(receiverTE instanceof MatterReceiverTileEntity)) {
                     return new Object[]{null, "Invalid matter receiver"};
                 }
 
@@ -116,7 +115,7 @@ public class DialingDeviceDriver {
                 Map transmitterSPos = a.checkTable(0);
                 TileEntity transmitterTE = tile.getWorld().getTileEntity(fromCoordinateMap(transmitterSPos));
 
-                if (transmitterTE == null || !(transmitterTE instanceof MatterTransmitterTileEntity)) {
+                if (!(transmitterTE instanceof MatterTransmitterTileEntity)) {
                     return new Object[]{null, "Invalid matter transmitter"};
                 }
 
@@ -140,9 +139,9 @@ public class DialingDeviceDriver {
                 return new Object[]{ret};
             }
 
-            @NotNull
+            @Nonnull
             private static Map<String, Integer> getCoordinateMap(BlockPos pos) {
-                HashMap<String, Integer> ret = new HashMap<>();
+                Map<String, Integer> ret = new HashMap<>();
                 ret.put("x", pos.getX());
                 ret.put("y", pos.getY());
                 ret.put("z", pos.getZ());

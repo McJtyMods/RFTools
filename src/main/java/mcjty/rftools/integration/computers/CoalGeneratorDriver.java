@@ -54,10 +54,11 @@ public class CoalGeneratorDriver {
 
             @Callback(doc="function():int; Gets the current RF/t")
             public Object[] getRFPerTick(Context c, Arguments a) {
-                if (tile.isWorking())
+                if (tile.isWorking()) {
                     return new Object[]{tile.getRfPerTick()};
-                else
+                } else {
                     return new Object[]{0};
+                }
             }
 
             @Callback(doc="function():bool; Returns whether the generator is currently running")
