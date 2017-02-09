@@ -442,6 +442,14 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         return totalInserted;
     }
 
+    public void resetTotalExtracted() {
+        this.totalExtracted = 0;
+    }
+
+    public void resetTotalInserted() {
+        this.totalInserted = 0;
+    }
+
     @Override
     public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
         if (modes[from.ordinal()] != Mode.MODE_INPUT) {

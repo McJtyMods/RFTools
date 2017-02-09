@@ -78,7 +78,7 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
         return false;
     }
 
-    private void injectPearl() {
+    public void injectPearl() {
         EndergenicTileEntity endergen = findEndergenicTileEntity();
         if (endergen != null) {
             if (!takePearl()) {
