@@ -89,7 +89,7 @@ public class StorageFilterCache {
     private boolean itemMatches(ItemStack stack, String modName) {
         if (stacks != null) {
             for (ItemStack itemStack : stacks) {
-                if (matchDamage && itemStack.getItemDamage() != stack.getItemDamage()) {
+                if (matchDamage && itemStack.getMetadata() != stack.getMetadata()) {
                     continue;
                 }
                 if (nbtMode && !ItemStack.areItemStackTagsEqual(itemStack, stack)) {

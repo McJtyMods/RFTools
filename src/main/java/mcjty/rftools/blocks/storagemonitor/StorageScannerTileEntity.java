@@ -320,7 +320,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                 Integer cachedCount = null;
                 if (tileEntity instanceof IInventoryTracker) {
                     IInventoryTracker tracker = (IInventoryTracker) tileEntity;
-                    CachedItemCount itemCount = cachedCounts.get(new CachedItemKey(c, stack.getItem(), stack.getItemDamage()));
+                    CachedItemCount itemCount = cachedCounts.get(new CachedItemKey(c, stack.getItem(), stack.getMetadata()));
                     if (itemCount != null) {
                         Integer oldVersion = itemCount.getVersion();
                         if (oldVersion == tracker.getVersion()) {
@@ -337,7 +337,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                     cnt += cc[0];
                     if (tileEntity instanceof IInventoryTracker) {
                         IInventoryTracker tracker = (IInventoryTracker) tileEntity;
-                        cachedCounts.put(new CachedItemKey(c, stack.getItem(), stack.getItemDamage()), new CachedItemCount(tracker.getVersion(), cc[0]));
+                        cachedCounts.put(new CachedItemKey(c, stack.getItem(), stack.getMetadata()), new CachedItemCount(tracker.getVersion(), cc[0]));
                     }
                 }
             }

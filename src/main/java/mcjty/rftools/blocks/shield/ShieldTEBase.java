@@ -400,7 +400,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             }
             Block block = ((ItemBlock) stack.getItem()).getBlock();
             camoId = Block.getIdFromBlock(block);
-            meta = stack.getItemDamage();
+            meta = stack.getMetadata();
             if (block.hasTileEntity(block.getStateFromMeta(meta))) {
                 te = 1;
             }

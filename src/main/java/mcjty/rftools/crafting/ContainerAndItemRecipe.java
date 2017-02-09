@@ -50,7 +50,7 @@ public class ContainerAndItemRecipe extends ShapedRecipes {
             if (ItemStackTools.isValid(stack) && stack.getItem() != null) {
                 Object o = getObjectFromStack(stack.getItem());
                 if (objectToInheritFrom.equals(o)) {
-                    return stack.getItemDamage();
+                    return stack.getMetadata();
                 }
             }
         }

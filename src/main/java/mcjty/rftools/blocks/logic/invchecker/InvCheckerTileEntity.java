@@ -146,7 +146,7 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
         if (ItemStackTools.isValid(matcher)) {
             if (oreDict) {
                 if (isEqualForOredict(matcher, stack)) {
-                    if ((!useMeta) || matcher.getItemDamage() == stack.getItemDamage()) {
+                    if ((!useMeta) || matcher.getMetadata() == stack.getMetadata()) {
                         nr = ItemStackTools.getStackSize(stack);
                     }
                 }
