@@ -260,7 +260,7 @@ public class PowerCellNetwork extends WorldSavedData {
         }
         private void getBlob(Set<GlobalCoordinate> todo, Set<GlobalCoordinate> blob, GlobalCoordinate coordinate) {
             blob.add(coordinate);
-            for (EnumFacing facing : EnumFacing.values()) {
+            for (EnumFacing facing : EnumFacing.VALUES) {
                 GlobalCoordinate offset = new GlobalCoordinate(coordinate.getCoordinate().offset(facing), coordinate.getDimension());
                 if (todo.contains(offset)) {
                     todo.remove(offset);

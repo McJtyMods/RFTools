@@ -285,7 +285,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     private void sendOutEnergy() {
         int energyStored = getEnergyStored(EnumFacing.DOWN);
 
-        for (EnumFacing face : EnumFacing.values()) {
+        for (EnumFacing face : EnumFacing.VALUES) {
             if (modes[face.ordinal()] == Mode.MODE_OUTPUT) {
                 BlockPos pos = getPos().offset(face);
                 TileEntity te = getWorld().getTileEntity(pos);
@@ -611,19 +611,19 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
             return true;
         }
         if (CMD_SETNONE.equals(command)) {
-            for (EnumFacing facing : EnumFacing.values()) {
+            for (EnumFacing facing : EnumFacing.VALUES) {
                 modes[facing.ordinal()] = Mode.MODE_NONE;
             }
             markDirtyClient();
             return true;
         } else if (CMD_SETINPUT.equals(command)) {
-            for (EnumFacing facing : EnumFacing.values()) {
+            for (EnumFacing facing : EnumFacing.VALUES) {
                 modes[facing.ordinal()] = Mode.MODE_INPUT;
             }
             markDirtyClient();
             return true;
         } else if (CMD_SETOUTPUT.equals(command)) {
-            for (EnumFacing facing : EnumFacing.values()) {
+            for (EnumFacing facing : EnumFacing.VALUES) {
                 modes[facing.ordinal()] = Mode.MODE_OUTPUT;
             }
             markDirtyClient();

@@ -186,7 +186,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
     private void handleSendingEnergy() {
         int energyStored = getEnergyStored(EnumFacing.DOWN);
 
-        for (EnumFacing facing : EnumFacing.values()) {
+        for (EnumFacing facing : EnumFacing.VALUES) {
             BlockPos pos = getPos().offset(facing);
             TileEntity te = getWorld().getTileEntity(pos);
             if (EnergyTools.isEnergyTE(te)) {

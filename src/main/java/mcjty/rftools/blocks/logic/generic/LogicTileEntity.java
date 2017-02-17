@@ -44,7 +44,7 @@ public class LogicTileEntity extends GenericTileEntity {
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        facing = LogicFacing.values()[tagCompound.getInteger("lf")];
+        facing = LogicFacing.VALUES[tagCompound.getInteger("lf")];
     }
 
     @Override

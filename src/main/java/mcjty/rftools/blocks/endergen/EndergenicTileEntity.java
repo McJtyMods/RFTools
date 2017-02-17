@@ -394,7 +394,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         }
         energyStored -= EndergenicConfiguration.keepRfInBuffer;
 
-        for (EnumFacing dir : EnumFacing.values()) {
+        for (EnumFacing dir : EnumFacing.VALUES) {
             BlockPos o = getPos().offset(dir);
             TileEntity te = getWorld().getTileEntity(o);
             if (EnergyTools.isEnergyTE(te)) {

@@ -54,7 +54,7 @@ public class RedstoneScreenModule implements IScreenModule<IModuleDataBoolean> {
                 channel = tagCompound.getInteger("channel");
             }
             if (tagCompound.hasKey("monitorx")) {
-                side = EnumFacing.values()[tagCompound.getInteger("monitorside")];
+                side = EnumFacing.VALUES[tagCompound.getInteger("monitorside")];
                 if (tagCompound.hasKey("monitordim")) {
                     this.dim = tagCompound.getInteger("monitordim");
                 } else {

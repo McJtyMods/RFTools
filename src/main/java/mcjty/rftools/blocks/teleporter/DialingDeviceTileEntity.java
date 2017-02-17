@@ -75,7 +75,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
     }
 
     public static boolean isMatterBoosterAvailable(World world, BlockPos pos) {
-        for (EnumFacing facing : EnumFacing.values()) {
+        for (EnumFacing facing : EnumFacing.VALUES) {
             if (TeleporterSetup.matterBoosterBlock.equals(world.getBlockState(pos.offset(facing)).getBlock())) {
                 return true;
             }
@@ -85,7 +85,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
 
 
     public static boolean isDestinationAnalyzerAvailable(World world, BlockPos pos) {
-        for (EnumFacing facing : EnumFacing.values()) {
+        for (EnumFacing facing : EnumFacing.VALUES) {
             if (TeleporterSetup.destinationAnalyzerBlock.equals(world.getBlockState(pos.offset(facing)).getBlock())) {
                 return true;
             }
