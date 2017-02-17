@@ -10,12 +10,14 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldType;
+import net.minecraftforge.client.ForgeHooksClient;
 import org.lwjgl.opengl.GL11;
 
 public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> {
@@ -45,14 +47,21 @@ public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> 
             GlStateManager.translate(0, te.getMovingY() - te.getPos().getY() + diff, 0);
             Tessellator tessellator = Tessellator.getInstance();
             BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
-            for (BlockPos pos : te.getPositions()) {
-                tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-                int dx = te.getPos().getX() - pos.getX();
-                int dy = te.getPos().getY() - pos.getY();
-                int dz = te.getPos().getZ() - pos.getZ();
-                tessellator.getBuffer().setTranslation(x - pos.getX() - dx, y - pos.getY() - dy, z - pos.getZ() - dz);
-                renderBlock(dispatcher, movingState, pos, te.getWorld(), tessellator.getBuffer());
-                tessellator.draw();
+
+            for (BlockRenderLayer layer : BlockRenderLayer.values()) {
+                if (movingState.getBlock().canRenderInLayer(movingState, layer)) {
+                    ForgeHooksClient.setRenderLayer(layer);
+
+                    for (BlockPos pos : te.getPositions()) {
+                        tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+                        int dx = te.getPos().getX() - pos.getX();
+                        int dy = te.getPos().getY() - pos.getY();
+                        int dz = te.getPos().getZ() - pos.getZ();
+                        tessellator.getBuffer().setTranslation(x - pos.getX() - dx, y - pos.getY() - dy, z - pos.getZ() - dz);
+                        renderBlock(dispatcher, movingState, pos, te.getWorld(), tessellator.getBuffer());
+                        tessellator.draw();
+                    }
+                }
             }
 
             tessellator.getBuffer().setTranslation(0, 0, 0);
