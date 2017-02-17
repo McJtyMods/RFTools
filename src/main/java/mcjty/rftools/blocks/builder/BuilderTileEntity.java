@@ -1206,9 +1206,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     if (!silent) {
                         SoundTools.playSound(getWorld(), block.getSoundType().getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
                     }
+                    return false;
                 }
-                // We never wait when pumping fluids
-                return false;
+                return true;    // No room in tanks or not a valid tank: wait
             }
         }
         return false;
