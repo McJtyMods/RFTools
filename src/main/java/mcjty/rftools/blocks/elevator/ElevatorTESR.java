@@ -22,6 +22,8 @@ import org.lwjgl.opengl.GL11;
 
 public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> {
 
+    private static final BlockRenderLayer[] LAYERS = BlockRenderLayer.values();
+
     @Override
     public void renderTileEntityAt(ElevatorTileEntity te, double x, double y, double z, float partialTicks, int destroyStage) {
 
@@ -48,7 +50,7 @@ public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> 
             Tessellator tessellator = Tessellator.getInstance();
             BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
 
-            for (BlockRenderLayer layer : BlockRenderLayer.values()) {
+            for (BlockRenderLayer layer : LAYERS) {
                 if (movingState.getBlock().canRenderInLayer(movingState, layer)) {
                     ForgeHooksClient.setRenderLayer(layer);
 
