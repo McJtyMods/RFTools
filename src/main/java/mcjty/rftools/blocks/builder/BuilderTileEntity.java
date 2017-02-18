@@ -1139,6 +1139,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 if (ItemStackTools.isValid(filter)) {
                     getFilterCache();
                     if (filterCache != null) {
+                        System.out.println("block.getRegistryName() = " + block.getRegistryName());
                         boolean match = filterCache.match(block.getItem(getWorld(), srcPos, srcState));
                         if (!match) {
                             consumeEnergy(Math.min(rfNeeded, BuilderConfiguration.builderRfPerSkipped));
