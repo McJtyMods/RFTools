@@ -111,6 +111,9 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
 
     private int tickCounter = 0;            // Only used for logging, counts server ticks.
 
+    // We enqueue endergenics for processing later
+    public static List<EndergenicTileEntity> todoEndergenics = new ArrayList<>();
+
     public EndergenicTileEntity() {
         super(5000000, 20000);
     }
@@ -155,7 +158,8 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         }
 
         if (!getWorld().isRemote) {
-            checkStateServer();
+            todoEndergenics.add(this);
+//            checkStateServer();
         }
     }
 
@@ -248,7 +252,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         return goodCounter;
     }
 
-    private void checkStateServer() {
+    public void checkStateServer() {
         tickCounter++;
 
         ticks--;

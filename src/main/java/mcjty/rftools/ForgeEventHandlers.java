@@ -6,6 +6,7 @@ import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.WrenchChecker;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorTileEntity;
 import mcjty.rftools.blocks.blockprotector.BlockProtectors;
+import mcjty.rftools.blocks.endergen.EndergenicTileEntity;
 import mcjty.rftools.blocks.environmental.NoTeleportAreaManager;
 import mcjty.rftools.blocks.environmental.PeacefulAreaManager;
 import mcjty.rftools.blocks.screens.ScreenBlock;
@@ -290,4 +291,11 @@ public class ForgeEventHandlers {
         }
     }
 
+    @SubscribeEvent
+    public void onPostWorldTick(TickEvent.WorldTickEvent event) {
+        for (EndergenicTileEntity endergenic : EndergenicTileEntity.todoEndergenics) {
+            endergenic.checkStateServer();
+        }
+        EndergenicTileEntity.todoEndergenics.clear();
+    }
 }
