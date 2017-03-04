@@ -293,9 +293,12 @@ public class ForgeEventHandlers {
 
     @SubscribeEvent
     public void onPostWorldTick(TickEvent.WorldTickEvent event) {
-        for (EndergenicTileEntity endergenic : EndergenicTileEntity.todoEndergenics) {
-            endergenic.checkStateServer();
+        if (!event.world.isRemote) {
+            for (EndergenicTileEntity endergenic : EndergenicTileEntity.todoEndergenics) {
+                endergenic.checkStateServer();
+            }
+            EndergenicTileEntity.todoEndergenics.clear();
+            EndergenicTileEntity.endergenicsAdded.clear();
         }
-        EndergenicTileEntity.todoEndergenics.clear();
     }
 }

@@ -27,7 +27,7 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
         return true;
     }
 
-    private EndergenicTileEntity findEndergenicTileEntity() {
+    public EndergenicTileEntity findEndergenicTileEntity() {
         IBlockState state = getWorld().getBlockState(getPos());
         int meta = state.getBlock().getMetaFromState(state);
         EnumFacing k = BlockTools.getOrientation(meta);

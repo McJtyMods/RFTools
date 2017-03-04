@@ -38,7 +38,7 @@ public class EnderMonitorTileEntity extends LogicTileEntity implements ITickable
         }
 
         needpulse = true;
-        markDirty();
+        markDirtyQuick();
     }
 
     @Override
@@ -52,7 +52,7 @@ public class EnderMonitorTileEntity extends LogicTileEntity implements ITickable
         boolean newout = false;
 
         if (needpulse) {
-            markDirty();
+            markDirtyQuick();
             newout = true;
             needpulse = false;
         }

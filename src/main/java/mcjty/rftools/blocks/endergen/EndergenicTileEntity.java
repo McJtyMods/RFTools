@@ -8,12 +8,14 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketServerCommand;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.EnergyTools;
+import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.hud.IHudSupport;
 import mcjty.rftools.network.PacketGetHudLog;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.typed.Type;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -28,10 +30,7 @@ import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implements ITickable, MachineInformation,
         IHudSupport, IMachineInformation {
@@ -113,6 +112,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
 
     // We enqueue endergenics for processing later
     public static List<EndergenicTileEntity> todoEndergenics = new ArrayList<>();
+    public static Set<GlobalCoordinate> endergenicsAdded = new HashSet<>();
 
     public EndergenicTileEntity() {
         super(5000000, 20000);
@@ -150,17 +150,80 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         // bad and good counter are handled both client and server side
         if (badCounter > 0) {
             badCounter--;
-            markDirty();
+            markDirtyQuick();
         }
         if (goodCounter > 0) {
             goodCounter--;
-            markDirty();
+            markDirtyQuick();
         }
 
         if (!getWorld().isRemote) {
-            todoEndergenics.add(this);
-//            checkStateServer();
+            queueWork();
         }
+    }
+
+    // Postpone the actual tick to after all other TE's have ticked (in a WorldTickEvent)
+    private void queueWork() {
+        GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().provider.getDimension());
+        if (endergenicsAdded.contains(gc)) {
+            // We're already there. Nothing to do
+            return;
+        }
+
+        // Find an endergenic with a pearl injector and start from there
+        EndergenicTileEntity endergenicWithInjector = findEndergenicWithInjector();
+        if (endergenicWithInjector != null) {
+            // We add all endergenics starting with the one with the injector.
+            EndergenicTileEntity loop = endergenicWithInjector;
+            while (loop != null) {
+                addToQueue(loop, new GlobalCoordinate(loop.getPos(), getWorld().provider.getDimension()));
+                loop = loop.getDestinationTE();
+                if (loop == endergenicWithInjector) {
+                    loop = null;
+                }
+            }
+        }
+        // In all cases we add this endergenic. This will not do anything
+        // if it was already added before
+        addToQueue(this, gc);
+    }
+
+    private void addToQueue(EndergenicTileEntity endergenicWithInjector, GlobalCoordinate gc2) {
+        if (!endergenicsAdded.contains(gc2)) {
+            todoEndergenics.add(endergenicWithInjector);
+            endergenicsAdded.add(gc2);
+        }
+    }
+
+    private EndergenicTileEntity findEndergenicWithInjector() {
+        if (hasInjector()) {
+            return this;
+        }
+        if (destination == null) {
+            return null;
+        }
+        TileEntity te = getWorld().getTileEntity(destination);
+        if (te instanceof EndergenicTileEntity) {
+            return ((EndergenicTileEntity) te).findEndergenicWithInjector();
+        }
+        return null;
+    }
+
+    private boolean hasInjector() {
+        for (EnumFacing dir : EnumFacing.VALUES) {
+            IBlockState state = getWorld().getBlockState(getPos().offset(dir));
+            if (state.getBlock() == EndergenicSetup.pearlInjectorBlock) {
+                TileEntity te = getWorld().getTileEntity(getPos().offset(dir));
+                if (te instanceof PearlInjectorTileEntity) {
+                    PearlInjectorTileEntity injector = (PearlInjectorTileEntity) te;
+                    EndergenicTileEntity endergenic = injector.findEndergenicTileEntity();
+                    if (endergenic == this) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -327,7 +390,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         }
 
         // Else we're charging up.
-        markDirty();
+        markDirtyQuick();
         chargingMode++;
         if (chargingMode >= 16) {
             log("Server Tick: charging mode ends -> idle");
@@ -491,7 +554,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     }
 
     public void firePearl() {
-        markDirty();
+        markDirtyQuick();
         // This method assumes we're in holding mode.
         getDestinationTE();
         if (destination == null) {
@@ -508,7 +571,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     }
 
     public void firePearlFromInjector() {
-        markDirty();
+        markDirtyQuick();
         // This method assumes we're not in holding mode.
         getDestinationTE();
         chargingMode = CHARGE_IDLE;
@@ -528,7 +591,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     // already generated power.
     public void receivePearl(int age) {
         fireMonitors(EnderMonitorMode.MODE_PEARLARRIVED);
-        markDirty();
+        markDirtyQuick();
         if (chargingMode == CHARGE_HOLDING) {
             log("Receive Pearl: pearl arrives but already holding -> both are lost");
             // If this block is already holding a pearl and it still has one then both pearls are
@@ -564,7 +627,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     }
 
     public void startCharging() {
-        markDirty();
+        markDirtyQuick();
         chargingMode = 1;
         chargeCounter++;
     }
@@ -629,7 +692,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     }
 
     public void setDestination(BlockPos destination) {
-        markDirty();
+        markDirtyQuick();
         this.destination = destination;
         distance = calculateDistance(destination);
 
