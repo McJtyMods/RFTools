@@ -171,7 +171,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         }
 
         // Find an endergenic with a pearl injector and start from there
-        EndergenicTileEntity endergenicWithInjector = findEndergenicWithInjector(getPos());
+        EndergenicTileEntity endergenicWithInjector = findEndergenicWithInjector(new HashSet<>());
         if (endergenicWithInjector != null) {
             // We add all endergenics starting with the one with the injector.
             EndergenicTileEntity loop = endergenicWithInjector;
@@ -195,7 +195,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         }
     }
 
-    private EndergenicTileEntity findEndergenicWithInjector(BlockPos start) {
+    private EndergenicTileEntity findEndergenicWithInjector(Set<BlockPos> done) {
         if (hasInjector()) {
             return this;
         }
@@ -203,12 +203,13 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
             return null;
         }
         // Avoid eternal loops
-        if (destination == start) {
+        done.add(getPos());
+        if (done.contains(destination)) {
             return null;
         }
         TileEntity te = getWorld().getTileEntity(destination);
         if (te instanceof EndergenicTileEntity) {
-            return ((EndergenicTileEntity) te).findEndergenicWithInjector(start);
+            return ((EndergenicTileEntity) te).findEndergenicWithInjector(done);
         }
         return null;
     }
