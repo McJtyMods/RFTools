@@ -89,7 +89,7 @@ public class DialingDeviceDriver {
                 boolean once = a.checkBoolean(3);
 
                 TileEntity transmitterTE = tile.getWorld().getTileEntity(fromCoordinateMap(transmitterSPos));
-                TileEntity receiverTE = tile.getWorld().getTileEntity(fromCoordinateMap(receiverSPos));
+                TileEntity receiverTE = TeleportationTools.getWorldForDimension(tile.getWorld(), targetDim).getTileEntity(fromCoordinateMap(receiverSPos));
 
                 if (!(transmitterTE instanceof MatterTransmitterTileEntity)) {
                     return new Object[]{null, "Invalid matter transmitter"};
