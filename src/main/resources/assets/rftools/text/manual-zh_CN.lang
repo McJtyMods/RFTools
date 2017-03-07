@@ -199,181 +199,125 @@ Table of contents:
 {b}RF监视器
 {n:monitor}
 {rb:rf_monitor}
-RF监视器是一个放在世界中的方块， and that
-can examine a nearby (3x3x3 area around the monitor) block and
-gives a visual indication of how much RF is left in that block.
-This block can also give out redstone signals in case the RF in
-the monitored block is too low or too high. You can use this
-redstone signal with the Power Relay (see below) to control
-parts of your RF network.
+RF监视器是可放置方块，能够检测附近3*3*3范围内所有方块所含的RF量并显示出来，
+当方块内部所含的RF过多或过少时也会发出红石信号. 你可以使用这个红石信号配
+合能量中继器（见下页）完成对RF网络的部分控制.
 {-------------------------------------------------------------} 
 {b}液体监视器
 {n:liqmonitor}
 {rb:liquid_monitor}
-The Liquid Monitor is a block that works like the RF Monitor except
-that it can examine the contents of a nearby liquid tank.
+和RF监视器大同小异，除了能检测附近水槽里液体的容量.
 {-------------------------------------------------------------}
-{b}Coal Generator
+{b}煤炭发电机
 {n:coalgen}
 {rb:coalgenerator}
-The coal generator is a simply generator that can produce 60 RF/tick
-from coal or charcoal. If fully infused it will produce 120 RF/tick.
-It can also charge items that need RF but does that slowly. The
-powercell is a much better solution to charge items.
+煤炭发电机是一个用木炭或煤炭发电的简单机器，功率为60RF/tick. 如果缓存被
+充满它的功率是120 RF/tick.
+也可以为需要RF的机器充能但是太慢了.为物品充电的话能量单元是更好的选择。
 {-------------------------------------------------------------}
-{b}Powercell
+{b}能量单元
 {n:powercell}
 {rb:powercell}
-The powercell can store power. There a normal and an advanced version.
-The advanced version can store more power and can also transfer power
-faster. Every side of a powercell can be configured with a wrench (input,
-output, none) or you can set all sides at once using the GUI.
+能量单元能存储能量. 有一个正常的和一个高级的版本.高级能量单元有更大容量，更快
+的输电速度.能量单元的每一个面都可以在界面中或者用扳手调节输入，输出，和无。
 
-The powercell can also charge items that use RF.
+也能为使用RF的物品充电.
 {-------------------------------------------------------------}
-Powercells can also be linked to each other. To do that you have to craft
-as many powercell cards as you have powercells that you want to link:
+能量单元可以彼此连接.要做到这个，你必须合成和你想连接的机器一样多的能量单元卡:
 {ri:powercell_card}
 
-Insert one card in the first powercell and the others in the linking slot
-in the middle. That way all these cards will now have the same id. You can
-then insert each of these cards in another powercell. This will create a
-big multiblock of connected powercells.
+将一张卡插在第一个能量单元里，其他的放在中间的链接槽里.这样所有的卡都会有相同的ID. 
+然后你可以将这些卡插入想要链接的单元中. 这会创建一个多方块能量单元网.
 {-------------------------------------------------------------}
-Powercells that are linked (using cards) don't have to be adjacent to
-each other. However, if they are not adjacent there will be a small cost
-that is calculated when power is extracted. The cost depends on distance
-and also on how big the cluster of powercells is from where you extract
-power. i.e. power is considered to be evently distributed over all cells.
-Note that infusing a powercell reduces this cost and also RFTools
-dimensions are more efficient at transfering power this way.
+用卡连接在一起的能量单元不需要相邻摆放.但是，如果不放在一起，当提取能量的时候会有
+一个很小的损耗（以维持链接）.损耗取决于你能量单元网的大小以及其他能量单元到你目前
+抽取的能量单元的距离. i.e. power（损耗能量）被平分到每一个能量单元中.
+注意为能量单元充能可以减少损耗，以这种方式工作RFtools维度也可以工作的更有效.
 {-------------------------------------------------------------}
-{b}Storage Scanner
+{b}存储检测器
 {n:stomon}
 {rb:storage_scanner}
-The Storage Scanner is a block that can scan the surrounding
-area for inventories (chests, furnaces, other devices, basically
-anything that can hold items) and show them in a list. You can
-then select an inventory in that list and it will display the
-contents of that inventory.
+存储检测器能扫描周围区域的所有容器(箱子，熔炉，其它设备，基本所有能装物品的容器) 
+并在清单中显示.你可以在清单中选择一个容器然后会为你显示出容器里的物品.
 {-------------------------------------------------------------}
-If you open the user interface of this scanner you get two lists.
-The top list is initially empty but will be filled when you press
-the 'Scan' button. It contains all the inventories (chests, furnaces
-and so on) that it could find in the selected area. If you
-previously scanned an area you don't have to do it again. If a line
-shows 'REMOVED' that means the specific block was removed after
-the scan.
+如果你打开检测器的界面会有两个清单.左面的清单最初是空的但是当你点击“scan”按钮时
+会被填充. 它包含了可扫描范围内所有的容器(箱子，熔炉，等等).如果你已经扫描了一个
+区域，并不需要重新开始. 如果一条线显示“removed”说明在扫描之后，一个容器被移除了.
 
-If you select an inventory in the top list then the bottom list will
-show the contents of that inventory.
+如果你选择了一个左边清单的容器，右边清单会显示容器内储存的物品.
 
-Doubleclick on an inventory in the top list will close this
-window and highlight it in the world for 5 seconds (by default).
+双击顶部清单的某个容器窗口会关闭并且高亮该容器5秒钟（默认）.
 {-------------------------------------------------------------}
-You can search for items in all inventories that it scanned. It will
-mark all the inventories where it found an item that matches what
-you typed with a yellow color. This gives you an easy way to find
-out where you put that diamond pickaxe again.
-
-The slider below the 'Scan' button allows you to select the radius
-that this machine will use to scan the area. A value of '4' means
-that an area of 9x9x9 will be scanned.
+你能在可扫描的所有容器里搜寻你想要的物品，并将容器用黄色标记显示出来. 这样你就
+可以知道，你又把钻石镐放哪儿了。
+'Scan' 按钮之下的滑块允许你调节机器选择的范围. 范围值为'4'意味着可以扫描9*9*9范
+围的方块.
 {-------------------------------------------------------------}
-It is also possible to request an item out of the given inventory
-by double clicking it in the list of items. And if an item is
-inserted into the 'inserter' slot then it will be distributed
-to the first available inventory (which is why the order of the
-inventories in the top list is important). Both operations
-require some power.
+点击清单内的物品将其拿出该容器. 如果一个物品被放入 'inserter'槽（下方的蓝色槽），
+会自动将其放入左边清单的第一个容器中 (所以清单内容器的顺序非常重要).这两个过程都
+需要能量.
 
-Note that the storage scanner will only insert items into inventories
-that are starred (press the 'star' button in the top list).
+注意存储检测器只能把物品放入被星星标记的容器 (点击左侧清单的星星按钮).
+你也可以点击最下方的星星（蓝色槽左面）将其熄灭，就可以无视上方清单的星星，
+直接传送到被选中的某容器中。——译者注
 {-------------------------------------------------------------}
-{b}Storage System
+{b}存储系统
 {n:storage}
 {rb:modular_storage}
-The Modular Storage Block is an advanced chest. Before you can use it
-you must insert a storage module. There are three tiers: 100, 200,
-or 300 stacks. You can insert modules to make the chest work better
-with various types of items. When you remove a storage module from a
-Modular Storage Block the contents will be copied to the module.
-
-The various item modules allow you to sort and group your items based
-on various criteria. There is also a third slot where you can insert
-a filter module to restrict items going into the storage.
+模块化存储器是一个高级箱子。在你使用它之前您必须插入储存舱。储存舱有三个等级：
+100，200，或300个存储堆栈。您可以插入模块，来使箱子来应对更多复杂的物品存储。
+从存储器中移出存储模块，模块化存储器的内容将被复制到模块中。
+不同的物品存储相关模块可以让你根据不同的标准来分类你的物品. 第三个槽可以放入存储
+过滤模块以控制什么物品可以进入模块存储器中.
 {-------------------------------------------------------------}
 {n:remotestor}
-There is also a Remote Storage Block:
+也有一个远程存储器:
 {rb:remote_storage}
-With this block you can make a storage module available remotely. You can
-put up to four storage modules in the remote storage block. Then you can
-create Remote Storage Module items. These need to be linked first to the
-right storage item. To do that place the remote storage module in the
-appropriate slot next to the item.
-
-You can then use the remote storage module by combining it with a tablet
-or you can insert the module in a modular chest block.
+使用这个箱子你可以建立一个远程存取网络. 你能在一个远程存储器中放入4个储存舱. 然后
+制作一个远程存储模块. 打开远程存储器，将远程存储模块放在储存舱旁边即可完成链接。
+需要在合成格子或者工作台中将远程存储模块与空的手持存储模块合成绑定后的存储模块
+或者直接将储存舱与空的手持存储模块合成.
 {-------------------------------------------------------------}
-Offline access with the Tablet:
+手持存储模块离线访问:
 {ri:storage_module_tablet}
-With this item you can open the contents of a remote or normal storage
-module from within your hotbar. To use it you need to craft the tablet
-together with the storage module and you must charge it with sufficient
-energy. Higher storage tiers will cost more RF to open. To get the
-storage module and empty tablet back you just put the tablet in your
-crafting grid.
+右键使用充满了电的这玩意你可以打开被绑定的远程模块或者存储模块里的物品.储存舱等级
+越高，打开消耗的能量越多.
 
-The tablet can also be combined with a storage screen module
-to remotely access a storage scanner. This is a very powerful combination
-as it allows full access to your entire storage network.
+这个手持模块也可以与存储控制模块合成在一起以远程访问一个存储检测器.这是一个很棒的功能，
+因为它可以控制到你所有的物品存储.
 {-------------------------------------------------------------}
 {n:storfilter}
-Filtering items for your storage:
+过滤模块:
 {ri:filter_module}
-With this item you can control what is allowed in the chest and what not.
-You can white or blacklist, filter with NBT, damage, ore dictionary or mod.
-This filter module is also usable in the crafter to control what goes into
-the crafter buffer and in the builder to control what to quarry or void.
+使用这个模块你可以控制哪些物品可以进入你的箱子，可以使用黑/白名单, 用NBT, 耐久值, 矿物
+辞典或模组来过滤.
+过滤模块也可以用在自动合成机中来控制哪些物品可以进入缓存，也可以放在建造机中控制挖掘哪
+些，清空哪些方块.
 
-The storage filter item has its own GUI which you can only access by having
-the filter in your hand or you can sneak right click on any inventory will
-configure the filter to the current contents of that inventory. Sneak right
-click on another block in the world will add that to the filter.
+手持过滤模块右击打开，或者潜行右击任何一个容器都可以打开其界面，这样就可以将容器中的物品
+直接加入过滤模块中.潜行右击世界中的方块也可以将其添加到过滤模块当中.
 {-------------------------------------------------------------}
-{b}Elevator
+{b}电梯
 {n:elevator}
 {rb:elevator}
 
-The elevator is a block that can move entities (including the player)
-up and down. To setup an elevator you need to place elevator blocks
-at every level and at one level make a platform in front of the
-elevator using solid blocks. Only the bottom elevator block needs power.
-If one of the elevator blocks gets a redstone signal then the platform
-will move there.
+电梯是一个上下移动实体(包括玩家)的方块. 要让电梯有效工作你必须在每一层放上电梯方块，而且
+在某一层的前面需要用任意固体方块做一个平台. 只有底部的电梯需要供应RF.
+如果某一层电梯接收到红石信号，平台就会移动到这一层.
 {-------------------------------------------------------------}
-The elevator works well with the wireless redstone system and the
-button screen module so you can control the elevator from a distance.
-In addition you can use the elevator button module which allows you
-to directly control to what level the platform should move.
+电梯与无线红石系统以及电梯按钮模块配合很好，所以你可以在一定距离外控制电梯.
+而且电梯按钮模块，允许你直接控制平台该移动到哪一层.
 {-------------------------------------------------------------}
-{b}Automatic Crafter
+{b}自动合成机
 {n:crafter}
 {rb:crafter1}
-The Crafter is a powerful automatic crafting machine that can handle
-up to eight different recipes in a single block. It can be used to
-craft multiple items independent from each other or else it can be
-used for more complicated multi-step crafting recipes. By default it
-uses 100 RF for every crafting cycle (where it does all crafting
-operations in one step).
+这是一个很棒的自动合成机械，能在一个方块内支持8个合成.可以彼此独立地合成很多物品，也可以用
+来进行复杂的多步合成.默认情况下每一次合成消耗100RF (在一步完成所有合成的情况下).
 {-------------------------------------------------------------} 
-The list at the top-left allows you to select all the supported
-recipes. If you select a recipe you can edit it in the right grid
-by dragging over the right items.
+左上角的清单允许你选择所有被支持的合成. 如果你选择了一个合成你可以在右边的格子里，将正确的
+物品拖过去以编辑这个合成.
 
-The crafter also has an internal inventory and four output slots
-for crafting results. By inserting a storage filter item you can
-also prevent unwanted items from being inserted into this inventory.
+合成机有一个内部缓存和4个成品输出槽.通过插入存储过滤器，你可以阻止不想要的物品传入缓存中.
 {-------------------------------------------------------------}
 The 'Keep/All' button is only active when a recipe is selected and
 allows you to control if this recipe will always keep at least a single
