@@ -101,122 +101,105 @@ Table of contents:
 {rb:machine_frame}
 机器框架是这个模组内部大多数机器的基本合成组件.
 {rb:machine_base}
-The machine base is the base ingredient for a few other machines.
+机器基座是其他一些机器的基本合成组件.
 {-------------------------------------------------------------}
-{b}Logic Gates
+{b}逻辑门
 {n:logic}
 
-{l:sequencer}Sequencer
-{l:timer}Timer
-{l:counter}Counter
-{l:endermon}Ender Monitor
-{l:redtrans}Redstone Transmitter
-{l:redrec}Redstone Receiver
-{l:threelogic}Logic Gate
-{l:invchecker}Inventory Checker
-{l:sensor}Sensor
+{l:sequencer}音序器
+{l:timer}计时器
+{l:counter}计数器
+{l:endermon}末影监视器
+{l:redtrans}红石发信器
+{l:redrec}红石接收器
+{l:threelogic}逻辑门
+{l:invchecker}物品检测器
+{l:sensor}传感器
 {-------------------------------------------------------------}
 {b}Sequencer
 {n:sequencer}
 {rb:sequencer_block}
-The sequencer is an advanced redstone based sequencer. It is
-capable of giving out a series of 64 different signals. You can
-edit the pattern of these signals in the gui of this block.
+音序器是一种高级红石机械. 它可以周期循环一系列64种不同的红石信号. 
+你可以在这个机器的界面中改变信号的模式.
 
-The modes of this block are explained in the next page. You can
-also set the speed at which the cycles are played. Default is 1
-which means that the cycle will proceed every tick.
+下一页解释了这个机器的模式. 你也可以设置机器循环红石信号的速度. 
+默认值是1也就是说，内部的红石信号每tick更新一次64tick完成一个循环.
 {-------------------------------------------------------------} 
-It has seven different modes:
+有7个不同的模式:
 
-    Once1: cycle once when pulse arrives. Ignore further pulses
-    Once2: cycle once when pulse arrives. Restart on pulse
-    Loop1: loop continuously, ignore redstone signal
-    Loop2: loop continuously, restart on pulse
-    Loop3: loop continuously while redstone signal is on. If
-           signal is down, stay at current step.
-    Loop4: loop continuously while redstone signal is on. If
-           signal is down, restart.
-    Step: step through the cycle one by one
+    单次: 红石脉冲到来时只播放一次音序（进行一次循环）. 
+    忽略更远处的红石信号。
+    单次重置: 红石脉冲到来时只进行一次循环，重新提供红石脉冲，循环
+    便会重新开始。
+    无尽循环: 一直循环，无视信号。
+    循环重置: 一直循环，但是重新提供红石脉冲循环便会重新开始。
+    循环中止: 红石信号开启时一直循环，关闭红石信号，音序会停在某一步。
+    重启循环: 红石信号开启时一直循环. 红石信号关闭音序循环便会重启。
+    步进式: 随外界红石信号的一次次开启而播放音序（就是按按钮
+    走序列，一个序列64下）。
 {-------------------------------------------------------------}
-{b}Timer
+{b}计时器
 {n:timer}
 {rb:timer_block}
-The timer is a simple gate that will repeatedly send a redstone pulse.
-You can input any value for the delay so it can be used for very long
-timeouts.
+计时器是一个定时重复发送红石信号的简单机器.
+你可以设定任何延时这样可用于长周期的自动红石控制任务.（凋灵塔可用——来自译者）
 
-What is special about this timer is that it restart when it itself
-receives a redstone pulse at its input. So given timely input pulses
-this block will never output a pulse itself. By using this feature this
-block can be used as a way to detect that a certain activity is overdue.
+这个计时器特殊在于当它接收到外界红石信号后计时会重置. 所以定时给予外界的脉冲
+会导致它事实上无法输出信号。通过这一特性这个方块可以探测一些过时而没有开启的
+红石活动.
 {-------------------------------------------------------------}
-{b}Counter
+{b}计数器
 {n:counter}
 {rb:counter_block}
-The counter is a simple block that will count redstone pulses and
-emit a redstone signal when it reaches a certain number. Then it
-starts over. You can see in the GUI how many redstone pulses it
-already got.
+这是个简单的方块，可以计数传来的红石信号并在达到一定数量后输出红石信号，然后
+计数重新开始。r. 你可以在它的界面中看到当前接受了多少信号.
 {-------------------------------------------------------------}
-{b}Ender Monitor
+{b}末影显示器
 {n:endermon}
 {rb:ender_monitor}
-The Ender Monitor only works in combination with the Endergenic
-Generator. It will send a pulse based on three different conditions:
-
-    Lost Pearl: send a redstone pulse when a pearl is lost
-    Pearl Fired: send a pulse when a pearl is fired
-    Pearl Arrived: send a pulse when a pearl arrives
-
-Note that the redstone signal outputs on the red dot side and this
-has to face away from the Endergenic Generator.
+末影显示器只能配合末影能发电机工作.它会在三种不同的情况下发送红石脉冲:
+ 
+    丢失珍珠: 损失一个末影珍珠时发出红石信号
+    珍珠点燃: 当一个末影珍珠被点燃时发出红石信号
+    珍珠到达: 当珍珠到达时发出红石信号
+    
+记住红石信号在红点/红箭头一侧发出，这一侧必须背向末影能发电机.
 {-------------------------------------------------------------}
-{b}Redstone Transmitter
+{b}红石发信器
 {n:redtrans}
 {rb:redstone_transmitter_block}
-This block will wirelessly send out a redstone signal on a
-specific channel when it gets a redstone signal. Use this in
-combination with the redstone receiver block. If you place this
-block down it will create a channel. You can also link this
-transmitter to existing channels by right clicking on another
-transmitter or receiver.
+当接收到红石信号时，这玩意会以一个频道将红石信号无线发送.配合红石接收器
+工作. 当你将这个方块放下时，就会创建一个频道. 通过手持发信器右击别的发信
+器和接收器，你也可以将这个发信器链接到已有的频道。
 {-------------------------------------------------------------}
-{b}Redstone Receiver
+{b}红石接收器
 {n:redrec}
 {rb:redstone_receiver_block}
-This block will receive a redstone signal from a linked
-redstone transmitter. To link this receiver with a transmitter
-right-select the transmitter (or another linked receiver) with
-this block.
+这个方块将从一个已连接的发信器接受红石信号. 只需手持接收器右击别的发信器
+或者已设置的接收器即可为其指定频道。
 {-------------------------------------------------------------}
-{b}Logic Gate
+{b}逻辑门
 {n:threelogic}
 {rb:logic_block}
-This block has three redstone inputs and one output. Using the GUI you
-can make any possible combination of those three inputs into a single
-output. For every input combination you can set the output to off, on
-or keep. In keep the state of the output will be the same as it was
-before the input was switched to this state.
+这个方块有三个红石输入和一个输出. 在界面里你可以任意配置三个输入脉冲下
+所输出的结果.对于每一个输入组合，你都可以将输出设置为关，开，保持三个选项. 
+当你从一个输入组合变动到设置为保持的输入组合时，输出结果依然不变.
 {-------------------------------------------------------------}
-{b}Inventory Checker
+{b}物品检测器
 {n:invchecker}
 {rb:invchecker_block}
-This block checks a slot in a nearby inventory and emits a redstone
-signal in case the number of items in that slot is above a certain
-value (configurable in GUI).
+这个方块会检测附近的箱子/容器，当箱子指定槽位里的物品达到一定数量时，
+发出红石信号(在界面中可配置).箱子的槽位是从0开始计数的——译者注。
 {-------------------------------------------------------------}
 {b}Sensor
 {n:sensor}
-{rb:sensor_block}
-The sensor can detect various things directly in front of it
-(either 1 block, 3 blocks or 5 blocks). It can detect blocks
-being placed, crop growth level, number of entities and so on.
+{rb:sensor_block}传感器能够检测前方不同的方块(不论1个方块还是三个五个). 
+它能检测被放置的方块, 作物生长等级, 实体数量等等.
 {-------------------------------------------------------------}
-{b}RF Monitor
+{b}RF监视器
 {n:monitor}
 {rb:rf_monitor}
-The RF Monitor is a block that you place in the world and that
+RF监视器是一个放在世界中的方块， and that
 can examine a nearby (3x3x3 area around the monitor) block and
 gives a visual indication of how much RF is left in that block.
 This block can also give out redstone signals in case the RF in
@@ -224,7 +207,7 @@ the monitored block is too low or too high. You can use this
 redstone signal with the Power Relay (see below) to control
 parts of your RF network.
 {-------------------------------------------------------------} 
-{b}Liquid Monitor
+{b}液体监视器
 {n:liqmonitor}
 {rb:liquid_monitor}
 The Liquid Monitor is a block that works like the RF Monitor except
