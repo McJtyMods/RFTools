@@ -558,8 +558,8 @@ RFTools提供了一个“简单的”护盾系统用以过滤怪物，动物，�
 已搭建的护盾上移除护盾支架的.
 如果你再次分解护盾，这个举动将不会被记忆.
 
-注意护盾也支持空间卡.这样你不必放置护盾方块，但是你必须插入合适的空间卡
-来决定护盾的形状.
+注意护盾也支持空间仓卡.这样你不必放置护盾方块，但是你必须插入合适的空间
+仓卡来决定护盾的形状.
 {-------------------------------------------------------------}
 {b}物品过滤器
 {n:filter}
@@ -625,102 +625,81 @@ RFTools提供了一个“简单的”护盾系统用以过滤怪物，动物，�
 加速效应器与环境控制器有关. 相对于影响整个区域，它只直接影响实体. 
 而且它一次只支持一个模块.
 {-------------------------------------------------------------}
-{b}Spawner System
+{b}刷怪系统
 {n:spawner}
 {rb:spawner}
 
-With this block you can spawn many kinds of mobs. Using it requires
-a bit of setup work though. First you need a full syringe for the
-mob that you want to spawn. If you insert this syringe in the spawner
-UI you can then see the other items you will need to spawn a creature
-of this type.
+使用这个方块你可以刷出很多生物.虽然使用它需要一点安装准备. 首先，你需要一个
+完整的你想要刷的生物的注射器. 当你将注射器插入刷怪笼界面时你就可以看到刷出
+这种生物的材料.
 {-------------------------------------------------------------}
-To get the materials into the spawner you need to set up
-at least one, preferably three or even more matter beamers:
+为了得到刷怪笼材料你需要至少一个，或许三个以上的物质投影仪:
 {rb:matter_beamer}
 
-This block has a single slot for items. You can connect
-it to a spawner by first selecting the beamer and then the
-spawner with a wrench.
+物质投影仪有一个物品插槽. 你可以用扳手先右击刷怪笼，再右击物质投影仪完成链接.
 {-------------------------------------------------------------}
-If you then give the spawner and the beamers power they should start
-to work. Note that to spawn a creature you need three types of
-material. That's why it is recommended to use three beamers as
-then you can dedicate every material to every laser.
+给予刷怪笼和投影仪电能它们就开始工作了. 注意生成一个生物需要三种材料. 这就是
+为什么需要三个物质投影仪，接着你就可以向投影仪提供材料了.
 
-The beamer needs a redstone signal before it starts.
+物质投影仪工作前需要红石信号.
 
-Infusing the beamer greatly increases the speed with which it
-can beam matter (and thus the spawning rate).
+注入（更多的）投影仪将很大提升它注入物质的速度(以及生成率).
 
-The leaf block in the spawner GUI indicates any type of living
-material (meat, wheat, seeds, ...). Some types of living material
-give a bigger bonus.
+刷怪笼界面里的树叶方块包括了任何维生材料(肉，小麦，种子...). 一些材料会给予
+更大的增益.
 {-------------------------------------------------------------}
-{b}Builder
+{b}建造机
 {n:builder}
 {rb:builder}
-The Builder is one of the most versatile machine in RFTools. It can do:
-    - Move a structure from one spot (even other dimension) to another
-    - Rebuild a structure from one spot to another
-    - Swap structures between two spots
-    - Build geometrical shapes (dome, torus, box, ...)
-    - Clear out areas in a certain shape (void blocks)
-    - Quarry an area in a certain shape (silk touch, fortune, ...)
-    - Collect items and XP an in area
-    - Pump liquids
+建造机是rftools里功能最多的机器之一. 它能做到:
+    - 将一个结构从一点 (甚至是其他维度)移动到另一点
+    - 从一点到另一点重建一个结构
+    - 交换两点的结构
+    - 建造几何形状 (圆顶,环面,盒式, ...)
+    - 清空区域成特殊形状 (空方块)
+    - 采掘特定形状区域内的方块 (精准采集, 时运, ...)
+    - 收集区域内的掉落物和经验
+    - 当水泵抽液体
 {-------------------------------------------------------------}
-A chest or tank on top or below is sometimes needed to supply or collect.
-Using the GUI you can control where the builder should place the blocks
-(always at the back of the builder). This only works for space cards.
+有时候需要在上面放置箱子或者水槽以便于收集.使用界面你可以控制建造机把方块放在
+哪里(总是在机器的背面). 这只需要几张空间卡.
 
-Other GUI options are:
-{i:textures/gui/guielements.png,160,48,Silent mode: mute sounds from moving blocks}
-{i:textures/gui/guielements.png,96,48,Support mode: create preview/support blocks}
-Help to identify what will happen and help with gravity affected blocks.
-{i:textures/gui/guielements.png,128,48,Entity mode: also move entities}
-{i:textures/gui/guielements.png,192,48,Loop mode:}
-In this mode the builder will keep running as long as it has a redstone
-signal and keep on moving or copying if there is room to do so. If
-this is off the builder will do one pass and stop.
+其他的界面选项是:
+{i:textures/gui/guielements.png,160,48,无声模式: 移除方块时静音}
+{i:textures/gui/guielements.png,96,48,支撑模式: 提供预览/支撑方块}
+帮助推测会发生什么，对重力影响方块提供支持.
+{i:textures/gui/guielements.png,128,48,实体模式: 也会移除实体}
+{i:textures/gui/guielements.png,192,48,循环模式:}
+在这个模式只要给一个红石信号，机器便会保持运行，保持移动或者复制，只要这里有
+空间. 如果该模式关闭，运行一次就会停止.
 {-------------------------------------------------------------}
-The builder also supports a standard RFTools filter. If that filter is
-inserted then it will only quarry or void blocks that match the filter.
-Note that this works only on the block in the world, not the end result
-of the block. i.e. to filter on diamonds you need to insert the diamond
-ore block in the filter. All filter options like whitelist/blacklist
-and filter by mod are supported.
+建造机也支持一个标准的rftools过滤器. 插入过滤器之后，只会采掘或者清空过滤器
+里匹配的物品.注意这只对世界中的方块起效而不是破坏方块的结果.换句话说过滤钻石
+你必须在过滤模块里面插入钻石矿. 所有的过滤选项都支持黑白名单和模组过滤.
 {-------------------------------------------------------------}
-For moving, swapping and copying structures you need a space card
-linked to a space chamber.
+为了移动，复制，交换结构，你需要一张链接到空间控制方块的空间仓卡.
 
-You can use Space Chamber blocks to mark the corners of the source
-area that you want to work. One of these corners should be a
-Space Chamber Controller block.
+你可以使用空间角落方块来标记你要工作的源区域（对于长方体区域必须8个顶点齐全，
+其他也是一样——译者注）. 角落方块其中之一应该是空间控制方块.
 {rb:space_chamber}
 {rb:space_chamber_controller}
 {-------------------------------------------------------------}
 {n:chambercard}
 {ri:space_chamber_card}
-Right selecting the controller block with a wrench will let it form the
-chamber. If all is correct you will get a message saying so. Then you need
-to use a Space Chamber Card (right click it on the controller) to link the
-controller to the card.
+使用扳手右键空间控制方块可以构建工作空间. 如果一切正常你会看到一条信息“
+Chamber cuccesfully created！”. 然后你需要手持空间仓卡右键空间控制方
+块建立链接.
 
-Put that card in the builder, set the right mode and other
-parameters and give it a redstone signal.
+将卡放进建造机里，设定正确的模式和其他参数，并给予红石信号.
 
-If you right click a linked space chamber card it will give you an overview
-of all blocks and entities together with the cost of moving them.
+如果你手持一个空间仓卡右击，会给你一个区域内方块和实体的概览以及移除它们消
+耗的能量.
 {-------------------------------------------------------------}
-For building geometrical shapes, voiding and quarrying areas you
-need shape cards:
+要建立几何形状,清空和采集区域你需要塑形卡片:
 {ri:shape_card}
 
-Right clicking such a card will open a GUI where you can set the shape as
-well as the dimensions. A shape card can be upgraded in the crafting table
-to make the void card and one of the quarry cards.
+右键塑形卡片会打开一个界面设置形状和大小. 一张塑形卡片可以在工作台中升级成
+具有特定功能的卡片.
 
-Note that several options in the GUI of the builder are unused if you use
-shape cards.
+注意使用塑形卡片时，建造机界面中的选项是不被使用的。.
 {-------------------------------------------------------------}
