@@ -136,13 +136,13 @@ Table of contents:
     循环中止: 红石信号开启时一直循环，关闭红石信号，音序会停在某一步。
     重启循环: 红石信号开启时一直循环. 红石信号关闭音序循环便会重启。
     步进式: 随外界红石信号的一次次开启而播放音序（就是按按钮
-    走序列，一个序列64下）。
+    走序列，一个序列64下——译者注）。
 {-------------------------------------------------------------}
 {b}计时器
 {n:timer}
 {rb:timer_block}
 计时器是一个定时重复发送红石信号的简单机器.你可以设定任何延时这样可用于
-长周期的自动红石控制任务.（凋灵塔可用——来自译者）
+长周期的自动红石控制任务.（凋灵塔可用——译者注）
 
 这个计时器特殊在于当它接收到外界红石信号后计时会重置. 所以定时给予外界的脉
 冲会导致它事实上无法输出信号。通过这一特性这个方块可以探测一些过时而没有开
@@ -231,7 +231,7 @@ RF监视器是可放置方块，能够检测附近3*3*3范围内所有方块所�
 {-------------------------------------------------------------}
 用卡连接在一起的能量单元不需要相邻摆放.但是，如果不放在一起，当提取能量的时候会
 有一个很小的损耗（以维持链接）.损耗取决于你能量单元网的大小以及其他能量单元到你
-目前抽取的能量单元的距离. i.e. power（损耗能量）被平分到每一个能量单元中.
+目前抽取的能量单元的距离.换句话说，能量被平分到每一个能量单元中.
 注意为能量单元充能可以减少损耗，以这种方式工作RFtools维度也可以工作的更有效.
 {-------------------------------------------------------------}
 {b}存储检测器
@@ -435,7 +435,7 @@ RFTools支持一个使用RF来传送物质的传送系统.一个传送系统是�
 . 注意比起正常的传送，这样会消耗更多的能量.
 接收器依然需要能量! 用这些合成这个:
 {ri:charged_porter}
-高级宠溺传送器可以存储更多的能量，传送的更快，允许8个目的地(潜行右击添加
+高级充能传送器可以存储更多的能量，传送的更快，允许8个目的地(潜行右击添加
 目的地，对空潜行右击以打开目的地选择菜单).
 有热键(默认[ and ])以循环目的地.
 {-------------------------------------------------------------}
@@ -518,145 +518,112 @@ TartaricAcid（酒石酸）在bilibili有一个很好的末影能发电系统解
 RFTools提供了一个“简单的”护盾系统用以过滤怪物，动物，玩家和物品.首先你要用相
 同颜色的护盾支架来搭起护盾的形状. 然后将一个护盾投射仪放在护盾支架旁边供电.
 
-A tier 1 shield can handle 256 blocks. Tier 2 ups this to 1024. The tier 3
-ups this to 4096 and deals 4 times as much damage at twice the power.
+一级的护盾支持256个方块.2级支持1024个.3级支持4096个，4级支持32768个，高级比
+起低级，以双倍的能量抵抗4倍的毁坏.
 
-To compose the shield right click the shield block with a wrench. The
-shield block will compose the shield in the specified shape. If you hit
-the shield with left click it will also connect on corners. Wrench the
-shield again to get the template blocks back. By doing that you
-can change the shape of your shield in case you're not happy with it.
+用扳手右击护盾投射仪以将护盾支架变成护盾方块.护盾投射仪将会将护盾排布成给定的
+形状. 即使用左键去破坏它护盾依然会村庄. 扳手右击护盾投射仪会将护盾变回支架. 
+这样你便可以自由改变护盾的形状.
 {-------------------------------------------------------------}
-To craft the Shield Template Blocks you use the following recipe:
+要用如下原料合成护盾支架:
 {rb:shield_template_block}
 
-Note that there are four different template blocks so you can use them
-to make adjacent distinct shields. Every projector will only take one color.
+注意有4种不同颜色的护盾支架以便你构建相邻却又分明的护盾.每个投射仪都只能支
+持一种颜色.
 
-To craft the Shield Block you use the following recipe:
+要这样合成护盾投射仪:
 {rb:shield_block1}
 {-------------------------------------------------------------}
-The shield has four visualization options:
+护盾有四个可视化选项:
 
-    Invisible: the shield is totally invisible
-    Shield: a transparent generic shield texture is used
-    Solid: the shield is solid
-    Transparent: the shield is transparent
+    不可见：护盾完全不可见
+    护盾:使用一个清澈的动态材质
+    固体: 护盾是不透明的
+    透明: 护盾是静态透明材质
+在界面里你可以为实体制定通过规则. 每一个规则有如下选项:
 
-In the gui you can also insert rules for different types of
-entities. For every rule you have the following actions:
-
-    Pass: entity can pass through
-    Solid: entity is blocked
-    Damage: entity gets damage
-    SolDmg: entity is blocked and gets damage
+    通过: 实体可以通过
+    固态: 实体被封锁
+    伤害: 实体受到伤害
+    炼狱: 实体被锁住且受到伤害
 {-------------------------------------------------------------}
-You can also set the type of damage. By default the damage
-will be 'generic' but you can also set it to 'player'. This
-will consume more energy but you will get XP orbs as well
-as loot that you normally only get when a mob is killed
-by the player.
+你也可以设置伤害的类型. 默认伤害是 'generic'（一般）但是你也可以设定为
+'player'（玩家）.这会消耗更多的能量，但是会像玩家正常的杀死一只怪物一样
+获得经验.
 
-If you select 'player' damage then you can also enable looting
-by inserting dimensional shards. These are used up for every
-looting kill.
+如果选择 'player' 伤害你可以放入空间碎片充当掠夺附魔. 用于需要获得大量
+战利品的情况.
 {-------------------------------------------------------------}
-If you hit the shield projector with your left mouse instead of
-the right mouse it will also scan on the corners for template
-blocks. Additionally using the smart wrench it is possible
-to add or remove shield templates to an already formed shield.
-Note that doing this will not be remembered if you decompose
-the shield again.
+用左键单击护盾投影仪一样会把护盾变回护盾支架.另外使用智能扳手是有可能从
+已搭建的护盾上移除护盾支架的.
+如果你再次分解护盾，这个举动将不会被记忆.
 
-Note that the shield also supports space cards. In that case you
-don't have to use shield template blocks but instead you can
-insert the appropriate space card to define the shape of
-the shield.
+注意护盾也支持空间卡.这样你不必放置护盾方块，但是你必须插入合适的空间卡
+来决定护盾的形状.
 {-------------------------------------------------------------}
-{b}Item Filter
+{b}物品过滤器
 {n:filter}
 {rb:item_filter}
-The Item Filter allows controlled input/output from any side of the
-block. It has nine storage slots that can be configured to only hold
-a specific type of item. For each of these storage slots you can
-control from which side it can receive items and to which side
-other machines can extract items.
+物品过滤器允许你配置任何一面（D，U，S，W，N，E）的输入输出. 有9个存储槽以
+控制物品的通过.对于每一个存储槽，你都可以控制它对应的每一面是可以输入所指
+定的物品，还是向别的机器输出物品，还是禁用.
 {-------------------------------------------------------------}
-{b}Modular Screens
+{b}模块化屏幕
 {n:screens}
 
-If you want to display various things in your base then the
-modular screen system in RFTools might be ideal for you. In
-these screens you can insert up to 11 modules which can give
-you various bits of information like energy in a machine,
-the number of fluids in a tank, the time of the day, simple text,
-the number of RF left in a dimension and so on. More modules
-are planned for the future.
+如果你想播放基地里不同的东西，模块屏幕可能是个解决办法. 在这里你可以插入11
+个显示不同信息的模块，例如机器能量,水槽液体含量,当前时间,简单文字,维度所
+含能量等等. 未来会有更多模块。
 
-There are large, huge and transparent screen variations of the
-screen. You can get those by using a wrench on the screen.
-You can also color a screen by selecting it with a dye item.
+屏幕有很大的，清晰的变化，你可以用扳手右键屏幕以获得这些信息.
+你也可以用染料右键屏幕以改变屏幕的颜色.
 {-------------------------------------------------------------}
-Screens are not directly powered but get power from a Screen
-Controller that you can craft as follows:
+屏幕不能直接供电但是可以从屏幕控制器中充能，如下合成:
 {rb:screen_controller}
 
-In the GUI of this block you can press 'Scan'. This will locate
-all screens in a 65x33x65 area around the controller (or 129x33x129
-for a maximum infused controller). From that point on these
-screens will receive power from this controller.
+在这个机器的界面中按下'Scan'.这将会查找控制器周围65x33x65区域内所有的屏幕
+(最大升级的控制器可达129x33x129).这些屏幕将会从这一点的屏幕控制器获得信息.
 {-------------------------------------------------------------}
-You can craft a screen as follows:
+你可以这样合成屏幕:
 {rb:screen}
 
-A screen with no modules is just black. So to make things interesting you
-should add one or more module.
+没有模块的屏幕只是黑的. 所以要想让屏幕有趣些，需要至少一个模块.
 
-Note that even with modules a screen will be black if it is
-not getting power. Make sure you have a screen controller
-nearby and press 'Scan' on that so that it finds all screens.
+注意没电情况下，有模块屏幕也是黑的.确保你的屏幕控制器在附近并按下了“scan”找
+到了所有屏幕.
 {-------------------------------------------------------------}
-The following screen modules are currently supported:
-    - Text: simple line of text
-    - Clock: a digital clock showing the time of the day
-    - Energy: monitor the RF energy level of a machine
-    - Dimension: monitor the RF energy level of a dimension
-    - Fluid: monitor the number of fluids in a tank
-    - Inventory: monitor up to 4 slots in an inventory
-    - Counter: show the current value of a counter gate
-    - Redstone: show yes/no text depending on wireless redstone
-    - Machine Info: generic information on certain machines
-    - Button: send out a wireless redstone signal (interactive)
-    - Storage: access 9 items directly from storage scanner
+屏幕显示模块包括这些:
+    - 文本：一些简单的文本
+    - 钟表: 一个显示了当前时间的数字钟
+    - 能量：监视机器当前所含能量
+    - 维度：监视维度当前所含能量
+    - 流体：监视某个水槽中流体的数量
+    - 物品: 监测某个容器中的4个槽
+    - 计数：显示计数器当前数值
+    - 红石: 显示yes/no文本取决于无线红石信号
+    - 机器信息: 特定机器的变化信息
+    - 按钮: 发出一个无线红石信号 (交互式)
+    - 存储: 直接从存储检测器引入9个物品
 {-------------------------------------------------------------}
-Some modules (like energy, fluid, inventory, and counter modules)
-require that you first shift-right click on the machine/tank that
-you want to monitor. After that insert them in the screen. The
-maximum distance between the screen and the monitored block is 64.
-The 'Plus' versions of the modules have no limits.
+一些模块 (例如能量，流体，物品，计数)需要你首先手持它们潜行右击你想检测的方
+块然后插入屏幕当中. 屏幕和被监测方块的最大间距为64.'+' 版本的模块没有限制.
 
-The Button module also allows the screen to be used in an
-interactive manner. i.e. you can click on the screen and control
-other machines that way.
+按钮模块可以把屏幕变成交互方式. 换句话说，你可以点击屏幕来控制相应机器.
 {-------------------------------------------------------------}
-{b}Environmental Controller
+{b}环境控制器
 {n:envctrl}
 {rb:environmental_controller}
 
-Using the environmental controller you can improve the area
-around it in various ways. There are modules to give you saturation,
-regeneration, and so on. Every module requires power so this doesn't
-come free. A single controller can affect an cylindrical area
-with a maximum radius of 100 from bottom to top of the world
-(if you're prepared to consume that much power).
+使用环境控制器你可以提高周围的环境质量.有给予你饱食度和生命再生等等模块. 每
+一个模块都是要电的.一个简单的控制器可以影响半径最大100，从世界顶端到底部的
+圆柱形区域(如果你不介意消耗更多能量).
 {-------------------------------------------------------------}
-{b}Booster
+{b}加速效应器
 {n:booster}
 {rb:booster}
 
-The booster is related to the environmental controller. Instead
-of affecting an entire area it only affects the entities directly
-on top of it. In addition it only supports one module at a time.
+加速效应器与环境控制器有关. 相对于影响整个区域，它只直接影响实体. 
+而且它一次只支持一个模块.
 {-------------------------------------------------------------}
 {b}Spawner System
 {n:spawner}
