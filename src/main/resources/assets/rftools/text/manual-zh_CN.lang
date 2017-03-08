@@ -404,160 +404,119 @@ RFTools支持一个使用RF来传送物质的传送系统.一个传送系统是�
 {b}目标分析仪
 {n:tpdestcheck}
 {rb:destination_analyzer}
-This is a passive block that you can place next to a dialing device. It
-enables the dialing device to check the status of a receiver or destination
-dimension. This way you can be sure that a receiver and/or dimension has
-enough power or is not blocked before attempting to make a connection.
+这是一个可以放在传送控制器旁边的无界面方块，允许传送控制器检查接收器或传送
+维度的状态.这样在传送之前就可以确保一个接收器或传送维度有足够电能或者不被
+锁定.
 
-You can also place a destination analyzer next to a transmitter. In
-that case the transmitter will show a red colored teleportation beam
-if there is something wrong on the receiving end. You can check the
-actual problem in the dialing device.
+目标分析仪也可以放在物质传输器旁边. 这样当传输过程中出现问题，传输器会发
+出红色的光柱. 也可以在传送控制器中检查问题.
 {-------------------------------------------------------------}
-{b}Matter Booster
+{b}物质助推器
 {n:tpbooster}
 {rb:matter_booster}
-This is another passive block that you can place next to a matter
-transmitter. If this block is present it gives the transmitter the
-capability to teleport the user to an unpowered receiver. This does
-use more energy so if not enough energy is available in the transmitter
-this will not work. Note that this block does not avoid all
-negative effects. You will still get hurt slightly and you end
-up rather confused. But it is still way better then dieing.
+这也是一个放在物质传输器旁边的无界面方块. 这个方块允许传输器把玩家传送到
+一个没电的接收器. 这会消耗更多的能量以传送，传输器更容易不工作. 注意这个
+方块并不能避免受到负面影响. 你仍然会受到轻伤且意念混乱.但总比直接死掉好.
 {-------------------------------------------------------------}
-{b}Access Control
+{b}准入控制
 {n:tpaccess}
-Both the transmitter and the receiver can be set in public mode (default)
-or private. In case the mode is private you have to insert a list of
-players who can access this transmitter or receiver.
+传输器和接收器都可以设定公共(默认)和私有. 在私人模式你必须插入一张玩家清单
+以决定谁可以使用传输器和接收器.
 
-In case of a transmitter an unauthorized player will not be able to dial
-to a receiver or to interrupt a dial and he/she will also not be able
-to step through the teleporter.
+传输器上一个不被允许的玩家无法被传送到接收器，无法链接传输器和接收器，也无
+法调试传送系统.
 
-In case of a receiver an unauthorized player can not dial to that
-receiver but he/she can teleport to it if there is an authorized
-transmitter already dialed to that receiver.
+接收器上一个不被允许的玩家无法被传送到这个接收器，但是他可以通过一个给他
+授权的传输器来到这里.
 {-------------------------------------------------------------} 
-{b}Charged Porter
+{b}充能传送器
 {n:porter}
-The Charged Porter is an item that you set to some target receiver (with
-sneak-right click) and charge up. Right clicking the porter will teleport
-you. Note that this requires more power compared to normal teleportation.
-Also note that the receiver still needs power! To craft this use:
+充能传送器是设定到接收器(潜行右击接收器)且需要充电. 手持传送器右击即可传送
+. 注意比起正常的传送，这样会消耗更多的能量.
+接收器依然需要能量! 用这些合成这个:
 {ri:charged_porter}
-The advanced version stores more power, teleports faster and allows 8
-destinations (sneak right click to add receiver and sneak right click in
-the air to edit the destinations).
-There are also hotkeys (default [ and ]) to cycle destinations.
+高级宠溺传送器可以存储更多的能量，传送的更快，允许8个目的地(潜行右击添加
+目的地，对空潜行右击以打开目的地选择菜单).
+有热键(默认[ and ])以循环目的地.
 {-------------------------------------------------------------}
-{b}Simple Dialer
+{b}简易传送控制器
 {n:simdial}
-The Simple Dialer is a logic block that will dial a pre-set
-transmitter/receiver combination when it gets a redstone signal.
-To set the transmitter and/or receiver you have to sneak-right
-click with this block on the transmitter and/or the receiver.
+简易传送控制器是一个逻辑方块，当收到红石信号时，可以完成一个预设的传输器
+和接收器之间的链接.
+要设置链接你必须手持这个方块，潜行右击传输器和接收器.
 
 {rb:simple_dialer}
 {-------------------------------------------------------------}
-{b}Advanced Power Generator
+{b}高级发电机
 {n:power}
 
-Scientists working in The End have discovered an interesting property
-of ender pearls. When a pearl is thrown in some controlled manner the
-mystic properties that occur on arrival can be harnessed and converted
-to RF. If done at exactly the right moment this can produce a lot of
-power. A pearl thrown this way is called an 'Endergenic Pearl'.
+工作在末地的科学家们发现了末影珍珠的一个有趣特性.当一个珍珠以被控制的方法
+扔出去，抵达时的神秘特性可以被利用转化为RF. 如果在精确的时间点将会产生大
+量的能量.以这种方式被投掷的珍珠被叫做 '末影能珍珠'.
 
-In addition it appears that pearls 'remember' that they have been
-captured this way. If a pearl is captured and then thrown again as soon
-as possible its internal power capacity increases which can give big
-benefits for producing RF from this. However, this means that the pearl
-has to be fired again as soon as possible, as trying to restrain a pearl
-from firing is very costly on energy.
+而且末影珍珠看上去似乎能“记住”它被俘获的方式.如果一个末影珍珠被俘获后尽快
+扔出去，它的内能会增加，可以提供一个很大的增益以提取它的能量. 但是这意味着
+珍珠需要尽快的点火发射,抑制一个点火状态下的珍珠会很耗费能量.
 {-------------------------------------------------------------}
-Note that even in optimal conditions it is possible that pearls are
-lost. So a way has to be found to ensure that the system stays operational
-at all times.
+注意即使在最理想的情况下末影珍珠也可能丢失. 一个方法是，保证系统随时可以运
+行使用.
 
-{b}Power Blocks
+{b}能量方块
 
-{l:powendergenic}Endergenic Generator
-{l:powinjector}Pearl Injector
+{l:powendergenic}末影能发电机
+{l:powinjector}末影珍珠填充器
 {-------------------------------------------------------------}
-{b}Endergenic Generator
+{b}末影能发电机
 {n:powendergenic}
 {rb:endergenic}
 
-The Endergenic Generator is the main block in the power generator system.
-This device can capture endergenic pearls and fire them again. It has three
-basic modes which are controlled by giving redstone pulses to this device:
+末影能发电机是发电系统的主要部分，可以俘获末影珍珠并给它们重新点火发射. 给予
+红石脉冲可以切换三个模式:
 
-    Idle: this is the default mode. It just waits
-    Charging: in this mode the device can receive endergenic pearls
-    Holding: in this mode the device is holding a pearl
+    空闲:默认模式，只是在等待
+    充能:在这个模式可以接受末影能珍珠
+    容纳:此模式可以容纳一颗珍珠
 {-------------------------------------------------------------}
-Charging mode is a 15-tick cycle. The most optimal time to capture a pearl
-is at tick 10 (starting with tick 1). RF will also be generated if an
-endergenic pearl arrives at any other point in the charging cycle but the
-RF that can be generated will be a lot less.
+充能模式是一个15tick的循环.俘获珍珠的最佳时机是tick10(起始是tick1). 末影
+能珍珠在循环中任何其他的时间点到达都会产出能量，但是RF值会大大减少.
 
-When the charging cycle ends without a pearl being received then
-the machine will go into idle mode again.
+充能循环结束依旧没有接收到珍珠，机器就会回到空闲模式.
 
-If a pearl is received then charging mode immediatelly ends and the machine
-goes into holding mode. In this mode it will consume RF every tick. Be
-careful holding the pearl for too long as you will then end up consuming
-more RF then you gained. If the internal storage of the generator does not
-have enough RF to hold the pearl then it will automatically be lost. Also
-each tick there is a small chance that the pearl will be lost in any case.
+如果一个珍珠到达时充能循环立刻结束，机器将转入容纳模式. 这个模式下会消耗能量. 
+小心不要容纳珍珠过久否则你将得不偿失. 如果机器的内缓存没有足够的能量容纳珍珠
+它将自动被丢弃. 任何情况下，末影珍珠每tick都有小概率的丢失.
 {-------------------------------------------------------------}
-You can use a BuildCraft or Thermal Expansion compatible wrench to control
-the destination of each generator. If you don't set a destination then pearls
-will be automatically lost as soon as they are fired.
+你可以使用BuildCraft（建筑）or Thermal Expansion（热力膨胀）联动的扳手来控
+制每个发电机的目的地.如果你没有设定目的地，珍珠在点火发射时就会被丢弃.
 
-When selecting a generator with a wrench (right click) it will turn red
-and then you can go to the destination generator (right click it again) to
-set the destination. Pay attention to the message you get when you do this
-as it tells you the distance (in ticks) between the two generators. This can
-help you to time the rest of the system exactly right. Note that the maximum
-distance is set to 4 ticks so keep that in mind.
+当用扳手右击发电机时，它会变红，然后你要用扳手右击目标发电机以定义目的地. 注意
+下方的信息，它会以tick为单位告诉你两个发电机之间的距离. 这能帮助你精确测定系统
+循环剩余的时间. 记住，最大的距离是4tick.
 {-------------------------------------------------------------}
-This mechanic of charging, holding and firing endergenic pearls at specific
-times implies precise timing and cooperation of multiple Endergenic
-Generators. You will need at least two generators to be able to produce
-power although it will probably be hard to get optimal RF production using
-only two generators.
+在特定时间充能，容纳，点火末影能珍珠的技术说明了对多个发电机的时间，坐标的精确
+控制.你至少需要两个发电机来产生能量，虽然只有两个很可能难以获得理想的RF发电量.
 
-If you have plenty of ender pearls and don't care too much about less then
-optimal generation you can just throw in as many pearls as you want from
-one generator and capture them in another. Then it that other generator
-you just fire them away immediatelly without caring about a destination.
-You will quickly consume lots of ender pearls this way so this might not
-be the best way to proceed.
+如果你有大量的末影珍珠，不在意相对于理想情况的损失，你只需要尽可能多的把末影珍珠
+从一个发电机扔到另一个发电机. 对于其他的发电机，只需要把它们（珍珠）发射出去而
+无所谓目的地.你将快速地损耗很多末影珍珠，这不是什么好办法.
 {-------------------------------------------------------------}
-{b}Pearl Injector
+{b}末影珍珠填充器
 {n:powinjector}
 {rb:pearl_injector}
 
-This block has to be placed facing an Endergenic Generator or else
-directly below it. This machine provides the only way to inject an ender
-pearl into the power system. When it receives a redstone signal it will
-convert the ender pearl to an endergenic pearl and immediatelly insert it
-into the adjacent Endergenic Generator. If that generator was already
-holding a pearl then nothing happens and the new pearl is lost.
+这个方块面对末影能发电机放置或者直接放在下面. 这是唯一将末影珍珠放入发电系统的
+方式. 当接收到红石信号时它会将末影珍珠转化为末影能珍珠并立刻插入邻近的末影能发
+电机.如果发电机已经容纳了一个末影珍珠则新的末影珍珠会丢失.
 {-------------------------------------------------------------}
-Otherwise the endergenic pearl is immediatelly fired from the
-generator and the system starts.
+否则末影能珍珠会立刻被末影能发电机发射，系统开始运作.
 
-This injector has an internal buffer that can only store ender pearls.
+填充器内部有一个只能安装末影珍珠的缓存.
+TartaricAcid（酒石酸）在bilibili有一个很好的末影能发电系统解决方案——译者注
 {-------------------------------------------------------------}
-{b}Shield System
+{b}护盾系统
 {n:shield}
-RFTools implements a 'simple' shield system that can filter mobs, animals,
-players, and items. You start by building the shape of your shield with
-connected Shield Template Blocks of the same color. Then you put a Shield
-Block next to one of these templates and you give it power.
+RFTools提供了一个“简单的”护盾系统用以过滤怪物，动物，玩家和物品.首先你要用相
+同颜色的护盾支架来搭起护盾的形状. 然后将一个护盾投射仪放在护盾支架旁边供电.
 
 A tier 1 shield can handle 256 blocks. Tier 2 ups this to 1024. The tier 3
 ups this to 4096 and deals 4 times as much damage at twice the power.
