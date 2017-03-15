@@ -10,6 +10,7 @@ import mcjty.rftools.blocks.storagemonitor.StorageScannerContainer;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -64,6 +65,7 @@ public class PacketCraftFromGrid implements IMessage {
 
         private void handle(PacketCraftFromGrid message, MessageContext ctx) {
             EntityPlayerMP player = ctx.getServerHandler().player;
+            player.addStat(StatList.CRAFTING_TABLE_INTERACTION);
             int[] testResult = new int[0];
             if (message.pos == null) {
                 // Handle tablet version
