@@ -131,7 +131,11 @@ public class SpawnerConfiguration {
         counter = addLiving(cfg, Items.MELON_SEEDS, counter, 0.4f);
         counter = addLiving(cfg, Items.BEEF, counter, 1.5f);
         counter = addLiving(cfg, Items.PORKCHOP, counter, 1.5f);
+        counter = addLiving(cfg, Items.MUTTON, counter, 1.5f);
         counter = addLiving(cfg, Items.CHICKEN, counter, 1.5f);
+        counter = addLiving(cfg, Items.RABBIT, counter, 1.2f);
+        counter = addLiving(cfg, Items.RABBIT_FOOT, counter, 1.0f);
+        counter = addLiving(cfg, Items.RABBIT_HIDE, counter, 0.5f);
         counter = addLiving(cfg, Items.BEETROOT, counter, 0.8f);
         counter = addLiving(cfg, Items.BEETROOT_SEEDS, counter, 0.4f);
         counter = addLiving(cfg, Items.CHORUS_FRUIT, counter, 1.5f);
