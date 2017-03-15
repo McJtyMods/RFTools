@@ -631,7 +631,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         // Check if we have enough energy
         int rfNeeded = (int) (ElevatorConfiguration.rfPerHeightUnit * Math.abs(getPos().getY() - platformPos.getY()) * (3.0f - getInfusedFactor()) / 3.0f);
         if (controller.getEnergyStored(EnumFacing.DOWN) < rfNeeded) {
-            Broadcaster.broadcast(getWorld(), getPos().getX(), getPos().getY(), getPos().getZ(), TextFormatting.RED + "Not enough power to move the elevator paltform!", 10);
+            Broadcaster.broadcast(getWorld(), getPos().getX(), getPos().getY(), getPos().getZ(), TextFormatting.RED + "Not enough power to move the elevator platform!", 10);
             return;
         }
         controller.consumeEnergy(rfNeeded);
