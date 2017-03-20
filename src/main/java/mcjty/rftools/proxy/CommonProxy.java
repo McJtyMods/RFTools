@@ -36,6 +36,7 @@ import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.world.ModWorldgen;
 import mcjty.rftools.world.WorldTickHandler;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
@@ -126,7 +127,7 @@ public abstract class CommonProxy {
     public static Method Block_getSilkTouch;
 
     private void reflect() {
-        Block_getSilkTouch = ReflectionHelper.findMethod(Block.class, null, new String[]{"func_180643_i ", "getSilkTouchDrop"});
+        Block_getSilkTouch = ReflectionHelper.findMethod(Block.class, null, new String[]{"func_180643_i ", "getSilkTouchDrop"}, IBlockState.class);
     }
 
     private void readMainConfig() {
