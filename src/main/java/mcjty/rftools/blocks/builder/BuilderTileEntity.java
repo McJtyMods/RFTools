@@ -29,7 +29,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.*;
@@ -1022,7 +1021,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (clear) {
             getWorld().setBlockToAir(spos);
         } else {
-            getWorld().setBlockState(spos, getDirtOrCobble().getDefaultState(), 2);       // No block update!
+            getWorld().setBlockState(spos, getReplacementBlock().getDefaultState(), 2);       // No block update!
         }
         consumeEnergy(rfNeeded);
         if (!silent) {
@@ -1030,8 +1029,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     }
 
-    private Block getDirtOrCobble() {
-        return BuilderConfiguration.quarryCobble ? Blocks.COBBLESTONE : Blocks.DIRT;
+    private Block getReplacementBlock() {
+        return BuilderConfiguration.getQuarryReplace();
     }
 
     private boolean silkQuarryBlock(int rfNeeded, BlockPos srcPos, Block block) {
@@ -1051,7 +1050,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         if (block.getBlockHardness(srcState, getWorld(), srcPos) >= 0) {
             boolean clear = ShapeCardItem.isClearingQuarry(getCardType());
-            if ((!clear) && block == getDirtOrCobble()) {
+            if ((!clear) && block == getReplacementBlock()) {
                 // We can skip dirt if we are not clearing.
                 return false;
             }
@@ -1086,15 +1085,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                         } catch (InvocationTargetException e) {
                             throw new RuntimeException(e);
                         }
-//                        Item item = Item.getItemFromBlock(block);
-//                        drops = new ArrayList<>();
-//                        if (item != null) {
-//                            int m = 0;
-//                            if (item.getHasSubtypes()) {
-//                                m = block.getMetaFromState(srcState);
-//                            }
-//                            drops.add(new ItemStack(item, 1, m));
-//                        }
                         drops = new ArrayList<>();
                         if (ItemStackTools.isValid(drop)) {
                             drops.add(drop);
@@ -1138,7 +1128,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         if (block.getBlockHardness(srcState, getWorld(), srcPos) >= 0) {
             boolean clear = ShapeCardItem.isClearingQuarry(getCardType());
-            if ((!clear) && block == getDirtOrCobble()) {
+            if ((!clear) && block == getReplacementBlock()) {
                 // We can skip dirt if we are not clearing.
                 return false;
             }
@@ -1215,7 +1205,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     if (clear) {
                         getWorld().setBlockToAir(srcPos);
                     } else {
-                        getWorld().setBlockState(srcPos, getDirtOrCobble().getDefaultState(), 2);       // No block update!
+                        getWorld().setBlockState(srcPos, getReplacementBlock().getDefaultState(), 2);       // No block update!
                     }
                     if (!silent) {
                         SoundTools.playSound(getWorld(), block.getSoundType().getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);

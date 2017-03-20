@@ -1,6 +1,10 @@
 package mcjty.rftools.blocks.builder;
 
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 public class BuilderConfiguration {
     public static final String CATEGORY_BUILDER = "builder";
@@ -29,7 +33,9 @@ public class BuilderConfiguration {
     public static double silkquarryShapeCardFactor = 3;
     public static double fortunequarryShapeCardFactor = 2;
 
-    public static boolean quarryCobble = false;
+    public static String quarryReplace = "minecraft:dirt";
+    private static Block quarryReplaceBlock = null;
+
     public static boolean quarryChunkloads = true;
     public static boolean shapeCardAllowed = true;
     public static boolean quarryAllowed = true;
@@ -92,8 +98,7 @@ public class BuilderConfiguration {
         fortunequarryShapeCardFactor = cfg.get(CATEGORY_BUILDER, "fortunequarryShapeCardFactor", fortunequarryShapeCardFactor,
                 "The RF per operation of the builder is multiplied with this factor when using the fortune quarry shape card").getDouble();
 
-        quarryCobble = cfg.get(CATEGORY_BUILDER, "quarryCobble", quarryCobble,
-                "If true the quarry replace with cobblestone instead of dirt").getBoolean();
+        quarryReplace = cfg.getString(CATEGORY_BUILDER, "quarryReplacE", quarryReplace, "Use this block for the builder to replace with");
         quarryTileEntities = cfg.get(CATEGORY_BUILDER, "quarryTileEntities", quarryTileEntities,
                 "If true the quarry will also quarry tile entities. Otherwise it just ignores them").getBoolean();
         quarryChunkloads = cfg.get(CATEGORY_BUILDER, "quarryChunkloads", quarryChunkloads,
@@ -119,5 +124,15 @@ public class BuilderConfiguration {
                 "If true we go back to the old (wrong) sphere/cylinder calculation for the builder/shield").getBoolean();
         showProgressHud = cfg.get(CATEGORY_BUILDER, "showProgressHud", showProgressHud,
                 "If true a holo hud with current progress is shown above the builder").getBoolean();
+    }
+
+    public static Block getQuarryReplace() {
+        if (quarryReplaceBlock == null) {
+            quarryReplaceBlock = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(quarryReplace));
+            if (quarryReplaceBlock == null) {
+                quarryReplaceBlock = Blocks.DIRT;
+            }
+        }
+        return quarryReplaceBlock;
     }
 }

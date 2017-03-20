@@ -413,7 +413,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
     }
 
     private String getDirtOrCobbleName() {
-        return BuilderConfiguration.quarryCobble ? "cobble" : "dirt";
+        return BuilderConfiguration.getQuarryReplace().getLocalizedName();
     }
 
     /**
