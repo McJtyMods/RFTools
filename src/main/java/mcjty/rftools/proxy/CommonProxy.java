@@ -35,6 +35,7 @@ import mcjty.rftools.playerprops.BuffProperties;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.world.ModWorldgen;
 import mcjty.rftools.world.WorldTickHandler;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
@@ -50,9 +51,11 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -63,6 +66,7 @@ public abstract class CommonProxy {
 
     public void preInit(FMLPreInitializationEvent e) {
         McJtyLib.preInit(e);
+        reflect();
 
         GeneralConfig.preInit(e);
 
@@ -117,6 +121,12 @@ public abstract class CommonProxy {
             public void ticketsLoaded(List<ForgeChunkManager.Ticket> tickets, World world) {
             }
         });
+    }
+
+    public static Method Block_getSilkTouch;
+
+    private void reflect() {
+        Block_getSilkTouch = ReflectionHelper.findMethod(Block.class, null, new String[]{"func_180643_i ", "getSilkTouchDrop"});
     }
 
     private void readMainConfig() {

@@ -17,6 +17,7 @@ import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.network.PacketGetHudLog;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.proxy.CommonProxy;
 import mcjty.rftools.varia.RFToolsTools;
 import mcjty.typed.Type;
 import net.minecraft.block.Block;
@@ -60,6 +61,7 @@ import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable,
@@ -1076,14 +1078,26 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 } else {
                     List<ItemStack> drops;
                     if (block.canSilkHarvest(getWorld(), srcPos, srcState, fakePlayer)) {
-                        Item item = Item.getItemFromBlock(block);
+                        ItemStack drop;
+                        try {
+                            drop = (ItemStack) CommonProxy.Block_getSilkTouch.invoke(block, srcState);
+                        } catch (IllegalAccessException e) {
+                            throw new RuntimeException(e);
+                        } catch (InvocationTargetException e) {
+                            throw new RuntimeException(e);
+                        }
+//                        Item item = Item.getItemFromBlock(block);
+//                        drops = new ArrayList<>();
+//                        if (item != null) {
+//                            int m = 0;
+//                            if (item.getHasSubtypes()) {
+//                                m = block.getMetaFromState(srcState);
+//                            }
+//                            drops.add(new ItemStack(item, 1, m));
+//                        }
                         drops = new ArrayList<>();
-                        if (item != null) {
-                            int m = 0;
-                            if (item.getHasSubtypes()) {
-                                m = block.getMetaFromState(srcState);
-                            }
-                            drops.add(new ItemStack(item, 1, m));
+                        if (ItemStackTools.isValid(drop)) {
+                            drops.add(drop);
                         }
                         net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, getWorld(), pos, srcState, 0, 1.0f, true, fakePlayer);
                     } else {
