@@ -1,6 +1,7 @@
 package mcjty.rftools.proxy;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import mcjty.lib.CompatLayer;
 import mcjty.lib.McJtyLib;
 import mcjty.lib.base.GeneralConfig;
 import mcjty.lib.network.PacketHandler;
@@ -127,7 +128,7 @@ public abstract class CommonProxy {
     public static Method Block_getSilkTouch;
 
     private void reflect() {
-        Block_getSilkTouch = ReflectionHelper.findMethod(Block.class, null, new String[]{"func_180643_i ", "getSilkTouchDrop"}, IBlockState.class);
+        Block_getSilkTouch = ReflectionHelper.findMethod(Block.class, null, new String[]{"getSilkTouchDrop", "func_180643_i"}, IBlockState.class);
     }
 
     private void readMainConfig() {
