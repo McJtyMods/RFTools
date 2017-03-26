@@ -45,8 +45,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -924,8 +926,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         Block block = null;
         if (getCardType() != ShapeCardItem.CARD_SHAPE) {
-            BlockPos spos = new BlockPos(sx, sy, sz);
-            IBlockState state = getWorld().getBlockState(spos);
+            IBlockState state = getWorld().getBlockState(srcPos);
             block = state.getBlock();
             if (!isEmpty(state, block)) {
                 float hardness;
@@ -935,7 +936,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     if (getCachedVoidableBlocks().contains(block)) {
                         rfNeeded = (int) (BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.voidShapeCardFactor);
                     }
-                    hardness = block.getBlockHardness(state, getWorld(), spos);
+                    hardness = block.getBlockHardness(state, getWorld(), srcPos);
                 }
                 rfNeeded *= (int) ((hardness + 1) * 2);
             }
@@ -1060,7 +1061,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
 
             FakePlayer fakePlayer = getHarvester();
-            if (block.canEntityDestroy(srcState, getWorld(), srcPos, fakePlayer)) {
+            if (allowedToBreak(srcState, getWorld(), srcPos,fakePlayer)) {
                 ItemStack filter = getStackInSlot(BuilderContainer.SLOT_FILTER);
                 if (ItemStackTools.isValid(filter)) {
                     getFilterCache();
@@ -1111,6 +1112,15 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     }
 
+    private static boolean allowedToBreak(IBlockState state, World world, BlockPos pos, EntityPlayer entityPlayer) {
+        if (!state.getBlock().canEntityDestroy(state, world, pos, entityPlayer)) {
+            return false;
+        }
+        BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, state, entityPlayer);
+        MinecraftForge.EVENT_BUS.post(event);
+        return !event.isCanceled();
+    }
+
     private boolean quarryBlock(int rfNeeded, BlockPos srcPos, Block block) {
         IBlockState srcState = getWorld().getBlockState(srcPos);
         int xCoord = getPos().getX();
@@ -1138,7 +1148,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
 
             FakePlayer fakePlayer = getHarvester();
-            if (block.canEntityDestroy(srcState, getWorld(), srcPos, fakePlayer)) {
+            if (allowedToBreak(srcState, getWorld(), srcPos, fakePlayer)) {
                 ItemStack filter = getStackInSlot(BuilderContainer.SLOT_FILTER);
                 if (ItemStackTools.isValid(filter)) {
                     getFilterCache();
@@ -1198,7 +1208,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         if (block.getBlockHardness(srcState, getWorld(), srcPos) >= 0) {
             FakePlayer fakePlayer = getHarvester();
-            if (block.canEntityDestroy(srcState, getWorld(), srcPos, fakePlayer)) {
+            if (allowedToBreak(srcState, getWorld(), srcPos, fakePlayer)) {
                 if (checkAndInsertFluids(fluid)) {
                     consumeEnergy(rfNeeded);
                     boolean clear = getCardType() == ShapeCardItem.CARD_PUMP_CLEAR;
@@ -1230,24 +1240,27 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             // Skip a 3x3x3 block around the builder.
             return false;
         }
-        if (block.getBlockHardness(srcState, getWorld(), srcPos) >= 0) {
-            ItemStack filter = getStackInSlot(BuilderContainer.SLOT_FILTER);
-            if (ItemStackTools.isValid(filter)) {
-                getFilterCache();
-                if (filterCache != null) {
-                    boolean match = filterCache.match(block.getItem(getWorld(), srcPos, srcState));
-                    if (!match) {
-                        consumeEnergy(Math.min(rfNeeded, BuilderConfiguration.builderRfPerSkipped));
-                        return false;   // Skip this
+        FakePlayer fakePlayer = getHarvester();
+        if (allowedToBreak(srcState, getWorld(), srcPos, fakePlayer)) {
+            if (block.getBlockHardness(srcState, getWorld(), srcPos) >= 0) {
+                ItemStack filter = getStackInSlot(BuilderContainer.SLOT_FILTER);
+                if (ItemStackTools.isValid(filter)) {
+                    getFilterCache();
+                    if (filterCache != null) {
+                        boolean match = filterCache.match(block.getItem(getWorld(), srcPos, srcState));
+                        if (!match) {
+                            consumeEnergy(Math.min(rfNeeded, BuilderConfiguration.builderRfPerSkipped));
+                            return false;   // Skip this
+                        }
                     }
                 }
-            }
 
-            if (!silent) {
-                SoundTools.playSound(getWorld(), block.getSoundType().getBreakSound(), sx, sy, sz, 1.0f, 1.0f);
+                if (!silent) {
+                    SoundTools.playSound(getWorld(), block.getSoundType().getBreakSound(), sx, sy, sz, 1.0f, 1.0f);
+                }
+                getWorld().setBlockToAir(srcPos);
+                consumeEnergy(rfNeeded);
             }
-            getWorld().setBlockToAir(srcPos);
-            consumeEnergy(rfNeeded);
         }
         return false;
     }
@@ -1456,7 +1469,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         FakePlayer fakePlayer = getHarvester();
-        if (!block.canEntityDestroy(state, world, pos, fakePlayer)) {
+        if (!allowedToBreak(state, world, pos, fakePlayer)) {
             return BuilderSetup.BlockInformation.INVALID;
         }
 
