@@ -174,11 +174,13 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         EndergenicTileEntity endergenicWithInjector = findEndergenicWithInjector(new HashSet<>());
         if (endergenicWithInjector != null) {
             // We add all endergenics starting with the one with the injector.
+            Set<BlockPos> done = new HashSet<>();
             EndergenicTileEntity loop = endergenicWithInjector;
             while (loop != null) {
+                done.add(loop.getPos());
                 addToQueue(loop, new GlobalCoordinate(loop.getPos(), getWorld().provider.getDimension()));
                 loop = loop.getDestinationTE();
-                if (loop == endergenicWithInjector) {
+                if (loop == null || done.contains(loop.getPos())) {
                     loop = null;
                 }
             }
