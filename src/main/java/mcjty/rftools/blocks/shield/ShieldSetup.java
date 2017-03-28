@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public class ShieldSetup {
     public static ShieldBlock shieldBlock1;
@@ -59,7 +60,6 @@ public class ShieldSetup {
     }
 
     public static void initCrafting() {
-        ItemStack lapisStack = new ItemStack(Items.DYE, 1, 4);
         Block redstoneTorch = Blocks.REDSTONE_TORCH;
 
         if (GeneralConfiguration.enableShieldProjectorRecipe) {
@@ -83,7 +83,7 @@ public class ShieldSetup {
             }, new ItemStack(shieldBlock4), 4));
         }
 
-        GameRegistry.addRecipe(new ItemStack(shieldTemplateBlock, 8, 0), "www", "lgl", "www", 'w', Blocks.WOOL, 'l', lapisStack, 'g', Blocks.GLASS);
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(shieldTemplateBlock, 8, 0), "www", "lgl", "www", 'w', Blocks.WOOL, 'l', "dyeBlue", 'g', Blocks.GLASS));
         GameRegistry.addRecipe(new ItemStack(shieldTemplateBlock, 1, 1), "s", 's', new ItemStack(shieldTemplateBlock, 1, 0));
         GameRegistry.addRecipe(new ItemStack(shieldTemplateBlock, 1, 2), "s", 's', new ItemStack(shieldTemplateBlock, 1, 1));
         GameRegistry.addRecipe(new ItemStack(shieldTemplateBlock, 1, 3), "s", 's', new ItemStack(shieldTemplateBlock, 1, 2));

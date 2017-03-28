@@ -17,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public class LogicBlockSetup {
     public static SequencerBlock sequencerBlock;
@@ -63,7 +64,7 @@ public class LogicBlockSetup {
         GameRegistry.addRecipe(new ItemStack(redstoneTransmitterBlock), "ror", "TMT", "rRr", 'o', Items.ENDER_PEARL, 'r', Items.REDSTONE, 'T', redstoneTorch, 'R', Blocks.REDSTONE_BLOCK, 'M', ModBlocks.machineBase);
         GameRegistry.addRecipe(new ItemStack(redstoneReceiverBlock), "ror", "TMT", "rRr", 'o', Items.ENDER_PEARL, 'r', Items.REDSTONE, 'T', Items.COMPARATOR, 'R', Blocks.REDSTONE_BLOCK, 'M', ModBlocks.machineBase);
         GameRegistry.addRecipe(new ItemStack(redstoneTransmitterBlock), "r", 'r', redstoneTransmitterBlock);    // To clear it
-        GameRegistry.addRecipe(new ItemStack(invCheckerBlock), " c ", "rMr", " C ", 'M', ModBlocks.machineBase, 'c', Items.COMPARATOR, 'C', Blocks.CHEST, 'r', Items.REDSTONE);
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(invCheckerBlock), " c ", "rMr", " C ", 'M', ModBlocks.machineBase, 'c', Items.COMPARATOR, 'C', "chest", 'r', Items.REDSTONE));
         GameRegistry.addRecipe(new ItemStack(sensorBlock), "xcx", "rMr", "xcx", 'M', ModBlocks.machineBase, 'c', Items.COMPARATOR, 'x', Items.QUARTZ, 'r', Items.REDSTONE);
         GameRegistry.addRecipe(new ItemStack(wireBlock), "   ", "rMr", "   ", 'M', ModBlocks.machineBase, 'r', Items.REDSTONE);
     }

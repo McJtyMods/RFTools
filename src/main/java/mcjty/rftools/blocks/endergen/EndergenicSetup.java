@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public class EndergenicSetup {
     public static EndergenicBlock endergenicBlock;
@@ -33,8 +34,8 @@ public class EndergenicSetup {
         if (GeneralConfiguration.enableEndergenRecipe) {
             GameRegistry.addRecipe(new ItemStack(endergenicBlock), "DoD", "oMo", "DoD", 'M', ModBlocks.machineFrame, 'D', Items.DIAMOND, 'o', Items.ENDER_PEARL);
         }
-        GameRegistry.addRecipe(new ItemStack(pearlInjectorBlock), " C ", "rMr", " H ", 'C', Blocks.CHEST, 'r', Items.REDSTONE,
-                'M', ModBlocks.machineFrame, 'H', Blocks.HOPPER);
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(pearlInjectorBlock), " C ", "rMr", " H ", 'C', "chest", 'r', Items.REDSTONE,
+                'M', ModBlocks.machineFrame, 'H', Blocks.HOPPER));
         GameRegistry.addRecipe(new ItemStack(enderMonitorBlock), "ror", "TMT", "rTr", 'o', Items.ENDER_PEARL, 'r', Items.REDSTONE, 'T', redstoneTorch, 'M', ModBlocks.machineBase);
     }
 }

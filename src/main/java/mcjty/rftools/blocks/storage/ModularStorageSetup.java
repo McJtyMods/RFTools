@@ -1,11 +1,10 @@
 package mcjty.rftools.blocks.storage;
 
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.crafting.ContainerAndItemRecipe;
 import mcjty.rftools.crafting.ContainerToItemRecipe;
-import mcjty.rftools.crafting.PreservingShapedRecipe;
+import mcjty.rftools.crafting.PreservingShapedOreRecipe;
 import mcjty.rftools.items.storage.*;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -13,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import static mcjty.rftools.items.storage.StorageModuleTabletItem.META_FOR_SCANNER;
 
@@ -57,8 +57,8 @@ public class ModularStorageSetup {
 
 
     public static void initCrafting() {
-        GameRegistry.addRecipe(new ItemStack(modularStorageBlock), "rcr", "qMq", "rqr", 'M', ModBlocks.machineFrame, 'c', Blocks.CHEST, 'r', Items.REDSTONE, 'q', Items.QUARTZ);
-        GameRegistry.addRecipe(new ItemStack(remoteStorageBlock), "ece", "qMq", "eqe", 'M', ModBlocks.machineFrame, 'c', Blocks.CHEST, 'e', Items.ENDER_PEARL, 'q', Items.QUARTZ);
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(modularStorageBlock), "rcr", "qMq", "rqr", 'M', ModBlocks.machineFrame, 'c', "chest", 'r', Items.REDSTONE, 'q', Items.QUARTZ));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(remoteStorageBlock), "ece", "qMq", "eqe", 'M', ModBlocks.machineFrame, 'c', "chest", 'e', Items.ENDER_PEARL, 'q', Items.QUARTZ));
         GameRegistry.addRecipe(new ItemStack(storageTerminalBlock), "pge", "gMg", "egp", 'M', ModBlocks.machineBase, 'g', Blocks.GLASS, 'e', Items.ENDER_PEARL, 'p', Items.PAPER);
         GameRegistry.addRecipe(new ItemStack(levelEmitterBlock), "pce", "gMg", "egp", 'M', ModBlocks.machineBase, 'g', Blocks.GLASS, 'e', Items.ENDER_PEARL, 'p', Items.PAPER, 'c', Items.COMPARATOR);
 
@@ -82,19 +82,21 @@ public class ModularStorageSetup {
         GameRegistry.addRecipe(new ContainerToItemRecipe(new ItemStack(storageModuleTabletItem, 1, StorageModuleTabletItem.DAMAGE_SCANNER),
                 new ItemStack(ScreenSetup.storageControlModuleItem), n -> 0));
 
-        GameRegistry.addRecipe(new ItemStack(storageModuleItem, 1, StorageModuleItem.STORAGE_TIER1), " c ", "gig", "qrq", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
-                'g', Items.GOLD_NUGGET, 'c', Blocks.CHEST, 'q', Items.QUARTZ);
-        GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-                ItemStackTools.getEmptyStack(), new ItemStack(Blocks.CHEST), ItemStackTools.getEmptyStack(),
-                new ItemStack(Items.GOLD_INGOT), new ItemStack(storageModuleItem, 1, StorageModuleItem.STORAGE_TIER1), new ItemStack(Items.GOLD_INGOT),
-                new ItemStack(Items.QUARTZ), new ItemStack(Items.REDSTONE), new ItemStack(Items.QUARTZ)},
-                new ItemStack(storageModuleItem, 1, StorageModuleItem.STORAGE_TIER2), 4));
-        GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-                ItemStackTools.getEmptyStack(), new ItemStack(Blocks.CHEST), ItemStackTools.getEmptyStack(),
-                new ItemStack(Blocks.GOLD_BLOCK), new ItemStack(storageModuleItem, 1, StorageModuleItem.STORAGE_TIER2), new ItemStack(Blocks.GOLD_BLOCK),
-                new ItemStack(Blocks.QUARTZ_BLOCK), new ItemStack(Blocks.REDSTONE_BLOCK), new ItemStack(Blocks.QUARTZ_BLOCK)},
-                new ItemStack(storageModuleItem, 1, StorageModuleItem.STORAGE_TIER3), 4));
-        GameRegistry.addRecipe(new ItemStack(storageModuleItem, 1, StorageModuleItem.STORAGE_REMOTE), "ece", "gig", "qrq", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
-                'g', Items.GOLD_NUGGET, 'c', Blocks.CHEST, 'q', Items.QUARTZ, 'e', Items.ENDER_PEARL);
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(storageModuleItem, 1, StorageModuleItem.STORAGE_TIER1), " c ", "gig", "qrq", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
+                'g', Items.GOLD_NUGGET, 'c', "chest", 'q', Items.QUARTZ));
+        GameRegistry.addRecipe(new PreservingShapedOreRecipe(
+                new ItemStack(storageModuleItem, 1, StorageModuleItem.STORAGE_TIER2), 4,
+                " c ", "gmg", "qrq",
+                'c', "chest", 'g', "ingotGold", 'r', Items.REDSTONE, 'q', Items.QUARTZ,
+                'm', new ItemStack(storageModuleItem, 1, StorageModuleItem.STORAGE_TIER1)
+                ));
+        GameRegistry.addRecipe(new PreservingShapedOreRecipe(
+                new ItemStack(storageModuleItem, 1, StorageModuleItem.STORAGE_TIER3), 4,
+                " c ", "gmg", "qrq",
+                'c', "chest", 'g', "blockGold", 'r', Blocks.REDSTONE_BLOCK, 'q', Blocks.QUARTZ_BLOCK,
+                'm', new ItemStack(storageModuleItem, 1, StorageModuleItem.STORAGE_TIER2)
+        ));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(storageModuleItem, 1, StorageModuleItem.STORAGE_REMOTE), "ece", "gig", "qrq", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
+                'g', Items.GOLD_NUGGET, 'c', "chest", 'q', Items.QUARTZ, 'e', Items.ENDER_PEARL));
     }
 }

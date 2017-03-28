@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public class SecuritySetup {
     public static SecurityManagerBlock securityManagerBlock;
@@ -32,7 +33,7 @@ public class SecuritySetup {
                                'b', Items.BOOK, 'p', Items.PAPER);
         GameRegistry.addRecipe(new ItemStack(securityCardItem), " f ", "rir", " p ", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
                 'f', Items.FLINT, 'p', Items.PAPER);
-        GameRegistry.addRecipe(new ItemStack(securityManagerBlock), "rfr", "fMf", "rcr", 'M', ModBlocks.machineFrame, 'r', Items.REDSTONE, 'f', Items.FLINT,
-                'c', Blocks.CHEST);
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(securityManagerBlock), "rfr", "fMf", "rcr", 'M', ModBlocks.machineFrame, 'r', Items.REDSTONE, 'f', Items.FLINT,
+                'c', "chest"));
     }
 }

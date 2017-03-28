@@ -36,10 +36,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.RecipeSorter;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public final class ModCrafting {
     static {
         RecipeSorter.register("rftools:shapedpreserving", PreservingShapedRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
+        RecipeSorter.register("rftools:shapedorepreserving", PreservingShapedOreRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
         RecipeSorter.register("rftools:containeranditem", ContainerAndItemRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
         RecipeSorter.register("rftools:containertoitem", ContainerToItemRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
         RecipeSorter.register("rftools:nbtmatchingrecipe", NBTMatchingRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
@@ -72,17 +74,14 @@ public final class ModCrafting {
     }
 
     private static void initBaseCrafting() {
-        ItemStack inkSac = new ItemStack(Items.DYE, 1, 0);
-        ItemStack lapisStack = new ItemStack(Items.DYE, 1, 4);
-
-        GameRegistry.addRecipe(new ItemStack(ModBlocks.machineFrame), "ili", "g g", "ili", 'i', Items.IRON_INGOT, 'g', Items.GOLD_NUGGET, 'l', lapisStack);
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.machineFrame), "ili", "g g", "ili", 'i', Items.IRON_INGOT, 'g', Items.GOLD_NUGGET, 'l', "dyeBlue"));
         GameRegistry.addRecipe(new ItemStack(ModBlocks.machineBase), "   ", "ggg", "sss", 'g', Items.GOLD_NUGGET, 's', Blocks.STONE);
 
         GameRegistry.addRecipe(new ItemStack(ModItems.rfToolsManualItem), " r ", "rbr", " r ", 'r', Items.REDSTONE, 'b', Items.BOOK);
-        GameRegistry.addRecipe(new ItemStack(ModItems.smartWrenchItem), "  i", " l ", "l  ", 'i', Items.IRON_INGOT, 'l', lapisStack);
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.smartWrenchItem), "  i", " l ", "l  ", 'i', Items.IRON_INGOT, 'l', "dyeBlue"));
         GameRegistry.addRecipe(new ItemStack(ModItems.infusedDiamond), "sss", "sds", "sss", 's', ModItems.dimensionalShardItem, 'd', Items.DIAMOND);
 
-        GameRegistry.addRecipe(new ItemStack(ModItems.networkMonitorItem), "rlr", "iri", "rlr", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT, 'l', inkSac);
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.networkMonitorItem), "rlr", "iri", "rlr", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT, 'l', "dyeBlack"));
 
         GameRegistry.addRecipe(new ItemStack(ModItems.syringeItem), "i  ", " i ", "  b", 'i', Items.IRON_INGOT, 'b', Items.GLASS_BOTTLE);
 
