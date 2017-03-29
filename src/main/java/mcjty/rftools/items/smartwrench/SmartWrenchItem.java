@@ -121,9 +121,6 @@ public class SmartWrenchItem extends CompatItem implements IToolHammer, SmartWre
                     if (CompatBlock.activateBlock(block, world, pos, state, player, hand, facing, hitX, hitY, hitZ)) {
                         return EnumActionResult.SUCCESS;
                     }
-                } else {
-                    SmartWrenchItem.setCurrentBlock(player.getHeldItem(EnumHand.MAIN_HAND), null);
-                    Logging.message(player, TextFormatting.YELLOW + "Cleared selected block");
                 }
             }
             SmartWrenchMode mode = getCurrentMode(stack);
