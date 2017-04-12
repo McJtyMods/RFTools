@@ -72,6 +72,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     private long prevTime = -1;
 
     private int listDirty = 0;
+    private boolean init = false;
 
     // From server: all the positions with inventories
     public static List<InventoriesInfoPacketClient.InventoryInfo> fromServer_inventories = new ArrayList<>();
@@ -207,6 +208,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         if (StorageScannerConfiguration.hilightStarredOnGuiOpen) {
             storageList.setSelected(0);
         }
+
+        init = true;
     }
 
     private int getStoragePanelWidth() {
@@ -516,6 +519,9 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
+        if (!init) {
+            return;
+        }
         updateStorageList();
         updateContentsList();
         requestListsIfNeeded();
@@ -565,6 +571,9 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
     @Override
     protected void drawGuiContainerForegroundLayer(int i1, int i2) {
+        if (!init) {
+            return;
+        }
         int x = Mouse.getEventX() * width / mc.displayWidth;
         int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
 
@@ -579,6 +588,9 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
+        if (!init) {
+            return;
+        }
 
         int x = Mouse.getEventX() * width / mc.displayWidth;
         int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
@@ -640,6 +652,9 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
     @Override
     protected void drawWindow() {
+        if (!init) {
+            return;
+        }
         super.drawWindow();
         craftingGrid.draw();
     }
