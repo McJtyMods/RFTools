@@ -18,6 +18,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldType;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.MinecraftForgeClient;
 import org.lwjgl.opengl.GL11;
 
 public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> {
@@ -49,6 +50,7 @@ public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> 
             GlStateManager.translate(0, te.getMovingY() - te.getPos().getY() + diff, 0);
             Tessellator tessellator = Tessellator.getInstance();
             BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+            BlockRenderLayer origLayer = MinecraftForgeClient.getRenderLayer();
 
             for (BlockRenderLayer layer : LAYERS) {
                 if (movingState.getBlock().canRenderInLayer(movingState, layer)) {
@@ -66,6 +68,7 @@ public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> 
                 }
             }
 
+            ForgeHooksClient.setRenderLayer(origLayer);
             tessellator.getBuffer().setTranslation(0, 0, 0);
 
             RenderHelper.enableStandardItemLighting();
