@@ -25,6 +25,8 @@ public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> 
 
     private static final BlockRenderLayer[] LAYERS = BlockRenderLayer.values();
 
+    private final FakeElevatorWorld fakeWorld = new FakeElevatorWorld();
+
     @Override
     public void renderTileEntityAt(ElevatorTileEntity te, double x, double y, double z, float partialTicks, int destroyStage) {
 
@@ -52,6 +54,8 @@ public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> 
             BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
             BlockRenderLayer origLayer = MinecraftForgeClient.getRenderLayer();
 
+            fakeWorld.setState(te, movingState);
+
             for (BlockRenderLayer layer : LAYERS) {
                 if (movingState.getBlock().canRenderInLayer(movingState, layer)) {
                     ForgeHooksClient.setRenderLayer(layer);
@@ -65,7 +69,7 @@ public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> 
                         int dy = te.getPos().getY() - pos.getY();
                         int dz = te.getPos().getZ() - pos.getZ();
                         tessellator.getBuffer().setTranslation(x - pos.getX() - dx, y - pos.getY() - dy, z - pos.getZ() - dz);
-                        renderBlock(dispatcher, movingState, pos, te.getWorld(), tessellator.getBuffer());
+                        renderBlock(dispatcher, movingState, pos, fakeWorld, tessellator.getBuffer());
                         tessellator.draw();
                     }
 

@@ -49,7 +49,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     private String name = "";
 
     // The positions of the blocks we are currently moving (with 'y' set to the height of the controller)
-    private List<BlockPos> positions = new ArrayList<>();
+    private Set<BlockPos> positions = new HashSet<>();
     private Bounds bounds;
     // The state that is moving
     private IBlockState movingState;
@@ -357,7 +357,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         return true;
     }
 
-    public List<BlockPos> getPositions() {
+    public Set<BlockPos> getPositions() {
         return positions;
     }
 
