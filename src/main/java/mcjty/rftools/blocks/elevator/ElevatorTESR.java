@@ -55,6 +55,9 @@ public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> 
             for (BlockRenderLayer layer : LAYERS) {
                 if (movingState.getBlock().canRenderInLayer(movingState, layer)) {
                     ForgeHooksClient.setRenderLayer(layer);
+                    if (layer == BlockRenderLayer.TRANSLUCENT) {
+                        GlStateManager.enableBlend();
+                    }
 
                     for (BlockPos pos : te.getPositions()) {
                         tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
@@ -64,6 +67,10 @@ public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> 
                         tessellator.getBuffer().setTranslation(x - pos.getX() - dx, y - pos.getY() - dy, z - pos.getZ() - dz);
                         renderBlock(dispatcher, movingState, pos, te.getWorld(), tessellator.getBuffer());
                         tessellator.draw();
+                    }
+
+                    if (layer == BlockRenderLayer.TRANSLUCENT) {
+                        GlStateManager.disableBlend();
                     }
                 }
             }
