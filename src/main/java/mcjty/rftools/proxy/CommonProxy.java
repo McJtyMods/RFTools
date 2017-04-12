@@ -6,10 +6,7 @@ import mcjty.lib.McJtyLib;
 import mcjty.lib.base.GeneralConfig;
 import mcjty.lib.network.PacketHandler;
 import mcjty.lib.varia.WrenchChecker;
-import mcjty.rftools.ForgeEventHandlers;
-import mcjty.rftools.GeneralConfiguration;
-import mcjty.rftools.ModSounds;
-import mcjty.rftools.RFTools;
+import mcjty.rftools.*;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorConfiguration;
 import mcjty.rftools.blocks.booster.BoosterConfiguration;
@@ -189,6 +186,9 @@ public abstract class CommonProxy {
         NetworkRegistry.INSTANCE.registerGuiHandler(RFTools.instance, new GuiProxy());
         MinecraftForge.EVENT_BUS.register(WorldTickHandler.instance);
         MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
+        if (CompatLayer.isV11()) {
+            ForgeEventHandlers11.init();
+        }
         ModCrafting.init();
     }
 
