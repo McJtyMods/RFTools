@@ -114,7 +114,8 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     }
 
     public boolean checkSensor() {
-        boolean newout;EnumFacing inputSide = getFacing(getWorld().getBlockState(getPos())).getInputSide();
+        boolean newout;
+        EnumFacing inputSide = getFacing(getWorld().getBlockState(getPos())).getInputSide();
         BlockPos newpos = getPos().offset(inputSide);
 
         switch (sensorType) {
@@ -254,6 +255,10 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
             pct = 0;
         }
         return pct >= number;
+    }
+
+    public void invalidateCache() {
+        cachedBox = null;
     }
 
     private AxisAlignedBB getCachedBox(BlockPos pos1, EnumFacing dir) {
