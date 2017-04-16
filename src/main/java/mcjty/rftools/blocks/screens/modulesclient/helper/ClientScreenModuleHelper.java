@@ -92,6 +92,9 @@ public class ClientScreenModuleHelper implements IModuleRenderHelper {
 
     @Override
     public void renderText(int x, int y, int color, @Nonnull ModuleRenderInfo renderInfo, String text) {
+        if (text == null) {
+            return;
+        }
         if (renderInfo.font != null) {
             float r = (color >> 16 & 255) / 255.0f;
             float g = (color >> 8 & 255) / 255.0f;
@@ -105,6 +108,9 @@ public class ClientScreenModuleHelper implements IModuleRenderHelper {
 
     @Override
     public void renderTextTrimmed(int x, int y, int color, @Nonnull ModuleRenderInfo renderInfo, String text, int maxwidth) {
+        if (text == null) {
+            return;
+        }
         if (renderInfo.font != null) {
             String trimmed = renderInfo.font.trimStringToWidth(text, maxwidth);
             float r = (color >> 16 & 255) / 255.0f;

@@ -25,7 +25,7 @@ import net.minecraft.world.World;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MachineInformationClientScreenModule implements IClientScreenModule<IModuleDataString> {
+public class    MachineInformationClientScreenModule implements IClientScreenModule<IModuleDataString> {
 
     private String line = "";
     private int labcolor = 0xffffff;
