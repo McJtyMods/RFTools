@@ -13,11 +13,11 @@ import mcjty.rftools.api.storage.IStorageScanner;
 import mcjty.rftools.blocks.crafter.CraftingRecipe;
 import mcjty.rftools.craftinggrid.*;
 import mcjty.rftools.jei.JEIRecipeAcceptor;
-import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,12 +29,17 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Predicate;
 
 public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable,
         CraftingGridProvider, JEIRecipeAcceptor, IStorageScanner {
@@ -254,23 +259,12 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             if (tileEntity instanceof StorageScannerTileEntity) {
                 continue;
             }
-            if (RFToolsTools.hasItemCapabilitySafe(tileEntity)) {
-                IItemHandler capability = RFToolsTools.getItemCapabilitySafe(tileEntity);
-                for (int i = 0; i < capability.getSlots(); i++) {
-                    ItemStack itemStack = capability.getStackInSlot(i);
+            IItemHandler handler = getItemHandlerAt(tileEntity, null);
+            if (handler != null) {
+                for (int i = 0; i < handler.getSlots(); i++) {
+                    ItemStack itemStack = handler.getStackInSlot(i);
                     if (isItemEqual(stack, itemStack, oredictMatches)) {
-                        ItemStack received = capability.extractItem(i, cnt[0], false);
-                        if (giveItemToPlayer(player, cnt, received)) {
-                            given = true;
-                        }
-                    }
-                }
-            } else if (tileEntity instanceof IInventory) {
-                IInventory inventory = (IInventory) tileEntity;
-                for (int i = 0; i < inventory.getSizeInventory(); i++) {
-                    ItemStack itemStack = inventory.getStackInSlot(i);
-                    if (isItemEqual(stack, itemStack, oredictMatches)) {
-                        ItemStack received = inventory.decrStackSize(i, cnt[0]);
+                        ItemStack received = handler.extractItem(i, cnt[0], false);
                         if (giveItemToPlayer(player, cnt, received)) {
                             given = true;
                         }
@@ -301,6 +295,28 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             player.entityDropItem(stack, 1.05f);
         }
         return true;
+    }
+
+    @Override
+    public int countItems(Predicate<ItemStack> matcher, boolean starred, @Nullable Integer maxneeded) {
+        int cnt = 0;
+        List<BlockPos> inventories = getInventories();
+        for (BlockPos c : inventories) {
+            if ((!starred) || routable.contains(c)) {
+                TileEntity tileEntity = getWorld().getTileEntity(c);
+                if (tileEntity instanceof StorageScannerTileEntity) {
+                    continue;
+                }
+                final int[] cc = {0};
+                InventoryHelper.getItems(tileEntity, matcher)
+                        .forEach(s -> cc[0] += ItemStackTools.getStackSize(s));
+                cnt += cc[0];
+                if (maxneeded != null && cnt >= maxneeded) {
+                    return cnt;
+                }
+            }
+        }
+        return cnt;
     }
 
     @Override
@@ -552,6 +568,36 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     @Override
+    public ItemStack requestItem(Predicate<ItemStack> matcher, boolean simulate, int amount, boolean doRoutable) {
+        if (getEnergyStored(EnumFacing.DOWN) < StorageScannerConfiguration.rfPerRequest) {
+            return ItemStackTools.getEmptyStack();
+        }
+        List<BlockPos> inventories = getInventories();
+        for (BlockPos c : inventories) {
+            if (doRoutable && !routable.contains(c)) {
+                continue;
+            }
+            TileEntity tileEntity = getWorld().getTileEntity(c);
+            if (tileEntity instanceof StorageScannerTileEntity) {
+                continue;
+            }
+            IItemHandler handler = getItemHandlerAt(tileEntity, null);
+            if (handler != null) {
+                for (int i = 0; i < handler.getSlots(); i++) {
+                    ItemStack itemStack = handler.getStackInSlot(i);
+                    if (matcher.test(itemStack)) {
+                        ItemStack received = handler.extractItem(i, amount, simulate);
+                        if (ItemStackTools.isValid(received)) {
+                            return received.copy();
+                        }
+                    }
+                }
+            }
+        }
+        return ItemStackTools.getEmptyStack();
+    }
+
+    @Override
     public ItemStack requestItem(ItemStack match, int amount, boolean doRoutable, boolean oredict) {
         if (ItemStackTools.isEmpty(match)) {
             return ItemStackTools.getEmptyStack();
@@ -575,28 +621,12 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             if (tileEntity instanceof StorageScannerTileEntity) {
                 continue;
             }
-            if (RFToolsTools.hasItemCapabilitySafe(tileEntity)) {
-                IItemHandler capability = RFToolsTools.getItemCapabilitySafe(tileEntity);
-                for (int i = 0; i < capability.getSlots(); i++) {
-                    ItemStack itemStack = capability.getStackInSlot(i);
+            IItemHandler handler = getItemHandlerAt(tileEntity, null);
+            if (handler != null) {
+                for (int i = 0; i < handler.getSlots(); i++) {
+                    ItemStack itemStack = handler.getStackInSlot(i);
                     if (isItemEqual(match, itemStack, oredictMatches)) {
-                        ItemStack received = capability.extractItem(i, cnt[0], false);
-                        if (ItemStackTools.isValid(received)) {
-                            if (ItemStackTools.isEmpty(result)) {
-                                result = received;
-                            } else {
-                                ItemStackTools.incStackSize(result, ItemStackTools.getStackSize(received));
-                            }
-                            cnt[0] -= ItemStackTools.getStackSize(received);
-                        }
-                    }
-                }
-            } else if (tileEntity instanceof IInventory) {
-                IInventory inventory = (IInventory) tileEntity;
-                for (int i = 0; i < inventory.getSizeInventory(); i++) {
-                    ItemStack itemStack = inventory.getStackInSlot(i);
-                    if (isItemEqual(match, itemStack, oredictMatches)) {
-                        ItemStack received = inventory.decrStackSize(i, cnt[0]);
+                        ItemStack received = handler.extractItem(i, cnt[0], false);
                         if (ItemStackTools.isValid(received)) {
                             if (ItemStackTools.isEmpty(result)) {
                                 result = received;
@@ -615,8 +645,33 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         return result;
     }
 
+    // @todo move to McJtyLib
+    @Nullable
+    private static IItemHandler getItemHandlerAt(@Nullable TileEntity te, EnumFacing intSide) {
+        if (te != null && te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, intSide)) {
+            IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, intSide);
+            if (handler != null) {
+                return handler;
+            }
+        } else if (te instanceof ISidedInventory) {
+            // Support for old inventory
+            ISidedInventory sidedInventory = (ISidedInventory) te;
+            return new SidedInvWrapper(sidedInventory, intSide);
+        } else if (te instanceof IInventory) {
+            // Support for old inventory
+            IInventory inventory = (IInventory) te;
+            return new InvWrapper(inventory);
+        }
+        return null;
+    }
+
     @Override
     public int insertItem(ItemStack stack) {
+        return insertItem(stack, false);
+    }
+
+    @Override
+    public int insertItem(ItemStack stack, boolean simulate) {
         if (getEnergyStored(EnumFacing.DOWN) < StorageScannerConfiguration.rfPerInsert) {
             return ItemStackTools.getStackSize(stack);
         }
@@ -626,8 +681,9 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         for (BlockPos blockPos : inventories) {
             if (!blockPos.equals(getPos()) && routable.contains(blockPos)) {
                 TileEntity te = getWorld().getTileEntity(blockPos);
-                if (te != null && !(te instanceof StorageScannerTileEntity)) {
-                    toInsert = InventoryHelper.insertItem(getWorld(), blockPos, null, toInsert);
+                IItemHandler handler = getItemHandlerAt(te, null);
+                if (handler != null) {
+                    toInsert = ItemHandlerHelper.insertItem(handler, toInsert, simulate);
                     if (ItemStackTools.isEmpty(toInsert)) {
                         return 0;
                     }
@@ -759,16 +815,10 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     private void addItemsFromInventory(BlockPos cpos, Set<Item> foundItems, List<ItemStack> stacks) {
         TileEntity tileEntity = getWorld().getTileEntity(cpos);
-
-        if (RFToolsTools.hasItemCapabilitySafe(tileEntity)) {
-            IItemHandler capability = RFToolsTools.getItemCapabilitySafe(tileEntity);
-            for (int i = 0; i < capability.getSlots(); i++) {
-                addItemStack(stacks, foundItems, capability.getStackInSlot(i));
-            }
-        } else if (tileEntity instanceof IInventory) {
-            IInventory inventory = (IInventory) tileEntity;
-            for (int i = 0; i < inventory.getSizeInventory(); i++) {
-                addItemStack(stacks, foundItems, inventory.getStackInSlot(i));
+        IItemHandler handler = getItemHandlerAt(tileEntity, null);
+        if (handler != null) {
+            for (int i = 0; i < handler.getSlots(); i++) {
+                addItemStack(stacks, foundItems, handler.getStackInSlot(i));
             }
         }
     }
