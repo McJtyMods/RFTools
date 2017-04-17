@@ -46,10 +46,10 @@ public interface IStorageScanner {
 
     /**
      * Push the given items into the system (routable inventories only).
-     * Returns the number of items that could not be inserted.
+     * Returns the stack that could not be inserted.
      * @param stack
      */
-    int insertItem(ItemStack stack, boolean simulate);
+    ItemStack insertItem(ItemStack stack, boolean simulate);
 
     /**
      * Push the given items into the system (routable inventories only).

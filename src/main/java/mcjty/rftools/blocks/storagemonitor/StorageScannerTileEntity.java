@@ -667,13 +667,14 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     @Override
     public int insertItem(ItemStack stack) {
-        return insertItem(stack, false);
+        ItemStack s = insertItem(stack, false);
+        return ItemStackTools.getStackSize(s);
     }
 
     @Override
-    public int insertItem(ItemStack stack, boolean simulate) {
+    public ItemStack insertItem(ItemStack stack, boolean simulate) {
         if (getEnergyStored(EnumFacing.DOWN) < StorageScannerConfiguration.rfPerInsert) {
-            return ItemStackTools.getStackSize(stack);
+            return stack;
         }
 
         ItemStack toInsert = stack.copy();
@@ -685,14 +686,14 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                 if (handler != null) {
                     toInsert = ItemHandlerHelper.insertItem(handler, toInsert, simulate);
                     if (ItemStackTools.isEmpty(toInsert)) {
-                        return 0;
+                        return ItemStackTools.getEmptyStack();
                     }
                 }
             }
         }
 
         consumeEnergy(StorageScannerConfiguration.rfPerInsert);
-        return ItemStackTools.getStackSize(toInsert);
+        return toInsert;
     }
 
     private ItemStack requestStackFromInv(BlockPos invPos, ItemStack requested, Integer[] todo, ItemStack outSlot) {
