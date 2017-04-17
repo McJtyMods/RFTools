@@ -319,8 +319,14 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         return cnt;
     }
 
+
     @Override
-    public int countItems(ItemStack stack, boolean starred, boolean oredict) {
+    public int countItems(ItemStack match, boolean routable, boolean oredict) {
+        return countItems(match, routable, oredict, null);
+    }
+
+    @Override
+    public int countItems(ItemStack stack, boolean starred, boolean oredict, @Nullable Integer maxneeded) {
         if (ItemStackTools.isEmpty(stack)) {
             return 0;
         }
@@ -355,6 +361,9 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                         IInventoryTracker tracker = (IInventoryTracker) tileEntity;
                         cachedCounts.put(new CachedItemKey(c, stack.getItem(), stack.getMetadata()), new CachedItemCount(tracker.getVersion(), cc[0]));
                     }
+                }
+                if (maxneeded != null && cnt >= maxneeded) {
+                    return cnt;
                 }
             }
         }

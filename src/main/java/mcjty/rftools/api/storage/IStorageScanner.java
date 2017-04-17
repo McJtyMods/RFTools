@@ -39,6 +39,14 @@ public interface IStorageScanner {
     int countItems(ItemStack match, boolean routable, boolean oredict);
 
     /**
+     * Count the number of items that match in this storage scanner. This counts all the
+     * items available in the system so the returned number can exceed the maximum
+     * stacksize of the item
+     * @return
+     */
+    int countItems(ItemStack match, boolean routable, boolean oredict, @Nullable Integer maxneeded);
+
+    /**
      * Count items matching a certain predicate.
      * If 'maxneeded' is given then the count will stop as soon as we have reached that number
      */
