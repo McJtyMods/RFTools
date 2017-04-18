@@ -21,6 +21,7 @@ import net.minecraftforge.common.DimensionManager;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class InventoriesInfoPacketServer implements InfoPacketServer {
 
@@ -65,14 +66,14 @@ public class InventoriesInfoPacketServer implements InfoPacketServer {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof StorageScannerTileEntity) {
             StorageScannerTileEntity scannerTileEntity = (StorageScannerTileEntity) te;
-            List<BlockPos> inventories;
+            Stream<BlockPos> inventories;
             if (doscan) {
                 inventories = scannerTileEntity.findInventories();
             } else {
-                inventories = scannerTileEntity.getInventories();
+                inventories = scannerTileEntity.getAllInventories();
             }
 
-            List<InventoriesInfoPacketClient.InventoryInfo> invs = inventories.stream()
+            List<InventoriesInfoPacketClient.InventoryInfo> invs = inventories
                     .map(pos -> toInventoryInfo(world, pos, scannerTileEntity))
                     .collect(Collectors.toList());
 

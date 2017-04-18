@@ -10,18 +10,23 @@ import mcjty.xnet.api.gui.IEditorGui;
 import mcjty.xnet.api.gui.IndicatorIcon;
 import mcjty.xnet.api.helper.DefaultChannelSettings;
 import mcjty.xnet.api.keys.SidedConsumer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.items.CapabilityItemHandler;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class StorageChannelSettings extends DefaultChannelSettings implements IChannelSettings {
 
@@ -58,11 +63,27 @@ public class StorageChannelSettings extends DefaultChannelSettings implements IC
                     TileEntity te = world.getTileEntity(pos);
                     if (te instanceof StorageScannerTileEntity) {
                         StorageScannerTileEntity scanner = (StorageScannerTileEntity) te;
-//                        scanner.register
+                        List<BlockPos> in = inputOnly.stream().map(isInventory(context)).filter(Objects::nonNull).collect(Collectors.toList());
+                        List<BlockPos> out = outputOnly.stream().map(isInventory(context)).filter(Objects::nonNull).collect(Collectors.toList());
+                        List<BlockPos> inOut = inputAndOutput.stream().map(isInventory(context)).filter(Objects::nonNull).collect(Collectors.toList());
+                        scanner.register(in, out, inOut);
                     }
                 }
             }
         }
+    }
+
+    private Function<Pair<SidedConsumer, StorageConnectorSettings>, BlockPos> isInventory(IControllerContext context) {
+        return pair -> {
+            BlockPos invPos = context.findConsumerPosition(pair.getKey().getConsumerId());
+            if (invPos != null) {
+                TileEntity te = context.getControllerWorld().getTileEntity(invPos);
+                if (te != null && (te instanceof IInventory || te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null))) {
+                    return invPos;
+                }
+            }
+            return null;
+        };
     }
 
     private boolean updateCache(int channel, IControllerContext context) {
