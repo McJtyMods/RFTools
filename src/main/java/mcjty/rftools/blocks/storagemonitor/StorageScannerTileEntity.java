@@ -60,6 +60,8 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     private List<BlockPos> inventories = new ArrayList<>();
     private Map<CachedItemKey, CachedItemCount> cachedCounts = new HashMap<>();
     private Set<BlockPos> routable = new HashSet<>();
+    private Set<BlockPos> noinput = new HashSet<>();
+    private Set<BlockPos> nooutput = new HashSet<>();
     private int radius = 1;
 
     // This is set on a client-side dummy tile entity for a tablet
@@ -125,7 +127,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         TileEntityItemSource itemSource = new TileEntityItemSource()
                 .addInventory(player.inventory, 0);
         for (BlockPos p : getInventories()) {
-            if (isRoutable(p)) {
+            if (isRoutable(p) && isOutput(p)) {
                 TileEntity tileEntity = getWorld().getTileEntity(p);
                 if (!(tileEntity instanceof StorageScannerTileEntity)) {
                     itemSource.add(tileEntity, 0);
@@ -220,7 +222,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             return stack;
         }
         for (BlockPos blockPos : inventories) {
-            if (!blockPos.equals(getPos()) && routable.contains(blockPos)) {
+            if (!blockPos.equals(getPos()) && routable.contains(blockPos) && isInput(blockPos)) {
                 TileEntity te = getWorld().getTileEntity(blockPos);
                 if (te != null && !(te instanceof StorageScannerTileEntity)) {
                     stack = InventoryHelper.insertItem(getWorld(), blockPos, null, stack);
@@ -255,18 +257,20 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         final int[] cnt = {single ? 1 : stack.getMaxStackSize()};
         boolean given = false;
         for (BlockPos c : inventories) {
-            TileEntity tileEntity = getWorld().getTileEntity(c);
-            if (tileEntity instanceof StorageScannerTileEntity) {
-                continue;
-            }
-            IItemHandler handler = getItemHandlerAt(tileEntity, null);
-            if (handler != null) {
-                for (int i = 0; i < handler.getSlots(); i++) {
-                    ItemStack itemStack = handler.getStackInSlot(i);
-                    if (isItemEqual(stack, itemStack, oredictMatches)) {
-                        ItemStack received = handler.extractItem(i, cnt[0], false);
-                        if (giveItemToPlayer(player, cnt, received)) {
-                            given = true;
+            if (isOutput(c)) {
+                TileEntity tileEntity = getWorld().getTileEntity(c);
+                if (tileEntity instanceof StorageScannerTileEntity) {
+                    continue;
+                }
+                IItemHandler handler = getItemHandlerAt(tileEntity, null);
+                if (handler != null) {
+                    for (int i = 0; i < handler.getSlots(); i++) {
+                        ItemStack itemStack = handler.getStackInSlot(i);
+                        if (isItemEqual(stack, itemStack, oredictMatches)) {
+                            ItemStack received = handler.extractItem(i, cnt[0], false);
+                            if (giveItemToPlayer(player, cnt, received)) {
+                                given = true;
+                            }
                         }
                     }
                 }
@@ -452,6 +456,14 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         return routable.contains(p);
     }
 
+    public boolean isOutput(BlockPos p) {
+        return !nooutput.contains(p);
+    }
+
+    public boolean isInput(BlockPos p) {
+        return !noinput.contains(p);
+    }
+
     public void toggleRoutable(BlockPos p) {
         if (routable.contains(p)) {
             routable.remove(p);
@@ -583,6 +595,9 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         }
         List<BlockPos> inventories = getInventories();
         for (BlockPos c : inventories) {
+            if (!isOutput(c)) {
+                continue;
+            }
             if (doRoutable && !routable.contains(c)) {
                 continue;
             }
@@ -622,6 +637,9 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         for (BlockPos c : inventories) {
             if (cnt[0] <= 0) {
                 break;
+            }
+            if (!isOutput(c)) {
+                continue;
             }
             if (doRoutable && !routable.contains(c)) {
                 continue;
@@ -689,7 +707,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         ItemStack toInsert = stack.copy();
 
         for (BlockPos blockPos : inventories) {
-            if (!blockPos.equals(getPos()) && routable.contains(blockPos)) {
+            if (!blockPos.equals(getPos()) && routable.contains(blockPos) && isInput(blockPos)) {
                 TileEntity te = getWorld().getTileEntity(blockPos);
                 IItemHandler handler = getItemHandlerAt(te, null);
                 if (handler != null) {
@@ -759,7 +777,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
         if (invPos.getY() == -1) {
             for (BlockPos blockPos : inventories) {
-                if (routable.contains(blockPos)) {
+                if (routable.contains(blockPos) && isOutput(blockPos)) {
                     outSlot = requestStackFromInv(blockPos, requested, todo, outSlot);
                     if (todo[0] == 0) {
                         break;
@@ -812,6 +830,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         if (cpos.getY() == -1) {
             // Get all starred inventories
             for (BlockPos blockPos : inventories) {
+                // @todo what? input or output?
                 if (routable.contains(blockPos)) {
                     addItemsFromInventory(blockPos, foundItems, stacks);
                 }

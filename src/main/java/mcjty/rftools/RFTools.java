@@ -58,6 +58,7 @@ public class RFTools implements ModBase {
 
     // Are some mods loaded?.
     public boolean rftoolsDimensions = false;
+    public boolean xnet = false;
 
     public static ScreenModuleRegistry screenModuleRegistry = new ScreenModuleRegistry();
 
@@ -160,7 +161,14 @@ public class RFTools implements ModBase {
             Logging.log("RFTools Detected Dimensions addon: enabling support");
             FMLInterModComms.sendFunctionMessage("rftoolsdim", "getDimensionManager", "mcjty.rftools.apideps.RFToolsDimensionChecker$GetDimensionManager");
         }
+
         FMLInterModComms.sendFunctionMessage("theoneprobe", "getTheOneProbe", "mcjty.rftools.theoneprobe.TheOneProbeSupport");
+
+        xnet = Loader.isModLoaded("xnet");
+        if (xnet) {
+            Logging.log("RFTools Detected XNet: enabling support");
+            FMLInterModComms.sendFunctionMessage("xnet", "getXNet", "mcjty.rftools.xnet.XNetSupport$GetXNet");
+        }
 
         if (Loader.isModLoaded("OpenComputers")) {
             OpenComputersIntegration.init();
