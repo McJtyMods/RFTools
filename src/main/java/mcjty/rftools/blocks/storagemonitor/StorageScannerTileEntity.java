@@ -58,11 +58,14 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     private static final int[] SLOTS = new int[]{0, 1, 2};
 
+    public static final int XNETDELAY = 40;
+
     private List<BlockPos> inventories = new ArrayList<>();
 
     private Set<BlockPos> inputInventories = Collections.emptySet();
     private Set<BlockPos> outputInventories = Collections.emptySet();
     private Set<BlockPos> inputOutputInventories = Collections.emptySet();
+    private int xnetDelay = XNETDELAY;
 
     private Map<CachedItemKey, CachedItemCount> cachedCounts = new HashMap<>();
     private Set<BlockPos> routable = new HashSet<>();
@@ -156,6 +159,15 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     @Override
     public void update() {
         if (!getWorld().isRemote) {
+            xnetDelay--;
+            if (xnetDelay < 0) {
+                // If there was no update from XNet for a while then we assume we no longer have information
+                inputInventories = Collections.emptySet();
+                outputInventories = Collections.emptySet();
+                inputOutputInventories = Collections.emptySet();
+                xnetDelay = XNETDELAY;
+            }
+
             if (inventoryHelper.containsItem(StorageScannerContainer.SLOT_IN)) {
                 if (getEnergyStored(EnumFacing.DOWN) < StorageScannerConfiguration.rfPerInsert) {
                     return;
@@ -453,10 +465,11 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         markDirtyClient();
     }
 
-    public void register(List<BlockPos> inputOnly, List<BlockPos> outputOnly, List<BlockPos> inputAndOutput) {
-        inputInventories = new HashSet<>(inputOnly);
-        outputInventories = new HashSet<>(outputOnly);
-        inputOutputInventories = new HashSet<>(inputAndOutput);
+    public void register(Set<BlockPos> inputOnly, Set<BlockPos> outputOnly, Set<BlockPos> inputAndOutput) {
+        inputInventories = inputOnly;
+        outputInventories = outputOnly;
+        inputOutputInventories = inputAndOutput;
+        xnetDelay = XNETDELAY;
     }
 
     public Stream<BlockPos> getAllInventories() {
@@ -699,18 +712,19 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
         ItemStack toInsert = stack.copy();
 
-        for (BlockPos blockPos : inventories) {
-            if (!blockPos.equals(getPos()) && routable.contains(blockPos) && isInput(blockPos)) {
-                TileEntity te = getWorld().getTileEntity(blockPos);
-                IItemHandler handler = getItemHandlerAt(te, null);
-                if (handler != null) {
-                    toInsert = ItemHandlerHelper.insertItem(handler, toInsert, simulate);
-                    if (ItemStackTools.isEmpty(toInsert)) {
-                        return ItemStackTools.getEmptyStack();
+        toInsert = getInputInventories()
+                .filter(p -> !p.equals(getPos()) && isRoutable(p))
+                .map(p -> getWorld().getTileEntity(p))
+                .filter(Objects::nonNull)
+                .map(te -> getItemHandlerAt(te, null))
+                .filter(Objects::nonNull)
+                .reduce(toInsert, (s, handler) -> {
+                    if (ItemStackTools.isValid(s)) {
+                        return ItemHandlerHelper.insertItem(handler, s, simulate);
+                    } else {
+                        return s;
                     }
-                }
-            }
-        }
+                }, (u, u2) -> u2);
 
         consumeEnergy(StorageScannerConfiguration.rfPerInsert);
         return toInsert;
@@ -769,13 +783,15 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         }
 
         if (invPos.getY() == -1) {
-            for (BlockPos blockPos : inventories) {
-                if (routable.contains(blockPos) && isOutput(blockPos)) {
-                    outSlot = requestStackFromInv(blockPos, requested, todo, outSlot);
-                    if (todo[0] == 0) {
-                        break;
-                    }
+            Iterator<BlockPos> iterator = getOutputInventories()
+                    .filter(this::isRoutable).iterator();
+            while (iterator.hasNext()) {
+                BlockPos blockPos = iterator.next();
+                outSlot = requestStackFromInv(blockPos, requested, todo, outSlot);
+                if (todo[0] == 0) {
+                    break;
                 }
+
             }
         } else {
             outSlot = requestStackFromInv(invPos, requested, todo, outSlot);
