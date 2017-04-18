@@ -47,7 +47,7 @@ public class StorageChannelType implements IChannelType {
     @Nonnull
     @Override
     public IConnectorSettings createConnector(boolean advanced, @Nonnull EnumFacing side) {
-        return new StorageConnectorSettings();
+        return new StorageConnectorSettings(advanced, side);
     }
 
     @Nonnull

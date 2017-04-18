@@ -830,7 +830,6 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         if (cpos.getY() == -1) {
             // Get all starred inventories
             for (BlockPos blockPos : inventories) {
-                // @todo what? input or output?
                 if (routable.contains(blockPos)) {
                     addItemsFromInventory(blockPos, foundItems, stacks);
                 }
