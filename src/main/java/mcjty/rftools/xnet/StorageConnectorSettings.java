@@ -54,7 +54,7 @@ public class StorageConnectorSettings extends AbstractConnectorSettings {
             case EXT:
                 return new IndicatorIcon(StorageChannelSettings.iconGuiElements, 13, 48, 13, 10);
             case STORAGE:
-                return new IndicatorIcon(StorageChannelSettings.iconGuiElements, 13, 67, 13, 10);
+                return new IndicatorIcon(StorageChannelSettings.iconGuiElements, 13, 66, 13, 10);
         }
         return null;
     }

@@ -75,11 +75,13 @@ public class StorageChannelSettings extends DefaultChannelSettings implements IC
 
     private Function<Pair<SidedConsumer, StorageConnectorSettings>, BlockPos> isInventory(IControllerContext context) {
         return pair -> {
-            BlockPos invPos = context.findConsumerPosition(pair.getKey().getConsumerId());
-            if (invPos != null) {
-                TileEntity te = context.getControllerWorld().getTileEntity(invPos);
+            BlockPos consumerPos = context.findConsumerPosition(pair.getKey().getConsumerId());
+            if (consumerPos != null) {
+                EnumFacing side = pair.getKey().getSide();
+                BlockPos pos = consumerPos.offset(side);
+                TileEntity te = context.getControllerWorld().getTileEntity(pos);
                 if (te != null && (te instanceof IInventory || te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null))) {
-                    return invPos;
+                    return pos;
                 }
             }
             return null;
