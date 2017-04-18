@@ -59,14 +59,13 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     private static final int[] SLOTS = new int[]{0, 1, 2};
 
     private List<BlockPos> inventories = new ArrayList<>();
-    private List<BlockPos> inputInventories = new ArrayList<>();
-    private List<BlockPos> outputInventories = new ArrayList<>();
-    private List<BlockPos> inputOutputInventories = new ArrayList<>();
+
+    private Set<BlockPos> inputInventories = Collections.emptySet();
+    private Set<BlockPos> outputInventories = Collections.emptySet();
+    private Set<BlockPos> inputOutputInventories = Collections.emptySet();
 
     private Map<CachedItemKey, CachedItemCount> cachedCounts = new HashMap<>();
     private Set<BlockPos> routable = new HashSet<>();
-    private Set<BlockPos> noinput = new HashSet<>();
-    private Set<BlockPos> nooutput = new HashSet<>();
     private int radius = 1;
 
     // This is set on a client-side dummy tile entity for a tablet
@@ -436,11 +435,13 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     public boolean isOutput(BlockPos p) {
-        return !nooutput.contains(p);
+        // An inventory is an output inventory if it is either in 'outputInventories', 'inputOutputInventories',
+        // or else not in 'inputInventories' because then it is an inventory not managed by XNet
+        return outputInventories.contains(p) || inputOutputInventories.contains(p) || !inputInventories.contains(p);
     }
 
     public boolean isInput(BlockPos p) {
-        return !noinput.contains(p);
+        return inputInventories.contains(p) || inputOutputInventories.contains(p) || !outputInventories.contains(p);
     }
 
     public void toggleRoutable(BlockPos p) {
@@ -453,21 +454,21 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     public void register(List<BlockPos> inputOnly, List<BlockPos> outputOnly, List<BlockPos> inputAndOutput) {
-        inputInventories = inputOnly;
-        outputInventories = outputOnly;
-        inputOutputInventories = inputAndOutput;
+        inputInventories = new HashSet<>(inputOnly);
+        outputInventories = new HashSet<>(outputOnly);
+        inputOutputInventories = new HashSet<>(inputAndOutput);
     }
 
     public Stream<BlockPos> getAllInventories() {
-        return Stream.of(inventories.stream(), inputInventories.stream(), outputInventories.stream(), inputOutputInventories.stream()).flatMap(s -> s);
+        return inventories.stream();
     }
 
     public Stream<BlockPos> getInputInventories() {
-        return Stream.of(inventories.stream(), inputInventories.stream(), inputOutputInventories.stream()).flatMap(s -> s);
+        return inventories.stream().filter(this::isInput);
     }
 
     public Stream<BlockPos> getOutputInventories() {
-        return Stream.of(inventories.stream(), outputInventories.stream(), inputOutputInventories.stream()).flatMap(s -> s);
+        return inventories.stream().filter(this::isOutput);
     }
 
     private void moveUp(int index) {
@@ -549,17 +550,12 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         Set<BlockPos> oldAdded = new HashSet<>();
         inventories = new ArrayList<>();
 
-
         for (BlockPos p : old) {
-            if (p.getX() >= getPos().getX() - radius && p.getX() <= getPos().getX() + radius) {
-                if (p.getY() >= getPos().getY() - radius && p.getY() <= getPos().getY() + radius) {
-                    if (p.getZ() >= getPos().getZ() - radius && p.getZ() <= getPos().getZ() + radius) {
-                        TileEntity te = getWorld().getTileEntity(p);
-                        if (InventoryHelper.isInventory(te) && !(te instanceof StorageScannerTileEntity)) {
-                            inventories.add(p);
-                            oldAdded.add(p);
-                        }
-                    }
+            if (inputInventories.contains(p) || outputInventories.contains(p) || inputOutputInventories.contains(p) || inRange(p)) {
+                TileEntity te = getWorld().getTileEntity(p);
+                if (InventoryHelper.isInventory(te) && !(te instanceof StorageScannerTileEntity)) {
+                    inventories.add(p);
+                    oldAdded.add(p);
                 }
             }
         }
@@ -569,16 +565,36 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             for (int z = getPos().getZ() - radius; z <= getPos().getZ() + radius; z++) {
                 for (int y = getPos().getY() - radius; y <= getPos().getY() + radius; y++) {
                     BlockPos p = new BlockPos(x, y, z);
-                    if (!oldAdded.contains(p)) {
-                        TileEntity te = getWorld().getTileEntity(p);
-                        if (InventoryHelper.isInventory(te) && !(te instanceof StorageScannerTileEntity)) {
-                            inventories.add(p);
-                        }
-                    }
+                    inventoryAddNew(oldAdded, p);
                 }
             }
         }
+        for (BlockPos p : inputInventories) {
+            inventoryAddNew(oldAdded, p);
+        }
+        for (BlockPos p : outputInventories) {
+            inventoryAddNew(oldAdded, p);
+        }
+        for (BlockPos p : inputOutputInventories) {
+            inventoryAddNew(oldAdded, p);
+        }
+
         return getAllInventories();
+    }
+
+    private void inventoryAddNew(Set<BlockPos> oldAdded, BlockPos p) {
+        if (!oldAdded.contains(p)) {
+            TileEntity te = getWorld().getTileEntity(p);
+            if (InventoryHelper.isInventory(te) && !(te instanceof StorageScannerTileEntity)) {
+                if (!inventories.contains(p)) {
+                    inventories.add(p);
+                }
+            }
+        }
+    }
+
+    private boolean inRange(BlockPos p) {
+        return p.getX() >= getPos().getX() - radius && p.getX() <= getPos().getX() + radius && p.getY() >= getPos().getY() - radius && p.getY() <= getPos().getY() + radius && p.getZ() >= getPos().getZ() - radius && p.getZ() <= getPos().getZ() + radius;
     }
 
     @Override
