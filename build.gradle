@@ -79,9 +79,10 @@ artifacts {
 dependencies {
     deobfCompile "mcp.mobius.waila:Hwyla:1.8.10-B23_1.11:api"
     deobfCompile "mezz.jei:jei_1.11.2:4.2.5.234"
-    deobfCompile "mcjty.theoneprobe:TheOneProbe:1.1x-1.4.1-51"
-    deobfCompile "com.github.mcjty:compatlayer:1.11.2-0.2.5"
+    deobfCompile "mcjty.theoneprobe:TheOneProbe:1.1x-1.4.6-56"
+    deobfCompile "com.github.mcjty:compatlayer:1.11.2-0.2.6"
     deobfCompile "com.github.mcjty:intwheel:1.1x-1.2.4"
+    deobfCompile "com.github.mcjty:xnet:1.2.0"
     deobfCompile "com.github.mcjty:mcjtylib:1.1x-2.3.11-SNAPSHOT"
 
     compile "li.cil.oc:OpenComputers:MC1.10.2-1.6.+:api"
