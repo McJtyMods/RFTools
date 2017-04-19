@@ -504,7 +504,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     public boolean isInputFromGui(BlockPos p) {
         InventoryAccessSettings settings = xnetAccess.get(p);
         if (settings != null) {
-            return !settings.isBlockOutputGui();
+            return !settings.isBlockInputGui();
         }
         return !inventoriesFromXNet.contains(p);
     }
