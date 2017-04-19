@@ -140,8 +140,14 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 .setDesiredWidth(50)
                 .setDesiredHeight(14)
                 .addButtonEvent(parent -> RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID,
-                        new InventoriesInfoPacketServer(tileEntity.getDimension(), tileEntity.getStorageScannerPos(), true))))
-                .setTooltips("Start/stop a scan of", "all storage units", "in radius");
+                        new InventoriesInfoPacketServer(tileEntity.getDimension(), tileEntity.getStorageScannerPos(), true))));
+        if (RFTools.instance.xnet) {
+            scanButton
+                    .setTooltips("Start/stop a scan of", "all storage units", "in radius", "Use 'shift' to scan", "XNet managed only");
+        } else {
+            scanButton
+                    .setTooltips("Start/stop a scan of", "all storage units", "in radius");
+        }
         ScrollableLabel radiusLabel = new ScrollableLabel(mc, this)
                 .addValueEvent((parent, newValue) -> changeRadius(newValue))
                 .setRealMinimum(1)
