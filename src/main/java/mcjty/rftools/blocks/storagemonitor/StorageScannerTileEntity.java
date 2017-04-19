@@ -13,6 +13,7 @@ import mcjty.rftools.api.storage.IStorageScanner;
 import mcjty.rftools.blocks.crafter.CraftingRecipe;
 import mcjty.rftools.craftinggrid.*;
 import mcjty.rftools.jei.JEIRecipeAcceptor;
+import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
@@ -61,11 +62,14 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     public static final int XNETDELAY = 40;
 
     private List<BlockPos> inventories = new ArrayList<>();
+    private Set<BlockPos> inventoriesFromXNet = new HashSet<>();
 
+    // This data is fed directly by the storage channel system (XNet) and is
+    // cleared automatically if that system stops or is disabled
     private Set<BlockPos> inputInventories = Collections.emptySet();
     private Set<BlockPos> outputInventories = Collections.emptySet();
     private Set<BlockPos> inputOutputInventories = Collections.emptySet();
-    private int xnetDelay = XNETDELAY;
+    private int xnetDelay = XNETDELAY;      // Timer to control when to clear the above
 
     private Map<CachedItemKey, CachedItemCount> cachedCounts = new HashMap<>();
     private Set<BlockPos> routable = new HashSet<>();
@@ -213,7 +217,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     private boolean checkForRoutableInventories() {
         return getAllInventories()
-                .filter(p -> !p.equals(getPos()) && isRoutable(p))
+                .filter(p -> (!p.equals(getPos()) && isRoutable(p)) && RFToolsTools.chunkLoaded(getWorld(), p))
                 .anyMatch(p -> getWorld().getTileEntity(p) != null);
     }
 
@@ -222,15 +226,17 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             // Try to insert into the selected inventory
             TileEntity te = getWorld().getTileEntity(lastSelectedInventory);
             if (te != null && !(te instanceof StorageScannerTileEntity)) {
-                stack = InventoryHelper.insertItem(getWorld(), lastSelectedInventory, null, stack);
-                if (ItemStackTools.isEmpty(stack)) {
-                    return stack;
+                if (isInput(lastSelectedInventory)) {
+                    stack = InventoryHelper.insertItem(getWorld(), lastSelectedInventory, null, stack);
+                    if (ItemStackTools.isEmpty(stack)) {
+                        return stack;
+                    }
                 }
             }
             return stack;
         }
         return getInputInventories()
-                .filter(p -> !p.equals(getPos()) && isRoutable(p))
+                .filter(p -> !p.equals(getPos()) && isRoutable(p) && RFToolsTools.chunkLoaded(getWorld(), p))
                 .map(p -> getWorld().getTileEntity(p))
                 .filter(te -> te != null && !(te instanceof StorageScannerTileEntity))
                 .reduce(stack, (s, te) -> {
@@ -262,9 +268,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         final int[] cnt = {single ? 1 : stack.getMaxStackSize()};
         int orig = cnt[0];
         getOutputInventories()
-                .map(p -> getWorld().getTileEntity(p))
-                .filter(te -> te != null && !(te instanceof StorageScannerTileEntity))
-                .map(te -> getItemHandlerAt(te, null))
+                .map(this::getItemHandlerAt)
                 .filter(Objects::nonNull)
                 .forEach(handler -> {
                     for (int i = 0; i < handler.getSlots(); i++) {
@@ -304,7 +308,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     public int countItems(Predicate<ItemStack> matcher, boolean starred, @Nullable Integer maxneeded) {
         final int[] cc = {0};
         getAllInventories()
-                .filter(p -> (!starred) || isRoutable(p))
+                .filter(p -> ((!starred) || isRoutable(p)) && RFToolsTools.chunkLoaded(getWorld(), p))
                 .map(p -> getWorld().getTileEntity(p))
                 .filter(te -> te != null && !(te instanceof StorageScannerTileEntity))
                 .allMatch(te -> {
@@ -329,41 +333,45 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         if (ItemStackTools.isEmpty(stack)) {
             return 0;
         }
-        final int[] cc = {0};
         Set<Integer> oredictMatches = getOredictMatchers(stack, oredict);
-        getAllInventories()
-                .filter(p -> (!starred) || isRoutable(p))
+        Iterator<TileEntity> iterator = getAllInventories()
+                .filter(p -> ((!starred) || isRoutable(p)) && RFToolsTools.chunkLoaded(getWorld(), p))
                 .map(p -> getWorld().getTileEntity(p))
                 .filter(te -> te != null && !(te instanceof StorageScannerTileEntity))
-                .allMatch(te -> {
-                    Integer cachedCount = null;
-                    if (te instanceof IInventoryTracker) {
-                        IInventoryTracker tracker = (IInventoryTracker) te;
-                        CachedItemCount itemCount = cachedCounts.get(new CachedItemKey(te.getPos(), stack.getItem(), stack.getMetadata()));
-                        if (itemCount != null) {
-                            Integer oldVersion = itemCount.getVersion();
-                            if (oldVersion == tracker.getVersion()) {
-                                cachedCount = itemCount.getCount();
-                            }
-                        }
-                    }
-                    if (cachedCount != null) {
-                        cc[0] += cachedCount;
-                    } else {
-                        InventoryHelper.getItems(te, s -> isItemEqual(stack, s, oredictMatches))
-                                .forEach(s -> cc[0] += ItemStackTools.getStackSize(s));
-                        if (te instanceof IInventoryTracker) {
-                            IInventoryTracker tracker = (IInventoryTracker) te;
-                            cachedCounts.put(new CachedItemKey(te.getPos(), stack.getItem(), stack.getMetadata()), new CachedItemCount(tracker.getVersion(), cc[0]));
-                        }
-                    }
-                    if (maxneeded != null && cc[0] >= maxneeded) {
-                        return false;
-                    }
-                    return true;
-                });
+                .iterator();
 
-        return cc[0];
+        int cnt = 0;
+        while (iterator.hasNext()) {
+            TileEntity te = iterator.next();
+            Integer cachedCount = null;
+            if (te instanceof IInventoryTracker) {
+                IInventoryTracker tracker = (IInventoryTracker) te;
+                CachedItemCount itemCount = cachedCounts.get(new CachedItemKey(te.getPos(), stack.getItem(), stack.getMetadata()));
+                if (itemCount != null) {
+                    Integer oldVersion = itemCount.getVersion();
+                    if (oldVersion == tracker.getVersion()) {
+                        cachedCount = itemCount.getCount();
+                    }
+                }
+            }
+            if (cachedCount != null) {
+                cnt += cachedCount;
+            } else {
+                final int[] cc = {0};
+                InventoryHelper.getItems(te, s -> isItemEqual(stack, s, oredictMatches))
+                        .forEach(s -> cc[0] += ItemStackTools.getStackSize(s));
+                if (te instanceof IInventoryTracker) {
+                    IInventoryTracker tracker = (IInventoryTracker) te;
+                    cachedCounts.put(new CachedItemKey(te.getPos(), stack.getItem(), stack.getMetadata()), new CachedItemCount(tracker.getVersion(), cc[0]));
+                }
+                cnt += cc[0];
+            }
+            if (maxneeded != null && cnt >= maxneeded) {
+                break;
+            }
+        };
+
+        return cnt;
     }
 
     private static Set<Integer> getOredictMatchers(ItemStack stack, boolean oredict) {
@@ -447,13 +455,23 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     public boolean isOutput(BlockPos p) {
-        // An inventory is an output inventory if it is either in 'outputInventories', 'inputOutputInventories',
-        // or else not in 'inputInventories' because then it is an inventory not managed by XNet
-        return outputInventories.contains(p) || inputOutputInventories.contains(p) || !inputInventories.contains(p);
+        if (outputInventories.contains(p)) {
+            return true;
+        }
+        if (inputOutputInventories.contains(p)) {
+            return true;
+        }
+        return !inventoriesFromXNet.contains(p);
     }
 
     public boolean isInput(BlockPos p) {
-        return inputInventories.contains(p) || inputOutputInventories.contains(p) || !outputInventories.contains(p);
+        if (inputInventories.contains(p)) {
+            return true;
+        }
+        if (inputOutputInventories.contains(p)) {
+            return true;
+        }
+        return !inventoriesFromXNet.contains(p);
     }
 
     public void toggleRoutable(BlockPos p) {
@@ -473,7 +491,8 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     public Stream<BlockPos> getAllInventories() {
-        return inventories.stream();
+        return inventories.stream()
+                .filter(p -> isInput(p) || isOutput(p));
     }
 
     public Stream<BlockPos> getInputInventories() {
@@ -546,6 +565,10 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             return;
         }
         BlockPos p = inventories.get(index);
+        if (inventoriesFromXNet.contains(p)) {
+            // Cannot remove inventories from xnet
+            return;
+        }
         inventories.remove(index);
         markDirty();
     }
@@ -557,6 +580,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     public Stream<BlockPos> findInventories() {
         // Clear the caches
         cachedCounts.clear();
+        inventoriesFromXNet.clear();
 
         // First remove all inventories that are either out of range or no longer an inventory:
         List<BlockPos> old = inventories;
@@ -584,12 +608,15 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         }
         for (BlockPos p : inputInventories) {
             inventoryAddNew(oldAdded, p);
+            inventoriesFromXNet.add(p);
         }
         for (BlockPos p : outputInventories) {
             inventoryAddNew(oldAdded, p);
+            inventoriesFromXNet.add(p);
         }
         for (BlockPos p : inputOutputInventories) {
             inventoryAddNew(oldAdded, p);
+            inventoriesFromXNet.add(p);
         }
 
         return getAllInventories();
@@ -617,9 +644,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         }
         return getOutputInventories()
                 .filter(p -> (!doRoutable) || isRoutable(p))
-                .map(p -> getWorld().getTileEntity(p))
-                .filter(te -> te != null && !(te instanceof StorageScannerTileEntity))
-                .map(te -> getItemHandlerAt(te, null))
+                .map(this::getItemHandlerAt)
                 .filter(Objects::nonNull)
                 .map(handler -> {
                     for (int i = 0; i < handler.getSlots(); i++) {
@@ -651,9 +676,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         final int[] cnt = {match.getMaxStackSize() < amount ? match.getMaxStackSize() : amount};
         getOutputInventories()
                 .filter(p -> (!doRoutable) || isRoutable(p))
-                .map(p -> getWorld().getTileEntity(p))
-                .filter(te -> te != null && !(te instanceof StorageScannerTileEntity))
-                .map(te -> getItemHandlerAt(te, null))
+                .map(this::getItemHandlerAt)
                 .filter(Objects::nonNull)
                 .allMatch(handler -> {
                     for (int i = 0; i < handler.getSlots(); i++) {
@@ -676,6 +699,18 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             consumeEnergy(StorageScannerConfiguration.rfPerRequest);
         }
         return result[0];
+    }
+
+    @Nullable
+    private IItemHandler getItemHandlerAt(BlockPos p) {
+        if (!RFToolsTools.chunkLoaded(getWorld(), p)) {
+            return null;
+        }
+        TileEntity te = getWorld().getTileEntity(p);
+        if (te == null || te instanceof StorageScannerTileEntity) {
+            return null;
+        }
+        return getItemHandlerAt(te, null);
     }
 
     // @todo move to McJtyLib
@@ -714,9 +749,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
         toInsert = getInputInventories()
                 .filter(p -> !p.equals(getPos()) && isRoutable(p))
-                .map(p -> getWorld().getTileEntity(p))
-                .filter(Objects::nonNull)
-                .map(te -> getItemHandlerAt(te, null))
+                .map(this::getItemHandlerAt)
                 .filter(Objects::nonNull)
                 .reduce(toInsert, (s, handler) -> {
                     if (ItemStackTools.isValid(s)) {
@@ -794,7 +827,9 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
             }
         } else {
-            outSlot = requestStackFromInv(invPos, requested, todo, outSlot);
+            if (isOutput(invPos)) {
+                outSlot = requestStackFromInv(invPos, requested, todo, outSlot);
+            }
         }
 
         if (todo[0] == amount) {
@@ -877,6 +912,13 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             BlockPos c = BlockPosTools.readFromNBT(tag, "c");
             routable.add(c);
         }
+        list = tagCompound.getTagList("fromxnet", Constants.NBT.TAG_COMPOUND);
+        inventoriesFromXNet.clear();
+        for (int i = 0; i < list.tagCount(); i++) {
+            NBTTagCompound tag = (NBTTagCompound) list.get(i);
+            BlockPos c = BlockPosTools.readFromNBT(tag, "c");
+            inventoriesFromXNet.add(c);
+        }
     }
 
     @Override
@@ -908,6 +950,12 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             list.appendTag(tag);
         }
         tagCompound.setTag("routable", list);
+        list = new NBTTagList();
+        for (BlockPos c : inventoriesFromXNet) {
+            NBTTagCompound tag = BlockPosTools.writeToNBT(c);
+            list.appendTag(tag);
+        }
+        tagCompound.setTag("fromxnet", list);
         return tagCompound;
     }
 
