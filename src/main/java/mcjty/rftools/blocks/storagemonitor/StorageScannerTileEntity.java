@@ -8,6 +8,7 @@ import mcjty.lib.tools.ChatTools;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.SoundTools;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.api.general.IInventoryTracker;
 import mcjty.rftools.api.storage.IStorageScanner;
 import mcjty.rftools.blocks.crafter.CraftingRecipe;
@@ -89,6 +90,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     public StorageScannerTileEntity() {
         super(StorageScannerConfiguration.MAXENERGY, StorageScannerConfiguration.RECEIVEPERTICK);
         monitorDim = null;
+        radius = (StorageScannerConfiguration.xnetRequired && RFTools.instance.xnet) ? 0 : 1;
     }
 
     // This constructor is used for constructing a dummy client-side tile entity when
@@ -427,6 +429,9 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     public void setRadius(int v) {
         radius = v;
+        if (StorageScannerConfiguration.xnetRequired && RFTools.instance.xnet) {
+            radius = 0;
+        }
         markDirtyClient();
     }
 
@@ -568,6 +573,10 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     public Stream<BlockPos> findInventories() {
+        if (RFTools.instance.xnet && StorageScannerConfiguration.xnetRequired) {
+            radius = 0;
+        }
+
         // Clear the caches
         cachedCounts.clear();
         inventoriesFromXNet.clear();
