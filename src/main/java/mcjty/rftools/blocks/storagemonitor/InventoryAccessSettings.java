@@ -1,5 +1,12 @@
 package mcjty.rftools.blocks.storagemonitor;
 
+import mcjty.lib.tools.ItemStackList;
+import mcjty.lib.tools.ItemStackTools;
+import mcjty.xnet.apiimpl.items.ItemFilterCache;
+import net.minecraft.item.ItemStack;
+
+import java.util.function.Predicate;
+
 public class InventoryAccessSettings {
     private boolean blockInputGui = false;
     private boolean blockInputAuto = false;
@@ -7,6 +14,52 @@ public class InventoryAccessSettings {
     private boolean blockOutputGui = false;
     private boolean blockOutputAuto = false;
     private boolean blockOutputScreen = false;
+
+    public static final int FILTER_SIZE = 18;
+    private boolean oredictMode = false;
+    private boolean metaMode = false;
+    private boolean nbtMode = false;
+    private boolean blacklist = false;
+    private ItemStackList filters = ItemStackList.create(FILTER_SIZE);
+
+    // Cached matcher for items
+    private Predicate<ItemStack> matcher = null;
+
+    public ItemStackList getFilters() {
+        return filters;
+    }
+
+    public boolean isOredictMode() {
+        return oredictMode;
+    }
+
+    public void setOredictMode(boolean oredictMode) {
+        this.oredictMode = oredictMode;
+    }
+
+    public boolean isMetaMode() {
+        return metaMode;
+    }
+
+    public void setMetaMode(boolean metaMode) {
+        this.metaMode = metaMode;
+    }
+
+    public boolean isNbtMode() {
+        return nbtMode;
+    }
+
+    public void setNbtMode(boolean nbtMode) {
+        this.nbtMode = nbtMode;
+    }
+
+    public boolean isBlacklist() {
+        return blacklist;
+    }
+
+    public void setBlacklist(boolean blacklist) {
+        this.blacklist = blacklist;
+    }
 
     public boolean isBlockInputGui() {
         return blockInputGui;
@@ -63,4 +116,23 @@ public class InventoryAccessSettings {
     public boolean outputBlocked() {
         return blockOutputGui || blockOutputScreen || blockOutputAuto;
     }
+
+    public Predicate<ItemStack> getMatcher() {
+        if (matcher == null) {
+            ItemStackList filterList = ItemStackList.create();
+            for (ItemStack stack : filters) {
+                if (ItemStackTools.isValid(stack)) {
+                    filterList.add(stack);
+                }
+            }
+            if (filterList.isEmpty()) {
+                matcher = itemStack -> true;
+            } else {
+                ItemFilterCache filterCache = new ItemFilterCache(metaMode, oredictMode, blacklist, nbtMode, filterList);
+                matcher = filterCache::match;
+            }
+        }
+        return matcher;
+    }
+
 }

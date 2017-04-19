@@ -227,7 +227,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             // Try to insert into the selected inventory
             TileEntity te = getWorld().getTileEntity(lastSelectedInventory);
             if (te != null && !(te instanceof StorageScannerTileEntity)) {
-                if (testAccess.apply(lastSelectedInventory)) {
+                if (testAccess.apply(lastSelectedInventory) && getInputMatcher(lastSelectedInventory).test(stack)) {
                     stack = InventoryHelper.insertItem(getWorld(), lastSelectedInventory, null, stack);
                     if (ItemStackTools.isEmpty(stack)) {
                         return stack;
@@ -236,8 +236,9 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             }
             return stack;
         }
+        final ItemStack finalStack = stack;
         Iterator<TileEntity> iterator = inventories.stream()
-                .filter(p -> testAccess.apply(p) && !p.equals(getPos()) && isRoutable(p) && RFToolsTools.chunkLoaded(getWorld(), p))
+                .filter(p -> testAccess.apply(p) && !p.equals(getPos()) && isRoutable(p) && RFToolsTools.chunkLoaded(getWorld(), p) && getInputMatcher(p).test(finalStack))
                 .map(p -> getWorld().getTileEntity(p))
                 .filter(te -> te != null && !(te instanceof StorageScannerTileEntity))
                 .iterator();
@@ -490,6 +491,14 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             return !settings.isBlockOutputAuto();
         }
         return !inventoriesFromXNet.contains(p);
+    }
+
+    public Predicate<ItemStack> getInputMatcher(BlockPos p) {
+        InventoryAccessSettings settings = xnetAccess.get(p);
+        if (settings != null) {
+            return settings.getMatcher();
+        }
+        return stack -> true;
     }
 
     public boolean isInputFromGui(BlockPos p) {
@@ -776,7 +785,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         ItemStack toInsert = stack.copy();
 
         Iterator<IItemHandler> iterator = inventories.stream()
-                .filter(p -> isInputFromAuto(p) && (!p.equals(getPos()) && isRoutable(p)))
+                .filter(p -> isInputFromAuto(p) && (!p.equals(getPos()) && isRoutable(p) && getInputMatcher(p).test(stack)))
                 .map(this::getItemHandlerAt)
                 .filter(Objects::nonNull)
                 .iterator();
