@@ -143,14 +143,14 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                         new InventoriesInfoPacketServer(tileEntity.getDimension(), tileEntity.getStorageScannerPos(), true))));
         if (RFTools.instance.xnet) {
             scanButton
-                    .setTooltips("Start/stop a scan of", "all storage units", "in radius", "Use 'shift' to scan", "XNet managed only");
+                    .setTooltips("Start/stop a scan of", "all storage units", "in radius", "User 'xnet' radius to", "restrict to XNet only");
         } else {
             scanButton
                     .setTooltips("Start/stop a scan of", "all storage units", "in radius");
         }
         ScrollableLabel radiusLabel = new ScrollableLabel(mc, this)
                 .addValueEvent((parent, newValue) -> changeRadius(newValue))
-                .setRealMinimum(1)
+                .setRealMinimum(RFTools.instance.xnet ? 0 : 1)
                 .setRealMaximum(20);
         radiusLabel.setRealValue(tileEntity.getRadius());
 
@@ -171,6 +171,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 .setMinimumKnobSize(12)
                 .setDesiredHeight(14)
                 .setScrollable(radiusLabel);
+        Panel radiusPanel = new Panel(mc, this).setLayout(new HorizontalLayout());
+        radiusPanel.addChild(radiusLabel);
         Panel scanPanel = new Panel(mc, this)
                 .setLayoutHint(new PositionalLayout.PositionalHint(8, 162, 74, 54))
                 .setFilledRectThickness(-2)
