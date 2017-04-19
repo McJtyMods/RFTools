@@ -695,6 +695,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                     }
                     return null;        // Null itemstack is ok here! needed for findFirst.
                 })
+                .filter(Objects::nonNull)
                 .findFirst()
                 .orElse(ItemStackTools.getEmptyStack());
     }
