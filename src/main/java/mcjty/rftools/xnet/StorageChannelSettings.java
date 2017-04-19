@@ -28,9 +28,8 @@ public class StorageChannelSettings extends DefaultChannelSettings implements IC
     public static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     private List<Pair<SidedConsumer, StorageConnectorSettings>> storageControllers = null;
-    private Set<BlockPos> inputOnly = null;
-    private Set<BlockPos> outputOnly = null;
-    private Set<BlockPos> inputAndOutput = null;
+    private Set<BlockPos> input = null;
+    private Set<BlockPos> output = null;
 
     private int delay = 0;
 
@@ -69,7 +68,7 @@ public class StorageChannelSettings extends DefaultChannelSettings implements IC
                 TileEntity te = world.getTileEntity(pos);
                 if (te instanceof StorageScannerTileEntity) {
                     StorageScannerTileEntity scanner = (StorageScannerTileEntity) te;
-                    scanner.register(inputOnly, outputOnly, inputAndOutput);
+                    scanner.register(input, output);
                 }
             }
         }
@@ -91,9 +90,8 @@ public class StorageChannelSettings extends DefaultChannelSettings implements IC
     private boolean updateCache(int channel, IControllerContext context) {
         if (storageControllers == null) {
             storageControllers = new ArrayList<>();
-            inputOnly = new HashSet<>();
-            outputOnly = new HashSet<>();
-            inputAndOutput = new HashSet<>();
+            input = new HashSet<>();
+            output = new HashSet<>();
 
             Map<SidedConsumer, IConnectorSettings> connectors = context.getConnectors(channel);
             for (Map.Entry<SidedConsumer, IConnectorSettings> entry : connectors.entrySet()) {
@@ -118,13 +116,14 @@ public class StorageChannelSettings extends DefaultChannelSettings implements IC
             if (inventory != null) {
                 switch (con.getMode()) {
                     case DUAL:
-                        inputAndOutput.add(inventory);
+                        input.add(inventory);
+                        output.add(inventory);
                         break;
                     case INS:
-                        inputOnly.add(inventory);
+                        input.add(inventory);
                         break;
                     case EXT:
-                        outputOnly.add(inventory);
+                        output.add(inventory);
                         break;
                 }
             }
@@ -135,9 +134,8 @@ public class StorageChannelSettings extends DefaultChannelSettings implements IC
     @Override
     public void cleanCache() {
         storageControllers = null;
-        inputOnly = null;
-        outputOnly = null;
-        inputAndOutput = null;
+        input = null;
+        output = null;
     }
 
     @Override
