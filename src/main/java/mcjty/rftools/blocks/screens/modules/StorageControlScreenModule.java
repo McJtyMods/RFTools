@@ -227,7 +227,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
             boolean insertStackActive = hitx >= 0 && hitx < 60 && hity > 98;
             if (insertStackActive) {
                 if (isShown(player.getHeldItem(EnumHand.MAIN_HAND))) {
-                    ItemStack stack = scannerTileEntity.injectStack(player.getHeldItem(EnumHand.MAIN_HAND), player);
+                    ItemStack stack = scannerTileEntity.injectStackFromScreen(player.getHeldItem(EnumHand.MAIN_HAND), player);
                     player.setHeldItem(EnumHand.MAIN_HAND, stack);
                 }
                 player.openContainer.detectAndSendChanges();
@@ -238,7 +238,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
             if (insertAllActive) {
                 for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
                     if (isShown(player.inventory.getStackInSlot(i))) {
-                        ItemStack stack = scannerTileEntity.injectStack(player.inventory.getStackInSlot(i), player);
+                        ItemStack stack = scannerTileEntity.injectStackFromScreen(player.inventory.getStackInSlot(i), player);
                         player.inventory.setInventorySlotContents(i, stack);
                     }
                 }
@@ -256,7 +256,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
                         dirty = i;
                     }
                 } else {
-                    scannerTileEntity.giveToPlayer(stacks.get(i), player.isSneaking(), player, oredict);
+                    scannerTileEntity.giveToPlayerFromScreen(stacks.get(i), player.isSneaking(), player, oredict);
                 }
             }
         }

@@ -2,6 +2,7 @@ package mcjty.rftools.xnet;
 
 import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.storagemonitor.InventoryAccessSettings;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import mcjty.xnet.api.channels.IChannelSettings;
 import mcjty.xnet.api.channels.IConnectorSettings;
@@ -21,15 +22,17 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class StorageChannelSettings extends DefaultChannelSettings implements IChannelSettings {
 
     public static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     private List<Pair<SidedConsumer, StorageConnectorSettings>> storageControllers = null;
-    private Set<BlockPos> input = null;
-    private Set<BlockPos> output = null;
+    private Map<BlockPos, InventoryAccessSettings> access = null;
 
     private int delay = 0;
 
@@ -68,7 +71,7 @@ public class StorageChannelSettings extends DefaultChannelSettings implements IC
                 TileEntity te = world.getTileEntity(pos);
                 if (te instanceof StorageScannerTileEntity) {
                     StorageScannerTileEntity scanner = (StorageScannerTileEntity) te;
-                    scanner.register(input, output);
+                    scanner.register(access);
                 }
             }
         }
@@ -90,8 +93,7 @@ public class StorageChannelSettings extends DefaultChannelSettings implements IC
     private boolean updateCache(int channel, IControllerContext context) {
         if (storageControllers == null) {
             storageControllers = new ArrayList<>();
-            input = new HashSet<>();
-            output = new HashSet<>();
+            access = new HashMap<>();
 
             Map<SidedConsumer, IConnectorSettings> connectors = context.getConnectors(channel);
             for (Map.Entry<SidedConsumer, IConnectorSettings> entry : connectors.entrySet()) {
@@ -114,18 +116,7 @@ public class StorageChannelSettings extends DefaultChannelSettings implements IC
         } else {
             BlockPos inventory = getInventory(context, entry.getKey());
             if (inventory != null) {
-                switch (con.getMode()) {
-                    case DUAL:
-                        input.add(inventory);
-                        output.add(inventory);
-                        break;
-                    case INS:
-                        input.add(inventory);
-                        break;
-                    case EXT:
-                        output.add(inventory);
-                        break;
-                }
+                access.put(inventory, ((StorageConnectorSettings)entry.getValue()).getAccessSettings());
             }
         }
     }
@@ -134,8 +125,7 @@ public class StorageChannelSettings extends DefaultChannelSettings implements IC
     @Override
     public void cleanCache() {
         storageControllers = null;
-        input = null;
-        output = null;
+        access = null;
     }
 
     @Override

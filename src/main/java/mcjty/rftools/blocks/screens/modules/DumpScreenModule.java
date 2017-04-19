@@ -95,7 +95,7 @@ public class DumpScreenModule implements IScreenModule {
         if (x >= xoffset) {
             for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
                 if (isShown(player.inventory.getStackInSlot(i))) {
-                    ItemStack stack = scannerTileEntity.injectStack(player.inventory.getStackInSlot(i), player);
+                    ItemStack stack = scannerTileEntity.injectStackFromScreen(player.inventory.getStackInSlot(i), player);
                     player.inventory.setInventorySlotContents(i, stack);
                 }
             }
