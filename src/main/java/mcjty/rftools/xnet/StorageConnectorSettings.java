@@ -126,6 +126,9 @@ public class StorageConnectorSettings extends AbstractConnectorSettings {
 
     @Override
     public boolean isEnabled(String tag) {
+        if (tag.equals(TAG_FACING)) {
+            return isAdvanced();
+        }
         return true;
     }
 
