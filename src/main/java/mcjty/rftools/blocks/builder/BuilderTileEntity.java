@@ -301,11 +301,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 return;
             }
 
+            BlockPos.MutableBlockPos src = new BlockPos.MutableBlockPos();
+            BlockPos.MutableBlockPos dest = new BlockPos.MutableBlockPos();
             for (int x = minBox.getX() ; x <= maxBox.getX() ; x++) {
                 for (int y = minBox.getY() ; y <= maxBox.getY() ; y++) {
                     for (int z = minBox.getZ() ; z <= maxBox.getZ() ; z++) {
-                        BlockPos src = new BlockPos(x, y, z);
-                        BlockPos dest = sourceToDest(src);
+                        src.setPos(x, y, z);
+                        sourceToDest(src, dest);
                         IBlockState srcState = world.getBlockState(src);
                         Block srcBlock = srcState.getBlock();
                         IBlockState dstState = world.getBlockState(dest);
@@ -361,17 +363,19 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             int dimension = chamberChannel.getDimension();
             World world = DimensionManager.getWorld(dimension);
 
+            BlockPos.MutableBlockPos src = new BlockPos.MutableBlockPos();
+            BlockPos.MutableBlockPos dest = new BlockPos.MutableBlockPos();
             for (int x = minBox.getX() ; x <= maxBox.getX() ; x++) {
                 for (int y = minBox.getY() ; y <= maxBox.getY() ; y++) {
                     for (int z = minBox.getZ() ; z <= maxBox.getZ() ; z++) {
-                        BlockPos src = new BlockPos(x, y, z);
+                        src.setPos(x, y, z);
                         if (world != null) {
                             Block srcBlock = world.getBlockState(src).getBlock();
                             if (srcBlock == BuilderSetup.supportBlock) {
                                 world.setBlockToAir(src);
                             }
                         }
-                        BlockPos dest = sourceToDest(src);
+                        sourceToDest(src, dest);
                         Block dstBlock = getWorld().getBlockState(dest).getBlock();
                         if (dstBlock == BuilderSetup.supportBlock) {
                             getWorld().setBlockToAir(dest);
@@ -540,16 +544,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 restartScan();
             }
         }
-    }
-
-    private BlockPos rotate(BlockPos c) {
-        switch (rotate) {
-            case 0: return c;
-            case 1: return new BlockPos(-c.getZ(), c.getY(), c.getX());
-            case 2: return new BlockPos(-c.getX(), c.getY(), -c.getZ());
-            case 3: return new BlockPos(c.getZ(), c.getY(), -c.getX());
-        }
-        return c;
     }
 
     private void createProjection(SpaceChamberRepository.SpaceChamberChannel chamberChannel) {
@@ -1861,6 +1855,31 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private BlockPos sourceToDest(BlockPos source) {
         return rotate(source).add(projDx, projDy, projDz);
+    }
+
+    private BlockPos rotate(BlockPos c) {
+        switch (rotate) {
+            case 0: return c;
+            case 1: return new BlockPos(-c.getZ(), c.getY(), c.getX());
+            case 2: return new BlockPos(-c.getX(), c.getY(), -c.getZ());
+            case 3: return new BlockPos(c.getZ(), c.getY(), -c.getX());
+        }
+        return c;
+    }
+
+    private void sourceToDest(BlockPos source, BlockPos.MutableBlockPos dest) {
+        rotate(source, dest);
+        dest.setPos(dest.getX() + projDx, dest.getY() + projDy, dest.getZ() + projDz);
+    }
+
+
+    private void rotate(BlockPos c, BlockPos.MutableBlockPos dest) {
+        switch (rotate) {
+            case 0: dest.setPos(c); break;
+            case 1: dest.setPos(-c.getZ(), c.getY(), c.getX()); break;
+            case 2: dest.setPos(-c.getX(), c.getY(), -c.getZ()); break;
+            case 3: dest.setPos(c.getZ(), c.getY(), -c.getX()); break;
+        }
     }
 
     private void restartScan() {
