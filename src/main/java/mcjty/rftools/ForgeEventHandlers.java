@@ -1,5 +1,6 @@
 package mcjty.rftools;
 
+import mcjty.lib.api.smartwrench.SmartWrench;
 import mcjty.lib.api.smartwrench.SmartWrenchMode;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.GlobalCoordinate;
@@ -14,7 +15,6 @@ import mcjty.rftools.blocks.screens.ScreenHitBlock;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.teleporter.TeleportDestination;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
-import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import mcjty.rftools.playerprops.BuffProperties;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
@@ -106,7 +106,7 @@ public class ForgeEventHandlers {
         }
         EntityPlayer player = event.getEntityPlayer();
         ItemStack heldItem = player.getHeldItemMainhand();
-        if (ItemStackTools.isEmpty(heldItem) || heldItem.getItem() != ModItems.smartWrenchItem) {
+        if (ItemStackTools.isEmpty(heldItem) || !(heldItem.getItem() instanceof SmartWrench)) {
             double blockReachDistance = ((EntityPlayerMP) player).interactionManager.getBlockReachDistance();
             RayTraceResult rayTrace = ForgeHooks.rayTraceEyes(player, blockReachDistance + 1);
             if (rayTrace != null && rayTrace.typeOfHit == RayTraceResult.Type.BLOCK) {
@@ -131,7 +131,7 @@ public class ForgeEventHandlers {
         } else if (event instanceof PlayerInteractEvent.RightClickBlock) {
             if (player.isSneaking()) {
                 ItemStack heldItem = player.getHeldItemMainhand();
-                if (ItemStackTools.isEmpty(heldItem) || heldItem.getItem() != ModItems.smartWrenchItem) {
+                if (ItemStackTools.isEmpty(heldItem) || !(heldItem.getItem() instanceof SmartWrench)) {
                     World world = event.getWorld();
                     IBlockState state = world.getBlockState(event.getPos());
                     Block block = state.getBlock();
