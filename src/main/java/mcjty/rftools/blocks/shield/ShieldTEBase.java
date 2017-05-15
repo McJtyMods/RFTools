@@ -739,9 +739,10 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         for (RelCoordinate c : shieldBlocks) {
             if (Blocks.AIR.equals(block)) {
-                BlockPos pos = new BlockPos(xCoord + c.getDx(), yCoord + c.getDy(), zCoord + c.getDz());
+                pos.setPos(xCoord + c.getDx(), yCoord + c.getDy(), zCoord + c.getDz());
                 IBlockState oldState = getWorld().getBlockState(pos);
                 if (oldState.getBlock() instanceof AbstractShieldBlock) {
                     getWorld().setBlockToAir(pos);
@@ -779,11 +780,12 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
+        BlockPos.MutableBlockPos pp = new BlockPos.MutableBlockPos();
         for (RelCoordinate c : shieldBlocks) {
             int cx = xCoord + c.getDx();
             int cy = yCoord + c.getDy();
             int cz = zCoord + c.getDz();
-            BlockPos pp = new BlockPos(cx, cy, cz);
+            pp.setPos(cx, cy, cz);
             Block block = getWorld().getBlockState(pp).getBlock();
             if (getWorld().isAirBlock(pp) || block instanceof AbstractShieldBlock) {
                 if (isShapedShield()) {
@@ -853,19 +855,20 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         int x = coordinate.getX();
         int y = coordinate.getY();
         int z = coordinate.getZ();
+        BlockPos.MutableBlockPos c = new BlockPos.MutableBlockPos();
         for (int xx = x-1 ; xx <= x+1 ; xx++) {
             for (int yy = y-1 ; yy <= y+1 ; yy++) {
                 for (int zz = z-1 ; zz <= z+1 ; zz++) {
                     if (xx != x || yy != y || zz != z) {
                         if (yy >= 0 && yy < getWorld().getHeight()) {
-                            BlockPos c = new BlockPos(xx, yy, zz);
+                            c.setPos(xx, yy, zz);
                             if (!coordinateSet.contains(c)) {
                                 IBlockState state = getWorld().getBlockState(c);
                                 if (ShieldSetup.shieldTemplateBlock.equals(state.getBlock())) {
                                     int m = state.getBlock().getMetaFromState(state);
                                     if (m == meta) {
                                         if (!todo.contains(c)) {
-                                            todo.addLast(c);
+                                            todo.addLast(c.toImmutable());
                                         }
                                     }
                                 }
