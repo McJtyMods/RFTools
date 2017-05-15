@@ -826,6 +826,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         return outSlot;
     }
 
+    // Meant to be used from the gui
     public void requestStack(BlockPos invPos, ItemStack requested, int amount, EntityPlayer player) {
         int rf = StorageScannerConfiguration.rfPerRequest;
         if (amount >= 0) {
