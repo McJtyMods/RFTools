@@ -49,6 +49,7 @@ public class WheelCompatibility {
                 public void updateWheelActions(@Nonnull Set<String> actions, @Nonnull EntityPlayer player, World world, @Nullable BlockPos pos) {
                     if (pos != null) {
                         Block block = world.getBlockState(pos).getBlock();
+                        actions.add(FindBlockAction.ACTION_FINDBLOCK);
                         if (block instanceof GenericBlock) {
                             actions.add(RemoveBlockAction.ACTION_REMOVEBLOCK);
                         }
@@ -62,6 +63,7 @@ public class WheelCompatibility {
             wheel.getRegistry().register(new RemoveBlockAction());
             wheel.getRegistry().register(new ResizeScreenAction());
             wheel.getRegistry().register(new ToggleScreenTransparentAction());
+            wheel.getRegistry().register(new FindBlockAction());
             return null;
         }
     }

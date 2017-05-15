@@ -25,15 +25,28 @@ public class ModularStorageItemInventory implements CompatInventory, CraftingGri
     private ItemStackList stacks;
     private final EntityPlayer entityPlayer;
     private CraftingGrid craftingGrid = new CraftingGrid();
+    private ItemStack storageItem = null;       // If null use held item from player
+
+    public ModularStorageItemInventory(EntityPlayer player, ItemStack storageItem) {
+        this.entityPlayer = player;
+        this.storageItem = storageItem;
+        int maxSize = getMaxSize();
+        stacks = ItemStackList.create(maxSize);
+        NBTTagList bufferTagList = getStorageItem().getTagCompound().getTagList("Items", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < Math.min(bufferTagList.tagCount(), maxSize) ; i++) {
+            NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
+            stacks.set(i, ItemStackTools.loadFromNBT(nbtTagCompound));
+        }
+    }
 
     public ModularStorageItemInventory(EntityPlayer player) {
         this.entityPlayer = player;
         int maxSize = getMaxSize();
         stacks = ItemStackList.create(maxSize);
-        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
+        NBTTagCompound tagCompound = getStorageItem().getTagCompound();
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
-            entityPlayer.getHeldItem(EnumHand.MAIN_HAND).setTagCompound(tagCompound);
+            getStorageItem().setTagCompound(tagCompound);
         }
         tagCompound.setInteger("maxSize", maxSize);
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
@@ -44,6 +57,15 @@ public class ModularStorageItemInventory implements CompatInventory, CraftingGri
         craftingGrid.readFromNBT(tagCompound.getCompoundTag("grid"));
 
     }
+
+    private ItemStack getStorageItem() {
+        if (storageItem != null) {
+            return storageItem;
+        } else {
+            return entityPlayer.getHeldItem(EnumHand.MAIN_HAND);
+        }
+    }
+
 
     @Override
     public void setGridContents(List<ItemStack> stacks) {
@@ -89,7 +111,7 @@ public class ModularStorageItemInventory implements CompatInventory, CraftingGri
 
 
     private int getMaxSize() {
-        ItemStack heldItem = entityPlayer.getHeldItem(EnumHand.MAIN_HAND);
+        ItemStack heldItem = getStorageItem();
         if (ItemStackTools.isEmpty(heldItem)) {
             return 0;
         }
@@ -174,7 +196,7 @@ public class ModularStorageItemInventory implements CompatInventory, CraftingGri
             }
             bufferTagList.appendTag(nbtTagCompound);
         }
-        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
+        NBTTagCompound tagCompound = getStorageItem().getTagCompound();
         tagCompound.setTag("Items", bufferTagList);
         tagCompound.setInteger("count", numStacks);
         tagCompound.setTag("grid", craftingGrid.writeToNBT());

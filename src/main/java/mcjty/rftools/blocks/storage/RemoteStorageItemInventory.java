@@ -22,13 +22,32 @@ public class RemoteStorageItemInventory implements CompatInventory, CraftingGrid
     private ItemStackList stacks = ItemStackList.create(RemoteStorageItemContainer.MAXSIZE_STORAGE);
     private final EntityPlayer entityPlayer;
     private CraftingGrid craftingGrid = new CraftingGrid();
+    private ItemStack storageItem = null;       // If null use held item from player
+
+    public RemoteStorageItemInventory(EntityPlayer player, ItemStack storageItem) {
+        this.entityPlayer = player;
+        this.storageItem = storageItem;
+        setup();
+    }
 
     public RemoteStorageItemInventory(EntityPlayer player) {
         this.entityPlayer = player;
-        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
+        setup();
+    }
+
+    private ItemStack getStorageItem() {
+        if (storageItem != null) {
+            return storageItem;
+        } else {
+            return entityPlayer.getHeldItem(EnumHand.MAIN_HAND);
+        }
+    }
+
+    private void setup() {
+        NBTTagCompound tagCompound = getStorageItem().getTagCompound();
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
-            entityPlayer.getHeldItem(EnumHand.MAIN_HAND).setTagCompound(tagCompound);
+            getStorageItem().setTagCompound(tagCompound);
         }
         craftingGrid.readFromNBT(tagCompound.getCompoundTag("grid"));
     }
@@ -42,7 +61,7 @@ public class RemoteStorageItemInventory implements CompatInventory, CraftingGrid
     }
 
     private int getStorageID() {
-        ItemStack heldItem = entityPlayer.getHeldItem(EnumHand.MAIN_HAND);
+        ItemStack heldItem = getStorageItem();
         if (ItemStackTools.isEmpty(heldItem) || heldItem.getTagCompound() == null) {
             return -1;
         }
@@ -108,7 +127,7 @@ public class RemoteStorageItemInventory implements CompatInventory, CraftingGrid
             }
             return storage.getRemoteStacks(si);
         } else {
-            int maxSize = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound().getInteger("maxSize");
+            int maxSize = getStorageItem().getTagCompound().getInteger("maxSize");
             if (maxSize != stacks.size()) {
                 stacks = ItemStackList.create(maxSize);
             }
@@ -128,10 +147,10 @@ public class RemoteStorageItemInventory implements CompatInventory, CraftingGrid
                 return 0;
             }
             int maxStacks = storage.getMaxStacks(si);
-            entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound().setInteger("maxSize", maxStacks);
+            getStorageItem().getTagCompound().setInteger("maxSize", maxStacks);
             return maxStacks;
         } else {
-            return entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound().getInteger("maxSize");
+            return getStorageItem().getTagCompound().getInteger("maxSize");
         }
     }
 
@@ -220,7 +239,7 @@ public class RemoteStorageItemInventory implements CompatInventory, CraftingGrid
         if (storage != null) {
             storage.markDirty();
         }
-        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
+        NBTTagCompound tagCompound = getStorageItem().getTagCompound();
         tagCompound.setTag("grid", craftingGrid.writeToNBT());
     }
 
