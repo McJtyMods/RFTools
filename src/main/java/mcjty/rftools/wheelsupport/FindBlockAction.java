@@ -110,7 +110,10 @@ public class FindBlockAction implements IWheelAction {
                         TileEntity te = w.getTileEntity(mpos);
                         if (te instanceof StorageScannerTileEntity) {
                             StorageScannerTileEntity scanner = (StorageScannerTileEntity) te;
-                            extracted = scanner.requestItem(result, result.getMaxStackSize(), true, true);
+                            extracted = scanner.requestItem(result, result.getMaxStackSize(), true, false);
+                            if (ItemStackTools.isEmpty(extracted)) {
+                                extracted = scanner.requestItem(result, result.getMaxStackSize(), true, true);
+                            }
                         }
                     }
                 } else {
