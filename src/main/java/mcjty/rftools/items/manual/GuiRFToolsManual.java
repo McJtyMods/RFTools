@@ -11,7 +11,6 @@ import mcjty.lib.gui.widgets.*;
 import mcjty.rftools.RFTools;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.resources.Language;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 
@@ -42,7 +41,7 @@ public class GuiRFToolsManual extends GuiScreen {
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiRFToolsManual(int manual) {
-        String gameLocale = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode();
+        String gameLocale = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode().toLowerCase(java.util.Locale.ENGLISH);
         if (manual == MANUAL_MAIN) {
             if (gameLocale.equals("en_us")) {
                 manualText = manualMainText;
