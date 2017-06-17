@@ -11,7 +11,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
 
@@ -47,7 +47,7 @@ repositories {
     }
 }
 
-version = "1.1x-6.02"
+version = "1.12-6.02"
 def ENV = System.getenv()
 if (ENV.DRONE_BUILD_NUMBER) {
     version += ".n" + ENV.DRONE_BUILD_NUMBER
@@ -59,9 +59,9 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 minecraft {
-    version = "1.11.2-13.20.0.2282"
+    version = "1.12-14.21.0.2331"
     runDir = "run"
-    mappings = "snapshot_20170411"
+    mappings = "snapshot_20170616"
     useDepAts = true
 }
 
@@ -77,13 +77,13 @@ artifacts {
 
 
 dependencies {
-    deobfCompile "mcp.mobius.waila:Hwyla:1.8.10-B23_1.11:api"
-    deobfCompile "mezz.jei:jei_1.11.2:4.2.5.234"
-    deobfCompile "mcjty.theoneprobe:TheOneProbe:1.1x-1.4.7-57"
-    deobfCompile "com.github.mcjty:compatlayer:1.11.2-0.2.6"
+    deobfCompile "mezz.jei:jei_1.12:4.6.0.58"
+    deobfCompile "mcp.mobius.waila:Hwyla:1.8.18-B32_1.12:api"
+    deobfCompile "mcjty.theoneprobe:TheOneProbe-1.12:1.12-1.4.8-2"
+
     deobfCompile "com.github.mcjty:intwheel:1.1x-1.2.6"
     deobfCompile "com.github.mcjty:xnet:1.3.0"
-    deobfCompile "com.github.mcjty:mcjtylib:1.1x-2.3.11-SNAPSHOT"
+    //deobfCompile "com.github.mcjty:mcjtylib:1.1x-2.3.11-SNAPSHOT"
 
     compile "li.cil.oc:OpenComputers:MC1.10.2-1.6.+:api"
 }

@@ -8,7 +8,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
@@ -24,7 +23,7 @@ public class MatterBeamerRenderer extends TileEntitySpecialRenderer<MatterBeamer
     public void renderTileEntityAt(MatterBeamerTileEntity tileEntity, double x, double y, double z, float time, int destroyStage) {
         ResourceLocation txt;
         Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer buffer = tessellator.getBuffer();
+        BufferBuilder buffer = tessellator.getBuffer();
 
         BlockPos destination = tileEntity.getDestination();
         if (destination != null) {

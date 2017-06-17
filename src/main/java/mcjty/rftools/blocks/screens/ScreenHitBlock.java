@@ -121,12 +121,12 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
 
             RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
             ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos.add(dx, dy, dz));
-            screenTileEntity.hitScreenClient(mouseOver.hitVec.xCoord - pos.getX() - dx, mouseOver.hitVec.yCoord - pos.getY() - dy, mouseOver.hitVec.zCoord - pos.getZ() - dz, mouseOver.sideHit);
+            screenTileEntity.hitScreenClient(mouseOver.hitVec.x - pos.getX() - dx, mouseOver.hitVec.y - pos.getY() - dy, mouseOver.hitVec.z - pos.getZ() - dz, mouseOver.sideHit);
         }
     }
 
     @Override
-    protected boolean clOnBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         return activate(world, pos, state, player, hand, side, hitX, hitY, hitZ);
     }
 
@@ -183,12 +183,6 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
     public boolean isBlockNormalCube(IBlockState state) {
         return false;
     }
-
-    @Override
-    public boolean isBlockSolid(IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
-        return true;
-    }
-
 
     @Override
     public boolean isFullBlock(IBlockState state) {

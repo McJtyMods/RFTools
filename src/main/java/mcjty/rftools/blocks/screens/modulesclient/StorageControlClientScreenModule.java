@@ -180,7 +180,7 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
     }
 
     private static void renderQuad(Tessellator tessellator, int x, int y, int width, int height, int color, double offset) {
-        VertexBuffer buffer = tessellator.getBuffer();
+        BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
 //        tessellator.setColorOpaque_I(color);
         buffer.pos(x, y, offset);

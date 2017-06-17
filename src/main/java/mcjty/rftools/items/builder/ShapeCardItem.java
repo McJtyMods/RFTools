@@ -11,6 +11,7 @@ import mcjty.rftools.blocks.builder.BuilderTileEntity;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -300,7 +301,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
 
         int type = itemStack.getItemDamage();
@@ -642,7 +643,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
         if (chunk == null) {
             return true;
         } else {
-            return chunk.chunkXPos == (x>>4);
+            return chunk.x == (x>>4);
         }
     }
 
@@ -650,7 +651,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
         if (chunk == null) {
             return true;
         } else {
-            return chunk.chunkZPos == (z>>4);
+            return chunk.z == (z>>4);
         }
     }
 

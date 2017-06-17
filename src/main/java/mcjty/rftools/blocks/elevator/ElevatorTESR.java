@@ -92,14 +92,14 @@ public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> 
         return te.isMoving();
     }
 
-    private static boolean renderBlock(BlockRendererDispatcher dispatcher, IBlockState state, BlockPos pos, IBlockAccess blockAccess, VertexBuffer worldRendererIn) {
+    private static boolean renderBlock(BlockRendererDispatcher dispatcher, IBlockState state, BlockPos pos, IBlockAccess blockAccess, BufferBuilder worldRendererIn) {
         try {
             EnumBlockRenderType enumblockrendertype = state.getRenderType();
 
             if (enumblockrendertype == EnumBlockRenderType.INVISIBLE) {
                 return false;
             } else {
-                if (blockAccess.getWorldType() != WorldType.DEBUG_WORLD) {
+                if (blockAccess.getWorldType() != WorldType.DEBUG_ALL_BLOCK_STATES) {
                     try {
                         state = state.getActualState(blockAccess, pos);
                     } catch (Exception var8) {

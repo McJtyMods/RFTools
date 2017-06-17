@@ -90,9 +90,9 @@ public class ForgeEventHandlers {
     }
 
     @SubscribeEvent
-    public void onEntityConstructing(AttachCapabilitiesEvent.Entity event){
-        if (event.getEntity() instanceof EntityPlayer) {
-            if (!event.getEntity().hasCapability(PlayerExtendedProperties.BUFF_CAPABILITY, null)) {
+    public void onEntityConstructing(AttachCapabilitiesEvent<Entity> event){
+        if (event.getObject() instanceof EntityPlayer) {
+            if (!event.getObject().hasCapability(PlayerExtendedProperties.BUFF_CAPABILITY, null)) {
                 event.addCapability(new ResourceLocation(RFTools.MODID, "Properties"), new PropertiesDispatcher());
             }
         }
@@ -211,7 +211,7 @@ public class ForgeEventHandlers {
     public void onDetonate(ExplosionEvent.Detonate event) {
         Explosion explosion = event.getExplosion();
         Vec3d explosionVector = explosion.getPosition();
-        Collection<GlobalCoordinate> protectors = BlockProtectors.getProtectors(event.getWorld(), (int) explosionVector.xCoord, (int) explosionVector.yCoord, (int) explosionVector.zCoord);
+        Collection<GlobalCoordinate> protectors = BlockProtectors.getProtectors(event.getWorld(), (int) explosionVector.x, (int) explosionVector.y, (int) explosionVector.z);
 
         if (protectors.isEmpty()) {
             return;

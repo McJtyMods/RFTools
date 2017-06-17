@@ -5,8 +5,10 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.NonNullList;
 
 import java.util.function.Function;
 
@@ -15,13 +17,19 @@ public class ContainerAndItemRecipe extends ShapedRecipes {
     private Object objectToGetEnergyFrom;
     private Function<InventoryCrafting,Integer> getMetaFunction;
 
-    public ContainerAndItemRecipe(ItemStack container, ItemStack item, ItemStack output,
-                                  Function<InventoryCrafting,Integer> getMetaFunction) {
-        super(2, 1, new ItemStack[] { container, item }, output);
-        objectToInheritFrom = getObjectFromStack(item.getItem());
-        objectToGetEnergyFrom = getObjectFromStack(container.getItem());
-        this.getMetaFunction = getMetaFunction == null ? inventoryCrafting -> getDamageFromObject(inventoryCrafting) : getMetaFunction;
+    // @todo
+    public ContainerAndItemRecipe(String group, int width, int height, NonNullList<Ingredient> ingredients, ItemStack result, Object objectToInheritFrom) {
+        super(group, width, height, ingredients, result);
+        this.objectToInheritFrom = objectToInheritFrom;
     }
+
+    //    public ContainerAndItemRecipe(ItemStack container, ItemStack item, ItemStack output,
+//                                  Function<InventoryCrafting,Integer> getMetaFunction) {
+//        super(2, 1, new ItemStack[] { container, item }, output);
+//        objectToInheritFrom = getObjectFromStack(item.getItem());
+//        objectToGetEnergyFrom = getObjectFromStack(container.getItem());
+//        this.getMetaFunction = getMetaFunction == null ? inventoryCrafting -> getDamageFromObject(inventoryCrafting) : getMetaFunction;
+//    }
 
     private Object getObjectFromStack(Item item) {
         if (item instanceof ItemBlock) {

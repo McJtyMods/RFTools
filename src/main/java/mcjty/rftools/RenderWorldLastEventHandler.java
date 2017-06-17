@@ -18,10 +18,10 @@ import mcjty.rftools.network.PacketReturnRfInRange;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -105,7 +105,7 @@ public class RenderWorldLastEventHandler {
         GlStateManager.enableTexture2D();
 
         Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer buffer = tessellator.getBuffer();
+        BufferBuilder buffer = tessellator.getBuffer();
 
         Minecraft.getMinecraft().getTextureManager().bindTexture(yellowglow);
 
@@ -181,7 +181,7 @@ public class RenderWorldLastEventHandler {
         GlStateManager.disableTexture2D();
 
         Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer buffer = tessellator.getBuffer();
+        BufferBuilder buffer = tessellator.getBuffer();
         float mx = c.getX();
         float my = c.getY();
         float mz = c.getZ();
@@ -269,7 +269,7 @@ public class RenderWorldLastEventHandler {
         GlStateManager.color(1, 1, 1);
 
         Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer buffer = tessellator.getBuffer();
+        BufferBuilder buffer = tessellator.getBuffer();
         float mx = pos.getX();
         float my = pos.getY();
         float mz = pos.getZ();

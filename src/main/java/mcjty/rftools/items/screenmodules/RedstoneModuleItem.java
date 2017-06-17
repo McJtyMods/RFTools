@@ -12,6 +12,7 @@ import mcjty.rftools.blocks.screens.modules.RedstoneScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.RedstoneClientScreenModule;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -64,7 +65,7 @@ public class RedstoneModuleItem extends GenericRFToolsItem implements IModulePro
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.REDSTONE_RFPERTICK + " RF/tick");
         NBTTagCompound tagCompound = itemStack.getTagCompound();

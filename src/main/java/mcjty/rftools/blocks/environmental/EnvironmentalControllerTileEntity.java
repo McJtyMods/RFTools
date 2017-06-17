@@ -431,7 +431,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     }
 
     @Override
-    public boolean isUsable(EntityPlayer player) {
+    public boolean isUsableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 
@@ -567,5 +567,10 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     @Override
     public boolean shouldRenderInPass(int pass) {
         return pass == 1;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
     }
 }

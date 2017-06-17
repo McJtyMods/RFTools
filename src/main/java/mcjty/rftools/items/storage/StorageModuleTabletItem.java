@@ -13,6 +13,7 @@ import mcjty.rftools.items.screenmodules.StorageControlModuleItem;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -30,6 +31,7 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
@@ -203,7 +205,7 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
     }
 
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
@@ -218,7 +220,7 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
                 list.add(TextFormatting.YELLOW + "No storage module installed!");
             }
         }
-        if (player.isSneaking()) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add("This RF/charged module can hold a storage module");
             list.add("and allows the wielder to manipulate the contents of");
             list.add("this module (remote or normal).");

@@ -393,7 +393,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             if (TeleportConfiguration.matterTransmitterLoadWorld == -1) {
                 return TeleportationTools.STATUS_UNKNOWN;
             } else {
-                w = getWorld().getMinecraftServer().worldServerForDimension(dimension);
+                w = getWorld().getMinecraftServer().getWorld(dimension);
                 checkReceiverStatusCounter = TeleportConfiguration.matterTransmitterLoadWorld;
             }
         }
@@ -462,7 +462,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             cooldownTimer = 5;
             return;
         }
-        if (playerBB.intersectsWith(beamBox)) {
+        if (playerBB.intersects(beamBox)) {
             startTeleportation(nearestPlayer);
         } else {
             cooldownTimer = 5;
@@ -560,7 +560,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         if (playerBB == null) {
             return true;
         }
-        if (!playerBB.intersectsWith(beamBox)) {
+        if (!playerBB.intersects(beamBox)) {
             Logging.message(player, "Teleportation was interrupted!");
             return true;
         }

@@ -1165,7 +1165,12 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     }
 
     @Override
-    public boolean isUsable(EntityPlayer player) {
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 }

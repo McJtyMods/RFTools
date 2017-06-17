@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.EntityDragon;
-import net.minecraft.entity.boss.EntityDragonPart;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -128,11 +127,6 @@ public class SyringeItem extends GenericRFToolsItem {
     private Class<? extends Entity> findSelectedMobClass(Entity entity) {
         // First try to find an exact matching class.
         Class<? extends Entity> entityClass = entity.getClass();
-
-        // Special case for the ender dragon
-        if (entity instanceof EntityDragonPart) {
-            entityClass = EntityDragon.class;
-        }
         return entityClass;
     }
 

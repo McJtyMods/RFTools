@@ -48,12 +48,14 @@ public class CraftingRecipe {
     private CraftMode craftMode = CraftMode.EXT;
 
     public static IRecipe findRecipe(World world, InventoryCrafting inv) {
-        List<IRecipe> recipes = new ArrayList<>(CraftingManager.getInstance().getRecipeList());
-        for (IRecipe r : recipes) {
-            if (r != null && r.matches(inv, world)) {
-                return r;
-            }
-        }
+
+        // @todo
+//        List<IRecipe> recipes = new ArrayList<>(CraftingManager.getInstance().getRecipeList());
+//        for (IRecipe r : recipes) {
+//            if (r != null && r.matches(inv, world)) {
+//                return r;
+//            }
+//        }
         return null;
     }
 

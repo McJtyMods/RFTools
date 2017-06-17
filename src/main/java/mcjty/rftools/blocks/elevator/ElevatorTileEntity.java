@@ -193,7 +193,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         if (bounds != null) {
             EntityPlayerSP player = MinecraftTools.getPlayer(Minecraft.getMinecraft());
             AxisAlignedBB aabb = getAABBAboveElevator(d);
-            boolean on = player.getEntityBoundingBox().intersectsWith(aabb);
+            boolean on = player.getEntityBoundingBox().intersects(aabb);
             if (on) {
                 player.setPosition(player.posX, movingY + 1, player.posZ);
             }
@@ -259,7 +259,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
                 // to ensure it is still in the patform shaft and in that case put it back on the platform.
                 // We also put back the entity if we know the list is complete.
                 if (entity instanceof EntityPlayer || entitiesOnPlatformComplete) {
-                    if (entity.getEntityBoundingBox().intersectsWith(getAABBBigMargin())) {
+                    if (entity.getEntityBoundingBox().intersects(getAABBBigMargin())) {
                         // Entity is no longer on the platform but was on the platform before and
                         // is still in the elevator shaft. In that case we put it back.
                         entity.fallDistance = 0;
