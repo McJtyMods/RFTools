@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.storagemonitor;
 
+import mcjty.lib.compat.MyGameReg;
 import mcjty.rftools.blocks.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -23,7 +24,7 @@ public class StorageScannerSetup {
 
     public static void initCrafting() {
         Block redstoneTorch = Blocks.REDSTONE_TORCH;
-        GameRegistry.addRecipe(new ItemStack(storageScannerBlock), "ToT", "gMg", "ToT", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'o', Items.ENDER_PEARL,
+        MyGameReg.addRecipe(new ItemStack(storageScannerBlock), "ToT", "gMg", "ToT", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'o', Items.ENDER_PEARL,
                 'g', Items.GOLD_INGOT);
     }
 }

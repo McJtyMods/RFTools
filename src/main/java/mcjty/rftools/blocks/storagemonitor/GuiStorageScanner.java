@@ -28,6 +28,7 @@ import mcjty.rftools.craftinggrid.PacketRequestGridSync;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -646,7 +647,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             // Protection for bad itemstacks
             list = new ArrayList<>();
         } else {
-            list = stack.getTooltip(MinecraftTools.getPlayer(this.mc), this.mc.gameSettings.advancedItemTooltips);
+            ITooltipFlag flag = this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL;
+            list = stack.getTooltip(MinecraftTools.getPlayer(this.mc), flag);
         }
 
         for (int i = 0; i < list.size(); ++i) {

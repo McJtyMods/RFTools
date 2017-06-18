@@ -1116,8 +1116,12 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     @Override
-    public boolean isUsable(EntityPlayer player) {
-        // @todo
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer player) {
         return true;
 //        return canPlayerAccess(player);
     }

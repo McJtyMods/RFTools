@@ -117,7 +117,8 @@ public class DimensionalShardBlock extends CompatBlock {
     public void onBlockHarvested(World worldIn, BlockPos pos, IBlockState state, EntityPlayer player) {
         super.onBlockHarvested(worldIn, pos, state, player);
         if (player != null) {
-            Achievements.trigger(player, Achievements.specialOres);
+            // @todo achievements
+//            Achievements.trigger(player, Achievements.specialOres);
         }
     }
 

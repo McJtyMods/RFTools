@@ -5,8 +5,10 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.NonNullList;
 
 import java.util.function.Function;
 
@@ -14,11 +16,17 @@ public class ContainerToItemRecipe extends ShapedRecipes {
     private Object objectToInheritFrom;
     private Function<NBTTagCompound, Integer> getMetaFunction;
 
-    public ContainerToItemRecipe(ItemStack item, ItemStack output, Function<NBTTagCompound, Integer> getMetaFunction) {
-        super(1, 1, new ItemStack[] { item }, output);
-        objectToInheritFrom = getObjectFromStack(item.getItem());
-        this.getMetaFunction = getMetaFunction == null ? s -> s.getInteger("childDamage") : getMetaFunction;
+    // @todo recipes
+    public ContainerToItemRecipe(String group, int width, int height, NonNullList<Ingredient> ingredients, ItemStack result, Object objectToInheritFrom) {
+        super(group, width, height, ingredients, result);
+        this.objectToInheritFrom = objectToInheritFrom;
     }
+
+    //    public ContainerToItemRecipe(ItemStack item, ItemStack output, Function<NBTTagCompound, Integer> getMetaFunction) {
+//        super(1, 1, new ItemStack[] { item }, output);
+//        objectToInheritFrom = getObjectFromStack(item.getItem());
+//        this.getMetaFunction = getMetaFunction == null ? s -> s.getInteger("childDamage") : getMetaFunction;
+//    }
 
     private Object getObjectFromStack(Item item) {
         if (item instanceof ItemBlock) {

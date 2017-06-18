@@ -144,8 +144,8 @@ public class GuiChamberDetails extends GuiItemScreen {
                 entityName = EntityList.getEntityString(entity);
                 if (entity instanceof EntityItem) {
                     EntityItem entityItem = (EntityItem) entity;
-                    if (ItemStackTools.isValid(entityItem.getEntityItem())) {
-                        String displayName = entityItem.getEntityItem().getDisplayName();
+                    if (ItemStackTools.isValid(entityItem.getItem())) {
+                        String displayName = entityItem.getItem().getDisplayName();
                         entityName += " (" + displayName + ")";
                     }
                 }

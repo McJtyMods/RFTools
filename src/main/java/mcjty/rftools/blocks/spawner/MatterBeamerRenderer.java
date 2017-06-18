@@ -6,6 +6,7 @@ import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.RFTools;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -20,7 +21,7 @@ public class MatterBeamerRenderer extends TileEntitySpecialRenderer<MatterBeamer
     private static final ResourceLocation blueglow = new ResourceLocation(RFTools.MODID, "textures/blocks/blueglow.png");
 
     @Override
-    public void renderTileEntityAt(MatterBeamerTileEntity tileEntity, double x, double y, double z, float time, int destroyStage) {
+    public void renderTileEntityAt(MatterBeamerTileEntity tileEntity, double x, double y, double z, float time, int destroyStage, float alpha) {
         ResourceLocation txt;
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();

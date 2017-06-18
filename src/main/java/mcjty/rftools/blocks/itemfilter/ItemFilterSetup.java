@@ -25,7 +25,7 @@ public class ItemFilterSetup {
     public static void initCrafting() {
 //        Block redstoneTorch = Blocks.REDSTONE_TORCH;
 //
-//        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(itemFilterBlock), "pcp", "rMr", "pTp", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'p', Items.PAPER,
+//        MyGameReg.addRecipe(new ItemStack(itemFilterBlock), "pcp", "rMr", "pTp", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'p', Items.PAPER,
 //                               'r', Items.REDSTONE, 'c', "chest"));
     }
 }

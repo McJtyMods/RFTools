@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.powercell;
 
+import mcjty.lib.compat.MyGameReg;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.crafting.PreservingShapedRecipe;
 import mcjty.rftools.items.InfusedDiamond;
@@ -38,24 +39,25 @@ public class PowerCellSetup {
     }
 
     public static void initCrafting() {
-        GameRegistry.addRecipe(new ItemStack(simplePowerCellBlock), "rdr", "bMb", "rdr", 'M', ModBlocks.machineFrame, 'r', Blocks.REDSTONE_BLOCK,
+        MyGameReg.addRecipe(new ItemStack(simplePowerCellBlock), "rdr", "bMb", "rdr", 'M', ModBlocks.machineFrame, 'r', Blocks.REDSTONE_BLOCK,
                 'b', Items.QUARTZ, 'd', Items.DIAMOND);
-        GameRegistry.addRecipe(new ItemStack(powerCellBlock), "rdr", "bMb", "rer", 'M', ModBlocks.machineFrame, 'r', Blocks.REDSTONE_BLOCK,
+        MyGameReg.addRecipe(new ItemStack(powerCellBlock), "rdr", "bMb", "rer", 'M', ModBlocks.machineFrame, 'r', Blocks.REDSTONE_BLOCK,
                 'b', Items.PRISMARINE_SHARD, 'e', Items.EMERALD, 'd', Items.DIAMOND);
-        GameRegistry.addRecipe(new ItemStack(powerCellCardItem), "rgr", "gPg", "rgr", 'P', Items.PAPER, 'r', Items.REDSTONE, 'g', Items.GOLD_NUGGET);
-        GameRegistry.addRecipe(new ItemStack(powerCellCardItem), "c", 'c', powerCellCardItem);
+        MyGameReg.addRecipe(new ItemStack(powerCellCardItem), "rgr", "gPg", "rgr", 'P', Items.PAPER, 'r', Items.REDSTONE, 'g', Items.GOLD_NUGGET);
+        MyGameReg.addRecipe(new ItemStack(powerCellCardItem), "c", 'c', powerCellCardItem);
 
         InfusedDiamond ind = ModItems.infusedDiamond;
-        GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
-                new ItemStack(Blocks.REDSTONE_BLOCK), new ItemStack(ind), new ItemStack(Blocks.REDSTONE_BLOCK),
-                new ItemStack(ind), new ItemStack(powerCellBlock), new ItemStack(ind),
-                new ItemStack(Blocks.REDSTONE_BLOCK), new ItemStack(ind), new ItemStack(Blocks.REDSTONE_BLOCK)
-        }, new ItemStack(advancedPowerCellBlock), 4));
-        GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
-                new ItemStack(Items.REDSTONE), new ItemStack(Items.DIAMOND), new ItemStack(Items.REDSTONE),
-                new ItemStack(Items.PRISMARINE_SHARD), new ItemStack(simplePowerCellBlock), new ItemStack(Items.PRISMARINE_SHARD),
-                new ItemStack(Items.REDSTONE), new ItemStack(Items.EMERALD), new ItemStack(Items.REDSTONE)
-        }, new ItemStack(powerCellBlock), 4));
+        // @todo recipes
+//        MyGameReg.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
+//                new ItemStack(Blocks.REDSTONE_BLOCK), new ItemStack(ind), new ItemStack(Blocks.REDSTONE_BLOCK),
+//                new ItemStack(ind), new ItemStack(powerCellBlock), new ItemStack(ind),
+//                new ItemStack(Blocks.REDSTONE_BLOCK), new ItemStack(ind), new ItemStack(Blocks.REDSTONE_BLOCK)
+//        }, new ItemStack(advancedPowerCellBlock), 4));
+//        MyGameReg.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
+//                new ItemStack(Items.REDSTONE), new ItemStack(Items.DIAMOND), new ItemStack(Items.REDSTONE),
+//                new ItemStack(Items.PRISMARINE_SHARD), new ItemStack(simplePowerCellBlock), new ItemStack(Items.PRISMARINE_SHARD),
+//                new ItemStack(Items.REDSTONE), new ItemStack(Items.EMERALD), new ItemStack(Items.REDSTONE)
+//        }, new ItemStack(powerCellBlock), 4));
 
     }
 }

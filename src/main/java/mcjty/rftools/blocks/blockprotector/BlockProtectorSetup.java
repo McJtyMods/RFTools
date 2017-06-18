@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.blockprotector;
 
+import mcjty.lib.compat.MyGameReg;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.shield.ShieldSetup;
@@ -23,7 +24,7 @@ public class BlockProtectorSetup {
 
     public static void initCrafting() {
         if (GeneralConfiguration.enableBlockProtectorRecipe) {
-            GameRegistry.addRecipe(new ItemStack(blockProtectorBlock), "oto", "tMt", "oto", 'M', ModBlocks.machineFrame, 'o', Blocks.OBSIDIAN, 't', ShieldSetup.shieldTemplateBlock);
+            MyGameReg.addRecipe(new ItemStack(blockProtectorBlock), "oto", "tMt", "oto", 'M', ModBlocks.machineFrame, 'o', Blocks.OBSIDIAN, 't', ShieldSetup.shieldTemplateBlock);
         }
     }
 }

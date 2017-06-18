@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.relay;
 
+import mcjty.lib.compat.MyGameReg;
 import mcjty.rftools.blocks.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -24,6 +25,6 @@ public class RelaySetup {
 
     public static void initCrafting() {
         Block redstoneTorch = Blocks.REDSTONE_TORCH;
-        GameRegistry.addRecipe(new ItemStack(relayBlock), "gTg", "gMg", "gTg", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'g', Items.GOLD_INGOT);
+        MyGameReg.addRecipe(new ItemStack(relayBlock), "gTg", "gMg", "gTg", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'g', Items.GOLD_INGOT);
     }
 }

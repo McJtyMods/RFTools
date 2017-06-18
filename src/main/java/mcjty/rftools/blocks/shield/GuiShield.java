@@ -126,7 +126,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
                 .setLayoutHint(new PositionalLayout.PositionalHint(31, 177, 48, 16));
         colorSelector.addColors(0x96ffc8);
         for (EnumDyeColor color : EnumDyeColor.values()) {
-            colorSelector.addColors(color.getMapColor().colorValue);
+            colorSelector.addColors(color.getColorValue());
         }
         colorSelector.setCurrentColor(tileEntity.getShieldColor());
         colorSelector.addChoiceEvent((parent, newColor) -> sendServerCommand(RFToolsMessages.INSTANCE, ShieldTEBase.CMD_SETCOLOR, new Argument("color", newColor)));

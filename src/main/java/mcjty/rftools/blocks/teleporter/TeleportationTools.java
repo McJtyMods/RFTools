@@ -156,7 +156,8 @@ public class TeleportationTools {
         if (TeleportConfiguration.whooshMessage) {
             Logging.message(player, "Whoosh!");
         }
-        Achievements.trigger(player, Achievements.firstTeleport);
+        // @todo achievements
+//        Achievements.trigger(player, Achievements.firstTeleport);
 
         boolean boostNeeded = false;
         int severity = consumeReceiverEnergy(player, dest.getCoordinate(), dest.getDimension());
@@ -184,7 +185,7 @@ public class TeleportationTools {
     public static World getWorldForDimension(World world, int id) {
         World w = DimensionManager.getWorld(id);
         if (w == null) {
-            w = world.getMinecraftServer().worldServerForDimension(id);
+            w = world.getMinecraftServer().getWorld(id);
         }
         return w;
     }
@@ -218,7 +219,7 @@ public class TeleportationTools {
         BlockPos c = teleportDestination.getCoordinate();
         World recWorld = getWorldForDimension(worldObj, teleportDestination.getDimension());
         if (recWorld == null) {
-            recWorld = worldObj.getMinecraftServer().worldServerForDimension(teleportDestination.getDimension());
+            recWorld = worldObj.getMinecraftServer().getWorld(teleportDestination.getDimension());
             if (recWorld == null) {
                 return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
             }
@@ -355,7 +356,7 @@ public class TeleportationTools {
         int oldDimension = player.getEntityWorld().provider.getDimension();
         EntityPlayerMP entityPlayerMP = (EntityPlayerMP) player;
         MinecraftServer server = player.getEntityWorld().getMinecraftServer();
-        WorldServer worldServer = server.worldServerForDimension(dimension);
+        WorldServer worldServer = server.getWorld(dimension);
         player.addExperienceLevel(0);
 
 

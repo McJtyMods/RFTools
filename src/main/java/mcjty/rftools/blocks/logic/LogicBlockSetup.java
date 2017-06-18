@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.logic;
 
+import mcjty.lib.compat.MyGameReg;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.logic.counter.CounterBlock;
 import mcjty.rftools.blocks.logic.invchecker.InvCheckerBlock;
@@ -57,15 +58,15 @@ public class LogicBlockSetup {
 
     public static void initCrafting() {
         Block redstoneTorch = Blocks.REDSTONE_TORCH;
-        GameRegistry.addRecipe(new ItemStack(sequencerBlock), "rTr", "TMT", "rTr", 'r', Items.REDSTONE, 'T', redstoneTorch, 'M', ModBlocks.machineBase);
-        GameRegistry.addRecipe(new ItemStack(counterBlock), "gcg", "TMT", "rTr", 'c', Items.CLOCK, 'r', Items.REDSTONE, 'T', redstoneTorch, 'M', ModBlocks.machineBase, 'g', Items.GOLD_NUGGET);
-        GameRegistry.addRecipe(new ItemStack(timerBlock), "rcr", "TMT", "rTr", 'c', Items.CLOCK, 'r', Items.REDSTONE, 'T', redstoneTorch, 'M', ModBlocks.machineBase);
-        GameRegistry.addRecipe(new ItemStack(threeLogicBlock), "rcr", "cMc", "rcr", 'c', Items.COMPARATOR, 'r', Items.REDSTONE, 'M', ModBlocks.machineBase);
-        GameRegistry.addRecipe(new ItemStack(redstoneTransmitterBlock), "ror", "TMT", "rRr", 'o', Items.ENDER_PEARL, 'r', Items.REDSTONE, 'T', redstoneTorch, 'R', Blocks.REDSTONE_BLOCK, 'M', ModBlocks.machineBase);
-        GameRegistry.addRecipe(new ItemStack(redstoneReceiverBlock), "ror", "TMT", "rRr", 'o', Items.ENDER_PEARL, 'r', Items.REDSTONE, 'T', Items.COMPARATOR, 'R', Blocks.REDSTONE_BLOCK, 'M', ModBlocks.machineBase);
-        GameRegistry.addRecipe(new ItemStack(redstoneTransmitterBlock), "r", 'r', redstoneTransmitterBlock);    // To clear it
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(invCheckerBlock), " c ", "rMr", " C ", 'M', ModBlocks.machineBase, 'c', Items.COMPARATOR, 'C', "chest", 'r', Items.REDSTONE));
-        GameRegistry.addRecipe(new ItemStack(sensorBlock), "xcx", "rMr", "xcx", 'M', ModBlocks.machineBase, 'c', Items.COMPARATOR, 'x', Items.QUARTZ, 'r', Items.REDSTONE);
-        GameRegistry.addRecipe(new ItemStack(wireBlock), "   ", "rMr", "   ", 'M', ModBlocks.machineBase, 'r', Items.REDSTONE);
+        MyGameReg.addRecipe(new ItemStack(sequencerBlock), "rTr", "TMT", "rTr", 'r', Items.REDSTONE, 'T', redstoneTorch, 'M', ModBlocks.machineBase);
+        MyGameReg.addRecipe(new ItemStack(counterBlock), "gcg", "TMT", "rTr", 'c', Items.CLOCK, 'r', Items.REDSTONE, 'T', redstoneTorch, 'M', ModBlocks.machineBase, 'g', Items.GOLD_NUGGET);
+        MyGameReg.addRecipe(new ItemStack(timerBlock), "rcr", "TMT", "rTr", 'c', Items.CLOCK, 'r', Items.REDSTONE, 'T', redstoneTorch, 'M', ModBlocks.machineBase);
+        MyGameReg.addRecipe(new ItemStack(threeLogicBlock), "rcr", "cMc", "rcr", 'c', Items.COMPARATOR, 'r', Items.REDSTONE, 'M', ModBlocks.machineBase);
+        MyGameReg.addRecipe(new ItemStack(redstoneTransmitterBlock), "ror", "TMT", "rRr", 'o', Items.ENDER_PEARL, 'r', Items.REDSTONE, 'T', redstoneTorch, 'R', Blocks.REDSTONE_BLOCK, 'M', ModBlocks.machineBase);
+        MyGameReg.addRecipe(new ItemStack(redstoneReceiverBlock), "ror", "TMT", "rRr", 'o', Items.ENDER_PEARL, 'r', Items.REDSTONE, 'T', Items.COMPARATOR, 'R', Blocks.REDSTONE_BLOCK, 'M', ModBlocks.machineBase);
+        MyGameReg.addRecipe(new ItemStack(redstoneTransmitterBlock), "r", 'r', redstoneTransmitterBlock);    // To clear it
+        MyGameReg.addRecipe(new ItemStack(invCheckerBlock), " c ", "rMr", " C ", 'M', ModBlocks.machineBase, 'c', Items.COMPARATOR, 'C', "chest", 'r', Items.REDSTONE);
+        MyGameReg.addRecipe(new ItemStack(sensorBlock), "xcx", "rMr", "xcx", 'M', ModBlocks.machineBase, 'c', Items.COMPARATOR, 'x', Items.QUARTZ, 'r', Items.REDSTONE);
+        MyGameReg.addRecipe(new ItemStack(wireBlock), "   ", "rMr", "   ", 'M', ModBlocks.machineBase, 'r', Items.REDSTONE);
     }
 }

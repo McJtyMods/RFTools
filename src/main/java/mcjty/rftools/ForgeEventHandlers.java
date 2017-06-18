@@ -137,12 +137,12 @@ public class ForgeEventHandlers {
                     Block block = state.getBlock();
                     if (block instanceof ScreenBlock) {
                         Vec3d vec = ((PlayerInteractEvent.RightClickBlock) event).getHitVec();
-                        ((ScreenBlock) block).activate(world, event.getPos(), state, player, event.getHand(), event.getFace(), (float) vec.xCoord, (float) vec.yCoord, (float) vec.zCoord);
+                        ((ScreenBlock) block).activate(world, event.getPos(), state, player, event.getHand(), event.getFace(), (float) vec.x, (float) vec.y, (float) vec.z);
                         ((PlayerInteractEvent.RightClickBlock) event).setUseItem(Event.Result.DENY);
                         return;
                     } else if (block instanceof ScreenHitBlock) {
                         Vec3d vec = ((PlayerInteractEvent.RightClickBlock) event).getHitVec();
-                        ((ScreenHitBlock) block).activate(world, event.getPos(), state, player, event.getHand(), event.getFace(), (float) vec.xCoord, (float) vec.yCoord, (float) vec.zCoord);
+                        ((ScreenHitBlock) block).activate(world, event.getPos(), state, player, event.getHand(), event.getFace(), (float) vec.x, (float) vec.y, (float) vec.z);
                         ((PlayerInteractEvent.RightClickBlock) event).setUseItem(Event.Result.DENY);
                         return;
                     }
@@ -232,7 +232,7 @@ public class ForgeEventHandlers {
                     if (b) {
                         Vec3d blockVector = new Vec3d(block);
                         double distanceTo = explosionVector.distanceTo(blockVector);
-                        int rfneeded = blockProtectorTileEntity.attemptExplosionProtection((float) (distanceTo / explosion.explosionSize), explosion.explosionSize);
+                        int rfneeded = blockProtectorTileEntity.attemptExplosionProtection((float) (distanceTo / explosion.size), explosion.size);
                         if (rfneeded > 0) {
                             toremove.add(block);
                             rf += rfneeded;

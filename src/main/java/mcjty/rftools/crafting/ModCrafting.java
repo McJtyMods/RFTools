@@ -1,5 +1,6 @@
 package mcjty.rftools.crafting;
 
+import mcjty.lib.compat.MyGameReg;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorSetup;
@@ -74,25 +75,26 @@ public final class ModCrafting {
     }
 
     private static void initBaseCrafting() {
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.machineFrame), "ili", "g g", "ili", 'i', Items.IRON_INGOT, 'g', Items.GOLD_NUGGET, 'l', "dyeBlue"));
-        GameRegistry.addRecipe(new ItemStack(ModBlocks.machineBase), "   ", "ggg", "sss", 'g', Items.GOLD_NUGGET, 's', Blocks.STONE);
+        MyGameReg.addRecipe(new ItemStack(ModBlocks.machineFrame), "ili", "g g", "ili", 'i', Items.IRON_INGOT, 'g', Items.GOLD_NUGGET, 'l', "dyeBlue");
+        MyGameReg.addRecipe(new ItemStack(ModBlocks.machineBase), "   ", "ggg", "sss", 'g', Items.GOLD_NUGGET, 's', Blocks.STONE);
 
-        GameRegistry.addRecipe(new ItemStack(ModItems.rfToolsManualItem), " r ", "rbr", " r ", 'r', Items.REDSTONE, 'b', Items.BOOK);
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.smartWrenchItem), "  i", " l ", "l  ", 'i', Items.IRON_INGOT, 'l', "dyeBlue"));
-        GameRegistry.addRecipe(new ItemStack(ModItems.infusedDiamond), "sss", "sds", "sss", 's', ModItems.dimensionalShardItem, 'd', Items.DIAMOND);
+        MyGameReg.addRecipe(new ItemStack(ModItems.rfToolsManualItem), " r ", "rbr", " r ", 'r', Items.REDSTONE, 'b', Items.BOOK);
+        MyGameReg.addRecipe(new ItemStack(ModItems.smartWrenchItem), "  i", " l ", "l  ", 'i', Items.IRON_INGOT, 'l', "dyeBlue");
+        MyGameReg.addRecipe(new ItemStack(ModItems.infusedDiamond), "sss", "sds", "sss", 's', ModItems.dimensionalShardItem, 'd', Items.DIAMOND);
 
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.networkMonitorItem), "rlr", "iri", "rlr", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT, 'l', "dyeBlack"));
+        MyGameReg.addRecipe(new ItemStack(ModItems.networkMonitorItem), "rlr", "iri", "rlr", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT, 'l', "dyeBlack");
 
-        GameRegistry.addRecipe(new ItemStack(ModItems.syringeItem), "i  ", " i ", "  b", 'i', Items.IRON_INGOT, 'b', Items.GLASS_BOTTLE);
+        MyGameReg.addRecipe(new ItemStack(ModItems.syringeItem), "i  ", " i ", "  b", 'i', Items.IRON_INGOT, 'b', Items.GLASS_BOTTLE);
 
         String[] syringeMatcher = new String[] { "level", "mobId" };
 
-        GameRegistry.addRecipe(new NBTMatchingRecipe(3, 3,
-                                                     new ItemStack[]{SyringeItem.createMobSyringe(EntityIronGolem.class), SyringeItem.createMobSyringe(EntityEnderman.class), SyringeItem.createMobSyringe(EntitySnowman.class),
-                                                             SyringeItem.createMobSyringe(EntityBat.class), SyringeItem.createMobSyringe(EntityOcelot.class), SyringeItem.createMobSyringe(EntityGuardian.class),
-                                                             SyringeItem.createMobSyringe(EntityWolf.class), SyringeItem.createMobSyringe(EntityPigZombie.class), SyringeItem.createMobSyringe(EntityMooshroom.class)},
-                                                     new String[][]{syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher},
-                                                     new ItemStack(ModItems.peaceEssenceItem)));
+        // @todo recipes
+//        MyGameReg.addRecipe(new NBTMatchingRecipe(3, 3,
+//                                                     new ItemStack[]{SyringeItem.createMobSyringe(EntityIronGolem.class), SyringeItem.createMobSyringe(EntityEnderman.class), SyringeItem.createMobSyringe(EntitySnowman.class),
+//                                                             SyringeItem.createMobSyringe(EntityBat.class), SyringeItem.createMobSyringe(EntityOcelot.class), SyringeItem.createMobSyringe(EntityGuardian.class),
+//                                                             SyringeItem.createMobSyringe(EntityWolf.class), SyringeItem.createMobSyringe(EntityPigZombie.class), SyringeItem.createMobSyringe(EntityMooshroom.class)},
+//                                                     new String[][]{syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher},
+//                                                     new ItemStack(ModItems.peaceEssenceItem)));
 
         int dimShardCraftability;
         if (Loader.isModLoaded("rftoolsdim")) {
@@ -105,11 +107,11 @@ public final class ModCrafting {
             case GeneralConfiguration.CRAFT_NONE:
                 break;
             case GeneralConfiguration.CRAFT_EASY:
-                GameRegistry.addRecipe(new ItemStack(ModItems.dimensionalShardItem, 8), " d ", "irg", " q ", 'd', Items.DIAMOND, 'g', Items.GOLD_INGOT,
+                MyGameReg.addRecipe(new ItemStack(ModItems.dimensionalShardItem, 8), " d ", "irg", " q ", 'd', Items.DIAMOND, 'g', Items.GOLD_INGOT,
                                        'i', Items.IRON_INGOT, 'q', Items.QUARTZ);
                 break;
             case GeneralConfiguration.CRAFT_HARD:
-                GameRegistry.addRecipe(new ItemStack(ModItems.dimensionalShardItem, 8), "deg", "irG", "qcL", 'd', Items.DIAMOND, 'e', Items.EMERALD, 'g', Items.GOLD_INGOT,
+                MyGameReg.addRecipe(new ItemStack(ModItems.dimensionalShardItem, 8), "deg", "irG", "qcL", 'd', Items.DIAMOND, 'e', Items.EMERALD, 'g', Items.GOLD_INGOT,
                                        'i', Items.IRON_INGOT, 'r', Items.REDSTONE, 'G', Items.GLOWSTONE_DUST, 'q', Items.QUARTZ, 'c', Items.PRISMARINE_SHARD, 'L', Blocks.GLASS);
                 break;
         }

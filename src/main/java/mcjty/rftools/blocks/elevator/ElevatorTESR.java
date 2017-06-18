@@ -28,12 +28,12 @@ public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> 
     private final FakeElevatorWorld fakeWorld = new FakeElevatorWorld();
 
     @Override
-    public void renderTileEntityAt(ElevatorTileEntity te, double x, double y, double z, float partialTicks, int destroyStage) {
+    public void renderTileEntityAt(ElevatorTileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 
         if (te.isMoving()) {
             // Correction in the y translation to avoid jitter when both player and platform are moving
             AxisAlignedBB aabb = te.getAABBAboveElevator(0);
-            boolean on = MinecraftTools.getPlayer(Minecraft.getMinecraft()).getEntityBoundingBox().intersectsWith(aabb);
+            boolean on = MinecraftTools.getPlayer(Minecraft.getMinecraft()).getEntityBoundingBox().intersects(aabb);
 
             double diff = on ? (te.getPos().getY() - (y+te.getMovingY()) - 1) : 0;
 

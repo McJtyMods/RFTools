@@ -13,6 +13,7 @@ import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -62,7 +63,7 @@ public class ShieldBlock extends GenericRFToolsBlock<ShieldTEBase, ShieldContain
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
 
         list.add(TextFormatting.GREEN + "Supports " + max + " blocks");
@@ -100,14 +101,16 @@ public class ShieldBlock extends GenericRFToolsBlock<ShieldTEBase, ShieldContain
     public void onBlockClicked(World world, BlockPos pos, EntityPlayer playerIn) {
         if (!world.isRemote) {
             composeDecomposeShield(world, pos, true);
-            Achievements.trigger(playerIn, Achievements.shieldSafety);
+            // @todo achievements
+//            Achievements.trigger(playerIn, Achievements.shieldSafety);
         }
     }
 
     @Override
     protected boolean wrenchUse(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
         composeDecomposeShield(world, pos, false);
-        Achievements.trigger(player, Achievements.shieldSafety);
+        // @todo achievements
+//        Achievements.trigger(player, Achievements.shieldSafety);
         return true;
     }
 

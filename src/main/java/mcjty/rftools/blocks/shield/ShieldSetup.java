@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.shield;
 
+import mcjty.lib.compat.MyGameReg;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.crafting.PreservingShapedRecipe;
@@ -63,30 +64,31 @@ public class ShieldSetup {
         Block redstoneTorch = Blocks.REDSTONE_TORCH;
 
         if (GeneralConfiguration.enableShieldProjectorRecipe) {
-            GameRegistry.addRecipe(new ItemStack(shieldBlock1), "gTg", "rMr", "ooo", 'M', ModBlocks.machineFrame, 'o', Blocks.OBSIDIAN,
+            MyGameReg.addRecipe(new ItemStack(shieldBlock1), "gTg", "rMr", "ooo", 'M', ModBlocks.machineFrame, 'o', Blocks.OBSIDIAN,
                                    'r', Items.REDSTONE, 'T', redstoneTorch, 'g', Items.GOLD_INGOT);
 
-            GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-                    new ItemStack(Blocks.REDSTONE_BLOCK), new ItemStack(Blocks.OBSIDIAN), new ItemStack(Blocks.REDSTONE_BLOCK),
-                    new ItemStack(Blocks.OBSIDIAN), new ItemStack(shieldBlock1), new ItemStack(Blocks.OBSIDIAN),
-                    new ItemStack(Blocks.REDSTONE_BLOCK), new ItemStack(Blocks.OBSIDIAN), new ItemStack(Blocks.REDSTONE_BLOCK)
-            }, new ItemStack(shieldBlock2), 4));
-            GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-                    new ItemStack(ModItems.dimensionalShardItem), new ItemStack(Blocks.OBSIDIAN), new ItemStack(ModItems.dimensionalShardItem),
-                    new ItemStack(Blocks.OBSIDIAN), new ItemStack(shieldBlock2), new ItemStack(Blocks.OBSIDIAN),
-                    new ItemStack(ModItems.dimensionalShardItem), new ItemStack(Blocks.OBSIDIAN), new ItemStack(ModItems.dimensionalShardItem)
-            }, new ItemStack(shieldBlock3), 4));
-            GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-                    new ItemStack(Items.NETHER_STAR), new ItemStack(Blocks.OBSIDIAN), new ItemStack(ModItems.dimensionalShardItem),
-                    new ItemStack(Blocks.OBSIDIAN), new ItemStack(shieldBlock3), new ItemStack(Blocks.OBSIDIAN),
-                    new ItemStack(ModItems.dimensionalShardItem), new ItemStack(Blocks.OBSIDIAN), new ItemStack(Items.NETHER_STAR)
-            }, new ItemStack(shieldBlock4), 4));
+            // @todo recipes
+//            MyGameReg.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
+//                    new ItemStack(Blocks.REDSTONE_BLOCK), new ItemStack(Blocks.OBSIDIAN), new ItemStack(Blocks.REDSTONE_BLOCK),
+//                    new ItemStack(Blocks.OBSIDIAN), new ItemStack(shieldBlock1), new ItemStack(Blocks.OBSIDIAN),
+//                    new ItemStack(Blocks.REDSTONE_BLOCK), new ItemStack(Blocks.OBSIDIAN), new ItemStack(Blocks.REDSTONE_BLOCK)
+//            }, new ItemStack(shieldBlock2), 4));
+//            MyGameReg.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
+//                    new ItemStack(ModItems.dimensionalShardItem), new ItemStack(Blocks.OBSIDIAN), new ItemStack(ModItems.dimensionalShardItem),
+//                    new ItemStack(Blocks.OBSIDIAN), new ItemStack(shieldBlock2), new ItemStack(Blocks.OBSIDIAN),
+//                    new ItemStack(ModItems.dimensionalShardItem), new ItemStack(Blocks.OBSIDIAN), new ItemStack(ModItems.dimensionalShardItem)
+//            }, new ItemStack(shieldBlock3), 4));
+//            MyGameReg.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
+//                    new ItemStack(Items.NETHER_STAR), new ItemStack(Blocks.OBSIDIAN), new ItemStack(ModItems.dimensionalShardItem),
+//                    new ItemStack(Blocks.OBSIDIAN), new ItemStack(shieldBlock3), new ItemStack(Blocks.OBSIDIAN),
+//                    new ItemStack(ModItems.dimensionalShardItem), new ItemStack(Blocks.OBSIDIAN), new ItemStack(Items.NETHER_STAR)
+//            }, new ItemStack(shieldBlock4), 4));
         }
 
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(shieldTemplateBlock, 8, 0), "www", "lgl", "www", 'w', Blocks.WOOL, 'l', "dyeBlue", 'g', Blocks.GLASS));
-        GameRegistry.addRecipe(new ItemStack(shieldTemplateBlock, 1, 1), "s", 's', new ItemStack(shieldTemplateBlock, 1, 0));
-        GameRegistry.addRecipe(new ItemStack(shieldTemplateBlock, 1, 2), "s", 's', new ItemStack(shieldTemplateBlock, 1, 1));
-        GameRegistry.addRecipe(new ItemStack(shieldTemplateBlock, 1, 3), "s", 's', new ItemStack(shieldTemplateBlock, 1, 2));
-        GameRegistry.addRecipe(new ItemStack(shieldTemplateBlock, 1, 0), "s", 's', new ItemStack(shieldTemplateBlock, 1, 3));
+        MyGameReg.addRecipe(new ItemStack(shieldTemplateBlock, 8, 0), "www", "lgl", "www", 'w', Blocks.WOOL, 'l', "dyeBlue", 'g', Blocks.GLASS);
+        MyGameReg.addRecipe(new ItemStack(shieldTemplateBlock, 1, 1), "s", 's', new ItemStack(shieldTemplateBlock, 1, 0));
+        MyGameReg.addRecipe(new ItemStack(shieldTemplateBlock, 1, 2), "s", 's', new ItemStack(shieldTemplateBlock, 1, 1));
+        MyGameReg.addRecipe(new ItemStack(shieldTemplateBlock, 1, 3), "s", 's', new ItemStack(shieldTemplateBlock, 1, 2));
+        MyGameReg.addRecipe(new ItemStack(shieldTemplateBlock, 1, 0), "s", 's', new ItemStack(shieldTemplateBlock, 1, 3));
     }
 }

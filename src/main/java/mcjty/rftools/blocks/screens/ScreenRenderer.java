@@ -40,7 +40,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
     private final ModelScreen screenModelHuge = new ModelScreen(ScreenTileEntity.SIZE_HUGE);
 
     @Override
-    public void renderTileEntityAt(ScreenTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
+    public void renderTileEntityAt(ScreenTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 //        GlStateManager.pushAttrib();
         GlStateManager.pushMatrix();
         float f3;
@@ -130,9 +130,9 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         }
         if (mouseOver != null) {
             if (mouseOver.sideHit == blockState.getValue(GenericBlock.FACING)) {
-                double xx = mouseOver.hitVec.xCoord - pos.getX();
-                double yy = mouseOver.hitVec.yCoord - pos.getY();
-                double zz = mouseOver.hitVec.zCoord - pos.getZ();
+                double xx = mouseOver.hitVec.x - pos.getX();
+                double yy = mouseOver.hitVec.y - pos.getY();
+                double zz = mouseOver.hitVec.z - pos.getZ();
                 hit = tileEntity.getHitModule(xx, yy, zz, mouseOver.sideHit);
                 if (hit != null) {
                     hitModule = modules.get(hit.getModuleIndex());

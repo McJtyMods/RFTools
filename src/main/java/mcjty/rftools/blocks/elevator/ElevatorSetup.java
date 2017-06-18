@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.elevator;
 
+import mcjty.lib.compat.MyGameReg;
 import mcjty.rftools.blocks.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -24,7 +25,7 @@ public class ElevatorSetup {
     public static void initCrafting() {
         Block redstoneTorch = Blocks.REDSTONE_TORCH;
 
-        GameRegistry.addRecipe(new ItemStack(elevatorBlock), "cec", "cMc", "cTc", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'c', Items.REDSTONE, 'e', Items.ENDER_PEARL);
+        MyGameReg.addRecipe(new ItemStack(elevatorBlock), "cec", "cMc", "cTc", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'c', Items.REDSTONE, 'e', Items.ENDER_PEARL);
     }
 
 }

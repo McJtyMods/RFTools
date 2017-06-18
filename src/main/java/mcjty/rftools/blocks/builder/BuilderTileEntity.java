@@ -748,7 +748,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         int rf;
         int rfNeeded;
 
-        ItemStack stack = item.getEntityItem();
+        ItemStack stack = item.getItem();
 
         rf = getEnergyStored(EnumFacing.DOWN);
         rfNeeded = (int) (BuilderConfiguration.collectRFPerItem * infusedFactor) * ItemStackTools.getStackSize(stack);
@@ -2067,7 +2067,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     @Override
-    public boolean isUsable(EntityPlayer player) {
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 

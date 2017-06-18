@@ -3,19 +3,26 @@ package mcjty.rftools.crafting;
 import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 
 public class NBTMatchingRecipe extends ShapedRecipes {
 
     private final String[][] matchingNBTs;
 
-    public NBTMatchingRecipe(int width, int height, ItemStack[] input, String[][] matchingNBTs, ItemStack output) {
-        super(width, height, input, output);
+    // @todo recipes
+    public NBTMatchingRecipe(String group, int width, int height, NonNullList<Ingredient> ingredients, ItemStack result, String[][] matchingNBTs) {
+        super(group, width, height, ingredients, result);
         this.matchingNBTs = matchingNBTs;
     }
+//    public NBTMatchingRecipe(int width, int height, ItemStack[] input, String[][] matchingNBTs, ItemStack output) {
+//        super(width, height, input, output);
+//        this.matchingNBTs = matchingNBTs;
+//    }
 
     @Override
     public ItemStack getCraftingResult(InventoryCrafting inventoryCrafting) {
@@ -57,7 +64,8 @@ public class NBTMatchingRecipe extends ShapedRecipes {
                     } else {
                         idx = i1 + j1 * this.recipeWidth;
                     }
-                    itemstack = this.recipeItems[idx];
+                    Ingredient ingredient = this.recipeItems.get(idx);
+                    itemstack = ingredient.getMatchingStacks()[0]; // @todo recipes most likely wrong!
                     nbt = this.matchingNBTs[idx];
                 }
 

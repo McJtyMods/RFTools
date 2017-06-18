@@ -22,7 +22,7 @@ public class BeamRenderer extends TileEntitySpecialRenderer<MatterTransmitterTil
     }
 
     @Override
-    public void renderTileEntityAt(MatterTransmitterTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
+    public void renderTileEntityAt(MatterTransmitterTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         if (tileEntity.isDialed() && !tileEntity.isBeamHidden()) {
             Tessellator tessellator = Tessellator.getInstance();
 //            GlStateManager.pushAttrib();

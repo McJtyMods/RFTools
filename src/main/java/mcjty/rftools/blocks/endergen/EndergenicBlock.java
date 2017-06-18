@@ -9,6 +9,7 @@ import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.theoneprobe.api.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -63,7 +64,7 @@ public class EndergenicBlock extends GenericRFToolsBlock<EndergenicTileEntity, E
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
@@ -115,7 +116,8 @@ public class EndergenicBlock extends GenericRFToolsBlock<EndergenicTileEntity, E
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         super.onBlockPlacedBy(world, pos, state, placer, stack);
         if (placer instanceof EntityPlayer) {
-            Achievements.trigger((EntityPlayer) placer, Achievements.hardPower);
+            // @todo achievements
+//            Achievements.trigger((EntityPlayer) placer, Achievements.hardPower);
         }
     }
 

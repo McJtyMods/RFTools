@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.security;
 
+import mcjty.lib.compat.MyGameReg;
 import mcjty.rftools.blocks.ModBlocks;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -29,11 +30,11 @@ public class SecuritySetup {
     }
 
     public static void initCrafting() {
-        GameRegistry.addRecipe(new ItemStack(orphaningCardItem), " b ", "rir", " p ", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
+        MyGameReg.addRecipe(new ItemStack(orphaningCardItem), " b ", "rir", " p ", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
                                'b', Items.BOOK, 'p', Items.PAPER);
-        GameRegistry.addRecipe(new ItemStack(securityCardItem), " f ", "rir", " p ", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
+        MyGameReg.addRecipe(new ItemStack(securityCardItem), " f ", "rir", " p ", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
                 'f', Items.FLINT, 'p', Items.PAPER);
-        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(securityManagerBlock), "rfr", "fMf", "rcr", 'M', ModBlocks.machineFrame, 'r', Items.REDSTONE, 'f', Items.FLINT,
-                'c', "chest"));
+        MyGameReg.addRecipe(new ItemStack(securityManagerBlock), "rfr", "fMf", "rcr", 'M', ModBlocks.machineFrame, 'r', Items.REDSTONE, 'f', Items.FLINT,
+                'c', "chest");
     }
 }

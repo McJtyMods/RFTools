@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.monitor;
 
+import mcjty.lib.compat.MyGameReg;
 import mcjty.rftools.blocks.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -26,7 +27,7 @@ public class MonitorSetup {
 
     public static void initCrafting() {
         Block redstoneTorch = Blocks.REDSTONE_TORCH;
-        GameRegistry.addRecipe(new ItemStack(monitorBlock), " T ", "rMr", " T ", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'r', Items.REDSTONE);
-        GameRegistry.addRecipe(new ItemStack(liquidMonitorBlock), " T ", "bMb", " T ", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'b', Items.BUCKET);
+        MyGameReg.addRecipe(new ItemStack(monitorBlock), " T ", "rMr", " T ", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'r', Items.REDSTONE);
+        MyGameReg.addRecipe(new ItemStack(liquidMonitorBlock), " T ", "bMb", " T ", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'b', Items.BUCKET);
     }
 }
