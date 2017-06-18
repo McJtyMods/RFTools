@@ -1,12 +1,10 @@
 package mcjty.rftools.blocks.security;
 
 import mcjty.lib.container.GenericGuiContainer;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -43,8 +41,8 @@ public class SecurityManagerBlock extends GenericRFToolsBlock<SecurityManagerTil
             for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
                 NBTTagCompound itemTag = bufferTagList.getCompoundTagAt(i);
                 if (itemTag != null) {
-                    ItemStack stack = ItemStackTools.loadFromNBT(itemTag);
-                    if (ItemStackTools.isValid(stack)) {
+                    ItemStack stack = new ItemStack(itemTag);
+                    if (!stack.isEmpty()) {
                         rc++;
                     }
                 }

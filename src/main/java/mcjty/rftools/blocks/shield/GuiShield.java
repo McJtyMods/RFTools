@@ -3,7 +3,6 @@ package mcjty.rftools.blocks.shield;
 import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
-import mcjty.lib.gui.events.ChoiceEvent;
 import mcjty.lib.gui.events.DefaultSelectionEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
@@ -14,7 +13,6 @@ import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.RFTools;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.blocks.shield.filters.*;
@@ -384,7 +382,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         ItemStack stack = tileEntity.getStackInSlot(0);
 
         int pass = 0;
-        if (ItemStackTools.isValid(stack)) {
+        if (!stack.isEmpty()) {
             Block block = Block.getBlockFromItem(stack.getItem());
             if (block != null) {
                 pass = block.getBlockLayer().ordinal();

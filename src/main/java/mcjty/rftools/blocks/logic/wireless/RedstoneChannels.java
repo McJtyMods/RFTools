@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.logic.wireless;
 
-import mcjty.lib.tools.WorldTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
@@ -24,7 +23,7 @@ public class RedstoneChannels extends WorldSavedData {
     }
 
     public void save(World world) {
-        WorldTools.saveData(world, REDSTONE_CHANNELS_NAME, this);
+        world.setData(REDSTONE_CHANNELS_NAME, this);
         markDirty();
     }
 
@@ -46,7 +45,7 @@ public class RedstoneChannels extends WorldSavedData {
         if (instance != null) {
             return instance;
         }
-        instance = WorldTools.loadData(world, RedstoneChannels.class, REDSTONE_CHANNELS_NAME);
+        instance = (RedstoneChannels) world.loadData(RedstoneChannels.class, REDSTONE_CHANNELS_NAME);
         if (instance == null) {
             instance = new RedstoneChannels(REDSTONE_CHANNELS_NAME);
         }

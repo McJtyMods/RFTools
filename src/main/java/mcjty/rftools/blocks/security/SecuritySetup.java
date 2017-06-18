@@ -1,14 +1,7 @@
 package mcjty.rftools.blocks.security;
 
-import mcjty.lib.compat.MyGameReg;
-import mcjty.rftools.blocks.ModBlocks;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public class SecuritySetup {
     public static SecurityManagerBlock securityManagerBlock;
@@ -30,11 +23,6 @@ public class SecuritySetup {
     }
 
     public static void initCrafting() {
-        MyGameReg.addRecipe(new ItemStack(orphaningCardItem), " b ", "rir", " p ", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
-                               'b', Items.BOOK, 'p', Items.PAPER);
-        MyGameReg.addRecipe(new ItemStack(securityCardItem), " f ", "rir", " p ", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
-                'f', Items.FLINT, 'p', Items.PAPER);
-        MyGameReg.addRecipe(new ItemStack(securityManagerBlock), "rfr", "fMf", "rcr", 'M', ModBlocks.machineFrame, 'r', Items.REDSTONE, 'f', Items.FLINT,
-                'c', "chest");
+
     }
 }

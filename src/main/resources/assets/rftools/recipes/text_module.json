@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "rftools:text_module"
+  },
+  "pattern": [
+    " p ",
+    "rir",
+    " b "
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "p": {
+      "item": "minecraft:paper"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "b": {
+      "item": "#dyeBlack"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    }
+  }
+}

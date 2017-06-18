@@ -4,7 +4,6 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -112,7 +111,7 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
             return false;
         }
         ItemStack ghostStack = inventoryHelper.getStackInSlot(index - ItemFilterContainer.SLOT_BUFFER);
-        return ItemStackTools.isEmpty(ghostStack) || ghostStack.isItemEqual(stack);
+        return ghostStack.isEmpty() || ghostStack.isItemEqual(stack);
     }
 
     @Override
@@ -133,13 +132,13 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
         int ghostIndex = index - ItemFilterContainer.SLOT_BUFFER;
 
         ItemStack ghostStack = inventoryHelper.getStackInSlot(ghostIndex);
-        if (ItemStackTools.isEmpty(ghostStack)) {
+        if (ghostStack.isEmpty()) {
             // First check if there are other ghosted items for this side that match.
             // In that case we don't allow input here.
             int im = inputMode[side.ordinal()];
             for (int i = ItemFilterContainer.SLOT_GHOST ; i < ItemFilterContainer.SLOT_GHOST + ItemFilterContainer.GHOST_SIZE ; i++) {
                 ItemStack g = inventoryHelper.getStackInSlot(i);
-                if (ItemStackTools.isValid(g) && ((im & (1<<i)) != 0) && g.isItemEqual(stack)) {
+                if (!g.isEmpty() && ((im & (1<<i)) != 0) && g.isItemEqual(stack)) {
                     return false;
                 }
             }

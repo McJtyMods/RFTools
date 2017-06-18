@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
-import mcjty.lib.tools.ItemStackList;
-import mcjty.lib.tools.ItemStackTools;
+import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
@@ -50,7 +49,7 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
 
             for (int yy = 0 ; yy < 3 ; yy++) {
                 for (int xx = 0 ; xx < 3 ; xx++) {
-                    if (ItemStackTools.isValid(stacks.get(i))) {
+                    if (!stacks.get(i).isEmpty()) {
                         int x = xx * 40;
                         boolean hilighted = renderInfo.hitx >= x+8 && renderInfo.hitx <= x + 38 && renderInfo.hity >= y-7 && renderInfo.hity <= y + 22;
                         if (hilighted) {
@@ -84,7 +83,7 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
 
         for (int yy = 0 ; yy < 3 ; yy++) {
             for (int xx = 0 ; xx < 3 ; xx++) {
-                if (ItemStackTools.isValid(stacks.get(i))) {
+                if (!stacks.get(i).isEmpty()) {
                     int x = 7 + xx * 30;
                     renderSlot(y, stacks.get(i), x);
                 }
@@ -105,7 +104,7 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
 
         for (int yy = 0 ; yy < 3 ; yy++) {
             for (int xx = 0 ; xx < 3 ; xx++) {
-                if (ItemStackTools.isValid(stacks.get(i))) {
+                if (!stacks.get(i).isEmpty()) {
                     renderSlotOverlay(fontRenderer, y, stacks.get(i), screenData.getAmount(i), 42 + xx * 64);
                 }
                 i++;
@@ -141,7 +140,7 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
     }
 
     private static void renderItemOverlayIntoGUI(FontRenderer fontRenderer, ItemStack itemStack, int size, int x, int y) {
-        if (ItemStackTools.isValid(itemStack)) {
+        if (!itemStack.isEmpty()) {
             String s1;
             if (size < 10000) {
                 s1 = String.valueOf(size);
@@ -207,7 +206,7 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
         if (tagCompound != null) {
             for (int i = 0 ; i < stacks.size() ; i++) {
                 if (tagCompound.hasKey("stack"+i)) {
-                    stacks.set(i, ItemStackTools.loadFromNBT(tagCompound.getCompoundTag("stack"+i)));
+                    stacks.set(i, new ItemStack(tagCompound.getCompoundTag("stack" + i)));
                 }
             }
         }

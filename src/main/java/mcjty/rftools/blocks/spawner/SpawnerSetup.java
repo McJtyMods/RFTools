@@ -1,11 +1,5 @@
 package mcjty.rftools.blocks.spawner;
 
-import mcjty.lib.compat.MyGameReg;
-import mcjty.rftools.blocks.ModBlocks;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -25,8 +19,6 @@ public class SpawnerSetup {
     }
 
     public static void initCrafting() {
-        MyGameReg.addRecipe(new ItemStack(spawnerBlock), "rzr", "eMl", "rbr", 'M', ModBlocks.machineFrame, 'z', Items.ROTTEN_FLESH, 'e', Items.ENDER_PEARL,
-                'l', Items.BLAZE_ROD, 'b', Items.BONE, 'r', Items.REDSTONE);
-        MyGameReg.addRecipe(new ItemStack(matterBeamerBlock), "RGR", "GMG", "RGR", 'M', ModBlocks.machineFrame, 'R', Blocks.REDSTONE_BLOCK, 'G', Blocks.GLOWSTONE);
+
     }
 }

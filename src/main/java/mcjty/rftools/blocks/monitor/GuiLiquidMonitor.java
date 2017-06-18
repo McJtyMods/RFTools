@@ -4,16 +4,13 @@ import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
-import mcjty.lib.gui.events.ChoiceEvent;
 import mcjty.lib.gui.events.DefaultSelectionEvent;
-import mcjty.lib.gui.events.ValueEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.tools.MinecraftTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
@@ -129,7 +126,7 @@ public class GuiLiquidMonitor extends GenericGuiContainer<LiquidMonitorBlockTile
         int index = 0;
         int sel = -1;
         for (BlockPos coordinate : adjacentBlocks) {
-            IBlockState state = MinecraftTools.getWorld(mc).getBlockState(coordinate);
+            IBlockState state = mc.world.getBlockState(coordinate);
             Block block = state.getBlock();
 
             int color = StyleConfig.colorTextInListNormal;

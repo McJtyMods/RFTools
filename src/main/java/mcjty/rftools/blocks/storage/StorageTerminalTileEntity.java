@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
@@ -54,7 +53,7 @@ public class StorageTerminalTileEntity extends LogicTileEntity implements Defaul
     @Nonnull
     public int[] craft(EntityPlayerMP player, int n, boolean test) {
         ItemStack module = inventoryHelper.getStackInSlot(StorageTerminalContainer.SLOT_MODULE);
-        if (ItemStackTools.isEmpty(module)) {
+        if (module.isEmpty()) {
             // No module. Should not be possible
             return new int[0];
         }
@@ -96,13 +95,13 @@ public class StorageTerminalTileEntity extends LogicTileEntity implements Defaul
 
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
-        boolean module = ItemStackTools.isValid(inventoryHelper.getStackInSlot(StorageTerminalContainer.SLOT_MODULE));
+        boolean module = !inventoryHelper.getStackInSlot(StorageTerminalContainer.SLOT_MODULE).isEmpty();
 
         super.onDataPacket(net, packet);
 
         if (getWorld().isRemote) {
             // If needed send a render update.
-            boolean newmodule = ItemStackTools.isValid(inventoryHelper.getStackInSlot(StorageTerminalContainer.SLOT_MODULE));
+            boolean newmodule = !inventoryHelper.getStackInSlot(StorageTerminalContainer.SLOT_MODULE).isEmpty();
             if (newmodule != module) {
                 getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
             }

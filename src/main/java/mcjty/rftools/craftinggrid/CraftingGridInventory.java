@@ -1,14 +1,13 @@
 package mcjty.rftools.craftinggrid;
 
-import mcjty.lib.compat.CompatInventory;
-import mcjty.lib.tools.ItemStackList;
-import mcjty.lib.tools.ItemStackTools;
+import mcjty.lib.varia.ItemStackList;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 
-public class CraftingGridInventory implements CompatInventory {
+public class CraftingGridInventory implements IInventory {
 
     public static int SLOT_GHOSTOUTPUT = 0;
     public static int SLOT_GHOSTINPUT = 1;
@@ -45,18 +44,18 @@ public class CraftingGridInventory implements CompatInventory {
     @Override
     public ItemStack decrStackSize(int index, int count) {
         return index >= 0 && index < stacks.size()
-                && !ItemStackTools.isEmpty(stacks.get(index))
+                && !stacks.get(index).isEmpty()
                 && count > 0
                 ? stacks.get(index).splitStack(count)
-                : ItemStackTools.getEmptyStack();
+                : ItemStack.EMPTY;
 //        return ItemStackHelper.getAndSplit(stacks, index, count);
     }
 
     @Override
     public ItemStack removeStackFromSlot(int index) {
         return index >= 0 && index < stacks.size()
-                ? stacks.set(index, ItemStackTools.getEmptyStack())
-                : ItemStackTools.getEmptyStack();
+                ? stacks.set(index, ItemStack.EMPTY)
+                : ItemStack.EMPTY;
 //        return ItemStackHelper.getAndRemove(stacks, index);
     }
 
@@ -75,7 +74,6 @@ public class CraftingGridInventory implements CompatInventory {
 
     }
 
-    @Override
     public boolean isUsable(EntityPlayer player) {
         return true;
     }
@@ -128,5 +126,15 @@ public class CraftingGridInventory implements CompatInventory {
     @Override
     public ITextComponent getDisplayName() {
         return new TextComponentString("grid");
+    }
+
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer player) {
+        return isUsable(player);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
     }
 }

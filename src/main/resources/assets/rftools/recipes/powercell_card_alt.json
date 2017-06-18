@@ -1,0 +1,14 @@
+{
+  "result": {
+    "item": "rftools:powercell_card"
+  },
+  "pattern": [
+    "c"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "c": {
+      "item": "rftools:powercell_card"
+    }
+  }
+}

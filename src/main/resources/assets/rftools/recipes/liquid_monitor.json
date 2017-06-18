@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "rftools:liquid_monitor"
+  },
+  "pattern": [
+    " T ",
+    "bMb",
+    " T "
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "b": {
+      "item": "minecraft:bucket"
+    },
+    "T": {
+      "item": "minecraft:redstone_torch"
+    },
+    "M": {
+      "item": "rftools:machine_frame"
+    }
+  }
+}

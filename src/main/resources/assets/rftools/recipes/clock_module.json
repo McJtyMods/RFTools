@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "rftools:clock_module"
+  },
+  "pattern": [
+    " c ",
+    "rir",
+    " b "
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "b": {
+      "item": "#dyeBlack"
+    },
+    "c": {
+      "item": "minecraft:clock"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    }
+  }
+}

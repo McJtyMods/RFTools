@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.builder;
 
 import io.netty.buffer.ByteBuf;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockMeta;
 import mcjty.lib.varia.Counter;
 import mcjty.rftools.network.RFToolsMessages;
@@ -48,7 +47,7 @@ public class PacketGetChamberInfo implements IMessage {
         private void handle(MessageContext ctx) {
             EntityPlayer player = ctx.getServerHandler().player;
             ItemStack cardItem = player.getHeldItem(EnumHand.MAIN_HAND);
-            if (ItemStackTools.isEmpty(cardItem) || cardItem.getTagCompound() == null) {
+            if (cardItem.isEmpty() || cardItem.getTagCompound() == null) {
                 return;
             }
 
@@ -95,7 +94,7 @@ public class PacketGetChamberInfo implements IMessage {
                 String canonicalName = entity.getClass().getCanonicalName();
                 if (entity instanceof EntityItem) {
                     EntityItem entityItem = (EntityItem) entity;
-                    if (ItemStackTools.isValid(entityItem.getItem())) {
+                    if (!entityItem.getItem().isEmpty()) {
                         String displayName = entityItem.getItem().getDisplayName();
                         canonicalName += " (" + displayName + ")";
                     }
@@ -129,7 +128,7 @@ public class PacketGetChamberInfo implements IMessage {
 
                             if (!stacks.containsKey(bm)) {
                                 ItemStack item = block.getItem(world, p, state);
-                                if (ItemStackTools.isValid(item)) {
+                                if (!item.isEmpty()) {
                                     stacks.put(bm, item);
                                 }
                             }

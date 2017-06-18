@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "rftools:sequencer_block"
+  },
+  "pattern": [
+    "rTr",
+    "TMT",
+    "rTr"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "T": {
+      "item": "minecraft:redstone_torch"
+    },
+    "M": {
+      "item": "rftools:machine_base"
+    }
+  }
+}

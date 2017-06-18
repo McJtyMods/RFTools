@@ -1,0 +1,26 @@
+{
+  "result": {
+    "item": "rftools:storage_module_tablet"
+  },
+  "pattern": [
+    "geg",
+    "rqr",
+    "grg"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "q": {
+      "item": "minecraft:quartz_block",
+      "data": 0
+    },
+    "r": {
+      "item": "minecraft:redstone_block"
+    },
+    "e": {
+      "item": "minecraft:emerald"
+    },
+    "g": {
+      "item": "minecraft:gold_nugget"
+    }
+  }
+}

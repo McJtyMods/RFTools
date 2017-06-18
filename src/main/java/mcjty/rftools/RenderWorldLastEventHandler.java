@@ -4,8 +4,6 @@ import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.api.smartwrench.SmartWrenchMode;
 import mcjty.lib.gui.HudRenderHelper;
 import mcjty.lib.gui.RenderGlowEffect;
-import mcjty.lib.tools.ItemStackTools;
-import mcjty.lib.tools.MinecraftTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorTileEntity;
 import mcjty.rftools.blocks.builder.BuilderSetup;
@@ -50,17 +48,17 @@ public class RenderWorldLastEventHandler {
 
     private static void renderProtectedBlocks(RenderWorldLastEvent evt) {
         Minecraft mc = Minecraft.getMinecraft();
-        EntityPlayerSP p = MinecraftTools.getPlayer(mc);
+        EntityPlayerSP p = mc.player;
         ItemStack heldItem = p.getHeldItem(EnumHand.MAIN_HAND);
-        if (ItemStackTools.isEmpty(heldItem)) {
+        if (heldItem.isEmpty()) {
             return;
         }
         if (heldItem.getItem() == ModItems.smartWrenchItem) {
             if (SmartWrenchItem.getCurrentMode(heldItem) == SmartWrenchMode.MODE_SELECT) {
                 GlobalCoordinate current = SmartWrenchItem.getCurrentBlock(heldItem);
                 if (current != null) {
-                    if (current.getDimension() == MinecraftTools.getWorld(mc).provider.getDimension()) {
-                        TileEntity te = MinecraftTools.getWorld(mc).getTileEntity(current.getCoordinate());
+                    if (current.getDimension() == mc.world.provider.getDimension()) {
+                        TileEntity te = mc.world.getTileEntity(current.getCoordinate());
                         if (te instanceof BlockProtectorTileEntity) {
                             BlockProtectorTileEntity blockProtectorTileEntity = (BlockProtectorTileEntity) te;
                             Set<BlockPos> coordinates = blockProtectorTileEntity.getProtectedBlocks();
@@ -75,7 +73,7 @@ public class RenderWorldLastEventHandler {
             int mode = ShapeCardItem.getMode(heldItem);
             if (mode == ShapeCardItem.MODE_CORNER1 || mode == ShapeCardItem.MODE_CORNER2) {
                 GlobalCoordinate current = ShapeCardItem.getCurrentBlock(heldItem);
-                if (current != null && current.getDimension() == MinecraftTools.getWorld(mc).provider.getDimension()) {
+                if (current != null && current.getDimension() == mc.world.provider.getDimension()) {
                     Set<BlockPos> coordinates = new HashSet<>();
                     coordinates.add(new BlockPos(0, 0, 0));
                     if (mode == ShapeCardItem.MODE_CORNER2) {
@@ -167,7 +165,7 @@ public class RenderWorldLastEventHandler {
             return;
         }
 
-        EntityPlayerSP p = MinecraftTools.getPlayer(mc);
+        EntityPlayerSP p = mc.player;
         double doubleX = p.lastTickPosX + (p.posX - p.lastTickPosX) * evt.getPartialTicks();
         double doubleY = p.lastTickPosY + (p.posY - p.lastTickPosY) * evt.getPartialTicks();
         double doubleZ = p.lastTickPosZ + (p.posZ - p.lastTickPosZ) * evt.getPartialTicks();
@@ -195,12 +193,12 @@ public class RenderWorldLastEventHandler {
     }
 
     private static void renderPower(RenderWorldLastEvent evt) {
-        EntityPlayerSP player = MinecraftTools.getPlayer(Minecraft.getMinecraft());
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
 
         ItemStack mainItem = player.getHeldItemMainhand();
         ItemStack offItem = player.getHeldItemOffhand();
-        if ((ItemStackTools.isValid(mainItem) && mainItem.getItem() instanceof NetworkMonitorItem)
-                || (ItemStackTools.isValid(offItem) && offItem.getItem() instanceof NetworkMonitorItem)) {
+        if ((!mainItem.isEmpty() && mainItem.getItem() instanceof NetworkMonitorItem)
+                || (!offItem.isEmpty() && offItem.getItem() instanceof NetworkMonitorItem)) {
             double doubleX = player.lastTickPosX + (player.posX - player.lastTickPosX) * evt.getPartialTicks();
             double doubleY = player.lastTickPosY + (player.posY - player.lastTickPosY) * evt.getPartialTicks();
             double doubleZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * evt.getPartialTicks();

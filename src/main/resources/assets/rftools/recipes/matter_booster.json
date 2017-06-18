@@ -1,0 +1,19 @@
+{
+  "result": {
+    "item": "rftools:matter_booster"
+  },
+  "pattern": [
+    " B ",
+    "BMB",
+    " B "
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "B": {
+      "item": "minecraft:redstone_block"
+    },
+    "M": {
+      "item": "rftools:destination_analyzer"
+    }
+  }
+}

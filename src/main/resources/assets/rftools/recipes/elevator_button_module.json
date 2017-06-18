@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "rftools:elevator_button_module"
+  },
+  "pattern": [
+    "fff",
+    "rir",
+    " b "
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "b": {
+      "item": "#dyeBlack"
+    },
+    "f": {
+      "item": "minecraft:stone_button"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    }
+  }
+}

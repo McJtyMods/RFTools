@@ -5,7 +5,6 @@ import gnu.trove.set.hash.TIntHashSet;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.network.Argument;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
@@ -117,7 +116,7 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
         BlockPos inputPos = getPos().offset(inputSide);
         TileEntity te = getWorld().getTileEntity(inputPos);
         if (InventoryHelper.isInventory(te)) {
-            ItemStack stack = ItemStackTools.getEmptyStack();
+            ItemStack stack = ItemStack.EMPTY;
             if (RFToolsTools.hasItemCapabilitySafe(te)) {
                 IItemHandler capability = RFToolsTools.getItemCapabilitySafe(te);
                 if (capability == null) {
@@ -132,7 +131,7 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
                     stack = inventory.getStackInSlot(slot);
                 }
             }
-            if (ItemStackTools.isValid(stack)) {
+            if (!stack.isEmpty()) {
                 int nr = isItemMatching(stack);
                 newout = nr >= amount;
             }
@@ -143,26 +142,26 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
     private int isItemMatching(ItemStack stack) {
         int nr = 0;
         ItemStack matcher = inventoryHelper.getStackInSlot(0);
-        if (ItemStackTools.isValid(matcher)) {
+        if (!matcher.isEmpty()) {
             if (oreDict) {
                 if (isEqualForOredict(matcher, stack)) {
                     if ((!useMeta) || matcher.getMetadata() == stack.getMetadata()) {
-                        nr = ItemStackTools.getStackSize(stack);
+                        nr = stack.getCount();
                     }
                 }
             } else {
                 if (useMeta) {
                     if (matcher.isItemEqual(stack)) {
-                        nr = ItemStackTools.getStackSize(stack);
+                        nr = stack.getCount();
                     }
                 } else {
                     if (matcher.getItem() == stack.getItem()) {
-                        nr = ItemStackTools.getStackSize(stack);
+                        nr = stack.getCount();
                     }
                 }
             }
         } else {
-            nr = ItemStackTools.getStackSize(stack);
+            nr = stack.getCount();
         }
         return nr;
     }

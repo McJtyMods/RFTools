@@ -1,6 +1,5 @@
 package mcjty.rftools.xnet;
 
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.storagemonitor.InventoryAccessSettings;
 import mcjty.xnet.api.gui.IEditorGui;
 import mcjty.xnet.api.gui.IndicatorIcon;
@@ -61,9 +60,9 @@ public class StorageConnectorSettings extends AbstractConnectorSettings {
         for (int i = 0 ; i < InventoryAccessSettings.FILTER_SIZE ; i++) {
             if (tag.hasKey("filter" + i)) {
                 NBTTagCompound itemTag = tag.getCompoundTag("filter" + i);
-                accessSettings.getFilters().set(i, ItemStackTools.loadFromNBT(itemTag));
+                accessSettings.getFilters().set(i, new ItemStack(itemTag));
             } else {
-                accessSettings.getFilters().set(i, ItemStackTools.getEmptyStack());
+                accessSettings.getFilters().set(i, ItemStack.EMPTY);
             }
         }
         accessSettings.setOredictMode(tag.getBoolean("oredictMode"));
@@ -83,7 +82,7 @@ public class StorageConnectorSettings extends AbstractConnectorSettings {
         tag.setBoolean("boauto", accessSettings.isBlockOutputAuto());
         tag.setBoolean("boscreen", accessSettings.isBlockOutputScreen());
         for (int i = 0 ; i < InventoryAccessSettings.FILTER_SIZE ; i++) {
-            if (ItemStackTools.isValid(accessSettings.getFilters().get(i))) {
+            if (!accessSettings.getFilters().get(i).isEmpty()) {
                 NBTTagCompound itemTag = new NBTTagCompound();
                 accessSettings.getFilters().get(i).writeToNBT(itemTag);
                 tag.setTag("filter" + i, itemTag);

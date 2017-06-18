@@ -4,11 +4,11 @@ import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.SlotDefinition;
 import mcjty.lib.container.SlotType;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.craftinggrid.CraftingGridInventory;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 
 public class StorageScannerContainer extends GenericContainer {
 
@@ -41,7 +41,7 @@ public class StorageScannerContainer extends GenericContainer {
     public void clearGrid() {
         IInventory inventory = inventories.get(CONTAINER_GRID);
         for (int i = 0 ; i < inventory.getSizeInventory() ; i++) {
-            inventory.setInventorySlotContents(i, ItemStackTools.getEmptyStack());
+            inventory.setInventorySlotContents(i, ItemStack.EMPTY);
         }
     }
 

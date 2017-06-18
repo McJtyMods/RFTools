@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.storagemonitor;
 
-import mcjty.lib.tools.ItemStackList;
-import mcjty.lib.tools.ItemStackTools;
+import mcjty.lib.varia.ItemStackList;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -31,7 +30,7 @@ public class ItemFilterCache {
     }
 
     public boolean match(ItemStack stack) {
-        if (ItemStackTools.isValid(stack)) {
+        if (!stack.isEmpty()) {
             boolean match = false;
 
             if (oredictMode) {

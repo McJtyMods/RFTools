@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "rftools:endergenic"
+  },
+  "pattern": [
+    "DoD",
+    "oMo",
+    "DoD"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "M": {
+      "item": "rftools:machine_frame"
+    },
+    "o": {
+      "item": "minecraft:ender_pearl"
+    }
+  }
+}

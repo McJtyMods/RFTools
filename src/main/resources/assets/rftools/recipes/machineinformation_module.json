@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "rftools:machineinformation_module"
+  },
+  "pattern": [
+    " f ",
+    "rir",
+    " b "
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "b": {
+      "item": "#dyeBlack"
+    },
+    "f": {
+      "item": "minecraft:furnace"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    }
+  }
+}

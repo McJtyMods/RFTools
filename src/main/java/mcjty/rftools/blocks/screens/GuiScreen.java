@@ -9,7 +9,6 @@ import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.ToggleButton;
 import mcjty.lib.network.Argument;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
@@ -115,7 +114,7 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
     private void refreshButtons() {
         for (int i = 0 ; i < ScreenContainer.SCREEN_MODULES ; i++) {
             final ItemStack slot = tileEntity.getStackInSlot(i);
-            if (ItemStackTools.isValid(slot) && slot.getItem() != null && slot.getItem() instanceof IModuleProvider) {
+            if (!slot.isEmpty() && slot.getItem() != null && slot.getItem() instanceof IModuleProvider) {
                 IModuleProvider moduleProvider = (IModuleProvider) slot.getItem();
                 Class<? extends IClientScreenModule> clientScreenModuleClass = moduleProvider.getClientScreenModule();
                 if (!clientScreenModuleClass.isInstance(clientScreenModules[i])) {

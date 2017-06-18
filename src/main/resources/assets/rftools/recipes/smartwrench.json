@@ -1,0 +1,19 @@
+{
+  "result": {
+    "item": "rftools:smartwrench"
+  },
+  "pattern": [
+    "  i",
+    " l ",
+    "l  "
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "l": {
+      "item": "#dyeBlue"
+    }
+  }
+}

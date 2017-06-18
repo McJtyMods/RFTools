@@ -1,7 +1,6 @@
 package mcjty.rftools.items.teleportprobe;
 
 import io.netty.buffer.ByteBuf;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.blocks.teleporter.TeleportDestination;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
@@ -37,7 +36,7 @@ public class PacketGetTargets implements IMessage {
         private void handle(PacketGetTargets message, MessageContext ctx) {
             EntityPlayerMP player = ctx.getServerHandler().player;
             ItemStack heldItem = player.getHeldItem(EnumHand.MAIN_HAND);
-            if (ItemStackTools.isEmpty(heldItem)) {
+            if (heldItem.isEmpty()) {
                 return;
             }
             NBTTagCompound tagCompound = heldItem.getTagCompound();

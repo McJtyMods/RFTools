@@ -1,18 +1,10 @@
 package mcjty.rftools.blocks.shield;
 
-import mcjty.lib.compat.MyGameReg;
 import mcjty.rftools.GeneralConfiguration;
-import mcjty.rftools.blocks.ModBlocks;
-import mcjty.rftools.crafting.PreservingShapedRecipe;
-import mcjty.rftools.items.ModItems;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public class ShieldSetup {
     public static ShieldBlock shieldBlock1;
@@ -64,8 +56,6 @@ public class ShieldSetup {
         Block redstoneTorch = Blocks.REDSTONE_TORCH;
 
         if (GeneralConfiguration.enableShieldProjectorRecipe) {
-            MyGameReg.addRecipe(new ItemStack(shieldBlock1), "gTg", "rMr", "ooo", 'M', ModBlocks.machineFrame, 'o', Blocks.OBSIDIAN,
-                                   'r', Items.REDSTONE, 'T', redstoneTorch, 'g', Items.GOLD_INGOT);
 
             // @todo recipes
 //            MyGameReg.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
@@ -85,10 +75,5 @@ public class ShieldSetup {
 //            }, new ItemStack(shieldBlock4), 4));
         }
 
-        MyGameReg.addRecipe(new ItemStack(shieldTemplateBlock, 8, 0), "www", "lgl", "www", 'w', Blocks.WOOL, 'l', "dyeBlue", 'g', Blocks.GLASS);
-        MyGameReg.addRecipe(new ItemStack(shieldTemplateBlock, 1, 1), "s", 's', new ItemStack(shieldTemplateBlock, 1, 0));
-        MyGameReg.addRecipe(new ItemStack(shieldTemplateBlock, 1, 2), "s", 's', new ItemStack(shieldTemplateBlock, 1, 1));
-        MyGameReg.addRecipe(new ItemStack(shieldTemplateBlock, 1, 3), "s", 's', new ItemStack(shieldTemplateBlock, 1, 2));
-        MyGameReg.addRecipe(new ItemStack(shieldTemplateBlock, 1, 0), "s", 's', new ItemStack(shieldTemplateBlock, 1, 3));
     }
 }

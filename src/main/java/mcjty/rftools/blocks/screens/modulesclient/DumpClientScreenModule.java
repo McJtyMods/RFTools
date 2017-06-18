@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
 import mcjty.lib.gui.RenderHelper;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.api.screens.*;
 import mcjty.rftools.api.screens.data.IModuleData;
 import mcjty.rftools.blocks.screens.modules.DumpScreenModule;
@@ -72,7 +71,7 @@ public class DumpClientScreenModule implements IClientScreenModule {
             }
             for (int i = 0 ; i < stacks.length ; i++) {
                 if (tagCompound.hasKey("stack"+i)) {
-                    stacks[i] = ItemStackTools.loadFromNBT(tagCompound.getCompoundTag("stack"+i));
+                    stacks[i] = new ItemStack(tagCompound.getCompoundTag("stack" + i));
                 }
             }
         }

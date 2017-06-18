@@ -1,7 +1,5 @@
 package mcjty.rftools.blocks.screens.modules;
 
-import mcjty.lib.tools.ChatTools;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
@@ -12,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -37,7 +36,7 @@ public class DumpScreenModule implements IScreenModule {
             setupCoordinateFromNBT(tagCompound, dim, pos);
             for (int i = 0; i < stacks.length; i++) {
                 if (tagCompound.hasKey("stack" + i)) {
-                    stacks[i] = ItemStackTools.loadFromNBT(tagCompound.getCompoundTag("stack" + i));
+                    stacks[i] = new ItemStack(tagCompound.getCompoundTag("stack" + i));
                 }
             }
         }
@@ -66,7 +65,7 @@ public class DumpScreenModule implements IScreenModule {
     }
 
     private boolean isShown(ItemStack stack) {
-        if (ItemStackTools.isEmpty(stack)) {
+        if (stack.isEmpty()) {
             return false;
         }
         for (ItemStack s : stacks) {
@@ -83,7 +82,12 @@ public class DumpScreenModule implements IScreenModule {
             return;
         }
         if (BlockPosTools.INVALID.equals(coordinate)) {
-            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Module is not linked to storage scanner!"));
+            ITextComponent component = new TextComponentString(TextFormatting.RED + "Module is not linked to storage scanner!");
+            if (player instanceof EntityPlayer) {
+                ((EntityPlayer) player).sendStatusMessage(component, false);
+            } else {
+                player.sendMessage(component);
+            }
             return;
         }
 

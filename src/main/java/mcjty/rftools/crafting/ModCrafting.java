@@ -1,8 +1,6 @@
 package mcjty.rftools.crafting;
 
-import mcjty.lib.compat.MyGameReg;
 import mcjty.rftools.GeneralConfiguration;
-import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorSetup;
 import mcjty.rftools.blocks.booster.BoosterSetup;
 import mcjty.rftools.blocks.builder.BuilderSetup;
@@ -24,20 +22,8 @@ import mcjty.rftools.blocks.spawner.SpawnerSetup;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerSetup;
 import mcjty.rftools.blocks.teleporter.TeleporterSetup;
-import mcjty.rftools.items.ModItems;
-import mcjty.rftools.items.SyringeItem;
-import net.minecraft.entity.monster.*;
-import net.minecraft.entity.passive.EntityBat;
-import net.minecraft.entity.passive.EntityMooshroom;
-import net.minecraft.entity.passive.EntityOcelot;
-import net.minecraft.entity.passive.EntityWolf;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.RecipeSorter;
-import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public final class ModCrafting {
     static {
@@ -75,16 +61,6 @@ public final class ModCrafting {
     }
 
     private static void initBaseCrafting() {
-        MyGameReg.addRecipe(new ItemStack(ModBlocks.machineFrame), "ili", "g g", "ili", 'i', Items.IRON_INGOT, 'g', Items.GOLD_NUGGET, 'l', "dyeBlue");
-        MyGameReg.addRecipe(new ItemStack(ModBlocks.machineBase), "   ", "ggg", "sss", 'g', Items.GOLD_NUGGET, 's', Blocks.STONE);
-
-        MyGameReg.addRecipe(new ItemStack(ModItems.rfToolsManualItem), " r ", "rbr", " r ", 'r', Items.REDSTONE, 'b', Items.BOOK);
-        MyGameReg.addRecipe(new ItemStack(ModItems.smartWrenchItem), "  i", " l ", "l  ", 'i', Items.IRON_INGOT, 'l', "dyeBlue");
-        MyGameReg.addRecipe(new ItemStack(ModItems.infusedDiamond), "sss", "sds", "sss", 's', ModItems.dimensionalShardItem, 'd', Items.DIAMOND);
-
-        MyGameReg.addRecipe(new ItemStack(ModItems.networkMonitorItem), "rlr", "iri", "rlr", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT, 'l', "dyeBlack");
-
-        MyGameReg.addRecipe(new ItemStack(ModItems.syringeItem), "i  ", " i ", "  b", 'i', Items.IRON_INGOT, 'b', Items.GLASS_BOTTLE);
 
         String[] syringeMatcher = new String[] { "level", "mobId" };
 
@@ -107,12 +83,10 @@ public final class ModCrafting {
             case GeneralConfiguration.CRAFT_NONE:
                 break;
             case GeneralConfiguration.CRAFT_EASY:
-                MyGameReg.addRecipe(new ItemStack(ModItems.dimensionalShardItem, 8), " d ", "irg", " q ", 'd', Items.DIAMOND, 'g', Items.GOLD_INGOT,
-                                       'i', Items.IRON_INGOT, 'q', Items.QUARTZ);
+
                 break;
             case GeneralConfiguration.CRAFT_HARD:
-                MyGameReg.addRecipe(new ItemStack(ModItems.dimensionalShardItem, 8), "deg", "irG", "qcL", 'd', Items.DIAMOND, 'e', Items.EMERALD, 'g', Items.GOLD_INGOT,
-                                       'i', Items.IRON_INGOT, 'r', Items.REDSTONE, 'G', Items.GLOWSTONE_DUST, 'q', Items.QUARTZ, 'c', Items.PRISMARINE_SHARD, 'L', Blocks.GLASS);
+
                 break;
         }
     }

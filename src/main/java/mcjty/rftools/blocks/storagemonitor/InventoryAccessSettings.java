@@ -1,8 +1,6 @@
 package mcjty.rftools.blocks.storagemonitor;
 
-import mcjty.lib.tools.ItemStackList;
-import mcjty.lib.tools.ItemStackTools;
-import mcjty.xnet.apiimpl.items.ItemFilterCache;
+import mcjty.lib.varia.ItemStackList;
 import net.minecraft.item.ItemStack;
 
 import java.util.function.Predicate;
@@ -121,7 +119,7 @@ public class InventoryAccessSettings {
         if (matcher == null) {
             ItemStackList filterList = ItemStackList.create();
             for (ItemStack stack : filters) {
-                if (ItemStackTools.isValid(stack)) {
+                if (!stack.isEmpty()) {
                     filterList.add(stack);
                 }
             }

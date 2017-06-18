@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.screens.modules;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
@@ -52,7 +51,7 @@ public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModul
                 if (buf.readBoolean()) {
                     stacks[i] = NetworkTools.readItemStack(buf);
                 } else {
-                    stacks[i] = ItemStackTools.getEmptyStack();
+                    stacks[i] = ItemStack.EMPTY;
                 }
             }
         }
@@ -70,7 +69,7 @@ public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModul
         }
 
         private void writeStack(ByteBuf buf, ItemStack stack) {
-            if (ItemStackTools.isValid(stack)) {
+            if (!stack.isEmpty()) {
                 buf.writeBoolean(true);
                 NetworkTools.writeItemStack(buf, stack);
             } else {
@@ -116,7 +115,7 @@ public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModul
 
     private ItemStack getItemStack(IInventory inventory, int slot) {
         if (slot == -1) {
-            return ItemStackTools.getEmptyStack();
+            return ItemStack.EMPTY;
         }
         if (slot < inventory.getSizeInventory()) {
 //            if (RFTools.instance.mfr && MFRCompatibility.isExtendedStorage(inventory)) {
@@ -126,13 +125,13 @@ public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModul
 //            }
             return inventory.getStackInSlot(slot);
         } else {
-            return ItemStackTools.getEmptyStack();
+            return ItemStack.EMPTY;
         }
     }
 
     private ItemStack getItemStack(IItemHandler itemHandler, int slot) {
         if (slot == -1) {
-            return ItemStackTools.getEmptyStack();
+            return ItemStack.EMPTY;
         }
         if (slot < itemHandler.getSlots()) {
 //            if (RFTools.instance.mfr && MFRCompatibility.isExtendedStorage(inventory)) {
@@ -142,7 +141,7 @@ public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModul
 //            }
             return itemHandler.getStackInSlot(slot);
         } else {
-            return ItemStackTools.getEmptyStack();
+            return ItemStack.EMPTY;
         }
     }
 

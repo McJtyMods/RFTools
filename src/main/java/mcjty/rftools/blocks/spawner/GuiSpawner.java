@@ -9,7 +9,6 @@ import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.SyringeItem;
 import mcjty.rftools.network.RFToolsMessages;
@@ -87,7 +86,7 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
         rfTick.setText("");
 
         ItemStack stack = tileEntity.getStackInSlot(SpawnerContainer.SLOT_SYRINGE);
-        if (ItemStackTools.isEmpty(stack)) {
+        if (stack.isEmpty()) {
             return;
         }
 
@@ -114,7 +113,7 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
                 for (SpawnerConfiguration.MobSpawnAmount spawnAmount : list) {
                     ItemStack b = spawnAmount.getObject();
                     float amount = spawnAmount.getAmount();
-                    if (ItemStackTools.isEmpty(b)) {
+                    if (b.isEmpty()) {
                         Object[] blocks = {Blocks.LEAVES, Blocks.PUMPKIN, Items.WHEAT, Items.POTATO, Items.BEEF};
                         int index = (int) ((System.currentTimeMillis() / 500) % blocks.length);
                         if (blocks[index] instanceof Block) {

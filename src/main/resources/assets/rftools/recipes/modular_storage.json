@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "rftools:modular_storage"
+  },
+  "pattern": [
+    "rcr",
+    "qMq",
+    "rqr"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "q": {
+      "item": "minecraft:quartz"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "c": {
+      "item": "#chest"
+    },
+    "M": {
+      "item": "rftools:machine_frame"
+    }
+  }
+}

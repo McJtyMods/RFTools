@@ -2,26 +2,17 @@ package mcjty.rftools.blocks.builder;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import mcjty.lib.compat.MyGameReg;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.ModBlocks;
-import mcjty.rftools.crafting.PreservingShapedOreRecipe;
-import mcjty.rftools.crafting.PreservingShapedRecipe;
-import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.builder.SpaceChamberCardItem;
 import mcjty.rftools.proxy.CommonProxy;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.io.*;
 import java.util.HashMap;
@@ -69,18 +60,11 @@ public class BuilderSetup {
     public static void initCrafting() {
         Block redstoneTorch = Blocks.REDSTONE_TORCH;
 
-        MyGameReg.addRecipe(new ItemStack(spaceChamberBlock), "lgl", "gMg", "lgl", 'M', ModBlocks.machineFrame, 'g', Blocks.GLASS, 'l', "dyeBlue");
-        MyGameReg.addRecipe(new ItemStack(spaceChamberControllerBlock), " e ", "tMt", " e ", 'M', spaceChamberBlock, 't', redstoneTorch, 'e', Items.ENDER_PEARL);
         if (GeneralConfiguration.enableBuilderRecipe) {
-            MyGameReg.addRecipe(new ItemStack(builderBlock), "beb", "rMr", "brb", 'M', ModBlocks.machineFrame, 'e', Items.ENDER_PEARL, 'r', Items.REDSTONE, 'b', Blocks.BRICK_BLOCK);
+
         }
 
-        MyGameReg.addRecipe(new ItemStack(spaceChamberCardItem), " b ", "rir", " b ", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
-                'b', Items.BRICK);
-
         if (BuilderConfiguration.shapeCardAllowed) {
-            MyGameReg.addRecipe(new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_SHAPE), "pbp", "rir", "pbp", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
-                    'b', Items.BRICK, 'p', Items.PAPER);
 
             if (BuilderConfiguration.quarryAllowed) {
                 // @todo recipes

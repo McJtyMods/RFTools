@@ -2,7 +2,6 @@ package mcjty.rftools.craftinggrid;
 
 import mcjty.lib.base.ModBase;
 import mcjty.lib.base.StyleConfig;
-import mcjty.lib.compat.CompatSlot;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.DefaultSelectionEvent;
@@ -11,8 +10,6 @@ import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.tools.ItemStackTools;
-import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.crafter.CraftingRecipe;
@@ -180,8 +177,8 @@ public class GuiCraftingGrid {
 
                 if (slot != null) {
                     GlStateManager.colorMask(true, true, true, false);
-                    int xPos = CompatSlot.getX(slot);
-                    int yPos = CompatSlot.getY(slot);
+                    int xPos = slot.xPos;
+                    int yPos = slot.yPos;
                     gui.drawRect(xPos, yPos, xPos + 16, yPos + 16, 0xffff0000);
                 }
             }
@@ -191,8 +188,8 @@ public class GuiCraftingGrid {
 
                     if (slot != null) {
                         GlStateManager.colorMask(true, true, true, false);
-                        int xPos = CompatSlot.getX(slot);
-                        int yPos = CompatSlot.getY(slot);
+                        int xPos = slot.xPos;
+                        int yPos = slot.yPos;
                         gui.drawRect(xPos, yPos, xPos + 16, yPos + 16, 0xffff0000);
                     }
                 }
@@ -214,10 +211,10 @@ public class GuiCraftingGrid {
         }
 
         // Compare current contents to avoid unneeded slot update.
-        IRecipe recipe = CraftingRecipe.findRecipe(MinecraftTools.getWorld(mc), inv);
+        IRecipe recipe = CraftingRecipe.findRecipe(mc.world, inv);
         ItemStack newResult;
         if (recipe == null) {
-            newResult = ItemStackTools.getEmptyStack();
+            newResult = ItemStack.EMPTY;
         } else {
             newResult = recipe.getCraftingResult(inv);
         }
@@ -227,7 +224,7 @@ public class GuiCraftingGrid {
     private void addRecipeLine(ItemStack craftingResult) {
         String readableName = BlockInfo.getReadableName(craftingResult, 0);
         int color = StyleConfig.colorTextInListNormal;
-        if (ItemStackTools.isEmpty(craftingResult)) {
+        if (craftingResult.isEmpty()) {
             readableName = "<recipe>";
             color = 0xFF505050;
         }

@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.screens.modules;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.lib.tools.ChatTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
@@ -15,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -148,7 +148,12 @@ public class ElevatorButtonScreenModule implements IScreenModule<ElevatorButtonS
     public void mouseClick(World world, int x, int y, boolean clicked, EntityPlayer player) {
         if (BlockPosTools.INVALID.equals(coordinate)) {
             if (player != null) {
-                ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Module is not linked to elevator!"));
+                ITextComponent component = new TextComponentString(TextFormatting.RED + "Module is not linked to elevator!");
+                if (player instanceof EntityPlayer) {
+                    ((EntityPlayer) player).sendStatusMessage(component, false);
+                } else {
+                    player.sendMessage(component);
+                }
             }
             return;
         }

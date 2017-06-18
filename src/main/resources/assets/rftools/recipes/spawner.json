@@ -1,0 +1,31 @@
+{
+  "result": {
+    "item": "rftools:spawner"
+  },
+  "pattern": [
+    "rzr",
+    "eMl",
+    "rbr"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "b": {
+      "item": "minecraft:bone"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "e": {
+      "item": "minecraft:ender_pearl"
+    },
+    "z": {
+      "item": "minecraft:rotten_flesh"
+    },
+    "l": {
+      "item": "minecraft:blaze_rod"
+    },
+    "M": {
+      "item": "rftools:machine_frame"
+    }
+  }
+}

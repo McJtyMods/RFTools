@@ -3,9 +3,7 @@ package mcjty.rftools.blocks.screens;
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.ModuleSupport;
-import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.api.screens.IScreenModule;
@@ -362,7 +360,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
     @Override
     protected boolean openGui(World world, int x, int y, int z, EntityPlayer player) {
         ItemStack itemStack = player.getHeldItem(EnumHand.MAIN_HAND);
-        if (ItemStackTools.isValid(itemStack) && itemStack.getItem() == Items.DYE) {
+        if (!itemStack.isEmpty() && itemStack.getItem() == Items.DYE) {
             int damage = itemStack.getItemDamage();
             if (damage < 0) {
                 damage = 0;
@@ -479,8 +477,8 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
             for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
                 NBTTagCompound tag = bufferTagList.getCompoundTagAt(i);
                 if (tag != null) {
-                    ItemStack stack = ItemStackTools.loadFromNBT(tag);
-                    if (ItemStackTools.isValid(stack)) {
+                    ItemStack stack = new ItemStack(tag);
+                    if (!stack.isEmpty()) {
                         rc++;
                     }
                 }

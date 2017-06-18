@@ -11,7 +11,6 @@ import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
-import mcjty.lib.tools.MinecraftTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.BlockInfo;
@@ -111,8 +110,8 @@ public class GuiNetworkMonitor extends GuiItemScreen {
         }
         BlockPos c = indexToCoordinate.get(index);
         RFTools.instance.clientInfo.hilightBlock(c, System.currentTimeMillis()+1000* NetworkMonitorConfiguration.hilightTime);
-        Logging.message(MinecraftTools.getPlayer(mc), "The block is now highlighted");
-        MinecraftTools.getPlayer(Minecraft.getMinecraft()).closeScreen();
+        Logging.message(mc.player, "The block is now highlighted");
+        Minecraft.getMinecraft().player.closeScreen();
     }
 
     private void refreshList(boolean recalcPerTick) {
@@ -170,7 +169,7 @@ public class GuiNetworkMonitor extends GuiItemScreen {
             for (Map.Entry<BlockPos, BlockInfo> me : connectedBlocks.entrySet()) {
                 BlockInfo blockInfo = me.getValue();
                 BlockPos coordinate = me.getKey();
-                if (MinecraftTools.getWorld(mc).isAirBlock(coordinate)) {
+                if (mc.world.isAirBlock(coordinate)) {
                     continue;
                 }
 
@@ -179,7 +178,7 @@ public class GuiNetworkMonitor extends GuiItemScreen {
 
                 int color = getTextColor(blockInfo);
 
-                IBlockState state = MinecraftTools.getWorld(mc).getBlockState(coordinate);
+                IBlockState state = mc.world.getBlockState(coordinate);
                 String displayName = BlockInfo.getReadableName(state);
 
                 if (filter != null) {

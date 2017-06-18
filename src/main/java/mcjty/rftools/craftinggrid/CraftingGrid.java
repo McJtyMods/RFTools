@@ -1,6 +1,5 @@
 package mcjty.rftools.craftinggrid;
 
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.crafter.CraftingRecipe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -60,7 +59,7 @@ public class CraftingGrid {
         for (int i = 0 ; i < craftingGridInventory.getSizeInventory() ; i++) {
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
             ItemStack stack = craftingGridInventory.getStackInSlot(i);
-            if (ItemStackTools.isValid(stack)) {
+            if (!stack.isEmpty()) {
                 stack.writeToNBT(nbtTagCompound);
             }
             bufferTagList.appendTag(nbtTagCompound);
@@ -85,7 +84,7 @@ public class CraftingGrid {
         NBTTagList bufferTagList = tagCompound.getTagList("grid", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < craftingGridInventory.getSizeInventory() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            craftingGridInventory.setInventorySlotContents(i, ItemStackTools.loadFromNBT(nbtTagCompound));
+            craftingGridInventory.setInventorySlotContents(i, new ItemStack(nbtTagCompound));
         }
 
         NBTTagList recipeTagList = tagCompound.getTagList("recipes", Constants.NBT.TAG_COMPOUND);

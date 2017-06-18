@@ -1,8 +1,6 @@
 package mcjty.rftools.blocks.storage;
 
-import mcjty.lib.compat.CompatInventory;
-import mcjty.lib.tools.ItemStackList;
-import mcjty.lib.tools.ItemStackTools;
+import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.craftinggrid.CraftingGrid;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import mcjty.rftools.craftinggrid.InventoriesItemSource;
@@ -11,6 +9,7 @@ import mcjty.rftools.items.storage.StorageModuleItem;
 import mcjty.rftools.jei.JEIRecipeAcceptor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -21,7 +20,7 @@ import net.minecraftforge.common.util.Constants;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class ModularStorageItemInventory implements CompatInventory, CraftingGridProvider, JEIRecipeAcceptor {
+public class ModularStorageItemInventory implements CraftingGridProvider, JEIRecipeAcceptor, IInventory {
     private ItemStackList stacks;
     private final EntityPlayer entityPlayer;
     private CraftingGrid craftingGrid = new CraftingGrid();
@@ -35,7 +34,7 @@ public class ModularStorageItemInventory implements CompatInventory, CraftingGri
         NBTTagList bufferTagList = getStorageItem().getTagCompound().getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < Math.min(bufferTagList.tagCount(), maxSize) ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            stacks.set(i, ItemStackTools.loadFromNBT(nbtTagCompound));
+            stacks.set(i, new ItemStack(nbtTagCompound));
         }
     }
 
@@ -52,7 +51,7 @@ public class ModularStorageItemInventory implements CompatInventory, CraftingGri
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < Math.min(bufferTagList.tagCount(), maxSize) ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            stacks.set(i, ItemStackTools.loadFromNBT(nbtTagCompound));
+            stacks.set(i, new ItemStack(nbtTagCompound));
         }
         craftingGrid.readFromNBT(tagCompound.getCompoundTag("grid"));
 
@@ -112,7 +111,7 @@ public class ModularStorageItemInventory implements CompatInventory, CraftingGri
 
     private int getMaxSize() {
         ItemStack heldItem = getStorageItem();
-        if (ItemStackTools.isEmpty(heldItem)) {
+        if (heldItem.isEmpty()) {
             return 0;
         }
         if (heldItem.getItem() != ModularStorageSetup.storageModuleTabletItem) {
@@ -136,7 +135,7 @@ public class ModularStorageItemInventory implements CompatInventory, CraftingGri
     @Override
     public ItemStack getStackInSlot(int index) {
         if (index >= getMaxSize()) {
-            return ItemStackTools.getEmptyStack();
+            return ItemStack.EMPTY;
         } else {
             return stacks.get(index);
         }
@@ -145,23 +144,23 @@ public class ModularStorageItemInventory implements CompatInventory, CraftingGri
     @Override
     public ItemStack decrStackSize(int index, int amount) {
         if (index >= stacks.size()) {
-            return ItemStackTools.getEmptyStack();
+            return ItemStack.EMPTY;
         }
-        if (ItemStackTools.isValid(stacks.get(index))) {
-            if (ItemStackTools.getStackSize(stacks.get(index)) <= amount) {
+        if (!stacks.get(index).isEmpty()) {
+            if (stacks.get(index).getCount() <= amount) {
                 ItemStack old = stacks.get(index);
-                stacks.set(index, ItemStackTools.getEmptyStack());
+                stacks.set(index, ItemStack.EMPTY);
                 markDirty();
                 return old;
             }
             ItemStack its = stacks.get(index).splitStack(amount);
-            if (ItemStackTools.isEmpty(stacks.get(index))) {
-                stacks.set(index, ItemStackTools.getEmptyStack());
+            if (stacks.get(index).isEmpty()) {
+                stacks.set(index, ItemStack.EMPTY);
             }
             markDirty();
             return its;
         }
-        return ItemStackTools.getEmptyStack();
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -170,8 +169,13 @@ public class ModularStorageItemInventory implements CompatInventory, CraftingGri
             return;
         }
         stacks.set(index, stack);
-        if (ItemStackTools.isValid(stack) && ItemStackTools.getStackSize(stack) > getInventoryStackLimit()) {
-            ItemStackTools.setStackSize(stack, getInventoryStackLimit());
+        if (!stack.isEmpty() && stack.getCount() > getInventoryStackLimit()) {
+            int amount = getInventoryStackLimit();
+            if (amount <= 0) {
+                stack.setCount(0);
+            } else {
+                stack.setCount(amount);
+            }
         }
         markDirty();
     }
@@ -188,9 +192,9 @@ public class ModularStorageItemInventory implements CompatInventory, CraftingGri
         for (int i = 0 ; i < getMaxSize() ; i++) {
             ItemStack stack = stacks.get(i);
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
-            if (ItemStackTools.isValid(stack)) {
+            if (!stack.isEmpty()) {
                 stack.writeToNBT(nbtTagCompound);
-                if (ItemStackTools.getStackSize(stack) > 0) {
+                if (stack.getCount() > 0) {
                     numStacks++;
                 }
             }
@@ -202,7 +206,6 @@ public class ModularStorageItemInventory implements CompatInventory, CraftingGri
         tagCompound.setTag("grid", craftingGrid.writeToNBT());
     }
 
-    @Override
     public boolean isUsable(EntityPlayer player) {
         return true;
     }
@@ -215,7 +218,7 @@ public class ModularStorageItemInventory implements CompatInventory, CraftingGri
     @Override
     public ItemStack removeStackFromSlot(int index) {
         ItemStack stack = getStackInSlot(index);
-        setInventorySlotContents(index, ItemStackTools.getEmptyStack());
+        setInventorySlotContents(index, ItemStack.EMPTY);
         return stack;
     }
 
@@ -262,5 +265,15 @@ public class ModularStorageItemInventory implements CompatInventory, CraftingGri
     @Override
     public ITextComponent getDisplayName() {
         return null;
+    }
+
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer player) {
+        return isUsable(player);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
     }
 }

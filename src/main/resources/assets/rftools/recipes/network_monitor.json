@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "rftools:network_monitor"
+  },
+  "pattern": [
+    "rlr",
+    "iri",
+    "rlr"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "l": {
+      "item": "#dyeBlack"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "rftools:rf_monitor"
+  },
+  "pattern": [
+    " T ",
+    "rMr",
+    " T "
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "T": {
+      "item": "minecraft:redstone_torch"
+    },
+    "M": {
+      "item": "rftools:machine_frame"
+    }
+  }
+}

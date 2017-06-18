@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.storage;
 
 import io.netty.buffer.ByteBuf;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerContainer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -32,7 +31,7 @@ public class PacketClearGrid implements IMessage {
         public void handle(PacketClearGrid message, MessageContext ctx) {
             EntityPlayerMP player = ctx.getServerHandler().player;
             ItemStack mainhand = player.getHeldItemMainhand();
-            if (ItemStackTools.isValid(mainhand) && mainhand.getItem() == ModularStorageSetup.storageModuleTabletItem) {
+            if (!mainhand.isEmpty() && mainhand.getItem() == ModularStorageSetup.storageModuleTabletItem) {
                 if (player.openContainer instanceof ModularStorageItemContainer) {
                     ModularStorageItemContainer storageItemContainer = (ModularStorageItemContainer) player.openContainer;
                     storageItemContainer.clearGrid();

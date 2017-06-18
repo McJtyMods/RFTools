@@ -1,7 +1,6 @@
 package mcjty.rftools.items.storage;
 
-import mcjty.lib.tools.ItemStackList;
-import mcjty.lib.tools.ItemStackTools;
+import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.blocks.storage.sorters.ModItemSorter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -34,8 +33,8 @@ public class StorageFilterCache {
             int cnt = 0;
             for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
                 NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-                ItemStack s = ItemStackTools.loadFromNBT(nbtTagCompound);
-                if (ItemStackTools.isValid(s)) {
+                ItemStack s = new ItemStack(nbtTagCompound);
+                if (!s.isEmpty()) {
                     cnt++;
                 }
             }
@@ -43,8 +42,8 @@ public class StorageFilterCache {
             cnt = 0;
             for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
                 NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-                ItemStack s = ItemStackTools.loadFromNBT(nbtTagCompound);
-                if (ItemStackTools.isValid(s)) {
+                ItemStack s = new ItemStack(nbtTagCompound);
+                if (!s.isEmpty()) {
                     stacks.set(cnt++, s);
                     if (oredictMode) {
                         for (int id : OreDictionary.getOreIDs(s)) {
@@ -59,7 +58,7 @@ public class StorageFilterCache {
     }
 
     public boolean match(ItemStack stack) {
-        if (ItemStackTools.isValid(stack)) {
+        if (!stack.isEmpty()) {
             boolean match = false;
             String modName = "";
             if (modMode) {

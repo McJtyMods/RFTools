@@ -1,14 +1,14 @@
 package mcjty.rftools.items.teleportprobe;
 
 import io.netty.buffer.ByteBuf;
-import mcjty.lib.tools.ChatTools;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.blocks.teleporter.TeleportDestination;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -47,7 +47,7 @@ public class PacketCycleDestination implements IMessage {
         private void handle(PacketCycleDestination message, MessageContext ctx) {
             EntityPlayerMP playerEntity = ctx.getServerHandler().player;
             ItemStack stack = playerEntity.getHeldItemMainhand();
-            if (ItemStackTools.isValid(stack) && stack.getItem() instanceof AdvancedChargedPorterItem) {
+            if (!stack.isEmpty() && stack.getItem() instanceof AdvancedChargedPorterItem) {
                 NBTTagCompound tagCompound = stack.getTagCompound();
                 if (tagCompound == null) {
                     return;
@@ -83,8 +83,13 @@ public class PacketCycleDestination implements IMessage {
                         if (donext == 1) {
                             String name = destination.getName() + " (dimension " + destination.getDimension() + ")";
                             tagCompound.setInteger("target", target);
-                            ChatTools.addChatMessage(playerEntity, new TextComponentString(TextFormatting.GREEN + "Target: "+
-                            TextFormatting.WHITE + name));
+                            ITextComponent component = new TextComponentString(TextFormatting.GREEN + "Target: "+
+                            TextFormatting.WHITE + name);
+                            if (playerEntity instanceof EntityPlayer) {
+                                ((EntityPlayer) playerEntity).sendStatusMessage(component, false);
+                            } else {
+                                playerEntity.sendMessage(component);
+                            }
                             donext = 2;
                         } else if (target == curtarget) {
                             donext = 1;

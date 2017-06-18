@@ -3,7 +3,6 @@ package mcjty.rftools.blocks.logic.sensor;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.network.Argument;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
@@ -164,11 +163,11 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     private boolean checkBlock(BlockPos newpos) {
         IBlockState state = getWorld().getBlockState(newpos);
         ItemStack matcher = inventoryHelper.getStackInSlot(0);
-        if (ItemStackTools.isEmpty(matcher)) {
+        if (matcher.isEmpty()) {
             return state.getBlock().isFullBlock(state);
         }
         ItemStack stack = state.getBlock().getItem(getWorld(), newpos, state);
-        if (ItemStackTools.isValid(stack)) {
+        if (!stack.isEmpty()) {
             return matcher.getItem() == stack.getItem();
         } else {
             return matcher.getItem() == Item.getItemFromBlock(state.getBlock());
@@ -179,7 +178,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         IBlockState state = getWorld().getBlockState(newpos);
         ItemStack matcher = inventoryHelper.getStackInSlot(0);
         Block block = state.getBlock();
-        if (ItemStackTools.isEmpty(matcher)) {
+        if (matcher.isEmpty()) {
             if (block instanceof BlockLiquid || block instanceof IFluidBlock) {
                 return !block.isAir(state, getWorld(), newpos);
             }

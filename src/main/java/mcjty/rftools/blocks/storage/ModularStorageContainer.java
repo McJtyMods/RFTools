@@ -1,18 +1,13 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.container.*;
-import mcjty.lib.tools.InventoryTools;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.craftinggrid.CraftingGridInventory;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.items.storage.StorageTypeItem;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.ClickType;
-import net.minecraft.inventory.IContainerListener;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -98,7 +93,7 @@ public class ModularStorageContainer extends GenericContainer {
                     @Override
                     public ItemStack getStack() {
                         if (getSlotIndex() >= (modularStorageTileEntity.getMaxSize() + SLOT_STORAGE)) {
-                            return ItemStackTools.getEmptyStack();
+                            return ItemStack.EMPTY;
                         }
                         return super.getStack();
                     }
@@ -145,11 +140,11 @@ public class ModularStorageContainer extends GenericContainer {
         List<Pair<Integer, ItemStack>> differentSlots = new ArrayList<>();
         for (int i = 0; i < this.inventorySlots.size(); ++i) {
             ItemStack itemstack = this.inventorySlots.get(i).getStack();
-            ItemStack itemstack1 = InventoryTools.getContainerItemStacks(this).get(i);
+            ItemStack itemstack1 = inventoryItemStacks.get(i);
 
             if (!ItemStack.areItemStacksEqual(itemstack1, itemstack)) {
-                itemstack1 = ItemStackTools.isEmpty(itemstack) ? ItemStackTools.getEmptyStack() : itemstack.copy();
-                InventoryTools.getContainerItemStacks(this).set(i, itemstack1);
+                itemstack1 = itemstack.isEmpty() ? ItemStack.EMPTY : itemstack.copy();
+                inventoryItemStacks.set(i, itemstack1);
                 differentSlots.add(Pair.of(i, itemstack));
                 if (differentSlots.size() >= 30) {
                     syncSlotsToListeners(differentSlots);

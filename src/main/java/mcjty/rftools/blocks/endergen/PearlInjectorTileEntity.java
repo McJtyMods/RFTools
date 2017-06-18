@@ -3,7 +3,6 @@ package mcjty.rftools.blocks.endergen;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockTools;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -70,7 +69,7 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
     private boolean takePearl() {
         for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
             ItemStack stack = inventoryHelper.getStackInSlot(i);
-            if (ItemStackTools.isValid(stack) && Items.ENDER_PEARL.equals(stack.getItem()) && ItemStackTools.getStackSize(stack) > 0) {
+            if (!stack.isEmpty() && Items.ENDER_PEARL.equals(stack.getItem()) && stack.getCount() > 0) {
                 decrStackSize(i, 1);
                 return true;
             }

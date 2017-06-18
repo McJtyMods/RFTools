@@ -1,11 +1,8 @@
 package mcjty.rftools.blocks.teleporter;
 
-import mcjty.lib.tools.DamageSourceTools;
-import mcjty.lib.tools.WorldTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.SoundTools;
-import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.environmental.NoTeleportAreaManager;
 import net.minecraft.block.Block;
@@ -17,6 +14,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -57,39 +55,39 @@ public class TeleportationTools {
                 break;
             case 3:
                 player.addPotionEffect(new PotionEffect(harm, 100));
-                player.attackEntityFrom(DamageSourceTools.getGenericSource(), 0.5f);
+                player.attackEntityFrom(DamageSource.GENERIC, 0.5f);
                 break;
             case 4:
                 player.addPotionEffect(new PotionEffect(harm, 200));
-                player.attackEntityFrom(DamageSourceTools.getGenericSource(), 0.5f);
+                player.attackEntityFrom(DamageSource.GENERIC, 0.5f);
                 break;
             case 5:
                 player.addPotionEffect(new PotionEffect(harm, 200));
-                player.attackEntityFrom(DamageSourceTools.getGenericSource(), 1.0f);
+                player.attackEntityFrom(DamageSource.GENERIC, 1.0f);
                 break;
             case 6:
                 player.addPotionEffect(new PotionEffect(harm, 300));
-                player.attackEntityFrom(DamageSourceTools.getGenericSource(), 1.0f);
+                player.attackEntityFrom(DamageSource.GENERIC, 1.0f);
                 break;
             case 7:
                 player.addPotionEffect(new PotionEffect(harm, 300));
                 player.addPotionEffect(new PotionEffect(wither, 200));
-                player.attackEntityFrom(DamageSourceTools.getGenericSource(), 2.0f);
+                player.attackEntityFrom(DamageSource.GENERIC, 2.0f);
                 break;
             case 8:
                 player.addPotionEffect(new PotionEffect(harm, 400));
                 player.addPotionEffect(new PotionEffect(wither, 300));
-                player.attackEntityFrom(DamageSourceTools.getGenericSource(), 2.0f);
+                player.attackEntityFrom(DamageSource.GENERIC, 2.0f);
                 break;
             case 9:
                 player.addPotionEffect(new PotionEffect(harm, 400));
                 player.addPotionEffect(new PotionEffect(wither, 400));
-                player.attackEntityFrom(DamageSourceTools.getGenericSource(), 3.0f);
+                player.attackEntityFrom(DamageSource.GENERIC, 3.0f);
                 break;
             case 10:
                 player.addPotionEffect(new PotionEffect(harm, 500));
                 player.addPotionEffect(new PotionEffect(wither, 500));
-                player.attackEntityFrom(DamageSourceTools.getGenericSource(), 3.0f);
+                player.attackEntityFrom(DamageSource.GENERIC, 3.0f);
                 break;
         }
     }
@@ -365,7 +363,7 @@ public class TeleportationTools {
         if (oldDimension == 1) {
             // For some reason teleporting out of the end does weird things.
             player.setPositionAndUpdate(x, y, z);
-            WorldTools.spawnEntity(worldServer, player);
+            worldServer.spawnEntity(player);
             worldServer.updateEntityWithOptionalForce(player, false);
         }
     }

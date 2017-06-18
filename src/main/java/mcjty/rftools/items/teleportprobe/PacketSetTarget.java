@@ -1,7 +1,6 @@
 package mcjty.rftools.items.teleportprobe;
 
 import io.netty.buffer.ByteBuf;
-import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -41,7 +40,7 @@ public class PacketSetTarget implements IMessage {
         private void handle(PacketSetTarget message, MessageContext ctx) {
             EntityPlayer player = ctx.getServerHandler().player;
             ItemStack heldItem = player.getHeldItem(EnumHand.MAIN_HAND);
-            if (ItemStackTools.isEmpty(heldItem)) {
+            if (heldItem.isEmpty()) {
                 return;
             }
             NBTTagCompound tagCompound = heldItem.getTagCompound();

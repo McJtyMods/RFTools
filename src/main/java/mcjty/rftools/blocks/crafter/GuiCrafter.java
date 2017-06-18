@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.crafter;
 
 import mcjty.lib.base.StyleConfig;
-import mcjty.lib.compat.CompatSlot;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.entity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.RenderHelper;
@@ -15,9 +14,7 @@ import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.network.Argument;
-import mcjty.lib.tools.ItemStackList;
-import mcjty.lib.tools.ItemStackTools;
-import mcjty.lib.tools.MinecraftTools;
+import mcjty.lib.varia.ItemStackList;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
@@ -222,7 +219,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     private void addRecipeLine(ItemStack craftingResult) {
         String readableName = BlockInfo.getReadableName(craftingResult, 0);
         int color = StyleConfig.colorTextInListNormal;
-        if (ItemStackTools.isEmpty(craftingResult)) {
+        if (craftingResult.isEmpty()) {
             readableName = "<no recipe>";
             color = 0xFF505050;
         }
@@ -244,7 +241,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         lastSelected = selected;
         if (selected == -1) {
             for (int i = 0 ; i < 10 ; i++) {
-                inventorySlots.getSlot(i).putStack(ItemStackTools.getEmptyStack());
+                inventorySlots.getSlot(i).putStack(ItemStack.EMPTY);
             }
             keepItem.setChoice("All");
             internalRecipe.setChoice("Ext");
@@ -278,10 +275,10 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         }
 
         // Compare current contents to avoid unneeded slot update.
-        IRecipe recipe = CraftingRecipe.findRecipe(MinecraftTools.getWorld(mc), inv);
+        IRecipe recipe = CraftingRecipe.findRecipe(mc.world, inv);
         ItemStack newResult;
         if (recipe == null) {
-            newResult = ItemStackTools.getEmptyStack();
+            newResult = ItemStack.EMPTY;
         } else {
             newResult = recipe.getCraftingResult(inv);
         }
@@ -311,10 +308,10 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         }
 
         // Compare current contents to avoid unneeded slot update.
-        IRecipe recipe = CraftingRecipe.findRecipe(MinecraftTools.getWorld(mc), inv);
+        IRecipe recipe = CraftingRecipe.findRecipe(mc.world, inv);
         ItemStack newResult;
         if (recipe == null) {
-            newResult = ItemStackTools.getEmptyStack();
+            newResult = ItemStack.EMPTY;
         } else {
             newResult = recipe.getCraftingResult(inv);
         }
@@ -349,10 +346,10 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     }
 
     private boolean itemStacksEqual(ItemStack matches, ItemStack oldStack) {
-        if (ItemStackTools.isEmpty(matches)) {
-            return ItemStackTools.isEmpty(oldStack);
+        if (matches.isEmpty()) {
+            return oldStack.isEmpty();
         } else {
-            return ItemStackTools.isValid(oldStack) && matches.isItemEqual(oldStack);
+            return !oldStack.isEmpty() && matches.isItemEqual(oldStack);
         }
     }
 
@@ -408,7 +405,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
 
         for (int i = 0 ; i < ghostSlots.size() ; i++) {
             ItemStack stack = ghostSlots.get(i);
-            if (ItemStackTools.isValid(stack)) {
+            if (!stack.isEmpty()) {
                 int slotIdx;
                 if (i < CrafterContainer.BUFFER_SIZE) {
                     slotIdx = i + CrafterContainer.SLOT_BUFFER;
@@ -417,13 +414,13 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
                 }
                 Slot slot = inventorySlots.getSlot(slotIdx);
                 if (!slot.getHasStack()) {
-                    itemRender.renderItemAndEffectIntoGUI(stack, CompatSlot.getX(slot), CompatSlot.getY(slot));
+                    itemRender.renderItemAndEffectIntoGUI(stack, slot.xPos, slot.yPos);
 
                     GlStateManager.disableLighting();
                     GlStateManager.enableBlend();
                     GlStateManager.disableDepth();
                     this.mc.getTextureManager().bindTexture(iconGuiElements);
-                    RenderHelper.drawTexturedModalRect(CompatSlot.getX(slot), CompatSlot.getY(slot), 14 * 16, 3 * 16, 16, 16);
+                    RenderHelper.drawTexturedModalRect(slot.xPos, slot.yPos, 14 * 16, 3 * 16, 16, 16);
                     GlStateManager.enableDepth();
                     GlStateManager.disableBlend();
                     GlStateManager.enableLighting();

@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.spawner;
 
 import mcjty.lib.gui.RenderGlowEffect;
 import mcjty.lib.gui.RenderHelper;
-import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.RFTools;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -37,7 +36,7 @@ public class MatterBeamerRenderer extends TileEntitySpecialRenderer<MatterBeamer
                 GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE);
 
                 Minecraft mc = Minecraft.getMinecraft();
-                EntityPlayerSP p = MinecraftTools.getPlayer(mc);
+                EntityPlayerSP p = mc.player;
                 double doubleX = p.lastTickPosX + (p.posX - p.lastTickPosX) * time;
                 double doubleY = p.lastTickPosY + (p.posY - p.lastTickPosY) * time;
                 double doubleZ = p.lastTickPosZ + (p.posZ - p.lastTickPosZ) * time;

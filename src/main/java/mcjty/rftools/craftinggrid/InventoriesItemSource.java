@@ -1,7 +1,6 @@
 package mcjty.rftools.craftinggrid;
 
 import mcjty.lib.container.InventoryHelper;
-import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -66,8 +65,8 @@ public class InventoriesItemSource implements IItemSource {
         ItemKey realKey = (ItemKey) key;
         ItemStack stack = realKey.getInventory().getStackInSlot(realKey.getSlot());
         ItemStack result = stack.splitStack(amount);
-        if (ItemStackTools.isEmpty(stack)) {
-            realKey.getInventory().setInventorySlotContents(realKey.getSlot(), ItemStackTools.getEmptyStack());
+        if (stack.isEmpty()) {
+            realKey.getInventory().setInventorySlotContents(realKey.getSlot(), ItemStack.EMPTY);
         }
         return result;
     }
@@ -77,12 +76,12 @@ public class InventoriesItemSource implements IItemSource {
         ItemKey realKey = (ItemKey) key;
         IInventory inventory = realKey.getInventory();
         ItemStack origStack = inventory.removeStackFromSlot(realKey.getSlot());
-        if (ItemStackTools.isValid(origStack)) {
+        if (!origStack.isEmpty()) {
             if (ItemHandlerHelper.canItemStacksStack(origStack, stack)) {
-                if ((ItemStackTools.getStackSize(stack) + ItemStackTools.getStackSize(origStack)) > stack.getMaxStackSize()) {
+                if ((stack.getCount() + origStack.getCount()) > stack.getMaxStackSize()) {
                     return false;
                 }
-                ItemStackTools.incStackSize(stack, ItemStackTools.getStackSize(origStack));
+                stack.grow(origStack.getCount());
             } else {
                 return false;
             }

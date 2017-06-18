@@ -1,16 +1,8 @@
 package mcjty.rftools.blocks.screens;
 
-import mcjty.lib.compat.MyGameReg;
-import mcjty.rftools.blocks.ModBlocks;
-import mcjty.rftools.crafting.PreservingShapedRecipe;
 import mcjty.rftools.items.screenmodules.*;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public class ScreenSetup {
     public static ScreenBlock screenBlock;
@@ -90,43 +82,14 @@ public class ScreenSetup {
     }
 
     public static void initCrafting() {
-        MyGameReg.addRecipe(new ItemStack(screenControllerBlock), "ror", "gMg", "rgr", 'r', Items.REDSTONE, 'o', Items.ENDER_PEARL, 'M', ModBlocks.machineFrame,
-                               'g', Blocks.GLASS);
-        MyGameReg.addRecipe(new ItemStack(screenBlock), "ggg", "gMg", "iii", 'M', ModBlocks.machineBase,
-                'g', Blocks.GLASS, 'i', Items.IRON_INGOT);
 
         initScreenModuleCrafting();
     }
 
     private static void initScreenModuleCrafting() {
-        MyGameReg.addRecipe(new ItemStack(textModuleItem), " p ", "rir", " b ", 'p', Items.PAPER, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
-                'b', "dyeBlack");
-        MyGameReg.addRecipe(new ItemStack(clockModuleItem), " c ", "rir", " b ", 'c', Items.CLOCK, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
-                'b', "dyeBlack");
-        MyGameReg.addRecipe(new ItemStack(energyModuleItem), " r ", "rir", " b ", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
-                'b', "dyeBlack");
-        MyGameReg.addRecipe(new ItemStack(fluidModuleItem), " c ", "rir", " b ", 'c', Items.BUCKET, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
-                'b', "dyeBlack");
-        MyGameReg.addRecipe(new ItemStack(inventoryModuleItem), " c ", "rir", " b ", 'c', "chest", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
-                'b', "dyeBlack");
-        MyGameReg.addRecipe(new ItemStack(counterModuleItem), " c ", "rir", " b ", 'c', Items.COMPARATOR, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
-                'b', "dyeBlack");
-        MyGameReg.addRecipe(new ItemStack(redstoneModuleItem), " c ", "rir", " b ", 'c', Items.REPEATER, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
-                'b', "dyeBlack");
-        MyGameReg.addRecipe(new ItemStack(machineInformationModuleItem), " f ", "rir", " b ", 'f', Blocks.FURNACE, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
-                'b', "dyeBlack");
-//        MyGameReg.addRecipe(new ItemStack(computerModuleItem), " f ", "rir", " b ", 'f', Blocks.quartz_block, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
-//                'b', "dyeBlack"));
-        MyGameReg.addRecipe(new ItemStack(buttonModuleItem), " f ", "rir", " b ", 'f', Blocks.STONE_BUTTON, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
-                               'b', "dyeBlack");
-        MyGameReg.addRecipe(new ItemStack(buttonModuleItem), "b", 'b', buttonModuleItem);    // To clear it
 
-        MyGameReg.addRecipe(new ItemStack(elevatorButtonModuleItem), "fff", "rir", " b ", 'f', Blocks.STONE_BUTTON, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
-                               'b', "dyeBlack");
-        MyGameReg.addRecipe(new ItemStack(storageControlModuleItem), " c ", "rir", " b ", 'c', Blocks.CRAFTING_TABLE, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
-                'b', "dyeBlack");
-        MyGameReg.addRecipe(new ItemStack(dumpModuleItem), " c ", "rir", " b ", 'c', Blocks.WOODEN_BUTTON, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
-                'b', "dyeBlack");
+        //        MyGameReg.addRecipe(new ItemStack(computerModuleItem), " f ", "rir", " b ", 'f', Blocks.quartz_block, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
+//                'b', "dyeBlack"));
 
         // @todo recipes
 //        MyGameReg.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {

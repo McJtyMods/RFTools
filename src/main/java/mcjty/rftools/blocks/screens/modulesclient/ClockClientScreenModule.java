@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
-import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
@@ -35,7 +34,7 @@ public class ClockClientScreenModule implements IClientScreenModule {
         GlStateManager.disableLighting();
         Minecraft minecraft = Minecraft.getMinecraft();
 
-        final long time = MinecraftTools.getWorld(minecraft).getWorldTime();
+        final long time = minecraft.world.getWorldTime();
         long hour = (time / 1000 + 6) % 24;
         final long minute = (time % 1000) * 60 / 1000;
         String timeString = String.format(Locale.ENGLISH, "%02d:%02d", hour, minute);

@@ -4,9 +4,7 @@ import mcjty.lib.api.MachineInformation;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
-import mcjty.lib.tools.EntityTools;
-import mcjty.lib.tools.ItemStackTools;
-import mcjty.lib.tools.WorldTools;
+import mcjty.rftools.varia.EntityTools;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.GeneralConfiguration;
@@ -96,7 +94,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         checkSyringe = false;
         mobId = null;
         ItemStack itemStack = inventoryHelper.getStackInSlot(0);
-        if (ItemStackTools.isEmpty(itemStack)) {
+        if (itemStack.isEmpty()) {
             clearMatter();
             return;
         }
@@ -251,7 +249,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         entityLiving.setLocationAndAngles(sx + 0.5D, sy, sz + 0.5D, 0.0F, 0.0F);
-        WorldTools.spawnEntity(getWorld(), entityLiving);
+        getWorld().spawnEntity(entityLiving);
     }
 
 //    private int countEntitiesWithinAABB(AxisAlignedBB aabb) {

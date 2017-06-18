@@ -7,8 +7,6 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.lib.tools.DamageSourceTools;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.RedstoneMode;
@@ -394,7 +392,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         int meta = 0;
         int te = 0;
 
-        if (ShieldRenderingMode.MODE_MIMIC.equals(shieldRenderingMode) && ItemStackTools.isValid(stack) && stack.getItem() != null) {
+        if (ShieldRenderingMode.MODE_MIMIC.equals(shieldRenderingMode) && !stack.isEmpty() && stack.getItem() != null) {
             if (!(stack.getItem() instanceof ItemBlock)) {
                 return new int[] { camoId, meta, te };
             }
@@ -493,14 +491,14 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     }
 
     private static FakePlayer killer = null;
-    private ItemStack lootingSword = ItemStackTools.getEmptyStack();
+    private ItemStack lootingSword = ItemStack.EMPTY;
 
     public void applyDamageToEntity(Entity entity) {
         DamageSource source;
         int rf;
         if (DamageTypeMode.DAMAGETYPE_GENERIC.equals(damageMode)) {
             rf = ShieldConfiguration.rfDamage;
-            source = DamageSourceTools.getGenericSource();
+            source = DamageSource.GENERIC;
         } else {
             rf = ShieldConfiguration.rfDamagePlayer;
             if (killer == null) {
@@ -508,15 +506,15 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             }
             FakePlayer fakePlayer = killer;
             ItemStack shards = getStackInSlot(ShieldContainer.SLOT_SHARD);
-            if (ItemStackTools.isValid(shards) && ItemStackTools.getStackSize(shards) >= ShieldConfiguration.shardsPerLootingKill) {
+            if (!shards.isEmpty() && shards.getCount() >= ShieldConfiguration.shardsPerLootingKill) {
                 decrStackSize(ShieldContainer.SLOT_SHARD, ShieldConfiguration.shardsPerLootingKill);
-                if (ItemStackTools.isEmpty(lootingSword)) {
+                if (lootingSword.isEmpty()) {
                     lootingSword = EnvironmentalSetup.createEnchantedItem(Items.DIAMOND_SWORD, Enchantments.LOOTING, ShieldConfiguration.lootingKillBonus);
                 }
                 lootingSword.setItemDamage(0);
                 fakePlayer.setHeldItem(EnumHand.MAIN_HAND, lootingSword);
             } else {
-                fakePlayer.setHeldItem(EnumHand.MAIN_HAND, ItemStackTools.getEmptyStack());
+                fakePlayer.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
             }
             source = DamageSource.causePlayerDamage(fakePlayer);
         }
@@ -657,7 +655,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     }
 
     private boolean isShapedShield() {
-        return ItemStackTools.isValid(inventoryHelper.getStackInSlot(ShieldContainer.SLOT_SHAPE));
+        return !inventoryHelper.getStackInSlot(ShieldContainer.SLOT_SHAPE).isEmpty();
     }
 
     private int findTemplateMeta() {
@@ -1122,39 +1120,44 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
-        if (index == ShieldContainer.SLOT_SHAPE && ItemStackTools.isValid(inventoryHelper.getStackInSlot(index)) && amount > 0) {
+        if (index == ShieldContainer.SLOT_SHAPE && !inventoryHelper.getStackInSlot(index).isEmpty() && amount > 0) {
             // Restart if we go from having a stack to not having stack or the other way around.
             decomposeShield();
         }
 
         ItemStack stackInSlot = inventoryHelper.getStackInSlot(index);
-        if (ItemStackTools.isValid(stackInSlot)) {
-            if (ItemStackTools.getStackSize(stackInSlot) <= amount) {
-                ItemStack old = ItemStackTools.safeCopy(stackInSlot);
-                inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, ItemStackTools.getEmptyStack());
+        if (!stackInSlot.isEmpty()) {
+            if (stackInSlot.getCount() <= amount) {
+                ItemStack old = stackInSlot.copy();
+                inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, ItemStack.EMPTY);
                 markDirty();
                 return old;
             }
             ItemStack its = stackInSlot.splitStack(amount);
-            if (ItemStackTools.isEmpty(stackInSlot)) {
-                inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, ItemStackTools.getEmptyStack());
+            if (stackInSlot.isEmpty()) {
+                inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, ItemStack.EMPTY);
             }
             markDirty();
             return its;
         }
-        return ItemStackTools.getEmptyStack();
+        return ItemStack.EMPTY;
     }
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-        if (index == ShieldContainer.SLOT_SHAPE && ((ItemStackTools.isEmpty(stack) && ItemStackTools.isValid(inventoryHelper.getStackInSlot(index))) || (ItemStackTools.isValid(stack) && ItemStackTools.isEmpty(inventoryHelper.getStackInSlot(index))))) {
+        if (index == ShieldContainer.SLOT_SHAPE && ((stack.isEmpty() && !inventoryHelper.getStackInSlot(index).isEmpty()) || (!stack.isEmpty() && inventoryHelper.getStackInSlot(index).isEmpty()))) {
             // Restart if we go from having a stack to not having stack or the other way around.
             decomposeShield();
         }
 
         inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
-        if (ItemStackTools.isValid(stack) && ItemStackTools.getStackSize(stack) > getInventoryStackLimit()) {
-            ItemStackTools.setStackSize(stack, getInventoryStackLimit());
+        if (!stack.isEmpty() && stack.getCount() > getInventoryStackLimit()) {
+            int amount = getInventoryStackLimit();
+            if (amount <= 0) {
+                stack.setCount(0);
+            } else {
+                stack.setCount(amount);
+            }
         }
         markDirty();
     }

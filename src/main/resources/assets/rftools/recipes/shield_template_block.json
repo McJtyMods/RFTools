@@ -1,0 +1,24 @@
+{
+  "result": {
+    "item": "rftools:shield_template_block",
+    "count": 8
+  },
+  "pattern": [
+    "www",
+    "lgl",
+    "www"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "w": {
+      "item": "minecraft:wool",
+      "data": 0
+    },
+    "g": {
+      "item": "minecraft:glass"
+    },
+    "l": {
+      "item": "#dyeBlue"
+    }
+  }
+}

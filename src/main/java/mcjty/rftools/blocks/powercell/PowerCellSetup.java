@@ -1,15 +1,8 @@
 package mcjty.rftools.blocks.powercell;
 
-import mcjty.lib.compat.MyGameReg;
-import mcjty.rftools.blocks.ModBlocks;
-import mcjty.rftools.crafting.PreservingShapedRecipe;
 import mcjty.rftools.items.InfusedDiamond;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.powercell.PowerCellCardItem;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -39,12 +32,6 @@ public class PowerCellSetup {
     }
 
     public static void initCrafting() {
-        MyGameReg.addRecipe(new ItemStack(simplePowerCellBlock), "rdr", "bMb", "rdr", 'M', ModBlocks.machineFrame, 'r', Blocks.REDSTONE_BLOCK,
-                'b', Items.QUARTZ, 'd', Items.DIAMOND);
-        MyGameReg.addRecipe(new ItemStack(powerCellBlock), "rdr", "bMb", "rer", 'M', ModBlocks.machineFrame, 'r', Blocks.REDSTONE_BLOCK,
-                'b', Items.PRISMARINE_SHARD, 'e', Items.EMERALD, 'd', Items.DIAMOND);
-        MyGameReg.addRecipe(new ItemStack(powerCellCardItem), "rgr", "gPg", "rgr", 'P', Items.PAPER, 'r', Items.REDSTONE, 'g', Items.GOLD_NUGGET);
-        MyGameReg.addRecipe(new ItemStack(powerCellCardItem), "c", 'c', powerCellCardItem);
 
         InfusedDiamond ind = ModItems.infusedDiamond;
         // @todo recipes

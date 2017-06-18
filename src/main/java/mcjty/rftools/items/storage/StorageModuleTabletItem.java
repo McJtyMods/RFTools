@@ -1,8 +1,6 @@
 package mcjty.rftools.items.storage;
 
 import cofh.api.energy.IEnergyContainerItem;
-import mcjty.lib.tools.ChatTools;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
@@ -22,6 +20,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -58,7 +57,7 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
 
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-        if (ItemStackTools.isEmpty(oldStack) != ItemStackTools.isEmpty(newStack)) {
+        if (oldStack.isEmpty() != newStack.isEmpty()) {
             return true;
         }
         return oldStack.getItem() != newStack.getItem();
@@ -129,12 +128,22 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
                     BlockPos pos = new BlockPos(monitorx, monitory, monitorz);
                     WorldServer w = DimensionManager.getWorld(monitordim);
                     if (w == null || !RFToolsTools.chunkLoaded(w, pos)) {
-                        ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Storage scanner is out of range!"));
+                        ITextComponent component = new TextComponentString(TextFormatting.RED + "Storage scanner is out of range!");
+                        if (player instanceof EntityPlayer) {
+                            ((EntityPlayer) player).sendStatusMessage(component, false);
+                        } else {
+                            player.sendMessage(component);
+                        }
                     } else {
                         player.openGui(RFTools.instance, RFTools.GUI_REMOTE_STORAGESCANNER_ITEM, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
                     }
                 } else {
-                    ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Storage module is not linked to a storage scanner!"));
+                    ITextComponent component = new TextComponentString(TextFormatting.RED + "Storage module is not linked to a storage scanner!");
+                    if (player instanceof EntityPlayer) {
+                        ((EntityPlayer) player).sendStatusMessage(component, false);
+                    } else {
+                        player.sendMessage(component);
+                    }
                 }
             } else if (moduleDamage == StorageModuleItem.STORAGE_REMOTE) {
                 if (!tagCompound.hasKey("id")) {
@@ -201,7 +210,7 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
             container.setTagCompound(tagCompound);
             return container;
         }
-        return ItemStackTools.getEmptyStack();
+        return ItemStack.EMPTY;
     }
 
     @Override

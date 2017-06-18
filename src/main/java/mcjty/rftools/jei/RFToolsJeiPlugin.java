@@ -1,7 +1,6 @@
 package mcjty.rftools.jei;
 
-import mcjty.lib.jei.CompatRecipeTransferHandler;
-import mcjty.lib.tools.ItemStackList;
+import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.network.RFToolsMessages;
 import mezz.jei.api.BlankModPlugin;
 import mezz.jei.api.IModRegistry;
@@ -34,10 +33,10 @@ public class RFToolsJeiPlugin extends BlankModPlugin {
     @Override
     public void register(@Nonnull IModRegistry registry) {
         IRecipeTransferRegistry transferRegistry = registry.getRecipeTransferRegistry();
-        CompatRecipeTransferHandler.register(transferRegistry, new CrafterRecipeTransferHandler());
-        CompatRecipeTransferHandler.register(transferRegistry, new ModularStorageRecipeTransferHandler());
-        CompatRecipeTransferHandler.register(transferRegistry, new ModularStorageItemRecipeTransferHandler());
-        CompatRecipeTransferHandler.register(transferRegistry, new RemoteStorageItemRecipeTransferHandler());
-        CompatRecipeTransferHandler.register(transferRegistry, new StorageScannerRecipeTransferHandler());
+        ModularStorageRecipeTransferHandler.register(transferRegistry, new CrafterRecipeTransferHandler());
+        ModularStorageRecipeTransferHandler.register(transferRegistry, new ModularStorageRecipeTransferHandler());
+        ModularStorageRecipeTransferHandler.register(transferRegistry, new ModularStorageItemRecipeTransferHandler());
+        ModularStorageRecipeTransferHandler.register(transferRegistry, new RemoteStorageItemRecipeTransferHandler());
+        ModularStorageRecipeTransferHandler.register(transferRegistry, new StorageScannerRecipeTransferHandler());
     }
 }

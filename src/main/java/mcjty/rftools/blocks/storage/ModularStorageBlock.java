@@ -3,9 +3,7 @@ package mcjty.rftools.blocks.storage;
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.ModuleSupport;
-import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.network.RFToolsMessages;
@@ -162,7 +160,7 @@ public class ModularStorageBlock extends GenericRFToolsBlock<ModularStorageTileE
 
             IBlockState newstate = state.withProperty(AMOUNT, p);
 
-            if (ItemStackTools.isEmpty(stack)) {
+            if (stack.isEmpty()) {
                 return newstate.withProperty(TYPEMODULE, TYPE_NONE);
             } else if (stack.getItem() == ModularStorageSetup.genericTypeItem) {
                 return newstate.withProperty(TYPEMODULE, TYPE_GENERIC);
@@ -206,7 +204,7 @@ public class ModularStorageBlock extends GenericRFToolsBlock<ModularStorageTileE
                 probeInfo.text(TextFormatting.YELLOW + "No storage module!");
             } else {
                 ItemStack storageModule = modularStorageTileEntity.getStackInSlot(ModularStorageContainer.SLOT_STORAGE_MODULE);
-                if (ItemStackTools.isValid(storageModule) && storageModule.getTagCompound().hasKey("display")) {
+                if (!storageModule.isEmpty() && storageModule.getTagCompound().hasKey("display")) {
                     probeInfo.text(TextFormatting.YELLOW + "Module: " + TextFormatting.WHITE + storageModule.getDisplayName());
                 }
                 int stacks = modularStorageTileEntity.getNumStacks();

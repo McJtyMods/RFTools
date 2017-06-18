@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "rftools:energy_module"
+  },
+  "pattern": [
+    " r ",
+    "rir",
+    " b "
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "b": {
+      "item": "#dyeBlack"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    }
+  }
+}

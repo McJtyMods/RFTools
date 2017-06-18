@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.builder;
 
-import mcjty.lib.tools.WorldTools;
 import mcjty.lib.varia.BlockPosTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -26,7 +25,7 @@ public class SpaceChamberRepository extends WorldSavedData {
     }
 
     public void save(World world) {
-        WorldTools.saveData(world, SPACECHAMBER_CHANNELS_NAME, this);
+        world.setData(SPACECHAMBER_CHANNELS_NAME, this);
         markDirty();
     }
 
@@ -48,7 +47,7 @@ public class SpaceChamberRepository extends WorldSavedData {
         if (instance != null) {
             return instance;
         }
-        instance = mcjty.lib.tools.WorldTools.loadData(world, SpaceChamberRepository.class, SPACECHAMBER_CHANNELS_NAME);
+        instance = (SpaceChamberRepository) world.loadData(SpaceChamberRepository.class, SPACECHAMBER_CHANNELS_NAME);
         if (instance == null) {
             instance = new SpaceChamberRepository(SPACECHAMBER_CHANNELS_NAME);
         }

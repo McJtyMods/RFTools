@@ -1,7 +1,6 @@
 package mcjty.rftools.items.storage;
 
 import mcjty.lib.container.*;
-import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
@@ -53,10 +52,14 @@ public class StorageFilterContainer extends GenericContainer {
 		if (slot != null && slot.getHasStack() && index >= FILTER_SLOTS && index < FILTER_SLOTS + 36) {
 			ItemStack itemstack1 = slot.getStack();
 			ItemStack stack = itemstack1.copy();
-			ItemStackTools.setStackSize(stack, 1);
+			if (1 <= 0) {
+                stack.setCount(0);
+            } else {
+                stack.setCount(1);
+            }
 			IInventory inv = inventories.get(CONTAINER_INVENTORY);
 			for (int i = 0; i < inv.getSizeInventory(); i++) {
-				if (ItemStackTools.isEmpty(inv.getStackInSlot(i))) {
+				if (inv.getStackInSlot(i).isEmpty()) {
 					inv.setInventorySlotContents(i, stack);
 					break;
 				}
@@ -65,6 +68,6 @@ public class StorageFilterContainer extends GenericContainer {
 
 		}
 
-		return ItemStackTools.getEmptyStack();
+		return ItemStack.EMPTY;
 	}
 }

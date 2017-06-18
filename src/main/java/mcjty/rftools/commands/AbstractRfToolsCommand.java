@@ -1,7 +1,8 @@
 package mcjty.rftools.commands;
 
-import mcjty.lib.tools.ChatTools;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 
@@ -21,7 +22,12 @@ public abstract class AbstractRfToolsCommand implements RfToolsCommand {
             value = Boolean.valueOf(args[index]);
         } catch (NumberFormatException e) {
             value = false;
-            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "Parameter is not a valid boolean!"));
+            ITextComponent component = new TextComponentString(TextFormatting.RED + "Parameter is not a valid boolean!");
+            if (sender instanceof EntityPlayer) {
+                ((EntityPlayer) sender).sendStatusMessage(component, false);
+            } else {
+                sender.sendMessage(component);
+            }
         } catch (ArrayIndexOutOfBoundsException e) {
             return defaultValue;
         }
@@ -34,7 +40,12 @@ public abstract class AbstractRfToolsCommand implements RfToolsCommand {
             value = Integer.parseInt(args[index]);
         } catch (NumberFormatException e) {
             value = 0;
-            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "Parameter is not a valid integer!"));
+            ITextComponent component = new TextComponentString(TextFormatting.RED + "Parameter is not a valid integer!");
+            if (sender instanceof EntityPlayer) {
+                ((EntityPlayer) sender).sendStatusMessage(component, false);
+            } else {
+                sender.sendMessage(component);
+            }
         } catch (ArrayIndexOutOfBoundsException e) {
             return defaultValue;
         }
@@ -47,7 +58,12 @@ public abstract class AbstractRfToolsCommand implements RfToolsCommand {
             value = Float.parseFloat(args[index]);
         } catch (NumberFormatException e) {
             value = 0.0f;
-            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "Parameter is not a valid real number!"));
+            ITextComponent component = new TextComponentString(TextFormatting.RED + "Parameter is not a valid real number!");
+            if (sender instanceof EntityPlayer) {
+                ((EntityPlayer) sender).sendStatusMessage(component, false);
+            } else {
+                sender.sendMessage(component);
+            }
         } catch (ArrayIndexOutOfBoundsException e) {
             return defaultValue;
         }

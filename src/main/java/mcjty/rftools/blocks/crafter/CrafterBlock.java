@@ -3,7 +3,6 @@ package mcjty.rftools.blocks.crafter;
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.GenericGuiContainer;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
@@ -52,8 +51,8 @@ public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterCont
             for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
                 NBTTagCompound itemTag = bufferTagList.getCompoundTagAt(i);
                 if (itemTag != null) {
-                    ItemStack stack = ItemStackTools.loadFromNBT(itemTag);
-                    if (ItemStackTools.isValid(stack)) {
+                    ItemStack stack = new ItemStack(itemTag);
+                    if (!stack.isEmpty()) {
                         rc++;
                     }
                 }
@@ -66,8 +65,8 @@ public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterCont
                 NBTTagCompound tagRecipe = recipeTagList.getCompoundTagAt(i);
                 NBTTagCompound resultCompound = tagRecipe.getCompoundTag("Result");
                 if (resultCompound != null) {
-                    ItemStack stack = ItemStackTools.loadFromNBT(resultCompound);
-                    if (ItemStackTools.isValid(stack)) {
+                    ItemStack stack = new ItemStack(resultCompound);
+                    if (!stack.isEmpty()) {
                         rc++;
                     }
                 }
@@ -107,9 +106,9 @@ public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterCont
     @Override
     public Container createServerContainer(EntityPlayer entityPlayer, TileEntity tileEntity) {
         CrafterBaseTE crafterBaseTE = (CrafterBaseTE) tileEntity;
-        crafterBaseTE.getInventoryHelper().setStackInSlot(CrafterContainer.SLOT_CRAFTOUTPUT, ItemStackTools.getEmptyStack());
+        crafterBaseTE.getInventoryHelper().setStackInSlot(CrafterContainer.SLOT_CRAFTOUTPUT, ItemStack.EMPTY);
         for (int i = CrafterContainer.SLOT_CRAFTINPUT ; i < CrafterContainer.SLOT_CRAFTINPUT + 9 ; i++) {
-            crafterBaseTE.getInventoryHelper().setStackInSlot(i, ItemStackTools.getEmptyStack());
+            crafterBaseTE.getInventoryHelper().setStackInSlot(i, ItemStack.EMPTY);
         }
         return super.createServerContainer(entityPlayer, tileEntity);
     }

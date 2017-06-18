@@ -1,0 +1,31 @@
+{
+  "result": {
+    "item": "rftools:environmental_controller"
+  },
+  "pattern": [
+    "oDo",
+    "GMI",
+    "oEo"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "D": {
+      "item": "minecraft:diamond_block"
+    },
+    "E": {
+      "item": "minecraft:emerald_block"
+    },
+    "G": {
+      "item": "minecraft:gold_block"
+    },
+    "I": {
+      "item": "minecraft:iron_block"
+    },
+    "M": {
+      "item": "rftools:machine_frame"
+    },
+    "o": {
+      "item": "minecraft:ender_pearl"
+    }
+  }
+}

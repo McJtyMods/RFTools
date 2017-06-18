@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.crafter;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.Logging;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -38,7 +37,7 @@ public class PacketCrafter implements IMessage {
                 if (b) {
                     items[i] = NetworkTools.readItemStack(buf);
                 } else {
-                    items[i] = ItemStackTools.getEmptyStack();
+                    items[i] = ItemStack.EMPTY;
                 }
             }
         }
@@ -54,7 +53,7 @@ public class PacketCrafter implements IMessage {
         if (items != null) {
             buf.writeByte(items.length);
             for (ItemStack item : items) {
-                if (ItemStackTools.isEmpty(item)) {
+                if (item.isEmpty()) {
                     buf.writeBoolean(false);
                 } else {
                     buf.writeBoolean(true);
@@ -76,18 +75,18 @@ public class PacketCrafter implements IMessage {
         if (inv != null) {
             for (int i = 0 ; i < 9 ; i++) {
                 ItemStack slot = inv.getStackInSlot(i);
-                if (ItemStackTools.isValid(slot)) {
+                if (!slot.isEmpty()) {
                     items[i] = slot.copy();
                 } else {
-                    items[i] = ItemStackTools.getEmptyStack();
+                    items[i] = ItemStack.EMPTY;
                 }
             }
         } else {
             for (int i = 0 ; i < 9 ; i++) {
-                items[i] = ItemStackTools.getEmptyStack();
+                items[i] = ItemStack.EMPTY;
             }
         }
-        items[9] = ItemStackTools.isEmpty(result) ? ItemStackTools.getEmptyStack() : result.copy();
+        items[9] = result.isEmpty() ? ItemStack.EMPTY : result.copy();
         this.keepOne = keepOne;
         this.craftInternal = craftInternal;
     }

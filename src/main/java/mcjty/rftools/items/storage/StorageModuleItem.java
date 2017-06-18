@@ -1,6 +1,5 @@
 package mcjty.rftools.items.storage;
 
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
@@ -59,7 +58,7 @@ public class StorageModuleItem extends GenericRFToolsItem {
 
     // Called from the Remote or Modular store TE's to update the stack size for this item while it is inside that TE.
     public static void updateStackSize(ItemStack stack, int numStacks) {
-        if (ItemStackTools.isEmpty(stack)) {
+        if (stack.isEmpty()) {
             return;
         }
         NBTTagCompound tagCompound = stack.getTagCompound();

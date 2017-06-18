@@ -1,7 +1,7 @@
 package mcjty.rftools.items.builder;
 
 import com.google.common.collect.AbstractIterator;
-import mcjty.lib.tools.ItemStackTools;
+import mcjty.rftools.varia.ItemStackTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;

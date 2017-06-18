@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "rftools:matter_beamer"
+  },
+  "pattern": [
+    "RGR",
+    "GMG",
+    "RGR"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "R": {
+      "item": "minecraft:redstone_block"
+    },
+    "G": {
+      "item": "minecraft:glowstone"
+    },
+    "M": {
+      "item": "rftools:machine_frame"
+    }
+  }
+}

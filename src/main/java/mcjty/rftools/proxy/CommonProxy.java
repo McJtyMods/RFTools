@@ -1,7 +1,6 @@
 package mcjty.rftools.proxy;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import mcjty.lib.CompatLayer;
 import mcjty.lib.McJtyLib;
 import mcjty.lib.base.GeneralConfig;
 import mcjty.lib.network.PacketHandler;
@@ -186,9 +185,6 @@ public abstract class CommonProxy {
         NetworkRegistry.INSTANCE.registerGuiHandler(RFTools.instance, new GuiProxy());
         MinecraftForge.EVENT_BUS.register(WorldTickHandler.instance);
         MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
-        if (CompatLayer.isV11()) {
-            ForgeEventHandlers11.init();
-        }
         ModCrafting.init();
     }
 

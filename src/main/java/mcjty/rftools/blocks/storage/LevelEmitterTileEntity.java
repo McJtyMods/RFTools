@@ -3,7 +3,6 @@ package mcjty.rftools.blocks.storage;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.network.Argument;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
@@ -55,9 +54,9 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
     public int getCurrentCount() {
         ItemStack module = inventoryHelper.getStackInSlot(LevelEmitterContainer.SLOT_MODULE);
         int count = -1;
-        if (ItemStackTools.isValid(module)) {
+        if (!module.isEmpty()) {
             ItemStack matcher = inventoryHelper.getStackInSlot(LevelEmitterContainer.SLOT_ITEMMATCH);
-            if (ItemStackTools.isEmpty(matcher)) {
+            if (matcher.isEmpty()) {
                 return count;
             }
             int dimension = RFToolsTools.getDimensionFromModule(module);
@@ -78,13 +77,13 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
 
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
-        boolean module = ItemStackTools.isValid(inventoryHelper.getStackInSlot(LevelEmitterContainer.SLOT_MODULE));
+        boolean module = !inventoryHelper.getStackInSlot(LevelEmitterContainer.SLOT_MODULE).isEmpty();
 
         super.onDataPacket(net, packet);
 
         if (getWorld().isRemote) {
             // If needed send a render update.
-            boolean newmodule = ItemStackTools.isValid(inventoryHelper.getStackInSlot(LevelEmitterContainer.SLOT_MODULE));
+            boolean newmodule = !inventoryHelper.getStackInSlot(LevelEmitterContainer.SLOT_MODULE).isEmpty();
             if (newmodule != module) {
                 getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
             }

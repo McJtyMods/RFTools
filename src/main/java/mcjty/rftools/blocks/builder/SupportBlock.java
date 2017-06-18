@@ -1,19 +1,26 @@
 package mcjty.rftools.blocks.builder;
 
-import mcjty.lib.compat.CompatBlock;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -22,11 +29,10 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.Random;
+import javax.annotation.Nullable;
+import java.util.*;
 
-public class SupportBlock extends CompatBlock {
+public class SupportBlock extends Block {
 
     public static final int STATUS_OK = 0;
     public static final int STATUS_WARN = 1;
@@ -41,6 +47,14 @@ public class SupportBlock extends CompatBlock {
         setCreativeTab(RFTools.tabRfTools);
         GameRegistry.register(this);
         GameRegistry.register(new ItemBlock(this), getRegistryName());
+    }
+
+    public static boolean activateBlock(Block block, World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        return block.onBlockActivated(world, pos, state, player, hand, facing, hitX, hitY, hitZ);
+    }
+
+    public static Collection<IProperty<?>> getPropertyKeys(IBlockState state) {
+        return state.getPropertyKeys();
     }
 
     @SideOnly(Side.CLIENT)
@@ -79,7 +93,6 @@ public class SupportBlock extends CompatBlock {
         return false;
     }
 
-    @Override
     protected boolean clOnBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
             // Find all connected blocks and remove them.
@@ -87,7 +100,7 @@ public class SupportBlock extends CompatBlock {
             todo.add(pos);
             removeBlock(world, todo);
         }
-        return super.clOnBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
+        return clOnBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
     }
 
     private void removeBlock(World world, Deque<BlockPos> todo) {
@@ -147,4 +160,36 @@ public class SupportBlock extends CompatBlock {
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, STATUS);
     }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
+        super.addInformation(stack, null, tooltip, null);
+    }
+
+    @Override
+    public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean p_185477_7_) {
+        super.addCollisionBoxToList(state, worldIn, pos, entityBox, collidingBoxes, entityIn, false);
+    }
+
+    @Override
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos p_189540_5_) {
+
+    }
+
+    @Override
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+        return clOnBlockActivated(worldIn, pos, state, playerIn, hand, side, hitX, hitY, hitZ);
+    }
+
+    @Override
+    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+        return super.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> tab) {
+        super.getSubBlocks(itemIn, tab);
+    }
+
 }

@@ -1,0 +1,19 @@
+{
+  "result": {
+    "item": "rftools:destination_analyzer"
+  },
+  "pattern": [
+    "o o",
+    " M ",
+    "o o"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "M": {
+      "item": "rftools:machine_frame"
+    },
+    "o": {
+      "item": "minecraft:ender_pearl"
+    }
+  }
+}

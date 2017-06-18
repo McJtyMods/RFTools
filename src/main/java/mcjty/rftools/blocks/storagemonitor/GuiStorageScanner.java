@@ -18,8 +18,6 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
-import mcjty.lib.tools.ItemStackTools;
-import mcjty.lib.tools.MinecraftTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
@@ -354,8 +352,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         InventoriesInfoPacketClient.InventoryInfo c = fromServer_inventories.get(index-1);
         if (c != null) {
             RFTools.instance.clientInfo.hilightBlock(c.getPos(), System.currentTimeMillis() + 1000 * StorageScannerConfiguration.hilightTime);
-            Logging.message(MinecraftTools.getPlayer(mc), "The inventory is now highlighted");
-            MinecraftTools.getPlayer(mc).closeScreen();
+            Logging.message(mc.player, "The inventory is now highlighted");
+            mc.player.closeScreen();
         }
     }
 
@@ -632,9 +630,9 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             } else if (renderItem instanceof Item) {
                 itemStack = new ItemStack((Item) renderItem);
             } else {
-                itemStack = ItemStackTools.getEmptyStack();
+                itemStack = ItemStack.EMPTY;
             }
-            if (ItemStackTools.isValid(itemStack)) {
+            if (!itemStack.isEmpty()) {
                 boolean custom = blockRender.getUserObject() instanceof Integer;
                 customRenderToolTip(itemStack, mouseX, mouseY, custom);
             }
@@ -648,7 +646,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             list = new ArrayList<>();
         } else {
             ITooltipFlag flag = this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL;
-            list = stack.getTooltip(MinecraftTools.getPlayer(this.mc), flag);
+            list = stack.getTooltip(this.mc.player, flag);
         }
 
         for (int i = 0; i < list.size(); ++i) {

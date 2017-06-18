@@ -1,0 +1,28 @@
+{
+  "result": {
+    "item": "rftools:counter_block"
+  },
+  "pattern": [
+    "gcg",
+    "TMT",
+    "rTr"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "c": {
+      "item": "minecraft:clock"
+    },
+    "T": {
+      "item": "minecraft:redstone_torch"
+    },
+    "g": {
+      "item": "minecraft:gold_nugget"
+    },
+    "M": {
+      "item": "rftools:machine_base"
+    }
+  }
+}

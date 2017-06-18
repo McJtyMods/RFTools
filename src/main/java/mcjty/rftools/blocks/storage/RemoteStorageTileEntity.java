@@ -4,9 +4,8 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.lib.tools.ItemStackList;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.GlobalCoordinate;
+import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.items.storage.StorageModuleItem;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -169,7 +168,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         if (si == -1) {
             for (int i = 0 ; i < 4 ; i++) {
                 ItemStack stack = getStackInSlot(i);
-                if (ItemStackTools.isValid(stack) && stack.getTagCompound() != null && stack.getTagCompound().hasKey("id")) {
+                if (!stack.isEmpty() && stack.getTagCompound() != null && stack.getTagCompound().hasKey("id")) {
                     return stack.getTagCompound().getInteger("id");
                 }
             }
@@ -178,7 +177,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         for (int i = si+1 ; i < si + 4 ; i++) {
             int ii = i % 4;
             ItemStack stack = getStackInSlot(ii);
-            if (ItemStackTools.isValid(stack) && stack.getTagCompound() != null && stack.getTagCompound().hasKey("id")) {
+            if (!stack.isEmpty() && stack.getTagCompound() != null && stack.getTagCompound().hasKey("id")) {
                 return stack.getTagCompound().getInteger("id");
             }
         }
@@ -291,7 +290,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
 
     public ItemStack getRemoteSlot(int si, int index) {
         if (index >= slots[si].size()) {
-            return ItemStackTools.getEmptyStack();
+            return ItemStack.EMPTY;
         }
         return slots[si].get(index);
     }
@@ -311,25 +310,25 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
 
     public ItemStack decrStackSizeRemote(int si, int index, int amount) {
         if (index >= slots[si].size()) {
-            return ItemStackTools.getEmptyStack();
+            return ItemStack.EMPTY;
         }
         ItemStackList stacks = slots[si];
-        boolean hasOld = ItemStackTools.isValid(stacks.get(index));
-        ItemStack its = ItemStackTools.getEmptyStack();
-        if (ItemStackTools.isValid(stacks.get(index))) {
-            if (ItemStackTools.getStackSize(stacks.get(index)) <= amount) {
+        boolean hasOld = !stacks.get(index).isEmpty();
+        ItemStack its = ItemStack.EMPTY;
+        if (!stacks.get(index).isEmpty()) {
+            if (stacks.get(index).getCount() <= amount) {
                 ItemStack old = stacks.get(index);
-                stacks.set(index, ItemStackTools.getEmptyStack());
+                stacks.set(index, ItemStack.EMPTY);
                 its = old;
             } else {
                 its = stacks.get(index).splitStack(amount);
-                if (ItemStackTools.isEmpty(stacks.get(index))) {
-                    stacks.set(index, ItemStackTools.getEmptyStack());
+                if (stacks.get(index).isEmpty()) {
+                    stacks.set(index, ItemStack.EMPTY);
                 }
             }
         }
 
-        boolean hasNew = ItemStackTools.isValid(stacks.get(index));
+        boolean hasNew = !stacks.get(index).isEmpty();
         if (hasOld && !hasNew) {
             numStacks[si]--;
         } else if (hasNew && !hasOld) {
@@ -343,14 +342,14 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
 
     public ItemStack removeStackFromSlotRemote(int si, int index) {
         if (index >= slots[si].size()) {
-            return ItemStackTools.getEmptyStack();
+            return ItemStack.EMPTY;
         }
         ItemStackList stacks = slots[si];
-        if (ItemStackTools.isEmpty(stacks.get(index))) {
-            return ItemStackTools.getEmptyStack();
+        if (stacks.get(index).isEmpty()) {
+            return ItemStack.EMPTY;
         }
         ItemStack old = stacks.get(index);
-        stacks.set(index, ItemStackTools.getEmptyStack());
+        stacks.set(index, ItemStack.EMPTY);
 
         numStacks[si]--;
         StorageModuleItem.updateStackSize(getStackInSlot(si), numStacks[si]);
@@ -363,12 +362,16 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         if (index >= slots[si].size()) {
             return false;
         }
-        boolean hasOld = ItemStackTools.isValid(slots[si].get(index));
+        boolean hasOld = !slots[si].get(index).isEmpty();
         slots[si].set(index, stack);
-        if (ItemStackTools.isValid(stack) && ItemStackTools.getStackSize(stack) > limit) {
-            ItemStackTools.setStackSize(stack, limit);
+        if (!stack.isEmpty() && stack.getCount() > limit) {
+            if (limit <= 0) {
+                stack.setCount(0);
+            } else {
+                stack.setCount(limit);
+            }
         }
-        boolean hasNew = ItemStackTools.isValid(stack);
+        boolean hasNew = !stack.isEmpty();
         if (hasOld && !hasNew) {
             numStacks[si]--;
         } else if (hasNew && !hasOld) {
@@ -394,7 +397,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
                 }
             }
         }
-        return ItemStackTools.getEmptyStack();
+        return ItemStack.EMPTY;
     }
 
     @Nonnull
@@ -418,7 +421,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
 
     public void copyToModule(int si) {
         ItemStack stack = inventoryHelper.getStackInSlot(si);
-        if (ItemStackTools.isEmpty(stack)) {
+        if (stack.isEmpty()) {
             // Should be impossible.
             return;
         }
@@ -435,7 +438,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
     }
 
     public void copyFromModule(ItemStack stack, int si) {
-        if (ItemStackTools.isEmpty(stack)) {
+        if (stack.isEmpty()) {
             setMaxSize(si, 0);
             return;
         }
@@ -464,7 +467,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         numStacks[si] = 0;
         ItemStackList stacks = slots[si];
         for (ItemStack stack : stacks) {
-            if (ItemStackTools.isValid(stack)) {
+            if (!stack.isEmpty()) {
                 numStacks[si]++;
             }
         }
@@ -493,7 +496,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         NBTTagList bufferTagList = tagCompound.getTagList(tagname, Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < Math.min(bufferTagList.tagCount(), slots[index].size()) ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            slots[index].set(i, ItemStackTools.loadFromNBT(nbtTagCompound));
+            slots[index].set(i, new ItemStack(nbtTagCompound));
         }
     }
 
@@ -522,10 +525,10 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         for (int i = 0 ; i < slots[index].size() ; i++) {
             ItemStack stack = slots[index].get(i);
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
-            if (ItemStackTools.isValid(stack)) {
+            if (!stack.isEmpty()) {
                 stack.writeToNBT(nbtTagCompound);
                 // @todo check?
-                if (ItemStackTools.getStackSize(stack) > 0) {
+                if (stack.getCount() > 0) {
                     cnt++;
                 }
             }

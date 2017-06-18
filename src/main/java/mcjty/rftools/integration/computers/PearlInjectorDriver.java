@@ -6,7 +6,6 @@ import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.prefab.ManagedEnvironment;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.integration.computers.AbstractOCDriver;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.endergen.PearlInjectorTileEntity;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -39,8 +38,8 @@ public class PearlInjectorDriver {
                 InventoryHelper inventoryHelper = tile.getInventoryHelper();
                 for (int i = 0; i < inventoryHelper.getCount(); ++i) {
                     ItemStack stack = inventoryHelper.getStackInSlot(i);
-                    if (ItemStackTools.isValid(stack) && Items.ENDER_PEARL.equals(stack.getItem()) && ItemStackTools.getStackSize(stack) > 0) {
-                        ret += ItemStackTools.getStackSize(stack);
+                    if (!stack.isEmpty() && Items.ENDER_PEARL.equals(stack.getItem()) && stack.getCount() > 0) {
+                        ret += stack.getCount();
                     }
                 }
                 return new Object[]{ret};

@@ -5,7 +5,6 @@ import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.tools.MinecraftTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.api.screens.*;
 import mcjty.rftools.api.screens.data.IModuleDataString;
@@ -106,7 +105,7 @@ public class    MachineInformationClientScreenModule implements IClientScreenMod
         int x = currentData.getInteger("monitorx");
         int y = currentData.getInteger("monitory");
         int z = currentData.getInteger("monitorz");
-        TileEntity tileEntity = MinecraftTools.getWorld(mc).getTileEntity(new BlockPos(x, y, z));
+        TileEntity tileEntity = mc.world.getTileEntity(new BlockPos(x, y, z));
 
         if (tileEntity instanceof MachineInformation) {
             int current = currentData.getInteger("monitorTag");
@@ -150,7 +149,7 @@ public class    MachineInformationClientScreenModule implements IClientScreenMod
                 // Compatibility reasons
                 this.dim = currentData.getInteger("dim");
             }
-            World world = MinecraftTools.getPlayer(mc).getEntityWorld();
+            World world = mc.player.getEntityWorld();
             if (dim == world.provider.getDimension()) {
                 int x = currentData.getInteger("monitorx");
                 int y = currentData.getInteger("monitory");

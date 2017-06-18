@@ -2,7 +2,6 @@ package mcjty.rftools.craftinggrid;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -25,7 +24,7 @@ public class PacketGridToServer extends PacketGridSync implements IMessage {
             if (buf.readBoolean()) {
                 stacks[i] = NetworkTools.readItemStack(buf);
             } else {
-                stacks[i] = ItemStackTools.getEmptyStack();
+                stacks[i] = ItemStack.EMPTY;
             }
         }
     }
@@ -35,7 +34,7 @@ public class PacketGridToServer extends PacketGridSync implements IMessage {
         convertToBytes(buf);
         buf.writeInt(stacks.length);
         for (ItemStack stack : stacks) {
-            if (ItemStackTools.isValid(stack)) {
+            if (!stack.isEmpty()) {
                 buf.writeBoolean(true);
                 NetworkTools.writeItemStack(buf, stack);
             } else {

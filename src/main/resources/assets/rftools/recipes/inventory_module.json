@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "rftools:inventory_module"
+  },
+  "pattern": [
+    " c ",
+    "rir",
+    " b "
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "b": {
+      "item": "#dyeBlack"
+    },
+    "c": {
+      "item": "#chest"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    }
+  }
+}

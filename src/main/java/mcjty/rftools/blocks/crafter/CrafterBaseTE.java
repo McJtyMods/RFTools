@@ -4,9 +4,7 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.lib.tools.InventoryTools;
-import mcjty.lib.tools.ItemStackList;
-import mcjty.lib.tools.ItemStackTools;
+import mcjty.lib.varia.ItemStackList;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.NullSidedInvWrapper;
 import mcjty.lib.varia.RedstoneMode;
@@ -168,7 +166,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         }
         if (index >= CrafterContainer.SLOT_BUFFER && index < CrafterContainer.SLOT_BUFFEROUT) {
             ItemStack ghostSlot = ghostSlots.get(index - CrafterContainer.SLOT_BUFFER);
-            if (ItemStackTools.isValid(ghostSlot)) {
+            if (!ghostSlot.isEmpty()) {
                 if (!ghostSlot.isItemEqual(stack)) {
                     return false;
                 }
@@ -181,7 +179,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
             }
         } else if (index >= CrafterContainer.SLOT_BUFFEROUT && index < CrafterContainer.SLOT_FILTER_MODULE) {
             ItemStack ghostSlot = ghostSlots.get(index - CrafterContainer.SLOT_BUFFEROUT + CrafterContainer.BUFFER_SIZE);
-            if (ItemStackTools.isValid(ghostSlot)) {
+            if (!ghostSlot.isEmpty()) {
                 if (!ghostSlot.isItemEqual(stack)) {
                     return false;
                 }
@@ -229,7 +227,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         NBTTagList bufferTagList = tagCompound.getTagList("GItems", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            ghostSlots.set(i, ItemStackTools.loadFromNBT(nbtTagCompound));
+            ghostSlots.set(i, new ItemStack(nbtTagCompound));
         }
     }
 
@@ -260,7 +258,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         NBTTagList bufferTagList = new NBTTagList();
         for (ItemStack stack : ghostSlots) {
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
-            if (ItemStackTools.isValid(stack)) {
+            if (!stack.isEmpty()) {
                 stack.writeToNBT(nbtTagCompound);
             }
             bufferTagList.appendTag(nbtTagCompound);
@@ -343,7 +341,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         }
 
 //        ItemStack result = recipe.getCraftingResult(craftingRecipe.getInventory());
-        ItemStack result = ItemStackTools.getEmptyStack();
+        ItemStack result = ItemStack.EMPTY;
         try {
             result = recipe.getCraftingResult(workInventory);
         } catch (Exception e) {
@@ -353,12 +351,12 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
         // Try to merge the output. If there is something that doesn't fit we undo everything.
         CraftingRecipe.CraftMode mode = craftingRecipe.getCraftMode();
-        if (ItemStackTools.isValid(result) && placeResult(mode, result, undo)) {
-            List<ItemStack> remaining = InventoryTools.getRemainingItems(recipe, workInventory);
+        if (!result.isEmpty() && placeResult(mode, result, undo)) {
+            List<ItemStack> remaining = recipe.getRemainingItems(workInventory);
             if (remaining != null) {
                 CraftingRecipe.CraftMode remainingMode = mode == EXTC ? INT : mode;
                 for (ItemStack s : remaining) {
-                    if (ItemStackTools.isValid(s)) {
+                    if (!s.isEmpty()) {
                         if (!placeResult(remainingMode, s, undo)) {
                             // Not enough room.
                             undo(undo);
@@ -380,8 +378,8 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         if (strictDamage) {
             return OreDictionary.itemMatches(target, input, false);
         } else {
-            if ((ItemStackTools.isEmpty(input) && ItemStackTools.isValid(target))
-                    || (ItemStackTools.isValid(input) && ItemStackTools.isEmpty(target))) {
+            if ((input.isEmpty() && !target.isEmpty())
+                    || (!input.isEmpty() && target.isEmpty())) {
                 return false;
             }
             return target.getItem() == input.getItem();
@@ -394,25 +392,25 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
         for (int i = 0 ; i < inventory.getSizeInventory() ; i++) {
             ItemStack stack = inventory.getStackInSlot(i);
-            if (ItemStackTools.isValid(stack)) {
-                int count = ItemStackTools.getStackSize(stack);
+            if (!stack.isEmpty()) {
+                int count = stack.getCount();
                 for (int j = 0 ; j < CrafterContainer.BUFFER_SIZE ; j++) {
                     int slotIdx = CrafterContainer.SLOT_BUFFER + j;
                     ItemStack input = inventoryHelper.getStackInSlot(slotIdx);
-                    if (ItemStackTools.isValid(input) && ItemStackTools.getStackSize(input) > keep) {
+                    if (!input.isEmpty() && input.getCount() > keep) {
                         if (match(stack, input, strictDamage)) {
                             workInventory.setInventorySlotContents(i, input.copy());
                             int ss = count;
-                            if (ItemStackTools.getStackSize(input) - ss < keep) {
-                                ss = ItemStackTools.getStackSize(input) - keep;
+                            if (input.getCount() - ss < keep) {
+                                ss = input.getCount() - keep;
                             }
                             count -= ss;
                             if (!undo.containsKey(slotIdx)) {
                                 undo.put(slotIdx, input.copy());
                             }
                             input.splitStack(ss);        // This consumes the items
-                            if (ItemStackTools.isEmpty(input)) {
-                                inventoryHelper.setStackInSlot(slotIdx, ItemStackTools.getEmptyStack());
+                            if (input.isEmpty()) {
+                                inventoryHelper.setStackInSlot(slotIdx, ItemStack.EMPTY);
                             }
                         }
                     }
@@ -424,7 +422,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
                     return false;   // Couldn't find all items.
                 }
             } else {
-                workInventory.setInventorySlotContents(i, ItemStackTools.getEmptyStack());
+                workInventory.setInventorySlotContents(i, ItemStack.EMPTY);
             }
         }
 
@@ -465,7 +463,12 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
             if (inventoryHelper.containsItem(slotIdx)) {
                 ItemStack stack = inventoryHelper.getStackInSlot(slotIdx);
                 ghostSlots.set(i, stack.copy());
-                ItemStackTools.setStackSize(ghostSlots.get(i), 1);
+                ItemStack stack1 = ghostSlots.get(i);
+                if (1 <= 0) {
+                    stack1.setCount(0);
+                } else {
+                    stack1.setCount(1);
+                }
             }
         }
         markDirtyClient();
@@ -473,7 +476,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
     private void forgetItems() {
         for (int i = 0 ; i < ghostSlots.size() ; i++) {
-            ghostSlots.set(i, ItemStackTools.getEmptyStack());
+            ghostSlots.set(i, ItemStack.EMPTY);
         }
         markDirtyClient();
     }

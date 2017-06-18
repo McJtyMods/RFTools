@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "rftools:block_protector"
+  },
+  "pattern": [
+    "oto",
+    "tMt",
+    "oto"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "t": {
+      "item": "rftools:shield_template_block"
+    },
+    "M": {
+      "item": "rftools:machine_frame"
+    },
+    "o": {
+      "item": "minecraft:obsidian"
+    }
+  }
+}

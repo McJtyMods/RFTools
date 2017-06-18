@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.container.GenericGuiContainer;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
@@ -73,7 +72,7 @@ public class LevelEmitterBlock extends LogicSlabBlock<LevelEmitterTileEntity, Le
     public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
         super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
         ItemStack module = getModule(world.getTileEntity(data.getPos()));
-        if (ItemStackTools.isEmpty(module)) {
+        if (module.isEmpty()) {
             probeInfo.text(TextFormatting.GREEN + "Install storage control module first");
         } else {
             TileEntity te = world.getTileEntity(data.getPos());
@@ -81,7 +80,7 @@ public class LevelEmitterBlock extends LogicSlabBlock<LevelEmitterTileEntity, Le
                 LevelEmitterTileEntity emitterTileEntity = (LevelEmitterTileEntity) te;
                 int count = emitterTileEntity.getCurrentCount();
                 ItemStack toCount = emitterTileEntity.getInventoryHelper().getStackInSlot(LevelEmitterContainer.SLOT_ITEMMATCH);
-                if (ItemStackTools.isValid(toCount)) {
+                if (!toCount.isEmpty()) {
                     probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER))
                             .item(toCount)
                             .text(TextFormatting.BLUE + "Count: " + TextFormatting.WHITE + count);
@@ -95,7 +94,7 @@ public class LevelEmitterBlock extends LogicSlabBlock<LevelEmitterTileEntity, Le
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         super.getWailaBody(itemStack, currenttip, accessor, config);
         ItemStack module = getModule(accessor.getTileEntity());
-        if (ItemStackTools.isEmpty(module)) {
+        if (module.isEmpty()) {
             currenttip.add(TextFormatting.GREEN + "Install storage control module first");
         }
         return currenttip;
@@ -117,13 +116,13 @@ public class LevelEmitterBlock extends LogicSlabBlock<LevelEmitterTileEntity, Le
             LevelEmitterTileEntity emitterTileEntity = (LevelEmitterTileEntity) tileEntity;
             return emitterTileEntity.getStackInSlot(LevelEmitterContainer.SLOT_MODULE);
         }
-        return ItemStackTools.getEmptyStack();
+        return ItemStack.EMPTY;
     }
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
         ItemStack module = getModule(world.getTileEntity(pos));
-        return super.getActualState(state, world, pos).withProperty(MODULE, ItemStackTools.isValid(module));
+        return super.getActualState(state, world, pos).withProperty(MODULE, !module.isEmpty());
     }
 
     @Override

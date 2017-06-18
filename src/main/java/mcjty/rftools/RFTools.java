@@ -3,7 +3,6 @@ package mcjty.rftools;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import mcjty.lib.base.ModBase;
-import mcjty.lib.compat.CompatCreativeTabs;
 import mcjty.lib.compat.MainCompatHandler;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.api.screens.IScreenModuleRegistry;
@@ -26,13 +25,11 @@ import mcjty.rftools.proxy.CommonProxy;
 import mcjty.rftools.wheelsupport.WheelSupport;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Mod(modid = RFTools.MODID, name = "RFTools",
         dependencies =
@@ -71,11 +68,10 @@ public class RFTools implements ModBase {
         return MODID;
     }
 
-    public static CreativeTabs tabRfTools = new CompatCreativeTabs("RfTools") {
+    public static CreativeTabs tabRfTools = new CreativeTabs("RfTools") {
         @Override
-        @SideOnly(Side.CLIENT)
-        public Item getItem() {
-            return ModItems.rfToolsManualItem;
+        public ItemStack getTabIconItem() {
+            return new ItemStack(ModItems.rfToolsManualItem);
         }
     };
 

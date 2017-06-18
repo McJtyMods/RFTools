@@ -3,8 +3,6 @@ package mcjty.rftools.items.builder;
 import mcjty.lib.base.StyleConfig;
 import mcjty.lib.gui.RenderHelper;
 import mcjty.lib.gui.Window;
-import mcjty.lib.gui.events.ButtonEvent;
-import mcjty.lib.gui.events.ChoiceEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
@@ -14,8 +12,6 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketUpdateNBTItem;
-import mcjty.lib.tools.ItemStackTools;
-import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -92,8 +88,8 @@ public class GuiShapeCard extends GuiScreen {
                 ShapeCardItem.Shape.SHAPE_SOLIDTORUS.getDescription(),
                 ShapeCardItem.Shape.SHAPE_SOLIDTOPDOME.getDescription(),
                 ShapeCardItem.Shape.SHAPE_SOLIDBOTTOMDOME.getDescription()).addChoiceEvent((parent, newChoice) -> updateSettings());
-        ItemStack heldItem = MinecraftTools.getPlayer(mc).getHeldItem(EnumHand.MAIN_HAND);
-        if (ItemStackTools.isEmpty(heldItem)) {
+        ItemStack heldItem = mc.player.getHeldItem(EnumHand.MAIN_HAND);
+        if (heldItem.isEmpty()) {
             // Cannot happen!
             return;
         }

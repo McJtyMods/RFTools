@@ -1,9 +1,5 @@
 package mcjty.rftools.blocks.environmental;
 
-import mcjty.lib.compat.MyGameReg;
-import mcjty.rftools.blocks.ModBlocks;
-import mcjty.rftools.crafting.NBTMatchingRecipe;
-import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.SyringeItem;
 import mcjty.rftools.items.envmodules.*;
 import net.minecraft.enchantment.Enchantment;
@@ -18,7 +14,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -103,8 +98,6 @@ public class EnvironmentalSetup {
     }
 
     public static void initCrafting() {
-        MyGameReg.addRecipe(new ItemStack(environmentalControllerBlock), "oDo", "GMI", "oEo", 'o', Items.ENDER_PEARL, 'M', ModBlocks.machineFrame,
-                'D', Blocks.DIAMOND_BLOCK, 'E', Blocks.EMERALD_BLOCK, 'G', Blocks.GOLD_BLOCK, 'I', Blocks.IRON_BLOCK);
 
         Object inkSac = Item.REGISTRY.getObjectById(351);
 
@@ -205,10 +198,8 @@ public class EnvironmentalSetup {
 //                new String[][] {null, syringeMatcher, null, null, null, null, null, null, null},
 //                new ItemStack(luckEModuleItem)));
 //
-        MyGameReg.addRecipe(new ItemStack(peacefulEModuleItem, 1), " p ", "rgr", " i ", 'p', ModItems.peaceEssenceItem,
-                'r', reds, 'g', gold, 'i', ink);
 
-//        MyGameReg.addRecipe(new NBTMatchingRecipe(3, 3,
+        //        MyGameReg.addRecipe(new NBTMatchingRecipe(3, 3,
 //                new ItemStack[]{null, squidSyringe, null, lapis, obsidian, lapis, null, ink, null},
 //                new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
 //                new ItemStack(blindnessEModuleItem)));

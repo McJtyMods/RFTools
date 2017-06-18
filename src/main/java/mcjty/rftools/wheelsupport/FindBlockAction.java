@@ -2,9 +2,6 @@ package mcjty.rftools.wheelsupport;
 
 import mcjty.intwheel.api.IWheelAction;
 import mcjty.intwheel.api.WheelActionElement;
-import mcjty.lib.tools.ChatTools;
-import mcjty.lib.tools.InventoryTools;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.storage.ModularStorageItemInventory;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
@@ -18,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -25,6 +23,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 
 import static mcjty.rftools.items.storage.StorageModuleTabletItem.META_FOR_SCANNER;
@@ -59,16 +58,16 @@ public class FindBlockAction implements IWheelAction {
             // If we come here we know that on client side we couldn't find a suitable block in the players inventory.
 
 
-            List<ItemStack> inventory = InventoryTools.getMainInventory(player);
+            List<ItemStack> inventory = Collections.unmodifiableList(player.inventory.mainInventory);
             IBlockState state = world.getBlockState(pos);
             ItemStack result = state.getBlock().getItem(world, pos, state);
-            if (result == null || ItemStackTools.isEmpty(result)) {
+            if (result == null || result.isEmpty()) {
                 return;
             }
 
-            ItemStack storage = ItemStackTools.getEmptyStack();
+            ItemStack storage = ItemStack.EMPTY;
             for (ItemStack stack : inventory) {
-                if (ItemStackTools.isValid(stack)) {
+                if (!stack.isEmpty()) {
                     if (stack.getItem() == ModularStorageSetup.storageModuleTabletItem) {
                         // Found!
                         storage = stack;
@@ -76,25 +75,40 @@ public class FindBlockAction implements IWheelAction {
                     }
                 }
             }
-            if (ItemStackTools.isEmpty(storage)) {
-                ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "No storage tablet in inventory!"));
+            if (storage.isEmpty()) {
+                ITextComponent component = new TextComponentString(TextFormatting.RED + "No storage tablet in inventory!");
+                if (player instanceof EntityPlayer) {
+                    ((EntityPlayer) player).sendStatusMessage(component, false);
+                } else {
+                    player.sendMessage(component);
+                }
                 return;
             }
 
             NBTTagCompound tagCompound = storage.getTagCompound();
             if (tagCompound == null || !tagCompound.hasKey("childDamage")) {
-                ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "No storage module in tablet!"));
+                ITextComponent component = new TextComponentString(TextFormatting.RED + "No storage module in tablet!");
+                if (player instanceof EntityPlayer) {
+                    ((EntityPlayer) player).sendStatusMessage(component, false);
+                } else {
+                    player.sendMessage(component);
+                }
                 return;
             }
 
             int firstEmptyStack = player.inventory.getFirstEmptyStack();
             if (firstEmptyStack < 0) {
-                ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "No room in inventory for block!"));
+                ITextComponent component = new TextComponentString(TextFormatting.RED + "No room in inventory for block!");
+                if (player instanceof EntityPlayer) {
+                    ((EntityPlayer) player).sendStatusMessage(component, false);
+                } else {
+                    player.sendMessage(component);
+                }
                 return;
             }
 
             int moduleDamage = tagCompound.getInteger("childDamage");
-            ItemStack extracted = ItemStackTools.getEmptyStack();
+            ItemStack extracted = ItemStack.EMPTY;
 
             if (moduleDamage == META_FOR_SCANNER) {
                 if (tagCompound.hasKey("monitorx")) {
@@ -105,19 +119,29 @@ public class FindBlockAction implements IWheelAction {
                     BlockPos mpos = new BlockPos(monitorx, monitory, monitorz);
                     WorldServer w = DimensionManager.getWorld(monitordim);
                     if (w == null || !RFToolsTools.chunkLoaded(w, mpos)) {
-                        ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Storage scanner is out of range!"));
+                        ITextComponent component = new TextComponentString(TextFormatting.RED + "Storage scanner is out of range!");
+                        if (player instanceof EntityPlayer) {
+                            ((EntityPlayer) player).sendStatusMessage(component, false);
+                        } else {
+                            player.sendMessage(component);
+                        }
                     } else {
                         TileEntity te = w.getTileEntity(mpos);
                         if (te instanceof StorageScannerTileEntity) {
                             StorageScannerTileEntity scanner = (StorageScannerTileEntity) te;
                             extracted = scanner.requestItem(result, result.getMaxStackSize(), true, false);
-                            if (ItemStackTools.isEmpty(extracted)) {
+                            if (extracted.isEmpty()) {
                                 extracted = scanner.requestItem(result, result.getMaxStackSize(), true, true);
                             }
                         }
                     }
                 } else {
-                    ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Storage module is not linked to a storage scanner!"));
+                    ITextComponent component = new TextComponentString(TextFormatting.RED + "Storage module is not linked to a storage scanner!");
+                    if (player instanceof EntityPlayer) {
+                        ((EntityPlayer) player).sendStatusMessage(component, false);
+                    } else {
+                        player.sendMessage(component);
+                    }
                 }
             } else if (moduleDamage == StorageModuleItem.STORAGE_REMOTE) {
                 if (!tagCompound.hasKey("id")) {
@@ -126,9 +150,9 @@ public class FindBlockAction implements IWheelAction {
                     RemoteStorageItemInventory storageInv = new RemoteStorageItemInventory(player, storage);
                     for (int i = 0 ; i < storageInv.getSizeInventory() ; i++) {
                         ItemStack s = storageInv.getStackInSlot(i);
-                        if (ItemStackTools.isValid(s) && stackEqualExact(result, s)) {
+                        if (!s.isEmpty() && stackEqualExact(result, s)) {
                             extracted = s;
-                            storageInv.setInventorySlotContents(i, ItemStackTools.getEmptyStack());
+                            storageInv.setInventorySlotContents(i, ItemStack.EMPTY);
                             break;
                         }
                     }
@@ -137,15 +161,15 @@ public class FindBlockAction implements IWheelAction {
                 ModularStorageItemInventory storageInv = new ModularStorageItemInventory(player, storage);
                 for (int i = 0 ; i < storageInv.getSizeInventory() ; i++) {
                     ItemStack s = storageInv.getStackInSlot(i);
-                    if (ItemStackTools.isValid(s) && stackEqualExact(result, s)) {
+                    if (!s.isEmpty() && stackEqualExact(result, s)) {
                         extracted = s;
-                        storageInv.setInventorySlotContents(i, ItemStackTools.getEmptyStack());
+                        storageInv.setInventorySlotContents(i, ItemStack.EMPTY);
                         break;
                     }
                 }
             }
 
-            if (ItemStackTools.isValid(extracted)) {
+            if (!extracted.isEmpty()) {
                 int currentItem = player.inventory.currentItem;
                 if (currentItem == firstEmptyStack) {
                     player.inventory.setInventorySlotContents(currentItem, extracted);

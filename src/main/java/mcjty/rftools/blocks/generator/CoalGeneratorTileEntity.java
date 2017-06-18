@@ -8,7 +8,6 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyProviderTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.RedstoneMode;
 import net.minecraft.entity.player.EntityPlayer;
@@ -165,7 +164,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
 
     private void handleChargingItem() {
         ItemStack stack = inventoryHelper.getStackInSlot(CoalGeneratorContainer.SLOT_CHARGEITEM);
-        if (ItemStackTools.isEmpty(stack)) {
+        if (stack.isEmpty()) {
             return;
         }
         if (stack.hasCapability(CapabilityEnergy.ENERGY, null)) {

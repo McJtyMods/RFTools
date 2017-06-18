@@ -1,13 +1,12 @@
 package mcjty.rftools.blocks.itemfilter;
 
-import mcjty.lib.compat.CompatItemHandlerModifiable;
-import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class ItemFilterInvWrapper implements CompatItemHandlerModifiable {
+public class ItemFilterInvWrapper implements IItemHandlerModifiable {
     private final ISidedInventory inv;
     private final EnumFacing side;
 
@@ -64,14 +63,14 @@ public class ItemFilterInvWrapper implements CompatItemHandlerModifiable {
     @Override
     public ItemStack getStackInSlot(int slot) {
         int i = getSlot(inv, slot, side);
-        return i == -1 ? ItemStackTools.getEmptyStack() : inv.getStackInSlot(i);
+        return i == -1 ? ItemStack.EMPTY : inv.getStackInSlot(i);
     }
 
     @Override
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
 
-        if (ItemStackTools.isEmpty(stack)) {
-            return ItemStackTools.getEmptyStack();
+        if (stack.isEmpty()) {
+            return ItemStack.EMPTY;
         }
 
         int slot1 = getSlot(inv, slot, side);
@@ -87,51 +86,53 @@ public class ItemFilterInvWrapper implements CompatItemHandlerModifiable {
         ItemStack stackInSlot = inv.getStackInSlot(slot1);
 
         int m;
-        if (ItemStackTools.isValid(stackInSlot)) {
+        if (!stackInSlot.isEmpty()) {
             if (!ItemHandlerHelper.canItemStacksStack(stack, stackInSlot)) {
                 return stack;
             }
 
-            m = Math.min(stack.getMaxStackSize(), inv.getInventoryStackLimit()) - ItemStackTools.getStackSize(stackInSlot);
+            m = Math.min(stack.getMaxStackSize(), inv.getInventoryStackLimit()) - stackInSlot.getCount();
 
-            if (ItemStackTools.getStackSize(stack) <= m) {
+            if (stack.getCount() <= m) {
                 if (!simulate) {
                     ItemStack copy = stack.copy();
-                    ItemStackTools.incStackSize(copy, ItemStackTools.getStackSize(stackInSlot));
+                    copy.grow(stackInSlot.getCount());
                     inv.setInventorySlotContents(slot1, copy);
                 }
 
-                return ItemStackTools.getEmptyStack();
+                return ItemStack.EMPTY;
             } else {
                 // copy the stack to not modify the original one
                 stack = stack.copy();
                 if (!simulate) {
                     ItemStack copy = stack.splitStack(m);
-                    ItemStackTools.incStackSize(copy, ItemStackTools.getStackSize(stackInSlot));
+                    copy.grow(stackInSlot.getCount());
                     inv.setInventorySlotContents(slot1, copy);
                     return stack;
                 } else {
-                    ItemStackTools.incStackSize(stack, -m);
+                    int amount = -m;
+                    stack.grow(amount);
                     return stack;
                 }
             }
         } else {
             m = Math.min(stack.getMaxStackSize(), inv.getInventoryStackLimit());
-            if (m < ItemStackTools.getStackSize(stack)) {
+            if (m < stack.getCount()) {
                 // copy the stack to not modify the original one
                 stack = stack.copy();
                 if (!simulate) {
                     inv.setInventorySlotContents(slot1, stack.splitStack(m));
                     return stack;
                 } else {
-                    ItemStackTools.incStackSize(stack, -m);
+                    int amount = -m;
+                    stack.grow(amount);
                     return stack;
                 }
             } else {
                 if (!simulate) {
                     inv.setInventorySlotContents(slot1, stack);
                 }
-                return ItemStackTools.getEmptyStack();
+                return ItemStack.EMPTY;
             }
         }
 
@@ -145,41 +146,45 @@ public class ItemFilterInvWrapper implements CompatItemHandlerModifiable {
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (amount == 0) {
-            return ItemStackTools.getEmptyStack();
+            return ItemStack.EMPTY;
         }
 
         int slot1 = getSlot(inv, slot, side);
 
         if (slot1 == -1) {
-            return ItemStackTools.getEmptyStack();
+            return ItemStack.EMPTY;
         }
 
         ItemStack stackInSlot = inv.getStackInSlot(slot1);
 
-        if (ItemStackTools.isEmpty(stackInSlot)) {
-            return ItemStackTools.getEmptyStack();
+        if (stackInSlot.isEmpty()) {
+            return ItemStack.EMPTY;
         }
 
         if (!inv.canExtractItem(slot1, stackInSlot, side)) {
-            return ItemStackTools.getEmptyStack();
+            return ItemStack.EMPTY;
         }
 
         if (simulate) {
-            if (ItemStackTools.getStackSize(stackInSlot) < amount) {
+            if (stackInSlot.getCount() < amount) {
                 return stackInSlot.copy();
             } else {
                 ItemStack copy = stackInSlot.copy();
-                ItemStackTools.setStackSize(copy, amount);
+                if (amount <= 0) {
+                    copy.setCount(0);
+                } else {
+                    copy.setCount(amount);
+                }
                 return copy;
             }
         } else {
-            int m = Math.min(ItemStackTools.getStackSize(stackInSlot), amount);
+            int m = Math.min(stackInSlot.getCount(), amount);
             return inv.decrStackSize(slot1, m);
         }
     }
 
     @Override
-    public int getSlotMaxLimit() {
+    public int getSlotLimit(int slot) {
         return 64;
     }
 }

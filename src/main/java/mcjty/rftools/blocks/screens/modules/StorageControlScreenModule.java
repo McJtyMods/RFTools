@@ -1,10 +1,8 @@
 package mcjty.rftools.blocks.screens.modules;
 
 import io.netty.buffer.ByteBuf;
-import mcjty.lib.tools.ChatTools;
-import mcjty.lib.tools.ItemStackList;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.lib.varia.ItemStackList;
 import mcjty.lib.varia.SoundTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
@@ -22,6 +20,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -115,7 +114,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
             setupCoordinateFromNBT(tagCompound, dim, pos);
             for (int i = 0; i < stacks.size(); i++) {
                 if (tagCompound.hasKey("stack" + i)) {
-                    stacks.set(i, ItemStackTools.loadFromNBT(tagCompound.getCompoundTag("stack" + i)));
+                    stacks.set(i, new ItemStack(tagCompound.getCompoundTag("stack" + i)));
                 }
             }
         }
@@ -147,7 +146,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
         StorageScannerTileEntity te = getStorageScanner(dim, coordinate);
         if (te != null) {
             int i = getHighlightedStack(x, y);
-            if (i != -1 && ItemStackTools.isValid(stacks.get(i))) {
+            if (i != -1 && !stacks.get(i).isEmpty()) {
                 return new String[]{
                         TextFormatting.GREEN + "Item: " + TextFormatting.WHITE + stacks.get(i).getDisplayName()};
             }
@@ -181,7 +180,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
 
 
     private boolean isShown(ItemStack stack) {
-        if (ItemStackTools.isEmpty(stack)) {
+        if (stack.isEmpty()) {
             return false;
         }
         for (ItemStack s : stacks) {
@@ -216,7 +215,12 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
             return;
         }
         if (BlockPosTools.INVALID.equals(coordinate)) {
-            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Module is not linked to storage scanner!"));
+            ITextComponent component = new TextComponentString(TextFormatting.RED + "Module is not linked to storage scanner!");
+            if (player instanceof EntityPlayer) {
+                ((EntityPlayer) player).sendStatusMessage(component, false);
+            } else {
+                player.sendMessage(component);
+            }
             return;
         }
         StorageScannerTileEntity scannerTileEntity = getStorageScanner(dim, coordinate);
@@ -248,11 +252,16 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
 
             int i = getHighlightedStack(hitx, hity);
             if (i != -1) {
-                if (ItemStackTools.isEmpty(stacks.get(i))) {
+                if (stacks.get(i).isEmpty()) {
                     ItemStack heldItem = player.getHeldItemMainhand();
-                    if (ItemStackTools.isValid(heldItem)) {
+                    if (!heldItem.isEmpty()) {
                         stacks.set(i, heldItem.copy());
-                        ItemStackTools.setStackSize(stacks.get(i), 1);
+                        ItemStack stack = stacks.get(i);
+                        if (1 <= 0) {
+                            stack.setCount(0);
+                        } else {
+                            stack.setCount(1);
+                        }
                         dirty = i;
                     }
                 } else {

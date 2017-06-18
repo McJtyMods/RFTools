@@ -1,0 +1,26 @@
+{
+  "result": {
+    "item": "rftools:peaceful_module"
+  },
+  "pattern": [
+    " p ",
+    "rgr",
+    " i "
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "p": {
+      "item": "rftools:peace_essence"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "g": {
+      "item": "minecraft:gold_ingot"
+    },
+    "i": {
+      "item": "minecraft:dye",
+      "data": 0
+    }
+  }
+}

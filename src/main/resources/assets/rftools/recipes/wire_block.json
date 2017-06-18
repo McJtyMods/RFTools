@@ -1,0 +1,19 @@
+{
+  "result": {
+    "item": "rftools:wire_block"
+  },
+  "pattern": [
+    "   ",
+    "rMr",
+    "   "
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "M": {
+      "item": "rftools:machine_base"
+    }
+  }
+}

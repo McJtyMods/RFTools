@@ -4,7 +4,6 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -39,7 +38,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
         if (getWorld().isRemote) {
             return;
         }
-        if (ItemStackTools.isEmpty(cardStack)) {
+        if (cardStack.isEmpty()) {
             return;
         }
         NBTTagCompound tagCompound = getOrCreateNBT(cardStack);
@@ -57,11 +56,11 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
             return;
         }
         ItemStack masterCard = inventoryHelper.getStackInSlot(SecurityManagerContainer.SLOT_CARD);
-        if (ItemStackTools.isEmpty(masterCard)) {
+        if (masterCard.isEmpty()) {
             return;
         }
         ItemStack linkerCard = inventoryHelper.getStackInSlot(SecurityManagerContainer.SLOT_LINKER);
-        if (ItemStackTools.isEmpty(linkerCard)) {
+        if (linkerCard.isEmpty()) {
             return;
         }
 
@@ -136,7 +135,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
 
     private NBTTagCompound getCardInfo() {
         ItemStack cardStack = inventoryHelper.getStackInSlot(SecurityManagerContainer.SLOT_CARD);
-        if (ItemStackTools.isEmpty(cardStack)) {
+        if (cardStack.isEmpty()) {
             return null;
         }
         return getOrCreateNBT(cardStack);

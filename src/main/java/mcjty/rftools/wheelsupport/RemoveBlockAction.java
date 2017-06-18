@@ -3,9 +3,9 @@ package mcjty.rftools.wheelsupport;
 import mcjty.intwheel.api.IWheelAction;
 import mcjty.intwheel.api.WheelActionElement;
 import mcjty.lib.container.GenericBlock;
-import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -35,7 +35,7 @@ public class RemoveBlockAction implements IWheelAction {
         if (pos != null) {
             Block block = world.getBlockState(pos).getBlock();
             if (block instanceof GenericBlock) {
-                block.harvestBlock(world, player, pos, world.getBlockState(pos), world.getTileEntity(pos), ItemStackTools.getEmptyStack());
+                block.harvestBlock(world, player, pos, world.getBlockState(pos), world.getTileEntity(pos), ItemStack.EMPTY);
             }
         }
     }

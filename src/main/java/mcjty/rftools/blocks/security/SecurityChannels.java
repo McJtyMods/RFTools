@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.security;
 
-import mcjty.lib.tools.WorldTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
@@ -27,7 +26,7 @@ public class SecurityChannels extends WorldSavedData {
     }
 
     public void save(World world) {
-        WorldTools.saveData(world, SECURITY_CHANNELS_NAME, this);
+        world.setData(SECURITY_CHANNELS_NAME, this);
         markDirty();
     }
 
@@ -49,7 +48,7 @@ public class SecurityChannels extends WorldSavedData {
         if (instance != null) {
             return instance;
         }
-        instance = WorldTools.loadData(world, SecurityChannels.class, SECURITY_CHANNELS_NAME);
+        instance = (SecurityChannels) world.loadData(SecurityChannels.class, SECURITY_CHANNELS_NAME);
         if (instance == null) {
             instance = new SecurityChannels(SECURITY_CHANNELS_NAME);
         }

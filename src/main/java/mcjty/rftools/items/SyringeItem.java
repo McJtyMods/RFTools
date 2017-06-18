@@ -1,6 +1,6 @@
 package mcjty.rftools.items;
 
-import mcjty.lib.tools.EntityTools;
+import mcjty.rftools.varia.EntityTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.boss.EntityDragon;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -122,7 +122,7 @@ public class SyringeItem extends GenericRFToolsItem {
     }
 
     private String findSelectedMobId(Class<? extends Entity> clazz, Entity entity) {
-        return EntityTools.findId(clazz, entity);
+        return EntityList.getKey(clazz).toString();
     }
 
     private Class<? extends Entity> findSelectedMobClass(Entity entity) {
@@ -132,7 +132,7 @@ public class SyringeItem extends GenericRFToolsItem {
     }
 
     private String findSelectedMobName(Entity entity) {
-        return EntityTools.getEntityName(entity);
+        return entity.getName();
     }
 
     @SideOnly(Side.CLIENT)

@@ -2,8 +2,7 @@ package mcjty.rftools.jei;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.lib.tools.ItemStackList;
-import mcjty.lib.tools.ItemStackTools;
+import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.blocks.storage.ModularStorageItemContainer;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.storage.RemoteStorageItemContainer;
@@ -30,7 +29,7 @@ public class PacketSendRecipe implements IMessage {
             if (buf.readBoolean()) {
                 stacks.set(i, NetworkTools.readItemStack(buf));
             } else {
-                stacks.set(i, ItemStackTools.getEmptyStack());
+                stacks.set(i, ItemStack.EMPTY);
             }
         }
         if (buf.readBoolean()) {
@@ -44,7 +43,7 @@ public class PacketSendRecipe implements IMessage {
     public void toBytes(ByteBuf buf) {
         buf.writeInt(stacks.size());
         for (ItemStack stack : stacks) {
-            if (ItemStackTools.isValid(stack)) {
+            if (!stack.isEmpty()) {
                 buf.writeBoolean(true);
                 NetworkTools.writeItemStack(buf, stack);
             } else {
@@ -80,7 +79,7 @@ public class PacketSendRecipe implements IMessage {
             if (message.pos == null) {
                 // Handle tablet version
                 ItemStack mainhand = player.getHeldItemMainhand();
-                if (ItemStackTools.isValid(mainhand) && mainhand.getItem() == ModularStorageSetup.storageModuleTabletItem) {
+                if (!mainhand.isEmpty() && mainhand.getItem() == ModularStorageSetup.storageModuleTabletItem) {
                     if (player.openContainer instanceof ModularStorageItemContainer) {
                         ModularStorageItemContainer storageItemContainer = (ModularStorageItemContainer) player.openContainer;
                         storageItemContainer.getJEIRecipeAcceptor().setGridContents(message.stacks);

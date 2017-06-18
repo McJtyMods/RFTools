@@ -1,8 +1,6 @@
 package mcjty.rftools.blocks.storage;
 
-import mcjty.lib.compat.CompatInventory;
-import mcjty.lib.tools.ItemStackList;
-import mcjty.lib.tools.ItemStackTools;
+import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.craftinggrid.CraftingGrid;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import mcjty.rftools.craftinggrid.InventoriesItemSource;
@@ -10,6 +8,7 @@ import mcjty.rftools.craftinggrid.StorageCraftingTools;
 import mcjty.rftools.jei.JEIRecipeAcceptor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
@@ -18,7 +17,7 @@ import net.minecraft.util.text.ITextComponent;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class RemoteStorageItemInventory implements CompatInventory, CraftingGridProvider, JEIRecipeAcceptor {
+public class RemoteStorageItemInventory implements CraftingGridProvider, JEIRecipeAcceptor, IInventory {
     private ItemStackList stacks = ItemStackList.create(RemoteStorageItemContainer.MAXSIZE_STORAGE);
     private final EntityPlayer entityPlayer;
     private CraftingGrid craftingGrid = new CraftingGrid();
@@ -62,7 +61,7 @@ public class RemoteStorageItemInventory implements CompatInventory, CraftingGrid
 
     private int getStorageID() {
         ItemStack heldItem = getStorageItem();
-        if (ItemStackTools.isEmpty(heldItem) || heldItem.getTagCompound() == null) {
+        if (heldItem.isEmpty() || heldItem.getTagCompound() == null) {
             return -1;
         }
         return heldItem.getTagCompound().getInteger("id");
@@ -159,11 +158,11 @@ public class RemoteStorageItemInventory implements CompatInventory, CraftingGrid
         if (isServer()) {
             RemoteStorageTileEntity storage = getRemoteStorage();
             if (storage == null) {
-                return ItemStackTools.getEmptyStack();
+                return ItemStack.EMPTY;
             }
             int si = storage.findRemoteIndex(getStorageID());
             if (si == -1) {
-                return ItemStackTools.getEmptyStack();
+                return ItemStack.EMPTY;
             }
             return storage.getRemoteSlot(si, index);
         } else {
@@ -176,32 +175,32 @@ public class RemoteStorageItemInventory implements CompatInventory, CraftingGrid
         if (isServer()) {
             RemoteStorageTileEntity storage = getRemoteStorage();
             if (storage == null) {
-                return ItemStackTools.getEmptyStack();
+                return ItemStack.EMPTY;
             }
             int si = storage.findRemoteIndex(getStorageID());
             if (si == -1) {
-                return ItemStackTools.getEmptyStack();
+                return ItemStack.EMPTY;
             }
             return storage.decrStackSizeRemote(si, index, amount);
         } else {
             if (index >= stacks.size()) {
-                return ItemStackTools.getEmptyStack();
+                return ItemStack.EMPTY;
             }
-            if (ItemStackTools.isValid(stacks.get(index))) {
+            if (!stacks.get(index).isEmpty()) {
                 markDirty();
-                if (ItemStackTools.getStackSize(stacks.get(index)) <= amount) {
+                if (stacks.get(index).getCount() <= amount) {
                     ItemStack old = stacks.get(index);
-                    stacks.set(index, ItemStackTools.getEmptyStack());
+                    stacks.set(index, ItemStack.EMPTY);
                     return old;
                 }
                 ItemStack its = stacks.get(index).splitStack(amount);
-                if (ItemStackTools.isEmpty(stacks.get(index))) {
-                    stacks.set(index, ItemStackTools.getEmptyStack());
+                if (stacks.get(index).isEmpty()) {
+                    stacks.set(index, ItemStack.EMPTY);
                 }
                 return its;
             }
         }
-        return ItemStackTools.getEmptyStack();
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -221,8 +220,13 @@ public class RemoteStorageItemInventory implements CompatInventory, CraftingGrid
                 return;
             }
             stacks.set(index, stack);
-            if (ItemStackTools.isValid(stack) && ItemStackTools.getStackSize(stack) > getInventoryStackLimit()) {
-                ItemStackTools.setStackSize(stack, getInventoryStackLimit());
+            if (!stack.isEmpty() && stack.getCount() > getInventoryStackLimit()) {
+                int amount = getInventoryStackLimit();
+                if (amount <= 0) {
+                    stack.setCount(0);
+                } else {
+                    stack.setCount(amount);
+                }
             }
             markDirty();
         }
@@ -243,7 +247,6 @@ public class RemoteStorageItemInventory implements CompatInventory, CraftingGrid
         tagCompound.setTag("grid", craftingGrid.writeToNBT());
     }
 
-    @Override
     public boolean isUsable(EntityPlayer player) {
         return true;
     }
@@ -273,7 +276,7 @@ public class RemoteStorageItemInventory implements CompatInventory, CraftingGrid
     @Override
     public ItemStack removeStackFromSlot(int index) {
         ItemStack stack = getStackInSlot(index);
-        setInventorySlotContents(index, ItemStackTools.getEmptyStack());
+        setInventorySlotContents(index, ItemStack.EMPTY);
         return stack;
     }
 
@@ -320,5 +323,15 @@ public class RemoteStorageItemInventory implements CompatInventory, CraftingGrid
     @Override
     public ITextComponent getDisplayName() {
         return null;
+    }
+
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer player) {
+        return isUsable(player);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
     }
 }

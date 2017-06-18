@@ -10,7 +10,6 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.GlobalCoordinate;
@@ -263,7 +262,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
     private void handleChargingItem() {
         ItemStack stack = inventoryHelper.getStackInSlot(PowerCellContainer.SLOT_CHARGEITEM);
-        if (ItemStackTools.isEmpty(stack)) {
+        if (stack.isEmpty()) {
             return;
         }
 
@@ -414,7 +413,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
     @Override
     public ItemStack decrStackSize(int index, int count) {
-        if (index == PowerCellContainer.SLOT_CARD && inventoryHelper.containsItem(index) && count >= ItemStackTools.getStackSize(inventoryHelper.getStackInSlot(index))) {
+        if (index == PowerCellContainer.SLOT_CARD && inventoryHelper.containsItem(index) && count >= inventoryHelper.getStackInSlot(index).getCount()) {
             handleCardRemoval();
         }
         return inventoryHelper.decrStackSize(index, count);

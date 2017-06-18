@@ -1,9 +1,7 @@
 package mcjty.rftools.items.storage;
 
 import mcjty.lib.container.InventoryHelper;
-import mcjty.lib.tools.ChatTools;
-import mcjty.lib.tools.ItemStackList;
-import mcjty.lib.tools.ItemStackTools;
+import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageTileEntity;
 import mcjty.rftools.items.GenericRFToolsItem;
@@ -16,6 +14,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -84,11 +83,16 @@ public class StorageFilterItem extends GenericRFToolsItem {
                         stack.setTagCompound(new NBTTagCompound());
                     }
                     StorageFilterInventory.convertItemsToNBT(stack.getTagCompound(), stacks);
-                    ChatTools.addChatMessage(playerIn, new TextComponentString(TextFormatting.GREEN + "Stored inventory contents in filter"));
+                    ITextComponent component = new TextComponentString(TextFormatting.GREEN + "Stored inventory contents in filter");
+                    if (playerIn instanceof EntityPlayer) {
+                        ((EntityPlayer) playerIn).sendStatusMessage(component, false);
+                    } else {
+                        playerIn.sendMessage(component);
+                    }
                 } else {
                     IBlockState state = worldIn.getBlockState(pos);
                     ItemStack blockStack = state.getBlock().getItem(worldIn, pos, state);
-                    if (ItemStackTools.isValid(blockStack)) {
+                    if (!blockStack.isEmpty()) {
                         if (!stack.hasTagCompound()) {
                             stack.setTagCompound(new NBTTagCompound());
                         }
@@ -97,12 +101,17 @@ public class StorageFilterItem extends GenericRFToolsItem {
                         NBTTagList bufferTagList = stack.getTagCompound().getTagList("Items", Constants.NBT.TAG_COMPOUND);
                         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
                             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-                            stacks.set(i, ItemStackTools.loadFromNBT(nbtTagCompound));
+                            stacks.set(i, new ItemStack(nbtTagCompound));
                         }
                         for (int i = 0 ; i < FILTER_SLOTS ; i++) {
-                            if (ItemStackTools.isEmpty(stacks.get(i))) {
+                            if (stacks.get(i).isEmpty()) {
                                 stacks.set(i, blockStack);
-                                ChatTools.addChatMessage(playerIn, new TextComponentString(TextFormatting.GREEN + "Added " + blockStack.getDisplayName() + " to the filter!"));
+                                ITextComponent component = new TextComponentString(TextFormatting.GREEN + "Added " + blockStack.getDisplayName() + " to the filter!");
+                                if (playerIn instanceof EntityPlayer) {
+                                    ((EntityPlayer) playerIn).sendStatusMessage(component, false);
+                                } else {
+                                    playerIn.sendMessage(component);
+                                }
                                 StorageFilterInventory.convertItemsToNBT(stack.getTagCompound(), stacks);
                                 break;
                             }
@@ -126,7 +135,11 @@ public class StorageFilterItem extends GenericRFToolsItem {
         }
         if (stacks.size() < FILTER_SLOTS) {
             ItemStack copy = s.copy();
-            ItemStackTools.setStackSize(copy, 1);
+            if (1 <= 0) {
+                copy.setCount(0);
+            } else {
+                copy.setCount(1);
+            }
             stacks.add(copy);
             registeredItems.add(s.getItem().getRegistryName());
         }
@@ -143,7 +156,7 @@ public class StorageFilterItem extends GenericRFToolsItem {
     }
 
     public static StorageFilterCache getCache(ItemStack stack) {
-        if (ItemStackTools.isEmpty(stack)) {
+        if (stack.isEmpty()) {
             return null;
         }
         return new StorageFilterCache(stack);

@@ -4,7 +4,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 import mcjty.lib.McJtyLibClient;
 import mcjty.lib.font.FontLoader;
 import mcjty.lib.font.TrueTypeFont;
-import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.RenderGameOverlayEventHandler;
 import mcjty.rftools.RenderWorldLastEventHandler;
@@ -95,12 +94,12 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public World getClientWorld() {
-        return MinecraftTools.getWorld(Minecraft.getMinecraft());
+        return Minecraft.getMinecraft().world;
     }
 
     @Override
     public EntityPlayer getClientPlayer() {
-        return MinecraftTools.getPlayer(Minecraft.getMinecraft());
+        return Minecraft.getMinecraft().player;
     }
 
     @Override

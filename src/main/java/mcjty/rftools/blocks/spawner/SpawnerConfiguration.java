@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.spawner;
 
-import mcjty.lib.tools.EntityTools;
-import mcjty.lib.tools.ItemStackTools;
+import mcjty.rftools.varia.EntityTools;
 import mcjty.lib.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
@@ -159,7 +158,7 @@ public class SpawnerConfiguration {
         defaultMobSpawnRf = 10000;
         defaultSpawnAmounts.add(new MobSpawnAmount(new ItemStack(Items.DIAMOND), 1.0f));
         defaultSpawnAmounts.add(new MobSpawnAmount(new ItemStack(Blocks.DIRT), 20));
-        defaultSpawnAmounts.add(new MobSpawnAmount(ItemStackTools.getEmptyStack(), 120.0f));
+        defaultSpawnAmounts.add(new MobSpawnAmount(ItemStack.EMPTY, 120.0f));
 
         ConfigCategory category = cfg.getCategory(CATEGORY_MOBSPAWNAMOUNTS);
         if (category.isEmpty()) {
@@ -395,7 +394,7 @@ public class SpawnerConfiguration {
             return;
         }
 
-        ItemStack stack = ItemStackTools.getEmptyStack();
+        ItemStack stack = ItemStack.EMPTY;
         if ("I".equals(type)) {
             Item item = Item.REGISTRY.getObject(itemname);
             stack = new ItemStack(item, 1, meta);
@@ -434,7 +433,7 @@ public class SpawnerConfiguration {
         }
 
         public Float match(ItemStack stack) {
-            if (ItemStackTools.isEmpty(object)) {
+            if (object.isEmpty()) {
                 // Living?
                 Item item = stack.getItem();
                 if (item instanceof ItemBlock) {

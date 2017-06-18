@@ -5,7 +5,6 @@ import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketServerCommand;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
@@ -87,7 +86,7 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
         }
 
         ItemStack itemStack = inventoryHelper.getStackInSlot(0);
-        if (ItemStackTools.isEmpty(itemStack)) {
+        if (itemStack.isEmpty()) {
             disableBlockGlow();
             return;
         }
@@ -95,7 +94,7 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
         SpawnerTileEntity spawnerTileEntity = (SpawnerTileEntity) te;
 
         int maxblocks = (int) (SpawnerConfiguration.beamBlocksPerSend * (1.01 + getInfusedFactor() * 2.0));
-        int numblocks = Math.min(maxblocks, ItemStackTools.getStackSize(itemStack));
+        int numblocks = Math.min(maxblocks, itemStack.getCount());
 
         int rf = (int) (SpawnerConfiguration.beamRfPerObject * numblocks * (4.0f - getInfusedFactor()) / 4.0f);
         if (getEnergyStored(EnumFacing.DOWN) < rf) {

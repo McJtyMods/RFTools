@@ -4,10 +4,7 @@ package mcjty.rftools.blocks.elevator;
 import mcjty.lib.container.GenericBlock;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.lib.tools.MinecraftTools;
-import mcjty.lib.tools.WorldTools;
 import mcjty.lib.varia.Broadcaster;
-import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.shield.RelCoordinate;
 import mcjty.rftools.playerprops.BuffProperties;
 import net.minecraft.block.Block;
@@ -98,7 +95,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
 
     private void setRedstoneState() {
         markDirty();
-        WorldTools.notifyNeighborsOfStateChange(getWorld(), this.pos, this.getBlockType());
+        getWorld().notifyNeighborsOfStateChange(this.pos, this.getBlockType(), false);
     }
 
 
@@ -191,7 +188,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         double d = calculateSpeed();
         handlePlatformMovement(d);
         if (bounds != null) {
-            EntityPlayerSP player = MinecraftTools.getPlayer(Minecraft.getMinecraft());
+            EntityPlayerSP player = Minecraft.getMinecraft().player;
             AxisAlignedBB aabb = getAABBAboveElevator(d);
             boolean on = player.getEntityBoundingBox().intersects(aabb);
             if (on) {
@@ -690,7 +687,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         if (tagCompound.hasKey("players")) {
             entitiesOnPlatform.clear();
             WorldServer world = DimensionManager.getWorld(0);
-            List<EntityPlayerMP> serverPlayers = WorldTools.getPlayerList(world);
+            List<EntityPlayerMP> serverPlayers = world.getMinecraftServer().getPlayerList().getPlayers();
             NBTTagList playerList = tagCompound.getTagList("players", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < playerList.tagCount(); i++) {
                 NBTTagCompound p = playerList.getCompoundTagAt(i);

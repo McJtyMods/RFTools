@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "rftools:security_manager"
+  },
+  "pattern": [
+    "rfr",
+    "fMf",
+    "rcr"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "c": {
+      "item": "#chest"
+    },
+    "f": {
+      "item": "minecraft:flint"
+    },
+    "M": {
+      "item": "rftools:machine_frame"
+    }
+  }
+}

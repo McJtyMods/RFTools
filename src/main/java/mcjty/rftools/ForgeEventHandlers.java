@@ -2,7 +2,6 @@ package mcjty.rftools;
 
 import mcjty.lib.api.smartwrench.SmartWrench;
 import mcjty.lib.api.smartwrench.SmartWrenchMode;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.WrenchChecker;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorTileEntity;
@@ -37,6 +36,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
+import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -106,7 +106,7 @@ public class ForgeEventHandlers {
         }
         EntityPlayer player = event.getEntityPlayer();
         ItemStack heldItem = player.getHeldItemMainhand();
-        if (ItemStackTools.isEmpty(heldItem) || !(heldItem.getItem() instanceof SmartWrench)) {
+        if (heldItem.isEmpty() || !(heldItem.getItem() instanceof SmartWrench)) {
             double blockReachDistance = ((EntityPlayerMP) player).interactionManager.getBlockReachDistance();
             RayTraceResult rayTrace = ForgeHooks.rayTraceEyes(player, blockReachDistance + 1);
             if (rayTrace != null && rayTrace.typeOfHit == RayTraceResult.Type.BLOCK) {
@@ -131,7 +131,7 @@ public class ForgeEventHandlers {
         } else if (event instanceof PlayerInteractEvent.RightClickBlock) {
             if (player.isSneaking()) {
                 ItemStack heldItem = player.getHeldItemMainhand();
-                if (ItemStackTools.isEmpty(heldItem) || !(heldItem.getItem() instanceof SmartWrench)) {
+                if (heldItem.isEmpty() || !(heldItem.getItem() instanceof SmartWrench)) {
                     World world = event.getWorld();
                     IBlockState state = world.getBlockState(event.getPos());
                     Block block = state.getBlock();
@@ -151,7 +151,7 @@ public class ForgeEventHandlers {
         }
 
         ItemStack heldItem = player.getHeldItem(event.getHand());
-        if (ItemStackTools.isEmpty(heldItem) || heldItem.getItem() == null) {
+        if (heldItem.isEmpty() || heldItem.getItem() == null) {
             return;
         }
         if (player.isSneaking() && WrenchChecker.isAWrench(heldItem.getItem())) {
@@ -299,6 +299,19 @@ public class ForgeEventHandlers {
             }
             EndergenicTileEntity.todoEndergenics.clear();
             EndergenicTileEntity.endergenicsAdded.clear();
+        }
+    }
+
+    @SubscribeEvent
+    public void onLivingDestroyBlock(LivingDestroyBlockEvent event) {
+        int x = event.getPos().getX();
+        int y = event.getPos().getY();
+        int z = event.getPos().getZ();
+        World world = event.getEntity().getEntityWorld();
+
+        Collection<GlobalCoordinate> protectors = BlockProtectors.getProtectors(world, x, y, z);
+        if (BlockProtectors.checkHarvestProtection(x, y, z, world, protectors)) {
+            event.setCanceled(true);
         }
     }
 }

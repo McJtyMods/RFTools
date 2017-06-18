@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.storage;
 
-import mcjty.lib.tools.WorldTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,7 +25,7 @@ public class RemoteStorageIdRegistry extends WorldSavedData {
     }
 
     public void save(World world) {
-        WorldTools.saveData(world, RFTOOLS_REMOTE_STORAGE, this);
+        world.setData(RFTOOLS_REMOTE_STORAGE, this);
         markDirty();
     }
 
@@ -41,7 +40,7 @@ public class RemoteStorageIdRegistry extends WorldSavedData {
         if (instance != null) {
             return instance;
         }
-        instance = WorldTools.loadData(world, RemoteStorageIdRegistry.class, RFTOOLS_REMOTE_STORAGE);
+        instance = (RemoteStorageIdRegistry) world.loadData(RemoteStorageIdRegistry.class, RFTOOLS_REMOTE_STORAGE);
         if (instance == null) {
             instance = new RemoteStorageIdRegistry(RFTOOLS_REMOTE_STORAGE);
         }

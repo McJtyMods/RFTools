@@ -1,0 +1,14 @@
+{
+  "result": {
+    "item": "rftools:button_module"
+  },
+  "pattern": [
+    "b"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "b": {
+      "item": "rftools:button_module"
+    }
+  }
+}

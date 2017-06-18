@@ -2,8 +2,6 @@ package mcjty.rftools.blocks.endergen;
 
 import mcjty.lib.gui.RenderGlowEffect;
 import mcjty.lib.gui.RenderHelper;
-import mcjty.lib.tools.ItemStackTools;
-import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.hud.HudRenderer;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
@@ -65,10 +63,10 @@ public class EndergenicRenderer extends TileEntitySpecialRenderer<EndergenicTile
 
         GlStateManager.popMatrix();
 
-        ItemStack mainHand = MinecraftTools.getPlayer(Minecraft.getMinecraft()).getHeldItemMainhand();
-        ItemStack offHand = MinecraftTools.getPlayer(Minecraft.getMinecraft()).getHeldItemOffhand();
-        boolean showOverlay = (ItemStackTools.isValid(mainHand) && mainHand.getItem() instanceof SmartWrenchItem) ||
-                (ItemStackTools.isValid(offHand) && offHand.getItem() instanceof SmartWrenchItem);
+        ItemStack mainHand = Minecraft.getMinecraft().player.getHeldItemMainhand();
+        ItemStack offHand = Minecraft.getMinecraft().player.getHeldItemOffhand();
+        boolean showOverlay = (!mainHand.isEmpty() && mainHand.getItem() instanceof SmartWrenchItem) ||
+                (!offHand.isEmpty() && offHand.getItem() instanceof SmartWrenchItem);
         if (showOverlay) {
             HudRenderer.renderHud(tileEntity, x, y, z);
         }

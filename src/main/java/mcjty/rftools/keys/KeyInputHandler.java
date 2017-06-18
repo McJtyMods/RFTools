@@ -2,7 +2,6 @@ package mcjty.rftools.keys;
 
 import mcjty.lib.debugtools.DumpBlockNBT;
 import mcjty.lib.debugtools.DumpItemNBT;
-import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.items.teleportprobe.PacketCycleDestination;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.Minecraft;
@@ -18,9 +17,9 @@ public class KeyInputHandler {
         } else if (KeyBindings.porterPrevDestination.isPressed()) {
             RFToolsMessages.INSTANCE.sendToServer(new PacketCycleDestination(false));
         } else if (KeyBindings.debugDumpNBTItem.isPressed()) {
-            DumpItemNBT.dumpHeldItem(RFToolsMessages.INSTANCE, MinecraftTools.getPlayer(Minecraft.getMinecraft()), false);
+            DumpItemNBT.dumpHeldItem(RFToolsMessages.INSTANCE, Minecraft.getMinecraft().player, false);
         } else if (KeyBindings.debugDumpNBTBlock.isPressed()) {
-            DumpBlockNBT.dumpFocusedBlock(RFToolsMessages.INSTANCE, MinecraftTools.getPlayer(Minecraft.getMinecraft()), true, false);
+            DumpBlockNBT.dumpFocusedBlock(RFToolsMessages.INSTANCE, Minecraft.getMinecraft().player, true, false);
         }
     }
 }

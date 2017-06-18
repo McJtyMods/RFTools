@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
@@ -86,13 +85,13 @@ public class ItemStackClientScreenModule implements IClientScreenModule<ItemStac
 
     private int renderSlot(int currenty, ItemStackScreenModule.ModuleDataStacks screenData, int slot, int index, int x) {
         if (slot != -1) {
-            ItemStack itm = ItemStackTools.getEmptyStack();
+            ItemStack itm = ItemStack.EMPTY;
             try {
                 itm = screenData.getStack(index);
             } catch (Exception e) {
                 // Ignore this.
             }
-            if (ItemStackTools.isValid(itm)) {
+            if (!itm.isEmpty()) {
                 RenderItem itemRender = Minecraft.getMinecraft().getRenderItem();
                 itemRender.renderItemAndEffectIntoGUI(itm, x, currenty);
             }
@@ -104,7 +103,7 @@ public class ItemStackClientScreenModule implements IClientScreenModule<ItemStac
     private int renderSlotOverlay(FontRenderer fontRenderer, int currenty, ItemStackScreenModule.ModuleDataStacks screenData, int slot, int index, int x) {
         if (slot != -1) {
             ItemStack itm = screenData.getStack(index);
-            if (ItemStackTools.isValid(itm)) {
+            if (!itm.isEmpty()) {
 //                itemRender.renderItemOverlayIntoGUI(fontRenderer, Minecraft.getMinecraft().getTextureManager(), itm, x, currenty);
                 renderItemOverlayIntoGUI(fontRenderer, itm, x, currenty);
             }
@@ -114,8 +113,8 @@ public class ItemStackClientScreenModule implements IClientScreenModule<ItemStac
     }
 
     private static void renderItemOverlayIntoGUI(FontRenderer fontRenderer, ItemStack itemStack, int x, int y) {
-        if (ItemStackTools.isValid(itemStack)) {
-            int size = ItemStackTools.getStackSize(itemStack);
+        if (!itemStack.isEmpty()) {
+            int size = itemStack.getCount();
             if (size > 1) {
                 String s1;
                 if (size < 10000) {
