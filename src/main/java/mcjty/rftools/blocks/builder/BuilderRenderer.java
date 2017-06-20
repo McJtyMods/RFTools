@@ -9,8 +9,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class BuilderRenderer extends TileEntitySpecialRenderer<BuilderTileEntity> {
 
     @Override
-    public void renderTileEntityAt(BuilderTileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-        super.renderTileEntityAt(te, x, y, z, partialTicks, destroyStage, alpha);
+    public void render(BuilderTileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+        super.render(te, x, y, z, partialTicks, destroyStage, alpha);
         if (BuilderConfiguration.showProgressHud) {
             HudRenderer.renderHud(te, x, y, z);
         }

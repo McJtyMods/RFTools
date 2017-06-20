@@ -40,7 +40,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
     private final ModelScreen screenModelHuge = new ModelScreen(ScreenTileEntity.SIZE_HUGE);
 
     @Override
-    public void renderTileEntityAt(ScreenTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+    public void render(ScreenTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 //        GlStateManager.pushAttrib();
         GlStateManager.pushMatrix();
         float f3;

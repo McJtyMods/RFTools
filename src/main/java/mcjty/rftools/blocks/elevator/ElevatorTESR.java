@@ -27,7 +27,7 @@ public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> 
     private final FakeElevatorWorld fakeWorld = new FakeElevatorWorld();
 
     @Override
-    public void renderTileEntityAt(ElevatorTileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+    public void render(ElevatorTileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 
         if (te.isMoving()) {
             // Correction in the y translation to avoid jitter when both player and platform are moving

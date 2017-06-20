@@ -20,7 +20,7 @@ public class MatterBeamerRenderer extends TileEntitySpecialRenderer<MatterBeamer
     private static final ResourceLocation blueglow = new ResourceLocation(RFTools.MODID, "textures/blocks/blueglow.png");
 
     @Override
-    public void renderTileEntityAt(MatterBeamerTileEntity tileEntity, double x, double y, double z, float time, int destroyStage, float alpha) {
+    public void render(MatterBeamerTileEntity tileEntity, double x, double y, double z, float time, int destroyStage, float alpha) {
         ResourceLocation txt;
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
