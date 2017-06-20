@@ -13,7 +13,8 @@
       "item": "minecraft:redstone"
     },
     "c": {
-      "item": "#chest"
+      "type": "forge:ore_dict",
+      "ore": "chest"
     },
     "f": {
       "item": "minecraft:flint"

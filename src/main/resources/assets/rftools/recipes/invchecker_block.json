@@ -16,7 +16,8 @@
       "item": "minecraft:comparator"
     },
     "C": {
-      "item": "#chest"
+      "type": "forge:ore_dict",
+      "ore": "chest"
     },
     "M": {
       "item": "rftools:machine_base"

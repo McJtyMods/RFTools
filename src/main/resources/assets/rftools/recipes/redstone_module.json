@@ -13,7 +13,8 @@
       "item": "minecraft:redstone"
     },
     "b": {
-      "item": "#dyeBlack"
+      "type": "forge:ore_dict",
+      "ore": "dyeBlack"
     },
     "c": {
       "item": "minecraft:repeater"

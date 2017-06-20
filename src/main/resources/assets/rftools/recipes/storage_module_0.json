@@ -17,7 +17,8 @@
       "item": "minecraft:redstone"
     },
     "c": {
-      "item": "#chest"
+      "type": "forge:ore_dict",
+      "ore": "chest"
     },
     "g": {
       "item": "minecraft:gold_nugget"

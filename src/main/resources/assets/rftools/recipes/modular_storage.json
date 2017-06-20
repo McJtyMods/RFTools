@@ -16,7 +16,8 @@
       "item": "minecraft:redstone"
     },
     "c": {
-      "item": "#chest"
+      "type": "forge:ore_dict",
+      "ore": "chest"
     },
     "M": {
       "item": "rftools:machine_frame"
