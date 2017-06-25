@@ -27,7 +27,7 @@ public class OreDictTypeItem extends StorageTypeItem {
         setUnlocalizedName("oredict_module");
         setRegistryName("oredict_module");
         setCreativeTab(RFTools.tabRfTools);
-        McJtyRegister.registerLater(this);
+        McJtyRegister.registerLater(this, RFTools.instance);
     }
 
     @Override

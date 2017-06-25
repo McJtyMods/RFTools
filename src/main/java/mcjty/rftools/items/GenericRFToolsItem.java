@@ -24,7 +24,7 @@ public class GenericRFToolsItem extends Item {
         setUnlocalizedName(name);
         setRegistryName(name);
         setCreativeTab(RFTools.tabRfTools);
-        McJtyRegister.registerLater(this);
+        McJtyRegister.registerLater(this, RFTools.instance);
     }
 
     @SideOnly(Side.CLIENT)

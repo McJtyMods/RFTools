@@ -24,7 +24,7 @@ public class GenericTypeItem extends StorageTypeItem {
         setUnlocalizedName("generic_module");
         setRegistryName("generic_module");
         setCreativeTab(RFTools.tabRfTools);
-        McJtyRegister.registerLater(this);
+        McJtyRegister.registerLater(this, RFTools.instance);
     }
 
     @Override

@@ -25,7 +25,7 @@ public class TeleportProbeItem extends Item {
         setRegistryName("teleport_probe");
         setCreativeTab(RFTools.tabRfTools);
         setMaxStackSize(1);
-        McJtyRegister.registerLater(this);
+        McJtyRegister.registerLater(this, RFTools.instance);
     }
 
     @SideOnly(Side.CLIENT)

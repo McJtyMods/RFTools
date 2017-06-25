@@ -76,12 +76,12 @@ public class ForgeEventHandlers {
 
     @SubscribeEvent
     public void registerBlocks(RegistryEvent.Register<Block> event) {
-        McJtyRegister.registerBlocks(event.getRegistry());
+        McJtyRegister.registerBlocks(RFTools.instance, event.getRegistry());
     }
 
     @SubscribeEvent
     public void registerItems(RegistryEvent.Register<Item> event) {
-        McJtyRegister.registerItems(event.getRegistry());
+        McJtyRegister.registerItems(RFTools.instance, event.getRegistry());
     }
 
     @SubscribeEvent
