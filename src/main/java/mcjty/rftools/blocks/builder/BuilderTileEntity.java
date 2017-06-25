@@ -988,7 +988,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             if (origMeta == null) {
                 origMeta = itemBlock.getDamage(stack);
             }
-            IBlockState newState = itemBlock.block.getStateFromMeta(origMeta);
+            IBlockState newState = itemBlock.getBlock().getStateFromMeta(origMeta);
             itemBlock.placeBlockAt(stack, fakePlayer, world, pos, EnumFacing.UP, 0, 0, 0, newState);
             return newState;
         } else {

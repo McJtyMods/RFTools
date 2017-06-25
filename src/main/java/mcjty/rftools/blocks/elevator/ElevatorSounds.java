@@ -8,6 +8,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,15 +21,15 @@ public class ElevatorSounds {
     public static SoundEvent loopSound;
     public static SoundEvent stopSound;
 
-    public static void init() {
-        startSound = registerSound(new ResourceLocation(RFTools.MODID, "elevator_start"));
-        loopSound = registerSound(new ResourceLocation(RFTools.MODID, "elevator_loop"));
-        stopSound = registerSound(new ResourceLocation(RFTools.MODID, "elevator_stop"));
+    public static void init(IForgeRegistry<SoundEvent> registry) {
+        startSound = registerSound(registry, new ResourceLocation(RFTools.MODID, "elevator_start"));
+        loopSound = registerSound(registry, new ResourceLocation(RFTools.MODID, "elevator_loop"));
+        stopSound = registerSound(registry, new ResourceLocation(RFTools.MODID, "elevator_stop"));
     }
 
-    private static SoundEvent registerSound(ResourceLocation sound) {
+    private static SoundEvent registerSound(IForgeRegistry<SoundEvent> registry, ResourceLocation sound) {
         SoundEvent event = new SoundEvent(sound).setRegistryName(sound);
-        SoundEvent.REGISTRY.register(-1, sound, event);
+        registry.register(event);
         return event;
     }
 

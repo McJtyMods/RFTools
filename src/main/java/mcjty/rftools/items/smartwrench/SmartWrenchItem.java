@@ -1,6 +1,7 @@
 package mcjty.rftools.items.smartwrench;
 
 import cofh.api.item.IToolHammer;
+import mcjty.lib.McJtyRegister;
 import mcjty.lib.api.smartwrench.SmartWrench;
 import mcjty.lib.api.smartwrench.SmartWrenchMode;
 import mcjty.lib.api.smartwrench.SmartWrenchSelector;
@@ -29,7 +30,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -42,7 +42,7 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
         setRegistryName("smartwrench");
         setCreativeTab(RFTools.tabRfTools);
         setMaxStackSize(1);
-        GameRegistry.register(this);
+        McJtyRegister.registerLater(this);
     }
 
     @SideOnly(Side.CLIENT)

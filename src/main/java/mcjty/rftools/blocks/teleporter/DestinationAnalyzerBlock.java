@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.teleporter;
 
+import mcjty.lib.McJtyRegister;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -17,7 +18,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -34,8 +34,7 @@ public class DestinationAnalyzerBlock extends Block {
         setSoundType(SoundType.METAL);
         setHarvestLevel("pickaxe", 0);
         setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
-        GameRegistry.register(this);
-        GameRegistry.register(new ItemBlock(this), getRegistryName());
+        McJtyRegister.registerLater(this, RFTools.instance, ItemBlock.class, null);
     }
 
     @SideOnly(Side.CLIENT)

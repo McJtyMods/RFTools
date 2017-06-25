@@ -12,6 +12,7 @@ import mcjty.rftools.blocks.booster.BoosterConfiguration;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.crafter.CrafterConfiguration;
 import mcjty.rftools.blocks.elevator.ElevatorConfiguration;
+import mcjty.rftools.blocks.elevator.ElevatorSounds;
 import mcjty.rftools.blocks.endergen.EndergenicConfiguration;
 import mcjty.rftools.blocks.environmental.EnvironmentalConfiguration;
 import mcjty.rftools.blocks.generator.CoalGeneratorConfiguration;
@@ -37,16 +38,19 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -63,6 +67,7 @@ public abstract class CommonProxy {
     private Configuration mainConfig;
 
     public void preInit(FMLPreInitializationEvent e) {
+        MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
         McJtyLib.preInit(e);
         reflect();
 
@@ -110,7 +115,6 @@ public abstract class CommonProxy {
         ModItems.init();
         ModBlocks.init();
         ModWorldgen.init();
-        ModSounds.init();
 
         RFTools.screenModuleRegistry.registerBuiltins();
 
@@ -120,6 +124,12 @@ public abstract class CommonProxy {
             }
         });
     }
+
+    @SubscribeEvent
+    public void registerSounds(RegistryEvent.Register<SoundEvent> sounds) {
+        ModSounds.init(sounds.getRegistry());
+    }
+
 
     public static Method Block_getSilkTouch;
 
@@ -184,7 +194,6 @@ public abstract class CommonProxy {
     public void init(FMLInitializationEvent e) {
         NetworkRegistry.INSTANCE.registerGuiHandler(RFTools.instance, new GuiProxy());
         MinecraftForge.EVENT_BUS.register(WorldTickHandler.instance);
-        MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
         ModCrafting.init();
     }
 

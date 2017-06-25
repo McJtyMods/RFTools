@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.builder;
 
+import mcjty.lib.McJtyRegister;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -25,7 +26,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -45,8 +45,7 @@ public class SupportBlock extends Block {
         setUnlocalizedName("rftools.support_block");
         setRegistryName("support_block");
         setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.register(this);
-        GameRegistry.register(new ItemBlock(this), getRegistryName());
+        McJtyRegister.registerLater(this, RFTools.instance, ItemBlock.class, null);
     }
 
     public static boolean activateBlock(Block block, World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {

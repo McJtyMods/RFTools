@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks;
 
+import mcjty.lib.McJtyRegister;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -9,7 +10,6 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -19,8 +19,7 @@ public class MachineFrame extends Block {
         setUnlocalizedName("rftools.machine_frame");
         setRegistryName("machine_frame");
         setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.register(this);
-        GameRegistry.register(new ItemBlock(this), getRegistryName());
+        McJtyRegister.registerLater(this, RFTools.instance, ItemBlock.class, null);
     }
 
     @SideOnly(Side.CLIENT)

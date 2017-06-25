@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.builder;
 
+import mcjty.lib.McJtyRegister;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -10,7 +11,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -24,8 +24,7 @@ public class SpaceChamberBlock extends Block {
         setUnlocalizedName("rftools.space_chamber");
         setRegistryName("space_chamber");
         setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.register(this);
-        GameRegistry.register(new ItemBlock(this), getRegistryName());
+        McJtyRegister.registerLater(this, RFTools.instance, ItemBlock.class, null);
     }
 
     @SideOnly(Side.CLIENT)

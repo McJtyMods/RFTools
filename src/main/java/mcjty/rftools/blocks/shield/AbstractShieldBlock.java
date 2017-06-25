@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.shield;
 
+import mcjty.lib.McJtyRegister;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.shield.filters.*;
 import net.minecraft.block.Block;
@@ -52,8 +53,7 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
         setBlockUnbreakable();
         setResistance(6000000.0F);
         setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.register(this);
-        GameRegistry.register(new ItemBlock(this), getRegistryName());
+        McJtyRegister.registerLater(this, RFTools.instance, ItemBlock.class, null);
         initTE();
     }
 

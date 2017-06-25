@@ -39,10 +39,10 @@ import net.minecraftforge.fml.common.event.*;
         version = RFTools.VERSION)
 public class RFTools implements ModBase {
     public static final String MODID = "rftools";
-    public static final String VERSION = "6.02";
+    public static final String VERSION = "6.03";
     public static final String MIN_FORGE11_VER = "13.20.0.2266";
-    public static final String MIN_MCJTYLIB_VER = "2.3.10";
-    public static final String MIN_XNET_VER = "1.3.0";
+    public static final String MIN_MCJTYLIB_VER = "2.3.12";
+    public static final String MIN_XNET_VER = "1.3.2";
 
     @SidedProxy(clientSide = "mcjty.rftools.proxy.ClientProxy", serverSide = "mcjty.rftools.proxy.ServerProxy")
     public static CommonProxy proxy;

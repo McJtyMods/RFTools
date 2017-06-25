@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.shield;
 
+import mcjty.lib.McJtyRegister;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -21,7 +22,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -120,8 +120,7 @@ public class ShieldTemplateBlock extends Block {
         setUnlocalizedName("rftools.shield_template_block");
         setRegistryName("shield_template_block");
         setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.register(this);
-        GameRegistry.register(new ShieldTemplateItemBlock(this), getRegistryName());
+        McJtyRegister.registerLater(this, RFTools.instance, ShieldTemplateItemBlock.class, null);
         setDefaultState(this.blockState.getBaseState().withProperty(COLOR, TemplateColor.BLUE));
     }
 

@@ -13,7 +13,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.apache.commons.lang3.StringUtils;
@@ -142,7 +141,7 @@ public class RFToolsTools {
     }
 
     public static String getModidForBlock(Block block) {
-        ResourceLocation nameForObject = GameData.getBlockRegistry().getNameForObject(block);
+        ResourceLocation nameForObject = block.getRegistryName();
         if (nameForObject == null) {
             return "?";
         }

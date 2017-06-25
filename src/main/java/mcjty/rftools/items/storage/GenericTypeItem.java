@@ -1,15 +1,14 @@
 package mcjty.rftools.items.storage;
 
+import mcjty.lib.McJtyRegister;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.sorters.*;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -25,7 +24,7 @@ public class GenericTypeItem extends StorageTypeItem {
         setUnlocalizedName("generic_module");
         setRegistryName("generic_module");
         setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.register(this);
+        McJtyRegister.registerLater(this);
     }
 
     @Override

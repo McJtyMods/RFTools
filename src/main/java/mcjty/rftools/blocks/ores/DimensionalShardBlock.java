@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.ores;
 
+import mcjty.lib.McJtyRegister;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.ModItems;
 import net.minecraft.block.Block;
@@ -22,7 +23,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -122,8 +122,7 @@ public class DimensionalShardBlock extends Block {
         setRegistryName("dimensional_shard_ore");
         setLightLevel(0.5f);
         setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.register(this);
-        GameRegistry.register(new DimensionalShardItemBlock(this), getRegistryName());
+        McJtyRegister.registerLater(this, RFTools.instance, DimensionalShardItemBlock.class, null);
     }
 
     @SideOnly(Side.CLIENT)

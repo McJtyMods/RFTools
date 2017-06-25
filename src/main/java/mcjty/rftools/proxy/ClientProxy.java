@@ -18,14 +18,18 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.registry.IRegistry;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -43,23 +47,31 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void preInit(FMLPreInitializationEvent e) {
         super.preInit(e);
+        MinecraftForge.EVENT_BUS.register(this);
         OBJLoader.INSTANCE.addDomain(RFTools.MODID);
-        ModItems.initClient();
-        ModBlocks.initClient();
-        ElevatorSounds.init();
         McJtyLibClient.preInit(e);
     }
 
     @Override
     public void init(FMLInitializationEvent e) {
         super.init(e);
-        MinecraftForge.EVENT_BUS.register(this);
         ModBlocks.initClientPost();
         MinecraftForge.EVENT_BUS.register(new KeyInputHandler());
         KeyBindings.init();
 
         font = FontLoader.createFont(new ResourceLocation(ScreenConfiguration.font), ScreenConfiguration.fontSize, false, Font.TRUETYPE_FONT,
                 ScreenConfiguration.additionalCharacters.toCharArray());
+    }
+
+    @SubscribeEvent
+    public void registerModels(ModelRegistryEvent event) {
+        ModItems.initClient();
+        ModBlocks.initClient();
+    }
+
+    @SubscribeEvent
+    public void registerSounds(RegistryEvent.Register<SoundEvent> sounds) {
+        ElevatorSounds.init(sounds.getRegistry());
     }
 
     @Override
