@@ -1,7 +1,5 @@
 package mcjty.rftools;
 
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import mcjty.lib.base.ModBase;
 import mcjty.lib.compat.MainCompatHandler;
 import mcjty.lib.varia.Logging;
@@ -30,6 +28,9 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
+
+import java.util.Optional;
+import java.util.function.Function;
 
 @Mod(modid = RFTools.MODID, name = "RFTools",
         dependencies =

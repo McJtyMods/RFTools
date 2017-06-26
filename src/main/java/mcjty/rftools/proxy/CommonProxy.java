@@ -134,7 +134,7 @@ public abstract class CommonProxy {
     public static Method Block_getSilkTouch;
 
     private void reflect() {
-        Block_getSilkTouch = ReflectionHelper.findMethod(Block.class, null, new String[]{"getSilkTouchDrop", "func_180643_i"}, IBlockState.class);
+        Block_getSilkTouch = ReflectionHelper.findMethod(Block.class, "getSilkTouchDrop", "func_180643_i", IBlockState.class);
     }
 
     private void readMainConfig() {
