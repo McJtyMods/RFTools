@@ -105,7 +105,7 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
         int[] rf = redstoneSignal ? rfOn : rfOff;
         boolean[] inputMode = redstoneSignal ? inputModeOn : inputModeOff;
 
-        int energyStored = getEnergyStored(EnumFacing.DOWN);
+        int energyStored = getEnergyStored();
         if (energyStored <= 0) {
             return;
         }
@@ -163,7 +163,7 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
         int side = BlockTools.reorient(from, meta).ordinal();
         if (inputMode[side]) {
             int[] rf = redstoneSignal ? rfOn : rfOff;
-            int actual = super.receiveEnergy(from, Math.min(maxReceive, rf[side]), simulate);
+            int actual = super.receiveEnergy(Math.min(maxReceive, rf[side]), simulate);
             if (!simulate) {
                 powerIn += actual;
             }

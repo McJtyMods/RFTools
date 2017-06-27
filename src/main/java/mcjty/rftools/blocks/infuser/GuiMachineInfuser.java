@@ -8,7 +8,6 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.Widget;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
@@ -24,7 +23,7 @@ public class GuiMachineInfuser extends GenericGuiContainer<MachineInfuserTileEnt
 
     public GuiMachineInfuser(MachineInfuserTileEntity machineInfuserTileEntity, MachineInfuserContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, machineInfuserTileEntity, container, 0/*@todoRFTools.GUI_MANUAL_DIMENSION*/, "infuser");
-        machineInfuserTileEntity.setCurrentRF(machineInfuserTileEntity.getEnergyStored(EnumFacing.DOWN));
+        machineInfuserTileEntity.setCurrentRF(machineInfuserTileEntity.getEnergyStored());
 
         xSize = INFUSER_WIDTH;
         ySize = INFUSER_HEIGHT;
@@ -34,7 +33,7 @@ public class GuiMachineInfuser extends GenericGuiContainer<MachineInfuserTileEnt
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored(EnumFacing.DOWN);
+        int maxEnergyStored = tileEntity.getMaxEnergyStored();
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 8, 54)).setShowText(false);
         energyBar.setValue(tileEntity.getCurrentRF());
 

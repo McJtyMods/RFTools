@@ -16,7 +16,6 @@ import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.util.EnumFacing;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
@@ -48,7 +47,7 @@ public class GuiMatterReceiver extends GenericGuiContainer<MatterReceiverTileEnt
 
     public GuiMatterReceiver(MatterReceiverTileEntity matterReceiverTileEntity, EmptyContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, matterReceiverTileEntity, container, RFTools.GUI_MANUAL_MAIN, "tpreceiver");
-        GenericEnergyStorageTileEntity.setCurrentRF(matterReceiverTileEntity.getEnergyStored(EnumFacing.DOWN));
+        GenericEnergyStorageTileEntity.setCurrentRF(matterReceiverTileEntity.getEnergyStored());
 
         xSize = MATTER_WIDTH;
         ySize = MATTER_HEIGHT;
@@ -58,7 +57,7 @@ public class GuiMatterReceiver extends GenericGuiContainer<MatterReceiverTileEnt
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored(EnumFacing.DOWN);
+        int maxEnergyStored = tileEntity.getMaxEnergyStored();
         energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredHeight(12).setDesiredWidth(80).setMaxValue(maxEnergyStored).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 

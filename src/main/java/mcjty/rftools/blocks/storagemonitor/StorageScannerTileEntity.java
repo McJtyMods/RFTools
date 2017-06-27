@@ -5,7 +5,6 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.rftools.varia.ItemStackTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.SoundTools;
 import mcjty.rftools.RFTools;
@@ -14,6 +13,7 @@ import mcjty.rftools.api.storage.IStorageScanner;
 import mcjty.rftools.blocks.crafter.CraftingRecipe;
 import mcjty.rftools.craftinggrid.*;
 import mcjty.rftools.jei.JEIRecipeAcceptor;
+import mcjty.rftools.varia.ItemStackTools;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -174,7 +174,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             }
 
             if (inventoryHelper.containsItem(StorageScannerContainer.SLOT_IN)) {
-                if (getEnergyStored(EnumFacing.DOWN) < StorageScannerConfiguration.rfPerInsert) {
+                if (getEnergyStored() < StorageScannerConfiguration.rfPerInsert) {
                     return;
                 }
 
@@ -185,7 +185,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                 consumeEnergy(StorageScannerConfiguration.rfPerInsert);
             }
             if (inventoryHelper.containsItem(StorageScannerContainer.SLOT_IN_AUTO)) {
-                if (getEnergyStored(EnumFacing.DOWN) < StorageScannerConfiguration.rfPerInsert) {
+                if (getEnergyStored() < StorageScannerConfiguration.rfPerInsert) {
                     return;
                 }
 
@@ -200,7 +200,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
 
     public ItemStack injectStackFromScreen(ItemStack stack, EntityPlayer player) {
-        if (getEnergyStored(EnumFacing.DOWN) < StorageScannerConfiguration.rfPerInsert) {
+        if (getEnergyStored() < StorageScannerConfiguration.rfPerInsert) {
             ITextComponent component = new TextComponentString(TextFormatting.RED + "Not enough power to insert items!");
             if (player instanceof EntityPlayer) {
                 ((EntityPlayer) player).sendStatusMessage(component, false);
@@ -271,7 +271,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         if (stack.isEmpty()) {
             return;
         }
-        if (getEnergyStored(EnumFacing.DOWN) < StorageScannerConfiguration.rfPerRequest) {
+        if (getEnergyStored() < StorageScannerConfiguration.rfPerRequest) {
             ITextComponent component = new TextComponentString(TextFormatting.RED + "Not enough power to request items!");
             if (player instanceof EntityPlayer) {
                 ((EntityPlayer) player).sendStatusMessage(component, false);
@@ -691,7 +691,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     @Override
     public ItemStack requestItem(Predicate<ItemStack> matcher, boolean simulate, int amount, boolean doRoutable) {
-        if (getEnergyStored(EnumFacing.DOWN) < StorageScannerConfiguration.rfPerRequest) {
+        if (getEnergyStored() < StorageScannerConfiguration.rfPerRequest) {
             return ItemStack.EMPTY;
         }
         return inventories.stream()
@@ -720,7 +720,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         if (match.isEmpty()) {
             return ItemStack.EMPTY;
         }
-        if (getEnergyStored(EnumFacing.DOWN) < StorageScannerConfiguration.rfPerRequest) {
+        if (getEnergyStored() < StorageScannerConfiguration.rfPerRequest) {
             return ItemStack.EMPTY;
         }
 
@@ -794,7 +794,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     @Override
     public ItemStack insertItem(ItemStack stack, boolean simulate) {
-        if (getEnergyStored(EnumFacing.DOWN) < StorageScannerConfiguration.rfPerInsert) {
+        if (getEnergyStored() < StorageScannerConfiguration.rfPerInsert) {
             return stack;
         }
 
@@ -850,7 +850,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         if (amount == -1) {
             amount = requested.getMaxStackSize();
         }
-        if (getEnergyStored(EnumFacing.DOWN) < rf) {
+        if (getEnergyStored() < rf) {
             return;
         }
 

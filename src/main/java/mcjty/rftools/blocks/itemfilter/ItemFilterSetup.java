@@ -1,14 +1,7 @@
 package mcjty.rftools.blocks.itemfilter;
 
-import mcjty.rftools.blocks.ModBlocks;
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public class ItemFilterSetup {
     public static ItemFilterBlock itemFilterBlock;

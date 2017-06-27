@@ -10,7 +10,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
@@ -173,7 +172,7 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
             return DialingDeviceTileEntity.DIAL_RECEIVER_BLOCKED_MASK;
         }
 
-        if (getEnergyStored(EnumFacing.DOWN) < TeleportConfiguration.rfPerTeleportReceiver) {
+        if (getEnergyStored() < TeleportConfiguration.rfPerTeleportReceiver) {
             return DialingDeviceTileEntity.DIAL_RECEIVER_POWER_LOW_MASK;
         }
 

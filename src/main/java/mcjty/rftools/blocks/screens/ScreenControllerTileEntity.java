@@ -5,7 +5,6 @@ import mcjty.lib.network.Argument;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 
@@ -275,7 +274,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
             return;
         }
         tickCounter = 20;
-        int rf = getEnergyStored(EnumFacing.DOWN);
+        int rf = getEnergyStored();
         int rememberRf = rf;
         boolean fixesAreNeeded = false;
         for (BlockPos c : connectedScreens) {

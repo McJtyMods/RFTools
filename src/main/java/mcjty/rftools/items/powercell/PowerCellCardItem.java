@@ -2,7 +2,6 @@ package mcjty.rftools.items.powercell;
 
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;

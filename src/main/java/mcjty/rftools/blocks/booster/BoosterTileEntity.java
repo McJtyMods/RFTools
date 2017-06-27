@@ -81,7 +81,7 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
                 }
             }
             if (cachedModule != null) {
-                int rf = getEnergyStored(EnumFacing.DOWN);
+                int rf = getEnergyStored();
                 int rfNeeded = (int) (cachedModule.getRfPerTick() * BoosterConfiguration.energyMultiplier);
                 rfNeeded = (int) (rfNeeded * (3.0f - getInfusedFactor()) / 3.0f);
                 for (EntityLivingBase entity : searchEntities()) {

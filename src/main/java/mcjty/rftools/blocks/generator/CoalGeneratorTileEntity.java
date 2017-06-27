@@ -182,7 +182,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
     }
 
     private void handleSendingEnergy() {
-        int energyStored = getEnergyStored(EnumFacing.DOWN);
+        int energyStored = getEnergyStored();
 
         for (EnumFacing facing : EnumFacing.VALUES) {
             BlockPos pos = getPos().offset(facing);

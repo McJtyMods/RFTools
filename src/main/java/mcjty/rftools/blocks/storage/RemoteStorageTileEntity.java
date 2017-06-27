@@ -49,7 +49,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
     private int timer = 0;
 
     public boolean isPowerLow() {
-        return getEnergyStored(EnumFacing.DOWN) < ModularStorageConfiguration.remoteShareLocal;
+        return getEnergyStored() < ModularStorageConfiguration.remoteShareLocal;
     }
 
     @Override
@@ -92,7 +92,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
                     }
                     rf = (int) (rf * (2.0f - getInfusedFactor()) / 2.0f);
 
-                    if (getEnergyStored(EnumFacing.DOWN) < rf) {
+                    if (getEnergyStored() < rf) {
                         return;
                     }
                     consumeEnergy(rf);

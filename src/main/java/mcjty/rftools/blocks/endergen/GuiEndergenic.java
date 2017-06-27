@@ -12,7 +12,6 @@ import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.PacketRequestIntegerFromServer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.util.EnumFacing;
 
 import java.awt.*;
 
@@ -36,7 +35,7 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
 
     public GuiEndergenic(EndergenicTileEntity endergenicTileEntity, EmptyContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, endergenicTileEntity, container, RFTools.GUI_MANUAL_MAIN, "power");
-        endergenicTileEntity.setCurrentRF(endergenicTileEntity.getEnergyStored(EnumFacing.DOWN));
+        endergenicTileEntity.setCurrentRF(endergenicTileEntity.getEnergyStored());
         xSize = ENDERGENIC_WIDTH;
         ySize = ENDERGENIC_HEIGHT;
     }
@@ -45,7 +44,7 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored(EnumFacing.DOWN);
+        int maxEnergyStored = tileEntity.getMaxEnergyStored();
         energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredHeight(12).setMaxValue(maxEnergyStored).setShowText(true);
         energyBar.setValue(tileEntity.getCurrentRF());
 

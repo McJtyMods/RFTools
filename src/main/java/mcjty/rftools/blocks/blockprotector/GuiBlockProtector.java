@@ -13,7 +13,6 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
@@ -30,7 +29,7 @@ public class GuiBlockProtector extends GenericGuiContainer<BlockProtectorTileEnt
 
     public GuiBlockProtector(BlockProtectorTileEntity blockProtectorTileEntity, BlockProtectorContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, blockProtectorTileEntity, container, RFTools.GUI_MANUAL_MAIN, "protect");
-        GenericEnergyStorageTileEntity.setCurrentRF(blockProtectorTileEntity.getEnergyStored(EnumFacing.DOWN));
+        GenericEnergyStorageTileEntity.setCurrentRF(blockProtectorTileEntity.getEnergyStored());
 
         xSize = PROTECTOR_WIDTH;
         ySize = PROTECTOR_HEIGHT;
@@ -40,7 +39,7 @@ public class GuiBlockProtector extends GenericGuiContainer<BlockProtectorTileEnt
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored(EnumFacing.DOWN);
+        int maxEnergyStored = tileEntity.getMaxEnergyStored();
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 8, 54)).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 

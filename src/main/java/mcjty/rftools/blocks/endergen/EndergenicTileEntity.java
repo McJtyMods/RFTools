@@ -383,7 +383,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
             int rf = EndergenicConfiguration.rfToHoldPearl;
             rf = (int) (rf * (3.0f - getInfusedFactor()) / 3.0f);
 
-            int rfStored = getEnergyStored(EnumFacing.DOWN);
+            int rfStored = getEnergyStored();
             if (rfStored < rf) {
                 // Not enough energy. Pearl is lost.
                 log("Server Tick: insufficient energy to hold pearl (" + rfStored + " vs " + rf + ")");
@@ -462,7 +462,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     }
 
     private void handleSendingEnergy() {
-        int energyStored = getEnergyStored(EnumFacing.DOWN);
+        int energyStored = getEnergyStored();
         if (energyStored <= EndergenicConfiguration.keepRfInBuffer) {
             return;
         }

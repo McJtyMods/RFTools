@@ -2,7 +2,6 @@ package mcjty.rftools.api.storage;
 
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Predicate;
 

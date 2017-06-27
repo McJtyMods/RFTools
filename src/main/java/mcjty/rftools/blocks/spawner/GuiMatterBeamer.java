@@ -9,7 +9,6 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.Widget;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
@@ -24,7 +23,7 @@ public class GuiMatterBeamer extends GenericGuiContainer<MatterBeamerTileEntity>
 
     public GuiMatterBeamer(MatterBeamerTileEntity beamerTileEntity, MatterBeamerContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, beamerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "spawner");
-        GenericEnergyStorageTileEntity.setCurrentRF(beamerTileEntity.getEnergyStored(EnumFacing.DOWN));
+        GenericEnergyStorageTileEntity.setCurrentRF(beamerTileEntity.getEnergyStored());
 
         xSize = BEAMER_WIDTH;
         ySize = BEAMER_HEIGHT;
@@ -34,7 +33,7 @@ public class GuiMatterBeamer extends GenericGuiContainer<MatterBeamerTileEntity>
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored(EnumFacing.DOWN);
+        int maxEnergyStored = tileEntity.getMaxEnergyStored();
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 8, 54)).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 

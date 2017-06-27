@@ -15,7 +15,6 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -242,7 +241,7 @@ public class TeleportationTools {
             int cost = TeleportConfiguration.rfPerDial;
             cost = (int) (cost * (2.0f - dialingDeviceTileEntity.getInfusedFactor()) / 2.0f);
 
-            if (dialingDeviceTileEntity.getEnergyStored(EnumFacing.DOWN) < cost) {
+            if (dialingDeviceTileEntity.getEnergyStored() < cost) {
                 return DialingDeviceTileEntity.DIAL_DIALER_POWER_LOW_MASK;
             }
 
@@ -279,12 +278,12 @@ public class TeleportationTools {
         }
 
         int extracted = rf;
-        if (rf > matterReceiverTileEntity.getEnergyStored(EnumFacing.DOWN)) {
-            extracted = matterReceiverTileEntity.getEnergyStored(EnumFacing.DOWN);
+        if (rf > matterReceiverTileEntity.getEnergyStored()) {
+            extracted = matterReceiverTileEntity.getEnergyStored();
         }
         matterReceiverTileEntity.consumeEnergy(rf);
 
-        int remainingRf = matterReceiverTileEntity.getEnergyStored(EnumFacing.DOWN);
+        int remainingRf = matterReceiverTileEntity.getEnergyStored();
         if (remainingRf <= 1) {
             Logging.warn(player, "The matter receiver has run out of power!");
         } else if (remainingRf < (TeleportConfiguration.RECEIVER_MAXENERGY / 10)) {

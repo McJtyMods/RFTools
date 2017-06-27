@@ -25,12 +25,12 @@ public class PowercellDriver {
 
             @Callback(doc = "function():number; Get the currently stored energy")
             public Object[] getEnergy(Context c, Arguments a) {
-                return new Object[]{tile.getEnergyStored(null)};
+                return new Object[]{tile.getEnergyStored()};
             }
 
             @Callback(doc = "function():number; Get the maximum stored energy")
             public Object[] getMaxEnergy(Context c, Arguments a) {
-                return new Object[]{tile.getMaxEnergyStored(null)};
+                return new Object[]{tile.getMaxEnergyStored()};
             }
 
             @Callback(doc="function():number; Get how much energy was extracted in total")

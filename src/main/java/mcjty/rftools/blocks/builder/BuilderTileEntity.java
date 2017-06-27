@@ -688,7 +688,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             scan = null;
         }
 
-        int rf = getEnergyStored(EnumFacing.DOWN);
+        int rf = getEnergyStored();
         float area = (maxBox.getX() - minBox.getX() + 1) * (maxBox.getY() - minBox.getY() + 1) * (maxBox.getZ() - minBox.getZ() + 1);
         float infusedFactor = (4.0f - getInfusedFactor()) / 4.0f;
         int rfNeeded = (int) (BuilderConfiguration.collectRFPerTickPerArea * area * infusedFactor) * BuilderConfiguration.collectTimer;
@@ -719,7 +719,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         int xp = orb.getXpValue();
 
-        rf = getEnergyStored(EnumFacing.DOWN);
+        rf = getEnergyStored();
         rfNeeded = (int) (BuilderConfiguration.collectRFPerXP * infusedFactor * xp);
         if (rfNeeded > rf) {
             // Not enough energy.
@@ -748,7 +748,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         ItemStack stack = item.getItem();
 
-        rf = getEnergyStored(EnumFacing.DOWN);
+        rf = getEnergyStored();
         rfNeeded = (int) (BuilderConfiguration.collectRFPerItem * infusedFactor) * stack.getCount();
         if (rfNeeded > rf) {
             // Not enough energy.
@@ -936,7 +936,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         rfNeeded = (int) (rfNeeded * (3.0f - getInfusedFactor()) / 3.0f);
 
-        if (rfNeeded > getEnergyStored(EnumFacing.DOWN)) {
+        if (rfNeeded > getEnergyStored()) {
             // Not enough energy.
             return true;
         }
@@ -1569,7 +1569,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private void copyBlock(World world, BlockPos srcPos, World destWorld, BlockPos destPos) {
-        int rf = getEnergyStored(EnumFacing.DOWN);
+        int rf = getEnergyStored();
         int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
         if (rfNeeded > rf) {
             // Not enough energy.
@@ -1608,7 +1608,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private boolean consumeEntityEnergy(int rfNeeded, int rfNeededPlayer, Entity entity) {
-        int rf = getEnergyStored(EnumFacing.DOWN);
+        int rf = getEnergyStored();
         int rfn;
         if (entity instanceof EntityPlayer) {
             rfn = rfNeededPlayer;
@@ -1735,7 +1735,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 return;
             }
 
-            int rf = getEnergyStored(EnumFacing.DOWN);
+            int rf = getEnergyStored();
             int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation * getDimensionCostFactor(world, destWorld) * information.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
             if (rfNeeded > rf) {
                 // Not enough energy.
@@ -1802,7 +1802,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return;
         }
 
-        int rf = getEnergyStored(EnumFacing.DOWN);
+        int rf = getEnergyStored();
         int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation * getDimensionCostFactor(world, destWorld) * srcInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
         rfNeeded += (int) (BuilderConfiguration.builderRfPerOperation * getDimensionCostFactor(world, destWorld) * dstInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
         if (rfNeeded > rf) {

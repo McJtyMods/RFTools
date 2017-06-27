@@ -521,7 +521,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
 
         rf = (int) (rf * costFactor * (4.0f - getInfusedFactor()) / 4.0f);
 
-        if (getEnergyStored(EnumFacing.DOWN) < rf) {
+        if (getEnergyStored() < rf) {
             // Not enough RF to do damage.
             return;
         }
@@ -585,7 +585,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         int rf = getRfPerTick();
 
         if (rf > 0) {
-            if (getEnergyStored(EnumFacing.DOWN) < rf) {
+            if (getEnergyStored() < rf) {
                 powerTimeout = 100;     // Wait 5 seconds before trying again.
                 needsUpdate = true;
             } else {

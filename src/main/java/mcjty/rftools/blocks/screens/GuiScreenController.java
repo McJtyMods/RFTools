@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
-import mcjty.lib.gui.events.ButtonEvent;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.*;
@@ -10,7 +9,6 @@ import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
@@ -26,7 +24,7 @@ public class GuiScreenController extends GenericGuiContainer<ScreenControllerTil
 
     public GuiScreenController(ScreenControllerTileEntity screenControllerTileEntity, ScreenControllerContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, screenControllerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "screens");
-        screenControllerTileEntity.setCurrentRF(screenControllerTileEntity.getEnergyStored(EnumFacing.DOWN));
+        screenControllerTileEntity.setCurrentRF(screenControllerTileEntity.getEnergyStored());
 
         xSize = CONTROLLER_WIDTH;
         ySize = CONTROLLER_HEIGHT;
@@ -36,7 +34,7 @@ public class GuiScreenController extends GenericGuiContainer<ScreenControllerTil
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored(EnumFacing.DOWN);
+        int maxEnergyStored = tileEntity.getMaxEnergyStored();
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 8, 54)).setShowText(false);
         energyBar.setValue(tileEntity.getCurrentRF());
 

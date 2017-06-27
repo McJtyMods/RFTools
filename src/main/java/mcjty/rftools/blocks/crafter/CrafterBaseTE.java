@@ -303,7 +303,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         // 100%: rf -> rf / 2
         int rf = (int) (CrafterConfiguration.rfPerOperation * (2.0f - getInfusedFactor()) / 2.0f);
 
-        if (getEnergyStored(EnumFacing.DOWN) < rf) {
+        if (getEnergyStored() < rf) {
             return;
         }
 

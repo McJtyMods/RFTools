@@ -320,7 +320,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
             return;
         }
 
-        int rf = getEnergyStored(EnumFacing.DOWN);
+        int rf = getEnergyStored();
         if (!isMachineEnabled()) {
             rf = 0;
         }

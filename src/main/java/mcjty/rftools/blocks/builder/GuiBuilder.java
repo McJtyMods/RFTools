@@ -12,7 +12,6 @@ import mcjty.lib.network.Argument;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
@@ -39,7 +38,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
 
     public GuiBuilder(BuilderTileEntity builderTileEntity, BuilderContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, builderTileEntity, container, RFTools.GUI_MANUAL_MAIN, "builder");
-        setCurrentRF(builderTileEntity.getEnergyStored(EnumFacing.DOWN));
+        setCurrentRF(builderTileEntity.getEnergyStored());
 
         xSize = BUILDER_WIDTH;
         ySize = BUILDER_HEIGHT;
@@ -49,7 +48,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored(EnumFacing.DOWN);
+        int maxEnergyStored = tileEntity.getMaxEnergyStored();
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(10, 6, 9, 59)).setShowText(false);
         energyBar.setValue(getCurrentRF());
 

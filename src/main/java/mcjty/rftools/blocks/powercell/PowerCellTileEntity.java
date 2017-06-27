@@ -255,7 +255,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
                 }
             }
 
-            int energyStored = getEnergyStored(EnumFacing.DOWN);
+            int energyStored = getEnergyStored();
             if (energyStored <= 0) {
                 return;
             }
@@ -273,12 +273,12 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
         if (stack.hasCapability(CapabilityEnergy.ENERGY, null)) {
             IEnergyStorage capability = stack.getCapability(CapabilityEnergy.ENERGY, null);
-            int energyStored = getEnergyStored(EnumFacing.DOWN);
+            int energyStored = getEnergyStored();
             int rfToGive = PowerCellConfiguration.CHARGEITEMPERTICK <= energyStored ? PowerCellConfiguration.CHARGEITEMPERTICK : energyStored;
             int received = capability.receiveEnergy(rfToGive, false);
             extractEnergyInternal(received, false, PowerCellConfiguration.CHARGEITEMPERTICK);
         } else if (RFTools.redstoneflux && RedstoneFluxCompatibility.isEnergyItem(stack.getItem())) {
-            int energyStored = getEnergyStored(EnumFacing.DOWN);
+            int energyStored = getEnergyStored();
             int rfToGive = PowerCellConfiguration.CHARGEITEMPERTICK <= energyStored ? PowerCellConfiguration.CHARGEITEMPERTICK : energyStored;
             int received = RedstoneFluxCompatibility.receiveEnergy(stack.getItem(), stack, rfToGive, false);
             extractEnergyInternal(received, false, PowerCellConfiguration.CHARGEITEMPERTICK);
@@ -286,7 +286,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     }
 
     private void sendOutEnergy() {
-        int energyStored = getEnergyStored(EnumFacing.DOWN);
+        int energyStored = getEnergyStored();
 
         for (EnumFacing face : EnumFacing.VALUES) {
             if (modes[face.ordinal()] == Mode.MODE_OUTPUT) {
@@ -455,6 +455,10 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     @Optional.Method(modid = "redstoneflux")
     @Override
     public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
+        return receiveEnergyFacing(from, maxReceive, simulate);
+    }
+
+    public int receiveEnergyFacing(EnumFacing from, int maxReceive, boolean simulate) {
         if (modes[from.ordinal()] != Mode.MODE_INPUT) {
             return 0;
         }
@@ -562,6 +566,10 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     @Optional.Method(modid = "redstoneflux")
     @Override
     public int getEnergyStored(EnumFacing from) {
+        return getEnergyStored();
+    }
+
+    public int getEnergyStored() {
         int networkId = getNetworkId();
         if (networkId == -1) {
             return energy;
@@ -573,6 +581,10 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     @Optional.Method(modid = "redstoneflux")
     @Override
     public int getMaxEnergyStored(EnumFacing from) {
+        return getMaxEnergyStored();
+    }
+
+    public int getMaxEnergyStored() {
         int networkId = getNetworkId();
         if (networkId == -1) {
             return PowerCellConfiguration.rfPerNormalCell * getPowerFactor() / simpleFactor;
@@ -719,7 +731,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         sidedHandlers[facing.ordinal()] = new IEnergyStorage() {
             @Override
             public int receiveEnergy(int maxReceive, boolean simulate) {
-                return PowerCellTileEntity.this.receiveEnergy(facing, maxReceive, simulate);
+                return PowerCellTileEntity.this.receiveEnergyFacing(facing, maxReceive, simulate);
             }
 
             @Override
@@ -729,12 +741,12 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
             @Override
             public int getEnergyStored() {
-                return PowerCellTileEntity.this.getEnergyStored(facing);
+                return PowerCellTileEntity.this.getEnergyStored();
             }
 
             @Override
             public int getMaxEnergyStored() {
-                return PowerCellTileEntity.this.getMaxEnergyStored(facing);
+                return PowerCellTileEntity.this.getMaxEnergyStored();
             }
 
             @Override
@@ -763,12 +775,12 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
             @Override
             public int getEnergyStored() {
-                return PowerCellTileEntity.this.getEnergyStored(EnumFacing.DOWN);
+                return PowerCellTileEntity.this.getEnergyStored();
             }
 
             @Override
             public int getMaxEnergyStored() {
-                return PowerCellTileEntity.this.getMaxEnergyStored(EnumFacing.DOWN);
+                return PowerCellTileEntity.this.getMaxEnergyStored();
             }
 
             @Override

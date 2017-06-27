@@ -15,7 +15,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -292,7 +291,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
 
     private void consumeIdlePower() {
         if (TeleportConfiguration.rfMatterIdleTick > 0 && teleportingPlayer == null) {
-            if (getEnergyStored(EnumFacing.DOWN) >= TeleportConfiguration.rfMatterIdleTick) {
+            if (getEnergyStored() >= TeleportConfiguration.rfMatterIdleTick) {
                 consumeEnergy(TeleportConfiguration.rfMatterIdleTick);
             } else {
                 setTeleportDestination(null, false);
@@ -349,7 +348,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         } else {
             int rf = rfPerTick;
 
-            if (getEnergyStored(EnumFacing.DOWN) < rf) {
+            if (getEnergyStored() < rf) {
                 // We don't have enough energy to handle this tick.
                 handleEnergyShortage();
             } else {
@@ -515,7 +514,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         }
 
         boolean boosted = DialingDeviceTileEntity.isMatterBoosterAvailable(getWorld(), getPos());
-        if (boosted && getEnergyStored(EnumFacing.DOWN) < TeleportConfiguration.rfBoostedTeleport) {
+        if (boosted && getEnergyStored() < TeleportConfiguration.rfBoostedTeleport) {
             // Not enough energy. We cannot do a boosted teleport.
             boosted = false;
         }
@@ -594,7 +593,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             int cost = TeleportationTools.calculateRFCost(getWorld(), getPos(), dest);
             cost = (int) (cost * (4.0f - getInfusedFactor()) / 4.0f);
 
-            if (getEnergyStored(EnumFacing.DOWN) < cost) {
+            if (getEnergyStored() < cost) {
                 Logging.warn(player, "Not enough power to start the teleport!");
                 cooldownTimer = 80;
                 return;

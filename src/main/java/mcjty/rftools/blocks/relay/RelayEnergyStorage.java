@@ -16,7 +16,7 @@ class RelayEnergyStorage implements IEnergyStorage {
 
     @Override
     public int receiveEnergy(int maxReceive, boolean simulate) {
-        return relayTileEntity.receiveEnergy(side, maxReceive, simulate);
+        return relayTileEntity.receiveEnergy(maxReceive, simulate);
     }
 
     @Override

@@ -8,7 +8,6 @@ import mcjty.rftools.blocks.screens.modules.ClockScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ClockClientScreenModule;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;

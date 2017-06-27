@@ -5,7 +5,6 @@ import mcjty.lib.api.Infusable;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericBlock;
 import mcjty.lib.container.GenericGuiContainer;
-import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -138,7 +137,7 @@ public class ElevatorBlock extends GenericRFToolsBlock<ElevatorTileEntity, Empty
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         super.getWailaBody(itemStack, currenttip, accessor, config);
         ElevatorTileEntity te = (ElevatorTileEntity) accessor.getTileEntity();
-        int energy = te.getEnergyStored(EnumFacing.DOWN);
+        int energy = te.getEnergyStored();
         currenttip.add(TextFormatting.GREEN + "RF: " + energy);
         if (te.getName() != null && !te.getName().isEmpty()) {
             currenttip.add(TextFormatting.BLUE + "Name: " + te.getName());

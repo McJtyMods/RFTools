@@ -1,20 +1,5 @@
 package mcjty.rftools;
 
-import mcjty.rftools.blocks.ModBlocks;
-import mcjty.rftools.blocks.builder.BuilderSetup;
-import mcjty.rftools.blocks.elevator.ElevatorSetup;
-import mcjty.rftools.blocks.endergen.EndergenicSetup;
-import mcjty.rftools.blocks.powercell.PowerCellSetup;
-import mcjty.rftools.blocks.screens.ScreenSetup;
-import mcjty.rftools.blocks.shield.ShieldSetup;
-import mcjty.rftools.blocks.storage.ModularStorageSetup;
-import mcjty.rftools.blocks.teleporter.TeleporterSetup;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class Achievements {
 //    public static AchievementPage page;
 //

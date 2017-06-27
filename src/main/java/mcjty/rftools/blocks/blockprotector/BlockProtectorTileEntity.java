@@ -14,7 +14,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -185,7 +184,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
         if (!isMachineEnabled()) {
             return false;
         }
-        int rf = getEnergyStored(EnumFacing.DOWN);
+        int rf = getEnergyStored();
         if (BlockProtectorConfiguration.rfForHarvestAttempt > rf) {
             return false;
         }
@@ -198,7 +197,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
         if (!isMachineEnabled()) {
             return -1;
         }
-        int rf = getEnergyStored(EnumFacing.DOWN);
+        int rf = getEnergyStored();
         int rfneeded = (int) (BlockProtectorConfiguration.rfForExplosionProtection * (1.0 - distance) * radius / 8.0f) + 1;
         rfneeded = (int) (rfneeded * (2.0f - getInfusedFactor()) / 2.0f);
 

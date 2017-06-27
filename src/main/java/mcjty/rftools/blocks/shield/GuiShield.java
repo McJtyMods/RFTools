@@ -13,14 +13,13 @@ import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
-import mcjty.rftools.RFTools;
 import mcjty.lib.varia.RedstoneMode;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.shield.filters.*;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
@@ -83,7 +82,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
 
     public GuiShield(ShieldTEBase shieldTileEntity, ShieldContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, shieldTileEntity, container, RFTools.GUI_MANUAL_MAIN, "shield");
-        shieldTileEntity.setCurrentRF(shieldTileEntity.getEnergyStored(EnumFacing.DOWN));
+        shieldTileEntity.setCurrentRF(shieldTileEntity.getEnergyStored());
 
         xSize = SHIELD_WIDTH;
         ySize = SHIELD_HEIGHT;
@@ -93,7 +92,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored(EnumFacing.DOWN);
+        int maxEnergyStored = tileEntity.getMaxEnergyStored();
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(12, 141, 10, 76)).setShowText(false);
         energyBar.setValue(tileEntity.getCurrentRF());
 

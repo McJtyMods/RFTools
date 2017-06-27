@@ -27,7 +27,6 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 
@@ -52,7 +51,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
 
     public GuiCrafter(CrafterBlockTileEntity1 te, CrafterContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, RFTools.GUI_MANUAL_MAIN, "crafter");
-        GenericEnergyStorageTileEntity.setCurrentRF(te.getEnergyStored(EnumFacing.DOWN));
+        GenericEnergyStorageTileEntity.setCurrentRF(te.getEnergyStored());
 
         xSize = CRAFTER_WIDTH;
         ySize = CRAFTER_HEIGHT;
@@ -60,7 +59,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
 
     public GuiCrafter(CrafterBlockTileEntity2 te, CrafterContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, RFTools.GUI_MANUAL_MAIN, "crafter");
-        GenericEnergyStorageTileEntity.setCurrentRF(te.getEnergyStored(EnumFacing.DOWN));
+        GenericEnergyStorageTileEntity.setCurrentRF(te.getEnergyStored());
 
         xSize = CRAFTER_WIDTH;
         ySize = CRAFTER_HEIGHT;
@@ -68,7 +67,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
 
     public GuiCrafter(CrafterBlockTileEntity3 te, CrafterContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, RFTools.GUI_MANUAL_MAIN, "crafter");
-        GenericEnergyStorageTileEntity.setCurrentRF(te.getEnergyStored(EnumFacing.DOWN));
+        GenericEnergyStorageTileEntity.setCurrentRF(te.getEnergyStored());
 
         xSize = CRAFTER_WIDTH;
         ySize = CRAFTER_HEIGHT;
@@ -78,7 +77,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored(EnumFacing.DOWN);
+        int maxEnergyStored = tileEntity.getMaxEnergyStored();
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(12, 141, 10, 76)).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
