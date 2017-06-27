@@ -1,11 +1,10 @@
 package mcjty.rftools.blocks.powercell;
 
-import cofh.api.energy.IEnergyConnection;
-import cofh.api.energy.IEnergyContainerItem;
-import cofh.api.energy.IEnergyProvider;
-import cofh.api.energy.IEnergyReceiver;
+import cofh.redstoneflux.api.IEnergyProvider;
+import cofh.redstoneflux.api.IEnergyReceiver;
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.api.smartwrench.SmartWrenchSelector;
+import mcjty.lib.compat.RedstoneFluxCompatibility;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
@@ -14,6 +13,7 @@ import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.items.powercell.PowerCellCardItem;
 import net.minecraft.block.Block;
@@ -32,6 +32,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fml.common.Optional;
 
 import java.util.Map;
 import java.util.Set;
@@ -39,6 +40,10 @@ import java.util.Set;
 import static mcjty.rftools.blocks.powercell.PowerCellConfiguration.advancedFactor;
 import static mcjty.rftools.blocks.powercell.PowerCellConfiguration.simpleFactor;
 
+@Optional.InterfaceList({
+        @Optional.Interface(iface = "cofh.redstoneflux.api.IEnergyProvider", modid = "redstoneflux"),
+        @Optional.Interface(iface = "cofh.redstoneflux.api.IEnergyReceiver", modid = "redstoneflux")
+})
 public class PowerCellTileEntity extends GenericTileEntity implements IEnergyProvider, IEnergyReceiver,
         DefaultSidedInventory, ITickable, SmartWrenchSelector, MachineInformation {
 
@@ -272,11 +277,10 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
             int rfToGive = PowerCellConfiguration.CHARGEITEMPERTICK <= energyStored ? PowerCellConfiguration.CHARGEITEMPERTICK : energyStored;
             int received = capability.receiveEnergy(rfToGive, false);
             extractEnergyInternal(received, false, PowerCellConfiguration.CHARGEITEMPERTICK);
-        } else if (stack.getItem() instanceof IEnergyContainerItem) {
-            IEnergyContainerItem energyContainerItem = (IEnergyContainerItem) stack.getItem();
+        } else if (RFTools.redstoneflux && RedstoneFluxCompatibility.isEnergyItem(stack.getItem())) {
             int energyStored = getEnergyStored(EnumFacing.DOWN);
             int rfToGive = PowerCellConfiguration.CHARGEITEMPERTICK <= energyStored ? PowerCellConfiguration.CHARGEITEMPERTICK : energyStored;
-            int received = energyContainerItem.receiveEnergy(stack, rfToGive, false);
+            int received = RedstoneFluxCompatibility.receiveEnergy(stack.getItem(), stack, rfToGive, false);
             extractEnergyInternal(received, false, PowerCellConfiguration.CHARGEITEMPERTICK);
         }
     }
@@ -303,9 +307,8 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
                             rfToGive = (int) (energyStored / factor);
                         }
 
-                        if (te instanceof IEnergyConnection) {
-                            IEnergyConnection connection = (IEnergyConnection) te;
-                            if (connection.canConnectEnergy(opposite)) {
+                        if (RFTools.redstoneflux && RedstoneFluxCompatibility.isEnergyConnection(te)) {
+                            if (RedstoneFluxCompatibility.canConnectEnergy(te, opposite)) {
                                 received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
                             } else {
                                 received = 0;
@@ -449,6 +452,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         this.totalInserted = 0;
     }
 
+    @Optional.Method(modid = "redstoneflux")
     @Override
     public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
         if (modes[from.ordinal()] != Mode.MODE_INPUT) {
@@ -498,6 +502,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         return maxInsert;
     }
 
+    @Optional.Method(modid = "redstoneflux")
     @Override
     public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
         return 0;
@@ -554,6 +559,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         return maxExtract;
     }
 
+    @Optional.Method(modid = "redstoneflux")
     @Override
     public int getEnergyStored(EnumFacing from) {
         int networkId = getNetworkId();
@@ -564,6 +570,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         return network.getEnergy();
     }
 
+    @Optional.Method(modid = "redstoneflux")
     @Override
     public int getMaxEnergyStored(EnumFacing from) {
         int networkId = getNetworkId();
@@ -588,6 +595,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         return true;
     }
 
+    @Optional.Method(modid = "redstoneflux")
     @Override
     public boolean canConnectEnergy(EnumFacing from) {
         return true;

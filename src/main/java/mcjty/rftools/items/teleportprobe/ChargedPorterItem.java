@@ -1,13 +1,14 @@
 package mcjty.rftools.items.teleportprobe;
 
-import cofh.api.energy.IEnergyContainerItem;
+import cofh.redstoneflux.api.IEnergyContainerItem;
 import mcjty.lib.varia.GlobalCoordinate;
+import mcjty.lib.varia.IEnergyItem;
+import mcjty.lib.varia.ItemCapabilityProvider;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.ForgeEventHandlers;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.*;
 import mcjty.rftools.items.GenericRFToolsItem;
-import mcjty.rftools.items.ItemCapabilityProvider;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -23,13 +24,15 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyContainerItem {
+@Optional.Interface(modid = "redstoneflux", iface = "cofh.redstoneflux.api.IEnergyContainerItem")
+public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem, IEnergyContainerItem {
 
     private int capacity;
     private int maxReceive;

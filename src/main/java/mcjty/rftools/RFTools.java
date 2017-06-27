@@ -54,6 +54,7 @@ public class RFTools implements ModBase {
     // Are some mods loaded?.
     public boolean rftoolsDimensions = false;
     public boolean xnet = false;
+    public static boolean redstoneflux = false;
 
     public static ScreenModuleRegistry screenModuleRegistry = new ScreenModuleRegistry();
 
@@ -158,6 +159,10 @@ public class RFTools implements ModBase {
 
         FMLInterModComms.sendFunctionMessage("theoneprobe", "getTheOneProbe", "mcjty.rftools.theoneprobe.TheOneProbeSupport");
 
+        redstoneflux = Loader.isModLoaded("redstoneflux");
+        if (redstoneflux) {
+            Logging.log("RFTools Detected RedstoneFlux: enabling support");
+        }
         xnet = Loader.isModLoaded("xnet");
         if (xnet) {
             Logging.log("RFTools Detected XNet: enabling support");

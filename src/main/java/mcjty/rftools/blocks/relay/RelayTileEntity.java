@@ -1,11 +1,12 @@
 package mcjty.rftools.blocks.relay;
 
-import cofh.api.energy.IEnergyConnection;
 import mcjty.lib.api.MachineInformation;
+import mcjty.lib.compat.RedstoneFluxCompatibility;
 import mcjty.lib.entity.GenericEnergyHandlerTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.EnergyTools;
+import mcjty.rftools.RFTools;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -126,9 +127,8 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
                     }
                     int received;
 
-                    if (te instanceof IEnergyConnection) {
-                        IEnergyConnection connection = (IEnergyConnection) te;
-                        if (connection.canConnectEnergy(opposite)) {
+                    if (RFTools.redstoneflux && RedstoneFluxCompatibility.isEnergyConnection(te)) {
+                        if (RedstoneFluxCompatibility.canConnectEnergy(te, opposite)) {
                             received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
                         } else {
                             received = 0;

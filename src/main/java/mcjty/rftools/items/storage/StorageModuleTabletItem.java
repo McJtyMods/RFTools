@@ -1,12 +1,13 @@
 package mcjty.rftools.items.storage;
 
-import cofh.api.energy.IEnergyContainerItem;
+import cofh.redstoneflux.api.IEnergyContainerItem;
+import mcjty.lib.varia.IEnergyItem;
+import mcjty.lib.varia.ItemCapabilityProvider;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.items.GenericRFToolsItem;
-import mcjty.rftools.items.ItemCapabilityProvider;
 import mcjty.rftools.items.screenmodules.StorageControlModuleItem;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.client.renderer.block.model.ModelBakery;
@@ -28,13 +29,15 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class StorageModuleTabletItem extends GenericRFToolsItem implements IEnergyContainerItem {
+@Optional.Interface(modid = "redstoneflux", iface = "cofh.redstoneflux.api.IEnergyContainerItem")
+public class StorageModuleTabletItem extends GenericRFToolsItem implements IEnergyItem, IEnergyContainerItem {
 
     private int capacity;
     private int maxReceive;

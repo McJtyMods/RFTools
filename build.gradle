@@ -45,6 +45,10 @@ repositories {
         name = "sonatype"
         url = "https://oss.sonatype.org/content/repositories/snapshots/"
     }
+    maven {
+        name = "CoFH Maven"
+        url = "http://maven.covers1624.net"
+    }
 }
 
 version = "1.12-6.03"
@@ -79,11 +83,12 @@ artifacts {
 dependencies {
     deobfCompile "mezz.jei:jei_1.12:4.7.0.67"
     deobfCompile "mcp.mobius.waila:Hwyla:1.8.18-B32_1.12:api"
-    deobfCompile "mcjty.theoneprobe:TheOneProbe-1.12:1.12-1.4.10-4"
+    deobfCompile "mcjty.theoneprobe:TheOneProbe-1.12:1.12-1.4.11-5"
+    compile "cofh:RedstoneFlux:1.12-2.0.0.+:deobf"
 
-    deobfCompile "com.github.mcjty:intwheel:1.12-1.2.6"
+    deobfCompile "com.github.mcjty:intwheel:1.12-1.2.7"
     deobfCompile "com.github.mcjty:xnet:1.12-1.3.3"
-    deobfCompile "com.github.mcjty:mcjtylib:1.12-2.3.13-SNAPSHOT"
+    deobfCompile "com.github.mcjty:mcjtylib:1.12-2.3.16-SNAPSHOT"
 
     compile "li.cil.oc:OpenComputers:MC1.10.2-1.6.+:api"
 }
