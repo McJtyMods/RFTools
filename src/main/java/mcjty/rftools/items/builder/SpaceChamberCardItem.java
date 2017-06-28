@@ -64,15 +64,15 @@ public class SpaceChamberCardItem extends GenericRFToolsItem {
     }
 
     @Override
-    protected ActionResult<ItemStack> clOnItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         if (!player.isSneaking()) {
             showDetails(world, player, player.getHeldItem(hand));
         }
-        return super.clOnItemRightClick(world, player, hand);
+        return super.onItemRightClick(world, player, hand);
     }
 
     @Override
-    protected EnumActionResult clOnItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
         TileEntity te = world.getTileEntity(pos);
         NBTTagCompound tagCompound = stack.getTagCompound();

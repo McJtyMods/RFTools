@@ -23,7 +23,7 @@ public class DevelopersDelightItem extends GenericRFToolsItem {
     }
 
     @Override
-    protected EnumActionResult clOnItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (world.isRemote) {
             dumpInfo(world, pos);
             GuiDevelopersDelight.setSelected(pos);

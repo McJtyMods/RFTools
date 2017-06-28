@@ -70,7 +70,7 @@ public class StorageFilterItem extends GenericRFToolsItem {
     }
 
     @Override
-    protected EnumActionResult clOnItemUse(EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = playerIn.getHeldItem(hand);
         if (playerIn.isSneaking()) {
             if (!worldIn.isRemote) {
@@ -121,7 +121,7 @@ public class StorageFilterItem extends GenericRFToolsItem {
             }
             return EnumActionResult.SUCCESS;
         }
-        return super.clOnItemUse(playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+        return super.onItemUse(playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
     }
 
     private void addItem(TileEntity te, List<ItemStack> stacks, Set<ResourceLocation> registeredItems, ItemStack s) {
@@ -146,7 +146,7 @@ public class StorageFilterItem extends GenericRFToolsItem {
     }
 
     @Override
-    protected ActionResult<ItemStack> clOnItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
             player.openGui(RFTools.instance, RFTools.GUI_STORAGE_FILTER, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);

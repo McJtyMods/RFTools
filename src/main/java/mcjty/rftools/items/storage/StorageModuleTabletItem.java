@@ -89,7 +89,7 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
     }
 
     @Override
-    protected ActionResult<ItemStack> clOnItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         // Make sure the tablet only works in main hand to avoid problems later
         if (hand != EnumHand.MAIN_HAND) {

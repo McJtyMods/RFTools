@@ -14,6 +14,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -47,7 +48,7 @@ public class StorageModuleItem extends GenericRFToolsItem {
     }
 
     @Override
-    protected ActionResult<ItemStack> clOnItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
             Logging.message(player, TextFormatting.YELLOW + "Place this module in a storage module tablet to access contents");
@@ -116,10 +117,12 @@ public class StorageModuleItem extends GenericRFToolsItem {
     }
 
     @Override
-    protected void clGetSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
-        for (int i = 0 ; i < 7 ; i++) {
-            if (MAXSIZE[i] != 0) {
-                subItems.add(new ItemStack(ModularStorageSetup.storageModuleItem, 1, i));
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+        if (isInCreativeTab(tab)) {
+            for (int i = 0; i < 7; i++) {
+                if (MAXSIZE[i] != 0) {
+                    items.add(new ItemStack(ModularStorageSetup.storageModuleItem, 1, i));
+                }
             }
         }
     }
