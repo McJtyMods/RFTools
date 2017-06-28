@@ -1372,6 +1372,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private boolean checkValidItems(Block block, List<ItemStack> items) {
         for (ItemStack stack : items) {
             if (stack.isEmpty() || stack.getItem() == null) {
+            if (ItemStackTools.isValid(stack) && stack.getItem() == null) {
                 Logging.logError("Builder tried to quarry " + block.getRegistryName().toString() + " and it returned null item!");
                 Broadcaster.broadcast(getWorld(), pos.getX(), pos.getY(), pos.getZ(), "Builder tried to quarry "
                         + block.getRegistryName().toString() + " and it returned null item!\nPlease report to mod author!",
@@ -1409,7 +1410,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private boolean checkAndInsertItems(Block block, List<ItemStack> items) {
         TileEntity te = getWorld().getTileEntity(getPos().up());
         if (!checkValidItems(block, items)) {
-            return false;
+            return true;    // We don't wait for this. Just skip the item
         }
         boolean ok = InventoryHelper.insertItemsAtomic(items, te, EnumFacing.DOWN);
         if (!ok) {
