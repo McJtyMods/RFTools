@@ -9,8 +9,6 @@ import mcjty.rftools.blocks.logic.timer.TimerBlock;
 import mcjty.rftools.blocks.logic.wire.WireBlock;
 import mcjty.rftools.blocks.logic.wireless.RedstoneReceiverBlock;
 import mcjty.rftools.blocks.logic.wireless.RedstoneTransmitterBlock;
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -48,10 +46,5 @@ public class LogicBlockSetup {
         invCheckerBlock.initModel();
         sensorBlock.initModel();
         wireBlock.initModel();
-    }
-
-    public static void initCrafting() {
-        Block redstoneTorch = Blocks.REDSTONE_TORCH;
-
     }
 }

@@ -1,0 +1,27 @@
+{
+  "result": {
+    "item": "rftools:shape_card",
+    "data": 3
+  },
+  "pattern": [
+    "rnr",
+    "dMd",
+    "rdr"
+  ],
+  "type": "rftools:copy_nbt",
+  "key": {
+    "r": {
+      "item": "rftools:dimensional_shard"
+    },
+    "d": {
+      "item": "minecraft:diamond"
+    },
+    "n": {
+      "item": "minecraft:nether_star"
+    },
+    "M": {
+      "item": "rftools:shape_card",
+      "data": 2
+    }
+  }
+}

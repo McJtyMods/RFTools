@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "rftools:inventoryplus_module"
+  },
+  "pattern": [
+    " e ",
+    "gMg",
+    " e "
+  ],
+  "type": "rftools:copy_nbt",
+  "key": {
+    "e": {
+      "item": "minecraft:enderpearl"
+    },
+    "g": {
+      "item": "minecraft:gold_ingot"
+    },
+    "M": {
+      "item": "rftools:inventory_module"
+    }
+  }
+}

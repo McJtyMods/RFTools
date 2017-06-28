@@ -14,11 +14,4 @@ public class ItemFilterSetup {
     public static void initClient() {
         itemFilterBlock.initModel();
     }
-
-    public static void initCrafting() {
-//        Block redstoneTorch = Blocks.REDSTONE_TORCH;
-//
-//        MyGameReg.addRecipe(new ItemStack(itemFilterBlock), "pcp", "rMr", "pTp", 'M', ModBlocks.machineFrame, 'T', redstoneTorch, 'p', Items.PAPER,
-//                               'r', Items.REDSTONE, 'c', "chest"));
-    }
 }

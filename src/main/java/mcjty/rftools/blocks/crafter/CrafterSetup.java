@@ -1,7 +1,5 @@
 package mcjty.rftools.blocks.crafter;
 
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -22,21 +20,5 @@ public class CrafterSetup {
         crafterBlock1.initModel();
         crafterBlock2.initModel();
         crafterBlock3.initModel();
-    }
-
-    public static void initCrafting() {
-        Block redstoneTorch = Blocks.REDSTONE_TORCH;
-
-        // @todo recipes
-//        MyGameReg.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
-//                ItemStackTools.getEmptyStack(), new ItemStack(redstoneTorch), ItemStackTools.getEmptyStack(),
-//                new ItemStack(Blocks.CRAFTING_TABLE), new ItemStack(crafterBlock1), new ItemStack(Blocks.CRAFTING_TABLE),
-//                ItemStackTools.getEmptyStack(), new ItemStack(redstoneTorch), ItemStackTools.getEmptyStack()
-//        }, new ItemStack(crafterBlock2), 4));
-//        MyGameReg.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
-//                ItemStackTools.getEmptyStack(), new ItemStack(redstoneTorch), ItemStackTools.getEmptyStack(),
-//                new ItemStack(Blocks.CRAFTING_TABLE), new ItemStack(crafterBlock2), new ItemStack(Blocks.CRAFTING_TABLE),
-//                ItemStackTools.getEmptyStack(), new ItemStack(redstoneTorch), ItemStackTools.getEmptyStack()
-//        }, new ItemStack(crafterBlock3), 4));
     }
 }

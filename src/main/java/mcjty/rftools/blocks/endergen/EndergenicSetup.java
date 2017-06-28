@@ -1,8 +1,5 @@
 package mcjty.rftools.blocks.endergen;
 
-import mcjty.rftools.GeneralConfiguration;
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -22,13 +19,5 @@ public class EndergenicSetup {
         endergenicBlock.initModel();
         pearlInjectorBlock.initModel();
         enderMonitorBlock.initModel();
-    }
-
-    public static void initCrafting() {
-        Block redstoneTorch = Blocks.REDSTONE_TORCH;
-        if (GeneralConfiguration.enableEndergenRecipe) {
-
-        }
-
     }
 }

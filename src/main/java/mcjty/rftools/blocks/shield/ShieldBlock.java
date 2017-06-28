@@ -9,6 +9,7 @@ import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.blocks.builder.BuilderSetup;
+import mcjty.rftools.crafting.INBTPreservingIngredient;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -30,7 +31,7 @@ import java.util.List;
 
 //@Optional.InterfaceList({
 //        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
-public class ShieldBlock extends GenericRFToolsBlock<ShieldTEBase, ShieldContainer> implements Infusable /*, IRedstoneConnectable*/ {
+public class ShieldBlock extends GenericRFToolsBlock<ShieldTEBase, ShieldContainer> implements Infusable, INBTPreservingIngredient /*, IRedstoneConnectable*/ {
 
     private final int max;
 

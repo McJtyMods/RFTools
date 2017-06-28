@@ -21,8 +21,4 @@ public class SecuritySetup {
         orphaningCardItem.initModel();
         securityCardItem.initModel();
     }
-
-    public static void initCrafting() {
-
-    }
 }

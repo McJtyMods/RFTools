@@ -7,6 +7,7 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
+import mcjty.rftools.crafting.INBTPreservingIngredient;
 import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.varia.ItemStackTools;
 import net.minecraft.block.Block;
@@ -35,7 +36,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.*;
 
-public class ShapeCardItem extends GenericRFToolsItem {
+public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingIngredient {
 
     public static final int CARD_UNKNOWN = -2;          // Not known yet
     public static final int CARD_SPACE = -1;            // Not a shape card but a space card instead

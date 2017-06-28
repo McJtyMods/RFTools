@@ -9,6 +9,7 @@ import mcjty.rftools.blocks.logic.counter.CounterTileEntity;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.CounterScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.CounterClientScreenModule;
+import mcjty.rftools.crafting.INBTPreservingIngredient;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -28,7 +29,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class CounterModuleItem extends GenericRFToolsItem implements IModuleProvider {
+public class CounterModuleItem extends GenericRFToolsItem implements IModuleProvider, INBTPreservingIngredient {
 
     public CounterModuleItem() {
         super("counter_module");

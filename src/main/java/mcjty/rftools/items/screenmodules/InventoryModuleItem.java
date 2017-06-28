@@ -8,6 +8,7 @@ import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ItemStackScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ItemStackClientScreenModule;
+import mcjty.rftools.crafting.INBTPreservingIngredient;
 import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
@@ -29,7 +30,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class InventoryModuleItem extends GenericRFToolsItem implements IModuleProvider {
+public class InventoryModuleItem extends GenericRFToolsItem implements IModuleProvider, INBTPreservingIngredient {
 
     public InventoryModuleItem() {
         super("inventory_module");

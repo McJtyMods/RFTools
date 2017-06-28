@@ -17,8 +17,4 @@ public class SpawnerSetup {
         spawnerBlock.initModel();
         matterBeamerBlock.initModel();
     }
-
-    public static void initCrafting() {
-
-    }
 }

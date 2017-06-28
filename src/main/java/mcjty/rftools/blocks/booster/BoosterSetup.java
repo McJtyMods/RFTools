@@ -14,8 +14,4 @@ public class BoosterSetup {
     public static void initClient() {
         boosterBlock.initModel();
     }
-
-    public static void initCrafting() {
-
-    }
 }

@@ -80,33 +80,4 @@ public class ScreenSetup {
         storageControlModuleItem.initModel();
         dumpModuleItem.initModel();
     }
-
-    public static void initCrafting() {
-
-        initScreenModuleCrafting();
-    }
-
-    private static void initScreenModuleCrafting() {
-
-        //        MyGameReg.addRecipe(new ItemStack(computerModuleItem), " f ", "rir", " b ", 'f', Blocks.quartz_block, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
-//                'b', "dyeBlack"));
-
-        // @todo recipes
-//        MyGameReg.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
-//                null, new ItemStack(Items.ENDER_PEARL), null,
-//                new ItemStack(Items.GOLD_INGOT), new ItemStack(energyModuleItem), new ItemStack(Items.GOLD_INGOT),
-//                null, new ItemStack(Items.ENDER_PEARL), null }, new ItemStack(energyPlusModuleItem), 4));
-//        MyGameReg.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
-//                null, new ItemStack(Items.ENDER_PEARL), null,
-//                new ItemStack(Items.GOLD_INGOT), new ItemStack(fluidModuleItem), new ItemStack(Items.GOLD_INGOT),
-//                null, new ItemStack(Items.ENDER_PEARL), null }, new ItemStack(fluidPlusModuleItem), 4));
-//        MyGameReg.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
-//                null, new ItemStack(Items.ENDER_PEARL), null,
-//                new ItemStack(Items.GOLD_INGOT), new ItemStack(inventoryModuleItem), new ItemStack(Items.GOLD_INGOT),
-//                null, new ItemStack(Items.ENDER_PEARL), null }, new ItemStack(inventoryPlusModuleItem), 4));
-//        MyGameReg.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[] {
-//                null, new ItemStack(Items.ENDER_PEARL), null,
-//                new ItemStack(Items.GOLD_INGOT), new ItemStack(counterModuleItem), new ItemStack(Items.GOLD_INGOT),
-//                null, new ItemStack(Items.ENDER_PEARL), null }, new ItemStack(counterPlusModuleItem), 4));
-    }
 }

@@ -14,8 +14,4 @@ public class MachineInfuserSetup {
     public static void initClient() {
         machineInfuserBlock.initModel();
     }
-
-    public static void initCrafting() {
-
-    }
 }

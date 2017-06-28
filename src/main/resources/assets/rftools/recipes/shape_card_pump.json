@@ -1,0 +1,29 @@
+{
+  "result": {
+    "item": "rftools:shape_card",
+    "data": 8
+  },
+  "pattern": [
+    "rwr",
+    "bMb",
+    "rlr"
+  ],
+  "type": "rftools:copy_nbt",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "w": {
+      "item": "minecraft:water_bucket"
+    },
+    "l": {
+      "item": "minecraft:lava_bucket"
+    },
+    "b": {
+      "item": "minecraft:bucket"
+    },
+    "M": {
+      "item": "rftools:shape_card"
+    }
+  }
+}

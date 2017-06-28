@@ -1,11 +1,8 @@
 package mcjty.rftools.blocks.teleporter;
 
-import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.items.teleportprobe.AdvancedChargedPorterItem;
 import mcjty.rftools.items.teleportprobe.ChargedPorterItem;
 import mcjty.rftools.items.teleportprobe.TeleportProbeItem;
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -46,30 +43,5 @@ public class TeleporterSetup {
         teleportProbeItem.initModel();
         chargedPorterItem.initModel();
         advancedChargedPorterItem.initModel();
-    }
-
-    public static void initCrafting() {
-        Block redstoneTorch = Blocks.REDSTONE_TORCH;
-
-        if (GeneralConfiguration.enableMatterTransmitterRecipe) {
-
-        }
-        if (GeneralConfiguration.enableMatterReceiverRecipe) {
-
-        }
-        if (GeneralConfiguration.enableDialingDeviceRecipe) {
-
-        }
-
-        // @todo recipes
-//        MyGameReg.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-//                new ItemStack(Blocks.REDSTONE_BLOCK), new ItemStack(Items.DIAMOND), new ItemStack(Blocks.REDSTONE_BLOCK),
-//                new ItemStack(Items.DIAMOND), new ItemStack(chargedPorterItem), new ItemStack(Items.DIAMOND),
-//                new ItemStack(Blocks.REDSTONE_BLOCK), new ItemStack(Items.DIAMOND), new ItemStack(Blocks.REDSTONE_BLOCK)
-//        }, new ItemStack(advancedChargedPorterItem), 4));
-
-        if (GeneralConfiguration.enableDialingDeviceRecipe) {
-
-        }
     }
 }

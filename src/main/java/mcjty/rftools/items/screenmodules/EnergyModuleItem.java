@@ -9,6 +9,7 @@ import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.EnergyBarScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.EnergyBarClientScreenModule;
+import mcjty.rftools.crafting.INBTPreservingIngredient;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -28,7 +29,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class EnergyModuleItem extends GenericRFToolsItem implements IModuleProvider {
+public class EnergyModuleItem extends GenericRFToolsItem implements IModuleProvider, INBTPreservingIngredient {
 
     public EnergyModuleItem() {
         super("energy_module");

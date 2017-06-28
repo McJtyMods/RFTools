@@ -1,8 +1,5 @@
 package mcjty.rftools.blocks.shield;
 
-import mcjty.rftools.GeneralConfiguration;
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -50,30 +47,5 @@ public class ShieldSetup {
     public static void initClientPost() {
         solidShieldBlock.initBlockColors();
         noTickSolidShieldBlock.initBlockColors();
-    }
-
-    public static void initCrafting() {
-        Block redstoneTorch = Blocks.REDSTONE_TORCH;
-
-        if (GeneralConfiguration.enableShieldProjectorRecipe) {
-
-            // @todo recipes
-//            MyGameReg.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-//                    new ItemStack(Blocks.REDSTONE_BLOCK), new ItemStack(Blocks.OBSIDIAN), new ItemStack(Blocks.REDSTONE_BLOCK),
-//                    new ItemStack(Blocks.OBSIDIAN), new ItemStack(shieldBlock1), new ItemStack(Blocks.OBSIDIAN),
-//                    new ItemStack(Blocks.REDSTONE_BLOCK), new ItemStack(Blocks.OBSIDIAN), new ItemStack(Blocks.REDSTONE_BLOCK)
-//            }, new ItemStack(shieldBlock2), 4));
-//            MyGameReg.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-//                    new ItemStack(ModItems.dimensionalShardItem), new ItemStack(Blocks.OBSIDIAN), new ItemStack(ModItems.dimensionalShardItem),
-//                    new ItemStack(Blocks.OBSIDIAN), new ItemStack(shieldBlock2), new ItemStack(Blocks.OBSIDIAN),
-//                    new ItemStack(ModItems.dimensionalShardItem), new ItemStack(Blocks.OBSIDIAN), new ItemStack(ModItems.dimensionalShardItem)
-//            }, new ItemStack(shieldBlock3), 4));
-//            MyGameReg.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-//                    new ItemStack(Items.NETHER_STAR), new ItemStack(Blocks.OBSIDIAN), new ItemStack(ModItems.dimensionalShardItem),
-//                    new ItemStack(Blocks.OBSIDIAN), new ItemStack(shieldBlock3), new ItemStack(Blocks.OBSIDIAN),
-//                    new ItemStack(ModItems.dimensionalShardItem), new ItemStack(Blocks.OBSIDIAN), new ItemStack(Items.NETHER_STAR)
-//            }, new ItemStack(shieldBlock4), 4));
-        }
-
     }
 }

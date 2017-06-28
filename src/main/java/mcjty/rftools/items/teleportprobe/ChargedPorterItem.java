@@ -8,6 +8,7 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.ForgeEventHandlers;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.*;
+import mcjty.rftools.crafting.INBTPreservingIngredient;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
@@ -32,7 +33,7 @@ import org.lwjgl.input.Keyboard;
 import java.util.List;
 
 @Optional.Interface(modid = "redstoneflux", iface = "cofh.redstoneflux.api.IEnergyContainerItem")
-public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem, IEnergyContainerItem {
+public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem, IEnergyContainerItem, INBTPreservingIngredient {
 
     private int capacity;
     private int maxReceive;

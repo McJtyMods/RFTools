@@ -1,0 +1,21 @@
+{
+  "result": {
+    "item": "rftools:shape_card",
+    "data": 5
+  },
+  "pattern": [
+    "ggg",
+    "gMg",
+    "ggg"
+  ],
+  "type": "rftools:copy_nbt",
+  "key": {
+    "g": {
+      "item": "minecraft:glass"
+    },
+    "M": {
+      "item": "rftools:shape_card",
+      "data": 2
+    }
+  }
+}

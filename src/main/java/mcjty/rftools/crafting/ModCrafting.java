@@ -1,34 +1,13 @@
 package mcjty.rftools.crafting;
 
 import mcjty.rftools.GeneralConfiguration;
-import mcjty.rftools.blocks.blockprotector.BlockProtectorSetup;
-import mcjty.rftools.blocks.booster.BoosterSetup;
-import mcjty.rftools.blocks.builder.BuilderSetup;
-import mcjty.rftools.blocks.crafter.CrafterSetup;
-import mcjty.rftools.blocks.elevator.ElevatorSetup;
-import mcjty.rftools.blocks.endergen.EndergenicSetup;
 import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
-import mcjty.rftools.blocks.generator.CoalGeneratorSetup;
-import mcjty.rftools.blocks.infuser.MachineInfuserSetup;
-import mcjty.rftools.blocks.itemfilter.ItemFilterSetup;
-import mcjty.rftools.blocks.logic.LogicBlockSetup;
-import mcjty.rftools.blocks.monitor.MonitorSetup;
-import mcjty.rftools.blocks.powercell.PowerCellSetup;
-import mcjty.rftools.blocks.relay.RelaySetup;
-import mcjty.rftools.blocks.screens.ScreenSetup;
-import mcjty.rftools.blocks.security.SecuritySetup;
-import mcjty.rftools.blocks.shield.ShieldSetup;
-import mcjty.rftools.blocks.spawner.SpawnerSetup;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
-import mcjty.rftools.blocks.storagemonitor.StorageScannerSetup;
-import mcjty.rftools.blocks.teleporter.TeleporterSetup;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.oredict.RecipeSorter;
 
 public final class ModCrafting {
     static {
-        RecipeSorter.register("rftools:shapedpreserving", PreservingShapedRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
-        RecipeSorter.register("rftools:shapedorepreserving", PreservingShapedOreRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
         RecipeSorter.register("rftools:containeranditem", ContainerAndItemRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
         RecipeSorter.register("rftools:containertoitem", ContainerToItemRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
         RecipeSorter.register("rftools:nbtmatchingrecipe", NBTMatchingRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
@@ -37,27 +16,8 @@ public final class ModCrafting {
     public static void init() {
         initBaseCrafting();
 
-        CoalGeneratorSetup.initCrafting();
-        CrafterSetup.initCrafting();
         ModularStorageSetup.initCrafting();
-        TeleporterSetup.initCrafting();
-        ScreenSetup.initCrafting();
-        LogicBlockSetup.initCrafting();
-        MachineInfuserSetup.initCrafting();
-        BuilderSetup.initCrafting();
-        PowerCellSetup.initCrafting();
-        RelaySetup.initCrafting();
-        MonitorSetup.initCrafting();
-        ShieldSetup.initCrafting();
         EnvironmentalSetup.initCrafting();
-        SpawnerSetup.initCrafting();
-        BlockProtectorSetup.initCrafting();
-        ItemFilterSetup.initCrafting();
-        SecuritySetup.initCrafting();
-        EndergenicSetup.initCrafting();
-        StorageScannerSetup.initCrafting();
-        ElevatorSetup.initCrafting();
-        BoosterSetup.initCrafting();
     }
 
     private static void initBaseCrafting() {

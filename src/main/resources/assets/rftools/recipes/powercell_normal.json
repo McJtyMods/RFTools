@@ -1,0 +1,28 @@
+{
+  "result": {
+    "item": "rftools:powercell"
+  },
+  "pattern": [
+    "rdr",
+    "bMb",
+    "rer"
+  ],
+  "type": "rftools:copy_nbt",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "b": {
+      "item": "minecraft:prismarine_shard"
+    },
+    "d": {
+      "item": "minecraft:diamond"
+    },
+    "e": {
+      "item": "minecraft:emerald"
+    },
+    "M": {
+      "item": "rftools:powercell_simple"
+    }
+  }
+}

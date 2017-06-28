@@ -1,0 +1,33 @@
+{
+  "result": {
+    "item": "rftools:shape_card",
+    "data": 4
+  },
+  "pattern": [
+    "rnr",
+    "eMd",
+    "rRr"
+  ],
+  "type": "rftools:copy_nbt",
+  "key": {
+    "r": {
+      "item": "rftools:dimensional_shard"
+    },
+    "d": {
+      "item": "minecraft:diamond"
+    },
+    "e": {
+      "item": "minecraft:emerald"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "n": {
+      "item": "minecraft:ghast_tear"
+    },
+    "M": {
+      "item": "rftools:shape_card",
+      "data": 2
+    }
+  }
+}
