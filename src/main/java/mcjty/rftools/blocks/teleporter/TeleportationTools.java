@@ -166,8 +166,12 @@ public class TeleportationTools {
         severity = applyBadEffectIfNeeded(player, severity, bad, good, boostNeeded);
         if (severity <= 0) {
             if (TeleportConfiguration.teleportVolume >= 0.01) {
-                SoundEvent sound = SoundEvent.REGISTRY.getObject(new ResourceLocation(RFTools.MODID + ":teleport_whoosh"));
-                SoundTools.playSound(player.getEntityWorld(), sound, player.posX, player.posY, player.posZ, TeleportConfiguration.teleportVolume, 1.0f);
+                SoundEvent sound = SoundEvent.REGISTRY.getObject(new ResourceLocation(RFTools.MODID, "teleport_whoosh"));
+                if (sound == null) {
+                    throw new RuntimeException("Could not find sound 'teleport_whoosh'!");
+                } else {
+                    SoundTools.playSound(player.getEntityWorld(), sound, player.posX, player.posY, player.posZ, TeleportConfiguration.teleportVolume, 1.0f);
+                }
             }
         }
         if (TeleportConfiguration.logTeleportUsages) {
@@ -327,8 +331,12 @@ public class TeleportationTools {
         }
 
         if (TeleportConfiguration.teleportErrorVolume >= 0.01) {
-            SoundEvent sound = SoundEvent.REGISTRY.getObject(new ResourceLocation(RFTools.MODID + ":teleport_error"));
-            SoundTools.playSound(player.getEntityWorld(), sound, player.posX, player.posY, player.posZ, TeleportConfiguration.teleportVolume, 1.0f);
+            SoundEvent sound = SoundEvent.REGISTRY.getObject(new ResourceLocation(RFTools.MODID, "teleport_error"));
+            if (sound == null) {
+                throw new RuntimeException("Could not find sound 'teleport_error'!");
+            } else {
+                SoundTools.playSound(player.getEntityWorld(), sound, player.posX, player.posY, player.posZ, TeleportConfiguration.teleportVolume, 1.0f);
+            }
         }
 
         applyEffectForSeverity(player, severity, boostNeeded);

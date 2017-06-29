@@ -6,9 +6,8 @@ import net.minecraftforge.registries.IForgeRegistry;
 
 public class ModSounds {
 
-    public static final String[] REGISTER_SOUND = { "registerSound", "func_187502_a", "a" };
-
     public static void init(IForgeRegistry<SoundEvent> registry) {
+        System.out.println("ModSounds.init ##########################################################3");
         SoundEvent whoosh = new SoundEvent(new ResourceLocation(RFTools.MODID, "teleport_whoosh")).setRegistryName(new ResourceLocation(RFTools.MODID, "teleport_whoosh"));
         SoundEvent error = new SoundEvent(new ResourceLocation(RFTools.MODID, "teleport_error")).setRegistryName(new ResourceLocation(RFTools.MODID, "teleport_error"));
         registry.register(whoosh);

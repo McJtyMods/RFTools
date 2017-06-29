@@ -10,7 +10,7 @@
   "type": "rftools:copy_nbt",
   "key": {
     "e": {
-      "item": "minecraft:enderpearl"
+      "item": "minecraft:ender_pearl"
     },
     "g": {
       "item": "minecraft:gold_ingot"
