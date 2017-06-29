@@ -4,11 +4,15 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CraftingRecipe {
     private InventoryCrafting inv = new InventoryCrafting(new Container() {
@@ -43,14 +47,11 @@ public class CraftingRecipe {
     private CraftMode craftMode = CraftMode.EXT;
 
     public static IRecipe findRecipe(World world, InventoryCrafting inv) {
-
-        // @todo
-//        List<IRecipe> recipes = new ArrayList<>(CraftingManager.getInstance().getRecipeList());
-//        for (IRecipe r : recipes) {
-//            if (r != null && r.matches(inv, world)) {
-//                return r;
-//            }
-//        }
+        for (IRecipe r : CraftingManager.REGISTRY) {
+            if (r != null && r.matches(inv, world)) {
+                return r;
+            }
+        }
         return null;
     }
 
