@@ -23,7 +23,8 @@
       "item": "minecraft:iron_ingot"
     },
     "M": {
-      "item": "rftools:shape_card"
+      "item": "rftools:shape_card",
+      "data": 0
     }
   }
 }

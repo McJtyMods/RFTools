@@ -18,7 +18,8 @@
       "item": "minecraft:obsidian"
     },
     "M": {
-      "item": "rftools:shape_card"
+      "item": "rftools:shape_card",
+      "data": 0
     }
   }
 }
