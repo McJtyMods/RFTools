@@ -11,7 +11,8 @@
   "type": "rftools:copy_nbt",
   "key": {
     "g": {
-      "item": "minecraft:dirt"
+      "item": "minecraft:dirt",
+      "data": 0
     },
     "M": {
       "item": "rftools:shape_card",
