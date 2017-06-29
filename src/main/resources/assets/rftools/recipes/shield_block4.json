@@ -10,7 +10,7 @@
   "type": "rftools:copy_nbt",
   "key": {
     "n": {
-      "item": "rftools:nether_star"
+      "item": "minecraft:nether_star"
     },
     "R": {
       "item": "rftools:dimensional_shard"

@@ -5,7 +5,7 @@
   "pattern": [
     "ROR",
     "OMO",
-    "ROB"
+    "ROR"
   ],
   "type": "rftools:copy_nbt",
   "key": {
