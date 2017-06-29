@@ -69,7 +69,6 @@ public abstract class CommonProxy {
     private Configuration mainConfig;
 
     public void preInit(FMLPreInitializationEvent e) {
-        MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
         McJtyLib.preInit(e);
         reflect();
@@ -127,12 +126,6 @@ public abstract class CommonProxy {
             }
         });
     }
-
-    @SubscribeEvent
-    public void registerSounds(RegistryEvent.Register<SoundEvent> sounds) {
-        ModSounds.init(sounds.getRegistry());
-    }
-
 
     public static Method Block_getSilkTouch;
 

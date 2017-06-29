@@ -30,6 +30,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -83,6 +84,12 @@ public class ForgeEventHandlers {
     public void registerItems(RegistryEvent.Register<Item> event) {
         McJtyRegister.registerItems(RFTools.instance, event.getRegistry());
     }
+
+    @SubscribeEvent
+    public void registerSounds(RegistryEvent.Register<SoundEvent> sounds) {
+        ModSounds.init(sounds.getRegistry());
+    }
+
 
     @SubscribeEvent
     public void onWorldTick(TickEvent.WorldTickEvent event) {
