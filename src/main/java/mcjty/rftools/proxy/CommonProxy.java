@@ -69,6 +69,7 @@ public abstract class CommonProxy {
     private Configuration mainConfig;
 
     public void preInit(FMLPreInitializationEvent e) {
+        MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
         McJtyLib.preInit(e);
         reflect();
