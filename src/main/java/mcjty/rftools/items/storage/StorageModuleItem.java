@@ -3,6 +3,7 @@ package mcjty.rftools.items.storage;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
+import mcjty.rftools.crafting.INBTPreservingIngredient;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
@@ -24,7 +25,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class StorageModuleItem extends GenericRFToolsItem {
+public class StorageModuleItem extends GenericRFToolsItem implements INBTPreservingIngredient {
     public static final int STORAGE_TIER1 = 0;
     public static final int STORAGE_TIER2 = 1;
     public static final int STORAGE_TIER3 = 2;

@@ -61,20 +61,5 @@ public class ModularStorageSetup {
 //                new ItemStack(storageModuleItem), null));
 //        MyGameReg.addRecipe(new ContainerToItemRecipe(new ItemStack(storageModuleTabletItem, 1, StorageModuleTabletItem.DAMAGE_SCANNER),
 //                new ItemStack(ScreenSetup.storageControlModuleItem), n -> 0));
-
-        // @todo recipes
-//        MyGameReg.addRecipe(new PreservingShapedOreRecipe(
-//                new ItemStack(storageModuleItem, 1, StorageModuleItem.STORAGE_TIER2), 4,
-//                " c ", "gmg", "qrq",
-//                'c', "chest", 'g', "ingotGold", 'r', Items.REDSTONE, 'q', Items.QUARTZ,
-//                'm', new ItemStack(storageModuleItem, 1, StorageModuleItem.STORAGE_TIER1)
-//                ));
-//        MyGameReg.addRecipe(new PreservingShapedOreRecipe(
-//                new ItemStack(storageModuleItem, 1, StorageModuleItem.STORAGE_TIER3), 4,
-//                " c ", "gmg", "qrq",
-//                'c', "chest", 'g', "blockGold", 'r', Blocks.REDSTONE_BLOCK, 'q', Blocks.QUARTZ_BLOCK,
-//                'm', new ItemStack(storageModuleItem, 1, StorageModuleItem.STORAGE_TIER2)
-//        ));
-
     }
 }
