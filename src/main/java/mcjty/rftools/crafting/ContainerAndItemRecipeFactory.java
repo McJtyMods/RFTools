@@ -1,6 +1,7 @@
 package mcjty.rftools.crafting;
 
 import com.google.gson.JsonObject;
+import mcjty.lib.crafting.INBTPreservingIngredient;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.InventoryCrafting;
@@ -15,7 +16,7 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import javax.annotation.Nonnull;
 
-public class CopyNBTRecipeFactory implements IRecipeFactory {
+public class ContainerAndItemRecipeFactory implements IRecipeFactory {
     @Override
     public IRecipe parse(JsonContext context, JsonObject json) {
         ShapedOreRecipe recipe = ShapedOreRecipe.factory(context, json);

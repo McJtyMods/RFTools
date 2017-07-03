@@ -1,6 +1,7 @@
 package mcjty.rftools.items.teleportprobe;
 
 import cofh.redstoneflux.api.IEnergyContainerItem;
+import mcjty.lib.crafting.INBTPreservingIngredient;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.IEnergyItem;
 import mcjty.lib.varia.ItemCapabilityProvider;
@@ -8,7 +9,6 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.ForgeEventHandlers;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.*;
-import mcjty.rftools.crafting.INBTPreservingIngredient;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;

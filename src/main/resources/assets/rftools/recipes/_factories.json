@@ -1,5 +1,5 @@
 {
   "recipes": {
-    "copy_nbt": "mcjty.rftools.crafting.CopyNBTRecipeFactory"
+    "copy_nbt": "mcjty.lib.crafting.CopyNBTRecipeFactory"
   }
 }
