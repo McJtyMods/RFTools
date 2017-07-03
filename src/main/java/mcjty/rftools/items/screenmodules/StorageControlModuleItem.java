@@ -1,5 +1,6 @@
 package mcjty.rftools.items.screenmodules;
 
+import mcjty.lib.crafting.INBTPreservingIngredient;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.BlockInfo;
@@ -32,7 +33,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class StorageControlModuleItem extends GenericRFToolsItem implements IModuleProvider {
+public class StorageControlModuleItem extends GenericRFToolsItem implements IModuleProvider, INBTPreservingIngredient {
 
     public StorageControlModuleItem() {
         super("storage_control_module");

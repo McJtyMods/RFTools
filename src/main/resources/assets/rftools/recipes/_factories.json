@@ -1,5 +1,7 @@
 {
   "recipes": {
-    "copy_nbt": "mcjty.lib.crafting.CopyNBTRecipeFactory"
+    "copy_nbt": "mcjty.lib.crafting.CopyNBTRecipeFactory",
+    "container_to_item": "mcjty.rftools.crafting.ContainerToItemRecipeFactory",
+    "container_and_item": "mcjty.rftools.crafting.ContainerAndItemRecipeFactory"
   }
 }

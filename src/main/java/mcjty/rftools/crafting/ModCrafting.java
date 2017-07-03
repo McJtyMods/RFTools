@@ -8,15 +8,12 @@ import net.minecraftforge.oredict.RecipeSorter;
 
 public final class ModCrafting {
     static {
-        RecipeSorter.register("rftools:containeranditem", ContainerAndItemRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
-        RecipeSorter.register("rftools:containertoitem", ContainerToItemRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
         RecipeSorter.register("rftools:nbtmatchingrecipe", NBTMatchingRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
     }
 
     public static void init() {
         initBaseCrafting();
 
-        ModularStorageSetup.initCrafting();
         EnvironmentalSetup.initCrafting();
     }
 
