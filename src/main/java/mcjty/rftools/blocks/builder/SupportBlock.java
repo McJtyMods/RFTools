@@ -162,13 +162,6 @@ public class SupportBlock extends Block {
 
 
     @Override
-    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos p_189540_5_) {
-
-    }
-
-
-    @SideOnly(Side.CLIENT)
-    @Override
     public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> tab) {
         super.getSubBlocks(itemIn, tab);
     }

@@ -10,8 +10,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.IMob;
@@ -19,11 +17,9 @@ import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
@@ -92,7 +88,8 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
         return EnumPushReaction.BLOCK;
     }
 
-    public void clAddCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> list, Entity entity) {
+    @Override
+    public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> list, @Nullable Entity entity, boolean p_185477_7_) {
         NoTickShieldBlockTileEntity shieldBlockTileEntity = (NoTickShieldBlockTileEntity) world.getTileEntity(pos);
         int cdData = shieldBlockTileEntity.getCollisionData();
 
@@ -103,7 +100,7 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
         if ((cdData & META_HOSTILE) != 0) {
             if (entity instanceof IMob) {
                 if (checkEntityCD(world, pos, HostileFilter.HOSTILE)) {
-                    clAddCollisionBoxToList(state, world, pos, entityBox, list, entity);
+                    super.addCollisionBoxToList(state, world, pos, entityBox, list, entity, p_185477_7_);
                 }
                 return;
             }
@@ -111,7 +108,7 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
         if ((cdData & META_PASSIVE) != 0) {
             if (entity instanceof IAnimals && !(entity instanceof IMob)) {
                 if (checkEntityCD(world, pos, AnimalFilter.ANIMAL)) {
-                    clAddCollisionBoxToList(state, world, pos, entityBox, list, entity);
+                    super.addCollisionBoxToList(state, world, pos, entityBox, list, entity, p_185477_7_);
                 }
                 return;
             }
@@ -119,14 +116,14 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
         if ((cdData & META_PLAYERS) != 0) {
             if (entity instanceof EntityPlayer) {
                 if (checkPlayerCD(world, pos, (EntityPlayer) entity)) {
-                    clAddCollisionBoxToList(state, world, pos, entityBox, list, entity);
+                    super.addCollisionBoxToList(state, world, pos, entityBox, list, entity, p_185477_7_);
                 }
             }
         }
         if ((cdData & META_ITEMS) != 0) {
             if (!(entity instanceof EntityLivingBase)) {
                 if (checkEntityCD(world, pos, ItemFilter.ITEM)) {
-                    clAddCollisionBoxToList(state, world, pos, entityBox, list, entity);
+                    super.addCollisionBoxToList(state, world, pos, entityBox, list, entity, p_185477_7_);
                 }
                 return;
             }
@@ -211,57 +208,5 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
     @Override
     public TileEntity createNewTileEntity(World world, int metadata) {
         return new NoTickShieldBlockTileEntity();
-    }
-
-    public void clAddInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
-        super.addInformation(stack, null, tooltip, null);
-    }
-
-    @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
-        clAddInformation(stack, null, tooltip, false);  // @todo WRONG
-    }
-
-    @Override
-    public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean p_185477_7_) {
-        clAddCollisionBoxToList(state, worldIn, pos, entityBox, collidingBoxes, entityIn);
-    }
-
-    protected void clOnNeighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
-
-    }
-
-    @Override
-    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos p_189540_5_) {
-        clOnNeighborChanged(state, worldIn, pos, blockIn);
-    }
-
-    protected boolean clOnBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-        return false;
-    }
-
-    @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-        return clOnBlockActivated(worldIn, pos, state, playerIn, hand, side, hitX, hitY, hitZ);
-    }
-
-    @Override
-    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
-        return clGetStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer);
-    }
-
-    protected IBlockState clGetStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
-        return super.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer);
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> tab) {
-        clGetSubBlocks(Item.getItemFromBlock(this), itemIn, tab);
-    }
-
-    @SideOnly(Side.CLIENT)
-    protected void clGetSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
-        super.getSubBlocks(tab, (NonNullList<ItemStack>) subItems);
     }
 }
