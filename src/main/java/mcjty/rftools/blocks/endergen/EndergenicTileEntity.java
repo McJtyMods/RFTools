@@ -27,6 +27,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.energy.CapabilityEnergy;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -471,8 +472,8 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         for (EnumFacing dir : EnumFacing.VALUES) {
             BlockPos o = getPos().offset(dir);
             TileEntity te = getWorld().getTileEntity(o);
-            if (EnergyTools.isEnergyTE(te)) {
-                EnumFacing opposite = dir.getOpposite();
+            EnumFacing opposite = dir.getOpposite();
+            if (EnergyTools.isEnergyTE(te) || (te != null && te.hasCapability(CapabilityEnergy.ENERGY, opposite))) {
                 int rfToGive;
                 if (EndergenicConfiguration.rfOutput <= energyStored) {
                     rfToGive = EndergenicConfiguration.rfOutput;

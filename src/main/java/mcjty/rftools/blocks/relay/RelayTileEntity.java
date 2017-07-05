@@ -117,8 +117,8 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
 //            int side = facing.ordinal();
             if (rf[side] > 0 && !inputMode[side]) {
                 TileEntity te = getWorld().getTileEntity(getPos().offset(facing));
-                if (EnergyTools.isEnergyTE(te)) {
-                    EnumFacing opposite = facing.getOpposite();
+                EnumFacing opposite = facing.getOpposite();
+                if (EnergyTools.isEnergyTE(te) || (te != null && te.hasCapability(CapabilityEnergy.ENERGY, opposite))) {
                     int rfToGive;
                     if (rf[side] <= energyStored) {
                         rfToGive = rf[side];
