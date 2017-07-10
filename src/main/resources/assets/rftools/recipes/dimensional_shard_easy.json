@@ -1,12 +1,17 @@
 {
+  "conditions": [
+    {
+      "type": "rftools:dimshard_easy"
+    }
+  ],
   "result": {
     "item": "rftools:dimensional_shard",
     "count": 8
   },
   "pattern": [
-    "deg",
-    "irG",
-    "qcL"
+    " d ",
+    "irg",
+    " q "
   ],
   "type": "minecraft:crafting_shaped",
   "key": {
@@ -16,26 +21,14 @@
     "r": {
       "item": "minecraft:redstone"
     },
-    "c": {
-      "item": "minecraft:prismarine_shard"
-    },
     "d": {
       "item": "minecraft:diamond"
-    },
-    "e": {
-      "item": "minecraft:emerald"
     },
     "g": {
       "item": "minecraft:gold_ingot"
     },
-    "G": {
-      "item": "minecraft:glowstone_dust"
-    },
     "i": {
       "item": "minecraft:iron_ingot"
-    },
-    "L": {
-      "item": "minecraft:glass"
     }
   }
 }

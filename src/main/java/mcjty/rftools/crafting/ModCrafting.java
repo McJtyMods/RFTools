@@ -1,6 +1,5 @@
 package mcjty.rftools.crafting;
 
-import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
 import mcjty.rftools.items.ModItems;
@@ -12,9 +11,7 @@ import net.minecraft.entity.passive.EntityOcelot;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public final class ModCrafting {
     public static void init() {
@@ -34,24 +31,5 @@ public final class ModCrafting {
                                 SyringeItem.createMobSyringe(EntityWolf.class), SyringeItem.createMobSyringe(EntityPigZombie.class), SyringeItem.createMobSyringe(EntityMooshroom.class)},
                         new String[][]{syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher},
                         new ItemStack(ModItems.peaceEssenceItem)).setRegistryName(new ResourceLocation(RFTools.MODID, "syringe")));
-
-        int dimShardCraftability;
-        if (Loader.isModLoaded("rftoolsdim")) {
-            dimShardCraftability = GeneralConfiguration.dimensionalShardRecipeWithDimensions;
-        } else {
-            dimShardCraftability = GeneralConfiguration.dimensionalShardRecipeWithoutDimensions;
-        }
-
-        // @todo recipes
-        switch (dimShardCraftability) {
-            case GeneralConfiguration.CRAFT_NONE:
-                break;
-            case GeneralConfiguration.CRAFT_EASY:
-
-                break;
-            case GeneralConfiguration.CRAFT_HARD:
-
-                break;
-        }
     }
 }
