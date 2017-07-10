@@ -1,16 +1,22 @@
 package mcjty.rftools.crafting;
 
 import mcjty.rftools.GeneralConfiguration;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
-import mcjty.rftools.blocks.storage.ModularStorageSetup;
+import mcjty.rftools.items.ModItems;
+import mcjty.rftools.items.SyringeItem;
+import net.minecraft.entity.monster.*;
+import net.minecraft.entity.passive.EntityBat;
+import net.minecraft.entity.passive.EntityMooshroom;
+import net.minecraft.entity.passive.EntityOcelot;
+import net.minecraft.entity.passive.EntityWolf;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.oredict.RecipeSorter;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public final class ModCrafting {
-    static {
-        RecipeSorter.register("rftools:nbtmatchingrecipe", NBTMatchingRecipe.class, RecipeSorter.Category.SHAPED, "after:minecraft:shaped");
-    }
-
     public static void init() {
         initBaseCrafting();
 
@@ -19,15 +25,15 @@ public final class ModCrafting {
 
     private static void initBaseCrafting() {
 
-        String[] syringeMatcher = new String[] { "level", "mobId" };
+        String[] syringeMatcher = new String[]{"level", "mobId"};
 
-        // @todo recipes
-//        MyGameReg.addRecipe(new NBTMatchingRecipe(3, 3,
-//                                                     new ItemStack[]{SyringeItem.createMobSyringe(EntityIronGolem.class), SyringeItem.createMobSyringe(EntityEnderman.class), SyringeItem.createMobSyringe(EntitySnowman.class),
-//                                                             SyringeItem.createMobSyringe(EntityBat.class), SyringeItem.createMobSyringe(EntityOcelot.class), SyringeItem.createMobSyringe(EntityGuardian.class),
-//                                                             SyringeItem.createMobSyringe(EntityWolf.class), SyringeItem.createMobSyringe(EntityPigZombie.class), SyringeItem.createMobSyringe(EntityMooshroom.class)},
-//                                                     new String[][]{syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher},
-//                                                     new ItemStack(ModItems.peaceEssenceItem)));
+        ForgeRegistries.RECIPES.register(
+                new NBTMatchingRecipe(3, 3,
+                        new ItemStack[]{SyringeItem.createMobSyringe(EntityIronGolem.class), SyringeItem.createMobSyringe(EntityEnderman.class), SyringeItem.createMobSyringe(EntitySnowman.class),
+                                SyringeItem.createMobSyringe(EntityBat.class), SyringeItem.createMobSyringe(EntityOcelot.class), SyringeItem.createMobSyringe(EntityGuardian.class),
+                                SyringeItem.createMobSyringe(EntityWolf.class), SyringeItem.createMobSyringe(EntityPigZombie.class), SyringeItem.createMobSyringe(EntityMooshroom.class)},
+                        new String[][]{syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher},
+                        new ItemStack(ModItems.peaceEssenceItem)).setRegistryName(new ResourceLocation(RFTools.MODID, "syringe")));
 
         int dimShardCraftability;
         if (Loader.isModLoaded("rftoolsdim")) {
@@ -36,6 +42,7 @@ public final class ModCrafting {
             dimShardCraftability = GeneralConfiguration.dimensionalShardRecipeWithoutDimensions;
         }
 
+        // @todo recipes
         switch (dimShardCraftability) {
             case GeneralConfiguration.CRAFT_NONE:
                 break;

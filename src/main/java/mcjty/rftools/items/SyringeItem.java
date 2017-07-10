@@ -20,6 +20,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -159,7 +160,8 @@ public class SyringeItem extends GenericRFToolsItem {
 
     public static ItemStack createMobSyringe(Class<? extends Entity> mobClass) {
         String id = EntityTools.findEntityIdByClass(mobClass);
-        String name = EntityTools.findEntityLocNameByClass(mobClass);
+//        String name = EntityTools.findEntityLocNameByClass(mobClass);
+        String name = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(id)).getName();
         return createMobSyringe(id, name);
     }
 

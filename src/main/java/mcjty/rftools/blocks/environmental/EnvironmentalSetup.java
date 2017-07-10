@@ -1,5 +1,7 @@
 package mcjty.rftools.blocks.environmental;
 
+import mcjty.rftools.RFTools;
+import mcjty.rftools.crafting.NBTMatchingRecipe;
 import mcjty.rftools.items.SyringeItem;
 import mcjty.rftools.items.envmodules.*;
 import net.minecraft.enchantment.Enchantment;
@@ -14,6 +16,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -101,8 +104,8 @@ public class EnvironmentalSetup {
 
         Object inkSac = Item.REGISTRY.getObjectById(351);
 
-        String[] syringeMatcher = new String[] { "level", "mobId" };
-        String[] pickMatcher = new String[] { "ench" };
+        String[] syringeMatcher = new String[]{"level", "mobId"};
+        String[] pickMatcher = new String[]{"ench"};
 
         ItemStack ironGolemSyringe = SyringeItem.createMobSyringe(EntityIronGolem.class);
         ItemStack endermanSyringe = SyringeItem.createMobSyringe(EntityEnderman.class);
@@ -123,106 +126,145 @@ public class EnvironmentalSetup {
         ItemStack obsidian = new ItemStack(Blocks.OBSIDIAN);
         ItemStack lapis = new ItemStack(Items.DYE, 1, 4);
 
-        // @todo recipes
-//        MyGameReg.addRecipe(new NBTMatchingRecipe(3, 3,
-//                new ItemStack[] {null, chickenSyringe, null, reds, gold, reds, null, ink, null},
-//                new String[][] {null, syringeMatcher, null, null, null, null, null, null, null},
-//                new ItemStack(featherFallingEModuleItem)));
-//
-//        MyGameReg.addRecipe(new NBTMatchingRecipe(3, 3,
-//                new ItemStack[] {null, ironGolemSyringe, null, reds, gold, reds, null, ink, null},
-//                new String[][] {null, syringeMatcher, null, null, null, null, null, null, null},
-//                new ItemStack(regenerationEModuleItem)));
-//
-//        MyGameReg.addRecipe(new NBTMatchingRecipe(3, 3,
-//                new ItemStack[] {null, horseSyringe, null, reds, gold, reds, null, ink, null},
-//                new String[][] {null, syringeMatcher, null, null, null, null, null, null, null},
-//                new ItemStack(speedEModuleItem)));
-//
-//        MyGameReg.addRecipe(new NBTMatchingRecipe(3, 3, new ItemStack[] {null, diamondPick, null, reds, gold, reds, null, ink, null},
-//                new String[][] {null, pickMatcher, null, null, null, null, null, null, null},
-//                new ItemStack(hasteEModuleItem)));
-//
-//        MyGameReg.addRecipe(new NBTMatchingRecipe(3, 3,
-//                new ItemStack[] {null, zombieSyringe, null, reds, gold, reds, null, ink, null},
-//                new String[][] {null, syringeMatcher, null, null, null, null, null, null, null},
-//                new ItemStack(saturationEModuleItem)));
-//
-//        MyGameReg.addRecipe(new NBTMatchingRecipe(3, 3,
-//                new ItemStack[] {null, ghastSyringe, null, reds, gold, reds, null, ink, null},
-//                new String[][] {null, syringeMatcher, null, null, null, null, null, null, null},
-//                new ItemStack(flightEModuleItem)));
-//
-//        MyGameReg.addRecipe(new NBTMatchingRecipe(3, 3,
-//                new ItemStack[] {null, guardianSyringe, null, reds, gold, reds, null, ink, null},
-//                new String[][] {null, syringeMatcher, null, null, null, null, null, null, null},
-//                new ItemStack(waterBreathingEModuleItem)));
-//
-//        MyGameReg.addRecipe(new NBTMatchingRecipe(3, 3,
-//                new ItemStack[] {null, caveSpiderSyringe, null, reds, gold, reds, null, ink, null},
-//                new String[][] {null, syringeMatcher, null, null, null, null, null, null, null},
-//                new ItemStack(nightVisionEModuleItem)));
-//
-//        MyGameReg.addRecipe(new NBTMatchingRecipe(2, 2,
-//                new ItemStack[]{new ItemStack(regenerationEModuleItem), ironGolemSyringe, ironGolemSyringe, null},
-//                new String[][] {null, syringeMatcher, syringeMatcher, null},
-//                new ItemStack(regenerationPlusEModuleItem)));
-//
-//        MyGameReg.addRecipe(new NBTMatchingRecipe(2, 2,
-//                new ItemStack[]{new ItemStack(speedEModuleItem), horseSyringe, horseSyringe, null},
-//                new String[][] {null, syringeMatcher, syringeMatcher, null},
-//                new ItemStack(speedPlusEModuleItem)));
-//
-//        MyGameReg.addRecipe(new NBTMatchingRecipe(2, 2,
-//                new ItemStack[]{new ItemStack(hasteEModuleItem), diamondPick, null, null},
-//                new String[][] {null, pickMatcher, null, null},
-//                new ItemStack(hastePlusEModuleItem)));
-//
-//        MyGameReg.addRecipe(new NBTMatchingRecipe(2, 2,
-//                new ItemStack[]{new ItemStack(saturationEModuleItem), zombieSyringe, zombieSyringe, null},
-//                new String[][] {null, syringeMatcher, syringeMatcher, null},
-//                new ItemStack(saturationPlusEModuleItem)));
-//
-//        MyGameReg.addRecipe(new NBTMatchingRecipe(2, 2,
-//                new ItemStack[]{new ItemStack(featherFallingEModuleItem), chickenSyringe, batSyringe, null},
-//                new String[][] {null, syringeMatcher, syringeMatcher, null},
-//                new ItemStack(featherFallingPlusEModuleItem)));
-//
-//        MyGameReg.addRecipe(new NBTMatchingRecipe(3, 3,
-//                new ItemStack[] {null, blazeSyringe, null, reds, gold, reds, null, ink, null},
-//                new String[][] {null, syringeMatcher, null, null, null, null, null, null, null},
-//                new ItemStack(glowingEModuleItem)));
-//
-//        MyGameReg.addRecipe(new NBTMatchingRecipe(3, 3,
-//                new ItemStack[] {null, shulkerEntity, null, reds, gold, reds, null, ink, null},
-//                new String[][] {null, syringeMatcher, null, null, null, null, null, null, null},
-//                new ItemStack(luckEModuleItem)));
-//
+        ForgeRegistries.RECIPES.register(
+                new NBTMatchingRecipe(3, 3,
+                        new ItemStack[]{ItemStack.EMPTY, chickenSyringe, ItemStack.EMPTY, reds, gold, reds, ItemStack.EMPTY, ink, ItemStack.EMPTY},
+                        new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
+                        new ItemStack(featherFallingEModuleItem))
+                        .setRegistryName(new ResourceLocation(RFTools.MODID, "featherfalling_module")));
 
-        //        MyGameReg.addRecipe(new NBTMatchingRecipe(3, 3,
-//                new ItemStack[]{null, squidSyringe, null, lapis, obsidian, lapis, null, ink, null},
-//                new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
-//                new ItemStack(blindnessEModuleItem)));
-//
-//        MyGameReg.addRecipe(new NBTMatchingRecipe(3, 3,
-//                new ItemStack[]{null, batSyringe, null, lapis, obsidian, lapis, null, ink, null},
-//                new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
-//                new ItemStack(weaknessEModuleItem)));
-//
-//        MyGameReg.addRecipe(new NBTMatchingRecipe(3, 3,
-//                new ItemStack[]{null, caveSpiderSyringe, null, lapis, obsidian, lapis, null, ink, null},
-//                new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
-//                new ItemStack(poisonEModuleItem)));
-//
-//        MyGameReg.addRecipe(new NBTMatchingRecipe(3, 3,
-//                new ItemStack[]{null, new ItemStack(Items.CLOCK), null, lapis, obsidian, lapis, null, ink, null},
-//                new String[][]{null, null, null, null, null, null, null, null, null},
-//                new ItemStack(slownessEModuleItem)));
-//
-//        MyGameReg.addRecipe(new NBTMatchingRecipe(3, 3,
-//                new ItemStack[]{null, endermanSyringe, null, lapis, obsidian, lapis, null, ink, null},
-//                new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
-//                new ItemStack(noTeleportEModuleItem)));
+        ForgeRegistries.RECIPES.register(
+                new NBTMatchingRecipe(3, 3,
+                        new ItemStack[]{ItemStack.EMPTY, ironGolemSyringe, ItemStack.EMPTY, reds, gold, reds, ItemStack.EMPTY, ink, ItemStack.EMPTY},
+                        new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
+                        new ItemStack(regenerationEModuleItem))
+                        .setRegistryName(new ResourceLocation(RFTools.MODID, "regeneration_module")));
+
+        ForgeRegistries.RECIPES.register(
+                new NBTMatchingRecipe(3, 3,
+                        new ItemStack[]{ItemStack.EMPTY, horseSyringe, ItemStack.EMPTY, reds, gold, reds, ItemStack.EMPTY, ink, ItemStack.EMPTY},
+                        new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
+                        new ItemStack(speedEModuleItem))
+                        .setRegistryName(new ResourceLocation(RFTools.MODID, "speed_module")));
+
+        ForgeRegistries.RECIPES.register(
+                new NBTMatchingRecipe(3, 3, new ItemStack[]{ItemStack.EMPTY, diamondPick, ItemStack.EMPTY, reds, gold, reds, ItemStack.EMPTY, ink, ItemStack.EMPTY},
+                        new String[][]{null, pickMatcher, null, null, null, null, null, null, null},
+                        new ItemStack(hasteEModuleItem))
+                        .setRegistryName(new ResourceLocation(RFTools.MODID, "haste_module")));
+
+        ForgeRegistries.RECIPES.register(
+                new NBTMatchingRecipe(3, 3,
+                        new ItemStack[]{ItemStack.EMPTY, zombieSyringe, ItemStack.EMPTY, reds, gold, reds, ItemStack.EMPTY, ink, ItemStack.EMPTY},
+                        new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
+                        new ItemStack(saturationEModuleItem))
+                        .setRegistryName(new ResourceLocation(RFTools.MODID, "saturation_module")));
+
+        ForgeRegistries.RECIPES.register(
+                new NBTMatchingRecipe(3, 3,
+                        new ItemStack[]{ItemStack.EMPTY, ghastSyringe, ItemStack.EMPTY, reds, gold, reds, ItemStack.EMPTY, ink, ItemStack.EMPTY},
+                        new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
+                        new ItemStack(flightEModuleItem))
+                        .setRegistryName(new ResourceLocation(RFTools.MODID, "flight_module")));
+
+        ForgeRegistries.RECIPES.register(
+                new NBTMatchingRecipe(3, 3,
+                        new ItemStack[]{ItemStack.EMPTY, guardianSyringe, ItemStack.EMPTY, reds, gold, reds, ItemStack.EMPTY, ink, ItemStack.EMPTY},
+                        new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
+                        new ItemStack(waterBreathingEModuleItem))
+                        .setRegistryName(new ResourceLocation(RFTools.MODID, "waterbreathing_module")));
+
+        ForgeRegistries.RECIPES.register(
+                new NBTMatchingRecipe(3, 3,
+                        new ItemStack[]{ItemStack.EMPTY, caveSpiderSyringe, ItemStack.EMPTY, reds, gold, reds, ItemStack.EMPTY, ink, ItemStack.EMPTY},
+                        new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
+                        new ItemStack(nightVisionEModuleItem))
+                        .setRegistryName(new ResourceLocation(RFTools.MODID, "nightvision_module")));
+
+        ForgeRegistries.RECIPES.register(
+                new NBTMatchingRecipe(2, 2,
+                        new ItemStack[]{new ItemStack(regenerationEModuleItem), ironGolemSyringe, ironGolemSyringe, ItemStack.EMPTY},
+                        new String[][]{null, syringeMatcher, syringeMatcher, null},
+                        new ItemStack(regenerationPlusEModuleItem))
+                        .setRegistryName(new ResourceLocation(RFTools.MODID, "regenerationplus_module")));
+
+        ForgeRegistries.RECIPES.register(
+                new NBTMatchingRecipe(2, 2,
+                        new ItemStack[]{new ItemStack(speedEModuleItem), horseSyringe, horseSyringe, ItemStack.EMPTY},
+                        new String[][]{null, syringeMatcher, syringeMatcher, null},
+                        new ItemStack(speedPlusEModuleItem))
+                        .setRegistryName(new ResourceLocation(RFTools.MODID, "speedplus_module")));
+
+        ForgeRegistries.RECIPES.register(
+                new NBTMatchingRecipe(2, 2,
+                        new ItemStack[]{new ItemStack(hasteEModuleItem), diamondPick, ItemStack.EMPTY, ItemStack.EMPTY},
+                        new String[][]{null, pickMatcher, null, null},
+                        new ItemStack(hastePlusEModuleItem))
+                        .setRegistryName(new ResourceLocation(RFTools.MODID, "hasteplus_module")));
+
+        ForgeRegistries.RECIPES.register(
+                new NBTMatchingRecipe(2, 2,
+                        new ItemStack[]{new ItemStack(saturationEModuleItem), zombieSyringe, zombieSyringe, ItemStack.EMPTY},
+                        new String[][]{null, syringeMatcher, syringeMatcher, null},
+                        new ItemStack(saturationPlusEModuleItem))
+                        .setRegistryName(new ResourceLocation(RFTools.MODID, "saturationplus_module")));
+
+        ForgeRegistries.RECIPES.register(
+                new NBTMatchingRecipe(2, 2,
+                        new ItemStack[]{new ItemStack(featherFallingEModuleItem), chickenSyringe, batSyringe, ItemStack.EMPTY},
+                        new String[][]{null, syringeMatcher, syringeMatcher, null},
+                        new ItemStack(featherFallingPlusEModuleItem))
+                        .setRegistryName(new ResourceLocation(RFTools.MODID, "featherfallingplus_module")));
+
+        ForgeRegistries.RECIPES.register(
+                new NBTMatchingRecipe(3, 3,
+                        new ItemStack[]{ItemStack.EMPTY, blazeSyringe, ItemStack.EMPTY, reds, gold, reds, ItemStack.EMPTY, ink, ItemStack.EMPTY},
+                        new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
+                        new ItemStack(glowingEModuleItem))
+                        .setRegistryName(new ResourceLocation(RFTools.MODID, "glowing_module")));
+
+        ForgeRegistries.RECIPES.register(
+                new NBTMatchingRecipe(3, 3,
+                        new ItemStack[]{ItemStack.EMPTY, shulkerEntity, ItemStack.EMPTY, reds, gold, reds, ItemStack.EMPTY, ink, ItemStack.EMPTY},
+                        new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
+                        new ItemStack(luckEModuleItem))
+                        .setRegistryName(new ResourceLocation(RFTools.MODID, "luck_module")));
+
+
+        ForgeRegistries.RECIPES.register(
+                new NBTMatchingRecipe(3, 3,
+                        new ItemStack[]{ItemStack.EMPTY, squidSyringe, ItemStack.EMPTY, lapis, obsidian, lapis, ItemStack.EMPTY, ink, ItemStack.EMPTY},
+                        new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
+                        new ItemStack(blindnessEModuleItem))
+                        .setRegistryName(new ResourceLocation(RFTools.MODID, "blindness_module")));
+
+        ForgeRegistries.RECIPES.register(
+                new NBTMatchingRecipe(3, 3,
+                        new ItemStack[]{ItemStack.EMPTY, batSyringe, ItemStack.EMPTY, lapis, obsidian, lapis, ItemStack.EMPTY, ink, ItemStack.EMPTY},
+                        new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
+                        new ItemStack(weaknessEModuleItem))
+                        .setRegistryName(new ResourceLocation(RFTools.MODID, "weakness_module")));
+
+        ForgeRegistries.RECIPES.register(
+                new NBTMatchingRecipe(3, 3,
+                        new ItemStack[]{ItemStack.EMPTY, caveSpiderSyringe, ItemStack.EMPTY, lapis, obsidian, lapis, ItemStack.EMPTY, ink, ItemStack.EMPTY},
+                        new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
+                        new ItemStack(poisonEModuleItem))
+                        .setRegistryName(new ResourceLocation(RFTools.MODID, "poison_module")));
+
+        ForgeRegistries.RECIPES.register(
+                new NBTMatchingRecipe(3, 3,
+                        new ItemStack[]{ItemStack.EMPTY, new ItemStack(Items.CLOCK), ItemStack.EMPTY, lapis, obsidian, lapis, ItemStack.EMPTY, ink, ItemStack.EMPTY},
+                        new String[][]{null, null, null, null, null, null, null, null, null},
+                        new ItemStack(slownessEModuleItem))
+                        .setRegistryName(new ResourceLocation(RFTools.MODID, "slowness_module")));
+
+        ForgeRegistries.RECIPES.register(
+                new NBTMatchingRecipe(3, 3,
+                        new ItemStack[]{ItemStack.EMPTY, endermanSyringe, ItemStack.EMPTY, lapis, obsidian, lapis, ItemStack.EMPTY, ink, ItemStack.EMPTY},
+                        new String[][]{null, syringeMatcher, null, null, null, null, null, null, null},
+                        new ItemStack(noTeleportEModuleItem))
+                        .setRegistryName(new ResourceLocation(RFTools.MODID, "noteleport_module")));
     }
 
     public static ItemStack createEnchantedItem(Item item, Enchantment effectId, int amount) {
