@@ -1,0 +1,34 @@
+{
+  "display": {
+    "icon": {
+      "item": "rftools:dimensional_shard"
+    },
+    "title": {
+      "translate": "advancements.rftools.specialores.title"
+    },
+    "description": {
+      "translate": "advancements.rftools.specialores.description"
+    },
+    "background": "rftools:textures/gui/advancements/rftools_background.png",
+    "show_toast": false,
+    "announce_to_chat": true
+  },
+  "parent": "rftools:root",
+  "criteria": {
+    "find_ores": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "rftools:dimensional_shard"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "find_ores"
+    ]
+  ]
+}

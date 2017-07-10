@@ -1,0 +1,30 @@
+{
+  "display": {
+    "icon": {
+      "item": "rftools:screen"
+    },
+    "title": {
+      "translate": "advancements.rftools.clearvision.title"
+    },
+    "description": {
+      "translate": "advancements.rftools.clearvision.description"
+    },
+    "background": "rftools:textures/gui/advancements/rftools_background.png",
+    "show_toast": false,
+    "announce_to_chat": true
+  },
+  "parent": "rftools:root",
+  "criteria": {
+    "placed_screen": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "block": "rftools:screen"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "placed_screen"
+    ]
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "item": "rftools:rftools_manual"
+    },
+    "title": {
+      "translate": "advancements.rftools.general.title"
+    },
+    "description": {
+      "translate": "advancements.rftools.general.description"
+    },
+    "background": "rftools:textures/gui/advancements/rftools_background.png",
+    "show_toast": false,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "has_machine_frame": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "rftools:machine_frame"
+          }
+        ]
+      }
+    }
+  }
+}

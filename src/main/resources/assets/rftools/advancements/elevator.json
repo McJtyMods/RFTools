@@ -1,0 +1,30 @@
+{
+  "display": {
+    "icon": {
+      "item": "rftools:elevator"
+    },
+    "title": {
+      "translate": "advancements.rftools.goingup.title"
+    },
+    "description": {
+      "translate": "advancements.rftools.goingup.description"
+    },
+    "background": "rftools:textures/gui/advancements/rftools_background.png",
+    "show_toast": false,
+    "announce_to_chat": true
+  },
+  "parent": "rftools:root",
+  "criteria": {
+    "placed_elevator": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "block": "rftools:elevator"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "placed_elevator"
+    ]
+  ]
+}

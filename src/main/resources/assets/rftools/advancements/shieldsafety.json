@@ -1,0 +1,30 @@
+{
+  "display": {
+    "icon": {
+      "item": "rftools:powercell"
+    },
+    "title": {
+      "translate": "advancements.rftools.shieldsafety.title"
+    },
+    "description": {
+      "translate": "advancements.rftools.shieldsafety.description"
+    },
+    "background": "rftools:textures/gui/advancements/rftools_background.png",
+    "show_toast": false,
+    "announce_to_chat": true
+  },
+  "parent": "rftools:root",
+  "criteria": {
+    "placed_shield": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "block": "rftools:shield_block1"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "placed_shield"
+    ]
+  ]
+}

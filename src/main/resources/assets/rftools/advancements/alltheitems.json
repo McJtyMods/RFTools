@@ -1,0 +1,30 @@
+{
+  "display": {
+    "icon": {
+      "item": "rftools:modular_storage"
+    },
+    "title": {
+      "translate": "advancements.rftools.alltheitems.title"
+    },
+    "description": {
+      "translate": "advancements.rftools.alltheitems.description"
+    },
+    "background": "rftools:textures/gui/advancements/rftools_background.png",
+    "show_toast": false,
+    "announce_to_chat": true
+  },
+  "parent": "rftools:root",
+  "criteria": {
+    "placed_storage": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "block": "rftools:modular_storage"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "placed_storage"
+    ]
+  ]
+}
