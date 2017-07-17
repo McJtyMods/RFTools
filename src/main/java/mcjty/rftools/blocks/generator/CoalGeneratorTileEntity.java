@@ -231,7 +231,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
             boolean rf = RFTools.redstoneflux && RedstoneFluxCompatibility.isEnergyItem(stack.getItem());
             return rf;
         } else if (index == CoalGeneratorContainer.SLOT_COALINPUT) {
-            return stack.getItem() == Items.COAL;
+            return stack.getItem() == Items.COAL || stack.getItem() == Item.getItemFromBlock(Blocks.COAL_BLOCK);
         }
         return true;
     }
