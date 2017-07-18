@@ -30,6 +30,6 @@ public final class ModCrafting {
                                 SyringeItem.createMobSyringe(EntityBat.class), SyringeItem.createMobSyringe(EntityOcelot.class), SyringeItem.createMobSyringe(EntityGuardian.class),
                                 SyringeItem.createMobSyringe(EntityWolf.class), SyringeItem.createMobSyringe(EntityPigZombie.class), SyringeItem.createMobSyringe(EntityMooshroom.class)},
                         new String[][]{syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher, syringeMatcher},
-                        new ItemStack(ModItems.peaceEssenceItem)).setRegistryName(new ResourceLocation(RFTools.MODID, "syringe")));
+                        new ItemStack(ModItems.peaceEssenceItem)).setRegistryName(new ResourceLocation(RFTools.MODID, "syringe_peace")));
     }
 }
