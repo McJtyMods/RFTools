@@ -555,7 +555,7 @@ capability to teleport the user to an unpowered receiver. This does
 use more energy so if not enough energy is available in the transmitter
 this will not work. Note that this block does not avoid all
 negative effects. You will still get hurt slightly and you end
-up rather confused. But it is still way better then dieing.
+up rather confused. But it is still way better then dying.
 {-------------------------------------------------------------}
 {b}Access Control
 {n:tpaccess}
