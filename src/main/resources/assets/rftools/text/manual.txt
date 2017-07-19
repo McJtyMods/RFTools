@@ -873,7 +873,7 @@ The Builder is one of the most versatile machine in RFTools. It can do:
     - Build geometrical shapes (dome, torus, box, ...)
     - Clear out areas in a certain shape (void blocks)
     - Quarry an area in a certain shape (silk touch, fortune, ...)
-    - Collect items and XP an in area
+    - Collect items and XP in an area
     - Pump liquids
 {-------------------------------------------------------------}
 A chest or tank on top or below is sometimes needed to supply or collect.
