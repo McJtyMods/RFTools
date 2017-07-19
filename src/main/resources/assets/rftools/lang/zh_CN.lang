@@ -65,6 +65,8 @@ item.shape_card4.name=塑形卡片 (时运采掘)
 item.shape_card5.name=塑形卡片 (清理采掘)
 item.shape_card6.name=塑形卡片 (清理精准采掘)
 item.shape_card7.name=塑形卡片 (清理时运采掘)
+item.shape_card8.name=塑形卡片 (泵)
+item.shape_card9.name=塑形卡片 (清理泵)
 
 item.regeneration_module.name=再生模块
 item.regenerationplus_module.name=再生+模块
@@ -144,6 +146,7 @@ tile.rftools.support_block.name=支撑块
 tile.rftools.space_chamber.name=空间角落方块
 tile.rftools.space_chamber_controller.name=空间控制方块
 tile.rftools.powercell.name=能量单元
+tile.rftools.powercell_simple.name=简单能量单元
 tile.rftools.powercell_advanced.name=高级能量单元
 tile.rftools.powercell_creative.name=创造模式能量单元
 tile.rftools.shield_template_block.name=护盾支架
@@ -158,3 +161,10 @@ tile.rftools.notick_solid_shield_block.name=护盾方块
 
 # Creative Tabs
 # itemGroup.RfTools=RFTools
+
+# Keys
+key.categories.rftools=RFTools
+key.porterNextDestination=下一个传送终点
+key.porterPrevDestination=上一个传送终点
+key.debugDumpNBTItem=导出手持物品的NBT
+key.debugDumpNBTBlock=导出被选择方块的NBT
