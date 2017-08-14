@@ -80,6 +80,7 @@ dependencies {
     deobfCompile "mcp.mobius.waila:Hwyla:1.8.10-B23_1.11:api"
     deobfCompile "mezz.jei:jei_1.11.2:4.2.5.234"
     deobfCompile "mcjty.theoneprobe:TheOneProbe:1.1x-1.4.7-57"
+    compile "team.chisel.ctm:CTM:MC1.11.2-0.2.1.10"
     deobfCompile "com.github.mcjty:compatlayer:1.11.2-0.2.6"
     deobfCompile "com.github.mcjty:intwheel:1.1x-1.2.6"
     deobfCompile "com.github.mcjty:xnet:1.3.0"
