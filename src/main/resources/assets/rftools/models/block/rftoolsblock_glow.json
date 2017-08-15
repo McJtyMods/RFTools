@@ -1,5 +1,5 @@
 {
-  "parent": "block/cube",
+  "parent": "rftools:block/util_cube_glow_2",
   "ambientocclusion": false,
   "textures": {
     "particle": "#front",

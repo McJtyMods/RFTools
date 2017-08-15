@@ -1,12 +1,9 @@
 {
-    "animation": {
-      "frametime": 5
-    },
     "ctm":{
         "ctm_version": 1,
         "layer":"CUTOUT",
         "extra": {
-            "light": 15
+            "light": 10
         }
     }
 }
