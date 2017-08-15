@@ -58,18 +58,21 @@ public class ContainerToItemRecipeFactory implements IRecipeFactory {
                     tagCompound = tabletItem.getTagCompound();
                 }
 
+                int childDamage = 0;
                 NBTTagCompound newtag = new NBTTagCompound();
-                for (Object o : tagCompound.getKeySet()) {
-                    String tag = (String) o;
-                    // @todo add a list of blacklisted NBT tags (make this more general)
-                    if ((!"childDamage".equals(tag)) && (!"Energy".equals(tag)) && (!"grid".equals(tag))) {
-                        newtag.setTag(tag, tagCompound.getTag(tag));
+                if (tagCompound != null) {
+                    for (Object o : tagCompound.getKeySet()) {
+                        String tag = (String) o;
+                        // @todo add a list of blacklisted NBT tags (make this more general)
+                        if ((!"childDamage".equals(tag)) && (!"Energy".equals(tag)) && (!"grid".equals(tag))) {
+                            newtag.setTag(tag, tagCompound.getTag(tag));
+                        }
                     }
-                }
 
-                int childDamage = tagCompound.getInteger("childDamage");
-                if (childDamage == META_FOR_SCANNER) {
-                    childDamage = 0;
+                    childDamage = tagCompound.getInteger("childDamage");
+                    if (childDamage == META_FOR_SCANNER) {
+                        childDamage = 0;
+                    }
                 }
                 result.setItemDamage(childDamage);
                 result.setTagCompound(newtag);
