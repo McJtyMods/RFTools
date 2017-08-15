@@ -22,6 +22,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -174,6 +175,11 @@ public class BlockProtectorBlock extends GenericRFToolsBlock<BlockProtectorTileE
             working = ((BlockProtectorTileEntity)te).isActive();
         }
         return state.withProperty(WORKING, working);
+    }
+
+    @Override
+    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
+        return super.canRenderInLayer(state, layer) || layer == BlockRenderLayer.CUTOUT;
     }
 
     @Override
