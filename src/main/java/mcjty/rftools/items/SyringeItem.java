@@ -10,6 +10,8 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.MultiPartEntityPart;
+import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -123,13 +125,22 @@ public class SyringeItem extends GenericRFToolsItem {
     }
 
     private String findSelectedMobId(Class<? extends Entity> clazz, Entity entity) {
-        return EntityList.getKey(clazz).toString();
+        ResourceLocation key = EntityList.getKey(clazz);
+        if (key != null) {
+            return key.toString();
+        }
+        if (clazz.isAssignableFrom(MultiPartEntityPart.class)) {
+            MultiPartEntityPart mp = (MultiPartEntityPart) entity;
+            if (mp.parent instanceof EntityDragon) {
+                return "minecraft:ender_dragon";
+            }
+        }
+        return null;
     }
 
     private Class<? extends Entity> findSelectedMobClass(Entity entity) {
         // First try to find an exact matching class.
-        Class<? extends Entity> entityClass = entity.getClass();
-        return entityClass;
+        return entity.getClass();
     }
 
     private String findSelectedMobName(Entity entity) {
@@ -197,7 +208,7 @@ public class SyringeItem extends GenericRFToolsItem {
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound != null) {
             String mob = tagCompound.getString("mobName");
-            if (mob == null) {
+            if (mob == null || "unknown".equals(mob)) {
                 if (tagCompound.hasKey("mobId")) {
                     String mobId = tagCompound.getString("mobId");
                     mobId = EntityTools.fixEntityId(mobId);
