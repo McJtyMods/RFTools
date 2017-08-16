@@ -104,18 +104,15 @@ public class ElevatorButtonClientScreenModule implements IClientScreenModule<Ele
                                        BlockPos pos, List<Integer> heights, ModuleRenderInfo renderInfo) {
         int max = large ? 6 : 8;
 
-        int w = buttons > max ? 58 : 120;
         int y = currenty;
-        boolean twocols = buttons > max;
+        int numcols = (buttons + max - 1) / max;
+        int w = ElevatorButtonScreenModule.getColumnWidth(numcols);
 
         for (int i = 0; i < buttons; i++) {
             int xoffset;
             int level = buttons-i-1;
-            if (twocols) {
-                xoffset = level >= max ? 70 : 5;
-            } else {
-                xoffset = 5;
-            }
+            int column = level / max;
+            xoffset = 5 + (w+7) * column;
 
             String text = getLevelText(level, pos, heights);
             boolean hasText = text != null;
@@ -137,7 +134,7 @@ public class ElevatorButtonClientScreenModule implements IClientScreenModule<Ele
                 renderHelper.renderTextTrimmed(x, yy, col, renderInfo, text, w * 4);
             }
             y += getDimension() - 2;
-            if (level == max) {
+            if ((level % max) == 0) {
                 y = currenty;
             }
         }
