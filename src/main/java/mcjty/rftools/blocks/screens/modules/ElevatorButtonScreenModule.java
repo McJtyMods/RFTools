@@ -179,7 +179,8 @@ public class ElevatorButtonScreenModule implements IScreenModule<ElevatorButtonS
 
         if (vertical) {
             int max = large ? 6 : 8;
-            boolean twocols = levelCount > max;
+            int numcols = (levelCount + max - 1) / max;
+            int colw = getColumnWidth(numcols);
 
             int yoffset = 0;
             if (y >= yoffset) {
@@ -187,16 +188,9 @@ public class ElevatorButtonScreenModule implements IScreenModule<ElevatorButtonS
                 if (level < 0) {
                     return;
                 }
-                if (twocols) {
-                    if (x > 73) {
-                        if (level < levelCount - max) {
-                            level = levelCount - level - 1;
-                        } else {
-                            level = -1;
-                        }
-                    } else {
-                        level = max - level - 1;
-                    }
+                if (numcols > 1) {
+                    int col = (x - 5) / (colw + 7);
+                    level = max - level - 1 + col * max;
                 } else {
                     level = levelCount - level - 1;
                 }
@@ -211,6 +205,20 @@ public class ElevatorButtonScreenModule implements IScreenModule<ElevatorButtonS
             elevatorTileEntity.toLevel(level);
         }
     }
+
+    public static int getColumnWidth(int numcols) {
+        int colw;
+        switch (numcols) {
+            case 1: colw = 120; break;
+            case 2: colw = 58; break;
+            case 3: colw = 36; break;
+            case 4: colw = 25; break;
+            case 5: colw = 19; break;
+            default: colw = 15; break;
+        }
+        return colw;
+    }
+
 
     @Override
     public int getRfPerTick() {
