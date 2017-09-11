@@ -998,9 +998,9 @@ public class ShapeCardItem extends GenericRFToolsItem {
     }
 
     private static int isInsideHeart(float centerx, float centery, float centerz, int x, int y, int z, float dx, float dy, float dz) {
-        double xx = (x-centerx) * 3.0 / dx;
-        double zz = (y-centery) * 3.0 / dy;
-        double yy = (z-centerz) * 3.0 / dz;
+        double xx = (x-centerx) * 2.6 / dx + .1;
+        double zz = (y-centery) * 2.4 / dy + .2;
+        double yy = (z-centerz) * 1.6 / dz + .1;
         double f1 = Math.pow(xx * xx + (9.0/4.0) * yy * yy + zz * zz - 1, 3.0);
         double f2 = xx * xx * zz* zz * zz;
         double f3 = (9.0 / 80.0) * yy * yy * zz * zz * zz;
