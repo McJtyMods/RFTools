@@ -3,7 +3,6 @@ package mcjty.rftools.blocks.shield;
 import mcjty.lib.compat.CompatBlock;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.shield.filters.*;
-import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
@@ -187,11 +186,11 @@ public abstract class AbstractShieldBlock extends CompatBlock implements ITileEn
         if (shieldBlockTileEntity == null) {
             return super.shouldSideBeRendered(state, world, pos, side);
         }
-        Block block = shieldBlockTileEntity.getBlock();
-        if (block == null) {
+        IBlockState mimic = shieldBlockTileEntity.getMimicBlock();
+        if (mimic == null) {
             return super.shouldSideBeRendered(state, world, pos, side);
         } else {
-            return block.shouldSideBeRendered(state, world, pos, side);
+            return mimic.getBlock().shouldSideBeRendered(state, world, pos, side);
         }
     }
 

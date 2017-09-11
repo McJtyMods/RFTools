@@ -408,7 +408,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         return new int[] { camoId, meta, te };
     }
 
-    private Block calculateShieldBlock(int damageBits) {
+    private Block calculateShieldBlock(int damageBits, int[] camoId) {
         if (!shieldActive || powerTimeout > 0) {
             return Blocks.AIR;
         }
@@ -420,10 +420,18 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             }
         }
 
-        if (damageBits == 0) {
-            return ShieldSetup.noTickSolidShieldBlock;
+        if (camoId[0] == -1) {
+            if (damageBits == 0) {
+                return ShieldSetup.noTickSolidShieldBlock;
+            } else {
+                return ShieldSetup.solidShieldBlock;
+            }
         } else {
-            return ShieldSetup.solidShieldBlock;
+            if (damageBits == 0) {
+                return ShieldSetup.noTickCamoShieldBlock;
+            } else {
+                return ShieldSetup.camoShieldBlock;
+            }
         }
     }
 
@@ -706,7 +714,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             int[] camoId = calculateCamoId();
             int cddata = calculateShieldCollisionData();
             int damageBits = calculateDamageBits();
-            Block block = calculateShieldBlock(damageBits);
+            Block block = calculateShieldBlock(damageBits, camoId);
 
 
             for (BlockPos templateBlock : templateBlocks) {
@@ -735,7 +743,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         int[] camoId = calculateCamoId();
         int cddata = calculateShieldCollisionData();
         int damageBits = calculateDamageBits();
-        Block block = calculateShieldBlock(damageBits);
+        Block block = calculateShieldBlock(damageBits, camoId);
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
@@ -767,7 +775,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         TileEntity te = getWorld().getTileEntity(pp);
         if (te instanceof NoTickShieldBlockTileEntity) {
             NoTickShieldBlockTileEntity shieldBlockTileEntity = (NoTickShieldBlockTileEntity) te;
-            shieldBlockTileEntity.setCamoBlock(camoId[0], camoId[2]);
+            shieldBlockTileEntity.setCamoBlock(camoId[0], camoId[1], camoId[2]);
             shieldBlockTileEntity.setShieldBlock(getPos());
             shieldBlockTileEntity.setDamageBits(damageBits);
             shieldBlockTileEntity.setCollisionData(cddata);
@@ -791,7 +799,8 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
                 if (isShapedShield()) {
                     getWorld().setBlockToAir(pp);
                 } else {
-                    getWorld().setBlockState(pp, ShieldSetup.shieldTemplateBlock.getStateFromMeta(templateMeta), 2);
+                    IBlockState templateBlock = ShieldSetup.shieldTemplateBlock.getStateFromMeta(templateMeta);
+                    getWorld().setBlockState(new BlockPos(pp), templateBlock, 2);
                 }
             } else {
                 if (!isShapedShield()) {

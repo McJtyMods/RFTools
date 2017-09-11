@@ -159,6 +159,8 @@ tile.rftools.invisible_shield_block.name=Invisible Shield Block
 tile.rftools.notick_invisible_shield_block.name=Invisible Shield Block
 tile.rftools.solid_shield_block.name=Solid Shield Block
 tile.rftools.notick_solid_shield_block.name=Solid Shield Block
+tile.rftools.camo_shield_block.name=Camo Shield Block
+tile.rftools.notick_camo_shield_block.name=Camo Shield Block
 
 # Creative Tabs
 itemGroup.RfTools=RFTools

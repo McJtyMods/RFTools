@@ -22,6 +22,8 @@ public class ShieldSetup {
     public static NoTickInvisibleShieldBlock noTickInvisibleShieldBlock;
     public static SolidShieldBlock solidShieldBlock;
     public static NoTickSolidShieldBlock noTickSolidShieldBlock;
+    public static CamoShieldBlock camoShieldBlock;
+    public static NoTickCamoShieldBlock noTickCamoShieldBlock;
     public static ShieldTemplateBlock shieldTemplateBlock;
 
     public static void init() {
@@ -36,6 +38,8 @@ public class ShieldSetup {
         if (!ShieldConfiguration.disableShieldBlocksToUncorruptWorld) {
             solidShieldBlock = new SolidShieldBlock();
             noTickSolidShieldBlock = new NoTickSolidShieldBlock();
+            camoShieldBlock = new CamoShieldBlock();
+            noTickCamoShieldBlock = new NoTickCamoShieldBlock();
             shieldTemplateBlock = new ShieldTemplateBlock();
         }
     }
@@ -49,14 +53,20 @@ public class ShieldSetup {
         shieldTemplateBlock.initModel();
         invisibleShieldBlock.initModel();
         noTickInvisibleShieldBlock.initModel();
-        solidShieldBlock.initModel();
-        noTickSolidShieldBlock.initModel();
+        if (!ShieldConfiguration.disableShieldBlocksToUncorruptWorld) {
+            solidShieldBlock.initModel();
+            noTickSolidShieldBlock.initModel();
+            camoShieldBlock.initModel();
+            noTickCamoShieldBlock.initModel();
+        }
     }
 
     @SideOnly(Side.CLIENT)
     public static void initClientPost() {
-        solidShieldBlock.initBlockColors();
-        noTickSolidShieldBlock.initBlockColors();
+        if (!ShieldConfiguration.disableShieldBlocksToUncorruptWorld) {
+            solidShieldBlock.initBlockColors();
+            noTickSolidShieldBlock.initBlockColors();
+        }
     }
 
     public static void initCrafting() {

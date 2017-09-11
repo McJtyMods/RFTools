@@ -119,8 +119,8 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
 
         Button applyCamo = new Button(mc, this).setText("Set").setTooltips("Set the camouflage block").
                 setLayoutHint(new PositionalLayout.PositionalHint(51, 142, 28, 16)).addButtonEvent(parent -> applyCamoToShield());
-        applyCamo.setEnabled(false);
-        applyCamo.setTooltips("Not implemented yet");   // @todo
+//        applyCamo.setEnabled(false);
+//        applyCamo.setTooltips("Not implemented yet");   // @todo
         colorSelector = new ColorChoiceLabel(mc, this)
                 .setTooltips("Color for the shield")
                 .setLayoutHint(new PositionalLayout.PositionalHint(31, 177, 48, 16));
@@ -324,9 +324,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
             if ((!ShieldConfiguration.allowInvisibleShield) && m == ShieldRenderingMode.MODE_INVISIBLE) {
                 continue;
             }
-            if (m != ShieldRenderingMode.MODE_MIMIC) {  // @todo
-                visibilityOptions.addChoices(m.getDescription());
-            }
+            visibilityOptions.addChoices(m.getDescription());
         }
         if (ShieldConfiguration.allowInvisibleShield) {
             visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_INVISIBLE.getDescription(), "Shield is completely invisible");
@@ -334,7 +332,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_SHIELD.getDescription(), "Default shield texture");
         visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_TRANSP.getDescription(), "Transparent shield texture");
         visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_SOLID.getDescription(), "Solid shield texture");
-//        visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_MIMIC.getDescription(), "Use the texture from the supplied block"); // @todo, currently not implemented
+        visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_MIMIC.getDescription(), "Use the texture from the supplied block");
         visibilityOptions.setChoice(tileEntity.getShieldRenderingMode().getDescription());
         visibilityOptions.addChoiceEvent((parent, newChoice) -> changeVisibilityMode());
     }
