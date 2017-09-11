@@ -18,7 +18,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.TextFormatting;
@@ -58,12 +61,14 @@ public class ShapeCardItem extends GenericRFToolsItem {
         SHAPE_CAPPEDCYLINDER(5, "Capped Cylinder"),
         SHAPE_PRISM(6, "Prism"),
         SHAPE_TORUS(7, "Torus"),
+        SHAPE_HEART(8, "Heart"),
         SHAPE_SOLIDBOX(100, "Solid Box"),
         SHAPE_SOLIDSPHERE(103, "Solid Sphere"),
         SHAPE_SOLIDCYLINDER(104, "Solid Cylinder"),
         SHAPE_SOLIDTORUS(107, "Solid Torus"),
         SHAPE_SOLIDTOPDOME(101, "Solid Top Dome"),
-        SHAPE_SOLIDBOTTOMDOME(102, "Solid Bottom Dome");
+        SHAPE_SOLIDBOTTOMDOME(102, "Solid Bottom Dome"),
+        SHAPE_SOLIDHEART(108, "Solid Heart");
 
 
         private final int index;
@@ -92,6 +97,8 @@ public class ShapeCardItem extends GenericRFToolsItem {
                     return SHAPE_CAPPEDCYLINDER;
                 case SHAPE_SOLIDTORUS:
                     return SHAPE_TORUS;
+                case SHAPE_SOLIDHEART:
+                    return SHAPE_HEART;
                 case SHAPE_SOLIDTOPDOME:
                     return SHAPE_TOPDOME;
                 case SHAPE_SOLIDBOTTOMDOME:
@@ -708,6 +715,12 @@ public class ShapeCardItem extends GenericRFToolsItem {
             case SHAPE_SOLIDTORUS:
                 composeTorus(worldObj, thisCoord, dimension, offset, blocks, maxSize, true, forquarry, chunk);
                 break;
+            case SHAPE_HEART:
+                composeHeart(worldObj, thisCoord, dimension, offset, blocks, maxSize, false, forquarry, chunk);
+                break;
+            case SHAPE_SOLIDHEART:
+                composeHeart(worldObj, thisCoord, dimension, offset, blocks, maxSize, true, forquarry, chunk);
+                break;
         }
     }
 
@@ -971,6 +984,67 @@ public class ShapeCardItem extends GenericRFToolsItem {
                                         cnt += isInsideTorus(centerx, centery, centerz, x, y, z + 1, bigRadius, smallRadius);
                                         cnt += isInsideTorus(centerx, centery, centerz, x, y - 1, z, bigRadius, smallRadius);
                                         cnt += isInsideTorus(centerx, centery, centerz, x, y + 1, z, bigRadius, smallRadius);
+                                    }
+                                    if (cnt != 6) {
+                                        placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static int isInsideHeart(float centerx, float centery, float centerz, int x, int y, int z, float dx, float dy, float dz) {
+        double xx = (x-centerx) * 3.0 / dx;
+        double zz = (y-centery) * 3.0 / dy;
+        double yy = (z-centerz) * 3.0 / dz;
+        double f1 = Math.pow(xx * xx + (9.0/4.0) * yy * yy + zz * zz - 1, 3.0);
+        double f2 = xx * xx * zz* zz * zz;
+        double f3 = (9.0 / 80.0) * yy * yy * zz * zz * zz;
+        double f = f1 - f2 - f3;
+        if (f < 0) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+
+    private static void composeHeart(World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean solid, boolean forquarry, ChunkPos chunk) {
+        int xCoord = thisCoord.getX();
+        int yCoord = thisCoord.getY();
+        int zCoord = thisCoord.getZ();
+        int dx = dimension.getX();
+        int dy = dimension.getY();
+        int dz = dimension.getZ();
+        float centerx = xCoord + offset.getX();
+        float centery = yCoord + offset.getY();
+        float centerz = zCoord + offset.getZ();
+        BlockPos tl = new BlockPos(xCoord - dx/2 + offset.getX(), yCoord - dy/2 + offset.getY(), zCoord - dz/2 + offset.getZ());
+
+        for (int ox = 0 ; ox < dx ; ox++) {
+            int x = tl.getX() + ox;
+            if (xInChunk(x, chunk)) {
+                for (int oz = 0 ; oz < dz ; oz++) {
+                    int z = tl.getZ() + oz;
+                    if (zInChunk(z, chunk)) {
+                        for (int oy = 0; oy < dy; oy++) {
+                            int y = tl.getY() + oy;
+                            if (y >= 0 && y < 255) {
+                                if (isInsideHeart(centerx, centery, centerz, x, y, z, dx, dy, dz) == 1) {
+                                    int cnt;
+                                    if (solid) {
+                                        cnt = 0;
+                                    } else {
+                                        cnt = isInsideHeart(centerx, centery, centerz, x - 1, y, z, dx, dy, dz);
+                                        cnt += isInsideHeart(centerx, centery, centerz, x + 1, y, z, dx, dy, dz);
+                                        cnt += isInsideHeart(centerx, centery, centerz, x, y, z - 1, dx, dy, dz);
+                                        cnt += isInsideHeart(centerx, centery, centerz, x, y, z + 1, dx, dy, dz);
+                                        cnt += isInsideHeart(centerx, centery, centerz, x, y - 1, z, dx, dy, dz);
+                                        cnt += isInsideHeart(centerx, centery, centerz, x, y + 1, z, dx, dy, dz);
                                     }
                                     if (cnt != 6) {
                                         placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);

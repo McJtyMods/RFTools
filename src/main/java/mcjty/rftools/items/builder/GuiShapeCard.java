@@ -86,12 +86,15 @@ public class GuiShapeCard extends GuiScreen {
                 ShapeCardItem.Shape.SHAPE_CAPPEDCYLINDER.getDescription(),
                 ShapeCardItem.Shape.SHAPE_PRISM.getDescription(),
                 ShapeCardItem.Shape.SHAPE_TORUS.getDescription(),
+                ShapeCardItem.Shape.SHAPE_HEART.getDescription(),
                 ShapeCardItem.Shape.SHAPE_SOLIDBOX.getDescription(),
                 ShapeCardItem.Shape.SHAPE_SOLIDSPHERE.getDescription(),
                 ShapeCardItem.Shape.SHAPE_SOLIDCYLINDER.getDescription(),
                 ShapeCardItem.Shape.SHAPE_SOLIDTORUS.getDescription(),
                 ShapeCardItem.Shape.SHAPE_SOLIDTOPDOME.getDescription(),
-                ShapeCardItem.Shape.SHAPE_SOLIDBOTTOMDOME.getDescription()).addChoiceEvent((parent, newChoice) -> updateSettings());
+                ShapeCardItem.Shape.SHAPE_SOLIDBOTTOMDOME.getDescription(),
+                ShapeCardItem.Shape.SHAPE_SOLIDHEART.getDescription()
+        ).addChoiceEvent((parent, newChoice) -> updateSettings());
         ItemStack heldItem = MinecraftTools.getPlayer(mc).getHeldItem(EnumHand.MAIN_HAND);
         if (ItemStackTools.isEmpty(heldItem)) {
             // Cannot happen!
