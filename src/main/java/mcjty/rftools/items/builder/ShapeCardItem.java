@@ -45,6 +45,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
     public static final int CARD_QUARRY_CLEAR_FORTUNE = 7;
     public static final int CARD_PUMP = 8;
     public static final int CARD_PUMP_CLEAR = 9;
+    public static final int CARD_PUMP_LIQUID = 10;
 
     public static final int MAXIMUM_COUNT = 50000000;
     
@@ -145,6 +146,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
         ModelLoader.setCustomModelResourceLocation(this, CARD_QUARRY_CLEAR_FORTUNE, new ModelResourceLocation(RFTools.MODID + ":shape_card_quarry_clear_fortune", "inventory"));
         ModelLoader.setCustomModelResourceLocation(this, CARD_PUMP, new ModelResourceLocation(RFTools.MODID + ":shape_card_pump", "inventory"));
         ModelLoader.setCustomModelResourceLocation(this, CARD_PUMP_CLEAR, new ModelResourceLocation(RFTools.MODID + ":shape_card_pump_clear", "inventory"));
+        ModelLoader.setCustomModelResourceLocation(this, CARD_PUMP_LIQUID, new ModelResourceLocation(RFTools.MODID + ":shape_card_liquid", "inventory"));
     }
 
     @Override
@@ -325,6 +327,13 @@ public class ShapeCardItem extends GenericRFToolsItem {
             list.add(TextFormatting.YELLOW + "Sneak right click on builder to start mark mode");
             list.add(TextFormatting.YELLOW + "Then right click to mark two corners of wanted area");
             switch (type) {
+                case CARD_PUMP_LIQUID:
+                    list.add(TextFormatting.WHITE + "This item will cause the builder to place");
+                    list.add(TextFormatting.WHITE + "liquids from an tank on top/bottom into the world.");
+                    list.add(TextFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
+                    list.add(TextFormatting.GREEN + "Base cost: " + BuilderConfiguration.builderRfPerLiquid + " RF/t per block");
+                    list.add(TextFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
+                    break;
                 case CARD_PUMP:
                     list.add(TextFormatting.WHITE + "This item will cause the builder to collect");
                     list.add(TextFormatting.WHITE + "all liquids in the configured space.");
@@ -986,7 +995,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
 
     @Override
     protected void clGetSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
-        for (int i = 0 ; i <= 9 ; i++) {
+        for (int i = 0 ; i <= 10 ; i++) {
             subItems.add(new ItemStack(this, 1, i));
         }
     }

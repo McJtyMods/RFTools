@@ -49,12 +49,10 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.fluids.BlockFluidBase;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -184,6 +182,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     break;
                 case ShapeCardItem.CARD_PUMP:
                     list.add("    Pump");
+                    break;
+                case ShapeCardItem.CARD_PUMP_LIQUID:
+                    list.add("    Place liquids");
                     break;
                 case ShapeCardItem.CARD_PUMP_CLEAR:
                     list.add("    Pump");
@@ -891,6 +892,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         int rfNeeded;
 
         switch (getCardType()) {
+            case ShapeCardItem.CARD_PUMP_LIQUID:
             case ShapeCardItem.CARD_PUMP:
             case ShapeCardItem.CARD_PUMP_CLEAR:
                 rfNeeded = BuilderConfiguration.builderRfPerLiquid;
@@ -919,7 +921,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         Block block = null;
-        if (getCardType() != ShapeCardItem.CARD_SHAPE) {
+        if (getCardType() != ShapeCardItem.CARD_SHAPE && getCardType() != ShapeCardItem.CARD_PUMP_LIQUID) {
             IBlockState state = getWorld().getBlockState(srcPos);
             block = state.getBlock();
             if (!isEmpty(state, block)) {
@@ -944,6 +946,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         switch (getCardType()) {
+            case ShapeCardItem.CARD_PUMP_LIQUID:
+                return placeLiquidBlock(rfNeeded, srcPos);
             case ShapeCardItem.CARD_PUMP:
             case ShapeCardItem.CARD_PUMP_CLEAR:
                 return pumpBlock(rfNeeded, srcPos, block);
@@ -1183,6 +1187,30 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return srcState.getValue(BlockFluidBase.LEVEL);
         }
         return -1;
+    }
+
+    private boolean placeLiquidBlock(int rfNeeded, BlockPos srcPos) {
+
+        if (isEmptyOrReplacable(getWorld(), srcPos)) {
+            FluidStack stack = consumeLiquid(getWorld(), srcPos);
+             if (stack == null) {
+                return true;    // We could not find a block. Wait
+            }
+
+            // We assume here the liquid is placable.
+            Block block = stack.getFluid().getBlock();
+//            ItemStack s = new ItemStack(block);
+            FakePlayer fakePlayer = getHarvester();
+            getWorld().setBlockState(srcPos, block.getDefaultState(), 11);
+//            IBlockState newState = placeBlockAt(getWorld(), srcPos, s, null, fakePlayer);
+
+            if (!silent) {
+                SoundTools.playSound(getWorld(), block.getSoundType().getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
+            }
+
+            consumeEnergy(rfNeeded);
+        }
+        return false;
     }
 
     private boolean pumpBlock(int rfNeeded, BlockPos srcPos, Block block) {
@@ -1447,6 +1475,46 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         return ItemStackTools.getEmptyStack();
     }
+
+    private FluidStack consumeLiquid(World srcWorld, BlockPos srcPos) {
+        FluidStack b = consumeLiquid(EnumFacing.UP, srcWorld, srcPos);
+        if (b == null) {
+            b = consumeLiquid(EnumFacing.DOWN, srcWorld, srcPos);
+        }
+        return b;
+    }
+
+    private FluidStack consumeLiquid(EnumFacing direction, World srcWorld, BlockPos srcPos) {
+        TileEntity te = getWorld().getTileEntity(getPos().offset(direction));
+        if (te != null) {
+            if (te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, direction.getOpposite())) {
+                IFluidHandler capability = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, direction.getOpposite());
+                return findAndConsumeLiquid(capability, srcWorld, srcPos);
+            }
+            if (te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null)) {
+                IFluidHandler capability = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
+                return findAndConsumeLiquid(capability, srcWorld, srcPos);
+            }
+        }
+        return null;
+    }
+
+    private FluidStack findAndConsumeLiquid(IFluidHandler tank, World srcWorld, BlockPos srcPos) {
+        for (IFluidTankProperties properties : tank.getTankProperties()) {
+            FluidStack contents = properties.getContents();
+            if (contents != null) {
+                if (contents.getFluid() != null) {
+                    if (contents.amount >= 1000) {
+                        FluidStack drained = tank.drain(new FluidStack(contents.getFluid(), 1000, contents.tag), true);
+                        System.out.println("drained = " + drained);
+                        return drained;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
 
     private ItemStack consumeBlock(World srcWorld, BlockPos srcPos, IBlockState state) {
         ItemStack b = consumeBlock(EnumFacing.UP, srcWorld, srcPos, state);

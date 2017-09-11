@@ -67,6 +67,7 @@ item.shape_card6.name=Shape Card (Clearing Silk Quarry)
 item.shape_card7.name=Shape Card (Clearing Fortune Quarry)
 item.shape_card8.name=Shape Card (Pump)
 item.shape_card9.name=Shape Card (Clearing Pump)
+item.shape_card10.name=Shape Card (Placing Liquids)
 
 item.regeneration_module.name=Regeneration Module
 item.regenerationplus_module.name=Regeneration Plus Module
