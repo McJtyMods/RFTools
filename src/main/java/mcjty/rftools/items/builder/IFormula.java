@@ -7,4 +7,6 @@ public interface IFormula {
     void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset);
 
     int isInside(int x, int y, int z);
+
+    default boolean isCustom() { return false; }
 }

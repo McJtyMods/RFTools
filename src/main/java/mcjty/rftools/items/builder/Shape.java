@@ -14,6 +14,7 @@ public enum Shape {
     SHAPE_PRISM(6, "Prism", false, Formulas.FORMULA_PRISM, 0),
     SHAPE_TORUS(7, "Torus", false, Formulas.FORMULA_TORUS, 0),
     SHAPE_HEART(8, "Heart", false, Formulas.FORMULA_HEART, 0),
+    SHAPE_CUSTOM(50, "Custom", false, Formulas.FORMULA_CUSTOM, 0),
     SHAPE_SOLIDBOX(100, "Solid Box", true, Formulas.FORMULA_BOX, 0),
     SHAPE_SOLIDSPHERE(103, "Solid Sphere", true, Formulas.FORMULA_SPHERE, 0),
     SHAPE_SOLIDCYLINDER(104, "Solid Cylinder", true, Formulas.FORMULA_CYLINDER, 0),
@@ -22,7 +23,8 @@ public enum Shape {
     SHAPE_SOLIDTOPDOME(101, "Solid Top Dome", true, Formulas.FORMULA_SPHERE, 1),
     SHAPE_SOLIDBOTTOMDOME(102, "Solid Bottom Dome", true, Formulas.FORMULA_SPHERE, -1),
     SHAPE_SOLIDPRISM(106, "Solid Prim", true, Formulas.FORMULA_PRISM, 0),
-    SHAPE_SOLIDHEART(108, "Solid Heart", true, Formulas.FORMULA_HEART, 0);
+    SHAPE_SOLIDHEART(108, "Solid Heart", true, Formulas.FORMULA_HEART, 0),
+    SHAPE_SOLIDCUSTOM(150, "Solid Custom", true, Formulas.FORMULA_CUSTOM, 0);
 
     private final int index;
     private final String description;
@@ -61,6 +63,8 @@ public enum Shape {
                 return SHAPE_BOTTOMDOME;
             case SHAPE_SOLIDPRISM:
                 return SHAPE_PRISM;
+            case SHAPE_SOLIDCUSTOM:
+                return SHAPE_CUSTOM;
         }
         return this;
     }
@@ -85,6 +89,8 @@ public enum Shape {
                 return SHAPE_SOLIDBOTTOMDOME;
             case SHAPE_PRISM:
                 return SHAPE_SOLIDPRISM;
+            case SHAPE_CUSTOM:
+                return SHAPE_SOLIDCUSTOM;
         }
         return this;
     }

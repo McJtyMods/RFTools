@@ -91,7 +91,8 @@ public class GuiShapeCard extends GuiScreen {
                 Shape.SHAPE_CAPPEDCYLINDER.getDescription(),
                 Shape.SHAPE_PRISM.getDescription(),
                 Shape.SHAPE_TORUS.getDescription(),
-                Shape.SHAPE_HEART.getDescription()
+                Shape.SHAPE_HEART.getDescription(),
+                Shape.SHAPE_CUSTOM.getDescription()
         ).addChoiceEvent((parent, newChoice) -> updateSettings());
 
         solidLabel = new ChoiceLabel(mc, this).setDesiredWidth(50).setDesiredHeight(16).addChoices(
@@ -113,7 +114,7 @@ public class GuiShapeCard extends GuiScreen {
         blocksLabel = new Label(mc, this).setText("# ").setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
         blocksLabel.setDesiredWidth(100).setDesiredHeight(16);
 
-        Panel modePanel = new Panel(mc, this).setLayout(new VerticalLayout()).setDesiredWidth(130).addChild(shapePanel).addChild(blocksLabel);
+        Panel modePanel = new Panel(mc, this).setLayout(new VerticalLayout()).setDesiredWidth(170).addChild(shapePanel).addChild(blocksLabel);
 
         BlockPos dim = ShapeCardItem.getDimension(heldItem);
         BlockPos offset = ShapeCardItem.getOffset(heldItem);

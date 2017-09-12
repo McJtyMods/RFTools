@@ -6,6 +6,7 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.blocks.shaper.ShaperBlock;
 import mcjty.rftools.crafting.PreservingShapedOreRecipe;
 import mcjty.rftools.crafting.PreservingShapedRecipe;
 import mcjty.rftools.items.ModItems;
@@ -31,6 +32,7 @@ public class BuilderSetup {
     public static SpaceChamberControllerBlock spaceChamberControllerBlock;
     public static BuilderBlock builderBlock;
     public static SupportBlock supportBlock;
+    public static ShaperBlock shaperBlock;
 
     public static SpaceChamberCardItem spaceChamberCardItem;
     public static ShapeCardItem shapeCardItem;
@@ -42,6 +44,7 @@ public class BuilderSetup {
         spaceChamberControllerBlock = new SpaceChamberControllerBlock();
         builderBlock = new BuilderBlock();
         supportBlock = new SupportBlock();
+        shaperBlock = new ShaperBlock();
 
         initItems();
 
@@ -55,6 +58,7 @@ public class BuilderSetup {
         spaceChamberControllerBlock.initModel();
         builderBlock.initModel();
         supportBlock.initModel();
+        shaperBlock.initModel();
 
         spaceChamberCardItem.initModel();
         shapeCardItem.initModel();
@@ -73,6 +77,9 @@ public class BuilderSetup {
         if (GeneralConfiguration.enableBuilderRecipe) {
             GameRegistry.addRecipe(new ItemStack(builderBlock), "beb", "rMr", "brb", 'M', ModBlocks.machineFrame, 'e', Items.ENDER_PEARL, 'r', Items.REDSTONE, 'b', Blocks.BRICK_BLOCK);
         }
+
+        GameRegistry.addRecipe(new ItemStack(shaperBlock), "pbp", "bMb", "pbp", 'M', ModBlocks.machineFrame, 'p', Items.PAPER, 'b', Items.BRICK);
+
 
         GameRegistry.addRecipe(new ItemStack(spaceChamberCardItem), " b ", "rir", " b ", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
                 'b', Items.BRICK);

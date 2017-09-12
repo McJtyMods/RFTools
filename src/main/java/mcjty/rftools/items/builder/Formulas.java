@@ -4,6 +4,23 @@ import net.minecraft.util.math.BlockPos;
 
 public class Formulas {
 
+    static final IFormula FORMULA_CUSTOM = new IFormula() {
+        @Override
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset) {
+
+        }
+
+        @Override
+        public int isInside(int x, int y, int z) {
+            return 0;
+        }
+
+        @Override
+        public boolean isCustom() {
+            return true;
+        }
+    };
+
     static final IFormula FORMULA_TORUS = new IFormula() {
         private float smallRadius;
         private float bigRadius;
