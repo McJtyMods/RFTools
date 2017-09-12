@@ -51,83 +51,6 @@ public class ShapeCardItem extends GenericRFToolsItem {
     public static final int CARD_PUMP_LIQUID = 10;
 
     public static final int MAXIMUM_COUNT = 50000000;
-    
-    public enum Shape {
-        SHAPE_BOX(0, "Box"),
-        SHAPE_TOPDOME(1, "Top Dome"),
-        SHAPE_BOTTOMDOME(2, "Bottom Dome"),
-        SHAPE_SPHERE(3, "Sphere"),
-        SHAPE_CYLINDER(4, "Cylinder"),
-        SHAPE_CAPPEDCYLINDER(5, "Capped Cylinder"),
-        SHAPE_PRISM(6, "Prism"),
-        SHAPE_TORUS(7, "Torus"),
-        SHAPE_HEART(8, "Heart"),
-        SHAPE_SOLIDBOX(100, "Solid Box"),
-        SHAPE_SOLIDSPHERE(103, "Solid Sphere"),
-        SHAPE_SOLIDCYLINDER(104, "Solid Cylinder"),
-        SHAPE_SOLIDTORUS(107, "Solid Torus"),
-        SHAPE_SOLIDTOPDOME(101, "Solid Top Dome"),
-        SHAPE_SOLIDBOTTOMDOME(102, "Solid Bottom Dome"),
-        SHAPE_SOLIDHEART(108, "Solid Heart");
-
-
-        private final int index;
-        private final String description;
-
-        private static final Map<Integer,Shape> shapes;
-        private static final Map<String,Shape> shapesByDescription;
-
-        static {
-            shapesByDescription = new HashMap<>();
-            shapes = new HashMap<>();
-            for (Shape shape : values()) {
-                shapes.put(shape.getIndex(), shape);
-                shapesByDescription.put(shape.getDescription(), shape);
-            }
-        }
-
-        // Return the hollow version of the shape.
-        public Shape makeHollow() {
-            switch (this) {
-                case SHAPE_SOLIDBOX:
-                    return SHAPE_BOX;
-                case SHAPE_SOLIDSPHERE:
-                    return SHAPE_SPHERE;
-                case SHAPE_SOLIDCYLINDER:
-                    return SHAPE_CAPPEDCYLINDER;
-                case SHAPE_SOLIDTORUS:
-                    return SHAPE_TORUS;
-                case SHAPE_SOLIDHEART:
-                    return SHAPE_HEART;
-                case SHAPE_SOLIDTOPDOME:
-                    return SHAPE_TOPDOME;
-                case SHAPE_SOLIDBOTTOMDOME:
-                    return SHAPE_BOTTOMDOME;
-            }
-            return this;
-        }
-
-        Shape(int index, String description) {
-            this.index = index;
-            this.description = description;
-        }
-
-        public int getIndex() {
-            return index;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public static Shape getShape(int index) {
-            return shapes.get(index);
-        }
-
-        public static Shape getShape(String description) {
-            return shapesByDescription.get(description);
-        }
-    }
 
     public static final int MODE_NONE = 0;
     public static final int MODE_CORNER1 = 1;
@@ -672,56 +595,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
 
     public static void composeShape(Shape shape, World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean forquarry,
                                     ChunkPos chunk) {
-        switch (shape) {
-            case SHAPE_BOX:
-                composeBox(worldObj, thisCoord, dimension, offset, blocks, maxSize, false, forquarry, chunk);
-                break;
-            case SHAPE_SOLIDBOX:
-                composeBox(worldObj, thisCoord, dimension, offset, blocks, maxSize, true, forquarry, chunk);
-                break;
-            case SHAPE_TOPDOME:
-                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 1, false, forquarry, chunk);
-                break;
-            case SHAPE_BOTTOMDOME:
-                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, -1, false, forquarry, chunk);
-                break;
-            case SHAPE_SOLIDTOPDOME:
-                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 1, true, forquarry, chunk);
-                break;
-            case SHAPE_SOLIDBOTTOMDOME:
-                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, -1, true, forquarry, chunk);
-                break;
-            case SHAPE_SPHERE:
-                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 0, false, forquarry, chunk);
-                break;
-            case SHAPE_SOLIDSPHERE:
-                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 0, true, forquarry, chunk);
-                break;
-            case SHAPE_CYLINDER:
-                composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, false, false, forquarry, chunk);
-                break;
-            case SHAPE_SOLIDCYLINDER:
-                composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, true, true, forquarry, chunk);
-                break;
-            case SHAPE_CAPPEDCYLINDER:
-                composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, true, false, forquarry, chunk);
-                break;
-            case SHAPE_PRISM:
-                composePrism(worldObj, thisCoord, dimension, offset, blocks, maxSize, forquarry, chunk);
-                break;
-            case SHAPE_TORUS:
-                composeTorus(worldObj, thisCoord, dimension, offset, blocks, maxSize, false, forquarry, chunk);
-                break;
-            case SHAPE_SOLIDTORUS:
-                composeTorus(worldObj, thisCoord, dimension, offset, blocks, maxSize, true, forquarry, chunk);
-                break;
-            case SHAPE_HEART:
-                composeHeart(worldObj, thisCoord, dimension, offset, blocks, maxSize, false, forquarry, chunk);
-                break;
-            case SHAPE_SOLIDHEART:
-                composeHeart(worldObj, thisCoord, dimension, offset, blocks, maxSize, true, forquarry, chunk);
-                break;
-        }
+        composeFormula(shape.getFormula(), worldObj, thisCoord, dimension, offset, blocks, maxSize, shape.getSide(), shape.isSolid(), forquarry, chunk);
     }
 
     private static void placeBlockIfPossible(World worldObj, Collection<BlockPos> blocks, int maxSize, int x, int y, int z, boolean forquarry) {
@@ -742,33 +616,17 @@ public class ShapeCardItem extends GenericRFToolsItem {
         }
     }
 
-    private static void composeSphere(World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, int side, boolean solid, boolean forquarry, ChunkPos chunk) {
+
+    private static void composeFormula(IFormula formula, World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, int side, boolean solid, boolean forquarry, ChunkPos chunk) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
         int zCoord = thisCoord.getZ();
         int dx = dimension.getX();
         int dy = dimension.getY();
         int dz = dimension.getZ();
-
-        float centerx;
-        float centery;
-        float centerz;
-        centerx = xCoord + offset.getX() + ((dx % 2 != 0) ? 0.0f : -.5f);
-        centery = yCoord + offset.getY() + ((dy % 2 != 0) ? 0.0f : -.5f);
-        centerz = zCoord + offset.getZ() + ((dz % 2 != 0) ? 0.0f : -.5f);
         BlockPos tl = new BlockPos(xCoord - dx/2 + offset.getX(), yCoord - dy/2 + offset.getY(), zCoord - dz/2 + offset.getZ());
 
-        float dx2;
-        float dy2;
-        float dz2;
-        int davg;
-
-//            float factor = 2.0f;
-        float factor = 1.8f;
-        dx2 = dx == 0 ? .5f : ((dx + factor) * (dx + factor)) / 4.0f;
-        dy2 = dy == 0 ? .5f : ((dy + factor) * (dy + factor)) / 4.0f;
-        dz2 = dz == 0 ? .5f : ((dz + factor) * (dz + factor)) / 4.0f;
-        davg = (int) ((dx + dy + dz + factor * 3) / 3);
+        formula.setup(thisCoord, dimension, offset);
 
         for (int ox = 0 ; ox < dx ; ox++) {
             int x = tl.getX() + ox;
@@ -780,274 +638,21 @@ public class ShapeCardItem extends GenericRFToolsItem {
                             int y = tl.getY() + oy;
                             if (y >= 0 && y < 255) {
                                 if (side == 0 || (side == 1 && y >= yCoord + offset.getY()) || (side == -1 && y <= yCoord + offset.getY())) {
-                                    if (isInside3D(centerx, centery, centerz, x, y, z, dx2, dy2, dz2, davg) == 1) {
+                                    if (formula.isInside(x, y, z) == 1) {
                                         int cnt;
                                         if (solid) {
                                             cnt = 0;
                                         } else {
-                                            cnt = isInside3D(centerx, centery, centerz, x - 1, y, z, dx2, dy2, dz2, davg);
-                                            cnt += isInside3D(centerx, centery, centerz, x + 1, y, z, dx2, dy2, dz2, davg);
-                                            cnt += isInside3D(centerx, centery, centerz, x, y - 1, z, dx2, dy2, dz2, davg);
-                                            cnt += isInside3D(centerx, centery, centerz, x, y + 1, z, dx2, dy2, dz2, davg);
-                                            cnt += isInside3D(centerx, centery, centerz, x, y, z - 1, dx2, dy2, dz2, davg);
-                                            cnt += isInside3D(centerx, centery, centerz, x, y, z + 1, dx2, dy2, dz2, davg);
+                                            cnt = formula.isInside(x - 1, y, z);
+                                            cnt += formula.isInside(x + 1, y, z);
+                                            cnt += formula.isInside(x, y, z - 1);
+                                            cnt += formula.isInside(x, y, z + 1);
+                                            cnt += formula.isInside(x, y - 1, z);
+                                            cnt += formula.isInside(x, y + 1, z);
                                         }
                                         if (cnt != 6) {
                                             placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
                                         }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private static float squaredDistance3D(float cx, float cy, float cz, float x1, float y1, float z1, float dx2, float dy2, float dz2) {
-        return (x1-cx) * (x1-cx) / dx2 + (y1-cy) * (y1-cy) / dy2 + (z1-cz) * (z1-cz) / dz2;
-    }
-
-    private static float squaredDistance2D(float cx, float cz, float x1, float z1, float dx2, float dz2) {
-        return (x1-cx) * (x1-cx) / dx2 + (z1-cz) * (z1-cz) / dz2;
-    }
-
-    private static int isInside2D(float centerx, float centerz, int x, int z, float dx2, float dz2, int davg) {
-        double distance = Math.sqrt(squaredDistance2D(centerx, centerz, x, z, dx2, dz2));
-        return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) ? 1 : 0;
-    }
-
-    private static int isInside3D(float centerx, float centery, float centerz, int x, int y, int z, float dx2, float dy2, float dz2, int davg) {
-        double distance = Math.sqrt(squaredDistance3D(centerx, centery, centerz, x, y, z, dx2, dy2, dz2));
-        return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) ? 1 : 0;
-    }
-
-    private static void composeCylinder(World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean capped, boolean solid, boolean forquarry, ChunkPos chunk) {
-        int xCoord = thisCoord.getX();
-        int yCoord = thisCoord.getY();
-        int zCoord = thisCoord.getZ();
-        int dx = dimension.getX();
-        int dy = dimension.getY();
-        int dz = dimension.getZ();
-        float centerx;
-        float centerz;
-
-        centerx = xCoord + offset.getX() + ((dx % 2 != 0) ? 0.0f : -.5f);
-        centerz = zCoord + offset.getZ() + ((dz % 2 != 0) ? 0.0f : -.5f);
-
-        BlockPos tl = new BlockPos(xCoord - dx/2 + offset.getX(), yCoord - dy/2 + offset.getY(), zCoord - dz/2 + offset.getZ());
-
-        float dx2;
-        float dz2;
-        int davg;
-
-        float factor = 1.7f;
-        dx2 = dx == 0 ? .5f : ((dx + factor) * (dx + factor)) / 4.0f;
-        dz2 = dz == 0 ? .5f : ((dz + factor) * (dz + factor)) / 4.0f;
-        davg = (int) ((dx + dz + factor * 2) / 2);
-
-        for (int ox = 0 ; ox < dx ; ox++) {
-            int x = tl.getX() + ox;
-            if (xInChunk(x, chunk)) {
-                for (int oz = 0; oz < dz; oz++) {
-                    int z = tl.getZ() + oz;
-                    if (zInChunk(z, chunk)) {
-                        for (int oy = 0; oy < dy; oy++) {
-                            int y = tl.getY() + oy;
-                            if (y >= 0 && y < 255) {
-                                if (isInside2D(centerx, centerz, x, z, dx2, dz2, davg) == 1) {
-                                    int cnt;
-                                    if (solid) {
-                                        cnt = 0;
-                                    } else {
-                                        cnt = isInside2D(centerx, centerz, x - 1, z, dx2, dz2, davg);
-                                        cnt += isInside2D(centerx, centerz, x + 1, z, dx2, dz2, davg);
-                                        cnt += isInside2D(centerx, centerz, x, z - 1, dx2, dz2, davg);
-                                        cnt += isInside2D(centerx, centerz, x, z + 1, dx2, dz2, davg);
-                                    }
-                                    if (cnt != 4 || (capped && (oy == 0 || oy == dy - 1))) {
-                                        placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private static void composeBox(World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean solid, boolean forquarry, ChunkPos chunk) {
-        int xCoord = thisCoord.getX();
-        int yCoord = thisCoord.getY();
-        int zCoord = thisCoord.getZ();
-        int dx = dimension.getX();
-        int dy = dimension.getY();
-        int dz = dimension.getZ();
-        BlockPos tl = new BlockPos(xCoord - dx/2 + offset.getX(), yCoord - dy/2 + offset.getY(), zCoord - dz/2 + offset.getZ());
-
-        for (int ox = 0 ; ox < dx ; ox++) {
-            int x = tl.getX() + ox;
-            if (xInChunk(x, chunk)) {
-                for (int oz = 0 ; oz < dz ; oz++) {
-                    int z = tl.getZ() + oz;
-                    if (zInChunk(z, chunk)) {
-                        for (int oy = 0; oy < dy; oy++) {
-                            int y = tl.getY() + oy;
-                            if (y >= 0 && y < 255) {
-                                if (solid || ox == 0 || oy == 0 || oz == 0 || ox == (dx - 1) || oy == (dy - 1) || oz == (dz - 1)) {
-                                    placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private static void composePrism(World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean forquarry, ChunkPos chunk) {
-        int xCoord = thisCoord.getX();
-        int yCoord = thisCoord.getY();
-        int zCoord = thisCoord.getZ();
-        int dx = dimension.getX();
-        int dy = dimension.getY();
-        int dz = dimension.getZ();
-        BlockPos tl = new BlockPos(xCoord - dx/2 + offset.getX(), yCoord - dy/2 + offset.getY(), zCoord - dz/2 + offset.getZ());
-
-        for (int oy = 0 ; oy < dy ; oy++) {
-            int y = tl.getY() + oy;
-            if (y >= 0 && y < 255) {
-                int yoffset = oy;
-                for (int ox = 0 ; ox < dx ; ox++) {
-                    if (ox >= yoffset && ox < dx-yoffset) {
-                        int x = tl.getX() + ox;
-                        if (xInChunk(x, chunk)) {
-                            for (int oz = yoffset; oz < dz - yoffset; oz++) {
-                                int z = tl.getZ() + oz;
-                                if (zInChunk(z, chunk)) {
-                                    if (ox == yoffset || oy == 0 || oz == yoffset || ox == (dx - yoffset - 1) || oz == (dz - yoffset - 1)) {
-                                        placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private static int isInsideTorus(float centerx, float centery, float centerz, int x, int y, int z, float bigRadius, float smallRadius) {
-        double rr = bigRadius - Math.sqrt((x-centerx)*(x-centerx) + (z-centerz)*(z-centerz));
-        double f = rr*rr + (y-centery) * (y-centery) - smallRadius * smallRadius;
-        if (f < 0) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
-
-    private static void composeTorus(World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean solid, boolean forquarry, ChunkPos chunk) {
-        int xCoord = thisCoord.getX();
-        int yCoord = thisCoord.getY();
-        int zCoord = thisCoord.getZ();
-        int dx = dimension.getX();
-        int dy = dimension.getY();
-        int dz = dimension.getZ();
-        float centerx = xCoord + offset.getX();
-        float centery = yCoord + offset.getY();
-        float centerz = zCoord + offset.getZ();
-        BlockPos tl = new BlockPos(xCoord - dx/2 + offset.getX(), yCoord - dy/2 + offset.getY(), zCoord - dz/2 + offset.getZ());
-
-        float smallRadius = (dy-2)/2.0f;
-        float bigRadius = (dx-2)/2.0f - smallRadius;
-
-        for (int ox = 0 ; ox < dx ; ox++) {
-            int x = tl.getX() + ox;
-            if (xInChunk(x, chunk)) {
-                for (int oz = 0 ; oz < dz ; oz++) {
-                    int z = tl.getZ() + oz;
-                    if (zInChunk(z, chunk)) {
-                        for (int oy = 0; oy < dy; oy++) {
-                            int y = tl.getY() + oy;
-                            if (y >= 0 && y < 255) {
-                                if (isInsideTorus(centerx, centery, centerz, x, y, z, bigRadius, smallRadius) == 1) {
-                                    int cnt;
-                                    if (solid) {
-                                        cnt = 0;
-                                    } else {
-                                        cnt = isInsideTorus(centerx, centery, centerz, x - 1, y, z, bigRadius, smallRadius);
-                                        cnt += isInsideTorus(centerx, centery, centerz, x + 1, y, z, bigRadius, smallRadius);
-                                        cnt += isInsideTorus(centerx, centery, centerz, x, y, z - 1, bigRadius, smallRadius);
-                                        cnt += isInsideTorus(centerx, centery, centerz, x, y, z + 1, bigRadius, smallRadius);
-                                        cnt += isInsideTorus(centerx, centery, centerz, x, y - 1, z, bigRadius, smallRadius);
-                                        cnt += isInsideTorus(centerx, centery, centerz, x, y + 1, z, bigRadius, smallRadius);
-                                    }
-                                    if (cnt != 6) {
-                                        placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private static int isInsideHeart(float centerx, float centery, float centerz, int x, int y, int z, float dx, float dy, float dz) {
-        double xx = (x-centerx) * 2.6 / dx + .1;
-        double zz = (y-centery) * 2.4 / dy + .2;
-        double yy = (z-centerz) * 1.6 / dz + .1;
-        double f1 = Math.pow(xx * xx + (9.0/4.0) * yy * yy + zz * zz - 1, 3.0);
-        double f2 = xx * xx * zz* zz * zz;
-        double f3 = (9.0 / 80.0) * yy * yy * zz * zz * zz;
-        double f = f1 - f2 - f3;
-        if (f < 0) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
-
-
-    private static void composeHeart(World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean solid, boolean forquarry, ChunkPos chunk) {
-        int xCoord = thisCoord.getX();
-        int yCoord = thisCoord.getY();
-        int zCoord = thisCoord.getZ();
-        int dx = dimension.getX();
-        int dy = dimension.getY();
-        int dz = dimension.getZ();
-        float centerx = xCoord + offset.getX();
-        float centery = yCoord + offset.getY();
-        float centerz = zCoord + offset.getZ();
-        BlockPos tl = new BlockPos(xCoord - dx/2 + offset.getX(), yCoord - dy/2 + offset.getY(), zCoord - dz/2 + offset.getZ());
-
-        for (int ox = 0 ; ox < dx ; ox++) {
-            int x = tl.getX() + ox;
-            if (xInChunk(x, chunk)) {
-                for (int oz = 0 ; oz < dz ; oz++) {
-                    int z = tl.getZ() + oz;
-                    if (zInChunk(z, chunk)) {
-                        for (int oy = 0; oy < dy; oy++) {
-                            int y = tl.getY() + oy;
-                            if (y >= 0 && y < 255) {
-                                if (isInsideHeart(centerx, centery, centerz, x, y, z, dx, dy, dz) == 1) {
-                                    int cnt;
-                                    if (solid) {
-                                        cnt = 0;
-                                    } else {
-                                        cnt = isInsideHeart(centerx, centery, centerz, x - 1, y, z, dx, dy, dz);
-                                        cnt += isInsideHeart(centerx, centery, centerz, x + 1, y, z, dx, dy, dz);
-                                        cnt += isInsideHeart(centerx, centery, centerz, x, y, z - 1, dx, dy, dz);
-                                        cnt += isInsideHeart(centerx, centery, centerz, x, y, z + 1, dx, dy, dz);
-                                        cnt += isInsideHeart(centerx, centery, centerz, x, y - 1, z, dx, dy, dz);
-                                        cnt += isInsideHeart(centerx, centery, centerz, x, y + 1, z, dx, dy, dz);
-                                    }
-                                    if (cnt != 6) {
-                                        placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
                                     }
                                 }
                             }

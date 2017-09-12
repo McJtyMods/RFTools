@@ -12,6 +12,7 @@ import mcjty.lib.varia.*;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.hud.IHudSupport;
+import mcjty.rftools.items.builder.Shape;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
@@ -218,7 +219,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     list.add("    Shape card");
                     ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
                     if (ItemStackTools.isValid(shapeCard)) {
-                        ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
+                        Shape shape = ShapeCardItem.getShape(shapeCard);
                         if (shape != null) {
                             list.add("    " + shape.getDescription());
                         }
@@ -280,7 +281,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
         BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
         BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
-        ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
+        Shape shape = ShapeCardItem.getShape(shapeCard);
         List<BlockPos> blocks = new ArrayList<>();
         ShapeCardItem.composeShape(shape.makeHollow(), getWorld(), getPos(), dimension, offset, blocks,
                 BuilderConfiguration.maxBuilderDimension * 256 * BuilderConfiguration.maxBuilderDimension, false, null);
@@ -341,7 +342,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
         BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
         BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
-        ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
+        Shape shape = ShapeCardItem.getShape(shapeCard);
         List<BlockPos> blocks = new ArrayList<BlockPos>();
         ShapeCardItem.composeShape(shape.makeHollow(), getWorld(), getPos(), dimension, offset, blocks, BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension, false, null);
         for (BlockPos block : blocks) {
@@ -843,7 +844,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (cachedBlocks == null) {
             cachedBlocks = new HashSet<>();
             ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
-            ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
+            Shape shape = ShapeCardItem.getShape(shapeCard);
             BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
             BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
             ShapeCardItem.composeShape(shape, getWorld(), getPos(), dimension, offset, cachedBlocks,

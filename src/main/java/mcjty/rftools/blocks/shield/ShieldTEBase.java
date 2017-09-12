@@ -16,6 +16,7 @@ import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
 import mcjty.rftools.blocks.shield.filters.*;
 import mcjty.rftools.items.ModItems;
+import mcjty.rftools.items.builder.Shape;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.typed.Type;
 import net.minecraft.block.Block;
@@ -640,7 +641,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
 
         if (isShapedShield()) {
             // Special shaped mode.
-            ShapeCardItem.Shape shape = ShapeCardItem.getShape(inventoryHelper.getStackInSlot(ShieldContainer.SLOT_SHAPE));
+            Shape shape = ShapeCardItem.getShape(inventoryHelper.getStackInSlot(ShieldContainer.SLOT_SHAPE));
             BlockPos dimension = ShapeCardItem.getClampedDimension(inventoryHelper.getStackInSlot(ShieldContainer.SLOT_SHAPE), ShieldConfiguration.maxShieldDimension);
             BlockPos offset = ShapeCardItem.getClampedOffset(inventoryHelper.getStackInSlot(ShieldContainer.SLOT_SHAPE), ShieldConfiguration.maxShieldOffset);
             coordinates = new ArrayList<>();

@@ -3,8 +3,6 @@ package mcjty.rftools.items.builder;
 import mcjty.lib.base.StyleConfig;
 import mcjty.lib.gui.RenderHelper;
 import mcjty.lib.gui.Window;
-import mcjty.lib.gui.events.ButtonEvent;
-import mcjty.lib.gui.events.ChoiceEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
@@ -45,6 +43,7 @@ public class GuiShapeCard extends GuiScreen {
     private boolean isQuarryCard;
 
     private ChoiceLabel shapeLabel;
+    private ChoiceLabel solidLabel;
     private TextField dimX;
     private TextField dimY;
     private TextField dimZ;
@@ -77,42 +76,44 @@ public class GuiShapeCard extends GuiScreen {
     public void initGui() {
         super.initGui();
 
-        shapeLabel = new ChoiceLabel(mc, this).setDesiredWidth(100).setDesiredHeight(16).addChoices(
-                ShapeCardItem.Shape.SHAPE_BOX.getDescription(),
-                ShapeCardItem.Shape.SHAPE_TOPDOME.getDescription(),
-                ShapeCardItem.Shape.SHAPE_BOTTOMDOME.getDescription(),
-                ShapeCardItem.Shape.SHAPE_SPHERE.getDescription(),
-                ShapeCardItem.Shape.SHAPE_CYLINDER.getDescription(),
-                ShapeCardItem.Shape.SHAPE_CAPPEDCYLINDER.getDescription(),
-                ShapeCardItem.Shape.SHAPE_PRISM.getDescription(),
-                ShapeCardItem.Shape.SHAPE_TORUS.getDescription(),
-                ShapeCardItem.Shape.SHAPE_HEART.getDescription(),
-                ShapeCardItem.Shape.SHAPE_SOLIDBOX.getDescription(),
-                ShapeCardItem.Shape.SHAPE_SOLIDSPHERE.getDescription(),
-                ShapeCardItem.Shape.SHAPE_SOLIDCYLINDER.getDescription(),
-                ShapeCardItem.Shape.SHAPE_SOLIDTORUS.getDescription(),
-                ShapeCardItem.Shape.SHAPE_SOLIDTOPDOME.getDescription(),
-                ShapeCardItem.Shape.SHAPE_SOLIDBOTTOMDOME.getDescription(),
-                ShapeCardItem.Shape.SHAPE_SOLIDHEART.getDescription()
-        ).addChoiceEvent((parent, newChoice) -> updateSettings());
         ItemStack heldItem = MinecraftTools.getPlayer(mc).getHeldItem(EnumHand.MAIN_HAND);
         if (ItemStackTools.isEmpty(heldItem)) {
             // Cannot happen!
             return;
         }
 
+        shapeLabel = new ChoiceLabel(mc, this).setDesiredWidth(100).setDesiredHeight(16).addChoices(
+                Shape.SHAPE_BOX.getDescription(),
+                Shape.SHAPE_TOPDOME.getDescription(),
+                Shape.SHAPE_BOTTOMDOME.getDescription(),
+                Shape.SHAPE_SPHERE.getDescription(),
+                Shape.SHAPE_CYLINDER.getDescription(),
+                Shape.SHAPE_CAPPEDCYLINDER.getDescription(),
+                Shape.SHAPE_PRISM.getDescription(),
+                Shape.SHAPE_TORUS.getDescription(),
+                Shape.SHAPE_HEART.getDescription()
+        ).addChoiceEvent((parent, newChoice) -> updateSettings());
+
+        solidLabel = new ChoiceLabel(mc, this).setDesiredWidth(50).setDesiredHeight(16).addChoices(
+                "Hollow",
+                "Solid"
+        ).addChoiceEvent((parent, newChoice) -> updateSettings());
+
+        Panel shapePanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(shapeLabel).addChild(solidLabel);
+
         isQuarryCard = ShapeCardItem.isQuarry(heldItem.getItemDamage());
         if (isQuarryCard) {
             ySize = 46 + 28;
         }
 
-        ShapeCardItem.Shape shape = ShapeCardItem.getShape(heldItem);
-        shapeLabel.setChoice(shape.getDescription());
+        Shape shape = ShapeCardItem.getShape(heldItem);
+        shapeLabel.setChoice(shape.makeHollow().getDescription());
+        solidLabel.setChoice(shape.isSolid() ? "Solid" : "Hollow");
 
         blocksLabel = new Label(mc, this).setText("# ").setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
         blocksLabel.setDesiredWidth(100).setDesiredHeight(16);
 
-        Panel modePanel = new Panel(mc, this).setLayout(new VerticalLayout()).setDesiredWidth(100).addChild(shapeLabel).addChild(blocksLabel);
+        Panel modePanel = new Panel(mc, this).setLayout(new VerticalLayout()).setDesiredWidth(130).addChild(shapePanel).addChild(blocksLabel);
 
         BlockPos dim = ShapeCardItem.getDimension(heldItem);
         BlockPos offset = ShapeCardItem.getOffset(heldItem);
@@ -180,12 +181,16 @@ public class GuiShapeCard extends GuiScreen {
     }
 
     private boolean isTorus() {
-        ShapeCardItem.Shape shape = getCurrentShape();
-        return ShapeCardItem.Shape.SHAPE_TORUS.equals(shape) || ShapeCardItem.Shape.SHAPE_SOLIDTORUS.equals(shape);
+        Shape shape = getCurrentShape();
+        return Shape.SHAPE_TORUS.equals(shape) || Shape.SHAPE_SOLIDTORUS.equals(shape);
     }
 
-    private ShapeCardItem.Shape getCurrentShape() {
-        return ShapeCardItem.Shape.getShape(shapeLabel.getCurrentChoice());
+    private Shape getCurrentShape() {
+        Shape shape = Shape.getShape(shapeLabel.getCurrentChoice());
+        if ("Solid".equals(solidLabel.getCurrentChoice())) {
+            shape = shape.makeSolid();
+        }
+        return shape;
     }
 
     private BlockPos getCurrentDimension() {
