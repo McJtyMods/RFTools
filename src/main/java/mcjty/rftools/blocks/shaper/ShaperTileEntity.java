@@ -10,7 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ShaperTileEntity extends GenericTileEntity implements DefaultSidedInventory {
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, ShaperContainer.factory, ShaperContainer.SLOT_COUNT);
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, ShaperContainer.factory, ShaperContainer.SLOT_COUNT + 1);
 
     public ShaperTileEntity() {
     }
