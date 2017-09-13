@@ -29,7 +29,7 @@ public enum Shape {
     private final int index;
     private final String description;
     private final boolean solid;
-    private final IFormula formula;
+    private final IFormulaFactory formulaFactory;
     private final int side;
 
     private static final Map<Integer, Shape> SHAPES;
@@ -95,11 +95,11 @@ public enum Shape {
         return this;
     }
 
-    Shape(int index, String description, boolean solid, @Nonnull IFormula formula, int side) {
+    Shape(int index, String description, boolean solid, @Nonnull IFormulaFactory formulaFactory, int side) {
         this.index = index;
         this.description = description;
         this.solid = solid;
-        this.formula = formula;
+        this.formulaFactory = formulaFactory;
         this.side = side;
     }
 
@@ -115,9 +115,13 @@ public enum Shape {
         return solid;
     }
 
+    public boolean isCustom() {
+        return this == SHAPE_CUSTOM || this == SHAPE_SOLIDCUSTOM;
+    }
+
     @Nonnull
-    public IFormula getFormula() {
-        return formula;
+    public IFormulaFactory getFormulaFactory() {
+        return formulaFactory;
     }
 
     public int getSide() {

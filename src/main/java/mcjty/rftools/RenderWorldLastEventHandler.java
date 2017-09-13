@@ -91,7 +91,7 @@ public class RenderWorldLastEventHandler {
         }
     }
 
-    private static final ResourceLocation yellowglow = new ResourceLocation(RFTools.MODID, "textures/blocks/yellowglow.png");
+    public static final ResourceLocation YELLOWGLOW = new ResourceLocation(RFTools.MODID, "textures/blocks/yellowglow.png");
 
     private static void renderHighlightedBlocks(RenderWorldLastEvent evt, EntityPlayerSP p, BlockPos base, Set<BlockPos> coordinates) {
         double doubleX = p.lastTickPosX + (p.posX - p.lastTickPosX) * evt.getPartialTicks();
@@ -107,7 +107,7 @@ public class RenderWorldLastEventHandler {
         Tessellator tessellator = Tessellator.getInstance();
         VertexBuffer buffer = tessellator.getBuffer();
 
-        Minecraft.getMinecraft().getTextureManager().bindTexture(yellowglow);
+        Minecraft.getMinecraft().getTextureManager().bindTexture(YELLOWGLOW);
 
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_LMAP_COLOR);
 //        tessellator.setColorRGBA(255, 255, 255, 64);

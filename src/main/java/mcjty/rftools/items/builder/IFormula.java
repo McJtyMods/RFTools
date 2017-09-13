@@ -1,11 +1,11 @@
 package mcjty.rftools.items.builder;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 
 public interface IFormula {
 
-    void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, ItemStack card);
+    void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card);
 
     int isInside(int x, int y, int z);
 

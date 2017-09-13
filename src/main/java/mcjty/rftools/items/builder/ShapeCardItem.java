@@ -432,6 +432,10 @@ public class ShapeCardItem extends GenericRFToolsItem {
 
     public static Shape getShape(ItemStack stack) {
         NBTTagCompound tagCompound = stack.getTagCompound();
+        return getShape(tagCompound);
+    }
+
+    public static Shape getShape(NBTTagCompound tagCompound) {
         if (tagCompound == null) {
             return Shape.SHAPE_SOLIDBOX;
         }
@@ -595,7 +599,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
 
     public static void composeShape(ItemStack shapeCard, Shape shape, World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean forquarry,
                                     ChunkPos chunk) {
-        composeFormula(shapeCard, shape.getFormula(), worldObj, thisCoord, dimension, offset, blocks, maxSize, shape.getSide(), shape.isSolid(), forquarry, chunk);
+        composeFormula(shapeCard, shape.getFormulaFactory().createFormula(), worldObj, thisCoord, dimension, offset, blocks, maxSize, shape.getSide(), shape.isSolid(), forquarry, chunk);
     }
 
     private static void placeBlockIfPossible(World worldObj, Collection<BlockPos> blocks, int maxSize, int x, int y, int z, boolean forquarry) {
@@ -626,7 +630,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
         int dz = dimension.getZ();
         BlockPos tl = new BlockPos(xCoord - dx/2 + offset.getX(), yCoord - dy/2 + offset.getY(), zCoord - dz/2 + offset.getZ());
 
-        formula.setup(thisCoord, dimension, offset, shapeCard);
+        formula.setup(thisCoord, dimension, offset, shapeCard != null ? shapeCard.getTagCompound() : null);
 
         for (int ox = 0 ; ox < dx ; ox++) {
             int x = tl.getX() + ox;
