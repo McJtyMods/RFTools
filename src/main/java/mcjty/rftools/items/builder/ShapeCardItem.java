@@ -450,6 +450,13 @@ public class ShapeCardItem extends GenericRFToolsItem {
         return s;
     }
 
+    public static IFormula createCorrectFormula(NBTTagCompound tagCompound) {
+        Shape shape = getShape(tagCompound);
+        IFormula formula = shape.getFormulaFactory().createFormula();
+        formula = formula.correctFormula(shape.isSolid());
+        return formula;
+    }
+
     public static void setShape(ItemStack stack, Shape shape) {
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
@@ -461,6 +468,10 @@ public class ShapeCardItem extends GenericRFToolsItem {
 
     public static BlockPos getDimension(ItemStack stack) {
         NBTTagCompound tagCompound = stack.getTagCompound();
+        return getDimension(tagCompound);
+    }
+
+    public static BlockPos getDimension(NBTTagCompound tagCompound) {
         if (tagCompound == null) {
             return new BlockPos(5, 5, 5);
         }
@@ -475,6 +486,10 @@ public class ShapeCardItem extends GenericRFToolsItem {
 
     public static BlockPos getClampedDimension(ItemStack stack, int maximum) {
         NBTTagCompound tagCompound = stack.getTagCompound();
+        return getClampedDimension(tagCompound, maximum);
+    }
+
+    public static BlockPos getClampedDimension(NBTTagCompound tagCompound, int maximum) {
         if (tagCompound == null) {
             return new BlockPos(5, 5, 5);
         }
@@ -506,6 +521,10 @@ public class ShapeCardItem extends GenericRFToolsItem {
 
     public static BlockPos getClampedOffset(ItemStack stack, int maximum) {
         NBTTagCompound tagCompound = stack.getTagCompound();
+        return getClampedOffset(tagCompound, maximum);
+    }
+
+    public static BlockPos getClampedOffset(NBTTagCompound tagCompound, int maximum) {
         if (tagCompound == null) {
             return new BlockPos(0, 0, 0);
         }
@@ -630,6 +649,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
         int dz = dimension.getZ();
         BlockPos tl = new BlockPos(xCoord - dx/2 + offset.getX(), yCoord - dy/2 + offset.getY(), zCoord - dz/2 + offset.getZ());
 
+        formula = formula.correctFormula(solid);
         formula.setup(thisCoord, dimension, offset, shapeCard != null ? shapeCard.getTagCompound() : null);
 
         for (int ox = 0 ; ox < dx ; ox++) {
@@ -643,20 +663,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
                             if (y >= 0 && y < 255) {
                                 if (side == 0 || (side == 1 && y >= yCoord + offset.getY()) || (side == -1 && y <= yCoord + offset.getY())) {
                                     if (formula.isInside(x, y, z) == 1) {
-                                        int cnt;
-                                        if (solid) {
-                                            cnt = 0;
-                                        } else {
-                                            cnt = formula.isInside(x - 1, y, z);
-                                            cnt += formula.isInside(x + 1, y, z);
-                                            cnt += formula.isInside(x, y, z - 1);
-                                            cnt += formula.isInside(x, y, z + 1);
-                                            cnt += formula.isInside(x, y - 1, z);
-                                            cnt += formula.isInside(x, y + 1, z);
-                                        }
-                                        if (cnt != 6) {
-                                            placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
-                                        }
+                                        placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
                                     }
                                 }
                             }

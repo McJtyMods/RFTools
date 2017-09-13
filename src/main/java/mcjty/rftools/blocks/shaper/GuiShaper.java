@@ -210,9 +210,6 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
 
             @Override
             public boolean add(BlockPos coordinate) {
-//                mcjty.lib.gui.RenderHelper.renderHighLightedBlocksOutline(buffer,
-//                        base.getX() + coordinate.getX(), base.getY() + coordinate.getY(), base.getZ() + coordinate.getZ(),
-//                        .9f, .0f, .5f, 1.0f);
                 float x = base.getX() + coordinate.getX();
                 float y = base.getY() + coordinate.getY();
                 float z = base.getZ() + coordinate.getZ();

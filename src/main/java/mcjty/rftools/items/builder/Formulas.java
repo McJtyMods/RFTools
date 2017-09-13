@@ -1,5 +1,6 @@
 package mcjty.rftools.items.builder;
 
+import mcjty.rftools.blocks.shield.ShieldConfiguration;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
@@ -32,9 +33,12 @@ public class Formulas {
                     NBTTagList children = card.getTagList("children", Constants.NBT.TAG_COMPOUND);
                     for (int i = 0 ; i < children.tagCount() ; i++) {
                         NBTTagCompound childTag = children.getCompoundTagAt(i);
-                        Shape shape = ShapeCardItem.getShape(childTag);
-                        IFormula formula = shape.getFormulaFactory().createFormula();
-                        formula.setup(thisCoord, dimension, offset, childTag);
+                        IFormula formula = ShapeCardItem.createCorrectFormula(childTag);
+
+                        BlockPos dim = ShapeCardItem.getClampedDimension(childTag, ShieldConfiguration.maxShieldDimension);
+                        BlockPos off = ShapeCardItem.getClampedOffset(childTag, ShieldConfiguration.maxShieldOffset);
+                        formula.setup(thisCoord, dim, off.add(0, 128, 0), childTag);
+
                         formulas.add(formula);
                         String op = childTag.getString("op");
                         operations.add(ShapeOperation.getByName(op));
@@ -71,6 +75,11 @@ public class Formulas {
                 }
 
                 @Override
+                public boolean isBorder(int x, int y, int z) {
+                    return isInside(x, y, z) == 1;
+                }
+
+                @Override
                 public boolean isCustom() {
                     return true;
                 }
@@ -78,282 +87,252 @@ public class Formulas {
         }
     };
 
-    static final IFormulaFactory FORMULA_TORUS = new IFormulaFactory() {
+    static final IFormulaFactory FORMULA_TORUS = () -> new IFormula() {
+        private float smallRadius;
+        private float bigRadius;
+        private float centerx;
+        private float centery;
+        private float centerz;
+
         @Override
-        public IFormula createFormula() {
-            return new IFormula() {
-                private float smallRadius;
-                private float bigRadius;
-                private float centerx;
-                private float centery;
-                private float centerz;
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
+            int dx = dimension.getX();
+            int dy = dimension.getY();
+            int dz = dimension.getZ();
+            smallRadius = (dy - 2) / 2.0f;
+            bigRadius = (dx - 2) / 2.0f - smallRadius;
 
-                @Override
-                public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
-                    int dx = dimension.getX();
-                    int dy = dimension.getY();
-                    int dz = dimension.getZ();
-                    smallRadius = (dy - 2) / 2.0f;
-                    bigRadius = (dx - 2) / 2.0f - smallRadius;
+            int xCoord = thisCoord.getX();
+            int yCoord = thisCoord.getY();
+            int zCoord = thisCoord.getZ();
+            centerx = xCoord + offset.getX() + ((dx % 2 != 0) ? 0.0f : -.5f);
+            centery = yCoord + offset.getY() + ((dy % 2 != 0) ? 0.0f : -.5f);
+            centerz = zCoord + offset.getZ() + ((dz % 2 != 0) ? 0.0f : -.5f);
+        }
 
-                    int xCoord = thisCoord.getX();
-                    int yCoord = thisCoord.getY();
-                    int zCoord = thisCoord.getZ();
-                    centerx = xCoord + offset.getX() + ((dx % 2 != 0) ? 0.0f : -.5f);
-                    centery = yCoord + offset.getY() + ((dy % 2 != 0) ? 0.0f : -.5f);
-                    centerz = zCoord + offset.getZ() + ((dz % 2 != 0) ? 0.0f : -.5f);
-                }
-
-                @Override
-                public int isInside(int x, int y, int z) {
-                    double rr = bigRadius - Math.sqrt((x - centerx) * (x - centerx) + (z - centerz) * (z - centerz));
-                    double f = rr * rr + (y - centery) * (y - centery) - smallRadius * smallRadius;
-                    if (f < 0) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-                }
-            };
+        @Override
+        public int isInside(int x, int y, int z) {
+            double rr = bigRadius - Math.sqrt((x - centerx) * (x - centerx) + (z - centerz) * (z - centerz));
+            double f = rr * rr + (y - centery) * (y - centery) - smallRadius * smallRadius;
+            if (f < 0) {
+                return 1;
+            } else {
+                return 0;
+            }
         }
     };
 
-    static final IFormulaFactory FORMULA_HEART = new IFormulaFactory() {
+    static final IFormulaFactory FORMULA_HEART = () -> new IFormula() {
+        private float centerx;
+        private float centery;
+        private float centerz;
+        private int dx;
+        private int dy;
+        private int dz;
+
         @Override
-        public IFormula createFormula() {
-            return new IFormula() {
-                private float centerx;
-                private float centery;
-                private float centerz;
-                private int dx;
-                private int dy;
-                private int dz;
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
+            dx = dimension.getX();
+            dy = dimension.getY();
+            dz = dimension.getZ();
+            int xCoord = thisCoord.getX();
+            int yCoord = thisCoord.getY();
+            int zCoord = thisCoord.getZ();
+            centerx = xCoord + offset.getX() + ((dx % 2 != 0) ? 0.0f : -.5f);
+            centery = yCoord + offset.getY() + ((dy % 2 != 0) ? 0.0f : -.5f);
+            centerz = zCoord + offset.getZ() + ((dz % 2 != 0) ? 0.0f : -.5f);
+        }
 
-                @Override
-                public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
-                    dx = dimension.getX();
-                    dy = dimension.getY();
-                    dz = dimension.getZ();
-                    int xCoord = thisCoord.getX();
-                    int yCoord = thisCoord.getY();
-                    int zCoord = thisCoord.getZ();
-                    centerx = xCoord + offset.getX() + ((dx % 2 != 0) ? 0.0f : -.5f);
-                    centery = yCoord + offset.getY() + ((dy % 2 != 0) ? 0.0f : -.5f);
-                    centerz = zCoord + offset.getZ() + ((dz % 2 != 0) ? 0.0f : -.5f);
-                }
-
-                @Override
-                public int isInside(int x, int y, int z) {
-                    double xx = (x - centerx) * 2.6 / dx + .1;
-                    double zz = (y - centery) * 2.4 / dy + .2;
-                    double yy = (z - centerz) * 1.6 / dz + .1;
-                    double f1 = Math.pow(xx * xx + (9.0 / 4.0) * yy * yy + zz * zz - 1, 3.0);
-                    double f2 = xx * xx * zz * zz * zz;
-                    double f3 = (9.0 / 80.0) * yy * yy * zz * zz * zz;
-                    double f = f1 - f2 - f3;
-                    if (f < 0) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-                }
-            };
+        @Override
+        public int isInside(int x, int y, int z) {
+            double xx = (x - centerx) * 2.6 / dx + .1;
+            double zz = (y - centery) * 2.4 / dy + .2;
+            double yy = (z - centerz) * 1.6 / dz + .1;
+            double f1 = Math.pow(xx * xx + (9.0 / 4.0) * yy * yy + zz * zz - 1, 3.0);
+            double f2 = xx * xx * zz * zz * zz;
+            double f3 = (9.0 / 80.0) * yy * yy * zz * zz * zz;
+            double f = f1 - f2 - f3;
+            if (f < 0) {
+                return 1;
+            } else {
+                return 0;
+            }
         }
     };
 
-    static final IFormulaFactory FORMULA_SPHERE = new IFormulaFactory() {
+    static final IFormulaFactory FORMULA_SPHERE = () -> new IFormula() {
+        private float centerx;
+        private float centery;
+        private float centerz;
+        private float dx2;
+        private float dy2;
+        private float dz2;
+        private int davg;
+
         @Override
-        public IFormula createFormula() {
-            return new IFormula() {
-                private float centerx;
-                private float centery;
-                private float centerz;
-                private float dx2;
-                private float dy2;
-                private float dz2;
-                private int davg;
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
+            int dx = dimension.getX();
+            int dy = dimension.getY();
+            int dz = dimension.getZ();
+            int xCoord = thisCoord.getX();
+            int yCoord = thisCoord.getY();
+            int zCoord = thisCoord.getZ();
+            centerx = xCoord + offset.getX() + ((dx % 2 != 0) ? 0.0f : -.5f);
+            centery = yCoord + offset.getY() + ((dy % 2 != 0) ? 0.0f : -.5f);
+            centerz = zCoord + offset.getZ() + ((dz % 2 != 0) ? 0.0f : -.5f);
 
-                @Override
-                public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
-                    int dx = dimension.getX();
-                    int dy = dimension.getY();
-                    int dz = dimension.getZ();
-                    int xCoord = thisCoord.getX();
-                    int yCoord = thisCoord.getY();
-                    int zCoord = thisCoord.getZ();
-                    centerx = xCoord + offset.getX() + ((dx % 2 != 0) ? 0.0f : -.5f);
-                    centery = yCoord + offset.getY() + ((dy % 2 != 0) ? 0.0f : -.5f);
-                    centerz = zCoord + offset.getZ() + ((dz % 2 != 0) ? 0.0f : -.5f);
+            float factor = 1.8f;
+            dx2 = dx == 0 ? .5f : ((dx + factor) * (dx + factor)) / 4.0f;
+            dy2 = dy == 0 ? .5f : ((dy + factor) * (dy + factor)) / 4.0f;
+            dz2 = dz == 0 ? .5f : ((dz + factor) * (dz + factor)) / 4.0f;
+            davg = (int) ((dx + dy + dz + factor * 3) / 3);
+        }
 
-                    float factor = 1.8f;
-                    dx2 = dx == 0 ? .5f : ((dx + factor) * (dx + factor)) / 4.0f;
-                    dy2 = dy == 0 ? .5f : ((dy + factor) * (dy + factor)) / 4.0f;
-                    dz2 = dz == 0 ? .5f : ((dz + factor) * (dz + factor)) / 4.0f;
-                    davg = (int) ((dx + dy + dz + factor * 3) / 3);
-                }
-
-                @Override
-                public int isInside(int x, int y, int z) {
-                    double distance = Math.sqrt(squaredDistance3D(centerx, centery, centerz, x, y, z, dx2, dy2, dz2));
-                    return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) ? 1 : 0;
-                }
-            };
+        @Override
+        public int isInside(int x, int y, int z) {
+            double distance = Math.sqrt(squaredDistance3D(centerx, centery, centerz, x, y, z, dx2, dy2, dz2));
+            return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) ? 1 : 0;
         }
     };
 
-    static final IFormulaFactory FORMULA_BOX = new IFormulaFactory() {
+    static final IFormulaFactory FORMULA_BOX = () -> new IFormula() {
+        private int x1;
+        private int y1;
+        private int z1;
+        private int x2;
+        private int y2;
+        private int z2;
+
         @Override
-        public IFormula createFormula() {
-            return new IFormula() {
-                private int x1;
-                private int y1;
-                private int z1;
-                private int x2;
-                private int y2;
-                private int z2;
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
+            int dx = dimension.getX();
+            int dy = dimension.getY();
+            int dz = dimension.getZ();
+            int xCoord = thisCoord.getX();
+            int yCoord = thisCoord.getY();
+            int zCoord = thisCoord.getZ();
+            BlockPos tl = new BlockPos(xCoord - dx / 2 + offset.getX(), yCoord - dy / 2 + offset.getY(), zCoord - dz / 2 + offset.getZ());
+            x1 = tl.getX();
+            y1 = tl.getY();
+            z1 = tl.getZ();
+            x2 = x1 + dx;
+            y2 = y1 + dy;
+            z2 = z1 + dz;
+        }
 
-                @Override
-                public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
-                    int dx = dimension.getX();
-                    int dy = dimension.getY();
-                    int dz = dimension.getZ();
-                    int xCoord = thisCoord.getX();
-                    int yCoord = thisCoord.getY();
-                    int zCoord = thisCoord.getZ();
-                    BlockPos tl = new BlockPos(xCoord - dx / 2 + offset.getX(), yCoord - dy / 2 + offset.getY(), zCoord - dz / 2 + offset.getZ());
-                    x1 = tl.getX();
-                    y1 = tl.getY();
-                    z1 = tl.getZ();
-                    x2 = x1 + dx;
-                    y2 = y1 + dy;
-                    z2 = z1 + dz;
-                }
+        @Override
+        public int isInside(int x, int y, int z) {
+            return (x >= x1 && x < x2 && y >= y1 && y < y2 && z >= z1 && z < z2) ? 1 : 0;
+        }
 
-                @Override
-                public int isInside(int x, int y, int z) {
-                    return (x >= x1 && x < x2 && y >= y1 && y < y2 && z >= z1 && z < z2) ? 1 : 0;
-                }
-            };
+        @Override
+        public boolean isBorder(int x, int y, int z) {
+            return (x == x1 || x == x2-1) || (y == y1 || y == y2-1) || (z == z1 || z == z2-1);
         }
     };
 
-    static final IFormulaFactory FORMULA_CAPPED_CYLINDER = new IFormulaFactory() {
+    static final IFormulaFactory FORMULA_CAPPED_CYLINDER = () -> new IFormula() {
+        private float centerx;
+        private float centerz;
+        private float dx2;
+        private float dz2;
+        private int davg;
+        private int y1;
+        private int y2;
+
         @Override
-        public IFormula createFormula() {
-            return new IFormula() {
-                private float centerx;
-                private float centerz;
-                private float dx2;
-                private float dz2;
-                private int davg;
-                private int y1;
-                private int y2;
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
+            int dx = dimension.getX();
+            int dy = dimension.getY();
+            int dz = dimension.getZ();
+            int xCoord = thisCoord.getX();
+            int yCoord = thisCoord.getY();
+            int zCoord = thisCoord.getZ();
+            centerx = xCoord + offset.getX() + ((dx % 2 != 0) ? 0.0f : -.5f);
+            centerz = zCoord + offset.getZ() + ((dz % 2 != 0) ? 0.0f : -.5f);
 
-                @Override
-                public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
-                    int dx = dimension.getX();
-                    int dy = dimension.getY();
-                    int dz = dimension.getZ();
-                    int xCoord = thisCoord.getX();
-                    int yCoord = thisCoord.getY();
-                    int zCoord = thisCoord.getZ();
-                    centerx = xCoord + offset.getX() + ((dx % 2 != 0) ? 0.0f : -.5f);
-                    centerz = zCoord + offset.getZ() + ((dz % 2 != 0) ? 0.0f : -.5f);
+            float factor = 1.7f;
+            dx2 = dx == 0 ? .5f : ((dx + factor) * (dx + factor)) / 4.0f;
+            dz2 = dz == 0 ? .5f : ((dz + factor) * (dz + factor)) / 4.0f;
+            davg = (int) ((dx + dz + factor * 2) / 2);
 
-                    float factor = 1.7f;
-                    dx2 = dx == 0 ? .5f : ((dx + factor) * (dx + factor)) / 4.0f;
-                    dz2 = dz == 0 ? .5f : ((dz + factor) * (dz + factor)) / 4.0f;
-                    davg = (int) ((dx + dz + factor * 2) / 2);
+            y1 = yCoord - dy / 2 + offset.getY();
+            y2 = y1 + dy;
+        }
 
-                    y1 = yCoord - dy / 2 + offset.getY();
-                    y2 = y1 + dy;
-                }
-
-                @Override
-                public int isInside(int x, int y, int z) {
-                    if (y < y1 || y >= y2) {
-                        return 0;
-                    }
-                    double distance = Math.sqrt(squaredDistance2D(centerx, centerz, x, z, dx2, dz2));
-                    return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) ? 1 : 0;
-                }
-            };
+        @Override
+        public int isInside(int x, int y, int z) {
+            if (y < y1 || y >= y2) {
+                return 0;
+            }
+            double distance = Math.sqrt(squaredDistance2D(centerx, centerz, x, z, dx2, dz2));
+            return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) ? 1 : 0;
         }
     };
 
-    static final IFormulaFactory FORMULA_CYLINDER = new IFormulaFactory() {
+    static final IFormulaFactory FORMULA_CYLINDER = () -> new IFormula() {
+        private float centerx;
+        private float centerz;
+        private float dx2;
+        private float dz2;
+        private int davg;
+
         @Override
-        public IFormula createFormula() {
-            return new IFormula() {
-                private float centerx;
-                private float centerz;
-                private float dx2;
-                private float dz2;
-                private int davg;
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
+            int dx = dimension.getX();
+            int dy = dimension.getY();
+            int dz = dimension.getZ();
+            int xCoord = thisCoord.getX();
+            int yCoord = thisCoord.getY();
+            int zCoord = thisCoord.getZ();
+            centerx = xCoord + offset.getX() + ((dx % 2 != 0) ? 0.0f : -.5f);
+            centerz = zCoord + offset.getZ() + ((dz % 2 != 0) ? 0.0f : -.5f);
 
-                @Override
-                public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
-                    int dx = dimension.getX();
-                    int dy = dimension.getY();
-                    int dz = dimension.getZ();
-                    int xCoord = thisCoord.getX();
-                    int yCoord = thisCoord.getY();
-                    int zCoord = thisCoord.getZ();
-                    centerx = xCoord + offset.getX() + ((dx % 2 != 0) ? 0.0f : -.5f);
-                    centerz = zCoord + offset.getZ() + ((dz % 2 != 0) ? 0.0f : -.5f);
+            float factor = 1.7f;
+            dx2 = dx == 0 ? .5f : ((dx + factor) * (dx + factor)) / 4.0f;
+            dz2 = dz == 0 ? .5f : ((dz + factor) * (dz + factor)) / 4.0f;
+            davg = (int) ((dx + dz + factor * 2) / 2);
+        }
 
-                    float factor = 1.7f;
-                    dx2 = dx == 0 ? .5f : ((dx + factor) * (dx + factor)) / 4.0f;
-                    dz2 = dz == 0 ? .5f : ((dz + factor) * (dz + factor)) / 4.0f;
-                    davg = (int) ((dx + dz + factor * 2) / 2);
-                }
-
-                @Override
-                public int isInside(int x, int y, int z) {
-                    double distance = Math.sqrt(squaredDistance2D(centerx, centerz, x, z, dx2, dz2));
-                    return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) ? 1 : 0;
-                }
-            };
+        @Override
+        public int isInside(int x, int y, int z) {
+            double distance = Math.sqrt(squaredDistance2D(centerx, centerz, x, z, dx2, dz2));
+            return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) ? 1 : 0;
         }
     };
 
-    static final IFormulaFactory FORMULA_PRISM = new IFormulaFactory() {
+    static final IFormulaFactory FORMULA_PRISM = () -> new IFormula() {
+        private int x1;
+        private int y1;
+        private int z1;
+        private int x2;
+        private int y2;
+        private int z2;
+
         @Override
-        public IFormula createFormula() {
-            return new IFormula() {
-                private int x1;
-                private int y1;
-                private int z1;
-                private int x2;
-                private int y2;
-                private int z2;
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
+            int dx = dimension.getX();
+            int dy = dimension.getY();
+            int dz = dimension.getZ();
+            int xCoord = thisCoord.getX();
+            int yCoord = thisCoord.getY();
+            int zCoord = thisCoord.getZ();
+            BlockPos tl = new BlockPos(xCoord - dx / 2 + offset.getX(), yCoord - dy / 2 + offset.getY(), zCoord - dz / 2 + offset.getZ());
+            x1 = tl.getX();
+            y1 = tl.getY();
+            z1 = tl.getZ();
+            x2 = x1 + dx;
+            y2 = y1 + dy;
+            z2 = z1 + dz;
+        }
 
-                @Override
-                public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
-                    int dx = dimension.getX();
-                    int dy = dimension.getY();
-                    int dz = dimension.getZ();
-                    int xCoord = thisCoord.getX();
-                    int yCoord = thisCoord.getY();
-                    int zCoord = thisCoord.getZ();
-                    BlockPos tl = new BlockPos(xCoord - dx / 2 + offset.getX(), yCoord - dy / 2 + offset.getY(), zCoord - dz / 2 + offset.getZ());
-                    x1 = tl.getX();
-                    y1 = tl.getY();
-                    z1 = tl.getZ();
-                    x2 = x1 + dx;
-                    y2 = y1 + dy;
-                    z2 = z1 + dz;
-                }
-
-                @Override
-                public int isInside(int x, int y, int z) {
-                    if (y < y1 || y >= y2) {
-                        return 0;
-                    }
-                    int dy = y - y1;
-                    return (x >= x1 + dy && x < x2 - dy && z >= z1 + dy && z < z2 - dy) ? 1 : 0;
-                }
-            };
+        @Override
+        public int isInside(int x, int y, int z) {
+            if (y < y1 || y >= y2) {
+                return 0;
+            }
+            int dy = y - y1;
+            return (x >= x1 + dy && x < x2 - dy && z >= z1 + dy && z < z2 - dy) ? 1 : 0;
         }
     };
 
