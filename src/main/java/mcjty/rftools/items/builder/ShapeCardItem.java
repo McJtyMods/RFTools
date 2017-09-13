@@ -552,7 +552,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
         final int[] cnt = {0};
         BlockPos offset = new BlockPos(0, 128, 0);
         BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
-        composeShape(shape, null, new BlockPos(0, 0, 0), clamped, offset, new AbstractCollection<BlockPos>() {
+        composeShape(ItemStackTools.getEmptyStack(), shape, null, new BlockPos(0, 0, 0), clamped, offset, new AbstractCollection<BlockPos>() {
             @Override
             public Iterator<BlockPos> iterator() {
                 return new AbstractIterator<BlockPos>() {
@@ -593,9 +593,9 @@ public class ShapeCardItem extends GenericRFToolsItem {
         }
     }
 
-    public static void composeShape(Shape shape, World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean forquarry,
+    public static void composeShape(ItemStack shapeCard, Shape shape, World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean forquarry,
                                     ChunkPos chunk) {
-        composeFormula(shape.getFormula(), worldObj, thisCoord, dimension, offset, blocks, maxSize, shape.getSide(), shape.isSolid(), forquarry, chunk);
+        composeFormula(shapeCard, shape.getFormula(), worldObj, thisCoord, dimension, offset, blocks, maxSize, shape.getSide(), shape.isSolid(), forquarry, chunk);
     }
 
     private static void placeBlockIfPossible(World worldObj, Collection<BlockPos> blocks, int maxSize, int x, int y, int z, boolean forquarry) {
@@ -617,7 +617,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
     }
 
 
-    private static void composeFormula(IFormula formula, World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, int side, boolean solid, boolean forquarry, ChunkPos chunk) {
+    private static void composeFormula(ItemStack shapeCard, IFormula formula, World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, int side, boolean solid, boolean forquarry, ChunkPos chunk) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
         int zCoord = thisCoord.getZ();
@@ -626,7 +626,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
         int dz = dimension.getZ();
         BlockPos tl = new BlockPos(xCoord - dx/2 + offset.getX(), yCoord - dy/2 + offset.getY(), zCoord - dz/2 + offset.getZ());
 
-        formula.setup(thisCoord, dimension, offset);
+        formula.setup(thisCoord, dimension, offset, shapeCard);
 
         for (int ox = 0 ; ox < dx ; ox++) {
             int x = tl.getX() + ox;

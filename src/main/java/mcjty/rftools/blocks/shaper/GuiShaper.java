@@ -101,7 +101,7 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
         BlockPos dimension = ShapeCardItem.getDimension(stack);
         BlockPos offset = new BlockPos(0, 128, 0);
         BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
-        ShapeCardItem.composeShape(shape, null, new BlockPos(0, 0, 0), clamped, offset, new AbstractCollection<BlockPos>() {
+        ShapeCardItem.composeShape(stack, shape, null, new BlockPos(0, 0, 0), clamped, offset, new AbstractCollection<BlockPos>() {
             @Override
             public Iterator<BlockPos> iterator() {
                 return new AbstractIterator<BlockPos>() {

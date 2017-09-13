@@ -283,7 +283,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
         Shape shape = ShapeCardItem.getShape(shapeCard);
         List<BlockPos> blocks = new ArrayList<>();
-        ShapeCardItem.composeShape(shape.makeHollow(), getWorld(), getPos(), dimension, offset, blocks,
+        ShapeCardItem.composeShape(shapeCard, shape.makeHollow(), getWorld(), getPos(), dimension, offset, blocks,
                 BuilderConfiguration.maxBuilderDimension * 256 * BuilderConfiguration.maxBuilderDimension, false, null);
         for (BlockPos p : blocks) {
             if (getWorld().isAirBlock(p)) {
@@ -344,7 +344,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
         Shape shape = ShapeCardItem.getShape(shapeCard);
         List<BlockPos> blocks = new ArrayList<BlockPos>();
-        ShapeCardItem.composeShape(shape.makeHollow(), getWorld(), getPos(), dimension, offset, blocks, BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension, false, null);
+        ShapeCardItem.composeShape(shapeCard, shape.makeHollow(), getWorld(), getPos(), dimension, offset, blocks, BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension, false, null);
         for (BlockPos block : blocks) {
             if (getWorld().getBlockState(block).getBlock() == BuilderSetup.supportBlock) {
                 getWorld().setBlockToAir(block);
@@ -847,7 +847,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             Shape shape = ShapeCardItem.getShape(shapeCard);
             BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
             BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
-            ShapeCardItem.composeShape(shape, getWorld(), getPos(), dimension, offset, cachedBlocks,
+            ShapeCardItem.composeShape(shapeCard, shape, getWorld(), getPos(), dimension, offset, cachedBlocks,
                     BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension,
                     !ShapeCardItem.isNormalShapeCard(shapeCard), chunk);
             cachedChunk = chunk;

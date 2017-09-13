@@ -1,12 +1,13 @@
 package mcjty.rftools.items.builder;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 
 public class Formulas {
 
     static final IFormula FORMULA_CUSTOM = new IFormula() {
         @Override
-        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset) {
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, ItemStack card) {
 
         }
 
@@ -29,7 +30,7 @@ public class Formulas {
         private float centerz;
 
         @Override
-        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset) {
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, ItemStack card) {
             int dx = dimension.getX();
             int dy = dimension.getY();
             int dz = dimension.getZ();
@@ -66,7 +67,7 @@ public class Formulas {
         private int dz;
 
         @Override
-        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset) {
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, ItemStack card) {
             dx = dimension.getX();
             dy = dimension.getY();
             dz = dimension.getZ();
@@ -105,7 +106,7 @@ public class Formulas {
         private int davg;
 
         @Override
-        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset) {
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, ItemStack card) {
             int dx = dimension.getX();
             int dy = dimension.getY();
             int dz = dimension.getZ();
@@ -139,7 +140,7 @@ public class Formulas {
         private int z2;
 
         @Override
-        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset) {
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, ItemStack card) {
             int dx = dimension.getX();
             int dy = dimension.getY();
             int dz = dimension.getZ();
@@ -171,7 +172,7 @@ public class Formulas {
         private int y2;
 
         @Override
-        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset) {
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, ItemStack card) {
             int dx = dimension.getX();
             int dy = dimension.getY();
             int dz = dimension.getZ();
@@ -208,7 +209,7 @@ public class Formulas {
         private int davg;
 
         @Override
-        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset) {
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, ItemStack card) {
             int dx = dimension.getX();
             int dy = dimension.getY();
             int dz = dimension.getZ();
@@ -240,7 +241,7 @@ public class Formulas {
         private int z2;
 
         @Override
-        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset) {
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, ItemStack card) {
             int dx = dimension.getX();
             int dy = dimension.getY();
             int dz = dimension.getZ();
