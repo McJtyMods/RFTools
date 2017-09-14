@@ -173,8 +173,8 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
                 }
             } else {
                 if (prevX != -1 && Mouse.isButtonDown(0)) {
-                    yangle += (x - prevX);
-                    xangle -= (y - prevY);
+                    yangle -= (x - prevX);
+                    xangle += (y - prevY);
                 }
             }
             prevX = x;
@@ -188,9 +188,14 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
 
         int dwheel = Mouse.getDWheel();
         if (dwheel < 0) {
-            scale -= 2f;
+//            scale -= 1f;
+            scale *= .6;
+            if (scale <= 0.1) {
+                scale = .1f;
+            }
         } else if (dwheel > 0) {
-            scale += 2f;
+//            scale += 1f;
+            scale *= 1.4;
         }
     }
 
@@ -218,14 +223,15 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
         int yScale = scaledresolution.getScaledHeight();
 
         int sx = (guiLeft + 84) * mc.displayWidth / xScale;
-        int sy = (mc.displayHeight) - (guiTop + 135) * mc.displayHeight / yScale;
-        int sw = 165 * mc.displayWidth / xScale;
+        int sy = (mc.displayHeight) - (guiTop + 136) * mc.displayHeight / yScale;
+        int sw = 161 * mc.displayWidth / xScale;
         int sh = 130 * mc.displayHeight / yScale;
 
         GL11.glScissor(sx, sy, sw, sh);
         GlStateManager.pushMatrix();
+
         GlStateManager.translate(dx, dy, 100);
-        GlStateManager.rotate(xangle, 1f, 0, 0); //xangle += .16f;
+        GlStateManager.rotate(180-xangle, 1f, 0, 0); //xangle += .16f;
         GlStateManager.rotate(yangle, 0, 1f, 0); //yangle += .09f;
         GlStateManager.rotate(zangle, 0, 0, 1f); //zangle += .31f;
         GlStateManager.scale(scale, scale, scale);
@@ -249,7 +255,7 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
         renderFaces(tessellator, buffer, positions);
-        renderOutline(tessellator, buffer, positions);
+//        renderOutline(tessellator, buffer, positions);
         renderAxis(tessellator, buffer, dimension.getX()/2.0f, dimension.getY()/2.0f, dimension.getZ()/2.0f);
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
@@ -343,36 +349,39 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
     private void renderFaces(Tessellator tessellator, final VertexBuffer buffer,
                              TLongHashSet positions) {
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-        GlStateManager.enableBlend();
-        GlStateManager.enableAlpha();
+//        GlStateManager.enableBlend();
+//        GlStateManager.enableAlpha();
 
         TLongIterator iterator = positions.iterator();
         while (iterator.hasNext()) {
             long p = iterator.next();
             BlockPos coordinate = BlockPos.fromLong(p);
             if (!isPositionEnclosed(positions, coordinate)) {
-                float x = coordinate.getX();
-                float y = coordinate.getY();
-                float z = coordinate.getZ();
+                int x = coordinate.getX();
+                int y = coordinate.getY();
+                int z = coordinate.getZ();
 
                 buffer.setTranslation(buffer.xOffset + x, buffer.yOffset + y, buffer.zOffset + z);
+                float d = .2f;
+                float l = ((x+y+z) & 1) == 1 ? .9f : .6f;
+                float l2 = .6f;
                 if (!positions.contains(coordinate.up().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.UP.ordinal(), 0, 1, 0);
+                    addSideFullTexture(buffer, EnumFacing.UP.ordinal(), d, l, d);
                 }
                 if (!positions.contains(coordinate.down().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), 0, 1, 0);
+                    addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), d, l, d);
                 }
                 if (!positions.contains(coordinate.north().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), 0, 0, 1);
+                    addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), d, d, l);
                 }
                 if (!positions.contains(coordinate.south().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), 0, 0, 1);
+                    addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), d, d, l);
                 }
                 if (!positions.contains(coordinate.west().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), 1, 0, 0);
+                    addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), l, d, d);
                 }
                 if (!positions.contains(coordinate.east().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), 1, 0, 0);
+                    addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), l, d, d);
                 }
                 buffer.setTranslation(buffer.xOffset - x, buffer.yOffset - y, buffer.zOffset - z);
             }
