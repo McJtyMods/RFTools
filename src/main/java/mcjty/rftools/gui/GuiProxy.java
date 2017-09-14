@@ -32,7 +32,8 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 public class GuiProxy implements IGuiHandler {
     @Override
     public Object getServerGuiElement(int guiid, EntityPlayer entityPlayer, World world, int x, int y, int z) {
-        if (guiid == RFTools.GUI_MANUAL_MAIN || guiid == RFTools.GUI_TELEPORTPROBE || guiid == RFTools.GUI_ADVANCEDPORTER || guiid == RFTools.GUI_SHAPECARD
+        if (guiid == RFTools.GUI_MANUAL_MAIN || guiid == RFTools.GUI_TELEPORTPROBE || guiid == RFTools.GUI_ADVANCEDPORTER
+                || guiid == RFTools.GUI_SHAPECARD || guiid == RFTools.GUI_SHAPECARD_SHAPER
                 || guiid == RFTools.GUI_CHAMBER_DETAILS || guiid == RFTools.GUI_DEVELOPERS_DELIGHT || guiid == RFTools.GUI_LIST_BLOCKS) {
             return null;
         } else if (guiid == RFTools.GUI_REMOTE_STORAGE_ITEM) {
@@ -118,7 +119,9 @@ public class GuiProxy implements IGuiHandler {
         } else if (guiid == RFTools.GUI_STORAGE_FILTER) {
             return new GuiStorageFilter(new StorageFilterContainer(entityPlayer));
         } else if (guiid == RFTools.GUI_SHAPECARD) {
-            return new GuiShapeCard();
+            return new GuiShapeCard(false);
+        } else if (guiid == RFTools.GUI_SHAPECARD_SHAPER) {
+            return new GuiShapeCard(true);
         } else if (guiid == RFTools.GUI_CHAMBER_DETAILS) {
             return new GuiChamberDetails();
         }

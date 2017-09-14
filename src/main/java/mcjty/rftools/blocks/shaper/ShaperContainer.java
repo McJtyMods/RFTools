@@ -19,10 +19,11 @@ public class ShaperContainer extends GenericContainer {
     public static final ContainerFactory factory = new ContainerFactory() {
         @Override
         protected void setup() {
-            addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(BuilderSetup.shapeCardItem)), CONTAINER_INVENTORY, SLOT_OUT, 13, 200);
+            addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
+                    new ItemStack(BuilderSetup.shapeCardItem)), CONTAINER_INVENTORY, SLOT_OUT, 18, 200);
             addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
                     new ItemStack(BuilderSetup.shapeCardItem)),
-                    CONTAINER_INVENTORY, SLOT_TABS, 13, 7, 1, 18, SLOT_COUNT, 18);
+                    CONTAINER_INVENTORY, SLOT_TABS, 18, 7, 1, 18, SLOT_COUNT, 18);
             layoutPlayerInventorySlots(85, 142);
         }
     };

@@ -112,6 +112,7 @@ public class RFTools implements ModBase {
     public static final int GUI_MACHINE_INFUSER = modGuiIndex++;
     public static final int GUI_BUILDER = modGuiIndex++;
     public static final int GUI_SHAPECARD = modGuiIndex++;
+    public static final int GUI_SHAPECARD_SHAPER = modGuiIndex++;
     public static final int GUI_CHAMBER_DETAILS = modGuiIndex++;
     public static final int GUI_POWERCELL = modGuiIndex++;
     public static final int GUI_RELAY = modGuiIndex++;

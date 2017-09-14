@@ -12,8 +12,12 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketUpdateNBTItem;
+import mcjty.lib.network.PacketUpdateNBTItemInventory;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.tools.MinecraftTools;
+import mcjty.rftools.blocks.shaper.GuiShaper;
+import mcjty.rftools.blocks.shaper.ShaperTileEntity;
+import mcjty.rftools.network.PacketOpenGui;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -24,6 +28,8 @@ import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import org.lwjgl.input.Mouse;
@@ -63,8 +69,10 @@ public class GuiShapeCard extends GuiScreen {
     private ToggleButton oredict;
 
     private boolean countDirty = true;
+    private boolean fromshaper;
 
-    public GuiShapeCard() {
+    public GuiShapeCard(boolean fromshaper) {
+        this.fromshaper = fromshaper;
     }
 
     @Override
@@ -72,11 +80,32 @@ public class GuiShapeCard extends GuiScreen {
         return false;
     }
 
+    private ItemStack getStackToEdit() {
+        if (fromshaper) {
+            TileEntity te = MinecraftTools.getWorld(Minecraft.getMinecraft()).getTileEntity(GuiShaper.shaperBlock);
+            if (te instanceof ShaperTileEntity) {
+                return ((ShaperTileEntity) te).getStackInSlot(GuiShaper.shaperStackSlot);
+            } else {
+                return ItemStackTools.getEmptyStack();
+            }
+        } else {
+            return MinecraftTools.getPlayer(mc).getHeldItem(EnumHand.MAIN_HAND);
+        }
+    }
+
+    @Override
+    public void onGuiClosed() {
+        if (fromshaper) {
+            RFToolsMessages.INSTANCE.sendToServer(new PacketOpenGui(GuiShaper.shaperBlock));
+        }
+    }
+
     @Override
     public void initGui() {
         super.initGui();
 
-        ItemStack heldItem = MinecraftTools.getPlayer(mc).getHeldItem(EnumHand.MAIN_HAND);
+
+        ItemStack heldItem = getStackToEdit();
         if (ItemStackTools.isEmpty(heldItem)) {
             // Cannot happen!
             return;
@@ -212,28 +241,67 @@ public class GuiShapeCard extends GuiScreen {
         if (isTorus()) {
             dimZ.setText(dimX.getText());
         }
-        RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItem(
-                new Argument("shapenew", getCurrentShape().getDescription()),
-                new Argument("solid", isSolid()),
-                new Argument("dimX", parseInt(dimX.getText())),
-                new Argument("dimY", parseInt(dimY.getText())),
-                new Argument("dimZ", parseInt(dimZ.getText())),
-                new Argument("offsetX", parseInt(offsetX.getText())),
-                new Argument("offsetY", parseInt(offsetY.getText())),
-                new Argument("offsetZ", parseInt(offsetZ.getText()))
-        ));
+        if (fromshaper) {
+            ItemStack stack = getStackToEdit();
+            if (ItemStackTools.isValid(stack)) {
+                NBTTagCompound tag = stack.getTagCompound();
+                if (tag == null) {
+                    tag = new NBTTagCompound();
+                }
+                tag.setString("shapenew", getCurrentShape().getDescription());
+                tag.setBoolean("solid", isSolid());
+                tag.setInteger("dimX", parseInt(dimX.getText()));
+                tag.setInteger("dimY", parseInt(dimY.getText()));
+                tag.setInteger("dimZ", parseInt(dimZ.getText()));
+                tag.setInteger("offsetX", parseInt(offsetX.getText()));
+                tag.setInteger("offsetY", parseInt(offsetY.getText()));
+                tag.setInteger("offsetZ", parseInt(offsetZ.getText()));
+                RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItemInventory(
+                        GuiShaper.shaperBlock, GuiShaper.shaperStackSlot, tag));
+            }
+        } else {
+            RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItem(
+                    new Argument("shapenew", getCurrentShape().getDescription()),
+                    new Argument("solid", isSolid()),
+                    new Argument("dimX", parseInt(dimX.getText())),
+                    new Argument("dimY", parseInt(dimY.getText())),
+                    new Argument("dimZ", parseInt(dimZ.getText())),
+                    new Argument("offsetX", parseInt(offsetX.getText())),
+                    new Argument("offsetY", parseInt(offsetY.getText())),
+                    new Argument("offsetZ", parseInt(offsetZ.getText()))
+            ));
+        }
     }
 
     private void updateVoidSettings() {
-        RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItem(
-                new Argument("voidstone", stone.isPressed()),
-                new Argument("voidcobble", cobble.isPressed()),
-                new Argument("voiddirt", dirt.isPressed()),
-                new Argument("voidgravel", gravel.isPressed()),
-                new Argument("voidsand", sand.isPressed()),
-                new Argument("voidnetherrack", netherrack.isPressed()),
-                new Argument("oredict", oredict.isPressed())
-        ));
+        if (fromshaper) {
+            ItemStack stack = getStackToEdit();
+            if (ItemStackTools.isValid(stack)) {
+                NBTTagCompound tag = stack.getTagCompound();
+                if (tag == null) {
+                    tag = new NBTTagCompound();
+                }
+                tag.setBoolean("voidstone", stone.isPressed());
+                tag.setBoolean("voidcobble", cobble.isPressed());
+                tag.setBoolean("voiddirt", dirt.isPressed());
+                tag.setBoolean("voidgravel", gravel.isPressed());
+                tag.setBoolean("voidsand", sand.isPressed());
+                tag.setBoolean("voidnetherrack", netherrack.isPressed());
+                tag.setBoolean("oredict", oredict.isPressed());
+                RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItemInventory(
+                        GuiShaper.shaperBlock, GuiShaper.shaperStackSlot, tag));
+            }
+        } else {
+            RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItem(
+                    new Argument("voidstone", stone.isPressed()),
+                    new Argument("voidcobble", cobble.isPressed()),
+                    new Argument("voiddirt", dirt.isPressed()),
+                    new Argument("voidgravel", gravel.isPressed()),
+                    new Argument("voidsand", sand.isPressed()),
+                    new Argument("voidnetherrack", netherrack.isPressed()),
+                    new Argument("oredict", oredict.isPressed())
+            ));
+        }
     }
 
     @Override
