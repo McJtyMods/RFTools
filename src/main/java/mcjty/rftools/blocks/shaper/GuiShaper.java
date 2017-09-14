@@ -67,6 +67,7 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
             operationLabels[i].addChoiceEvent((parent, newChoice) -> update());
             toplevel.addChild(operationLabels[i]);
         }
+        operationLabels[0].setEnabled(false);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
@@ -166,7 +167,7 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
         GlStateManager.glLineWidth(1);
         buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
 
-        ShapeCardItem.composeShape(stack, shape, null, new BlockPos(0, 0, 0), clamped, offset, new AbstractCollection<BlockPos>() {
+        ShapeCardItem.composeShape(stack, shape, false, null, new BlockPos(0, 0, 0), clamped, offset, new AbstractCollection<BlockPos>() {
             @Override
             public Iterator<BlockPos> iterator() {
                 return new AbstractIterator<BlockPos>() {
@@ -197,7 +198,7 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
     private void renderFaces(ItemStack stack, Tessellator tessellator, final VertexBuffer buffer, final BlockPos base, Shape shape, BlockPos offset, BlockPos clamped) {
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 
-        ShapeCardItem.composeShape(stack, shape, null, new BlockPos(0, 0, 0), clamped, offset, new AbstractCollection<BlockPos>() {
+        ShapeCardItem.composeShape(stack, shape, false, null, new BlockPos(0, 0, 0), clamped, offset, new AbstractCollection<BlockPos>() {
             @Override
             public Iterator<BlockPos> iterator() {
                 return new AbstractIterator<BlockPos>() {

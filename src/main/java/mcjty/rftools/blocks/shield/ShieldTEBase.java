@@ -643,10 +643,11 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             // Special shaped mode.
             ItemStack shapeItem = inventoryHelper.getStackInSlot(ShieldContainer.SLOT_SHAPE);
             Shape shape = ShapeCardItem.getShape(shapeItem);
+            boolean solid = ShapeCardItem.isSolid(shapeItem);
             BlockPos dimension = ShapeCardItem.getClampedDimension(shapeItem, ShieldConfiguration.maxShieldDimension);
             BlockPos offset = ShapeCardItem.getClampedOffset(shapeItem, ShieldConfiguration.maxShieldOffset);
             coordinates = new ArrayList<>();
-            ShapeCardItem.composeShape(shapeItem, shape, getWorld(), getPos(), dimension, offset, coordinates, supportedBlocks, false, null);
+            ShapeCardItem.composeShape(shapeItem, shape, solid, getWorld(), getPos(), dimension, offset, coordinates, supportedBlocks, false, null);
         } else {
             templateMeta = findTemplateMeta();
 

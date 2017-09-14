@@ -143,7 +143,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
 
                         setMode(stack, MODE_NONE);
                         setCorner1(stack, null);
-                        setShape(stack, Shape.SHAPE_SOLIDBOX);
+                        setShape(stack, Shape.SHAPE_BOX, true);
                     }
                 }
             }
@@ -249,7 +249,8 @@ public class ShapeCardItem extends GenericRFToolsItem {
         }
 
         Shape shape = getShape(itemStack);
-        list.add(TextFormatting.GREEN + "Shape " + shape.getDescription());
+        boolean issolid = isSolid(itemStack);
+        list.add(TextFormatting.GREEN + "Shape " + shape.getDescription() + " (" + (issolid ? "Solid" : "Hollow") + ")");
         list.add(TextFormatting.GREEN + "Dimension " + BlockPosTools.toString(getDimension(itemStack)));
         list.add(TextFormatting.GREEN + "Offset " + BlockPosTools.toString(getOffset(itemStack)));
 
@@ -437,33 +438,63 @@ public class ShapeCardItem extends GenericRFToolsItem {
 
     public static Shape getShape(NBTTagCompound tagCompound) {
         if (tagCompound == null) {
-            return Shape.SHAPE_SOLIDBOX;
+            return Shape.SHAPE_BOX;
         }
-        if (!tagCompound.hasKey("shape")) {
-            return Shape.SHAPE_SOLIDBOX;
+        if (!tagCompound.hasKey("shape") && !tagCompound.hasKey("shapenew")) {
+            return Shape.SHAPE_BOX;
         }
-        int shape = tagCompound.getInteger("shape");
-        Shape s = Shape.getShape(shape);
-        if (s == null) {
-            return Shape.SHAPE_SOLIDBOX;
+        Shape shape;
+        if (tagCompound.hasKey("shapenew")) {
+            String sn = tagCompound.getString("shapenew");
+            shape = Shape.getShape(sn);
+        } else {
+            int shapedeprecated = tagCompound.getInteger("shape");
+            ShapeDeprecated sd = ShapeDeprecated.getShape(shapedeprecated);
+            shape = sd.getNewshape();
         }
-        return s;
+
+        if (shape == null) {
+            return Shape.SHAPE_BOX;
+        }
+        return shape;
+    }
+
+    public static boolean isSolid(ItemStack stack) {
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        return isSolid(tagCompound);
+    }
+
+    public static boolean isSolid(NBTTagCompound tagCompound) {
+        if (tagCompound == null) {
+            return true;
+        }
+        if (!tagCompound.hasKey("shape") && !tagCompound.hasKey("shapenew")) {
+            return true;
+        }
+        if (tagCompound.hasKey("shapenew")) {
+            return tagCompound.getBoolean("solid");
+        } else {
+            int shapedeprecated = tagCompound.getInteger("shape");
+            ShapeDeprecated sd = ShapeDeprecated.getShape(shapedeprecated);
+            return sd.isSolid();
+        }
     }
 
     public static IFormula createCorrectFormula(NBTTagCompound tagCompound) {
         Shape shape = getShape(tagCompound);
+        boolean solid = isSolid(tagCompound);
         IFormula formula = shape.getFormulaFactory().createFormula();
-        formula = formula.correctFormula(shape.isSolid());
-        return formula;
+        return formula.correctFormula(solid);
     }
 
-    public static void setShape(ItemStack stack, Shape shape) {
+    public static void setShape(ItemStack stack, Shape shape, boolean solid) {
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
             stack.setTagCompound(tagCompound);
         }
-        tagCompound.setInteger("shape", shape.getIndex());
+        tagCompound.setString("shapenew", shape.getDescription());
+        tagCompound.setBoolean("solid", solid);
     }
 
     public static BlockPos getDimension(ItemStack stack) {
@@ -571,11 +602,11 @@ public class ShapeCardItem extends GenericRFToolsItem {
         return new BlockPos(minCorner.getX() + dx, minCorner.getY() + dy, minCorner.getZ() + dz);
     }
 
-    public static int countBlocks(Shape shape, BlockPos dimension) {
+    public static int countBlocks(Shape shape, boolean solid, BlockPos dimension) {
         final int[] cnt = {0};
         BlockPos offset = new BlockPos(0, 128, 0);
         BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
-        composeShape(ItemStackTools.getEmptyStack(), shape, null, new BlockPos(0, 0, 0), clamped, offset, new AbstractCollection<BlockPos>() {
+        composeShape(ItemStackTools.getEmptyStack(), shape, solid, null, new BlockPos(0, 0, 0), clamped, offset, new AbstractCollection<BlockPos>() {
             @Override
             public Iterator<BlockPos> iterator() {
                 return new AbstractIterator<BlockPos>() {
@@ -616,9 +647,9 @@ public class ShapeCardItem extends GenericRFToolsItem {
         }
     }
 
-    public static void composeShape(ItemStack shapeCard, Shape shape, World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean forquarry,
+    public static void composeShape(ItemStack shapeCard, Shape shape, boolean solid, World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean forquarry,
                                     ChunkPos chunk) {
-        composeFormula(shapeCard, shape.getFormulaFactory().createFormula(), worldObj, thisCoord, dimension, offset, blocks, maxSize, shape.getSide(), shape.isSolid(), forquarry, chunk);
+        composeFormula(shapeCard, shape.getFormulaFactory().createFormula(), worldObj, thisCoord, dimension, offset, blocks, maxSize, solid, forquarry, chunk);
     }
 
     private static void placeBlockIfPossible(World worldObj, Collection<BlockPos> blocks, int maxSize, int x, int y, int z, boolean forquarry) {
@@ -640,7 +671,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
     }
 
 
-    private static void composeFormula(ItemStack shapeCard, IFormula formula, World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, int side, boolean solid, boolean forquarry, ChunkPos chunk) {
+    private static void composeFormula(ItemStack shapeCard, IFormula formula, World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean solid, boolean forquarry, ChunkPos chunk) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
         int zCoord = thisCoord.getZ();
@@ -661,10 +692,8 @@ public class ShapeCardItem extends GenericRFToolsItem {
                         for (int oy = 0; oy < dy; oy++) {
                             int y = tl.getY() + oy;
                             if (y >= 0 && y < 255) {
-                                if (side == 0 || (side == 1 && y >= yCoord + offset.getY()) || (side == -1 && y <= yCoord + offset.getY())) {
-                                    if (formula.isInside(x, y, z) == 1) {
-                                        placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
-                                    }
+                                if (formula.isInside(x, y, z) == 1) {
+                                    placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
                                 }
                             }
                         }

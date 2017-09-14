@@ -37,7 +37,7 @@ public class Formulas {
 
                         BlockPos dim = ShapeCardItem.getClampedDimension(childTag, ShieldConfiguration.maxShieldDimension);
                         BlockPos off = ShapeCardItem.getClampedOffset(childTag, ShieldConfiguration.maxShieldOffset);
-                        formula.setup(thisCoord, dim, off.add(0, 128, 0), childTag);
+                        formula.setup(thisCoord, dim, off.add(offset), childTag);
 
                         formulas.add(formula);
                         String op = childTag.getString("op");
@@ -72,11 +72,6 @@ public class Formulas {
                         }
                     }
                     return ok;
-                }
-
-                @Override
-                public boolean isBorder(int x, int y, int z) {
-                    return isInside(x, y, z) == 1;
                 }
 
                 @Override
@@ -190,6 +185,82 @@ public class Formulas {
 
         @Override
         public int isInside(int x, int y, int z) {
+            double distance = Math.sqrt(squaredDistance3D(centerx, centery, centerz, x, y, z, dx2, dy2, dz2));
+            return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) ? 1 : 0;
+        }
+    };
+
+    static final IFormulaFactory FORMULA_TOPDOME = () -> new IFormula() {
+        private float centerx;
+        private float centery;
+        private float centerz;
+        private float dx2;
+        private float dy2;
+        private float dz2;
+        private int davg;
+
+        @Override
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
+            int dx = dimension.getX();
+            int dy = dimension.getY();
+            int dz = dimension.getZ();
+            int xCoord = thisCoord.getX();
+            int yCoord = thisCoord.getY();
+            int zCoord = thisCoord.getZ();
+            centerx = xCoord + offset.getX() + ((dx % 2 != 0) ? 0.0f : -.5f);
+            centery = yCoord + offset.getY() + ((dy % 2 != 0) ? 0.0f : -.5f);
+            centerz = zCoord + offset.getZ() + ((dz % 2 != 0) ? 0.0f : -.5f);
+
+            float factor = 1.8f;
+            dx2 = dx == 0 ? .5f : ((dx + factor) * (dx + factor)) / 4.0f;
+            dy2 = dy == 0 ? .5f : ((dy + factor) * (dy + factor)) / 4.0f;
+            dz2 = dz == 0 ? .5f : ((dz + factor) * (dz + factor)) / 4.0f;
+            davg = (int) ((dx + dy + dz + factor * 3) / 3);
+        }
+
+        @Override
+        public int isInside(int x, int y, int z) {
+            if (y < centery) {
+                return 0;
+            }
+            double distance = Math.sqrt(squaredDistance3D(centerx, centery, centerz, x, y, z, dx2, dy2, dz2));
+            return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) ? 1 : 0;
+        }
+    };
+
+    static final IFormulaFactory FORMULA_BOTTOMDOME = () -> new IFormula() {
+        private float centerx;
+        private float centery;
+        private float centerz;
+        private float dx2;
+        private float dy2;
+        private float dz2;
+        private int davg;
+
+        @Override
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
+            int dx = dimension.getX();
+            int dy = dimension.getY();
+            int dz = dimension.getZ();
+            int xCoord = thisCoord.getX();
+            int yCoord = thisCoord.getY();
+            int zCoord = thisCoord.getZ();
+            centerx = xCoord + offset.getX() + ((dx % 2 != 0) ? 0.0f : -.5f);
+            centery = yCoord + offset.getY() + ((dy % 2 != 0) ? 0.0f : -.5f);
+            centerz = zCoord + offset.getZ() + ((dz % 2 != 0) ? 0.0f : -.5f);
+
+            float factor = 1.8f;
+            dx2 = dx == 0 ? .5f : ((dx + factor) * (dx + factor)) / 4.0f;
+            dy2 = dy == 0 ? .5f : ((dy + factor) * (dy + factor)) / 4.0f;
+            dz2 = dz == 0 ? .5f : ((dz + factor) * (dz + factor)) / 4.0f;
+            davg = (int) ((dx + dy + dz + factor * 3) / 3);
+        }
+
+        @Override
+        public int isInside(int x, int y, int z) {
+            if (y > centery) {
+                return 0;
+            }
             double distance = Math.sqrt(squaredDistance3D(centerx, centery, centerz, x, y, z, dx2, dy2, dz2));
             return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) ? 1 : 0;
         }

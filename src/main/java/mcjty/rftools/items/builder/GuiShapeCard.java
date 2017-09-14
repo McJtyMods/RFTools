@@ -108,8 +108,9 @@ public class GuiShapeCard extends GuiScreen {
         }
 
         Shape shape = ShapeCardItem.getShape(heldItem);
-        shapeLabel.setChoice(shape.makeHollow().getDescription());
-        solidLabel.setChoice(shape.isSolid() ? "Solid" : "Hollow");
+        shapeLabel.setChoice(shape.getDescription());
+        boolean solid = ShapeCardItem.isSolid(heldItem);
+        solidLabel.setChoice(solid ? "Solid" : "Hollow");
 
         blocksLabel = new Label(mc, this).setText("# ").setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
         blocksLabel.setDesiredWidth(100).setDesiredHeight(16);
@@ -183,15 +184,15 @@ public class GuiShapeCard extends GuiScreen {
 
     private boolean isTorus() {
         Shape shape = getCurrentShape();
-        return Shape.SHAPE_TORUS.equals(shape) || Shape.SHAPE_SOLIDTORUS.equals(shape);
+        return Shape.SHAPE_TORUS.equals(shape);
     }
 
     private Shape getCurrentShape() {
-        Shape shape = Shape.getShape(shapeLabel.getCurrentChoice());
-        if ("Solid".equals(solidLabel.getCurrentChoice())) {
-            shape = shape.makeSolid();
-        }
-        return shape;
+        return Shape.getShape(shapeLabel.getCurrentChoice());
+    }
+
+    private boolean isSolid() {
+        return "Solid".equals(solidLabel.getCurrentChoice());
     }
 
     private BlockPos getCurrentDimension() {
@@ -212,7 +213,8 @@ public class GuiShapeCard extends GuiScreen {
             dimZ.setText(dimX.getText());
         }
         RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItem(
-                new Argument("shape", getCurrentShape().getIndex()),
+                new Argument("shapenew", getCurrentShape().getDescription()),
+                new Argument("solid", isSolid()),
                 new Argument("dimX", parseInt(dimX.getText())),
                 new Argument("dimY", parseInt(dimY.getText())),
                 new Argument("dimZ", parseInt(dimZ.getText())),
@@ -271,7 +273,7 @@ public class GuiShapeCard extends GuiScreen {
             updateCounter = 10;
             if (countDirty) {
                 countDirty = false;
-                int count = ShapeCardItem.countBlocks(getCurrentShape(), getCurrentDimension());
+                int count = ShapeCardItem.countBlocks(getCurrentShape(), isSolid(), getCurrentDimension());
                 if (count >= ShapeCardItem.MAXIMUM_COUNT) {
                     blocksLabel.setText("#Blocks: ++" + count);
                 } else {
