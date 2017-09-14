@@ -217,9 +217,9 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
         int xScale = scaledresolution.getScaledWidth();
         int yScale = scaledresolution.getScaledHeight();
 
-        int sx = (guiLeft + 85) * mc.displayWidth / xScale;
+        int sx = (guiLeft + 84) * mc.displayWidth / xScale;
         int sy = (mc.displayHeight) - (guiTop + 135) * mc.displayHeight / yScale;
-        int sw = 160 * mc.displayWidth / xScale;
+        int sw = 165 * mc.displayWidth / xScale;
         int sh = 130 * mc.displayHeight / yScale;
 
         GL11.glScissor(sx, sy, sw, sh);
@@ -231,7 +231,6 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
         GlStateManager.scale(scale, scale, scale);
 
         GlStateManager.disableBlend();
-//        GlStateManager.disableDepth();
         GlStateManager.disableCull();
         GlStateManager.disableTexture2D();
 
