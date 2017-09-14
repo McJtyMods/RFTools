@@ -5,6 +5,7 @@ import gnu.trove.iterator.TLongIterator;
 import gnu.trove.set.hash.TLongHashSet;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
+import mcjty.lib.gui.WindowManager;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.ChoiceLabel;
@@ -40,9 +41,11 @@ import java.util.AbstractCollection;
 import java.util.Iterator;
 
 public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
+    public static final int SIDEWIDTH = 80;
     public static final int SHAPER_WIDTH = 256;
     public static final int SHAPER_HEIGHT = 238;
 
+    private static final ResourceLocation sideBackground = new ResourceLocation(RFTools.MODID, "textures/gui/sidegui.png");
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/shaper.png");
     private static final ResourceLocation guiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
@@ -53,6 +56,9 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
     // For GuiShapeCard: the current card to edit
     public static BlockPos shaperBlock = null;
     public static int shaperStackSlot = 0;
+
+    private Window sideWindow;
+
 
     public GuiShaper(ShaperTileEntity shaperTileEntity, ShaperContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, shaperTileEntity, container, RFTools.GUI_MANUAL_MAIN, "shaper");
@@ -109,7 +115,19 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
+        Panel sidePanel = new Panel(mc, this).setLayout(new PositionalLayout()).setBackground(sideBackground);
+//                .addChild(listPanel);
+        sidePanel.setBounds(new Rectangle(guiLeft-SIDEWIDTH, guiTop, SIDEWIDTH, ySize));
+        sideWindow = new Window(this, sidePanel);
+
         window = new Window(this, toplevel);
+    }
+
+
+    @Override
+    protected void registerWindows(WindowManager mgr) {
+        super.registerWindows(mgr);
+        mgr.addWindow(sideWindow);
     }
 
     float scale = 3.0f;
@@ -364,7 +382,6 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
                 buffer.setTranslation(buffer.xOffset + x, buffer.yOffset + y, buffer.zOffset + z);
                 float d = .2f;
                 float l = ((x+y+z) & 1) == 1 ? .9f : .6f;
-                float l2 = .6f;
                 if (!positions.contains(coordinate.up().toLong())) {
                     addSideFullTexture(buffer, EnumFacing.UP.ordinal(), d, l, d);
                 }
