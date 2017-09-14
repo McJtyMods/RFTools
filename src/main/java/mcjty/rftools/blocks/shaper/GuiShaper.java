@@ -8,6 +8,7 @@ import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.ChoiceLabel;
+import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.tools.MinecraftTools;
@@ -18,6 +19,7 @@ import mcjty.rftools.items.builder.ShapeOperation;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -29,9 +31,10 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.io.IOException;
 import java.util.AbstractCollection;
 import java.util.Iterator;
@@ -83,15 +86,26 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
 
         for (int i = 0 ; i < ShaperContainer.SLOT_COUNT ; i++) {
             configButton[i] = new Button(mc, this).setText("?");
-            configButton[i].setLayoutHint(new PositionalLayout.PositionalHint(2, 7 + i*18+2, 14, 12));
+            configButton[i].setLayoutHint(new PositionalLayout.PositionalHint(3, 7 + i*18+2, 13, 12));
             int finalI = i;
             configButton[i].addButtonEvent(parent -> openCardGui(finalI));
+            configButton[i].setTooltips("Click to open the card gui");
             toplevel.addChild(configButton[i]);
         }
         outConfigButton = new Button(mc, this).setText("?");
-        outConfigButton.setLayoutHint(new PositionalLayout.PositionalHint(2, 200+2, 14, 12));
+        outConfigButton.setLayoutHint(new PositionalLayout.PositionalHint(3, 200+2, 13, 12));
         outConfigButton.addButtonEvent(parent -> openCardGui(-1));
+        outConfigButton.setTooltips("Click to open the card gui");
         toplevel.addChild(outConfigButton);
+
+        String[] tt = {
+                "Drag left mouse button to rotate",
+                "Shift drag left mouse to pan",
+                "Use mouse wheel to zoom in/out",
+                "Use middle click to reset rotation" };
+        toplevel.addChild(new Label<>(mc, this).setText("E/W").setColor(0xffff0000).setTooltips(tt).setLayoutHint(new PositionalLayout.PositionalHint(5, 145, 20, 15)));
+        toplevel.addChild(new Label<>(mc, this).setText("U/D").setColor(0xff00ff00).setTooltips(tt).setLayoutHint(new PositionalLayout.PositionalHint(5, 160, 20, 15)));
+        toplevel.addChild(new Label<>(mc, this).setText("N/S").setColor(0xff0000ff).setTooltips(tt).setLayoutHint(new PositionalLayout.PositionalHint(5, 175, 20, 15)));
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
@@ -133,50 +147,87 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         super.keyTyped(typedChar, keyCode);
-        if (keyCode == Keyboard.KEY_PRIOR) {
-            scale += .2f;
-            System.out.println("scale = " + scale);
-        } else if (keyCode == Keyboard.KEY_NEXT) {
-            scale -= .2f;
-            System.out.println("scale = " + scale);
-        } else if (keyCode == Keyboard.KEY_W) {
-            dy -= 5f;
-            System.out.println("dy = " + dy);
-        } else if (keyCode == Keyboard.KEY_S) {
-            dy += 5f;
-            System.out.println("dy = " + dy);
-        } else if (keyCode == Keyboard.KEY_A) {
-            dx -= 5f;
-            System.out.println("dx = " + dx);
-        } else if (keyCode == Keyboard.KEY_D) {
-            dx += 5f;
-            System.out.println("dx = " + dx);
-        } else if (keyCode == Keyboard.KEY_R) {
-            xangle = 0;
-            yangle = 0;
-            zangle = 0;
+    }
+
+    private int prevX = -1;
+    private int prevY = -1;
+
+    @Override
+    protected void mouseClicked(int x, int y, int button) throws IOException {
+        super.mouseClicked(x, y, button);
+    }
+
+    @Override
+    public void handleMouseInput() throws IOException {
+        super.handleMouseInput();
+        int x = Mouse.getEventX() * width / mc.displayWidth;
+        int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
+        x -= guiLeft;
+        y -= guiTop;
+
+        if (x >= 100 && y <= 120) {
+            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+                if (prevX != -1 && Mouse.isButtonDown(0)) {
+                    dx += (x - prevX);
+                    dy += (y - prevY);
+                }
+            } else {
+                if (prevX != -1 && Mouse.isButtonDown(0)) {
+                    yangle += (x - prevX);
+                    xangle -= (y - prevY);
+                }
+            }
+            prevX = x;
+            prevY = y;
+        }
+
+        if (Mouse.isButtonDown(2)) {
+            xangle = 0.0f;
+            yangle = 0.0f;
+        }
+
+        int dwheel = Mouse.getDWheel();
+        if (dwheel < 0) {
+            scale -= 2f;
+        } else if (dwheel > 0) {
+            scale += 2f;
         }
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
+    protected void mouseReleased(int x, int y, int state) {
+        super.mouseReleased(x, y, state);
+    }
+
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float v, int x, int y) {
         drawWindow();
 
         Slot slot = inventorySlots.getSlot(ShaperContainer.SLOT_OUT);
         if (slot.getHasStack()) {
             ItemStack stack = slot.getStack();
             if (ItemStackTools.isValid(stack)) {
-                renderShape(stack);
+                renderShape(stack, guiLeft, guiTop);
             }
         }
     }
 
-    private void renderShape(ItemStack stack) {
+    private void renderShape(ItemStack stack, int x, int y) {
+        final ScaledResolution scaledresolution = new ScaledResolution(this.mc);
+        int xScale = scaledresolution.getScaledWidth();
+        int yScale = scaledresolution.getScaledHeight();
+
+        int sx = (guiLeft + 85) * mc.displayWidth / xScale;
+        int sy = (mc.displayHeight) - (guiTop + 135) * mc.displayHeight / yScale;
+        int sw = 160 * mc.displayWidth / xScale;
+        int sh = 130 * mc.displayHeight / yScale;
+
+        GL11.glScissor(sx, sy, sw, sh);
         GlStateManager.pushMatrix();
         GlStateManager.translate(dx, dy, 100);
-        GlStateManager.rotate(xangle, 1f, 0, 0); xangle += .16f;
-        GlStateManager.rotate(yangle, 0, 1f, 0); yangle += .09f;
-        GlStateManager.rotate(zangle, 0, 0, 1f); zangle += .31f;
+        GlStateManager.rotate(xangle, 1f, 0, 0); //xangle += .16f;
+        GlStateManager.rotate(yangle, 0, 1f, 0); //yangle += .09f;
+        GlStateManager.rotate(zangle, 0, 0, 1f); //zangle += .31f;
         GlStateManager.scale(scale, scale, scale);
 
         GlStateManager.disableBlend();
@@ -194,6 +245,49 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
         BlockPos offset = new BlockPos(0, 128, 0);
         BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
 
+        TLongHashSet positions = getPositions(stack, shape, solid, base, offset, clamped);
+
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+
+        renderFaces(tessellator, buffer, positions);
+        renderOutline(tessellator, buffer, positions);
+        renderAxis(tessellator, buffer, dimension.getX()/2.0f, dimension.getY()/2.0f, dimension.getZ()/2.0f);
+
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+
+        GlStateManager.popMatrix();
+
+        GlStateManager.glLineWidth(3);
+        buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+        buffer.pos(x+30, y+150, 0)  .color(1f, 0f, 0f, 1f).endVertex();
+        buffer.pos(x+50, y+150, 0)  .color(1f, 0f, 0f, 1f).endVertex();
+        buffer.pos(x+30, y+165, 0)  .color(0f, 1f, 0f, 1f).endVertex();
+        buffer.pos(x+50, y+165, 0)  .color(0f, 1f, 0f, 1f).endVertex();
+        buffer.pos(x+30, y+180, 0)  .color(0f, 0f, 1f, 1f).endVertex();
+        buffer.pos(x+50, y+180, 0)  .color(0f, 0f, 1f, 1f).endVertex();
+        tessellator.draw();
+
+
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+        RenderHelper.enableGUIStandardItemLighting();
+    }
+
+    private void renderAxis(Tessellator tessellator, VertexBuffer buffer, float xlen, float ylen, float zlen) {
+        BlockPos base = new BlockPos(0, 0, 0);
+        // X, Y, Z axis
+        GlStateManager.glLineWidth(2.5f);
+        buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+        buffer.pos(0, 0, 0)     .color(1f, 0f, 0f, 1f).endVertex();
+        buffer.pos(xlen, 0, 0)  .color(1f, 0f, 0f, 1f).endVertex();
+        buffer.pos(0, 0, 0)     .color(0f, 1f, 0f, 1f).endVertex();
+        buffer.pos(0, ylen, 0)  .color(0f, 1f, 0f, 1f).endVertex();
+        buffer.pos(0, 0, 0)     .color(0f, 0f, 1f, 1f).endVertex();
+        buffer.pos(0, 0, zlen)  .color(0f, 0f, 1f, 1f).endVertex();
+        tessellator.draw();
+    }
+
+    private TLongHashSet getPositions(ItemStack stack, Shape shape, boolean solid, BlockPos base, BlockPos offset, BlockPos clamped) {
         TLongHashSet positions = new TLongHashSet();
         ShapeCardItem.composeShape(stack, shape, solid, null, new BlockPos(0, 0, 0), clamped, offset, new AbstractCollection<BlockPos>() {
             @Override
@@ -208,7 +302,7 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
 
             @Override
             public boolean add(BlockPos coordinate) {
-                positions.add(coordinate.toLong());
+                positions.add(base.add(coordinate).toLong());
                 return true;
             }
 
@@ -217,15 +311,7 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
                 return 0;
             }
         }, ShapeCardItem.MAXIMUM_COUNT+1, false, null);
-
-        renderFaces(stack, tessellator, buffer, base, shape, offset, clamped, positions);
-        renderOutline(stack, tessellator, buffer, base, shape, offset, clamped, positions);
-
-        GlStateManager.popMatrix();
-
-        GlStateManager.enableTexture2D();
-        GlStateManager.disableBlend();
-        RenderHelper.enableGUIStandardItemLighting();
+        return positions;
     }
 
     private boolean isPositionEnclosed(TLongHashSet positions, BlockPos coordinate) {
@@ -237,7 +323,7 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
                 positions.contains(coordinate.north().toLong());
     }
 
-    private void renderOutline(ItemStack stack, Tessellator tessellator, final VertexBuffer buffer, final BlockPos base, Shape shape, BlockPos offset, BlockPos clamped,
+    private void renderOutline(Tessellator tessellator, final VertexBuffer buffer,
                                TLongHashSet positions) {
         GlStateManager.glLineWidth(1);
         buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
@@ -246,40 +332,94 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
             long p = iterator.next();
             BlockPos coordinate = BlockPos.fromLong(p);
             if (!isPositionEnclosed(positions, coordinate)) {
-                mcjty.lib.gui.RenderHelper.renderHighLightedBlocksOutline(buffer,
-                        base.getX() + coordinate.getX(), base.getY() + coordinate.getY(), base.getZ() + coordinate.getZ(),
-                        1, 1, 1, 1.0f);
+                renderHighLightedBlocksOutline(buffer,
+                        coordinate.getX(), coordinate.getY(), coordinate.getZ(),
+                        .5f ,5f ,5f, .5f);
             }
         }
+
         tessellator.draw();
     }
 
-    private void renderFaces(ItemStack stack, Tessellator tessellator, final VertexBuffer buffer, final BlockPos base, Shape shape, BlockPos offset, BlockPos clamped,
+    private void renderFaces(Tessellator tessellator, final VertexBuffer buffer,
                              TLongHashSet positions) {
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        GlStateManager.enableBlend();
+        GlStateManager.enableAlpha();
+
         TLongIterator iterator = positions.iterator();
         while (iterator.hasNext()) {
             long p = iterator.next();
             BlockPos coordinate = BlockPos.fromLong(p);
             if (!isPositionEnclosed(positions, coordinate)) {
-                float x = base.getX() + coordinate.getX();
-                float y = base.getY() + coordinate.getY();
-                float z = base.getZ() + coordinate.getZ();
-                buffer.setTranslation(buffer.xOffset + x, buffer.yOffset + y, buffer.zOffset + z);
+                float x = coordinate.getX();
+                float y = coordinate.getY();
+                float z = coordinate.getZ();
 
-                addSideFullTexture(buffer, EnumFacing.UP.ordinal(), 1f, 0, 0, .5f, 1);
-                addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), 1f, 0, 0, 0, 1);
-                addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), 1f, 0, 0, 1, 0);
-                addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), 1f, 0, .5f, 1, 0);
-                addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), 1f, 0, 1, 0, 0);
-                addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), 1f, 0, 1, .5f, 0);
+                buffer.setTranslation(buffer.xOffset + x, buffer.yOffset + y, buffer.zOffset + z);
+                if (!positions.contains(coordinate.up().toLong())) {
+                    addSideFullTexture(buffer, EnumFacing.UP.ordinal(), 0, 1, 0);
+                }
+                if (!positions.contains(coordinate.down().toLong())) {
+                    addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), 0, 1, 0);
+                }
+                if (!positions.contains(coordinate.north().toLong())) {
+                    addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), 0, 0, 1);
+                }
+                if (!positions.contains(coordinate.south().toLong())) {
+                    addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), 0, 0, 1);
+                }
+                if (!positions.contains(coordinate.west().toLong())) {
+                    addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), 1, 0, 0);
+                }
+                if (!positions.contains(coordinate.east().toLong())) {
+                    addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), 1, 0, 0);
+                }
                 buffer.setTranslation(buffer.xOffset - x, buffer.yOffset - y, buffer.zOffset - z);
             }
         }
         tessellator.draw();
+        GlStateManager.disableBlend();
+        GlStateManager.disableAlpha();
+
     }
 
-    private static final Quad[] quads = new Quad[] {
+    private static void bufpos(VertexBuffer buffer, float mx, float my, float mz, float r, float g, float b, float a) {
+        buffer.pos(mx, my, mz).color(r, g, b, a).endVertex();
+    }
+
+    private static void renderHighLightedBlocksOutline(VertexBuffer buffer, float mx, float my, float mz, float r, float g, float b, float a) {
+        buffer.pos(mx, my, mz).color(r, g, b, a).endVertex();
+        buffer.pos(mx+1, my, mz).color(r, g, b, a).endVertex();
+        buffer.pos(mx, my, mz).color(r, g, b, a).endVertex();
+        buffer.pos(mx, my+1, mz).color(r, g, b, a).endVertex();
+        buffer.pos(mx, my, mz).color(r, g, b, a).endVertex();
+        buffer.pos(mx, my, mz+1).color(r, g, b, a).endVertex();
+        buffer.pos(mx+1, my+1, mz+1).color(r, g, b, a).endVertex();
+        buffer.pos(mx, my+1, mz+1).color(r, g, b, a).endVertex();
+        buffer.pos(mx+1, my+1, mz+1).color(r, g, b, a).endVertex();
+        buffer.pos(mx+1, my, mz+1).color(r, g, b, a).endVertex();
+        buffer.pos(mx+1, my+1, mz+1).color(r, g, b, a).endVertex();
+        buffer.pos(mx+1, my+1, mz).color(r, g, b, a).endVertex();
+
+        buffer.pos(mx, my+1, mz).color(r, g, b, a).endVertex();
+        buffer.pos(mx, my+1, mz+1).color(r, g, b, a).endVertex();
+        buffer.pos(mx, my+1, mz).color(r, g, b, a).endVertex();
+        buffer.pos(mx+1, my+1, mz).color(r, g, b, a).endVertex();
+
+        buffer.pos(mx+1, my, mz).color(r, g, b, a).endVertex();
+        buffer.pos(mx+1, my, mz+1).color(r, g, b, a).endVertex();
+        buffer.pos(mx+1, my, mz).color(r, g, b, a).endVertex();
+        buffer.pos(mx+1, my+1, mz).color(r, g, b, a).endVertex();
+
+        buffer.pos(mx, my, mz+1).color(r, g, b, a).endVertex();
+        buffer.pos(mx+1, my, mz+1).color(r, g, b, a).endVertex();
+        buffer.pos(mx, my, mz+1).color(r, g, b, a).endVertex();
+        buffer.pos(mx, my+1, mz+1).color(r, g, b, a).endVertex();
+
+    }
+
+    private static final Quad[] QUADS = new Quad[] {
             new Quad(new Vt(0, 0, 0), new Vt(1, 0, 0), new Vt(1, 0, 1), new Vt(0, 0, 1)),       // DOWN
             new Quad(new Vt(0, 1, 1), new Vt(1, 1, 1), new Vt(1, 1, 0), new Vt(0, 1, 0)),       // UP
             new Quad(new Vt(1, 1, 0), new Vt(1, 0, 0), new Vt(0, 0, 0), new Vt(0, 1, 0)),       // NORTH
@@ -289,19 +429,13 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
     };
 
 
-    public static void addSideFullTexture(VertexBuffer buffer, int side, float mult, float offset, float r, float g, float b) {
-        int brightness = 240;
-        int b1 = brightness >> 16 & 65535;
-        int b2 = brightness & 65535;
-        float u1 = 0;
-        float v1 = 0;
-        float u2 = 1;
-        float v2 = 1;
-        Quad quad = quads[side];
-        buffer.pos(quad.v1.x * mult + offset, quad.v1.y * mult + offset, quad.v1.z * mult + offset).color(r, g, b, 1.0f).endVertex();
-        buffer.pos(quad.v2.x * mult + offset, quad.v2.y * mult + offset, quad.v2.z * mult + offset).color(r, g, b, 1.0f).endVertex();
-        buffer.pos(quad.v3.x * mult + offset, quad.v3.y * mult + offset, quad.v3.z * mult + offset).color(r, g, b, 1.0f).endVertex();
-        buffer.pos(quad.v4.x * mult + offset, quad.v4.y * mult + offset, quad.v4.z * mult + offset).color(r, g, b, 1.0f).endVertex();
+    public static void addSideFullTexture(VertexBuffer buffer, int side, float r, float g, float b) {
+        Quad quad = QUADS[side];
+        float a = 0.5f;
+        buffer.pos(quad.v1.x, quad.v1.y, quad.v1.z).color(r, g, b, a).endVertex();
+        buffer.pos(quad.v2.x, quad.v2.y, quad.v2.z).color(r, g, b, a).endVertex();
+        buffer.pos(quad.v3.x, quad.v3.y, quad.v3.z).color(r, g, b, a).endVertex();
+        buffer.pos(quad.v4.x, quad.v4.y, quad.v4.z).color(r, g, b, a).endVertex();
     }
 
     private static class Vt {
@@ -328,16 +462,6 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
             this.v2 = v2;
             this.v3 = v3;
             this.v4 = v4;
-        }
-
-        public Quad rotate(EnumFacing direction) {
-            switch (direction) {
-                case NORTH: return new Quad(v4, v1, v2, v3);
-                case EAST: return new Quad(v3, v4, v1, v2);
-                case SOUTH: return new Quad(v2, v3, v4, v1);
-                case WEST: return this;
-                default: return this;
-            }
         }
     }
 
