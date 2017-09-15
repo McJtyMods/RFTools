@@ -51,7 +51,7 @@ public class Formulas {
         @Override
         public IFormula createFormula() {
             return new IFormula() {
-                private BlockPos thisCoordx;
+                private BlockPos thisCoord;
                 private BlockPos dimension;
                 private BlockPos offset;
                 private List<IFormula> formulas = new ArrayList<>();
@@ -60,9 +60,13 @@ public class Formulas {
 
                 @Override
                 public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
-                    this.thisCoordx = thisCoord;
+                    this.thisCoord = thisCoord;
                     this.dimension = dimension;
                     this.offset = offset;
+
+                    System.out.println("dimension = " + dimension);
+                    System.out.println("offset = " + offset);
+                    System.out.println("thisCoord = " + thisCoord);
 
                     if (card == null) {
                         return;
@@ -93,6 +97,9 @@ public class Formulas {
 
                 @Override
                 public int isInside(int x, int y, int z) {
+                    x -= thisCoord.getX();
+                    y -= thisCoord.getY();
+                    z -= thisCoord.getZ();
                     int ok = 0;
                     for (int i = 0 ; i < formulas.size() ; i++) {
                         IFormula formula = formulas.get(i);
@@ -130,7 +137,7 @@ public class Formulas {
                                 ty = o.getY() - (ty-o.getY());
                             }
 
-                            inside = formula.isInside(tx, ty, tz);
+                            inside = formula.isInside(tx+thisCoord.getX(), ty+thisCoord.getY(), tz+thisCoord.getZ());
                         }
 
                         switch (modifier.getOperation()) {
