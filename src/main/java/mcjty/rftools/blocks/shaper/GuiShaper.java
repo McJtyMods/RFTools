@@ -7,8 +7,8 @@ import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.WindowManager;
 import mcjty.lib.gui.layout.PositionalLayout;
+import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Button;
-import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.tools.ItemStackTools;
@@ -52,6 +52,8 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
     private ChoiceLabel operationLabels[] = new ChoiceLabel[ShaperContainer.SLOT_COUNT];
     private Button configButton[] = new Button[ShaperContainer.SLOT_COUNT];
     private Button outConfigButton;
+    private ToggleButton showAxis;
+    private ToggleButton showOuter;
 
     // For GuiShapeCard: the current card to edit
     public static BlockPos shaperBlock = null;
@@ -104,19 +106,35 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
         outConfigButton.setTooltips("Click to open the card gui");
         toplevel.addChild(outConfigButton);
 
+        showAxis = new ToggleButton(mc, this).setCheckMarker(true).setText("Axis").setLayoutHint(new PositionalLayout.PositionalHint(3, 176, 38, 16));
+        showAxis.setPressed(true);
+        toplevel.addChild(showAxis);
+        showOuter = new ToggleButton(mc, this).setCheckMarker(true).setText("Box").setLayoutHint(new PositionalLayout.PositionalHint(42, 176, 38, 16));
+        showOuter.setPressed(true);
+        toplevel.addChild(showOuter);
+
+        toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
+
+        Panel sidePanel = new Panel(mc, this).setLayout(new PositionalLayout()).setBackground(sideBackground);
         String[] tt = {
                 "Drag left mouse button to rotate",
                 "Shift drag left mouse to pan",
                 "Use mouse wheel to zoom in/out",
                 "Use middle click to reset rotation" };
-        toplevel.addChild(new Label<>(mc, this).setText("E/W").setColor(0xffff0000).setTooltips(tt).setLayoutHint(new PositionalLayout.PositionalHint(5, 145, 20, 15)));
-        toplevel.addChild(new Label<>(mc, this).setText("U/D").setColor(0xff00ff00).setTooltips(tt).setLayoutHint(new PositionalLayout.PositionalHint(5, 160, 20, 15)));
-        toplevel.addChild(new Label<>(mc, this).setText("N/S").setColor(0xff0000ff).setTooltips(tt).setLayoutHint(new PositionalLayout.PositionalHint(5, 175, 20, 15)));
+        sidePanel.addChild(new Label<>(mc, this).setText("E").setColor(0xffff0000).setTooltips(tt).setLayoutHint(new PositionalLayout.PositionalHint(5, 175, 15, 15)));
+        sidePanel.addChild(new Label<>(mc, this).setText("W").setColor(0xffff0000).setTooltips(tt).setLayoutHint(new PositionalLayout.PositionalHint(40, 175, 15, 15)));
+        sidePanel.addChild(new Label<>(mc, this).setText("U").setColor(0xff00bb00).setTooltips(tt).setLayoutHint(new PositionalLayout.PositionalHint(5, 190, 15, 15)));
+        sidePanel.addChild(new Label<>(mc, this).setText("U").setColor(0xff00bb00).setTooltips(tt).setLayoutHint(new PositionalLayout.PositionalHint(40, 190, 15, 15)));
+        sidePanel.addChild(new Label<>(mc, this).setText("N").setColor(0xff0000ff).setTooltips(tt).setLayoutHint(new PositionalLayout.PositionalHint(5, 205, 15, 15)));
+        sidePanel.addChild(new Label<>(mc, this).setText("S").setColor(0xff0000ff).setTooltips(tt).setLayoutHint(new PositionalLayout.PositionalHint(40, 205, 15, 15)));
 
-        toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
+        for (int i = 0 ; i < ShaperContainer.SLOT_COUNT ; i++) {
+            ToggleButton flip = new ToggleButton(mc, this).setText("Flip").setCheckMarker(true).setLayoutHint(new PositionalLayout.PositionalHint(6, 7 + i*18, 35, 16));
+            sidePanel.addChild(flip);
+            ChoiceLabel rot = new ChoiceLabel(mc, this).addChoices("None", "X", "Y", "Z").setChoice("None").setLayoutHint(new PositionalLayout.PositionalHint(45, 7 + i*18, 35, 16));
+            sidePanel.addChild(rot);
+        }
 
-        Panel sidePanel = new Panel(mc, this).setLayout(new PositionalLayout()).setBackground(sideBackground);
-//                .addChild(listPanel);
         sidePanel.setBounds(new Rectangle(guiLeft-SIDEWIDTH, guiTop, SIDEWIDTH, ySize));
         sideWindow = new Window(this, sidePanel);
 
@@ -248,7 +266,7 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
         GL11.glScissor(sx, sy, sw, sh);
         GlStateManager.pushMatrix();
 
-        GlStateManager.translate(dx, dy, 100);
+        GlStateManager.translate(dx, dy, 200);
         GlStateManager.rotate(180-xangle, 1f, 0, 0); //xangle += .16f;
         GlStateManager.rotate(yangle, 0, 1f, 0); //yangle += .09f;
         GlStateManager.rotate(zangle, 0, 0, 1f); //zangle += .31f;
@@ -282,12 +300,12 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
 
         GlStateManager.glLineWidth(3);
         buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-        buffer.pos(x+30, y+150, 0)  .color(1f, 0f, 0f, 1f).endVertex();
-        buffer.pos(x+50, y+150, 0)  .color(1f, 0f, 0f, 1f).endVertex();
-        buffer.pos(x+30, y+165, 0)  .color(0f, 1f, 0f, 1f).endVertex();
-        buffer.pos(x+50, y+165, 0)  .color(0f, 1f, 0f, 1f).endVertex();
-        buffer.pos(x+30, y+180, 0)  .color(0f, 0f, 1f, 1f).endVertex();
-        buffer.pos(x+50, y+180, 0)  .color(0f, 0f, 1f, 1f).endVertex();
+        buffer.pos(x-62, y+180, 0)  .color(1f, 0f, 0f, 1f).endVertex();
+        buffer.pos(x-39, y+180, 0)  .color(1f, 0f, 0f, 1f).endVertex();
+        buffer.pos(x-62, y+195, 0)  .color(0f, 0.8f, 0f, 1f).endVertex();
+        buffer.pos(x-39, y+195, 0)  .color(0f, 0.8f, 0f, 1f).endVertex();
+        buffer.pos(x-62, y+210, 0)  .color(0f, 0f, 1f, 1f).endVertex();
+        buffer.pos(x-39, y+210, 0)  .color(0f, 0f, 1f, 1f).endVertex();
         tessellator.draw();
 
 
@@ -297,17 +315,48 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
     }
 
     private void renderAxis(Tessellator tessellator, VertexBuffer buffer, float xlen, float ylen, float zlen) {
-        BlockPos base = new BlockPos(0, 0, 0);
         // X, Y, Z axis
-        GlStateManager.glLineWidth(2.5f);
-        buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-        buffer.pos(0, 0, 0)     .color(1f, 0f, 0f, 1f).endVertex();
-        buffer.pos(xlen, 0, 0)  .color(1f, 0f, 0f, 1f).endVertex();
-        buffer.pos(0, 0, 0)     .color(0f, 1f, 0f, 1f).endVertex();
-        buffer.pos(0, ylen, 0)  .color(0f, 1f, 0f, 1f).endVertex();
-        buffer.pos(0, 0, 0)     .color(0f, 0f, 1f, 1f).endVertex();
-        buffer.pos(0, 0, zlen)  .color(0f, 0f, 1f, 1f).endVertex();
-        tessellator.draw();
+        if (showAxis.isPressed()) {
+            GlStateManager.glLineWidth(2.5f);
+            buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+            buffer.pos(0, 0, 0).color(1f, 0f, 0f, 1f).endVertex();
+            buffer.pos(xlen, 0, 0).color(1f, 0f, 0f, 1f).endVertex();
+            buffer.pos(0, 0, 0).color(0f, 1f, 0f, 1f).endVertex();
+            buffer.pos(0, ylen, 0).color(0f, 1f, 0f, 1f).endVertex();
+            buffer.pos(0, 0, 0).color(0f, 0f, 1f, 1f).endVertex();
+            buffer.pos(0, 0, zlen).color(0f, 0f, 1f, 1f).endVertex();
+            tessellator.draw();
+        }
+
+        if (showOuter.isPressed()) {
+            GlStateManager.glLineWidth(1.0f);
+            buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+            buffer.pos(-xlen, -xlen, -xlen).color(1f, 1f, 1f, 1f).endVertex();
+            buffer.pos(xlen, -xlen, -xlen).color(1f, 1f, 1f, 1f).endVertex();
+            buffer.pos(-xlen, -xlen, -xlen).color(1f, 1f, 1f, 1f).endVertex();
+            buffer.pos(-xlen, xlen, -xlen).color(1f, 1f, 1f, 1f).endVertex();
+            buffer.pos(-xlen, -xlen, -xlen).color(1f, 1f, 1f, 1f).endVertex();
+            buffer.pos(-xlen, -xlen, xlen).color(1f, 1f, 1f, 1f).endVertex();
+            buffer.pos(xlen, xlen, xlen).color(1f, 1f, 1f, 1f).endVertex();
+            buffer.pos(-xlen, xlen, xlen).color(1f, 1f, 1f, 1f).endVertex();
+            buffer.pos(xlen, xlen, xlen).color(1f, 1f, 1f, 1f).endVertex();
+            buffer.pos(xlen, -xlen, xlen).color(1f, 1f, 1f, 1f).endVertex();
+            buffer.pos(xlen, xlen, xlen).color(1f, 1f, 1f, 1f).endVertex();
+            buffer.pos(xlen, xlen, -xlen).color(1f, 1f, 1f, 1f).endVertex();
+            buffer.pos(xlen, -xlen, -xlen).color(1f, 1f, 1f, 1f).endVertex();
+            buffer.pos(xlen, -xlen, xlen).color(1f, 1f, 1f, 1f).endVertex();
+            buffer.pos(xlen, -xlen, -xlen).color(1f, 1f, 1f, 1f).endVertex();
+            buffer.pos(xlen, xlen, -xlen).color(1f, 1f, 1f, 1f).endVertex();
+            buffer.pos(-xlen, xlen, -xlen).color(1f, 1f, 1f, 1f).endVertex();
+            buffer.pos(xlen, xlen, -xlen).color(1f, 1f, 1f, 1f).endVertex();
+            buffer.pos(-xlen, xlen, -xlen).color(1f, 1f, 1f, 1f).endVertex();
+            buffer.pos(-xlen, xlen, xlen).color(1f, 1f, 1f, 1f).endVertex();
+            buffer.pos(-xlen, xlen, xlen).color(1f, 1f, 1f, 1f).endVertex();
+            buffer.pos(-xlen, -xlen, xlen).color(1f, 1f, 1f, 1f).endVertex();
+            buffer.pos(-xlen, -xlen, xlen).color(1f, 1f, 1f, 1f).endVertex();
+            buffer.pos(xlen, -xlen, xlen).color(1f, 1f, 1f, 1f).endVertex();
+            tessellator.draw();
+        }
     }
 
     private TLongHashSet getPositions(ItemStack stack, Shape shape, boolean solid, BlockPos base, BlockPos offset, BlockPos clamped) {

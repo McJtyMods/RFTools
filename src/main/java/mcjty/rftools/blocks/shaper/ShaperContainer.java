@@ -14,7 +14,7 @@ public class ShaperContainer extends GenericContainer {
 
     public static final int SLOT_OUT = 0;
     public static final int SLOT_TABS = 1;
-    public static final int SLOT_COUNT = 7;
+    public static final int SLOT_COUNT = 9;
 
     public static final ContainerFactory factory = new ContainerFactory() {
         @Override

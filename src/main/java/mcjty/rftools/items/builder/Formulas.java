@@ -11,6 +11,36 @@ import java.util.List;
 
 public class Formulas {
 
+    private static class Bounds {
+        private BlockPos p1;
+        private BlockPos p2;
+
+        public Bounds(BlockPos p1, BlockPos p2) {
+            this.p1 = p1;
+            this.p2 = p2;
+        }
+
+        public BlockPos getP1() {
+            return p1;
+        }
+
+        public BlockPos getP2() {
+            return p2;
+        }
+
+        public boolean in(BlockPos p) {
+            int x = p.getX();
+            int y = p.getY();
+            int z = p.getZ();
+            return in(x, y, z);
+        }
+
+        public boolean in(int x, int y, int z) {
+            return x >= p1.getX() && x < p2.getX() && y >= p1.getY() && y < p2.getY() && z >= p1.getZ() && z < p2.getZ();
+        }
+    }
+
+
     static final IFormulaFactory FORMULA_CUSTOM = new IFormulaFactory() {
         @Override
         public IFormula createFormula() {
@@ -19,6 +49,7 @@ public class Formulas {
                 private BlockPos dimension;
                 private BlockPos offset;
                 private List<IFormula> formulas = new ArrayList<>();
+                private List<Bounds> bounds = new ArrayList<>();
                 private List<ShapeOperation> operations = new ArrayList<>();
 
                 @Override
@@ -37,7 +68,10 @@ public class Formulas {
 
                         BlockPos dim = ShapeCardItem.getClampedDimension(childTag, ShieldConfiguration.maxShieldDimension);
                         BlockPos off = ShapeCardItem.getClampedOffset(childTag, ShieldConfiguration.maxShieldOffset);
-                        formula.setup(thisCoord, dim, off.add(offset), childTag);
+                        BlockPos o = off.add(offset);
+                        formula.setup(thisCoord, dim, o, childTag);
+                        BlockPos tl = new BlockPos(o.getX() - dim.getX()/2, o.getY() - dim.getY()/2, o.getZ() - dim.getZ()/2);
+                        bounds.add(new Bounds(tl, tl.add(dim)));
 
                         formulas.add(formula);
                         String op = childTag.getString("op");
@@ -50,7 +84,8 @@ public class Formulas {
                     int ok = 0;
                     for (int i = 0 ; i < formulas.size() ; i++) {
                         IFormula formula = formulas.get(i);
-                        int inside = formula.isInside(x, y, z);
+                        Bounds bounds = this.bounds.get(i);
+                        int inside = bounds.in(x, y, z) ? formula.isInside(x, y, z) : 0;
                         switch (operations.get(i)) {
                             case UNION:
                                 if (inside == 1) {
