@@ -10,6 +10,7 @@ import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -606,19 +607,19 @@ public class ShapeCardItem extends GenericRFToolsItem {
         final int[] cnt = {0};
         BlockPos offset = new BlockPos(0, 128, 0);
         BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
-        composeShape(ItemStackTools.getEmptyStack(), shape, solid, null, new BlockPos(0, 0, 0), clamped, offset, new AbstractCollection<BlockPos>() {
+        composeShape(ItemStackTools.getEmptyStack(), shape, solid, null, new BlockPos(0, 0, 0), clamped, offset, new AbstractCollection<BlockPosState>() {
             @Override
-            public Iterator<BlockPos> iterator() {
-                return new AbstractIterator<BlockPos>() {
+            public Iterator<BlockPosState> iterator() {
+                return new AbstractIterator<BlockPosState>() {
                     @Override
-                    protected BlockPos computeNext() {
+                    protected BlockPosState computeNext() {
                         return null;
                     }
                 };
             }
 
             @Override
-            public boolean add(BlockPos coordinate) {
+            public boolean add(BlockPosState coordinate) {
                 cnt[0]++;
                 return true;
             }
@@ -647,13 +648,13 @@ public class ShapeCardItem extends GenericRFToolsItem {
         }
     }
 
-    public static void composeShape(ItemStack shapeCard, Shape shape, boolean solid, World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean forquarry,
+    public static void composeShape(ItemStack shapeCard, Shape shape, boolean solid, World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPosState> blocks, int maxSize, boolean forquarry,
                                     ChunkPos chunk) {
         composeFormula(shapeCard, shape.getFormulaFactory().createFormula(), worldObj, thisCoord, dimension, offset, blocks, maxSize, solid, forquarry, chunk);
     }
 
-    private static void placeBlockIfPossible(World worldObj, Collection<BlockPos> blocks, int maxSize, int x, int y, int z, boolean forquarry) {
-        BlockPos c = new BlockPos(x, y, z);
+    private static void placeBlockIfPossible(World worldObj, Collection<BlockPosState> blocks, int maxSize, int x, int y, int z, IBlockState state, boolean forquarry) {
+        BlockPosState c = new BlockPosState(x, y, z, state);
         if (worldObj == null) {
             blocks.add(c);
             return;
@@ -671,7 +672,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
     }
 
 
-    private static void composeFormula(ItemStack shapeCard, IFormula formula, World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean solid, boolean forquarry, ChunkPos chunk) {
+    private static void composeFormula(ItemStack shapeCard, IFormula formula, World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPosState> blocks, int maxSize, boolean solid, boolean forquarry, ChunkPos chunk) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
         int zCoord = thisCoord.getZ();
@@ -693,7 +694,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
                             int y = tl.getY() + oy;
 //                            if (y >= yCoord-dy/2 && y < yCoord+dy/2) {    @todo!!!
                                 if (formula.isInside(x, y, z) == 1) {
-                                    placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
+                                    placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, formula.getLastState(), forquarry);
                                 }
 //                            }
                         }

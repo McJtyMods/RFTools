@@ -1,5 +1,6 @@
 package mcjty.rftools.items.builder;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 
@@ -8,6 +9,9 @@ public interface IFormula {
     void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card);
 
     int isInside(int x, int y, int z);
+
+    /// Return the blockstate resulting from the last isInside test
+    default IBlockState getLastState() { return null; }
 
     default boolean isBorder(int x, int y, int z) {
         if (isInside(x, y, z) == 0) {
@@ -32,6 +36,11 @@ public interface IFormula {
                 @Override
                 public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
                     IFormula.this.setup(thisCoord, dimension, offset, card);
+                }
+
+                @Override
+                public IBlockState getLastState() {
+                    return IFormula.this.getLastState();
                 }
 
                 @Override

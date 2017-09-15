@@ -6,7 +6,9 @@ import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.items.builder.*;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -39,6 +41,14 @@ public class ShaperTileEntity extends GenericTileEntity implements DefaultSidedI
                             copy.setString("mod_op", modifier.getOperation().getCode());
                             copy.setBoolean("mod_flipy", modifier.isFlipY());
                             copy.setString("mod_rot", modifier.getRotation().getCode());
+                            ItemStack materialGhost = getStackInSlot(i + ShaperContainer.SLOT_COUNT);
+                            if (ItemStackTools.isValid(materialGhost)) {
+                                Block block = Block.getBlockFromItem(materialGhost.getItem());
+                                if (block != null) {
+                                    copy.setString("ghost_block", block.getRegistryName().toString());
+                                    copy.setInteger("ghost_meta", materialGhost.getMetadata());
+                                }
+                            }
                             list.appendTag(copy);
                         }
                     }

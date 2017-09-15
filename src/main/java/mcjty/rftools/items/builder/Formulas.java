@@ -1,10 +1,14 @@
 package mcjty.rftools.items.builder;
 
 import mcjty.rftools.blocks.shield.ShieldConfiguration;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,19 +58,17 @@ public class Formulas {
                 private BlockPos thisCoord;
                 private BlockPos dimension;
                 private BlockPos offset;
+                private IBlockState blockState;
                 private List<IFormula> formulas = new ArrayList<>();
                 private List<Bounds> bounds = new ArrayList<>();
                 private List<ShapeModifier> modifiers = new ArrayList<>();
+                private List<IBlockState> blockStates = new ArrayList<>();
 
                 @Override
                 public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
                     this.thisCoord = thisCoord;
                     this.dimension = dimension;
                     this.offset = offset;
-
-                    System.out.println("dimension = " + dimension);
-                    System.out.println("offset = " + offset);
-                    System.out.println("thisCoord = " + thisCoord);
 
                     if (card == null) {
                         return;
@@ -92,11 +94,27 @@ public class Formulas {
                         dim = rotation.transformDimension(dim);
                         BlockPos tl = new BlockPos(o.getX() - dim.getX()/2, o.getY() - dim.getY()/2, o.getZ() - dim.getZ()/2);
                         bounds.add(new Bounds(tl, tl.add(dim), o));
+
+                        IBlockState state = null;
+                        if (childTag.hasKey("ghost_block")) {
+                            Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(childTag.getString("ghost_block")));
+                            if (block != null) {
+                                int meta = childTag.getInteger("ghost_meta");
+                                state = block.getStateFromMeta(meta);
+                            }
+                        }
+                        blockStates.add(state);
                     }
                 }
 
                 @Override
+                public IBlockState getLastState() {
+                    return blockState;
+                }
+
+                @Override
                 public int isInside(int x, int y, int z) {
+                    blockState = null;
                     x -= thisCoord.getX();
                     y -= thisCoord.getY();
                     z -= thisCoord.getZ();
@@ -144,6 +162,7 @@ public class Formulas {
                             case UNION:
                                 if (inside == 1) {
                                     ok = 1;
+                                    blockState = blockStates.get(i);
                                 }
                                 break;
                             case SUBTRACT:
@@ -154,6 +173,7 @@ public class Formulas {
                             case INTERSECT:
                                 if (inside == 1 && ok == 1) {
                                     ok = 1;
+                                    blockState = blockStates.get(i);
                                 } else {
                                     ok = 0;
                                 }

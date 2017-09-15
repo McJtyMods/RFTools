@@ -368,19 +368,19 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
 
     private TLongHashSet getPositions(ItemStack stack, Shape shape, boolean solid, BlockPos clamped) {
         TLongHashSet positions = new TLongHashSet();
-        ShapeCardItem.composeShape(stack, shape, solid, null, new BlockPos(0, 0, 0), clamped, new BlockPos(0, 0, 0), new AbstractCollection<BlockPos>() {
+        ShapeCardItem.composeShape(stack, shape, solid, null, new BlockPos(0, 0, 0), clamped, new BlockPos(0, 0, 0), new AbstractCollection<BlockPosState>() {
             @Override
-            public Iterator<BlockPos> iterator() {
-                return new AbstractIterator<BlockPos>() {
+            public Iterator<BlockPosState> iterator() {
+                return new AbstractIterator<BlockPosState>() {
                     @Override
-                    protected BlockPos computeNext() {
+                    protected BlockPosState computeNext() {
                         return null;
                     }
                 };
             }
 
             @Override
-            public boolean add(BlockPos coordinate) {
+            public boolean add(BlockPosState coordinate) {
                 positions.add(coordinate.toLong());
                 return true;
             }

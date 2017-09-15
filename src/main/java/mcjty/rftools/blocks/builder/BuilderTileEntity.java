@@ -12,6 +12,7 @@ import mcjty.lib.varia.*;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.hud.IHudSupport;
+import mcjty.rftools.items.builder.BlockPosState;
 import mcjty.rftools.items.builder.Shape;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.storage.StorageFilterCache;
@@ -137,7 +138,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private ChunkPos forcedChunk = null;
 
     // Cached set of blocks that we need to build in shaped mode
-    private Set<BlockPos> cachedBlocks = null;
+    private Set<BlockPosState> cachedBlocks = null;
     private ChunkPos cachedChunk = null;       // For which chunk are the cachedBlocks valid
 
     // Cached set of blocks that we want to void with the quarry.
@@ -282,7 +283,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
         BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
         Shape shape = ShapeCardItem.getShape(shapeCard);
-        List<BlockPos> blocks = new ArrayList<>();
+        List<BlockPosState> blocks = new ArrayList<>();
         ShapeCardItem.composeShape(shapeCard, shape, false, getWorld(), getPos(), dimension, offset, blocks,
                 BuilderConfiguration.maxBuilderDimension * 256 * BuilderConfiguration.maxBuilderDimension, false, null);
         for (BlockPos p : blocks) {
@@ -343,7 +344,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
         BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
         Shape shape = ShapeCardItem.getShape(shapeCard);
-        List<BlockPos> blocks = new ArrayList<BlockPos>();
+        List<BlockPosState> blocks = new ArrayList<>();
         ShapeCardItem.composeShape(shapeCard, shape, false, getWorld(), getPos(), dimension, offset, blocks, BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension, false, null);
         for (BlockPos block : blocks) {
             if (getWorld().getBlockState(block).getBlock() == BuilderSetup.supportBlock) {
@@ -836,7 +837,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return chamberChannel;
     }
 
-    private Set<BlockPos> getCachedBlocks(ChunkPos chunk) {
+    private Set<BlockPosState> getCachedBlocks(ChunkPos chunk) {
         if ((chunk != null && !chunk.equals(cachedChunk)) || (chunk == null && cachedChunk != null)) {
             cachedBlocks = null;
         }
