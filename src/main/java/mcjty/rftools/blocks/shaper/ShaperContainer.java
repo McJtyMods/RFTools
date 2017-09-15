@@ -12,9 +12,11 @@ import net.minecraft.item.ItemStack;
 public class ShaperContainer extends GenericContainer {
     public static final String CONTAINER_INVENTORY = "container";
 
+    public static final int SLOT_COUNT = 9;
+
     public static final int SLOT_OUT = 0;
     public static final int SLOT_TABS = 1;
-    public static final int SLOT_COUNT = 9;
+    public static final int SLOT_GHOSTS = SLOT_TABS + SLOT_COUNT;
 
     public static final ContainerFactory factory = new ContainerFactory() {
         @Override
@@ -22,8 +24,10 @@ public class ShaperContainer extends GenericContainer {
             addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
                     new ItemStack(BuilderSetup.shapeCardItem)), CONTAINER_INVENTORY, SLOT_OUT, 18, 200);
             addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
-                    new ItemStack(BuilderSetup.shapeCardItem)),
+                            new ItemStack(BuilderSetup.shapeCardItem)),
                     CONTAINER_INVENTORY, SLOT_TABS, 18, 7, 1, 18, SLOT_COUNT, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_GHOST),
+                    CONTAINER_INVENTORY, SLOT_GHOSTS, 36, 7, 1, 18, SLOT_COUNT, 18);
             layoutPlayerInventorySlots(85, 142);
         }
     };

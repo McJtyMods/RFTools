@@ -7,16 +7,15 @@ import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.WindowManager;
 import mcjty.lib.gui.layout.PositionalLayout;
-import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Button;
+import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.builder.Shape;
-import mcjty.rftools.items.builder.ShapeCardItem;
-import mcjty.rftools.items.builder.ShapeOperation;
+import mcjty.rftools.items.builder.*;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -50,6 +49,8 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
     private static final ResourceLocation guiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     private ChoiceLabel operationLabels[] = new ChoiceLabel[ShaperContainer.SLOT_COUNT];
+    private ChoiceLabel rotationLabels[] = new ChoiceLabel[ShaperContainer.SLOT_COUNT];
+    private ToggleButton flipButtons[] = new ToggleButton[ShaperContainer.SLOT_COUNT];
     private Button configButton[] = new Button[ShaperContainer.SLOT_COUNT];
     private Button outConfigButton;
     private ToggleButton showAxis;
@@ -75,7 +76,8 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
-        ShapeOperation[] operations = tileEntity.getOperations();
+        ShapeModifier[] modifiers = tileEntity.getModifiers();
+
         operationLabels[0] = null;
         for (int i = 0 ; i < ShaperContainer.SLOT_COUNT ; i++) {
             operationLabels[i] = new ChoiceLabel(mc, this).addChoices(
@@ -85,8 +87,8 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
             for (ShapeOperation operation : ShapeOperation.values()) {
                 operationLabels[i].setChoiceTooltip(operation.getCode(), operation.getDescription());
             }
-            operationLabels[i].setLayoutHint(new PositionalLayout.PositionalHint(39, 7 + i*18, 40, 16));
-            operationLabels[i].setChoice(operations[i].getCode());
+            operationLabels[i].setLayoutHint(new PositionalLayout.PositionalHint(55, 7 + i*18, 26, 16));
+            operationLabels[i].setChoice(modifiers[i].getOperation().getCode());
             operationLabels[i].addChoiceEvent((parent, newChoice) -> update());
             toplevel.addChild(operationLabels[i]);
         }
@@ -124,15 +126,21 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
         sidePanel.addChild(new Label<>(mc, this).setText("E").setColor(0xffff0000).setTooltips(tt).setLayoutHint(new PositionalLayout.PositionalHint(5, 175, 15, 15)));
         sidePanel.addChild(new Label<>(mc, this).setText("W").setColor(0xffff0000).setTooltips(tt).setLayoutHint(new PositionalLayout.PositionalHint(40, 175, 15, 15)));
         sidePanel.addChild(new Label<>(mc, this).setText("U").setColor(0xff00bb00).setTooltips(tt).setLayoutHint(new PositionalLayout.PositionalHint(5, 190, 15, 15)));
-        sidePanel.addChild(new Label<>(mc, this).setText("U").setColor(0xff00bb00).setTooltips(tt).setLayoutHint(new PositionalLayout.PositionalHint(40, 190, 15, 15)));
+        sidePanel.addChild(new Label<>(mc, this).setText("D").setColor(0xff00bb00).setTooltips(tt).setLayoutHint(new PositionalLayout.PositionalHint(40, 190, 15, 15)));
         sidePanel.addChild(new Label<>(mc, this).setText("N").setColor(0xff0000ff).setTooltips(tt).setLayoutHint(new PositionalLayout.PositionalHint(5, 205, 15, 15)));
         sidePanel.addChild(new Label<>(mc, this).setText("S").setColor(0xff0000ff).setTooltips(tt).setLayoutHint(new PositionalLayout.PositionalHint(40, 205, 15, 15)));
 
         for (int i = 0 ; i < ShaperContainer.SLOT_COUNT ; i++) {
             ToggleButton flip = new ToggleButton(mc, this).setText("Flip").setCheckMarker(true).setLayoutHint(new PositionalLayout.PositionalHint(6, 7 + i*18, 35, 16));
+            flip.setPressed(modifiers[i].isFlipY());
+            flip.addButtonEvent(parent -> update());
             sidePanel.addChild(flip);
+            flipButtons[i] = flip;
             ChoiceLabel rot = new ChoiceLabel(mc, this).addChoices("None", "X", "Y", "Z").setChoice("None").setLayoutHint(new PositionalLayout.PositionalHint(45, 7 + i*18, 35, 16));
+            rot.setChoice(modifiers[i].getRotation().getCode());
+            rot.addChoiceEvent((parent, newChoice) -> update());
             sidePanel.addChild(rot);
+            rotationLabels[i] = rot;
         }
 
         sidePanel.setBounds(new Rectangle(guiLeft-SIDEWIDTH, guiTop, SIDEWIDTH, ySize));
@@ -172,12 +180,13 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
     }
 
     private void update() {
-        ShapeOperation[] operations = new ShapeOperation[ShaperContainer.SLOT_COUNT];
-        operations[0] = ShapeOperation.UNION;
-        for (int i = 1 ; i < ShaperContainer.SLOT_COUNT ; i++) {
-            operations[i] = ShapeOperation.getByName(operationLabels[i].getCurrentChoice());
+        ShapeModifier[] modifiers = new ShapeModifier[ShaperContainer.SLOT_COUNT];
+        for (int i = 0 ; i < ShaperContainer.SLOT_COUNT ; i++) {
+            ShapeOperation op = ShapeOperation.getByName(operationLabels[i].getCurrentChoice());
+            ShapeRotation rot = ShapeRotation.getByName(rotationLabels[i].getCurrentChoice());
+            modifiers[i] = new ShapeModifier(op, flipButtons[i].isPressed(), rot);
         }
-        network.sendToServer(new PacketSendShaperData(tileEntity.getPos(), operations));
+        network.sendToServer(new PacketSendShaperData(tileEntity.getPos(), modifiers));
     }
 
     @Override
@@ -279,14 +288,12 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
         Tessellator tessellator = Tessellator.getInstance();
         VertexBuffer buffer = tessellator.getBuffer();
 
-        BlockPos base = new BlockPos(0, -128, 0);
         Shape shape = ShapeCardItem.getShape(stack);
         boolean solid = ShapeCardItem.isSolid(stack);
         BlockPos dimension = ShapeCardItem.getDimension(stack);
-        BlockPos offset = new BlockPos(0, 128, 0);
         BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
 
-        TLongHashSet positions = getPositions(stack, shape, solid, base, offset, clamped);
+        TLongHashSet positions = getPositions(stack, shape, solid, clamped);
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
@@ -359,9 +366,9 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
         }
     }
 
-    private TLongHashSet getPositions(ItemStack stack, Shape shape, boolean solid, BlockPos base, BlockPos offset, BlockPos clamped) {
+    private TLongHashSet getPositions(ItemStack stack, Shape shape, boolean solid, BlockPos clamped) {
         TLongHashSet positions = new TLongHashSet();
-        ShapeCardItem.composeShape(stack, shape, solid, null, new BlockPos(0, 0, 0), clamped, offset, new AbstractCollection<BlockPos>() {
+        ShapeCardItem.composeShape(stack, shape, solid, null, new BlockPos(0, 0, 0), clamped, new BlockPos(0, 0, 0), new AbstractCollection<BlockPos>() {
             @Override
             public Iterator<BlockPos> iterator() {
                 return new AbstractIterator<BlockPos>() {
@@ -374,7 +381,7 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
 
             @Override
             public boolean add(BlockPos coordinate) {
-                positions.add(base.add(coordinate).toLong());
+                positions.add(coordinate.toLong());
                 return true;
             }
 

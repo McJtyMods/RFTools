@@ -5,9 +5,7 @@ import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.builder.BuilderSetup;
-import mcjty.rftools.items.builder.Shape;
-import mcjty.rftools.items.builder.ShapeCardItem;
-import mcjty.rftools.items.builder.ShapeOperation;
+import mcjty.rftools.items.builder.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,12 +15,12 @@ import net.minecraftforge.common.util.Constants;
 
 public class ShaperTileEntity extends GenericTileEntity implements DefaultSidedInventory, ITickable {
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, ShaperContainer.factory, ShaperContainer.SLOT_COUNT + 1);
-    private ShapeOperation operations[] = new ShapeOperation[ShaperContainer.SLOT_COUNT];
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, ShaperContainer.factory, ShaperContainer.SLOT_COUNT*2 + 1);
+    private ShapeModifier modifiers[] = new ShapeModifier[ShaperContainer.SLOT_COUNT];
 
     public ShaperTileEntity() {
-        for (int i = 0 ; i < operations.length ; i++) {
-            operations[i] = ShapeOperation.UNION;
+        for (int i = 0; i < modifiers.length ; i++) {
+            modifiers[i] = new ShapeModifier(ShapeOperation.UNION, false, ShapeRotation.NONE);
         }
     }
 
@@ -37,7 +35,10 @@ public class ShaperTileEntity extends GenericTileEntity implements DefaultSidedI
                     if (ItemStackTools.isValid(item)) {
                         if (item.hasTagCompound()) {
                             NBTTagCompound copy = item.getTagCompound().copy();
-                            copy.setString("op", operations[i-1].getCode());
+                            ShapeModifier modifier = modifiers[i - 1];
+                            copy.setString("mod_op", modifier.getOperation().getCode());
+                            copy.setBoolean("mod_flipy", modifier.isFlipY());
+                            copy.setString("mod_rot", modifier.getRotation().getCode());
                             list.appendTag(copy);
                         }
                     }
@@ -53,12 +54,12 @@ public class ShaperTileEntity extends GenericTileEntity implements DefaultSidedI
         }
     }
 
-    public ShapeOperation[] getOperations() {
-        return operations;
+    public ShapeModifier[] getModifiers() {
+        return modifiers;
     }
 
-    public void setOperations(ShapeOperation[] operations) {
-        this.operations = operations;
+    public void setModifiers(ShapeModifier[] modifiers) {
+        this.modifiers = modifiers;
         markDirtyClient();
     }
 
@@ -84,8 +85,18 @@ public class ShaperTileEntity extends GenericTileEntity implements DefaultSidedI
         NBTTagList list = tagCompound.getTagList("ops", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < list.tagCount() ; i++) {
             NBTTagCompound tag = list.getCompoundTagAt(i);
-            String opcode = tag.getString("op");
-            operations[i] = ShapeOperation.getByName(opcode);
+            String op = tag.getString("mod_op");
+            boolean flipY = tag.getBoolean("mod_flipy");
+            String rot = tag.getString("mod_rot");
+            ShapeOperation operation = ShapeOperation.getByName(op);
+            if (operation == null) {
+                operation = ShapeOperation.UNION;
+            }
+            ShapeRotation rotation = ShapeRotation.getByName(rot);
+            if (rotation == null) {
+                rotation = ShapeRotation.NONE;
+            }
+            modifiers[i] = new ShapeModifier(operation, flipY, rotation);
         }
     }
 
@@ -96,7 +107,10 @@ public class ShaperTileEntity extends GenericTileEntity implements DefaultSidedI
         NBTTagList list = new NBTTagList();
         for (int i = 0 ; i < ShaperContainer.SLOT_COUNT ; i++) {
             NBTTagCompound tc = new NBTTagCompound();
-            tc.setString("op", operations[i].getCode());
+            ShapeModifier mod = modifiers[i];
+            tc.setString("mod_op", mod.getOperation().getCode());
+            tc.setBoolean("mod_flipy", mod.isFlipY());
+            tc.setString("mod_rot", mod.getRotation().getCode());
             list.appendTag(tc);
         }
         tagCompound.setTag("ops", list);

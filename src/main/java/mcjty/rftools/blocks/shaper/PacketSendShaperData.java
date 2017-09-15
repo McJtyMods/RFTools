@@ -2,15 +2,10 @@ package mcjty.rftools.blocks.shaper;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.lib.tools.EntityTools;
-import mcjty.lib.tools.ItemStackTools;
+import mcjty.rftools.items.builder.ShapeModifier;
 import mcjty.rftools.items.builder.ShapeOperation;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import mcjty.rftools.items.builder.ShapeRotation;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -19,24 +14,30 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class PacketSendShaperData implements IMessage {
     private BlockPos pos;
-    private ShapeOperation operations[];
+    private ShapeModifier modifiers[];
 
     @Override
     public void fromBytes(ByteBuf buf) {
         int s = buf.readInt();
-        operations = new ShapeOperation[s];
+        modifiers = new ShapeModifier[s];
         for (int i = 0 ; i < s ; i++) {
             String code = NetworkTools.readString(buf);
-            operations[i] = ShapeOperation.getByName(code);
+            ShapeOperation op = ShapeOperation.getByName(code);
+            boolean flip = buf.readBoolean();
+            code = NetworkTools.readString(buf);
+            ShapeRotation rot = ShapeRotation.getByName(code);
+            modifiers[i] = new ShapeModifier(op, flip, rot);
         }
         pos = NetworkTools.readPos(buf);
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(operations.length);
-        for (ShapeOperation operation : operations) {
-            NetworkTools.writeString(buf, operation.getCode());
+        buf.writeInt(modifiers.length);
+        for (ShapeModifier modifier : modifiers) {
+            NetworkTools.writeString(buf, modifier.getOperation().getCode());
+            buf.writeBoolean(modifier.isFlipY());
+            NetworkTools.writeString(buf, modifier.getRotation().getCode());
         }
         NetworkTools.writePos(buf, pos);
     }
@@ -44,9 +45,9 @@ public class PacketSendShaperData implements IMessage {
     public PacketSendShaperData() {
     }
 
-    public PacketSendShaperData(BlockPos pos, ShapeOperation[] operations) {
+    public PacketSendShaperData(BlockPos pos, ShapeModifier[] modifiers) {
         this.pos = pos;
-        this.operations = operations;
+        this.modifiers = modifiers;
     }
 
     public static class Handler implements IMessageHandler<PacketSendShaperData, IMessage> {
@@ -59,7 +60,7 @@ public class PacketSendShaperData implements IMessage {
         private void handle(PacketSendShaperData message, MessageContext ctx) {
             TileEntity te = ctx.getServerHandler().player.getEntityWorld().getTileEntity(message.pos);
             if (te instanceof ShaperTileEntity) {
-                ((ShaperTileEntity) te).setOperations(message.operations);
+                ((ShaperTileEntity) te).setModifiers(message.modifiers);
             }
         }
 

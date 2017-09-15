@@ -691,7 +691,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
                     if (zInChunk(z, chunk)) {
                         for (int oy = 0; oy < dy; oy++) {
                             int y = tl.getY() + oy;
-                            if (y >= 0 && y < 255) {
+                            if (y >= yCoord-dy/2 && y < yCoord+dy/2) {
                                 if (formula.isInside(x, y, z) == 1) {
                                     placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
                                 }

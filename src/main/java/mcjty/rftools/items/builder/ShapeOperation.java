@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum ShapeOperation {
-    UNION("Add", "Add (union) this shape to the previous one"),
-    SUBTRACT("Sub", "Subtract (difference) this shape from the previous one"),
-    INTERSECT("Int", "Intersect this shape with the previous one");
+    UNION("+", "Add (union) this shape to the previous one"),
+    SUBTRACT("-", "Subtract (difference) this shape from the previous one"),
+    INTERSECT("^", "Intersect this shape with the previous one");
 
     private final String code;
     private final String description;

@@ -11,13 +11,15 @@ import java.util.List;
 
 public class Formulas {
 
-    private static class Bounds {
+    public static class Bounds {
         private BlockPos p1;
         private BlockPos p2;
+        private BlockPos offset;
 
-        public Bounds(BlockPos p1, BlockPos p2) {
+        public Bounds(BlockPos p1, BlockPos p2, BlockPos offset) {
             this.p1 = p1;
             this.p2 = p2;
+            this.offset = offset;
         }
 
         public BlockPos getP1() {
@@ -26,6 +28,10 @@ public class Formulas {
 
         public BlockPos getP2() {
             return p2;
+        }
+
+        public BlockPos getOffset() {
+            return offset;
         }
 
         public boolean in(BlockPos p) {
@@ -50,7 +56,7 @@ public class Formulas {
                 private BlockPos offset;
                 private List<IFormula> formulas = new ArrayList<>();
                 private List<Bounds> bounds = new ArrayList<>();
-                private List<ShapeOperation> operations = new ArrayList<>();
+                private List<ShapeModifier> modifiers = new ArrayList<>();
 
                 @Override
                 public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
@@ -66,16 +72,22 @@ public class Formulas {
                         NBTTagCompound childTag = children.getCompoundTagAt(i);
                         IFormula formula = ShapeCardItem.createCorrectFormula(childTag);
 
+                        String op = childTag.getString("mod_op");
+                        ShapeOperation operation = ShapeOperation.getByName(op);
+                        boolean flip = childTag.getBoolean("mod_flipy");
+                        String rot = childTag.getString("mod_rot");
+                        ShapeRotation rotation = ShapeRotation.getByName(rot);
+                        modifiers.add(new ShapeModifier(operation, flip, rotation));
+
                         BlockPos dim = ShapeCardItem.getClampedDimension(childTag, ShieldConfiguration.maxShieldDimension);
                         BlockPos off = ShapeCardItem.getClampedOffset(childTag, ShieldConfiguration.maxShieldOffset);
                         BlockPos o = off.add(offset);
                         formula.setup(thisCoord, dim, o, childTag);
-                        BlockPos tl = new BlockPos(o.getX() - dim.getX()/2, o.getY() - dim.getY()/2, o.getZ() - dim.getZ()/2);
-                        bounds.add(new Bounds(tl, tl.add(dim)));
-
                         formulas.add(formula);
-                        String op = childTag.getString("op");
-                        operations.add(ShapeOperation.getByName(op));
+
+                        dim = rotation.transformDimension(dim);
+                        BlockPos tl = new BlockPos(o.getX() - dim.getX()/2, o.getY() - dim.getY()/2, o.getZ() - dim.getZ()/2);
+                        bounds.add(new Bounds(tl, tl.add(dim), o));
                     }
                 }
 
@@ -85,8 +97,43 @@ public class Formulas {
                     for (int i = 0 ; i < formulas.size() ; i++) {
                         IFormula formula = formulas.get(i);
                         Bounds bounds = this.bounds.get(i);
-                        int inside = bounds.in(x, y, z) ? formula.isInside(x, y, z) : 0;
-                        switch (operations.get(i)) {
+                        ShapeModifier modifier = modifiers.get(i);
+
+                        int inside = 0;
+                        if (bounds.in(x, y, z)) {
+                            int tx = x;
+                            int ty = y;
+                            int tz = z;
+                            BlockPos o = bounds.getOffset();
+                            switch (modifier.getRotation()) {
+                                default:
+                                case NONE:
+                                    break;
+                                case X:
+                                    tx = x;
+                                    ty = (z-o.getZ()) + o.getY();
+                                    tz = (y-o.getY()) + o.getZ();
+                                    break;
+                                case Y:
+                                    tx = (z-o.getZ()) + o.getX();;
+                                    ty = y;
+                                    tz = (x-o.getX()) + o.getZ();
+                                    break;
+                                case Z:
+                                    tx = (y-o.getY()) + o.getX();;
+                                    ty = (x-o.getX()) + o.getY();
+                                    tz = z;
+                                    break;
+                            }
+
+                            if (modifier.isFlipY()) {
+                                ty = o.getY() - (ty-o.getY());
+                            }
+
+                            inside = formula.isInside(tx, ty, tz);
+                        }
+
+                        switch (modifier.getOperation()) {
                             case UNION:
                                 if (inside == 1) {
                                     ok = 1;
