@@ -376,7 +376,7 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
 
             @Override
             public IBlockState put(BlockPos key, IBlockState value) {
-                positions.add(key.toLong());
+                positions.add(new BlockPos(key.getX(), key.getY(), -key.getZ()).toLong());
                 return value;
             }
 
