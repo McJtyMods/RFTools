@@ -17,6 +17,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.items.builder.Shape;
 import mcjty.rftools.items.builder.*;
 import mcjty.rftools.network.RFToolsMessages;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.ScaledResolution;
@@ -36,8 +37,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.AbstractCollection;
-import java.util.Iterator;
+import java.util.*;
 
 public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
     public static final int SIDEWIDTH = 80;
@@ -368,21 +368,16 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
 
     private TLongHashSet getPositions(ItemStack stack, Shape shape, boolean solid, BlockPos clamped) {
         TLongHashSet positions = new TLongHashSet();
-        ShapeCardItem.composeShape(stack, shape, solid, null, new BlockPos(0, 0, 0), clamped, new BlockPos(0, 0, 0), new AbstractCollection<BlockPosState>() {
+        ShapeCardItem.composeShape(stack, shape, solid, null, new BlockPos(0, 0, 0), clamped, new BlockPos(0, 0, 0), new AbstractMap<BlockPos, IBlockState>() {
             @Override
-            public Iterator<BlockPosState> iterator() {
-                return new AbstractIterator<BlockPosState>() {
-                    @Override
-                    protected BlockPosState computeNext() {
-                        return null;
-                    }
-                };
+            public Set<Entry<BlockPos, IBlockState>> entrySet() {
+                return Collections.emptySet();
             }
 
             @Override
-            public boolean add(BlockPosState coordinate) {
-                positions.add(coordinate.toLong());
-                return true;
+            public IBlockState put(BlockPos key, IBlockState value) {
+                positions.add(key.toLong());
+                return value;
             }
 
             @Override

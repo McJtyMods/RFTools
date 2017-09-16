@@ -12,7 +12,6 @@ import mcjty.lib.varia.*;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.hud.IHudSupport;
-import mcjty.rftools.items.builder.BlockPosState;
 import mcjty.rftools.items.builder.Shape;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.storage.StorageFilterCache;
@@ -138,7 +137,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private ChunkPos forcedChunk = null;
 
     // Cached set of blocks that we need to build in shaped mode
-    private Set<BlockPosState> cachedBlocks = null;
+    private Map<BlockPos, IBlockState> cachedBlocks = null;
     private ChunkPos cachedChunk = null;       // For which chunk are the cachedBlocks valid
 
     // Cached set of blocks that we want to void with the quarry.
@@ -283,10 +282,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
         BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
         Shape shape = ShapeCardItem.getShape(shapeCard);
-        List<BlockPosState> blocks = new ArrayList<>();
+        Map<BlockPos, IBlockState> blocks = new HashMap<>();
         ShapeCardItem.composeShape(shapeCard, shape, false, getWorld(), getPos(), dimension, offset, blocks,
                 BuilderConfiguration.maxBuilderDimension * 256 * BuilderConfiguration.maxBuilderDimension, false, null);
-        for (BlockPos p : blocks) {
+        for (Map.Entry<BlockPos, IBlockState> entry : blocks.entrySet()) {
+            BlockPos p = entry.getKey();
             if (getWorld().isAirBlock(p)) {
                 getWorld().setBlockState(p, BuilderSetup.supportBlock.getDefaultState().withProperty(SupportBlock.STATUS, SupportBlock.STATUS_OK), 3);
             }
@@ -344,9 +344,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
         BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
         Shape shape = ShapeCardItem.getShape(shapeCard);
-        List<BlockPosState> blocks = new ArrayList<>();
+        Map<BlockPos, IBlockState> blocks = new HashMap<>();
         ShapeCardItem.composeShape(shapeCard, shape, false, getWorld(), getPos(), dimension, offset, blocks, BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension, false, null);
-        for (BlockPos block : blocks) {
+        for (Map.Entry<BlockPos, IBlockState> entry : blocks.entrySet()) {
+            BlockPos block = entry.getKey();
             if (getWorld().getBlockState(block).getBlock() == BuilderSetup.supportBlock) {
                 getWorld().setBlockToAir(block);
             }
@@ -837,13 +838,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return chamberChannel;
     }
 
-    private Set<BlockPosState> getCachedBlocks(ChunkPos chunk) {
+    private Map<BlockPos, IBlockState> getCachedBlocks(ChunkPos chunk) {
         if ((chunk != null && !chunk.equals(cachedChunk)) || (chunk == null && cachedChunk != null)) {
             cachedBlocks = null;
         }
 
         if (cachedBlocks == null) {
-            cachedBlocks = new HashSet<>();
+            cachedBlocks = new HashMap<>();
             ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
             Shape shape = ShapeCardItem.getShape(shapeCard);
             boolean solid = ShapeCardItem.isSolid(shapeCard);
@@ -862,8 +863,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             if (scan == null) {
                 return;
             }
-            if (getCachedBlocks(new ChunkPos(scan.getX() >> 4, scan.getZ() >> 4)).contains(scan)) {
-                if (!handleSingleBlock()) {
+            Map<BlockPos, IBlockState> blocks = getCachedBlocks(new ChunkPos(scan.getX() >> 4, scan.getZ() >> 4));
+            if (blocks.containsKey(scan)) {
+                IBlockState state = blocks.get(scan);
+                if (!handleSingleBlock(state)) {
                     nextLocation();
                 }
                 return;
@@ -884,7 +887,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     // Return true if we have to wait at this spot.
-    private boolean handleSingleBlock() {
+    private boolean handleSingleBlock(IBlockState pickState) {
         BlockPos srcPos = scan;
         int sx = scan.getX();
         int sy = scan.getY();
@@ -968,14 +971,14 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             case ShapeCardItem.CARD_QUARRY_CLEAR_SILK:
                 return silkQuarryBlock(rfNeeded, srcPos, block);
             case ShapeCardItem.CARD_SHAPE:
-                return buildBlock(rfNeeded, srcPos);
+                return buildBlock(rfNeeded, srcPos, pickState);
         }
         return true;
     }
 
-    private boolean buildBlock(int rfNeeded, BlockPos srcPos) {
+    private boolean buildBlock(int rfNeeded, BlockPos srcPos, IBlockState pickState) {
         if (isEmptyOrReplacable(getWorld(), srcPos)) {
-            ItemStack stack = consumeBlock(getWorld(), srcPos, null);
+            ItemStack stack = consumeBlock(getWorld(), srcPos, pickState);
             if (ItemStackTools.isEmpty(stack)) {
                 return true;    // We could not find a block. Wait
             }

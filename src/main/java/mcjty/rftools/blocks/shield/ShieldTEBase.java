@@ -16,7 +16,6 @@ import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
 import mcjty.rftools.blocks.shield.filters.*;
 import mcjty.rftools.items.ModItems;
-import mcjty.rftools.items.builder.BlockPosState;
 import mcjty.rftools.items.builder.Shape;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.typed.Type;
@@ -638,7 +637,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     public void composeShield(boolean ctrl) {
         shieldBlocks.clear();
         blockStateTable.clear();
-        Collection<? extends BlockPos> coordinates;
+        Map<BlockPos, IBlockState> coordinates;
 
         if (isShapedShield()) {
             // Special shaped mode.
@@ -647,13 +646,13 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             boolean solid = ShapeCardItem.isSolid(shapeItem);
             BlockPos dimension = ShapeCardItem.getClampedDimension(shapeItem, ShieldConfiguration.maxShieldDimension);
             BlockPos offset = ShapeCardItem.getClampedOffset(shapeItem, ShieldConfiguration.maxShieldOffset);
-            Collection<BlockPosState> col = new ArrayList<>();
+            Map<BlockPos, IBlockState> col = new HashMap<>();
             ShapeCardItem.composeShape(shapeItem, shape, solid, getWorld(), getPos(), dimension, offset, col, supportedBlocks, false, null);
             coordinates = col;
         } else {
             templateMeta = findTemplateMeta();
 
-            Set<BlockPos> col = new HashSet<>();
+            Map<BlockPos, IBlockState> col = new HashMap<>();
             findTemplateBlocks(col, templateMeta, ctrl, getPos());
             coordinates = col;
         }
@@ -661,21 +660,20 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
-        for (BlockPos c : coordinates) {
+        for (Map.Entry<BlockPos, IBlockState> entry : coordinates.entrySet()) {
+            BlockPos c = entry.getKey();
+            IBlockState state = entry.getValue();
             int st = -1;
-            if (c instanceof BlockPosState) {
-                IBlockState state = ((BlockPosState) c).getState();
-                if (state != null) {
-                    for (int i = 0; i < blockStateTable.size(); i++) {
-                        if (state.equals(blockStateTable.get(i))) {
-                            st = i;
-                            break;
-                        }
+            if (state != null) {
+                for (int i = 0; i < blockStateTable.size(); i++) {
+                    if (state.equals(blockStateTable.get(i))) {
+                        st = i;
+                        break;
                     }
-                    if (st == -1) {
-                        st = blockStateTable.size();
-                        blockStateTable.add(state);
-                    }
+                }
+                if (st == -1) {
+                    st = blockStateTable.size();
+                    blockStateTable.add(state);
                 }
             }
             shieldBlocks.add(new RelCoordinateShield(c.getX() - xCoord, c.getY() - yCoord, c.getZ() - zCoord, st));
@@ -728,9 +726,9 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
                 Logging.message(player, TextFormatting.YELLOW + "You cannot add template blocks to a shaped shield (using a shape card)!");
                 return;
             }
-            Set<BlockPos> templateBlocks = new HashSet<>();
+            Map<BlockPos, IBlockState> templateBlocks = new HashMap<>();
             IBlockState state = getWorld().getBlockState(pos);
-            templateBlocks.add(pos);
+            templateBlocks.put(pos, null);
             findTemplateBlocks(templateBlocks, state.getBlock().getMetaFromState(state), false, pos);
 
             int[] camoId = calculateCamoId();
@@ -738,12 +736,14 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             int damageBits = calculateDamageBits();
             Block block = calculateShieldBlock(damageBits, camoId);
 
-            for (BlockPos templateBlock : templateBlocks) {
+            for (Map.Entry<BlockPos, IBlockState> entry : templateBlocks.entrySet()) {
+                BlockPos templateBlock = entry.getKey();
                 RelCoordinateShield relc = new RelCoordinateShield(templateBlock.getX() - xCoord, templateBlock.getY() - yCoord, templateBlock.getZ() - zCoord, -1);
                 shieldBlocks.add(relc);
                 updateShieldBlock(camoId, cddata, damageBits, block, relc);
             }
         } else if (origBlock instanceof AbstractShieldBlock) {
+            //@todo
             shieldBlocks.remove(new RelCoordinate(pos.getX() - xCoord, pos.getY() - yCoord, pos.getZ() - zCoord));
             if (isShapedShield()) {
                 getWorld().setBlockToAir(pos);
@@ -850,31 +850,31 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
      * @param meta the metavalue for the shield template block we support
      * @param ctrl if true also scan for blocks in corners
      */
-    private void findTemplateBlocks(Set<BlockPos> coordinateSet, int meta, boolean ctrl, BlockPos start) {
+    private void findTemplateBlocks(Map<BlockPos, IBlockState> coordinateSet, int meta, boolean ctrl, BlockPos start) {
         Deque<BlockPos> todo = new ArrayDeque<>();
 
         if (ctrl) {
             addToTodoCornered(coordinateSet, todo, start, meta);
             while (!todo.isEmpty() && coordinateSet.size() < supportedBlocks) {
                 BlockPos coordinate = todo.pollFirst();
-                coordinateSet.add(coordinate);
+                coordinateSet.put(coordinate, null);
                 addToTodoCornered(coordinateSet, todo, coordinate, meta);
             }
         } else {
             addToTodoStraight(coordinateSet, todo, start, meta);
             while (!todo.isEmpty() && coordinateSet.size() < supportedBlocks) {
                 BlockPos coordinate = todo.pollFirst();
-                coordinateSet.add(coordinate);
+                coordinateSet.put(coordinate, null);
                 addToTodoStraight(coordinateSet, todo, coordinate, meta);
             }
         }
     }
 
-    private void addToTodoStraight(Set<BlockPos> coordinateSet, Deque<BlockPos> todo, BlockPos coordinate, int meta) {
+    private void addToTodoStraight(Map<BlockPos, IBlockState> coordinateSet, Deque<BlockPos> todo, BlockPos coordinate, int meta) {
         for (EnumFacing dir : EnumFacing.VALUES) {
             BlockPos pp = coordinate.offset(dir);
             if (pp.getY() >= 0 && pp.getY() < getWorld().getHeight()) {
-                if (!coordinateSet.contains(pp)) {
+                if (!coordinateSet.containsKey(pp)) {
                     IBlockState state = getWorld().getBlockState(pp);
                     if (ShieldSetup.shieldTemplateBlock.equals(state.getBlock())) {
                         int m = state.getBlock().getMetaFromState(state);
@@ -889,7 +889,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         }
     }
 
-    private void addToTodoCornered(Set<BlockPos> coordinateSet, Deque<BlockPos> todo, BlockPos coordinate, int meta) {
+    private void addToTodoCornered(Map<BlockPos, IBlockState> coordinateSet, Deque<BlockPos> todo, BlockPos coordinate, int meta) {
         int x = coordinate.getX();
         int y = coordinate.getY();
         int z = coordinate.getZ();
@@ -900,7 +900,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
                     if (xx != x || yy != y || zz != z) {
                         if (yy >= 0 && yy < getWorld().getHeight()) {
                             c.setPos(xx, yy, zz);
-                            if (!coordinateSet.contains(c)) {
+                            if (!coordinateSet.containsKey(c)) {
                                 IBlockState state = getWorld().getBlockState(c);
                                 if (ShieldSetup.shieldTemplateBlock.equals(state.getBlock())) {
                                     int m = state.getBlock().getMetaFromState(state);
