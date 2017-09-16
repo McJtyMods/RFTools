@@ -1,8 +1,5 @@
 package mcjty.rftools.blocks.shaper;
 
-import com.google.common.collect.AbstractIterator;
-import gnu.trove.iterator.TLongIterator;
-import gnu.trove.set.hash.TLongHashSet;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.WindowManager;
@@ -14,30 +11,20 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.items.builder.Shape;
-import mcjty.rftools.items.builder.*;
+import mcjty.rftools.items.builder.ShapeModifier;
+import mcjty.rftools.items.builder.ShapeOperation;
+import mcjty.rftools.items.builder.ShapeRotation;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.*;
 
 public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
     public static final int SIDEWIDTH = 80;
@@ -59,6 +46,8 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
     // For GuiShapeCard: the current card to edit
     public static BlockPos shaperBlock = null;
     public static int shaperStackSlot = 0;
+
+    private ShapeRenderer shapeRenderer = new ShapeRenderer();
 
     private Window sideWindow;
 
@@ -156,13 +145,6 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
         mgr.addWindow(sideWindow);
     }
 
-    float scale = 3.0f;
-    float dx = 230.0f;
-    float dy = 100.0f;
-    float xangle = 0.0f;
-    float yangle = 0.0f;
-    float zangle = 0.0f;
-
     private void openCardGui(int i) {
         int slot;
         if (i == -1) {
@@ -190,19 +172,6 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
     }
 
     @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        super.keyTyped(typedChar, keyCode);
-    }
-
-    private int prevX = -1;
-    private int prevY = -1;
-
-    @Override
-    protected void mouseClicked(int x, int y, int button) throws IOException {
-        super.mouseClicked(x, y, button);
-    }
-
-    @Override
     public void handleMouseInput() throws IOException {
         super.handleMouseInput();
         int x = Mouse.getEventX() * width / mc.displayWidth;
@@ -210,43 +179,7 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
         x -= guiLeft;
         y -= guiTop;
 
-        if (x >= 100 && y <= 120) {
-            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-                if (prevX != -1 && Mouse.isButtonDown(0)) {
-                    dx += (x - prevX);
-                    dy += (y - prevY);
-                }
-            } else {
-                if (prevX != -1 && Mouse.isButtonDown(0)) {
-                    yangle -= (x - prevX);
-                    xangle += (y - prevY);
-                }
-            }
-            prevX = x;
-            prevY = y;
-        }
-
-        if (Mouse.isButtonDown(2)) {
-            xangle = 0.0f;
-            yangle = 0.0f;
-        }
-
-        int dwheel = Mouse.getDWheel();
-        if (dwheel < 0) {
-//            scale -= 1f;
-            scale *= .6;
-            if (scale <= 0.1) {
-                scale = .1f;
-            }
-        } else if (dwheel > 0) {
-//            scale += 1f;
-            scale *= 1.4;
-        }
-    }
-
-    @Override
-    protected void mouseReleased(int x, int y, int state) {
-        super.mouseReleased(x, y, state);
+        shapeRenderer.handleShapeDragging(x, y);
     }
 
     @Override
@@ -257,287 +190,8 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
         if (slot.getHasStack()) {
             ItemStack stack = slot.getStack();
             if (ItemStackTools.isValid(stack)) {
-                renderShape(stack, guiLeft, guiTop);
+                shapeRenderer.renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed());
             }
-        }
-    }
-
-    private void renderShape(ItemStack stack, int x, int y) {
-        final ScaledResolution scaledresolution = new ScaledResolution(this.mc);
-        int xScale = scaledresolution.getScaledWidth();
-        int yScale = scaledresolution.getScaledHeight();
-
-        int sx = (guiLeft + 84) * mc.displayWidth / xScale;
-        int sy = (mc.displayHeight) - (guiTop + 136) * mc.displayHeight / yScale;
-        int sw = 161 * mc.displayWidth / xScale;
-        int sh = 130 * mc.displayHeight / yScale;
-
-        GL11.glScissor(sx, sy, sw, sh);
-        GlStateManager.pushMatrix();
-
-        GlStateManager.translate(dx, dy, 200);
-        GlStateManager.rotate(180-xangle, 1f, 0, 0); //xangle += .16f;
-        GlStateManager.rotate(yangle, 0, 1f, 0); //yangle += .09f;
-        GlStateManager.rotate(zangle, 0, 0, 1f); //zangle += .31f;
-        GlStateManager.scale(scale, scale, scale);
-
-        GlStateManager.disableBlend();
-        GlStateManager.disableCull();
-        GlStateManager.disableTexture2D();
-
-        Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer buffer = tessellator.getBuffer();
-
-        Shape shape = ShapeCardItem.getShape(stack);
-        boolean solid = ShapeCardItem.isSolid(stack);
-        BlockPos dimension = ShapeCardItem.getDimension(stack);
-        BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
-
-        TLongHashSet positions = getPositions(stack, shape, solid, clamped);
-
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
-
-        renderFaces(tessellator, buffer, positions);
-//        renderOutline(tessellator, buffer, positions);
-        renderAxis(tessellator, buffer, dimension.getX()/2.0f, dimension.getY()/2.0f, dimension.getZ()/2.0f);
-
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
-
-        GlStateManager.popMatrix();
-
-        GlStateManager.glLineWidth(3);
-        buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-        buffer.pos(x-62, y+180, 0)  .color(1f, 0f, 0f, 1f).endVertex();
-        buffer.pos(x-39, y+180, 0)  .color(1f, 0f, 0f, 1f).endVertex();
-        buffer.pos(x-62, y+195, 0)  .color(0f, 0.8f, 0f, 1f).endVertex();
-        buffer.pos(x-39, y+195, 0)  .color(0f, 0.8f, 0f, 1f).endVertex();
-        buffer.pos(x-62, y+210, 0)  .color(0f, 0f, 1f, 1f).endVertex();
-        buffer.pos(x-39, y+210, 0)  .color(0f, 0f, 1f, 1f).endVertex();
-        tessellator.draw();
-
-
-        GlStateManager.enableTexture2D();
-        GlStateManager.disableBlend();
-        RenderHelper.enableGUIStandardItemLighting();
-    }
-
-    private void renderAxis(Tessellator tessellator, VertexBuffer buffer, float xlen, float ylen, float zlen) {
-        // X, Y, Z axis
-        if (showAxis.isPressed()) {
-            GlStateManager.glLineWidth(2.5f);
-            buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-            buffer.pos(0, 0, 0).color(1f, 0f, 0f, 1f).endVertex();
-            buffer.pos(xlen, 0, 0).color(1f, 0f, 0f, 1f).endVertex();
-            buffer.pos(0, 0, 0).color(0f, 1f, 0f, 1f).endVertex();
-            buffer.pos(0, ylen, 0).color(0f, 1f, 0f, 1f).endVertex();
-            buffer.pos(0, 0, 0).color(0f, 0f, 1f, 1f).endVertex();
-            buffer.pos(0, 0, zlen).color(0f, 0f, 1f, 1f).endVertex();
-            tessellator.draw();
-        }
-
-        if (showOuter.isPressed()) {
-            GlStateManager.glLineWidth(1.0f);
-            buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-            buffer.pos(-xlen, -ylen, -zlen).color(1f, 1f, 1f, 1f).endVertex();
-            buffer.pos(xlen, -ylen, -zlen).color(1f, 1f, 1f, 1f).endVertex();
-            buffer.pos(-xlen, -ylen, -zlen).color(1f, 1f, 1f, 1f).endVertex();
-            buffer.pos(-xlen, ylen, -zlen).color(1f, 1f, 1f, 1f).endVertex();
-            buffer.pos(-xlen, -ylen, -zlen).color(1f, 1f, 1f, 1f).endVertex();
-            buffer.pos(-xlen, -ylen, zlen).color(1f, 1f, 1f, 1f).endVertex();
-            buffer.pos(xlen, ylen, zlen).color(1f, 1f, 1f, 1f).endVertex();
-            buffer.pos(-xlen, ylen, zlen).color(1f, 1f, 1f, 1f).endVertex();
-            buffer.pos(xlen, ylen, zlen).color(1f, 1f, 1f, 1f).endVertex();
-            buffer.pos(xlen, -ylen, zlen).color(1f, 1f, 1f, 1f).endVertex();
-            buffer.pos(xlen, ylen, zlen).color(1f, 1f, 1f, 1f).endVertex();
-            buffer.pos(xlen, ylen, -zlen).color(1f, 1f, 1f, 1f).endVertex();
-            buffer.pos(xlen, -ylen, -zlen).color(1f, 1f, 1f, 1f).endVertex();
-            buffer.pos(xlen, -ylen, zlen).color(1f, 1f, 1f, 1f).endVertex();
-            buffer.pos(xlen, -ylen, -zlen).color(1f, 1f, 1f, 1f).endVertex();
-            buffer.pos(xlen, ylen, -zlen).color(1f, 1f, 1f, 1f).endVertex();
-            buffer.pos(-xlen, ylen, -zlen).color(1f, 1f, 1f, 1f).endVertex();
-            buffer.pos(xlen, ylen, -zlen).color(1f, 1f, 1f, 1f).endVertex();
-            buffer.pos(-xlen, ylen, -zlen).color(1f, 1f, 1f, 1f).endVertex();
-            buffer.pos(-xlen, ylen, zlen).color(1f, 1f, 1f, 1f).endVertex();
-            buffer.pos(-xlen, ylen, zlen).color(1f, 1f, 1f, 1f).endVertex();
-            buffer.pos(-xlen, -ylen, zlen).color(1f, 1f, 1f, 1f).endVertex();
-            buffer.pos(-xlen, -ylen, zlen).color(1f, 1f, 1f, 1f).endVertex();
-            buffer.pos(xlen, -ylen, zlen).color(1f, 1f, 1f, 1f).endVertex();
-            tessellator.draw();
-        }
-    }
-
-    private TLongHashSet getPositions(ItemStack stack, Shape shape, boolean solid, BlockPos clamped) {
-        TLongHashSet positions = new TLongHashSet();
-        ShapeCardItem.composeShape(stack, shape, solid, null, new BlockPos(0, 0, 0), clamped, new BlockPos(0, 0, 0), new AbstractMap<BlockPos, IBlockState>() {
-            @Override
-            public Set<Entry<BlockPos, IBlockState>> entrySet() {
-                return Collections.emptySet();
-            }
-
-            @Override
-            public IBlockState put(BlockPos key, IBlockState value) {
-                positions.add(new BlockPos(key.getX(), key.getY(), -key.getZ()).toLong());
-                return value;
-            }
-
-            @Override
-            public int size() {
-                return 0;
-            }
-        }, ShapeCardItem.MAXIMUM_COUNT+1, false, null);
-        return positions;
-    }
-
-    private boolean isPositionEnclosed(TLongHashSet positions, BlockPos coordinate) {
-        return positions.contains(coordinate.up().toLong()) &&
-                positions.contains(coordinate.down().toLong()) &&
-                positions.contains(coordinate.east().toLong()) &&
-                positions.contains(coordinate.west().toLong()) &&
-                positions.contains(coordinate.south().toLong()) &&
-                positions.contains(coordinate.north().toLong());
-    }
-
-    private void renderOutline(Tessellator tessellator, final VertexBuffer buffer,
-                               TLongHashSet positions) {
-        GlStateManager.glLineWidth(1);
-        buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-        TLongIterator iterator = positions.iterator();
-        while (iterator.hasNext()) {
-            long p = iterator.next();
-            BlockPos coordinate = BlockPos.fromLong(p);
-            if (!isPositionEnclosed(positions, coordinate)) {
-                renderHighLightedBlocksOutline(buffer,
-                        coordinate.getX(), coordinate.getY(), coordinate.getZ(),
-                        .5f ,5f ,5f, .5f);
-            }
-        }
-
-        tessellator.draw();
-    }
-
-    private void renderFaces(Tessellator tessellator, final VertexBuffer buffer,
-                             TLongHashSet positions) {
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-//        GlStateManager.enableBlend();
-//        GlStateManager.enableAlpha();
-
-        TLongIterator iterator = positions.iterator();
-        while (iterator.hasNext()) {
-            long p = iterator.next();
-            BlockPos coordinate = BlockPos.fromLong(p);
-            if (!isPositionEnclosed(positions, coordinate)) {
-                int x = coordinate.getX();
-                int y = coordinate.getY();
-                int z = coordinate.getZ();
-
-                buffer.setTranslation(buffer.xOffset + x, buffer.yOffset + y, buffer.zOffset + z);
-                float d = .2f;
-                float l = ((x+y+z) & 1) == 1 ? .9f : .6f;
-                if (!positions.contains(coordinate.up().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.UP.ordinal(), d, l, d);
-                }
-                if (!positions.contains(coordinate.down().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), d, l, d);
-                }
-                if (!positions.contains(coordinate.north().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), d, d, l);
-                }
-                if (!positions.contains(coordinate.south().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), d, d, l);
-                }
-                if (!positions.contains(coordinate.west().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), l, d, d);
-                }
-                if (!positions.contains(coordinate.east().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), l, d, d);
-                }
-                buffer.setTranslation(buffer.xOffset - x, buffer.yOffset - y, buffer.zOffset - z);
-            }
-        }
-        tessellator.draw();
-        GlStateManager.disableBlend();
-        GlStateManager.disableAlpha();
-
-    }
-
-    private static void bufpos(VertexBuffer buffer, float mx, float my, float mz, float r, float g, float b, float a) {
-        buffer.pos(mx, my, mz).color(r, g, b, a).endVertex();
-    }
-
-    private static void renderHighLightedBlocksOutline(VertexBuffer buffer, float mx, float my, float mz, float r, float g, float b, float a) {
-        buffer.pos(mx, my, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx+1, my, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my+1, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my, mz+1).color(r, g, b, a).endVertex();
-        buffer.pos(mx+1, my+1, mz+1).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my+1, mz+1).color(r, g, b, a).endVertex();
-        buffer.pos(mx+1, my+1, mz+1).color(r, g, b, a).endVertex();
-        buffer.pos(mx+1, my, mz+1).color(r, g, b, a).endVertex();
-        buffer.pos(mx+1, my+1, mz+1).color(r, g, b, a).endVertex();
-        buffer.pos(mx+1, my+1, mz).color(r, g, b, a).endVertex();
-
-        buffer.pos(mx, my+1, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my+1, mz+1).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my+1, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx+1, my+1, mz).color(r, g, b, a).endVertex();
-
-        buffer.pos(mx+1, my, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx+1, my, mz+1).color(r, g, b, a).endVertex();
-        buffer.pos(mx+1, my, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx+1, my+1, mz).color(r, g, b, a).endVertex();
-
-        buffer.pos(mx, my, mz+1).color(r, g, b, a).endVertex();
-        buffer.pos(mx+1, my, mz+1).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my, mz+1).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my+1, mz+1).color(r, g, b, a).endVertex();
-
-    }
-
-    private static final Quad[] QUADS = new Quad[] {
-            new Quad(new Vt(0, 0, 0), new Vt(1, 0, 0), new Vt(1, 0, 1), new Vt(0, 0, 1)),       // DOWN
-            new Quad(new Vt(0, 1, 1), new Vt(1, 1, 1), new Vt(1, 1, 0), new Vt(0, 1, 0)),       // UP
-            new Quad(new Vt(1, 1, 0), new Vt(1, 0, 0), new Vt(0, 0, 0), new Vt(0, 1, 0)),       // NORTH
-            new Quad(new Vt(1, 0, 1), new Vt(1, 1, 1), new Vt(0, 1, 1), new Vt(0, 0, 1)),       // SOUTH
-            new Quad(new Vt(0, 0, 1), new Vt(0, 1, 1), new Vt(0, 1, 0), new Vt(0, 0, 0)),       // WEST
-            new Quad(new Vt(1, 0, 0), new Vt(1, 1, 0), new Vt(1, 1, 1), new Vt(1, 0, 1)),       // EAST
-    };
-
-
-    public static void addSideFullTexture(VertexBuffer buffer, int side, float r, float g, float b) {
-        Quad quad = QUADS[side];
-        float a = 0.5f;
-        buffer.pos(quad.v1.x, quad.v1.y, quad.v1.z).color(r, g, b, a).endVertex();
-        buffer.pos(quad.v2.x, quad.v2.y, quad.v2.z).color(r, g, b, a).endVertex();
-        buffer.pos(quad.v3.x, quad.v3.y, quad.v3.z).color(r, g, b, a).endVertex();
-        buffer.pos(quad.v4.x, quad.v4.y, quad.v4.z).color(r, g, b, a).endVertex();
-    }
-
-    private static class Vt {
-        public final float x;
-        public final float y;
-        public final float z;
-
-        public Vt(float x, float y, float z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-    }
-
-
-    private static class Quad {
-        public final Vt v1;
-        public final Vt v2;
-        public final Vt v3;
-        public final Vt v4;
-
-        public Quad(Vt v1, Vt v2, Vt v3, Vt v4) {
-            this.v1 = v1;
-            this.v2 = v2;
-            this.v3 = v3;
-            this.v4 = v4;
         }
     }
 
