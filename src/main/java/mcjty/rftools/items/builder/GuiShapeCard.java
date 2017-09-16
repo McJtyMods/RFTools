@@ -341,7 +341,7 @@ public class GuiShapeCard extends GuiScreen {
             updateCounter = 10;
             if (countDirty) {
                 countDirty = false;
-                int count = ShapeCardItem.countBlocks(getCurrentShape(), isSolid(), getCurrentDimension());
+                int count = ShapeCardItem.countBlocks(getStackToEdit(), getCurrentShape(), isSolid(), getCurrentDimension());
                 if (count >= ShapeCardItem.MAXIMUM_COUNT) {
                     blocksLabel.setText("#Blocks: ++" + count);
                 } else {

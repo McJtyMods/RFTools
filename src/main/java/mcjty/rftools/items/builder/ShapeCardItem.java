@@ -18,6 +18,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -27,6 +28,7 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
@@ -253,6 +255,12 @@ public class ShapeCardItem extends GenericRFToolsItem {
         list.add(TextFormatting.GREEN + "Shape " + shape.getDescription() + " (" + (issolid ? "Solid" : "Hollow") + ")");
         list.add(TextFormatting.GREEN + "Dimension " + BlockPosTools.toString(getDimension(itemStack)));
         list.add(TextFormatting.GREEN + "Offset " + BlockPosTools.toString(getOffset(itemStack)));
+
+        if (shape.isCustom()) {
+            NBTTagCompound card = itemStack.getTagCompound();
+            NBTTagList children = card.getTagList("children", Constants.NBT.TAG_COMPOUND);
+            list.add(TextFormatting.DARK_GREEN + "Formulas: " + children.tagCount());
+        }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(TextFormatting.YELLOW + "Sneak right click on builder to start mark mode");
@@ -602,11 +610,11 @@ public class ShapeCardItem extends GenericRFToolsItem {
         return new BlockPos(minCorner.getX() + dx, minCorner.getY() + dy, minCorner.getZ() + dz);
     }
 
-    public static int countBlocks(Shape shape, boolean solid, BlockPos dimension) {
+    public static int countBlocks(ItemStack shapeCard, Shape shape, boolean solid, BlockPos dimension) {
         final int[] cnt = {0};
         BlockPos offset = new BlockPos(0, 128, 0);
         BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
-        composeShape(ItemStackTools.getEmptyStack(), shape, solid, null, new BlockPos(0, 0, 0), clamped, offset, new AbstractMap<BlockPos, IBlockState>() {
+        composeShape(shapeCard, shape, solid, null, new BlockPos(0, 0, 0), clamped, offset, new AbstractMap<BlockPos, IBlockState>() {
             @Override
             public IBlockState put(BlockPos key, IBlockState value) {
                 cnt[0]++;
