@@ -17,9 +17,12 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.Set;
+import java.util.zip.Adler32;
 import java.util.zip.CRC32;
 
 public class ShapeRenderer {
@@ -193,7 +196,7 @@ public class ShapeRenderer {
     }
 
     private static long calculateChecksum(ItemStack stack, Shape shape, boolean solid, BlockPos clamped) {
-        final long[] checksum = {0};
+        Adler32 adler = new Adler32();
         ShapeCardItem.composeShape(stack, shape, solid, null, new BlockPos(0, 0, 0), clamped, new BlockPos(0, 0, 0), new AbstractMap<BlockPos, IBlockState>() {
             @Override
             public Set<Entry<BlockPos, IBlockState>> entrySet() {
@@ -203,7 +206,13 @@ public class ShapeRenderer {
             @Override
             public IBlockState put(BlockPos key, IBlockState value) {
                 // @todo good checksum??
-                checksum[0] = checksum[0] ^ key.getX() ^ (key.getY() << 15) ^ (key.getZ() << 30) ^ 0xff;
+//                checksum[0] = checksum[0] ^ (key.getX() + 10000L) ^ ((key.getY() + 10000L) << 15) ^ ((key.getZ() + 10000L) << 30) ^ 0xff;
+                adler.update(key.getX() & 0xff);
+                adler.update((key.getX() & 0xff00) >> 8);
+                adler.update(key.getY() & 0xff);
+                adler.update((key.getY() & 0xff00) >> 8);
+                adler.update(key.getZ() & 0xff);
+                adler.update((key.getZ() & 0xff00) >> 8);
                 return value;
             }
 
@@ -212,7 +221,7 @@ public class ShapeRenderer {
                 return 0;
             }
         }, ShapeCardItem.MAXIMUM_COUNT+1, false, null);
-        return checksum[0];
+        return adler.getValue();
     }
 
     private static TLongHashSet getPositions(ItemStack stack, Shape shape, boolean solid, BlockPos clamped) {
@@ -297,6 +306,7 @@ public class ShapeRenderer {
 
     void renderFaces(Tessellator tessellator, final VertexBuffer buffer,
                      ItemStack stack, Shape shape, boolean solid, BlockPos clamped) {
+
 
         long check = ShapeRenderer.calculateChecksum(stack, shape, solid, clamped);
 

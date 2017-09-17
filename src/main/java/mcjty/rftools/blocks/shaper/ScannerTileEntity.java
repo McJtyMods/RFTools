@@ -8,6 +8,8 @@ import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.items.builder.Shape;
 import mcjty.rftools.items.builder.ShapeCardItem;
+import mcjty.rftools.items.storage.StorageFilterCache;
+import mcjty.rftools.items.storage.StorageFilterItem;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -23,7 +25,8 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
 
     public static final String CMD_SCAN = "scan";
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, ScannerContainer.factory, 2);
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, ScannerContainer.factory, 3);
+    private StorageFilterCache filterCache = null;
 
     @Override
     public InventoryHelper getInventoryHelper() {
@@ -31,8 +34,30 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
     }
 
     @Override
+    public void setInventorySlotContents(int index, ItemStack stack) {
+        if (index == ScannerContainer.SLOT_FILTER) {
+            filterCache = null;
+        }
+        inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
+    }
+
+    @Override
+    public ItemStack decrStackSize(int index, int count) {
+        if (index == ScannerContainer.SLOT_FILTER) {
+            filterCache = null;
+        }
+        return getInventoryHelper().decrStackSize(index, count);
+    }
+
+    @Override
     public boolean isUsable(EntityPlayer player) {
         return canPlayerAccess(player);
+    }
+
+    private void getFilterCache() {
+        if (filterCache == null) {
+            filterCache = StorageFilterItem.getCache(inventoryHelper.getStackInSlot(ScannerContainer.SLOT_FILTER));
+        }
     }
 
     @Override
@@ -97,7 +122,14 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
                         c = 0;
                     } else {
                         IBlockState state = getWorld().getBlockState(mpos);
+                        getFilterCache();
                         c = 1;
+                        if (filterCache != null) {
+                            ItemStack item = state.getBlock().getItem(getWorld(), mpos, state);
+                            if (!filterCache.match(item)) {
+                                c = 0;
+                            }
+                        }
                     }
                     if (prev == null) {
                         prev = c;

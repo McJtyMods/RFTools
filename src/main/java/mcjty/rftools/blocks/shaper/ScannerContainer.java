@@ -5,6 +5,7 @@ import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.SlotDefinition;
 import mcjty.lib.container.SlotType;
 import mcjty.rftools.blocks.builder.BuilderSetup;
+import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -14,6 +15,7 @@ public class ScannerContainer extends GenericContainer {
 
     public static final int SLOT_IN = 0;
     public static final int SLOT_OUT = 1;
+    public static final int SLOT_FILTER = 2;
 
     public static final ContainerFactory factory = new ContainerFactory() {
         @Override
@@ -22,6 +24,8 @@ public class ScannerContainer extends GenericContainer {
                     new ItemStack(BuilderSetup.shapeCardItem)), CONTAINER_INVENTORY, SLOT_IN, 18, 7);
             addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
                     new ItemStack(BuilderSetup.shapeCardItem)), CONTAINER_INVENTORY, SLOT_OUT, 18, 200);
+            addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
+                    new ItemStack(ModularStorageSetup.storageFilterItem)), CONTAINER_INVENTORY, SLOT_FILTER, 40, 7);
             layoutPlayerInventorySlots(85, 142);
         }
     };
