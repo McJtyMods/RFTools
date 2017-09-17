@@ -19,9 +19,9 @@ public class ScannerContainer extends GenericContainer {
         @Override
         protected void setup() {
             addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
-                    new ItemStack(BuilderSetup.shapeCardItem)), CONTAINER_INVENTORY, SLOT_IN, 18, 200);
+                    new ItemStack(BuilderSetup.shapeCardItem)), CONTAINER_INVENTORY, SLOT_IN, 18, 7);
             addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
-                    new ItemStack(BuilderSetup.shapeCardItem)), CONTAINER_INVENTORY, SLOT_OUT, 36, 200);
+                    new ItemStack(BuilderSetup.shapeCardItem)), CONTAINER_INVENTORY, SLOT_OUT, 18, 200);
             layoutPlayerInventorySlots(85, 142);
         }
     };

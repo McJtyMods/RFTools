@@ -51,6 +51,59 @@ public class Formulas {
     }
 
 
+    static final IFormulaFactory FORMULA_SCHEME = () -> new IFormula() {
+        private byte[] data;
+        private int x1;
+        private int y1;
+        private int z1;
+        private int dx;
+        private int dy;
+        private int dz;
+
+        @Override
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
+            if (card == null) {
+                data = null;
+                return;
+            }
+            dx = dimension.getX();
+            dy = dimension.getY();
+            dz = dimension.getZ();
+            int xCoord = thisCoord.getX();
+            int yCoord = thisCoord.getY();
+            int zCoord = thisCoord.getZ();
+            BlockPos tl = new BlockPos(xCoord - dx / 2 + offset.getX(), yCoord - dy / 2 + offset.getY(), zCoord - dz / 2 + offset.getZ());
+            x1 = tl.getX();
+            y1 = tl.getY();
+            z1 = tl.getZ();
+
+            byte[] datas = card.getByteArray("data");
+            data = new byte[dx * dy * dz];
+            int j = 0;
+            for (int i = 0 ; i < datas.length / 2 ; i++) {
+                int cnt = ((int)datas[i*2]) & 0xff;
+                int c = datas[i*2+1];
+                while (cnt > 0) {
+                    data[j++] = (byte) c;
+                    cnt--;
+                }
+            }
+        }
+
+        @Override
+        public int isInside(int x, int y, int z) {
+            if (data == null) {
+                return 0;
+            }
+            if (x < x1 || x >= x1+dx || y < y1 || y >= y1+dy || z < z1 || z >= z1+dz) {
+                return 0;
+            }
+
+            int index = (y-y1) * dx * dz + (x-x1) * dz + (z-z1);
+            return data[index] == 0 ? 0 : 1;
+        }
+    };
+
     static final IFormulaFactory FORMULA_CUSTOM = new IFormulaFactory() {
         @Override
         public IFormula createFormula() {

@@ -3,13 +3,16 @@ package mcjty.rftools.blocks.shaper;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.PositionalLayout;
+import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.ToggleButton;
+import mcjty.lib.network.Argument;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 
@@ -43,18 +46,49 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> {
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
 
-        showAxis = new ToggleButton(mc, this).setCheckMarker(true).setText("Axis").setLayoutHint(new PositionalLayout.PositionalHint(3, 176, 38, 16));
+        showAxis = new ToggleButton(mc, this).setCheckMarker(true).setText("Axis").setLayoutHint(new PositionalLayout.PositionalHint(5, 176, 38, 16));
         showAxis.setPressed(true);
         toplevel.addChild(showAxis);
         showOuter = new ToggleButton(mc, this).setCheckMarker(true).setText("Box").setLayoutHint(new PositionalLayout.PositionalHint(42, 176, 38, 16));
         showOuter.setPressed(true);
         toplevel.addChild(showOuter);
 
+        toplevel.addChild(new Button(mc, this).setText("W").addButtonEvent(parent -> move(-16, 0, 0)).setLayoutHint(new PositionalLayout.PositionalHint(4, 30, 16, 15)));
+        toplevel.addChild(new Button(mc, this).setText("w").addButtonEvent(parent -> move(-1, 0, 0)).setLayoutHint(new PositionalLayout.PositionalHint(20, 30, 16, 15)));
+        toplevel.addChild(new Button(mc, this).setText("e").addButtonEvent(parent -> move(1, 0, 0)).setLayoutHint(new PositionalLayout.PositionalHint(45, 30, 16, 15)));
+        toplevel.addChild(new Button(mc, this).setText("E").addButtonEvent(parent -> move(16, 0, 0)).setLayoutHint(new PositionalLayout.PositionalHint(61, 30, 16, 15)));
+
+        toplevel.addChild(new Button(mc, this).setText("S").addButtonEvent(parent -> move(0, 0, -16)).setLayoutHint(new PositionalLayout.PositionalHint(4, 50, 16, 15)));
+        toplevel.addChild(new Button(mc, this).setText("s").addButtonEvent(parent -> move(0, 0, -1)).setLayoutHint(new PositionalLayout.PositionalHint(20, 50, 16, 15)));
+        toplevel.addChild(new Button(mc, this).setText("n").addButtonEvent(parent -> move(0, 0, 1)).setLayoutHint(new PositionalLayout.PositionalHint(45, 50, 16, 15)));
+        toplevel.addChild(new Button(mc, this).setText("N").addButtonEvent(parent -> move(0, 0, 16)).setLayoutHint(new PositionalLayout.PositionalHint(61, 50, 16, 15)));
+
+        toplevel.addChild(new Button(mc, this).setText("D").addButtonEvent(parent -> move(0, -16, 0)).setLayoutHint(new PositionalLayout.PositionalHint(4, 70, 16, 15)));
+        toplevel.addChild(new Button(mc, this).setText("d").addButtonEvent(parent -> move(0, -1, 0)).setLayoutHint(new PositionalLayout.PositionalHint(20, 70, 16, 15)));
+        toplevel.addChild(new Button(mc, this).setText("u").addButtonEvent(parent -> move(0, 1, 0)).setLayoutHint(new PositionalLayout.PositionalHint(45, 70, 16, 15)));
+        toplevel.addChild(new Button(mc, this).setText("U").addButtonEvent(parent -> move(0, 16, 0)).setLayoutHint(new PositionalLayout.PositionalHint(61, 70, 16, 15)));
+
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
     }
 
+    private void move(int x, int y, int z) {
+        Slot slot = inventorySlots.getSlot(ScannerContainer.SLOT_IN);
+        if (slot.getHasStack()) {
+            ItemStack stack = slot.getStack();
+            if (ItemStackTools.isValid(stack)) {
+                NBTTagCompound tag = stack.getTagCompound();
+                if (tag == null) {
+                    tag = new NBTTagCompound();
+                }
+                int offsetX = tag.getInteger("offsetX") + x;
+                int offsetY = tag.getInteger("offsetY") + y;
+                int offsetZ = tag.getInteger("offsetZ") + z;
+                sendServerCommand(network, ScannerTileEntity.CMD_SCAN, new Argument("offsetX", offsetX), new Argument("offsetY", offsetY), new Argument("offsetZ", offsetZ));
+            }
+        }
+    }
 
     @Override
     public void handleMouseInput() throws IOException {

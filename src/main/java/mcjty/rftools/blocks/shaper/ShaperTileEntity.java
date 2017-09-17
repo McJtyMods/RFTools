@@ -58,7 +58,7 @@ public class ShaperTileEntity extends GenericTileEntity implements DefaultSidedI
                 }
                 output.getTagCompound().setTag("children", list);
                 if (!ShapeCardItem.getShape(output).isCustom()) {
-                    ShapeCardItem.setShape(output, Shape.SHAPE_CUSTOM, false);
+                    ShapeCardItem.setShape(output, Shape.SHAPE_CUSTOM, true);
                 }
             }
         }
