@@ -8,10 +8,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -23,6 +20,7 @@ import org.lwjgl.opengl.GL11;
 import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.Set;
+import java.util.zip.CRC32;
 
 public class ShapeRenderer {
 
@@ -35,6 +33,10 @@ public class ShapeRenderer {
     private float xangle = 0.0f;
     private float yangle = 0.0f;
     private float zangle = 0.0f;
+
+    private int glList = -1;
+    private long checksum = -1;
+
 
     public void handleShapeDragging(int x, int y) {
         if (x >= 100 && y <= 120) {
@@ -69,6 +71,13 @@ public class ShapeRenderer {
         }
     }
 
+    public void invalidateGlList() {
+        if (glList != -1) {
+            GLAllocation.deleteDisplayLists(glList);
+        }
+        glList = -1;
+    }
+
 
     public void renderShape(GuiContainer gui, ItemStack stack, int x, int y, boolean showAxis, boolean showOuter) {
         setupScissor(gui);
@@ -93,11 +102,9 @@ public class ShapeRenderer {
         BlockPos dimension = ShapeCardItem.getDimension(stack);
         BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
 
-        TLongHashSet positions = ShapeRenderer.getPositions(stack, shape, solid, clamped);
-
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
-        ShapeRenderer.renderFaces(tessellator, buffer, positions);
+        renderFaces(tessellator, buffer, stack, shape, solid, clamped);
 //        renderOutline(tessellator, buffer, positions);
         renderHelpers(tessellator, buffer, dimension.getX()/2.0f, dimension.getY()/2.0f, dimension.getZ()/2.0f, showAxis, showOuter);
 
@@ -185,7 +192,30 @@ public class ShapeRenderer {
         tessellator.draw();
     }
 
-    static TLongHashSet getPositions(ItemStack stack, Shape shape, boolean solid, BlockPos clamped) {
+    private static long calculateChecksum(ItemStack stack, Shape shape, boolean solid, BlockPos clamped) {
+        final long[] checksum = {0};
+        ShapeCardItem.composeShape(stack, shape, solid, null, new BlockPos(0, 0, 0), clamped, new BlockPos(0, 0, 0), new AbstractMap<BlockPos, IBlockState>() {
+            @Override
+            public Set<Entry<BlockPos, IBlockState>> entrySet() {
+                return Collections.emptySet();
+            }
+
+            @Override
+            public IBlockState put(BlockPos key, IBlockState value) {
+                // @todo good checksum??
+                checksum[0] = checksum[0] ^ key.getX() ^ (key.getY() << 15) ^ (key.getZ() << 30) ^ 0xff;
+                return value;
+            }
+
+            @Override
+            public int size() {
+                return 0;
+            }
+        }, ShapeCardItem.MAXIMUM_COUNT+1, false, null);
+        return checksum[0];
+    }
+
+    private static TLongHashSet getPositions(ItemStack stack, Shape shape, boolean solid, BlockPos clamped) {
         TLongHashSet positions = new TLongHashSet();
         ShapeCardItem.composeShape(stack, shape, solid, null, new BlockPos(0, 0, 0), clamped, new BlockPos(0, 0, 0), new AbstractMap<BlockPos, IBlockState>() {
             @Override
@@ -265,48 +295,64 @@ public class ShapeRenderer {
 
     }
 
-    static void renderFaces(Tessellator tessellator, final VertexBuffer buffer,
-                            TLongHashSet positions) {
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+    void renderFaces(Tessellator tessellator, final VertexBuffer buffer,
+                     ItemStack stack, Shape shape, boolean solid, BlockPos clamped) {
+
+        long check = ShapeRenderer.calculateChecksum(stack, shape, solid, clamped);
+
+        if (glList == -1 || check != checksum) {
+            checksum = check;
+            invalidateGlList();
+            glList = GLAllocation.generateDisplayLists(1);
+            GlStateManager.glNewList(glList, GL11.GL_COMPILE);
+
+            buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 //        GlStateManager.enableBlend();
 //        GlStateManager.enableAlpha();
 
-        TLongIterator iterator = positions.iterator();
-        while (iterator.hasNext()) {
-            long p = iterator.next();
-            BlockPos coordinate = BlockPos.fromLong(p);
-            if (!isPositionEnclosed(positions, coordinate)) {
-                int x = coordinate.getX();
-                int y = coordinate.getY();
-                int z = coordinate.getZ();
+            TLongHashSet positions = ShapeRenderer.getPositions(stack, shape, solid, clamped);
 
-                buffer.setTranslation(buffer.xOffset + x, buffer.yOffset + y, buffer.zOffset + z);
-                float d = .2f;
-                float l = ((x+y+z) & 1) == 1 ? .9f : .6f;
-                if (!positions.contains(coordinate.up().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.UP.ordinal(), d, l, d);
+            TLongIterator iterator = positions.iterator();
+            while (iterator.hasNext()) {
+                long p = iterator.next();
+                BlockPos coordinate = BlockPos.fromLong(p);
+                if (!isPositionEnclosed(positions, coordinate)) {
+                    int x = coordinate.getX();
+                    int y = coordinate.getY();
+                    int z = coordinate.getZ();
+
+                    buffer.setTranslation(buffer.xOffset + x, buffer.yOffset + y, buffer.zOffset + z);
+                    float d = .2f;
+                    float l = ((x + y + z) & 1) == 1 ? .9f : .6f;
+                    if (!positions.contains(coordinate.up().toLong())) {
+                        addSideFullTexture(buffer, EnumFacing.UP.ordinal(), d, l, d);
+                    }
+                    if (!positions.contains(coordinate.down().toLong())) {
+                        addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), d, l, d);
+                    }
+                    if (!positions.contains(coordinate.north().toLong())) {
+                        addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), d, d, l);
+                    }
+                    if (!positions.contains(coordinate.south().toLong())) {
+                        addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), d, d, l);
+                    }
+                    if (!positions.contains(coordinate.west().toLong())) {
+                        addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), l, d, d);
+                    }
+                    if (!positions.contains(coordinate.east().toLong())) {
+                        addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), l, d, d);
+                    }
+                    buffer.setTranslation(buffer.xOffset - x, buffer.yOffset - y, buffer.zOffset - z);
                 }
-                if (!positions.contains(coordinate.down().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), d, l, d);
-                }
-                if (!positions.contains(coordinate.north().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), d, d, l);
-                }
-                if (!positions.contains(coordinate.south().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), d, d, l);
-                }
-                if (!positions.contains(coordinate.west().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), l, d, d);
-                }
-                if (!positions.contains(coordinate.east().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), l, d, d);
-                }
-                buffer.setTranslation(buffer.xOffset - x, buffer.yOffset - y, buffer.zOffset - z);
             }
+            tessellator.draw();
+            GlStateManager.glEndList();
         }
-        tessellator.draw();
-        GlStateManager.disableBlend();
-        GlStateManager.disableAlpha();
+
+        GlStateManager.callList(glList);
+
+//        GlStateManager.disableBlend();
+//        GlStateManager.disableAlpha();
 
     }
 

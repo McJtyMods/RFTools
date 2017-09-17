@@ -88,6 +88,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> {
                 sendServerCommand(network, ScannerTileEntity.CMD_SCAN, new Argument("offsetX", offsetX), new Argument("offsetY", offsetY), new Argument("offsetZ", offsetZ));
             }
         }
+        counter = 10;
     }
 
     @Override
@@ -101,9 +102,18 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> {
         shapeRenderer.handleShapeDragging(x, y);
     }
 
+    private int counter = 30;
+
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int x, int y) {
         drawWindow();
+
+        counter--;
+        if (counter < 0) {
+            counter = 30;
+//            shapeRenderer.invalidateGlList();
+        }
+
 
         Slot slot = inventorySlots.getSlot(ScannerContainer.SLOT_OUT);
         if (slot.getHasStack()) {
