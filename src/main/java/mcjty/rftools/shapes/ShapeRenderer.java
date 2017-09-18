@@ -2,6 +2,7 @@ package mcjty.rftools.shapes;
 
 import gnu.trove.iterator.TLongIterator;
 import gnu.trove.set.hash.TLongHashSet;
+import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -78,7 +79,7 @@ public class ShapeRenderer {
     }
 
 
-    public void renderShape(GuiContainer gui, ItemStack stack, int x, int y, boolean showAxis, boolean showOuter) {
+    public void renderShape(GenericGuiContainer gui, ItemStack stack, int x, int y, boolean showAxis, boolean showOuter) {
         setupScissor(gui);
 
         GlStateManager.pushMatrix();
@@ -368,8 +369,8 @@ public class ShapeRenderer {
         final ScaledResolution scaledresolution = new ScaledResolution(mc);
         int xScale = scaledresolution.getScaledWidth();
         int yScale = scaledresolution.getScaledHeight();
-        int sx = (gui.guiLeft + 84) * mc.displayWidth / xScale;
-        int sy = (mc.displayHeight) - (gui.guiTop + 136) * mc.displayHeight / yScale;
+        int sx = (gui.getGuiLeft() + 84) * mc.displayWidth / xScale;
+        int sy = (mc.displayHeight) - (gui.getGuiTop() + 136) * mc.displayHeight / yScale;
         int sw = 161 * mc.displayWidth / xScale;
         int sh = 130 * mc.displayHeight / yScale;
 
