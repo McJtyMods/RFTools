@@ -20,7 +20,7 @@ import java.awt.*;
 
 public class GuiModifier extends GenericGuiContainer {
     public static final int MODIFIER_WIDTH = 180;
-    public static final int MODIFIER_HEIGHT = 188;
+    public static final int MODIFIER_HEIGHT = 228;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/modifier.png");
     private static final ResourceLocation guiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");

@@ -19,8 +19,9 @@ public class ModifierContainer extends GenericContainer {
 	public static final ContainerFactory factory = new ContainerFactory() {
         @Override
         protected void setup() {
+			//154,8
             addSlotBox(new SlotDefinition(SlotType.SLOT_GHOST), CONTAINER_INVENTORY, SLOT_FILTER, 10, 9, 6, 18, 5, 18);
-            layoutPlayerInventorySlots(10, 106);
+            layoutPlayerInventorySlots(10, 146);
         }
     };
 
