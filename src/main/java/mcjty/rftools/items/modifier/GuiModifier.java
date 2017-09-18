@@ -1,4 +1,4 @@
-package mcjty.rftools.items.storage;
+package mcjty.rftools.items.modifier;
 
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
@@ -18,11 +18,11 @@ import net.minecraft.util.ResourceLocation;
 import java.awt.*;
 
 
-public class GuiStorageFilter extends GenericGuiContainer {
-    public static final int CONTROLLER_WIDTH = 180;
-    public static final int CONTROLLER_HEIGHT = 188;
+public class GuiModifier extends GenericGuiContainer {
+    public static final int MODIFIER_WIDTH = 180;
+    public static final int MODIFIER_HEIGHT = 188;
 
-    private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/storagefilter.png");
+    private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/modifier.png");
     private static final ResourceLocation guiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     private ImageChoiceLabel blacklistMode;
@@ -31,10 +31,10 @@ public class GuiStorageFilter extends GenericGuiContainer {
     private ImageChoiceLabel nbtMode;
     private ImageChoiceLabel modMode;
 
-    public GuiStorageFilter(StorageFilterContainer container) {
+    public GuiModifier(ModifierContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, null, container, RFTools.GUI_MANUAL_MAIN, "storfilter");
-        xSize = CONTROLLER_WIDTH;
-        ySize = CONTROLLER_HEIGHT;
+        xSize = MODIFIER_WIDTH;
+        ySize = MODIFIER_HEIGHT;
     }
 
     @Override

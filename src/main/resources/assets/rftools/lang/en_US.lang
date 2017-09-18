@@ -56,6 +56,7 @@ item.filter_module.name=Storage Filter Module
 item.oredict_module.name=Ore Dictionary Storage Module
 item.generic_module.name=Generic Storage Module
 item.powercell_card.name=Powercell Card
+item.modifier_module.name=Modifier
 item.space_chamber_card.name=Space Chamber Card
 item.shape_card.name=Shape Card
 item.shape_card1.name=Shape Card (Void)

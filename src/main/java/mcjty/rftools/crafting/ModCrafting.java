@@ -82,6 +82,7 @@ public final class ModCrafting {
         GameRegistry.addRecipe(new ItemStack(ModItems.infusedDiamond), "sss", "sds", "sss", 's', ModItems.dimensionalShardItem, 'd', Items.DIAMOND);
 
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.networkMonitorItem), "rlr", "iri", "rlr", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT, 'l', "dyeBlack"));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.modifierItem), "bpr", "rpr", "rpb", 'r', Items.REDSTONE, 'p', Items.PAPER, 'b', Items.BRICK));
 
         GameRegistry.addRecipe(new ItemStack(ModItems.syringeItem), "i  ", " i ", "  b", 'i', Items.IRON_INGOT, 'b', Items.GLASS_BOTTLE);
 
