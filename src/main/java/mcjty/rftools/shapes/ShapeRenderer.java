@@ -1,8 +1,7 @@
-package mcjty.rftools.blocks.shaper;
+package mcjty.rftools.shapes;
 
 import gnu.trove.iterator.TLongIterator;
 import gnu.trove.set.hash.TLongHashSet;
-import mcjty.rftools.items.builder.Shape;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -17,13 +16,10 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.Set;
 import java.util.zip.Adler32;
-import java.util.zip.CRC32;
 
 public class ShapeRenderer {
 

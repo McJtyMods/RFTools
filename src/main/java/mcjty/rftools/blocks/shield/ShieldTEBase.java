@@ -16,7 +16,7 @@ import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
 import mcjty.rftools.blocks.shield.filters.*;
 import mcjty.rftools.items.ModItems;
-import mcjty.rftools.items.builder.Shape;
+import mcjty.rftools.shapes.Shape;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.typed.Type;
 import net.minecraft.block.Block;

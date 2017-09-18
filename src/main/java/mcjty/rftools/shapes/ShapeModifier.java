@@ -1,4 +1,4 @@
-package mcjty.rftools.items.builder;
+package mcjty.rftools.shapes;
 
 public class ShapeModifier {
     private final ShapeOperation operation;

@@ -1,6 +1,7 @@
-package mcjty.rftools.items.builder;
+package mcjty.rftools.shapes;
 
 import mcjty.rftools.blocks.shield.ShieldConfiguration;
+import mcjty.rftools.items.builder.ShapeCardItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;

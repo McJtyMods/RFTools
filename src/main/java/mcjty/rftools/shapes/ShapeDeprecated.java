@@ -1,4 +1,4 @@
-package mcjty.rftools.items.builder;
+package mcjty.rftools.shapes;
 
 import java.util.HashMap;
 import java.util.Map;

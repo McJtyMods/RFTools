@@ -15,7 +15,7 @@ import mcjty.rftools.blocks.security.PacketGetSecurityInfo;
 import mcjty.rftools.blocks.security.PacketGetSecurityName;
 import mcjty.rftools.blocks.security.PacketSecurityInfoReady;
 import mcjty.rftools.blocks.security.PacketSecurityNameReady;
-import mcjty.rftools.blocks.shaper.PacketSendShaperData;
+import mcjty.rftools.shapes.PacketSendShaperData;
 import mcjty.rftools.blocks.shield.PacketFiltersReady;
 import mcjty.rftools.blocks.shield.PacketGetFilters;
 import mcjty.rftools.blocks.spawner.SpawnerInfoPacketClient;

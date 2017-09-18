@@ -1,4 +1,4 @@
-package mcjty.rftools.items.builder;
+package mcjty.rftools.shapes;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;

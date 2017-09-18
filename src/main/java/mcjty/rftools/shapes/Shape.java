@@ -1,4 +1,4 @@
-package mcjty.rftools.items.builder;
+package mcjty.rftools.shapes;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;

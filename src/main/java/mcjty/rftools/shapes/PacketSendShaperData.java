@@ -1,10 +1,8 @@
-package mcjty.rftools.blocks.shaper;
+package mcjty.rftools.shapes;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.rftools.items.builder.ShapeModifier;
-import mcjty.rftools.items.builder.ShapeOperation;
-import mcjty.rftools.items.builder.ShapeRotation;
+import mcjty.rftools.blocks.shaper.ShaperTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.FMLCommonHandler;

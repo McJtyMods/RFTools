@@ -112,16 +112,16 @@ public class GuiShapeCard extends GuiScreen {
         }
 
         shapeLabel = new ChoiceLabel(mc, this).setDesiredWidth(100).setDesiredHeight(16).addChoices(
-                Shape.SHAPE_BOX.getDescription(),
-                Shape.SHAPE_TOPDOME.getDescription(),
-                Shape.SHAPE_BOTTOMDOME.getDescription(),
-                Shape.SHAPE_SPHERE.getDescription(),
-                Shape.SHAPE_CYLINDER.getDescription(),
-                Shape.SHAPE_CAPPEDCYLINDER.getDescription(),
-                Shape.SHAPE_PRISM.getDescription(),
-                Shape.SHAPE_TORUS.getDescription(),
-                Shape.SHAPE_HEART.getDescription(),
-                Shape.SHAPE_CUSTOM.getDescription()
+                mcjty.rftools.shapes.Shape.SHAPE_BOX.getDescription(),
+                mcjty.rftools.shapes.Shape.SHAPE_TOPDOME.getDescription(),
+                mcjty.rftools.shapes.Shape.SHAPE_BOTTOMDOME.getDescription(),
+                mcjty.rftools.shapes.Shape.SHAPE_SPHERE.getDescription(),
+                mcjty.rftools.shapes.Shape.SHAPE_CYLINDER.getDescription(),
+                mcjty.rftools.shapes.Shape.SHAPE_CAPPEDCYLINDER.getDescription(),
+                mcjty.rftools.shapes.Shape.SHAPE_PRISM.getDescription(),
+                mcjty.rftools.shapes.Shape.SHAPE_TORUS.getDescription(),
+                mcjty.rftools.shapes.Shape.SHAPE_HEART.getDescription(),
+                mcjty.rftools.shapes.Shape.SHAPE_CUSTOM.getDescription()
         ).addChoiceEvent((parent, newChoice) -> updateSettings());
 
         solidLabel = new ChoiceLabel(mc, this).setDesiredWidth(50).setDesiredHeight(16).addChoices(
@@ -136,7 +136,7 @@ public class GuiShapeCard extends GuiScreen {
             ySize = 46 + 28;
         }
 
-        Shape shape = ShapeCardItem.getShape(heldItem);
+        mcjty.rftools.shapes.Shape shape = ShapeCardItem.getShape(heldItem);
         shapeLabel.setChoice(shape.getDescription());
         boolean solid = ShapeCardItem.isSolid(heldItem);
         solidLabel.setChoice(solid ? "Solid" : "Hollow");
@@ -212,12 +212,12 @@ public class GuiShapeCard extends GuiScreen {
     }
 
     private boolean isTorus() {
-        Shape shape = getCurrentShape();
-        return Shape.SHAPE_TORUS.equals(shape);
+        mcjty.rftools.shapes.Shape shape = getCurrentShape();
+        return mcjty.rftools.shapes.Shape.SHAPE_TORUS.equals(shape);
     }
 
-    private Shape getCurrentShape() {
-        return Shape.getShape(shapeLabel.getCurrentChoice());
+    private mcjty.rftools.shapes.Shape getCurrentShape() {
+        return mcjty.rftools.shapes.Shape.getShape(shapeLabel.getCurrentChoice());
     }
 
     private boolean isSolid() {
