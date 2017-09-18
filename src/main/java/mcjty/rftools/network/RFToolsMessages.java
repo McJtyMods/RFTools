@@ -15,6 +15,7 @@ import mcjty.rftools.blocks.security.PacketGetSecurityInfo;
 import mcjty.rftools.blocks.security.PacketGetSecurityName;
 import mcjty.rftools.blocks.security.PacketSecurityInfoReady;
 import mcjty.rftools.blocks.security.PacketSecurityNameReady;
+import mcjty.rftools.items.modifier.PacketUpdateModifier;
 import mcjty.rftools.shapes.PacketSendShaperData;
 import mcjty.rftools.blocks.shield.PacketFiltersReady;
 import mcjty.rftools.blocks.shield.PacketGetFilters;
@@ -75,6 +76,7 @@ public class RFToolsMessages {
         net.registerMessage(PacketGetRfInRange.Handler.class, PacketGetRfInRange.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketSendShaperData.Handler.class, PacketSendShaperData.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketOpenGui.Handler.class, PacketOpenGui.class, PacketHandler.nextID(), Side.SERVER);
+        net.registerMessage(PacketUpdateModifier.Handler.class, PacketUpdateModifier.class, PacketHandler.nextID(), Side.SERVER);
 
         // Client side
         net.registerMessage(PacketPlayersReady.Handler.class, PacketPlayersReady.class, PacketHandler.nextID(), Side.CLIENT);
