@@ -9,12 +9,13 @@ import mcjty.lib.gui.widgets.ToggleButton;
 import mcjty.lib.network.Argument;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.ShapeRenderer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
@@ -79,13 +80,10 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> {
         if (slot.getHasStack()) {
             ItemStack stack = slot.getStack();
             if (ItemStackTools.isValid(stack)) {
-                NBTTagCompound tag = stack.getTagCompound();
-                if (tag == null) {
-                    tag = new NBTTagCompound();
-                }
-                int offsetX = tag.getInteger("offsetX") + x;
-                int offsetY = tag.getInteger("offsetY") + y;
-                int offsetZ = tag.getInteger("offsetZ") + z;
+                BlockPos offset = ShapeCardItem.getOffset(stack);
+                int offsetX = offset.getX() + x;
+                int offsetY = offset.getY() + y;
+                int offsetZ = offset.getZ() + z;
                 sendServerCommand(network, ScannerTileEntity.CMD_SCAN, new Argument("offsetX", offsetX), new Argument("offsetY", offsetY), new Argument("offsetZ", offsetZ));
             }
         }

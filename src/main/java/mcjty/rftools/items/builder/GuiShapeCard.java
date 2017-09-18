@@ -248,14 +248,9 @@ public class GuiShapeCard extends GuiScreen {
                 if (tag == null) {
                     tag = new NBTTagCompound();
                 }
-                tag.setString("shapenew", getCurrentShape().getDescription());
-                tag.setBoolean("solid", isSolid());
-                tag.setInteger("dimX", parseInt(dimX.getText()));
-                tag.setInteger("dimY", parseInt(dimY.getText()));
-                tag.setInteger("dimZ", parseInt(dimZ.getText()));
-                tag.setInteger("offsetX", parseInt(offsetX.getText()));
-                tag.setInteger("offsetY", parseInt(offsetY.getText()));
-                tag.setInteger("offsetZ", parseInt(offsetZ.getText()));
+                ShapeCardItem.setShape(stack, getCurrentShape(), isSolid());
+                ShapeCardItem.setDimension(stack, parseInt(dimX.getText()), parseInt(dimY.getText()), parseInt(dimZ.getText()));
+                ShapeCardItem.setOffset(stack, parseInt(offsetX.getText()), parseInt(offsetY.getText()), parseInt(offsetZ.getText()));
                 RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItemInventory(
                         GuiShaper.shaperBlock, GuiShaper.shaperStackSlot, tag));
             }

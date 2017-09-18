@@ -472,14 +472,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             int dz = dimension.getZ();
 
             BlockPos offset = new BlockPos(minBox.getX() + (int) Math.ceil(dx / 2), minBox.getY() + (int) Math.ceil(dy / 2), minBox.getZ() + (int) Math.ceil(dz / 2));
-            NBTTagCompound tagCompound = shapeCard.getTagCompound();
-            if (tagCompound == null) {
-                tagCompound = new NBTTagCompound();
-                shapeCard.setTagCompound(tagCompound);
-            }
-            tagCompound.setInteger("offsetX", offset.getX());
-            tagCompound.setInteger("offsetY", offset.getY());
-            tagCompound.setInteger("offsetZ", offset.getZ());
+            ShapeCardItem.setOffset(shapeCard, offset.getX(), offset.getY(), offset.getX());
         }
 
         if (supportMode) {

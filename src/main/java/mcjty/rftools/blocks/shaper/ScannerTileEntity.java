@@ -6,10 +6,10 @@ import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.builder.BuilderSetup;
-import mcjty.rftools.shapes.Shape;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
+import mcjty.rftools.shapes.Shape;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -79,14 +79,7 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
     private void scan(int offsetX, int offsetY, int offsetZ) {
         ItemStack cardIn = inventoryHelper.getStackInSlot(ScannerContainer.SLOT_IN);
         if (ItemStackTools.isValid(cardIn)) {
-            NBTTagCompound tagIn = cardIn.getTagCompound();
-            if (tagIn == null) {
-                tagIn = new NBTTagCompound();
-                cardIn.setTagCompound(tagIn);
-            }
-            tagIn.setInteger("offsetX", offsetX);
-            tagIn.setInteger("offsetY", offsetY);
-            tagIn.setInteger("offsetZ", offsetZ);
+            ShapeCardItem.setOffset(cardIn, offsetX, offsetY, offsetZ);
 
             ItemStack cardOut = inventoryHelper.getStackInSlot(ScannerContainer.SLOT_OUT);
             if (ItemStackTools.isEmpty(cardOut)) {
@@ -96,12 +89,12 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
                 ShapeCardItem.setShape(cardOut, Shape.SHAPE_SCHEME, true);
             }
             NBTTagCompound tagOut = cardOut.getTagCompound();
-            int dimX = tagIn.getInteger("dimX");
-            int dimY = tagIn.getInteger("dimY");
-            int dimZ = tagIn.getInteger("dimZ");
-            tagOut.setInteger("dimX", dimX);
-            tagOut.setInteger("dimY", dimY);
-            tagOut.setInteger("dimZ", dimZ);
+            NBTTagCompound tagIn = cardIn.getTagCompound();
+            BlockPos dim = ShapeCardItem.getDimension(cardIn);
+            int dimX = dim.getX();
+            int dimY = dim.getY();
+            int dimZ = dim.getZ();
+            ShapeCardItem.setDimension(cardOut, dimX, dimY, dimZ);
             scanArea(tagOut, getPos().add(offsetX, offsetY, offsetZ), dimX, dimY, dimZ);
         }
     }
@@ -148,7 +141,7 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
             stream.write(cnt);
             stream.write(prev);
         }
-        tagOut.setByteArray("data", stream.toByteArray());
+        ShapeCardItem.setData(tagOut, stream.toByteArray());
     }
 
     @Override

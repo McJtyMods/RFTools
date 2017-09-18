@@ -5,12 +5,11 @@ import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.builder.BuilderSetup;
-import mcjty.rftools.items.builder.*;
+import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.shapes.Shape;
 import mcjty.rftools.shapes.ShapeModifier;
 import mcjty.rftools.shapes.ShapeOperation;
 import mcjty.rftools.shapes.ShapeRotation;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -41,25 +40,14 @@ public class ShaperTileEntity extends GenericTileEntity implements DefaultSidedI
                         if (item.hasTagCompound()) {
                             NBTTagCompound copy = item.getTagCompound().copy();
                             ShapeModifier modifier = modifiers[i - 1];
-                            copy.setString("mod_op", modifier.getOperation().getCode());
-                            copy.setBoolean("mod_flipy", modifier.isFlipY());
-                            copy.setString("mod_rot", modifier.getRotation().getCode());
+                            ShapeCardItem.setModifier(copy, modifier);
                             ItemStack materialGhost = getStackInSlot(i + ShaperContainer.SLOT_COUNT);
-                            if (ItemStackTools.isValid(materialGhost)) {
-                                Block block = Block.getBlockFromItem(materialGhost.getItem());
-                                if (block != null) {
-                                    copy.setString("ghost_block", block.getRegistryName().toString());
-                                    copy.setInteger("ghost_meta", materialGhost.getMetadata());
-                                }
-                            }
+                            ShapeCardItem.setGhostMaterial(copy, materialGhost);
                             list.appendTag(copy);
                         }
                     }
                 }
-                if (!output.hasTagCompound()) {
-                    output.setTagCompound(new NBTTagCompound());
-                }
-                output.getTagCompound().setTag("children", list);
+                ShapeCardItem.setChildren(output, list);
                 if (!ShapeCardItem.getShape(output).isCustom()) {
                     ShapeCardItem.setShape(output, Shape.SHAPE_CUSTOM, true);
                 }

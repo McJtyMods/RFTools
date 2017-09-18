@@ -192,35 +192,6 @@ public class ShapeRenderer {
         tessellator.draw();
     }
 
-    private static long calculateChecksum(ItemStack stack, Shape shape, boolean solid, BlockPos clamped) {
-        Adler32 adler = new Adler32();
-        ShapeCardItem.composeShape(stack, shape, solid, null, new BlockPos(0, 0, 0), clamped, new BlockPos(0, 0, 0), new AbstractMap<BlockPos, IBlockState>() {
-            @Override
-            public Set<Entry<BlockPos, IBlockState>> entrySet() {
-                return Collections.emptySet();
-            }
-
-            @Override
-            public IBlockState put(BlockPos key, IBlockState value) {
-                // @todo good checksum??
-//                checksum[0] = checksum[0] ^ (key.getX() + 10000L) ^ ((key.getY() + 10000L) << 15) ^ ((key.getZ() + 10000L) << 30) ^ 0xff;
-                adler.update(key.getX() & 0xff);
-                adler.update((key.getX() & 0xff00) >> 8);
-                adler.update(key.getY() & 0xff);
-                adler.update((key.getY() & 0xff00) >> 8);
-                adler.update(key.getZ() & 0xff);
-                adler.update((key.getZ() & 0xff00) >> 8);
-                return value;
-            }
-
-            @Override
-            public int size() {
-                return 0;
-            }
-        }, ShapeCardItem.MAXIMUM_COUNT+1, false, null);
-        return adler.getValue();
-    }
-
     private static TLongHashSet getPositions(ItemStack stack, Shape shape, boolean solid, BlockPos clamped) {
         TLongHashSet positions = new TLongHashSet();
         ShapeCardItem.composeShape(stack, shape, solid, null, new BlockPos(0, 0, 0), clamped, new BlockPos(0, 0, 0), new AbstractMap<BlockPos, IBlockState>() {
@@ -301,13 +272,19 @@ public class ShapeRenderer {
 
     }
 
+    private long calculateChecksum(ItemStack stack) {
+        return ShapeCardItem.getCheck(stack);
+    }
+
     void renderFaces(Tessellator tessellator, final VertexBuffer buffer,
                      ItemStack stack, Shape shape, boolean solid, BlockPos clamped) {
 
-
-        long check = ShapeRenderer.calculateChecksum(stack, shape, solid, clamped);
+        long check = calculateChecksum(stack);
 
         if (glList == -1 || check != checksum) {
+            if (checksum != check) {
+                System.out.println("check = " + check);
+            }
             checksum = check;
             invalidateGlList();
             glList = GLAllocation.generateDisplayLists(1);

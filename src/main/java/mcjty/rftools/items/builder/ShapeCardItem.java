@@ -7,10 +7,12 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
+import mcjty.rftools.blocks.shaper.ShaperContainer;
 import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.shapes.IFormula;
 import mcjty.rftools.shapes.Shape;
 import mcjty.rftools.shapes.ShapeDeprecated;
+import mcjty.rftools.shapes.ShapeModifier;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -127,11 +129,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
                     Logging.message(player, TextFormatting.RED + "Cleared area selection mode!");
                     setMode(stack, MODE_NONE);
                 } else {
-                    NBTTagCompound tag = stack.getTagCompound();
-                    if (tag == null) {
-                        tag = new NBTTagCompound();
-                        stack.setTagCompound(tag);
-                    }
+                    NBTTagCompound tag = getCompound(stack);
                     BlockPos c1 = getCorner1(stack);
                     if (c1 == null) {
                         Logging.message(player, TextFormatting.RED + "Cleared area selection mode!");
@@ -139,12 +137,8 @@ public class ShapeCardItem extends GenericRFToolsItem {
                     } else {
                         Logging.message(player, TextFormatting.GREEN + "New settings copied to the shape card!");
                         BlockPos center = new BlockPos((int) Math.ceil((c1.getX() + pos.getX()) / 2.0f), (int) Math.ceil((c1.getY() + pos.getY()) / 2.0f), (int) Math.ceil((c1.getZ() + pos.getZ()) / 2.0f));
-                        tag.setInteger("dimX", Math.abs(c1.getX() - pos.getX()) + 1);
-                        tag.setInteger("dimY", Math.abs(c1.getY() - pos.getY()) + 1);
-                        tag.setInteger("dimZ", Math.abs(c1.getZ() - pos.getZ()) + 1);
-                        tag.setInteger("offsetX", center.getX() - currentBlock.getCoordinate().getX());
-                        tag.setInteger("offsetY", center.getY() - currentBlock.getCoordinate().getY());
-                        tag.setInteger("offsetZ", center.getZ() - currentBlock.getCoordinate().getZ());
+                        setDimension(stack, Math.abs(c1.getX() - pos.getX()) + 1, Math.abs(c1.getY() - pos.getY()) + 1, Math.abs(c1.getZ() - pos.getZ()) + 1);
+                        setOffset(stack, center.getX() - currentBlock.getCoordinate().getX(), center.getY() - currentBlock.getCoordinate().getY(), center.getZ() - currentBlock.getCoordinate().getZ());
 
                         setMode(stack, MODE_NONE);
                         setCorner1(stack, null);
@@ -156,12 +150,99 @@ public class ShapeCardItem extends GenericRFToolsItem {
         return EnumActionResult.SUCCESS;
     }
 
-    public static void setCorner1(ItemStack itemStack, BlockPos corner) {
+    public static void setData(ItemStack itemStack, byte[] data) {
+        NBTTagCompound tagCompound = getCompound(itemStack);
+        setData(tagCompound, data);
+    }
+
+    public static void setData(NBTTagCompound tagCompound, byte[] data) {
+        tagCompound.setByteArray("data", data);
+        dirty(tagCompound);
+    }
+
+    public static void setModifier(NBTTagCompound tag, ShapeModifier modifier) {
+        tag.setString("mod_op", modifier.getOperation().getCode());
+        tag.setBoolean("mod_flipy", modifier.isFlipY());
+        tag.setString("mod_rot", modifier.getRotation().getCode());
+    }
+
+    public static void setGhostMaterial(NBTTagCompound tag, ItemStack materialGhost) {
+        if (ItemStackTools.isEmpty(materialGhost)) {
+            tag.removeTag("ghost_block");
+            tag.removeTag("ghost_meta");
+        } else {
+            Block block = Block.getBlockFromItem(materialGhost.getItem());
+            if (block == null) {
+                tag.removeTag("ghost_block");
+                tag.removeTag("ghost_meta");
+            } else {
+                tag.setString("ghost_block", block.getRegistryName().toString());
+                tag.setInteger("ghost_meta", materialGhost.getMetadata());
+            }
+        }
+    }
+
+    public static void setChildren(ItemStack itemStack, NBTTagList list) {
+        NBTTagCompound tagCompound = getCompound(itemStack);
+        NBTTagList listThis = tagCompound.getTagList("children", Constants.NBT.TAG_COMPOUND);
+        boolean same = true;
+        for (int i = 0 ; i < list.tagCount() ; i++) {
+            NBTTagCompound child1 = listThis.getCompoundTagAt(i);
+            int c1 = getCheck(child1);
+            NBTTagCompound child2 = list.getCompoundTagAt(i);
+            int c2 = getCheck(child1);
+            if (c1 != c2) {
+                same = false;
+                break;
+            }
+            if (!(child1.getString("mod_op").equals(child2.getString("mod_op")) &&
+                    child1.getString("mod_rot").equals(child2.getString("mod_rot")) &&
+                    child1.getBoolean("mod_flipy") == child2.getBoolean("mod_flipy") &&
+                    child1.getString("ghost_block").equals(child2.getString("ghost_block")) &&
+                    child1.getInteger("ghost_meta") == child2.getInteger("ghost_meta"))) {
+                same = false;
+            }
+        }
+        tagCompound.setTag("children", list);
+        if (!same) {
+            dirty(tagCompound);
+        }
+    }
+
+    public static void setDimension(ItemStack itemStack, int x, int y, int z) {
+        NBTTagCompound tagCompound = getCompound(itemStack);
+        if (tagCompound.getInteger("dimX") == x && tagCompound.getInteger("dimY") == y && tagCompound.getInteger("dimZ") == z) {
+            return;
+        }
+        tagCompound.setInteger("dimX", x);
+        tagCompound.setInteger("dimY", y);
+        tagCompound.setInteger("dimZ", z);
+        dirty(tagCompound);
+    }
+
+
+    public static void setOffset(ItemStack itemStack, int x, int y, int z) {
+        NBTTagCompound tagCompound = getCompound(itemStack);
+        if (tagCompound.getInteger("offsetX") == x && tagCompound.getInteger("offsetY") == y && tagCompound.getInteger("offsetZ") == z) {
+            return;
+        }
+        tagCompound.setInteger("offsetX", x);
+        tagCompound.setInteger("offsetY", y);
+        tagCompound.setInteger("offsetZ", z);
+        dirty(tagCompound);
+    }
+
+    private static NBTTagCompound getCompound(ItemStack itemStack) {
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
             itemStack.setTagCompound(tagCompound);
         }
+        return tagCompound;
+    }
+
+    public static void setCorner1(ItemStack itemStack, BlockPos corner) {
+        NBTTagCompound tagCompound = getCompound(itemStack);
         if (corner == null) {
             tagCompound.removeTag("corner1x");
             tagCompound.removeTag("corner1y");
@@ -194,20 +275,16 @@ public class ShapeCardItem extends GenericRFToolsItem {
     }
 
     public static void setMode(ItemStack itemStack, int mode) {
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
-        if (tagCompound == null) {
-            tagCompound = new NBTTagCompound();
-            itemStack.setTagCompound(tagCompound);
+        NBTTagCompound tagCompound = getCompound(itemStack);
+        if (tagCompound.getInteger("mode") == mode) {
+            return;
         }
         tagCompound.setInteger("mode", mode);
+        dirty(tagCompound);
     }
 
     public static void setCurrentBlock(ItemStack itemStack, GlobalCoordinate c) {
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
-        if (tagCompound == null) {
-            tagCompound = new NBTTagCompound();
-            itemStack.setTagCompound(tagCompound);
-        }
+        NBTTagCompound tagCompound = getCompound(itemStack);
 
         if (c == null) {
             tagCompound.removeTag("selectedX");
@@ -498,14 +575,34 @@ public class ShapeCardItem extends GenericRFToolsItem {
         return formula.correctFormula(solid);
     }
 
+    public static int getCheck(ItemStack stack) {
+        NBTTagCompound tagCompound = getCompound(stack);
+        return getCheck(tagCompound);
+    }
+
+    public static int getCheck(NBTTagCompound tagCompound) {
+        int check = tagCompound.getInteger("check");
+        NBTTagList children = tagCompound.getTagList("children", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < children.tagCount() ; i++) {
+            NBTTagCompound child = children.getCompoundTagAt(i);
+            check += getCheck(child) << 6;
+        }
+        return check;
+    }
+
+    private static void dirty(NBTTagCompound tag) {
+        tag.setInteger("check", tag.getInteger("check") + 1);
+    }
+
     public static void setShape(ItemStack stack, Shape shape, boolean solid) {
-        NBTTagCompound tagCompound = stack.getTagCompound();
-        if (tagCompound == null) {
-            tagCompound = new NBTTagCompound();
-            stack.setTagCompound(tagCompound);
+        NBTTagCompound tagCompound = getCompound(stack);
+        if (isSolid(tagCompound) == solid && getShape(tagCompound).equals(shape)) {
+            // Nothing happens
+            return;
         }
         tagCompound.setString("shapenew", shape.getDescription());
         tagCompound.setBoolean("solid", solid);
+        dirty(tagCompound);
     }
 
     public static BlockPos getDimension(ItemStack stack) {
