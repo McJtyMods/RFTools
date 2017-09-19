@@ -7,24 +7,32 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.items.builder.ShapeCardItem;
+import mcjty.rftools.items.modifier.ModifierEntry;
+import mcjty.rftools.items.modifier.ModifierItem;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.shapes.Shape;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ScannerTileEntity extends GenericTileEntity implements DefaultSidedInventory {
 
     public static final String CMD_SCAN = "scan";
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, ScannerContainer.factory, 3);
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, ScannerContainer.factory, 4);
     private StorageFilterCache filterCache = null;
 
     @Override
@@ -89,7 +97,7 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
                 ShapeCardItem.setShape(cardOut, Shape.SHAPE_SCHEME, true);
             }
             NBTTagCompound tagOut = cardOut.getTagCompound();
-            NBTTagCompound tagIn = cardIn.getTagCompound();
+            NBTTagCompound tagIn = cardIn.getTagCompound();     // @todo use this
             BlockPos dim = ShapeCardItem.getDimension(cardIn);
             int dimX = dim.getX();
             int dimY = dim.getY();
@@ -99,7 +107,55 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         }
     }
 
+    private IBlockState mapState(List<ModifierEntry> modifiers, Map<IBlockState, IBlockState> modifierMapping, BlockPos pos, IBlockState input) {
+        if (modifiers.isEmpty()) {
+            return input;
+        }
+        if (!modifierMapping.containsKey(input)) {
+            IBlockState outItem = null;
+            boolean stop = false;
+            for (ModifierEntry modifier : modifiers) {
+                if (stop) {
+                    break;
+                }
+                switch (modifier.getType()) {
+                    case FILTER_SLOT:
+                        // @todo support item filter here
+                        ItemStack inputItem = input.getBlock().getItem(getWorld(), pos, input);
+                        // Empty input stack in modifier also matches
+                        if (ItemStackTools.isEmpty(modifier.getIn()) || ItemStack.areItemsEqual(inputItem, modifier.getIn())) {
+                            ItemStack outputItem = modifier.getOut();
+                            if (ItemStackTools.isEmpty(outputItem)) {
+                                outItem = input;
+                            } else {
+                                Block block = ForgeRegistries.BLOCKS.getValue(outputItem.getItem().getRegistryName());
+                                if (block == null) {
+                                    outItem = Blocks.AIR.getDefaultState();
+                                } else {
+                                    outItem = block.getStateFromMeta(outputItem.getMetadata());
+                                }
+                            }
+                            stop = true;
+                        }
+                        break;
+                    case FILTER_ORE:
+                        break;
+                    case FILTER_LIQUID:
+                        break;
+                    case FILTER_TILEENTITY:
+                        break;
+                }
+            }
+            modifierMapping.put(input, outItem);
+        }
+        return modifierMapping.get(input);
+    }
+
     private void scanArea(NBTTagCompound tagOut, BlockPos center, int dimX, int dimY, int dimZ) {
+        ItemStack modifier = getStackInSlot(ScannerContainer.SLOT_MODIFIER);
+        List<ModifierEntry> modifiers = ModifierItem.getModifiers(modifier);
+        Map<IBlockState, IBlockState> modifierMapping = new HashMap<>();
+
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         BlockPos tl = new BlockPos(center.getX() - dimX/2, center.getY() - dimY/2, center.getZ() - dimZ/2);
         Byte prev = null;

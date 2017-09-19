@@ -2,6 +2,7 @@ package mcjty.rftools.items.modifier;
 
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
+import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Button;
@@ -14,15 +15,15 @@ import mcjty.rftools.items.ModItems;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.Constants;
 
 import java.awt.*;
+import java.util.Collections;
+import java.util.List;
 
 
 public class GuiModifier extends GenericGuiContainer {
@@ -111,32 +112,62 @@ public class GuiModifier extends GenericGuiContainer {
 
     private void refreshList() {
         list.removeChildren();
-        NBTTagList taglist = getOpList();
-        for (int i = 0 ; i < taglist.tagCount() ; i++) {
-            NBTTagCompound compound = taglist.getCompoundTagAt(i);
-            ItemStack stackIn = ItemStackTools.loadFromNBT(compound.getCompoundTag("in"));
-            ItemStack stackOut = ItemStackTools.loadFromNBT(compound.getCompoundTag("out"));
-            ModifierFilterType type = ModifierFilterType.getByCode(compound.getString("type"));
-            ModifierFilterOperation op = ModifierFilterOperation.getByCode(compound.getString("op"));
+        List<ModifierEntry> modifiers = getModifiers();
+        for (ModifierEntry modifier : modifiers) {
+            ItemStack stackIn = modifier.getIn();
+            ItemStack stackOut = modifier.getOut();
+            ModifierFilterType type = modifier.getType();
+            ModifierFilterOperation op = modifier.getOp();
             Panel panel = new Panel(mc, this).setLayout(new PositionalLayout()).setDesiredHeight(18).setDesiredWidth(150);
             panel.addChild(new BlockRender(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(1, 0, 18, 18)).setRenderItem(stackIn));
-            panel.addChild(new Label<>(mc, this).setText(type.getCode() + " -> " + op.getCode()).setLayoutHint(new PositionalLayout.PositionalHint(22, 0, 110, 18)));
+            panel.addChild(new Label<>(mc, this).setText(type.getCode() + " -> " + op.getCode())
+                    .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
+                    .setLayoutHint(new PositionalLayout.PositionalHint(22, 0, 100, 18)));
             panel.addChild(new BlockRender(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(130, 0, 18, 18)).setRenderItem(stackOut));
 
             list.addChild(panel);
         }
     }
 
-    private NBTTagList getOpList() {
-        ItemStack item = getItem();
-        if (ItemStackTools.isValid(item) && item.getItem() == ModItems.modifierItem) {
-            if (!item.hasTagCompound()) {
-                item.setTagCompound(new NBTTagCompound());
-            }
-            NBTTagCompound tag = item.getTagCompound();
-            return tag.getTagList("ops", Constants.NBT.TAG_COMPOUND);
+    private List<ModifierEntry> getModifiers() {
+        if (!isValidItem()) {
+            return Collections.emptyList();
         }
-        return new NBTTagList();
+        ItemStack item = getItem();
+        return ModifierItem.getModifiers(item);
+    }
+
+    private NBTTagList getTagList(List<ModifierEntry> modifiers) {
+        NBTTagList taglist = new NBTTagList();
+        for (ModifierEntry modifier : modifiers) {
+            NBTTagCompound tag = new NBTTagCompound();
+
+            if (ItemStackTools.isValid(modifier.getIn())) {
+                NBTTagCompound tc = new NBTTagCompound();
+                modifier.getIn().writeToNBT(tc);
+                tag.setTag("in", tc);
+            }
+            if (ItemStackTools.isValid(modifier.getOut())) {
+                NBTTagCompound tc = new NBTTagCompound();
+                modifier.getOut().writeToNBT(tc);
+                tag.setTag("out", tc);
+            }
+
+            tag.setString("type", modifier.getType().getCode());
+            tag.setString("op", modifier.getOp().getCode());
+
+            taglist.appendTag(tag);
+
+        }
+
+        return taglist;
+    }
+
+    private void updateModifiers(List<ModifierEntry> modifiers) {
+        NBTTagList tagList = getTagList(modifiers);
+        ItemStack item = getItem();
+        item.getTagCompound().setTag("ops", tagList);
+        RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateModifier(item));
     }
 
     private void addOp() {
@@ -144,41 +175,62 @@ public class GuiModifier extends GenericGuiContainer {
             return;
         }
 
-        NBTTagList taglist = getOpList();
-        NBTTagCompound tag = new NBTTagCompound();
-
-        NBTTagCompound tc = new NBTTagCompound();
-        new ItemStack(Blocks.DIAMOND_BLOCK).writeToNBT(tc);
-        tag.setTag("in", tc);
-
-        tc = new NBTTagCompound();
-        new ItemStack(Blocks.DOUBLE_STONE_SLAB).writeToNBT(tc);
-        tag.setTag("out", tc);
-
-        tag.setString("type", ModifierFilterType.FILTER_ORE.getCode());
-        tag.setString("op", ModifierFilterOperation.OPERATION_SLOT.getCode());
-
-        taglist.appendTag(tag);
-
-        RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateModifier(getItem()));
+        List<ModifierEntry> modifiers = getModifiers();
+        ItemStack stackIn = inventorySlots.getSlot(ModifierContainer.SLOT_FILTER).getStack();
+        ItemStack stackOut = inventorySlots.getSlot(ModifierContainer.SLOT_REPLACEMENT).getStack();
+        modifiers.add(new ModifierEntry(stackIn, stackOut, ModifierFilterType.getByCode(mode.getCurrentChoice()), ModifierFilterOperation.getByCode(op.getCurrentChoice())));
+        updateModifiers(modifiers);
     }
 
     private void delOp() {
+        if (list.getSelected() < 0) {
+            return;
+        }
+        if (!isValidItem()) {
+            return;
+        }
 
+        List<ModifierEntry> modifiers = getModifiers();
+        modifiers.remove(list.getSelected());
+        updateModifiers(modifiers);
     }
 
     private void upOp() {
+        if (list.getSelected() <= 0) {
+            return;
+        }
+        if (!isValidItem()) {
+            return;
+        }
 
+        List<ModifierEntry> modifiers = getModifiers();
+        ModifierEntry entry = modifiers.get(list.getSelected());
+        modifiers.remove(list.getSelected());
+        modifiers.add(list.getSelected()-1, entry);
+        list.setSelected(list.getSelected()-1);
+        updateModifiers(modifiers);
     }
 
     private void downOp() {
+        if (list.getSelected() > list.getChildCount()-1) {
+            return;
+        }
+        if (!isValidItem()) {
+            return;
+        }
 
+        List<ModifierEntry> modifiers = getModifiers();
+        ModifierEntry entry = modifiers.get(list.getSelected());
+        modifiers.remove(list.getSelected());
+        modifiers.add(list.getSelected()+1, entry);
+        list.setSelected(list.getSelected()+1);
+        updateModifiers(modifiers);
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         refreshList();
-        del.setEnabled(list.getSelected() >= 0);
+        del.setEnabled(list.getSelected() >= 0 && list.getChildCount() > 0);
         up.setEnabled(list.getSelected() > 0);
         down.setEnabled(list.getSelected() < list.getChildCount()-1);
 
