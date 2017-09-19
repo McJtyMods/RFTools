@@ -73,6 +73,10 @@ public class Formulas {
             dx = dimension.getX();
             dy = dimension.getY();
             dz = dimension.getZ();
+            if (dx <= 0 || dy <= 0 || dz <= 0) {
+                data = null;
+                return;
+            }
             int xCoord = thisCoord.getX();
             int yCoord = thisCoord.getY();
             int zCoord = thisCoord.getZ();
@@ -100,9 +104,12 @@ public class Formulas {
             for (int i = 0 ; i < datas.length / 2 ; i++) {
                 int cnt = (datas[i*2]) & 0xff;
                 int c = datas[i*2+1];
-                while (cnt > 0) {
+                while (cnt > 0 && j < data.length) {
                     data[j++] = (byte) c;
                     cnt--;
+                }
+                if (j >= data.length) {
+                    break;
                 }
             }
         }
@@ -154,6 +161,15 @@ public class Formulas {
                     if (card == null) {
                         return;
                     }
+
+                    int dx = dimension.getX();
+                    int dy = dimension.getY();
+                    int dz = dimension.getZ();
+                    if (dx <= 0 || dy <= 0 || dz <= 0) {
+                        return;
+                    }
+
+
                     NBTTagList children = card.getTagList("children", Constants.NBT.TAG_COMPOUND);
                     for (int i = 0 ; i < children.tagCount() ; i++) {
                         NBTTagCompound childTag = children.getCompoundTagAt(i);
@@ -257,9 +273,11 @@ public class Formulas {
                             case INTERSECT:
                                 if (inside == 1 && ok == 1) {
                                     ok = 1;
-                                    blockState = blockStates.get(i);
                                     if (blockState == null) {
-                                        blockState = formula.getLastState();
+                                        blockState = blockStates.get(i);
+                                        if (blockState == null) {
+                                            blockState = formula.getLastState();
+                                        }
                                     }
                                 } else {
                                     ok = 0;
