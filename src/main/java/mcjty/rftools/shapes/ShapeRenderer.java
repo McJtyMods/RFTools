@@ -3,6 +3,7 @@ package mcjty.rftools.shapes;
 import gnu.trove.iterator.TLongIterator;
 import gnu.trove.set.hash.TLongHashSet;
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -10,6 +11,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -17,10 +19,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import java.util.AbstractMap;
-import java.util.Collections;
-import java.util.Set;
-import java.util.zip.Adler32;
+import java.util.*;
 
 public class ShapeRenderer {
 
@@ -36,6 +35,7 @@ public class ShapeRenderer {
 
     private int glList = -1;
     private long checksum = -1;
+    private boolean prevShowMat = false;
 
 
     public void handleShapeDragging(int x, int y) {
@@ -79,7 +79,7 @@ public class ShapeRenderer {
     }
 
 
-    public void renderShape(GenericGuiContainer gui, ItemStack stack, int x, int y, boolean showAxis, boolean showOuter) {
+    public void renderShape(GenericGuiContainer gui, ItemStack stack, int x, int y, boolean showAxis, boolean showOuter, boolean showMat) {
         setupScissor(gui);
 
         GlStateManager.pushMatrix();
@@ -104,7 +104,7 @@ public class ShapeRenderer {
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
-        renderFaces(tessellator, buffer, stack, shape, solid, clamped);
+        renderFaces(tessellator, buffer, stack, shape, solid, clamped, showMat);
 //        renderOutline(tessellator, buffer, positions);
         renderHelpers(tessellator, buffer, dimension.getX()/2.0f, dimension.getY()/2.0f, dimension.getZ()/2.0f, showAxis, showOuter);
 
@@ -192,7 +192,7 @@ public class ShapeRenderer {
         tessellator.draw();
     }
 
-    private static TLongHashSet getPositions(ItemStack stack, Shape shape, boolean solid, BlockPos clamped) {
+    private static TLongHashSet getPositions(ItemStack stack, Shape shape, boolean solid, BlockPos clamped, Map<Long, IBlockState> stateMap) {
         TLongHashSet positions = new TLongHashSet();
         ShapeCardItem.composeShape(stack, shape, solid, null, new BlockPos(0, 0, 0), clamped, new BlockPos(0, 0, 0), new AbstractMap<BlockPos, IBlockState>() {
             @Override
@@ -202,7 +202,9 @@ public class ShapeRenderer {
 
             @Override
             public IBlockState put(BlockPos key, IBlockState value) {
-                positions.add(new BlockPos(key.getX(), key.getY(), -key.getZ()).toLong());
+                long val = new BlockPos(key.getX(), key.getY(), -key.getZ()).toLong();
+                positions.add(val);
+                stateMap.put(val, value);
                 return value;
             }
 
@@ -276,16 +278,89 @@ public class ShapeRenderer {
         return ShapeCardItem.getCheck(stack);
     }
 
-    void renderFaces(Tessellator tessellator, final VertexBuffer buffer,
-                     ItemStack stack, Shape shape, boolean solid, BlockPos clamped) {
+    private static class Col {
+        private final float r;
+        private final float g;
+        private final float b;
+
+        public Col(float r, float g, float b) {
+            this.r = r;
+            this.g = g;
+            this.b = b;
+        }
+
+        public float getR() {
+            return r;
+        }
+
+        public float getG() {
+            return g;
+        }
+
+        public float getB() {
+            return b;
+        }
+    }
+
+    private static final Col COL_DEFAULT = new Col(.5f,.3f,.5f);
+    private static final Col COL_SNOW = new Col(.8f,.8f,.8f);
+    private static final Col COL_DIRT = new Col(0x86/255.0f,0x60/255.0f,0x43/255.0f);
+    private static final Col COL_GRASS = new Col(0x20/255.0f,0x90/255.0f,0x20/255.0f);
+    private static final Col COL_FOLIAGE = new Col(0x20/255.0f,0x70/255.0f,0x20/255.0f);
+    private static final Col COL_STONE = new Col(0x7d/255.0f,0x7d/255.0f,0x7d/255.0f);
+    private static final Col COL_WATER = new Col(0x37/255.0f,0x49/255.0f,0xc6/255.0f);
+    private static final Col COL_NETHERACK = new Col(0x6f/255.0f,0x36/255.0f,0x35/255.0f);
+    private static final Col COL_ENDSTONE = new Col(0xdd/255.0f,0xe0/255.0f,0xa5/255.0f);
+    private static final Col COL_SAND = new Col(0xdb/255.0f,0xd3/255.0f,0xa0/255.0f);
+    private static final Col COL_GRAVEL = new Col(0x7f/255.0f,0x7c/255.0f,0x7b/255.0f);
+    private static final Col COL_BEDROCK = new Col(0x54/255.0f,0x54/255.0f,0x54/255.0f);
+    private static final Col COL_LAVA = new Col(0xd4/255.0f,0x5a/255.0f,0x12/255.0f);
+
+    private Col getColor(Map<IBlockState, Col> pallete, IBlockState state) {
+        if (state == null) {
+            return COL_DEFAULT;
+        }
+        if (pallete.containsKey(state)) {
+            return pallete.get(state);
+        }
+        Col col = COL_DEFAULT;
+        if (state.getBlock() == Blocks.DIRT) {
+            col = COL_DIRT;
+        } else if (state.getBlock() == Blocks.GRASS) {
+            col = COL_GRASS;
+        } else if (state.getBlock() == Blocks.GRAVEL) {
+            col = COL_GRAVEL;
+        } else if (state.getBlock() == Blocks.BEDROCK) {
+            col = COL_BEDROCK;
+        } else if (state.getBlock() == Blocks.SAND || state.getBlock() == Blocks.SANDSTONE) {
+            col = COL_SAND;
+        } else if (state.getBlock() == Blocks.NETHERRACK) {
+            col = COL_NETHERACK;
+        } else if (state.getBlock() == Blocks.END_STONE) {
+            col = COL_ENDSTONE;
+        } else if (state.getBlock() == Blocks.LEAVES || state.getBlock() == Blocks.LEAVES2) {
+            col = COL_FOLIAGE;
+        } else if (state.getBlock() == Blocks.SNOW || state.getBlock() == Blocks.SNOW_LAYER) {
+            col = COL_SNOW;
+        } else if (state.getBlock() == Blocks.STONE || state.getBlock() == Blocks.COBBLESTONE) {
+            col = COL_STONE;
+        } else if (state.getBlock() == Blocks.WATER || state.getBlock() == Blocks.FLOWING_WATER) {
+            col = COL_WATER;
+        } else if (state.getBlock() == Blocks.LAVA || state.getBlock() == Blocks.FLOWING_LAVA) {
+            col = COL_LAVA;
+        }
+        pallete.put(state, col);
+        return col;
+    }
+
+    private void renderFaces(Tessellator tessellator, final VertexBuffer buffer,
+                     ItemStack stack, Shape shape, boolean solid, BlockPos clamped, boolean showMat) {
 
         long check = calculateChecksum(stack);
 
-        if (glList == -1 || check != checksum) {
-            if (checksum != check) {
-                System.out.println("check = " + check);
-            }
+        if (glList == -1 || check != checksum || showMat != prevShowMat) {
             checksum = check;
+            prevShowMat = showMat;
             invalidateGlList();
             glList = GLAllocation.generateDisplayLists(1);
             GlStateManager.glNewList(glList, GL11.GL_COMPILE);
@@ -294,7 +369,9 @@ public class ShapeRenderer {
 //        GlStateManager.enableBlend();
 //        GlStateManager.enableAlpha();
 
-            TLongHashSet positions = ShapeRenderer.getPositions(stack, shape, solid, clamped);
+            Map<Long, IBlockState> stateMap = new HashMap<>();
+            TLongHashSet positions = ShapeRenderer.getPositions(stack, shape, solid, clamped, stateMap);
+            Map<IBlockState, Col> pallete = new HashMap<>();
 
             TLongIterator iterator = positions.iterator();
             while (iterator.hasNext()) {
@@ -306,25 +383,50 @@ public class ShapeRenderer {
                     int z = coordinate.getZ();
 
                     buffer.setTranslation(buffer.xOffset + x, buffer.yOffset + y, buffer.zOffset + z);
-                    float d = .2f;
-                    float l = ((x + y + z) & 1) == 1 ? .9f : .6f;
-                    if (!positions.contains(coordinate.up().toLong())) {
-                        addSideFullTexture(buffer, EnumFacing.UP.ordinal(), d, l, d);
-                    }
-                    if (!positions.contains(coordinate.down().toLong())) {
-                        addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), d, l, d);
-                    }
-                    if (!positions.contains(coordinate.north().toLong())) {
-                        addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), d, d, l);
-                    }
-                    if (!positions.contains(coordinate.south().toLong())) {
-                        addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), d, d, l);
-                    }
-                    if (!positions.contains(coordinate.west().toLong())) {
-                        addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), l, d, d);
-                    }
-                    if (!positions.contains(coordinate.east().toLong())) {
-                        addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), l, d, d);
+                    if (showMat) {
+                        Col col = getColor(pallete, stateMap.get(p));
+                        float r = col.getR();
+                        float g = col.getG();
+                        float b = col.getB();
+                        if (!positions.contains(coordinate.up().toLong())) {
+                            addSideFullTexture(buffer, EnumFacing.UP.ordinal(), r * .8f, g * .8f, b * .8f);
+                        }
+                        if (!positions.contains(coordinate.down().toLong())) {
+                            addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), r * .8f, g * .8f, b * .8f);
+                        }
+                        if (!positions.contains(coordinate.north().toLong())) {
+                            addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), r * 1.2f, g * 1.2f, b * 1.2f);
+                        }
+                        if (!positions.contains(coordinate.south().toLong())) {
+                            addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), r * 1.2f, g * 1.2f, b * 1.2f);
+                        }
+                        if (!positions.contains(coordinate.west().toLong())) {
+                            addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), r, g, b);
+                        }
+                        if (!positions.contains(coordinate.east().toLong())) {
+                            addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), r, g, b);
+                        }
+                    } else {
+                        float d = .2f;
+                        float l = ((x + y + z) & 1) == 1 ? .9f : .6f;
+                        if (!positions.contains(coordinate.up().toLong())) {
+                            addSideFullTexture(buffer, EnumFacing.UP.ordinal(), d, l, d);
+                        }
+                        if (!positions.contains(coordinate.down().toLong())) {
+                            addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), d, l, d);
+                        }
+                        if (!positions.contains(coordinate.north().toLong())) {
+                            addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), d, d, l);
+                        }
+                        if (!positions.contains(coordinate.south().toLong())) {
+                            addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), d, d, l);
+                        }
+                        if (!positions.contains(coordinate.west().toLong())) {
+                            addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), l, d, d);
+                        }
+                        if (!positions.contains(coordinate.east().toLong())) {
+                            addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), l, d, d);
+                        }
                     }
                     buffer.setTranslation(buffer.xOffset - x, buffer.yOffset - y, buffer.zOffset - z);
                 }

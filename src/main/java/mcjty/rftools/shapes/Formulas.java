@@ -4,6 +4,7 @@ import mcjty.rftools.blocks.shield.ShieldConfiguration;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
@@ -54,12 +55,14 @@ public class Formulas {
 
     static final IFormulaFactory FORMULA_SCHEME = () -> new IFormula() {
         private byte[] data;
+        private List<IBlockState> palette = new ArrayList<>();
         private int x1;
         private int y1;
         private int z1;
         private int dx;
         private int dy;
         private int dz;
+        private IBlockState lastState = null;
 
         @Override
         public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
@@ -78,11 +81,24 @@ public class Formulas {
             y1 = tl.getY();
             z1 = tl.getZ();
 
+            NBTTagList pallist = card.getTagList("datapal", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0 ; i < pallist.tagCount() ; i++) {
+                NBTTagCompound tc = pallist.getCompoundTagAt(i);
+                String r = tc.getString("r");
+                int m = tc.getInteger("m");
+                Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(r));
+                if (block == null) {
+                    block = Blocks.STONE;
+                    m = 0;
+                }
+                palette.add(block.getStateFromMeta(m));
+            }
+
             byte[] datas = card.getByteArray("data");
             data = new byte[dx * dy * dz];
             int j = 0;
             for (int i = 0 ; i < datas.length / 2 ; i++) {
-                int cnt = ((int)datas[i*2]) & 0xff;
+                int cnt = (datas[i*2]) & 0xff;
                 int c = datas[i*2+1];
                 while (cnt > 0) {
                     data[j++] = (byte) c;
@@ -101,7 +117,18 @@ public class Formulas {
             }
 
             int index = (y-y1) * dx * dz + (x-x1) * dz + (z-z1);
-            return data[index] == 0 ? 0 : 1;
+            if (data[index] == 0) {
+                return 0;
+            } else {
+                int idx = (data[index]) & 0xff;
+                lastState = idx < palette.size() ? palette.get(idx) : null;
+                return 1;
+            }
+        }
+
+        @Override
+        public IBlockState getLastState() {
+            return lastState;
         }
     };
 

@@ -30,6 +30,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> {
 
     private ToggleButton showAxis;
     private ToggleButton showOuter;
+    private ToggleButton showMat;
 
     private ShapeRenderer shapeRenderer = new ShapeRenderer();
 
@@ -48,12 +49,15 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> {
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
 
-        showAxis = new ToggleButton(mc, this).setCheckMarker(true).setText("Axis").setLayoutHint(new PositionalLayout.PositionalHint(5, 176, 38, 16));
+        showAxis = new ToggleButton(mc, this).setCheckMarker(true).setText("A").setLayoutHint(new PositionalLayout.PositionalHint(5, 176, 24, 16));
         showAxis.setPressed(true);
         toplevel.addChild(showAxis);
-        showOuter = new ToggleButton(mc, this).setCheckMarker(true).setText("Box").setLayoutHint(new PositionalLayout.PositionalHint(42, 176, 38, 16));
+        showOuter = new ToggleButton(mc, this).setCheckMarker(true).setText("B").setLayoutHint(new PositionalLayout.PositionalHint(31, 176, 24, 16));
         showOuter.setPressed(true);
         toplevel.addChild(showOuter);
+        showMat = new ToggleButton(mc, this).setCheckMarker(true).setText("M").setLayoutHint(new PositionalLayout.PositionalHint(57, 176, 24, 16));
+        showMat.setPressed(true);
+        toplevel.addChild(showMat);
 
         toplevel.addChild(new Button(mc, this).setText("W").addButtonEvent(parent -> move(-16, 0, 0)).setLayoutHint(new PositionalLayout.PositionalHint(4, 30, 16, 15)));
         toplevel.addChild(new Button(mc, this).setText("w").addButtonEvent(parent -> move(-1, 0, 0)).setLayoutHint(new PositionalLayout.PositionalHint(20, 30, 16, 15)));
@@ -118,7 +122,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> {
         if (slot.getHasStack()) {
             ItemStack stack = slot.getStack();
             if (ItemStackTools.isValid(stack)) {
-                shapeRenderer.renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed());
+                shapeRenderer.renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed(), showMat.isPressed());
             }
         }
     }

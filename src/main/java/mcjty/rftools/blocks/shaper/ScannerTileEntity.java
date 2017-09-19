@@ -204,7 +204,7 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         BlockPos tl = new BlockPos(center.getX() - dimX/2, center.getY() - dimY/2, center.getZ() - dimZ/2);
-        Integer prev = null;
+        int prev = -1;
 
         List<IBlockState> materialPalette = new ArrayList<>();
         Map<IBlockState, Integer> paletteIndex = new HashMap<>();
@@ -236,7 +236,7 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
                             c = 0;
                         }
                     }
-                    if (prev == null) {
+                    if (prev == -1) {
                         prev = c;
                         cnt = 1;
                     } else if (prev == c && cnt < 255) {
@@ -250,11 +250,11 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
                 }
             }
         }
-        if (prev != null) {
+        if (prev != -1) {
             stream.write(cnt);
             stream.write(prev);
         }
-        ShapeCardItem.setData(tagOut, stream.toByteArray());
+        ShapeCardItem.setData(tagOut, stream.toByteArray(), materialPalette);
     }
 
     @Override

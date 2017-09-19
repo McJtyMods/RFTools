@@ -7,7 +7,6 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
-import mcjty.rftools.blocks.shaper.ShaperContainer;
 import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.shapes.IFormula;
 import mcjty.rftools.shapes.Shape;
@@ -24,10 +23,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.TextFormatting;
@@ -150,13 +146,23 @@ public class ShapeCardItem extends GenericRFToolsItem {
         return EnumActionResult.SUCCESS;
     }
 
-    public static void setData(ItemStack itemStack, byte[] data) {
+    public static void setData(ItemStack itemStack, byte[] data, List<IBlockState> materialPalette) {
         NBTTagCompound tagCompound = getCompound(itemStack);
-        setData(tagCompound, data);
+        setData(tagCompound, data, materialPalette);
     }
 
-    public static void setData(NBTTagCompound tagCompound, byte[] data) {
+    public static void setData(NBTTagCompound tagCompound, byte[] data, List<IBlockState> materialPalette) {
         tagCompound.setByteArray("data", data);
+        NBTTagList palette = new NBTTagList();
+        for (IBlockState state : materialPalette) {
+            ResourceLocation name = state.getBlock().getRegistryName();
+            int meta = state.getBlock().getMetaFromState(state);
+            NBTTagCompound tc = new NBTTagCompound();
+            tc.setString("r", name.toString());
+            tc.setInteger("m", meta);
+            palette.appendTag(tc);
+        }
+        tagCompound.setTag("datapal", palette);
         dirty(tagCompound);
     }
 
