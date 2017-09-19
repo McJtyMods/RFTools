@@ -1,5 +1,6 @@
 package mcjty.rftools.items.builder;
 
+import gnu.trove.set.hash.TLongHashSet;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
@@ -35,6 +36,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 import org.lwjgl.input.Keyboard;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 public class ShapeCardItem extends GenericRFToolsItem {
@@ -720,7 +722,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
         final int[] cnt = {0};
         BlockPos offset = new BlockPos(0, 128, 0);
         BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
-        composeShape(shapeCard, shape, solid, null, new BlockPos(0, 0, 0), clamped, offset, new AbstractMap<BlockPos, IBlockState>() {
+        composeFormula(shapeCard, shape.getFormulaFactory().createFormula(), null, new BlockPos(0, 0, 0), clamped, offset, new AbstractMap<BlockPos, IBlockState>() {
             @Override
             public IBlockState put(BlockPos key, IBlockState value) {
                 cnt[0]++;
@@ -736,7 +738,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
             public int size() {
                 return 0;
             }
-        }, MAXIMUM_COUNT+1, false, null);
+        }, MAXIMUM_COUNT+1, solid, false, null);
         return cnt[0];
     }
 
@@ -754,11 +756,6 @@ public class ShapeCardItem extends GenericRFToolsItem {
         } else {
             return chunk.chunkZPos == (z>>4);
         }
-    }
-
-    public static void composeShape(ItemStack shapeCard, Shape shape, boolean solid, World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Map<BlockPos, IBlockState> blocks, int maxSize, boolean forquarry,
-                                    ChunkPos chunk) {
-        composeFormula(shapeCard, shape.getFormulaFactory().createFormula(), worldObj, thisCoord, dimension, offset, blocks, maxSize, solid, forquarry, chunk);
     }
 
     private static void placeBlockIfPossible(World worldObj, Map<BlockPos, IBlockState> blocks, int maxSize, int x, int y, int z, IBlockState state, boolean forquarry) {
@@ -779,8 +776,34 @@ public class ShapeCardItem extends GenericRFToolsItem {
         }
     }
 
+    public static TLongHashSet getPositions(ItemStack stack, Shape shape, boolean solid, BlockPos thisCoord, BlockPos clamped, BlockPos offset, @Nullable Map<Long, IBlockState> stateMap) {
+        TLongHashSet positions = new TLongHashSet();
+        composeFormula(stack, shape.getFormulaFactory().createFormula(), null, thisCoord, clamped, offset, new AbstractMap<BlockPos, IBlockState>() {
+            @Override
+            public Set<Entry<BlockPos, IBlockState>> entrySet() {
+                return Collections.emptySet();
+            }
 
-    private static void composeFormula(ItemStack shapeCard, IFormula formula, World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Map<BlockPos, IBlockState> blocks, int maxSize, boolean solid, boolean forquarry, ChunkPos chunk) {
+            @Override
+            public IBlockState put(BlockPos key, IBlockState value) {
+                long val = new BlockPos(key.getX(), key.getY(), -key.getZ()).toLong();
+                positions.add(val);
+                if (stateMap != null) {
+                    stateMap.put(val, value);
+                }
+                return value;
+            }
+
+            @Override
+            public int size() {
+                return 0;
+            }
+        }, MAXIMUM_COUNT +1, solid, false, null);
+        return positions;
+    }
+
+
+    public static void composeFormula(ItemStack shapeCard, IFormula formula, World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Map<BlockPos, IBlockState> blocks, int maxSize, boolean solid, boolean forquarry, ChunkPos chunk) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
         int zCoord = thisCoord.getZ();

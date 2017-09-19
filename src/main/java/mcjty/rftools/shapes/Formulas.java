@@ -120,7 +120,7 @@ public class Formulas {
             if (data[index] == 0) {
                 return 0;
             } else {
-                int idx = (data[index]) & 0xff;
+                int idx = ((data[index]) & 0xff)-1;
                 lastState = idx < palette.size() ? palette.get(idx) : null;
                 return 1;
             }
@@ -244,6 +244,9 @@ public class Formulas {
                                 if (inside == 1) {
                                     ok = 1;
                                     blockState = blockStates.get(i);
+                                    if (blockState == null) {
+                                        blockState = formula.getLastState();
+                                    }
                                 }
                                 break;
                             case SUBTRACT:
@@ -255,6 +258,9 @@ public class Formulas {
                                 if (inside == 1 && ok == 1) {
                                     ok = 1;
                                     blockState = blockStates.get(i);
+                                    if (blockState == null) {
+                                        blockState = formula.getLastState();
+                                    }
                                 } else {
                                     ok = 0;
                                 }

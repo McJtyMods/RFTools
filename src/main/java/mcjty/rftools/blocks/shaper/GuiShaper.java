@@ -176,7 +176,6 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
             modifiers[i] = new ShapeModifier(op, flipButtons[i].isPressed(), rot);
         }
         network.sendToServer(new PacketSendShaperData(tileEntity.getPos(), modifiers));
-        counter = 10;
     }
 
     @Override
@@ -190,17 +189,9 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
         shapeRenderer.handleShapeDragging(x, y);
     }
 
-    private int counter = 30;
-
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int x, int y) {
         drawWindow();
-
-        counter--;
-        if (counter < 0) {
-            counter = 30;
-//            shapeRenderer.invalidateGlList();
-        }
 
         Slot slot = inventorySlots.getSlot(ShaperContainer.SLOT_OUT);
         if (slot.getHasStack()) {

@@ -283,8 +283,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
         Shape shape = ShapeCardItem.getShape(shapeCard);
         Map<BlockPos, IBlockState> blocks = new HashMap<>();
-        ShapeCardItem.composeShape(shapeCard, shape, false, getWorld(), getPos(), dimension, offset, blocks,
-                BuilderConfiguration.maxBuilderDimension * 256 * BuilderConfiguration.maxBuilderDimension, false, null);
+        ShapeCardItem.composeFormula(shapeCard, shape.getFormulaFactory().createFormula(), getWorld(), getPos(), dimension, offset, blocks, BuilderConfiguration.maxBuilderDimension * 256 * BuilderConfiguration.maxBuilderDimension, false, false, null);
         for (Map.Entry<BlockPos, IBlockState> entry : blocks.entrySet()) {
             BlockPos p = entry.getKey();
             if (getWorld().isAirBlock(p)) {
@@ -345,7 +344,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
         Shape shape = ShapeCardItem.getShape(shapeCard);
         Map<BlockPos, IBlockState> blocks = new HashMap<>();
-        ShapeCardItem.composeShape(shapeCard, shape, false, getWorld(), getPos(), dimension, offset, blocks, BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension, false, null);
+        ShapeCardItem.composeFormula(shapeCard, shape.getFormulaFactory().createFormula(), getWorld(), getPos(), dimension, offset, blocks, BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension, false, false, null);
         for (Map.Entry<BlockPos, IBlockState> entry : blocks.entrySet()) {
             BlockPos block = entry.getKey();
             if (getWorld().getBlockState(block).getBlock() == BuilderSetup.supportBlock) {
@@ -843,9 +842,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             boolean solid = ShapeCardItem.isSolid(shapeCard);
             BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
             BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
-            ShapeCardItem.composeShape(shapeCard, shape, solid, getWorld(), getPos(), dimension, offset, cachedBlocks,
-                    BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension,
-                    !ShapeCardItem.isNormalShapeCard(shapeCard), chunk);
+            boolean forquarry = !ShapeCardItem.isNormalShapeCard(shapeCard);
+            ShapeCardItem.composeFormula(shapeCard, shape.getFormulaFactory().createFormula(), getWorld(), getPos(), dimension, offset, cachedBlocks, BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension, solid, forquarry, chunk);
             cachedChunk = chunk;
         }
         return cachedBlocks;

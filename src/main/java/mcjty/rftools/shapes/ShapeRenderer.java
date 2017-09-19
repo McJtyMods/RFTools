@@ -3,8 +3,8 @@ package mcjty.rftools.shapes;
 import gnu.trove.iterator.TLongIterator;
 import gnu.trove.set.hash.TLongHashSet;
 import mcjty.lib.container.GenericGuiContainer;
-import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.items.builder.ShapeCardItem;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -192,30 +192,6 @@ public class ShapeRenderer {
         tessellator.draw();
     }
 
-    private static TLongHashSet getPositions(ItemStack stack, Shape shape, boolean solid, BlockPos clamped, Map<Long, IBlockState> stateMap) {
-        TLongHashSet positions = new TLongHashSet();
-        ShapeCardItem.composeShape(stack, shape, solid, null, new BlockPos(0, 0, 0), clamped, new BlockPos(0, 0, 0), new AbstractMap<BlockPos, IBlockState>() {
-            @Override
-            public Set<Entry<BlockPos, IBlockState>> entrySet() {
-                return Collections.emptySet();
-            }
-
-            @Override
-            public IBlockState put(BlockPos key, IBlockState value) {
-                long val = new BlockPos(key.getX(), key.getY(), -key.getZ()).toLong();
-                positions.add(val);
-                stateMap.put(val, value);
-                return value;
-            }
-
-            @Override
-            public int size() {
-                return 0;
-            }
-        }, ShapeCardItem.MAXIMUM_COUNT+1, false, null);
-        return positions;
-    }
-
     static boolean isPositionEnclosed(TLongHashSet positions, BlockPos coordinate) {
         return positions.contains(coordinate.up().toLong()) &&
                 positions.contains(coordinate.down().toLong()) &&
@@ -303,6 +279,7 @@ public class ShapeRenderer {
     }
 
     private static final Col COL_DEFAULT = new Col(.5f,.3f,.5f);
+    private static final Col COL_MODDED = new Col(.1f,.8f,.8f);
     private static final Col COL_SNOW = new Col(.8f,.8f,.8f);
     private static final Col COL_DIRT = new Col(0x86/255.0f,0x60/255.0f,0x43/255.0f);
     private static final Col COL_GRASS = new Col(0x20/255.0f,0x90/255.0f,0x20/255.0f);
@@ -315,6 +292,9 @@ public class ShapeRenderer {
     private static final Col COL_GRAVEL = new Col(0x7f/255.0f,0x7c/255.0f,0x7b/255.0f);
     private static final Col COL_BEDROCK = new Col(0x54/255.0f,0x54/255.0f,0x54/255.0f);
     private static final Col COL_LAVA = new Col(0xd4/255.0f,0x5a/255.0f,0x12/255.0f);
+    private static final Col COL_WOOD = new Col(0x66/255.0f,0x51/255.0f,0x32/255.0f);
+    private static final Col COL_FLOWER = new Col(0xa0/255.0f,0x20/255.0f,0x20/255.0f);
+    private static final Col COL_OBSIDIAN = new Col(0x14/255.0f,0x12/255.0f,0x1e/255.0f);
 
     private Col getColor(Map<IBlockState, Col> pallete, IBlockState state) {
         if (state == null) {
@@ -323,31 +303,42 @@ public class ShapeRenderer {
         if (pallete.containsKey(state)) {
             return pallete.get(state);
         }
-        Col col = COL_DEFAULT;
-        if (state.getBlock() == Blocks.DIRT) {
+        Col col;
+        Block b = state.getBlock();
+        if (b == Blocks.DIRT || b == Blocks.FARMLAND || b == Blocks.GRASS_PATH) {
             col = COL_DIRT;
-        } else if (state.getBlock() == Blocks.GRASS) {
+        } else if (b == Blocks.GRASS) {
             col = COL_GRASS;
-        } else if (state.getBlock() == Blocks.GRAVEL) {
+        } else if (b == Blocks.GRAVEL) {
             col = COL_GRAVEL;
-        } else if (state.getBlock() == Blocks.BEDROCK) {
+        } else if (b == Blocks.BEDROCK) {
             col = COL_BEDROCK;
-        } else if (state.getBlock() == Blocks.SAND || state.getBlock() == Blocks.SANDSTONE) {
+        } else if (b == Blocks.SAND || b == Blocks.SANDSTONE) {
             col = COL_SAND;
-        } else if (state.getBlock() == Blocks.NETHERRACK) {
+        } else if (b == Blocks.NETHERRACK) {
             col = COL_NETHERACK;
-        } else if (state.getBlock() == Blocks.END_STONE) {
+        } else if (b == Blocks.OBSIDIAN) {
+            col = COL_OBSIDIAN;
+        } else if (b == Blocks.END_STONE) {
             col = COL_ENDSTONE;
-        } else if (state.getBlock() == Blocks.LEAVES || state.getBlock() == Blocks.LEAVES2) {
+        } else if (b == Blocks.LEAVES || b == Blocks.LEAVES2 || b == Blocks.REEDS || b == Blocks.SAPLING) {
             col = COL_FOLIAGE;
-        } else if (state.getBlock() == Blocks.SNOW || state.getBlock() == Blocks.SNOW_LAYER) {
+        } else if (b == Blocks.RED_FLOWER || b == Blocks.YELLOW_FLOWER) {
+            col = COL_FLOWER;
+        } else if (b == Blocks.SNOW || b == Blocks.SNOW_LAYER) {
             col = COL_SNOW;
-        } else if (state.getBlock() == Blocks.STONE || state.getBlock() == Blocks.COBBLESTONE) {
+        } else if (b == Blocks.STONE || b == Blocks.COBBLESTONE || b == Blocks.MOSSY_COBBLESTONE) {
             col = COL_STONE;
-        } else if (state.getBlock() == Blocks.WATER || state.getBlock() == Blocks.FLOWING_WATER) {
+        } else if (b == Blocks.WATER || b == Blocks.FLOWING_WATER) {
             col = COL_WATER;
-        } else if (state.getBlock() == Blocks.LAVA || state.getBlock() == Blocks.FLOWING_LAVA) {
+        } else if (b == Blocks.LAVA || b == Blocks.FLOWING_LAVA) {
             col = COL_LAVA;
+        } else if (b == Blocks.PLANKS || b == Blocks.LOG || b == Blocks.LOG2) {
+            col = COL_WOOD;
+        } else if (!"minecraft".equals(state.getBlock().getRegistryName().getResourceDomain())) {
+            col = COL_MODDED;
+        } else {
+            col = COL_DEFAULT;
         }
         pallete.put(state, col);
         return col;
@@ -370,7 +361,7 @@ public class ShapeRenderer {
 //        GlStateManager.enableAlpha();
 
             Map<Long, IBlockState> stateMap = new HashMap<>();
-            TLongHashSet positions = ShapeRenderer.getPositions(stack, shape, solid, clamped, stateMap);
+            TLongHashSet positions = ShapeCardItem.getPositions(stack, shape, solid, new BlockPos(0, 0, 0), clamped, new BlockPos(0, 0, 0), stateMap);
             Map<IBlockState, Col> pallete = new HashMap<>();
 
             TLongIterator iterator = positions.iterator();

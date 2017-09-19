@@ -1,11 +1,14 @@
 package mcjty.rftools.blocks.shaper;
 
+import gnu.trove.set.hash.TLongHashSet;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.builder.BuilderSetup;
+import mcjty.rftools.blocks.storage.ModularStorageSetup;
+import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.modifier.ModifierEntry;
 import mcjty.rftools.items.modifier.ModifierFilterOperation;
@@ -14,7 +17,6 @@ import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.shapes.Shape;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,7 +24,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.OreDictionary;
@@ -90,24 +91,17 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
     }
 
     private void scan(int offsetX, int offsetY, int offsetZ) {
-        ItemStack cardIn = inventoryHelper.getStackInSlot(ScannerContainer.SLOT_IN);
-        if (ItemStackTools.isValid(cardIn)) {
-            ShapeCardItem.setOffset(cardIn, offsetX, offsetY, offsetZ);
-
-            ItemStack cardOut = inventoryHelper.getStackInSlot(ScannerContainer.SLOT_OUT);
-            if (ItemStackTools.isEmpty(cardOut)) {
-                return;
-            }
+        ItemStack cardOut = inventoryHelper.getStackInSlot(ScannerContainer.SLOT_OUT);
+        if (ItemStackTools.isValid(cardOut)) {
+            ShapeCardItem.setOffset(cardOut, offsetX, offsetY, offsetZ);
             if (!ShapeCardItem.getShape(cardOut).isScheme()) {
                 ShapeCardItem.setShape(cardOut, Shape.SHAPE_SCHEME, true);
             }
             NBTTagCompound tagOut = cardOut.getTagCompound();
-            NBTTagCompound tagIn = cardIn.getTagCompound();     // @todo use this
-            BlockPos dim = ShapeCardItem.getDimension(cardIn);
+            BlockPos dim = ShapeCardItem.getDimension(cardOut);
             int dimX = dim.getX();
             int dimY = dim.getY();
             int dimZ = dim.getZ();
-            ShapeCardItem.setDimension(cardOut, dimX, dimY, dimZ);
             scanArea(tagOut, getPos().add(offsetX, offsetY, offsetZ), dimX, dimY, dimZ);
         }
     }
@@ -125,12 +119,19 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
                 }
                 switch (modifier.getType()) {
                     case FILTER_SLOT: {
-                        // @todo support item filter here
                         ItemStack inputItem = inState.getBlock().getItem(getWorld(), pos, inState);
-                        // Empty input stack in modifier also matches
-                        if (ItemStackTools.isEmpty(modifier.getIn()) || ItemStack.areItemsEqual(inputItem, modifier.getIn())) {
-                            outState = getOutput(inState, modifier);
-                            stop = true;
+                        if (ItemStackTools.isValid(modifier.getIn()) && modifier.getIn().getItem() == ModularStorageSetup.storageFilterItem) {
+                            StorageFilterCache filter = StorageFilterItem.getCache(modifier.getIn());
+                            if (filter.match(inputItem)) {
+                                outState = getOutput(inState, modifier);
+                                stop = true;
+                            }
+                        } else {
+                            // Empty input stack in modifier also matches
+                            if (ItemStackTools.isEmpty(modifier.getIn()) || ItemStack.areItemsEqual(inputItem, modifier.getIn())) {
+                                outState = getOutput(inState, modifier);
+                                stop = true;
+                            }
                         }
                         break;
                     }
@@ -187,7 +188,7 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
             return paletteIndex.get(state);
         }
         int idx = materialPalette.size();
-        if (idx > 254) {
+        if (idx > 253) {
             // @todo overflow. How to handle gracefully?
             System.out.println("Scanner palette overflow!");
             return idx;
@@ -209,6 +210,18 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         List<IBlockState> materialPalette = new ArrayList<>();
         Map<IBlockState, Integer> paletteIndex = new HashMap<>();
 
+        TLongHashSet positionMask = null;
+        ItemStack cardIn = inventoryHelper.getStackInSlot(ScannerContainer.SLOT_IN);
+        if (ItemStackTools.isValid(cardIn)) {
+            Shape shape = ShapeCardItem.getShape(cardIn);
+            BlockPos dimension = ShapeCardItem.getDimension(cardIn);
+            BlockPos offset = ShapeCardItem.getOffset(cardIn);
+            BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
+            System.out.println("center = " + center);
+            // @todo THIS IS NOT WORKING YET!
+            positionMask = ShapeCardItem.getPositions(cardIn, shape, ShapeCardItem.isSolid(cardIn), center, clamped, offset, null);
+        }
+
         int cnt = 0;
         BlockPos.MutableBlockPos mpos = new BlockPos.MutableBlockPos();
         for (int y = tl.getY() ; y < tl.getY() + dimY ; y++) {
@@ -216,7 +229,7 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
                 for (int z = tl.getZ() ; z < tl.getZ() + dimZ ; z++) {
                     mpos.setPos(x, y, z);
                     int c;
-                    if (getWorld().isAirBlock(mpos)) {
+                    if (getWorld().isAirBlock(mpos) || (positionMask != null && !positionMask.contains(mpos.toLong()))) {
                         c = 0;
                     } else {
                         IBlockState state = getWorld().getBlockState(mpos);
@@ -227,11 +240,11 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
                                 state = null;
                             }
                         }
-                        if (state != Blocks.AIR.getDefaultState()) {
+                        if (state != null && state != Blocks.AIR.getDefaultState()) {
                             state = mapState(modifiers, modifierMapping, mpos, state);
                         }
-                        if (state != Blocks.AIR.getDefaultState()) {
-                            c = allocPalette(materialPalette, paletteIndex, state);
+                        if (state != null && state != Blocks.AIR.getDefaultState()) {
+                            c = allocPalette(materialPalette, paletteIndex, state) + 1;
                         } else {
                             c = 0;
                         }

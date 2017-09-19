@@ -33,7 +33,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> {
     private ToggleButton showMat;
 
     private ShapeRenderer shapeRenderer = new ShapeRenderer();
-
+    private int filterCnt = 0;
 
     public GuiScanner(ScannerTileEntity shaperTileEntity, ScannerContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, shaperTileEntity, container, RFTools.GUI_MANUAL_MAIN, "scanner");
@@ -77,10 +77,28 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> {
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
+
+        move(0, 0, 0);
+
+        filterCnt = countFilters();
+    }
+
+    private int countFilters() {
+        int cnt = 0;
+        if (inventorySlots.getSlot(ScannerContainer.SLOT_IN).getHasStack()) {
+            cnt++;
+        }
+        if (inventorySlots.getSlot(ScannerContainer.SLOT_FILTER).getHasStack()) {
+            cnt++;
+        }
+        if (inventorySlots.getSlot(ScannerContainer.SLOT_MODIFIER).getHasStack()) {
+            cnt++;
+        }
+        return cnt;
     }
 
     private void move(int x, int y, int z) {
-        Slot slot = inventorySlots.getSlot(ScannerContainer.SLOT_IN);
+        Slot slot = inventorySlots.getSlot(ScannerContainer.SLOT_OUT);
         if (slot.getHasStack()) {
             ItemStack stack = slot.getStack();
             if (ItemStackTools.isValid(stack)) {
@@ -91,7 +109,6 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> {
                 sendServerCommand(network, ScannerTileEntity.CMD_SCAN, new Argument("offsetX", offsetX), new Argument("offsetY", offsetY), new Argument("offsetZ", offsetZ));
             }
         }
-        counter = 10;
     }
 
     @Override
@@ -105,23 +122,22 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> {
         shapeRenderer.handleShapeDragging(x, y);
     }
 
-    private int counter = 30;
+
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int x, int y) {
         drawWindow();
 
-        counter--;
-        if (counter < 0) {
-            counter = 30;
-//            shapeRenderer.invalidateGlList();
-        }
-
-
         Slot slot = inventorySlots.getSlot(ScannerContainer.SLOT_OUT);
         if (slot.getHasStack()) {
             ItemStack stack = slot.getStack();
             if (ItemStackTools.isValid(stack)) {
+                int cnt = countFilters();
+                if (cnt != filterCnt) {
+                    filterCnt = cnt;
+                    move(0, 0, 0);
+                }
+
                 shapeRenderer.renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed(), showMat.isPressed());
             }
         }
