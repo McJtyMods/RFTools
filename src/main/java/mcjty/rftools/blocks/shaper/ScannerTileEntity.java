@@ -8,11 +8,14 @@ import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.modifier.ModifierEntry;
+import mcjty.rftools.items.modifier.ModifierFilterOperation;
 import mcjty.rftools.items.modifier.ModifierItem;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.shapes.Shape;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDynamicLiquid;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -22,8 +25,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,48 +112,89 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         }
     }
 
-    private IBlockState mapState(List<ModifierEntry> modifiers, Map<IBlockState, IBlockState> modifierMapping, BlockPos pos, IBlockState input) {
+    private IBlockState mapState(List<ModifierEntry> modifiers, Map<IBlockState, IBlockState> modifierMapping, BlockPos pos, IBlockState inState) {
         if (modifiers.isEmpty()) {
-            return input;
+            return inState;
         }
-        if (!modifierMapping.containsKey(input)) {
-            IBlockState outItem = null;
+        if (!modifierMapping.containsKey(inState)) {
+            IBlockState outState = inState;
             boolean stop = false;
             for (ModifierEntry modifier : modifiers) {
                 if (stop) {
                     break;
                 }
                 switch (modifier.getType()) {
-                    case FILTER_SLOT:
+                    case FILTER_SLOT: {
                         // @todo support item filter here
-                        ItemStack inputItem = input.getBlock().getItem(getWorld(), pos, input);
+                        ItemStack inputItem = inState.getBlock().getItem(getWorld(), pos, inState);
                         // Empty input stack in modifier also matches
                         if (ItemStackTools.isEmpty(modifier.getIn()) || ItemStack.areItemsEqual(inputItem, modifier.getIn())) {
-                            ItemStack outputItem = modifier.getOut();
-                            if (ItemStackTools.isEmpty(outputItem)) {
-                                outItem = input;
-                            } else {
-                                Block block = ForgeRegistries.BLOCKS.getValue(outputItem.getItem().getRegistryName());
-                                if (block == null) {
-                                    outItem = Blocks.AIR.getDefaultState();
-                                } else {
-                                    outItem = block.getStateFromMeta(outputItem.getMetadata());
-                                }
-                            }
+                            outState = getOutput(inState, modifier);
                             stop = true;
                         }
                         break;
-                    case FILTER_ORE:
+                    }
+                    case FILTER_ORE: {
+                        ItemStack inputItem = inState.getBlock().getItem(getWorld(), pos, inState);
+                        int[] oreIDs = OreDictionary.getOreIDs(inputItem);
+                        for (int id : oreIDs) {
+                            if (OreDictionary.getOreName(id).startsWith("ore")) {
+                                outState = getOutput(inState, modifier);
+                                stop = true;
+                                break;
+                            }
+                        }
                         break;
+                    }
                     case FILTER_LIQUID:
+                        if (inState.getBlock() instanceof BlockLiquid) {
+                            outState = getOutput(inState, modifier);
+                            stop = true;
+                        }
                         break;
                     case FILTER_TILEENTITY:
+                        if (getWorld().getTileEntity(pos) != null) {
+                            outState = getOutput(inState, modifier);
+                            stop = true;
+                        }
                         break;
                 }
             }
-            modifierMapping.put(input, outItem);
+            modifierMapping.put(inState, outState);
         }
-        return modifierMapping.get(input);
+        return modifierMapping.get(inState);
+    }
+
+    private IBlockState getOutput(IBlockState input, ModifierEntry modifier) {
+        if (modifier.getOp() == ModifierFilterOperation.OPERATION_VOID) {
+            return Blocks.AIR.getDefaultState();
+        }
+        ItemStack outputItem = modifier.getOut();
+        if (ItemStackTools.isEmpty(outputItem)) {
+            return input;
+        } else {
+            Block block = ForgeRegistries.BLOCKS.getValue(outputItem.getItem().getRegistryName());
+            if (block == null) {
+                return Blocks.AIR.getDefaultState();
+            } else {
+                return block.getStateFromMeta(outputItem.getMetadata());
+            }
+        }
+    }
+
+    private int allocPalette(List<IBlockState> materialPalette, Map<IBlockState, Integer> paletteIndex, IBlockState state) {
+        if (paletteIndex.containsKey(state)) {
+            return paletteIndex.get(state);
+        }
+        int idx = materialPalette.size();
+        if (idx > 254) {
+            // @todo overflow. How to handle gracefully?
+            System.out.println("Scanner palette overflow!");
+            return idx;
+        }
+        materialPalette.add(state);
+        paletteIndex.put(state, idx);
+        return idx;
     }
 
     private void scanArea(NBTTagCompound tagOut, BlockPos center, int dimX, int dimY, int dimZ) {
@@ -158,25 +204,36 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         BlockPos tl = new BlockPos(center.getX() - dimX/2, center.getY() - dimY/2, center.getZ() - dimZ/2);
-        Byte prev = null;
+        Integer prev = null;
+
+        List<IBlockState> materialPalette = new ArrayList<>();
+        Map<IBlockState, Integer> paletteIndex = new HashMap<>();
+
         int cnt = 0;
         BlockPos.MutableBlockPos mpos = new BlockPos.MutableBlockPos();
         for (int y = tl.getY() ; y < tl.getY() + dimY ; y++) {
             for (int x = tl.getX() ; x < tl.getX() + dimX ; x++) {
                 for (int z = tl.getZ() ; z < tl.getZ() + dimZ ; z++) {
                     mpos.setPos(x, y, z);
-                    byte c;
+                    int c;
                     if (getWorld().isAirBlock(mpos)) {
                         c = 0;
                     } else {
                         IBlockState state = getWorld().getBlockState(mpos);
                         getFilterCache();
-                        c = 1;
                         if (filterCache != null) {
                             ItemStack item = state.getBlock().getItem(getWorld(), mpos, state);
                             if (!filterCache.match(item)) {
-                                c = 0;
+                                state = null;
                             }
+                        }
+                        if (state != Blocks.AIR.getDefaultState()) {
+                            state = mapState(modifiers, modifierMapping, mpos, state);
+                        }
+                        if (state != Blocks.AIR.getDefaultState()) {
+                            c = allocPalette(materialPalette, paletteIndex, state);
+                        } else {
+                            c = 0;
                         }
                     }
                     if (prev == null) {
