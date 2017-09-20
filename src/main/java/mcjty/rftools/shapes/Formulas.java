@@ -597,6 +597,40 @@ public class Formulas {
         }
     };
 
+    static final IFormulaFactory FORMULA_CONE = () -> new IFormula() {
+        private float centerx;
+        private float centerz;
+        private float dx2;
+        private float dz2;
+        private float dy;
+        private float topy;
+        private int davg;
+
+        @Override
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
+            int dx = dimension.getX();
+            int dy = dimension.getY();
+            int dz = dimension.getZ();
+            int xCoord = thisCoord.getX();
+            int yCoord = thisCoord.getY();
+            int zCoord = thisCoord.getZ();
+            centerx = xCoord + offset.getX() + ((dx % 2 != 0) ? 0.0f : -.5f);
+            centerz = zCoord + offset.getZ() + ((dz % 2 != 0) ? 0.0f : -.5f);
+
+            float factor = 1.7f;
+            dx2 = dx == 0 ? .5f : ((dx + factor) * (dx + factor)) / 4.0f;
+            dz2 = dz == 0 ? .5f : ((dz + factor) * (dz + factor)) / 4.0f;
+            davg = (int) ((dx + dz + factor * 2) / 2);
+            this.dy = dy + .5f;     // Avoid division by zero
+            topy = yCoord + offset.getY() + dy / 2;
+        }
+
+        @Override
+        public boolean isInside(int x, int y, int z) {
+            double distance = Math.sqrt(squaredDistance2D(centerx, centerz, x, z, dx2, dz2));
+            return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) *  (topy-y) / dy;
+        }
+    };
     static final IFormulaFactory FORMULA_PRISM = () -> new IFormula() {
         private int x1;
         private int y1;

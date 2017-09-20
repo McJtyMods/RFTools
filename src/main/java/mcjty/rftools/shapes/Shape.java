@@ -14,6 +14,7 @@ public enum Shape {
     SHAPE_PRISM("Prism", Formulas.FORMULA_PRISM),
     SHAPE_TORUS("Torus", Formulas.FORMULA_TORUS),
     SHAPE_HEART("Heart", Formulas.FORMULA_HEART),
+    SHAPE_CONE("Cone", Formulas.FORMULA_CONE),
     SHAPE_CUSTOM("Custom", Formulas.FORMULA_CUSTOM),
     SHAPE_SCHEME("Scheme", Formulas.FORMULA_SCHEME);
 
