@@ -44,7 +44,8 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
     private StorageFilterCache filterCache = null;
 
     private byte[] data = null;
-    List<IBlockState> materialPalette = new ArrayList<>();
+    private List<IBlockState> materialPalette = new ArrayList<>();
+    private BlockPos dataDim;
 
     @Override
     public InventoryHelper getInventoryHelper() {
@@ -80,6 +81,10 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         return materialPalette;
     }
 
+    public BlockPos getDataDim() {
+        return dataDim;
+    }
+
     private void getFilterCache() {
         if (filterCache == null) {
             filterCache = StorageFilterItem.getCache(inventoryHelper.getStackInSlot(ScannerContainer.SLOT_FILTER));
@@ -110,6 +115,7 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
             }
             materialPalette.add(block.getStateFromMeta(tc.getInteger("m")));
         }
+        dataDim = new BlockPos(tagCompound.getInteger("scandimx"), tagCompound.getInteger("scandimy"), tagCompound.getInteger("scandimz"));
     }
 
 //    @Override
@@ -132,6 +138,11 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
             pal.appendTag(tc);
         }
         tagCompound.setTag("scanpal", pal);
+        if (dataDim != null) {
+            tagCompound.setInteger("scandimx", dataDim.getX());
+            tagCompound.setInteger("scandimy", dataDim.getY());
+            tagCompound.setInteger("scandimz", dataDim.getZ());
+        }
     }
 
     private void writeCommonToNBT(NBTTagCompound tagCompound) {
@@ -318,6 +329,7 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         }
         this.data = stream.toByteArray();
         this.materialPalette = materialPalette;
+        this.dataDim = new BlockPos(dimX, dimY, dimZ);
         ShapeCardItem.setData(tagOut, getWorld().provider.getDimension(), getPos());
         markDirty();
     }

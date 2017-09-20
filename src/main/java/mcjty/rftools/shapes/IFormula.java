@@ -8,22 +8,17 @@ public interface IFormula {
 
     void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card);
 
-    int isInside(int x, int y, int z);
+    boolean isInside(int x, int y, int z);
 
     /// Return the blockstate resulting from the last isInside test
     default IBlockState getLastState() { return null; }
 
     default boolean isBorder(int x, int y, int z) {
-        if (isInside(x, y, z) == 0) {
-            return false;
+        if (!isInside(x - 1, y, z) || !isInside(x + 1, y, z) || !isInside(x, y, z - 1) ||
+                !isInside(x, y, z + 1) || !isInside(x, y - 1, z) || !isInside(x, y + 1, z)) {
+            return isInside(x, y, z);
         }
-        int cnt = isInside(x - 1, y, z);
-        cnt += isInside(x + 1, y, z);
-        cnt += isInside(x, y, z - 1);
-        cnt += isInside(x, y, z + 1);
-        cnt += isInside(x, y - 1, z);
-        cnt += isInside(x, y + 1, z);
-        return cnt != 6;
+        return false;
     }
 
     default boolean isCustom() { return false; }
@@ -44,8 +39,8 @@ public interface IFormula {
                 }
 
                 @Override
-                public int isInside(int x, int y, int z) {
-                    return IFormula.this.isBorder(x, y, z) ? 1 : 0;
+                public boolean isInside(int x, int y, int z) {
+                    return IFormula.this.isBorder(x, y, z);
                 }
 
                 @Override

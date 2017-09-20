@@ -5,14 +5,12 @@ import mcjty.rftools.blocks.shield.ShieldConfiguration;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -127,31 +125,31 @@ public class Formulas {
         }
 
         @Override
-        public int isInside(int x, int y, int z) {
+        public boolean isInside(int x, int y, int z) {
             if (data == null) {
-                return 0;
+                return false;
             }
             if (x < x1 || x >= x1+dx || y < y1 || y >= y1+dy || z < z1 || z >= z1+dz) {
-                return 0;
+                return false;
             }
 
             if (scannerWorld == null) {
-                return 0;
+                return false;
             }
             if (!scannerWorld.isBlockLoaded(scannerPos)) {
-                return 0;
+                return false;
             }
             if (!(scannerWorld.getTileEntity(scannerPos) instanceof ScannerTileEntity)) {
-                return 0;
+                return false;
             }
 
             int index = (y-y1) * dx * dz + (x-x1) * dz + (z-z1);
             if (data[index] == 0) {
-                return 0;
+                return false;
             } else {
                 int idx = ((data[index]) & 0xff)-1;
                 lastState = idx < palette.size() ? palette.get(idx) : null;
-                return 1;
+                return true;
             }
         }
 
@@ -232,18 +230,18 @@ public class Formulas {
                 }
 
                 @Override
-                public int isInside(int x, int y, int z) {
+                public boolean isInside(int x, int y, int z) {
                     blockState = null;
                     x -= thisCoord.getX();
                     y -= thisCoord.getY();
                     z -= thisCoord.getZ();
-                    int ok = 0;
+                    boolean ok = false;
                     for (int i = 0 ; i < formulas.size() ; i++) {
                         IFormula formula = formulas.get(i);
                         Bounds bounds = this.bounds.get(i);
                         ShapeModifier modifier = modifiers.get(i);
 
-                        int inside = 0;
+                        boolean inside = false;
                         if (bounds.in(x, y, z)) {
                             int tx = x;
                             int ty = y;
@@ -279,8 +277,8 @@ public class Formulas {
 
                         switch (modifier.getOperation()) {
                             case UNION:
-                                if (inside == 1) {
-                                    ok = 1;
+                                if (inside) {
+                                    ok = true;
                                     blockState = blockStates.get(i);
                                     if (blockState == null) {
                                         blockState = formula.getLastState();
@@ -288,13 +286,12 @@ public class Formulas {
                                 }
                                 break;
                             case SUBTRACT:
-                                if (inside == 1) {
-                                    ok = 0;
+                                if (inside) {
+                                    ok = false;
                                 }
                                 break;
                             case INTERSECT:
-                                if (inside == 1 && ok == 1) {
-                                    ok = 1;
+                                if (inside && ok) {
                                     if (blockState == null) {
                                         blockState = blockStates.get(i);
                                         if (blockState == null) {
@@ -302,7 +299,7 @@ public class Formulas {
                                         }
                                     }
                                 } else {
-                                    ok = 0;
+                                    ok = false;
                                 }
                                 break;
                         }
@@ -342,14 +339,10 @@ public class Formulas {
         }
 
         @Override
-        public int isInside(int x, int y, int z) {
+        public boolean isInside(int x, int y, int z) {
             double rr = bigRadius - Math.sqrt((x - centerx) * (x - centerx) + (z - centerz) * (z - centerz));
             double f = rr * rr + (y - centery) * (y - centery) - smallRadius * smallRadius;
-            if (f < 0) {
-                return 1;
-            } else {
-                return 0;
-            }
+            return f < 0;
         }
     };
 
@@ -375,7 +368,7 @@ public class Formulas {
         }
 
         @Override
-        public int isInside(int x, int y, int z) {
+        public boolean isInside(int x, int y, int z) {
             double xx = (x - centerx) * 2.6 / dx + .1;
             double zz = (y - centery) * 2.4 / dy + .2;
             double yy = (z - centerz) * 1.6 / dz + .1;
@@ -383,11 +376,7 @@ public class Formulas {
             double f2 = xx * xx * zz * zz * zz;
             double f3 = (9.0 / 80.0) * yy * yy * zz * zz * zz;
             double f = f1 - f2 - f3;
-            if (f < 0) {
-                return 1;
-            } else {
-                return 0;
-            }
+            return f < 0;
         }
     };
 
@@ -420,9 +409,9 @@ public class Formulas {
         }
 
         @Override
-        public int isInside(int x, int y, int z) {
+        public boolean isInside(int x, int y, int z) {
             double distance = Math.sqrt(squaredDistance3D(centerx, centery, centerz, x, y, z, dx2, dy2, dz2));
-            return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) ? 1 : 0;
+            return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1);
         }
     };
 
@@ -455,12 +444,12 @@ public class Formulas {
         }
 
         @Override
-        public int isInside(int x, int y, int z) {
+        public boolean isInside(int x, int y, int z) {
             if (y < centery) {
-                return 0;
+                return false;
             }
             double distance = Math.sqrt(squaredDistance3D(centerx, centery, centerz, x, y, z, dx2, dy2, dz2));
-            return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) ? 1 : 0;
+            return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1);
         }
     };
 
@@ -493,12 +482,12 @@ public class Formulas {
         }
 
         @Override
-        public int isInside(int x, int y, int z) {
+        public boolean isInside(int x, int y, int z) {
             if (y > centery) {
-                return 0;
+                return false;
             }
             double distance = Math.sqrt(squaredDistance3D(centerx, centery, centerz, x, y, z, dx2, dy2, dz2));
-            return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) ? 1 : 0;
+            return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1);
         }
     };
 
@@ -528,8 +517,8 @@ public class Formulas {
         }
 
         @Override
-        public int isInside(int x, int y, int z) {
-            return (x >= x1 && x < x2 && y >= y1 && y < y2 && z >= z1 && z < z2) ? 1 : 0;
+        public boolean isInside(int x, int y, int z) {
+            return (x >= x1 && x < x2 && y >= y1 && y < y2 && z >= z1 && z < z2);
         }
 
         @Override
@@ -568,12 +557,12 @@ public class Formulas {
         }
 
         @Override
-        public int isInside(int x, int y, int z) {
+        public boolean isInside(int x, int y, int z) {
             if (y < y1 || y >= y2) {
-                return 0;
+                return false;
             }
             double distance = Math.sqrt(squaredDistance2D(centerx, centerz, x, z, dx2, dz2));
-            return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) ? 1 : 0;
+            return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1);
         }
     };
 
@@ -602,9 +591,9 @@ public class Formulas {
         }
 
         @Override
-        public int isInside(int x, int y, int z) {
+        public boolean isInside(int x, int y, int z) {
             double distance = Math.sqrt(squaredDistance2D(centerx, centerz, x, z, dx2, dz2));
-            return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) ? 1 : 0;
+            return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1);
         }
     };
 
@@ -634,12 +623,12 @@ public class Formulas {
         }
 
         @Override
-        public int isInside(int x, int y, int z) {
+        public boolean isInside(int x, int y, int z) {
             if (y < y1 || y >= y2) {
-                return 0;
+                return false;
             }
             int dy = y - y1;
-            return (x >= x1 + dy && x < x2 - dy && z >= z1 + dy && z < z2 - dy) ? 1 : 0;
+            return (x >= x1 + dy && x < x2 - dy && z >= z1 + dy && z < z2 - dy);
         }
     };
 
