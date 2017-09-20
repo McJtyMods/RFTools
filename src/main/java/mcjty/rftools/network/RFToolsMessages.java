@@ -16,6 +16,8 @@ import mcjty.rftools.blocks.security.PacketGetSecurityName;
 import mcjty.rftools.blocks.security.PacketSecurityInfoReady;
 import mcjty.rftools.blocks.security.PacketSecurityNameReady;
 import mcjty.rftools.items.modifier.PacketUpdateModifier;
+import mcjty.rftools.shapes.PacketRequestShapeData;
+import mcjty.rftools.shapes.PacketReturnShapeData;
 import mcjty.rftools.shapes.PacketSendShaperData;
 import mcjty.rftools.blocks.shield.PacketFiltersReady;
 import mcjty.rftools.blocks.shield.PacketGetFilters;
@@ -77,6 +79,7 @@ public class RFToolsMessages {
         net.registerMessage(PacketSendShaperData.Handler.class, PacketSendShaperData.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketOpenGui.Handler.class, PacketOpenGui.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketUpdateModifier.Handler.class, PacketUpdateModifier.class, PacketHandler.nextID(), Side.SERVER);
+        net.registerMessage(PacketRequestShapeData.Handler.class, PacketRequestShapeData.class, PacketHandler.nextID(), Side.SERVER);
 
         // Client side
         net.registerMessage(PacketPlayersReady.Handler.class, PacketPlayersReady.class, PacketHandler.nextID(), Side.CLIENT);
@@ -101,6 +104,7 @@ public class RFToolsMessages {
         net.registerMessage(PacketEndergenicFlash.Handler.class, PacketEndergenicFlash.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketHudLogReady.Handler.class, PacketHudLogReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketReturnRfInRange.Handler.class, PacketReturnRfInRange.class, PacketHandler.nextID(), Side.CLIENT);
+        net.registerMessage(PacketReturnShapeData.Handler.class, PacketReturnShapeData.class, PacketHandler.nextID(), Side.CLIENT);
 
         PacketHandler.register(PacketHandler.nextPacketID(), StorageInfoPacketServer.class, StorageInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), PowerCellInfoPacketServer.class, PowerCellInfoPacketClient.class);

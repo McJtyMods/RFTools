@@ -778,7 +778,10 @@ public class ShapeCardItem extends GenericRFToolsItem {
         }
     }
 
-    public static TLongHashSet getPositions(ItemStack stack, Shape shape, boolean solid, BlockPos thisCoord, BlockPos clamped, BlockPos offset, @Nullable Map<Long, IBlockState> stateMap) {
+    public static TLongHashSet getPositions(ItemStack stack, Shape shape, boolean solid, BlockPos thisCoord, BlockPos offset, @Nullable Map<Long, IBlockState> stateMap) {
+        BlockPos dimension = ShapeCardItem.getDimension(stack);
+        BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
+
         TLongHashSet positions = new TLongHashSet();
         composeFormula(stack, shape.getFormulaFactory().createFormula(), null, thisCoord, clamped, offset, new AbstractMap<BlockPos, IBlockState>() {
             @Override

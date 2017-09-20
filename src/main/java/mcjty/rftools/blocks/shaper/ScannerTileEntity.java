@@ -279,7 +279,7 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
             BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
             System.out.println("center = " + center);
             // @todo THIS IS NOT WORKING YET!
-            positionMask = ShapeCardItem.getPositions(cardIn, shape, ShapeCardItem.isSolid(cardIn), center, clamped, offset, null);
+            positionMask = ShapeCardItem.getPositions(cardIn, shape, ShapeCardItem.isSolid(cardIn), center, offset, null);
         }
 
         int cnt = 0;

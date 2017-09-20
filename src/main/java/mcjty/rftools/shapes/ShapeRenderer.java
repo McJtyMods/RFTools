@@ -3,7 +3,9 @@ package mcjty.rftools.shapes;
 import gnu.trove.iterator.TLongIterator;
 import gnu.trove.set.hash.TLongHashSet;
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.items.builder.ShapeCardItem;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -30,14 +32,22 @@ public class ShapeRenderer {
     private float scale = 3.0f;
     private float dx = 230.0f;
     private float dy = 100.0f;
-    private float xangle = 0.0f;
-    private float yangle = 0.0f;
-    private float zangle = 0.0f;
+    private float xangle = 0.5f;
+    private float yangle = 0.5f;
+    private float zangle = 0.5f;
 
     private int glList = -1;
     private long checksum = -1;
     private boolean prevShowMat = false;
 
+    private static int waitForNewRequest = 0;
+    private static TLongHashSet positions = null;
+    private static Map<Long, IBlockState> stateMap = null;
+
+    public static void setRenderData(TLongHashSet positions, Map<Long, IBlockState> stateMap) {
+        ShapeRenderer.positions = new TLongHashSet(positions);
+        ShapeRenderer.stateMap = new HashMap<>(stateMap);
+    }
 
     public void handleShapeDragging(int x, int y) {
         if (x >= 100 && y <= 120) {
@@ -98,15 +108,10 @@ public class ShapeRenderer {
         Tessellator tessellator = Tessellator.getInstance();
         VertexBuffer buffer = tessellator.getBuffer();
 
-        Shape shape = ShapeCardItem.getShape(stack);
-        boolean solid = ShapeCardItem.isSolid(stack);
-        BlockPos dimension = ShapeCardItem.getDimension(stack);
-        BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
-
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
-        renderFaces(tessellator, buffer, stack, shape, solid, clamped, showMat);
-//        renderOutline(tessellator, buffer, positions);
+        renderFaces(tessellator, buffer, stack, showMat);
+        BlockPos dimension = ShapeCardItem.getDimension(stack);
         renderHelpers(tessellator, buffer, dimension.getX()/2.0f, dimension.getY()/2.0f, dimension.getZ()/2.0f, showAxis, showOuter);
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
@@ -238,6 +243,8 @@ public class ShapeRenderer {
     private static final Col COL_WOOD = new Col(0x66/255.0f,0x51/255.0f,0x32/255.0f);
     private static final Col COL_FLOWER = new Col(0xa0/255.0f,0x20/255.0f,0x20/255.0f);
     private static final Col COL_OBSIDIAN = new Col(0x14/255.0f,0x12/255.0f,0x1e/255.0f);
+    private static final Col COL_QUARTZ = new Col(0xec/255.0f,0xe9/255.0f,0xe2/255.0f);
+    private static final Col COL_SCANNER = new Col(0x00/255.0f,0x00/255.0f,0xe0/255.0f);
 
     private Col getColor(Map<IBlockState, Col> pallete, IBlockState state) {
         if (state == null) {
@@ -258,6 +265,8 @@ public class ShapeRenderer {
             col = COL_BEDROCK;
         } else if (b == Blocks.SAND || b == Blocks.SANDSTONE) {
             col = COL_SAND;
+        } else if (b == Blocks.QUARTZ_BLOCK) {
+            col = COL_QUARTZ;
         } else if (b == Blocks.NETHERRACK) {
             col = COL_NETHERACK;
         } else if (b == Blocks.OBSIDIAN) {
@@ -278,6 +287,8 @@ public class ShapeRenderer {
             col = COL_LAVA;
         } else if (b == Blocks.PLANKS || b == Blocks.LOG || b == Blocks.LOG2) {
             col = COL_WOOD;
+        } else if (b == BuilderSetup.scannerBlock) {
+            col = COL_SCANNER;
         } else if (!"minecraft".equals(state.getBlock().getRegistryName().getResourceDomain())) {
             col = COL_MODDED;
         } else {
@@ -288,90 +299,115 @@ public class ShapeRenderer {
     }
 
     private void renderFaces(Tessellator tessellator, final VertexBuffer buffer,
-                     ItemStack stack, Shape shape, boolean solid, BlockPos clamped, boolean showMat) {
+                     ItemStack stack, boolean showMat) {
+
+        if (ShapeRenderer.positions == null || waitForNewRequest > 0) {
+            if (waitForNewRequest <= 0) {
+                // No positions, send a new request
+                RFToolsMessages.INSTANCE.sendToServer(new PacketRequestShapeData(stack));
+                waitForNewRequest = 10;
+                ShapeRenderer.stateMap = null;
+                ShapeRenderer.positions = null;
+            } else {
+                waitForNewRequest--;
+                if (ShapeRenderer.positions != null) {
+                    // Positions have arrived, create displayList
+                    // Data is received
+                    waitForNewRequest = 0;
+                    checksum = calculateChecksum(stack);
+                    createDisplayList(tessellator, buffer, showMat);
+                }
+            }
+            if (glList != -1) {
+                // Render old data while we're waiting
+                GlStateManager.callList(glList);
+            }
+            return;
+        }
 
         long check = calculateChecksum(stack);
-
         if (glList == -1 || check != checksum || showMat != prevShowMat) {
-            checksum = check;
-            prevShowMat = showMat;
-            invalidateGlList();
-            glList = GLAllocation.generateDisplayLists(1);
-            GlStateManager.glNewList(glList, GL11.GL_COMPILE);
+            // Checksum failed, set positions to null
+            ShapeRenderer.positions = null;
+        }
 
-            buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        if (glList != -1) {
+            GlStateManager.callList(glList);
+        }
+    }
+
+    private void createDisplayList(Tessellator tessellator, VertexBuffer buffer, boolean showMat) {
+        prevShowMat = showMat;
+        invalidateGlList();
+        glList = GLAllocation.generateDisplayLists(1);
+        GlStateManager.glNewList(glList, GL11.GL_COMPILE);
+
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 //        GlStateManager.enableBlend();
 //        GlStateManager.enableAlpha();
 
-            Map<Long, IBlockState> stateMap = new HashMap<>();
-            TLongHashSet positions = ShapeCardItem.getPositions(stack, shape, false, new BlockPos(0, 0, 0), clamped, new BlockPos(0, 0, 0), stateMap);
-            Map<IBlockState, Col> pallete = new HashMap<>();
+//            Map<Long, IBlockState> stateMap = new HashMap<>();
+//            TLongHashSet positions = ShapeCardItem.getPositions(stack, shape, false, new BlockPos(0, 0, 0), new BlockPos(0, 0, 0), stateMap);
+        Map<IBlockState, Col> pallete = new HashMap<>();
 
-            TLongIterator iterator = positions.iterator();
-            while (iterator.hasNext()) {
-                long p = iterator.next();
-                BlockPos coordinate = BlockPos.fromLong(p);
-                int x = coordinate.getX();
-                int y = coordinate.getY();
-                int z = coordinate.getZ();
+        TLongIterator iterator = positions.iterator();
+        while (iterator.hasNext()) {
+            long p = iterator.next();
+            BlockPos coordinate = BlockPos.fromLong(p);
+            int x = coordinate.getX();
+            int y = coordinate.getY();
+            int z = coordinate.getZ();
 
-                buffer.setTranslation(buffer.xOffset + x, buffer.yOffset + y, buffer.zOffset + z);
-                if (showMat) {
-                    Col col = getColor(pallete, stateMap.get(p));
-                    float r = col.getR();
-                    float g = col.getG();
-                    float b = col.getB();
-                    if (!positions.contains(coordinate.up().toLong())) {
-                        addSideFullTexture(buffer, EnumFacing.UP.ordinal(), r * .8f, g * .8f, b * .8f);
-                    }
-                    if (!positions.contains(coordinate.down().toLong())) {
-                        addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), r * .8f, g * .8f, b * .8f);
-                    }
-                    if (!positions.contains(coordinate.north().toLong())) {
-                        addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), r * 1.2f, g * 1.2f, b * 1.2f);
-                    }
-                    if (!positions.contains(coordinate.south().toLong())) {
-                        addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), r * 1.2f, g * 1.2f, b * 1.2f);
-                    }
-                    if (!positions.contains(coordinate.west().toLong())) {
-                        addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), r, g, b);
-                    }
-                    if (!positions.contains(coordinate.east().toLong())) {
-                        addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), r, g, b);
-                    }
-                } else {
-                    float d = .2f;
-                    float l = ((x + y + z) & 1) == 1 ? .9f : .6f;
-                    if (!positions.contains(coordinate.up().toLong())) {
-                        addSideFullTexture(buffer, EnumFacing.UP.ordinal(), d, l, d);
-                    }
-                    if (!positions.contains(coordinate.down().toLong())) {
-                        addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), d, l, d);
-                    }
-                    if (!positions.contains(coordinate.north().toLong())) {
-                        addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), d, d, l);
-                    }
-                    if (!positions.contains(coordinate.south().toLong())) {
-                        addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), d, d, l);
-                    }
-                    if (!positions.contains(coordinate.west().toLong())) {
-                        addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), l, d, d);
-                    }
-                    if (!positions.contains(coordinate.east().toLong())) {
-                        addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), l, d, d);
-                    }
+            buffer.setTranslation(buffer.xOffset + x, buffer.yOffset + y, buffer.zOffset + z);
+            if (showMat) {
+                Col col = getColor(pallete, stateMap.get(p));
+                float r = col.getR();
+                float g = col.getG();
+                float b = col.getB();
+                if (!positions.contains(coordinate.up().toLong())) {
+                    addSideFullTexture(buffer, EnumFacing.UP.ordinal(), r * .8f, g * .8f, b * .8f);
                 }
-                buffer.setTranslation(buffer.xOffset - x, buffer.yOffset - y, buffer.zOffset - z);
+                if (!positions.contains(coordinate.down().toLong())) {
+                    addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), r * .8f, g * .8f, b * .8f);
+                }
+                if (!positions.contains(coordinate.north().toLong())) {
+                    addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), r * 1.2f, g * 1.2f, b * 1.2f);
+                }
+                if (!positions.contains(coordinate.south().toLong())) {
+                    addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), r * 1.2f, g * 1.2f, b * 1.2f);
+                }
+                if (!positions.contains(coordinate.west().toLong())) {
+                    addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), r, g, b);
+                }
+                if (!positions.contains(coordinate.east().toLong())) {
+                    addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), r, g, b);
+                }
+            } else {
+                float d = .2f;
+                float l = ((x + y + z) & 1) == 1 ? .9f : .6f;
+                if (!positions.contains(coordinate.up().toLong())) {
+                    addSideFullTexture(buffer, EnumFacing.UP.ordinal(), d, l, d);
+                }
+                if (!positions.contains(coordinate.down().toLong())) {
+                    addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), d, l, d);
+                }
+                if (!positions.contains(coordinate.north().toLong())) {
+                    addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), d, d, l);
+                }
+                if (!positions.contains(coordinate.south().toLong())) {
+                    addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), d, d, l);
+                }
+                if (!positions.contains(coordinate.west().toLong())) {
+                    addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), l, d, d);
+                }
+                if (!positions.contains(coordinate.east().toLong())) {
+                    addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), l, d, d);
+                }
             }
-            tessellator.draw();
-            GlStateManager.glEndList();
+            buffer.setTranslation(buffer.xOffset - x, buffer.yOffset - y, buffer.zOffset - z);
         }
-
-        GlStateManager.callList(glList);
-
-//        GlStateManager.disableBlend();
-//        GlStateManager.disableAlpha();
-
+        tessellator.draw();
+        GlStateManager.glEndList();
     }
 
     private static void setupScissor(GuiContainer gui) {
