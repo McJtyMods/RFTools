@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.shaper;
 
-import gnu.trove.set.hash.TLongHashSet;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
@@ -15,6 +14,7 @@ import mcjty.rftools.items.modifier.ModifierItem;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.shapes.Shape;
+import mcjty.rftools.shapes.StatePalette;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
@@ -243,20 +243,6 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         }
     }
 
-    private int allocPalette(List<IBlockState> materialPalette, Map<IBlockState, Integer> paletteIndex, IBlockState state) {
-        if (paletteIndex.containsKey(state)) {
-            return paletteIndex.get(state);
-        }
-        int idx = materialPalette.size();
-        if (idx > 253) {
-            // @todo overflow. How to handle gracefully?
-            System.out.println("Scanner palette overflow!");
-            return idx;
-        }
-        materialPalette.add(state);
-        paletteIndex.put(state, idx);
-        return idx;
-    }
 
     private void scanArea(NBTTagCompound tagOut, BlockPos center, int dimX, int dimY, int dimZ) {
         ItemStack modifier = getStackInSlot(ScannerContainer.SLOT_MODIFIER);
@@ -267,19 +253,18 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         BlockPos tl = new BlockPos(center.getX() - dimX/2, center.getY() - dimY/2, center.getZ() - dimZ/2);
         int prev = -1;
 
-        List<IBlockState> materialPalette = new ArrayList<>();
+        StatePalette materialPalette = new StatePalette();
         Map<IBlockState, Integer> paletteIndex = new HashMap<>();
 
-        TLongHashSet positionMask = null;
+        Map<Long, IBlockState> positionMask = null;
         ItemStack cardIn = inventoryHelper.getStackInSlot(ScannerContainer.SLOT_IN);
         if (ItemStackTools.isValid(cardIn)) {
             Shape shape = ShapeCardItem.getShape(cardIn);
             BlockPos dimension = ShapeCardItem.getDimension(cardIn);
             BlockPos offset = ShapeCardItem.getOffset(cardIn);
-            BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
             System.out.println("center = " + center);
             // @todo THIS IS NOT WORKING YET!
-            positionMask = ShapeCardItem.getPositions(cardIn, shape, ShapeCardItem.isSolid(cardIn), center, offset, null);
+            positionMask = ShapeCardItem.getPositions(cardIn, shape, ShapeCardItem.isSolid(cardIn), center, offset);
         }
 
         int cnt = 0;
@@ -289,7 +274,7 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
                 for (int z = tl.getZ() ; z < tl.getZ() + dimZ ; z++) {
                     mpos.setPos(x, y, z);
                     int c;
-                    if (getWorld().isAirBlock(mpos) || (positionMask != null && !positionMask.contains(mpos.toLong()))) {
+                    if (getWorld().isAirBlock(mpos) || (positionMask != null && !positionMask.containsKey(mpos.toLong()))) {
                         c = 0;
                     } else {
                         IBlockState state = getWorld().getBlockState(mpos);
@@ -304,7 +289,7 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
                             state = mapState(modifiers, modifierMapping, mpos, state);
                         }
                         if (state != null && state != Blocks.AIR.getDefaultState()) {
-                            c = allocPalette(materialPalette, paletteIndex, state) + 1;
+                            c = materialPalette.alloc(state) + 1;
                         } else {
                             c = 0;
                         }
@@ -328,7 +313,7 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
             stream.write(prev);
         }
         this.data = stream.toByteArray();
-        this.materialPalette = materialPalette;
+        this.materialPalette = materialPalette.getPalette();
         this.dataDim = new BlockPos(dimX, dimY, dimZ);
         ShapeCardItem.setData(tagOut, getWorld().provider.getDimension(), getPos());
         markDirty();

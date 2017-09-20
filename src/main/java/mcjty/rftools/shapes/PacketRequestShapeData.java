@@ -19,26 +19,22 @@ import java.util.Map;
 
 public class PacketRequestShapeData implements IMessage {
     private ItemStack card;
-    private boolean count;
 
     @Override
     public void fromBytes(ByteBuf buf) {
         card = NetworkTools.readItemStack(buf);
-        count = buf.readBoolean();
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         NetworkTools.writeItemStack(buf, card);
-        buf.writeBoolean(count);
     }
 
     public PacketRequestShapeData() {
     }
 
-    public PacketRequestShapeData(ItemStack card, boolean count) {
+    public PacketRequestShapeData(ItemStack card) {
         this.card = card;
-        this.count = count;
     }
 
     public static class Handler implements IMessageHandler<PacketRequestShapeData, IMessage> {
@@ -49,40 +45,49 @@ public class PacketRequestShapeData implements IMessage {
         }
 
         private void handle(PacketRequestShapeData message, MessageContext ctx) {
+
+            System.out.println("CALC START : 1");
+
             Shape shape = ShapeCardItem.getShape(message.card);
-            Map<Long, IBlockState> stateMap = new HashMap<Long, IBlockState>();
             boolean solid = ShapeCardItem.isSolid(message.card);
-            TLongHashSet positionsFull = ShapeCardItem.getPositions(message.card, shape, solid, new BlockPos(0, 0, 0), new BlockPos(0, 0, 0), stateMap);
+            BlockPos dimension = ShapeCardItem.getDimension(message.card);
+
+            if (dimension.getX() > 100 || dimension.getY() > 100 || dimension.getZ() > 100) {
+                System.out.println("Sorry, no preview");
+                return;
+            }
+
+            System.out.println("dimension = " + dimension);
+            Map<Long, IBlockState> positionsFull = ShapeCardItem.getPositions(message.card, shape, solid, new BlockPos(0, 0, 0), new BlockPos(0, 0, 0));
+            System.out.println("CALC START : 2");
             int cnt = positionsFull.size();
             // Remove all blocks that are fully enclosed (not visible) but only if we are solid. If not solid this is not needed
-            TLongHashSet positions;
+            Map<Long, IBlockState> positions;
             if (solid) {
-                positions = new TLongHashSet();
-                TLongIterator iterator = positionsFull.iterator();
-                while (iterator.hasNext()) {
-                    long pos = iterator.next();
+                positions = new HashMap<>();
+                for (Map.Entry<Long, IBlockState> entry : positionsFull.entrySet()) {
+                    long pos = entry.getKey();
                     if (!isPositionEnclosed(positionsFull, BlockPos.fromLong(pos))) {
-                        positions.add(pos);
+                        positions.put(pos, entry.getValue());
                     }
                 }
             } else {
                 positions = positionsFull;
             }
 
-//            if (message.count) {
-//                cnt = ShapeCardItem.countBlocks(message.card, shape, ShapeCardItem.isSolid(message.card), ShapeCardItem.getDimension(message.card));
-//            }
-            RFToolsMessages.INSTANCE.sendTo(new PacketReturnShapeData(positions, stateMap, cnt), ctx.getServerHandler().player);
+            System.out.println("CALC STOP");
+
+            RFToolsMessages.INSTANCE.sendTo(new PacketReturnShapeData(positions, cnt), ctx.getServerHandler().player);
         }
     }
 
-    static boolean isPositionEnclosed(TLongHashSet positions, BlockPos coordinate) {
-        return positions.contains(coordinate.up().toLong()) &&
-                positions.contains(coordinate.down().toLong()) &&
-                positions.contains(coordinate.east().toLong()) &&
-                positions.contains(coordinate.west().toLong()) &&
-                positions.contains(coordinate.south().toLong()) &&
-                positions.contains(coordinate.north().toLong());
+    static boolean isPositionEnclosed(Map<Long, IBlockState> positions, BlockPos coordinate) {
+        return positions.containsKey(coordinate.up().toLong()) &&
+                positions.containsKey(coordinate.down().toLong()) &&
+                positions.containsKey(coordinate.east().toLong()) &&
+                positions.containsKey(coordinate.west().toLong()) &&
+                positions.containsKey(coordinate.south().toLong()) &&
+                positions.containsKey(coordinate.north().toLong());
     }
 
 }

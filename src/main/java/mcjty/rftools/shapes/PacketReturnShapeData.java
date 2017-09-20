@@ -5,7 +5,6 @@ import gnu.trove.set.hash.TLongHashSet;
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.network.ReturnDestinationInfoHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
@@ -14,35 +13,43 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import static mcjty.rftools.network.ReturnDestinationInfoHelper.id;
-import static mcjty.rftools.network.ReturnDestinationInfoHelper.name;
-
 public class PacketReturnShapeData implements IMessage {
-    private TLongHashSet positions;
-    private Map<Long, IBlockState> stateMap;
+    private Map<Long, IBlockState> positions;
     private int count;
 
     @Override
     public void fromBytes(ByteBuf buf) {
         int size = buf.readInt();
-        positions = new TLongHashSet();
+        System.out.println("1: size = " + size);
+        List<IBlockState> palette = new ArrayList<>();
         while (size > 0) {
-            positions.add(buf.readLong());
+            String r = NetworkTools.readString(buf);
+            int m = buf.readInt();
+            Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(r));
+            palette.add(block.getStateFromMeta(m));
             size--;
         }
-        stateMap = new HashMap<>();
+
         size = buf.readInt();
+        System.out.println("2: size = " + size);
+        positions = new HashMap<>();
         while (size > 0) {
-            long key = buf.readLong();
-            if (buf.readBoolean()) {
-                String r = NetworkTools.readString(buf);
-                int m = buf.readInt();
-                Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(r));
-                stateMap.put(key, block.getStateFromMeta(m));
+            long pos = buf.readLong();
+            int index = ((int) buf.readByte()) & 0xff;
+            IBlockState state = null;
+            if (index != 255) {
+                if (index >= palette.size()) {
+//                    System.out.println("index = " + index);
+                } else {
+                    state = palette.get(index);
+                }
             }
+            positions.put(pos, state);
             size--;
         }
         count = buf.readInt();
@@ -50,47 +57,52 @@ public class PacketReturnShapeData implements IMessage {
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(positions.size());
-        TLongIterator iterator = positions.iterator();
-        while (iterator.hasNext()) {
-            buf.writeLong(iterator.next());
-        }
-        buf.writeInt(stateMap.size());
-        for (Map.Entry<Long, IBlockState> entry : stateMap.entrySet()) {
-            buf.writeLong(entry.getKey());
+        System.out.println("#########################################");
+        System.out.println("positions.size() = " + positions.size());
+
+
+        // First make a palette for more compact transmission
+        StatePalette palette = new StatePalette();
+        for (Map.Entry<Long, IBlockState> entry : positions.entrySet()) {
             IBlockState state = entry.getValue();
-            if (state == null) {
-                buf.writeBoolean(false);
-            } else {
-                buf.writeBoolean(true);
-                NetworkTools.writeString(buf, state.getBlock().getRegistryName().toString());
-                buf.writeInt(state.getBlock().getMetaFromState(state));
+            if (state != null) {
+                palette.alloc(state);
             }
         }
+
+        buf.writeInt(palette.getPalette().size());
+        for (IBlockState state : palette.getPalette()) {
+            NetworkTools.writeString(buf, state.getBlock().getRegistryName().toString());
+            buf.writeInt(state.getBlock().getMetaFromState(state));
+        }
+
+        buf.writeInt(positions.size());
+        for (Map.Entry<Long, IBlockState> entry : positions.entrySet()) {
+            long pos = entry.getKey();
+            buf.writeLong(pos);
+            IBlockState state = entry.getValue();
+            if (state == null) {
+                buf.writeByte(255); // Indicates no entry (palette only goes up to 254)
+            } else {
+                buf.writeByte(palette.alloc(state));
+            }
+        }
+
         buf.writeInt(count);
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public PacketReturnShapeData() {
     }
 
-    public PacketReturnShapeData(TLongHashSet positions, Map<Long, IBlockState> stateMap, int count) {
+    public PacketReturnShapeData(Map<Long, IBlockState> positions,int count) {
         this.positions = positions;
-        this.stateMap = stateMap;
         this.count = count;
     }
 
     public static class Handler implements IMessageHandler<PacketReturnShapeData, IMessage> {
         @Override
         public IMessage onMessage(PacketReturnShapeData message, MessageContext ctx) {
-            RFTools.proxy.addScheduledTaskClient(() -> ShapeRenderer.setRenderData(message.positions, message.stateMap, message.count));
+            RFTools.proxy.addScheduledTaskClient(() -> ShapeRenderer.setRenderData(message.positions, message.count));
             return null;
         }
 

@@ -117,11 +117,6 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
     }
 
     @Override
-    public boolean needCount() {
-        return true;
-    }
-
-    @Override
     public void initGui() {
         super.initGui();
 

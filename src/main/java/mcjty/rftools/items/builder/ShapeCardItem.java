@@ -1,6 +1,5 @@
 package mcjty.rftools.items.builder;
 
-import gnu.trove.set.hash.TLongHashSet;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
@@ -39,7 +38,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 import org.lwjgl.input.Keyboard;
 
-import javax.annotation.Nullable;
 import java.util.*;
 
 public class ShapeCardItem extends GenericRFToolsItem {
@@ -778,11 +776,11 @@ public class ShapeCardItem extends GenericRFToolsItem {
         }
     }
 
-    public static TLongHashSet getPositions(ItemStack stack, Shape shape, boolean solid, BlockPos thisCoord, BlockPos offset, @Nullable Map<Long, IBlockState> stateMap) {
+    public static Map<Long, IBlockState> getPositions(ItemStack stack, Shape shape, boolean solid, BlockPos thisCoord, BlockPos offset) {
         BlockPos dimension = ShapeCardItem.getDimension(stack);
         BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
 
-        TLongHashSet positions = new TLongHashSet();
+        Map<Long, IBlockState> positions = new HashMap<>();
         composeFormula(stack, shape.getFormulaFactory().createFormula(), null, thisCoord, clamped, offset, new AbstractMap<BlockPos, IBlockState>() {
             @Override
             public Set<Entry<BlockPos, IBlockState>> entrySet() {
@@ -792,10 +790,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
             @Override
             public IBlockState put(BlockPos key, IBlockState value) {
                 long val = new BlockPos(key.getX(), key.getY(), -key.getZ()).toLong();
-                positions.add(val);
-                if (stateMap != null) {
-                    stateMap.put(val, value);
-                }
+                positions.put(val, value);
                 return value;
             }
 

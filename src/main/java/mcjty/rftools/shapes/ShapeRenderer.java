@@ -39,13 +39,11 @@ public class ShapeRenderer {
     private boolean prevShowMat = false;
 
     private static int waitForNewRequest = 0;
-    private static TLongHashSet positions = null;
-    private static Map<Long, IBlockState> stateMap = null;
+    private static Map<Long, IBlockState> positions = null;
     public static int shapeCount = 0;
 
-    public static void setRenderData(TLongHashSet positions, Map<Long, IBlockState> stateMap, int count) {
-        ShapeRenderer.positions = new TLongHashSet(positions);
-        ShapeRenderer.stateMap = new HashMap<>(stateMap);
+    public static void setRenderData(Map<Long, IBlockState> positions, int count) {
+        ShapeRenderer.positions = positions;//new HashMap<>(positions);
         ShapeRenderer.shapeCount = count;
     }
 
@@ -110,7 +108,7 @@ public class ShapeRenderer {
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
-        renderFaces(gui, tessellator, buffer, stack, showMat);
+        renderFaces(tessellator, buffer, stack, showMat);
         BlockPos dimension = ShapeCardItem.getDimension(stack);
         renderHelpers(tessellator, buffer, dimension.getX()/2.0f, dimension.getY()/2.0f, dimension.getZ()/2.0f, showAxis, showOuter);
 
@@ -298,15 +296,14 @@ public class ShapeRenderer {
         return col;
     }
 
-    private void renderFaces(IShapeParentGui gui, Tessellator tessellator, final VertexBuffer buffer,
+    private void renderFaces(Tessellator tessellator, final VertexBuffer buffer,
                      ItemStack stack, boolean showMat) {
 
         if (ShapeRenderer.positions == null || waitForNewRequest > 0) {
             if (waitForNewRequest <= 0) {
                 // No positions, send a new request
-                RFToolsMessages.INSTANCE.sendToServer(new PacketRequestShapeData(stack, gui.needCount()));
+                RFToolsMessages.INSTANCE.sendToServer(new PacketRequestShapeData(stack));
                 waitForNewRequest = 10;
-                ShapeRenderer.stateMap = null;
                 ShapeRenderer.positions = null;
             } else {
                 waitForNewRequest--;
@@ -350,9 +347,8 @@ public class ShapeRenderer {
 //            TLongHashSet positions = ShapeCardItem.getPositions(stack, shape, false, new BlockPos(0, 0, 0), new BlockPos(0, 0, 0), stateMap);
         Map<IBlockState, Col> pallete = new HashMap<>();
 
-        TLongIterator iterator = positions.iterator();
-        while (iterator.hasNext()) {
-            long p = iterator.next();
+        for (Map.Entry<Long, IBlockState> entry : positions.entrySet()) {
+            long p = entry.getKey();
             BlockPos coordinate = BlockPos.fromLong(p);
             int x = coordinate.getX();
             int y = coordinate.getY();
@@ -360,47 +356,47 @@ public class ShapeRenderer {
 
             buffer.setTranslation(buffer.xOffset + x, buffer.yOffset + y, buffer.zOffset + z);
             if (showMat) {
-                Col col = getColor(pallete, stateMap.get(p));
+                Col col = getColor(pallete, entry.getValue());
                 float r = col.getR();
                 float g = col.getG();
                 float b = col.getB();
-                if (!positions.contains(coordinate.up().toLong())) {
+                if (!positions.containsKey(coordinate.up().toLong())) {
                     addSideFullTexture(buffer, EnumFacing.UP.ordinal(), r * .8f, g * .8f, b * .8f);
                 }
-                if (!positions.contains(coordinate.down().toLong())) {
+                if (!positions.containsKey(coordinate.down().toLong())) {
                     addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), r * .8f, g * .8f, b * .8f);
                 }
-                if (!positions.contains(coordinate.north().toLong())) {
+                if (!positions.containsKey(coordinate.north().toLong())) {
                     addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), r * 1.2f, g * 1.2f, b * 1.2f);
                 }
-                if (!positions.contains(coordinate.south().toLong())) {
+                if (!positions.containsKey(coordinate.south().toLong())) {
                     addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), r * 1.2f, g * 1.2f, b * 1.2f);
                 }
-                if (!positions.contains(coordinate.west().toLong())) {
+                if (!positions.containsKey(coordinate.west().toLong())) {
                     addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), r, g, b);
                 }
-                if (!positions.contains(coordinate.east().toLong())) {
+                if (!positions.containsKey(coordinate.east().toLong())) {
                     addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), r, g, b);
                 }
             } else {
                 float d = .2f;
                 float l = ((x + y + z) & 1) == 1 ? .9f : .6f;
-                if (!positions.contains(coordinate.up().toLong())) {
+                if (!positions.containsKey(coordinate.up().toLong())) {
                     addSideFullTexture(buffer, EnumFacing.UP.ordinal(), d, l, d);
                 }
-                if (!positions.contains(coordinate.down().toLong())) {
+                if (!positions.containsKey(coordinate.down().toLong())) {
                     addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), d, l, d);
                 }
-                if (!positions.contains(coordinate.north().toLong())) {
+                if (!positions.containsKey(coordinate.north().toLong())) {
                     addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), d, d, l);
                 }
-                if (!positions.contains(coordinate.south().toLong())) {
+                if (!positions.containsKey(coordinate.south().toLong())) {
                     addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), d, d, l);
                 }
-                if (!positions.contains(coordinate.west().toLong())) {
+                if (!positions.containsKey(coordinate.west().toLong())) {
                     addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), l, d, d);
                 }
-                if (!positions.contains(coordinate.east().toLong())) {
+                if (!positions.containsKey(coordinate.east().toLong())) {
                     addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), l, d, d);
                 }
             }

@@ -5,6 +5,4 @@ public interface IShapeParentGui {
     int getPreviewLeft();
 
     int getPreviewTop();
-
-    boolean needCount();
 }

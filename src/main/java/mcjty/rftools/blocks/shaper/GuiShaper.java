@@ -158,11 +158,6 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> implements 
         return getGuiTop();
     }
 
-    @Override
-    public boolean needCount() {
-        return false;
-    }
-
     private void openCardGui(int i) {
         int slot;
         if (i == -1) {

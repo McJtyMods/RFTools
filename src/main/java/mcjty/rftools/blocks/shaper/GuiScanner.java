@@ -134,11 +134,6 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
     }
 
     @Override
-    public boolean needCount() {
-        return false;
-    }
-
-    @Override
     protected void drawGuiContainerBackgroundLayer(float v, int x, int y) {
         drawWindow();
 
