@@ -1,5 +1,6 @@
 package mcjty.rftools.shapes;
 
+import gnu.trove.iterator.TLongIterator;
 import gnu.trove.set.hash.TLongHashSet;
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
@@ -50,13 +51,38 @@ public class PacketRequestShapeData implements IMessage {
         private void handle(PacketRequestShapeData message, MessageContext ctx) {
             Shape shape = ShapeCardItem.getShape(message.card);
             Map<Long, IBlockState> stateMap = new HashMap<Long, IBlockState>();
-            TLongHashSet positions = ShapeCardItem.getPositions(message.card, shape, false, new BlockPos(0, 0, 0), new BlockPos(0, 0, 0), stateMap);
-            int cnt = 0;
-            if (message.count) {
-                cnt = ShapeCardItem.countBlocks(message.card, shape, ShapeCardItem.isSolid(message.card), ShapeCardItem.getDimension(message.card));
+            boolean solid = ShapeCardItem.isSolid(message.card);
+            TLongHashSet positionsFull = ShapeCardItem.getPositions(message.card, shape, solid, new BlockPos(0, 0, 0), new BlockPos(0, 0, 0), stateMap);
+            int cnt = positionsFull.size();
+            // Remove all blocks that are fully enclosed (not visible) but only if we are solid. If not solid this is not needed
+            TLongHashSet positions;
+            if (solid) {
+                positions = new TLongHashSet();
+                TLongIterator iterator = positionsFull.iterator();
+                while (iterator.hasNext()) {
+                    long pos = iterator.next();
+                    if (!isPositionEnclosed(positionsFull, BlockPos.fromLong(pos))) {
+                        positions.add(pos);
+                    }
+                }
+            } else {
+                positions = positionsFull;
             }
+
+//            if (message.count) {
+//                cnt = ShapeCardItem.countBlocks(message.card, shape, ShapeCardItem.isSolid(message.card), ShapeCardItem.getDimension(message.card));
+//            }
             RFToolsMessages.INSTANCE.sendTo(new PacketReturnShapeData(positions, stateMap, cnt), ctx.getServerHandler().player);
         }
+    }
+
+    static boolean isPositionEnclosed(TLongHashSet positions, BlockPos coordinate) {
+        return positions.contains(coordinate.up().toLong()) &&
+                positions.contains(coordinate.down().toLong()) &&
+                positions.contains(coordinate.east().toLong()) &&
+                positions.contains(coordinate.west().toLong()) &&
+                positions.contains(coordinate.south().toLong()) &&
+                positions.contains(coordinate.north().toLong());
     }
 
 }
