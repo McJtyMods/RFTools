@@ -600,7 +600,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
         return check;
     }
 
-    private static void dirty(NBTTagCompound tag) {
+    public static void dirty(NBTTagCompound tag) {
         tag.setInteger("check", tag.getInteger("check") + 1);
     }
 

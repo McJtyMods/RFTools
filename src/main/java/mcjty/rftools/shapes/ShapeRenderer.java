@@ -2,7 +2,6 @@ package mcjty.rftools.shapes;
 
 import gnu.trove.iterator.TLongIterator;
 import gnu.trove.set.hash.TLongHashSet;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
@@ -10,7 +9,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.init.Blocks;
@@ -32,9 +30,9 @@ public class ShapeRenderer {
     private float scale = 3.0f;
     private float dx = 230.0f;
     private float dy = 100.0f;
-    private float xangle = 0.5f;
-    private float yangle = 0.5f;
-    private float zangle = 0.5f;
+    private float xangle = 25.0f;
+    private float yangle = 25.0f;
+    private float zangle = 0.0f;
 
     private int glList = -1;
     private long checksum = -1;
@@ -43,10 +41,12 @@ public class ShapeRenderer {
     private static int waitForNewRequest = 0;
     private static TLongHashSet positions = null;
     private static Map<Long, IBlockState> stateMap = null;
+    public static int shapeCount = 0;
 
-    public static void setRenderData(TLongHashSet positions, Map<Long, IBlockState> stateMap) {
+    public static void setRenderData(TLongHashSet positions, Map<Long, IBlockState> stateMap, int count) {
         ShapeRenderer.positions = new TLongHashSet(positions);
         ShapeRenderer.stateMap = new HashMap<>(stateMap);
+        ShapeRenderer.shapeCount = count;
     }
 
     public void handleShapeDragging(int x, int y) {
@@ -90,7 +90,7 @@ public class ShapeRenderer {
     }
 
 
-    public void renderShape(GenericGuiContainer gui, ItemStack stack, int x, int y, boolean showAxis, boolean showOuter, boolean showMat) {
+    public void renderShape(IShapeParentGui gui, ItemStack stack, int x, int y, boolean showAxis, boolean showOuter, boolean showMat) {
         setupScissor(gui);
 
         GlStateManager.pushMatrix();
@@ -110,7 +110,7 @@ public class ShapeRenderer {
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
-        renderFaces(tessellator, buffer, stack, showMat);
+        renderFaces(gui, tessellator, buffer, stack, showMat);
         BlockPos dimension = ShapeCardItem.getDimension(stack);
         renderHelpers(tessellator, buffer, dimension.getX()/2.0f, dimension.getY()/2.0f, dimension.getZ()/2.0f, showAxis, showOuter);
 
@@ -298,13 +298,13 @@ public class ShapeRenderer {
         return col;
     }
 
-    private void renderFaces(Tessellator tessellator, final VertexBuffer buffer,
+    private void renderFaces(IShapeParentGui gui, Tessellator tessellator, final VertexBuffer buffer,
                      ItemStack stack, boolean showMat) {
 
         if (ShapeRenderer.positions == null || waitForNewRequest > 0) {
             if (waitForNewRequest <= 0) {
                 // No positions, send a new request
-                RFToolsMessages.INSTANCE.sendToServer(new PacketRequestShapeData(stack));
+                RFToolsMessages.INSTANCE.sendToServer(new PacketRequestShapeData(stack, gui.needCount()));
                 waitForNewRequest = 10;
                 ShapeRenderer.stateMap = null;
                 ShapeRenderer.positions = null;
@@ -410,14 +410,14 @@ public class ShapeRenderer {
         GlStateManager.glEndList();
     }
 
-    private static void setupScissor(GuiContainer gui) {
+    private static void setupScissor(IShapeParentGui gui) {
         Minecraft mc = Minecraft.getMinecraft();
 
         final ScaledResolution scaledresolution = new ScaledResolution(mc);
         int xScale = scaledresolution.getScaledWidth();
         int yScale = scaledresolution.getScaledHeight();
-        int sx = (gui.getGuiLeft() + 84) * mc.displayWidth / xScale;
-        int sy = (mc.displayHeight) - (gui.getGuiTop() + 136) * mc.displayHeight / yScale;
+        int sx = (gui.getPreviewLeft() + 84) * mc.displayWidth / xScale;
+        int sy = (mc.displayHeight) - (gui.getPreviewTop() + 136) * mc.displayHeight / yScale;
         int sw = 161 * mc.displayWidth / xScale;
         int sh = 130 * mc.displayHeight / yScale;
 

@@ -34,6 +34,7 @@ import mcjty.rftools.items.netmonitor.PacketGetConnectedBlocks;
 import mcjty.rftools.items.teleportprobe.*;
 import mcjty.rftools.jei.PacketSendRecipe;
 import mcjty.rftools.playerprops.PacketSendBuffsToClient;
+import mcjty.rftools.shapes.PacketUpdateNBTShapeCard;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -80,6 +81,7 @@ public class RFToolsMessages {
         net.registerMessage(PacketOpenGui.Handler.class, PacketOpenGui.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketUpdateModifier.Handler.class, PacketUpdateModifier.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketRequestShapeData.Handler.class, PacketRequestShapeData.class, PacketHandler.nextID(), Side.SERVER);
+        net.registerMessage(PacketUpdateNBTShapeCard.Handler.class, PacketUpdateNBTShapeCard.class, PacketHandler.nextID(), Side.SERVER);
 
         // Client side
         net.registerMessage(PacketPlayersReady.Handler.class, PacketPlayersReady.class, PacketHandler.nextID(), Side.CLIENT);

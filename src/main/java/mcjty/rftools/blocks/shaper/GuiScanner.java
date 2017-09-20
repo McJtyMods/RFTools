@@ -11,6 +11,7 @@ import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.shapes.IShapeParentGui;
 import mcjty.rftools.shapes.ShapeRenderer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -21,7 +22,7 @@ import org.lwjgl.input.Mouse;
 import java.awt.*;
 import java.io.IOException;
 
-public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> {
+public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implements IShapeParentGui {
 
     public static final int SCANNER_WIDTH = 256;
     public static final int SCANNER_HEIGHT = 238;
@@ -122,7 +123,20 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> {
         shapeRenderer.handleShapeDragging(x, y);
     }
 
+    @Override
+    public int getPreviewLeft() {
+        return getGuiLeft();
+    }
 
+    @Override
+    public int getPreviewTop() {
+        return getGuiTop();
+    }
+
+    @Override
+    public boolean needCount() {
+        return false;
+    }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int x, int y) {

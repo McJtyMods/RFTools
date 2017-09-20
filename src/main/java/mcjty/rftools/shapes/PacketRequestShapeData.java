@@ -18,22 +18,26 @@ import java.util.Map;
 
 public class PacketRequestShapeData implements IMessage {
     private ItemStack card;
+    private boolean count;
 
     @Override
     public void fromBytes(ByteBuf buf) {
         card = NetworkTools.readItemStack(buf);
+        count = buf.readBoolean();
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         NetworkTools.writeItemStack(buf, card);
+        buf.writeBoolean(count);
     }
 
     public PacketRequestShapeData() {
     }
 
-    public PacketRequestShapeData(ItemStack card) {
+    public PacketRequestShapeData(ItemStack card, boolean count) {
         this.card = card;
+        this.count = count;
     }
 
     public static class Handler implements IMessageHandler<PacketRequestShapeData, IMessage> {
@@ -47,7 +51,11 @@ public class PacketRequestShapeData implements IMessage {
             Shape shape = ShapeCardItem.getShape(message.card);
             Map<Long, IBlockState> stateMap = new HashMap<Long, IBlockState>();
             TLongHashSet positions = ShapeCardItem.getPositions(message.card, shape, false, new BlockPos(0, 0, 0), new BlockPos(0, 0, 0), stateMap);
-            RFToolsMessages.INSTANCE.sendTo(new PacketReturnShapeData(positions, stateMap), ctx.getServerHandler().player);
+            int cnt = 0;
+            if (message.count) {
+                cnt = ShapeCardItem.countBlocks(message.card, shape, ShapeCardItem.isSolid(message.card), ShapeCardItem.getDimension(message.card));
+            }
+            RFToolsMessages.INSTANCE.sendTo(new PacketReturnShapeData(positions, stateMap, cnt), ctx.getServerHandler().player);
         }
     }
 

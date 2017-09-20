@@ -5,13 +5,13 @@ import mcjty.lib.gui.RenderHelper;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
+import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
-import mcjty.lib.network.PacketUpdateNBTItem;
 import mcjty.lib.network.PacketUpdateNBTItemInventory;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.tools.MinecraftTools;
@@ -19,6 +19,7 @@ import mcjty.rftools.blocks.shaper.GuiShaper;
 import mcjty.rftools.blocks.shaper.ShaperTileEntity;
 import mcjty.rftools.network.PacketOpenGui;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.shapes.*;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -39,12 +40,15 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
-public class GuiShapeCard extends GuiScreen {
+public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
 
     /** The X size of the window in pixels. */
     protected int xSize = 360;
     /** The Y size of the window in pixels. */
-    protected int ySize = 46;
+    protected int ySize = 160;
+
+    private int guiLeft;
+    private int guiTop;
 
     private boolean isQuarryCard;
 
@@ -70,6 +74,8 @@ public class GuiShapeCard extends GuiScreen {
 
     private boolean countDirty = true;
     private boolean fromshaper;
+
+    private ShapeRenderer shapeRenderer = new ShapeRenderer();
 
     public GuiShapeCard(boolean fromshaper) {
         this.fromshaper = fromshaper;
@@ -101,9 +107,28 @@ public class GuiShapeCard extends GuiScreen {
     }
 
     @Override
+    public int getPreviewLeft() {
+        return guiLeft + 104;
+    }
+
+    @Override
+    public int getPreviewTop() {
+        return guiTop - 5 + (isQuarryCard ? 0 : 10);
+    }
+
+    @Override
+    public boolean needCount() {
+        return true;
+    }
+
+    @Override
     public void initGui() {
         super.initGui();
 
+        this.guiLeft = (this.width - this.xSize) / 2;
+        this.guiTop = (this.height - this.ySize) / 2;
+
+        ShapeRenderer.shapeCount = 0;
 
         ItemStack heldItem = getStackToEdit();
         if (ItemStackTools.isEmpty(heldItem)) {
@@ -121,7 +146,8 @@ public class GuiShapeCard extends GuiScreen {
                 mcjty.rftools.shapes.Shape.SHAPE_PRISM.getDescription(),
                 mcjty.rftools.shapes.Shape.SHAPE_TORUS.getDescription(),
                 mcjty.rftools.shapes.Shape.SHAPE_HEART.getDescription(),
-                mcjty.rftools.shapes.Shape.SHAPE_CUSTOM.getDescription()
+                mcjty.rftools.shapes.Shape.SHAPE_CUSTOM.getDescription(),
+                mcjty.rftools.shapes.Shape.SHAPE_SCHEME.getDescription()
         ).addChoiceEvent((parent, newChoice) -> updateSettings());
 
         solidLabel = new ChoiceLabel(mc, this).setDesiredWidth(50).setDesiredHeight(16).addChoices(
@@ -133,7 +159,7 @@ public class GuiShapeCard extends GuiScreen {
 
         isQuarryCard = ShapeCardItem.isQuarry(heldItem.getItemDamage());
         if (isQuarryCard) {
-            ySize = 46 + 28;
+            ySize = 160 + 28;
         }
 
         mcjty.rftools.shapes.Shape shape = ShapeCardItem.getShape(heldItem);
@@ -157,25 +183,33 @@ public class GuiShapeCard extends GuiScreen {
         }).setText(String.valueOf(dim.getX()));
         dimY = new TextField(mc, this).addTextEvent((parent, newText) -> updateSettings()).setText(String.valueOf(dim.getY()));
         dimZ = new TextField(mc, this).addTextEvent((parent, newText) -> updateSettings()).setText(String.valueOf(dim.getZ()));
-        Panel dimPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(0)).addChild(new Label(mc, this).setText("Dim:").setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT).setDesiredWidth(70)).setDesiredHeight(18).addChild(dimX).addChild(dimY).addChild(dimZ);
+        Panel dimPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(0)).addChild(new Label(mc, this).setText("Dim:").setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT).setDesiredWidth(40)).setDesiredHeight(18).addChild(dimX).addChild(dimY).addChild(dimZ);
         offsetX = new TextField(mc, this).addTextEvent((parent, newText) -> updateSettings()).setText(String.valueOf(offset.getX()));
         offsetY = new TextField(mc, this).addTextEvent((parent, newText) -> updateSettings()).setText(String.valueOf(offset.getY()));
         offsetZ = new TextField(mc, this).addTextEvent((parent, newText) -> updateSettings()).setText(String.valueOf(offset.getZ()));
-        Panel offsetPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(0)).addChild(new Label(mc, this).setText("Offset:").setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT).setDesiredWidth(70)).setDesiredHeight(18).addChild(offsetX).addChild(offsetY).addChild(offsetZ);
+        Panel offsetPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(0)).addChild(new Label(mc, this).setText("Offset:").setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT).setDesiredWidth(40)).setDesiredHeight(18).addChild(offsetX).addChild(offsetY).addChild(offsetZ);
+        Panel infoPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(0)).setDesiredHeight(18)
+                .addChild(new Label<>(mc, this).setText("INFO")).setDesiredWidth(30)
+                .addChild(new Label<>(mc, this).setText("X").setDesiredWidth(30))
+                .addChild(new Label<>(mc, this).setText("Y").setDesiredWidth(30))
+                .addChild(new Label<>(mc, this).setText("Z").setDesiredWidth(30));
 
-        Panel settingsPanel = new Panel(mc, this).setLayout(new VerticalLayout().setSpacing(1).setVerticalMargin(1).setHorizontalMargin(0)).addChild(dimPanel).addChild(offsetPanel);
+        Panel settingsPanel = new Panel(mc, this).setLayout(new VerticalLayout().setSpacing(1).setVerticalMargin(1).setHorizontalMargin(0))
+                .addChild(dimPanel).addChild(offsetPanel);
+//        .addChild(infoPanel).addChild(dimPanel).addChild(offsetPanel);
 
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
 
-        Panel modeSettingsPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(0)).addChild(modePanel).addChild(settingsPanel);
+        Panel modeSettingsPanel = new Panel(mc, this).setLayout(new VerticalLayout().setHorizontalMargin(0)).addChild(modePanel).addChild(settingsPanel);
+        modeSettingsPanel.setLayoutHint(new PositionalLayout.PositionalHint(0, 0, 180, 160));
         Widget toplevel;
         if (isQuarryCard) {
             setupVoidPanel(heldItem);
-            toplevel = new Panel(mc, this).setLayout(new VerticalLayout()).setFilledRectThickness(2).addChild(modeSettingsPanel).addChild(voidPanel);
+            toplevel = new Panel(mc, this).setLayout(new PositionalLayout()).setFilledRectThickness(2).addChild(modeSettingsPanel).addChild(voidPanel);
 
         } else {
-            toplevel = new Panel(mc, this).setLayout(new VerticalLayout()).setFilledRectThickness(2).addChild(modeSettingsPanel);
+            toplevel = new Panel(mc, this).setLayout(new PositionalLayout()).setFilledRectThickness(2).addChild(modeSettingsPanel);
         }
 
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
@@ -188,6 +222,7 @@ public class GuiShapeCard extends GuiScreen {
                 .setDesiredHeight(26)
                 .setFilledRectThickness(-2)
                 .setFilledBackground(StyleConfig.colorListBackground);
+        voidPanel.setLayoutHint(new PositionalLayout.PositionalHint(5, 155, 350, 26));
         Label label = new Label(mc, this).setText("Void:");
         stone = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void stone").addButtonEvent(widget -> updateVoidSettings());
         cobble = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void cobble").addButtonEvent(widget -> updateVoidSettings());
@@ -237,7 +272,6 @@ public class GuiShapeCard extends GuiScreen {
     }
 
     private void updateSettings() {
-        countDirty = true;
         if (isTorus()) {
             dimZ.setText(dimX.getText());
         }
@@ -255,7 +289,7 @@ public class GuiShapeCard extends GuiScreen {
                         GuiShaper.shaperBlock, GuiShaper.shaperStackSlot, tag));
             }
         } else {
-            RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItem(
+            RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTShapeCard(
                     new Argument("shapenew", getCurrentShape().getDescription()),
                     new Argument("solid", isSolid()),
                     new Argument("dimX", parseInt(dimX.getText())),
@@ -287,7 +321,7 @@ public class GuiShapeCard extends GuiScreen {
                         GuiShaper.shaperBlock, GuiShaper.shaperStackSlot, tag));
             }
         } else {
-            RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItem(
+            RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTShapeCard(
                     new Argument("voidstone", stone.isPressed()),
                     new Argument("voidcobble", cobble.isPressed()),
                     new Argument("voiddirt", dirt.isPressed()),
@@ -309,6 +343,13 @@ public class GuiShapeCard extends GuiScreen {
     public void handleMouseInput() throws IOException {
         super.handleMouseInput();
         window.handleMouseInput();
+
+        int x = Mouse.getEventX() * width / mc.displayWidth;
+        int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
+        x -= guiLeft;
+        y -= guiTop;
+
+        shapeRenderer.handleShapeDragging(x, y);
     }
 
     @Override
@@ -334,14 +375,11 @@ public class GuiShapeCard extends GuiScreen {
         updateCounter--;
         if (updateCounter <= 0) {
             updateCounter = 10;
-            if (countDirty) {
-                countDirty = false;
-                int count = ShapeCardItem.countBlocks(getStackToEdit(), getCurrentShape(), isSolid(), getCurrentDimension());
-                if (count >= ShapeCardItem.MAXIMUM_COUNT) {
-                    blocksLabel.setText("#Blocks: ++" + count);
-                } else {
-                    blocksLabel.setText("#Blocks: " + count);
-                }
+            int count = ShapeRenderer.shapeCount;
+            if (count >= ShapeCardItem.MAXIMUM_COUNT) {
+                blocksLabel.setText("#Blocks: ++" + count);
+            } else {
+                blocksLabel.setText("#Blocks: " + count);
             }
         }
 
@@ -359,6 +397,12 @@ public class GuiShapeCard extends GuiScreen {
             renderVoidBlock(x, y, sand, Blocks.SAND);
             renderVoidBlock(x, y, netherrack, Blocks.NETHERRACK);
         }
+
+        ItemStack stack = getStackToEdit();
+        if (ItemStackTools.isValid(stack)) {
+            shapeRenderer.renderShape(this, stack, guiLeft, guiTop, true, true, true);
+        }
+
 
         List<String> tooltips = window.getTooltips();
         if (tooltips != null) {

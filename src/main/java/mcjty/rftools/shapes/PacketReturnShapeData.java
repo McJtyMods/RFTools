@@ -23,6 +23,7 @@ import static mcjty.rftools.network.ReturnDestinationInfoHelper.name;
 public class PacketReturnShapeData implements IMessage {
     private TLongHashSet positions;
     private Map<Long, IBlockState> stateMap;
+    private int count;
 
     @Override
     public void fromBytes(ByteBuf buf) {
@@ -36,12 +37,15 @@ public class PacketReturnShapeData implements IMessage {
         size = buf.readInt();
         while (size > 0) {
             long key = buf.readLong();
-            String r = NetworkTools.readString(buf);
-            int m = buf.readInt();
-            Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(r));
-            stateMap.put(key, block.getStateFromMeta(m));
+            if (buf.readBoolean()) {
+                String r = NetworkTools.readString(buf);
+                int m = buf.readInt();
+                Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(r));
+                stateMap.put(key, block.getStateFromMeta(m));
+            }
             size--;
         }
+        count = buf.readInt();
     }
 
     @Override
@@ -55,9 +59,15 @@ public class PacketReturnShapeData implements IMessage {
         for (Map.Entry<Long, IBlockState> entry : stateMap.entrySet()) {
             buf.writeLong(entry.getKey());
             IBlockState state = entry.getValue();
-            NetworkTools.writeString(buf, state.getBlock().getRegistryName().toString());
-            buf.writeInt(state.getBlock().getMetaFromState(state));
+            if (state == null) {
+                buf.writeBoolean(false);
+            } else {
+                buf.writeBoolean(true);
+                NetworkTools.writeString(buf, state.getBlock().getRegistryName().toString());
+                buf.writeInt(state.getBlock().getMetaFromState(state));
+            }
         }
+        buf.writeInt(count);
     }
 
     public int getId() {
@@ -71,15 +81,16 @@ public class PacketReturnShapeData implements IMessage {
     public PacketReturnShapeData() {
     }
 
-    public PacketReturnShapeData(TLongHashSet positions, Map<Long, IBlockState> stateMap) {
+    public PacketReturnShapeData(TLongHashSet positions, Map<Long, IBlockState> stateMap, int count) {
         this.positions = positions;
         this.stateMap = stateMap;
+        this.count = count;
     }
 
     public static class Handler implements IMessageHandler<PacketReturnShapeData, IMessage> {
         @Override
         public IMessage onMessage(PacketReturnShapeData message, MessageContext ctx) {
-            RFTools.proxy.addScheduledTaskClient(() -> ShapeRenderer.setRenderData(message.positions, message.stateMap));
+            RFTools.proxy.addScheduledTaskClient(() -> ShapeRenderer.setRenderData(message.positions, message.stateMap, message.count));
             return null;
         }
 

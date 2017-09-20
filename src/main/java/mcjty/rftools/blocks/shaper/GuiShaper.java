@@ -11,12 +11,8 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.shapes.ShapeModifier;
-import mcjty.rftools.shapes.ShapeOperation;
-import mcjty.rftools.shapes.ShapeRotation;
+import mcjty.rftools.shapes.*;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.rftools.shapes.PacketSendShaperData;
-import mcjty.rftools.shapes.ShapeRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.inventory.Slot;
@@ -28,7 +24,7 @@ import org.lwjgl.input.Mouse;
 import java.awt.*;
 import java.io.IOException;
 
-public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
+public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> implements IShapeParentGui {
     public static final int SIDEWIDTH = 80;
     public static final int SHAPER_WIDTH = 256;
     public static final int SHAPER_HEIGHT = 238;
@@ -150,6 +146,21 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> {
     protected void registerWindows(WindowManager mgr) {
         super.registerWindows(mgr);
         mgr.addWindow(sideWindow);
+    }
+
+    @Override
+    public int getPreviewLeft() {
+        return getGuiLeft();
+    }
+
+    @Override
+    public int getPreviewTop() {
+        return getGuiTop();
+    }
+
+    @Override
+    public boolean needCount() {
+        return false;
     }
 
     private void openCardGui(int i) {
