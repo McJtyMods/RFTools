@@ -24,7 +24,10 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.TextFormatting;
@@ -148,23 +151,13 @@ public class ShapeCardItem extends GenericRFToolsItem {
         return EnumActionResult.SUCCESS;
     }
 
-    public static void setData(ItemStack itemStack, byte[] data, List<IBlockState> materialPalette) {
-        NBTTagCompound tagCompound = getCompound(itemStack);
-        setData(tagCompound, data, materialPalette);
-    }
-
-    public static void setData(NBTTagCompound tagCompound, byte[] data, List<IBlockState> materialPalette) {
-        tagCompound.setByteArray("data", data);
-        NBTTagList palette = new NBTTagList();
-        for (IBlockState state : materialPalette) {
-            ResourceLocation name = state.getBlock().getRegistryName();
-            int meta = state.getBlock().getMetaFromState(state);
-            NBTTagCompound tc = new NBTTagCompound();
-            tc.setString("r", name.toString());
-            tc.setInteger("m", meta);
-            palette.appendTag(tc);
-        }
-        tagCompound.setTag("datapal", palette);
+    public static void setData(NBTTagCompound tagCompound, int dimension, BlockPos pos) {
+        tagCompound.removeTag("data");  // Temporary to get rid of the big data
+        tagCompound.removeTag("datapal");  // Temporary to get rid of the big data
+        tagCompound.setInteger("datadim", dimension);
+        tagCompound.setInteger("datax", pos.getX());
+        tagCompound.setInteger("datay", pos.getY());
+        tagCompound.setInteger("dataz", pos.getZ());
         dirty(tagCompound);
     }
 
@@ -348,6 +341,15 @@ public class ShapeCardItem extends GenericRFToolsItem {
             NBTTagCompound card = itemStack.getTagCompound();
             NBTTagList children = card.getTagList("children", Constants.NBT.TAG_COMPOUND);
             list.add(TextFormatting.DARK_GREEN + "Formulas: " + children.tagCount());
+        }
+
+        if (shape.isScheme()) {
+            NBTTagCompound card = itemStack.getTagCompound();
+            int dim = card.getInteger("datadim");
+            int x = card.getInteger("datax");
+            int y = card.getInteger("datay");
+            int z = card.getInteger("dataz");
+            list.add(TextFormatting.DARK_GREEN + "Scanner at: " + x + "," + y + "," + z + " (dim " + dim + ")");
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {

@@ -1,5 +1,6 @@
 package mcjty.rftools.shapes;
 
+import mcjty.rftools.blocks.shaper.ScannerTileEntity;
 import mcjty.rftools.blocks.shield.ShieldConfiguration;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import net.minecraft.block.Block;
@@ -7,8 +8,12 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
@@ -63,18 +68,21 @@ public class Formulas {
         private int dy;
         private int dz;
         private IBlockState lastState = null;
+        private World scannerWorld;
+        private BlockPos scannerPos;
 
         @Override
         public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
+            data = null;
+            scannerWorld = null;
+
             if (card == null) {
-                data = null;
                 return;
             }
             dx = dimension.getX();
             dy = dimension.getY();
             dz = dimension.getZ();
             if (dx <= 0 || dy <= 0 || dz <= 0) {
-                data = null;
                 return;
             }
             int xCoord = thisCoord.getX();
@@ -85,33 +93,37 @@ public class Formulas {
             y1 = tl.getY();
             z1 = tl.getZ();
 
-            NBTTagList pallist = card.getTagList("datapal", Constants.NBT.TAG_COMPOUND);
-            for (int i = 0 ; i < pallist.tagCount() ; i++) {
-                NBTTagCompound tc = pallist.getCompoundTagAt(i);
-                String r = tc.getString("r");
-                int m = tc.getInteger("m");
-                Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(r));
-                if (block == null) {
-                    block = Blocks.STONE;
-                    m = 0;
+            palette.clear();
+
+            int dim = card.getInteger("datadim");
+            scannerWorld = DimensionManager.getWorld(dim);
+            if (scannerWorld != null) {
+                int x = card.getInteger("datax");
+                int y = card.getInteger("datay");
+                int z = card.getInteger("dataz");
+                scannerPos = new BlockPos(x, y, z);
+                if (scannerWorld.isBlockLoaded(scannerPos)) {
+                    TileEntity te = scannerWorld.getTileEntity(scannerPos);
+                    if (te instanceof ScannerTileEntity) {
+                        palette = new ArrayList<>(((ScannerTileEntity) te).getMaterialPalette());
+                        byte[] datas = ((ScannerTileEntity) te).getData();
+                        data = new byte[dx * dy * dz];
+                        int j = 0;
+                        for (int i = 0; i < datas.length / 2; i++) {
+                            int cnt = (datas[i * 2]) & 0xff;
+                            int c = datas[i * 2 + 1];
+                            while (cnt > 0 && j < data.length) {
+                                data[j++] = (byte) c;
+                                cnt--;
+                            }
+                            if (j >= data.length) {
+                                break;
+                            }
+                        }
+                    }
                 }
-                palette.add(block.getStateFromMeta(m));
             }
 
-            byte[] datas = card.getByteArray("data");
-            data = new byte[dx * dy * dz];
-            int j = 0;
-            for (int i = 0 ; i < datas.length / 2 ; i++) {
-                int cnt = (datas[i*2]) & 0xff;
-                int c = datas[i*2+1];
-                while (cnt > 0 && j < data.length) {
-                    data[j++] = (byte) c;
-                    cnt--;
-                }
-                if (j >= data.length) {
-                    break;
-                }
-            }
         }
 
         @Override
@@ -120,6 +132,16 @@ public class Formulas {
                 return 0;
             }
             if (x < x1 || x >= x1+dx || y < y1 || y >= y1+dy || z < z1 || z >= z1+dz) {
+                return 0;
+            }
+
+            if (scannerWorld == null) {
+                return 0;
+            }
+            if (!scannerWorld.isBlockLoaded(scannerPos)) {
+                return 0;
+            }
+            if (!(scannerWorld.getTileEntity(scannerPos) instanceof ScannerTileEntity)) {
                 return 0;
             }
 

@@ -8,7 +8,6 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
-import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.modifier.ModifierEntry;
 import mcjty.rftools.items.modifier.ModifierFilterOperation;
@@ -24,7 +23,10 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -40,6 +42,9 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ScannerContainer.factory, 4);
     private StorageFilterCache filterCache = null;
+
+    private byte[] data = null;
+    List<IBlockState> materialPalette = new ArrayList<>();
 
     @Override
     public InventoryHelper getInventoryHelper() {
@@ -67,6 +72,14 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         return canPlayerAccess(player);
     }
 
+    public byte[] getData() {
+        return data;
+    }
+
+    public List<IBlockState> getMaterialPalette() {
+        return materialPalette;
+    }
+
     private void getFilterCache() {
         if (filterCache == null) {
             filterCache = StorageFilterItem.getCache(inventoryHelper.getStackInSlot(ScannerContainer.SLOT_FILTER));
@@ -82,10 +95,46 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
+
+        if (tagCompound.hasKey("scandata")) {
+            data = tagCompound.getByteArray("scandata");
+        } else {
+            data = null;
+        }
+        NBTTagList list = tagCompound.getTagList("scanpal", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < list.tagCount() ; i++) {
+            NBTTagCompound tc = list.getCompoundTagAt(i);
+            Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(tc.getString("r")));
+            if (block == null) {
+                block = Blocks.STONE;
+            }
+            materialPalette.add(block.getStateFromMeta(tc.getInteger("m")));
+        }
     }
+
+//    @Override
+//    public void writeClientDataToNBT(NBTTagCompound tagCompound) {
+//        writeCommonToNBT(tagCompound);
+//    }
 
     @Override
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+        writeCommonToNBT(tagCompound);
+
+        if (data != null) {
+            tagCompound.setByteArray("scandata", data);
+        }
+        NBTTagList pal = new NBTTagList();
+        for (IBlockState state : materialPalette) {
+            NBTTagCompound tc = new NBTTagCompound();
+            tc.setString("r", state.getBlock().getRegistryName().toString());
+            tc.setInteger("m", state.getBlock().getMetaFromState(state));
+            pal.appendTag(tc);
+        }
+        tagCompound.setTag("scanpal", pal);
+    }
+
+    private void writeCommonToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
     }
@@ -267,7 +316,10 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
             stream.write(cnt);
             stream.write(prev);
         }
-        ShapeCardItem.setData(tagOut, stream.toByteArray(), materialPalette);
+        this.data = stream.toByteArray();
+        this.materialPalette = materialPalette;
+        ShapeCardItem.setData(tagOut, getWorld().provider.getDimension(), getPos());
+        markDirty();
     }
 
     @Override
