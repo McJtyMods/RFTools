@@ -14,6 +14,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,32 +53,22 @@ public class PacketRequestShapeData implements IMessage {
             boolean solid = ShapeCardItem.isSolid(message.card);
             BlockPos dimension = ShapeCardItem.getDimension(message.card);
 
-            if (dimension.getX() > 100 || dimension.getY() > 100 || dimension.getZ() > 100) {
+            if (dimension.getX()*dimension.getY()*dimension.getZ() > (256 * 256 * 256)) {
                 System.out.println("Sorry, no preview");
+                RFToolsMessages.INSTANCE.sendTo(new PacketReturnShapeData(Collections.emptyMap(), 0, "Too large for preview!"), ctx.getServerHandler().player);
                 return;
             }
 
             System.out.println("dimension = " + dimension);
-            Map<Long, IBlockState> positionsFull = ShapeCardItem.getPositions(message.card, shape, solid, new BlockPos(0, 0, 0), new BlockPos(0, 0, 0));
-            System.out.println("CALC START : 2");
-            int cnt = positionsFull.size();
-            // Remove all blocks that are fully enclosed (not visible) but only if we are solid. If not solid this is not needed
-            Map<Long, IBlockState> positions;
-            if (solid) {
-                positions = new HashMap<>();
-                for (Map.Entry<Long, IBlockState> entry : positionsFull.entrySet()) {
-                    long pos = entry.getKey();
-                    if (!isPositionEnclosed(positionsFull, BlockPos.fromLong(pos))) {
-                        positions.put(pos, entry.getValue());
-                    }
-                }
-            } else {
-                positions = positionsFull;
-            }
+
+            Map<Long, IBlockState> positions = new HashMap<>();
+            int cnt = ShapeCardItem.getRenderPositions(message.card, shape, solid, positions);
+            System.out.println("cnt = " + cnt);
+            System.out.println("positions.size() = " + positions.size());
 
             System.out.println("CALC STOP");
 
-            RFToolsMessages.INSTANCE.sendTo(new PacketReturnShapeData(positions, cnt), ctx.getServerHandler().player);
+            RFToolsMessages.INSTANCE.sendTo(new PacketReturnShapeData(positions, cnt, ""), ctx.getServerHandler().player);
         }
     }
 

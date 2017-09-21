@@ -41,10 +41,12 @@ public class ShapeRenderer {
     private static int waitForNewRequest = 0;
     private static Map<Long, IBlockState> positions = null;
     public static int shapeCount = 0;
+    public static String previewMessage = "";
 
-    public static void setRenderData(Map<Long, IBlockState> positions, int count) {
+    public static void setRenderData(Map<Long, IBlockState> positions, int count, String msg) {
         ShapeRenderer.positions = positions;//new HashMap<>(positions);
         ShapeRenderer.shapeCount = count;
+        ShapeRenderer.previewMessage = msg;
     }
 
     public void handleShapeDragging(int x, int y) {
@@ -130,6 +132,12 @@ public class ShapeRenderer {
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
         RenderHelper.enableGUIStandardItemLighting();
+
+        if (!previewMessage.isEmpty()) {
+            Minecraft.getMinecraft().fontRenderer.drawString(previewMessage, gui.getPreviewLeft()+84, gui.getPreviewTop()+50, 0xffff0000);
+            return;
+        }
+
     }
 
     private void renderHelpers(Tessellator tessellator, VertexBuffer buffer, float xlen, float ylen, float zlen, boolean showAxis, boolean showOuter) {

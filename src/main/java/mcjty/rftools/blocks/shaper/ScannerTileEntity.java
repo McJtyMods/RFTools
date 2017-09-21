@@ -254,18 +254,17 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         int prev = -1;
 
         StatePalette materialPalette = new StatePalette();
-        Map<IBlockState, Integer> paletteIndex = new HashMap<>();
 
-        Map<Long, IBlockState> positionMask = null;
-        ItemStack cardIn = inventoryHelper.getStackInSlot(ScannerContainer.SLOT_IN);
-        if (ItemStackTools.isValid(cardIn)) {
-            Shape shape = ShapeCardItem.getShape(cardIn);
-            BlockPos dimension = ShapeCardItem.getDimension(cardIn);
-            BlockPos offset = ShapeCardItem.getOffset(cardIn);
-            System.out.println("center = " + center);
-            // @todo THIS IS NOT WORKING YET!
-            positionMask = ShapeCardItem.getPositions(cardIn, shape, ShapeCardItem.isSolid(cardIn), center, offset);
-        }
+//        Map<Long, IBlockState> positionMask = null;
+//        ItemStack cardIn = inventoryHelper.getStackInSlot(ScannerContainer.SLOT_IN);
+//        if (ItemStackTools.isValid(cardIn)) {
+//            Shape shape = ShapeCardItem.getShape(cardIn);
+//            BlockPos dimension = ShapeCardItem.getDimension(cardIn);
+//            BlockPos offset = ShapeCardItem.getOffset(cardIn);
+//            System.out.println("center = " + center);
+//            // @todo THIS IS NOT WORKING YET!
+//            positionMask = ShapeCardItem.getPositions(cardIn, shape, ShapeCardItem.isSolid(cardIn), center, offset);
+//        }
 
         int cnt = 0;
         BlockPos.MutableBlockPos mpos = new BlockPos.MutableBlockPos();
@@ -274,7 +273,8 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
                 for (int z = tl.getZ() ; z < tl.getZ() + dimZ ; z++) {
                     mpos.setPos(x, y, z);
                     int c;
-                    if (getWorld().isAirBlock(mpos) || (positionMask != null && !positionMask.containsKey(mpos.toLong()))) {
+//                    if (getWorld().isAirBlock(mpos) || (positionMask != null && !positionMask.containsKey(mpos.toLong()))) {
+                      if (getWorld().isAirBlock(mpos)) {
                         c = 0;
                     } else {
                         IBlockState state = getWorld().getBlockState(mpos);

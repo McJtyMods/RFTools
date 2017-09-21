@@ -21,9 +21,13 @@ import java.util.Map;
 public class PacketReturnShapeData implements IMessage {
     private Map<Long, IBlockState> positions;
     private int count;
+    private String msg;
 
     @Override
     public void fromBytes(ByteBuf buf) {
+        count = buf.readInt();
+        msg = NetworkTools.readStringUTF8(buf);
+
         int size = buf.readInt();
         System.out.println("1: size = " + size);
         List<IBlockState> palette = new ArrayList<>();
@@ -52,7 +56,6 @@ public class PacketReturnShapeData implements IMessage {
             positions.put(pos, state);
             size--;
         }
-        count = buf.readInt();
     }
 
     @Override
@@ -60,6 +63,8 @@ public class PacketReturnShapeData implements IMessage {
         System.out.println("#########################################");
         System.out.println("positions.size() = " + positions.size());
 
+        buf.writeInt(count);
+        NetworkTools.writeStringUTF8(buf, msg);
 
         // First make a palette for more compact transmission
         StatePalette palette = new StatePalette();
@@ -88,21 +93,22 @@ public class PacketReturnShapeData implements IMessage {
             }
         }
 
-        buf.writeInt(count);
+        System.out.println("buf.capacity() = " + buf.capacity());
     }
 
     public PacketReturnShapeData() {
     }
 
-    public PacketReturnShapeData(Map<Long, IBlockState> positions,int count) {
+    public PacketReturnShapeData(Map<Long, IBlockState> positions, int count, String msg) {
         this.positions = positions;
         this.count = count;
+        this.msg = msg;
     }
 
     public static class Handler implements IMessageHandler<PacketReturnShapeData, IMessage> {
         @Override
         public IMessage onMessage(PacketReturnShapeData message, MessageContext ctx) {
-            RFTools.proxy.addScheduledTaskClient(() -> ShapeRenderer.setRenderData(message.positions, message.count));
+            RFTools.proxy.addScheduledTaskClient(() -> ShapeRenderer.setRenderData(message.positions, message.count, message.msg));
             return null;
         }
 
