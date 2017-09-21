@@ -110,6 +110,9 @@ public class Formulas {
                         for (int i = 0; i < datas.length / 2; i++) {
                             int cnt = (datas[i * 2]) & 0xff;
                             int c = datas[i * 2 + 1];
+                            if (c == 255) {
+                                c = 0;
+                            }
                             while (cnt > 0 && j < data.length) {
                                 data[j++] = (byte) c;
                                 cnt--;

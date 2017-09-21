@@ -1,5 +1,6 @@
 package mcjty.rftools.items.builder;
 
+import mcjty.lib.tools.ChatTools;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
@@ -7,6 +8,7 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
+import mcjty.rftools.blocks.shaper.ScannerTileEntity;
 import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.shapes.*;
 import mcjty.rftools.varia.RLE;
@@ -21,21 +23,24 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
+import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
 
+import java.io.*;
 import java.util.*;
 
 public class ShapeCardItem extends GenericRFToolsItem {
@@ -147,9 +152,18 @@ public class ShapeCardItem extends GenericRFToolsItem {
         return EnumActionResult.SUCCESS;
     }
 
+    public static GlobalCoordinate getData(NBTTagCompound tagCompound) {
+        if (!tagCompound.hasKey("datadim")) {
+            return null;
+        }
+        int dim = tagCompound.getInteger("datadim");
+        int x = tagCompound.getInteger("datax");
+        int y = tagCompound.getInteger("datay");
+        int z = tagCompound.getInteger("dataz");
+        return new GlobalCoordinate(new BlockPos(x, y, z), dim);
+    }
+
     public static void setData(NBTTagCompound tagCompound, int dimension, BlockPos pos) {
-        tagCompound.removeTag("data");  // Temporary to get rid of the big data
-        tagCompound.removeTag("datapal");  // Temporary to get rid of the big data
         tagCompound.setInteger("datadim", dimension);
         tagCompound.setInteger("datax", pos.getX());
         tagCompound.setInteger("datay", pos.getY());
@@ -814,6 +828,39 @@ public class ShapeCardItem extends GenericRFToolsItem {
         return cnt;
     }
 
+    // Used for saving
+    public static int getDataPositions(ItemStack stack, Shape shape, boolean solid, RLE positions, StatePalette statePalette) {
+        BlockPos dimension = ShapeCardItem.getDimension(stack);
+        BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
+
+        IFormula formula = shape.getFormulaFactory().createFormula();
+        int dx = clamped.getX();
+        int dy = clamped.getY();
+        int dz = clamped.getZ();
+
+        formula = formula.correctFormula(solid);
+        formula.setup(new BlockPos(0, 0, 0), clamped, new BlockPos(0, 0, 0), stack != null ? stack.getTagCompound() : null);
+
+        int cnt = 0;
+        for (int oy = 0; oy < dy; oy++) {
+            int y = oy - dy/2;
+            for (int ox = 0; ox < dx; ox++) {
+                int x = ox - dx/2;
+                for (int oz = 0; oz < dz; oz++) {
+                    int z = oz - dz/2;
+                    int v = 255;
+                    if (formula.isInside(x, y, z)) {
+                        cnt++;
+                        v = statePalette.alloc(formula.getLastState(), -1) + 1;
+                    }
+                    positions.add(v);
+                }
+            }
+        }
+        return cnt;
+    }
+
+
 
     public static void composeFormula(ItemStack shapeCard, IFormula formula, World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Map<BlockPos, IBlockState> blocks, int maxSize, boolean solid, boolean forquarry, ChunkPos chunk) {
         int xCoord = thisCoord.getX();
@@ -863,4 +910,128 @@ public class ShapeCardItem extends GenericRFToolsItem {
         }
     }
 
+    public static void save(EntityPlayer player, ItemStack card, String filename) {
+        Shape shape = ShapeCardItem.getShape(card);
+        boolean solid = ShapeCardItem.isSolid(card);
+        BlockPos offset = ShapeCardItem.getOffset(card);
+        BlockPos dimension = ShapeCardItem.getDimension(card);
+
+        RLE positions = new RLE();
+        StatePalette statePalette = new StatePalette();
+        int cnt = getDataPositions(card, shape, solid, positions, statePalette);
+
+        byte[] data = positions.getData();
+
+        File file = new File(filename);
+        FileOutputStream stream;
+        try {
+            stream = new FileOutputStream(file);
+        } catch (FileNotFoundException e) {
+            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Cannot write to file '" + filename + "'!"));
+            return;
+        }
+        PrintWriter writer = new PrintWriter(stream);
+        writer.println("SHAPE");
+        writer.println("DIM:" + dimension.getX() + "," + dimension.getY() + "," + dimension.getZ());
+        writer.println("OFF:" + offset.getX() + "," + offset.getY() + "," + offset.getZ());
+        for (IBlockState state : statePalette.getPalette()) {
+            String r = state.getBlock().getRegistryName().toString();
+            writer.println(r + "@" + state.getBlock().getMetaFromState(state));
+        }
+        writer.println("DATA");
+
+        byte[] encoded = Base64.getEncoder().encode(data);
+        writer.write(new String(encoded));
+        writer.close();
+    }
+
+    public static void load(EntityPlayer player, ItemStack card, String filename) {
+        Shape shape = ShapeCardItem.getShape(card);
+
+        if (shape != Shape.SHAPE_SCHEME) {
+            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "To load a file into this card you need a linked 'scheme' type card!"));
+            return;
+        }
+
+        NBTTagCompound compound = ShapeCardItem.getCompound(card);
+        GlobalCoordinate scannerPos = ShapeCardItem.getData(compound);
+        if (scannerPos == null) {
+            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "This card is not linked to a scanner!"));
+            return;
+        }
+
+        World world = DimensionManager.getWorld(scannerPos.getDimension());
+        if (world == null || !world.isBlockLoaded(scannerPos.getCoordinate())) {
+            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "The scanner is out of reach or not chunkloaded!"));
+            return;
+        }
+
+        TileEntity te = world.getTileEntity(scannerPos.getCoordinate());
+        if (!(te instanceof ScannerTileEntity)) {
+            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Not a valid scanner!"));
+            return;
+        }
+
+        ScannerTileEntity scanner = (ScannerTileEntity) te;
+
+        File file = new File(filename);
+        FileInputStream stream;
+
+        try {
+            stream = new FileInputStream(file);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+            String s = reader.readLine();
+            if (!"SHAPE".equals(s)) {
+                ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "This does not appear to be a valid shapecard file!"));
+                return;
+            }
+            s = reader.readLine();
+            if (!s.startsWith("DIM:")) {
+                ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "This does not appear to be a valid shapecard file!"));
+                return;
+            }
+            BlockPos dim = parse(s.substring(4));
+            s = reader.readLine();
+            if (!s.startsWith("OFF:")) {
+                ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "This does not appear to be a valid shapecard file!"));
+                return;
+            }
+            BlockPos off = parse(s.substring(4));
+            s = reader.readLine();
+            StatePalette statePalette = new StatePalette();
+            while (!"DATA".equals(s)) {
+                String[] split = StringUtils.split(s, '@');
+                Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(split[0]));
+                int meta = Integer.parseInt(split[1]);
+                if (block == null) {
+                    ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.YELLOW + "Could not find block '" + split[0] + "'!"));
+                    block = Blocks.STONE;
+                    meta = 0;
+                }
+                statePalette.add(block.getStateFromMeta(meta));
+                s = reader.readLine();
+            }
+            s = reader.readLine();
+            byte[] decoded = Base64.getDecoder().decode(s.getBytes());
+            scanner.setDataFromFile(card, dim, off, decoded, statePalette);
+        } catch (FileNotFoundException e) {
+            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Cannot read from file '" + filename + "'!"));
+            return;
+        } catch (IOException e) {
+            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Cannot read from file '" + filename + "'!"));
+            return;
+        } catch (NullPointerException e) {
+            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "File '" + filename + "' is too short!"));
+            return;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "File '" + filename + "' contains invalid entries!"));
+            return;
+        }
+
+    }
+
+    private static BlockPos parse(String s) {
+        String[] split = StringUtils.split(s, ',');
+        return new BlockPos(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+    }
 }

@@ -18,6 +18,7 @@ import mcjty.rftools.blocks.storage.RemoteStorageIdRegistry;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import mcjty.rftools.commands.CommandRftCfg;
 import mcjty.rftools.commands.CommandRftDb;
+import mcjty.rftools.commands.CommandRftShape;
 import mcjty.rftools.commands.CommandRftTp;
 import mcjty.rftools.integration.computers.OpenComputersIntegration;
 import mcjty.rftools.items.ModItems;
@@ -184,6 +185,7 @@ public class RFTools implements ModBase {
     @Mod.EventHandler
     public void serverLoad(FMLServerStartingEvent event) {
         event.registerServerCommand(new CommandRftTp());
+        event.registerServerCommand(new CommandRftShape());
         event.registerServerCommand(new CommandRftDb());
         event.registerServerCommand(new CommandRftCfg());
     }

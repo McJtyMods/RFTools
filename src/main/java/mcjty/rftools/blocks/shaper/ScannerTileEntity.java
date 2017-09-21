@@ -175,6 +175,18 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         tagCompound.setBoolean("locked", locked);
     }
 
+    public void setDataFromFile(ItemStack card, BlockPos dimension, BlockPos offset, byte[] data, StatePalette palette) {
+        this.dataDim = dimension;
+        this.dataOffset = offset;
+        this.data = data;
+        this.materialPalette = palette.getPalette();
+        this.locked = true;
+        ShapeCardItem.setDimension(card, dimension.getX(), dimension.getY(), dimension.getZ());
+        ShapeCardItem.setOffset(card, offset.getX(), offset.getY(), offset.getZ());
+        ShapeCardItem.setShape(card, Shape.SHAPE_SCHEME, true);
+        markDirty();
+    }
+
     private void scan(int offsetX, int offsetY, int offsetZ) {
         ItemStack cardOut = inventoryHelper.getStackInSlot(ScannerContainer.SLOT_OUT);
         if (!ShapeCardItem.getShape(cardOut).isScheme()) {
@@ -306,8 +318,8 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
                 for (int z = tl.getZ() ; z < tl.getZ() + dimZ ; z++) {
                     mpos.setPos(x, y, z);
                     int c;
-//                    if (getWorld().isAirBlock(mpos) || (positionMask != null && !positionMask.containsKey(mpos.toLong()))) {
-                      if (getWorld().isAirBlock(mpos)) {
+//                  if (getWorld().isAirBlock(mpos) || (positionMask != null && !positionMask.containsKey(mpos.toLong()))) {
+                    if (getWorld().isAirBlock(mpos)) {
                         c = 0;
                     } else {
                         IBlockState state = getWorld().getBlockState(mpos);
