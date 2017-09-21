@@ -33,6 +33,8 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
     private ToggleButton showOuter;
     private ToggleButton showMat;
 
+    private ToggleButton locked;
+
     private ShapeRenderer shapeRenderer = new ShapeRenderer();
     private int filterCnt = 0;
 
@@ -60,6 +62,12 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
         showMat.setPressed(true);
         toplevel.addChild(showMat);
 
+        locked = new ToggleButton(mc, this).setText("Lock")
+                .addButtonEvent(parent -> setLocked())
+                .setLayoutHint(new PositionalLayout.PositionalHint(5, 156, 40, 16));
+        locked.setPressed(tileEntity.isLocked());
+        toplevel.addChild(locked);
+
         toplevel.addChild(new Button(mc, this).setText("W").addButtonEvent(parent -> move(-16, 0, 0)).setLayoutHint(new PositionalLayout.PositionalHint(4, 30, 16, 15)));
         toplevel.addChild(new Button(mc, this).setText("w").addButtonEvent(parent -> move(-1, 0, 0)).setLayoutHint(new PositionalLayout.PositionalHint(20, 30, 16, 15)));
         toplevel.addChild(new Button(mc, this).setText("e").addButtonEvent(parent -> move(1, 0, 0)).setLayoutHint(new PositionalLayout.PositionalHint(45, 30, 16, 15)));
@@ -82,6 +90,10 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
         move(0, 0, 0);
 
         filterCnt = countFilters();
+    }
+
+    private void setLocked() {
+        sendServerCommand(network, ScannerTileEntity.CMD_SETLOCK, new Argument("locked", locked.isPressed()));
     }
 
     private int countFilters() {

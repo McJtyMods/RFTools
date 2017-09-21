@@ -39,13 +39,16 @@ import java.util.Map;
 public class ScannerTileEntity extends GenericTileEntity implements DefaultSidedInventory {
 
     public static final String CMD_SCAN = "scan";
+    public static final String CMD_SETLOCK = "setlock";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ScannerContainer.factory, 4);
     private StorageFilterCache filterCache = null;
+    private boolean locked = false;
 
     private byte[] data = null;
     private List<IBlockState> materialPalette = new ArrayList<>();
     private BlockPos dataDim;
+    private BlockPos dataOffset;
 
     @Override
     public InventoryHelper getInventoryHelper() {
@@ -85,6 +88,19 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         return dataDim;
     }
 
+    public BlockPos getDataOffset() {
+        return dataOffset;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+        markDirtyClient();
+    }
+
     private void getFilterCache() {
         if (filterCache == null) {
             filterCache = StorageFilterItem.getCache(inventoryHelper.getStackInSlot(ScannerContainer.SLOT_FILTER));
@@ -101,6 +117,8 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
 
+        locked = tagCompound.getBoolean("locked");
+
         if (tagCompound.hasKey("scandata")) {
             data = tagCompound.getByteArray("scandata");
         } else {
@@ -116,6 +134,7 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
             materialPalette.add(block.getStateFromMeta(tc.getInteger("m")));
         }
         dataDim = new BlockPos(tagCompound.getInteger("scandimx"), tagCompound.getInteger("scandimy"), tagCompound.getInteger("scandimz"));
+        dataOffset = new BlockPos(tagCompound.getInteger("scanoffx"), tagCompound.getInteger("scanoffy"), tagCompound.getInteger("scanoffz"));
     }
 
 //    @Override
@@ -143,26 +162,40 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
             tagCompound.setInteger("scandimy", dataDim.getY());
             tagCompound.setInteger("scandimz", dataDim.getZ());
         }
+        if (dataOffset != null) {
+            tagCompound.setInteger("scanoffx", dataOffset.getX());
+            tagCompound.setInteger("scanoffy", dataOffset.getY());
+            tagCompound.setInteger("scanoffz", dataOffset.getZ());
+        }
     }
 
     private void writeCommonToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
+        tagCompound.setBoolean("locked", locked);
     }
 
     private void scan(int offsetX, int offsetY, int offsetZ) {
         ItemStack cardOut = inventoryHelper.getStackInSlot(ScannerContainer.SLOT_OUT);
+        if (!ShapeCardItem.getShape(cardOut).isScheme()) {
+            boolean solid = ShapeCardItem.isSolid(cardOut);
+            ShapeCardItem.setShape(cardOut, Shape.SHAPE_SCHEME, solid);
+        }
+        NBTTagCompound tagOut = cardOut.getTagCompound();
+
         if (ItemStackTools.isValid(cardOut)) {
-            ShapeCardItem.setOffset(cardOut, offsetX, offsetY, offsetZ);
-            if (!ShapeCardItem.getShape(cardOut).isScheme()) {
-                ShapeCardItem.setShape(cardOut, Shape.SHAPE_SCHEME, true);
+            if (locked) {
+                ShapeCardItem.setOffset(cardOut, dataOffset.getX(), dataOffset.getY(), dataOffset.getZ());
+                ShapeCardItem.setDimension(cardOut, dataDim.getX(), dataDim.getY(), dataDim.getZ());
+                ShapeCardItem.setData(tagOut, getWorld().provider.getDimension(), getPos());
+            } else {
+                ShapeCardItem.setOffset(cardOut, offsetX, offsetY, offsetZ);
+                BlockPos dim = ShapeCardItem.getDimension(cardOut);
+                int dimX = dim.getX();
+                int dimY = dim.getY();
+                int dimZ = dim.getZ();
+                scanArea(tagOut, getPos().add(offsetX, offsetY, offsetZ), dimX, dimY, dimZ);
             }
-            NBTTagCompound tagOut = cardOut.getTagCompound();
-            BlockPos dim = ShapeCardItem.getDimension(cardOut);
-            int dimX = dim.getX();
-            int dimY = dim.getY();
-            int dimZ = dim.getZ();
-            scanArea(tagOut, getPos().add(offsetX, offsetY, offsetZ), dimX, dimY, dimZ);
         }
     }
 
@@ -301,6 +334,7 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         this.data = rle.getData();
         this.materialPalette = materialPalette.getPalette();
         this.dataDim = new BlockPos(dimX, dimY, dimZ);
+        this.dataOffset = center;
         ShapeCardItem.setData(tagOut, getWorld().provider.getDimension(), getPos());
         markDirty();
     }
@@ -314,7 +348,9 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         if (CMD_SCAN.equals(command)) {
             scan(args.get("offsetX").getInteger(), args.get("offsetY").getInteger(), args.get("offsetZ").getInteger());
             return true;
-
+        } else if (CMD_SETLOCK.equals(command)) {
+            setLocked(args.get("locked").getBoolean());
+            return true;
         }
         return false;
     }
