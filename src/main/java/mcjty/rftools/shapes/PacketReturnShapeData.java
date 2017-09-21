@@ -50,9 +50,6 @@ public class PacketReturnShapeData implements IMessage {
 
     @Override
     public void toBytes(ByteBuf buf) {
-        System.out.println("#########################################");
-        System.out.println("positions.size() = " + positions.getData().length);
-
         buf.writeInt(count);
         NetworkTools.writeStringUTF8(buf, msg);
         NetworkTools.writePos(buf, dimension);

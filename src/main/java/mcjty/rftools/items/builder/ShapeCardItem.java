@@ -851,8 +851,13 @@ public class ShapeCardItem extends GenericRFToolsItem {
                     int v = 255;
                     if (formula.isInside(x, y, z)) {
                         cnt++;
-                        v = statePalette.alloc(formula.getLastState(), -1) + 1;
+                        IBlockState lastState = formula.getLastState();
+                        if (lastState == null) {
+                            lastState = Blocks.STONE.getDefaultState();
+                        }
+                        v = statePalette.alloc(lastState, 0) + 1;
                     }
+                    System.out.println("v = " + v);
                     positions.add(v);
                 }
             }
@@ -1013,6 +1018,10 @@ public class ShapeCardItem extends GenericRFToolsItem {
             }
             s = reader.readLine();
             byte[] decoded = Base64.getDecoder().decode(s.getBytes());
+            for (byte b : decoded) {
+                System.out.println("b = " + b);
+            }
+
             scanner.setDataFromFile(card, dim, off, decoded, statePalette);
         } catch (FileNotFoundException e) {
             ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Cannot read from file '" + filename + "'!"));

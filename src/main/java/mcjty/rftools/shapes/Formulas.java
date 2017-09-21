@@ -109,7 +109,7 @@ public class Formulas {
                         int j = 0;
                         for (int i = 0; i < datas.length / 2; i++) {
                             int cnt = (datas[i * 2]) & 0xff;
-                            int c = datas[i * 2 + 1];
+                            int c = datas[i * 2 + 1] & 0xff;
                             if (c == 255) {
                                 c = 0;
                             }

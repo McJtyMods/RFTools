@@ -163,6 +163,7 @@ public class ShapeRenderer {
     static void renderOuterBox(Tessellator tessellator, VertexBuffer buffer, float xlen, float ylen, float zlen) {
         GlStateManager.glLineWidth(1.0f);
         buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+        buffer.setTranslation(0.5, 0.5, 0.5);
         buffer.pos(-xlen, -ylen, -zlen).color(1f, 1f, 1f, 1f).endVertex();
         buffer.pos(xlen, -ylen, -zlen).color(1f, 1f, 1f, 1f).endVertex();
         buffer.pos(-xlen, -ylen, -zlen).color(1f, 1f, 1f, 1f).endVertex();
@@ -187,18 +188,21 @@ public class ShapeRenderer {
         buffer.pos(-xlen, -ylen, zlen).color(1f, 1f, 1f, 1f).endVertex();
         buffer.pos(-xlen, -ylen, zlen).color(1f, 1f, 1f, 1f).endVertex();
         buffer.pos(xlen, -ylen, zlen).color(1f, 1f, 1f, 1f).endVertex();
+        buffer.setTranslation(0, 0, 0);
         tessellator.draw();
     }
 
     static void renderAxis(Tessellator tessellator, VertexBuffer buffer, float xlen, float ylen, float zlen) {
         GlStateManager.glLineWidth(2.5f);
         buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+        buffer.setTranslation(0.5, 0.5, 0.5);
         buffer.pos(0, 0, 0).color(1f, 0f, 0f, 1f).endVertex();
         buffer.pos(xlen, 0, 0).color(1f, 0f, 0f, 1f).endVertex();
         buffer.pos(0, 0, 0).color(0f, 1f, 0f, 1f).endVertex();
         buffer.pos(0, ylen, 0).color(0f, 1f, 0f, 1f).endVertex();
         buffer.pos(0, 0, 0).color(0f, 0f, 1f, 1f).endVertex();
         buffer.pos(0, 0, zlen).color(0f, 0f, 1f, 1f).endVertex();
+        buffer.setTranslation(0, 0, 0);
         tessellator.draw();
     }
 
