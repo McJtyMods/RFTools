@@ -1,11 +1,10 @@
 package mcjty.rftools.shapes;
 
-import gnu.trove.iterator.TLongIterator;
-import gnu.trove.set.hash.TLongHashSet;
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.varia.RLE;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -14,8 +13,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 public class PacketRequestShapeData implements IMessage {
@@ -47,28 +44,20 @@ public class PacketRequestShapeData implements IMessage {
 
         private void handle(PacketRequestShapeData message, MessageContext ctx) {
 
-            System.out.println("CALC START : 1");
-
             Shape shape = ShapeCardItem.getShape(message.card);
             boolean solid = ShapeCardItem.isSolid(message.card);
             BlockPos dimension = ShapeCardItem.getDimension(message.card);
 
-            if (dimension.getX()*dimension.getY()*dimension.getZ() > (256 * 256 * 256)) {
-                System.out.println("Sorry, no preview");
-                RFToolsMessages.INSTANCE.sendTo(new PacketReturnShapeData(Collections.emptyMap(), 0, "Too large for preview!"), ctx.getServerHandler().player);
+            if (dimension.getX()*dimension.getY()*dimension.getZ() > (200 * 200 * 200)) {
+                RFToolsMessages.INSTANCE.sendTo(new PacketReturnShapeData(null, null, dimension, 0, "Too large for preview!"), ctx.getServerHandler().player);
                 return;
             }
 
-            System.out.println("dimension = " + dimension);
+            RLE positions = new RLE();
+            StatePalette statePalette = new StatePalette();
+            int cnt = ShapeCardItem.getRenderPositions(message.card, shape, solid, positions, statePalette);
 
-            Map<Long, IBlockState> positions = new HashMap<>();
-            int cnt = ShapeCardItem.getRenderPositions(message.card, shape, solid, positions);
-            System.out.println("cnt = " + cnt);
-            System.out.println("positions.size() = " + positions.size());
-
-            System.out.println("CALC STOP");
-
-            RFToolsMessages.INSTANCE.sendTo(new PacketReturnShapeData(positions, cnt, ""), ctx.getServerHandler().player);
+            RFToolsMessages.INSTANCE.sendTo(new PacketReturnShapeData(positions, statePalette, dimension, cnt, ""), ctx.getServerHandler().player);
         }
     }
 

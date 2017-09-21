@@ -1,7 +1,5 @@
 package mcjty.rftools.shapes;
 
-import gnu.trove.iterator.TLongIterator;
-import gnu.trove.set.hash.TLongHashSet;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
@@ -300,6 +298,7 @@ public class ShapeRenderer {
         } else {
             col = COL_DEFAULT;
         }
+        // CLAY, ICE, SOUL_SAND, STONEBRICK, NETHER_BRICK, PRISMARINE, PURPUR_BLOCK
         pallete.put(state, col);
         return col;
     }

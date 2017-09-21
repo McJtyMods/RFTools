@@ -1,97 +1,70 @@
 package mcjty.rftools.shapes;
 
-import gnu.trove.iterator.TLongIterator;
-import gnu.trove.set.hash.TLongHashSet;
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.varia.RLE;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class PacketReturnShapeData implements IMessage {
-    private Map<Long, IBlockState> positions;
+    private RLE positions;
+    private StatePalette statePalette;
     private int count;
     private String msg;
+    private BlockPos dimension;
 
     @Override
     public void fromBytes(ByteBuf buf) {
         count = buf.readInt();
         msg = NetworkTools.readStringUTF8(buf);
+        dimension = NetworkTools.readPos(buf);
 
         int size = buf.readInt();
         System.out.println("1: size = " + size);
-        List<IBlockState> palette = new ArrayList<>();
+        statePalette = new StatePalette();
         while (size > 0) {
             String r = NetworkTools.readString(buf);
             int m = buf.readInt();
             Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(r));
-            palette.add(block.getStateFromMeta(m));
+            statePalette.add(block.getStateFromMeta(m));
             size--;
         }
 
         size = buf.readInt();
         System.out.println("2: size = " + size);
-        positions = new HashMap<>();
-        while (size > 0) {
-            long pos = buf.readLong();
-            int index = ((int) buf.readByte()) & 0xff;
-            IBlockState state = null;
-            if (index != 255) {
-                if (index >= palette.size()) {
-//                    System.out.println("index = " + index);
-                } else {
-                    state = palette.get(index);
-                }
-            }
-            positions.put(pos, state);
-            size--;
-        }
+        positions = new RLE();
+        byte[] data = new byte[size];
+        buf.readBytes(data);
+        positions.setData(data);
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         System.out.println("#########################################");
-        System.out.println("positions.size() = " + positions.size());
+        System.out.println("positions.size() = " + positions.getData().length);
 
         buf.writeInt(count);
         NetworkTools.writeStringUTF8(buf, msg);
+        NetworkTools.writePos(buf, dimension);
 
-        // First make a palette for more compact transmission
-        StatePalette palette = new StatePalette();
-        for (Map.Entry<Long, IBlockState> entry : positions.entrySet()) {
-            IBlockState state = entry.getValue();
-            if (state != null) {
-                palette.alloc(state);
-            }
-        }
-
-        buf.writeInt(palette.getPalette().size());
-        for (IBlockState state : palette.getPalette()) {
+        buf.writeInt(statePalette.getPalette().size());
+        for (IBlockState state : statePalette.getPalette()) {
             NetworkTools.writeString(buf, state.getBlock().getRegistryName().toString());
             buf.writeInt(state.getBlock().getMetaFromState(state));
         }
 
-        buf.writeInt(positions.size());
-        for (Map.Entry<Long, IBlockState> entry : positions.entrySet()) {
-            long pos = entry.getKey();
-            buf.writeLong(pos);
-            IBlockState state = entry.getValue();
-            if (state == null) {
-                buf.writeByte(255); // Indicates no entry (palette only goes up to 254)
-            } else {
-                buf.writeByte(palette.alloc(state));
-            }
-        }
+        buf.writeInt(positions.getData().length);
+        buf.writeBytes(positions.getData());
 
         System.out.println("buf.capacity() = " + buf.capacity());
     }
@@ -99,8 +72,10 @@ public class PacketReturnShapeData implements IMessage {
     public PacketReturnShapeData() {
     }
 
-    public PacketReturnShapeData(Map<Long, IBlockState> positions, int count, String msg) {
+    public PacketReturnShapeData(RLE positions, StatePalette statePalette, BlockPos dimension, int count, String msg) {
         this.positions = positions;
+        this.statePalette = statePalette;
+        this.dimension = dimension;
         this.count = count;
         this.msg = msg;
     }
@@ -108,8 +83,38 @@ public class PacketReturnShapeData implements IMessage {
     public static class Handler implements IMessageHandler<PacketReturnShapeData, IMessage> {
         @Override
         public IMessage onMessage(PacketReturnShapeData message, MessageContext ctx) {
-            RFTools.proxy.addScheduledTaskClient(() -> ShapeRenderer.setRenderData(message.positions, message.count, message.msg));
+            RFTools.proxy.addScheduledTaskClient(() -> handle(message));
             return null;
+        }
+
+        private void handle(PacketReturnShapeData message) {
+            Map<Long, IBlockState> positions = new HashMap<>();
+            int dx = message.dimension.getX();
+            int dy = message.dimension.getY();
+            int dz = message.dimension.getZ();
+            RLE rle = message.positions;
+            if (rle != null) {
+                rle.reset();
+                for (int oy = 0; oy < dy; oy++) {
+                    int y = oy - dy / 2;
+                    for (int ox = 0; ox < dx; ox++) {
+                        int x = ox - dx / 2;
+                        for (int oz = 0; oz < dz; oz++) {
+                            int z = oz - dz / 2;
+                            int data = rle.read();
+                            if (data < 255) {
+                                if (data == 0) {
+                                    positions.put(BlockPosHelper.toLong(x, y, z), null);
+                                } else {
+                                    data--;
+                                    positions.put(BlockPosHelper.toLong(x, y, z), message.statePalette.getPalette().get(data));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            ShapeRenderer.setRenderData(positions, message.count, message.msg);
         }
 
     }

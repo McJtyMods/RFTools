@@ -15,6 +15,7 @@ import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.shapes.Shape;
 import mcjty.rftools.shapes.StatePalette;
+import mcjty.rftools.varia.RLE;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
@@ -29,7 +30,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.OreDictionary;
-import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -249,9 +249,8 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         List<ModifierEntry> modifiers = ModifierItem.getModifiers(modifier);
         Map<IBlockState, IBlockState> modifierMapping = new HashMap<>();
 
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        RLE rle = new RLE();
         BlockPos tl = new BlockPos(center.getX() - dimX/2, center.getY() - dimY/2, center.getZ() - dimZ/2);
-        int prev = -1;
 
         StatePalette materialPalette = new StatePalette();
 
@@ -265,6 +264,7 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
 //            // @todo THIS IS NOT WORKING YET!
 //            positionMask = ShapeCardItem.getPositions(cardIn, shape, ShapeCardItem.isSolid(cardIn), center, offset);
 //        }
+
 
         int cnt = 0;
         BlockPos.MutableBlockPos mpos = new BlockPos.MutableBlockPos();
@@ -289,30 +289,16 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
                             state = mapState(modifiers, modifierMapping, mpos, state);
                         }
                         if (state != null && state != Blocks.AIR.getDefaultState()) {
-                            c = materialPalette.alloc(state) + 1;
+                            c = materialPalette.alloc(state, 0) + 1;
                         } else {
                             c = 0;
                         }
                     }
-                    if (prev == -1) {
-                        prev = c;
-                        cnt = 1;
-                    } else if (prev == c && cnt < 255) {
-                        cnt++;
-                    } else {
-                        stream.write(cnt);
-                        stream.write(prev);
-                        prev = c;
-                        cnt = 1;
-                    }
+                    rle.add(c);
                 }
             }
         }
-        if (prev != -1) {
-            stream.write(cnt);
-            stream.write(prev);
-        }
-        this.data = stream.toByteArray();
+        this.data = rle.getData();
         this.materialPalette = materialPalette.getPalette();
         this.dataDim = new BlockPos(dimX, dimY, dimZ);
         ShapeCardItem.setData(tagOut, getWorld().provider.getDimension(), getPos());

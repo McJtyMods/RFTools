@@ -9,6 +9,7 @@ import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
 import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.shapes.*;
+import mcjty.rftools.varia.RLE;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -773,34 +774,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
         }
     }
 
-    public static Map<Long, IBlockState> getPositions(ItemStack stack, Shape shape, boolean solid, BlockPos thisCoord, BlockPos offset) {
-        BlockPos dimension = ShapeCardItem.getDimension(stack);
-        BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
-
-        Map<Long, IBlockState> positions = new HashMap<>();
-        composeFormula(stack, shape.getFormulaFactory().createFormula(), null, thisCoord, clamped, offset, new AbstractMap<BlockPos, IBlockState>() {
-            @Override
-            public Set<Entry<BlockPos, IBlockState>> entrySet() {
-                return Collections.emptySet();
-            }
-
-            @Override
-            public IBlockState put(BlockPos key, IBlockState value) {
-                long val = new BlockPos(key.getX(), key.getY(), -key.getZ()).toLong();
-                positions.put(val, value);
-                return value;
-            }
-
-            @Override
-            public int size() {
-                return 0;
-            }
-        }, MAXIMUM_COUNT +1, solid, false, null);
-        return positions;
-    }
-
-
-    public static int getRenderPositions(ItemStack stack, Shape shape, boolean solid, Map<Long, IBlockState> positions) {
+    public static int getRenderPositions(ItemStack stack, Shape shape, boolean solid, RLE positions, StatePalette statePalette) {
         BlockPos dimension = ShapeCardItem.getDimension(stack);
         BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
 
@@ -808,31 +782,32 @@ public class ShapeCardItem extends GenericRFToolsItem {
         int dx = clamped.getX();
         int dy = clamped.getY();
         int dz = clamped.getZ();
-        BlockPos tl = new BlockPos(- dx/2, - dy/2, - dz/2);
 
         formula = formula.correctFormula(solid);
         formula.setup(new BlockPos(0, 0, 0), clamped, new BlockPos(0, 0, 0), stack != null ? stack.getTagCompound() : null);
 
         int cnt = 0;
-        for (int ox = 0 ; ox < dx ; ox++) {
-            int x = tl.getX() + ox;
-            for (int oz = 0; oz < dz; oz++) {
-                int z = tl.getZ() + oz;
-                for (int oy = 0; oy < dy; oy++) {
-                    int y = tl.getY() + oy;
+        for (int oy = 0; oy < dy; oy++) {
+            int y = oy - dy/2;
+            for (int ox = 0; ox < dx; ox++) {
+                int x = ox - dx/2;
+                for (int oz = 0; oz < dz; oz++) {
+                    int z = oz - dz/2;
+                    int v = 255;
                     if (formula.isInside(x, y, z)) {
                         cnt++;
                         IBlockState lastState = formula.getLastState();
                         if (solid) {
-                            if (ox == 0 || ox == dx-1 || oy == 0 || oy == dy-1 || oz == 0 || oz == dz-1) {
-                                positions.put(BlockPosHelper.toLong(x, y, z), lastState);
-                            } else if (!formula.isInside(x-1,y,z) || !formula.isInside(x+1,y,z) || !formula.isInside(x,y-1,z) || !formula.isInside(x,y+1,z) || !formula.isInside(x,y,z-1) || !formula.isInside(x,y,z+1)) {
-                                positions.put(BlockPosHelper.toLong(x, y, z), lastState);
+                            if (ox == 0 || ox == dx - 1 || oy == 0 || oy == dy - 1 || oz == 0 || oz == dz - 1) {
+                                v = statePalette.alloc(lastState, -1) + 1;
+                            } else if (!formula.isInside(x - 1, y, z) || !formula.isInside(x + 1, y, z) || !formula.isInside(x, y - 1, z) || !formula.isInside(x, y + 1, z) || !formula.isInside(x, y, z - 1) || !formula.isInside(x, y, z + 1)) {
+                                v = statePalette.alloc(lastState, -1) + 1;
                             }
                         } else {
-                            positions.put(BlockPosHelper.toLong(x, y, z), lastState);
+                            v = statePalette.alloc(lastState, -1) + 1;
                         }
                     }
+                    positions.add(v);
                 }
             }
         }
