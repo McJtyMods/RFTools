@@ -110,7 +110,7 @@ public class ShapeRenderer {
 
         renderFaces(tessellator, buffer, stack, showMat);
         BlockPos dimension = ShapeCardItem.getDimension(stack);
-        renderHelpers(tessellator, buffer, dimension.getX()/2.0f, dimension.getY()/2.0f, dimension.getZ()/2.0f, showAxis, showOuter);
+        renderHelpers(tessellator, buffer, dimension.getX(), dimension.getY(), dimension.getZ(), showAxis, showOuter);
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
@@ -138,10 +138,10 @@ public class ShapeRenderer {
 
     }
 
-    private void renderHelpers(Tessellator tessellator, VertexBuffer buffer, float xlen, float ylen, float zlen, boolean showAxis, boolean showOuter) {
+    private void renderHelpers(Tessellator tessellator, VertexBuffer buffer, int xlen, int ylen, int zlen, boolean showAxis, boolean showOuter) {
         // X, Y, Z axis
         if (showAxis) {
-            ShapeRenderer.renderAxis(tessellator, buffer, xlen, ylen, zlen);
+            ShapeRenderer.renderAxis(tessellator, buffer, xlen/2, ylen/2, zlen/2);
         }
 
         if (showOuter) {
@@ -160,42 +160,49 @@ public class ShapeRenderer {
             new Quad(new Vt(1, 0, 0), new Vt(1, 1, 0), new Vt(1, 1, 1), new Vt(1, 0, 1)),       // EAST
     };
 
-    static void renderOuterBox(Tessellator tessellator, VertexBuffer buffer, float xlen, float ylen, float zlen) {
+    static void renderOuterBox(Tessellator tessellator, VertexBuffer buffer, int xlen, int ylen, int zlen) {
         GlStateManager.glLineWidth(1.0f);
         buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-        buffer.setTranslation(0.5, 0.5, 0.5);
-        buffer.pos(-xlen, -ylen, -zlen).color(1f, 1f, 1f, 1f).endVertex();
-        buffer.pos(xlen, -ylen, -zlen).color(1f, 1f, 1f, 1f).endVertex();
-        buffer.pos(-xlen, -ylen, -zlen).color(1f, 1f, 1f, 1f).endVertex();
-        buffer.pos(-xlen, ylen, -zlen).color(1f, 1f, 1f, 1f).endVertex();
-        buffer.pos(-xlen, -ylen, -zlen).color(1f, 1f, 1f, 1f).endVertex();
-        buffer.pos(-xlen, -ylen, zlen).color(1f, 1f, 1f, 1f).endVertex();
-        buffer.pos(xlen, ylen, zlen).color(1f, 1f, 1f, 1f).endVertex();
-        buffer.pos(-xlen, ylen, zlen).color(1f, 1f, 1f, 1f).endVertex();
-        buffer.pos(xlen, ylen, zlen).color(1f, 1f, 1f, 1f).endVertex();
-        buffer.pos(xlen, -ylen, zlen).color(1f, 1f, 1f, 1f).endVertex();
-        buffer.pos(xlen, ylen, zlen).color(1f, 1f, 1f, 1f).endVertex();
-        buffer.pos(xlen, ylen, -zlen).color(1f, 1f, 1f, 1f).endVertex();
-        buffer.pos(xlen, -ylen, -zlen).color(1f, 1f, 1f, 1f).endVertex();
-        buffer.pos(xlen, -ylen, zlen).color(1f, 1f, 1f, 1f).endVertex();
-        buffer.pos(xlen, -ylen, -zlen).color(1f, 1f, 1f, 1f).endVertex();
-        buffer.pos(xlen, ylen, -zlen).color(1f, 1f, 1f, 1f).endVertex();
-        buffer.pos(-xlen, ylen, -zlen).color(1f, 1f, 1f, 1f).endVertex();
-        buffer.pos(xlen, ylen, -zlen).color(1f, 1f, 1f, 1f).endVertex();
-        buffer.pos(-xlen, ylen, -zlen).color(1f, 1f, 1f, 1f).endVertex();
-        buffer.pos(-xlen, ylen, zlen).color(1f, 1f, 1f, 1f).endVertex();
-        buffer.pos(-xlen, ylen, zlen).color(1f, 1f, 1f, 1f).endVertex();
-        buffer.pos(-xlen, -ylen, zlen).color(1f, 1f, 1f, 1f).endVertex();
-        buffer.pos(-xlen, -ylen, zlen).color(1f, 1f, 1f, 1f).endVertex();
-        buffer.pos(xlen, -ylen, zlen).color(1f, 1f, 1f, 1f).endVertex();
+//        buffer.setTranslation(0.5, 0.5, 0.5);
+        int xleft = -xlen / 2;
+        int xright = xlen / 2 + (xlen & 1);
+        int ybot = -ylen / 2;
+        int ytop = ylen / 2 + (ylen & 1);
+        int zsouth = -zlen / 2;
+        int znorth = zlen / 2 + (zlen & 1);
+
+        buffer.pos(xleft, ybot, zsouth).color(1f, 1f, 1f, 1f).endVertex();
+        buffer.pos(xright, ybot, zsouth).color(1f, 1f, 1f, 1f).endVertex();
+        buffer.pos(xleft, ybot, zsouth).color(1f, 1f, 1f, 1f).endVertex();
+        buffer.pos(xleft, ytop, zsouth).color(1f, 1f, 1f, 1f).endVertex();
+        buffer.pos(xleft, ybot, zsouth).color(1f, 1f, 1f, 1f).endVertex();
+        buffer.pos(xleft, ybot, znorth).color(1f, 1f, 1f, 1f).endVertex();
+        buffer.pos(xright, ytop, znorth).color(1f, 1f, 1f, 1f).endVertex();
+        buffer.pos(xleft, ytop, znorth).color(1f, 1f, 1f, 1f).endVertex();
+        buffer.pos(xright, ytop, znorth).color(1f, 1f, 1f, 1f).endVertex();
+        buffer.pos(xright, ybot, znorth).color(1f, 1f, 1f, 1f).endVertex();
+        buffer.pos(xright, ytop, znorth).color(1f, 1f, 1f, 1f).endVertex();
+        buffer.pos(xright, ytop, zsouth).color(1f, 1f, 1f, 1f).endVertex();
+        buffer.pos(xright, ybot, zsouth).color(1f, 1f, 1f, 1f).endVertex();
+        buffer.pos(xright, ybot, znorth).color(1f, 1f, 1f, 1f).endVertex();
+        buffer.pos(xright, ybot, zsouth).color(1f, 1f, 1f, 1f).endVertex();
+        buffer.pos(xright, ytop, zsouth).color(1f, 1f, 1f, 1f).endVertex();
+        buffer.pos(xleft, ytop, zsouth).color(1f, 1f, 1f, 1f).endVertex();
+        buffer.pos(xright, ytop, zsouth).color(1f, 1f, 1f, 1f).endVertex();
+        buffer.pos(xleft, ytop, zsouth).color(1f, 1f, 1f, 1f).endVertex();
+        buffer.pos(xleft, ytop, znorth).color(1f, 1f, 1f, 1f).endVertex();
+        buffer.pos(xleft, ytop, znorth).color(1f, 1f, 1f, 1f).endVertex();
+        buffer.pos(xleft, ybot, znorth).color(1f, 1f, 1f, 1f).endVertex();
+        buffer.pos(xleft, ybot, znorth).color(1f, 1f, 1f, 1f).endVertex();
+        buffer.pos(xright, ybot, znorth).color(1f, 1f, 1f, 1f).endVertex();
         buffer.setTranslation(0, 0, 0);
         tessellator.draw();
     }
 
-    static void renderAxis(Tessellator tessellator, VertexBuffer buffer, float xlen, float ylen, float zlen) {
+    static void renderAxis(Tessellator tessellator, VertexBuffer buffer, int xlen, int ylen, int zlen) {
         GlStateManager.glLineWidth(2.5f);
         buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-        buffer.setTranslation(0.5, 0.5, 0.5);
+//        buffer.setTranslation(0.5, 0.5, 0.5);
         buffer.pos(0, 0, 0).color(1f, 0f, 0f, 1f).endVertex();
         buffer.pos(xlen, 0, 0).color(1f, 0f, 0f, 1f).endVertex();
         buffer.pos(0, 0, 0).color(0f, 1f, 0f, 1f).endVertex();

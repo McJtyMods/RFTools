@@ -61,6 +61,17 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
             filterCache = null;
         }
         inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
+        if (index == ScannerContainer.SLOT_OUT) {
+            if (ItemStackTools.isValid(stack)) {
+                BlockPos offset;
+                if (locked) {
+                    offset = dataOffset;
+                } else {
+                    offset = ShapeCardItem.getOffset(stack);
+                }
+                scan(offset.getX(), offset.getY(), offset.getZ());
+            }
+        }
     }
 
     @Override
@@ -176,6 +187,8 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
     }
 
     public void setDataFromFile(ItemStack card, BlockPos dimension, BlockPos offset, byte[] data, StatePalette palette) {
+        System.out.println("offset = " + offset);
+        System.out.println("getWorld().isRemote = " + getWorld().isRemote);
         this.dataDim = dimension;
         this.dataOffset = offset;
         this.data = data;
@@ -184,8 +197,10 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         ShapeCardItem.setDimension(card, dimension.getX(), dimension.getY(), dimension.getZ());
         ShapeCardItem.setOffset(card, offset.getX(), offset.getY(), offset.getZ());
         ShapeCardItem.setShape(card, Shape.SHAPE_SCHEME, true);
-        markDirty();
+        markDirtyClient();
     }
+
+
 
     private void scan(int offsetX, int offsetY, int offsetZ) {
         ItemStack cardOut = inventoryHelper.getStackInSlot(ScannerContainer.SLOT_OUT);
