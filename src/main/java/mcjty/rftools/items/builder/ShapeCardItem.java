@@ -347,13 +347,13 @@ public class ShapeCardItem extends GenericRFToolsItem {
         list.add(TextFormatting.GREEN + "Dimension " + BlockPosTools.toString(getDimension(itemStack)));
         list.add(TextFormatting.GREEN + "Offset " + BlockPosTools.toString(getOffset(itemStack)));
 
-        if (shape.isCustom()) {
+        if (shape.isComposition()) {
             NBTTagCompound card = itemStack.getTagCompound();
             NBTTagList children = card.getTagList("children", Constants.NBT.TAG_COMPOUND);
             list.add(TextFormatting.DARK_GREEN + "Formulas: " + children.tagCount());
         }
 
-        if (shape.isScheme()) {
+        if (shape.isScan()) {
             NBTTagCompound card = itemStack.getTagCompound();
             int dim = card.getInteger("datadim");
             int x = card.getInteger("datax");
@@ -953,8 +953,8 @@ public class ShapeCardItem extends GenericRFToolsItem {
     public static void load(EntityPlayer player, ItemStack card, String filename) {
         Shape shape = ShapeCardItem.getShape(card);
 
-        if (shape != Shape.SHAPE_SCHEME) {
-            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "To load a file into this card you need a linked 'scheme' type card!"));
+        if (shape != Shape.SHAPE_SCAN) {
+            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "To load a file into this card you need a linked 'scan' type card!"));
             return;
         }
 

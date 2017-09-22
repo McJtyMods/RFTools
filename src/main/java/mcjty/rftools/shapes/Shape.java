@@ -15,8 +15,8 @@ public enum Shape {
     SHAPE_TORUS("Torus", Formulas.FORMULA_TORUS),
     SHAPE_HEART("Heart", Formulas.FORMULA_HEART),
     SHAPE_CONE("Cone", Formulas.FORMULA_CONE),
-    SHAPE_CUSTOM("Custom", Formulas.FORMULA_CUSTOM),
-    SHAPE_SCHEME("Scheme", Formulas.FORMULA_SCHEME);
+    SHAPE_COMPOSITION("Composition", Formulas.FORMULA_COMPOSITION),
+    SHAPE_SCAN("Scan", Formulas.FORMULA_SCAN);
 
     private final String description;
     private final IFormulaFactory formulaFactory;
@@ -39,12 +39,12 @@ public enum Shape {
         return description;
     }
 
-    public boolean isCustom() {
-        return this == SHAPE_CUSTOM;
+    public boolean isComposition() {
+        return this == SHAPE_COMPOSITION;
     }
 
-    public boolean isScheme() {
-        return this == SHAPE_SCHEME;
+    public boolean isScan() {
+        return this == SHAPE_SCAN;
     }
 
     @Nonnull

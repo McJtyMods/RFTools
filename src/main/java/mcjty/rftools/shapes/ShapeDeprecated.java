@@ -13,7 +13,7 @@ public enum ShapeDeprecated {
     SHAPE_PRISM(6, "Prism", false, 0, Shape.SHAPE_PRISM),
     SHAPE_TORUS(7, "Torus", false, 0, Shape.SHAPE_TORUS),
     SHAPE_HEART(8, "Heart", false, 0, Shape.SHAPE_HEART),
-    SHAPE_CUSTOM(50, "Custom", false, 0, Shape.SHAPE_CUSTOM),
+    SHAPE_CUSTOM(50, "Custom", false, 0, Shape.SHAPE_COMPOSITION),
     SHAPE_SOLIDBOX(100, "Solid Box", true, 0, Shape.SHAPE_BOX),
     SHAPE_SOLIDSPHERE(103, "Solid Sphere", true, 0, Shape.SHAPE_SPHERE),
     SHAPE_SOLIDCYLINDER(104, "Solid Cylinder", true, 0, Shape.SHAPE_CYLINDER),
@@ -23,7 +23,7 @@ public enum ShapeDeprecated {
     SHAPE_SOLIDBOTTOMDOME(102, "Solid Bottom Dome", true, -1, Shape.SHAPE_BOTTOMDOME),
     SHAPE_SOLIDPRISM(106, "Solid Prim", true, 0, Shape.SHAPE_PRISM),
     SHAPE_SOLIDHEART(108, "Solid Heart", true, 0, Shape.SHAPE_HEART),
-    SHAPE_SOLIDCUSTOM(150, "Solid Custom", true, 0, Shape.SHAPE_CUSTOM);
+    SHAPE_SOLIDCUSTOM(150, "Solid Custom", true, 0, Shape.SHAPE_COMPOSITION);
 
     private final int index;
     private final String description;

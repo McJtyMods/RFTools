@@ -56,7 +56,7 @@ public class Formulas {
     }
 
 
-    static final IFormulaFactory FORMULA_SCHEME = () -> new IFormula() {
+    static final IFormulaFactory FORMULA_SCAN = () -> new IFormula() {
         private byte[] data;
         private List<IBlockState> palette = new ArrayList<>();
         private int x1;
@@ -162,7 +162,7 @@ public class Formulas {
         }
     };
 
-    static final IFormulaFactory FORMULA_CUSTOM = new IFormulaFactory() {
+    static final IFormulaFactory FORMULA_COMPOSITION = new IFormulaFactory() {
         @Override
         public IFormula createFormula() {
             return new IFormula() {

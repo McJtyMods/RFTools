@@ -188,7 +188,7 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         this.locked = true;
         ShapeCardItem.setDimension(card, dimension.getX(), dimension.getY(), dimension.getZ());
         ShapeCardItem.setOffset(card, offset.getX(), offset.getY(), offset.getZ());
-        ShapeCardItem.setShape(card, Shape.SHAPE_SCHEME, true);
+        ShapeCardItem.setShape(card, Shape.SHAPE_SCAN, true);
         markDirtyClient();
     }
 
@@ -214,9 +214,9 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
     }
 
     private void scanCard(int offsetX, int offsetY, int offsetZ, ItemStack cardOut) {
-        if (!ShapeCardItem.getShape(cardOut).isScheme()) {
+        if (!ShapeCardItem.getShape(cardOut).isScan()) {
             boolean solid = ShapeCardItem.isSolid(cardOut);
-            ShapeCardItem.setShape(cardOut, Shape.SHAPE_SCHEME, solid);
+            ShapeCardItem.setShape(cardOut, Shape.SHAPE_SCAN, solid);
         }
         NBTTagCompound tagOut = cardOut.getTagCompound();
 

@@ -142,8 +142,8 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
                 mcjty.rftools.shapes.Shape.SHAPE_TORUS.getDescription(),
                 mcjty.rftools.shapes.Shape.SHAPE_CONE.getDescription(),
                 mcjty.rftools.shapes.Shape.SHAPE_HEART.getDescription(),
-                mcjty.rftools.shapes.Shape.SHAPE_CUSTOM.getDescription(),
-                mcjty.rftools.shapes.Shape.SHAPE_SCHEME.getDescription()
+                mcjty.rftools.shapes.Shape.SHAPE_COMPOSITION.getDescription(),
+                mcjty.rftools.shapes.Shape.SHAPE_SCAN.getDescription()
         ).addChoiceEvent((parent, newChoice) -> updateSettings());
 
         solidLabel = new ChoiceLabel(mc, this).setDesiredWidth(50).setDesiredHeight(16).addChoices(
