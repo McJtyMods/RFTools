@@ -179,6 +179,8 @@ public class GuiModifier extends GenericGuiContainer {
         ItemStack stackIn = inventorySlots.getSlot(ModifierContainer.SLOT_FILTER).getStack();
         ItemStack stackOut = inventorySlots.getSlot(ModifierContainer.SLOT_REPLACEMENT).getStack();
         modifiers.add(new ModifierEntry(stackIn, stackOut, ModifierFilterType.getByCode(mode.getCurrentChoice()), ModifierFilterOperation.getByCode(op.getCurrentChoice())));
+        inventorySlots.getSlot(ModifierContainer.SLOT_FILTER).putStack(ItemStackTools.getEmptyStack());
+        inventorySlots.getSlot(ModifierContainer.SLOT_REPLACEMENT).putStack(ItemStackTools.getEmptyStack());
         updateModifiers(modifiers);
     }
 
@@ -191,6 +193,24 @@ public class GuiModifier extends GenericGuiContainer {
         }
 
         List<ModifierEntry> modifiers = getModifiers();
+        ModifierEntry entry = modifiers.get(list.getSelected());
+        ItemStack in = entry.getIn();
+        ItemStack out = entry.getOut();
+        if (ItemStackTools.isValid(in) && inventorySlots.getSlot(ModifierContainer.SLOT_FILTER).getHasStack()) {
+            // Something is in the way
+            return;
+        }
+        if (ItemStackTools.isValid(out) && inventorySlots.getSlot(ModifierContainer.SLOT_REPLACEMENT).getHasStack()) {
+            // Something is in the way
+            return;
+        }
+        if (ItemStackTools.isValid(in)) {
+            inventorySlots.getSlot(ModifierContainer.SLOT_FILTER).putStack(in);
+        }
+        if (ItemStackTools.isValid(out)) {
+            inventorySlots.getSlot(ModifierContainer.SLOT_REPLACEMENT).putStack(out);
+        }
+
         modifiers.remove(list.getSelected());
         updateModifiers(modifiers);
     }
