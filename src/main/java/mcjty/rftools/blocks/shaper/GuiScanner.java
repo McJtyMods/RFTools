@@ -9,7 +9,6 @@ import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.ToggleButton;
 import mcjty.lib.network.Argument;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
@@ -126,7 +125,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
         Slot slot = inventorySlots.getSlot(ScannerContainer.SLOT_OUT);
         if (slot.getHasStack()) {
             ItemStack stack = slot.getStack();
-            if (ItemStackTools.isValid(stack)) {
+            if (!stack.isEmpty()) {
                 BlockPos offset = tileEntity.getDataOffset();
                 int offsetX = offset.getX() + x;
                 int offsetY = offset.getY() + y;
@@ -170,7 +169,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
 //        Slot slot = inventorySlots.getSlot(ScannerContainer.SLOT_OUT);
 //        if (slot.getHasStack()) {
 //            ItemStack stack = slot.getStack();
-            if (ItemStackTools.isValid(stack)) {
+            if (!stack.isEmpty()) {
                 int cnt = countFilters();
                 if (cnt != filterCnt) {
                     filterCnt = cnt;

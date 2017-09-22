@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.shield;
 import mcjty.lib.McJtyRegister;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.shield.filters.*;
+import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;

@@ -8,11 +8,9 @@ import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.tools.ItemStackTools;
-import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.shapes.*;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.shapes.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.inventory.Slot;
@@ -166,8 +164,8 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
             slot = ComposerContainer.SLOT_TABS+i;
         }
         ItemStack cardStack = inventorySlots.getSlot(slot).getStack();
-        if (ItemStackTools.isValid(cardStack)) {
-            EntityPlayerSP player = MinecraftTools.getPlayer(Minecraft.getMinecraft());
+        if (!cardStack.isEmpty()) {
+            EntityPlayerSP player = Minecraft.getMinecraft().player;
             shaperBlock = tileEntity.getPos();
             shaperStackSlot = slot;
             player.openGui(RFTools.instance, RFTools.GUI_SHAPECARD_COMPOSER, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
@@ -205,7 +203,7 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
         Slot slot = inventorySlots.getSlot(ComposerContainer.SLOT_OUT);
         if (slot.getHasStack()) {
             ItemStack stack = slot.getStack();
-            if (ItemStackTools.isValid(stack)) {
+            if (!stack.isEmpty()) {
                 shapeRenderer.renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed(), showMat.isPressed());
             }
         }

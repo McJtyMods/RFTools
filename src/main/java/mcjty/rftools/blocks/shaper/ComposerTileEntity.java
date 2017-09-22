@@ -3,7 +3,6 @@ package mcjty.rftools.blocks.shaper;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.shapes.Shape;
@@ -32,11 +31,11 @@ public class ComposerTileEntity extends GenericTileEntity implements DefaultSide
     public void update() {
         if (!getWorld().isRemote) {
             ItemStack output = getStackInSlot(ComposerContainer.SLOT_OUT);
-            if (ItemStackTools.isValid(output)) {
+            if (!output.isEmpty()) {
                 NBTTagList list = new NBTTagList();
                 for (int i = ComposerContainer.SLOT_TABS; i < ComposerContainer.SLOT_TABS + ComposerContainer.SLOT_COUNT; i++) {
                     ItemStack item = getStackInSlot(i);
-                    if (ItemStackTools.isValid(item)) {
+                    if (!item.isEmpty()) {
                         if (item.hasTagCompound()) {
                             NBTTagCompound copy = item.getTagCompound().copy();
                             ShapeModifier modifier = modifiers[i - 1];
@@ -70,7 +69,12 @@ public class ComposerTileEntity extends GenericTileEntity implements DefaultSide
     }
 
     @Override
-    public boolean isUsable(EntityPlayer player) {
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 

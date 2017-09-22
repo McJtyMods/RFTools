@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "rftools:composer"
+  },
+  "pattern": [
+    "pbp",
+    "bMb",
+    "pbp"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "p": {
+      "item": "minecraft:paper"
+    },
+    "b": {
+      "item": "minecraft:brick"
+    },
+    "M": {
+      "item": "rftools:machine_frame"
+    }
+  }
+}

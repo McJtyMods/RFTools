@@ -8,8 +8,6 @@ import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.tools.ItemStackTools;
-import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.network.RFToolsMessages;
@@ -49,13 +47,13 @@ public class GuiModifier extends GenericGuiContainer {
     }
 
     private ItemStack getItem() {
-        EntityPlayerSP player = MinecraftTools.getPlayer(Minecraft.getMinecraft());
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
         return player.getHeldItem(EnumHand.MAIN_HAND);
     }
 
     private boolean isValidItem() {
         ItemStack item = getItem();
-        return ItemStackTools.isValid(item) && item.getItem() == ModItems.modifierItem;
+        return !item.isEmpty() && item.getItem() == ModItems.modifierItem;
     }
 
     @Override
@@ -142,12 +140,12 @@ public class GuiModifier extends GenericGuiContainer {
         for (ModifierEntry modifier : modifiers) {
             NBTTagCompound tag = new NBTTagCompound();
 
-            if (ItemStackTools.isValid(modifier.getIn())) {
+            if (!modifier.getIn().isEmpty()) {
                 NBTTagCompound tc = new NBTTagCompound();
                 modifier.getIn().writeToNBT(tc);
                 tag.setTag("in", tc);
             }
-            if (ItemStackTools.isValid(modifier.getOut())) {
+            if (!modifier.getOut().isEmpty()) {
                 NBTTagCompound tc = new NBTTagCompound();
                 modifier.getOut().writeToNBT(tc);
                 tag.setTag("out", tc);
@@ -179,8 +177,8 @@ public class GuiModifier extends GenericGuiContainer {
         ItemStack stackIn = inventorySlots.getSlot(ModifierContainer.SLOT_FILTER).getStack();
         ItemStack stackOut = inventorySlots.getSlot(ModifierContainer.SLOT_REPLACEMENT).getStack();
         modifiers.add(new ModifierEntry(stackIn, stackOut, ModifierFilterType.getByCode(mode.getCurrentChoice()), ModifierFilterOperation.getByCode(op.getCurrentChoice())));
-        inventorySlots.getSlot(ModifierContainer.SLOT_FILTER).putStack(ItemStackTools.getEmptyStack());
-        inventorySlots.getSlot(ModifierContainer.SLOT_REPLACEMENT).putStack(ItemStackTools.getEmptyStack());
+        inventorySlots.getSlot(ModifierContainer.SLOT_FILTER).putStack(ItemStack.EMPTY);
+        inventorySlots.getSlot(ModifierContainer.SLOT_REPLACEMENT).putStack(ItemStack.EMPTY);
         updateModifiers(modifiers);
     }
 
@@ -196,18 +194,18 @@ public class GuiModifier extends GenericGuiContainer {
         ModifierEntry entry = modifiers.get(list.getSelected());
         ItemStack in = entry.getIn();
         ItemStack out = entry.getOut();
-        if (ItemStackTools.isValid(in) && inventorySlots.getSlot(ModifierContainer.SLOT_FILTER).getHasStack()) {
+        if (!in.isEmpty() && inventorySlots.getSlot(ModifierContainer.SLOT_FILTER).getHasStack()) {
             // Something is in the way
             return;
         }
-        if (ItemStackTools.isValid(out) && inventorySlots.getSlot(ModifierContainer.SLOT_REPLACEMENT).getHasStack()) {
+        if (!out.isEmpty() && inventorySlots.getSlot(ModifierContainer.SLOT_REPLACEMENT).getHasStack()) {
             // Something is in the way
             return;
         }
-        if (ItemStackTools.isValid(in)) {
+        if (!in.isEmpty()) {
             inventorySlots.getSlot(ModifierContainer.SLOT_FILTER).putStack(in);
         }
-        if (ItemStackTools.isValid(out)) {
+        if (!out.isEmpty()) {
             inventorySlots.getSlot(ModifierContainer.SLOT_REPLACEMENT).putStack(out);
         }
 

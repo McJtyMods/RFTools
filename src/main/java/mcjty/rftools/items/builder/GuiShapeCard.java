@@ -12,15 +12,14 @@ import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
-import mcjty.lib.network.PacketUpdateNBTItem;
 import mcjty.lib.network.PacketUpdateNBTItemInventory;
-import mcjty.lib.tools.ItemStackTools;
-import mcjty.lib.tools.MinecraftTools;
-import mcjty.rftools.blocks.shaper.GuiComposer;
 import mcjty.rftools.blocks.shaper.ComposerTileEntity;
+import mcjty.rftools.blocks.shaper.GuiComposer;
 import mcjty.rftools.network.PacketOpenGui;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.rftools.shapes.*;
+import mcjty.rftools.shapes.IShapeParentGui;
+import mcjty.rftools.shapes.PacketUpdateNBTShapeCard;
+import mcjty.rftools.shapes.ShapeRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -89,14 +88,14 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
 
     private ItemStack getStackToEdit() {
         if (fromshaper) {
-            TileEntity te = MinecraftTools.getWorld(Minecraft.getMinecraft()).getTileEntity(GuiComposer.shaperBlock);
+            TileEntity te = mc.world.getTileEntity(GuiComposer.shaperBlock);
             if (te instanceof ComposerTileEntity) {
                 return ((ComposerTileEntity) te).getStackInSlot(GuiComposer.shaperStackSlot);
             } else {
-                return ItemStackTools.getEmptyStack();
+                return ItemStack.EMPTY;
             }
         } else {
-            return MinecraftTools.getPlayer(mc).getHeldItem(EnumHand.MAIN_HAND);
+            return mc.player.getHeldItem(EnumHand.MAIN_HAND);
         }
     }
 
@@ -121,30 +120,13 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
     public void initGui() {
         super.initGui();
 
-        shapeLabel = new ChoiceLabel(mc, this).setDesiredWidth(100).setDesiredHeight(16).addChoices(
-                ShapeCardItem.Shape.SHAPE_BOX.getDescription(),
-                ShapeCardItem.Shape.SHAPE_TOPDOME.getDescription(),
-                ShapeCardItem.Shape.SHAPE_BOTTOMDOME.getDescription(),
-                ShapeCardItem.Shape.SHAPE_SPHERE.getDescription(),
-                ShapeCardItem.Shape.SHAPE_CYLINDER.getDescription(),
-                ShapeCardItem.Shape.SHAPE_CAPPEDCYLINDER.getDescription(),
-                ShapeCardItem.Shape.SHAPE_PRISM.getDescription(),
-                ShapeCardItem.Shape.SHAPE_TORUS.getDescription(),
-                ShapeCardItem.Shape.SHAPE_SOLIDBOX.getDescription(),
-                ShapeCardItem.Shape.SHAPE_SOLIDSPHERE.getDescription(),
-                ShapeCardItem.Shape.SHAPE_SOLIDCYLINDER.getDescription(),
-                ShapeCardItem.Shape.SHAPE_SOLIDTORUS.getDescription(),
-                ShapeCardItem.Shape.SHAPE_SOLIDTOPDOME.getDescription(),
-                ShapeCardItem.Shape.SHAPE_SOLIDBOTTOMDOME.getDescription()).addChoiceEvent((parent, newChoice) -> updateSettings());
-        ItemStack heldItem = mc.player.getHeldItem(EnumHand.MAIN_HAND);
-        if (heldItem.isEmpty()) {
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
 
         ShapeRenderer.shapeCount = 0;
 
         ItemStack heldItem = getStackToEdit();
-        if (ItemStackTools.isEmpty(heldItem)) {
+        if (heldItem.isEmpty()) {
             // Cannot happen!
             return;
         }
@@ -291,7 +273,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         }
         if (fromshaper) {
             ItemStack stack = getStackToEdit();
-            if (ItemStackTools.isValid(stack)) {
+            if (!stack.isEmpty()) {
                 NBTTagCompound tag = stack.getTagCompound();
                 if (tag == null) {
                     tag = new NBTTagCompound();
@@ -319,7 +301,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
     private void updateVoidSettings() {
         if (fromshaper) {
             ItemStack stack = getStackToEdit();
-            if (ItemStackTools.isValid(stack)) {
+            if (!stack.isEmpty()) {
                 NBTTagCompound tag = stack.getTagCompound();
                 if (tag == null) {
                     tag = new NBTTagCompound();
@@ -416,7 +398,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         }
 
         ItemStack stack = getStackToEdit();
-        if (ItemStackTools.isValid(stack)) {
+        if (!stack.isEmpty()) {
             shapeRenderer.renderShape(this, stack, guiLeft, guiTop, true, true, true);
         }
 

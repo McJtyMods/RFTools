@@ -4,7 +4,6 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.items.builder.ShapeCardItem;
@@ -62,7 +61,7 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         }
         inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
         if (index == ScannerContainer.SLOT_OUT) {
-            if (ItemStackTools.isValid(stack)) {
+            if (!stack.isEmpty()) {
                 scan(dataOffset.getX(), dataOffset.getY(), dataOffset.getZ());
             }
         }
@@ -77,8 +76,13 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
     }
 
     @Override
-    public boolean isUsable(EntityPlayer player) {
+    public boolean isUsableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
     }
 
     public byte[] getData() {
@@ -201,7 +205,7 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
 
     public ItemStack getRenderStack() {
         ItemStack stack = inventoryHelper.getStackInSlot(ScannerContainer.SLOT_OUT);
-        if (ItemStackTools.isValid(stack)) {
+        if (!stack.isEmpty()) {
             return stack;
         }
         // We need a dummy stack if we are locked
@@ -210,7 +214,7 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
             scanCard(dataOffset.getX(), dataOffset.getY(), dataOffset.getZ(), stack);
             return stack;
         }
-        return ItemStackTools.getEmptyStack();
+        return ItemStack.EMPTY;
     }
 
 
@@ -226,7 +230,7 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         }
         NBTTagCompound tagOut = cardOut.getTagCompound();
 
-        if (ItemStackTools.isValid(cardOut)) {
+        if (!cardOut.isEmpty()) {
             if (locked) {
                 ShapeCardItem.setDimension(cardOut, dataDim.getX(), dataDim.getY(), dataDim.getZ());
                 ShapeCardItem.setData(tagOut, getWorld().provider.getDimension(), getPos());
@@ -255,7 +259,7 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
                 switch (modifier.getType()) {
                     case FILTER_SLOT: {
                         ItemStack inputItem = inState.getBlock().getItem(getWorld(), pos, inState);
-                        if (ItemStackTools.isValid(modifier.getIn()) && modifier.getIn().getItem() == ModularStorageSetup.storageFilterItem) {
+                        if (!modifier.getIn().isEmpty() && modifier.getIn().getItem() == ModularStorageSetup.storageFilterItem) {
                             StorageFilterCache filter = StorageFilterItem.getCache(modifier.getIn());
                             if (filter.match(inputItem)) {
                                 outState = getOutput(inState, modifier);
@@ -263,7 +267,7 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
                             }
                         } else {
                             // Empty input stack in modifier also matches
-                            if (ItemStackTools.isEmpty(modifier.getIn()) || ItemStack.areItemsEqual(inputItem, modifier.getIn())) {
+                            if (modifier.getIn().isEmpty() || ItemStack.areItemsEqual(inputItem, modifier.getIn())) {
                                 outState = getOutput(inState, modifier);
                                 stop = true;
                             }
@@ -306,7 +310,7 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
             return Blocks.AIR.getDefaultState();
         }
         ItemStack outputItem = modifier.getOut();
-        if (ItemStackTools.isEmpty(outputItem)) {
+        if (outputItem.isEmpty()) {
             return input;
         } else {
             Block block = ForgeRegistries.BLOCKS.getValue(outputItem.getItem().getRegistryName());

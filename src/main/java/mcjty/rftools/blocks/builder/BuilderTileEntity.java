@@ -10,13 +10,13 @@ import mcjty.lib.varia.*;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.hud.IHudSupport;
-import mcjty.rftools.shapes.Shape;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.network.PacketGetHudLog;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.proxy.CommonProxy;
+import mcjty.rftools.shapes.Shape;
 import mcjty.rftools.varia.RFToolsTools;
 import mcjty.typed.Type;
 import net.minecraft.block.Block;
@@ -216,7 +216,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 case ShapeCardItem.CARD_SHAPE:
                     list.add("    Shape card");
                     ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
-                    if (ItemStackTools.isValid(shapeCard)) {
+                    if (!shapeCard.isEmpty()) {
                         Shape shape = ShapeCardItem.getShape(shapeCard);
                         if (shape != null) {
                             list.add("    " + shape.getDescription());
@@ -968,7 +968,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private boolean buildBlock(int rfNeeded, BlockPos srcPos, IBlockState pickState) {
         if (isEmptyOrReplacable(getWorld(), srcPos)) {
             ItemStack stack = consumeBlock(getWorld(), srcPos, pickState);
-            if (ItemStackTools.isEmpty(stack)) {
+            if (stack.isEmpty()) {
                 return true;    // We could not find a block. Wait
             }
 

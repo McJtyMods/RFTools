@@ -1,10 +1,8 @@
 package mcjty.rftools.items.modifier;
 
-import mcjty.lib.compat.CompatInventory;
-import mcjty.lib.tools.ItemStackList;
-import mcjty.lib.tools.ItemStackTools;
-import mcjty.rftools.items.storage.StorageFilterContainer;
+import mcjty.lib.varia.ItemStackList;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -12,7 +10,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
 
-public class ModifierInventory implements CompatInventory {
+public class ModifierInventory implements IInventory {
 
     private ItemStackList stacks = ItemStackList.create(ModifierContainer.COUNT_SLOTS);
     private final EntityPlayer entityPlayer;
@@ -27,7 +25,7 @@ public class ModifierInventory implements CompatInventory {
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            stacks.set(i, ItemStackTools.loadFromNBT(nbtTagCompound));
+            stacks.set(i, new ItemStack(nbtTagCompound));
         }
     }
 
@@ -44,23 +42,23 @@ public class ModifierInventory implements CompatInventory {
     @Override
     public ItemStack decrStackSize(int index, int amount) {
         if (index >= stacks.size()) {
-            return ItemStackTools.getEmptyStack();
+            return ItemStack.EMPTY;
         }
-        if (ItemStackTools.isValid(stacks.get(index))) {
-            if (ItemStackTools.getStackSize(stacks.get(index)) <= amount) {
+        if (!stacks.get(index).isEmpty()) {
+            if (stacks.get(index).getCount() <= amount) {
                 ItemStack old = stacks.get(index);
-                stacks.set(index, ItemStackTools.getEmptyStack());
+                stacks.set(index, ItemStack.EMPTY);
                 markDirty();
                 return old;
             }
             ItemStack its = stacks.get(index).splitStack(amount);
-            if (ItemStackTools.isEmpty(stacks.get(index))) {
-                stacks.set(index, ItemStackTools.getEmptyStack());
+            if (stacks.get(index).isEmpty()) {
+                stacks.set(index, ItemStack.EMPTY);
             }
             markDirty();
             return its;
         }
-        return ItemStackTools.getEmptyStack();
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -70,8 +68,8 @@ public class ModifierInventory implements CompatInventory {
         }
 
         stacks.set(index, stack);
-        if (ItemStackTools.isValid(stack) && ItemStackTools.getStackSize(stack) > getInventoryStackLimit()) {
-            ItemStackTools.setStackSize(stack, getInventoryStackLimit());
+        if (!stack.isEmpty() && stack.getCount() > getInventoryStackLimit()) {
+            stack.setCount(getInventoryStackLimit());
         }
         markDirty();
     }
@@ -84,7 +82,7 @@ public class ModifierInventory implements CompatInventory {
     @Override
     public void markDirty() {
         ItemStack heldItem = entityPlayer.getHeldItem(EnumHand.MAIN_HAND);
-        if (ItemStackTools.isValid((heldItem))) {
+        if (!heldItem.isEmpty()) {
             NBTTagCompound tagCompound = heldItem.getTagCompound();
             convertItemsToNBT(tagCompound, stacks);
         }
@@ -94,7 +92,7 @@ public class ModifierInventory implements CompatInventory {
         NBTTagList bufferTagList = new NBTTagList();
         for (ItemStack stack : stacks) {
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
-            if (ItemStackTools.isValid(stack)) {
+            if (!stack.isEmpty()) {
                 stack.writeToNBT(nbtTagCompound);
             }
             bufferTagList.appendTag(nbtTagCompound);
@@ -103,7 +101,12 @@ public class ModifierInventory implements CompatInventory {
     }
 
     @Override
-    public boolean isUsable(EntityPlayer player) {
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer player) {
         return true;
     }
 
@@ -115,7 +118,7 @@ public class ModifierInventory implements CompatInventory {
     @Override
     public ItemStack removeStackFromSlot(int index) {
         ItemStack stack = getStackInSlot(index);
-        setInventorySlotContents(index, ItemStackTools.getEmptyStack());
+        setInventorySlotContents(index, ItemStack.EMPTY);
         return stack;
     }
 

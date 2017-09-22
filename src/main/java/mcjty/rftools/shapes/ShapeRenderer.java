@@ -106,7 +106,7 @@ public class ShapeRenderer {
         GlStateManager.disableTexture2D();
 
         Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer buffer = tessellator.getBuffer();
+        BufferBuilder buffer = tessellator.getBuffer();
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
@@ -140,7 +140,7 @@ public class ShapeRenderer {
 
     }
 
-    private void renderHelpers(Tessellator tessellator, VertexBuffer buffer, int xlen, int ylen, int zlen, boolean showAxis, boolean showOuter) {
+    private void renderHelpers(Tessellator tessellator, BufferBuilder buffer, int xlen, int ylen, int zlen, boolean showAxis, boolean showOuter) {
         // X, Y, Z axis
         if (showAxis) {
             ShapeRenderer.renderAxis(tessellator, buffer, xlen/2, ylen/2, zlen/2);
@@ -162,7 +162,7 @@ public class ShapeRenderer {
             new Quad(new Vt(1, 0, 0), new Vt(1, 1, 0), new Vt(1, 1, 1), new Vt(1, 0, 1)),       // EAST
     };
 
-    static void renderOuterBox(Tessellator tessellator, VertexBuffer buffer, int xlen, int ylen, int zlen) {
+    static void renderOuterBox(Tessellator tessellator, BufferBuilder buffer, int xlen, int ylen, int zlen) {
         GlStateManager.glLineWidth(1.0f);
         buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
 //        buffer.setTranslation(0.5, 0.5, 0.5);
@@ -201,7 +201,7 @@ public class ShapeRenderer {
         tessellator.draw();
     }
 
-    static void renderAxis(Tessellator tessellator, VertexBuffer buffer, int xlen, int ylen, int zlen) {
+    static void renderAxis(Tessellator tessellator, BufferBuilder buffer, int xlen, int ylen, int zlen) {
         GlStateManager.glLineWidth(2.5f);
         buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
 //        buffer.setTranslation(0.5, 0.5, 0.5);
@@ -316,7 +316,7 @@ public class ShapeRenderer {
         return col;
     }
 
-    private void renderFaces(Tessellator tessellator, final VertexBuffer buffer,
+    private void renderFaces(Tessellator tessellator, final BufferBuilder buffer,
                      ItemStack stack, boolean showMat) {
 
         if (ShapeRenderer.positions == null || waitForNewRequest > 0) {
@@ -353,7 +353,7 @@ public class ShapeRenderer {
         }
     }
 
-    private void createDisplayList(Tessellator tessellator, VertexBuffer buffer, boolean showMat) {
+    private void createDisplayList(Tessellator tessellator, BufferBuilder buffer, boolean showMat) {
         prevShowMat = showMat;
         invalidateGlList();
         glList = GLAllocation.generateDisplayLists(1);
@@ -441,7 +441,7 @@ public class ShapeRenderer {
     }
 
 
-    public static void addSideFullTexture(VertexBuffer buffer, int side, float r, float g, float b) {
+    public static void addSideFullTexture(BufferBuilder buffer, int side, float r, float g, float b) {
         Quad quad = QUADS[side];
         float a = 0.5f;
         buffer.pos(quad.v1.x, quad.v1.y, quad.v1.z).color(r, g, b, a).endVertex();

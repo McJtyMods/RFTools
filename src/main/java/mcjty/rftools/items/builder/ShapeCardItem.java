@@ -1,9 +1,6 @@
 package mcjty.rftools.items.builder;
 
-import com.google.common.collect.AbstractIterator;
 import mcjty.lib.crafting.INBTPreservingIngredient;
-import mcjty.lib.tools.ChatTools;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
@@ -12,8 +9,8 @@ import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
 import mcjty.rftools.blocks.shaper.ScannerTileEntity;
 import mcjty.rftools.items.GenericRFToolsItem;
-import mcjty.rftools.varia.ItemStackTools;
 import mcjty.rftools.shapes.*;
+import mcjty.rftools.varia.ItemStackTools;
 import mcjty.rftools.varia.RLE;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -181,7 +178,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
     }
 
     public static void setGhostMaterial(NBTTagCompound tag, ItemStack materialGhost) {
-        if (ItemStackTools.isEmpty(materialGhost)) {
+        if (materialGhost.isEmpty()) {
             tag.removeTag("ghost_block");
             tag.removeTag("ghost_meta");
         } else {
@@ -912,9 +909,6 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
     }
 
     @Override
-    protected void clGetSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
-        for (int i = 0 ; i <= 10 ; i++) {
-            subItems.add(new ItemStack(this, 1, i));
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (this.isInCreativeTab(tab)) {
             for (int i = 0; i <= 9; i++) {
@@ -940,7 +934,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         try {
             stream = new FileOutputStream(file);
         } catch (FileNotFoundException e) {
-            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Cannot write to file '" + filename + "'!"));
+            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Cannot write to file '" + filename + "'!"), false);
             return;
         }
         PrintWriter writer = new PrintWriter(stream);
@@ -962,26 +956,26 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         Shape shape = ShapeCardItem.getShape(card);
 
         if (shape != Shape.SHAPE_SCAN) {
-            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "To load a file into this card you need a linked 'scan' type card!"));
+            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "To load a file into this card you need a linked 'scan' type card!"), false);
             return;
         }
 
         NBTTagCompound compound = ShapeCardItem.getCompound(card);
         GlobalCoordinate scannerPos = ShapeCardItem.getData(compound);
         if (scannerPos == null) {
-            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "This card is not linked to a scanner!"));
+            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "This card is not linked to a scanner!"), false);
             return;
         }
 
         World world = DimensionManager.getWorld(scannerPos.getDimension());
         if (world == null || !world.isBlockLoaded(scannerPos.getCoordinate())) {
-            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "The scanner is out of reach or not chunkloaded!"));
+            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "The scanner is out of reach or not chunkloaded!"), false);
             return;
         }
 
         TileEntity te = world.getTileEntity(scannerPos.getCoordinate());
         if (!(te instanceof ScannerTileEntity)) {
-            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Not a valid scanner!"));
+            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Not a valid scanner!"), false);
             return;
         }
 
@@ -995,18 +989,18 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
             BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
             String s = reader.readLine();
             if (!"SHAPE".equals(s)) {
-                ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "This does not appear to be a valid shapecard file!"));
+                player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "This does not appear to be a valid shapecard file!"), false);
                 return;
             }
             s = reader.readLine();
             if (!s.startsWith("DIM:")) {
-                ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "This does not appear to be a valid shapecard file!"));
+                player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "This does not appear to be a valid shapecard file!"), false);
                 return;
             }
             BlockPos dim = parse(s.substring(4));
             s = reader.readLine();
             if (!s.startsWith("OFF:")) {
-                ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "This does not appear to be a valid shapecard file!"));
+                player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "This does not appear to be a valid shapecard file!"), false);
                 return;
             }
             BlockPos off = parse(s.substring(4));
@@ -1017,7 +1011,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
                 Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(split[0]));
                 int meta = Integer.parseInt(split[1]);
                 if (block == null) {
-                    ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.YELLOW + "Could not find block '" + split[0] + "'!"));
+                    player.sendStatusMessage(new TextComponentString(TextFormatting.YELLOW + "Could not find block '" + split[0] + "'!"), false);
                     block = Blocks.STONE;
                     meta = 0;
                 }
@@ -1032,16 +1026,16 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
 
             scanner.setDataFromFile(card, dim, off, decoded, statePalette);
         } catch (FileNotFoundException e) {
-            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Cannot read from file '" + filename + "'!"));
+            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Cannot read from file '" + filename + "'!"), false);
             return;
         } catch (IOException e) {
-            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Cannot read from file '" + filename + "'!"));
+            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Cannot read from file '" + filename + "'!"), false);
             return;
         } catch (NullPointerException e) {
-            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "File '" + filename + "' is too short!"));
+            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "File '" + filename + "' is too short!"), false);
             return;
         } catch (ArrayIndexOutOfBoundsException e) {
-            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "File '" + filename + "' contains invalid entries!"));
+            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "File '" + filename + "' contains invalid entries!"), false);
             return;
         }
 

@@ -1,6 +1,5 @@
 package mcjty.rftools.varia;
 
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
 import net.minecraft.block.Block;
@@ -142,7 +141,7 @@ public class RFToolsTools {
     }
 
     public static String getModid(ItemStack stack) {
-        if (ItemStackTools.isValid(stack)) {
+        if (!stack.isEmpty()) {
             return stack.getItem().getRegistryName().getResourceDomain();
         } else {
             return "";

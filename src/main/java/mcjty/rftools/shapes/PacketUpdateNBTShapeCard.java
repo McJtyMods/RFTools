@@ -3,7 +3,6 @@ package mcjty.rftools.shapes;
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.AbstractServerCommand;
 import mcjty.lib.network.Argument;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -57,7 +56,7 @@ public class PacketUpdateNBTShapeCard implements IMessage {
         private void handle(PacketUpdateNBTShapeCard message, MessageContext ctx) {
             EntityPlayerMP playerEntity = ctx.getServerHandler().player;
             ItemStack heldItem = playerEntity.getHeldItem(EnumHand.MAIN_HAND);
-            if (ItemStackTools.isEmpty(heldItem)) {
+            if (heldItem.isEmpty()) {
                 return;
             }
             NBTTagCompound tagCompound = heldItem.getTagCompound();

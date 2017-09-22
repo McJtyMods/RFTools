@@ -1,9 +1,9 @@
 package mcjty.rftools.items.modifier;
 
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.items.ModItems;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -30,7 +30,7 @@ public class ModifierItem extends GenericRFToolsItem {
     }
 
     private static NBTTagList getOpList(ItemStack item) {
-        if (ItemStackTools.isValid(item) && item.getItem() == ModItems.modifierItem) {
+        if (!item.isEmpty() && item.getItem() == ModItems.modifierItem) {
             if (!item.hasTagCompound()) {
                 item.setTagCompound(new NBTTagCompound());
             }
@@ -54,8 +54,8 @@ public class ModifierItem extends GenericRFToolsItem {
         }
         for (int i = 0 ; i < taglist.tagCount() ; i++) {
             NBTTagCompound compound = taglist.getCompoundTagAt(i);
-            ItemStack stackIn = ItemStackTools.loadFromNBT(compound.getCompoundTag("in"));
-            ItemStack stackOut = ItemStackTools.loadFromNBT(compound.getCompoundTag("out"));
+            ItemStack stackIn = new ItemStack(compound.getCompoundTag("in"));
+            ItemStack stackOut = new ItemStack(compound.getCompoundTag("out"));
             ModifierFilterType type = ModifierFilterType.getByCode(compound.getString("type"));
             ModifierFilterOperation op = ModifierFilterOperation.getByCode(compound.getString("op"));
             modifiers.add(new ModifierEntry(stackIn, stackOut, type, op));
@@ -65,7 +65,7 @@ public class ModifierItem extends GenericRFToolsItem {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(TextFormatting.WHITE + "This module can be used by the area scanner to");
@@ -77,7 +77,7 @@ public class ModifierItem extends GenericRFToolsItem {
 
 
     @Override
-    protected ActionResult<ItemStack> clOnItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
             player.openGui(RFTools.instance, RFTools.GUI_MODIFIER_MODULE, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);

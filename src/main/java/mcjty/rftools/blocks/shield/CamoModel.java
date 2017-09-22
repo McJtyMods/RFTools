@@ -10,11 +10,12 @@ import net.minecraftforge.common.model.TRSRTransformation;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Function;
 
 public class CamoModel implements IModel {
 
     @Override
-    public IBakedModel bake(IModelState state, VertexFormat format, com.google.common.base.Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
+    public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
         return new CamoBakedModel(state, format, bakedTextureGetter);
     }
 
