@@ -30,7 +30,6 @@ public class PacketReturnShapeData implements IMessage {
         dimension = NetworkTools.readPos(buf);
 
         int size = buf.readInt();
-        System.out.println("1: size = " + size);
         statePalette = new StatePalette();
         while (size > 0) {
             String r = NetworkTools.readString(buf);
@@ -41,7 +40,6 @@ public class PacketReturnShapeData implements IMessage {
         }
 
         size = buf.readInt();
-        System.out.println("2: size = " + size);
         positions = new RLE();
         byte[] data = new byte[size];
         buf.readBytes(data);

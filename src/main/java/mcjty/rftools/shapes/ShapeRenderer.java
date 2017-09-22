@@ -261,7 +261,7 @@ public class ShapeRenderer {
     private static final Col COL_FLOWER = new Col(0xa0/255.0f,0x20/255.0f,0x20/255.0f);
     private static final Col COL_OBSIDIAN = new Col(0x14/255.0f,0x12/255.0f,0x1e/255.0f);
     private static final Col COL_QUARTZ = new Col(0xec/255.0f,0xe9/255.0f,0xe2/255.0f);
-    private static final Col COL_SCANNER = new Col(0x00/255.0f,0x00/255.0f,0xe0/255.0f);
+    private static final Col COL_SCANNER = new Col(0x00/255.0f,0x00/255.0f,0xe2/255.0f);
 
     private Col getColor(Map<IBlockState, Col> pallete, IBlockState state) {
         if (state == null) {

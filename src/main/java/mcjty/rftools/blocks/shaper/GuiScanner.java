@@ -2,14 +2,16 @@ package mcjty.rftools.blocks.shaper;
 
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
+import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.Button;
+import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.ToggleButton;
 import mcjty.lib.network.Argument;
 import mcjty.lib.tools.ItemStackTools;
+import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.IShapeParentGui;
 import mcjty.rftools.shapes.ShapeRenderer;
@@ -34,6 +36,9 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
     private ToggleButton showMat;
 
     private ToggleButton locked;
+
+    private Label offsetLabel;
+    private Label dimensionLabel;
 
     private ShapeRenderer shapeRenderer = new ShapeRenderer();
     private int filterCnt = 0;
@@ -83,6 +88,13 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
         toplevel.addChild(new Button(mc, this).setText("u").addButtonEvent(parent -> move(0, 1, 0)).setLayoutHint(new PositionalLayout.PositionalHint(45, 70, 16, 15)));
         toplevel.addChild(new Button(mc, this).setText("U").addButtonEvent(parent -> move(0, 16, 0)).setLayoutHint(new PositionalLayout.PositionalHint(61, 70, 16, 15)));
 
+        offsetLabel = new Label(mc, this).setText("Off: " + BlockPosTools.toString(tileEntity.getDataOffset())).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
+        offsetLabel.setLayoutHint(new PositionalLayout.PositionalHint(4, 90, 80, 14));
+        toplevel.addChild(offsetLabel);
+        dimensionLabel = new Label(mc, this).setText("Dim: " + BlockPosTools.toString(tileEntity.getDataDim())).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
+        dimensionLabel.setLayoutHint(new PositionalLayout.PositionalHint(4, 105, 80, 14));
+        toplevel.addChild(dimensionLabel);
+
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -115,7 +127,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
         if (slot.getHasStack()) {
             ItemStack stack = slot.getStack();
             if (ItemStackTools.isValid(stack)) {
-                BlockPos offset = ShapeCardItem.getOffset(stack);
+                BlockPos offset = tileEntity.getDataOffset();
                 int offsetX = offset.getX() + x;
                 int offsetY = offset.getY() + y;
                 int offsetZ = offset.getZ() + z;
@@ -149,12 +161,15 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
     protected void drawGuiContainerBackgroundLayer(float v, int x, int y) {
 
         shapeRenderer.handleMouseWheel();
+        offsetLabel.setText("Off: " + BlockPosTools.toString(tileEntity.getDataOffset()));
+        dimensionLabel.setText("Dim: " + BlockPosTools.toString(tileEntity.getDataDim()));
 
         drawWindow();
 
-        Slot slot = inventorySlots.getSlot(ScannerContainer.SLOT_OUT);
-        if (slot.getHasStack()) {
-            ItemStack stack = slot.getStack();
+        ItemStack stack = tileEntity.getRenderStack();
+//        Slot slot = inventorySlots.getSlot(ScannerContainer.SLOT_OUT);
+//        if (slot.getHasStack()) {
+//            ItemStack stack = slot.getStack();
             if (ItemStackTools.isValid(stack)) {
                 int cnt = countFilters();
                 if (cnt != filterCnt) {
@@ -163,7 +178,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
                 }
 
                 shapeRenderer.renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed(), showMat.isPressed());
-            }
+//            }
         }
     }
 

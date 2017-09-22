@@ -48,7 +48,7 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
     private byte[] data = null;
     private List<IBlockState> materialPalette = new ArrayList<>();
     private BlockPos dataDim;
-    private BlockPos dataOffset;
+    private BlockPos dataOffset = new BlockPos(0, 0, 0);
 
     @Override
     public InventoryHelper getInventoryHelper() {
@@ -63,13 +63,7 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
         if (index == ScannerContainer.SLOT_OUT) {
             if (ItemStackTools.isValid(stack)) {
-                BlockPos offset;
-                if (locked) {
-                    offset = dataOffset;
-                } else {
-                    offset = ShapeCardItem.getOffset(stack);
-                }
-                scan(offset.getX(), offset.getY(), offset.getZ());
+                scan(dataOffset.getX(), dataOffset.getY(), dataOffset.getZ());
             }
         }
     }
@@ -187,10 +181,8 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
     }
 
     public void setDataFromFile(ItemStack card, BlockPos dimension, BlockPos offset, byte[] data, StatePalette palette) {
-        System.out.println("offset = " + offset);
-        System.out.println("getWorld().isRemote = " + getWorld().isRemote);
         this.dataDim = dimension;
-        this.dataOffset = offset;
+        this.dataOffset = new BlockPos(0, 0, 0);
         this.data = data;
         this.materialPalette = palette.getPalette();
         this.locked = true;
@@ -201,9 +193,27 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
     }
 
 
+    public ItemStack getRenderStack() {
+        ItemStack stack = inventoryHelper.getStackInSlot(ScannerContainer.SLOT_OUT);
+        if (ItemStackTools.isValid(stack)) {
+            return stack;
+        }
+        // We need a dummy stack if we are locked
+        if (locked) {
+            stack = new ItemStack(BuilderSetup.shapeCardItem);
+            scanCard(dataOffset.getX(), dataOffset.getY(), dataOffset.getZ(), stack);
+            return stack;
+        }
+        return ItemStackTools.getEmptyStack();
+    }
+
 
     private void scan(int offsetX, int offsetY, int offsetZ) {
         ItemStack cardOut = inventoryHelper.getStackInSlot(ScannerContainer.SLOT_OUT);
+        scanCard(offsetX, offsetY, offsetZ, cardOut);
+    }
+
+    private void scanCard(int offsetX, int offsetY, int offsetZ, ItemStack cardOut) {
         if (!ShapeCardItem.getShape(cardOut).isScheme()) {
             boolean solid = ShapeCardItem.isSolid(cardOut);
             ShapeCardItem.setShape(cardOut, Shape.SHAPE_SCHEME, solid);
@@ -212,11 +222,10 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
 
         if (ItemStackTools.isValid(cardOut)) {
             if (locked) {
-                ShapeCardItem.setOffset(cardOut, dataOffset.getX(), dataOffset.getY(), dataOffset.getZ());
                 ShapeCardItem.setDimension(cardOut, dataDim.getX(), dataDim.getY(), dataDim.getZ());
                 ShapeCardItem.setData(tagOut, getWorld().provider.getDimension(), getPos());
             } else {
-                ShapeCardItem.setOffset(cardOut, offsetX, offsetY, offsetZ);
+                dataOffset = new BlockPos(offsetX, offsetY, offsetZ);
                 BlockPos dim = ShapeCardItem.getDimension(cardOut);
                 int dimX = dim.getX();
                 int dimY = dim.getY();
@@ -361,9 +370,8 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         this.data = rle.getData();
         this.materialPalette = materialPalette.getPalette();
         this.dataDim = new BlockPos(dimX, dimY, dimZ);
-        this.dataOffset = center;
         ShapeCardItem.setData(tagOut, getWorld().provider.getDimension(), getPos());
-        markDirty();
+        markDirtyClient();
     }
 
     @Override
