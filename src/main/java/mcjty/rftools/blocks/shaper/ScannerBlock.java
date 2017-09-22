@@ -25,8 +25,10 @@ public class ScannerBlock extends GenericRFToolsBlock<ScannerTileEntity, Scanner
     public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(TextFormatting.WHITE + "This block can construct more complex,");
-            list.add(TextFormatting.WHITE + "shape cards for the builder");
+            list.add(TextFormatting.WHITE + "This block can scan an area and link");
+            list.add(TextFormatting.WHITE + "to shape cards for the Builder or Shield.");
+            list.add(TextFormatting.WHITE + "The resulting shape card can also be used");
+            list.add(TextFormatting.WHITE + "in the Composer");
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }

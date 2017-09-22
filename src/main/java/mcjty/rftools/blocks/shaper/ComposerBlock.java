@@ -26,7 +26,9 @@ public class ComposerBlock extends GenericRFToolsBlock<ComposerTileEntity, Compo
         super.addInformation(itemStack, player, list, whatIsThis);
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(TextFormatting.WHITE + "This block can construct more complex");
-            list.add(TextFormatting.WHITE + "shape cards for the builder");
+            list.add(TextFormatting.WHITE + "shape cards for the Builder or Shield");
+            list.add(TextFormatting.WHITE + "by creating combinations of other shape");
+            list.add(TextFormatting.WHITE + "cards");
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
