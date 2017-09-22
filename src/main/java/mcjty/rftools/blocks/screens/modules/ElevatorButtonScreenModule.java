@@ -191,6 +191,9 @@ public class ElevatorButtonScreenModule implements IScreenModule<ElevatorButtonS
                 if (numcols > 1) {
                     int col = (x - 5) / (colw + 7);
                     level = max - level - 1 + col * max;
+                    if (col == numcols - 1) {
+                        level -= max - (levelCount % max);
+                    }
                 } else {
                     level = levelCount - level - 1;
                 }

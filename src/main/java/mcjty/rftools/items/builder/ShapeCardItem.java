@@ -2,15 +2,21 @@ package mcjty.rftools.items.builder;
 
 import com.google.common.collect.AbstractIterator;
 import mcjty.lib.crafting.INBTPreservingIngredient;
+import mcjty.lib.tools.ChatTools;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
+import mcjty.rftools.blocks.shaper.ScannerTileEntity;
 import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.varia.ItemStackTools;
+import mcjty.rftools.shapes.*;
+import mcjty.rftools.varia.RLE;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -19,17 +25,25 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
+import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
 
+import java.io.*;
 import java.util.*;
 
 public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingIngredient {
@@ -46,81 +60,9 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
     public static final int CARD_QUARRY_CLEAR_FORTUNE = 7;
     public static final int CARD_PUMP = 8;
     public static final int CARD_PUMP_CLEAR = 9;
+    public static final int CARD_PUMP_LIQUID = 10;
 
     public static final int MAXIMUM_COUNT = 50000000;
-    
-    public enum Shape {
-        SHAPE_BOX(0, "Box"),
-        SHAPE_TOPDOME(1, "Top Dome"),
-        SHAPE_BOTTOMDOME(2, "Bottom Dome"),
-        SHAPE_SPHERE(3, "Sphere"),
-        SHAPE_CYLINDER(4, "Cylinder"),
-        SHAPE_CAPPEDCYLINDER(5, "Capped Cylinder"),
-        SHAPE_PRISM(6, "Prism"),
-        SHAPE_TORUS(7, "Torus"),
-        SHAPE_SOLIDBOX(100, "Solid Box"),
-        SHAPE_SOLIDSPHERE(103, "Solid Sphere"),
-        SHAPE_SOLIDCYLINDER(104, "Solid Cylinder"),
-        SHAPE_SOLIDTORUS(107, "Solid Torus"),
-        SHAPE_SOLIDTOPDOME(101, "Solid Top Dome"),
-        SHAPE_SOLIDBOTTOMDOME(102, "Solid Bottom Dome");
-
-
-        private final int index;
-        private final String description;
-
-        private static final Map<Integer,Shape> shapes;
-        private static final Map<String,Shape> shapesByDescription;
-
-        static {
-            shapesByDescription = new HashMap<>();
-            shapes = new HashMap<>();
-            for (Shape shape : values()) {
-                shapes.put(shape.getIndex(), shape);
-                shapesByDescription.put(shape.getDescription(), shape);
-            }
-        }
-
-        // Return the hollow version of the shape.
-        public Shape makeHollow() {
-            switch (this) {
-                case SHAPE_SOLIDBOX:
-                    return SHAPE_BOX;
-                case SHAPE_SOLIDSPHERE:
-                    return SHAPE_SPHERE;
-                case SHAPE_SOLIDCYLINDER:
-                    return SHAPE_CAPPEDCYLINDER;
-                case SHAPE_SOLIDTORUS:
-                    return SHAPE_TORUS;
-                case SHAPE_SOLIDTOPDOME:
-                    return SHAPE_TOPDOME;
-                case SHAPE_SOLIDBOTTOMDOME:
-                    return SHAPE_BOTTOMDOME;
-            }
-            return this;
-        }
-
-        Shape(int index, String description) {
-            this.index = index;
-            this.description = description;
-        }
-
-        public int getIndex() {
-            return index;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public static Shape getShape(int index) {
-            return shapes.get(index);
-        }
-
-        public static Shape getShape(String description) {
-            return shapesByDescription.get(description);
-        }
-    }
 
     public static final int MODE_NONE = 0;
     public static final int MODE_CORNER1 = 1;
@@ -146,6 +88,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         ModelLoader.setCustomModelResourceLocation(this, CARD_QUARRY_CLEAR_FORTUNE, new ModelResourceLocation(RFTools.MODID + ":shape_card_quarry_clear_fortune", "inventory"));
         ModelLoader.setCustomModelResourceLocation(this, CARD_PUMP, new ModelResourceLocation(RFTools.MODID + ":shape_card_pump", "inventory"));
         ModelLoader.setCustomModelResourceLocation(this, CARD_PUMP_CLEAR, new ModelResourceLocation(RFTools.MODID + ":shape_card_pump_clear", "inventory"));
+        ModelLoader.setCustomModelResourceLocation(this, CARD_PUMP_LIQUID, new ModelResourceLocation(RFTools.MODID + ":shape_card_liquid", "inventory"));
     }
 
     @Override
@@ -191,11 +134,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
                     Logging.message(player, TextFormatting.RED + "Cleared area selection mode!");
                     setMode(stack, MODE_NONE);
                 } else {
-                    NBTTagCompound tag = stack.getTagCompound();
-                    if (tag == null) {
-                        tag = new NBTTagCompound();
-                        stack.setTagCompound(tag);
-                    }
+                    NBTTagCompound tag = getCompound(stack);
                     BlockPos c1 = getCorner1(stack);
                     if (c1 == null) {
                         Logging.message(player, TextFormatting.RED + "Cleared area selection mode!");
@@ -203,16 +142,12 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
                     } else {
                         Logging.message(player, TextFormatting.GREEN + "New settings copied to the shape card!");
                         BlockPos center = new BlockPos((int) Math.ceil((c1.getX() + pos.getX()) / 2.0f), (int) Math.ceil((c1.getY() + pos.getY()) / 2.0f), (int) Math.ceil((c1.getZ() + pos.getZ()) / 2.0f));
-                        tag.setInteger("dimX", Math.abs(c1.getX() - pos.getX()) + 1);
-                        tag.setInteger("dimY", Math.abs(c1.getY() - pos.getY()) + 1);
-                        tag.setInteger("dimZ", Math.abs(c1.getZ() - pos.getZ()) + 1);
-                        tag.setInteger("offsetX", center.getX() - currentBlock.getCoordinate().getX());
-                        tag.setInteger("offsetY", center.getY() - currentBlock.getCoordinate().getY());
-                        tag.setInteger("offsetZ", center.getZ() - currentBlock.getCoordinate().getZ());
+                        setDimension(stack, Math.abs(c1.getX() - pos.getX()) + 1, Math.abs(c1.getY() - pos.getY()) + 1, Math.abs(c1.getZ() - pos.getZ()) + 1);
+                        setOffset(stack, center.getX() - currentBlock.getCoordinate().getX(), center.getY() - currentBlock.getCoordinate().getY(), center.getZ() - currentBlock.getCoordinate().getZ());
 
                         setMode(stack, MODE_NONE);
                         setCorner1(stack, null);
-                        setShape(stack, Shape.SHAPE_SOLIDBOX);
+                        setShape(stack, Shape.SHAPE_BOX, true);
                     }
                 }
             }
@@ -220,12 +155,108 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         return EnumActionResult.SUCCESS;
     }
 
-    public static void setCorner1(ItemStack itemStack, BlockPos corner) {
+    public static GlobalCoordinate getData(NBTTagCompound tagCompound) {
+        if (!tagCompound.hasKey("datadim")) {
+            return null;
+        }
+        int dim = tagCompound.getInteger("datadim");
+        int x = tagCompound.getInteger("datax");
+        int y = tagCompound.getInteger("datay");
+        int z = tagCompound.getInteger("dataz");
+        return new GlobalCoordinate(new BlockPos(x, y, z), dim);
+    }
+
+    public static void setData(NBTTagCompound tagCompound, int dimension, BlockPos pos) {
+        tagCompound.setInteger("datadim", dimension);
+        tagCompound.setInteger("datax", pos.getX());
+        tagCompound.setInteger("datay", pos.getY());
+        tagCompound.setInteger("dataz", pos.getZ());
+        dirty(tagCompound);
+    }
+
+    public static void setModifier(NBTTagCompound tag, ShapeModifier modifier) {
+        tag.setString("mod_op", modifier.getOperation().getCode());
+        tag.setBoolean("mod_flipy", modifier.isFlipY());
+        tag.setString("mod_rot", modifier.getRotation().getCode());
+    }
+
+    public static void setGhostMaterial(NBTTagCompound tag, ItemStack materialGhost) {
+        if (ItemStackTools.isEmpty(materialGhost)) {
+            tag.removeTag("ghost_block");
+            tag.removeTag("ghost_meta");
+        } else {
+            Block block = Block.getBlockFromItem(materialGhost.getItem());
+            if (block == null) {
+                tag.removeTag("ghost_block");
+                tag.removeTag("ghost_meta");
+            } else {
+                tag.setString("ghost_block", block.getRegistryName().toString());
+                tag.setInteger("ghost_meta", materialGhost.getMetadata());
+            }
+        }
+    }
+
+    public static void setChildren(ItemStack itemStack, NBTTagList list) {
+        NBTTagCompound tagCompound = getCompound(itemStack);
+        NBTTagList listThis = tagCompound.getTagList("children", Constants.NBT.TAG_COMPOUND);
+        boolean same = true;
+        for (int i = 0 ; i < list.tagCount() ; i++) {
+            NBTTagCompound child1 = listThis.getCompoundTagAt(i);
+            int c1 = getCheck(child1);
+            NBTTagCompound child2 = list.getCompoundTagAt(i);
+            int c2 = getCheck(child1);
+            if (c1 != c2) {
+                same = false;
+                break;
+            }
+            if (!(child1.getString("mod_op").equals(child2.getString("mod_op")) &&
+                    child1.getString("mod_rot").equals(child2.getString("mod_rot")) &&
+                    child1.getBoolean("mod_flipy") == child2.getBoolean("mod_flipy") &&
+                    child1.getString("ghost_block").equals(child2.getString("ghost_block")) &&
+                    child1.getInteger("ghost_meta") == child2.getInteger("ghost_meta"))) {
+                same = false;
+            }
+        }
+        tagCompound.setTag("children", list);
+        if (!same) {
+            dirty(tagCompound);
+        }
+    }
+
+    public static void setDimension(ItemStack itemStack, int x, int y, int z) {
+        NBTTagCompound tagCompound = getCompound(itemStack);
+        if (tagCompound.getInteger("dimX") == x && tagCompound.getInteger("dimY") == y && tagCompound.getInteger("dimZ") == z) {
+            return;
+        }
+        tagCompound.setInteger("dimX", x);
+        tagCompound.setInteger("dimY", y);
+        tagCompound.setInteger("dimZ", z);
+        dirty(tagCompound);
+    }
+
+
+    public static void setOffset(ItemStack itemStack, int x, int y, int z) {
+        NBTTagCompound tagCompound = getCompound(itemStack);
+        if (tagCompound.getInteger("offsetX") == x && tagCompound.getInteger("offsetY") == y && tagCompound.getInteger("offsetZ") == z) {
+            return;
+        }
+        tagCompound.setInteger("offsetX", x);
+        tagCompound.setInteger("offsetY", y);
+        tagCompound.setInteger("offsetZ", z);
+        dirty(tagCompound);
+    }
+
+    private static NBTTagCompound getCompound(ItemStack itemStack) {
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
             itemStack.setTagCompound(tagCompound);
         }
+        return tagCompound;
+    }
+
+    public static void setCorner1(ItemStack itemStack, BlockPos corner) {
+        NBTTagCompound tagCompound = getCompound(itemStack);
         if (corner == null) {
             tagCompound.removeTag("corner1x");
             tagCompound.removeTag("corner1y");
@@ -258,20 +289,16 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
     }
 
     public static void setMode(ItemStack itemStack, int mode) {
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
-        if (tagCompound == null) {
-            tagCompound = new NBTTagCompound();
-            itemStack.setTagCompound(tagCompound);
+        NBTTagCompound tagCompound = getCompound(itemStack);
+        if (tagCompound.getInteger("mode") == mode) {
+            return;
         }
         tagCompound.setInteger("mode", mode);
+        dirty(tagCompound);
     }
 
     public static void setCurrentBlock(ItemStack itemStack, GlobalCoordinate c) {
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
-        if (tagCompound == null) {
-            tagCompound = new NBTTagCompound();
-            itemStack.setTagCompound(tagCompound);
-        }
+        NBTTagCompound tagCompound = getCompound(itemStack);
 
         if (c == null) {
             tagCompound.removeTag("selectedX");
@@ -318,14 +345,37 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         }
 
         Shape shape = getShape(itemStack);
-        list.add(TextFormatting.GREEN + "Shape " + shape.getDescription());
+        boolean issolid = isSolid(itemStack);
+        list.add(TextFormatting.GREEN + "Shape " + shape.getDescription() + " (" + (issolid ? "Solid" : "Hollow") + ")");
         list.add(TextFormatting.GREEN + "Dimension " + BlockPosTools.toString(getDimension(itemStack)));
         list.add(TextFormatting.GREEN + "Offset " + BlockPosTools.toString(getOffset(itemStack)));
+
+        if (shape.isComposition()) {
+            NBTTagCompound card = itemStack.getTagCompound();
+            NBTTagList children = card.getTagList("children", Constants.NBT.TAG_COMPOUND);
+            list.add(TextFormatting.DARK_GREEN + "Formulas: " + children.tagCount());
+        }
+
+        if (shape.isScan()) {
+            NBTTagCompound card = itemStack.getTagCompound();
+            int dim = card.getInteger("datadim");
+            int x = card.getInteger("datax");
+            int y = card.getInteger("datay");
+            int z = card.getInteger("dataz");
+            list.add(TextFormatting.DARK_GREEN + "Scanner at: " + x + "," + y + "," + z + " (dim " + dim + ")");
+        }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(TextFormatting.YELLOW + "Sneak right click on builder to start mark mode");
             list.add(TextFormatting.YELLOW + "Then right click to mark two corners of wanted area");
             switch (type) {
+                case CARD_PUMP_LIQUID:
+                    list.add(TextFormatting.WHITE + "This item will cause the builder to place");
+                    list.add(TextFormatting.WHITE + "liquids from an tank on top/bottom into the world.");
+                    list.add(TextFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
+                    list.add(TextFormatting.GREEN + "Base cost: " + BuilderConfiguration.builderRfPerLiquid + " RF/t per block");
+                    list.add(TextFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
+                    break;
                 case CARD_PUMP:
                     list.add(TextFormatting.WHITE + "This item will cause the builder to collect");
                     list.add(TextFormatting.WHITE + "all liquids in the configured space.");
@@ -494,31 +544,96 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
 
     public static Shape getShape(ItemStack stack) {
         NBTTagCompound tagCompound = stack.getTagCompound();
-        if (tagCompound == null) {
-            return Shape.SHAPE_SOLIDBOX;
-        }
-        if (!tagCompound.hasKey("shape")) {
-            return Shape.SHAPE_SOLIDBOX;
-        }
-        int shape = tagCompound.getInteger("shape");
-        Shape s = Shape.getShape(shape);
-        if (s == null) {
-            return Shape.SHAPE_SOLIDBOX;
-        }
-        return s;
+        return getShape(tagCompound);
     }
 
-    public static void setShape(ItemStack stack, Shape shape) {
-        NBTTagCompound tagCompound = stack.getTagCompound();
+    public static Shape getShape(NBTTagCompound tagCompound) {
         if (tagCompound == null) {
-            tagCompound = new NBTTagCompound();
-            stack.setTagCompound(tagCompound);
+            return Shape.SHAPE_BOX;
         }
-        tagCompound.setInteger("shape", shape.getIndex());
+        if (!tagCompound.hasKey("shape") && !tagCompound.hasKey("shapenew")) {
+            return Shape.SHAPE_BOX;
+        }
+        Shape shape;
+        if (tagCompound.hasKey("shapenew")) {
+            String sn = tagCompound.getString("shapenew");
+            shape = Shape.getShape(sn);
+        } else {
+            int shapedeprecated = tagCompound.getInteger("shape");
+            ShapeDeprecated sd = ShapeDeprecated.getShape(shapedeprecated);
+            shape = sd.getNewshape();
+        }
+
+        if (shape == null) {
+            return Shape.SHAPE_BOX;
+        }
+        return shape;
+    }
+
+    public static boolean isSolid(ItemStack stack) {
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        return isSolid(tagCompound);
+    }
+
+    public static boolean isSolid(NBTTagCompound tagCompound) {
+        if (tagCompound == null) {
+            return true;
+        }
+        if (!tagCompound.hasKey("shape") && !tagCompound.hasKey("shapenew")) {
+            return true;
+        }
+        if (tagCompound.hasKey("shapenew")) {
+            return tagCompound.getBoolean("solid");
+        } else {
+            int shapedeprecated = tagCompound.getInteger("shape");
+            ShapeDeprecated sd = ShapeDeprecated.getShape(shapedeprecated);
+            return sd.isSolid();
+        }
+    }
+
+    public static IFormula createCorrectFormula(NBTTagCompound tagCompound) {
+        Shape shape = getShape(tagCompound);
+        boolean solid = isSolid(tagCompound);
+        IFormula formula = shape.getFormulaFactory().createFormula();
+        return formula.correctFormula(solid);
+    }
+
+    public static int getCheck(ItemStack stack) {
+        NBTTagCompound tagCompound = getCompound(stack);
+        return getCheck(tagCompound);
+    }
+
+    public static int getCheck(NBTTagCompound tagCompound) {
+        int check = tagCompound.getInteger("check");
+        NBTTagList children = tagCompound.getTagList("children", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < children.tagCount() ; i++) {
+            NBTTagCompound child = children.getCompoundTagAt(i);
+            check += getCheck(child) << 6;
+        }
+        return check;
+    }
+
+    public static void dirty(NBTTagCompound tag) {
+        tag.setInteger("check", tag.getInteger("check") + 1);
+    }
+
+    public static void setShape(ItemStack stack, Shape shape, boolean solid) {
+        NBTTagCompound tagCompound = getCompound(stack);
+        if (isSolid(tagCompound) == solid && getShape(tagCompound).equals(shape)) {
+            // Nothing happens
+            return;
+        }
+        tagCompound.setString("shapenew", shape.getDescription());
+        tagCompound.setBoolean("solid", solid);
+        dirty(tagCompound);
     }
 
     public static BlockPos getDimension(ItemStack stack) {
         NBTTagCompound tagCompound = stack.getTagCompound();
+        return getDimension(tagCompound);
+    }
+
+    public static BlockPos getDimension(NBTTagCompound tagCompound) {
         if (tagCompound == null) {
             return new BlockPos(5, 5, 5);
         }
@@ -533,6 +648,10 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
 
     public static BlockPos getClampedDimension(ItemStack stack, int maximum) {
         NBTTagCompound tagCompound = stack.getTagCompound();
+        return getClampedDimension(tagCompound, maximum);
+    }
+
+    public static BlockPos getClampedDimension(NBTTagCompound tagCompound, int maximum) {
         if (tagCompound == null) {
             return new BlockPos(5, 5, 5);
         }
@@ -564,6 +683,10 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
 
     public static BlockPos getClampedOffset(ItemStack stack, int maximum) {
         NBTTagCompound tagCompound = stack.getTagCompound();
+        return getClampedOffset(tagCompound, maximum);
+    }
+
+    public static BlockPos getClampedOffset(NBTTagCompound tagCompound, int maximum) {
         if (tagCompound == null) {
             return new BlockPos(0, 0, 0);
         }
@@ -610,32 +733,27 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         return new BlockPos(minCorner.getX() + dx, minCorner.getY() + dy, minCorner.getZ() + dz);
     }
 
-    public static int countBlocks(Shape shape, BlockPos dimension) {
+    public static int countBlocks(ItemStack shapeCard, Shape shape, boolean solid, BlockPos dimension) {
         final int[] cnt = {0};
         BlockPos offset = new BlockPos(0, 128, 0);
         BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
-        composeShape(shape, null, new BlockPos(0, 0, 0), clamped, offset, new AbstractCollection<BlockPos>() {
+        composeFormula(shapeCard, shape.getFormulaFactory().createFormula(), null, new BlockPos(0, 0, 0), clamped, offset, new AbstractMap<BlockPos, IBlockState>() {
             @Override
-            public Iterator<BlockPos> iterator() {
-                return new AbstractIterator<BlockPos>() {
-                    @Override
-                    protected BlockPos computeNext() {
-                        return null;
-                    }
-                };
+            public IBlockState put(BlockPos key, IBlockState value) {
+                cnt[0]++;
+                return value;
             }
 
             @Override
-            public boolean add(BlockPos coordinate) {
-                cnt[0]++;
-                return true;
+            public Set<Entry<BlockPos, IBlockState>> entrySet() {
+                return Collections.emptySet();
             }
 
             @Override
             public int size() {
                 return 0;
             }
-        }, MAXIMUM_COUNT+1, false, null);
+        }, MAXIMUM_COUNT+1, solid, false, null);
         return cnt[0];
     }
 
@@ -655,209 +773,104 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         }
     }
 
-    public static void composeShape(Shape shape, World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean forquarry,
-                                    ChunkPos chunk) {
-        switch (shape) {
-            case SHAPE_BOX:
-                composeBox(worldObj, thisCoord, dimension, offset, blocks, maxSize, false, forquarry, chunk);
-                break;
-            case SHAPE_SOLIDBOX:
-                composeBox(worldObj, thisCoord, dimension, offset, blocks, maxSize, true, forquarry, chunk);
-                break;
-            case SHAPE_TOPDOME:
-                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 1, false, forquarry, chunk);
-                break;
-            case SHAPE_BOTTOMDOME:
-                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, -1, false, forquarry, chunk);
-                break;
-            case SHAPE_SOLIDTOPDOME:
-                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 1, true, forquarry, chunk);
-                break;
-            case SHAPE_SOLIDBOTTOMDOME:
-                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, -1, true, forquarry, chunk);
-                break;
-            case SHAPE_SPHERE:
-                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 0, false, forquarry, chunk);
-                break;
-            case SHAPE_SOLIDSPHERE:
-                composeSphere(worldObj, thisCoord, dimension, offset, blocks, maxSize, 0, true, forquarry, chunk);
-                break;
-            case SHAPE_CYLINDER:
-                composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, false, false, forquarry, chunk);
-                break;
-            case SHAPE_SOLIDCYLINDER:
-                composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, true, true, forquarry, chunk);
-                break;
-            case SHAPE_CAPPEDCYLINDER:
-                composeCylinder(worldObj, thisCoord, dimension, offset, blocks, maxSize, true, false, forquarry, chunk);
-                break;
-            case SHAPE_PRISM:
-                composePrism(worldObj, thisCoord, dimension, offset, blocks, maxSize, forquarry, chunk);
-                break;
-            case SHAPE_TORUS:
-                composeTorus(worldObj, thisCoord, dimension, offset, blocks, maxSize, false, forquarry, chunk);
-                break;
-            case SHAPE_SOLIDTORUS:
-                composeTorus(worldObj, thisCoord, dimension, offset, blocks, maxSize, true, forquarry, chunk);
-                break;
-        }
-    }
-
-    private static void placeBlockIfPossible(World worldObj, Collection<BlockPos> blocks, int maxSize, int x, int y, int z, boolean forquarry) {
+    private static void placeBlockIfPossible(World worldObj, Map<BlockPos, IBlockState> blocks, int maxSize, int x, int y, int z, IBlockState state, boolean forquarry) {
         BlockPos c = new BlockPos(x, y, z);
         if (worldObj == null) {
-            blocks.add(c);
+            blocks.put(c, state);
             return;
         }
         if (forquarry) {
             if (worldObj.isAirBlock(c)) {
                 return;
             }
-            blocks.add(c);
+            blocks.put(c, state);
         } else {
             if (BuilderTileEntity.isEmptyOrReplacable(worldObj, c) && blocks.size() < maxSize - 1) {
-                blocks.add(c);
+                blocks.put(c, state);
             }
         }
     }
 
-    private static void composeSphere(World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, int side, boolean solid, boolean forquarry, ChunkPos chunk) {
-        int xCoord = thisCoord.getX();
-        int yCoord = thisCoord.getY();
-        int zCoord = thisCoord.getZ();
-        int dx = dimension.getX();
-        int dy = dimension.getY();
-        int dz = dimension.getZ();
+    public static int getRenderPositions(ItemStack stack, Shape shape, boolean solid, RLE positions, StatePalette statePalette) {
+        BlockPos dimension = ShapeCardItem.getDimension(stack);
+        BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
 
-        float centerx;
-        float centery;
-        float centerz;
-        centerx = xCoord + offset.getX() + ((dx % 2 != 0) ? 0.0f : -.5f);
-        centery = yCoord + offset.getY() + ((dy % 2 != 0) ? 0.0f : -.5f);
-        centerz = zCoord + offset.getZ() + ((dz % 2 != 0) ? 0.0f : -.5f);
-        BlockPos tl = new BlockPos(xCoord - dx/2 + offset.getX(), yCoord - dy/2 + offset.getY(), zCoord - dz/2 + offset.getZ());
+        IFormula formula = shape.getFormulaFactory().createFormula();
+        int dx = clamped.getX();
+        int dy = clamped.getY();
+        int dz = clamped.getZ();
 
-        float dx2;
-        float dy2;
-        float dz2;
-        int davg;
+        formula = formula.correctFormula(solid);
+        formula.setup(new BlockPos(0, 0, 0), clamped, new BlockPos(0, 0, 0), stack != null ? stack.getTagCompound() : null);
 
-//            float factor = 2.0f;
-        float factor = 1.8f;
-        dx2 = dx == 0 ? .5f : ((dx + factor) * (dx + factor)) / 4.0f;
-        dy2 = dy == 0 ? .5f : ((dy + factor) * (dy + factor)) / 4.0f;
-        dz2 = dz == 0 ? .5f : ((dz + factor) * (dz + factor)) / 4.0f;
-        davg = (int) ((dx + dy + dz + factor * 3) / 3);
-
-        for (int ox = 0 ; ox < dx ; ox++) {
-            int x = tl.getX() + ox;
-            if (xInChunk(x, chunk)) {
-                for (int oz = 0 ; oz < dz ; oz++) {
-                    int z = tl.getZ() + oz;
-                    if (zInChunk(z, chunk)) {
-                        for (int oy = 0; oy < dy; oy++) {
-                            int y = tl.getY() + oy;
-                            if (y >= 0 && y < 255) {
-                                if (side == 0 || (side == 1 && y >= yCoord + offset.getY()) || (side == -1 && y <= yCoord + offset.getY())) {
-                                    if (isInside3D(centerx, centery, centerz, x, y, z, dx2, dy2, dz2, davg) == 1) {
-                                        int cnt;
-                                        if (solid) {
-                                            cnt = 0;
-                                        } else {
-                                            cnt = isInside3D(centerx, centery, centerz, x - 1, y, z, dx2, dy2, dz2, davg);
-                                            cnt += isInside3D(centerx, centery, centerz, x + 1, y, z, dx2, dy2, dz2, davg);
-                                            cnt += isInside3D(centerx, centery, centerz, x, y - 1, z, dx2, dy2, dz2, davg);
-                                            cnt += isInside3D(centerx, centery, centerz, x, y + 1, z, dx2, dy2, dz2, davg);
-                                            cnt += isInside3D(centerx, centery, centerz, x, y, z - 1, dx2, dy2, dz2, davg);
-                                            cnt += isInside3D(centerx, centery, centerz, x, y, z + 1, dx2, dy2, dz2, davg);
-                                        }
-                                        if (cnt != 6) {
-                                            placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private static float squaredDistance3D(float cx, float cy, float cz, float x1, float y1, float z1, float dx2, float dy2, float dz2) {
-        return (x1-cx) * (x1-cx) / dx2 + (y1-cy) * (y1-cy) / dy2 + (z1-cz) * (z1-cz) / dz2;
-    }
-
-    private static float squaredDistance2D(float cx, float cz, float x1, float z1, float dx2, float dz2) {
-        return (x1-cx) * (x1-cx) / dx2 + (z1-cz) * (z1-cz) / dz2;
-    }
-
-    private static int isInside2D(float centerx, float centerz, int x, int z, float dx2, float dz2, int davg) {
-        double distance = Math.sqrt(squaredDistance2D(centerx, centerz, x, z, dx2, dz2));
-        return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) ? 1 : 0;
-    }
-
-    private static int isInside3D(float centerx, float centery, float centerz, int x, int y, int z, float dx2, float dy2, float dz2, int davg) {
-        double distance = Math.sqrt(squaredDistance3D(centerx, centery, centerz, x, y, z, dx2, dy2, dz2));
-        return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) ? 1 : 0;
-    }
-
-    private static void composeCylinder(World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean capped, boolean solid, boolean forquarry, ChunkPos chunk) {
-        int xCoord = thisCoord.getX();
-        int yCoord = thisCoord.getY();
-        int zCoord = thisCoord.getZ();
-        int dx = dimension.getX();
-        int dy = dimension.getY();
-        int dz = dimension.getZ();
-        float centerx;
-        float centerz;
-
-        centerx = xCoord + offset.getX() + ((dx % 2 != 0) ? 0.0f : -.5f);
-        centerz = zCoord + offset.getZ() + ((dz % 2 != 0) ? 0.0f : -.5f);
-
-        BlockPos tl = new BlockPos(xCoord - dx/2 + offset.getX(), yCoord - dy/2 + offset.getY(), zCoord - dz/2 + offset.getZ());
-
-        float dx2;
-        float dz2;
-        int davg;
-
-        float factor = 1.7f;
-        dx2 = dx == 0 ? .5f : ((dx + factor) * (dx + factor)) / 4.0f;
-        dz2 = dz == 0 ? .5f : ((dz + factor) * (dz + factor)) / 4.0f;
-        davg = (int) ((dx + dz + factor * 2) / 2);
-
-        for (int ox = 0 ; ox < dx ; ox++) {
-            int x = tl.getX() + ox;
-            if (xInChunk(x, chunk)) {
+        int cnt = 0;
+        for (int oy = 0; oy < dy; oy++) {
+            int y = oy - dy/2;
+            for (int ox = 0; ox < dx; ox++) {
+                int x = ox - dx/2;
                 for (int oz = 0; oz < dz; oz++) {
-                    int z = tl.getZ() + oz;
-                    if (zInChunk(z, chunk)) {
-                        for (int oy = 0; oy < dy; oy++) {
-                            int y = tl.getY() + oy;
-                            if (y >= 0 && y < 255) {
-                                if (isInside2D(centerx, centerz, x, z, dx2, dz2, davg) == 1) {
-                                    int cnt;
-                                    if (solid) {
-                                        cnt = 0;
-                                    } else {
-                                        cnt = isInside2D(centerx, centerz, x - 1, z, dx2, dz2, davg);
-                                        cnt += isInside2D(centerx, centerz, x + 1, z, dx2, dz2, davg);
-                                        cnt += isInside2D(centerx, centerz, x, z - 1, dx2, dz2, davg);
-                                        cnt += isInside2D(centerx, centerz, x, z + 1, dx2, dz2, davg);
-                                    }
-                                    if (cnt != 4 || (capped && (oy == 0 || oy == dy - 1))) {
-                                        placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
-                                    }
-                                }
+                    int z = oz - dz/2;
+                    int v = 255;
+                    if (formula.isInside(x, y, z)) {
+                        cnt++;
+                        IBlockState lastState = formula.getLastState();
+                        if (solid) {
+                            if (ox == 0 || ox == dx - 1 || oy == 0 || oy == dy - 1 || oz == 0 || oz == dz - 1) {
+                                v = statePalette.alloc(lastState, -1) + 1;
+                            } else if (!formula.isInside(x - 1, y, z) || !formula.isInside(x + 1, y, z) || !formula.isInside(x, y - 1, z) || !formula.isInside(x, y + 1, z) || !formula.isInside(x, y, z - 1) || !formula.isInside(x, y, z + 1)) {
+                                v = statePalette.alloc(lastState, -1) + 1;
                             }
+                        } else {
+                            v = statePalette.alloc(lastState, -1) + 1;
                         }
                     }
+                    positions.add(v);
                 }
             }
         }
+        return cnt;
     }
 
-    private static void composeBox(World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean solid, boolean forquarry, ChunkPos chunk) {
+    // Used for saving
+    public static int getDataPositions(ItemStack stack, Shape shape, boolean solid, RLE positions, StatePalette statePalette) {
+        BlockPos dimension = ShapeCardItem.getDimension(stack);
+        BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
+
+        IFormula formula = shape.getFormulaFactory().createFormula();
+        int dx = clamped.getX();
+        int dy = clamped.getY();
+        int dz = clamped.getZ();
+
+        formula = formula.correctFormula(solid);
+        formula.setup(new BlockPos(0, 0, 0), clamped, new BlockPos(0, 0, 0), stack != null ? stack.getTagCompound() : null);
+
+        int cnt = 0;
+        for (int oy = 0; oy < dy; oy++) {
+            int y = oy - dy/2;
+            for (int ox = 0; ox < dx; ox++) {
+                int x = ox - dx/2;
+                for (int oz = 0; oz < dz; oz++) {
+                    int z = oz - dz/2;
+                    int v = 255;
+                    if (formula.isInside(x, y, z)) {
+                        cnt++;
+                        IBlockState lastState = formula.getLastState();
+                        if (lastState == null) {
+                            lastState = Blocks.STONE.getDefaultState();
+                        }
+                        v = statePalette.alloc(lastState, 0) + 1;
+                    }
+                    System.out.println("v = " + v);
+                    positions.add(v);
+                }
+            }
+        }
+        return cnt;
+    }
+
+
+
+    public static void composeFormula(ItemStack shapeCard, IFormula formula, World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Map<BlockPos, IBlockState> blocks, int maxSize, boolean solid, boolean forquarry, ChunkPos chunk) {
         int xCoord = thisCoord.getX();
         int yCoord = thisCoord.getY();
         int zCoord = thisCoord.getZ();
@@ -865,6 +878,9 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         int dy = dimension.getY();
         int dz = dimension.getZ();
         BlockPos tl = new BlockPos(xCoord - dx/2 + offset.getX(), yCoord - dy/2 + offset.getY(), zCoord - dz/2 + offset.getZ());
+
+        formula = formula.correctFormula(solid);
+        formula.setup(thisCoord, dimension, offset, shapeCard != null ? shapeCard.getTagCompound() : null);
 
         for (int ox = 0 ; ox < dx ; ox++) {
             int x = tl.getX() + ox;
@@ -874,101 +890,11 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
                     if (zInChunk(z, chunk)) {
                         for (int oy = 0; oy < dy; oy++) {
                             int y = tl.getY() + oy;
-                            if (y >= 0 && y < 255) {
-                                if (solid || ox == 0 || oy == 0 || oz == 0 || ox == (dx - 1) || oy == (dy - 1) || oz == (dz - 1)) {
-                                    placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
+//                            if (y >= yCoord-dy/2 && y < yCoord+dy/2) {    @todo!!!
+                                if (formula.isInside(x, y, z)) {
+                                    placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, formula.getLastState(), forquarry);
                                 }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private static void composePrism(World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean forquarry, ChunkPos chunk) {
-        int xCoord = thisCoord.getX();
-        int yCoord = thisCoord.getY();
-        int zCoord = thisCoord.getZ();
-        int dx = dimension.getX();
-        int dy = dimension.getY();
-        int dz = dimension.getZ();
-        BlockPos tl = new BlockPos(xCoord - dx/2 + offset.getX(), yCoord - dy/2 + offset.getY(), zCoord - dz/2 + offset.getZ());
-
-        for (int oy = 0 ; oy < dy ; oy++) {
-            int y = tl.getY() + oy;
-            if (y >= 0 && y < 255) {
-                int yoffset = oy;
-                for (int ox = 0 ; ox < dx ; ox++) {
-                    if (ox >= yoffset && ox < dx-yoffset) {
-                        int x = tl.getX() + ox;
-                        if (xInChunk(x, chunk)) {
-                            for (int oz = yoffset; oz < dz - yoffset; oz++) {
-                                int z = tl.getZ() + oz;
-                                if (zInChunk(z, chunk)) {
-                                    if (ox == yoffset || oy == 0 || oz == yoffset || ox == (dx - yoffset - 1) || oz == (dz - yoffset - 1)) {
-                                        placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private static int isInsideTorus(float centerx, float centery, float centerz, int x, int y, int z, float bigRadius, float smallRadius) {
-        double rr = bigRadius - Math.sqrt((x-centerx)*(x-centerx) + (z-centerz)*(z-centerz));
-        double f = rr*rr + (y-centery) * (y-centery) - smallRadius * smallRadius;
-        if (f < 0) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
-
-    private static void composeTorus(World worldObj, BlockPos thisCoord, BlockPos dimension, BlockPos offset, Collection<BlockPos> blocks, int maxSize, boolean solid, boolean forquarry, ChunkPos chunk) {
-        int xCoord = thisCoord.getX();
-        int yCoord = thisCoord.getY();
-        int zCoord = thisCoord.getZ();
-        int dx = dimension.getX();
-        int dy = dimension.getY();
-        int dz = dimension.getZ();
-        float centerx = xCoord + offset.getX();
-        float centery = yCoord + offset.getY();
-        float centerz = zCoord + offset.getZ();
-        BlockPos tl = new BlockPos(xCoord - dx/2 + offset.getX(), yCoord - dy/2 + offset.getY(), zCoord - dz/2 + offset.getZ());
-
-        float smallRadius = (dy-2)/2.0f;
-        float bigRadius = (dx-2)/2.0f - smallRadius;
-
-        for (int ox = 0 ; ox < dx ; ox++) {
-            int x = tl.getX() + ox;
-            if (xInChunk(x, chunk)) {
-                for (int oz = 0 ; oz < dz ; oz++) {
-                    int z = tl.getZ() + oz;
-                    if (zInChunk(z, chunk)) {
-                        for (int oy = 0; oy < dy; oy++) {
-                            int y = tl.getY() + oy;
-                            if (y >= 0 && y < 255) {
-                                if (isInsideTorus(centerx, centery, centerz, x, y, z, bigRadius, smallRadius) == 1) {
-                                    int cnt;
-                                    if (solid) {
-                                        cnt = 0;
-                                    } else {
-                                        cnt = isInsideTorus(centerx, centery, centerz, x - 1, y, z, bigRadius, smallRadius);
-                                        cnt += isInsideTorus(centerx, centery, centerz, x + 1, y, z, bigRadius, smallRadius);
-                                        cnt += isInsideTorus(centerx, centery, centerz, x, y, z - 1, bigRadius, smallRadius);
-                                        cnt += isInsideTorus(centerx, centery, centerz, x, y, z + 1, bigRadius, smallRadius);
-                                        cnt += isInsideTorus(centerx, centery, centerz, x, y - 1, z, bigRadius, smallRadius);
-                                        cnt += isInsideTorus(centerx, centery, centerz, x, y + 1, z, bigRadius, smallRadius);
-                                    }
-                                    if (cnt != 6) {
-                                        placeBlockIfPossible(worldObj, blocks, maxSize, x, y, z, forquarry);
-                                    }
-                                }
-                            }
+//                            }
                         }
                     }
                 }
@@ -986,6 +912,9 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
     }
 
     @Override
+    protected void clGetSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
+        for (int i = 0 ; i <= 10 ; i++) {
+            subItems.add(new ItemStack(this, 1, i));
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (this.isInCreativeTab(tab)) {
             for (int i = 0; i <= 9; i++) {
@@ -994,4 +923,132 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         }
     }
 
+    public static void save(EntityPlayer player, ItemStack card, String filename) {
+        Shape shape = ShapeCardItem.getShape(card);
+        boolean solid = ShapeCardItem.isSolid(card);
+        BlockPos offset = ShapeCardItem.getOffset(card);
+        BlockPos dimension = ShapeCardItem.getDimension(card);
+
+        RLE positions = new RLE();
+        StatePalette statePalette = new StatePalette();
+        int cnt = getDataPositions(card, shape, solid, positions, statePalette);
+
+        byte[] data = positions.getData();
+
+        File file = new File(filename);
+        FileOutputStream stream;
+        try {
+            stream = new FileOutputStream(file);
+        } catch (FileNotFoundException e) {
+            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Cannot write to file '" + filename + "'!"));
+            return;
+        }
+        PrintWriter writer = new PrintWriter(stream);
+        writer.println("SHAPE");
+        writer.println("DIM:" + dimension.getX() + "," + dimension.getY() + "," + dimension.getZ());
+        writer.println("OFF:" + offset.getX() + "," + offset.getY() + "," + offset.getZ());
+        for (IBlockState state : statePalette.getPalette()) {
+            String r = state.getBlock().getRegistryName().toString();
+            writer.println(r + "@" + state.getBlock().getMetaFromState(state));
+        }
+        writer.println("DATA");
+
+        byte[] encoded = Base64.getEncoder().encode(data);
+        writer.write(new String(encoded));
+        writer.close();
+    }
+
+    public static void load(EntityPlayer player, ItemStack card, String filename) {
+        Shape shape = ShapeCardItem.getShape(card);
+
+        if (shape != Shape.SHAPE_SCAN) {
+            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "To load a file into this card you need a linked 'scan' type card!"));
+            return;
+        }
+
+        NBTTagCompound compound = ShapeCardItem.getCompound(card);
+        GlobalCoordinate scannerPos = ShapeCardItem.getData(compound);
+        if (scannerPos == null) {
+            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "This card is not linked to a scanner!"));
+            return;
+        }
+
+        World world = DimensionManager.getWorld(scannerPos.getDimension());
+        if (world == null || !world.isBlockLoaded(scannerPos.getCoordinate())) {
+            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "The scanner is out of reach or not chunkloaded!"));
+            return;
+        }
+
+        TileEntity te = world.getTileEntity(scannerPos.getCoordinate());
+        if (!(te instanceof ScannerTileEntity)) {
+            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Not a valid scanner!"));
+            return;
+        }
+
+        ScannerTileEntity scanner = (ScannerTileEntity) te;
+
+        File file = new File(filename);
+        FileInputStream stream;
+
+        try {
+            stream = new FileInputStream(file);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+            String s = reader.readLine();
+            if (!"SHAPE".equals(s)) {
+                ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "This does not appear to be a valid shapecard file!"));
+                return;
+            }
+            s = reader.readLine();
+            if (!s.startsWith("DIM:")) {
+                ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "This does not appear to be a valid shapecard file!"));
+                return;
+            }
+            BlockPos dim = parse(s.substring(4));
+            s = reader.readLine();
+            if (!s.startsWith("OFF:")) {
+                ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "This does not appear to be a valid shapecard file!"));
+                return;
+            }
+            BlockPos off = parse(s.substring(4));
+            s = reader.readLine();
+            StatePalette statePalette = new StatePalette();
+            while (!"DATA".equals(s)) {
+                String[] split = StringUtils.split(s, '@');
+                Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(split[0]));
+                int meta = Integer.parseInt(split[1]);
+                if (block == null) {
+                    ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.YELLOW + "Could not find block '" + split[0] + "'!"));
+                    block = Blocks.STONE;
+                    meta = 0;
+                }
+                statePalette.add(block.getStateFromMeta(meta));
+                s = reader.readLine();
+            }
+            s = reader.readLine();
+            byte[] decoded = Base64.getDecoder().decode(s.getBytes());
+            for (byte b : decoded) {
+                System.out.println("b = " + b);
+            }
+
+            scanner.setDataFromFile(card, dim, off, decoded, statePalette);
+        } catch (FileNotFoundException e) {
+            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Cannot read from file '" + filename + "'!"));
+            return;
+        } catch (IOException e) {
+            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Cannot read from file '" + filename + "'!"));
+            return;
+        } catch (NullPointerException e) {
+            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "File '" + filename + "' is too short!"));
+            return;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "File '" + filename + "' contains invalid entries!"));
+            return;
+        }
+
+    }
+
+    private static BlockPos parse(String s) {
+        String[] split = StringUtils.split(s, ',');
+        return new BlockPos(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+    }
 }

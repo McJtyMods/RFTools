@@ -38,6 +38,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import net.minecraftforge.oredict.OreDictionary;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -426,16 +427,43 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
 
     public Set<BlockPos> performSearch(String search) {
-        final String finalSearch = search;
+
+        Predicate<ItemStack> matcher = getMatcher(search);
+
         Set<BlockPos> output = new HashSet<>();
+        Predicate<ItemStack> finalMatcher = matcher;
         inventories.stream()
                 .filter(this::isValid)
                 .map(p -> getWorld().getTileEntity(p))
                 .filter(te -> te != null && !(te instanceof StorageScannerTileEntity))
-                .forEach(te -> {
-                    InventoryHelper.getItems(te, s -> s.getDisplayName().toLowerCase().contains(finalSearch)).forEach(s -> output.add(te.getPos()));
-                });
+                .forEach(te -> InventoryHelper.getItems(te, finalMatcher).forEach(s -> output.add(te.getPos())));
         return output;
+    }
+
+    public static Predicate<ItemStack> getMatcher(String search) {
+        Predicate<ItemStack> matcher = null;
+        search = search.toLowerCase();
+
+        String[] splitted = StringUtils.split(search);
+        for (String split : splitted) {
+            if (matcher == null) {
+                matcher = makeSearchPredicate(split);
+            } else {
+                matcher = matcher.and(makeSearchPredicate(split));
+            }
+        }
+        if (matcher == null) {
+            matcher = s -> true;
+        }
+        return matcher;
+    }
+
+    private static Predicate<ItemStack> makeSearchPredicate(String split) {
+        if (split.startsWith("@")) {
+            return s -> RFToolsTools.getModid(s).toLowerCase().startsWith(split.substring(1));
+        } else {
+            return s -> s.getDisplayName().toLowerCase().contains(split);
+        }
     }
 
     public int getRadius() {

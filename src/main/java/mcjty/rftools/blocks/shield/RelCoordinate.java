@@ -25,23 +25,16 @@ public class RelCoordinate {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (!(o instanceof RelCoordinate)) return false;
 
         RelCoordinate that = (RelCoordinate) o;
 
-        if (dx != that.dx) {
-            return false;
-        }
-        if (dy != that.dy) {
-            return false;
-        }
-        return dz == that.dz;
+        if (dx != that.dx) return false;
+        if (dy != that.dy) return false;
+        if (dz != that.dz) return false;
 
+        return true;
     }
 
     @Override

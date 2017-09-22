@@ -11,6 +11,7 @@ import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.elevator.ElevatorSounds;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.ScreenSetup;
+import mcjty.rftools.blocks.shield.BakedModelLoader;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.keys.KeyBindings;
 import mcjty.rftools.keys.KeyInputHandler;
@@ -26,6 +27,7 @@ import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -48,6 +50,7 @@ public class ClientProxy extends CommonProxy {
         super.preInit(e);
         MinecraftForge.EVENT_BUS.register(this);
         OBJLoader.INSTANCE.addDomain(RFTools.MODID);
+        ModelLoaderRegistry.registerLoader(new BakedModelLoader());
         McJtyLibClient.preInit(e);
     }
 

@@ -10,6 +10,7 @@ import mcjty.lib.varia.*;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.hud.IHudSupport;
+import mcjty.rftools.shapes.Shape;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
@@ -53,6 +54,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -86,7 +88,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public static final int MODE_BACK = 3;
     public static final int MODE_COLLECT = 4;
 
-    public static final String[] MODES = new String[] { "Copy", "Move", "Swap", "Back", "Collect" };
+    public static final String[] MODES = new String[]{"Copy", "Move", "Swap", "Back", "Collect"};
 
     public static final String ROTATE_0 = "0";
     public static final String ROTATE_90 = "90";
@@ -133,7 +135,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private ChunkPos forcedChunk = null;
 
     // Cached set of blocks that we need to build in shaped mode
-    private Set<BlockPos> cachedBlocks = null;
+    private Map<BlockPos, IBlockState> cachedBlocks = null;
     private ChunkPos cachedChunk = null;       // For which chunk are the cachedBlocks valid
 
     // Cached set of blocks that we want to void with the quarry.
@@ -183,6 +185,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 case ShapeCardItem.CARD_PUMP:
                     list.add("    Pump");
                     break;
+                case ShapeCardItem.CARD_PUMP_LIQUID:
+                    list.add("    Place liquids");
+                    break;
                 case ShapeCardItem.CARD_PUMP_CLEAR:
                     list.add("    Pump");
                     list.add("    (clearing)");
@@ -211,8 +216,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 case ShapeCardItem.CARD_SHAPE:
                     list.add("    Shape card");
                     ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
-                    if (!shapeCard.isEmpty()) {
-                        ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
+                    if (ItemStackTools.isValid(shapeCard)) {
+                        Shape shape = ShapeCardItem.getShape(shapeCard);
                         if (shape != null) {
                             list.add("    " + shape.getDescription());
                         }
@@ -231,8 +236,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             int maxChunkZ = maxBox.getZ() >> 4;
             int curX = scan.getX() >> 4;
             int curZ = scan.getZ() >> 4;
-            int totChunks = (maxChunkX-minChunkX+1) * (maxChunkZ-minChunkZ+1);
-            int curChunk = (curZ-minChunkZ) * (maxChunkX-minChunkX) + curX-minChunkX;
+            int totChunks = (maxChunkX - minChunkX + 1) * (maxChunkZ - minChunkZ + 1);
+            int curChunk = (curZ - minChunkZ) * (maxChunkX - minChunkX) + curX - minChunkX;
             list.add("    Chunk:  " + curChunk + " of " + totChunks);
         }
         return list;
@@ -274,11 +279,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
         BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
         BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
-        ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
-        List<BlockPos> blocks = new ArrayList<>();
-        ShapeCardItem.composeShape(shape.makeHollow(), getWorld(), getPos(), dimension, offset, blocks,
-                BuilderConfiguration.maxBuilderDimension*256* BuilderConfiguration.maxBuilderDimension, false, null);
-        for (BlockPos p : blocks) {
+        Shape shape = ShapeCardItem.getShape(shapeCard);
+        Map<BlockPos, IBlockState> blocks = new HashMap<>();
+        ShapeCardItem.composeFormula(shapeCard, shape.getFormulaFactory().createFormula(), getWorld(), getPos(), dimension, offset, blocks, BuilderConfiguration.maxBuilderDimension * 256 * BuilderConfiguration.maxBuilderDimension, false, false, null);
+        for (Map.Entry<BlockPos, IBlockState> entry : blocks.entrySet()) {
+            BlockPos p = entry.getKey();
             if (getWorld().isAirBlock(p)) {
                 getWorld().setBlockState(p, BuilderSetup.supportBlock.getDefaultState().withProperty(SupportBlock.STATUS, SupportBlock.STATUS_OK), 3);
             }
@@ -301,9 +306,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
             BlockPos.MutableBlockPos src = new BlockPos.MutableBlockPos();
             BlockPos.MutableBlockPos dest = new BlockPos.MutableBlockPos();
-            for (int x = minBox.getX() ; x <= maxBox.getX() ; x++) {
-                for (int y = minBox.getY() ; y <= maxBox.getY() ; y++) {
-                    for (int z = minBox.getZ() ; z <= maxBox.getZ() ; z++) {
+            for (int x = minBox.getX(); x <= maxBox.getX(); x++) {
+                for (int y = minBox.getY(); y <= maxBox.getY(); y++) {
+                    for (int z = minBox.getZ(); z <= maxBox.getZ(); z++) {
                         src.setPos(x, y, z);
                         sourceToDest(src, dest);
                         IBlockState srcState = world.getBlockState(src);
@@ -335,10 +340,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
         BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
         BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
-        ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
-        List<BlockPos> blocks = new ArrayList<BlockPos>();
-        ShapeCardItem.composeShape(shape.makeHollow(), getWorld(), getPos(), dimension, offset, blocks, BuilderConfiguration.maxSpaceChamberDimension* BuilderConfiguration.maxSpaceChamberDimension* BuilderConfiguration.maxSpaceChamberDimension, false, null);
-        for (BlockPos block : blocks) {
+        Shape shape = ShapeCardItem.getShape(shapeCard);
+        Map<BlockPos, IBlockState> blocks = new HashMap<>();
+        ShapeCardItem.composeFormula(shapeCard, shape.getFormulaFactory().createFormula(), getWorld(), getPos(), dimension, offset, blocks, BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension, false, false, null);
+        for (Map.Entry<BlockPos, IBlockState> entry : blocks.entrySet()) {
+            BlockPos block = entry.getKey();
             if (getWorld().getBlockState(block).getBlock() == BuilderSetup.supportBlock) {
                 getWorld().setBlockToAir(block);
             }
@@ -363,9 +369,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
             BlockPos.MutableBlockPos src = new BlockPos.MutableBlockPos();
             BlockPos.MutableBlockPos dest = new BlockPos.MutableBlockPos();
-            for (int x = minBox.getX() ; x <= maxBox.getX() ; x++) {
-                for (int y = minBox.getY() ; y <= maxBox.getY() ; y++) {
-                    for (int z = minBox.getZ() ; z <= maxBox.getZ() ; z++) {
+            for (int x = minBox.getX(); x <= maxBox.getX(); x++) {
+                for (int y = minBox.getY(); y <= maxBox.getY(); y++) {
+                    for (int z = minBox.getZ(); z <= maxBox.getZ(); z++) {
                         src.setPos(x, y, z);
                         if (world != null) {
                             Block srcBlock = world.getBlockState(src).getBlock();
@@ -462,15 +468,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             int dy = dimension.getY();
             int dz = dimension.getZ();
 
-            BlockPos offset = new BlockPos(minBox.getX() + (int)Math.ceil(dx / 2), minBox.getY() + (int)Math.ceil(dy / 2), minBox.getZ() + (int)Math.ceil(dz / 2));
-            NBTTagCompound tagCompound = shapeCard.getTagCompound();
-            if (tagCompound == null) {
-                tagCompound = new NBTTagCompound();
-                shapeCard.setTagCompound(tagCompound);
-            }
-            tagCompound.setInteger("offsetX", offset.getX());
-            tagCompound.setInteger("offsetY", offset.getY());
-            tagCompound.setInteger("offsetZ", offset.getZ());
+            BlockPos offset = new BlockPos(minBox.getX() + (int) Math.ceil(dx / 2), minBox.getY() + (int) Math.ceil(dy / 2), minBox.getZ() + (int) Math.ceil(dz / 2));
+            ShapeCardItem.setOffset(shapeCard, offset.getX(), offset.getY(), offset.getX());
         }
 
         if (supportMode) {
@@ -489,11 +488,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         int x = 0;
         int y;
         int z = 0;
-        y = - ((anchor == ANCHOR_NE || anchor == ANCHOR_NW) ? spanY - 1 : 0);
+        y = -((anchor == ANCHOR_NE || anchor == ANCHOR_NW) ? spanY - 1 : 0);
         switch (direction) {
             case SOUTH:
-                x = - ((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? spanX - 1 : 0);
-                z = - spanZ;
+                x = -((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? spanX - 1 : 0);
+                z = -spanZ;
                 break;
             case NORTH:
                 x = 1 - spanX + ((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? spanX - 1 : 0);
@@ -501,11 +500,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 break;
             case WEST:
                 x = 1;
-                z = - ((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? spanZ - 1 : 0);
+                z = -((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? spanZ - 1 : 0);
                 break;
             case EAST:
-                x = - spanX;
-                z = - ((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? 0 : spanZ - 1);
+                x = -spanX;
+                z = -((anchor == ANCHOR_NE || anchor == ANCHOR_SE) ? 0 : spanZ - 1);
                 break;
             case DOWN:
             case UP:
@@ -514,7 +513,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         return new BlockPos(x, y, z);
     }
-
 
 
     public int getRotate() {
@@ -613,7 +611,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void checkStateServerShaped() {
         float factor = getInfusedFactor();
-        for (int i = 0 ; i < BuilderConfiguration.quarryBaseSpeed + (factor * BuilderConfiguration.quarryInfusionSpeedFactor) ; i++) {
+        for (int i = 0; i < BuilderConfiguration.quarryBaseSpeed + (factor * BuilderConfiguration.quarryInfusionSpeedFactor); i++) {
             if (scan != null) {
                 handleBlockShaped();
             }
@@ -830,32 +828,34 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return chamberChannel;
     }
 
-    private Set<BlockPos> getCachedBlocks(ChunkPos chunk) {
+    private Map<BlockPos, IBlockState> getCachedBlocks(ChunkPos chunk) {
         if ((chunk != null && !chunk.equals(cachedChunk)) || (chunk == null && cachedChunk != null)) {
             cachedBlocks = null;
         }
 
         if (cachedBlocks == null) {
-            cachedBlocks = new HashSet<>();
+            cachedBlocks = new HashMap<>();
             ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
-            ShapeCardItem.Shape shape = ShapeCardItem.getShape(shapeCard);
+            Shape shape = ShapeCardItem.getShape(shapeCard);
+            boolean solid = ShapeCardItem.isSolid(shapeCard);
             BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
             BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
-            ShapeCardItem.composeShape(shape, getWorld(), getPos(), dimension, offset, cachedBlocks,
-                    BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension,
-                    !ShapeCardItem.isNormalShapeCard(shapeCard), chunk);
+            boolean forquarry = !ShapeCardItem.isNormalShapeCard(shapeCard);
+            ShapeCardItem.composeFormula(shapeCard, shape.getFormulaFactory().createFormula(), getWorld(), getPos(), dimension, offset, cachedBlocks, BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension, solid, forquarry, chunk);
             cachedChunk = chunk;
         }
         return cachedBlocks;
     }
 
     private void handleBlockShaped() {
-        for (int i = 0 ; i < 100 ; i++) {
+        for (int i = 0; i < 100; i++) {
             if (scan == null) {
                 return;
             }
-            if (getCachedBlocks(new ChunkPos(scan.getX() >> 4, scan.getZ() >> 4)).contains(scan)) {
-                if (!handleSingleBlock()) {
+            Map<BlockPos, IBlockState> blocks = getCachedBlocks(new ChunkPos(scan.getX() >> 4, scan.getZ() >> 4));
+            if (blocks.containsKey(scan)) {
+                IBlockState state = blocks.get(scan);
+                if (!handleSingleBlock(state)) {
                     nextLocation();
                 }
                 return;
@@ -876,7 +876,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     // Return true if we have to wait at this spot.
-    private boolean handleSingleBlock() {
+    private boolean handleSingleBlock(IBlockState pickState) {
         BlockPos srcPos = scan;
         int sx = scan.getX();
         int sy = scan.getY();
@@ -889,6 +889,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         int rfNeeded;
 
         switch (getCardType()) {
+            case ShapeCardItem.CARD_PUMP_LIQUID:
             case ShapeCardItem.CARD_PUMP:
             case ShapeCardItem.CARD_PUMP_CLEAR:
                 rfNeeded = BuilderConfiguration.builderRfPerLiquid;
@@ -917,7 +918,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         Block block = null;
-        if (getCardType() != ShapeCardItem.CARD_SHAPE) {
+        if (getCardType() != ShapeCardItem.CARD_SHAPE && getCardType() != ShapeCardItem.CARD_PUMP_LIQUID) {
             IBlockState state = getWorld().getBlockState(srcPos);
             block = state.getBlock();
             if (!isEmpty(state, block)) {
@@ -942,6 +943,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         switch (getCardType()) {
+            case ShapeCardItem.CARD_PUMP_LIQUID:
+                return placeLiquidBlock(rfNeeded, srcPos);
             case ShapeCardItem.CARD_PUMP:
             case ShapeCardItem.CARD_PUMP_CLEAR:
                 return pumpBlock(rfNeeded, srcPos, block);
@@ -957,15 +960,15 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             case ShapeCardItem.CARD_QUARRY_CLEAR_SILK:
                 return silkQuarryBlock(rfNeeded, srcPos, block);
             case ShapeCardItem.CARD_SHAPE:
-                return buildBlock(rfNeeded, srcPos);
+                return buildBlock(rfNeeded, srcPos, pickState);
         }
         return true;
     }
 
-    private boolean buildBlock(int rfNeeded, BlockPos srcPos) {
+    private boolean buildBlock(int rfNeeded, BlockPos srcPos, IBlockState pickState) {
         if (isEmptyOrReplacable(getWorld(), srcPos)) {
-            ItemStack stack = consumeBlock(getWorld(), srcPos, null);
-            if (stack.isEmpty()) {
+            ItemStack stack = consumeBlock(getWorld(), srcPos, pickState);
+            if (ItemStackTools.isEmpty(stack)) {
                 return true;    // We could not find a block. Wait
             }
 
@@ -1035,7 +1038,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         int sx = srcPos.getX();
         int sy = srcPos.getY();
         int sz = srcPos.getZ();
-        if (sx >= xCoord-1 && sx <= xCoord+1 && sy >= yCoord-1 && sy <= yCoord+1 && sz >= zCoord-1 && sz <= zCoord+1) {
+        if (sx >= xCoord - 1 && sx <= xCoord + 1 && sy >= yCoord - 1 && sy <= yCoord + 1 && sz >= zCoord - 1 && sz <= zCoord + 1) {
             // Skip a 3x3x3 block around the builder.
             return false;
         }
@@ -1054,7 +1057,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
 
             FakePlayer fakePlayer = getHarvester();
-            if (allowedToBreak(srcState, getWorld(), srcPos,fakePlayer)) {
+            if (allowedToBreak(srcState, getWorld(), srcPos, fakePlayer)) {
                 ItemStack filter = getStackInSlot(BuilderContainer.SLOT_FILTER);
                 if (!filter.isEmpty()) {
                     getFilterCache();
@@ -1122,7 +1125,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         int sx = srcPos.getX();
         int sy = srcPos.getY();
         int sz = srcPos.getZ();
-        if (sx >= xCoord-1 && sx <= xCoord+1 && sy >= yCoord-1 && sy <= yCoord+1 && sz >= zCoord-1 && sz <= zCoord+1) {
+        if (sx >= xCoord - 1 && sx <= xCoord + 1 && sy >= yCoord - 1 && sy <= yCoord + 1 && sz >= zCoord - 1 && sz <= zCoord + 1) {
             // Skip a 3x3x3 block around the builder.
             return false;
         }
@@ -1184,6 +1187,28 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return -1;
     }
 
+    private boolean placeLiquidBlock(int rfNeeded, BlockPos srcPos) {
+
+        if (isEmptyOrReplacable(getWorld(), srcPos)) {
+            FluidStack stack = consumeLiquid(getWorld(), srcPos);
+            if (stack == null) {
+                return true;    // We could not find a block. Wait
+            }
+
+            // We assume here the liquid is placable.
+            Block block = stack.getFluid().getBlock();
+            FakePlayer fakePlayer = getHarvester();
+            getWorld().setBlockState(srcPos, block.getDefaultState(), 11);
+
+            if (!silent) {
+                SoundTools.playSound(getWorld(), block.getSoundType().getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
+            }
+
+            consumeEnergy(rfNeeded);
+        }
+        return false;
+    }
+
     private boolean pumpBlock(int rfNeeded, BlockPos srcPos, Block block) {
         Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
         if (fluid == null) {
@@ -1229,7 +1254,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         int sx = srcPos.getX();
         int sy = srcPos.getY();
         int sz = srcPos.getZ();
-        if (sx >= xCoord-1 && sx <= xCoord+1 && sy >= yCoord-1 && sy <= yCoord+1 && sz >= zCoord-1 && sz <= zCoord+1) {
+        if (sx >= xCoord - 1 && sx <= xCoord + 1 && sy >= yCoord - 1 && sy <= yCoord + 1 && sz >= zCoord - 1 && sz <= zCoord + 1) {
             // Skip a 3x3x3 block around the builder.
             return false;
         }
@@ -1374,7 +1399,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             if ((!stack.isEmpty()) && stack.getItem() == null) {
                 Logging.logError("Builder tried to quarry " + block.getRegistryName().toString() + " and it returned null item!");
                 Broadcaster.broadcast(getWorld(), pos.getX(), pos.getY(), pos.getZ(), "Builder tried to quarry "
-                        + block.getRegistryName().toString() + " and it returned null item!\nPlease report to mod author!",
+                                + block.getRegistryName().toString() + " and it returned null item!\nPlease report to mod author!",
                         10);
                 return false;
             }
@@ -1446,6 +1471,46 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         return ItemStack.EMPTY;
     }
+
+    private FluidStack consumeLiquid(World srcWorld, BlockPos srcPos) {
+        FluidStack b = consumeLiquid(EnumFacing.UP, srcWorld, srcPos);
+        if (b == null) {
+            b = consumeLiquid(EnumFacing.DOWN, srcWorld, srcPos);
+        }
+        return b;
+    }
+
+    private FluidStack consumeLiquid(EnumFacing direction, World srcWorld, BlockPos srcPos) {
+        TileEntity te = getWorld().getTileEntity(getPos().offset(direction));
+        if (te != null) {
+            if (te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, direction.getOpposite())) {
+                IFluidHandler capability = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, direction.getOpposite());
+                return findAndConsumeLiquid(capability, srcWorld, srcPos);
+            }
+            if (te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null)) {
+                IFluidHandler capability = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
+                return findAndConsumeLiquid(capability, srcWorld, srcPos);
+            }
+        }
+        return null;
+    }
+
+    private FluidStack findAndConsumeLiquid(IFluidHandler tank, World srcWorld, BlockPos srcPos) {
+        for (IFluidTankProperties properties : tank.getTankProperties()) {
+            FluidStack contents = properties.getContents();
+            if (contents != null) {
+                if (contents.getFluid() != null) {
+                    if (contents.amount >= 1000) {
+                        FluidStack drained = tank.drain(new FluidStack(contents.getFluid(), 1000, contents.tag), true);
+                        System.out.println("drained = " + drained);
+                        return drained;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
 
     private ItemStack consumeBlock(World srcWorld, BlockPos srcPos, IBlockState state) {
         ItemStack b = consumeBlock(EnumFacing.UP, srcWorld, srcPos, state);
@@ -1714,7 +1779,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
 
     private boolean isEntityInBlock(int x, int y, int z, Entity entity) {
-        if (entity.posX >= x && entity.posX < x+1 && entity.posY >= y && entity.posY < y+1 && entity.posZ >= z && entity.posZ < z+1) {
+        if (entity.posX >= x && entity.posX < x + 1 && entity.posY >= y && entity.posY < y + 1 && entity.posZ >= z && entity.posZ < z + 1) {
             return true;
         }
         return false;
@@ -1858,10 +1923,14 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private BlockPos rotate(BlockPos c) {
         switch (rotate) {
-            case 0: return c;
-            case 1: return new BlockPos(-c.getZ(), c.getY(), c.getX());
-            case 2: return new BlockPos(-c.getX(), c.getY(), -c.getZ());
-            case 3: return new BlockPos(c.getZ(), c.getY(), -c.getX());
+            case 0:
+                return c;
+            case 1:
+                return new BlockPos(-c.getZ(), c.getY(), c.getX());
+            case 2:
+                return new BlockPos(-c.getX(), c.getY(), -c.getZ());
+            case 3:
+                return new BlockPos(c.getZ(), c.getY(), -c.getX());
         }
         return c;
     }
@@ -1874,10 +1943,18 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void rotate(BlockPos c, BlockPos.MutableBlockPos dest) {
         switch (rotate) {
-            case 0: dest.setPos(c); break;
-            case 1: dest.setPos(-c.getZ(), c.getY(), c.getX()); break;
-            case 2: dest.setPos(-c.getX(), c.getY(), -c.getZ()); break;
-            case 3: dest.setPos(c.getZ(), c.getY(), -c.getX()); break;
+            case 0:
+                dest.setPos(c);
+                break;
+            case 1:
+                dest.setPos(-c.getZ(), c.getY(), c.getX());
+                break;
+            case 2:
+                dest.setPos(-c.getX(), c.getY(), -c.getZ());
+                break;
+            case 3:
+                dest.setPos(c.getZ(), c.getY(), -c.getX());
+                break;
         }
     }
 
@@ -1961,8 +2038,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private void nextLocationQuarry(int x, int y, int z) {
-        if (x >= maxBox.getX() || ((x+1) % 16 == 0)) {
-            if (z >= maxBox.getZ() || ((z+1) % 16 == 0)) {
+        if (x >= maxBox.getX() || ((x + 1) % 16 == 0)) {
+            if (z >= maxBox.getZ() || ((z + 1) % 16 == 0)) {
                 if (y <= minBox.getY()) {
                     if (x < maxBox.getX()) {
                         x++;

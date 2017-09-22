@@ -4,6 +4,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.blocks.shaper.ScannerBlock;
+import mcjty.rftools.blocks.shaper.ComposerBlock;
+import mcjty.rftools.crafting.PreservingShapedOreRecipe;
+import mcjty.rftools.crafting.PreservingShapedRecipe;
+import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.builder.SpaceChamberCardItem;
 import mcjty.rftools.proxy.CommonProxy;
@@ -21,6 +27,8 @@ public class BuilderSetup {
     public static SpaceChamberControllerBlock spaceChamberControllerBlock;
     public static BuilderBlock builderBlock;
     public static SupportBlock supportBlock;
+    public static ComposerBlock composerBlock;
+    public static ScannerBlock scannerBlock;
 
     public static SpaceChamberCardItem spaceChamberCardItem;
     public static ShapeCardItem shapeCardItem;
@@ -32,6 +40,8 @@ public class BuilderSetup {
         spaceChamberControllerBlock = new SpaceChamberControllerBlock();
         builderBlock = new BuilderBlock();
         supportBlock = new SupportBlock();
+        composerBlock = new ComposerBlock();
+        scannerBlock = new ScannerBlock();
 
         initItems();
 
@@ -45,6 +55,8 @@ public class BuilderSetup {
         spaceChamberControllerBlock.initModel();
         builderBlock.initModel();
         supportBlock.initModel();
+        composerBlock.initModel();
+        scannerBlock.initModel();
 
         spaceChamberCardItem.initModel();
         shapeCardItem.initModel();

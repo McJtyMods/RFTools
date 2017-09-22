@@ -59,8 +59,9 @@ public class StorageFilterItem extends GenericRFToolsItem {
             list.add(TextFormatting.BLUE + modeLine);
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(TextFormatting.WHITE + "This filter module is for the Modular Storage block.");
-            list.add(TextFormatting.WHITE + "This module can make sure the storage block only accepts");
+            list.add(TextFormatting.WHITE + "This filter module is for the Modular Storage block,");
+            list.add(TextFormatting.WHITE + "the Builder or the Area Scanner.");
+            list.add(TextFormatting.WHITE + "This module can make sure the block only accepts");
             list.add(TextFormatting.WHITE + "certain types of items");
             list.add(TextFormatting.YELLOW + "Sneak-right click on an inventory to");
             list.add(TextFormatting.YELLOW + "configure the filter based on contents");

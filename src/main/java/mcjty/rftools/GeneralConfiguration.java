@@ -21,7 +21,7 @@ public class GeneralConfiguration {
     public static int dimensionalShardRecipeWithoutDimensions = CRAFT_HARD;
 
     // Dimensions where dimensional shard ore can generate.
-    private static int[] dimensionalShardOregenWithDimensions = new int[] { };
+    private static int[] dimensionalShardOregenWithDimensions = new int[] { -1, 1 };
     private static int[] dimensionalShardOregenWithoutDimensions = new int[] { -1, 1 };
     public static Set<Integer> oregenDimensionsWithDimensions = new HashSet<>();
     public static Set<Integer> oregenDimensionsWithoutDimensions = new HashSet<>();

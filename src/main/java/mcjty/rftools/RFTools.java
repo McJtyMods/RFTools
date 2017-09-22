@@ -15,6 +15,7 @@ import mcjty.rftools.blocks.storage.RemoteStorageIdRegistry;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import mcjty.rftools.commands.CommandRftCfg;
 import mcjty.rftools.commands.CommandRftDb;
+import mcjty.rftools.commands.CommandRftShape;
 import mcjty.rftools.commands.CommandRftTp;
 import mcjty.rftools.integration.computers.OpenComputersIntegration;
 import mcjty.rftools.items.ModItems;
@@ -89,6 +90,7 @@ public class RFTools implements ModBase {
     public static final int GUI_MODULAR_STORAGE = modGuiIndex++;
     public static final int GUI_REMOTE_STORAGE = modGuiIndex++;
     public static final int GUI_STORAGE_FILTER = modGuiIndex++;
+    public static final int GUI_MODIFIER_MODULE = modGuiIndex++;
     public static final int GUI_REMOTE_STORAGE_ITEM = modGuiIndex++;
     public static final int GUI_MODULAR_STORAGE_ITEM = modGuiIndex++;
     public static final int GUI_REMOTE_STORAGESCANNER_ITEM = modGuiIndex++;
@@ -106,6 +108,7 @@ public class RFTools implements ModBase {
     public static final int GUI_MACHINE_INFUSER = modGuiIndex++;
     public static final int GUI_BUILDER = modGuiIndex++;
     public static final int GUI_SHAPECARD = modGuiIndex++;
+    public static final int GUI_SHAPECARD_COMPOSER = modGuiIndex++;
     public static final int GUI_CHAMBER_DETAILS = modGuiIndex++;
     public static final int GUI_POWERCELL = modGuiIndex++;
     public static final int GUI_RELAY = modGuiIndex++;
@@ -130,6 +133,8 @@ public class RFTools implements ModBase {
     public static final int GUI_STORAGE_TERMINAL = modGuiIndex++;
     public static final int GUI_STORAGE_TERMINAL_SCANNER = modGuiIndex++;
     public static final int GUI_ELEVATOR = modGuiIndex++;
+    public static final int GUI_COMPOSER = modGuiIndex++;
+    public static final int GUI_SCANNER = modGuiIndex++;
 
     /**
      * Run before anything else. Read your config, create blocks, items, etc, and
@@ -178,6 +183,7 @@ public class RFTools implements ModBase {
     @Mod.EventHandler
     public void serverLoad(FMLServerStartingEvent event) {
         event.registerServerCommand(new CommandRftTp());
+        event.registerServerCommand(new CommandRftShape());
         event.registerServerCommand(new CommandRftDb());
         event.registerServerCommand(new CommandRftCfg());
     }

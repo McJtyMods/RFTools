@@ -8,7 +8,6 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketUpdateNBTItem;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.storage.ModularStorageTileEntity;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,7 +17,7 @@ import net.minecraft.util.ResourceLocation;
 import java.awt.*;
 
 
-public class GuiStorageFilter extends GenericGuiContainer<ModularStorageTileEntity> {
+public class GuiStorageFilter extends GenericGuiContainer {
     public static final int CONTROLLER_WIDTH = 180;
     public static final int CONTROLLER_HEIGHT = 188;
 

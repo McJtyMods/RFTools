@@ -42,6 +42,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
+import java.util.function.Predicate;
 
 
 public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEntity> {
@@ -415,10 +416,11 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         Collections.sort(fromServer_inventory, (o1, o2) -> o1.getDisplayName().compareTo(o2.getDisplayName()));
 
         String filterText = searchField.getText().toLowerCase();
+        Predicate<ItemStack> matcher = StorageScannerTileEntity.getMatcher(filterText);
 
         for (ItemStack item : fromServer_inventory) {
-            String displayName = item.getDisplayName();
-            if (filterText.isEmpty() || displayName.toLowerCase().contains(filterText)) {
+//            String displayName = item.getDisplayName();
+            if (filterText.isEmpty() || matcher.test(item)) {
                 currentPos = addItemToList(item, itemList, currentPos, numcolumns, spacing);
             }
         }

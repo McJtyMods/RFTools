@@ -60,6 +60,7 @@ item.filter_module.name=Storage Filter Module
 item.oredict_module.name=Ore Dictionary Storage Module
 item.generic_module.name=Generic Storage Module
 item.powercell_card.name=Powercell Card
+item.modifier_module.name=Modifier
 item.space_chamber_card.name=Space Chamber Card
 item.shape_card.name=Shape Card
 item.shape_card1.name=Shape Card (Void)
@@ -71,6 +72,7 @@ item.shape_card6.name=Shape Card (Clearing Silk Quarry)
 item.shape_card7.name=Shape Card (Clearing Fortune Quarry)
 item.shape_card8.name=Shape Card (Pump)
 item.shape_card9.name=Shape Card (Clearing Pump)
+item.shape_card10.name=Shape Card (Placing Liquids)
 
 item.regeneration_module.name=Regeneration Module
 item.regenerationplus_module.name=Regeneration Plus Module
@@ -145,7 +147,9 @@ tile.rftools.modular_storage.name=Modular Storage
 tile.rftools.remote_storage.name=Remote Storage
 tile.rftools.security_manager.name=Security Manager
 tile.rftools.dimensional_shard_ore.name=Dimensional Shard Ore
-tile.rftools.builder.name=Builder Block
+tile.rftools.builder.name=Builder
+tile.rftools.composer.name=Composer
+tile.rftools.scanner.name=Scanner
 tile.rftools.support_block.name=Support Block
 tile.rftools.space_chamber.name=Space Chamber Corner Block
 tile.rftools.space_chamber_controller.name=Space Chamber Controller Block
@@ -162,6 +166,8 @@ tile.rftools.invisible_shield_block.name=Invisible Shield Block
 tile.rftools.notick_invisible_shield_block.name=Invisible Shield Block
 tile.rftools.solid_shield_block.name=Solid Shield Block
 tile.rftools.notick_solid_shield_block.name=Solid Shield Block
+tile.rftools.camo_shield_block.name=Camo Shield Block
+tile.rftools.notick_camo_shield_block.name=Camo Shield Block
 
 # Creative Tabs
 itemGroup.RfTools=RFTools
