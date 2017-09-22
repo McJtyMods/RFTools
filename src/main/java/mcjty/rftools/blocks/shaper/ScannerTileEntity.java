@@ -157,8 +157,14 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         NBTTagList pal = new NBTTagList();
         for (IBlockState state : materialPalette) {
             NBTTagCompound tc = new NBTTagCompound();
-            tc.setString("r", state.getBlock().getRegistryName().toString());
-            tc.setInteger("m", state.getBlock().getMetaFromState(state));
+            Block block = state.getBlock();
+            if (block == null || block.getRegistryName() == null) {
+                tc.setString("r", Blocks.STONE.getRegistryName().toString());
+                tc.setInteger("m", 0);
+            } else {
+                tc.setString("r", block.getRegistryName().toString());
+                tc.setInteger("m", block.getMetaFromState(state));
+            }
             pal.appendTag(tc);
         }
         tagCompound.setTag("scanpal", pal);

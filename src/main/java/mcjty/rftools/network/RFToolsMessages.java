@@ -18,7 +18,7 @@ import mcjty.rftools.blocks.security.PacketSecurityNameReady;
 import mcjty.rftools.items.modifier.PacketUpdateModifier;
 import mcjty.rftools.shapes.PacketRequestShapeData;
 import mcjty.rftools.shapes.PacketReturnShapeData;
-import mcjty.rftools.shapes.PacketSendShaperData;
+import mcjty.rftools.shapes.PacketSendComposerData;
 import mcjty.rftools.blocks.shield.PacketFiltersReady;
 import mcjty.rftools.blocks.shield.PacketGetFilters;
 import mcjty.rftools.blocks.spawner.SpawnerInfoPacketClient;
@@ -77,7 +77,7 @@ public class RFToolsMessages {
         net.registerMessage(PacketRequestItem.Handler.class, PacketRequestItem.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketGetHudLog.Handler.class, PacketGetHudLog.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketGetRfInRange.Handler.class, PacketGetRfInRange.class, PacketHandler.nextID(), Side.SERVER);
-        net.registerMessage(PacketSendShaperData.Handler.class, PacketSendShaperData.class, PacketHandler.nextID(), Side.SERVER);
+        net.registerMessage(PacketSendComposerData.Handler.class, PacketSendComposerData.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketOpenGui.Handler.class, PacketOpenGui.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketUpdateModifier.Handler.class, PacketUpdateModifier.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketRequestShapeData.Handler.class, PacketRequestShapeData.class, PacketHandler.nextID(), Side.SERVER);

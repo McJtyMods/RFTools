@@ -13,10 +13,10 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class ShaperBlock extends GenericRFToolsBlock<ShaperTileEntity, ShaperContainer> /*, IRedstoneConnectable */ {
+public class ComposerBlock extends GenericRFToolsBlock<ComposerTileEntity, ComposerContainer> /*, IRedstoneConnectable */ {
 
-    public ShaperBlock() {
-        super(Material.IRON, ShaperTileEntity.class, ShaperContainer.class, "shaper", true);
+    public ComposerBlock() {
+        super(Material.IRON, ComposerTileEntity.class, ComposerContainer.class, "composer", true);
     }
 
 
@@ -25,7 +25,7 @@ public class ShaperBlock extends GenericRFToolsBlock<ShaperTileEntity, ShaperCon
     public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(TextFormatting.WHITE + "This block can construct more complex,");
+            list.add(TextFormatting.WHITE + "This block can construct more complex");
             list.add(TextFormatting.WHITE + "shape cards for the builder");
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
@@ -35,11 +35,11 @@ public class ShaperBlock extends GenericRFToolsBlock<ShaperTileEntity, ShaperCon
     @SideOnly(Side.CLIENT)
     @Override
     public Class<? extends GenericGuiContainer> getGuiClass() {
-        return GuiShaper.class;
+        return GuiComposer.class;
     }
 
     @Override
     public int getGuiID() {
-        return RFTools.GUI_SHAPER;
+        return RFTools.GUI_COMPOSER;
     }
 }

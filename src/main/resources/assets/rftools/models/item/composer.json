@@ -1,5 +1,5 @@
 {
-  "parent": "rftools:block/shaper",
+  "parent": "rftools:block/composer",
   "display": {
     "thirdperson": {
       "rotation": [ 10, -45, 170 ],

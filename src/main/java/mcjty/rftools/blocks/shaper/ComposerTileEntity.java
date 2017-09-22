@@ -17,12 +17,12 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.common.util.Constants;
 
-public class ShaperTileEntity extends GenericTileEntity implements DefaultSidedInventory, ITickable {
+public class ComposerTileEntity extends GenericTileEntity implements DefaultSidedInventory, ITickable {
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, ShaperContainer.factory, ShaperContainer.SLOT_COUNT*2 + 1);
-    private ShapeModifier modifiers[] = new ShapeModifier[ShaperContainer.SLOT_COUNT];
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, ComposerContainer.factory, ComposerContainer.SLOT_COUNT*2 + 1);
+    private ShapeModifier modifiers[] = new ShapeModifier[ComposerContainer.SLOT_COUNT];
 
-    public ShaperTileEntity() {
+    public ComposerTileEntity() {
         for (int i = 0; i < modifiers.length ; i++) {
             modifiers[i] = new ShapeModifier(ShapeOperation.UNION, false, ShapeRotation.NONE);
         }
@@ -31,17 +31,17 @@ public class ShaperTileEntity extends GenericTileEntity implements DefaultSidedI
     @Override
     public void update() {
         if (!getWorld().isRemote) {
-            ItemStack output = getStackInSlot(ShaperContainer.SLOT_OUT);
+            ItemStack output = getStackInSlot(ComposerContainer.SLOT_OUT);
             if (ItemStackTools.isValid(output)) {
                 NBTTagList list = new NBTTagList();
-                for (int i = ShaperContainer.SLOT_TABS; i < ShaperContainer.SLOT_TABS + ShaperContainer.SLOT_COUNT; i++) {
+                for (int i = ComposerContainer.SLOT_TABS; i < ComposerContainer.SLOT_TABS + ComposerContainer.SLOT_COUNT; i++) {
                     ItemStack item = getStackInSlot(i);
                     if (ItemStackTools.isValid(item)) {
                         if (item.hasTagCompound()) {
                             NBTTagCompound copy = item.getTagCompound().copy();
                             ShapeModifier modifier = modifiers[i - 1];
                             ShapeCardItem.setModifier(copy, modifier);
-                            ItemStack materialGhost = getStackInSlot(i + ShaperContainer.SLOT_COUNT);
+                            ItemStack materialGhost = getStackInSlot(i + ComposerContainer.SLOT_COUNT);
                             ShapeCardItem.setGhostMaterial(copy, materialGhost);
                             list.appendTag(copy);
                         }
@@ -106,7 +106,7 @@ public class ShaperTileEntity extends GenericTileEntity implements DefaultSidedI
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
         NBTTagList list = new NBTTagList();
-        for (int i = 0 ; i < ShaperContainer.SLOT_COUNT ; i++) {
+        for (int i = 0; i < ComposerContainer.SLOT_COUNT ; i++) {
             NBTTagCompound tc = new NBTTagCompound();
             ShapeModifier mod = modifiers[i];
             tc.setString("mod_op", mod.getOperation().getCode());

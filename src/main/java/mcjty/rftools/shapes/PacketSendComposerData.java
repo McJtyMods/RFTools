@@ -2,7 +2,7 @@ package mcjty.rftools.shapes;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.rftools.blocks.shaper.ShaperTileEntity;
+import mcjty.rftools.blocks.shaper.ComposerTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class PacketSendShaperData implements IMessage {
+public class PacketSendComposerData implements IMessage {
     private BlockPos pos;
     private ShapeModifier modifiers[];
 
@@ -40,25 +40,25 @@ public class PacketSendShaperData implements IMessage {
         NetworkTools.writePos(buf, pos);
     }
 
-    public PacketSendShaperData() {
+    public PacketSendComposerData() {
     }
 
-    public PacketSendShaperData(BlockPos pos, ShapeModifier[] modifiers) {
+    public PacketSendComposerData(BlockPos pos, ShapeModifier[] modifiers) {
         this.pos = pos;
         this.modifiers = modifiers;
     }
 
-    public static class Handler implements IMessageHandler<PacketSendShaperData, IMessage> {
+    public static class Handler implements IMessageHandler<PacketSendComposerData, IMessage> {
         @Override
-        public IMessage onMessage(PacketSendShaperData message, MessageContext ctx) {
+        public IMessage onMessage(PacketSendComposerData message, MessageContext ctx) {
             FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
             return null;
         }
 
-        private void handle(PacketSendShaperData message, MessageContext ctx) {
+        private void handle(PacketSendComposerData message, MessageContext ctx) {
             TileEntity te = ctx.getServerHandler().player.getEntityWorld().getTileEntity(message.pos);
-            if (te instanceof ShaperTileEntity) {
-                ((ShaperTileEntity) te).setModifiers(message.modifiers);
+            if (te instanceof ComposerTileEntity) {
+                ((ComposerTileEntity) te).setModifiers(message.modifiers);
             }
         }
 

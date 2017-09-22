@@ -24,19 +24,19 @@ import org.lwjgl.input.Mouse;
 import java.awt.*;
 import java.io.IOException;
 
-public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> implements IShapeParentGui {
+public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> implements IShapeParentGui {
     public static final int SIDEWIDTH = 80;
     public static final int SHAPER_WIDTH = 256;
     public static final int SHAPER_HEIGHT = 238;
 
     private static final ResourceLocation sideBackground = new ResourceLocation(RFTools.MODID, "textures/gui/sidegui.png");
-    private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/shaper.png");
+    private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/composer.png");
     private static final ResourceLocation guiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
-    private ChoiceLabel operationLabels[] = new ChoiceLabel[ShaperContainer.SLOT_COUNT];
-    private ChoiceLabel rotationLabels[] = new ChoiceLabel[ShaperContainer.SLOT_COUNT];
-    private ToggleButton flipButtons[] = new ToggleButton[ShaperContainer.SLOT_COUNT];
-    private Button configButton[] = new Button[ShaperContainer.SLOT_COUNT];
+    private ChoiceLabel operationLabels[] = new ChoiceLabel[ComposerContainer.SLOT_COUNT];
+    private ChoiceLabel rotationLabels[] = new ChoiceLabel[ComposerContainer.SLOT_COUNT];
+    private ToggleButton flipButtons[] = new ToggleButton[ComposerContainer.SLOT_COUNT];
+    private Button configButton[] = new Button[ComposerContainer.SLOT_COUNT];
     private Button outConfigButton;
 
     private ToggleButton showAxis;
@@ -52,8 +52,8 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> implements 
     private Window sideWindow;
 
 
-    public GuiShaper(ShaperTileEntity shaperTileEntity, ShaperContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, shaperTileEntity, container, RFTools.GUI_MANUAL_MAIN, "shaper");
+    public GuiComposer(ComposerTileEntity composerTileEntity, ComposerContainer container) {
+        super(RFTools.instance, RFToolsMessages.INSTANCE, composerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "shaper");
 
         xSize = SHAPER_WIDTH;
         ySize = SHAPER_HEIGHT;
@@ -68,7 +68,7 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> implements 
         ShapeModifier[] modifiers = tileEntity.getModifiers();
 
         operationLabels[0] = null;
-        for (int i = 0 ; i < ShaperContainer.SLOT_COUNT ; i++) {
+        for (int i = 0; i < ComposerContainer.SLOT_COUNT ; i++) {
             operationLabels[i] = new ChoiceLabel(mc, this).addChoices(
                     ShapeOperation.UNION.getCode(),
                     ShapeOperation.SUBTRACT.getCode(),
@@ -83,7 +83,7 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> implements 
         }
         operationLabels[0].setEnabled(false);
 
-        for (int i = 0 ; i < ShaperContainer.SLOT_COUNT ; i++) {
+        for (int i = 0; i < ComposerContainer.SLOT_COUNT ; i++) {
             configButton[i] = new Button(mc, this).setText("?");
             configButton[i].setLayoutHint(new PositionalLayout.PositionalHint(3, 7 + i*18+2, 13, 12));
             int finalI = i;
@@ -122,7 +122,7 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> implements 
         sidePanel.addChild(new Label<>(mc, this).setText("N").setColor(0xff0000ff).setTooltips(tt).setLayoutHint(new PositionalLayout.PositionalHint(5, 205, 15, 15)));
         sidePanel.addChild(new Label<>(mc, this).setText("S").setColor(0xff0000ff).setTooltips(tt).setLayoutHint(new PositionalLayout.PositionalHint(40, 205, 15, 15)));
 
-        for (int i = 0 ; i < ShaperContainer.SLOT_COUNT ; i++) {
+        for (int i = 0; i < ComposerContainer.SLOT_COUNT ; i++) {
             ToggleButton flip = new ToggleButton(mc, this).setText("Flip").setCheckMarker(true).setLayoutHint(new PositionalLayout.PositionalHint(6, 7 + i*18, 35, 16));
             flip.setPressed(modifiers[i].isFlipY());
             flip.addButtonEvent(parent -> update());
@@ -161,27 +161,27 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> implements 
     private void openCardGui(int i) {
         int slot;
         if (i == -1) {
-            slot = ShaperContainer.SLOT_OUT;
+            slot = ComposerContainer.SLOT_OUT;
         } else {
-            slot = ShaperContainer.SLOT_TABS+i;
+            slot = ComposerContainer.SLOT_TABS+i;
         }
         ItemStack cardStack = inventorySlots.getSlot(slot).getStack();
         if (ItemStackTools.isValid(cardStack)) {
             EntityPlayerSP player = MinecraftTools.getPlayer(Minecraft.getMinecraft());
             shaperBlock = tileEntity.getPos();
             shaperStackSlot = slot;
-            player.openGui(RFTools.instance, RFTools.GUI_SHAPECARD_SHAPER, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
+            player.openGui(RFTools.instance, RFTools.GUI_SHAPECARD_COMPOSER, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
         }
     }
 
     private void update() {
-        ShapeModifier[] modifiers = new ShapeModifier[ShaperContainer.SLOT_COUNT];
-        for (int i = 0 ; i < ShaperContainer.SLOT_COUNT ; i++) {
+        ShapeModifier[] modifiers = new ShapeModifier[ComposerContainer.SLOT_COUNT];
+        for (int i = 0; i < ComposerContainer.SLOT_COUNT ; i++) {
             ShapeOperation op = ShapeOperation.getByName(operationLabels[i].getCurrentChoice());
             ShapeRotation rot = ShapeRotation.getByName(rotationLabels[i].getCurrentChoice());
             modifiers[i] = new ShapeModifier(op, flipButtons[i].isPressed(), rot);
         }
-        network.sendToServer(new PacketSendShaperData(tileEntity.getPos(), modifiers));
+        network.sendToServer(new PacketSendComposerData(tileEntity.getPos(), modifiers));
     }
 
     @Override
@@ -202,7 +202,7 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> implements 
 
         drawWindow();
 
-        Slot slot = inventorySlots.getSlot(ShaperContainer.SLOT_OUT);
+        Slot slot = inventorySlots.getSlot(ComposerContainer.SLOT_OUT);
         if (slot.getHasStack()) {
             ItemStack stack = slot.getStack();
             if (ItemStackTools.isValid(stack)) {

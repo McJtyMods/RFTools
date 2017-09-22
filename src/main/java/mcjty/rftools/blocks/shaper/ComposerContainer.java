@@ -9,7 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
-public class ShaperContainer extends GenericContainer {
+public class ComposerContainer extends GenericContainer {
     public static final String CONTAINER_INVENTORY = "container";
 
     public static final int SLOT_COUNT = 9;
@@ -32,7 +32,7 @@ public class ShaperContainer extends GenericContainer {
         }
     };
 
-    public ShaperContainer(EntityPlayer player, IInventory containerInventory) {
+    public ComposerContainer(EntityPlayer player, IInventory containerInventory) {
         super(factory);
         addInventory(CONTAINER_INVENTORY, containerInventory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);

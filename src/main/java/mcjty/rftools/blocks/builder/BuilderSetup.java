@@ -7,7 +7,7 @@ import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.shaper.ScannerBlock;
-import mcjty.rftools.blocks.shaper.ShaperBlock;
+import mcjty.rftools.blocks.shaper.ComposerBlock;
 import mcjty.rftools.crafting.PreservingShapedOreRecipe;
 import mcjty.rftools.crafting.PreservingShapedRecipe;
 import mcjty.rftools.items.ModItems;
@@ -33,7 +33,7 @@ public class BuilderSetup {
     public static SpaceChamberControllerBlock spaceChamberControllerBlock;
     public static BuilderBlock builderBlock;
     public static SupportBlock supportBlock;
-    public static ShaperBlock shaperBlock;
+    public static ComposerBlock composerBlock;
     public static ScannerBlock scannerBlock;
 
     public static SpaceChamberCardItem spaceChamberCardItem;
@@ -46,7 +46,7 @@ public class BuilderSetup {
         spaceChamberControllerBlock = new SpaceChamberControllerBlock();
         builderBlock = new BuilderBlock();
         supportBlock = new SupportBlock();
-        shaperBlock = new ShaperBlock();
+        composerBlock = new ComposerBlock();
         scannerBlock = new ScannerBlock();
 
         initItems();
@@ -61,7 +61,7 @@ public class BuilderSetup {
         spaceChamberControllerBlock.initModel();
         builderBlock.initModel();
         supportBlock.initModel();
-        shaperBlock.initModel();
+        composerBlock.initModel();
         scannerBlock.initModel();
 
         spaceChamberCardItem.initModel();
@@ -82,7 +82,7 @@ public class BuilderSetup {
             GameRegistry.addRecipe(new ItemStack(builderBlock), "beb", "rMr", "brb", 'M', ModBlocks.machineFrame, 'e', Items.ENDER_PEARL, 'r', Items.REDSTONE, 'b', Blocks.BRICK_BLOCK);
         }
 
-        GameRegistry.addRecipe(new ItemStack(shaperBlock), "pbp", "bMb", "pbp", 'M', ModBlocks.machineFrame, 'p', Items.PAPER, 'b', Items.BRICK);
+        GameRegistry.addRecipe(new ItemStack(composerBlock), "pbp", "bMb", "pbp", 'M', ModBlocks.machineFrame, 'p', Items.PAPER, 'b', Items.BRICK);
         GameRegistry.addRecipe(new ItemStack(scannerBlock), "beb", "qMq", "brb", 'M', ModBlocks.machineFrame, 'r', Items.REDSTONE, 'b', ModItems.infusedDiamond, 'e', Items.ENDER_PEARL, 'q', Items.QUARTZ);
 
         GameRegistry.addRecipe(new ItemStack(spaceChamberCardItem), " b ", "rir", " b ", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
