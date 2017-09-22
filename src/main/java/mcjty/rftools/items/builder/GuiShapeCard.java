@@ -364,6 +364,9 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
 
     @Override
     public void drawScreen(int xSize_lo, int ySize_lo, float par3) {
+
+        shapeRenderer.handleMouseWheel();
+
         super.drawScreen(xSize_lo, ySize_lo, par3);
 
         dimZ.setEnabled(!isTorus());

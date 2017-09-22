@@ -68,7 +68,9 @@ public class ShapeRenderer {
             xangle = 0.0f;
             yangle = 0.0f;
         }
+    }
 
+    public void handleMouseWheel() {
         int dwheel = Mouse.getDWheel();
         if (dwheel < 0) {
             scale *= .6;

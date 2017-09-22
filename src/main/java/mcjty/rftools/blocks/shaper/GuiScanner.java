@@ -147,6 +147,9 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int x, int y) {
+
+        shapeRenderer.handleMouseWheel();
+
         drawWindow();
 
         Slot slot = inventorySlots.getSlot(ScannerContainer.SLOT_OUT);

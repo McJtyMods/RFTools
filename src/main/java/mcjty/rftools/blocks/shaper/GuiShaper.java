@@ -197,6 +197,9 @@ public class GuiShaper extends GenericGuiContainer<ShaperTileEntity> implements 
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int x, int y) {
+
+        shapeRenderer.handleMouseWheel();
+
         drawWindow();
 
         Slot slot = inventorySlots.getSlot(ShaperContainer.SLOT_OUT);
