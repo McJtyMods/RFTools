@@ -6,6 +6,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.varia.RLE;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -54,14 +55,15 @@ public class PacketReturnShapeData implements IMessage {
 
         buf.writeInt(statePalette.getPalette().size());
         for (IBlockState state : statePalette.getPalette()) {
+            if (state.getBlock().getRegistryName() == null) {
+                state = Blocks.STONE.getDefaultState();
+            }
             NetworkTools.writeString(buf, state.getBlock().getRegistryName().toString());
             buf.writeInt(state.getBlock().getMetaFromState(state));
         }
 
         buf.writeInt(positions.getData().length);
         buf.writeBytes(positions.getData());
-
-        System.out.println("buf.capacity() = " + buf.capacity());
     }
 
     public PacketReturnShapeData() {

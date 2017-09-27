@@ -15,9 +15,9 @@ public class BuilderConfiguration {
     public static int BUILDER_MAXENERGY = 1000000;
     public static int BUILDER_RECEIVEPERTICK = 20000;
 
-    public static int SCANNER_MAXENERGY = 1000000;
-    public static int SCANNER_RECEIVEPERTICK = 10000;
-    public static int SCANNER_ONESCAN = 1000000;
+    public static int SCANNER_MAXENERGY = 500000;
+    public static int SCANNER_RECEIVEPERTICK = 20000;
+    public static int SCANNER_ONESCAN = 500000;
 
     public static int builderRfPerOperation = 500;
     public static int builderRfPerLiquid = 300;
