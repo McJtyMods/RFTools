@@ -56,8 +56,8 @@ public class PowerCellInfoPacketServer implements InfoPacketServer {
         } else {
             PowerCellNetwork generatorNetwork = PowerCellNetwork.getChannels(world);
             PowerCellNetwork.Network network = generatorNetwork.getChannel(id);
-            int totInserted = 0;
-            int totExtracted = 0;
+            long totInserted = 0;
+            long totExtracted = 0;
             int rfPerTick = 0;
             float costFactor = 0;
 
