@@ -80,6 +80,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public static final String CMD_SETENTITIES = "setEntities";
     public static final String CMD_SETLOOP = "setLoop";
     public static final String CMD_GETLEVEL = "getLevel";
+    public static final String CMD_MODE = "setMode";
     public static final String CLIENTCMD_GETLEVEL = "getLevel";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, BuilderContainer.factory, 2);
@@ -147,6 +148,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     public BuilderTileEntity() {
         super(BuilderConfiguration.BUILDER_MAXENERGY, BuilderConfiguration.BUILDER_RECEIVEPERTICK);
+        setRSMode(RedstoneMode.REDSTONE_ONREQUIRED);
+    }
+
+    @Override
+    protected boolean needsRedstoneMode() {
+        return true;
     }
 
     @Override
@@ -535,10 +542,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public void setPowerInput(int powered) {
-        boolean changed = powerLevel != powered;
+        boolean o = isMachineEnabled();
         super.setPowerInput(powered);
-        if (changed) {
-            if (loopMode || (powered > 0 && scan == null)) {
+        boolean n = isMachineEnabled();
+        if (o != n) {
+            if (loopMode || (n && scan == null)) {
                 restartScan();
             }
         }
@@ -2156,6 +2164,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     @Override
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
+
+        // Workaround to get the redstone mode for old builders to default to 'on'
+        if (!tagCompound.hasKey("rsMode")) {
+            rsMode = RedstoneMode.REDSTONE_ONREQUIRED;
+        }
+
+
         readBufferFromNBT(tagCompound, inventoryHelper);
         mode = tagCompound.getInteger("mode");
         anchor = tagCompound.getInteger("anchor");
@@ -2202,7 +2217,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (rc) {
             return true;
         }
-        if (CMD_SETMODE.equals(command)) {
+        if (CMD_MODE.equals(command)) {
+            String m = args.get("rs").getString();
+            setRSMode(RedstoneMode.getMode(m));
+            return true;
+        } else  if (CMD_SETMODE.equals(command)) {
             setMode(args.get("mode").getInteger());
             return true;
         } else if (CMD_SETANCHOR.equals(command)) {

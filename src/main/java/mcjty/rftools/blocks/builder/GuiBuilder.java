@@ -10,6 +10,7 @@ import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.network.Argument;
 import mcjty.lib.tools.ItemStackTools;
+import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.item.ItemStack;
@@ -25,6 +26,8 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     public static final int BUILDER_HEIGHT = 152;
 
     private EnergyBar energyBar;
+    private ImageChoiceLabel redstoneMode;
+
     private ChoiceLabel modeChoice;
     private ImageChoiceLabel silentMode;
     private ImageChoiceLabel supportMode;
@@ -54,6 +57,8 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(10, 6, 9, 59)).setShowText(false);
         energyBar.setValue(getCurrentRF());
 
+        initRedstoneMode();
+
         currentLevel = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
         currentLevel.setText("Y:").setTooltips("Current level the builder is at").setLayoutHint(new PositionalLayout.PositionalHint(75, 31, 40, 15));
 
@@ -61,13 +66,31 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         Panel modePanel = setupModePanel();
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
-                addChild(modePanel).addChild(positionPanel).addChild(currentLevel);
+                addChild(modePanel).addChild(positionPanel).addChild(currentLevel).addChild(redstoneMode);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
         tileEntity.requestRfFromServer(RFTools.MODID);
         tileEntity.requestCurrentLevel();
     }
+
+    private void initRedstoneMode() {
+        redstoneMode = new ImageChoiceLabel(mc, this).
+                addChoiceEvent((parent, newChoice) -> changeRedstoneMode()).
+                addChoice(RedstoneMode.REDSTONE_IGNORED.getDescription(), "Redstone mode:\nIgnored", guiElements, 0, 0).
+                addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", guiElements, 16, 0).
+                addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", guiElements, 32, 0);
+        redstoneMode.setLayoutHint(new PositionalLayout.PositionalHint(100, 46, 16, 16));
+        redstoneMode.setCurrentChoice(tileEntity.getRSMode().ordinal());
+    }
+
+    private void changeRedstoneMode() {
+        tileEntity.setRSMode(RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()]);
+        sendServerCommand(RFToolsMessages.INSTANCE, BuilderTileEntity.CMD_MODE,
+                new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()));
+    }
+
+
 
     private Panel setupPositionPanel() {
         rotateButton = new ChoiceLabel(mc, this).addChoices(ROTATE_0, ROTATE_90, ROTATE_180, ROTATE_270).setLayoutHint(new PositionalLayout.PositionalHint(4, 4, 42, 14)).
