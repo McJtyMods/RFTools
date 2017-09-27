@@ -47,12 +47,18 @@ public class ShapeRenderer {
         ShapeRenderer.previewMessage = msg;
     }
 
+    public void initView(float dx, float dy) {
+        this.dx = dx;
+        this.dy = dy;
+    }
+
     public void handleShapeDragging(int x, int y) {
         if (x >= 100 && y <= 120) {
             if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
                 if (prevX != -1 && Mouse.isButtonDown(0)) {
                     dx += (x - prevX);
                     dy += (y - prevY);
+                    System.out.println("dx = " + dx + "," + dy);
                 }
             } else {
                 if (prevX != -1 && Mouse.isButtonDown(0)) {

@@ -124,6 +124,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         this.guiTop = (this.height - this.ySize) / 2;
 
         ShapeRenderer.shapeCount = 0;
+        shapeRenderer.initView(300, 100);
 
         ItemStack heldItem = getStackToEdit();
         if (ItemStackTools.isEmpty(heldItem)) {

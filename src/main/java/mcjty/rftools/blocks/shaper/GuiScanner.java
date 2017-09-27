@@ -60,6 +60,8 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
     public void initGui() {
         super.initGui();
 
+        shapeRenderer.initView(250, 70);
+
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored();
