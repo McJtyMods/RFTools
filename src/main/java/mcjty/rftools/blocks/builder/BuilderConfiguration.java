@@ -12,8 +12,12 @@ public class BuilderConfiguration {
     public static int SPACEPROJECTOR_MAXENERGY = 100000;
     public static int SPACEPROJECTOR_RECEIVEPERTICK = 1000;
 
-    public static int BUILDER_MAXENERGY = 10000000;
-    public static int BUILDER_RECEIVEPERTICK = 50000;
+    public static int BUILDER_MAXENERGY = 1000000;
+    public static int BUILDER_RECEIVEPERTICK = 20000;
+
+    public static int SCANNER_MAXENERGY = 1000000;
+    public static int SCANNER_RECEIVEPERTICK = 10000;
+    public static int SCANNER_ONESCAN = 1000000;
 
     public static int builderRfPerOperation = 500;
     public static int builderRfPerLiquid = 300;
@@ -65,6 +69,12 @@ public class BuilderConfiguration {
                 "Maximum RF storage that the builder can hold").getInt();
         BUILDER_RECEIVEPERTICK = cfg.get(CATEGORY_BUILDER, "builderRFPerTick", BUILDER_RECEIVEPERTICK,
                 "RF per tick that the builder can receive").getInt();
+        SCANNER_MAXENERGY = cfg.get(CATEGORY_BUILDER, "scannerMaxRF", SCANNER_MAXENERGY,
+                "Maximum RF storage that the scanner can hold").getInt();
+        SCANNER_RECEIVEPERTICK = cfg.get(CATEGORY_BUILDER, "scannerRFPerTick", SCANNER_RECEIVEPERTICK,
+                "RF per tick that the scanner can receive").getInt();
+        SCANNER_ONESCAN = cfg.get(CATEGORY_BUILDER, "scannerOneScanRF", SCANNER_ONESCAN,
+                "Amount of RF needed for a single scan operation").getInt();
         builderRfPerOperation = cfg.get(CATEGORY_BUILDER, "builderRfPerOperation", builderRfPerOperation,
                 "RF per block operation for the builder when used to build").getInt();
         builderRfPerQuarry = cfg.get(CATEGORY_BUILDER, "builderRfPerQuarry", builderRfPerQuarry,
