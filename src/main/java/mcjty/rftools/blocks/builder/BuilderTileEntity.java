@@ -984,7 +984,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
 
             FakePlayer fakePlayer = getHarvester();
-            IBlockState newState = placeBlockAt(getWorld(), srcPos, stack, null, fakePlayer);
+            Integer origMeta = pickState != null ? pickState.getBlock().getMetaFromState(pickState) : null;
+            IBlockState newState = placeBlockAt(getWorld(), srcPos, stack, origMeta, fakePlayer);
 
             if (!silent) {
                 SoundTools.playSound(getWorld(), newState.getBlock().getSoundType().getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
