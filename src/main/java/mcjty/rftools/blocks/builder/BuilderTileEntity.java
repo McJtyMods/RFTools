@@ -543,9 +543,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public void setPowerInput(int powered) {
-//        if (getRSMode() == RedstoneMode.REDSTONE_ONREQUIRED) {
-//
-//        }
         boolean o = isMachineEnabled();
         super.setPowerInput(powered);
         boolean n = isMachineEnabled();
@@ -554,16 +551,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 restartScan();
             }
         }
-
-
-//        boolean changed = powerLevel != powered;
-//        super.setPowerInput(powered);
-//        if (changed) {
-//            if (loopMode || (powered > 0 && scan == null)) {
-//                restartScan();
-//            }
-//        }
-
     }
 
     private void createProjection(SpaceChamberRepository.SpaceChamberChannel chamberChannel) {
@@ -656,7 +643,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private void checkStateServer() {
-        if (powerLevel == 0 && loopMode) {
+        if (!isMachineEnabled() && loopMode) {
             return;
         }
 
@@ -665,7 +652,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         if (isShapeCard()) {
-            if (powerLevel == 0) {
+            if (!isMachineEnabled()) {
                 chunkUnload();
                 return;
             }
@@ -1983,7 +1970,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void restartScan() {
         chunkUnload();
-        if (loopMode || (powerLevel > 0 && scan == null)) {
+        if (loopMode || (isMachineEnabled() && scan == null)) {
             if (getCardType() == ShapeCardItem.CARD_SPACE) {
                 calculateBox();
                 scan = minBox;
