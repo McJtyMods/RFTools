@@ -479,7 +479,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             int dz = dimension.getZ();
 
             BlockPos offset = new BlockPos(minBox.getX() + (int) Math.ceil(dx / 2), minBox.getY() + (int) Math.ceil(dy / 2), minBox.getZ() + (int) Math.ceil(dz / 2));
-            ShapeCardItem.setOffset(shapeCard, offset.getX(), offset.getY(), offset.getX());
+            ShapeCardItem.setOffset(shapeCard, offset.getX(), offset.getY(), offset.getZ());
         }
 
         if (supportMode) {
