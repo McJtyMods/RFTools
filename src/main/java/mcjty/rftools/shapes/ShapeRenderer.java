@@ -4,6 +4,7 @@ import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -40,6 +41,13 @@ public class ShapeRenderer {
     private static Map<Long, IBlockState> positions = null;
     public static int shapeCount = 0;
     public static String previewMessage = "";
+
+
+
+    // VBO @todo
+//    VertexBuffer vboBuffer = null;
+
+
 
     public static void setRenderData(Map<Long, IBlockState> positions, int count, String msg) {
         ShapeRenderer.positions = positions;//new HashMap<>(positions);
@@ -302,6 +310,11 @@ public class ShapeRenderer {
         }
         Col col;
         Block b = state.getBlock();
+        MapColor mapColor = b.getMapColor(state);
+        if (mapColor != null) {
+            return new Col(((mapColor.colorValue>>16) & 0xff) / 255.0f, ((mapColor.colorValue>>8) & 0xff) / 255.0f, (mapColor.colorValue & 0xff) / 255.0f);
+        }
+
         if (b == Blocks.DIRT || b == Blocks.FARMLAND || b == Blocks.GRASS_PATH) {
             col = COL_DIRT;
         } else if (b == Blocks.GRASS) {
@@ -346,6 +359,15 @@ public class ShapeRenderer {
         return col;
     }
 
+
+//    private void renderFacesVBO(Tessellator tessellator, final VertexBuffer buffer,
+//                                ItemStack stack, boolean showMat) {
+//        if (vboBuffer == null) {
+//            vboBuffer = new VertexBuffer(2097152);
+//        }
+//        buffer
+//    }
+//
     private void renderFaces(Tessellator tessellator, final VertexBuffer buffer,
                      ItemStack stack, boolean showMat) {
 
