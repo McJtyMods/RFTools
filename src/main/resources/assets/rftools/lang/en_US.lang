@@ -145,6 +145,7 @@ tile.rftools.security_manager.name=Security Manager
 tile.rftools.dimensional_shard_ore.name=Dimensional Shard Ore
 tile.rftools.builder.name=Builder
 tile.rftools.composer.name=Composer
+tile.rftools.projector.name=Projector
 tile.rftools.scanner.name=Scanner
 tile.rftools.support_block.name=Support Block
 tile.rftools.space_chamber.name=Space Chamber Corner Block

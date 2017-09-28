@@ -19,6 +19,10 @@ public class BuilderConfiguration {
     public static int SCANNER_RECEIVEPERTICK = 20000;
     public static int SCANNER_ONESCAN = 500000;
 
+    public static int PROJECTOR_MAXENERGY = 500000;
+    public static int PROJECTOR_RECEIVEPERTICK = 10000;
+    public static int PROJECTOR_USEPERTICK = 1000;
+
     public static int builderRfPerOperation = 500;
     public static int builderRfPerLiquid = 300;
     public static int builderRfPerQuarry = 300;
@@ -75,6 +79,12 @@ public class BuilderConfiguration {
                 "RF per tick that the scanner can receive").getInt();
         SCANNER_ONESCAN = cfg.get(CATEGORY_BUILDER, "scannerOneScanRF", SCANNER_ONESCAN,
                 "Amount of RF needed for a single scan operation").getInt();
+        PROJECTOR_MAXENERGY = cfg.get(CATEGORY_BUILDER, "projectorMaxRF", PROJECTOR_MAXENERGY,
+                "Maximum RF storage that the projector can hold").getInt();
+        PROJECTOR_RECEIVEPERTICK = cfg.get(CATEGORY_BUILDER, "projectorRFPerTick", PROJECTOR_RECEIVEPERTICK,
+                "RF per tick that the projector can receive").getInt();
+        PROJECTOR_USEPERTICK = cfg.get(CATEGORY_BUILDER, "projectorUsePerTick", PROJECTOR_USEPERTICK,
+                "RF/t for the projector while it is in use").getInt();
         builderRfPerOperation = cfg.get(CATEGORY_BUILDER, "builderRfPerOperation", builderRfPerOperation,
                 "RF per block operation for the builder when used to build").getInt();
         builderRfPerQuarry = cfg.get(CATEGORY_BUILDER, "builderRfPerQuarry", builderRfPerQuarry,
