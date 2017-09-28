@@ -3,10 +3,9 @@ package mcjty.rftools.blocks.builder;
 import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
-import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
+import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.network.Argument;
 import mcjty.lib.tools.ItemStackTools;
@@ -16,6 +15,7 @@ import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 
 import java.awt.*;
 
@@ -33,7 +33,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     private ImageChoiceLabel supportMode;
     private ImageChoiceLabel entityMode;
     private ImageChoiceLabel loopMode;
-    private Label currentLevel;
+    private Button currentLevel;
 
     private ImageChoiceLabel anchor[] = new ImageChoiceLabel[4];
     private ChoiceLabel rotateButton;
@@ -59,8 +59,9 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
 
         initRedstoneMode();
 
-        currentLevel = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
-        currentLevel.setText("Y:").setTooltips("Current level the builder is at").setLayoutHint(new PositionalLayout.PositionalHint(75, 31, 40, 15));
+        currentLevel = new Button(mc, this);
+        currentLevel.setText("Y:").setTooltips("Current level the builder is at", TextFormatting.YELLOW + "Press to restart!").setLayoutHint(new PositionalLayout.PositionalHint(75, 31, 45, 13))
+            .addButtonEvent(parent -> restart());
 
         Panel positionPanel = setupPositionPanel();
         Panel modePanel = setupModePanel();
@@ -90,7 +91,10 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
                 new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()));
     }
 
-
+    private void restart() {
+        sendServerCommand(RFToolsMessages.INSTANCE, BuilderTileEntity.CMD_RESTART,
+                new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()));
+    }
 
     private Panel setupPositionPanel() {
         rotateButton = new ChoiceLabel(mc, this).addChoices(ROTATE_0, ROTATE_90, ROTATE_180, ROTATE_270).setLayoutHint(new PositionalLayout.PositionalHint(4, 4, 42, 14)).
@@ -251,7 +255,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
-        int cury = getCurrentLevel();
+        int cury = getCurrentLevelClientSide();
         currentLevel.setText("Y: " + (cury == -1 ? "stop" : cury));
 
         ItemStack card = tileEntity.getStackInSlot(BuilderContainer.SLOT_TAB);

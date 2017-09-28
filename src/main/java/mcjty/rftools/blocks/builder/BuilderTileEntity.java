@@ -81,6 +81,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public static final String CMD_SETLOOP = "setLoop";
     public static final String CMD_GETLEVEL = "getLevel";
     public static final String CMD_MODE = "setMode";
+    public static final String CMD_RESTART = "restart";
     public static final String CLIENTCMD_GETLEVEL = "getLevel";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, BuilderContainer.factory, 2);
@@ -542,6 +543,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public void setPowerInput(int powered) {
+//        if (getRSMode() == RedstoneMode.REDSTONE_ONREQUIRED) {
+//
+//        }
         boolean o = isMachineEnabled();
         super.setPowerInput(powered);
         boolean n = isMachineEnabled();
@@ -550,6 +554,16 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 restartScan();
             }
         }
+
+
+//        boolean changed = powerLevel != powered;
+//        super.setPowerInput(powered);
+//        if (changed) {
+//            if (loopMode || (powered > 0 && scan == null)) {
+//                restartScan();
+//            }
+//        }
+
     }
 
     private void createProjection(SpaceChamberRepository.SpaceChamberChannel chamberChannel) {
@@ -2207,9 +2221,14 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 CLIENTCMD_GETLEVEL));
     }
 
-    public static int getCurrentLevel() {
+    public static int getCurrentLevelClientSide() {
         return currentLevel;
     }
+
+    public int getCurrentLevel() {
+        return scan == null ? -1 : scan.getY();
+    }
+
 
     @Override
     public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
@@ -2220,6 +2239,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (CMD_MODE.equals(command)) {
             String m = args.get("rs").getString();
             setRSMode(RedstoneMode.getMode(m));
+            return true;
+        } else if (CMD_RESTART.equals(command)) {
+            restartScan();
             return true;
         } else  if (CMD_SETMODE.equals(command)) {
             setMode(args.get("mode").getInteger());
