@@ -31,20 +31,28 @@ public class PacketReturnShapeData implements IMessage {
         dimension = NetworkTools.readPos(buf);
 
         int size = buf.readInt();
-        statePalette = new StatePalette();
-        while (size > 0) {
-            String r = NetworkTools.readString(buf);
-            int m = buf.readInt();
-            Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(r));
-            statePalette.add(block.getStateFromMeta(m));
-            size--;
+        if (size == 0) {
+            statePalette = null;
+        } else {
+            statePalette = new StatePalette();
+            while (size > 0) {
+                String r = NetworkTools.readString(buf);
+                int m = buf.readInt();
+                Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(r));
+                statePalette.add(block.getStateFromMeta(m));
+                size--;
+            }
         }
 
         size = buf.readInt();
-        positions = new RLE();
-        byte[] data = new byte[size];
-        buf.readBytes(data);
-        positions.setData(data);
+        if (size == 0) {
+            positions = null;
+        } else {
+            positions = new RLE();
+            byte[] data = new byte[size];
+            buf.readBytes(data);
+            positions.setData(data);
+        }
     }
 
     @Override
@@ -53,17 +61,25 @@ public class PacketReturnShapeData implements IMessage {
         NetworkTools.writeStringUTF8(buf, msg);
         NetworkTools.writePos(buf, dimension);
 
-        buf.writeInt(statePalette.getPalette().size());
-        for (IBlockState state : statePalette.getPalette()) {
-            if (state.getBlock().getRegistryName() == null) {
-                state = Blocks.STONE.getDefaultState();
+        if (statePalette == null) {
+            buf.writeInt(0);
+        } else {
+            buf.writeInt(statePalette.getPalette().size());
+            for (IBlockState state : statePalette.getPalette()) {
+                if (state.getBlock().getRegistryName() == null) {
+                    state = Blocks.STONE.getDefaultState();
+                }
+                NetworkTools.writeString(buf, state.getBlock().getRegistryName().toString());
+                buf.writeInt(state.getBlock().getMetaFromState(state));
             }
-            NetworkTools.writeString(buf, state.getBlock().getRegistryName().toString());
-            buf.writeInt(state.getBlock().getMetaFromState(state));
         }
 
-        buf.writeInt(positions.getData().length);
-        buf.writeBytes(positions.getData());
+        if (positions == null) {
+            buf.writeInt(0);
+        } else {
+            buf.writeInt(positions.getData().length);
+            buf.writeBytes(positions.getData());
+        }
     }
 
     public PacketReturnShapeData() {

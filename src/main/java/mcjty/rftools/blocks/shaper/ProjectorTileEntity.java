@@ -5,14 +5,19 @@ import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderSetup;
+import mcjty.rftools.shapes.ShapeRenderer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable {
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ProjectorContainer.factory, 1);
+    private ShapeRenderer shapeRenderer = null;
 
     public ProjectorTileEntity() {
         super(BuilderConfiguration.PROJECTOR_MAXENERGY, BuilderConfiguration.PROJECTOR_RECEIVEPERTICK);
@@ -61,5 +66,23 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
     private void writeCommonToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
+    }
+
+    public ItemStack getRenderStack() {
+        return inventoryHelper.getStackInSlot(ProjectorContainer.SLOT_CARD);
+    }
+
+    public ShapeRenderer getShapeRenderer() {
+        if (shapeRenderer == null) {
+            shapeRenderer = new ShapeRenderer();
+        }
+        return shapeRenderer;
+    }
+
+    @SuppressWarnings("NullableProblems")
+    @SideOnly(Side.CLIENT)
+    @Override
+    public AxisAlignedBB getRenderBoundingBox() {
+        return new AxisAlignedBB(pos.add(-2, 0, -2), pos.add(3, 3, 3));
     }
 }

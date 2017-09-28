@@ -95,6 +95,30 @@ public class ShapeRenderer {
         glList = -1;
     }
 
+    public void renderShapeInWorld(ItemStack stack, double x, double y, double z) {
+        GlStateManager.pushMatrix();
+        GlStateManager.translate((float) x + 0.5F, (float) y + 3F, (float) z + 0.5F);
+        GlStateManager.scale(0.02,0.02,0.02);
+
+        net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
+        Minecraft.getMinecraft().entityRenderer.disableLightmap();
+        GlStateManager.disableBlend();
+        GlStateManager.enableCull();
+        GlStateManager.disableLighting();
+        GlStateManager.disableTexture2D();
+
+        Tessellator tessellator = Tessellator.getInstance();
+        VertexBuffer buffer = tessellator.getBuffer();
+        renderFaces(tessellator, buffer, stack, true);
+
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+        GlStateManager.enableLighting();
+        RenderHelper.enableStandardItemLighting();
+        Minecraft.getMinecraft().entityRenderer.enableLightmap();
+
+        GlStateManager.popMatrix();
+    }
 
     public void renderShape(IShapeParentGui gui, ItemStack stack, int x, int y, boolean showAxis, boolean showOuter, boolean showMat) {
         setupScissor(gui);
