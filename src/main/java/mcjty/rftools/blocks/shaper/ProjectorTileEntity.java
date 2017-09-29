@@ -41,11 +41,20 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
     @Override
     public void update() {
         if (!getWorld().isRemote) {
-            // @todo power usage
             boolean a = isMachineEnabled();
+            if (a) {
+                if (getEnergyStored() < BuilderConfiguration.PROJECTOR_USEPERTICK) {
+                    a = false;
+                }
+            }
+
             if (a != active) {
                 active = a;
                 markDirtyClient();
+            }
+
+            if (active) {
+                consumeEnergy(BuilderConfiguration.PROJECTOR_USEPERTICK);
             }
         } else {
             if (autoRotate) {
@@ -119,7 +128,6 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
     // 0 -> 0.001
     // 100 -> 0.1
     public int getScaleInt() {
-//        return (int) (scale * 500);
         return (int) (20.0 * Math.log((scale - 0.001f) / 0.1f * 147.4131f + 1));
     }
 

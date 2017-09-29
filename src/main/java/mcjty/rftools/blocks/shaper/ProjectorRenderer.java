@@ -15,7 +15,7 @@ public class ProjectorRenderer extends TileEntitySpecialRenderer<ProjectorTileEn
         super.renderTileEntityAt(te, x, y, z, partialTicks, destroyStage);
 
         ItemStack renderStack = te.getRenderStack();
-        if (ItemStackTools.isValid(renderStack)) {
+        if (te.isActive() && ItemStackTools.isValid(renderStack)) {
             ShapeRenderer renderer = te.getShapeRenderer();
             renderer.renderShapeInWorld(renderStack, x, y, z, te.getVerticalOffset(), te.getScale(), te.getAngle());
         }
