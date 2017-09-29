@@ -19,7 +19,9 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class ShapeRenderer {
 
@@ -36,7 +38,6 @@ public class ShapeRenderer {
     private final String name;    // For debug
     private final int id;         // Unique ID for this renderer
     private static int lastId = 0;
-    private int glList = -1;
     private long checksum = -1;
     private boolean prevShowMat = false;
 
@@ -47,6 +48,8 @@ public class ShapeRenderer {
         private Map<Long, IBlockState> positions = null;
         public int shapeCount = 0;
         public String previewMessage = "";
+        private int glList = -1;
+        private long touchTime = 0;
     }
 
     private static final Map<Integer, RenderData> renderDataMap = new HashMap<>();
@@ -67,12 +70,45 @@ public class ShapeRenderer {
         return 0;
     }
 
+    public static RenderData getRenderData(int id) {
+        RenderData data = renderDataMap.get(id);
+        if (data == null) {
+            data = new RenderData();
+            renderDataMap.put(id, data);
+        }
+        data.touchTime = System.currentTimeMillis();
+        return data;
+    }
+
+    private static int cleanupCounter = 20;
+    public static void cleanupOldRenderers() {
+        cleanupCounter--;
+        if (cleanupCounter >= 0) {
+            return;
+        }
+        cleanupCounter = 20;
+        long current = System.currentTimeMillis();
+        Set<Integer> toRemove = new HashSet<>();
+        for (Map.Entry<Integer, RenderData> entry : renderDataMap.entrySet()) {
+            if (entry.getValue().touchTime + 5000 < current) {
+                System.out.println("Removing id = " + entry.getKey());
+                toRemove.add(entry.getKey());
+            }
+        }
+        for (Integer id : toRemove) {
+            RenderData data = renderDataMap.get(id);
+            if (data.glList != -1) {
+                GLAllocation.deleteDisplayLists(data.glList);
+            }
+            renderDataMap.remove(id);
+        }
+    }
+
     public static void setRenderData(int id, Map<Long, IBlockState> positions, int count, String msg) {
-        RenderData data = new RenderData();
+        RenderData data = getRenderData(id);
         data.positions = positions;//new HashMap<>(positions);
         data.shapeCount = count;
         data.previewMessage = msg;
-        renderDataMap.put(id, data);
     }
 
     public void initView(float dx, float dy) {
@@ -117,10 +153,14 @@ public class ShapeRenderer {
     }
 
     public void invalidateGlList() {
-        if (glList != -1) {
-            GLAllocation.deleteDisplayLists(glList);
+        RenderData data = renderDataMap.get(id);
+        if (data == null) {
+            return;
         }
-        glList = -1;
+        if (data.glList != -1) {
+            GLAllocation.deleteDisplayLists(data.glList);
+        }
+        data.glList = -1;
     }
 
     public void renderShapeInWorld(ItemStack stack, double x, double y, double z) {
@@ -354,19 +394,18 @@ public class ShapeRenderer {
     private void renderFaces(Tessellator tessellator, final VertexBuffer buffer,
                      ItemStack stack, boolean showMat) {
 
-        RenderData data = renderDataMap.get(id);
+        RenderData data = getRenderData(id);
+        int glList = data.glList;
 
-        if (data == null || data.positions == null || waitForNewRequest > 0) {
+        if (data.positions == null || waitForNewRequest > 0) {
             if (waitForNewRequest <= 0) {
                 // No positions, send a new request
                 RFToolsMessages.INSTANCE.sendToServer(new PacketRequestShapeData(stack, id));
                 waitForNewRequest = 10;
-                if (data != null) {
-                    data.positions = null;
-                }
+                data.positions = null;
             } else {
                 waitForNewRequest--;
-                if (data != null && data.positions != null) {
+                if (data.positions != null) {
                     // Positions have arrived, create displayList
                     // Data is received
                     waitForNewRequest = 0;
@@ -395,8 +434,9 @@ public class ShapeRenderer {
     private void createDisplayList(Tessellator tessellator, VertexBuffer buffer, boolean showMat) {
         prevShowMat = showMat;
         invalidateGlList();
-        glList = GLAllocation.generateDisplayLists(1);
-        GlStateManager.glNewList(glList, GL11.GL_COMPILE);
+        RenderData data = getRenderData(id);
+        data.glList = GLAllocation.generateDisplayLists(1);
+        GlStateManager.glNewList(data.glList, GL11.GL_COMPILE);
 
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 //        GlStateManager.enableBlend();
@@ -406,7 +446,6 @@ public class ShapeRenderer {
 //            TLongHashSet positions = ShapeCardItem.getPositions(stack, shape, false, new BlockPos(0, 0, 0), new BlockPos(0, 0, 0), stateMap);
         Map<IBlockState, Col> pallete = new HashMap<>();
 
-        RenderData data = renderDataMap.get(id);
         Map<Long, IBlockState> positions = data.positions;
 
         for (Map.Entry<Long, IBlockState> entry : positions.entrySet()) {
