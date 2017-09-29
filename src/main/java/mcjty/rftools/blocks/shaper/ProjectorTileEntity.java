@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.shaper;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.shapes.ShapeRenderer;
@@ -74,7 +75,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
 
     public ShapeRenderer getShapeRenderer() {
         if (shapeRenderer == null) {
-            shapeRenderer = new ShapeRenderer();
+            shapeRenderer = new ShapeRenderer("projector at :" + BlockPosTools.toString(getPos()));
         }
         return shapeRenderer;
     }

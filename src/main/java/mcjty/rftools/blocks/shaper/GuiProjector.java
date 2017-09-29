@@ -37,7 +37,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
     private ToggleButton showOuter;
     private ToggleButton showMat;
 
-    private ShapeRenderer shapeRenderer = new ShapeRenderer();
+    private ShapeRenderer shapeRenderer = new ShapeRenderer("projector");
     private int filterCnt = 0;
 
     public GuiProjector(ProjectorTileEntity te, ProjectorContainer container) {

@@ -46,7 +46,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
     private Label offsetLabel;
     private Label dimensionLabel;
 
-    private ShapeRenderer shapeRenderer = new ShapeRenderer();
+    private ShapeRenderer shapeRenderer = new ShapeRenderer("scanner");
     private int filterCnt = 0;
 
     public GuiScanner(ScannerTileEntity shaperTileEntity, ScannerContainer container) {

@@ -33,26 +33,46 @@ public class ShapeRenderer {
     private float yangle = 25.0f;
     private float zangle = 0.0f;
 
+    private final String name;    // For debug
+    private final int id;         // Unique ID for this renderer
+    private static int lastId = 0;
     private int glList = -1;
     private long checksum = -1;
     private boolean prevShowMat = false;
 
-    private static int waitForNewRequest = 0;
-    private static Map<Long, IBlockState> positions = null;
-    public static int shapeCount = 0;
-    public static String previewMessage = "";
+    private int waitForNewRequest = 0;
 
 
+    public static class RenderData {
+        private Map<Long, IBlockState> positions = null;
+        public int shapeCount = 0;
+        public String previewMessage = "";
+    }
 
-    // VBO @todo
-//    VertexBuffer vboBuffer = null;
+    private static final Map<Integer, RenderData> renderDataMap = new HashMap<>();
 
+    public ShapeRenderer(String name) {
+        this.name = name;
+        this.id = lastId++;
+    }
 
+    public int getId() {
+        return id;
+    }
 
-    public static void setRenderData(Map<Long, IBlockState> positions, int count, String msg) {
-        ShapeRenderer.positions = positions;//new HashMap<>(positions);
-        ShapeRenderer.shapeCount = count;
-        ShapeRenderer.previewMessage = msg;
+    public int getCount() {
+        if (renderDataMap.containsKey(id)) {
+            return renderDataMap.get(id).shapeCount;
+        }
+        return 0;
+    }
+
+    public static void setRenderData(int id, Map<Long, IBlockState> positions, int count, String msg) {
+        RenderData data = new RenderData();
+        data.positions = positions;//new HashMap<>(positions);
+        data.shapeCount = count;
+        data.previewMessage = msg;
+        renderDataMap.put(id, data);
     }
 
     public void initView(float dx, float dy) {
@@ -171,8 +191,9 @@ public class ShapeRenderer {
         GlStateManager.disableBlend();
         RenderHelper.enableGUIStandardItemLighting();
 
-        if (!previewMessage.isEmpty()) {
-            Minecraft.getMinecraft().fontRenderer.drawString(previewMessage, gui.getPreviewLeft()+84, gui.getPreviewTop()+50, 0xffff0000);
+        RenderData data = renderDataMap.get(id);
+        if (data != null && !data.previewMessage.isEmpty()) {
+            Minecraft.getMinecraft().fontRenderer.drawString(data.previewMessage, gui.getPreviewLeft()+84, gui.getPreviewTop()+50, 0xffff0000);
             return;
         }
 
@@ -333,15 +354,19 @@ public class ShapeRenderer {
     private void renderFaces(Tessellator tessellator, final VertexBuffer buffer,
                      ItemStack stack, boolean showMat) {
 
-        if (ShapeRenderer.positions == null || waitForNewRequest > 0) {
+        RenderData data = renderDataMap.get(id);
+
+        if (data == null || data.positions == null || waitForNewRequest > 0) {
             if (waitForNewRequest <= 0) {
                 // No positions, send a new request
-                RFToolsMessages.INSTANCE.sendToServer(new PacketRequestShapeData(stack));
+                RFToolsMessages.INSTANCE.sendToServer(new PacketRequestShapeData(stack, id));
                 waitForNewRequest = 10;
-                ShapeRenderer.positions = null;
+                if (data != null) {
+                    data.positions = null;
+                }
             } else {
                 waitForNewRequest--;
-                if (ShapeRenderer.positions != null) {
+                if (data != null && data.positions != null) {
                     // Positions have arrived, create displayList
                     // Data is received
                     waitForNewRequest = 0;
@@ -359,7 +384,7 @@ public class ShapeRenderer {
         long check = calculateChecksum(stack);
         if (glList == -1 || check != checksum || showMat != prevShowMat) {
             // Checksum failed, set positions to null
-            ShapeRenderer.positions = null;
+            data.positions = null;
         }
 
         if (glList != -1) {
@@ -380,6 +405,9 @@ public class ShapeRenderer {
 //            Map<Long, IBlockState> stateMap = new HashMap<>();
 //            TLongHashSet positions = ShapeCardItem.getPositions(stack, shape, false, new BlockPos(0, 0, 0), new BlockPos(0, 0, 0), stateMap);
         Map<IBlockState, Col> pallete = new HashMap<>();
+
+        RenderData data = renderDataMap.get(id);
+        Map<Long, IBlockState> positions = data.positions;
 
         for (Map.Entry<Long, IBlockState> entry : positions.entrySet()) {
             long p = entry.getKey();

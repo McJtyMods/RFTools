@@ -250,9 +250,9 @@ public class GuiModifier extends GenericGuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         refreshList();
-        del.setEnabled(list.getSelected() >= 0 && list.getChildCount() > 0);
-        up.setEnabled(list.getSelected() > 0);
-        down.setEnabled(list.getSelected() < list.getChildCount()-1);
+        del.setEnabled(list.getSelected() >= 0 && list.getChildCount() > 0 && list.getSelected() < list.getChildCount());
+        up.setEnabled(list.getSelected() > 0 && list.getSelected() < list.getChildCount());
+        down.setEnabled(list.getSelected() < list.getChildCount()-1 && list.getSelected() >= 0);
 
         drawWindow();
     }

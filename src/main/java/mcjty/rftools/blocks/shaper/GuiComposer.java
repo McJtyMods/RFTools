@@ -47,7 +47,7 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
     public static BlockPos shaperBlock = null;
     public static int shaperStackSlot = 0;
 
-    private ShapeRenderer shapeRenderer = new ShapeRenderer();
+    private ShapeRenderer shapeRenderer = new ShapeRenderer("composer");
 
     private Window sideWindow;
 
