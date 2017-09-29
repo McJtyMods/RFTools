@@ -67,9 +67,9 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     private int energy = 0;
 
     // Total amount of energy extracted from this block (local or not)
-    private int totalExtracted = 0;
+    private long totalExtracted = 0;
     // Total amount of energy inserted in this block (local or not)
-    private int totalInserted = 0;
+    private long totalInserted = 0;
 
     private int lastRfPerTickIn = 0;
     private int lastRfPerTickOut = 0;
@@ -178,8 +178,8 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
         energy = tagCompound.getInteger("energy");
-        totalInserted = tagCompound.getInteger("totIns");
-        totalExtracted = tagCompound.getInteger("totExt");
+        totalInserted = tagCompound.getLong("totIns");
+        totalExtracted = tagCompound.getLong("totExt");
         networkId = tagCompound.getInteger("networkId");
         modes[0] = Mode.values()[tagCompound.getByte("m0")];
         modes[1] = Mode.values()[tagCompound.getByte("m1")];
@@ -200,8 +200,8 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
         tagCompound.setInteger("energy", energy);
-        tagCompound.setInteger("totIns", totalInserted);
-        tagCompound.setInteger("totExt", totalExtracted);
+        tagCompound.setLong("totIns", totalInserted);
+        tagCompound.setLong("totExt", totalExtracted);
         tagCompound.setInteger("networkId", networkId);
         tagCompound.setByte("m0", (byte) modes[0].ordinal());
         tagCompound.setByte("m1", (byte) modes[1].ordinal());
@@ -436,11 +436,11 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         }
     }
 
-    public int getTotalExtracted() {
+    public long getTotalExtracted() {
         return totalExtracted;
     }
 
-    public int getTotalInserted() {
+    public long getTotalInserted() {
         return totalInserted;
     }
 

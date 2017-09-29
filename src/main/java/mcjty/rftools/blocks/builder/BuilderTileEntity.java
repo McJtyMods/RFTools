@@ -78,6 +78,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public static final String CMD_SETENTITIES = "setEntities";
     public static final String CMD_SETLOOP = "setLoop";
     public static final String CMD_GETLEVEL = "getLevel";
+    public static final String CMD_MODE = "setMode";
+    public static final String CMD_RESTART = "restart";
     public static final String CLIENTCMD_GETLEVEL = "getLevel";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, BuilderContainer.factory, 2);
@@ -145,6 +147,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     public BuilderTileEntity() {
         super(BuilderConfiguration.BUILDER_MAXENERGY, BuilderConfiguration.BUILDER_RECEIVEPERTICK);
+        setRSMode(RedstoneMode.REDSTONE_ONREQUIRED);
+    }
+
+    @Override
+    protected boolean needsRedstoneMode() {
+        return true;
     }
 
     @Override
@@ -469,7 +477,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             int dz = dimension.getZ();
 
             BlockPos offset = new BlockPos(minBox.getX() + (int) Math.ceil(dx / 2), minBox.getY() + (int) Math.ceil(dy / 2), minBox.getZ() + (int) Math.ceil(dz / 2));
-            ShapeCardItem.setOffset(shapeCard, offset.getX(), offset.getY(), offset.getX());
+            ShapeCardItem.setOffset(shapeCard, offset.getX(), offset.getY(), offset.getZ());
         }
 
         if (supportMode) {
@@ -533,10 +541,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public void setPowerInput(int powered) {
-        boolean changed = powerLevel != powered;
+        boolean o = isMachineEnabled();
         super.setPowerInput(powered);
-        if (changed) {
-            if (loopMode || (powered > 0 && scan == null)) {
+        boolean n = isMachineEnabled();
+        if (o != n) {
+            if (loopMode || (n && scan == null)) {
                 restartScan();
             }
         }
@@ -632,7 +641,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private void checkStateServer() {
-        if (powerLevel == 0 && loopMode) {
+        if (!isMachineEnabled() && loopMode) {
             return;
         }
 
@@ -641,7 +650,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         if (isShapeCard()) {
-            if (powerLevel == 0) {
+            if (!isMachineEnabled()) {
                 chunkUnload();
                 return;
             }
@@ -973,7 +982,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
 
             FakePlayer fakePlayer = getHarvester();
-            IBlockState newState = placeBlockAt(getWorld(), srcPos, stack, null, fakePlayer);
+            Integer origMeta = pickState != null ? pickState.getBlock().getMetaFromState(pickState) : null;
+            IBlockState newState = placeBlockAt(getWorld(), srcPos, stack, origMeta, fakePlayer);
 
             if (!silent) {
                 SoundTools.playSound(getWorld(), newState.getBlock().getSoundType().getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
@@ -1960,7 +1970,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void restartScan() {
         chunkUnload();
-        if (loopMode || (powerLevel > 0 && scan == null)) {
+        if (loopMode || (isMachineEnabled() && scan == null)) {
             if (getCardType() == ShapeCardItem.CARD_SPACE) {
                 calculateBox();
                 scan = minBox;
@@ -2160,6 +2170,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     @Override
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
+
+        // Workaround to get the redstone mode for old builders to default to 'on'
+        if (!tagCompound.hasKey("rsMode")) {
+            rsMode = RedstoneMode.REDSTONE_ONREQUIRED;
+        }
+
+
         readBufferFromNBT(tagCompound, inventoryHelper);
         mode = tagCompound.getInteger("mode");
         anchor = tagCompound.getInteger("anchor");
@@ -2196,9 +2213,14 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 CLIENTCMD_GETLEVEL));
     }
 
-    public static int getCurrentLevel() {
+    public static int getCurrentLevelClientSide() {
         return currentLevel;
     }
+
+    public int getCurrentLevel() {
+        return scan == null ? -1 : scan.getY();
+    }
+
 
     @Override
     public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
@@ -2206,7 +2228,14 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (rc) {
             return true;
         }
-        if (CMD_SETMODE.equals(command)) {
+        if (CMD_MODE.equals(command)) {
+            String m = args.get("rs").getString();
+            setRSMode(RedstoneMode.getMode(m));
+            return true;
+        } else if (CMD_RESTART.equals(command)) {
+            restartScan();
+            return true;
+        } else  if (CMD_SETMODE.equals(command)) {
             setMode(args.get("mode").getInteger());
             return true;
         } else if (CMD_SETANCHOR.equals(command)) {

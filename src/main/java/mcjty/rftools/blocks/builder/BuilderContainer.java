@@ -22,7 +22,7 @@ public class BuilderContainer extends GenericContainer {
                     new ItemStack(BuilderSetup.spaceChamberCardItem),
                     new ItemStack(BuilderSetup.shapeCardItem)),
                     CONTAINER_INVENTORY, SLOT_TAB, 87, 10, 1, 18, 1, 18);
-            addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, StorageFilterItem.class), CONTAINER_INVENTORY, SLOT_FILTER, 88, 46);
+            addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, StorageFilterItem.class), CONTAINER_INVENTORY, SLOT_FILTER, 78, 46);
             layoutPlayerInventorySlots(10, 70);
         }
     };

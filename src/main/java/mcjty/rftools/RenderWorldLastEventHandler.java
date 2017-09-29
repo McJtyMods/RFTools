@@ -14,6 +14,7 @@ import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import mcjty.rftools.network.PacketGetRfInRange;
 import mcjty.rftools.network.PacketReturnRfInRange;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.shapes.ShapeRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -44,6 +45,7 @@ public class RenderWorldLastEventHandler {
         renderHilightedBlock(evt);
         renderProtectedBlocks(evt);
         renderPower(evt);
+        ShapeRenderer.cleanupOldRenderers();
     }
 
     private static void renderProtectedBlocks(RenderWorldLastEvent evt) {

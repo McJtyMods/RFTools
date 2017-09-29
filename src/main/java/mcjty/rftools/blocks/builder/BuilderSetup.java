@@ -4,6 +4,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.blocks.shaper.ProjectorBlock;
+import mcjty.rftools.blocks.shaper.ScannerBlock;
 import mcjty.rftools.blocks.shaper.ComposerBlock;
 import mcjty.rftools.blocks.shaper.ScannerBlock;
 import mcjty.rftools.items.builder.ShapeCardItem;
@@ -25,6 +28,7 @@ public class BuilderSetup {
     public static SupportBlock supportBlock;
     public static ComposerBlock composerBlock;
     public static ScannerBlock scannerBlock;
+    public static ProjectorBlock projectorBlock;
 
     public static SpaceChamberCardItem spaceChamberCardItem;
     public static ShapeCardItem shapeCardItem;
@@ -38,6 +42,7 @@ public class BuilderSetup {
         supportBlock = new SupportBlock();
         composerBlock = new ComposerBlock();
         scannerBlock = new ScannerBlock();
+        projectorBlock = new ProjectorBlock();
 
         initItems();
 
@@ -53,6 +58,7 @@ public class BuilderSetup {
         supportBlock.initModel();
         composerBlock.initModel();
         scannerBlock.initModel();
+        projectorBlock.initModel();
 
         spaceChamberCardItem.initModel();
         shapeCardItem.initModel();

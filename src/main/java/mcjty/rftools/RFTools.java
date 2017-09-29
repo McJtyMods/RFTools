@@ -135,6 +135,7 @@ public class RFTools implements ModBase {
     public static final int GUI_ELEVATOR = modGuiIndex++;
     public static final int GUI_COMPOSER = modGuiIndex++;
     public static final int GUI_SCANNER = modGuiIndex++;
+    public static final int GUI_PROJECTOR = modGuiIndex++;
 
     /**
      * Run before anything else. Read your config, create blocks, items, etc, and

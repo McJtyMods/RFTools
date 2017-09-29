@@ -801,12 +801,12 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         formula.setup(new BlockPos(0, 0, 0), clamped, new BlockPos(0, 0, 0), stack != null ? stack.getTagCompound() : null);
 
         int cnt = 0;
-        for (int oy = 0; oy < dy; oy++) {
-            int y = oy - dy/2;
-            for (int ox = 0; ox < dx; ox++) {
-                int x = ox - dx/2;
-                for (int oz = 0; oz < dz; oz++) {
-                    int z = oz - dz/2;
+        for (int ox = 0; ox < dx; ox++) {
+            int x = ox - dx/2;
+            for (int oz = 0; oz < dz; oz++) {
+                int z = oz - dz/2;
+                for (int oy = 0; oy < dy; oy++) {
+                    int y = oy - dy/2;
                     int v = 255;
                     if (formula.isInside(x, y, z)) {
                         cnt++;

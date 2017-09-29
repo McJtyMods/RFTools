@@ -17,22 +17,26 @@ import java.util.Map;
 
 public class PacketRequestShapeData implements IMessage {
     private ItemStack card;
+    private int id;
 
     @Override
     public void fromBytes(ByteBuf buf) {
         card = NetworkTools.readItemStack(buf);
+        id = buf.readInt();
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         NetworkTools.writeItemStack(buf, card);
+        buf.writeInt(id);
     }
 
     public PacketRequestShapeData() {
     }
 
-    public PacketRequestShapeData(ItemStack card) {
+    public PacketRequestShapeData(ItemStack card, int id) {
         this.card = card;
+        this.id = id;
     }
 
     public static class Handler implements IMessageHandler<PacketRequestShapeData, IMessage> {
@@ -49,7 +53,7 @@ public class PacketRequestShapeData implements IMessage {
             BlockPos dimension = ShapeCardItem.getDimension(message.card);
 
             if (dimension.getX()*dimension.getY()*dimension.getZ() > (200 * 200 * 200)) {
-                RFToolsMessages.INSTANCE.sendTo(new PacketReturnShapeData(null, null, dimension, 0, "Too large for preview!"), ctx.getServerHandler().player);
+                RFToolsMessages.INSTANCE.sendTo(new PacketReturnShapeData(message.id, null, null, dimension, 0, "Too large for preview!"), ctx.getServerHandler().player);
                 return;
             }
 
@@ -57,7 +61,7 @@ public class PacketRequestShapeData implements IMessage {
             StatePalette statePalette = new StatePalette();
             int cnt = ShapeCardItem.getRenderPositions(message.card, shape, solid, positions, statePalette);
 
-            RFToolsMessages.INSTANCE.sendTo(new PacketReturnShapeData(positions, statePalette, dimension, cnt, ""), ctx.getServerHandler().player);
+            RFToolsMessages.INSTANCE.sendTo(new PacketReturnShapeData(message.id, positions, statePalette, dimension, cnt, ""), ctx.getServerHandler().player);
         }
     }
 

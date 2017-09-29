@@ -2,8 +2,11 @@ package mcjty.rftools.blocks.shaper;
 
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
-import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.tools.ItemStackTools;
+import mcjty.lib.varia.RedstoneMode;
+import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.items.builder.ShapeCardItem;
@@ -24,6 +27,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
@@ -35,24 +39,45 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ScannerTileEntity extends GenericTileEntity implements DefaultSidedInventory {
+public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable {
 
     public static final String CMD_SCAN = "scan";
-    public static final String CMD_SETLOCK = "setlock";
+    public static final String CMD_SETOFFSET = "setOffset";
+    public static final String CMD_MODE = "setMode";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ScannerContainer.factory, 4);
     private StorageFilterCache filterCache = null;
-    private boolean locked = false;
 
     private byte[] data = null;
     private List<IBlockState> materialPalette = new ArrayList<>();
     private BlockPos dataDim;
     private BlockPos dataOffset = new BlockPos(0, 0, 0);
+    private ItemStack renderStack = ItemStackTools.getEmptyStack();
+
+    public ScannerTileEntity() {
+        super(BuilderConfiguration.SCANNER_MAXENERGY, BuilderConfiguration.SCANNER_RECEIVEPERTICK);
+        setRSMode(RedstoneMode.REDSTONE_ONREQUIRED);
+    }
+
+    @Override
+    public void update() {
+        if (!getWorld().isRemote) {
+            if (isMachineEnabled()) {
+                scan();
+            }
+        }
+    }
 
     @Override
     public InventoryHelper getInventoryHelper() {
         return inventoryHelper;
     }
+
+    @Override
+    protected boolean needsRedstoneMode() {
+        return true;
+    }
+
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
@@ -63,6 +88,13 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         if (index == ScannerContainer.SLOT_OUT) {
             if (!stack.isEmpty()) {
                 scan(dataOffset.getX(), dataOffset.getY(), dataOffset.getZ());
+            if (ItemStackTools.isValid(stack)) {
+                updateScanCard(stack);
+            }
+        }
+        if (index == ScannerContainer.SLOT_IN) {
+            if (ItemStackTools.isValid(stack)) {
+                dataDim = ShapeCardItem.getDimension(stack);
             }
         }
     }
@@ -101,15 +133,6 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         return dataOffset;
     }
 
-    public boolean isLocked() {
-        return locked;
-    }
-
-    public void setLocked(boolean locked) {
-        this.locked = locked;
-        markDirtyClient();
-    }
-
     private void getFilterCache() {
         if (filterCache == null) {
             filterCache = StorageFilterItem.getCache(inventoryHelper.getStackInSlot(ScannerContainer.SLOT_FILTER));
@@ -125,8 +148,6 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
-
-        locked = tagCompound.getBoolean("locked");
 
         if (tagCompound.hasKey("scandata")) {
             data = tagCompound.getByteArray("scandata");
@@ -187,7 +208,6 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
     private void writeCommonToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
-        tagCompound.setBoolean("locked", locked);
     }
 
     public void setDataFromFile(ItemStack card, BlockPos dimension, BlockPos offset, byte[] data, StatePalette palette) {
@@ -195,7 +215,6 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         this.dataOffset = new BlockPos(0, 0, 0);
         this.data = data;
         this.materialPalette = palette.getPalette();
-        this.locked = true;
         ShapeCardItem.setDimension(card, dimension.getX(), dimension.getY(), dimension.getZ());
         ShapeCardItem.setOffset(card, offset.getX(), offset.getY(), offset.getZ());
         ShapeCardItem.setShape(card, Shape.SHAPE_SCAN, true);
@@ -208,19 +227,18 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         if (!stack.isEmpty()) {
             return stack;
         }
-        // We need a dummy stack if we are locked
-        if (locked) {
-            stack = new ItemStack(BuilderSetup.shapeCardItem);
-            scanCard(dataOffset.getX(), dataOffset.getY(), dataOffset.getZ(), stack);
-            return stack;
+        if (ItemStackTools.isEmpty(renderStack)) {
+            renderStack = new ItemStack(BuilderSetup.shapeCardItem);
         }
         return ItemStack.EMPTY;
+        updateScanCard(renderStack);
+        return renderStack;
     }
 
 
-    private void scan(int offsetX, int offsetY, int offsetZ) {
-        ItemStack cardOut = inventoryHelper.getStackInSlot(ScannerContainer.SLOT_OUT);
-        scanCard(offsetX, offsetY, offsetZ, cardOut);
+    private void setOffset(int offsetX, int offsetY, int offsetZ) {
+        dataOffset = new BlockPos(offsetX, offsetY, offsetZ);
+        markDirtyClient();
     }
 
     private void scanCard(int offsetX, int offsetY, int offsetZ, ItemStack cardOut) {
@@ -242,7 +260,34 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
                 int dimZ = dim.getZ();
                 scanArea(tagOut, getPos().add(offsetX, offsetY, offsetZ), dimX, dimY, dimZ);
             }
+    private void updateScanCard(ItemStack cardOut) {
+        if (data != null && ItemStackTools.isValid(cardOut)) {
+            if (!ShapeCardItem.getShape(cardOut).isScan()) {
+                boolean solid = ShapeCardItem.isSolid(cardOut);
+                ShapeCardItem.setShape(cardOut, Shape.SHAPE_SCAN, solid);
+            }
+            NBTTagCompound tagOut = cardOut.getTagCompound();
+            ShapeCardItem.setDimension(cardOut, dataDim.getX(), dataDim.getY(), dataDim.getZ());
+            ShapeCardItem.setData(tagOut, getWorld().provider.getDimension(), getPos());
         }
+    }
+
+    private void scan() {
+        if (ItemStackTools.isEmpty(getStackInSlot(ScannerContainer.SLOT_IN))) {
+            // Cannot scan. No input card
+            return;
+        }
+
+        if (getEnergyStored() < BuilderConfiguration.SCANNER_ONESCAN) {
+            // Not enough power
+            return;
+        }
+        consumeEnergy(BuilderConfiguration.SCANNER_ONESCAN);
+
+        int dimX = dataDim.getX();
+        int dimY = dataDim.getY();
+        int dimZ = dataDim.getZ();
+        scanArea(getPos().add(dataOffset.getX(), dataOffset.getY(), dataOffset.getZ()), dimX, dimY, dimZ);
     }
 
     private IBlockState mapState(List<ModifierEntry> modifiers, Map<IBlockState, IBlockState> modifierMapping, BlockPos pos, IBlockState inState) {
@@ -323,7 +368,7 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
     }
 
 
-    private void scanArea(NBTTagCompound tagOut, BlockPos center, int dimX, int dimY, int dimZ) {
+    private void scanArea(BlockPos center, int dimX, int dimY, int dimZ) {
         ItemStack modifier = getStackInSlot(ScannerContainer.SLOT_MODIFIER);
         List<ModifierEntry> modifiers = ModifierItem.getModifiers(modifier);
         Map<IBlockState, IBlockState> modifierMapping = new HashMap<>();
@@ -380,7 +425,6 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         this.data = rle.getData();
         this.materialPalette = materialPalette.getPalette();
         this.dataDim = new BlockPos(dimX, dimY, dimZ);
-        ShapeCardItem.setData(tagOut, getWorld().provider.getDimension(), getPos());
         markDirtyClient();
     }
 
@@ -390,11 +434,15 @@ public class ScannerTileEntity extends GenericTileEntity implements DefaultSided
         if (rc) {
             return true;
         }
-        if (CMD_SCAN.equals(command)) {
-            scan(args.get("offsetX").getInteger(), args.get("offsetY").getInteger(), args.get("offsetZ").getInteger());
+        if (CMD_MODE.equals(command)) {
+            String m = args.get("rs").getString();
+            setRSMode(RedstoneMode.getMode(m));
             return true;
-        } else if (CMD_SETLOCK.equals(command)) {
-            setLocked(args.get("locked").getBoolean());
+        } else if (CMD_SCAN.equals(command)) {
+            scan();
+            return true;
+        } else if (CMD_SETOFFSET.equals(command)) {
+            setOffset(args.get("offsetX").getInteger(), args.get("offsetY").getInteger(), args.get("offsetZ").getInteger());
             return true;
         }
         return false;

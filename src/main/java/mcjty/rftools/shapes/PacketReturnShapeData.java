@@ -6,6 +6,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.varia.RLE;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -17,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PacketReturnShapeData implements IMessage {
+    private int id;
     private RLE positions;
     private StatePalette statePalette;
     private int count;
@@ -25,49 +27,69 @@ public class PacketReturnShapeData implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
+        id = buf.readInt();
         count = buf.readInt();
         msg = NetworkTools.readStringUTF8(buf);
         dimension = NetworkTools.readPos(buf);
 
         int size = buf.readInt();
-        statePalette = new StatePalette();
-        while (size > 0) {
-            String r = NetworkTools.readString(buf);
-            int m = buf.readInt();
-            Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(r));
-            statePalette.add(block.getStateFromMeta(m));
-            size--;
+        if (size == 0) {
+            statePalette = null;
+        } else {
+            statePalette = new StatePalette();
+            while (size > 0) {
+                String r = NetworkTools.readString(buf);
+                int m = buf.readInt();
+                Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(r));
+                statePalette.add(block.getStateFromMeta(m));
+                size--;
+            }
         }
 
         size = buf.readInt();
-        positions = new RLE();
-        byte[] data = new byte[size];
-        buf.readBytes(data);
-        positions.setData(data);
+        if (size == 0) {
+            positions = null;
+        } else {
+            positions = new RLE();
+            byte[] data = new byte[size];
+            buf.readBytes(data);
+            positions.setData(data);
+        }
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
+        buf.writeInt(id);
         buf.writeInt(count);
         NetworkTools.writeStringUTF8(buf, msg);
         NetworkTools.writePos(buf, dimension);
 
-        buf.writeInt(statePalette.getPalette().size());
-        for (IBlockState state : statePalette.getPalette()) {
-            NetworkTools.writeString(buf, state.getBlock().getRegistryName().toString());
-            buf.writeInt(state.getBlock().getMetaFromState(state));
+        if (statePalette == null) {
+            buf.writeInt(0);
+        } else {
+            buf.writeInt(statePalette.getPalette().size());
+            for (IBlockState state : statePalette.getPalette()) {
+                if (state.getBlock().getRegistryName() == null) {
+                    state = Blocks.STONE.getDefaultState();
+                }
+                NetworkTools.writeString(buf, state.getBlock().getRegistryName().toString());
+                buf.writeInt(state.getBlock().getMetaFromState(state));
+            }
         }
 
-        buf.writeInt(positions.getData().length);
-        buf.writeBytes(positions.getData());
-
-        System.out.println("buf.capacity() = " + buf.capacity());
+        if (positions == null) {
+            buf.writeInt(0);
+        } else {
+            buf.writeInt(positions.getData().length);
+            buf.writeBytes(positions.getData());
+        }
     }
 
     public PacketReturnShapeData() {
     }
 
-    public PacketReturnShapeData(RLE positions, StatePalette statePalette, BlockPos dimension, int count, String msg) {
+    public PacketReturnShapeData(int id, RLE positions, StatePalette statePalette, BlockPos dimension, int count, String msg) {
+        this.id = id;
         this.positions = positions;
         this.statePalette = statePalette;
         this.dimension = dimension;
@@ -90,12 +112,12 @@ public class PacketReturnShapeData implements IMessage {
             RLE rle = message.positions;
             if (rle != null) {
                 rle.reset();
-                for (int oy = 0; oy < dy; oy++) {
-                    int y = oy - dy / 2;
-                    for (int ox = 0; ox < dx; ox++) {
-                        int x = ox - dx / 2;
-                        for (int oz = 0; oz < dz; oz++) {
-                            int z = oz - dz / 2;
+                for (int ox = 0; ox < dx; ox++) {
+                    int x = ox - dx / 2;
+                    for (int oz = 0; oz < dz; oz++) {
+                        int z = oz - dz / 2;
+                        for (int oy = 0; oy < dy; oy++) {
+                            int y = oy - dy / 2;
                             int data = rle.read();
                             if (data < 255) {
                                 if (data == 0) {
@@ -109,7 +131,7 @@ public class PacketReturnShapeData implements IMessage {
                     }
                 }
             }
-            ShapeRenderer.setRenderData(positions, message.count, message.msg);
+            ShapeRenderer.setRenderData(message.id, positions, message.count, message.msg);
         }
 
     }

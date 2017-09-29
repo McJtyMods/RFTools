@@ -1,0 +1,7 @@
+{
+  "parent": "rftools:block/rftoolstopblock",
+  "textures": {
+    "particle": "rftools:blocks/machineside",
+    "up": "rftools:blocks/machineprojector"
+  }
+}

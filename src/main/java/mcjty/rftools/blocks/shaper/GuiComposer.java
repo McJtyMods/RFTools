@@ -45,7 +45,7 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
     public static BlockPos shaperBlock = null;
     public static int shaperStackSlot = 0;
 
-    private ShapeRenderer shapeRenderer = new ShapeRenderer();
+    private ShapeRenderer shapeRenderer = new ShapeRenderer("composer");
 
     private Window sideWindow;
 
@@ -62,6 +62,8 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
         super.initGui();
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
+
+        shapeRenderer.initView(250, 70);
 
         ShapeModifier[] modifiers = tileEntity.getModifiers();
 

@@ -92,7 +92,7 @@ public class BuilderBlock extends GenericRFToolsBlock<BuilderTileEntity, Builder
         super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
         TileEntity te = world.getTileEntity(data.getPos());
         if (te instanceof BuilderTileEntity) {
-            int scan = BuilderTileEntity.getCurrentLevel();
+            int scan = ((BuilderTileEntity) te).getCurrentLevel();
             probeInfo.text(TextFormatting.GREEN + "Current level: " + (scan == -1 ? "not scanning" : scan));
         }
     }
@@ -108,7 +108,7 @@ public class BuilderBlock extends GenericRFToolsBlock<BuilderTileEntity, Builder
                 BuilderTileEntity builderTileEntity = (BuilderTileEntity) te;
                 builderTileEntity.requestCurrentLevel();
             }
-            int scan = BuilderTileEntity.getCurrentLevel();
+            int scan = BuilderTileEntity.getCurrentLevelClientSide();
             currenttip.add(TextFormatting.GREEN + "Current level: " + (scan == -1 ? "not scanning" : scan));
         }
         return currenttip;
