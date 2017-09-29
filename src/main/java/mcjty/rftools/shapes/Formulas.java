@@ -139,12 +139,12 @@ public class Formulas {
             if (scannerWorld == null) {
                 return false;
             }
-            if (!scannerWorld.isBlockLoaded(scannerPos)) {
-                return false;
-            }
-            if (!(scannerWorld.getTileEntity(scannerPos) instanceof ScannerTileEntity)) {
-                return false;
-            }
+//            if (!scannerWorld.isBlockLoaded(scannerPos)) {
+//                return false;
+//            }
+//            if (!(scannerWorld.getTileEntity(scannerPos) instanceof ScannerTileEntity)) {
+//                return false;
+//            }
 
             int index = (y-y1) * dx * dz + (x-x1) * dz + (z-z1);
             if (data[index] == 0) {

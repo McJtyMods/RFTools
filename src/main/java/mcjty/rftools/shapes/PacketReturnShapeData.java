@@ -108,12 +108,12 @@ public class PacketReturnShapeData implements IMessage {
             RLE rle = message.positions;
             if (rle != null) {
                 rle.reset();
-                for (int oy = 0; oy < dy; oy++) {
-                    int y = oy - dy / 2;
-                    for (int ox = 0; ox < dx; ox++) {
-                        int x = ox - dx / 2;
-                        for (int oz = 0; oz < dz; oz++) {
-                            int z = oz - dz / 2;
+                for (int ox = 0; ox < dx; ox++) {
+                    int x = ox - dx / 2;
+                    for (int oz = 0; oz < dz; oz++) {
+                        int z = oz - dz / 2;
+                        for (int oy = 0; oy < dy; oy++) {
+                            int y = oy - dy / 2;
                             int data = rle.read();
                             if (data < 255) {
                                 if (data == 0) {
