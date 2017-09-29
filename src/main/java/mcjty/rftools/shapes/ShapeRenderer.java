@@ -163,10 +163,11 @@ public class ShapeRenderer {
         data.glList = -1;
     }
 
-    public void renderShapeInWorld(ItemStack stack, double x, double y, double z) {
+    public void renderShapeInWorld(ItemStack stack, double x, double y, double z, float offset, float scale, float angle) {
         GlStateManager.pushMatrix();
-        GlStateManager.translate((float) x + 0.5F, (float) y + 3F, (float) z + 0.5F);
-        GlStateManager.scale(0.02,0.02,0.02);
+        GlStateManager.translate((float) x + 0.5F, (float) y + 1F + offset, (float) z + 0.5F);
+        GlStateManager.scale(scale, scale, scale);
+        GlStateManager.rotate(angle, 0, 1, 0);
 
         net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
         Minecraft.getMinecraft().entityRenderer.disableLightmap();

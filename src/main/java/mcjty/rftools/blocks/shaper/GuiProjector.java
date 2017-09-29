@@ -3,11 +3,12 @@ package mcjty.rftools.blocks.shaper;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.entity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.Window;
+import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
-import mcjty.lib.gui.widgets.EnergyBar;
-import mcjty.lib.gui.widgets.ImageChoiceLabel;
+import mcjty.lib.gui.widgets.*;
+import mcjty.lib.gui.widgets.Button;
+import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.gui.widgets.ToggleButton;
 import mcjty.lib.network.Argument;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.RedstoneMode;
@@ -37,6 +38,14 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
     private ToggleButton showOuter;
     private ToggleButton showMat;
 
+    private ScrollableLabel angleLabel;
+    private ScrollableLabel offsetLabel;
+    private ScrollableLabel scaleLabel;
+    private Slider angleSlider;
+    private Slider offsetSlider;
+    private Slider scaleSlider;
+    private ToggleButton autoRotate;
+
     private ShapeRenderer shapeRenderer = new ShapeRenderer("projector");
     private int filterCnt = 0;
 
@@ -56,20 +65,72 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored();
-        energyBar = new EnergyBar(mc, this).setHorizontal().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(8, 120, 70, 10)).setShowText(false);
+        energyBar = new EnergyBar(mc, this).setHorizontal().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(26, 184, 55, 10)).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
         toplevel.addChild(energyBar);
 
         initRedstoneMode();
         toplevel.addChild(redstoneMode);
 
-        showAxis = new ToggleButton(mc, this).setCheckMarker(true).setText("A").setLayoutHint(new PositionalLayout.PositionalHint(5, 176, 24, 16));
+        Label angleI = new Label(mc, this).setText("Angle:");
+        angleI.setLayoutHint(new PositionalLayout.PositionalHint(23, 30, 18, 15));
+        angleLabel = new ScrollableLabel(mc, this).setRealMinimum(0).setRealMaximum(360)
+                .setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT)
+                .setLayoutHint(new PositionalLayout.PositionalHint(32, 30, 34, 15));
+        angleLabel.setRealValue(tileEntity.getAngleInt());
+        Button angleM = new Button(mc, this).setText("-").setLayoutHint(new PositionalLayout.PositionalHint(5, 30, 10, 15))
+                .addButtonEvent(parent -> min(angleLabel));
+        Button angleP = new Button(mc, this).setText("+").setLayoutHint(new PositionalLayout.PositionalHint(70, 30, 10, 15))
+                .addButtonEvent(parent -> plus(angleLabel));
+        angleSlider = new Slider(mc, this).setHorizontal().setScrollable(angleLabel)
+                .setLayoutHint(new PositionalLayout.PositionalHint(5, 46, 76, 15));
+        toplevel.addChild(angleI).addChild(angleLabel).addChild(angleSlider).addChild(angleM).addChild(angleP);
+
+        Label scaleI = new Label(mc, this).setText("Scale:");
+        scaleI.setLayoutHint(new PositionalLayout.PositionalHint(23, 62, 18, 15));
+        scaleLabel = new ScrollableLabel(mc, this).setRealMinimum(0).setRealMaximum(100)
+                .setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT)
+                .setLayoutHint(new PositionalLayout.PositionalHint(32, 62, 34, 15));
+        scaleLabel.setRealValue(tileEntity.getScaleInt());
+        Button scaleM = new Button(mc, this).setText("-").setLayoutHint(new PositionalLayout.PositionalHint(5, 62, 10, 15))
+                .addButtonEvent(parent -> min(scaleLabel));
+        Button scaleP = new Button(mc, this).setText("+").setLayoutHint(new PositionalLayout.PositionalHint(70, 62, 10, 15))
+                .addButtonEvent(parent -> plus(scaleLabel));
+        scaleSlider = new Slider(mc, this).setHorizontal().setScrollable(scaleLabel)
+                .setLayoutHint(new PositionalLayout.PositionalHint(5, 78, 76, 15));
+        toplevel.addChild(scaleI).addChild(scaleLabel).addChild(scaleSlider).addChild(scaleM).addChild(scaleP);
+
+        Label offsetI = new Label(mc, this).setText("Offs:");
+        offsetI.setLayoutHint(new PositionalLayout.PositionalHint(23, 94, 18, 15));
+        offsetLabel = new ScrollableLabel(mc, this).setRealMinimum(0).setRealMaximum(100)
+                .setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT)
+                .setLayoutHint(new PositionalLayout.PositionalHint(32, 94, 34, 15));
+        offsetLabel.setRealValue(tileEntity.getOffsetInt());
+        Button offsetM = new Button(mc, this).setText("-").setLayoutHint(new PositionalLayout.PositionalHint(5, 94, 10, 15))
+                .addButtonEvent(parent -> min(offsetLabel));
+        Button offsetP = new Button(mc, this).setText("+").setLayoutHint(new PositionalLayout.PositionalHint(70, 94, 10, 15))
+                .addButtonEvent(parent -> plus(offsetLabel));
+        offsetSlider = new Slider(mc, this).setHorizontal().setScrollable(offsetLabel)
+                .setLayoutHint(new PositionalLayout.PositionalHint(5, 110, 76, 15));
+        toplevel.addChild(offsetI).addChild(offsetLabel).addChild(offsetSlider).addChild(offsetM).addChild(offsetP);
+
+        autoRotate = new ToggleButton(mc, this).setCheckMarker(true).setText("Auto").setLayoutHint(new PositionalLayout.PositionalHint(5, 126, 48, 16));
+        autoRotate.setPressed(tileEntity.isAutoRotate());
+        toplevel.addChild(autoRotate);
+
+        angleLabel.addValueEvent((parent, newValue) -> update());
+        scaleLabel.addValueEvent((parent, newValue) -> update());
+        offsetLabel.addValueEvent((parent, newValue) -> update());
+        autoRotate.addButtonEvent(parent -> update());
+
+
+        showAxis = new ToggleButton(mc, this).setCheckMarker(true).setText("A").setLayoutHint(new PositionalLayout.PositionalHint(5, 200, 24, 16));
         showAxis.setPressed(true);
         toplevel.addChild(showAxis);
-        showOuter = new ToggleButton(mc, this).setCheckMarker(true).setText("B").setLayoutHint(new PositionalLayout.PositionalHint(31, 176, 24, 16));
+        showOuter = new ToggleButton(mc, this).setCheckMarker(true).setText("B").setLayoutHint(new PositionalLayout.PositionalHint(31, 200, 24, 16));
         showOuter.setPressed(true);
         toplevel.addChild(showOuter);
-        showMat = new ToggleButton(mc, this).setCheckMarker(true).setText("M").setLayoutHint(new PositionalLayout.PositionalHint(57, 176, 24, 16));
+        showMat = new ToggleButton(mc, this).setCheckMarker(true).setText("M").setLayoutHint(new PositionalLayout.PositionalHint(57, 200, 24, 16));
         showMat.setPressed(true);
         toplevel.addChild(showMat);
 
@@ -81,19 +142,36 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
         tileEntity.requestRfFromServer(RFTools.MODID);
     }
 
+    private void plus(ScrollableLabel l) {
+        l.setRealValue(l.getRealValue()+1);
+    }
+
+    private void min(ScrollableLabel l) {
+        l.setRealValue(l.getRealValue()-1);
+    }
+
+    private void update() {
+        sendServerCommand(RFToolsMessages.INSTANCE, ProjectorTileEntity.CMD_SETTINGS,
+                new Argument("scale", scaleLabel.getRealValue()),
+                new Argument("offset", offsetLabel.getRealValue()),
+                new Argument("angle", angleLabel.getRealValue()),
+                new Argument("auto", autoRotate.isPressed())
+                );
+    }
+
     private void initRedstoneMode() {
         redstoneMode = new ImageChoiceLabel(mc, this).
                 addChoiceEvent((parent, newChoice) -> changeRedstoneMode()).
                 addChoice(RedstoneMode.REDSTONE_IGNORED.getDescription(), "Redstone mode:\nIgnored", iconGuiElements, 0, 0).
                 addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
                 addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
-        redstoneMode.setLayoutHint(new PositionalLayout.PositionalHint(50, 156, 16, 16));
+        redstoneMode.setLayoutHint(new PositionalLayout.PositionalHint(5, 180, 16, 16));
         redstoneMode.setCurrentChoice(tileEntity.getRSMode().ordinal());
     }
 
     private void changeRedstoneMode() {
         tileEntity.setRSMode(RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()]);
-        sendServerCommand(RFToolsMessages.INSTANCE, ScannerTileEntity.CMD_MODE,
+        sendServerCommand(RFToolsMessages.INSTANCE, ProjectorTileEntity.CMD_MODE,
                 new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()));
     }
 
