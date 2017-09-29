@@ -76,9 +76,13 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
         return true;
     }
 
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 
     @Override
-    public boolean isUsable(EntityPlayer player) {
+    public boolean isUsableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 

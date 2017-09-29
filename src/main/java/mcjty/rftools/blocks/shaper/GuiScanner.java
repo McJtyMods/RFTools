@@ -17,6 +17,7 @@ import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.IShapeParentGui;
 import mcjty.rftools.shapes.ShapeRenderer;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;

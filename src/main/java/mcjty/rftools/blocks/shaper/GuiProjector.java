@@ -10,7 +10,6 @@ import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.network.Argument;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
@@ -226,7 +225,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
         tileEntity.requestRfFromServer(RFTools.MODID);
 
         ItemStack stack = tileEntity.getRenderStack();
-        if (ItemStackTools.isValid(stack)) {
+        if (!stack.isEmpty()) {
             shapeRenderer.renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed(), showMat.isPressed());
         }
     }

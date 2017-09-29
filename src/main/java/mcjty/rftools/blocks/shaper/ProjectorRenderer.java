@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.shaper;
 
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.shapes.ShapeRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.ItemStack;
@@ -11,11 +10,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ProjectorRenderer extends TileEntitySpecialRenderer<ProjectorTileEntity> {
 
     @Override
-    public void renderTileEntityAt(ProjectorTileEntity te, double x, double y, double z, float partialTicks, int destroyStage) {
-        super.renderTileEntityAt(te, x, y, z, partialTicks, destroyStage);
+    public void render(ProjectorTileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+        super.render(te, x, y, z, partialTicks, destroyStage, alpha);
 
         ItemStack renderStack = te.getRenderStack();
-        if (te.isActive() && ItemStackTools.isValid(renderStack)) {
+        if (te.isActive() && !renderStack.isEmpty()) {
             ShapeRenderer renderer = te.getShapeRenderer();
             renderer.renderShapeInWorld(renderStack, x, y, z, te.getVerticalOffset(), te.getScale(), te.getAngle());
         }

@@ -177,7 +177,7 @@ public class ShapeRenderer {
         GlStateManager.disableTexture2D();
 
         Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer buffer = tessellator.getBuffer();
+        BufferBuilder buffer = tessellator.getBuffer();
         renderFaces(tessellator, buffer, stack, true);
 
         GlStateManager.enableTexture2D();
@@ -356,7 +356,7 @@ public class ShapeRenderer {
         }
         Col col;
         Block block = state.getBlock();
-        MapColor mapColor = block.getMapColor(state);
+        MapColor mapColor = block.getMapColor(state, null, null);
         if (block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
             col = COL_LAVA;
         } else if (block == BuilderSetup.scannerBlock) {
@@ -392,7 +392,6 @@ public class ShapeRenderer {
 //        buffer
 //    }
 //
-    private void renderFaces(Tessellator tessellator, final VertexBuffer buffer,
     private void renderFaces(Tessellator tessellator, final BufferBuilder buffer,
                      ItemStack stack, boolean showMat) {
 

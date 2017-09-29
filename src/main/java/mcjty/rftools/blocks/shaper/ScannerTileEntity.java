@@ -4,7 +4,6 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderSetup;
@@ -52,7 +51,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     private List<IBlockState> materialPalette = new ArrayList<>();
     private BlockPos dataDim;
     private BlockPos dataOffset = new BlockPos(0, 0, 0);
-    private ItemStack renderStack = ItemStackTools.getEmptyStack();
+    private ItemStack renderStack = ItemStack.EMPTY;
 
     public ScannerTileEntity() {
         super(BuilderConfiguration.SCANNER_MAXENERGY, BuilderConfiguration.SCANNER_RECEIVEPERTICK);
@@ -87,13 +86,11 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
         if (index == ScannerContainer.SLOT_OUT) {
             if (!stack.isEmpty()) {
-                scan(dataOffset.getX(), dataOffset.getY(), dataOffset.getZ());
-            if (ItemStackTools.isValid(stack)) {
                 updateScanCard(stack);
             }
         }
         if (index == ScannerContainer.SLOT_IN) {
-            if (ItemStackTools.isValid(stack)) {
+            if (!stack.isEmpty()) {
                 dataDim = ShapeCardItem.getDimension(stack);
             }
         }
@@ -227,10 +224,9 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         if (!stack.isEmpty()) {
             return stack;
         }
-        if (ItemStackTools.isEmpty(renderStack)) {
+        if (renderStack.isEmpty()) {
             renderStack = new ItemStack(BuilderSetup.shapeCardItem);
         }
-        return ItemStack.EMPTY;
         updateScanCard(renderStack);
         return renderStack;
     }
@@ -241,27 +237,8 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         markDirtyClient();
     }
 
-    private void scanCard(int offsetX, int offsetY, int offsetZ, ItemStack cardOut) {
-        if (!ShapeCardItem.getShape(cardOut).isScan()) {
-            boolean solid = ShapeCardItem.isSolid(cardOut);
-            ShapeCardItem.setShape(cardOut, Shape.SHAPE_SCAN, solid);
-        }
-        NBTTagCompound tagOut = cardOut.getTagCompound();
-
-        if (!cardOut.isEmpty()) {
-            if (locked) {
-                ShapeCardItem.setDimension(cardOut, dataDim.getX(), dataDim.getY(), dataDim.getZ());
-                ShapeCardItem.setData(tagOut, getWorld().provider.getDimension(), getPos());
-            } else {
-                dataOffset = new BlockPos(offsetX, offsetY, offsetZ);
-                BlockPos dim = ShapeCardItem.getDimension(cardOut);
-                int dimX = dim.getX();
-                int dimY = dim.getY();
-                int dimZ = dim.getZ();
-                scanArea(tagOut, getPos().add(offsetX, offsetY, offsetZ), dimX, dimY, dimZ);
-            }
     private void updateScanCard(ItemStack cardOut) {
-        if (data != null && ItemStackTools.isValid(cardOut)) {
+        if (data != null && !cardOut.isEmpty()) {
             if (!ShapeCardItem.getShape(cardOut).isScan()) {
                 boolean solid = ShapeCardItem.isSolid(cardOut);
                 ShapeCardItem.setShape(cardOut, Shape.SHAPE_SCAN, solid);
@@ -273,7 +250,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private void scan() {
-        if (ItemStackTools.isEmpty(getStackInSlot(ScannerContainer.SLOT_IN))) {
+        if (getStackInSlot(ScannerContainer.SLOT_IN).isEmpty()) {
             // Cannot scan. No input card
             return;
         }
