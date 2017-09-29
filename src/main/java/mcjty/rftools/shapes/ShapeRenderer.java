@@ -282,23 +282,7 @@ public class ShapeRenderer {
     }
 
     private static final Col COL_DEFAULT = new Col(.5f,.3f,.5f);
-    private static final Col COL_MODDED = new Col(.1f,.8f,.8f);
-    private static final Col COL_SNOW = new Col(.8f,.8f,.8f);
-    private static final Col COL_DIRT = new Col(0x86/255.0f,0x60/255.0f,0x43/255.0f);
-    private static final Col COL_GRASS = new Col(0x20/255.0f,0x90/255.0f,0x20/255.0f);
-    private static final Col COL_FOLIAGE = new Col(0x20/255.0f,0x70/255.0f,0x20/255.0f);
-    private static final Col COL_STONE = new Col(0x7d/255.0f,0x7d/255.0f,0x7d/255.0f);
-    private static final Col COL_WATER = new Col(0x37/255.0f,0x49/255.0f,0xc6/255.0f);
-    private static final Col COL_NETHERACK = new Col(0x6f/255.0f,0x36/255.0f,0x35/255.0f);
-    private static final Col COL_ENDSTONE = new Col(0xdd/255.0f,0xe0/255.0f,0xa5/255.0f);
-    private static final Col COL_SAND = new Col(0xdb/255.0f,0xd3/255.0f,0xa0/255.0f);
-    private static final Col COL_GRAVEL = new Col(0x7f/255.0f,0x7c/255.0f,0x7b/255.0f);
-    private static final Col COL_BEDROCK = new Col(0x54/255.0f,0x54/255.0f,0x54/255.0f);
     private static final Col COL_LAVA = new Col(0xd4/255.0f,0x5a/255.0f,0x12/255.0f);
-    private static final Col COL_WOOD = new Col(0x66/255.0f,0x51/255.0f,0x32/255.0f);
-    private static final Col COL_FLOWER = new Col(0xa0/255.0f,0x20/255.0f,0x20/255.0f);
-    private static final Col COL_OBSIDIAN = new Col(0x14/255.0f,0x12/255.0f,0x1e/255.0f);
-    private static final Col COL_QUARTZ = new Col(0xec/255.0f,0xe9/255.0f,0xe2/255.0f);
     private static final Col COL_SCANNER = new Col(0x00/255.0f,0x00/255.0f,0xe2/255.0f);
 
     private Col getColor(Map<IBlockState, Col> pallete, IBlockState state) {
@@ -309,52 +293,30 @@ public class ShapeRenderer {
             return pallete.get(state);
         }
         Col col;
-        Block b = state.getBlock();
-        MapColor mapColor = b.getMapColor(state);
-        if (mapColor != null) {
-            return new Col(((mapColor.colorValue>>16) & 0xff) / 255.0f, ((mapColor.colorValue>>8) & 0xff) / 255.0f, (mapColor.colorValue & 0xff) / 255.0f);
-        }
-
-        if (b == Blocks.DIRT || b == Blocks.FARMLAND || b == Blocks.GRASS_PATH) {
-            col = COL_DIRT;
-        } else if (b == Blocks.GRASS) {
-            col = COL_GRASS;
-        } else if (b == Blocks.GRAVEL) {
-            col = COL_GRAVEL;
-        } else if (b == Blocks.BEDROCK) {
-            col = COL_BEDROCK;
-        } else if (b == Blocks.SAND || b == Blocks.SANDSTONE) {
-            col = COL_SAND;
-        } else if (b == Blocks.QUARTZ_BLOCK) {
-            col = COL_QUARTZ;
-        } else if (b == Blocks.NETHERRACK) {
-            col = COL_NETHERACK;
-        } else if (b == Blocks.OBSIDIAN) {
-            col = COL_OBSIDIAN;
-        } else if (b == Blocks.END_STONE) {
-            col = COL_ENDSTONE;
-        } else if (b == Blocks.LEAVES || b == Blocks.LEAVES2 || b == Blocks.REEDS || b == Blocks.SAPLING) {
-            col = COL_FOLIAGE;
-        } else if (b == Blocks.RED_FLOWER || b == Blocks.YELLOW_FLOWER) {
-            col = COL_FLOWER;
-        } else if (b == Blocks.SNOW || b == Blocks.SNOW_LAYER) {
-            col = COL_SNOW;
-        } else if (b == Blocks.STONE || b == Blocks.COBBLESTONE || b == Blocks.MOSSY_COBBLESTONE) {
-            col = COL_STONE;
-        } else if (b == Blocks.WATER || b == Blocks.FLOWING_WATER) {
-            col = COL_WATER;
-        } else if (b == Blocks.LAVA || b == Blocks.FLOWING_LAVA) {
+        Block block = state.getBlock();
+        MapColor mapColor = block.getMapColor(state);
+        if (block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
             col = COL_LAVA;
-        } else if (b == Blocks.PLANKS || b == Blocks.LOG || b == Blocks.LOG2) {
-            col = COL_WOOD;
-        } else if (b == BuilderSetup.scannerBlock) {
+        } else if (block == BuilderSetup.scannerBlock) {
             col = COL_SCANNER;
-        } else if (!"minecraft".equals(state.getBlock().getRegistryName().getResourceDomain())) {
-            col = COL_MODDED;
+        } else if (mapColor != null) {
+            col = new Col(((mapColor.colorValue>>16) & 0xff) / 255.0f, ((mapColor.colorValue>>8) & 0xff) / 255.0f, (mapColor.colorValue & 0xff) / 255.0f);
         } else {
             col = COL_DEFAULT;
         }
-        // CLAY, ICE, SOUL_SAND, STONEBRICK, NETHER_BRICK, PRISMARINE, PURPUR_BLOCK
+        float r = col.getR();
+        float g = col.getG();
+        float b = col.getB();
+        if (r * 1.2f > 1.0f) {
+            r = 0.99f/1.2f;
+        }
+        if (g * 1.2f > 1.0f) {
+            g = 0.99f/1.2f;
+        }
+        if (b * 1.2f > 1.0f) {
+            b = 0.99f/1.2f;
+        }
+        col = new Col(r, g, b);
         pallete.put(state, col);
         return col;
     }
