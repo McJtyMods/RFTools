@@ -42,7 +42,7 @@ public class ShapeRenderer {
 
     private int waitForNewRequest = 0;
 
-    private static boolean useVBO = false;
+    private static boolean useVBO = true;
 
 
     public static class RenderData {
@@ -433,17 +433,7 @@ public class ShapeRenderer {
             }
             if (data.hasData()) {
                 // Render old data while we're waiting
-                if (useVBO) {
-                    //...
-                    data.vbo.bindBuffer();
-                    GlStateManager.glEnableClientState(GL11.GL_COLOR_ARRAY + GL11.GL_VERTEX_ARRAY);
-                    GlStateManager.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
-                    data.vbo.drawArrays(7);
-                    data.vbo.unbindBuffer();
-                    GlStateManager.glDisableClientState(GL11.GL_COLOR_ARRAY + GL11.GL_VERTEX_ARRAY);
-                } else {
-                    GlStateManager.callList(data.glList);
-                }
+                renderData(data);
             }
             return;
         }
@@ -455,16 +445,25 @@ public class ShapeRenderer {
         }
 
         if (data.hasData()) {
-            if (useVBO) {
-                data.vbo.bindBuffer();
-                GlStateManager.glEnableClientState(GL11.GL_COLOR_ARRAY + GL11.GL_VERTEX_ARRAY);
-                GlStateManager.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
-                data.vbo.drawArrays(7);
-                data.vbo.unbindBuffer();
-                GlStateManager.glDisableClientState(GL11.GL_COLOR_ARRAY + GL11.GL_VERTEX_ARRAY);
-            } else {
-                GlStateManager.callList(data.glList);
-            }
+            renderData(data);
+        }
+    }
+
+    private void renderData(RenderData data) {
+        if (useVBO) {
+            //...
+            data.vbo.bindBuffer();
+            GlStateManager.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+//                    GlStateManager.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
+            GlStateManager.glVertexPointer(3, GL11.GL_FLOAT, 4, 0);
+            GlStateManager.glEnableClientState(GL11.GL_COLOR_ARRAY);
+            GlStateManager.glColorPointer(4, GL11.GL_UNSIGNED_BYTE, 16, 16);
+            data.vbo.drawArrays(7);
+            data.vbo.unbindBuffer();
+            GlStateManager.glDisableClientState(GL11.GL_COLOR_ARRAY);
+            GlStateManager.glDisableClientState(GL11.GL_VERTEX_ARRAY);
+        } else {
+            GlStateManager.callList(data.glList);
         }
     }
 
