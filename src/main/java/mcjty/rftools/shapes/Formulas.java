@@ -129,20 +129,10 @@ public class Formulas {
 
         @Override
         public boolean isInside(int x, int y, int z) {
-            if (data == null) {
-                return false;
-            }
-            if (x < x1 || x >= x1+dx || y < y1 || y >= y1+dy || z < z1 || z >= z1+dz) {
-                return false;
-            }
-
-            if (scannerWorld == null) {
-                return false;
-            }
-//            if (!scannerWorld.isBlockLoaded(scannerPos)) {
+//            if (data == null) {
 //                return false;
 //            }
-//            if (!(scannerWorld.getTileEntity(scannerPos) instanceof ScannerTileEntity)) {
+//            if (x < x1 || x >= x1+dx || y < y1 || y >= y1+dy || z < z1 || z >= z1+dz) {
 //                return false;
 //            }
 
@@ -151,7 +141,8 @@ public class Formulas {
                 return false;
             } else {
                 int idx = ((data[index]) & 0xff)-1;
-                lastState = idx < palette.size() ? palette.get(idx) : null;
+                lastState = palette.get(idx);
+//                lastState = idx < palette.size() ? palette.get(idx) : null;
                 return true;
             }
         }

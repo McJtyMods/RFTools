@@ -16,8 +16,9 @@ public class StatePalette {
         if (state == null) {
             return def;
         }
-        if (paletteIndex.containsKey(state)) {
-            return paletteIndex.get(state);
+        Integer index = paletteIndex.get(state);
+        if (index != null) {
+            return index;
         }
         int idx = palette.size();
         if (idx > 253) {

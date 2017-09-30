@@ -105,33 +105,46 @@ public class PacketReturnShapeData implements IMessage {
         }
 
         private void handle(PacketReturnShapeData message) {
-            Map<Long, IBlockState> positions = new HashMap<>();
+//            Map<Long, IBlockState> positions = new HashMap<>();
             int dx = message.dimension.getX();
             int dy = message.dimension.getY();
             int dz = message.dimension.getZ();
+
+            ShapeRenderer.RenderColumn columns[] = new ShapeRenderer.RenderColumn[dx * dz];
             RLE rle = message.positions;
+
             if (rle != null) {
                 rle.reset();
                 for (int ox = 0; ox < dx; ox++) {
                     int x = ox - dx / 2;
                     for (int oz = 0; oz < dz; oz++) {
                         int z = oz - dz / 2;
+
+                        ShapeRenderer.RenderColumn column = new ShapeRenderer.RenderColumn(new BlockPos(x, -dy/2, z));
+                        columns[ox*dz+oz] = column;
+
                         for (int oy = 0; oy < dy; oy++) {
-                            int y = oy - dy / 2;
+//                            int y = oy - dy / 2;
                             int data = rle.read();
                             if (data < 255) {
                                 if (data == 0) {
-                                    positions.put(BlockPosHelper.toLong(x, y, z), null);
+//                                    positions.put(BlockPosHelper.toLong(x, y, z), null);
+                                    column.add(null);
                                 } else {
                                     data--;
-                                    positions.put(BlockPosHelper.toLong(x, y, z), message.statePalette.getPalette().get(data));
+//                                    positions.put(BlockPosHelper.toLong(x, y, z), message.statePalette.getPalette().get(data));
+                                    column.add(message.statePalette.getPalette().get(data));
                                 }
+                            } else {
+                                column.add(null);
                             }
                         }
+
+                        column.close();
                     }
                 }
             }
-            ShapeRenderer.setRenderData(message.id, positions, message.count, message.msg);
+            ShapeRenderer.setRenderData(message.id, null/* positions*/, columns, message.count, message.msg);
         }
 
     }
