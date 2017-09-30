@@ -9,7 +9,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.vertex.*;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -41,13 +42,24 @@ public class ShapeRenderer {
 
     private int waitForNewRequest = 0;
 
+    private static boolean useVBO = false;
+
 
     public static class RenderData {
         private ShapeRenderer.RenderColumn columns[] = null;
         public int shapeCount = 0;
         public String previewMessage = "";
         private int glList = -1;
+        private net.minecraft.client.renderer.vertex.VertexBuffer vbo;
         private long touchTime = 0;
+
+        public boolean hasData() {
+            if (useVBO) {
+                return vbo != null;
+            } else {
+                return glList != -1;
+            }
+        }
     }
 
     private static final Map<Integer, RenderData> renderDataMap = new HashMap<>();
@@ -95,10 +107,22 @@ public class ShapeRenderer {
         }
         for (Integer id : toRemove) {
             RenderData data = renderDataMap.get(id);
+            cleanupGLBuffer(data);
+            renderDataMap.remove(id);
+        }
+    }
+
+    private static void cleanupGLBuffer(RenderData data) {
+        if (useVBO) {
+            if (data.vbo != null) {
+                data.vbo.deleteGlBuffers();
+                data.vbo = null;
+            }
+        } else {
             if (data.glList != -1) {
                 GLAllocation.deleteDisplayLists(data.glList);
+                data.glList = -1;
             }
-            renderDataMap.remove(id);
         }
     }
 
@@ -154,10 +178,7 @@ public class ShapeRenderer {
         if (data == null) {
             return;
         }
-        if (data.glList != -1) {
-            GLAllocation.deleteDisplayLists(data.glList);
-        }
-        data.glList = -1;
+        cleanupGLBuffer(data);
     }
 
     public void renderShapeInWorld(ItemStack stack, double x, double y, double z, float offset, float scale, float angle) {
@@ -393,7 +414,6 @@ public class ShapeRenderer {
                      ItemStack stack, boolean showMat) {
 
         RenderData data = getRenderData(id);
-        int glList = data.glList;
 
         if (data.columns == null || waitForNewRequest > 0) {
             if (waitForNewRequest <= 0) {
@@ -411,21 +431,40 @@ public class ShapeRenderer {
                     createDisplayList(tessellator, buffer, showMat);
                 }
             }
-            if (glList != -1) {
+            if (data.hasData()) {
                 // Render old data while we're waiting
-                GlStateManager.callList(glList);
+                if (useVBO) {
+                    //...
+                    data.vbo.bindBuffer();
+                    GlStateManager.glEnableClientState(GL11.GL_COLOR_ARRAY + GL11.GL_VERTEX_ARRAY);
+                    GlStateManager.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
+                    data.vbo.drawArrays(7);
+                    data.vbo.unbindBuffer();
+                    GlStateManager.glDisableClientState(GL11.GL_COLOR_ARRAY + GL11.GL_VERTEX_ARRAY);
+                } else {
+                    GlStateManager.callList(data.glList);
+                }
             }
             return;
         }
 
         long check = calculateChecksum(stack);
-        if (glList == -1 || check != checksum || showMat != prevShowMat) {
+        if (!data.hasData() || check != checksum || showMat != prevShowMat) {
             // Checksum failed, set positions to null
             data.columns = null;
         }
 
-        if (glList != -1) {
-            GlStateManager.callList(glList);
+        if (data.hasData()) {
+            if (useVBO) {
+                data.vbo.bindBuffer();
+                GlStateManager.glEnableClientState(GL11.GL_COLOR_ARRAY + GL11.GL_VERTEX_ARRAY);
+                GlStateManager.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
+                data.vbo.drawArrays(7);
+                data.vbo.unbindBuffer();
+                GlStateManager.glDisableClientState(GL11.GL_COLOR_ARRAY + GL11.GL_VERTEX_ARRAY);
+            } else {
+                GlStateManager.callList(data.glList);
+            }
         }
     }
 
@@ -433,8 +472,14 @@ public class ShapeRenderer {
         prevShowMat = showMat;
         invalidateGlList();
         RenderData data = getRenderData(id);
-        data.glList = GLAllocation.generateDisplayLists(1);
-        GlStateManager.glNewList(data.glList, GL11.GL_COMPILE);
+
+        if (useVBO) {
+            data.vbo = new net.minecraft.client.renderer.vertex.VertexBuffer(DefaultVertexFormats.POSITION_COLOR);
+            buffer = new VertexBuffer(2097152);  // @todo keep global!!
+        } else {
+            data.glList = GLAllocation.generateDisplayLists(1);
+            GlStateManager.glNewList(data.glList, GL11.GL_COMPILE);
+        }
 
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 //        GlStateManager.enableBlend();
@@ -501,8 +546,15 @@ public class ShapeRenderer {
         System.out.println("avg = " + avg);
         buffer.setTranslation(origOffsetX, origOffsetY, origOffsetZ);
 
-        tessellator.draw();
-        GlStateManager.glEndList();
+        if (useVBO) {
+            buffer.finishDrawing();
+            buffer.reset();
+            data.vbo.bufferData(buffer.getByteBuffer());
+
+        } else {
+            tessellator.draw();
+            GlStateManager.glEndList();
+        }
     }
 
     private static void setupScissor(IShapeParentGui gui) {
