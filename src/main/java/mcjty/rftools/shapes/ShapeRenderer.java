@@ -43,7 +43,6 @@ public class ShapeRenderer {
 
 
     public static class RenderData {
-//        private Map<Long, IBlockState> positions = null;
         private ShapeRenderer.RenderColumn columns[] = null;
         public int shapeCount = 0;
         public String previewMessage = "";
@@ -103,9 +102,8 @@ public class ShapeRenderer {
         }
     }
 
-    public static void setRenderData(int id, Map<Long, IBlockState> positions, ShapeRenderer.RenderColumn columns[], int count, String msg) {
+    public static void setRenderData(int id, ShapeRenderer.RenderColumn columns[], int count, String msg) {
         RenderData data = getRenderData(id);
-//        data.positions = positions;//new HashMap<>(positions);
         data.columns = columns;
         data.shapeCount = count;
         data.previewMessage = msg;
@@ -443,14 +441,12 @@ public class ShapeRenderer {
 //        GlStateManager.enableAlpha();
 
 //            Map<Long, IBlockState> stateMap = new HashMap<>();
-//            TLongHashSet positions = ShapeCardItem.getPositions(stack, shape, false, new BlockPos(0, 0, 0), new BlockPos(0, 0, 0), stateMap);
         Map<IBlockState, Col> pallete = new HashMap<>();
 
         double origOffsetX = buffer.xOffset;
         double origOffsetY = buffer.yOffset;
         double origOffsetZ = buffer.zOffset;
 
-//        Map<Long, IBlockState> positions = data.positions;
         int avgcnt = 0;
         int total = 0;
         RenderColumn[] columns = data.columns;
@@ -505,62 +501,6 @@ public class ShapeRenderer {
         System.out.println("avg = " + avg);
         buffer.setTranslation(origOffsetX, origOffsetY, origOffsetZ);
 
-
-//        for (Map.Entry<Long, IBlockState> entry : positions.entrySet()) {
-//            long p = entry.getKey();
-//            BlockPos coordinate = BlockPos.fromLong(p);
-//            int x = coordinate.getX();
-//            int y = coordinate.getY();
-//            int z = coordinate.getZ();
-//
-//            buffer.setTranslation(origOffsetX + x, origOffsetY + y, origOffsetZ + z);
-//            if (showMat) {
-//                Col col = getColor(pallete, entry.getValue());
-//                float r = col.getR();
-//                float g = col.getG();
-//                float b = col.getB();
-//                if (!positions.containsKey(coordinate.up().toLong())) {
-//                    addSideFullTexture(buffer, EnumFacing.UP.ordinal(), r * .8f, g * .8f, b * .8f);
-//                }
-//                if (!positions.containsKey(coordinate.down().toLong())) {
-//                    addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), r * .8f, g * .8f, b * .8f);
-//                }
-//                if (!positions.containsKey(coordinate.north().toLong())) {
-//                    addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), r * 1.2f, g * 1.2f, b * 1.2f);
-//                }
-//                if (!positions.containsKey(coordinate.south().toLong())) {
-//                    addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), r * 1.2f, g * 1.2f, b * 1.2f);
-//                }
-//                if (!positions.containsKey(coordinate.west().toLong())) {
-//                    addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), r, g, b);
-//                }
-//                if (!positions.containsKey(coordinate.east().toLong())) {
-//                    addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), r, g, b);
-//                }
-//            } else {
-//                float d = .2f;
-//                float l = ((x + y + z) & 1) == 1 ? .9f : .6f;
-//                if (!positions.containsKey(coordinate.up().toLong())) {
-//                    addSideFullTexture(buffer, EnumFacing.UP.ordinal(), d, l, d);
-//                }
-//                if (!positions.containsKey(coordinate.down().toLong())) {
-//                    addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), d, l, d);
-//                }
-//                if (!positions.containsKey(coordinate.north().toLong())) {
-//                    addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), d, d, l);
-//                }
-//                if (!positions.containsKey(coordinate.south().toLong())) {
-//                    addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), d, d, l);
-//                }
-//                if (!positions.containsKey(coordinate.west().toLong())) {
-//                    addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), l, d, d);
-//                }
-//                if (!positions.containsKey(coordinate.east().toLong())) {
-//                    addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), l, d, d);
-//                }
-//            }
-//            buffer.setTranslation(origOffsetX - x, origOffsetY - y, origOffsetZ - z);
-//        }
         tessellator.draw();
         GlStateManager.glEndList();
     }

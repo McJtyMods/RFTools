@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.builder;
 import mcjty.lib.compat.CompatBlock;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
@@ -35,7 +36,7 @@ public class SupportBlock extends CompatBlock {
     public static PropertyInteger STATUS = PropertyInteger.create("status", 0, 2);
 
     public SupportBlock() {
-        super(Material.GLASS);
+        super(Material.GLASS, MapColor.CYAN);
         setUnlocalizedName("rftools.support_block");
         setRegistryName("support_block");
         setCreativeTab(RFTools.tabRfTools);

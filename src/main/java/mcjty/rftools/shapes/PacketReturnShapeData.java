@@ -3,6 +3,7 @@ package mcjty.rftools.shapes;
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.varia.RLE;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -105,7 +106,6 @@ public class PacketReturnShapeData implements IMessage {
         }
 
         private void handle(PacketReturnShapeData message) {
-//            Map<Long, IBlockState> positions = new HashMap<>();
             int dx = message.dimension.getX();
             int dy = message.dimension.getY();
             int dz = message.dimension.getZ();
@@ -114,6 +114,8 @@ public class PacketReturnShapeData implements IMessage {
             RLE rle = message.positions;
 
             if (rle != null) {
+                IBlockState dummy = BuilderSetup.supportBlock.getDefaultState();
+
                 rle.reset();
                 for (int ox = 0; ox < dx; ox++) {
                     int x = ox - dx / 2;
@@ -124,15 +126,12 @@ public class PacketReturnShapeData implements IMessage {
                         columns[ox*dz+oz] = column;
 
                         for (int oy = 0; oy < dy; oy++) {
-//                            int y = oy - dy / 2;
                             int data = rle.read();
                             if (data < 255) {
                                 if (data == 0) {
-//                                    positions.put(BlockPosHelper.toLong(x, y, z), null);
-                                    column.add(null);
+                                    column.add(dummy);
                                 } else {
                                     data--;
-//                                    positions.put(BlockPosHelper.toLong(x, y, z), message.statePalette.getPalette().get(data));
                                     column.add(message.statePalette.getPalette().get(data));
                                 }
                             } else {
@@ -144,7 +143,7 @@ public class PacketReturnShapeData implements IMessage {
                     }
                 }
             }
-            ShapeRenderer.setRenderData(message.id, null/* positions*/, columns, message.count, message.msg);
+            ShapeRenderer.setRenderData(message.id, columns, message.count, message.msg);
         }
 
     }
