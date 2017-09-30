@@ -589,7 +589,7 @@ public class ShapeRenderer {
         buffer.pos(quad.v4.x, quad.v4.y, quad.v4.z).color(r, g, b, a).endVertex();
     }
 
-    public static void addSideFullTexture(VertexBuffer buffer, int side, int cnt, float r, float g, float b) {
+    public static void addSideFullTexture(BufferBuilder buffer, int side, int cnt, float r, float g, float b) {
         Quad quad = QUADS[side];
         float a = 0.5f;
         buffer.pos(quad.v1.x, quad.v1.y * cnt, quad.v1.z).color(r, g, b, a).endVertex();
