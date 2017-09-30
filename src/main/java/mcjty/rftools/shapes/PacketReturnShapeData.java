@@ -136,7 +136,7 @@ public class PacketReturnShapeData implements IMessage {
                                     column.add(message.statePalette.getPalette().get(data));
                                 }
                             } else {
-                                column.add(null);
+                                column.add(null); // @todo, two kinds of null: no data or unknown texture!
                             }
                         }
 
