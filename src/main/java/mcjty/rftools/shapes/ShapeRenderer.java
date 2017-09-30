@@ -14,14 +14,12 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ShapeRenderer {
 
@@ -45,7 +43,8 @@ public class ShapeRenderer {
 
 
     public static class RenderData {
-        private Map<Long, IBlockState> positions = null;
+//        private Map<Long, IBlockState> positions = null;
+        private ShapeRenderer.RenderColumn columns[] = null;
         public int shapeCount = 0;
         public String previewMessage = "";
         private int glList = -1;
@@ -104,9 +103,10 @@ public class ShapeRenderer {
         }
     }
 
-    public static void setRenderData(int id, Map<Long, IBlockState> positions, int count, String msg) {
+    public static void setRenderData(int id, Map<Long, IBlockState> positions, ShapeRenderer.RenderColumn columns[], int count, String msg) {
         RenderData data = getRenderData(id);
-        data.positions = positions;//new HashMap<>(positions);
+//        data.positions = positions;//new HashMap<>(positions);
+        data.columns = columns;
         data.shapeCount = count;
         data.previewMessage = msg;
     }
@@ -122,7 +122,6 @@ public class ShapeRenderer {
                 if (prevX != -1 && Mouse.isButtonDown(0)) {
                     dx += (x - prevX);
                     dy += (y - prevY);
-                    System.out.println("dx = " + dx + "," + dy);
                 }
             } else {
                 if (prevX != -1 && Mouse.isButtonDown(0)) {
@@ -398,15 +397,15 @@ public class ShapeRenderer {
         RenderData data = getRenderData(id);
         int glList = data.glList;
 
-        if (data.positions == null || waitForNewRequest > 0) {
+        if (data.columns == null || waitForNewRequest > 0) {
             if (waitForNewRequest <= 0) {
                 // No positions, send a new request
                 RFToolsMessages.INSTANCE.sendToServer(new PacketRequestShapeData(stack, id));
                 waitForNewRequest = 10;
-                data.positions = null;
+                data.columns = null;
             } else {
                 waitForNewRequest--;
-                if (data.positions != null) {
+                if (data.columns != null) {
                     // Positions have arrived, create displayList
                     // Data is received
                     waitForNewRequest = 0;
@@ -424,7 +423,7 @@ public class ShapeRenderer {
         long check = calculateChecksum(stack);
         if (glList == -1 || check != checksum || showMat != prevShowMat) {
             // Checksum failed, set positions to null
-            data.positions = null;
+            data.columns = null;
         }
 
         if (glList != -1) {
@@ -447,63 +446,121 @@ public class ShapeRenderer {
 //            TLongHashSet positions = ShapeCardItem.getPositions(stack, shape, false, new BlockPos(0, 0, 0), new BlockPos(0, 0, 0), stateMap);
         Map<IBlockState, Col> pallete = new HashMap<>();
 
-        Map<Long, IBlockState> positions = data.positions;
+        double origOffsetX = buffer.xOffset;
+        double origOffsetY = buffer.yOffset;
+        double origOffsetZ = buffer.zOffset;
 
-        for (Map.Entry<Long, IBlockState> entry : positions.entrySet()) {
-            long p = entry.getKey();
-            BlockPos coordinate = BlockPos.fromLong(p);
+//        Map<Long, IBlockState> positions = data.positions;
+        int avgcnt = 0;
+        int total = 0;
+        RenderColumn[] columns = data.columns;
+        for (RenderColumn column : columns) {
+            BlockPos coordinate = column.getBottomPos();
             int x = coordinate.getX();
             int y = coordinate.getY();
             int z = coordinate.getZ();
-
-            buffer.setTranslation(buffer.xOffset + x, buffer.yOffset + y, buffer.zOffset + z);
-            if (showMat) {
-                Col col = getColor(pallete, entry.getValue());
-                float r = col.getR();
-                float g = col.getG();
-                float b = col.getB();
-                if (!positions.containsKey(coordinate.up().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.UP.ordinal(), r * .8f, g * .8f, b * .8f);
+            List<Pair<Integer, IBlockState>> columnData = column.getData();
+            for (int i = 0 ; i < columnData.size() ; i++) {
+                Pair<Integer, IBlockState> pair = columnData.get(i);
+                int cnt = pair.getKey();
+                IBlockState state = pair.getValue();
+                if (state != null) {
+                    buffer.setTranslation(origOffsetX + x, origOffsetY + y, origOffsetZ + z);
+                    avgcnt += cnt;
+                    total++;
+                    if (showMat) {
+                        Col col = getColor(pallete, state);
+                        float r = col.getR();
+                        float g = col.getG();
+                        float b = col.getB();
+                        if (column.isEmptyAt(i+1)) {
+                            addSideFullTexture(buffer, EnumFacing.UP.ordinal(), cnt, r * .8f, g * .8f, b * .8f);
+                        }
+                        if (column.isEmptyAt(i-1)) {
+                            addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), r * .8f, g * .8f, b * .8f);
+                        }
+                        addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), cnt, r * 1.2f, g * 1.2f, b * 1.2f);
+                        addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), cnt, r * 1.2f, g * 1.2f, b * 1.2f);
+                        addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), cnt, r, g, b);
+                        addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), cnt, r, g, b);
+                    } else {
+                        float d = .2f;
+                        float l = ((x + y + z) & 1) == 1 ? .9f : .6f;
+                        if (column.isEmptyAt(i+1)) {
+                            addSideFullTexture(buffer, EnumFacing.UP.ordinal(), cnt, d, l, d);
+                        }
+                        if (column.isEmptyAt(i-1)) {
+                            addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), d, l, d);
+                        }
+                        addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), cnt, d, d, l);
+                        addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), cnt, d, d, l);
+                        addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), cnt, l, d, d);
+                        addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), cnt, l, d, d);
+                    }
                 }
-                if (!positions.containsKey(coordinate.down().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), r * .8f, g * .8f, b * .8f);
-                }
-                if (!positions.containsKey(coordinate.north().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), r * 1.2f, g * 1.2f, b * 1.2f);
-                }
-                if (!positions.containsKey(coordinate.south().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), r * 1.2f, g * 1.2f, b * 1.2f);
-                }
-                if (!positions.containsKey(coordinate.west().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), r, g, b);
-                }
-                if (!positions.containsKey(coordinate.east().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), r, g, b);
-                }
-            } else {
-                float d = .2f;
-                float l = ((x + y + z) & 1) == 1 ? .9f : .6f;
-                if (!positions.containsKey(coordinate.up().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.UP.ordinal(), d, l, d);
-                }
-                if (!positions.containsKey(coordinate.down().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), d, l, d);
-                }
-                if (!positions.containsKey(coordinate.north().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), d, d, l);
-                }
-                if (!positions.containsKey(coordinate.south().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), d, d, l);
-                }
-                if (!positions.containsKey(coordinate.west().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), l, d, d);
-                }
-                if (!positions.containsKey(coordinate.east().toLong())) {
-                    addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), l, d, d);
-                }
+                y += cnt;
             }
-            buffer.setTranslation(buffer.xOffset - x, buffer.yOffset - y, buffer.zOffset - z);
         }
+        float avg = avgcnt / (float) total;
+        System.out.println("avg = " + avg);
+        buffer.setTranslation(origOffsetX, origOffsetY, origOffsetZ);
+
+
+//        for (Map.Entry<Long, IBlockState> entry : positions.entrySet()) {
+//            long p = entry.getKey();
+//            BlockPos coordinate = BlockPos.fromLong(p);
+//            int x = coordinate.getX();
+//            int y = coordinate.getY();
+//            int z = coordinate.getZ();
+//
+//            buffer.setTranslation(origOffsetX + x, origOffsetY + y, origOffsetZ + z);
+//            if (showMat) {
+//                Col col = getColor(pallete, entry.getValue());
+//                float r = col.getR();
+//                float g = col.getG();
+//                float b = col.getB();
+//                if (!positions.containsKey(coordinate.up().toLong())) {
+//                    addSideFullTexture(buffer, EnumFacing.UP.ordinal(), r * .8f, g * .8f, b * .8f);
+//                }
+//                if (!positions.containsKey(coordinate.down().toLong())) {
+//                    addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), r * .8f, g * .8f, b * .8f);
+//                }
+//                if (!positions.containsKey(coordinate.north().toLong())) {
+//                    addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), r * 1.2f, g * 1.2f, b * 1.2f);
+//                }
+//                if (!positions.containsKey(coordinate.south().toLong())) {
+//                    addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), r * 1.2f, g * 1.2f, b * 1.2f);
+//                }
+//                if (!positions.containsKey(coordinate.west().toLong())) {
+//                    addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), r, g, b);
+//                }
+//                if (!positions.containsKey(coordinate.east().toLong())) {
+//                    addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), r, g, b);
+//                }
+//            } else {
+//                float d = .2f;
+//                float l = ((x + y + z) & 1) == 1 ? .9f : .6f;
+//                if (!positions.containsKey(coordinate.up().toLong())) {
+//                    addSideFullTexture(buffer, EnumFacing.UP.ordinal(), d, l, d);
+//                }
+//                if (!positions.containsKey(coordinate.down().toLong())) {
+//                    addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), d, l, d);
+//                }
+//                if (!positions.containsKey(coordinate.north().toLong())) {
+//                    addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), d, d, l);
+//                }
+//                if (!positions.containsKey(coordinate.south().toLong())) {
+//                    addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), d, d, l);
+//                }
+//                if (!positions.containsKey(coordinate.west().toLong())) {
+//                    addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), l, d, d);
+//                }
+//                if (!positions.containsKey(coordinate.east().toLong())) {
+//                    addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), l, d, d);
+//                }
+//            }
+//            buffer.setTranslation(origOffsetX - x, origOffsetY - y, origOffsetZ - z);
+//        }
         tessellator.draw();
         GlStateManager.glEndList();
     }
@@ -532,6 +589,15 @@ public class ShapeRenderer {
         buffer.pos(quad.v4.x, quad.v4.y, quad.v4.z).color(r, g, b, a).endVertex();
     }
 
+    public static void addSideFullTexture(VertexBuffer buffer, int side, int cnt, float r, float g, float b) {
+        Quad quad = QUADS[side];
+        float a = 0.5f;
+        buffer.pos(quad.v1.x, quad.v1.y * cnt, quad.v1.z).color(r, g, b, a).endVertex();
+        buffer.pos(quad.v2.x, quad.v2.y * cnt, quad.v2.z).color(r, g, b, a).endVertex();
+        buffer.pos(quad.v3.x, quad.v3.y * cnt, quad.v3.z).color(r, g, b, a).endVertex();
+        buffer.pos(quad.v4.x, quad.v4.y * cnt, quad.v4.z).color(r, g, b, a).endVertex();
+    }
+
     private static class Vt {
         public final float x;
         public final float y;
@@ -555,6 +621,57 @@ public class ShapeRenderer {
             this.v2 = v2;
             this.v3 = v3;
             this.v4 = v4;
+        }
+    }
+
+    public static class RenderColumn {
+        private final List<Pair<Integer, IBlockState>> data = new ArrayList<>();
+        private final BlockPos bottomPos;
+        private IBlockState last;
+        private int cnt = 0;
+
+        public RenderColumn(BlockPos bottomPos) {
+            this.bottomPos = bottomPos;
+        }
+
+        public BlockPos getBottomPos() {
+            return bottomPos;
+        }
+
+        public List<Pair<Integer, IBlockState>> getData() {
+            return data;
+        }
+
+        public boolean isEmptyAt(int i) {
+            if (i < 0) {
+                return true;
+            }
+            if (i >= data.size()) {
+                return true;
+            }
+            return data.get(i).getValue() == null;
+        }
+
+        public void add(IBlockState state) {
+            if (cnt == 0) {
+                last = state;
+                cnt = 1;
+            } else {
+                if (last != state) {
+                    data.add(Pair.of(cnt, last));
+                    last = state;
+                    cnt = 1;
+                } else {
+                    cnt++;
+                }
+            }
+        }
+
+        public void close() {
+            if (cnt > 0) {
+                data.add(Pair.of(cnt, last));
+                cnt = 0;
+            }
         }
     }
 }
