@@ -1,10 +1,10 @@
 package mcjty.rftools.varia;
 
-import org.apache.commons.io.output.ByteArrayOutputStream;
+import mcjty.rftools.shapes.FastByteArray;
 
 public class RLE {
 
-    private ByteArrayOutputStream stream = new ByteArrayOutputStream();
+    private FastByteArray stream = new FastByteArray();
     private byte[] data = null;
     private int cnt = 0;
     private int prev = -1;
