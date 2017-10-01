@@ -9,8 +9,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.VertexBuffer;
-import net.minecraft.client.renderer.vertex.*;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -21,6 +20,8 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.util.*;
+
+import static mcjty.rftools.blocks.builder.BuilderConfiguration.useVBO;
 
 public class ShapeRenderer {
 
@@ -41,8 +42,6 @@ public class ShapeRenderer {
     private boolean prevShowMat = false;
 
     private int waitForNewRequest = 0;
-
-    private static boolean useVBO = true;
 
 
     public static class RenderData {
@@ -454,10 +453,9 @@ public class ShapeRenderer {
             //...
             data.vbo.bindBuffer();
             GlStateManager.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-//                    GlStateManager.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
-            GlStateManager.glVertexPointer(3, GL11.GL_FLOAT, 4, 0);
+            GlStateManager.glVertexPointer(3, GL11.GL_FLOAT, 16, 0);
             GlStateManager.glEnableClientState(GL11.GL_COLOR_ARRAY);
-            GlStateManager.glColorPointer(4, GL11.GL_UNSIGNED_BYTE, 16, 16);
+            GlStateManager.glColorPointer(4, GL11.GL_UNSIGNED_BYTE, 16, 12);
             data.vbo.drawArrays(7);
             data.vbo.unbindBuffer();
             GlStateManager.glDisableClientState(GL11.GL_COLOR_ARRAY);
@@ -467,6 +465,9 @@ public class ShapeRenderer {
         }
     }
 
+
+    private static VertexBuffer vboBuffer = new VertexBuffer(2097152);
+
     private void createDisplayList(Tessellator tessellator, VertexBuffer buffer, boolean showMat) {
         prevShowMat = showMat;
         invalidateGlList();
@@ -474,7 +475,7 @@ public class ShapeRenderer {
 
         if (useVBO) {
             data.vbo = new net.minecraft.client.renderer.vertex.VertexBuffer(DefaultVertexFormats.POSITION_COLOR);
-            buffer = new VertexBuffer(2097152);  // @todo keep global!!
+            buffer = vboBuffer;
         } else {
             data.glList = GLAllocation.generateDisplayLists(1);
             GlStateManager.glNewList(data.glList, GL11.GL_COMPILE);

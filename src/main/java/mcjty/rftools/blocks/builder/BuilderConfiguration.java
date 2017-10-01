@@ -31,6 +31,8 @@ public class BuilderConfiguration {
     public static int builderRfPerPlayer = 40000;
     public static double dimensionCostFactor = 5.0f;
 
+    public static boolean useVBO = true;
+
     public static BuilderTileEntityMode teMode = BuilderTileEntityMode.MOVE_WHITELIST;
 
     public static boolean showProgressHud = true;
@@ -144,6 +146,9 @@ public class BuilderConfiguration {
                 "If true we go back to the old (wrong) sphere/cylinder calculation for the builder/shield").getBoolean();
         showProgressHud = cfg.get(CATEGORY_BUILDER, "showProgressHud", showProgressHud,
                 "If true a holo hud with current progress is shown above the builder").getBoolean();
+
+        useVBO = cfg.get(CATEGORY_BUILDER, "useVBO", useVBO,
+                "Use VBO for rendering shapecard views. Otherwise display lists").getBoolean();
     }
 
     public static Block getQuarryReplace() {
