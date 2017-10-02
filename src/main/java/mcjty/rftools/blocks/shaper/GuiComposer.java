@@ -11,8 +11,9 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.shapes.*;
+import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.shapes.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.inventory.Slot;
@@ -47,7 +48,7 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
     public static BlockPos shaperBlock = null;
     public static int shaperStackSlot = 0;
 
-    private ShapeRenderer shapeRenderer = new ShapeRenderer("composer");
+    private ShapeRenderer shapeRenderer = null;
 
     private Window sideWindow;
 
@@ -59,13 +60,28 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
         ySize = SHAPER_HEIGHT;
     }
 
+    private ShapeRenderer getShapeRenderer() {
+        if (shapeRenderer == null) {
+            shapeRenderer = new ShapeRenderer(getShapeID());
+        }
+        return shapeRenderer;
+    }
+
+    private ShapeID getShapeID() {
+        Slot slot = inventorySlots.getSlot(ComposerContainer.SLOT_OUT);
+        ItemStack stack = slot.getHasStack() ? slot.getStack() : ItemStackTools.getEmptyStack();
+
+        return new ShapeID(tileEntity.getWorld().provider.getDimension(), tileEntity.getPos(), ShapeCardItem.getCheck(stack));
+    }
+
+
     @Override
     public void initGui() {
         super.initGui();
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
-        shapeRenderer.initView(250, 70);
+        getShapeRenderer().initView(250, 70);
 
         ShapeModifier[] modifiers = tileEntity.getModifiers();
 
@@ -194,13 +210,13 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
         x -= guiLeft;
         y -= guiTop;
 
-        shapeRenderer.handleShapeDragging(x, y);
+        getShapeRenderer().handleShapeDragging(x, y);
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int x, int y) {
 
-        shapeRenderer.handleMouseWheel();
+        getShapeRenderer().handleMouseWheel();
 
         drawWindow();
 
@@ -208,7 +224,8 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
         if (slot.getHasStack()) {
             ItemStack stack = slot.getStack();
             if (ItemStackTools.isValid(stack)) {
-                shapeRenderer.renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed(), showMat.isPressed());
+                getShapeRenderer().setShapeID(getShapeID());
+                getShapeRenderer().renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed(), showMat.isPressed());
             }
         }
     }

@@ -8,7 +8,10 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -19,9 +22,10 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import java.util.*;
-
-import static mcjty.rftools.blocks.builder.BuilderConfiguration.useVBO;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ShapeRenderer {
 
@@ -35,99 +39,42 @@ public class ShapeRenderer {
     private float yangle = 25.0f;
     private float zangle = 0.0f;
 
-    private final String name;    // For debug
-    private final int id;         // Unique ID for this renderer
-    private static int lastId = 0;
+    private ShapeID shapeID;
     private long checksum = -1;
     private boolean prevShowMat = false;
 
     private int waitForNewRequest = 0;
 
 
-    public static class RenderData {
-        private ShapeRenderer.RenderColumn columns[] = null;
-        public int shapeCount = 0;
-        public String previewMessage = "";
-        private int glList = -1;
-        private net.minecraft.client.renderer.vertex.VertexBuffer vbo;
-        private long touchTime = 0;
-
-        public boolean hasData() {
-            if (useVBO) {
-                return vbo != null;
-            } else {
-                return glList != -1;
-            }
-        }
+    public ShapeRenderer(ShapeID shapeID) {
+        this.shapeID = shapeID;
     }
 
-    private static final Map<Integer, RenderData> renderDataMap = new HashMap<>();
-
-    public ShapeRenderer(String name) {
-        this.name = name;
-        this.id = lastId++;
+    public void setShapeID(ShapeID shapeID) {
+        this.shapeID = shapeID;
     }
 
-    public int getId() {
-        return id;
+    public ShapeID getShapeID() {
+        return shapeID;
     }
 
     public int getCount() {
-        if (renderDataMap.containsKey(id)) {
-            return renderDataMap.get(id).shapeCount;
+        RenderData data = ShapeDataManager.getRenderData(shapeID);
+        if (data != null) {
+            return data.shapeCount;
         }
         return 0;
     }
 
-    public static RenderData getRenderData(int id) {
-        RenderData data = renderDataMap.get(id);
-        if (data == null) {
-            data = new RenderData();
-            renderDataMap.put(id, data);
-        }
-        data.touchTime = System.currentTimeMillis();
+    public static RenderData getRenderDataAndCreate(ShapeID shapeID) {
+        RenderData data = ShapeDataManager.getRenderDataAndCreate(shapeID);
+        data.touch();
         return data;
     }
 
-    private static int cleanupCounter = 20;
-    public static void cleanupOldRenderers() {
-        cleanupCounter--;
-        if (cleanupCounter >= 0) {
-            return;
-        }
-        cleanupCounter = 20;
-        long current = System.currentTimeMillis();
-        Set<Integer> toRemove = new HashSet<>();
-        for (Map.Entry<Integer, RenderData> entry : renderDataMap.entrySet()) {
-            if (entry.getValue().touchTime + 5000 < current) {
-                System.out.println("Removing id = " + entry.getKey());
-                toRemove.add(entry.getKey());
-            }
-        }
-        for (Integer id : toRemove) {
-            RenderData data = renderDataMap.get(id);
-            cleanupGLBuffer(data);
-            renderDataMap.remove(id);
-        }
-    }
-
-    private static void cleanupGLBuffer(RenderData data) {
-        if (useVBO) {
-            if (data.vbo != null) {
-                data.vbo.deleteGlBuffers();
-                data.vbo = null;
-            }
-        } else {
-            if (data.glList != -1) {
-                GLAllocation.deleteDisplayLists(data.glList);
-                data.glList = -1;
-            }
-        }
-    }
-
-    public static void setRenderData(int id, ShapeRenderer.RenderColumn columns[], int count, String msg) {
-        RenderData data = getRenderData(id);
-        data.columns = columns;
+    public static void setRenderData(ShapeID id, ShapeRenderer.RenderColumn columns[], int count, String msg) {
+        RenderData data = getRenderDataAndCreate(id);
+        data.setColumns(columns);
         data.shapeCount = count;
         data.previewMessage = msg;
     }
@@ -173,11 +120,11 @@ public class ShapeRenderer {
     }
 
     public void invalidateGlList() {
-        RenderData data = renderDataMap.get(id);
+        RenderData data = ShapeDataManager.getRenderData(shapeID);
         if (data == null) {
             return;
         }
-        cleanupGLBuffer(data);
+        data.cleanup();
     }
 
     public void renderShapeInWorld(ItemStack stack, double x, double y, double z, float offset, float scale, float angle) {
@@ -249,7 +196,7 @@ public class ShapeRenderer {
         GlStateManager.disableBlend();
         RenderHelper.enableGUIStandardItemLighting();
 
-        RenderData data = renderDataMap.get(id);
+        RenderData data = ShapeDataManager.getRenderData(shapeID);
         if (data != null && !data.previewMessage.isEmpty()) {
             Minecraft.getMinecraft().fontRenderer.drawString(data.previewMessage, gui.getPreviewLeft()+84, gui.getPreviewTop()+50, 0xffff0000);
             return;
@@ -404,17 +351,17 @@ public class ShapeRenderer {
     private void renderFaces(Tessellator tessellator, final VertexBuffer buffer,
                      ItemStack stack, boolean showMat) {
 
-        RenderData data = getRenderData(id);
+        RenderData data = getRenderDataAndCreate(shapeID);
 
-        if (data.columns == null || waitForNewRequest > 0) {
+        if (data.getColumns() == null || waitForNewRequest > 0) {
             if (waitForNewRequest <= 0) {
                 // No positions, send a new request
-                RFToolsMessages.INSTANCE.sendToServer(new PacketRequestShapeData(stack, id));
+                RFToolsMessages.INSTANCE.sendToServer(new PacketRequestShapeData(stack, shapeID));
                 waitForNewRequest = 10;
-                data.columns = null;
+                data.setColumns(null);
             } else {
                 waitForNewRequest--;
-                if (data.columns != null) {
+                if (data.getColumns() != null) {
                     // Positions have arrived, create displayList
                     // Data is received
                     waitForNewRequest = 0;
@@ -424,7 +371,7 @@ public class ShapeRenderer {
             }
             if (data.hasData()) {
                 // Render old data while we're waiting
-                renderData(data);
+                data.render();
             }
             return;
         }
@@ -432,46 +379,21 @@ public class ShapeRenderer {
         long check = calculateChecksum(stack);
         if (!data.hasData() || check != checksum || showMat != prevShowMat) {
             // Checksum failed, set positions to null
-            data.columns = null;
+            data.setColumns(null);
         }
 
         if (data.hasData()) {
-            renderData(data);
+            data.render();
         }
     }
 
-    private void renderData(RenderData data) {
-        if (useVBO) {
-            //...
-            data.vbo.bindBuffer();
-            GlStateManager.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-            GlStateManager.glVertexPointer(3, GL11.GL_FLOAT, 16, 0);
-            GlStateManager.glEnableClientState(GL11.GL_COLOR_ARRAY);
-            GlStateManager.glColorPointer(4, GL11.GL_UNSIGNED_BYTE, 16, 12);
-            data.vbo.drawArrays(7);
-            data.vbo.unbindBuffer();
-            GlStateManager.glDisableClientState(GL11.GL_COLOR_ARRAY);
-            GlStateManager.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-        } else {
-            GlStateManager.callList(data.glList);
-        }
-    }
-
-
-    private static VertexBuffer vboBuffer = new VertexBuffer(2097152);
 
     private void createRenderData(Tessellator tessellator, VertexBuffer buffer, boolean showMat) {
         prevShowMat = showMat;
         invalidateGlList();
-        RenderData data = getRenderData(id);
+        RenderData data = getRenderDataAndCreate(shapeID);
 
-        if (useVBO) {
-            data.vbo = new net.minecraft.client.renderer.vertex.VertexBuffer(DefaultVertexFormats.POSITION_COLOR);
-            buffer = vboBuffer;
-        } else {
-            data.glList = GLAllocation.generateDisplayLists(1);
-            GlStateManager.glNewList(data.glList, GL11.GL_COMPILE);
-        }
+        buffer = data.createRenderList(buffer);
 
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 //        GlStateManager.enableBlend();
@@ -486,7 +408,7 @@ public class ShapeRenderer {
         int avgcnt = 0;
         int total = 0;
         quadcnt = 0;
-        RenderColumn[] columns = data.columns;
+        RenderColumn[] columns = data.getColumns();
         for (RenderColumn column : columns) {
             BlockPos coordinate = column.getBottomPos();
             int x = coordinate.getX();
@@ -538,15 +460,7 @@ public class ShapeRenderer {
         System.out.println("avg = " + avg + ", quads = " + quadcnt);
         buffer.setTranslation(origOffsetX, origOffsetY, origOffsetZ);
 
-        if (useVBO) {
-            buffer.finishDrawing();
-            buffer.reset();
-            data.vbo.bufferData(buffer.getByteBuffer());
-
-        } else {
-            tessellator.draw();
-            GlStateManager.glEndList();
-        }
+        data.performRender(tessellator, buffer);
     }
 
     private static void setupScissor(IShapeParentGui gui) {

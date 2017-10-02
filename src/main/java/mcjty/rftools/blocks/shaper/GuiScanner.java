@@ -15,8 +15,10 @@ import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
+import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.IShapeParentGui;
+import mcjty.rftools.shapes.ShapeID;
 import mcjty.rftools.shapes.ShapeRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -46,7 +48,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
     private Label offsetLabel;
     private Label dimensionLabel;
 
-    private ShapeRenderer shapeRenderer = new ShapeRenderer("scanner");
+    private ShapeRenderer shapeRenderer = null;
     private int filterCnt = 0;
 
     public GuiScanner(ScannerTileEntity shaperTileEntity, ScannerContainer container) {
@@ -56,11 +58,23 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
         ySize = SCANNER_HEIGHT;
     }
 
+    private ShapeRenderer getShapeRenderer() {
+        if (shapeRenderer == null) {
+            shapeRenderer = new ShapeRenderer(getShapeID());
+        }
+        return shapeRenderer;
+    }
+
+    private ShapeID getShapeID() {
+        return new ShapeID(tileEntity.getWorld().provider.getDimension(), tileEntity.getPos(), ShapeCardItem.getCheck(tileEntity.getRenderStack()));
+    }
+
+
     @Override
     public void initGui() {
         super.initGui();
 
-        shapeRenderer.initView(250, 70);
+        getShapeRenderer().initView(250, 70);
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
@@ -169,7 +183,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
         x -= guiLeft;
         y -= guiTop;
 
-        shapeRenderer.handleShapeDragging(x, y);
+        getShapeRenderer().handleShapeDragging(x, y);
     }
 
     @Override
@@ -185,7 +199,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int x, int y) {
 
-        shapeRenderer.handleMouseWheel();
+        getShapeRenderer().handleMouseWheel();
 
         offsetLabel.setText("Off: " + BlockPosTools.toString(tileEntity.getDataOffset()));
         dimensionLabel.setText("Dim: " + BlockPosTools.toString(tileEntity.getDataDim()));
@@ -213,7 +227,8 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
                     move(0, 0, 0);
                 }
 
-                shapeRenderer.renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed(), showMat.isPressed());
+                getShapeRenderer().setShapeID(getShapeID());
+                getShapeRenderer().renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed(), showMat.isPressed());
 //            }
         }
     }

@@ -8,6 +8,8 @@ import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderSetup;
+import mcjty.rftools.items.builder.ShapeCardItem;
+import mcjty.rftools.shapes.ShapeID;
 import mcjty.rftools.shapes.ShapeRenderer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -161,7 +163,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
 
     public ShapeRenderer getShapeRenderer() {
         if (shapeRenderer == null) {
-            shapeRenderer = new ShapeRenderer("projector at :" + BlockPosTools.toString(getPos()));
+            shapeRenderer = new ShapeRenderer(new ShapeID(getWorld().provider.getDimension(), getPos(), ShapeCardItem.getCheck(getRenderStack())));
         }
         return shapeRenderer;
     }

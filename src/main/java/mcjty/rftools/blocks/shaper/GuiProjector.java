@@ -5,16 +5,18 @@ import mcjty.lib.entity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
-import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Button;
+import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.network.Argument;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.IShapeParentGui;
+import mcjty.rftools.shapes.ShapeID;
 import mcjty.rftools.shapes.ShapeRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -46,8 +48,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
     private Slider scaleSlider;
     private ToggleButton autoRotate;
 
-    private ShapeRenderer shapeRenderer = new ShapeRenderer("projector");
-    private int filterCnt = 0;
+    private ShapeRenderer shapeRenderer = null;
 
     public GuiProjector(ProjectorTileEntity te, ProjectorContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, RFTools.GUI_MANUAL_MAIN, "projector");
@@ -56,11 +57,23 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
         ySize = PROJECTOR_HEIGHT;
     }
 
+    private ShapeRenderer getShapeRenderer() {
+        if (shapeRenderer == null) {
+            shapeRenderer = new ShapeRenderer(getShapeID());
+        }
+        return shapeRenderer;
+    }
+
+    private ShapeID getShapeID() {
+        return new ShapeID(tileEntity.getWorld().provider.getDimension(), tileEntity.getPos(), ShapeCardItem.getCheck(tileEntity.getRenderStack()));
+    }
+
+
     @Override
     public void initGui() {
         super.initGui();
 
-        shapeRenderer.initView(250, 70);
+        getShapeRenderer().initView(250, 70);
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
@@ -138,7 +151,6 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
 
         window = new Window(this, toplevel);
 
-        filterCnt = countFilters();
         tileEntity.requestRfFromServer(RFTools.MODID);
     }
 
@@ -175,24 +187,6 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
                 new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()));
     }
 
-    private void scan() {
-        sendServerCommand(network, ScannerTileEntity.CMD_SCAN);
-    }
-
-    private int countFilters() {
-        int cnt = 0;
-        if (inventorySlots.getSlot(ScannerContainer.SLOT_IN).getHasStack()) {
-            cnt++;
-        }
-        if (inventorySlots.getSlot(ScannerContainer.SLOT_FILTER).getHasStack()) {
-            cnt++;
-        }
-        if (inventorySlots.getSlot(ScannerContainer.SLOT_MODIFIER).getHasStack()) {
-            cnt++;
-        }
-        return cnt;
-    }
-
     @Override
     public void handleMouseInput() throws IOException {
         super.handleMouseInput();
@@ -201,7 +195,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
         x -= guiLeft;
         y -= guiTop;
 
-        shapeRenderer.handleShapeDragging(x, y);
+        getShapeRenderer().handleShapeDragging(x, y);
     }
 
     @Override
@@ -217,7 +211,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int x, int y) {
 
-        shapeRenderer.handleMouseWheel();
+        getShapeRenderer().handleMouseWheel();
 
         drawWindow();
 
@@ -227,7 +221,8 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
 
         ItemStack stack = tileEntity.getRenderStack();
         if (ItemStackTools.isValid(stack)) {
-            shapeRenderer.renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed(), showMat.isPressed());
+            getShapeRenderer().setShapeID(getShapeID());
+            getShapeRenderer().renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed(), showMat.isPressed());
         }
     }
 

@@ -596,6 +596,9 @@ public class ShapeCardItem extends GenericRFToolsItem {
     }
 
     public static int getCheck(ItemStack stack) {
+        if (ItemStackTools.isEmpty(stack)) {
+            return 0;
+        }
         NBTTagCompound tagCompound = getCompound(stack);
         return getCheck(tagCompound);
     }

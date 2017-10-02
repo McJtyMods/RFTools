@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PacketReturnShapeData implements IMessage {
-    private int id;
+    private ShapeID id;
     private RLE positions;
     private StatePalette statePalette;
     private int count;
@@ -28,7 +28,7 @@ public class PacketReturnShapeData implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        id = buf.readInt();
+        id = new ShapeID(buf);
         count = buf.readInt();
         msg = NetworkTools.readStringUTF8(buf);
         dimension = NetworkTools.readPos(buf);
@@ -60,7 +60,7 @@ public class PacketReturnShapeData implements IMessage {
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(id);
+        id.toBytes(buf);
         buf.writeInt(count);
         NetworkTools.writeStringUTF8(buf, msg);
         NetworkTools.writePos(buf, dimension);
@@ -89,7 +89,7 @@ public class PacketReturnShapeData implements IMessage {
     public PacketReturnShapeData() {
     }
 
-    public PacketReturnShapeData(int id, RLE positions, StatePalette statePalette, BlockPos dimension, int count, String msg) {
+    public PacketReturnShapeData(ShapeID id, RLE positions, StatePalette statePalette, BlockPos dimension, int count, String msg) {
         this.id = id;
         this.positions = positions;
         this.statePalette = statePalette;

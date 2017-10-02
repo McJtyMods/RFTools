@@ -75,10 +75,17 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
     private boolean countDirty = true;
     private boolean fromshaper;
 
-    private ShapeRenderer shapeRenderer = new ShapeRenderer("card");
+    private ShapeRenderer shapeRenderer = null;
 
     public GuiShapeCard(boolean fromshaper) {
         this.fromshaper = fromshaper;
+    }
+
+    private ShapeRenderer getShapeRenderer() {
+        if (shapeRenderer == null) {
+            shapeRenderer = new ShapeRenderer(new ShapeID(0, null, ShapeCardItem.getCheck(getStackToEdit())));
+        }
+        return shapeRenderer;
     }
 
     @Override
@@ -123,13 +130,13 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
 
-        shapeRenderer.initView(300, 100);
-
         ItemStack heldItem = getStackToEdit();
         if (ItemStackTools.isEmpty(heldItem)) {
             // Cannot happen!
             return;
         }
+
+        getShapeRenderer().initView(300, 100);
 
         shapeLabel = new ChoiceLabel(mc, this).setDesiredWidth(100).setDesiredHeight(16).addChoices(
                 mcjty.rftools.shapes.Shape.SHAPE_BOX.getDescription(),
@@ -345,7 +352,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         x -= guiLeft;
         y -= guiTop;
 
-        shapeRenderer.handleShapeDragging(x, y);
+        getShapeRenderer().handleShapeDragging(x, y);
     }
 
     @Override
@@ -365,7 +372,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
     @Override
     public void drawScreen(int xSize_lo, int ySize_lo, float par3) {
 
-        shapeRenderer.handleMouseWheel();
+        getShapeRenderer().handleMouseWheel();
 
         super.drawScreen(xSize_lo, ySize_lo, par3);
 
@@ -374,7 +381,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         updateCounter--;
         if (updateCounter <= 0) {
             updateCounter = 10;
-            int count = shapeRenderer.getCount();
+            int count = getShapeRenderer().getCount();
             if (count >= ShapeCardItem.MAXIMUM_COUNT) {
                 blocksLabel.setText("#Blocks: ++" + count);
             } else {
@@ -399,7 +406,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
 
         ItemStack stack = getStackToEdit();
         if (ItemStackTools.isValid(stack)) {
-            shapeRenderer.renderShape(this, stack, guiLeft, guiTop, true, true, true);
+            getShapeRenderer().renderShape(this, stack, guiLeft, guiTop, true, true, true);
         }
 
 
