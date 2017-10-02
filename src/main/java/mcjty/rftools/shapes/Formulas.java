@@ -1,5 +1,6 @@
 package mcjty.rftools.shapes;
 
+import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.shaper.ScannerTileEntity;
 import mcjty.rftools.blocks.shield.ShieldConfiguration;
 import mcjty.rftools.items.builder.ShapeCardItem;
@@ -196,8 +197,8 @@ public class Formulas {
                         ShapeRotation rotation = ShapeRotation.getByName(rot);
                         modifiers.add(new ShapeModifier(operation, flip, rotation));
 
-                        BlockPos dim = ShapeCardItem.getClampedDimension(childTag, ShieldConfiguration.maxShieldDimension);
-                        BlockPos off = ShapeCardItem.getClampedOffset(childTag, ShieldConfiguration.maxShieldOffset);
+                        BlockPos dim = ShapeCardItem.getClampedDimension(childTag, BuilderConfiguration.maxScannerDimension);
+                        BlockPos off = ShapeCardItem.getClampedOffset(childTag, BuilderConfiguration.maxScannerOffset);
                         BlockPos o = off.add(offset);
                         formula.setup(thisCoord, dim, o, childTag);
                         formulas.add(formula);

@@ -10,6 +10,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,6 @@ public class RenderData {
     private static VertexBuffer vboBuffer = new VertexBuffer(2097152);
 
     private RenderPlane planes[] = null;
-    public int shapeCount = 0;
     public String previewMessage = "";
     private long touchTime = 0;
     private boolean wantData = true;
@@ -37,6 +37,19 @@ public class RenderData {
         return false;
     }
 
+    public int getBlockCount() {
+        if (planes != null) {
+            int cnt = 0;
+            for (RenderPlane plane : planes) {
+                if (plane != null) {
+                    cnt += plane.getCount();
+                }
+            }
+            return cnt;
+        }
+        return 0;
+    }
+
     public boolean isWantData() {
         return planes == null || wantData;
     }
@@ -49,29 +62,15 @@ public class RenderData {
         return planes;
     }
 
-    public void setPlaneData(@Nonnull RenderPlane[] planes) {
-        if (this.planes == null) {
-            this.planes = planes;
-        } else if (this.planes.length != planes.length) {
-            cleanup();
-            this.planes = planes;
-        } else {
-            for (int i = 0 ; i < planes.length ; i++) {
-                if (planes[i] != null) {
-                    this.planes[i].refreshData(planes[i]);
-                }
-            }
-        }
-    }
-
-    public void setPlaneData(@Nonnull RenderPlane plane, int offsetY, int dy) {
+    public void setPlaneData(@Nullable RenderPlane plane, int offsetY, int dy) {
         if (planes == null) {
             planes = new RenderPlane[dy];
         } else if (planes.length != dy) {
             cleanup();
             planes = new RenderPlane[dy];
         }
-        if (planes[offsetY] == null) {
+        if (plane == null) {
+        } else if (planes[offsetY] == null) {
             planes[offsetY] = plane;
         } else {
             planes[offsetY].refreshData(plane);
@@ -117,15 +116,17 @@ public class RenderData {
         private int offsety;
         private int startz;
         private boolean dirty = true;
+        private int count = 0;
 
         private int glList = -1;
         private net.minecraft.client.renderer.vertex.VertexBuffer vbo;
 
-        public RenderPlane(RenderStrip[] strips, int y, int offsety, int startz) {
+        public RenderPlane(RenderStrip[] strips, int y, int offsety, int startz, int count) {
             this.strips = strips;
             this.y = y;
             this.offsety = offsety;
             this.startz = startz;
+            this.count = count;
         }
 
         public void refreshData(RenderPlane other) {
@@ -133,8 +134,13 @@ public class RenderData {
             this.y = other.y;
             this.offsety = other.offsety;
             this.startz = other.startz;
+            this.count = other.count;
             this.dirty = true;
             cleanup();
+        }
+
+        public int getCount() {
+            return count;
         }
 
         public void markClean() {

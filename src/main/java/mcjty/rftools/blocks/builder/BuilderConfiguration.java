@@ -57,6 +57,9 @@ public class BuilderConfiguration {
 
     public static int maxBuilderOffset = 260;
     public static int maxBuilderDimension = 512;
+    // Maximum shield dimension when the shape card is used for projection/scanner
+    public static int maxScannerDimension = 512;
+    public static int maxScannerOffset = 512;
 
     public static boolean oldSphereCylinderShape = false;
 
@@ -141,6 +144,10 @@ public class BuilderConfiguration {
                 "Maximum offset of the shape when a shape card is used in the builder").getInt();
         maxBuilderDimension = cfg.get(CATEGORY_BUILDER, "maxBuilderDimension", maxBuilderDimension,
                 "Maximum dimension of the shape when a shape card is used in the builder").getInt();
+        maxScannerOffset = cfg.get(CATEGORY_BUILDER, "maxScannerOffset", maxScannerOffset,
+                "Maximum offset of the shape when a shape card is used in the scanner/projector").getInt();
+        maxScannerDimension = cfg.get(CATEGORY_BUILDER, "maxScannerDimension", maxScannerDimension,
+                "Maximum dimension of the shape when a scanner/projector card is used").getInt();
 
         oldSphereCylinderShape = cfg.get(CATEGORY_BUILDER, "oldSphereCylinderShape", oldSphereCylinderShape,
                 "If true we go back to the old (wrong) sphere/cylinder calculation for the builder/shield").getBoolean();

@@ -733,30 +733,6 @@ public class ShapeCardItem extends GenericRFToolsItem {
         return new BlockPos(minCorner.getX() + dx, minCorner.getY() + dy, minCorner.getZ() + dz);
     }
 
-    public static int countBlocks(ItemStack shapeCard, Shape shape, boolean solid, BlockPos dimension) {
-        final int[] cnt = {0};
-        BlockPos offset = new BlockPos(0, 128, 0);
-        BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
-        composeFormula(shapeCard, shape.getFormulaFactory().createFormula(), null, new BlockPos(0, 0, 0), clamped, offset, new AbstractMap<BlockPos, IBlockState>() {
-            @Override
-            public IBlockState put(BlockPos key, IBlockState value) {
-                cnt[0]++;
-                return value;
-            }
-
-            @Override
-            public Set<Entry<BlockPos, IBlockState>> entrySet() {
-                return Collections.emptySet();
-            }
-
-            @Override
-            public int size() {
-                return 0;
-            }
-        }, MAXIMUM_COUNT+1, solid, false, null);
-        return cnt[0];
-    }
-
     public static boolean xInChunk(int x, ChunkPos chunk) {
         if (chunk == null) {
             return true;
@@ -789,46 +765,6 @@ public class ShapeCardItem extends GenericRFToolsItem {
                 blocks.put(c, state);
             }
         }
-    }
-
-    public static int getRenderPositions(ItemStack stack, Shape shape, boolean solid, RLE positions, StatePalette statePalette) {
-        BlockPos dimension = ShapeCardItem.getDimension(stack);
-        BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
-
-        IFormula formula = shape.getFormulaFactory().createFormula();
-        int dx = clamped.getX();
-        int dy = clamped.getY();
-        int dz = clamped.getZ();
-
-        formula = formula.correctFormula(solid);
-        formula.setup(new BlockPos(0, 0, 0), clamped, new BlockPos(0, 0, 0), stack != null ? stack.getTagCompound() : null);
-
-        int cnt = 0;
-        for (int oy = 0; oy < dy; oy++) {
-            int y = oy - dy/2;
-            for (int ox = 0; ox < dx; ox++) {
-                int x = ox - dx/2;
-                for (int oz = 0; oz < dz; oz++) {
-                    int z = oz - dz/2;
-                    int v = 255;
-                    if (formula.isInside(x, y, z)) {
-                        cnt++;
-                        IBlockState lastState = formula.getLastState();
-                        if (solid) {
-                            if (ox == 0 || ox == dx - 1 || oy == 0 || oy == dy - 1 || oz == 0 || oz == dz - 1) {
-                                v = statePalette.alloc(lastState, -1) + 1;
-                            } else if (!formula.isInside(x - 1, y, z) || !formula.isInside(x + 1, y, z) || !formula.isInside(x, y - 1, z) || !formula.isInside(x, y + 1, z) || !formula.isInside(x, y, z - 1) || !formula.isInside(x, y, z + 1)) {
-                                v = statePalette.alloc(lastState, -1) + 1;
-                            }
-                        } else {
-                            v = statePalette.alloc(lastState, -1) + 1;
-                        }
-                    }
-                    positions.add(v);
-                }
-            }
-        }
-        return cnt;
     }
 
     public static int getRenderPositions(ItemStack stack, boolean solid, RLE positions, StatePalette statePalette, IFormula formula, int oy) {

@@ -170,6 +170,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         dataDim = new BlockPos(tagCompound.getInteger("scandimx"), tagCompound.getInteger("scandimy"), tagCompound.getInteger("scandimz"));
         dataOffset = new BlockPos(tagCompound.getInteger("scanoffx"), tagCompound.getInteger("scanoffy"), tagCompound.getInteger("scanoffz"));
+        System.out.println("readRestorable: getPos() = " + getPos() + ": " + dataDim);
     }
 
 //    @Override
@@ -224,6 +225,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         ShapeCardItem.setDimension(card, dimension.getX(), dimension.getY(), dimension.getZ());
         ShapeCardItem.setOffset(card, offset.getX(), offset.getY(), offset.getZ());
         ShapeCardItem.setShape(card, Shape.SHAPE_SCAN, true);
+        System.out.println("setDataFromFile: getPos() = " + getPos() + ": " + dataDim);
         markDirtyClient();
     }
 
@@ -237,6 +239,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
             renderStack = new ItemStack(BuilderSetup.shapeCardItem);
             updateScanCard(renderStack);
         }
+        System.out.println("ShapeCardItem.getDimension(renderStack) = " + ShapeCardItem.getDimension(renderStack));
         return renderStack;
     }
 
@@ -252,6 +255,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
                 ShapeCardItem.setShape(cardOut, Shape.SHAPE_SCAN, solid);
             }
             NBTTagCompound tagOut = cardOut.getTagCompound();
+            System.out.println("updateScanCard: getPos() = " + getPos() + ": " + dataDim);
             ShapeCardItem.setDimension(cardOut, dataDim.getX(), dataDim.getY(), dataDim.getZ());
             ShapeCardItem.setData(tagOut, getWorld().provider.getDimension(), getPos());
         }

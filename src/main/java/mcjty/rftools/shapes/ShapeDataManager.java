@@ -58,10 +58,10 @@ public class ShapeDataManager {
 
     private static class WorkUnit {
         private final ShapeID shapeID;
-        private final ItemStack stack;
-        private final int offsetY;
         private final List<EntityPlayerMP> players = new ArrayList<>();
-        private final IFormula formula;
+        private ItemStack stack;
+        private int offsetY;
+        private IFormula formula;
 
         public WorkUnit(ShapeID shapeID, ItemStack stack, int offsetY, IFormula formula, EntityPlayerMP player) {
             this.shapeID = shapeID;
@@ -69,6 +69,15 @@ public class ShapeDataManager {
             this.offsetY = offsetY;
             this.formula = formula;
             this.players.add(player);
+        }
+
+        public void update(ItemStack stack, int offsetY, IFormula formula, EntityPlayerMP player) {
+            this.stack = stack;
+            this.offsetY = offsetY;
+            this.formula = formula;
+            if (!players.contains(player)) {
+                players.add(player);
+            }
         }
 
         public List<EntityPlayerMP> getPlayers() {
@@ -99,10 +108,7 @@ public class ShapeDataManager {
     public static void pushWork(ShapeID shapeID, ItemStack stack, int offsetY, IFormula formula, EntityPlayerMP player) {
         Pair<ShapeID, Integer> key = Pair.of(shapeID, offsetY);
         if (workingOn.containsKey(key)) {
-            List<EntityPlayerMP> players = workingOn.get(key).getPlayers();
-            if (!players.contains(player)) {
-                players.add(player);
-            }
+            workingOn.get(key).update(stack, offsetY, formula, player);
         } else {
             WorkUnit unit = new WorkUnit(shapeID, stack, offsetY, formula, player);
             workQueue.addLast(unit);
@@ -113,7 +119,7 @@ public class ShapeDataManager {
     public static int maxworkqueue = 0;
 
     public static void handleWork() {
-        int pertick = 3;
+        int pertick = 200*200;
         while (!workQueue.isEmpty()) {
             if (workQueue.size() > maxworkqueue) {
                 maxworkqueue = workQueue.size();
@@ -135,7 +141,7 @@ public class ShapeDataManager {
                 RFToolsMessages.INSTANCE.sendTo(new PacketReturnShapeData(unit.getShapeID(), positions, statePalette, dimension, cnt, unit.getOffsetY(), ""), player);
             }
             if (cnt > 0) {
-                pertick--;
+                pertick -= dimension.getX() * dimension.getZ();
                 if (pertick <= 0) {
                     break;
                 }

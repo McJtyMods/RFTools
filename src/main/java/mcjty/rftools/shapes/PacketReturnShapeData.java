@@ -144,58 +144,10 @@ public class PacketReturnShapeData implements IMessage {
                     }
 
                     strip.close();
-                    plane = new RenderData.RenderPlane(strips, y, oy, -dz / 2);
+                    plane = new RenderData.RenderPlane(strips, y, oy, -dz / 2, message.count);
                 }
             }
-            ShapeRenderer.setRenderData(message.id, plane, message.offsetY, dy, message.count, message.msg);
+            ShapeRenderer.setRenderData(message.id, plane, message.offsetY, dy, message.msg);
         }
-
-        private void handleOld(PacketReturnShapeData message) {
-            int dx = message.dimension.getX();
-            int dy = message.dimension.getY();
-            int dz = message.dimension.getZ();
-
-            RenderData.RenderPlane planes[] = new RenderData.RenderPlane[dy];
-            RLE rle = message.positions;
-
-            if (rle != null) {
-                IBlockState dummy = BuilderSetup.supportBlock.getDefaultState();
-
-                rle.reset();
-                for (int oy = 0; oy < dy; oy++) {
-                    int y = oy - dy / 2;
-
-                    RenderData.RenderStrip strips[] = new RenderData.RenderStrip[dx];
-                    for (int ox = 0; ox < dx; ox++) {
-                        int x = ox - dx / 2;
-
-                        RenderData.RenderStrip strip = new RenderData.RenderStrip(x);
-                        strips[ox] = strip;
-
-                        for (int oz = 0; oz < dz; oz++) {
-                            int data = rle.read();
-                            if (data < 255) {
-                                if (data == 0) {
-                                    strip.add(dummy);
-                                } else {
-                                    data--;
-                                    strip.add(message.statePalette.getPalette().get(data));
-                                }
-                            } else {
-                                strip.add(null);
-                            }
-                        }
-
-                        strip.close();
-                    }
-                    planes[oy] = new RenderData.RenderPlane(strips, y, oy, -dz/2);
-
-                }
-            } else {
-                planes = null;
-            }
-            ShapeRenderer.setRenderData(message.id, planes, message.count, message.msg);
-        }
-
     }
 }

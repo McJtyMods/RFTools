@@ -22,6 +22,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +61,7 @@ public class ShapeRenderer {
     public int getCount() {
         RenderData data = ShapeDataManager.getRenderData(shapeID);
         if (data != null) {
-            return data.shapeCount;
+            return data.getBlockCount();
         }
         return 0;
     }
@@ -71,17 +72,9 @@ public class ShapeRenderer {
         return data;
     }
 
-    public static void setRenderData(ShapeID id, RenderData.RenderPlane planes[], int count, String msg) {
-        RenderData data = getRenderDataAndCreate(id);
-        data.setPlaneData(planes);
-        data.shapeCount = count;
-        data.previewMessage = msg;
-    }
-
-    public static void setRenderData(ShapeID id, RenderData.RenderPlane plane, int offsetY, int dy, int count, String msg) {
+    public static void setRenderData(ShapeID id, @Nullable RenderData.RenderPlane plane, int offsetY, int dy, String msg) {
         RenderData data = getRenderDataAndCreate(id);
         data.setPlaneData(plane, offsetY, dy);
-        data.shapeCount = count;
         data.previewMessage = msg;
     }
 
