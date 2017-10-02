@@ -831,6 +831,40 @@ public class ShapeCardItem extends GenericRFToolsItem {
         return cnt;
     }
 
+    public static int getRenderPositions(ItemStack stack, boolean solid, RLE positions, StatePalette statePalette, IFormula formula, int oy) {
+        BlockPos dimension = ShapeCardItem.getDimension(stack);
+        BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
+
+        int dx = clamped.getX();
+        int dy = clamped.getY();
+        int dz = clamped.getZ();
+
+        int cnt = 0;
+        int y = oy - dy / 2;
+        for (int ox = 0; ox < dx; ox++) {
+            int x = ox - dx / 2;
+            for (int oz = 0; oz < dz; oz++) {
+                int z = oz - dz / 2;
+                int v = 255;
+                if (formula.isInside(x, y, z)) {
+                    cnt++;
+                    IBlockState lastState = formula.getLastState();
+                    if (solid) {
+                        if (ox == 0 || ox == dx - 1 || oy == 0 || oy == dy - 1 || oz == 0 || oz == dz - 1) {
+                            v = statePalette.alloc(lastState, -1) + 1;
+                        } else if (!formula.isInside(x - 1, y, z) || !formula.isInside(x + 1, y, z) || !formula.isInside(x, y - 1, z) || !formula.isInside(x, y + 1, z) || !formula.isInside(x, y, z - 1) || !formula.isInside(x, y, z + 1)) {
+                            v = statePalette.alloc(lastState, -1) + 1;
+                        }
+                    } else {
+                        v = statePalette.alloc(lastState, -1) + 1;
+                    }
+                }
+                positions.add(v);
+            }
+        }
+        return cnt;
+    }
+
     // Used for saving
     public static int getDataPositions(ItemStack stack, Shape shape, boolean solid, RLE positions, StatePalette statePalette) {
         BlockPos dimension = ShapeCardItem.getDimension(stack);

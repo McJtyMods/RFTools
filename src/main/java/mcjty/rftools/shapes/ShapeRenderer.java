@@ -78,6 +78,13 @@ public class ShapeRenderer {
         data.previewMessage = msg;
     }
 
+    public static void setRenderData(ShapeID id, RenderData.RenderPlane plane, int offsetY, int dy, int count, String msg) {
+        RenderData data = getRenderDataAndCreate(id);
+        data.setPlaneData(plane, offsetY, dy);
+        data.shapeCount = count;
+        data.previewMessage = msg;
+    }
+
     public void initView(float dx, float dy) {
         this.dx = dx;
         this.dy = dy;
@@ -364,11 +371,13 @@ public class ShapeRenderer {
 
         if (data.getPlanes() != null) {
             for (RenderData.RenderPlane plane : data.getPlanes()) {
-                if (plane.isDirty()) {
-                    createRenderData(tessellator, buffer, showMat, plane, data);
-                    plane.markClean();
+                if (plane != null) {
+                    if (plane.isDirty()) {
+                        createRenderData(tessellator, buffer, showMat, plane, data);
+                        plane.markClean();
+                    }
+                    plane.render();
                 }
-                plane.render();
             }
         }
     }

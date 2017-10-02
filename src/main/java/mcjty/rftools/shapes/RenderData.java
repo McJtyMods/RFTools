@@ -30,7 +30,7 @@ public class RenderData {
             return false;
         }
         for (RenderPlane plane : planes) {
-            if (plane.vbo != null || plane.glList != -1) {
+            if (plane != null && (plane.vbo != null || plane.glList != -1)) {
                 return true;
             }
         }
@@ -64,6 +64,20 @@ public class RenderData {
         }
     }
 
+    public void setPlaneData(@Nonnull RenderPlane plane, int offsetY, int dy) {
+        if (planes == null) {
+            planes = new RenderPlane[dy];
+        } else if (planes.length != dy) {
+            cleanup();
+            planes = new RenderPlane[dy];
+        }
+        if (planes[offsetY] == null) {
+            planes[offsetY] = plane;
+        } else {
+            planes[offsetY].refreshData(plane);
+        }
+    }
+
     public void touch() {
         touchTime = System.currentTimeMillis();
     }
@@ -76,7 +90,9 @@ public class RenderData {
     public void cleanup() {
         if (planes != null) {
             for (RenderPlane plane : planes) {
-                plane.cleanup();
+                if (plane != null) {
+                    plane.cleanup();
+                }
             }
         }
     }

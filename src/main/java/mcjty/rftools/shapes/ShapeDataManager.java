@@ -1,28 +1,22 @@
 package mcjty.rftools.shapes;
 
+import mcjty.rftools.items.builder.ShapeCardItem;
+import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.varia.RLE;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /// Server side handling for shape data
 public class ShapeDataManager {
 
+    // Client-side
     private static final Map<ShapeID, RenderData> renderDataMap = new HashMap<>();
-
-    // The client calls this to request shape data from the server
-    public static void requestShape(ShapeID shapeID, ItemStack card) {
-        if (renderDataMap.containsKey(shapeID)) {
-            // Already present
-            return;
-        }
-
-        // @todo
-    }
 
     @Nullable
     public static RenderData getRenderData(ShapeID shapeID) {
@@ -62,5 +56,91 @@ public class ShapeDataManager {
     }
 
 
+    private static class WorkUnit {
+        private final ShapeID shapeID;
+        private final ItemStack stack;
+        private final int offsetY;
+        private final List<EntityPlayerMP> players = new ArrayList<>();
+        private final IFormula formula;
+
+        public WorkUnit(ShapeID shapeID, ItemStack stack, int offsetY, IFormula formula, EntityPlayerMP player) {
+            this.shapeID = shapeID;
+            this.stack = stack;
+            this.offsetY = offsetY;
+            this.formula = formula;
+            this.players.add(player);
+        }
+
+        public List<EntityPlayerMP> getPlayers() {
+            return players;
+        }
+
+        public ShapeID getShapeID() {
+            return shapeID;
+        }
+
+        public ItemStack getStack() {
+            return stack;
+        }
+
+        public int getOffsetY() {
+            return offsetY;
+        }
+
+        public IFormula getFormula() {
+            return formula;
+        }
+    }
+
+    // Server-side
+    private static final ArrayDeque<WorkUnit> workQueue = new ArrayDeque<>();
+    private static final Map<Pair<ShapeID, Integer>, WorkUnit> workingOn = new HashMap<>();
+
+    public static void pushWork(ShapeID shapeID, ItemStack stack, int offsetY, IFormula formula, EntityPlayerMP player) {
+        Pair<ShapeID, Integer> key = Pair.of(shapeID, offsetY);
+        if (workingOn.containsKey(key)) {
+            List<EntityPlayerMP> players = workingOn.get(key).getPlayers();
+            if (!players.contains(player)) {
+                players.add(player);
+            }
+        } else {
+            WorkUnit unit = new WorkUnit(shapeID, stack, offsetY, formula, player);
+            workQueue.addLast(unit);
+            workingOn.put(key, unit);
+        }
+    }
+
+    public static int maxworkqueue = 0;
+
+    public static void handleWork() {
+        int pertick = 3;
+        while (!workQueue.isEmpty()) {
+            if (workQueue.size() > maxworkqueue) {
+                maxworkqueue = workQueue.size();
+                System.out.println("maxworkqueue = " + maxworkqueue);
+            }
+            WorkUnit unit = workQueue.removeFirst();
+            Pair<ShapeID, Integer> key = Pair.of(unit.shapeID, unit.getOffsetY());
+            workingOn.remove(key);
+
+            ItemStack card = unit.getStack();
+            boolean solid = ShapeCardItem.isSolid(card);
+            BlockPos dimension = ShapeCardItem.getDimension(card);
+
+            RLE positions = new RLE();
+            StatePalette statePalette = new StatePalette();
+            int cnt = ShapeCardItem.getRenderPositions(card, solid, positions, statePalette, unit.getFormula(), unit.getOffsetY());
+
+            for (EntityPlayerMP player : unit.getPlayers()) {
+                RFToolsMessages.INSTANCE.sendTo(new PacketReturnShapeData(unit.getShapeID(), positions, statePalette, dimension, cnt, unit.getOffsetY(), ""), player);
+            }
+            if (cnt > 0) {
+                pertick--;
+                if (pertick <= 0) {
+                    break;
+                }
+            }
+        }
+    }
 
 }

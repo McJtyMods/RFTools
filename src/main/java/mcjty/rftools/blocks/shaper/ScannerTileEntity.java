@@ -5,6 +5,7 @@ import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.tools.ItemStackTools;
+import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderSetup;
@@ -88,11 +89,17 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         if (index == ScannerContainer.SLOT_OUT) {
             if (ItemStackTools.isValid(stack)) {
                 updateScanCard(stack);
+                markDirty();
             }
         }
         if (index == ScannerContainer.SLOT_IN) {
             if (ItemStackTools.isValid(stack)) {
                 dataDim = ShapeCardItem.getDimension(stack);
+                if (ItemStackTools.isEmpty(renderStack)) {
+                    renderStack = new ItemStack(BuilderSetup.shapeCardItem);
+                }
+                updateScanCard(renderStack);
+                markDirty();
             }
         }
     }

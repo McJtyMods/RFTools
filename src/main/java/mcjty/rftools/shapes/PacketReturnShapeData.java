@@ -20,6 +20,7 @@ public class PacketReturnShapeData implements IMessage {
     private RLE positions;
     private StatePalette statePalette;
     private int count;
+    private int offsetY;
     private String msg;
     private BlockPos dimension;
 
@@ -27,6 +28,7 @@ public class PacketReturnShapeData implements IMessage {
     public void fromBytes(ByteBuf buf) {
         id = new ShapeID(buf);
         count = buf.readInt();
+        offsetY = buf.readInt();
         msg = NetworkTools.readStringUTF8(buf);
         dimension = NetworkTools.readPos(buf);
 
@@ -59,6 +61,7 @@ public class PacketReturnShapeData implements IMessage {
     public void toBytes(ByteBuf buf) {
         id.toBytes(buf);
         buf.writeInt(count);
+        buf.writeInt(offsetY);
         NetworkTools.writeStringUTF8(buf, msg);
         NetworkTools.writePos(buf, dimension);
 
@@ -86,12 +89,13 @@ public class PacketReturnShapeData implements IMessage {
     public PacketReturnShapeData() {
     }
 
-    public PacketReturnShapeData(ShapeID id, RLE positions, StatePalette statePalette, BlockPos dimension, int count, String msg) {
+    public PacketReturnShapeData(ShapeID id, RLE positions, StatePalette statePalette, BlockPos dimension, int count, int offsetY, String msg) {
         this.id = id;
         this.positions = positions;
         this.statePalette = statePalette;
         this.dimension = dimension;
         this.count = count;
+        this.offsetY = offsetY;
         this.msg = msg;
     }
 
@@ -103,6 +107,50 @@ public class PacketReturnShapeData implements IMessage {
         }
 
         private void handle(PacketReturnShapeData message) {
+            int dx = message.dimension.getX();
+            int dy = message.dimension.getY();
+            int dz = message.dimension.getZ();
+
+            RLE rle = message.positions;
+            RenderData.RenderPlane plane = null;
+
+            if (rle != null) {
+                IBlockState dummy = BuilderSetup.supportBlock.getDefaultState();
+
+                rle.reset();
+//                for (int oy = 0; oy < dy; oy++) {
+                int oy = message.offsetY;
+                int y = oy - dy / 2;
+
+                RenderData.RenderStrip strips[] = new RenderData.RenderStrip[dx];
+                for (int ox = 0; ox < dx; ox++) {
+                    int x = ox - dx / 2;
+
+                    RenderData.RenderStrip strip = new RenderData.RenderStrip(x);
+                    strips[ox] = strip;
+
+                    for (int oz = 0; oz < dz; oz++) {
+                        int data = rle.read();
+                        if (data < 255) {
+                            if (data == 0) {
+                                strip.add(dummy);
+                            } else {
+                                data--;
+                                strip.add(message.statePalette.getPalette().get(data));
+                            }
+                        } else {
+                            strip.add(null);
+                        }
+                    }
+
+                    strip.close();
+                    plane = new RenderData.RenderPlane(strips, y, oy, -dz / 2);
+                }
+            }
+            ShapeRenderer.setRenderData(message.id, plane, message.offsetY, dy, message.count, message.msg);
+        }
+
+        private void handleOld(PacketReturnShapeData message) {
             int dx = message.dimension.getX();
             int dy = message.dimension.getY();
             int dz = message.dimension.getZ();
