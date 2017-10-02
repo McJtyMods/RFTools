@@ -140,7 +140,7 @@ public class PacketReturnShapeData implements IMessage {
 
                         strip.close();
                     }
-                    planes[oy] = new RenderData.RenderPlane(strips, y, -dz/2);
+                    planes[oy] = new RenderData.RenderPlane(strips, y, oy, -dz/2);
 
                 }
             } else {
