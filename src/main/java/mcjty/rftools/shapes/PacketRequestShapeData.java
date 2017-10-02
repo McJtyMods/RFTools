@@ -52,10 +52,10 @@ public class PacketRequestShapeData implements IMessage {
             boolean solid = ShapeCardItem.isSolid(message.card);
             BlockPos dimension = ShapeCardItem.getDimension(message.card);
 
-            if (dimension.getX()*dimension.getY()*dimension.getZ() > (200 * 200 * 200)) {
-                RFToolsMessages.INSTANCE.sendTo(new PacketReturnShapeData(message.id, null, null, dimension, 0, "Too large for preview!"), ctx.getServerHandler().player);
-                return;
-            }
+//            if (dimension.getX()*dimension.getY()*dimension.getZ() > (256 * 256 * 256)) {
+//                RFToolsMessages.INSTANCE.sendTo(new PacketReturnShapeData(message.id, null, null, dimension, 0, "Too large for preview!"), ctx.getServerHandler().player);
+//                return;
+//            }
 
             RLE positions = new RLE();
             StatePalette statePalette = new StatePalette();

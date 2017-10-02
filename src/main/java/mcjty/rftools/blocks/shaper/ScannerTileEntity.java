@@ -141,6 +141,11 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
+        if (tagCompound.hasKey("render")) {
+            renderStack = ItemStackTools.loadFromNBT(tagCompound.getCompoundTag("render"));
+        } else {
+            renderStack = ItemStackTools.getEmptyStack();
+        }
 
         if (tagCompound.hasKey("scandata")) {
             data = tagCompound.getByteArray("scandata");
@@ -167,7 +172,13 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
-        writeCommonToNBT(tagCompound);
+        super.writeRestorableToNBT(tagCompound);
+        writeBufferToNBT(tagCompound, inventoryHelper);
+        if (ItemStackTools.isValid(renderStack)) {
+            NBTTagCompound tc = new NBTTagCompound();
+            renderStack.writeToNBT(tc);
+            tagCompound.setTag("render", tc);
+        }
 
         if (data != null) {
             tagCompound.setByteArray("scandata", data);
@@ -198,11 +209,6 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     }
 
-    private void writeCommonToNBT(NBTTagCompound tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
-        writeBufferToNBT(tagCompound, inventoryHelper);
-    }
-
     public void setDataFromFile(ItemStack card, BlockPos dimension, BlockPos offset, byte[] data, StatePalette palette) {
         this.dataDim = dimension;
         this.dataOffset = new BlockPos(0, 0, 0);
@@ -222,11 +228,10 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         if (ItemStackTools.isEmpty(renderStack)) {
             renderStack = new ItemStack(BuilderSetup.shapeCardItem);
+            updateScanCard(renderStack);
         }
-        updateScanCard(renderStack);
         return renderStack;
     }
-
 
     private void setOffset(int offsetX, int offsetY, int offsetZ) {
         dataOffset = new BlockPos(offsetX, offsetY, offsetZ);
@@ -398,6 +403,10 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         this.data = rle.getData();
         this.materialPalette = materialPalette.getPalette();
         this.dataDim = new BlockPos(dimX, dimY, dimZ);
+        if (ItemStackTools.isEmpty(renderStack)) {
+            renderStack = new ItemStack(BuilderSetup.shapeCardItem);
+        }
+        updateScanCard(renderStack);
         markDirtyClient();
     }
 

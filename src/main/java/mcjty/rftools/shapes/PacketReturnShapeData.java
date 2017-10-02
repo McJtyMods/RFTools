@@ -142,6 +142,8 @@ public class PacketReturnShapeData implements IMessage {
                         column.close();
                     }
                 }
+            } else {
+                columns = null;
             }
             ShapeRenderer.setRenderData(message.id, columns, message.count, message.msg);
         }

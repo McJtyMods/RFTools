@@ -401,14 +401,6 @@ public class ShapeRenderer {
     }
 
 
-//    private void renderFacesVBO(Tessellator tessellator, final VertexBuffer buffer,
-//                                ItemStack stack, boolean showMat) {
-//        if (vboBuffer == null) {
-//            vboBuffer = new VertexBuffer(2097152);
-//        }
-//        buffer
-//    }
-//
     private void renderFaces(Tessellator tessellator, final VertexBuffer buffer,
                      ItemStack stack, boolean showMat) {
 
@@ -427,7 +419,7 @@ public class ShapeRenderer {
                     // Data is received
                     waitForNewRequest = 0;
                     checksum = calculateChecksum(stack);
-                    createDisplayList(tessellator, buffer, showMat);
+                    createRenderData(tessellator, buffer, showMat);
                 }
             }
             if (data.hasData()) {
@@ -468,7 +460,7 @@ public class ShapeRenderer {
 
     private static VertexBuffer vboBuffer = new VertexBuffer(2097152);
 
-    private void createDisplayList(Tessellator tessellator, VertexBuffer buffer, boolean showMat) {
+    private void createRenderData(Tessellator tessellator, VertexBuffer buffer, boolean showMat) {
         prevShowMat = showMat;
         invalidateGlList();
         RenderData data = getRenderData(id);
@@ -485,7 +477,6 @@ public class ShapeRenderer {
 //        GlStateManager.enableBlend();
 //        GlStateManager.enableAlpha();
 
-//            Map<Long, IBlockState> stateMap = new HashMap<>();
         Map<IBlockState, Col> pallete = new HashMap<>();
 
         double origOffsetX = buffer.xOffset;
@@ -494,6 +485,7 @@ public class ShapeRenderer {
 
         int avgcnt = 0;
         int total = 0;
+        quadcnt = 0;
         RenderColumn[] columns = data.columns;
         for (RenderColumn column : columns) {
             BlockPos coordinate = column.getBottomPos();
@@ -543,7 +535,7 @@ public class ShapeRenderer {
             }
         }
         float avg = avgcnt / (float) total;
-        System.out.println("avg = " + avg);
+        System.out.println("avg = " + avg + ", quads = " + quadcnt);
         buffer.setTranslation(origOffsetX, origOffsetY, origOffsetZ);
 
         if (useVBO) {
@@ -571,23 +563,26 @@ public class ShapeRenderer {
         GL11.glScissor(sx, sy, sw, sh);
     }
 
+    private static int quadcnt;
 
-    public static void addSideFullTexture(VertexBuffer buffer, int side, float r, float g, float b) {
+    private static void addSideFullTexture(VertexBuffer buffer, int side, float r, float g, float b) {
         Quad quad = QUADS[side];
         float a = 0.5f;
         buffer.pos(quad.v1.x, quad.v1.y, quad.v1.z).color(r, g, b, a).endVertex();
         buffer.pos(quad.v2.x, quad.v2.y, quad.v2.z).color(r, g, b, a).endVertex();
         buffer.pos(quad.v3.x, quad.v3.y, quad.v3.z).color(r, g, b, a).endVertex();
         buffer.pos(quad.v4.x, quad.v4.y, quad.v4.z).color(r, g, b, a).endVertex();
+        quadcnt++;
     }
 
-    public static void addSideFullTexture(VertexBuffer buffer, int side, int cnt, float r, float g, float b) {
+    private static void addSideFullTexture(VertexBuffer buffer, int side, int cnt, float r, float g, float b) {
         Quad quad = QUADS[side];
         float a = 0.5f;
         buffer.pos(quad.v1.x, quad.v1.y * cnt, quad.v1.z).color(r, g, b, a).endVertex();
         buffer.pos(quad.v2.x, quad.v2.y * cnt, quad.v2.z).color(r, g, b, a).endVertex();
         buffer.pos(quad.v3.x, quad.v3.y * cnt, quad.v3.z).color(r, g, b, a).endVertex();
         buffer.pos(quad.v4.x, quad.v4.y * cnt, quad.v4.z).color(r, g, b, a).endVertex();
+        quadcnt++;
     }
 
     private static class Vt {
