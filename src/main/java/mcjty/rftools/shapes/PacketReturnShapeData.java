@@ -15,9 +15,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class PacketReturnShapeData implements IMessage {
     private ShapeID id;
     private RLE positions;
@@ -110,42 +107,46 @@ public class PacketReturnShapeData implements IMessage {
             int dy = message.dimension.getY();
             int dz = message.dimension.getZ();
 
-            ShapeRenderer.RenderColumn columns[] = new ShapeRenderer.RenderColumn[dx * dz];
+            RenderData.RenderPlane planes[] = new RenderData.RenderPlane[dy];
             RLE rle = message.positions;
 
             if (rle != null) {
                 IBlockState dummy = BuilderSetup.supportBlock.getDefaultState();
 
                 rle.reset();
-                for (int ox = 0; ox < dx; ox++) {
-                    int x = ox - dx / 2;
-                    for (int oz = 0; oz < dz; oz++) {
-                        int z = oz - dz / 2;
+                for (int oy = 0; oy < dy; oy++) {
+                    int y = oy - dy / 2;
 
-                        ShapeRenderer.RenderColumn column = new ShapeRenderer.RenderColumn(new BlockPos(x, -dy/2, z));
-                        columns[ox*dz+oz] = column;
+                    RenderData.RenderStrip strips[] = new RenderData.RenderStrip[dx];
+                    for (int ox = 0; ox < dx; ox++) {
+                        int x = ox - dx / 2;
 
-                        for (int oy = 0; oy < dy; oy++) {
+                        RenderData.RenderStrip strip = new RenderData.RenderStrip(x);
+                        strips[ox] = strip;
+
+                        for (int oz = 0; oz < dz; oz++) {
                             int data = rle.read();
                             if (data < 255) {
                                 if (data == 0) {
-                                    column.add(dummy);
+                                    strip.add(dummy);
                                 } else {
                                     data--;
-                                    column.add(message.statePalette.getPalette().get(data));
+                                    strip.add(message.statePalette.getPalette().get(data));
                                 }
                             } else {
-                                column.add(null); // @todo, two kinds of null: no data or unknown texture!
+                                strip.add(null);
                             }
                         }
 
-                        column.close();
+                        strip.close();
                     }
+                    planes[oy] = new RenderData.RenderPlane(strips, y, -dz/2);
+
                 }
             } else {
-                columns = null;
+                planes = null;
             }
-            ShapeRenderer.setRenderData(message.id, columns, message.count, message.msg);
+            ShapeRenderer.setRenderData(message.id, planes, message.count, message.msg);
         }
 
     }

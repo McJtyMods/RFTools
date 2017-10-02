@@ -22,7 +22,6 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,9 +71,9 @@ public class ShapeRenderer {
         return data;
     }
 
-    public static void setRenderData(ShapeID id, ShapeRenderer.RenderColumn columns[], int count, String msg) {
+    public static void setRenderData(ShapeID id, RenderData.RenderPlane planes[], int count, String msg) {
         RenderData data = getRenderDataAndCreate(id);
-        data.setColumns(columns);
+        data.setPlanes(planes);
         data.shapeCount = count;
         data.previewMessage = msg;
     }
@@ -199,7 +198,6 @@ public class ShapeRenderer {
         RenderData data = ShapeDataManager.getRenderData(shapeID);
         if (data != null && !data.previewMessage.isEmpty()) {
             Minecraft.getMinecraft().fontRenderer.drawString(data.previewMessage, gui.getPreviewLeft()+84, gui.getPreviewTop()+50, 0xffff0000);
-            return;
         }
 
     }
@@ -353,15 +351,15 @@ public class ShapeRenderer {
 
         RenderData data = getRenderDataAndCreate(shapeID);
 
-        if (data.getColumns() == null || waitForNewRequest > 0) {
+        if (data.getPlanes() == null || waitForNewRequest > 0) {
             if (waitForNewRequest <= 0) {
                 // No positions, send a new request
                 RFToolsMessages.INSTANCE.sendToServer(new PacketRequestShapeData(stack, shapeID));
                 waitForNewRequest = 10;
-                data.setColumns(null);
+                data.setPlanes(null);
             } else {
                 waitForNewRequest--;
-                if (data.getColumns() != null) {
+                if (data.getPlanes() != null) {
                     // Positions have arrived, create displayList
                     // Data is received
                     waitForNewRequest = 0;
@@ -379,7 +377,7 @@ public class ShapeRenderer {
         long check = calculateChecksum(stack);
         if (!data.hasData() || check != checksum || showMat != prevShowMat) {
             // Checksum failed, set positions to null
-            data.setColumns(null);
+            data.setPlanes(null);
         }
 
         if (data.hasData()) {
@@ -408,52 +406,53 @@ public class ShapeRenderer {
         int avgcnt = 0;
         int total = 0;
         quadcnt = 0;
-        RenderColumn[] columns = data.getColumns();
-        for (RenderColumn column : columns) {
-            BlockPos coordinate = column.getBottomPos();
-            int x = coordinate.getX();
-            int y = coordinate.getY();
-            int z = coordinate.getZ();
-            List<Pair<Integer, IBlockState>> columnData = column.getData();
-            for (int i = 0 ; i < columnData.size() ; i++) {
-                Pair<Integer, IBlockState> pair = columnData.get(i);
-                int cnt = pair.getKey();
-                IBlockState state = pair.getValue();
-                if (state != null) {
-                    buffer.setTranslation(origOffsetX + x, origOffsetY + y, origOffsetZ + z);
-                    avgcnt += cnt;
-                    total++;
-                    if (showMat) {
-                        Col col = getColor(pallete, state);
-                        float r = col.getR();
-                        float g = col.getG();
-                        float b = col.getB();
-                        if (column.isEmptyAt(i+1)) {
+        RenderData.RenderPlane[] planes = data.getPlanes();
+        for (RenderData.RenderPlane plane : planes) {
+            int y = plane.getY();
+            for (RenderData.RenderStrip strip : plane.getStrips()) {
+                int z = plane.getStartz();
+                int x = strip.getX();
+                List<Pair<Integer, IBlockState>> columnData = strip.getData();
+                for (int i = 0; i < columnData.size(); i++) {
+                    Pair<Integer, IBlockState> pair = columnData.get(i);
+                    int cnt = pair.getKey();
+                    IBlockState state = pair.getValue();
+                    if (state != null) {
+                        buffer.setTranslation(origOffsetX + x, origOffsetY + y, origOffsetZ + z);
+                        avgcnt += cnt;
+                        total++;
+                        if (showMat) {
+                            Col col = getColor(pallete, state);
+                            float r = col.getR();
+                            float g = col.getG();
+                            float b = col.getB();
                             addSideFullTexture(buffer, EnumFacing.UP.ordinal(), cnt, r * .8f, g * .8f, b * .8f);
-                        }
-                        if (column.isEmptyAt(i-1)) {
-                            addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), r * .8f, g * .8f, b * .8f);
-                        }
-                        addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), cnt, r * 1.2f, g * 1.2f, b * 1.2f);
-                        addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), cnt, r * 1.2f, g * 1.2f, b * 1.2f);
-                        addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), cnt, r, g, b);
-                        addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), cnt, r, g, b);
-                    } else {
-                        float d = .2f;
-                        float l = ((x + y + z) & 1) == 1 ? .9f : .6f;
-                        if (column.isEmptyAt(i+1)) {
+                            addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), cnt, r * .8f, g * .8f, b * .8f);
+                            if (strip.isEmptyAt(i - 1)) {
+                                addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), cnt, r * 1.2f, g * 1.2f, b * 1.2f);
+                            }
+                            if (strip.isEmptyAt(i + 1)) {
+                                addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), cnt, r * 1.2f, g * 1.2f, b * 1.2f);
+                            }
+                            addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), cnt, r, g, b);
+                            addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), cnt, r, g, b);
+                        } else {
+                            float d = .2f;
+                            float l = ((x + y + z) & 1) == 1 ? .9f : .6f;
                             addSideFullTexture(buffer, EnumFacing.UP.ordinal(), cnt, d, l, d);
+                            addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), cnt, d, l, d);
+                            if (strip.isEmptyAt(i - 1)) {
+                                addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), cnt, d, d, l);
+                            }
+                            if (strip.isEmptyAt(i + 1)) {
+                                addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), cnt, d, d, l);
+                            }
+                            addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), cnt, l, d, d);
+                            addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), cnt, l, d, d);
                         }
-                        if (column.isEmptyAt(i-1)) {
-                            addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), d, l, d);
-                        }
-                        addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), cnt, d, d, l);
-                        addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), cnt, d, d, l);
-                        addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), cnt, l, d, d);
-                        addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), cnt, l, d, d);
                     }
+                    z += cnt;
                 }
-                y += cnt;
             }
         }
         float avg = avgcnt / (float) total;
@@ -492,10 +491,10 @@ public class ShapeRenderer {
     private static void addSideFullTexture(VertexBuffer buffer, int side, int cnt, float r, float g, float b) {
         Quad quad = QUADS[side];
         float a = 0.5f;
-        buffer.pos(quad.v1.x, quad.v1.y * cnt, quad.v1.z).color(r, g, b, a).endVertex();
-        buffer.pos(quad.v2.x, quad.v2.y * cnt, quad.v2.z).color(r, g, b, a).endVertex();
-        buffer.pos(quad.v3.x, quad.v3.y * cnt, quad.v3.z).color(r, g, b, a).endVertex();
-        buffer.pos(quad.v4.x, quad.v4.y * cnt, quad.v4.z).color(r, g, b, a).endVertex();
+        buffer.pos(quad.v1.x, quad.v1.y, quad.v1.z * cnt).color(r, g, b, a).endVertex();
+        buffer.pos(quad.v2.x, quad.v2.y, quad.v2.z * cnt).color(r, g, b, a).endVertex();
+        buffer.pos(quad.v3.x, quad.v3.y, quad.v3.z * cnt).color(r, g, b, a).endVertex();
+        buffer.pos(quad.v4.x, quad.v4.y, quad.v4.z * cnt).color(r, g, b, a).endVertex();
         quadcnt++;
     }
 
@@ -525,54 +524,4 @@ public class ShapeRenderer {
         }
     }
 
-    public static class RenderColumn {
-        private final List<Pair<Integer, IBlockState>> data = new ArrayList<>();
-        private final BlockPos bottomPos;
-        private IBlockState last;
-        private int cnt = 0;
-
-        public RenderColumn(BlockPos bottomPos) {
-            this.bottomPos = bottomPos;
-        }
-
-        public BlockPos getBottomPos() {
-            return bottomPos;
-        }
-
-        public List<Pair<Integer, IBlockState>> getData() {
-            return data;
-        }
-
-        public boolean isEmptyAt(int i) {
-            if (i < 0) {
-                return true;
-            }
-            if (i >= data.size()) {
-                return true;
-            }
-            return data.get(i).getValue() == null;
-        }
-
-        public void add(IBlockState state) {
-            if (cnt == 0) {
-                last = state;
-                cnt = 1;
-            } else {
-                if (last != state) {
-                    data.add(Pair.of(cnt, last));
-                    last = state;
-                    cnt = 1;
-                } else {
-                    cnt++;
-                }
-            }
-        }
-
-        public void close() {
-            if (cnt > 0) {
-                data.add(Pair.of(cnt, last));
-                cnt = 0;
-            }
-        }
-    }
 }
