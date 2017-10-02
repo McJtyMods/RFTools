@@ -24,6 +24,7 @@ import mcjty.rftools.integration.computers.OpenComputersIntegration;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.manual.GuiRFToolsManual;
 import mcjty.rftools.proxy.CommonProxy;
+import mcjty.rftools.shapes.ScanDataManager;
 import mcjty.rftools.wheelsupport.WheelSupport;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -198,6 +199,7 @@ public class RFTools implements ModBase {
         RemoteStorageIdRegistry.clearInstance();
         RedstoneChannels.clearInstance();
         PowerCellNetwork.clearInstance();
+        ScanDataManager.clearInstance();
         SecurityChannels.clearInstance();
         BlockProtectors.clearInstance();
     }

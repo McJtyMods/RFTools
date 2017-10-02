@@ -5,7 +5,6 @@ import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.tools.ItemStackTools;
-import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderSetup;
@@ -16,6 +15,7 @@ import mcjty.rftools.items.modifier.ModifierFilterOperation;
 import mcjty.rftools.items.modifier.ModifierItem;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
+import mcjty.rftools.shapes.ScanDataManager;
 import mcjty.rftools.shapes.Shape;
 import mcjty.rftools.shapes.StatePalette;
 import mcjty.rftools.varia.RLE;
@@ -28,6 +28,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -49,7 +50,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ScannerContainer.factory, 4);
     private StorageFilterCache filterCache = null;
 
-    private byte[] data = null;
+    private int scanId = 0;
     private List<IBlockState> materialPalette = new ArrayList<>();
     private BlockPos dataDim;
     private BlockPos dataOffset = new BlockPos(0, 0, 0);
@@ -117,8 +118,17 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         return canPlayerAccess(player);
     }
 
+    private int getScanId() {
+        if (scanId == 0) {
+            scanId = ScanDataManager.getScans(getWorld()).newScan();
+            markDirtyQuick();
+        }
+        return scanId;
+    }
+
     public byte[] getData() {
-        return data;
+        ScanDataManager.Scan scan = ScanDataManager.getScans(getWorld()).getOrCreateScan(getScanId());
+        return scan.getData();
     }
 
     public List<IBlockState> getMaterialPalette() {
@@ -154,11 +164,13 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
             renderStack = ItemStackTools.getEmptyStack();
         }
 
-        if (tagCompound.hasKey("scandata")) {
-            data = tagCompound.getByteArray("scandata");
-        } else {
-            data = null;
-        }
+        scanId = tagCompound.getInteger("scanid");
+//        if (tagCompound.hasKey("scandata")) {
+//            data = tagCompound.getByteArray("scandata");
+//            System.out.println("readRestorableFromNBT: data.length = " + data.length);
+//        } else {
+//            data = null;
+//        }
         NBTTagList list = tagCompound.getTagList("scanpal", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < list.tagCount() ; i++) {
             NBTTagCompound tc = list.getCompoundTagAt(i);
@@ -173,24 +185,32 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         System.out.println("readRestorable: getPos() = " + getPos() + ": " + dataDim);
     }
 
-//    @Override
-//    public void writeClientDataToNBT(NBTTagCompound tagCompound) {
-//        writeCommonToNBT(tagCompound);
-//    }
+    @Override
+    public void writeClientDataToNBT(NBTTagCompound tagCompound) {
+        writeInternal(tagCompound);
+        if (powerLevel > 0) {
+            tagCompound.setByte("powered", (byte) powerLevel);
+        }
+        writeCommonToNBT(tagCompound);
+    }
+
+    private NBTTagCompound writeInternal(NBTTagCompound compound) {
+        compound.setString("id", TileEntity.getKey(ScannerTileEntity.class).toString());
+        compound.setInteger("x", this.pos.getX());
+        compound.setInteger("y", this.pos.getY());
+        compound.setInteger("z", this.pos.getZ());
+        return compound;
+    }
 
     @Override
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
-        writeBufferToNBT(tagCompound, inventoryHelper);
-        if (ItemStackTools.isValid(renderStack)) {
-            NBTTagCompound tc = new NBTTagCompound();
-            renderStack.writeToNBT(tc);
-            tagCompound.setTag("render", tc);
-        }
+        writeCommonToNBT(tagCompound);
 
-        if (data != null) {
-            tagCompound.setByteArray("scandata", data);
-        }
+        tagCompound.setInteger("scanid", getScanId());
+//        if (data != null) {
+//            tagCompound.setByteArray("scandata", data);
+//            System.out.println("writeRestorableToNBT: data.length = " + data.length);
+//        }
         NBTTagList pal = new NBTTagList();
         for (IBlockState state : materialPalette) {
             NBTTagCompound tc = new NBTTagCompound();
@@ -205,6 +225,16 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
             pal.appendTag(tc);
         }
         tagCompound.setTag("scanpal", pal);
+    }
+
+    private void writeCommonToNBT(NBTTagCompound tagCompound) {
+        super.writeRestorableToNBT(tagCompound);
+        writeBufferToNBT(tagCompound, inventoryHelper);
+        if (ItemStackTools.isValid(renderStack)) {
+            NBTTagCompound tc = new NBTTagCompound();
+            renderStack.writeToNBT(tc);
+            tagCompound.setTag("render", tc);
+        }
         if (dataDim != null) {
             tagCompound.setInteger("scandimx", dataDim.getX());
             tagCompound.setInteger("scandimy", dataDim.getY());
@@ -220,7 +250,8 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     public void setDataFromFile(ItemStack card, BlockPos dimension, BlockPos offset, byte[] data, StatePalette palette) {
         this.dataDim = dimension;
         this.dataOffset = new BlockPos(0, 0, 0);
-        this.data = data;
+        ScanDataManager.getScans(getWorld()).getOrCreateScan(getScanId()).setData(data);
+        ScanDataManager.getScans(getWorld()).save(getWorld());
         this.materialPalette = palette.getPalette();
         ShapeCardItem.setDimension(card, dimension.getX(), dimension.getY(), dimension.getZ());
         ShapeCardItem.setOffset(card, offset.getX(), offset.getY(), offset.getZ());
@@ -239,7 +270,6 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
             renderStack = new ItemStack(BuilderSetup.shapeCardItem);
             updateScanCard(renderStack);
         }
-        System.out.println("ShapeCardItem.getDimension(renderStack) = " + ShapeCardItem.getDimension(renderStack));
         return renderStack;
     }
 
@@ -249,13 +279,16 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private void updateScanCard(ItemStack cardOut) {
-        if (data != null && ItemStackTools.isValid(cardOut)) {
+        ScanDataManager.Scan scan = null;
+        if (!getWorld().isRemote) {
+            scan = ScanDataManager.getScans(getWorld()).getScan(getScanId());
+        }
+        if (scan != null && scan.getData() != null && ItemStackTools.isValid(cardOut)) {
             if (!ShapeCardItem.getShape(cardOut).isScan()) {
                 boolean solid = ShapeCardItem.isSolid(cardOut);
                 ShapeCardItem.setShape(cardOut, Shape.SHAPE_SCAN, solid);
             }
             NBTTagCompound tagOut = cardOut.getTagCompound();
-            System.out.println("updateScanCard: getPos() = " + getPos() + ": " + dataDim);
             ShapeCardItem.setDimension(cardOut, dataDim.getX(), dataDim.getY(), dataDim.getZ());
             ShapeCardItem.setData(tagOut, getWorld().provider.getDimension(), getPos());
         }
@@ -411,7 +444,8 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
                 }
             }
         }
-        this.data = rle.getData();
+        ScanDataManager.getScans(getWorld()).getOrCreateScan(getScanId()).setData(rle.getData());
+        ScanDataManager.getScans(getWorld()).save(getWorld());
         this.materialPalette = materialPalette.getPalette();
         this.dataDim = new BlockPos(dimX, dimY, dimZ);
         if (ItemStackTools.isEmpty(renderStack)) {
