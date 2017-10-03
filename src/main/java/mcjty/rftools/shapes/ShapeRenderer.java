@@ -43,7 +43,6 @@ public class ShapeRenderer {
 
     private ShapeID shapeID;
     private long checksum = -1;
-    private boolean prevShowMat = false;
 
     private int waitForNewRequest = 0;
 
@@ -135,7 +134,7 @@ public class ShapeRenderer {
 
         Tessellator tessellator = Tessellator.getInstance();
         VertexBuffer buffer = tessellator.getBuffer();
-        renderFaces(tessellator, buffer, stack, true);
+        renderFaces(tessellator, buffer, stack);
 
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
@@ -146,7 +145,7 @@ public class ShapeRenderer {
         GlStateManager.popMatrix();
     }
 
-    public void renderShape(IShapeParentGui gui, ItemStack stack, int x, int y, boolean showAxis, boolean showOuter, boolean showMat) {
+    public void renderShape(IShapeParentGui gui, ItemStack stack, int x, int y, boolean showAxis, boolean showOuter) {
         setupScissor(gui);
 
         GlStateManager.pushMatrix();
@@ -166,7 +165,7 @@ public class ShapeRenderer {
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
-        renderFaces(tessellator, buffer, stack, showMat);
+        renderFaces(tessellator, buffer, stack);
         BlockPos dimension = ShapeCardItem.getDimension(stack);
         renderHelpers(tessellator, buffer, dimension.getX(), dimension.getY(), dimension.getZ(), showAxis, showOuter);
 
@@ -346,7 +345,7 @@ public class ShapeRenderer {
 
 
     private void renderFaces(Tessellator tessellator, final VertexBuffer buffer,
-                     ItemStack stack, boolean showMat) {
+                     ItemStack stack) {
 
         RenderData data = getRenderDataAndCreate(shapeID);
 
@@ -361,9 +360,8 @@ public class ShapeRenderer {
             }
         } else {
             long check = calculateChecksum(stack);
-            if (!data.hasData() || check != checksum || showMat != prevShowMat) {
+            if (!data.hasData() || check != checksum) {
                 // Checksum failed, we want new data
-                prevShowMat = showMat;
                 checksum = check;
                 data.setWantData(true);
             }
@@ -373,7 +371,7 @@ public class ShapeRenderer {
             for (RenderData.RenderPlane plane : data.getPlanes()) {
                 if (plane != null) {
                     if (plane.isDirty()) {
-                        createRenderData(tessellator, buffer, showMat, plane, data);
+                        createRenderData(tessellator, buffer, plane, data);
                         plane.markClean();
                     }
                     plane.render();
@@ -382,7 +380,7 @@ public class ShapeRenderer {
         }
     }
 
-    private void createRenderData(Tessellator tessellator, VertexBuffer buffer, boolean showMat, RenderData.RenderPlane plane, RenderData data) {
+    private void createRenderData(Tessellator tessellator, VertexBuffer buffer, RenderData.RenderPlane plane, RenderData data) {
         Map<IBlockState, Col> pallete = new HashMap<>();
 
         double origOffsetX = buffer.xOffset;
@@ -410,35 +408,20 @@ public class ShapeRenderer {
                     buffer.setTranslation(origOffsetX + x, origOffsetY + y, origOffsetZ + z);
                     avgcnt += cnt;
                     total++;
-                    if (showMat) {
-                        Col col = getColor(pallete, state);
-                        float r = col.getR();
-                        float g = col.getG();
-                        float b = col.getB();
-                        addSideFullTexture(buffer, EnumFacing.UP.ordinal(), cnt, r * .8f, g * .8f, b * .8f);
-                        addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), cnt, r * .8f, g * .8f, b * .8f);
-                        if (strip.isEmptyAt(i - 1)) {
-                            addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), cnt, r * 1.2f, g * 1.2f, b * 1.2f);
-                        }
-                        if (strip.isEmptyAt(i + 1)) {
-                            addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), cnt, r * 1.2f, g * 1.2f, b * 1.2f);
-                        }
-                        addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), cnt, r, g, b);
-                        addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), cnt, r, g, b);
-                    } else {
-                        float d = .2f;
-                        float l = ((x + y + z) & 1) == 1 ? .9f : .6f;
-                        addSideFullTexture(buffer, EnumFacing.UP.ordinal(), cnt, d, l, d);
-                        addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), cnt, d, l, d);
-                        if (strip.isEmptyAt(i - 1)) {
-                            addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), cnt, d, d, l);
-                        }
-                        if (strip.isEmptyAt(i + 1)) {
-                            addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), cnt, d, d, l);
-                        }
-                        addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), cnt, l, d, d);
-                        addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), cnt, l, d, d);
+                    Col col = getColor(pallete, state);
+                    float r = col.getR();
+                    float g = col.getG();
+                    float b = col.getB();
+                    addSideFullTexture(buffer, EnumFacing.UP.ordinal(), cnt, r * .8f, g * .8f, b * .8f);
+                    addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), cnt, r * .8f, g * .8f, b * .8f);
+                    if (strip.isEmptyAt(i - 1)) {
+                        addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), cnt, r * 1.2f, g * 1.2f, b * 1.2f);
                     }
+                    if (strip.isEmptyAt(i + 1)) {
+                        addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), cnt, r * 1.2f, g * 1.2f, b * 1.2f);
+                    }
+                    addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), cnt, r, g, b);
+                    addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), cnt, r, g, b);
                 }
                 z += cnt;
             }

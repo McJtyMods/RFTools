@@ -41,7 +41,6 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
 
     private ToggleButton showAxis;
     private ToggleButton showOuter;
-    private ToggleButton showMat;
 
     private Button scanButton;
 
@@ -92,9 +91,6 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
         showOuter = new ToggleButton(mc, this).setCheckMarker(true).setText("B").setLayoutHint(new PositionalLayout.PositionalHint(31, 176, 24, 16));
         showOuter.setPressed(true);
         toplevel.addChild(showOuter);
-        showMat = new ToggleButton(mc, this).setCheckMarker(true).setText("M").setLayoutHint(new PositionalLayout.PositionalHint(57, 176, 24, 16));
-        showMat.setPressed(true);
-        toplevel.addChild(showMat);
 
         scanButton = new Button(mc, this).setText("Scan")
                 .addButtonEvent(parent -> scan())
@@ -228,7 +224,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
                 }
 
                 getShapeRenderer().setShapeID(getShapeID());
-                getShapeRenderer().renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed(), showMat.isPressed());
+                getShapeRenderer().renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed());
 //            }
         }
     }

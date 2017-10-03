@@ -42,7 +42,6 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
 
     private ToggleButton showAxis;
     private ToggleButton showOuter;
-    private ToggleButton showMat;
 
     // For GuiShapeCard: the current card to edit
     public static BlockPos shaperBlock = null;
@@ -121,9 +120,6 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
         showOuter = new ToggleButton(mc, this).setCheckMarker(true).setText("B").setLayoutHint(new PositionalLayout.PositionalHint(31, 176, 24, 16));
         showOuter.setPressed(true);
         toplevel.addChild(showOuter);
-        showMat = new ToggleButton(mc, this).setCheckMarker(true).setText("M").setLayoutHint(new PositionalLayout.PositionalHint(57, 176, 24, 16));
-        showMat.setPressed(true);
-        toplevel.addChild(showMat);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
@@ -225,7 +221,7 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
             ItemStack stack = slot.getStack();
             if (ItemStackTools.isValid(stack)) {
                 getShapeRenderer().setShapeID(getShapeID());
-                getShapeRenderer().renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed(), showMat.isPressed());
+                getShapeRenderer().renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed());
             }
         }
     }
