@@ -63,7 +63,10 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
     private ShapeRenderer getShapeRenderer() {
         if (shapeRenderer == null) {
             shapeRenderer = new ShapeRenderer(getShapeID());
+        } else if (getShapeID().getFormulaCheck() != shapeRenderer.getShapeID().getFormulaCheck()) {
+            shapeRenderer = new ShapeRenderer(getShapeID());
         }
+
         return shapeRenderer;
     }
 
@@ -71,7 +74,7 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
         Slot slot = inventorySlots.getSlot(ComposerContainer.SLOT_OUT);
         ItemStack stack = slot.getHasStack() ? slot.getStack() : ItemStackTools.getEmptyStack();
 
-        return new ShapeID(tileEntity.getWorld().provider.getDimension(), tileEntity.getPos(), ShapeCardItem.getCheck(stack));
+        return new ShapeID(tileEntity.getWorld().provider.getDimension(), tileEntity.getPos(), ShapeCardItem.getCheck(stack), ShapeCardItem.getFormulaCheck(stack));
     }
 
 

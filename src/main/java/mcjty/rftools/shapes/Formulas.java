@@ -65,6 +65,14 @@ public class Formulas {
         private IBlockState lastState = null;
 
         @Override
+        public int getChecksum(NBTTagCompound tc) {
+            return 0; // @todo this can be called client side? What to do then?
+//            int scanId = tc.getInteger("scanid");
+//            ScanDataManager.Scan scan = ScanDataManager.getScans(DimensionManager.getWorld(0)).getOrCreateScan(scanId);
+//            return scan.getDirtyCounter();
+        }
+
+        @Override
         public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
             data = null;
 
@@ -117,17 +125,12 @@ public class Formulas {
             if (data == null) {
                 return false;
             }
-//            if (x < x1 || x >= x1+dx || y < y1 || y >= y1+dy || z < z1 || z >= z1+dz) {
-//                return false;
-//            }
-
             int index = (y-y1) * dx * dz + (x-x1) * dz + (z-z1);
             if (data[index] == 0) {
                 return false;
             } else {
                 int idx = ((data[index]) & 0xff)-1;
                 lastState = palette.get(idx);
-//                lastState = idx < palette.size() ? palette.get(idx) : null;
                 return true;
             }
         }
@@ -143,8 +146,6 @@ public class Formulas {
         public IFormula createFormula() {
             return new IFormula() {
                 private BlockPos thisCoord;
-                private BlockPos dimension;
-                private BlockPos offset;
                 private IBlockState blockState;
                 private List<IFormula> formulas = new ArrayList<>();
                 private List<Bounds> bounds = new ArrayList<>();
@@ -154,8 +155,6 @@ public class Formulas {
                 @Override
                 public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
                     this.thisCoord = thisCoord;
-                    this.dimension = dimension;
-                    this.offset = offset;
 
                     if (card == null) {
                         return;
@@ -201,6 +200,19 @@ public class Formulas {
                         }
                         blockStates.add(state);
                     }
+                }
+
+                @Override
+                public int getChecksum(NBTTagCompound tc) {
+                    int check = 0;
+                    NBTTagList children = tc.getTagList("children", Constants.NBT.TAG_COMPOUND);
+                    for (int i = 0 ; i < children.tagCount() ; i++) {
+                        NBTTagCompound childTag = children.getCompoundTagAt(i);
+                        IFormula formula = ShapeCardItem.createCorrectFormula(childTag);
+                        // @todo is this good?
+                        check = (check<<1) ^ formula.getChecksum(childTag);
+                    }
+                    return check;
                 }
 
                 @Override

@@ -1,12 +1,15 @@
 package mcjty.rftools.shapes;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 
 public interface IFormula {
 
     void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card);
+
+    default int getChecksum(NBTTagCompound cardTag) { return 0; }
 
     boolean isInside(int x, int y, int z);
 

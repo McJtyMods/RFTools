@@ -10,12 +10,14 @@ import javax.annotation.Nullable;
 public final class ShapeID {
     private final int dimension;
     @Nullable private final BlockPos pos;     // null if this is for a shapecard (i.e. shapecard gui in hand)
-    private final int check;        // Check from the shapecard
+    private final int check;            // Check from the shapecard
+    private final int formulaCheck;     // Check from formula
 
-    public ShapeID(int dimension, BlockPos pos, int check) {
+    public ShapeID(int dimension, BlockPos pos, int check, int formulaCheck) {
         this.dimension = dimension;
         this.pos = pos;
         this.check = check;
+        this.formulaCheck = formulaCheck;
     }
 
     public ShapeID(ByteBuf buf) {
@@ -26,6 +28,7 @@ public final class ShapeID {
             p = NetworkTools.readPos(buf);
         }
         check = buf.readInt();
+        formulaCheck = buf.readInt();
         dimension = dim;
         pos = p;
     }
@@ -39,9 +42,12 @@ public final class ShapeID {
             NetworkTools.writePos(buf, getPos());
         }
         buf.writeInt(getCheck());
+        buf.writeInt(getFormulaCheck());
     }
 
-
+    public int getFormulaCheck() {
+        return formulaCheck;
+    }
 
     public int getDimension() {
         return dimension;
@@ -65,6 +71,7 @@ public final class ShapeID {
 
         if (dimension != shapeID.dimension) return false;
         if (check != shapeID.check) return false;
+        if (formulaCheck != shapeID.formulaCheck) return false;
         return pos != null ? pos.equals(shapeID.pos) : shapeID.pos == null;
 
     }
@@ -74,6 +81,7 @@ public final class ShapeID {
         int result = dimension;
         result = 31 * result + (pos != null ? pos.hashCode() : 0);
         result = 31 * result + check;
+        result = 31 * result + formulaCheck;
         return result;
     }
 }
