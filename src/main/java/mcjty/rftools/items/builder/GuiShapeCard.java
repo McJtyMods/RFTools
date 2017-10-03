@@ -409,7 +409,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
 
         ItemStack stack = getStackToEdit();
         if (ItemStackTools.isValid(stack)) {
-            getShapeRenderer().renderShape(this, stack, guiLeft, guiTop, true, true);
+            getShapeRenderer().renderShape(this, stack, guiLeft, guiTop, true, true, false);
         }
 
         List<String> tooltips = window.getTooltips();

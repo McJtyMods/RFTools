@@ -144,7 +144,7 @@ public class ShapeRenderer {
         GlStateManager.popMatrix();
     }
 
-    public void renderShape(IShapeParentGui gui, ItemStack stack, int x, int y, boolean showAxis, boolean showOuter) {
+    public void renderShape(IShapeParentGui gui, ItemStack stack, int x, int y, boolean showAxis, boolean showOuter, boolean showGuidelines) {
         setupScissor(gui);
 
         GlStateManager.pushMatrix();
@@ -172,16 +172,17 @@ public class ShapeRenderer {
 
         GlStateManager.popMatrix();
 
-        GlStateManager.glLineWidth(3);
-        buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-        buffer.pos(x-62, y+180, 0)  .color(1f, 0f, 0f, 1f).endVertex();
-        buffer.pos(x-39, y+180, 0)  .color(1f, 0f, 0f, 1f).endVertex();
-        buffer.pos(x-62, y+195, 0)  .color(0f, 0.8f, 0f, 1f).endVertex();
-        buffer.pos(x-39, y+195, 0)  .color(0f, 0.8f, 0f, 1f).endVertex();
-        buffer.pos(x-62, y+210, 0)  .color(0f, 0f, 1f, 1f).endVertex();
-        buffer.pos(x-39, y+210, 0)  .color(0f, 0f, 1f, 1f).endVertex();
-        tessellator.draw();
-
+        if (showGuidelines) {
+            GlStateManager.glLineWidth(3);
+            buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+            buffer.pos(x - 62, y + 180, 0).color(1f, 0f, 0f, 1f).endVertex();
+            buffer.pos(x - 39, y + 180, 0).color(1f, 0f, 0f, 1f).endVertex();
+            buffer.pos(x - 62, y + 195, 0).color(0f, 0.8f, 0f, 1f).endVertex();
+            buffer.pos(x - 39, y + 195, 0).color(0f, 0.8f, 0f, 1f).endVertex();
+            buffer.pos(x - 62, y + 210, 0).color(0f, 0f, 1f, 1f).endVertex();
+            buffer.pos(x - 39, y + 210, 0).color(0f, 0f, 1f, 1f).endVertex();
+            tessellator.draw();
+        }
 
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();

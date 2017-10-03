@@ -231,7 +231,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
             }
 
             getShapeRenderer().setShapeID(getShapeID());
-            getShapeRenderer().renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed());
+            getShapeRenderer().renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed(), false);
         }
     }
 

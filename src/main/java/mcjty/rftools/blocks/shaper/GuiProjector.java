@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.shaper;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.entity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.Window;
+import mcjty.lib.gui.WindowManager;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.Button;
@@ -27,9 +28,11 @@ import java.io.IOException;
 
 public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> implements IShapeParentGui {
 
+    public static final int SIDEWIDTH = 80;
     public static final int PROJECTOR_WIDTH = 256;
     public static final int PROJECTOR_HEIGHT = 238;
 
+    private static final ResourceLocation sideBackground = new ResourceLocation(RFTools.MODID, "textures/gui/sidegui_projector.png");
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/projector.png");
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
@@ -46,6 +49,8 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
     private Slider offsetSlider;
     private Slider scaleSlider;
     private ToggleButton autoRotate;
+
+    private Window sideWindow;
 
     private ShapeRenderer shapeRenderer = null;
 
@@ -150,10 +155,30 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
+        initSidePanel();
+
         window = new Window(this, toplevel);
 
         tileEntity.requestRfFromServer(RFTools.MODID);
     }
+
+    private void initSidePanel() {
+        Panel sidePanel = new Panel(mc, this).setLayout(new PositionalLayout()).setBackground(sideBackground);
+        sidePanel.addChild(new Label<>(mc, this).setText("North").setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setLayoutHint(new PositionalLayout.PositionalHint(8, 10, 50, 13)));
+        sidePanel.addChild(new Label<>(mc, this).setText("South").setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setLayoutHint(new PositionalLayout.PositionalHint(8, 63, 50, 13)));
+        sidePanel.addChild(new Label<>(mc, this).setText("East").setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setLayoutHint(new PositionalLayout.PositionalHint(8, 116, 50, 13)));
+        sidePanel.addChild(new Label<>(mc, this).setText("West").setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setLayoutHint(new PositionalLayout.PositionalHint(8, 169, 50, 13)));
+        sidePanel.setBounds(new Rectangle(guiLeft-SIDEWIDTH, guiTop, SIDEWIDTH, ySize));
+        sideWindow = new Window(this, sidePanel);
+    }
+
+    @Override
+    protected void registerWindows(WindowManager mgr) {
+        super.registerWindows(mgr);
+        mgr.addWindow(sideWindow);
+    }
+
+
 
     private void plus(ScrollableLabel l) {
         l.setRealValue(l.getRealValue()+1);
@@ -223,7 +248,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
         ItemStack stack = tileEntity.getRenderStack();
         if (ItemStackTools.isValid(stack)) {
             getShapeRenderer().setShapeID(getShapeID());
-            getShapeRenderer().renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed());
+            getShapeRenderer().renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed(), false);
         }
     }
 

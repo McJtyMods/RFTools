@@ -221,7 +221,7 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
             ItemStack stack = slot.getStack();
             if (ItemStackTools.isValid(stack)) {
                 getShapeRenderer().setShapeID(getShapeID());
-                getShapeRenderer().renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed());
+                getShapeRenderer().renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed(), true);
             }
         }
     }
