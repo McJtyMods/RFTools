@@ -157,7 +157,7 @@ public class ScanDataManager extends WorldSavedData {
         private int dirtyCounter = 0;
         private int dirtyRequestTimeout = 0;   // Client side only
 
-        public final static byte[] EMPTY = new byte[0];
+        public static final byte[] EMPTY = new byte[0];
 
         public byte[] getData() {
             if (data == null) {

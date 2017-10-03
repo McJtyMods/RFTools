@@ -120,11 +120,6 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         return scanId;
     }
 
-    public byte[] getData() {
-        ScanDataManager.Scan scan = ScanDataManager.getScans().getOrCreateScan(getScanId());
-        return scan.getData();
-    }
-
     public List<IBlockState> getMaterialPalette() {
         ScanDataManager.Scan scan = ScanDataManager.getScans().getOrCreateScan(getScanId());
         return scan.getMaterialPalette();
@@ -337,9 +332,9 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
 
         int cnt = 0;
         BlockPos.MutableBlockPos mpos = new BlockPos.MutableBlockPos();
-        for (int y = tl.getY() ; y < tl.getY() + dimY ; y++) {
-            for (int x = tl.getX() ; x < tl.getX() + dimX ; x++) {
-                for (int z = tl.getZ() ; z < tl.getZ() + dimZ ; z++) {
+        for (int x = tl.getX() ; x < tl.getX() + dimX ; x++) {
+            for (int z = tl.getZ() ; z < tl.getZ() + dimZ ; z++) {
+                for (int y = tl.getY() ; y < tl.getY() + dimY ; y++) {
                     mpos.setPos(x, y, z);
                     int c;
 //                  if (getWorld().isAirBlock(mpos) || (positionMask != null && !positionMask.containsKey(mpos.toLong()))) {

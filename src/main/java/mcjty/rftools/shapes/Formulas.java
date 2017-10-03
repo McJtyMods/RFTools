@@ -132,7 +132,9 @@ public class Formulas {
             if (data == null) {
                 return false;
             }
-            int index = (y-y1) * dx * dz + (x-x1) * dz + (z-z1);
+            // y x z
+            // x z y
+            int index = (x-x1) * dy * dz + (z-z1) * dy + (y-y1);
             if (data[index] == 0) {
                 return false;
             } else {
