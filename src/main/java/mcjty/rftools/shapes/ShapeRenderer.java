@@ -304,6 +304,7 @@ public class ShapeRenderer {
 
     private static final Col COL_DEFAULT = new Col(.5f,.3f,.5f);
     private static final Col COL_LAVA = new Col(0xd4/255.0f,0x5a/255.0f,0x12/255.0f);
+    private static final Col COL_NETHERBRICK = new Col(0x2d/255.0f,0x17/255.0f,0x1b/255.0f);
     private static final Col COL_SCANNER = new Col(0x00/255.0f,0x00/255.0f,0xe2/255.0f);
 
     private Col getColor(Map<IBlockState, Col> pallete, IBlockState state) {
@@ -318,6 +319,8 @@ public class ShapeRenderer {
         MapColor mapColor = block.getMapColor(state);
         if (block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
             col = COL_LAVA;
+        } else if (block == Blocks.NETHER_BRICK || block == Blocks.NETHER_BRICK_FENCE || block == Blocks.NETHER_BRICK_STAIRS) {
+            col = COL_NETHERBRICK;
         } else if (block == BuilderSetup.scannerBlock) {
             col = COL_SCANNER;
         } else if (mapColor != null) {
@@ -352,7 +355,6 @@ public class ShapeRenderer {
             if (waitForNewRequest <= 0) {
                 // No positions, send a new request
                 RFToolsMessages.INSTANCE.sendToServer(new PacketRequestShapeData(stack, shapeID));
-                System.out.println("REQUEST: shapeID = " + shapeID);
                 waitForNewRequest = 20;
                 data.setWantData(false);
             } else {
