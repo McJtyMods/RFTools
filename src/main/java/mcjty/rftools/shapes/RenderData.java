@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +22,7 @@ public class RenderData {
     private RenderPlane planes[] = null;
     public String previewMessage = "";
     private long touchTime = 0;
+    private long checksum = -1;
     private boolean wantData = true;
 
     public boolean hasData() {
@@ -48,6 +48,14 @@ public class RenderData {
             return cnt;
         }
         return 0;
+    }
+
+    public long getChecksum() {
+        return checksum;
+    }
+
+    public void setChecksum(long checksum) {
+        this.checksum = checksum;
     }
 
     public boolean isWantData() {

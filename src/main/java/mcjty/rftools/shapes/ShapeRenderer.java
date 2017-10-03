@@ -42,7 +42,6 @@ public class ShapeRenderer {
     private float zangle = 0.0f;
 
     private ShapeID shapeID;
-    private long checksum = -1;
 
     private int waitForNewRequest = 0;
 
@@ -360,9 +359,9 @@ public class ShapeRenderer {
             }
         } else {
             long check = calculateChecksum(stack);
-            if (!data.hasData() || check != checksum) {
+            if (!data.hasData() || check != data.getChecksum()) {
                 // Checksum failed, we want new data
-                checksum = check;
+                data.setChecksum(check);
                 data.setWantData(true);
             }
         }
