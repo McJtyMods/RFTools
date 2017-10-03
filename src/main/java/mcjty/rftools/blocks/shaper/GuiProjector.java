@@ -60,14 +60,17 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
     private ShapeRenderer getShapeRenderer() {
         if (shapeRenderer == null) {
             shapeRenderer = new ShapeRenderer(getShapeID());
-        } else if (getShapeID().getFormulaCheck() != shapeRenderer.getShapeID().getFormulaCheck()) {
-            shapeRenderer = new ShapeRenderer(getShapeID());
         }
         return shapeRenderer;
     }
 
     private ShapeID getShapeID() {
-        return new ShapeID(tileEntity.getWorld().provider.getDimension(), tileEntity.getPos(), ShapeCardItem.getCheck(tileEntity.getRenderStack()), ShapeCardItem.getFormulaCheckClient(tileEntity.getRenderStack()));
+        int scanId = ShapeCardItem.getScanId(tileEntity.getRenderStack());
+        if (scanId == 0) {
+            return new ShapeID(tileEntity.getWorld().provider.getDimension(), tileEntity.getPos(), scanId);
+        } else {
+            return new ShapeID(0, null, scanId);
+        }
     }
 
 

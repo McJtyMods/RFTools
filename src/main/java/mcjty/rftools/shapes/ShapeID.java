@@ -9,15 +9,13 @@ import javax.annotation.Nullable;
 /// ID to identify a shape for a player/projector/scanner/...
 public final class ShapeID {
     private final int dimension;
-    @Nullable private final BlockPos pos;     // null if this is for a shapecard (i.e. shapecard gui in hand)
-    private final int check;            // Check from the shapecard
-    private final int formulaCheck;     // Check from formula
+    @Nullable private final BlockPos pos;     // null if there is a scanId (shapecard in hand or projector)
+    private final int scanId;
 
-    public ShapeID(int dimension, BlockPos pos, int check, int formulaCheck) {
+    public ShapeID(int dimension, BlockPos pos, int scanId) {
         this.dimension = dimension;
         this.pos = pos;
-        this.check = check;
-        this.formulaCheck = formulaCheck;
+        this.scanId = scanId;
     }
 
     public ShapeID(ByteBuf buf) {
@@ -27,8 +25,7 @@ public final class ShapeID {
             dim = buf.readInt();
             p = NetworkTools.readPos(buf);
         }
-        check = buf.readInt();
-        formulaCheck = buf.readInt();
+        scanId = buf.readInt();
         dimension = dim;
         pos = p;
     }
@@ -41,12 +38,7 @@ public final class ShapeID {
             buf.writeInt(getDimension());
             NetworkTools.writePos(buf, getPos());
         }
-        buf.writeInt(getCheck());
-        buf.writeInt(getFormulaCheck());
-    }
-
-    public int getFormulaCheck() {
-        return formulaCheck;
+        buf.writeInt(scanId);
     }
 
     public int getDimension() {
@@ -58,30 +50,29 @@ public final class ShapeID {
         return pos;
     }
 
-    public int getCheck() {
-        return check;
+    public int getScanId() {
+        return scanId;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof ShapeID)) return false;
 
         ShapeID shapeID = (ShapeID) o;
 
         if (dimension != shapeID.dimension) return false;
-        if (check != shapeID.check) return false;
-        if (formulaCheck != shapeID.formulaCheck) return false;
-        return pos != null ? pos.equals(shapeID.pos) : shapeID.pos == null;
+        if (scanId != shapeID.scanId) return false;
+        if (pos != null ? !pos.equals(shapeID.pos) : shapeID.pos != null) return false;
 
+        return true;
     }
 
     @Override
     public int hashCode() {
         int result = dimension;
         result = 31 * result + (pos != null ? pos.hashCode() : 0);
-        result = 31 * result + check;
-        result = 31 * result + formulaCheck;
+        result = 31 * result + scanId;
         return result;
     }
 }

@@ -4,7 +4,6 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderSetup;
@@ -163,13 +162,8 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
 
     public ShapeRenderer getShapeRenderer() {
         ItemStack renderStack = getRenderStack();
-        int formulaCheck = ShapeCardItem.getFormulaCheckClient(renderStack);
-
         if (shapeRenderer == null) {
-            shapeRenderer = new ShapeRenderer(new ShapeID(getWorld().provider.getDimension(), getPos(), ShapeCardItem.getCheck(renderStack), formulaCheck));
-        } else if (formulaCheck != shapeRenderer.getShapeID().getFormulaCheck()) {
-            // Outdated
-            shapeRenderer = new ShapeRenderer(new ShapeID(getWorld().provider.getDimension(), getPos(), ShapeCardItem.getCheck(renderStack), formulaCheck));
+            shapeRenderer = new ShapeRenderer(new ShapeID(getWorld().provider.getDimension(), getPos(), ShapeCardItem.getScanId(renderStack)));
         }
         return shapeRenderer;
     }

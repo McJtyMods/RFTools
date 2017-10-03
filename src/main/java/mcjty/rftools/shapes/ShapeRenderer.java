@@ -1,8 +1,10 @@
 package mcjty.rftools.shapes;
 
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.varia.Check32;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.state.IBlockState;
@@ -269,8 +271,13 @@ public class ShapeRenderer {
         tessellator.draw();
     }
 
-    private long calculateChecksum(ItemStack stack) {
-        return ShapeCardItem.getCheck(stack);
+    private int calculateChecksum(ItemStack stack) {
+        Check32 crc = new Check32();
+        if (ItemStackTools.isValid(stack)) {
+            ShapeCardItem.getCheck(stack.getTagCompound(), crc);
+            ShapeCardItem.getFormulaCheckClient(stack, crc);
+        }
+        return crc.get();
     }
 
     private static class Col {

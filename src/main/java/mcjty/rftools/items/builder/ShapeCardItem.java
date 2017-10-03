@@ -588,6 +588,14 @@ public class ShapeCardItem extends GenericRFToolsItem {
         return getCheck(tagCompound);
     }
 
+    public static int getScanId(ItemStack stack) {
+        if (ItemStackTools.isEmpty(stack)) {
+            return 0;
+        }
+        NBTTagCompound tagCompound = getCompound(stack);
+        return tagCompound.getInteger("scanid");
+    }
+
     public static int getFormulaCheck(ItemStack stack) {
         Shape shape = getShape(stack);
         IFormula formula = shape.getFormulaFactory().createFormula();
@@ -597,11 +605,15 @@ public class ShapeCardItem extends GenericRFToolsItem {
     }
 
     public static int getFormulaCheckClient(ItemStack stack) {
+        Check32 crc = new Check32();
+        getFormulaCheckClient(stack, crc);
+        return crc.get();
+    }
+
+    public static void getFormulaCheckClient(ItemStack stack, Check32 crc) {
         Shape shape = getShape(stack);
         IFormula formula = shape.getFormulaFactory().createFormula();
-        Check32 crc = new Check32();
         formula.getCheckSumClient(stack.getTagCompound(), crc);
-        return crc.get();
     }
 
     public static int getCheck(NBTTagCompound tagCompound) {
@@ -611,6 +623,9 @@ public class ShapeCardItem extends GenericRFToolsItem {
     }
 
     public static void getCheck(NBTTagCompound tagCompound, Check32 crc) {
+        if (tagCompound == null) {
+            return;
+        }
         crc.add(tagCompound.getInteger("check"));
         NBTTagList children = tagCompound.getTagList("children", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < children.tagCount() ; i++) {

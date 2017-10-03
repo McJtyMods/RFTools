@@ -85,11 +85,8 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
     }
 
     private ShapeRenderer getShapeRenderer() {
-        int formulaCheck = ShapeCardItem.getFormulaCheckClient(getStackToEdit());
         if (shapeRenderer == null) {
-            shapeRenderer = new ShapeRenderer(new ShapeID(0, null, ShapeCardItem.getCheck(getStackToEdit()), formulaCheck));
-        } else if (formulaCheck != shapeRenderer.getShapeID().getFormulaCheck()) {
-            shapeRenderer = new ShapeRenderer(new ShapeID(0, null, ShapeCardItem.getCheck(getStackToEdit()), formulaCheck));
+            shapeRenderer = new ShapeRenderer(new ShapeID(0, null, ShapeCardItem.getScanId(getStackToEdit())));
         }
         return shapeRenderer;
     }
