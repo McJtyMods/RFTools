@@ -370,13 +370,23 @@ public class ShapeRenderer {
         }
 
         if (data.getPlanes() != null) {
+            long time = System.currentTimeMillis();
             for (RenderData.RenderPlane plane : data.getPlanes()) {
                 if (plane != null) {
                     if (plane.isDirty()) {
                         createRenderData(tessellator, buffer, plane, data);
                         plane.markClean();
                     }
+                    boolean flash = plane.getBirthtime() > time-200;
+                    if (flash) {
+                        GlStateManager.enableBlend();
+                        GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE);
+                    }
                     plane.render();
+                    if (flash) {
+                        GlStateManager.disableBlend();
+                        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                    }
                 }
             }
         }

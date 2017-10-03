@@ -125,6 +125,7 @@ public class RenderData {
         private int startz;
         private boolean dirty = true;
         private int count = 0;
+        private long birthtime;
 
         private int glList = -1;
         private net.minecraft.client.renderer.vertex.VertexBuffer vbo;
@@ -135,6 +136,7 @@ public class RenderData {
             this.offsety = offsety;
             this.startz = startz;
             this.count = count;
+            birthtime = System.currentTimeMillis();
         }
 
         public void refreshData(RenderPlane other) {
@@ -144,7 +146,12 @@ public class RenderData {
             this.startz = other.startz;
             this.count = other.count;
             this.dirty = true;
+            birthtime = System.currentTimeMillis();
             cleanup();
+        }
+
+        public long getBirthtime() {
+            return birthtime;
         }
 
         public int getCount() {
