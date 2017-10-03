@@ -352,6 +352,7 @@ public class ShapeRenderer {
             if (waitForNewRequest <= 0) {
                 // No positions, send a new request
                 RFToolsMessages.INSTANCE.sendToServer(new PacketRequestShapeData(stack, shapeID));
+                System.out.println("REQUEST: shapeID = " + shapeID);
                 waitForNewRequest = 20;
                 data.setWantData(false);
             } else {

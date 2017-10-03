@@ -75,4 +75,13 @@ public final class ShapeID {
         result = 31 * result + scanId;
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "ShapeID{" +
+                "dimension=" + dimension +
+                ", pos=" + pos +
+                ", scanId=" + scanId +
+                '}';
+    }
 }

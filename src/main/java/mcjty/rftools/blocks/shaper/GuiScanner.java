@@ -65,7 +65,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
     }
 
     private ShapeID getShapeID() {
-        return new ShapeID(tileEntity.getWorld().provider.getDimension(), tileEntity.getPos(), ShapeCardItem.getScanId(tileEntity.getRenderStack()));
+        return new ShapeID(0, null, ShapeCardItem.getScanId(tileEntity.getRenderStack()));
     }
 
 

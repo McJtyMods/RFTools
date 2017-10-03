@@ -163,7 +163,12 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
     public ShapeRenderer getShapeRenderer() {
         ItemStack renderStack = getRenderStack();
         if (shapeRenderer == null) {
-            shapeRenderer = new ShapeRenderer(new ShapeID(getWorld().provider.getDimension(), getPos(), ShapeCardItem.getScanId(renderStack)));
+            int scanId = ShapeCardItem.getScanId(renderStack);
+            if (scanId == 0) {
+                shapeRenderer = new ShapeRenderer(new ShapeID(getWorld().provider.getDimension(), getPos(), scanId));
+            } else {
+                shapeRenderer = new ShapeRenderer(new ShapeID(0, null, scanId));
+            }
         }
         return shapeRenderer;
     }
