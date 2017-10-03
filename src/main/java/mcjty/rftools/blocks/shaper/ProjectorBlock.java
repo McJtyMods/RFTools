@@ -26,6 +26,11 @@ public class ProjectorBlock extends GenericRFToolsBlock<ProjectorTileEntity, Pro
         return true;
     }
 
+    @Override
+    public boolean needsRedstoneCheck() {
+        return true;
+    }
+
     @SideOnly(Side.CLIENT)
     @Override
     public Class<? extends GenericGuiContainer> getGuiClass() {
