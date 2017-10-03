@@ -156,7 +156,6 @@ public class ShapeCardItem extends GenericRFToolsItem {
 
     public static void setData(NBTTagCompound tagCompound, int scanID) {
         tagCompound.setInteger("scanid", scanID);
-        dirty(tagCompound);
     }
 
     public static void setModifier(NBTTagCompound tag, ShapeModifier modifier) {
@@ -183,29 +182,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
 
     public static void setChildren(ItemStack itemStack, NBTTagList list) {
         NBTTagCompound tagCompound = getCompound(itemStack);
-        NBTTagList listThis = tagCompound.getTagList("children", Constants.NBT.TAG_COMPOUND);
-        boolean same = true;
-        for (int i = 0 ; i < list.tagCount() ; i++) {
-            NBTTagCompound child1 = listThis.getCompoundTagAt(i);
-            int c1 = getCheck(child1);
-            NBTTagCompound child2 = list.getCompoundTagAt(i);
-            int c2 = getCheck(child1);
-            if (c1 != c2) {
-                same = false;
-                break;
-            }
-            if (!(child1.getString("mod_op").equals(child2.getString("mod_op")) &&
-                    child1.getString("mod_rot").equals(child2.getString("mod_rot")) &&
-                    child1.getBoolean("mod_flipy") == child2.getBoolean("mod_flipy") &&
-                    child1.getString("ghost_block").equals(child2.getString("ghost_block")) &&
-                    child1.getInteger("ghost_meta") == child2.getInteger("ghost_meta"))) {
-                same = false;
-            }
-        }
         tagCompound.setTag("children", list);
-        if (!same) {
-            dirty(tagCompound);
-        }
     }
 
     public static void setDimension(ItemStack itemStack, int x, int y, int z) {
@@ -216,7 +193,6 @@ public class ShapeCardItem extends GenericRFToolsItem {
         tagCompound.setInteger("dimX", x);
         tagCompound.setInteger("dimY", y);
         tagCompound.setInteger("dimZ", z);
-        dirty(tagCompound);
     }
 
 
@@ -228,7 +204,6 @@ public class ShapeCardItem extends GenericRFToolsItem {
         tagCompound.setInteger("offsetX", x);
         tagCompound.setInteger("offsetY", y);
         tagCompound.setInteger("offsetZ", z);
-        dirty(tagCompound);
     }
 
     private static NBTTagCompound getCompound(ItemStack itemStack) {
@@ -279,7 +254,6 @@ public class ShapeCardItem extends GenericRFToolsItem {
             return;
         }
         tagCompound.setInteger("mode", mode);
-        dirty(tagCompound);
     }
 
     public static void setCurrentBlock(ItemStack itemStack, GlobalCoordinate c) {
@@ -580,28 +554,12 @@ public class ShapeCardItem extends GenericRFToolsItem {
         return formula.correctFormula(solid);
     }
 
-    public static int getCheck(ItemStack stack) {
-        if (ItemStackTools.isEmpty(stack)) {
-            return 0;
-        }
-        NBTTagCompound tagCompound = getCompound(stack);
-        return getCheck(tagCompound);
-    }
-
     public static int getScanId(ItemStack stack) {
         if (ItemStackTools.isEmpty(stack)) {
             return 0;
         }
         NBTTagCompound tagCompound = getCompound(stack);
         return tagCompound.getInteger("scanid");
-    }
-
-    public static int getFormulaCheck(ItemStack stack) {
-        Shape shape = getShape(stack);
-        IFormula formula = shape.getFormulaFactory().createFormula();
-        Check32 crc = new Check32();
-        formula.getChecksum(stack.getTagCompound(), crc);
-        return crc.get();
     }
 
     public static int getFormulaCheckClient(ItemStack stack) {
@@ -616,27 +574,19 @@ public class ShapeCardItem extends GenericRFToolsItem {
         formula.getCheckSumClient(stack.getTagCompound(), crc);
     }
 
-    public static int getCheck(NBTTagCompound tagCompound) {
-        Check32 crc = new Check32();
-        getCheck(tagCompound, crc);
-        return crc.get();
-    }
-
-    public static void getCheck(NBTTagCompound tagCompound, Check32 crc) {
+    public static void getLocalChecksum(NBTTagCompound tagCompound, Check32 crc) {
         if (tagCompound == null) {
             return;
         }
-        crc.add(tagCompound.getInteger("check"));
-        NBTTagList children = tagCompound.getTagList("children", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < children.tagCount() ; i++) {
-            NBTTagCompound child = children.getCompoundTagAt(i);
-            getCheck(child, crc);
-        }
+        crc.add(getShape(tagCompound).ordinal());
+        BlockPos dim = getDimension(tagCompound);
+        crc.add(dim.getX());
+        crc.add(dim.getY());
+        crc.add(dim.getZ());
+        crc.add(isSolid(tagCompound) ? 1 : 0);
     }
 
-    public static void dirty(NBTTagCompound tag) {
-        tag.setInteger("check", tag.getInteger("check") + 1);
-    }
+
 
     public static void setShape(ItemStack stack, Shape shape, boolean solid) {
         NBTTagCompound tagCompound = getCompound(stack);
@@ -646,7 +596,6 @@ public class ShapeCardItem extends GenericRFToolsItem {
         }
         tagCompound.setString("shapenew", shape.getDescription());
         tagCompound.setBoolean("solid", solid);
-        dirty(tagCompound);
     }
 
     public static BlockPos getDimension(ItemStack stack) {

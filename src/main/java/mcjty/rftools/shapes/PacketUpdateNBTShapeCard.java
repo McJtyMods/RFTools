@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.AbstractServerCommand;
 import mcjty.lib.network.Argument;
 import mcjty.lib.tools.ItemStackTools;
-import mcjty.rftools.items.builder.ShapeCardItem;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -84,7 +83,6 @@ public class PacketUpdateNBTShapeCard implements IMessage {
                         break;
                 }
             }
-            ShapeCardItem.dirty(tagCompound);
         }
 
     }

@@ -272,7 +272,6 @@ public class ShapeRenderer {
     private int calculateChecksum(ItemStack stack) {
         Check32 crc = new Check32();
         if (ItemStackTools.isValid(stack)) {
-            ShapeCardItem.getCheck(stack.getTagCompound(), crc);
             ShapeCardItem.getFormulaCheckClient(stack, crc);
         }
         return crc.get();
@@ -381,11 +380,13 @@ public class ShapeRenderer {
                     if (flash) {
                         GlStateManager.enableBlend();
                         GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE);
+//                        GlStateManager.colorMask(false, false, true, true);
                     }
                     plane.render();
                     if (flash) {
                         GlStateManager.disableBlend();
                         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+//                        GlStateManager.colorMask(true, true, true, true);
                     }
                 }
             }
