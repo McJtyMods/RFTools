@@ -1,17 +1,13 @@
 package mcjty.rftools.shapes;
 
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
-import mcjty.rftools.blocks.shaper.ScannerTileEntity;
-import mcjty.rftools.blocks.shield.ShieldConfiguration;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -67,13 +63,10 @@ public class Formulas {
         private int dy;
         private int dz;
         private IBlockState lastState = null;
-        private World scannerWorld;
-        private BlockPos scannerPos;
 
         @Override
         public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
             data = null;
-            scannerWorld = null;
 
             if (card == null) {
                 return;
@@ -94,34 +87,25 @@ public class Formulas {
 
             palette.clear();
 
-            int dim = card.getInteger("datadim");
-            scannerWorld = DimensionManager.getWorld(dim);
-            if (scannerWorld != null) {
-                int x = card.getInteger("datax");
-                int y = card.getInteger("datay");
-                int z = card.getInteger("dataz");
-                scannerPos = new BlockPos(x, y, z);
-                if (scannerWorld.isBlockLoaded(scannerPos)) {
-                    TileEntity te = scannerWorld.getTileEntity(scannerPos);
-                    if (te instanceof ScannerTileEntity) {
-                        palette = new ArrayList<>(((ScannerTileEntity) te).getMaterialPalette());
-                        byte[] datas = ((ScannerTileEntity) te).getData();
-                        data = new byte[dx * dy * dz];
-                        int j = 0;
-                        for (int i = 0; i < datas.length / 2; i++) {
-                            int cnt = (datas[i * 2]) & 0xff;
-                            int c = datas[i * 2 + 1] & 0xff;
-                            if (c == 255) {
-                                c = 0;
-                            }
-                            while (cnt > 0 && j < data.length) {
-                                data[j++] = (byte) c;
-                                cnt--;
-                            }
-                            if (j >= data.length) {
-                                break;
-                            }
-                        }
+            int scanId = card.getInteger("scanid");
+            if (scanId != 0) {
+                ScanDataManager.Scan scan = ScanDataManager.getScans(DimensionManager.getWorld(0)).getOrCreateScan(scanId);
+                palette = new ArrayList<>(scan.getMaterialPalette());
+                byte[] datas = scan.getData();
+                data = new byte[dx * dy * dz];
+                int j = 0;
+                for (int i = 0; i < datas.length / 2; i++) {
+                    int cnt = (datas[i * 2]) & 0xff;
+                    int c = datas[i * 2 + 1] & 0xff;
+                    if (c == 255) {
+                        c = 0;
+                    }
+                    while (cnt > 0 && j < data.length) {
+                        data[j++] = (byte) c;
+                        cnt--;
+                    }
+                    if (j >= data.length) {
+                        break;
                     }
                 }
             }
@@ -130,9 +114,9 @@ public class Formulas {
 
         @Override
         public boolean isInside(int x, int y, int z) {
-//            if (data == null) {
-//                return false;
-//            }
+            if (data == null) {
+                return false;
+            }
 //            if (x < x1 || x >= x1+dx || y < y1 || y >= y1+dy || z < z1 || z >= z1+dz) {
 //                return false;
 //            }

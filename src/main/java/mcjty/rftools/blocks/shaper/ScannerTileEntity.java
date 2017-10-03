@@ -27,16 +27,11 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.OreDictionary;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,10 +46,9 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     private StorageFilterCache filterCache = null;
 
     private int scanId = 0;
-    private List<IBlockState> materialPalette = new ArrayList<>();
+    private ItemStack renderStack = ItemStackTools.getEmptyStack();
     private BlockPos dataDim;
     private BlockPos dataOffset = new BlockPos(0, 0, 0);
-    private ItemStack renderStack = ItemStackTools.getEmptyStack();
 
     public ScannerTileEntity() {
         super(BuilderConfiguration.SCANNER_MAXENERGY, BuilderConfiguration.SCANNER_RECEIVEPERTICK);
@@ -118,7 +112,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         return canPlayerAccess(player);
     }
 
-    private int getScanId() {
+    public int getScanId() {
         if (scanId == 0) {
             scanId = ScanDataManager.getScans(getWorld()).newScan();
             markDirtyQuick();
@@ -132,7 +126,8 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     public List<IBlockState> getMaterialPalette() {
-        return materialPalette;
+        ScanDataManager.Scan scan = ScanDataManager.getScans(getWorld()).getOrCreateScan(getScanId());
+        return scan.getMaterialPalette();
     }
 
     public BlockPos getDataDim() {
@@ -165,69 +160,13 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         scanId = tagCompound.getInteger("scanid");
-//        if (tagCompound.hasKey("scandata")) {
-//            data = tagCompound.getByteArray("scandata");
-//            System.out.println("readRestorableFromNBT: data.length = " + data.length);
-//        } else {
-//            data = null;
-//        }
-        NBTTagList list = tagCompound.getTagList("scanpal", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < list.tagCount() ; i++) {
-            NBTTagCompound tc = list.getCompoundTagAt(i);
-            Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(tc.getString("r")));
-            if (block == null) {
-                block = Blocks.STONE;
-            }
-            materialPalette.add(block.getStateFromMeta(tc.getInteger("m")));
-        }
         dataDim = new BlockPos(tagCompound.getInteger("scandimx"), tagCompound.getInteger("scandimy"), tagCompound.getInteger("scandimz"));
         dataOffset = new BlockPos(tagCompound.getInteger("scanoffx"), tagCompound.getInteger("scanoffy"), tagCompound.getInteger("scanoffz"));
-        System.out.println("readRestorable: getPos() = " + getPos() + ": " + dataDim);
     }
 
-    @Override
-    public void writeClientDataToNBT(NBTTagCompound tagCompound) {
-        writeInternal(tagCompound);
-        if (powerLevel > 0) {
-            tagCompound.setByte("powered", (byte) powerLevel);
-        }
-        writeCommonToNBT(tagCompound);
-    }
-
-    private NBTTagCompound writeInternal(NBTTagCompound compound) {
-        compound.setString("id", TileEntity.getKey(ScannerTileEntity.class).toString());
-        compound.setInteger("x", this.pos.getX());
-        compound.setInteger("y", this.pos.getY());
-        compound.setInteger("z", this.pos.getZ());
-        return compound;
-    }
 
     @Override
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
-        writeCommonToNBT(tagCompound);
-
-        tagCompound.setInteger("scanid", getScanId());
-//        if (data != null) {
-//            tagCompound.setByteArray("scandata", data);
-//            System.out.println("writeRestorableToNBT: data.length = " + data.length);
-//        }
-        NBTTagList pal = new NBTTagList();
-        for (IBlockState state : materialPalette) {
-            NBTTagCompound tc = new NBTTagCompound();
-            Block block = state.getBlock();
-            if (block == null || block.getRegistryName() == null) {
-                tc.setString("r", Blocks.STONE.getRegistryName().toString());
-                tc.setInteger("m", 0);
-            } else {
-                tc.setString("r", block.getRegistryName().toString());
-                tc.setInteger("m", block.getMetaFromState(state));
-            }
-            pal.appendTag(tc);
-        }
-        tagCompound.setTag("scanpal", pal);
-    }
-
-    private void writeCommonToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
         if (ItemStackTools.isValid(renderStack)) {
@@ -235,6 +174,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
             renderStack.writeToNBT(tc);
             tagCompound.setTag("render", tc);
         }
+        tagCompound.setInteger("scanid", getScanId());
         if (dataDim != null) {
             tagCompound.setInteger("scandimx", dataDim.getX());
             tagCompound.setInteger("scandimy", dataDim.getY());
@@ -245,19 +185,6 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
             tagCompound.setInteger("scanoffy", dataOffset.getY());
             tagCompound.setInteger("scanoffz", dataOffset.getZ());
         }
-    }
-
-    public void setDataFromFile(ItemStack card, BlockPos dimension, BlockPos offset, byte[] data, StatePalette palette) {
-        this.dataDim = dimension;
-        this.dataOffset = new BlockPos(0, 0, 0);
-        ScanDataManager.getScans(getWorld()).getOrCreateScan(getScanId()).setData(data);
-        ScanDataManager.getScans(getWorld()).save(getWorld());
-        this.materialPalette = palette.getPalette();
-        ShapeCardItem.setDimension(card, dimension.getX(), dimension.getY(), dimension.getZ());
-        ShapeCardItem.setOffset(card, offset.getX(), offset.getY(), offset.getZ());
-        ShapeCardItem.setShape(card, Shape.SHAPE_SCAN, true);
-        System.out.println("setDataFromFile: getPos() = " + getPos() + ": " + dataDim);
-        markDirtyClient();
     }
 
 
@@ -279,19 +206,28 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private void updateScanCard(ItemStack cardOut) {
-        ScanDataManager.Scan scan = null;
-        if (!getWorld().isRemote) {
-            scan = ScanDataManager.getScans(getWorld()).getScan(getScanId());
-        }
-        if (scan != null && scan.getData() != null && ItemStackTools.isValid(cardOut)) {
+        if (ItemStackTools.isValid(cardOut)) {
             if (!ShapeCardItem.getShape(cardOut).isScan()) {
                 boolean solid = ShapeCardItem.isSolid(cardOut);
                 ShapeCardItem.setShape(cardOut, Shape.SHAPE_SCAN, solid);
             }
             NBTTagCompound tagOut = cardOut.getTagCompound();
             ShapeCardItem.setDimension(cardOut, dataDim.getX(), dataDim.getY(), dataDim.getZ());
-            ShapeCardItem.setData(tagOut, getWorld().provider.getDimension(), getPos());
+            ShapeCardItem.setData(tagOut, getScanId());
         }
+//        ScanDataManager.Scan scan = null;
+//        if (!getWorld().isRemote) {
+//            scan = ScanDataManager.getScans(getWorld()).getScan(getScanId());
+//        }
+//        if (scan != null && scan.getData() != null && ItemStackTools.isValid(cardOut)) {
+//            if (!ShapeCardItem.getShape(cardOut).isScan()) {
+//                boolean solid = ShapeCardItem.isSolid(cardOut);
+//                ShapeCardItem.setShape(cardOut, Shape.SHAPE_SCAN, solid);
+//            }
+//            NBTTagCompound tagOut = cardOut.getTagCompound();
+//            ShapeCardItem.setDimension(cardOut, dataDim.getX(), dataDim.getY(), dataDim.getZ());
+//            ShapeCardItem.setData(tagOut, getWorld().provider.getDimension(), getPos());
+//        }
     }
 
     private void scan() {
@@ -444,10 +380,10 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
                 }
             }
         }
-        ScanDataManager.getScans(getWorld()).getOrCreateScan(getScanId()).setData(rle.getData());
-        ScanDataManager.getScans(getWorld()).save(getWorld());
-        this.materialPalette = materialPalette.getPalette();
         this.dataDim = new BlockPos(dimX, dimY, dimZ);
+        ScanDataManager scan = ScanDataManager.getScans(getWorld());
+        scan.getOrCreateScan(getScanId()).setData(rle.getData(), materialPalette.getPalette(), dataDim, dataOffset);
+        scan.save(getWorld());
         if (ItemStackTools.isEmpty(renderStack)) {
             renderStack = new ItemStack(BuilderSetup.shapeCardItem);
         }

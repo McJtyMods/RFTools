@@ -23,7 +23,6 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -31,7 +30,6 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
@@ -152,22 +150,12 @@ public class ShapeCardItem extends GenericRFToolsItem {
         return EnumActionResult.SUCCESS;
     }
 
-    public static GlobalCoordinate getData(NBTTagCompound tagCompound) {
-        if (!tagCompound.hasKey("datadim")) {
-            return null;
-        }
-        int dim = tagCompound.getInteger("datadim");
-        int x = tagCompound.getInteger("datax");
-        int y = tagCompound.getInteger("datay");
-        int z = tagCompound.getInteger("dataz");
-        return new GlobalCoordinate(new BlockPos(x, y, z), dim);
+    public static int getData(NBTTagCompound tagCompound) {
+        return tagCompound.getInteger("scanid");
     }
 
-    public static void setData(NBTTagCompound tagCompound, int dimension, BlockPos pos) {
-        tagCompound.setInteger("datadim", dimension);
-        tagCompound.setInteger("datax", pos.getX());
-        tagCompound.setInteger("datay", pos.getY());
-        tagCompound.setInteger("dataz", pos.getZ());
+    public static void setData(NBTTagCompound tagCompound, int scanID) {
+        tagCompound.setInteger("scanid", scanID);
         dirty(tagCompound);
     }
 
@@ -355,11 +343,8 @@ public class ShapeCardItem extends GenericRFToolsItem {
 
         if (shape.isScan()) {
             NBTTagCompound card = itemStack.getTagCompound();
-            int dim = card.getInteger("datadim");
-            int x = card.getInteger("datax");
-            int y = card.getInteger("datay");
-            int z = card.getInteger("dataz");
-            list.add(TextFormatting.DARK_GREEN + "Scanner at: " + x + "," + y + "," + z + " (dim " + dim + ")");
+            int scanid = card.getInteger("scanid");
+            list.add(TextFormatting.DARK_GREEN + "Scan id: " + scanid);
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
@@ -932,25 +917,11 @@ public class ShapeCardItem extends GenericRFToolsItem {
         }
 
         NBTTagCompound compound = ShapeCardItem.getCompound(card);
-        GlobalCoordinate scannerPos = ShapeCardItem.getData(compound);
-        if (scannerPos == null) {
-            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "This card is not linked to a scanner!"));
+        int scanId = ShapeCardItem.getData(compound);
+        if (scanId == 0) {
+            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "This card is not linked to scan data!"));
             return;
         }
-
-        World world = DimensionManager.getWorld(scannerPos.getDimension());
-        if (world == null || !world.isBlockLoaded(scannerPos.getCoordinate())) {
-            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "The scanner is out of reach or not chunkloaded!"));
-            return;
-        }
-
-        TileEntity te = world.getTileEntity(scannerPos.getCoordinate());
-        if (!(te instanceof ScannerTileEntity)) {
-            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Not a valid scanner!"));
-            return;
-        }
-
-        ScannerTileEntity scanner = (ScannerTileEntity) te;
 
         File file = new File(filename);
         FileInputStream stream;
@@ -995,7 +966,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
                 System.out.println("b = " + b);
             }
 
-            scanner.setDataFromFile(card, dim, off, decoded, statePalette);
+            setDataFromFile(player.getEntityWorld(), scanId, card, dim, off, decoded, statePalette);
         } catch (FileNotFoundException e) {
             ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Cannot read from file '" + filename + "'!"));
             return;
@@ -1011,6 +982,16 @@ public class ShapeCardItem extends GenericRFToolsItem {
         }
 
     }
+
+    private static void setDataFromFile(World world, int scanId, ItemStack card, BlockPos dimension, BlockPos offset, byte[] data, StatePalette palette) {
+        ScanDataManager scans = ScanDataManager.getScans(world);
+        scans.getOrCreateScan(scanId).setData(data, palette.getPalette(), dimension, offset);
+        scans.save(world);
+        ShapeCardItem.setDimension(card, dimension.getX(), dimension.getY(), dimension.getZ());
+        ShapeCardItem.setOffset(card, offset.getX(), offset.getY(), offset.getZ());
+        ShapeCardItem.setShape(card, Shape.SHAPE_SCAN, true);
+    }
+
 
     private static BlockPos parse(String s) {
         String[] split = StringUtils.split(s, ',');
