@@ -1,5 +1,6 @@
 package mcjty.rftools.shapes;
 
+import mcjty.rftools.varia.Check32;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -9,7 +10,11 @@ public interface IFormula {
 
     void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card);
 
-    default int getChecksum(NBTTagCompound cardTag) { return 0; }
+    void getChecksum(NBTTagCompound cardTag, Check32 crc);
+
+    default void getCheckSumClient(NBTTagCompound cardTag, Check32 crc) {
+        getChecksum(cardTag, crc);
+    }
 
     boolean isInside(int x, int y, int z);
 
@@ -34,6 +39,11 @@ public interface IFormula {
                 @Override
                 public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
                     IFormula.this.setup(thisCoord, dimension, offset, card);
+                }
+
+                @Override
+                public void getChecksum(NBTTagCompound cardTag, Check32 crc) {
+                    IFormula.this.getChecksum(cardTag, crc);
                 }
 
                 @Override

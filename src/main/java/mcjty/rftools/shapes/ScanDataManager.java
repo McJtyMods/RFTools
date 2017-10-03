@@ -2,6 +2,7 @@ package mcjty.rftools.shapes;
 
 import mcjty.lib.tools.ChatTools;
 import mcjty.lib.tools.WorldTools;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.ICommandSender;
@@ -49,10 +50,31 @@ public class ScanDataManager extends WorldSavedData {
         }
     }
 
-    public static ScanDataManager getScans(World world) {
-        if (world.isRemote) {
-            return null;
+    public static ScanDataManager getScansClient() {
+        if (instance == null) {
+            instance = new ScanDataManager(SCANDATA_NETWORK_NAME);
         }
+        return instance;
+    }
+
+    public int getScanDirtyCounterClient(int id) {
+        Scan scan;
+        if (!scans.containsKey(id)) {
+            scan = new Scan();
+            scans.put(id, scan);
+        } else {
+            scan = scans.get(id);
+        }
+        scan.dirtyRequestTimeout--;
+        if (scan.dirtyRequestTimeout <= 0) {
+            RFToolsMessages.INSTANCE.sendToServer(new PacketRequestScanDirty(id));
+            scan.dirtyRequestTimeout = 20;
+        }
+        return scan.getDirtyCounter();
+    }
+
+    public static ScanDataManager getScans() {
+        World world = DimensionManager.getWorld(0);
         if (instance != null) {
             return instance;
         }
@@ -74,7 +96,7 @@ public class ScanDataManager extends WorldSavedData {
     }
 
     public static void listScans(ICommandSender sender) {
-        ScanDataManager scans = getScans(DimensionManager.getWorld(0));
+        ScanDataManager scans = getScans();
         for (Map.Entry<Integer, Scan> entry : scans.scans.entrySet()) {
             Integer scanid = entry.getKey();
             Scan scan = entry.getValue();
@@ -133,6 +155,7 @@ public class ScanDataManager extends WorldSavedData {
         private BlockPos dataDim;
         private BlockPos dataOffset = new BlockPos(0, 0, 0);
         private int dirtyCounter = 0;
+        private int dirtyRequestTimeout = 0;   // Client side only
 
         public final static byte[] EMPTY = new byte[0];
 
@@ -143,12 +166,17 @@ public class ScanDataManager extends WorldSavedData {
             return data;
         }
 
+
         public void setData(byte[] data, List<IBlockState> materialPalette, BlockPos dim, BlockPos offset) {
             this.data = data;
             this.materialPalette = materialPalette;
             this.dataDim = dim;
             this.dataOffset = offset;
             dirtyCounter++;
+        }
+
+        void setDirtyCounter(int dirtyCounter) {
+            this.dirtyCounter = dirtyCounter;
         }
 
         public int getDirtyCounter() {

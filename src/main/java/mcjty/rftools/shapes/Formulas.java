@@ -2,13 +2,13 @@ package mcjty.rftools.shapes;
 
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.items.builder.ShapeCardItem;
+import mcjty.rftools.varia.Check32;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
@@ -65,11 +65,18 @@ public class Formulas {
         private IBlockState lastState = null;
 
         @Override
-        public int getChecksum(NBTTagCompound tc) {
-            return 0; // @todo this can be called client side? What to do then?
-//            int scanId = tc.getInteger("scanid");
-//            ScanDataManager.Scan scan = ScanDataManager.getScans(DimensionManager.getWorld(0)).getOrCreateScan(scanId);
-//            return scan.getDirtyCounter();
+        public void getChecksum(NBTTagCompound tc, Check32 crc) {
+            crc.add(Shape.SHAPE_SCAN.ordinal());
+            int scanId = tc.getInteger("scanid");
+            ScanDataManager.Scan scan = ScanDataManager.getScans().getOrCreateScan(scanId);
+            crc.add(scan.getDirtyCounter());
+        }
+
+        @Override
+        public void getCheckSumClient(NBTTagCompound tc, Check32 crc) {
+            crc.add(Shape.SHAPE_SCAN.ordinal());
+            int scanId = tc.getInteger("scanid");
+            crc.add(ScanDataManager.getScansClient().getScanDirtyCounterClient(scanId));
         }
 
         @Override
@@ -97,7 +104,7 @@ public class Formulas {
 
             int scanId = card.getInteger("scanid");
             if (scanId != 0) {
-                ScanDataManager.Scan scan = ScanDataManager.getScans(DimensionManager.getWorld(0)).getOrCreateScan(scanId);
+                ScanDataManager.Scan scan = ScanDataManager.getScans().getOrCreateScan(scanId);
                 palette = new ArrayList<>(scan.getMaterialPalette());
                 byte[] datas = scan.getData();
                 data = new byte[dx * dy * dz];
@@ -203,16 +210,14 @@ public class Formulas {
                 }
 
                 @Override
-                public int getChecksum(NBTTagCompound tc) {
-                    int check = 0;
+                public void getChecksum(NBTTagCompound tc, Check32 crc) {
+                    crc.add(Shape.SHAPE_COMPOSITION.ordinal());
                     NBTTagList children = tc.getTagList("children", Constants.NBT.TAG_COMPOUND);
                     for (int i = 0 ; i < children.tagCount() ; i++) {
                         NBTTagCompound childTag = children.getCompoundTagAt(i);
                         IFormula formula = ShapeCardItem.createCorrectFormula(childTag);
-                        // @todo is this good?
-                        check = (check<<1) ^ formula.getChecksum(childTag);
+                        formula.getChecksum(childTag, crc);
                     }
-                    return check;
                 }
 
                 @Override
@@ -314,6 +319,11 @@ public class Formulas {
         private float centerz;
 
         @Override
+        public void getChecksum(NBTTagCompound cardTag, Check32 crc) {
+            crc.add(Shape.SHAPE_TORUS.ordinal());
+        }
+
+        @Override
         public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
             int dx = dimension.getX();
             int dy = dimension.getY();
@@ -344,6 +354,11 @@ public class Formulas {
         private int dx;
         private int dy;
         private int dz;
+
+        @Override
+        public void getChecksum(NBTTagCompound cardTag, Check32 crc) {
+            crc.add(Shape.SHAPE_HEART.ordinal());
+        }
 
         @Override
         public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
@@ -381,6 +396,11 @@ public class Formulas {
         private int davg;
 
         @Override
+        public void getChecksum(NBTTagCompound cardTag, Check32 crc) {
+            crc.add(Shape.SHAPE_SPHERE.ordinal());
+        }
+
+        @Override
         public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
             int dx = dimension.getX();
             int dy = dimension.getY();
@@ -414,6 +434,11 @@ public class Formulas {
         private float dy2;
         private float dz2;
         private int davg;
+
+        @Override
+        public void getChecksum(NBTTagCompound cardTag, Check32 crc) {
+            crc.add(Shape.SHAPE_TOPDOME.ordinal());
+        }
 
         @Override
         public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
@@ -454,6 +479,11 @@ public class Formulas {
         private int davg;
 
         @Override
+        public void getChecksum(NBTTagCompound cardTag, Check32 crc) {
+            crc.add(Shape.SHAPE_BOTTOMDOME.ordinal());
+        }
+
+        @Override
         public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
             int dx = dimension.getX();
             int dy = dimension.getY();
@@ -489,6 +519,11 @@ public class Formulas {
         private int x2;
         private int y2;
         private int z2;
+
+        @Override
+        public void getChecksum(NBTTagCompound cardTag, Check32 crc) {
+            crc.add(Shape.SHAPE_BOX.ordinal());
+        }
 
         @Override
         public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
@@ -528,6 +563,11 @@ public class Formulas {
         private int y2;
 
         @Override
+        public void getChecksum(NBTTagCompound cardTag, Check32 crc) {
+            crc.add(Shape.SHAPE_CAPPEDCYLINDER.ordinal());
+        }
+
+        @Override
         public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
             int dx = dimension.getX();
             int dy = dimension.getY();
@@ -565,6 +605,11 @@ public class Formulas {
         private int davg;
 
         @Override
+        public void getChecksum(NBTTagCompound cardTag, Check32 crc) {
+            crc.add(Shape.SHAPE_CYLINDER.ordinal());
+        }
+
+        @Override
         public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
             int dx = dimension.getX();
             int dy = dimension.getY();
@@ -598,6 +643,11 @@ public class Formulas {
         private int davg;
 
         @Override
+        public void getChecksum(NBTTagCompound cardTag, Check32 crc) {
+            crc.add(Shape.SHAPE_CONE.ordinal());
+        }
+
+        @Override
         public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
             int dx = dimension.getX();
             int dy = dimension.getY();
@@ -629,6 +679,11 @@ public class Formulas {
         private int x2;
         private int y2;
         private int z2;
+
+        @Override
+        public void getChecksum(NBTTagCompound cardTag, Check32 crc) {
+            crc.add(Shape.SHAPE_PRISM.ordinal());
+        }
 
         @Override
         public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {

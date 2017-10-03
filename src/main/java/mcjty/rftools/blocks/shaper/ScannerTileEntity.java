@@ -114,19 +114,19 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
 
     public int getScanId() {
         if (scanId == 0) {
-            scanId = ScanDataManager.getScans(getWorld()).newScan();
+            scanId = ScanDataManager.getScans().newScan();
             markDirtyQuick();
         }
         return scanId;
     }
 
     public byte[] getData() {
-        ScanDataManager.Scan scan = ScanDataManager.getScans(getWorld()).getOrCreateScan(getScanId());
+        ScanDataManager.Scan scan = ScanDataManager.getScans().getOrCreateScan(getScanId());
         return scan.getData();
     }
 
     public List<IBlockState> getMaterialPalette() {
-        ScanDataManager.Scan scan = ScanDataManager.getScans(getWorld()).getOrCreateScan(getScanId());
+        ScanDataManager.Scan scan = ScanDataManager.getScans().getOrCreateScan(getScanId());
         return scan.getMaterialPalette();
     }
 
@@ -368,7 +368,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
             }
         }
         this.dataDim = new BlockPos(dimX, dimY, dimZ);
-        ScanDataManager scan = ScanDataManager.getScans(getWorld());
+        ScanDataManager scan = ScanDataManager.getScans();
         scan.getOrCreateScan(getScanId()).setData(rle.getData(), materialPalette.getPalette(), dataDim, dataOffset);
         scan.save(getWorld());
         if (ItemStackTools.isEmpty(renderStack)) {

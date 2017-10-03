@@ -15,11 +15,14 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketUpdateNBTItemInventory;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.tools.MinecraftTools;
-import mcjty.rftools.blocks.shaper.GuiComposer;
 import mcjty.rftools.blocks.shaper.ComposerTileEntity;
+import mcjty.rftools.blocks.shaper.GuiComposer;
 import mcjty.rftools.network.PacketOpenGui;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.rftools.shapes.*;
+import mcjty.rftools.shapes.IShapeParentGui;
+import mcjty.rftools.shapes.PacketUpdateNBTShapeCard;
+import mcjty.rftools.shapes.ShapeID;
+import mcjty.rftools.shapes.ShapeRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -82,10 +85,11 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
     }
 
     private ShapeRenderer getShapeRenderer() {
+        int formulaCheck = ShapeCardItem.getFormulaCheckClient(getStackToEdit());
         if (shapeRenderer == null) {
-            shapeRenderer = new ShapeRenderer(new ShapeID(0, null, ShapeCardItem.getCheck(getStackToEdit()), ShapeCardItem.getFormulaCheck(getStackToEdit())));
-        } else if (ShapeCardItem.getFormulaCheck(getStackToEdit()) != shapeRenderer.getShapeID().getFormulaCheck()) {
-            shapeRenderer = new ShapeRenderer(new ShapeID(0, null, ShapeCardItem.getCheck(getStackToEdit()), ShapeCardItem.getFormulaCheck(getStackToEdit())));
+            shapeRenderer = new ShapeRenderer(new ShapeID(0, null, ShapeCardItem.getCheck(getStackToEdit()), formulaCheck));
+        } else if (formulaCheck != shapeRenderer.getShapeID().getFormulaCheck()) {
+            shapeRenderer = new ShapeRenderer(new ShapeID(0, null, ShapeCardItem.getCheck(getStackToEdit()), formulaCheck));
         }
         return shapeRenderer;
     }

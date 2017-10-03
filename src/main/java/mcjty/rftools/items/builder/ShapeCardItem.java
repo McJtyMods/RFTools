@@ -8,9 +8,9 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
-import mcjty.rftools.blocks.shaper.ScannerTileEntity;
 import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.shapes.*;
+import mcjty.rftools.varia.Check32;
 import mcjty.rftools.varia.RLE;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -591,18 +591,32 @@ public class ShapeCardItem extends GenericRFToolsItem {
     public static int getFormulaCheck(ItemStack stack) {
         Shape shape = getShape(stack);
         IFormula formula = shape.getFormulaFactory().createFormula();
-        return formula.getChecksum(stack.getTagCompound());
+        Check32 crc = new Check32();
+        formula.getChecksum(stack.getTagCompound(), crc);
+        return crc.get();
+    }
+
+    public static int getFormulaCheckClient(ItemStack stack) {
+        Shape shape = getShape(stack);
+        IFormula formula = shape.getFormulaFactory().createFormula();
+        Check32 crc = new Check32();
+        formula.getCheckSumClient(stack.getTagCompound(), crc);
+        return crc.get();
     }
 
     public static int getCheck(NBTTagCompound tagCompound) {
-        int check = tagCompound.getInteger("check");
+        Check32 crc = new Check32();
+        getCheck(tagCompound, crc);
+        return crc.get();
+    }
+
+    public static void getCheck(NBTTagCompound tagCompound, Check32 crc) {
+        crc.add(tagCompound.getInteger("check"));
         NBTTagList children = tagCompound.getTagList("children", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < children.tagCount() ; i++) {
             NBTTagCompound child = children.getCompoundTagAt(i);
-            check += getCheck(child) << 6;
+            getCheck(child, crc);
         }
-
-        return check;
     }
 
     public static void dirty(NBTTagCompound tag) {
@@ -991,7 +1005,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
     }
 
     private static void setDataFromFile(World world, int scanId, ItemStack card, BlockPos dimension, BlockPos offset, byte[] data, StatePalette palette) {
-        ScanDataManager scans = ScanDataManager.getScans(world);
+        ScanDataManager scans = ScanDataManager.getScans();
         scans.getOrCreateScan(scanId).setData(data, palette.getPalette(), dimension, offset);
         scans.save(world);
         ShapeCardItem.setDimension(card, dimension.getX(), dimension.getY(), dimension.getZ());

@@ -163,11 +163,13 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
 
     public ShapeRenderer getShapeRenderer() {
         ItemStack renderStack = getRenderStack();
+        int formulaCheck = ShapeCardItem.getFormulaCheckClient(renderStack);
+
         if (shapeRenderer == null) {
-            shapeRenderer = new ShapeRenderer(new ShapeID(getWorld().provider.getDimension(), getPos(), ShapeCardItem.getCheck(renderStack), ShapeCardItem.getFormulaCheck(renderStack)));
-        } else if (ShapeCardItem.getFormulaCheck(renderStack) != shapeRenderer.getShapeID().getFormulaCheck()) {
+            shapeRenderer = new ShapeRenderer(new ShapeID(getWorld().provider.getDimension(), getPos(), ShapeCardItem.getCheck(renderStack), formulaCheck));
+        } else if (formulaCheck != shapeRenderer.getShapeID().getFormulaCheck()) {
             // Outdated
-            shapeRenderer = new ShapeRenderer(new ShapeID(getWorld().provider.getDimension(), getPos(), ShapeCardItem.getCheck(renderStack), ShapeCardItem.getFormulaCheck(renderStack)));
+            shapeRenderer = new ShapeRenderer(new ShapeID(getWorld().provider.getDimension(), getPos(), ShapeCardItem.getCheck(renderStack), formulaCheck));
         }
         return shapeRenderer;
     }
