@@ -215,19 +215,6 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
             ShapeCardItem.setDimension(cardOut, dataDim.getX(), dataDim.getY(), dataDim.getZ());
             ShapeCardItem.setData(tagOut, getScanId());
         }
-//        ScanDataManager.Scan scan = null;
-//        if (!getWorld().isRemote) {
-//            scan = ScanDataManager.getScans(getWorld()).getScan(getScanId());
-//        }
-//        if (scan != null && scan.getData() != null && ItemStackTools.isValid(cardOut)) {
-//            if (!ShapeCardItem.getShape(cardOut).isScan()) {
-//                boolean solid = ShapeCardItem.isSolid(cardOut);
-//                ShapeCardItem.setShape(cardOut, Shape.SHAPE_SCAN, solid);
-//            }
-//            NBTTagCompound tagOut = cardOut.getTagCompound();
-//            ShapeCardItem.setDimension(cardOut, dataDim.getX(), dataDim.getY(), dataDim.getZ());
-//            ShapeCardItem.setData(tagOut, getWorld().provider.getDimension(), getPos());
-//        }
     }
 
     private void scan() {
