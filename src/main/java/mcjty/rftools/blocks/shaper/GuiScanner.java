@@ -46,6 +46,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
 
     private Label offsetLabel;
     private Label dimensionLabel;
+    private Label progressLabel;
 
     private ShapeRenderer shapeRenderer = null;
     private int filterCnt = 0;
@@ -118,6 +119,9 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
         dimensionLabel = new Label(mc, this).setText("Dim: " + BlockPosTools.toString(tileEntity.getDataDim())).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
         dimensionLabel.setLayoutHint(new PositionalLayout.PositionalHint(4, 105, 80, 14));
         toplevel.addChild(dimensionLabel);
+        progressLabel = new Label(mc, this).setText("");
+        progressLabel.setLayoutHint(new PositionalLayout.PositionalHint(4, 135, 80, 14));
+        toplevel.addChild(progressLabel);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
@@ -210,22 +214,24 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
         if (currentRF < BuilderConfiguration.SCANNER_ONESCAN) {
             instack = false;
         }
+        if (tileEntity.getScanProgress() >= 0) {
+            instack = false;
+            progressLabel.setText(tileEntity.getScanProgress() + "%");
+        } else {
+            progressLabel.setText("");
+        }
         scanButton.setEnabled(instack);
 
         ItemStack stack = tileEntity.getRenderStack();
-//        Slot slot = inventorySlots.getSlot(ScannerContainer.SLOT_OUT);
-//        if (slot.getHasStack()) {
-//            ItemStack stack = slot.getStack();
-            if (ItemStackTools.isValid(stack)) {
-                int cnt = countFilters();
-                if (cnt != filterCnt) {
-                    filterCnt = cnt;
-                    move(0, 0, 0);
-                }
+        if (ItemStackTools.isValid(stack)) {
+            int cnt = countFilters();
+            if (cnt != filterCnt) {
+                filterCnt = cnt;
+                move(0, 0, 0);
+            }
 
-                getShapeRenderer().setShapeID(getShapeID());
-                getShapeRenderer().renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed());
-//            }
+            getShapeRenderer().setShapeID(getShapeID());
+            getShapeRenderer().renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed());
         }
     }
 

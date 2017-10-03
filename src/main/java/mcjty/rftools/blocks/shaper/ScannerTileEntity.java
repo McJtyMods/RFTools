@@ -50,6 +50,11 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     private BlockPos dataDim;
     private BlockPos dataOffset = new BlockPos(0, 0, 0);
 
+    // Transient data that is used during the scan.
+    private ScanProgress progress = null;
+    // Client side indication if there is a scan in progress
+    private int progressBusy = -1;
+
     public ScannerTileEntity() {
         super(BuilderConfiguration.SCANNER_MAXENERGY, BuilderConfiguration.SCANNER_RECEIVEPERTICK);
         setRSMode(RedstoneMode.REDSTONE_ONREQUIRED);
@@ -58,10 +63,16 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     @Override
     public void update() {
         if (!getWorld().isRemote) {
-            if (isMachineEnabled()) {
+            if (progress != null) {
+                progressScan();
+            } else if (isMachineEnabled()) {
                 scan();
             }
         }
+    }
+
+    public int getScanProgress() {
+        return progressBusy;
     }
 
     @Override
@@ -157,6 +168,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         scanId = tagCompound.getInteger("scanid");
         dataDim = new BlockPos(tagCompound.getInteger("scandimx"), tagCompound.getInteger("scandimy"), tagCompound.getInteger("scandimz"));
         dataOffset = new BlockPos(tagCompound.getInteger("scanoffx"), tagCompound.getInteger("scanoffy"), tagCompound.getInteger("scanoffz"));
+        progressBusy = tagCompound.getInteger("progress");
     }
 
 
@@ -179,6 +191,11 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
             tagCompound.setInteger("scanoffx", dataOffset.getX());
             tagCompound.setInteger("scanoffy", dataOffset.getY());
             tagCompound.setInteger("scanoffz", dataOffset.getZ());
+        }
+        if (progress == null) {
+            tagCompound.setInteger("progress", -1);
+        } else {
+            tagCompound.setInteger("progress", (progress.x-progress.tl.getX()) * 100 / progress.dimX);
         }
     }
 
@@ -213,6 +230,9 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private void scan() {
+        if (progress != null) {
+            return;
+        }
         if (ItemStackTools.isEmpty(getStackInSlot(ScannerContainer.SLOT_IN))) {
             // Cannot scan. No input card
             return;
@@ -227,7 +247,8 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         int dimX = dataDim.getX();
         int dimY = dataDim.getY();
         int dimZ = dataDim.getZ();
-        scanArea(getPos().add(dataOffset.getX(), dataOffset.getY(), dataOffset.getZ()), dimX, dimY, dimZ);
+        startScanArea(getPos().add(dataOffset.getX(), dataOffset.getY(), dataOffset.getZ()), dimX, dimY, dimZ);
+//        scanArea(getPos().add(dataOffset.getX(), dataOffset.getY(), dataOffset.getZ()), dimX, dimY, dimZ);
     }
 
     private IBlockState mapState(List<ModifierEntry> modifiers, Map<IBlockState, IBlockState> modifierMapping, BlockPos pos, IBlockState inState) {
@@ -307,10 +328,89 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     }
 
+    private static class ScanProgress {
+        List<ModifierEntry> modifiers;
+        Map<IBlockState, IBlockState> modifierMapping;
+        RLE rle;
+        BlockPos tl;
+        StatePalette materialPalette;
+        BlockPos.MutableBlockPos mpos = new BlockPos.MutableBlockPos();
+        int dimX;
+        int dimY;
+        int dimZ;
+        int x;
+    }
+
+    private void startScanArea(BlockPos center, int dimX, int dimY, int dimZ) {
+        progress = new ScanProgress();
+        progress.modifiers = ModifierItem.getModifiers(getStackInSlot(ScannerContainer.SLOT_MODIFIER));
+        progress.modifierMapping = new HashMap<>();
+        progress.rle = new RLE();
+        progress.tl = new BlockPos(center.getX() - dimX/2, center.getY() - dimY/2, center.getZ() - dimZ/2);
+        progress.materialPalette = new StatePalette();
+        progress.x = progress.tl.getX();
+        progress.dimX = dimX;
+        progress.dimY = dimY;
+        progress.dimZ = dimZ;
+        markDirtyClient();
+    }
+
+    private void progressScan() {
+        BlockPos tl = progress.tl;
+        int dimX = progress.dimX;
+        int dimY = progress.dimY;
+        int dimZ = progress.dimZ;
+        BlockPos.MutableBlockPos mpos = progress.mpos;
+        for (int z = tl.getZ() ; z < tl.getZ() + dimZ ; z++) {
+            for (int y = tl.getY() ; y < tl.getY() + dimY ; y++) {
+                mpos.setPos(progress.x, y, z);
+                int c;
+                if (getWorld().isAirBlock(mpos)) {
+                    c = 0;
+                } else {
+                    IBlockState state = getWorld().getBlockState(mpos);
+                    getFilterCache();
+                    if (filterCache != null) {
+                        ItemStack item = state.getBlock().getItem(getWorld(), mpos, state);
+                        if (!filterCache.match(item)) {
+                            state = null;
+                        }
+                    }
+                    if (state != null && state != Blocks.AIR.getDefaultState()) {
+                        state = mapState(progress.modifiers, progress.modifierMapping, mpos, state);
+                    }
+                    if (state != null && state != Blocks.AIR.getDefaultState()) {
+                        c = progress.materialPalette.alloc(state, 0) + 1;
+                    } else {
+                        c = 0;
+                    }
+                }
+                progress.rle.add(c);
+            }
+        }
+        progress.x++;
+        if (progress.x >= tl.getX() + dimX) {
+            stopScanArea();
+        } else {
+            markDirtyClient();
+        }
+    }
+
+    private void stopScanArea() {
+        this.dataDim = new BlockPos(progress.dimX, progress.dimY, progress.dimZ);
+        ScanDataManager scan = ScanDataManager.getScans();
+        scan.getOrCreateScan(getScanId()).setData(progress.rle.getData(), progress.materialPalette.getPalette(), dataDim, dataOffset);
+        scan.save(getWorld());
+        if (ItemStackTools.isEmpty(renderStack)) {
+            renderStack = new ItemStack(BuilderSetup.shapeCardItem);
+        }
+        updateScanCard(renderStack);
+        markDirtyClient();
+        progress = null;
+    }
 
     private void scanArea(BlockPos center, int dimX, int dimY, int dimZ) {
-        ItemStack modifier = getStackInSlot(ScannerContainer.SLOT_MODIFIER);
-        List<ModifierEntry> modifiers = ModifierItem.getModifiers(modifier);
+        List<ModifierEntry> modifiers = ModifierItem.getModifiers(getStackInSlot(ScannerContainer.SLOT_MODIFIER));
         Map<IBlockState, IBlockState> modifierMapping = new HashMap<>();
 
         RLE rle = new RLE();
@@ -318,26 +418,12 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
 
         StatePalette materialPalette = new StatePalette();
 
-//        Map<Long, IBlockState> positionMask = null;
-//        ItemStack cardIn = inventoryHelper.getStackInSlot(ScannerContainer.SLOT_IN);
-//        if (ItemStackTools.isValid(cardIn)) {
-//            Shape shape = ShapeCardItem.getShape(cardIn);
-//            BlockPos dimension = ShapeCardItem.getDimension(cardIn);
-//            BlockPos offset = ShapeCardItem.getOffset(cardIn);
-//            System.out.println("center = " + center);
-//            // @todo THIS IS NOT WORKING YET!
-//            positionMask = ShapeCardItem.getPositions(cardIn, shape, ShapeCardItem.isSolid(cardIn), center, offset);
-//        }
-
-
-        int cnt = 0;
         BlockPos.MutableBlockPos mpos = new BlockPos.MutableBlockPos();
         for (int x = tl.getX() ; x < tl.getX() + dimX ; x++) {
             for (int z = tl.getZ() ; z < tl.getZ() + dimZ ; z++) {
                 for (int y = tl.getY() ; y < tl.getY() + dimY ; y++) {
                     mpos.setPos(x, y, z);
                     int c;
-//                  if (getWorld().isAirBlock(mpos) || (positionMask != null && !positionMask.containsKey(mpos.toLong()))) {
                     if (getWorld().isAirBlock(mpos)) {
                         c = 0;
                     } else {
