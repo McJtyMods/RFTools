@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static mcjty.rftools.blocks.builder.BuilderConfiguration.useVBO;
+import static mcjty.rftools.blocks.shaper.ScannerConfiguration.useVBO;
 
 public class RenderData {
 

@@ -6,7 +6,6 @@ import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.RedstoneMode;
-import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.items.builder.ShapeCardItem;
@@ -56,7 +55,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     private int progressBusy = -1;
 
     public ScannerTileEntity() {
-        super(BuilderConfiguration.SCANNER_MAXENERGY, BuilderConfiguration.SCANNER_RECEIVEPERTICK);
+        super(ScannerConfiguration.SCANNER_MAXENERGY, ScannerConfiguration.SCANNER_RECEIVEPERTICK);
         setRSMode(RedstoneMode.REDSTONE_ONREQUIRED);
     }
 
@@ -238,11 +237,11 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
             return;
         }
 
-        if (getEnergyStored() < BuilderConfiguration.SCANNER_ONESCAN) {
+        if (getEnergyStored() < ScannerConfiguration.SCANNER_ONESCAN) {
             // Not enough power
             return;
         }
-        consumeEnergy(BuilderConfiguration.SCANNER_ONESCAN);
+        consumeEnergy(ScannerConfiguration.SCANNER_ONESCAN);
 
         int dimX = dataDim.getX();
         int dimY = dataDim.getY();

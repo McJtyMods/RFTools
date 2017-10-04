@@ -4,7 +4,6 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.shapes.RenderData;
@@ -46,7 +45,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
     private ProjectorOperation operations[] = new ProjectorOperation[4];
 
     public ProjectorTileEntity() {
-        super(BuilderConfiguration.PROJECTOR_MAXENERGY, BuilderConfiguration.PROJECTOR_RECEIVEPERTICK);
+        super(ScannerConfiguration.PROJECTOR_MAXENERGY, ScannerConfiguration.PROJECTOR_RECEIVEPERTICK);
         for (int i = 0 ; i < operations.length ; i++) {
             operations[i] = new ProjectorOperation();
         }
@@ -67,7 +66,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
 
             boolean a = active;
             if (a) {
-                if (getEnergyStored() < BuilderConfiguration.PROJECTOR_USEPERTICK) {
+                if (getEnergyStored() < ScannerConfiguration.PROJECTOR_USEPERTICK) {
                     a = false;
                 }
             }
@@ -78,7 +77,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
             }
 
             if (projecting) {
-                consumeEnergy(BuilderConfiguration.PROJECTOR_USEPERTICK);
+                consumeEnergy(ScannerConfiguration.PROJECTOR_USEPERTICK);
             }
         } else {
             if (scanNeeded) {

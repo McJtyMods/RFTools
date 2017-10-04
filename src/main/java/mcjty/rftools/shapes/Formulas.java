@@ -1,6 +1,6 @@
 package mcjty.rftools.shapes;
 
-import mcjty.rftools.blocks.builder.BuilderConfiguration;
+import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.varia.Check32;
 import net.minecraft.block.Block;
@@ -181,8 +181,8 @@ public class Formulas {
                         ShapeRotation rotation = ShapeRotation.getByName(rot);
                         modifiers.add(new ShapeModifier(operation, flip, rotation));
 
-                        BlockPos dim = ShapeCardItem.getClampedDimension(childTag, BuilderConfiguration.maxScannerDimension);
-                        BlockPos off = ShapeCardItem.getClampedOffset(childTag, BuilderConfiguration.maxScannerOffset);
+                        BlockPos dim = ShapeCardItem.getClampedDimension(childTag, ScannerConfiguration.maxScannerDimension);
+                        BlockPos off = ShapeCardItem.getClampedOffset(childTag, ScannerConfiguration.maxScannerOffset);
                         BlockPos o = off.add(offset);
                         formula.setup(thisCoord, dim, o, childTag);
                         formulas.add(formula);

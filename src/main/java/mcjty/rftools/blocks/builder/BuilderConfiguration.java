@@ -9,19 +9,8 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 public class BuilderConfiguration {
     public static final String CATEGORY_BUILDER = "builder";
 
-    public static int SPACEPROJECTOR_MAXENERGY = 100000;
-    public static int SPACEPROJECTOR_RECEIVEPERTICK = 1000;
-
     public static int BUILDER_MAXENERGY = 1000000;
     public static int BUILDER_RECEIVEPERTICK = 20000;
-
-    public static int SCANNER_MAXENERGY = 500000;
-    public static int SCANNER_RECEIVEPERTICK = 20000;
-    public static int SCANNER_ONESCAN = 500000;
-
-    public static int PROJECTOR_MAXENERGY = 500000;
-    public static int PROJECTOR_RECEIVEPERTICK = 10000;
-    public static int PROJECTOR_USEPERTICK = 1000;
 
     public static int builderRfPerOperation = 500;
     public static int builderRfPerLiquid = 300;
@@ -30,8 +19,6 @@ public class BuilderConfiguration {
     public static int builderRfPerEntity = 5000;
     public static int builderRfPerPlayer = 40000;
     public static double dimensionCostFactor = 5.0f;
-
-    public static boolean useVBO = true;
 
     public static BuilderTileEntityMode teMode = BuilderTileEntityMode.MOVE_WHITELIST;
 
@@ -57,9 +44,6 @@ public class BuilderConfiguration {
 
     public static int maxBuilderOffset = 260;
     public static int maxBuilderDimension = 512;
-    // Maximum shield dimension when the shape card is used for projection/scanner
-    public static int maxScannerDimension = 512;
-    public static int maxScannerOffset = 512;
 
     public static boolean oldSphereCylinderShape = false;
 
@@ -70,26 +54,10 @@ public class BuilderConfiguration {
 
 
     public static void init(Configuration cfg) {
-        SPACEPROJECTOR_MAXENERGY = cfg.get(CATEGORY_BUILDER, "spaceProjectorMaxRF", SPACEPROJECTOR_MAXENERGY,
-                "Maximum RF storage that the space projector can hold").getInt();
-        SPACEPROJECTOR_RECEIVEPERTICK = cfg.get(CATEGORY_BUILDER, "spaceProjectorRFPerTick", SPACEPROJECTOR_RECEIVEPERTICK,
-                "RF per tick that the space projector can receive").getInt();
         BUILDER_MAXENERGY = cfg.get(CATEGORY_BUILDER, "builderMaxRF", BUILDER_MAXENERGY,
                 "Maximum RF storage that the builder can hold").getInt();
         BUILDER_RECEIVEPERTICK = cfg.get(CATEGORY_BUILDER, "builderRFPerTick", BUILDER_RECEIVEPERTICK,
                 "RF per tick that the builder can receive").getInt();
-        SCANNER_MAXENERGY = cfg.get(CATEGORY_BUILDER, "scannerMaxRF", SCANNER_MAXENERGY,
-                "Maximum RF storage that the scanner can hold").getInt();
-        SCANNER_RECEIVEPERTICK = cfg.get(CATEGORY_BUILDER, "scannerRFPerTick", SCANNER_RECEIVEPERTICK,
-                "RF per tick that the scanner can receive").getInt();
-        SCANNER_ONESCAN = cfg.get(CATEGORY_BUILDER, "scannerOneScanRF", SCANNER_ONESCAN,
-                "Amount of RF needed for a single scan operation").getInt();
-        PROJECTOR_MAXENERGY = cfg.get(CATEGORY_BUILDER, "projectorMaxRF", PROJECTOR_MAXENERGY,
-                "Maximum RF storage that the projector can hold").getInt();
-        PROJECTOR_RECEIVEPERTICK = cfg.get(CATEGORY_BUILDER, "projectorRFPerTick", PROJECTOR_RECEIVEPERTICK,
-                "RF per tick that the projector can receive").getInt();
-        PROJECTOR_USEPERTICK = cfg.get(CATEGORY_BUILDER, "projectorUsePerTick", PROJECTOR_USEPERTICK,
-                "RF/t for the projector while it is in use").getInt();
         builderRfPerOperation = cfg.get(CATEGORY_BUILDER, "builderRfPerOperation", builderRfPerOperation,
                 "RF per block operation for the builder when used to build").getInt();
         builderRfPerQuarry = cfg.get(CATEGORY_BUILDER, "builderRfPerQuarry", builderRfPerQuarry,
@@ -144,18 +112,11 @@ public class BuilderConfiguration {
                 "Maximum offset of the shape when a shape card is used in the builder").getInt();
         maxBuilderDimension = cfg.get(CATEGORY_BUILDER, "maxBuilderDimension", maxBuilderDimension,
                 "Maximum dimension of the shape when a shape card is used in the builder").getInt();
-        maxScannerOffset = cfg.get(CATEGORY_BUILDER, "maxScannerOffset", maxScannerOffset,
-                "Maximum offset of the shape when a shape card is used in the scanner/projector").getInt();
-        maxScannerDimension = cfg.get(CATEGORY_BUILDER, "maxScannerDimension", maxScannerDimension,
-                "Maximum dimension of the shape when a scanner/projector card is used").getInt();
 
         oldSphereCylinderShape = cfg.get(CATEGORY_BUILDER, "oldSphereCylinderShape", oldSphereCylinderShape,
                 "If true we go back to the old (wrong) sphere/cylinder calculation for the builder/shield").getBoolean();
         showProgressHud = cfg.get(CATEGORY_BUILDER, "showProgressHud", showProgressHud,
                 "If true a holo hud with current progress is shown above the builder").getBoolean();
-
-        useVBO = cfg.get(CATEGORY_BUILDER, "useVBO", useVBO,
-                "Use VBO for rendering shapecard views. Otherwise display lists").getBoolean();
     }
 
     public static Block getQuarryReplace() {

@@ -14,7 +14,6 @@ import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.IShapeParentGui;
@@ -211,7 +210,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
         tileEntity.requestRfFromServer(RFTools.MODID);
 
         boolean instack = inventorySlots.getSlot(ScannerContainer.SLOT_IN).getHasStack();
-        if (currentRF < BuilderConfiguration.SCANNER_ONESCAN) {
+        if (currentRF < ScannerConfiguration.SCANNER_ONESCAN) {
             instack = false;
         }
         if (tileEntity.getScanProgress() >= 0) {
