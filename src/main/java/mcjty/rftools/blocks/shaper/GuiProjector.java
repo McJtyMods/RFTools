@@ -10,6 +10,7 @@ import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.varia.RedstoneMode;
@@ -49,6 +50,9 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
     private Slider offsetSlider;
     private Slider scaleSlider;
     private ToggleButton autoRotate;
+
+    private ChoiceLabel[] rsLabel;
+    private TextField[] val;
 
     private Window sideWindow;
 
@@ -170,6 +174,13 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
         sidePanel.addChild(new Label<>(mc, this).setText("West").setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setLayoutHint(new PositionalLayout.PositionalHint(8, 169, 50, 13)));
         sidePanel.setBounds(new Rectangle(guiLeft-SIDEWIDTH, guiTop, SIDEWIDTH, ySize));
         sideWindow = new Window(this, sidePanel);
+    }
+
+    private void initRsPanel(Panel sidePanel, int o, String label, int y) {
+        sidePanel.addChild(new Label<>(mc, this).setText(label).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setLayoutHint(new PositionalLayout.PositionalHint(8, y+10, 50, 13)));
+        rsLabel[o] = new ChoiceLabel(mc, this);
+        sidePanel.addChild(rsLabel[o]);
+
     }
 
     @Override
