@@ -4,9 +4,9 @@
     "particle": "rftools:blocks/machineside",
     "down": "rftools:blocks/machineside",
     "up": "rftools:blocks/machineprojector",
-    "north": "rftools:blocks/machinerelay",
-    "east": "rftools:blocks/machinerelayw",
-    "south": "rftools:blocks/machinerelayn",
-    "west": "rftools:blocks/machinerelaye"
+    "north": "rftools:blocks/machineside_red",
+    "east": "rftools:blocks/machineside_yellow",
+    "south": "rftools:blocks/machineside_green",
+    "west": "rftools:blocks/machineside_blue"
   }
 }
