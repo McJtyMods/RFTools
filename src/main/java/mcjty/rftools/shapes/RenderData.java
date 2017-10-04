@@ -1,5 +1,6 @@
 package mcjty.rftools.shapes;
 
+import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
@@ -90,7 +91,7 @@ public class RenderData {
     }
 
     public boolean tooOld() {
-        return touchTime + 5000 < System.currentTimeMillis();
+        return touchTime + ScannerConfiguration.clientRenderDataTimeout < System.currentTimeMillis();
     }
 
 

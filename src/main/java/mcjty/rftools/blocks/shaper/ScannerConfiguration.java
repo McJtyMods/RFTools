@@ -17,7 +17,11 @@ public class ScannerConfiguration {
 
     // Maximum dimension when the shape card is used for projection/scanner
     public static int maxScannerDimension = 512;
-    public static int maxScannerOffset = 512;
+    public static int maxScannerOffset = 2048;
+
+    public static int planesPerTick = 2;
+    public static int planeSurfacePerTick = 200*200;
+    public static int clientRenderDataTimeout = 5000;
 
 
     public static void init(Configuration cfg) {
@@ -38,6 +42,16 @@ public class ScannerConfiguration {
                 "Maximum offset of the shape when a shape card is used in the scanner/projector").getInt();
         maxScannerDimension = cfg.get(CATEGORY_SCANNER, "maxScannerDimension", maxScannerDimension,
                 "Maximum dimension of the shape when a scanner/projector card is used").getInt();
+
+        planesPerTick = cfg.get(CATEGORY_SCANNER, "planesPerTick", planesPerTick,
+                "The amount of planes the scanner will scan in a tick. Increasing this will increase the speed of the scanner but cause more strain on the server",
+                1, 1000).getInt();
+        planeSurfacePerTick = cfg.get(CATEGORY_SCANNER, "planeSurfacePerTick", planeSurfacePerTick,
+                "The amount of 'surface area' that the server will send to the client for the projector. Increasing this will increase the speed at which projections are ready but also increase the load for server and client",
+                100, 10000000).getInt();
+        clientRenderDataTimeout = cfg.get(CATEGORY_SCANNER, "clientRenderDataTimeout", clientRenderDataTimeout,
+                "The amount of milliseconds before the client will remove shape render data that hasn't been used. Decreasing this will free memory faster at the cost of having to update shape renders more often",
+                100, 1000000).getInt();
 
         useVBO = cfg.get(CATEGORY_SCANNER, "useVBO", useVBO,
                 "Use VBO for rendering shapecard views. Otherwise display lists").getBoolean();

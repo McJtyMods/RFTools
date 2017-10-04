@@ -1,5 +1,6 @@
 package mcjty.rftools.shapes;
 
+import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.varia.RLE;
@@ -119,7 +120,7 @@ public class ShapeDataManager {
     public static int maxworkqueue = 0;
 
     public static void handleWork() {
-        int pertick = 200*200;
+        int pertick = ScannerConfiguration.planeSurfacePerTick;
         while (!workQueue.isEmpty()) {
             if (workQueue.size() > maxworkqueue) {
                 maxworkqueue = workQueue.size();

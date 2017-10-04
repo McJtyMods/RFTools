@@ -63,7 +63,9 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     public void update() {
         if (!getWorld().isRemote) {
             if (progress != null) {
-                progressScan();
+                for (int i = 0 ; i < ScannerConfiguration.planesPerTick ; i++) {
+                    progressScan();
+                }
             } else if (isMachineEnabled()) {
                 scan();
             }
@@ -355,6 +357,9 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private void progressScan() {
+        if (progress == null) {
+            return;
+        }
         BlockPos tl = progress.tl;
         int dimX = progress.dimX;
         int dimY = progress.dimY;
