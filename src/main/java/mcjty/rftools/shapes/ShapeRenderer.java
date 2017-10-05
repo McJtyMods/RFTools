@@ -113,7 +113,8 @@ public class ShapeRenderer {
         }
     }
 
-    public void renderShapeInWorld(ItemStack stack, double x, double y, double z, float offset, float scale, float angle) {
+    public void renderShapeInWorld(ItemStack stack, double x, double y, double z, float offset, float scale, float angle,
+                                   boolean scan) {
         GlStateManager.pushMatrix();
         GlStateManager.translate((float) x + 0.5F, (float) y + 1F + offset, (float) z + 0.5F);
         GlStateManager.scale(scale, scale, scale);
@@ -128,7 +129,7 @@ public class ShapeRenderer {
 
         Tessellator tessellator = Tessellator.getInstance();
         VertexBuffer buffer = tessellator.getBuffer();
-        renderFaces(tessellator, buffer, stack);
+        renderFaces(tessellator, buffer, stack, scan);
 
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
@@ -139,7 +140,7 @@ public class ShapeRenderer {
         GlStateManager.popMatrix();
     }
 
-    public void renderShape(IShapeParentGui gui, ItemStack stack, int x, int y, boolean showAxis, boolean showOuter, boolean showGuidelines) {
+    public void renderShape(IShapeParentGui gui, ItemStack stack, int x, int y, boolean showAxis, boolean showOuter, boolean showScan, boolean showGuidelines) {
         setupScissor(gui);
 
         GlStateManager.pushMatrix();
@@ -159,7 +160,7 @@ public class ShapeRenderer {
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
-        renderFaces(tessellator, buffer, stack);
+        renderFaces(tessellator, buffer, stack, showScan);
         BlockPos dimension = ShapeCardItem.getDimension(stack);
         renderHelpers(tessellator, buffer, dimension.getX(), dimension.getY(), dimension.getZ(), showAxis, showOuter);
 
@@ -266,7 +267,7 @@ public class ShapeRenderer {
 
 
     private void renderFaces(Tessellator tessellator, final VertexBuffer buffer,
-                     ItemStack stack) {
+                     ItemStack stack, boolean showScan) {
 
         RenderData data = getRenderDataAndCreate(shapeID);
 
@@ -296,7 +297,7 @@ public class ShapeRenderer {
                         createRenderData(tessellator, buffer, plane, data);
                         plane.markClean();
                     }
-                    boolean flash = plane.getBirthtime() > time-200;
+                    boolean flash = showScan && (plane.getBirthtime() > time-200);
                     if (flash) {
                         GlStateManager.enableBlend();
                         GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE);

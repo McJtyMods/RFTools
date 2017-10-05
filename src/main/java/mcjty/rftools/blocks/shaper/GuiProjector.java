@@ -36,6 +36,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
 
     private ToggleButton showAxis;
     private ToggleButton showOuter;
+    private ToggleButton showScan;
 
     private ScrollableLabel angleLabel;
     private ScrollableLabel offsetLabel;
@@ -44,6 +45,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
     private Slider offsetSlider;
     private Slider scaleSlider;
     private ToggleButton autoRotate;
+    private ToggleButton scanline;
 
     private ChoiceLabel[] rsLabelOn = new ChoiceLabel[4];
     private ChoiceLabel[] rsLabelOff = new ChoiceLabel[4];
@@ -123,14 +125,24 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
                 .setLayoutHint(new PositionalLayout.PositionalHint(5, 110, 76, 15));
         toplevel.addChild(offsetI).addChild(offsetLabel).addChild(offsetSlider).addChild(offsetM).addChild(offsetP);
 
-        autoRotate = new ToggleButton(mc, this).setCheckMarker(true).setText("Auto").setLayoutHint(new PositionalLayout.PositionalHint(5, 126, 48, 16));
+        autoRotate = new ToggleButton(mc, this).setCheckMarker(true)
+                .setText("Auto")
+                .setTooltips("Automatic client-side rotation")
+                .setLayoutHint(new PositionalLayout.PositionalHint(5, 126, 48, 16));
         autoRotate.setPressed(tileEntity.isAutoRotate());
         toplevel.addChild(autoRotate);
+        scanline = new ToggleButton(mc, this).setCheckMarker(true)
+                .setText("SL")
+                .setTooltips("Enable/disable visual scanlines when", "the scan is refreshed")
+                .setLayoutHint(new PositionalLayout.PositionalHint(5, 110, 48, 16));
+        scanline.setPressed(tileEntity.isScanline());
+        toplevel.addChild(scanline);
 
         angleLabel.addValueEvent((parent, newValue) -> update());
         scaleLabel.addValueEvent((parent, newValue) -> update());
         offsetLabel.addValueEvent((parent, newValue) -> update());
         autoRotate.addButtonEvent(parent -> update());
+        scanline.addButtonEvent(parent -> update());
 
 
         showAxis = new ToggleButton(mc, this).setCheckMarker(true).setText("A").setLayoutHint(new PositionalLayout.PositionalHint(5, 200, 24, 16));
@@ -139,6 +151,9 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
         showOuter = new ToggleButton(mc, this).setCheckMarker(true).setText("B").setLayoutHint(new PositionalLayout.PositionalHint(31, 200, 24, 16));
         showOuter.setPressed(true);
         toplevel.addChild(showOuter);
+        showScan = new ToggleButton(mc, this).setCheckMarker(true).setText("S").setLayoutHint(new PositionalLayout.PositionalHint(57, 200, 24, 16));
+        showScan.setPressed(true);
+        toplevel.addChild(showScan);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
@@ -252,7 +267,8 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
                 new Argument("scale", scaleLabel.getRealValue()),
                 new Argument("offset", offsetLabel.getRealValue()),
                 new Argument("angle", angleLabel.getRealValue()),
-                new Argument("auto", autoRotate.isPressed())
+                new Argument("auto", autoRotate.isPressed()),
+                new Argument("scan", scanline.isPressed())
                 );
     }
 
@@ -297,7 +313,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
         ItemStack stack = tileEntity.getRenderStack();
         if (ItemStackTools.isValid(stack)) {
             getShapeRenderer().setShapeID(tileEntity.getShapeID());
-            getShapeRenderer().renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed(), false);
+            getShapeRenderer().renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed(), showScan.isPressed(), false);
         }
     }
 

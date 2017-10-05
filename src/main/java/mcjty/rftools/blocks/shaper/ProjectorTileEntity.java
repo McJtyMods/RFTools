@@ -38,6 +38,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
     private boolean autoRotate = false;
     private boolean projecting = false;
     private boolean active = false;
+    private boolean scanline = true;
 
     private int counter = 0;    // Counter to detect that we need to do a new 'scan' client-side
     private boolean scanNeeded = false;
@@ -231,6 +232,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
         scale = tagCompound.hasKey("scale") ? tagCompound.getFloat("scale") : .01f;
         angle = tagCompound.hasKey("angle") ? tagCompound.getFloat("angle") : .0f;
         autoRotate = tagCompound.getBoolean("rot");
+        scanline = tagCompound.getBoolean("scan");
         projecting = tagCompound.getBoolean("projecting");
         active = tagCompound.getBoolean("active");
         counter = tagCompound.getInteger("counter");
@@ -265,6 +267,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
         tagCompound.setFloat("scale", scale);
         tagCompound.setFloat("angle", angle);
         tagCompound.setBoolean("rot", autoRotate);
+        tagCompound.setBoolean("scan", scanline);
         tagCompound.setBoolean("projecting", projecting);
         tagCompound.setBoolean("active", active);
         tagCompound.setInteger("counter", counter);
@@ -334,6 +337,10 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
         return autoRotate;
     }
 
+    public boolean isScanline() {
+        return scanline;
+    }
+
     public boolean isProjecting() {
         return projecting;
     }
@@ -397,6 +404,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
             setOffsetInt(offsetInt);
             setAngleInt(angleInt);
             autoRotate = args.get("auto").getBoolean();
+            scanline = args.get("scan").getBoolean();
             markDirtyClient();
             return true;
         }
