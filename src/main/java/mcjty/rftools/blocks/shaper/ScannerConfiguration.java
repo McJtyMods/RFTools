@@ -19,7 +19,7 @@ public class ScannerConfiguration {
     public static int maxScannerDimension = 512;
     public static int maxScannerOffset = 2048;
 
-    public static int planesPerTick = 2;
+    public static int surfaceAreaPerTick = 512*256*2;
     public static int planeSurfacePerTick = 200*200;
     public static int clientRenderDataTimeout = 5000;
 
@@ -43,9 +43,9 @@ public class ScannerConfiguration {
         maxScannerDimension = cfg.get(CATEGORY_SCANNER, "maxScannerDimension", maxScannerDimension,
                 "Maximum dimension of the shape when a scanner/projector card is used").getInt();
 
-        planesPerTick = cfg.get(CATEGORY_SCANNER, "planesPerTick", planesPerTick,
-                "The amount of planes the scanner will scan in a tick. Increasing this will increase the speed of the scanner but cause more strain on the server",
-                1, 1000).getInt();
+        surfaceAreaPerTick = cfg.get(CATEGORY_SCANNER, "surfaceAreaPerTick", surfaceAreaPerTick,
+                "The amount of surface area the scanner will scan in a tick. Increasing this will increase the speed of the scanner but cause more strain on the server",
+                100, 32768*32768).getInt();
         planeSurfacePerTick = cfg.get(CATEGORY_SCANNER, "planeSurfacePerTick", planeSurfacePerTick,
                 "The amount of 'surface area' that the server will send to the client for the projector. Increasing this will increase the speed at which projections are ready but also increase the load for server and client",
                 100, 10000000).getInt();

@@ -63,8 +63,10 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     public void update() {
         if (!getWorld().isRemote) {
             if (progress != null) {
-                for (int i = 0 ; i < ScannerConfiguration.planesPerTick ; i++) {
+                int done = 0;
+                while (done < ScannerConfiguration.surfaceAreaPerTick) {
                     progressScan();
+                    done -= dataDim.getZ()*dataDim.getY();  // We scan planes on the x axis
                 }
             } else if (isMachineEnabled()) {
                 scan();
