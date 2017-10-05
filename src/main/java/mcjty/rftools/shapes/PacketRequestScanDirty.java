@@ -1,6 +1,7 @@
 package mcjty.rftools.shapes;
 
 import io.netty.buffer.ByteBuf;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -35,7 +36,7 @@ public class PacketRequestScanDirty implements IMessage {
         }
 
         private void handle(PacketRequestScanDirty message, MessageContext ctx) {
-            int counter = ScanDataManager.getScans().getOrCreateScan(message.scanId).getDirtyCounter();
+            int counter = ScanDataManager.getScans().loadScan(message.scanId).getDirtyCounter();
             RFToolsMessages.INSTANCE.sendTo(new PacketReturnScanDirty(message.scanId, counter), ctx.getServerHandler().player);
         }
     }

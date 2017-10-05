@@ -131,14 +131,14 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
 
     public int getScanId() {
         if (scanId == 0) {
-            scanId = ScanDataManager.getScans().newScan();
+            scanId = ScanDataManager.getScans().newScan(getWorld());
             markDirtyQuick();
         }
         return scanId;
     }
 
     public List<IBlockState> getMaterialPalette() {
-        ScanDataManager.Scan scan = ScanDataManager.getScans().getOrCreateScan(getScanId());
+        ScanDataManager.Scan scan = ScanDataManager.getScans().loadScan(getScanId());
         return scan.getMaterialPalette();
     }
 
@@ -403,63 +403,13 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         this.dataDim = new BlockPos(progress.dimX, progress.dimY, progress.dimZ);
         ScanDataManager scan = ScanDataManager.getScans();
         scan.getOrCreateScan(getScanId()).setData(progress.rle.getData(), progress.materialPalette.getPalette(), dataDim, dataOffset);
-        scan.save(getWorld());
+        scan.save(getWorld(), getScanId());
         if (ItemStackTools.isEmpty(renderStack)) {
             renderStack = new ItemStack(BuilderSetup.shapeCardItem);
         }
         updateScanCard(renderStack);
         markDirtyClient();
         progress = null;
-    }
-
-    private void scanArea(BlockPos center, int dimX, int dimY, int dimZ) {
-        List<ModifierEntry> modifiers = ModifierItem.getModifiers(getStackInSlot(ScannerContainer.SLOT_MODIFIER));
-        Map<IBlockState, IBlockState> modifierMapping = new HashMap<>();
-
-        RLE rle = new RLE();
-        BlockPos tl = new BlockPos(center.getX() - dimX/2, center.getY() - dimY/2, center.getZ() - dimZ/2);
-
-        StatePalette materialPalette = new StatePalette();
-
-        BlockPos.MutableBlockPos mpos = new BlockPos.MutableBlockPos();
-        for (int x = tl.getX() ; x < tl.getX() + dimX ; x++) {
-            for (int z = tl.getZ() ; z < tl.getZ() + dimZ ; z++) {
-                for (int y = tl.getY() ; y < tl.getY() + dimY ; y++) {
-                    mpos.setPos(x, y, z);
-                    int c;
-                    if (getWorld().isAirBlock(mpos)) {
-                        c = 0;
-                    } else {
-                        IBlockState state = getWorld().getBlockState(mpos);
-                        getFilterCache();
-                        if (filterCache != null) {
-                            ItemStack item = state.getBlock().getItem(getWorld(), mpos, state);
-                            if (!filterCache.match(item)) {
-                                state = null;
-                            }
-                        }
-                        if (state != null && state != Blocks.AIR.getDefaultState()) {
-                            state = mapState(modifiers, modifierMapping, mpos, state);
-                        }
-                        if (state != null && state != Blocks.AIR.getDefaultState()) {
-                            c = materialPalette.alloc(state, 0) + 1;
-                        } else {
-                            c = 0;
-                        }
-                    }
-                    rle.add(c);
-                }
-            }
-        }
-        this.dataDim = new BlockPos(dimX, dimY, dimZ);
-        ScanDataManager scan = ScanDataManager.getScans();
-        scan.getOrCreateScan(getScanId()).setData(rle.getData(), materialPalette.getPalette(), dataDim, dataOffset);
-        scan.save(getWorld());
-        if (ItemStackTools.isEmpty(renderStack)) {
-            renderStack = new ItemStack(BuilderSetup.shapeCardItem);
-        }
-        updateScanCard(renderStack);
-        markDirtyClient();
     }
 
     @Override

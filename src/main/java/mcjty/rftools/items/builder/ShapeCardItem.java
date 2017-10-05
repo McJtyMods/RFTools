@@ -980,7 +980,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
     private static void setDataFromFile(World world, int scanId, ItemStack card, BlockPos dimension, BlockPos offset, byte[] data, StatePalette palette) {
         ScanDataManager scans = ScanDataManager.getScans();
         scans.getOrCreateScan(scanId).setData(data, palette.getPalette(), dimension, offset);
-        scans.save(world);
+        scans.save(world, scanId);
         ShapeCardItem.setDimension(card, dimension.getX(), dimension.getY(), dimension.getZ());
         ShapeCardItem.setOffset(card, offset.getX(), offset.getY(), offset.getZ());
         ShapeCardItem.setShape(card, Shape.SHAPE_SCAN, true);

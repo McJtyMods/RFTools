@@ -2,11 +2,13 @@ package mcjty.rftools.shapes;
 
 import mcjty.lib.tools.ChatTools;
 import mcjty.lib.tools.WorldTools;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.init.Blocks;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
@@ -15,11 +17,13 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import javax.annotation.Nonnull;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +42,26 @@ public class ScanDataManager extends WorldSavedData {
         super(identifier);
     }
 
-    public void save(World world) {
+    public void save(World world, int scanId) {
+        File dataDir = new File(((WorldServer) world).getChunkSaveLocation(), "rftoolsscans");
+        dataDir.mkdirs();
+        File file = new File(dataDir, "scan" + scanId);
+        Scan scan = getOrCreateScan(scanId);
+        NBTTagCompound tc = new NBTTagCompound();
+        scan.writeToNBTExternal(tc);
+        DataOutputStream dataoutputstream = null;
+        try {
+            dataoutputstream = new DataOutputStream(new FileOutputStream(file));
+            try {
+                CompressedStreamTools.writeCompressed(tc, dataoutputstream);
+            } catch (IOException e) {
+                throw new RuntimeException("Error writing to file 'scan" + scan + "'!", e);
+            } finally {
+                dataoutputstream.close();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error writing to file 'scan" + scan + "'!", e);
+        }
         WorldTools.saveData(world, SCANDATA_NETWORK_NAME, this);
         markDirty();
     }
@@ -90,7 +113,36 @@ public class ScanDataManager extends WorldSavedData {
         Scan scan = scans.get(id);
         if (scan == null) {
             scan = new Scan();
-            scans.put(id, scan);
+        }
+        return scan;
+    }
+
+    @Nonnull
+    public Scan loadScan(int id) {
+        World world = DimensionManager.getWorld(0);
+        Scan scan = scans.get(id);
+        if (scan == null || scan.data == null) {
+            if (scan == null) {
+                scan = new Scan();
+            }
+            File dataDir = new File(((WorldServer) world).getChunkSaveLocation(), "rftoolsscans");
+            dataDir.mkdirs();
+            File file = new File(dataDir, "scan" + id);
+            if (file.exists()) {
+                try {
+                    DataInputStream datainputstream = new DataInputStream(new FileInputStream(file));
+                    try {
+                        NBTTagCompound tag = CompressedStreamTools.readCompressed(datainputstream);
+                        scan.readFromNBTExternal(tag);
+                    } catch (IOException e) {
+                        Logging.log("Error reading scan file for id: " + id);
+                    } finally {
+                        datainputstream.close();
+                    }
+                } catch (IOException e) {
+                    Logging.log("Error reading scan file for id: " + id);
+                }
+            }
         }
         return scan;
     }
@@ -108,16 +160,10 @@ public class ScanDataManager extends WorldSavedData {
     }
 
 
-    public Scan getScan(int id) {
-        return scans.get(id);
-    }
-
-    public void deleteScan(int id) {
-        scans.remove(id);
-    }
-
-    public int newScan() {
+    public int newScan(World world) {
         lastId++;
+        WorldTools.saveData(world, SCANDATA_NETWORK_NAME, this);
+        markDirty();
         return lastId;
     }
 
@@ -135,6 +181,7 @@ public class ScanDataManager extends WorldSavedData {
         lastId = tagCompound.getInteger("lastId");
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         NBTTagList lst = new NBTTagList();
@@ -196,6 +243,10 @@ public class ScanDataManager extends WorldSavedData {
         }
 
         public void writeToNBT(NBTTagCompound tagCompound) {
+            tagCompound.setInteger("dirty", dirtyCounter);
+        }
+
+        public void writeToNBTExternal(NBTTagCompound tagCompound) {
             tagCompound.setByteArray("data", data);
             NBTTagList pal = new NBTTagList();
             for (IBlockState state : materialPalette) {
@@ -221,10 +272,13 @@ public class ScanDataManager extends WorldSavedData {
                 tagCompound.setInteger("scanoffy", dataOffset.getY());
                 tagCompound.setInteger("scanoffz", dataOffset.getZ());
             }
-            tagCompound.setInteger("dirty", dirtyCounter);
         }
 
         public void readFromNBT(NBTTagCompound tagCompound) {
+            dirtyCounter = tagCompound.getInteger("dirty");
+        }
+
+        public void readFromNBTExternal(NBTTagCompound tagCompound) {
             NBTTagList list = tagCompound.getTagList("scanpal", Constants.NBT.TAG_COMPOUND);
             for (int i = 0 ; i < list.tagCount() ; i++) {
                 NBTTagCompound tc = list.getCompoundTagAt(i);
@@ -237,7 +291,6 @@ public class ScanDataManager extends WorldSavedData {
             data = tagCompound.getByteArray("data");
             dataDim = new BlockPos(tagCompound.getInteger("scandimx"), tagCompound.getInteger("scandimy"), tagCompound.getInteger("scandimz"));
             dataOffset = new BlockPos(tagCompound.getInteger("scanoffx"), tagCompound.getInteger("scanoffy"), tagCompound.getInteger("scanoffz"));
-            dirtyCounter = tagCompound.getInteger("dirty");
         }
     }
 }
