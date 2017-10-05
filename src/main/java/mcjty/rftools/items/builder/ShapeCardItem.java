@@ -745,7 +745,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
         int dy = clamped.getY();
         int dz = clamped.getZ();
 
-        Map<IBlockState, ShapeRenderer.BlockDim> bdpal = new HashMap<>();
+        Map<IBlockState, ShapeBlockInfo> palette = new HashMap<>();
 
         int cnt = 0;
         int y = oy - dy / 2;
@@ -760,7 +760,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
                     if (solid) {
                         if (ox == 0 || ox == dx - 1 || oy == 0 || oy == dy - 1 || oz == 0 || oz == dz - 1) {
                             v = statePalette.alloc(lastState, -1) + 1;
-                        } else if (isClear(formula, x - 1, y, z, bdpal) || isClear(formula, x + 1, y, z, bdpal) || isClear(formula, x, y - 1, z, bdpal) || isClear(formula, x, y + 1, z, bdpal) || isClear(formula, x, y, z - 1, bdpal) || isClear(formula, x, y, z + 1, bdpal)) {
+                        } else if (isClear(formula, x - 1, y, z, palette) || isClear(formula, x + 1, y, z, palette) || isClear(formula, x, y - 1, z, palette) || isClear(formula, x, y + 1, z, palette) || isClear(formula, x, y, z - 1, palette) || isClear(formula, x, y, z + 1, palette)) {
                             v = statePalette.alloc(lastState, -1) + 1;
                         }
                     } else {
@@ -773,12 +773,12 @@ public class ShapeCardItem extends GenericRFToolsItem {
         return cnt;
     }
 
-    private static boolean isClear(IFormula formula, int x, int y, int z, Map<IBlockState, ShapeRenderer.BlockDim> bdpal) {
+    private static boolean isClear(IFormula formula, int x, int y, int z, Map<IBlockState, ShapeBlockInfo> palette) {
         if (!formula.isInside(x, y, z)) {
             return true;
         }
-        ShapeRenderer.BlockDim bd = ShapeRenderer.getBlockDim(bdpal, formula.getLastState());
-        return bd != null;
+        ShapeBlockInfo bd = ShapeBlockInfo.getBlockInfo(palette, formula.getLastState());
+        return bd.isNonSolid();
     }
 
     // Used for saving
@@ -810,7 +810,6 @@ public class ShapeCardItem extends GenericRFToolsItem {
                         }
                         v = statePalette.alloc(lastState, 0) + 1;
                     }
-                    System.out.println("v = " + v);
                     positions.add(v);
                 }
             }

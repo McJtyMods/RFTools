@@ -263,7 +263,7 @@ public class RenderData {
             return data;
         }
 
-        public boolean isEmptyAt(int i, Map<IBlockState, ShapeRenderer.BlockDim> bdpal) {
+        public boolean isEmptyAt(int i, Map<IBlockState, ShapeBlockInfo> palette) {
             if (i < 0) {
                 return true;
             }
@@ -271,9 +271,8 @@ public class RenderData {
                 return true;
             }
             IBlockState state = data.get(i).getValue();
-            ShapeRenderer.BlockDim bd = ShapeRenderer.getBlockDim(bdpal, state);
-            if (bd != null) {
-                return true;        // A non solid block. Consider as empty
+            if (ShapeBlockInfo.getBlockInfo(palette, state).isNonSolid()) {
+                return true;
             }
             return state == null;
         }

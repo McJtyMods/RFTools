@@ -1,12 +1,9 @@
 package mcjty.rftools.shapes;
 
 import mcjty.lib.tools.ItemStackTools;
-import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.varia.Check32;
-import net.minecraft.block.Block;
-import net.minecraft.block.material.MapColor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -15,7 +12,6 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import org.apache.commons.lang3.tuple.Pair;
@@ -268,136 +264,6 @@ public class ShapeRenderer {
         return crc.get();
     }
 
-    private static class Col {
-        private final float r;
-        private final float g;
-        private final float b;
-
-        public Col(float r, float g, float b) {
-            this.r = r;
-            this.g = g;
-            this.b = b;
-        }
-
-        public float getR() {
-            return r;
-        }
-
-        public float getG() {
-            return g;
-        }
-
-        public float getB() {
-            return b;
-        }
-    }
-
-    private static final Col COL_DEFAULT = new Col(.5f,.3f,.5f);
-    private static final Col COL_LAVA = new Col(0xd4/255.0f,0x5a/255.0f,0x12/255.0f);
-    private static final Col COL_NETHERBRICK = new Col(0x2d/255.0f,0x17/255.0f,0x1b/255.0f);
-    private static final Col COL_SCANNER = new Col(0x00/255.0f,0x00/255.0f,0xe2/255.0f);
-
-    public static class BlockDim {
-        private final float height;
-        private final float offset;
-
-        public BlockDim(float offset, float height) {
-            this.height = height;
-            this.offset = offset;
-        }
-
-        public float getHeight() {
-            return height;
-        }
-
-        public float getOffset() {
-            return offset;
-        }
-    }
-
-    private static final BlockDim BD_RAIL = new BlockDim(.1f, .2f);
-    private static final BlockDim BD_GRASS = new BlockDim(.1f, .2f);
-    private static final BlockDim BD_TORCH = new BlockDim(.4f, .7f);
-    private static final BlockDim BD_FLOWER = new BlockDim(.4f, .6f);
-    private static final BlockDim BD_MUSHROOM = new BlockDim(.3f, .5f);
-    private static final BlockDim BD_BARS = new BlockDim(.4f, 1);
-    private static final BlockDim BD_VINE = new BlockDim(.4f, 1);
-    private static final BlockDim BD_WALL = new BlockDim(.25f, .9f);
-    private static final BlockDim BD_SLAB = new BlockDim(.05f, .4f);
-    private static final BlockDim BD_FIRE = new BlockDim(.1f, .3f);
-
-    public static BlockDim getBlockDim(Map<IBlockState, BlockDim> palette, IBlockState state) {
-        if (state == null) {
-            return null;
-        }
-        if (palette.containsKey(state)) {
-            return palette.get(state);
-        }
-        BlockDim bd = null;
-        Block block = state.getBlock();
-        if (block == Blocks.TORCH || block == Blocks.REDSTONE_TORCH) {
-            bd = BD_TORCH;
-        } else if (block == Blocks.SNOW_LAYER || block == Blocks.STONE_SLAB || block == Blocks.WOODEN_SLAB) {
-            bd = BD_SLAB;
-        } else if (block == Blocks.COBBLESTONE_WALL) {
-            bd = BD_WALL;
-        } else if (block == Blocks.IRON_BARS || block == Blocks.LADDER) {
-            bd = BD_BARS;
-        } else if (block == Blocks.VINE) {
-            bd = BD_VINE;
-        } else if (block == Blocks.RED_FLOWER || block == Blocks.YELLOW_FLOWER) {
-            bd = BD_FLOWER;
-        } else if (block == Blocks.TALLGRASS) {
-            bd = BD_GRASS;
-        } else if (block == Blocks.RAIL || block == Blocks.ACTIVATOR_RAIL || block == Blocks.DETECTOR_RAIL || block == Blocks.GOLDEN_RAIL) {
-            bd = BD_RAIL;
-        } else if (block == Blocks.RED_MUSHROOM || block == Blocks.BROWN_MUSHROOM) {
-            bd = BD_MUSHROOM;
-        } else if (block == Blocks.FIRE) {
-            bd = BD_FIRE;
-        }
-        palette.put(state, bd);
-        return bd;
-    }
-
-    private Col getColor(Map<IBlockState, Col> palette, IBlockState state) {
-        if (state == null) {
-            return COL_DEFAULT;
-        }
-        if (palette.containsKey(state)) {
-            return palette.get(state);
-        }
-        Col col;
-        Block block = state.getBlock();
-        MapColor mapColor = block.getMapColor(state);
-        if (block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
-            col = COL_LAVA;
-        } else if (block == Blocks.NETHER_BRICK || block == Blocks.NETHER_BRICK_FENCE || block == Blocks.NETHER_BRICK_STAIRS) {
-            col = COL_NETHERBRICK;
-        } else if (block == BuilderSetup.scannerBlock) {
-            col = COL_SCANNER;
-        } else if (mapColor != null) {
-            col = new Col(((mapColor.colorValue>>16) & 0xff) / 255.0f, ((mapColor.colorValue>>8) & 0xff) / 255.0f, (mapColor.colorValue & 0xff) / 255.0f);
-        } else {
-            col = COL_DEFAULT;
-        }
-        float r = col.getR();
-        float g = col.getG();
-        float b = col.getB();
-        if (r * 1.2f > 1.0f) {
-            r = 0.99f/1.2f;
-        }
-        if (g * 1.2f > 1.0f) {
-            g = 0.99f/1.2f;
-        }
-        if (b * 1.2f > 1.0f) {
-            b = 0.99f/1.2f;
-        }
-        col = new Col(r, g, b);
-        palette.put(state, col);
-        return col;
-    }
-
 
     private void renderFaces(Tessellator tessellator, final VertexBuffer buffer,
                      ItemStack stack) {
@@ -448,8 +314,7 @@ public class ShapeRenderer {
     }
 
     private void createRenderData(Tessellator tessellator, VertexBuffer buffer, RenderData.RenderPlane plane, RenderData data) {
-        Map<IBlockState, Col> pallete = new HashMap<>();
-        Map<IBlockState, BlockDim> bdpal = new HashMap<>();
+        Map<IBlockState, ShapeBlockInfo> palette = new HashMap<>();
 
         double origOffsetX = buffer.xOffset;
         double origOffsetY = buffer.yOffset;
@@ -475,30 +340,26 @@ public class ShapeRenderer {
                     buffer.setTranslation(origOffsetX + x, origOffsetY + y, origOffsetZ + z);
                     avgcnt += cnt;
                     total++;
-                    Col col = getColor(pallete, state);
+                    ShapeBlockInfo info = ShapeBlockInfo.getBlockInfo(palette, state);
+                    ShapeBlockInfo.Col col = info.getCol();
                     float r = col.getR();
                     float g = col.getG();
                     float b = col.getB();
-                    BlockDim bd = getBlockDim(bdpal, state);
+                    ShapeBlockInfo.IBlockRender bd = info.getRender();
                     if (bd == null) {
-                        addSideFullTextureUp(buffer, cnt, r * .8f, g * .8f, b * .8f);
-                        addSideFullTextureDown(buffer, cnt, r * .8f, g * .8f, b * .8f);
-                        if (strip.isEmptyAt(i - 1, bdpal)) {
-                            addSideFullTextureNorth(buffer, cnt, r * 1.2f, g * 1.2f, b * 1.2f);
+                        addSideFullTextureU(buffer, cnt, r * .8f, g * .8f, b * .8f);
+                        addSideFullTextureD(buffer, cnt, r * .8f, g * .8f, b * .8f);
+                        if (strip.isEmptyAt(i - 1, palette)) {
+                            addSideFullTextureN(buffer, cnt, r * 1.2f, g * 1.2f, b * 1.2f);
                         }
-                        if (strip.isEmptyAt(i + 1, bdpal)) {
-                            addSideFullTextureSouth(buffer, cnt, r * 1.2f, g * 1.2f, b * 1.2f);
+                        if (strip.isEmptyAt(i + 1, palette)) {
+                            addSideFullTextureS(buffer, cnt, r * 1.2f, g * 1.2f, b * 1.2f);
                         }
-                        addSideFullTextureWest(buffer, cnt, r, g, b);
-                        addSideFullTextureEast(buffer, cnt, r, g, b);
+                        addSideFullTextureW(buffer, cnt, r, g, b);
+                        addSideFullTextureE(buffer, cnt, r, g, b);
                     } else {
                         for (int c = 0 ; c < cnt ; c++) {
-                            addSideFullTextureUp(buffer, bd.getOffset(), bd.getHeight(), c, r * .8f, g * .8f, b * .8f);
-                            addSideFullTextureDown(buffer, bd.getOffset(), bd.getHeight(), c, r * .8f, g * .8f, b * .8f);
-                            addSideFullTextureNorth(buffer, bd.getOffset(), bd.getHeight(), c, r * 1.2f, g * 1.2f, b * 1.2f);
-                            addSideFullTextureSouth(buffer, bd.getOffset(), bd.getHeight(), c, r * 1.2f, g * 1.2f, b * 1.2f);
-                            addSideFullTextureWest(buffer, bd.getOffset(), bd.getHeight(), c, r, g, b);
-                            addSideFullTextureEast(buffer, bd.getOffset(), bd.getHeight(), c, r, g, b);
+                            bd.render(buffer, c, r, g, b);
                         }
                     }
                 }
@@ -528,7 +389,7 @@ public class ShapeRenderer {
         GL11.glScissor(sx, sy, sw, sh);
     }
 
-    private static void addSideFullTextureDown(VertexBuffer buffer, int cnt, float r, float g, float b) {
+    public static void addSideFullTextureD(VertexBuffer buffer, int cnt, float r, float g, float b) {
         float a = 0.5f;
         buffer.pos(0, 0, 0).color(r, g, b, a).endVertex();
         buffer.pos(1, 0, 0).color(r, g, b, a).endVertex();
@@ -536,7 +397,7 @@ public class ShapeRenderer {
         buffer.pos(0, 0, cnt).color(r, g, b, a).endVertex();
     }
 
-    private static void addSideFullTextureUp(VertexBuffer buffer, int cnt, float r, float g, float b) {
+    public static void addSideFullTextureU(VertexBuffer buffer, int cnt, float r, float g, float b) {
         float a = 0.5f;
         buffer.pos(0, 1, cnt).color(r, g, b, a).endVertex();
         buffer.pos(1, 1, cnt).color(r, g, b, a).endVertex();
@@ -544,7 +405,7 @@ public class ShapeRenderer {
         buffer.pos(0, 1, 0).color(r, g, b, a).endVertex();
     }
 
-    private static void addSideFullTextureEast(VertexBuffer buffer, int cnt, float r, float g, float b) {
+    public static void addSideFullTextureE(VertexBuffer buffer, int cnt, float r, float g, float b) {
         float a = 0.5f;
         buffer.pos(1, 0, 0).color(r, g, b, a).endVertex();
         buffer.pos(1, 1, 0).color(r, g, b, a).endVertex();
@@ -552,7 +413,7 @@ public class ShapeRenderer {
         buffer.pos(1, 0, cnt).color(r, g, b, a).endVertex();
     }
 
-    private static void addSideFullTextureWest(VertexBuffer buffer, int cnt, float r, float g, float b) {
+    public static void addSideFullTextureW(VertexBuffer buffer, int cnt, float r, float g, float b) {
         float a = 0.5f;
         buffer.pos(0, 0, cnt).color(r, g, b, a).endVertex();
         buffer.pos(0, 1, cnt).color(r, g, b, a).endVertex();
@@ -560,7 +421,7 @@ public class ShapeRenderer {
         buffer.pos(0, 0, 0).color(r, g, b, a).endVertex();
     }
 
-    private static void addSideFullTextureNorth(VertexBuffer buffer, int cnt, float r, float g, float b) {
+    public static void addSideFullTextureN(VertexBuffer buffer, int cnt, float r, float g, float b) {
         float a = 0.5f;
         buffer.pos(1, 1, 0).color(r, g, b, a).endVertex();
         buffer.pos(1, 0, 0).color(r, g, b, a).endVertex();
@@ -568,60 +429,12 @@ public class ShapeRenderer {
         buffer.pos(0, 1, 0).color(r, g, b, a).endVertex();
     }
 
-    private static void addSideFullTextureSouth(VertexBuffer buffer, int cnt, float r, float g, float b) {
+    public static void addSideFullTextureS(VertexBuffer buffer, int cnt, float r, float g, float b) {
         float a = 0.5f;
         buffer.pos(1, 0, cnt).color(r, g, b, a).endVertex();
         buffer.pos(1, 1, cnt).color(r, g, b, a).endVertex();
         buffer.pos(0, 1, cnt).color(r, g, b, a).endVertex();
         buffer.pos(0, 0, cnt).color(r, g, b, a).endVertex();
-    }
-
-    private static void addSideFullTextureDown(VertexBuffer buffer, float offset, float height, int c, float r, float g, float b) {
-        float a = 0.5f;
-        buffer.pos(offset, 0, offset+c).color(r, g, b, a).endVertex();
-        buffer.pos(1-offset, 0, offset+c).color(r, g, b, a).endVertex();
-        buffer.pos(1-offset, 0, 1-offset+c).color(r, g, b, a).endVertex();
-        buffer.pos(offset, 0, 1-offset+c).color(r, g, b, a).endVertex();
-    }
-
-    private static void addSideFullTextureUp(VertexBuffer buffer, float offset, float height, int c, float r, float g, float b) {
-        float a = 0.5f;
-        buffer.pos(offset, height, 1-offset+c).color(r, g, b, a).endVertex();
-        buffer.pos(1-offset, height, 1-offset+c).color(r, g, b, a).endVertex();
-        buffer.pos(1-offset, height, offset+c).color(r, g, b, a).endVertex();
-        buffer.pos(offset, height, offset+c).color(r, g, b, a).endVertex();
-    }
-
-    private static void addSideFullTextureEast(VertexBuffer buffer, float offset, float height, int c, float r, float g, float b) {
-        float a = 0.5f;
-        buffer.pos(1-offset, 0, offset+c).color(r, g, b, a).endVertex();
-        buffer.pos(1-offset, height, offset+c).color(r, g, b, a).endVertex();
-        buffer.pos(1-offset, height, 1-offset+c).color(r, g, b, a).endVertex();
-        buffer.pos(1-offset, 0, 1-offset+c).color(r, g, b, a).endVertex();
-    }
-
-    private static void addSideFullTextureWest(VertexBuffer buffer, float offset, float height, int c, float r, float g, float b) {
-        float a = 0.5f;
-        buffer.pos(offset, 0, 1-offset+c).color(r, g, b, a).endVertex();
-        buffer.pos(offset, height, 1-offset+c).color(r, g, b, a).endVertex();
-        buffer.pos(offset, height, offset+c).color(r, g, b, a).endVertex();
-        buffer.pos(offset, 0, offset+c).color(r, g, b, a).endVertex();
-    }
-
-    private static void addSideFullTextureNorth(VertexBuffer buffer, float offset, float height, int c, float r, float g, float b) {
-        float a = 0.5f;
-        buffer.pos(1-offset, height, offset+c).color(r, g, b, a).endVertex();
-        buffer.pos(1-offset, 0, offset+c).color(r, g, b, a).endVertex();
-        buffer.pos(offset, 0, offset+c).color(r, g, b, a).endVertex();
-        buffer.pos(offset, height, offset+c).color(r, g, b, a).endVertex();
-    }
-
-    private static void addSideFullTextureSouth(VertexBuffer buffer, float offset, float height, int c, float r, float g, float b) {
-        float a = 0.5f;
-        buffer.pos(1-offset, 0, 1-offset+c).color(r, g, b, a).endVertex();
-        buffer.pos(1-offset, height, 1-offset+c).color(r, g, b, a).endVertex();
-        buffer.pos(offset, height, 1-offset+c).color(r, g, b, a).endVertex();
-        buffer.pos(offset, 0, 1-offset+c).color(r, g, b, a).endVertex();
     }
 
 }
