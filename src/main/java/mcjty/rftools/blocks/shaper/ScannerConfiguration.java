@@ -23,7 +23,7 @@ public class ScannerConfiguration {
     public static int planeSurfacePerTick = 200*200;
     public static int clientRenderDataTimeout = 5000;
 
-    public static float baseProjectorVolume = 0.6f;      // Use 0 to turn off projector sounds
+    public static float baseProjectorVolume = 0.4f;      // Use 0 to turn off projector sounds
 
 
     public static void init(Configuration cfg) {

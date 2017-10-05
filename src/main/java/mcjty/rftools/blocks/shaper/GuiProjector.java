@@ -46,6 +46,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
     private Slider scaleSlider;
     private ToggleButton autoRotate;
     private ToggleButton scanline;
+    private ToggleButton sound;
 
     private ChoiceLabel[] rsLabelOn = new ChoiceLabel[4];
     private ChoiceLabel[] rsLabelOff = new ChoiceLabel[4];
@@ -87,7 +88,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
         angleI.setLayoutHint(new PositionalLayout.PositionalHint(23, 30, 18, 15));
         angleLabel = new ScrollableLabel(mc, this).setRealMinimum(0).setRealMaximum(360)
                 .setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT)
-                .setLayoutHint(new PositionalLayout.PositionalHint(32, 30, 34, 15));
+                .setLayoutHint(new PositionalLayout.PositionalHint(38, 30, 30, 15));
         angleLabel.setRealValue(tileEntity.getAngleInt());
         Button angleM = new Button(mc, this).setText("-").setLayoutHint(new PositionalLayout.PositionalHint(5, 30, 10, 15))
                 .addButtonEvent(parent -> min(angleLabel));
@@ -101,7 +102,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
         scaleI.setLayoutHint(new PositionalLayout.PositionalHint(23, 62, 18, 15));
         scaleLabel = new ScrollableLabel(mc, this).setRealMinimum(0).setRealMaximum(100)
                 .setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT)
-                .setLayoutHint(new PositionalLayout.PositionalHint(32, 62, 34, 15));
+                .setLayoutHint(new PositionalLayout.PositionalHint(38, 62, 30, 15));
         scaleLabel.setRealValue(tileEntity.getScaleInt());
         Button scaleM = new Button(mc, this).setText("-").setLayoutHint(new PositionalLayout.PositionalHint(5, 62, 10, 15))
                 .addButtonEvent(parent -> min(scaleLabel));
@@ -115,7 +116,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
         offsetI.setLayoutHint(new PositionalLayout.PositionalHint(23, 94, 18, 15));
         offsetLabel = new ScrollableLabel(mc, this).setRealMinimum(0).setRealMaximum(100)
                 .setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT)
-                .setLayoutHint(new PositionalLayout.PositionalHint(32, 94, 34, 15));
+                .setLayoutHint(new PositionalLayout.PositionalHint(38, 94, 30, 15));
         offsetLabel.setRealValue(tileEntity.getOffsetInt());
         Button offsetM = new Button(mc, this).setText("-").setLayoutHint(new PositionalLayout.PositionalHint(5, 94, 10, 15))
                 .addButtonEvent(parent -> min(offsetLabel));
@@ -128,21 +129,28 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
         autoRotate = new ToggleButton(mc, this).setCheckMarker(true)
                 .setText("Auto")
                 .setTooltips("Automatic client-side rotation")
-                .setLayoutHint(new PositionalLayout.PositionalHint(5, 130, 48, 16));
+                .setLayoutHint(new PositionalLayout.PositionalHint(5, 128, 48, 16));
         autoRotate.setPressed(tileEntity.isAutoRotate());
         toplevel.addChild(autoRotate);
         scanline = new ToggleButton(mc, this).setCheckMarker(true)
                 .setText("SL")
                 .setTooltips("Enable/disable visual scanlines when", "the scan is refreshed")
-                .setLayoutHint(new PositionalLayout.PositionalHint(5, 150, 48, 16));
+                .setLayoutHint(new PositionalLayout.PositionalHint(5, 146, 48, 16));
         scanline.setPressed(tileEntity.isScanline());
         toplevel.addChild(scanline);
+        sound = new ToggleButton(mc, this).setCheckMarker(true)
+                .setText("Snd")
+                .setTooltips("Enable/disable sound during", "visual scan")
+                .setLayoutHint(new PositionalLayout.PositionalHint(5, 164, 48, 16));
+        sound.setPressed(tileEntity.isSound());
+        toplevel.addChild(sound);
 
         angleLabel.addValueEvent((parent, newValue) -> update());
         scaleLabel.addValueEvent((parent, newValue) -> update());
         offsetLabel.addValueEvent((parent, newValue) -> update());
         autoRotate.addButtonEvent(parent -> update());
         scanline.addButtonEvent(parent -> update());
+        sound.addButtonEvent(parent -> update());
 
 
         showAxis = new ToggleButton(mc, this).setCheckMarker(true).setText("A").setLayoutHint(new PositionalLayout.PositionalHint(5, 200, 24, 16));
@@ -268,7 +276,8 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
                 new Argument("offset", offsetLabel.getRealValue()),
                 new Argument("angle", angleLabel.getRealValue()),
                 new Argument("auto", autoRotate.isPressed()),
-                new Argument("scan", scanline.isPressed())
+                new Argument("scan", scanline.isPressed()),
+                new Argument("sound", sound.isPressed())
                 );
     }
 
@@ -303,6 +312,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
             valOn[i].setEnabled(op.getOpcodeOn().isNeedsValue());
             valOff[i].setEnabled(op.getOpcodeOff().isNeedsValue());
         }
+        sound.setEnabled(scanline.isPressed());
 
         drawWindow();
 

@@ -17,6 +17,7 @@ public class PacketProjectorClientNotification implements IMessage {
     private boolean autoRotate;
     private boolean projecting;
     private boolean scanline;
+    private boolean sound;
     private int counter;
 
     @Override
@@ -28,6 +29,7 @@ public class PacketProjectorClientNotification implements IMessage {
         autoRotate = buf.readBoolean();
         projecting = buf.readBoolean();
         scanline = buf.readBoolean();
+        sound = buf.readBoolean();
         counter = buf.readInt();
     }
 
@@ -40,6 +42,7 @@ public class PacketProjectorClientNotification implements IMessage {
         buf.writeBoolean(autoRotate);
         buf.writeBoolean(projecting);
         buf.writeBoolean(scanline);
+        buf.writeBoolean(sound);
         buf.writeInt(counter);
     }
 
@@ -71,6 +74,10 @@ public class PacketProjectorClientNotification implements IMessage {
         return counter;
     }
 
+    public boolean isSound() {
+        return sound;
+    }
+
     public PacketProjectorClientNotification() {
     }
 
@@ -82,6 +89,7 @@ public class PacketProjectorClientNotification implements IMessage {
         autoRotate = tileEntity.isAutoRotate();
         projecting = tileEntity.isProjecting();
         scanline = tileEntity.isScanline();
+        sound = tileEntity.isSound();
         counter = tileEntity.getCounter();
     }
 

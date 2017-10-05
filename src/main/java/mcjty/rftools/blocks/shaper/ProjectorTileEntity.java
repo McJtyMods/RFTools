@@ -41,6 +41,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
     private boolean autoRotate = false;
     private boolean projecting = false;
     private boolean scanline = true;
+    private boolean sound = true;
     private int counter = 0;    // Counter to detect that we need to do a new 'scan' client-side
 
     // Needed client side but set on client when 'counter' changes
@@ -236,6 +237,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
         angle = tagCompound.hasKey("angle") ? tagCompound.getFloat("angle") : .0f;
         autoRotate = tagCompound.getBoolean("rot");
         scanline = tagCompound.getBoolean("scan");
+        sound = tagCompound.getBoolean("sound");
         projecting = tagCompound.getBoolean("projecting");
         active = tagCompound.getBoolean("active");
         counter = tagCompound.getInteger("counter");
@@ -271,6 +273,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
         tagCompound.setFloat("angle", angle);
         tagCompound.setBoolean("rot", autoRotate);
         tagCompound.setBoolean("scan", scanline);
+        tagCompound.setBoolean("sound", sound);
         tagCompound.setBoolean("projecting", projecting);
         tagCompound.setBoolean("active", active);
         tagCompound.setInteger("counter", counter);
@@ -344,6 +347,10 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
         return scanline;
     }
 
+    public boolean isSound() {
+        return sound;
+    }
+
     public boolean isProjecting() {
         return projecting;
     }
@@ -402,6 +409,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
         autoRotate = message.isAutoRotate();
         projecting = message.isProjecting();
         scanline = message.isScanline();
+        sound = message.isSound();
         if (counter != message.getCounter()) {
             counter = message.getCounter();
             scanNeeded = true;
@@ -444,6 +452,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
             setAngleInt(angleInt);
             autoRotate = args.get("auto").getBoolean();
             scanline = args.get("scan").getBoolean();
+            sound = args.get("sound").getBoolean();
             markDirtyClient();
             return true;
         }

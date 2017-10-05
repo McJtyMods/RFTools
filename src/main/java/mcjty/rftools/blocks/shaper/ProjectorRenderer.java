@@ -20,7 +20,7 @@ public class ProjectorRenderer extends TileEntitySpecialRenderer<ProjectorTileEn
             boolean doSound = renderer.renderShapeInWorld(renderStack, x, y, z, te.getVerticalOffset(), te.getScale(), te.getAngle(),
                     te.isScanline());
             if (ScannerConfiguration.baseProjectorVolume > 0.0f) {
-                if (doSound) {
+                if (doSound && te.isSound()) {
                     if (!ProjectorSounds.isScanPlaying(te.getPos())) {
                         ProjectorSounds.playScan(te.getWorld(), te.getPos());
                     }
