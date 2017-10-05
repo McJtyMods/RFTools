@@ -17,8 +17,13 @@ public class ProjectorRenderer extends TileEntitySpecialRenderer<ProjectorTileEn
         ItemStack renderStack = te.getRenderStack();
         if (te.isProjecting() && ItemStackTools.isValid(renderStack)) {
             ShapeRenderer renderer = te.getShapeRenderer();
-            renderer.renderShapeInWorld(renderStack, x, y, z, te.getVerticalOffset(), te.getScale(), te.getAngle(),
+            boolean doSound = renderer.renderShapeInWorld(renderStack, x, y, z, te.getVerticalOffset(), te.getScale(), te.getAngle(),
                     te.isScanline());
+            if (doSound && ScannerConfiguration.baseProjectorVolume > 0.0f) {
+                if (!ProjectorSounds.isScanPlaying(te.getWorld(), te.getPos())) {
+                    ProjectorSounds.playScan(te.getWorld(), te.getPos());
+                }
+            }
         }
     }
 }

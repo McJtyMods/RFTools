@@ -23,6 +23,8 @@ public class ScannerConfiguration {
     public static int planeSurfacePerTick = 200*200;
     public static int clientRenderDataTimeout = 5000;
 
+    public static float baseProjectorVolume = 1.0f;      // Use 0 to turn off projector sounds
+
 
     public static void init(Configuration cfg) {
         SCANNER_MAXENERGY = cfg.get(CATEGORY_SCANNER, "scannerMaxRF", SCANNER_MAXENERGY,
@@ -52,6 +54,9 @@ public class ScannerConfiguration {
         clientRenderDataTimeout = cfg.get(CATEGORY_SCANNER, "clientRenderDataTimeout", clientRenderDataTimeout,
                 "The amount of milliseconds before the client will remove shape render data that hasn't been used. Decreasing this will free memory faster at the cost of having to update shape renders more often",
                 100, 1000000).getInt();
+
+        baseProjectorVolume = (float) cfg.get(CATEGORY_SCANNER, "baseProjectorVolume", baseProjectorVolume,
+                "The volume for the projector sound (1.0 is default, 0.0 is off)").getDouble();
 
         useVBO = cfg.get(CATEGORY_SCANNER, "useVBO", useVBO,
                 "Use VBO for rendering shapecard views. Otherwise display lists").getBoolean();

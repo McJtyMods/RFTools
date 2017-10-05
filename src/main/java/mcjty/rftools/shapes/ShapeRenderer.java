@@ -113,7 +113,7 @@ public class ShapeRenderer {
         }
     }
 
-    public void renderShapeInWorld(ItemStack stack, double x, double y, double z, float offset, float scale, float angle,
+    public boolean renderShapeInWorld(ItemStack stack, double x, double y, double z, float offset, float scale, float angle,
                                    boolean scan) {
         GlStateManager.pushMatrix();
         GlStateManager.translate((float) x + 0.5F, (float) y + 1F + offset, (float) z + 0.5F);
@@ -129,7 +129,7 @@ public class ShapeRenderer {
 
         Tessellator tessellator = Tessellator.getInstance();
         VertexBuffer buffer = tessellator.getBuffer();
-        renderFaces(tessellator, buffer, stack, scan);
+        boolean doSound = renderFaces(tessellator, buffer, stack, scan);
 
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
@@ -138,6 +138,7 @@ public class ShapeRenderer {
         Minecraft.getMinecraft().entityRenderer.enableLightmap();
 
         GlStateManager.popMatrix();
+        return doSound;
     }
 
     public void renderShape(IShapeParentGui gui, ItemStack stack, int x, int y, boolean showAxis, boolean showOuter, boolean showScan, boolean showGuidelines) {
@@ -266,7 +267,7 @@ public class ShapeRenderer {
     }
 
 
-    private void renderFaces(Tessellator tessellator, final VertexBuffer buffer,
+    private boolean renderFaces(Tessellator tessellator, final VertexBuffer buffer,
                      ItemStack stack, boolean showScan) {
 
         RenderData data = getRenderDataAndCreate(shapeID);
@@ -289,6 +290,7 @@ public class ShapeRenderer {
             }
         }
 
+        boolean needScanSound = false;
         if (data.getPlanes() != null) {
             long time = System.currentTimeMillis();
             for (RenderData.RenderPlane plane : data.getPlanes()) {
@@ -299,6 +301,7 @@ public class ShapeRenderer {
                     }
                     boolean flash = showScan && (plane.getBirthtime() > time-200);
                     if (flash) {
+                        needScanSound = true;
                         GlStateManager.enableBlend();
                         GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE);
 //                        GlStateManager.colorMask(false, false, true, true);
@@ -312,6 +315,7 @@ public class ShapeRenderer {
                 }
             }
         }
+        return needScanSound;
     }
 
     private void createRenderData(Tessellator tessellator, VertexBuffer buffer, RenderData.RenderPlane plane, RenderData data) {
