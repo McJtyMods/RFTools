@@ -121,12 +121,18 @@ public class Formulas {
         }
 
         @Override
+        public boolean isInsideSafe(int x, int y, int z) {
+            if (x < x1 || x >= x1+dx || y < y1 || y >= y1+dy || z < z1 || z >= z1+dz) {
+                return false;
+            }
+            return isInside(x, y, z);
+        }
+
+        @Override
         public boolean isInside(int x, int y, int z) {
             if (data == null) {
                 return false;
             }
-            // y x z
-            // x z y
             int index = (x-x1) * dy * dz + (z-z1) * dy + (y-y1);
             if (data[index] == 0) {
                 return false;

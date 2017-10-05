@@ -95,6 +95,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
         }
     }
 
+
     public ShapeID getShapeID() {
         int scanId = ShapeCardItem.getScanId(getRenderStack());
         if (scanId == 0) {
@@ -222,6 +223,11 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
         return stack.getItem() == BuilderSetup.shapeCardItem;
+    }
+
+    @Override
+    public void readClientDataFromNBT(NBTTagCompound tagCompound) {
+        super.readClientDataFromNBT(tagCompound);
     }
 
     @Override
