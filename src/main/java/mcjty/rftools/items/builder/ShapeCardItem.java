@@ -745,6 +745,8 @@ public class ShapeCardItem extends GenericRFToolsItem {
         int dy = clamped.getY();
         int dz = clamped.getZ();
 
+        Map<IBlockState, ShapeRenderer.BlockDim> bdpal = new HashMap<>();
+
         int cnt = 0;
         int y = oy - dy / 2;
         for (int ox = 0; ox < dx; ox++) {
@@ -758,7 +760,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
                     if (solid) {
                         if (ox == 0 || ox == dx - 1 || oy == 0 || oy == dy - 1 || oz == 0 || oz == dz - 1) {
                             v = statePalette.alloc(lastState, -1) + 1;
-                        } else if (!formula.isInside(x - 1, y, z) || !formula.isInside(x + 1, y, z) || !formula.isInside(x, y - 1, z) || !formula.isInside(x, y + 1, z) || !formula.isInside(x, y, z - 1) || !formula.isInside(x, y, z + 1)) {
+                        } else if (isClear(formula, x - 1, y, z, bdpal) || isClear(formula, x + 1, y, z, bdpal) || isClear(formula, x, y - 1, z, bdpal) || isClear(formula, x, y + 1, z, bdpal) || isClear(formula, x, y, z - 1, bdpal) || isClear(formula, x, y, z + 1, bdpal)) {
                             v = statePalette.alloc(lastState, -1) + 1;
                         }
                     } else {
@@ -769,6 +771,14 @@ public class ShapeCardItem extends GenericRFToolsItem {
             }
         }
         return cnt;
+    }
+
+    private static boolean isClear(IFormula formula, int x, int y, int z, Map<IBlockState, ShapeRenderer.BlockDim> bdpal) {
+        if (!formula.isInside(x, y, z)) {
+            return true;
+        }
+        ShapeRenderer.BlockDim bd = ShapeRenderer.getBlockDim(bdpal, formula.getLastState());
+        return bd != null;
     }
 
     // Used for saving

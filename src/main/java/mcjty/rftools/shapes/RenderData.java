@@ -13,6 +13,7 @@ import org.lwjgl.opengl.GL11;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static mcjty.rftools.blocks.shaper.ScannerConfiguration.useVBO;
 
@@ -262,14 +263,19 @@ public class RenderData {
             return data;
         }
 
-        public boolean isEmptyAt(int i) {
+        public boolean isEmptyAt(int i, Map<IBlockState, ShapeRenderer.BlockDim> bdpal) {
             if (i < 0) {
                 return true;
             }
             if (i >= data.size()) {
                 return true;
             }
-            return data.get(i).getValue() == null;
+            IBlockState state = data.get(i).getValue();
+            ShapeRenderer.BlockDim bd = ShapeRenderer.getBlockDim(bdpal, state);
+            if (bd != null) {
+                return true;        // A non solid block. Consider as empty
+            }
+            return state == null;
         }
 
         public void add(IBlockState state) {
