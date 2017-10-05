@@ -210,7 +210,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
         tileEntity.requestRfFromServer(RFTools.MODID);
 
         boolean instack = inventorySlots.getSlot(ScannerContainer.SLOT_IN).getHasStack();
-        if (currentRF < ScannerConfiguration.SCANNER_ONESCAN) {
+        if (currentRF < ScannerConfiguration.SCANNER_PERTICK) {
             instack = false;
         }
         if (tileEntity.getScanProgress() >= 0) {

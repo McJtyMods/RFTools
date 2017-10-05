@@ -63,10 +63,13 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     public void update() {
         if (!getWorld().isRemote) {
             if (progress != null) {
-                int done = 0;
-                while (done < ScannerConfiguration.surfaceAreaPerTick) {
-                    progressScan();
-                    done -= dataDim.getZ()*dataDim.getY();  // We scan planes on the x axis
+                if (getEnergyStored() >= ScannerConfiguration.SCANNER_PERTICK) {
+                    consumeEnergy(ScannerConfiguration.SCANNER_PERTICK);
+                    int done = 0;
+                    while (progress != null && done < ScannerConfiguration.surfaceAreaPerTick) {
+                        progressScan();
+                        done += dataDim.getZ() * dataDim.getY();  // We scan planes on the x axis
+                    }
                 }
             } else if (isMachineEnabled()) {
                 scan();
@@ -240,12 +243,6 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
             // Cannot scan. No input card
             return;
         }
-
-        if (getEnergyStored() < ScannerConfiguration.SCANNER_ONESCAN) {
-            // Not enough power
-            return;
-        }
-        consumeEnergy(ScannerConfiguration.SCANNER_ONESCAN);
 
         int dimX = dataDim.getX();
         int dimY = dataDim.getY();
