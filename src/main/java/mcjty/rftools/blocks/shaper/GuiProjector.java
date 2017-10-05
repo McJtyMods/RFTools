@@ -128,13 +128,13 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
         autoRotate = new ToggleButton(mc, this).setCheckMarker(true)
                 .setText("Auto")
                 .setTooltips("Automatic client-side rotation")
-                .setLayoutHint(new PositionalLayout.PositionalHint(5, 126, 48, 16));
+                .setLayoutHint(new PositionalLayout.PositionalHint(5, 130, 48, 16));
         autoRotate.setPressed(tileEntity.isAutoRotate());
         toplevel.addChild(autoRotate);
         scanline = new ToggleButton(mc, this).setCheckMarker(true)
                 .setText("SL")
                 .setTooltips("Enable/disable visual scanlines when", "the scan is refreshed")
-                .setLayoutHint(new PositionalLayout.PositionalHint(5, 110, 48, 16));
+                .setLayoutHint(new PositionalLayout.PositionalHint(5, 150, 48, 16));
         scanline.setPressed(tileEntity.isScanline());
         toplevel.addChild(scanline);
 
