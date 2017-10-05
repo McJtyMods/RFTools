@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.shaper;
 
-import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.RFTools;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MovingSound;
@@ -14,7 +13,7 @@ import java.util.Map;
 
 public class ProjectorSounds {
 
-    private static final Map<GlobalCoordinate, MovingSound> sounds = new HashMap<>();
+    private static final Map<BlockPos, MovingSound> sounds = new HashMap<>();
 
     public static SoundEvent scanSound;
 
@@ -28,31 +27,28 @@ public class ProjectorSounds {
         return event;
     }
 
-    public static void stopSound(World worldObj, BlockPos pos) {
-        GlobalCoordinate g = new GlobalCoordinate(pos, worldObj.provider.getDimension());
-        if (sounds.containsKey(g)) {
-            MovingSound movingSound = sounds.get(g);
+    public static void stopSound(BlockPos pos) {
+        if (sounds.containsKey(pos)) {
+            MovingSound movingSound = sounds.get(pos);
             Minecraft.getMinecraft().getSoundHandler().stopSound(movingSound);
-            sounds.remove(g);
+            sounds.remove(pos);
         }
     }
 
-    private static void playSound(World worldObj, BlockPos pos, MovingSound sound) {
-        stopSound(worldObj, pos);
+    private static void playSound(BlockPos pos, MovingSound sound) {
+        stopSound(pos);
         Minecraft.getMinecraft().getSoundHandler().playSound(sound);
-        GlobalCoordinate g = new GlobalCoordinate(pos, worldObj.provider.getDimension());
-        sounds.put(g, sound);
+        sounds.put(pos, sound);
     }
 
 
     public static void playScan(World worldObj, BlockPos pos) {
         MovingSound sound = new ProjectorSound(worldObj, pos.getX(), pos.getY(), pos.getZ());
-        playSound(worldObj, pos, sound);
+        playSound(pos, sound);
     }
 
-    public static boolean isScanPlaying(World worldObj, BlockPos pos) {
-        GlobalCoordinate g = new GlobalCoordinate(pos, worldObj.provider.getDimension());
-        MovingSound movingSound = sounds.get(g);
+    public static boolean isScanPlaying(BlockPos pos) {
+        MovingSound movingSound = sounds.get(pos);
         return movingSound instanceof ProjectorSound;
     }
 }

@@ -23,7 +23,7 @@ public class ScannerConfiguration {
     public static int planeSurfacePerTick = 200*200;
     public static int clientRenderDataTimeout = 5000;
 
-    public static float baseProjectorVolume = 1.0f;      // Use 0 to turn off projector sounds
+    public static float baseProjectorVolume = 0.6f;      // Use 0 to turn off projector sounds
 
 
     public static void init(Configuration cfg) {
@@ -56,7 +56,7 @@ public class ScannerConfiguration {
                 100, 1000000).getInt();
 
         baseProjectorVolume = (float) cfg.get(CATEGORY_SCANNER, "baseProjectorVolume", baseProjectorVolume,
-                "The volume for the projector sound (1.0 is default, 0.0 is off)").getDouble();
+                "The volume for the projector sound (0.0 is off)").getDouble();
 
         useVBO = cfg.get(CATEGORY_SCANNER, "useVBO", useVBO,
                 "Use VBO for rendering shapecard views. Otherwise display lists").getBoolean();
