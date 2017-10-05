@@ -15,6 +15,7 @@ import mcjty.rftools.blocks.security.PacketGetSecurityInfo;
 import mcjty.rftools.blocks.security.PacketGetSecurityName;
 import mcjty.rftools.blocks.security.PacketSecurityInfoReady;
 import mcjty.rftools.blocks.security.PacketSecurityNameReady;
+import mcjty.rftools.blocks.shaper.PacketProjectorClientNotification;
 import mcjty.rftools.items.modifier.PacketUpdateModifier;
 import mcjty.rftools.shapes.*;
 import mcjty.rftools.blocks.shield.PacketFiltersReady;
@@ -106,6 +107,7 @@ public class RFToolsMessages {
         net.registerMessage(PacketReturnRfInRange.Handler.class, PacketReturnRfInRange.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketReturnShapeData.Handler.class, PacketReturnShapeData.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketReturnScanDirty.Handler.class, PacketReturnScanDirty.class, PacketHandler.nextID(), Side.CLIENT);
+        net.registerMessage(PacketProjectorClientNotification.Handler.class, PacketProjectorClientNotification.class, PacketHandler.nextID(), Side.CLIENT);
 
         PacketHandler.register(PacketHandler.nextPacketID(), StorageInfoPacketServer.class, StorageInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), PowerCellInfoPacketServer.class, PowerCellInfoPacketClient.class);

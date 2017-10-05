@@ -6,6 +6,7 @@ import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.items.builder.ShapeCardItem;
+import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.RenderData;
 import mcjty.rftools.shapes.ShapeID;
 import mcjty.rftools.shapes.ShapeRenderer;
@@ -13,8 +14,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -31,19 +30,24 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ProjectorContainer.factory, 1);
     private ShapeRenderer shapeRenderer = null;
+    private ProjectorOperation operations[] = new ProjectorOperation[4];
 
+    private boolean active = false;
+
+    // The following fields are all needed on client and sent with a custom packet
     private float verticalOffset = .2f;
     private float scale = 0.01f;
     private float angle = 0.0f;
     private boolean autoRotate = false;
     private boolean projecting = false;
-    private boolean active = false;
     private boolean scanline = true;
-
     private int counter = 0;    // Counter to detect that we need to do a new 'scan' client-side
+
+    // Needed client side but set on client when 'counter' changes
     private boolean scanNeeded = false;
 
-    private ProjectorOperation operations[] = new ProjectorOperation[4];
+    // Set on server
+    private boolean doNotifyClients = false;  // Set to true to notify clients
 
     public ProjectorTileEntity() {
         super(ScannerConfiguration.PROJECTOR_MAXENERGY, ScannerConfiguration.PROJECTOR_RECEIVEPERTICK);
@@ -74,11 +78,15 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
 
             if (a != projecting) {
                 projecting = a;
-                markDirtyClient();
+                markForNotification();
             }
 
             if (projecting) {
                 consumeEnergy(ScannerConfiguration.PROJECTOR_USEPERTICK);
+            }
+            if (doNotifyClients) {
+                doNotifyClients = false;
+                notifyClients();
             }
         } else {
             if (scanNeeded) {
@@ -104,16 +112,6 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
             return new ShapeID(0, null, scanId);
         }
     }
-
-    @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
-        int old = counter;
-        super.onDataPacket(net, packet);
-        if (old != counter && getWorld().isRemote) {
-            scanNeeded = true;
-        }
-    }
-
 
     @Override
     public void setPowerInput(int powered) {
@@ -152,7 +150,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
             case SCAN:
                 if (pulse) {
                     counter++;
-                    markDirtyClient();
+                    markForNotification();
                 }
                 break;
             case OFFSET: {
@@ -164,7 +162,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
                         o--;
                     }
                     setOffsetInt(o);
-                    markDirtyClient();
+                    markForNotification();
                 }
                 break;
             }
@@ -177,7 +175,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
                         o--;
                     }
                     setAngleInt(o);
-                    markDirtyClient();
+                    markForNotification();
                 }
                 break;
             }
@@ -190,7 +188,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
                         o--;
                     }
                     setScaleInt(o);
-                    markDirtyClient();
+                    markForNotification();
                 }
                 break;
             }
@@ -209,6 +207,10 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
         return operations;
     }
 
+    public int getCounter() {
+        return counter;
+    }
+
     @Override
     public InventoryHelper getInventoryHelper() {
         return inventoryHelper;
@@ -223,11 +225,6 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
         return stack.getItem() == BuilderSetup.shapeCardItem;
-    }
-
-    @Override
-    public void readClientDataFromNBT(NBTTagCompound tagCompound) {
-        super.readClientDataFromNBT(tagCompound);
     }
 
     @Override
@@ -373,6 +370,42 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
         return new AxisAlignedBB(pos.add(-5, 0, -5), pos.add(6, 5, 6));
+    }
+
+    private void markForNotification() {
+        markDirtyQuick();
+        doNotifyClients = true;
+    }
+
+    private void notifyClients() {
+        int dimension = getWorld().provider.getDimension();
+        double x = getPos().getX();
+        double y = getPos().getY();
+        double z = getPos().getZ();
+        double sqradius = 40 * 40;
+        for (EntityPlayerMP player : getWorld().getMinecraftServer().getPlayerList().getPlayers()) {
+            if (player.dimension == dimension) {
+                double d0 = x - player.posX;
+                double d1 = y - player.posY;
+                double d2 = z - player.posZ;
+                if (d0 * d0 + d1 * d1 + d2 * d2 < sqradius) {
+                    RFToolsMessages.INSTANCE.sendTo(new PacketProjectorClientNotification(this), player);
+                }
+            }
+        }
+    }
+
+    public void updateFromServer(PacketProjectorClientNotification message) {
+        verticalOffset = message.getVerticalOffset();
+        scale = message.getScale();
+        angle = message.getAngle();
+        autoRotate = message.isAutoRotate();
+        projecting = message.isProjecting();
+        scanline = message.isScanline();
+        if (counter != message.getCounter()) {
+            counter = message.getCounter();
+            scanNeeded = true;
+        }
     }
 
     @Override
