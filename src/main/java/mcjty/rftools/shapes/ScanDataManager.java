@@ -36,7 +36,7 @@ public class ScanDataManager extends WorldSavedData {
 
     private int lastId = 0;
 
-    private final Map<Integer,Scan> scans = new HashMap<>();
+    private final Map<Integer, Scan> scans = new HashMap<>();
 
     public ScanDataManager(String identifier) {
         super(identifier);
@@ -151,11 +151,19 @@ public class ScanDataManager extends WorldSavedData {
         ScanDataManager scans = getScans();
         for (Map.Entry<Integer, Scan> entry : scans.scans.entrySet()) {
             Integer scanid = entry.getKey();
+            scans.loadScan(scanid);
             Scan scan = entry.getValue();
             BlockPos dim = scan.getDataDim();
-            ChatTools.addChatMessage(sender, new TextComponentString(
-                    TextFormatting.YELLOW + "Scan: " + TextFormatting.WHITE + scanid +
-                            TextFormatting.YELLOW + " Size: " + TextFormatting.WHITE + dim.getX() + "," +dim.getY() + "," +dim.getZ()));
+            if (dim == null) {
+                ChatTools.addChatMessage(sender, new TextComponentString(
+                        TextFormatting.YELLOW + "Scan: " + TextFormatting.WHITE + scanid +
+                                TextFormatting.RED + "   Invalid"));
+            } else {
+                ChatTools.addChatMessage(sender, new TextComponentString(
+                        TextFormatting.YELLOW + "Scan: " + TextFormatting.WHITE + scanid +
+                                TextFormatting.YELLOW + "   Dim: " + TextFormatting.WHITE + dim.getX() + "," + dim.getY() + "," + dim.getZ() +
+                                TextFormatting.YELLOW + "   Size: " + TextFormatting.WHITE + scan.data.length + " bytes"));
+            }
         }
     }
 
@@ -171,7 +179,7 @@ public class ScanDataManager extends WorldSavedData {
     public void readFromNBT(NBTTagCompound tagCompound) {
         scans.clear();
         NBTTagList lst = tagCompound.getTagList("scans", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < lst.tagCount() ; i++) {
+        for (int i = 0; i < lst.tagCount(); i++) {
             NBTTagCompound tc = lst.getCompoundTagAt(i);
             int id = tc.getInteger("scan");
             Scan scan = new Scan();
@@ -280,7 +288,7 @@ public class ScanDataManager extends WorldSavedData {
 
         public void readFromNBTExternal(NBTTagCompound tagCompound) {
             NBTTagList list = tagCompound.getTagList("scanpal", Constants.NBT.TAG_COMPOUND);
-            for (int i = 0 ; i < list.tagCount() ; i++) {
+            for (int i = 0; i < list.tagCount(); i++) {
                 NBTTagCompound tc = list.getCompoundTagAt(i);
                 Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(tc.getString("r")));
                 if (block == null) {

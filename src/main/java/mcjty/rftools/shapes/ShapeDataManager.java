@@ -135,7 +135,6 @@ public class ShapeDataManager {
             while (!queue.workQueue.isEmpty()) {
                 if (queue.workQueue.size() > maxworkqueue) {
                     maxworkqueue = queue.workQueue.size();
-                    System.out.println("maxworkqueue = " + maxworkqueue);
                 }
                 WorkUnit unit = queue.workQueue.removeFirst();
                 queue.workingOn.remove(unit.getOffsetY());
