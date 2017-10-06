@@ -127,7 +127,8 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
         for (EnumFacing facing : EnumFacing.HORIZONTALS) {
             int index = facing.ordinal() - 2;
             ProjectorOperation op = operations[index];
-            if (((powerLevel >> index) & 1) != 0) {
+            int pl = index ^ 1;
+            if (((powerLevel >> pl) & 1) != 0) {
                 handleOpcode(op.getOpcodeOn(), op.getValueOn(), pulse);
             } else {
                 handleOpcode(op.getOpcodeOff(), op.getValueOff(), pulse);

@@ -16,6 +16,9 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import static net.minecraft.util.EnumFacing.*;
+import static net.minecraft.util.EnumFacing.WEST;
+
 public class ProjectorBlock extends GenericRFToolsBlock<ProjectorTileEntity, ProjectorContainer> {
 
     public ProjectorBlock() {
@@ -45,10 +48,12 @@ public class ProjectorBlock extends GenericRFToolsBlock<ProjectorTileEntity, Pro
         TileEntity te = world.getTileEntity(pos);
         if (state.getBlock() instanceof ProjectorBlock && te instanceof ProjectorTileEntity) {
             ProjectorTileEntity projector = (ProjectorTileEntity)te;
-            EnumFacing north = BlockTools.reorientHoriz(EnumFacing.NORTH, getMetaFromState(state));
-            EnumFacing south = BlockTools.reorientHoriz(EnumFacing.SOUTH, getMetaFromState(state));
-            EnumFacing west = BlockTools.reorientHoriz(EnumFacing.WEST, getMetaFromState(state));
-            EnumFacing east = BlockTools.reorientHoriz(EnumFacing.EAST, getMetaFromState(state));
+            int meta = getMetaFromState(state);
+            EnumFacing horiz = BlockTools.getOrientationHoriz(meta);
+            EnumFacing north = reorient(EnumFacing.NORTH, horiz);
+            EnumFacing south = reorient(EnumFacing.SOUTH, horiz);
+            EnumFacing west = reorient(EnumFacing.WEST, horiz);
+            EnumFacing east = reorient(EnumFacing.EAST, horiz);
 
             int powered1 = getInputStrength(world, pos, north) > 0 ? 1 : 0;
             int powered2 = getInputStrength(world, pos, south) > 0 ? 2 : 0;
@@ -58,10 +63,49 @@ public class ProjectorBlock extends GenericRFToolsBlock<ProjectorTileEntity, Pro
         }
     }
 
+    private static EnumFacing reorient(EnumFacing side, EnumFacing blockDirection) {
+        switch (blockDirection) {
+            case NORTH:
+                if (side == DOWN || side == UP) {
+                    return side;
+                }
+                return side.getOpposite();
+            case SOUTH:
+                return side;
+            case WEST:
+                if (side == DOWN || side == UP) {
+                    return side;
+                } else if (side == WEST) {
+                    return NORTH;
+                } else if (side == NORTH) {
+                    return EAST;
+                } else if (side == EAST) {
+                    return SOUTH;
+                } else {
+                    return WEST;
+                }
+            case EAST:
+                if (side == DOWN || side == UP) {
+                    return side;
+                } else if (side == WEST) {
+                    return SOUTH;
+                } else if (side == NORTH) {
+                    return WEST;
+                } else if (side == EAST) {
+                    return NORTH;
+                } else {
+                    return EAST;
+                }
+            default:
+                return side;
+        }
+    }
+
+
     /**
      * Returns the signal strength at one side of the block
      */
-    protected int getInputStrength(World world, BlockPos pos, EnumFacing side) {
+    private int getInputStrength(World world, BlockPos pos, EnumFacing side) {
         int power = world.getRedstonePower(pos.offset(side), side);
         if (power == 0) {
             // Check if there is no redstone wire there. If there is a 'bend' in the redstone wire it is

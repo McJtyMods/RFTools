@@ -174,10 +174,10 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
 
     private void initSidePanel() {
         Panel sidePanel = new Panel(mc, this).setLayout(new PositionalLayout()).setBackground(sideBackground);
-        initRsPanel(sidePanel, 0, "N");
-        initRsPanel(sidePanel, 1, "S");
-        initRsPanel(sidePanel, 2, "W");
-        initRsPanel(sidePanel, 3, "E");
+        initRsPanel(sidePanel, 0, "S");
+        initRsPanel(sidePanel, 1, "N");
+        initRsPanel(sidePanel, 2, "E");
+        initRsPanel(sidePanel, 3, "W");
         sidePanel.setBounds(new Rectangle(guiLeft-SIDEWIDTH, guiTop, SIDEWIDTH, ySize));
         sideWindow = new Window(this, sidePanel);
     }
