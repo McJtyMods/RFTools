@@ -325,7 +325,7 @@ public class ShapeRenderer {
                 extraDataCounter = 10;
                 ScanDataManager.getScansClient().requestExtraDataClient(scanId);
             }
-            ScanExtraData extraData = ScanDataManager.getScansClient().getExtraData(scanId);
+            ScanExtraData extraData = ScanDataManager.getScansClient().getExtraDataClient(scanId);
             GlStateManager.glLineWidth(3);
             buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
             for (BlockPos pos : extraData.getBeacons()) {

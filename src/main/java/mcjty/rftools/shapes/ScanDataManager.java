@@ -33,6 +33,7 @@ public class ScanDataManager extends WorldSavedData {
 
     // This data is not persisted
     private final Map<Integer, ScanExtraData> scanData = new HashMap<>();
+    private final Map<Integer, ScanExtraData> scanDataClient = new HashMap<>();
 
     public ScanDataManager(String identifier) {
         super(identifier);
@@ -85,6 +86,15 @@ public class ScanDataManager extends WorldSavedData {
         return data;
     }
 
+    public ScanExtraData getExtraDataClient(int id) {
+        ScanExtraData data = scanDataClient.get(id);
+        if (data == null) {
+            data = new ScanExtraData();
+            scanDataClient.put(id, data);
+        }
+        return data;
+    }
+
     // Client side only
     public void requestExtraDataClient(int id) {
         RFToolsMessages.INSTANCE.sendToServer(new PacketRequestExtraData(id));
@@ -92,7 +102,7 @@ public class ScanDataManager extends WorldSavedData {
 
     // Client side only
     public void registerExtraDataFromServer(int id, ScanExtraData extraData) {
-        scanData.put(id, extraData);
+        scanDataClient.put(id, extraData);
     }
 
     public int getScanDirtyCounterClient(int id) {
