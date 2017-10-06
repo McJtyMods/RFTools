@@ -104,6 +104,18 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
         }
     }
 
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        if (getWorld().isRemote) {
+            stopSounds();
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void stopSounds() {
+        ProjectorSounds.stopSound(getPos());
+    }
 
     public ShapeID getShapeID() {
         int scanId = ShapeCardItem.getScanId(getRenderStack());

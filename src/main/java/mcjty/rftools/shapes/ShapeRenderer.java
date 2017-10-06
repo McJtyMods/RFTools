@@ -1,6 +1,7 @@
 package mcjty.rftools.shapes;
 
 import mcjty.lib.tools.ItemStackTools;
+import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.varia.Check32;
@@ -299,7 +300,7 @@ public class ShapeRenderer {
                         createRenderData(tessellator, buffer, plane, data);
                         plane.markClean();
                     }
-                    boolean flash = showScan && (plane.getBirthtime() > time-200);
+                    boolean flash = showScan && (plane.getBirthtime() > time-ScannerConfiguration.projectorFlashTimeout);
                     if (flash) {
                         needScanSound = true;
                         GlStateManager.enableBlend();

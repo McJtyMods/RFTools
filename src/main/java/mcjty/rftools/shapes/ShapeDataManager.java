@@ -123,8 +123,6 @@ public class ShapeDataManager {
         }
     }
 
-    private static int maxworkqueue = 0;
-
     public static void handleWork() {
         Set<ShapeID> toRemove = new HashSet<>();
         for (Map.Entry<ShapeID, WorkQueue> entry : workQueues.entrySet()) {
@@ -133,9 +131,6 @@ public class ShapeDataManager {
 
             int pertick = ScannerConfiguration.planeSurfacePerTick;
             while (!queue.workQueue.isEmpty()) {
-                if (queue.workQueue.size() > maxworkqueue) {
-                    maxworkqueue = queue.workQueue.size();
-                }
                 WorkUnit unit = queue.workQueue.removeFirst();
                 queue.workingOn.remove(unit.getOffsetY());
 
