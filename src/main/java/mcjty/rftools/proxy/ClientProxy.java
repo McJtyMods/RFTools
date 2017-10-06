@@ -75,7 +75,7 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent
     public void registerSounds(RegistryEvent.Register<SoundEvent> sounds) {
         ElevatorSounds.init(sounds.getRegistry());
-        ProjectorSounds.init();
+        ProjectorSounds.init(sounds.getRegistry());
     }
 
     @Override

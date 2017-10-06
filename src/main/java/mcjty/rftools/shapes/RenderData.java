@@ -2,10 +2,10 @@ package mcjty.rftools.shapes;
 
 import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
@@ -19,7 +19,7 @@ import static mcjty.rftools.blocks.shaper.ScannerConfiguration.useVBO;
 
 public class RenderData {
 
-    private static VertexBuffer vboBuffer = new VertexBuffer(2097152);
+    private static BufferBuilder vboBuffer = new BufferBuilder(2097152);
 
     private RenderPlane planes[] = null;
     public String previewMessage = "";
@@ -106,14 +106,14 @@ public class RenderData {
         }
     }
 
-    public VertexBuffer createRenderList(VertexBuffer buffer, int y) {
+    public BufferBuilder createRenderList(BufferBuilder buffer, int y) {
         if (planes != null) {
             return planes[y].createRenderList(buffer);
         }
         return null;
     }
 
-    public void performRenderToList(Tessellator tessellator, VertexBuffer buffer, int y) {
+    public void performRenderToList(Tessellator tessellator, BufferBuilder buffer, int y) {
         if (planes != null) {
             planes[y].performRenderToList(tessellator, buffer);
         }
@@ -218,7 +218,7 @@ public class RenderData {
             }
         }
 
-        public VertexBuffer createRenderList(VertexBuffer buffer) {
+        public BufferBuilder createRenderList(BufferBuilder buffer) {
             if (useVBO) {
                 vbo = new net.minecraft.client.renderer.vertex.VertexBuffer(DefaultVertexFormats.POSITION_COLOR);
                 buffer = vboBuffer;
@@ -229,7 +229,7 @@ public class RenderData {
             return buffer;
         }
 
-        public void performRenderToList(Tessellator tessellator, VertexBuffer buffer) {
+        public void performRenderToList(Tessellator tessellator, BufferBuilder buffer) {
             if (useVBO) {
                 buffer.finishDrawing();
                 buffer.reset();

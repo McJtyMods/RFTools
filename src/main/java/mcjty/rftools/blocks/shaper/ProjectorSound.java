@@ -28,6 +28,10 @@ public class ProjectorSound extends MovingSound {
         this.repeatDelay = 0;
     }
 
+    public void stop() {
+        donePlaying = true;
+    }
+
     public void move(float x, float y, float z) {
         xPosF = x;
         yPosF = y;

@@ -1,16 +1,16 @@
 package mcjty.rftools.shapes;
 
-import mcjty.lib.tools.ItemStackTools;
+import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.varia.Check32;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -128,10 +128,8 @@ public class ShapeRenderer {
         GlStateManager.disableTexture2D();
 
         Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer buffer = tessellator.getBuffer();
-        boolean doSound = renderFaces(tessellator, buffer, stack, scan);
         BufferBuilder buffer = tessellator.getBuffer();
-        renderFaces(tessellator, buffer, stack, true);
+        boolean doSound = renderFaces(tessellator, buffer, stack, scan);
 
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
@@ -207,7 +205,7 @@ public class ShapeRenderer {
 
 
 
-    static void renderOuterBox(Tessellator tessellator, VertexBuffer buffer, int xlen, int ylen, int zlen) {
+    static void renderOuterBox(Tessellator tessellator, BufferBuilder buffer, int xlen, int ylen, int zlen) {
         GlStateManager.glLineWidth(1.0f);
         buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
 //        buffer.setTranslation(0.5, 0.5, 0.5);
@@ -262,14 +260,14 @@ public class ShapeRenderer {
 
     private int calculateChecksum(ItemStack stack) {
         Check32 crc = new Check32();
-        if (ItemStackTools.isValid(stack)) {
+        if (!stack.isEmpty()) {
             ShapeCardItem.getFormulaCheckClient(stack, crc);
         }
         return crc.get();
     }
 
 
-    private boolean renderFaces(Tessellator tessellator, final VertexBuffer buffer,
+    private boolean renderFaces(Tessellator tessellator, final BufferBuilder buffer,
                      ItemStack stack, boolean showScan) {
 
         RenderData data = getRenderDataAndCreate(shapeID);
@@ -301,7 +299,7 @@ public class ShapeRenderer {
                         createRenderData(tessellator, buffer, plane, data);
                         plane.markClean();
                     }
-                    boolean flash = showScan && (plane.getBirthtime() > time-200);
+                    boolean flash = showScan && (plane.getBirthtime() > time-ScannerConfiguration.projectorFlashTimeout);
                     if (flash) {
                         needScanSound = true;
                         GlStateManager.enableBlend();
@@ -320,7 +318,7 @@ public class ShapeRenderer {
         return needScanSound;
     }
 
-    private void createRenderData(Tessellator tessellator, VertexBuffer buffer, RenderData.RenderPlane plane, RenderData data) {
+    private void createRenderData(Tessellator tessellator, BufferBuilder buffer, RenderData.RenderPlane plane, RenderData data) {
         Map<IBlockState, ShapeBlockInfo> palette = new HashMap<>();
 
         double origOffsetX = buffer.xOffset;
@@ -396,7 +394,7 @@ public class ShapeRenderer {
         GL11.glScissor(sx, sy, sw, sh);
     }
 
-    public static void addSideFullTextureD(VertexBuffer buffer, int cnt, float r, float g, float b) {
+    public static void addSideFullTextureD(BufferBuilder buffer, int cnt, float r, float g, float b) {
         float a = 0.5f;
         buffer.pos(0, 0, 0).color(r, g, b, a).endVertex();
         buffer.pos(1, 0, 0).color(r, g, b, a).endVertex();
@@ -404,7 +402,7 @@ public class ShapeRenderer {
         buffer.pos(0, 0, cnt).color(r, g, b, a).endVertex();
     }
 
-    public static void addSideFullTextureU(VertexBuffer buffer, int cnt, float r, float g, float b) {
+    public static void addSideFullTextureU(BufferBuilder buffer, int cnt, float r, float g, float b) {
         float a = 0.5f;
         buffer.pos(0, 1, cnt).color(r, g, b, a).endVertex();
         buffer.pos(1, 1, cnt).color(r, g, b, a).endVertex();
@@ -412,7 +410,7 @@ public class ShapeRenderer {
         buffer.pos(0, 1, 0).color(r, g, b, a).endVertex();
     }
 
-    public static void addSideFullTextureE(VertexBuffer buffer, int cnt, float r, float g, float b) {
+    public static void addSideFullTextureE(BufferBuilder buffer, int cnt, float r, float g, float b) {
         float a = 0.5f;
         buffer.pos(1, 0, 0).color(r, g, b, a).endVertex();
         buffer.pos(1, 1, 0).color(r, g, b, a).endVertex();
@@ -420,7 +418,7 @@ public class ShapeRenderer {
         buffer.pos(1, 0, cnt).color(r, g, b, a).endVertex();
     }
 
-    public static void addSideFullTextureW(VertexBuffer buffer, int cnt, float r, float g, float b) {
+    public static void addSideFullTextureW(BufferBuilder buffer, int cnt, float r, float g, float b) {
         float a = 0.5f;
         buffer.pos(0, 0, cnt).color(r, g, b, a).endVertex();
         buffer.pos(0, 1, cnt).color(r, g, b, a).endVertex();
@@ -428,7 +426,7 @@ public class ShapeRenderer {
         buffer.pos(0, 0, 0).color(r, g, b, a).endVertex();
     }
 
-    public static void addSideFullTextureN(VertexBuffer buffer, int cnt, float r, float g, float b) {
+    public static void addSideFullTextureN(BufferBuilder buffer, int cnt, float r, float g, float b) {
         float a = 0.5f;
         buffer.pos(1, 1, 0).color(r, g, b, a).endVertex();
         buffer.pos(1, 0, 0).color(r, g, b, a).endVertex();
@@ -436,48 +434,11 @@ public class ShapeRenderer {
         buffer.pos(0, 1, 0).color(r, g, b, a).endVertex();
     }
 
-    public static void addSideFullTextureS(VertexBuffer buffer, int cnt, float r, float g, float b) {
+    public static void addSideFullTextureS(BufferBuilder buffer, int cnt, float r, float g, float b) {
         float a = 0.5f;
         buffer.pos(1, 0, cnt).color(r, g, b, a).endVertex();
         buffer.pos(1, 1, cnt).color(r, g, b, a).endVertex();
         buffer.pos(0, 1, cnt).color(r, g, b, a).endVertex();
         buffer.pos(0, 0, cnt).color(r, g, b, a).endVertex();
-    }
-
-        public List<Pair<Integer, IBlockState>> getData() {
-            return data;
-        }
-
-        public boolean isEmptyAt(int i) {
-            if (i < 0) {
-                return true;
-            }
-            if (i >= data.size()) {
-                return true;
-            }
-            return data.get(i).getValue() == null;
-        }
-
-        public void add(IBlockState state) {
-            if (cnt == 0) {
-                last = state;
-                cnt = 1;
-            } else {
-                if (last != state) {
-                    data.add(Pair.of(cnt, last));
-                    last = state;
-                    cnt = 1;
-                } else {
-                    cnt++;
-                }
-            }
-        }
-
-        public void close() {
-            if (cnt > 0) {
-                data.add(Pair.of(cnt, last));
-                cnt = 0;
-            }
-        }
     }
 }

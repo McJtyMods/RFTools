@@ -23,6 +23,8 @@ public class ScannerConfiguration {
     public static int planeSurfacePerTick = 200*200;
     public static int clientRenderDataTimeout = 5000;
 
+    public static int projectorFlashTimeout = 400;
+
     public static float baseProjectorVolume = 0.4f;      // Use 0 to turn off projector sounds
 
 
@@ -54,6 +56,10 @@ public class ScannerConfiguration {
         clientRenderDataTimeout = cfg.get(CATEGORY_SCANNER, "clientRenderDataTimeout", clientRenderDataTimeout,
                 "The amount of milliseconds before the client will remove shape render data that hasn't been used. Decreasing this will free memory faster at the cost of having to update shape renders more often",
                 100, 1000000).getInt();
+
+        projectorFlashTimeout = cfg.get(CATEGORY_SCANNER, "projectorFlashTimeout", projectorFlashTimeout,
+                "The amount of milliseconds that a scanline 'flash' will exist on the client",
+                10, 1000000).getInt();
 
         baseProjectorVolume = (float) cfg.get(CATEGORY_SCANNER, "baseProjectorVolume", baseProjectorVolume,
                 "The volume for the projector sound (0.0 is off)").getDouble();

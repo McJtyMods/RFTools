@@ -44,7 +44,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     private StorageFilterCache filterCache = null;
 
     private int scanId = 0;
-    private ItemStack renderStack = ItemStackTools.getEmptyStack();
+    private ItemStack renderStack = ItemStack.EMPTY;
     private BlockPos dataDim;
     private BlockPos dataOffset = new BlockPos(0, 0, 0);
 
@@ -52,7 +52,6 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     private ScanProgress progress = null;
     // Client side indication if there is a scan in progress
     private int progressBusy = -1;
-    private ItemStack renderStack = ItemStack.EMPTY;
 
     public ScannerTileEntity() {
         super(ScannerConfiguration.SCANNER_MAXENERGY, ScannerConfiguration.SCANNER_RECEIVEPERTICK);
@@ -134,8 +133,6 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         return false;
     }
 
-    public byte[] getData() {
-        return data;
     public int getScanId() {
         if (scanId == 0) {
             scanId = ScanDataManager.getScans().newScan(getWorld());
@@ -173,9 +170,9 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
         if (tagCompound.hasKey("render")) {
-            renderStack = ItemStackTools.loadFromNBT(tagCompound.getCompoundTag("render"));
+            renderStack = new ItemStack(tagCompound.getCompoundTag("render"));
         } else {
-            renderStack = ItemStackTools.getEmptyStack();
+            renderStack = ItemStack.EMPTY;
         }
 
         scanId = tagCompound.getInteger("scanid");
@@ -189,7 +186,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
-        if (ItemStackTools.isValid(renderStack)) {
+        if (!renderStack.isEmpty()) {
             NBTTagCompound tc = new NBTTagCompound();
             renderStack.writeToNBT(tc);
             tagCompound.setTag("render", tc);
@@ -237,8 +234,10 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
                 ShapeCardItem.setShape(cardOut, Shape.SHAPE_SCAN, solid);
             }
             NBTTagCompound tagOut = cardOut.getTagCompound();
-            ShapeCardItem.setDimension(cardOut, dataDim.getX(), dataDim.getY(), dataDim.getZ());
-            ShapeCardItem.setData(tagOut, getScanId());
+            if (dataDim != null) {
+                ShapeCardItem.setDimension(cardOut, dataDim.getX(), dataDim.getY(), dataDim.getZ());
+                ShapeCardItem.setData(tagOut, getScanId());
+            }
         }
     }
 
@@ -411,7 +410,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         ScanDataManager scan = ScanDataManager.getScans();
         scan.getOrCreateScan(getScanId()).setData(progress.rle.getData(), progress.materialPalette.getPalette(), dataDim, dataOffset);
         scan.save(getWorld(), getScanId());
-        if (ItemStackTools.isEmpty(renderStack)) {
+        if (renderStack.isEmpty()) {
             renderStack = new ItemStack(BuilderSetup.shapeCardItem);
         }
         updateScanCard(renderStack);

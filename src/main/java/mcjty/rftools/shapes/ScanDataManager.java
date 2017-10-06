@@ -1,7 +1,5 @@
 package mcjty.rftools.shapes;
 
-import mcjty.lib.tools.ChatTools;
-import mcjty.lib.tools.WorldTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
@@ -16,8 +14,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -62,7 +60,7 @@ public class ScanDataManager extends WorldSavedData {
         } catch (IOException e) {
             throw new RuntimeException("Error writing to file 'scan" + scan + "'!", e);
         }
-        WorldTools.saveData(world, SCANDATA_NETWORK_NAME, this);
+        world.setData(SCANDATA_NETWORK_NAME, this);
         markDirty();
     }
 
@@ -101,7 +99,7 @@ public class ScanDataManager extends WorldSavedData {
         if (instance != null) {
             return instance;
         }
-        instance = mcjty.lib.tools.WorldTools.loadData(world, ScanDataManager.class, SCANDATA_NETWORK_NAME);
+        instance = (ScanDataManager) world.loadData(ScanDataManager.class, SCANDATA_NETWORK_NAME);
         if (instance == null) {
             instance = new ScanDataManager(SCANDATA_NETWORK_NAME);
         }
@@ -155,11 +153,11 @@ public class ScanDataManager extends WorldSavedData {
             Scan scan = entry.getValue();
             BlockPos dim = scan.getDataDim();
             if (dim == null) {
-                ChatTools.addChatMessage(sender, new TextComponentString(
+                sender.sendMessage(new TextComponentString(
                         TextFormatting.YELLOW + "Scan: " + TextFormatting.WHITE + scanid +
                                 TextFormatting.RED + "   Invalid"));
             } else {
-                ChatTools.addChatMessage(sender, new TextComponentString(
+                sender.sendMessage(new TextComponentString(
                         TextFormatting.YELLOW + "Scan: " + TextFormatting.WHITE + scanid +
                                 TextFormatting.YELLOW + "   Dim: " + TextFormatting.WHITE + dim.getX() + "," + dim.getY() + "," + dim.getZ() +
                                 TextFormatting.YELLOW + "   Size: " + TextFormatting.WHITE + scan.data.length + " bytes"));
@@ -170,7 +168,7 @@ public class ScanDataManager extends WorldSavedData {
 
     public int newScan(World world) {
         lastId++;
-        WorldTools.saveData(world, SCANDATA_NETWORK_NAME, this);
+        world.setData(SCANDATA_NETWORK_NAME, this);
         markDirty();
         return lastId;
     }

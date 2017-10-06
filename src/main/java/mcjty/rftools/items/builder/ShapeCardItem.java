@@ -555,7 +555,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
     }
 
     public static int getScanId(ItemStack stack) {
-        if (ItemStackTools.isEmpty(stack)) {
+        if (stack.isEmpty()) {
             return 0;
         }
         NBTTagCompound tagCompound = getCompound(stack);
@@ -915,7 +915,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         NBTTagCompound compound = ShapeCardItem.getCompound(card);
         int scanId = ShapeCardItem.getData(compound);
         if (scanId == 0) {
-            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "This card is not linked to scan data!"));
+            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "This card is not linked to scan data!"), false);
             return;
         }
 

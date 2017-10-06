@@ -5,7 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockSlab;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.init.Blocks;
 
 import javax.annotation.Nonnull;
@@ -99,7 +99,7 @@ public class ShapeBlockInfo {
         }
         Col col;
         Block block = state.getBlock();
-        MapColor mapColor = block.getMapColor(state);
+        MapColor mapColor = block.getMapColor(state, null, null);
         if (block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
             col = COL_LAVA;
         } else if (block == Blocks.NETHER_BRICK || block == Blocks.NETHER_BRICK_FENCE || block == Blocks.NETHER_BRICK_STAIRS) {
@@ -175,7 +175,7 @@ public class ShapeBlockInfo {
     }
 
     static interface IBlockRender {
-        void render(VertexBuffer buffer, int zoffset, float r, float g, float b);
+        void render(BufferBuilder buffer, int zoffset, float r, float g, float b);
     }
 
     static class DefaultRender implements IBlockRender {
@@ -188,7 +188,7 @@ public class ShapeBlockInfo {
         }
 
         @Override
-        public void render(VertexBuffer buffer, int z, float r, float g, float b) {
+        public void render(BufferBuilder buffer, int z, float r, float g, float b) {
             float a = 0.5f;
             // Up
             buffer.pos(offset, height, 1- offset + z).color(r * .8f, g * .8f, b * .8f, a).endVertex();
@@ -240,7 +240,7 @@ public class ShapeBlockInfo {
         }
 
         @Override
-        public void render(VertexBuffer buffer, int z, float r, float g, float b) {
+        public void render(BufferBuilder buffer, int z, float r, float g, float b) {
             float a = 0.5f;
             // Up
             buffer.pos(xoffset, height, 1- zoffset + z).color(r * .8f, g * .8f, b * .8f, a).endVertex();
@@ -290,7 +290,7 @@ public class ShapeBlockInfo {
         }
 
         @Override
-        public void render(VertexBuffer buffer, int z, float r, float g, float b) {
+        public void render(BufferBuilder buffer, int z, float r, float g, float b) {
             float a = 0.5f;
             // Up
             buffer.pos(offset, height+.5, 1- offset + z).color(r * .8f, g * .8f, b * .8f, a).endVertex();

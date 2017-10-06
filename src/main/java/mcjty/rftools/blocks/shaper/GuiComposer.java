@@ -4,10 +4,7 @@ import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.WindowManager;
 import mcjty.lib.gui.layout.PositionalLayout;
-import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.Panel;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
@@ -20,7 +17,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import org.lwjgl.input.Mouse;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.io.IOException;
 
 public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> implements IShapeParentGui {
@@ -67,7 +64,7 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
 
     private ShapeID getShapeID() {
         Slot slot = inventorySlots.getSlot(ComposerContainer.SLOT_OUT);
-        ItemStack stack = slot.getHasStack() ? slot.getStack() : ItemStackTools.getEmptyStack();
+        ItemStack stack = slot.getHasStack() ? slot.getStack() : ItemStack.EMPTY;
 
         return new ShapeID(tileEntity.getWorld().provider.getDimension(), tileEntity.getPos(), ShapeCardItem.getScanId(stack));
     }
