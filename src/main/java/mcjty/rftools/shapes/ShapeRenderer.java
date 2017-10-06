@@ -328,25 +328,28 @@ public class ShapeRenderer {
             ScanExtraData extraData = ScanDataManager.getScansClient().getExtraDataClient(scanId);
             GlStateManager.glLineWidth(3);
             buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-            for (BlockPos pos : extraData.getBeacons()) {
-                int x = pos.getX();
-                int y = pos.getY()+1;
-                int z = pos.getZ();
+            for (ScanExtraData.Beacon beacon : extraData.getBeacons()) {
+                int x = beacon.getPos().getX();
+                int y = beacon.getPos().getY()+1;
+                int z = beacon.getPos().getZ();
+                float r = beacon.getR();
+                float g = beacon.getG();
+                float b = beacon.getB();
                 float a = 0.5f;
-                buffer.pos(x-.5, y-.5, z-.5).color(0, .5f, 1, a).endVertex();
-                buffer.pos(x+.5, y+.5, z+.5).color(0, .5f, 1, a).endVertex();
-                buffer.pos(x+.5, y-.5, z-.5).color(0, .5f, 1, a).endVertex();
-                buffer.pos(x-.5, y+.5, z+.5).color(0, .5f, 1, a).endVertex();
-                buffer.pos(x-.5, y+.5, z-.5).color(0, .5f, 1, a).endVertex();
-                buffer.pos(x+.5, y-.5, z+.5).color(0, .5f, 1, a).endVertex();
-                buffer.pos(x-.5, y-.5, z+.5).color(0, .5f, 1, a).endVertex();
-                buffer.pos(x+.5, y+.5, z-.5).color(0, .5f, 1, a).endVertex();
-                buffer.pos(x+.5, y+.5, z-.5).color(0, .5f, 1, a).endVertex();
-                buffer.pos(x-.5, y-.5, z+.5).color(0, .5f, 1, a).endVertex();
-                buffer.pos(x+.5, y-.5, z+.5).color(0, .5f, 1, a).endVertex();
-                buffer.pos(x-.5, y+.5, z-.5).color(0, .5f, 1, a).endVertex();
-                buffer.pos(x+.5, y+.5, z+.5).color(0, .5f, 1, a).endVertex();
-                buffer.pos(x-.5, y-.5, z-.5).color(0, .5f, 1, a).endVertex();
+                buffer.pos(x-.5, y-.5, z-.5).color(r, g, b, a).endVertex();
+                buffer.pos(x+.5, y+.5, z+.5).color(r, g, b, a).endVertex();
+                buffer.pos(x+.5, y-.5, z-.5).color(r, g, b, a).endVertex();
+                buffer.pos(x-.5, y+.5, z+.5).color(r, g, b, a).endVertex();
+                buffer.pos(x-.5, y+.5, z-.5).color(r, g, b, a).endVertex();
+                buffer.pos(x+.5, y-.5, z+.5).color(r, g, b, a).endVertex();
+                buffer.pos(x-.5, y-.5, z+.5).color(r, g, b, a).endVertex();
+                buffer.pos(x+.5, y+.5, z-.5).color(r, g, b, a).endVertex();
+                buffer.pos(x+.5, y+.5, z-.5).color(r, g, b, a).endVertex();
+                buffer.pos(x-.5, y-.5, z+.5).color(r, g, b, a).endVertex();
+                buffer.pos(x+.5, y-.5, z+.5).color(r, g, b, a).endVertex();
+                buffer.pos(x-.5, y+.5, z-.5).color(r, g, b, a).endVertex();
+                buffer.pos(x+.5, y+.5, z+.5).color(r, g, b, a).endVertex();
+                buffer.pos(x-.5, y-.5, z-.5).color(r, g, b, a).endVertex();
             }
             tessellator.draw();
         }

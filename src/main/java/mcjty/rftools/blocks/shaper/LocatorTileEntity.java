@@ -7,6 +7,8 @@ import mcjty.rftools.shapes.ScanDataManager;
 import mcjty.rftools.shapes.ScanExtraData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.passive.EntityAnimal;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -56,7 +58,13 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
 
                 BlockPos center = scanner.getScanCenter();
                 for (Entity entity : entities) {
-                    extraData.addBeacon(entity.getPosition().subtract(center));
+                    if (entity instanceof EntityAnimal) {
+                        extraData.addBeacon(entity.getPosition().subtract(center), 0, 1, .3f);
+                    } else if (entity instanceof EntityPlayer) {
+                        extraData.addBeacon(entity.getPosition().subtract(center), .8f, 0, 1);
+                    } else {
+                        extraData.addBeacon(entity.getPosition().subtract(center), 1, 0, 0);
+                    }
                 }
             }
         }
