@@ -115,7 +115,7 @@ public class ShapeRenderer {
     }
 
     public boolean renderShapeInWorld(ItemStack stack, double x, double y, double z, float offset, float scale, float angle,
-                                   boolean scan) {
+                                   boolean scan, ShapeID shape) {
         GlStateManager.pushMatrix();
         GlStateManager.translate((float) x + 0.5F, (float) y + 1F + offset, (float) z + 0.5F);
         GlStateManager.scale(scale, scale, scale);
@@ -130,7 +130,7 @@ public class ShapeRenderer {
 
         Tessellator tessellator = Tessellator.getInstance();
         VertexBuffer buffer = tessellator.getBuffer();
-        boolean doSound = renderFaces(tessellator, buffer, stack, scan);
+        boolean doSound = renderFaces(tessellator, buffer, stack, scan, shape.getScanId());
 
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
@@ -162,7 +162,7 @@ public class ShapeRenderer {
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
-        renderFaces(tessellator, buffer, stack, showScan);
+        renderFaces(tessellator, buffer, stack, showScan, -1);
         BlockPos dimension = ShapeCardItem.getDimension(stack);
         renderHelpers(tessellator, buffer, dimension.getX(), dimension.getY(), dimension.getZ(), showAxis, showOuter);
 
@@ -267,9 +267,10 @@ public class ShapeRenderer {
         return crc.get();
     }
 
+    private int extraDataCounter = 0;
 
     private boolean renderFaces(Tessellator tessellator, final VertexBuffer buffer,
-                     ItemStack stack, boolean showScan) {
+                     ItemStack stack, boolean showScan, int scanId) {
 
         RenderData data = getRenderDataAndCreate(shapeID);
 
@@ -316,6 +317,42 @@ public class ShapeRenderer {
                 }
             }
         }
+
+        // Possibly request extra data for the scan
+        if (scanId != -1) {
+            extraDataCounter--;
+            if (extraDataCounter <= 0) {
+                extraDataCounter = 10;
+                ScanDataManager.getScansClient().requestExtraDataClient(scanId);
+            }
+            ScanExtraData extraData = ScanDataManager.getScansClient().getExtraData(scanId);
+            GlStateManager.glLineWidth(3);
+            GlStateManager.disableDepth();
+            buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+            for (BlockPos pos : extraData.getBeacons()) {
+                int x = pos.getX();
+                int y = pos.getY();
+                int z = pos.getZ();
+                float a = 0.5f;
+                buffer.pos(x-.5, y-.5, z-.5).color(0, .5f, 1, a).endVertex();
+                buffer.pos(x+.5, y+.5, z+.5).color(0, .5f, 1, a).endVertex();
+                buffer.pos(x+.5, y-.5, z-.5).color(0, .5f, 1, a).endVertex();
+                buffer.pos(x-.5, y+.5, z+.5).color(0, .5f, 1, a).endVertex();
+                buffer.pos(x-.5, y+.5, z-.5).color(0, .5f, 1, a).endVertex();
+                buffer.pos(x+.5, y-.5, z+.5).color(0, .5f, 1, a).endVertex();
+                buffer.pos(x-.5, y-.5, z+.5).color(0, .5f, 1, a).endVertex();
+                buffer.pos(x+.5, y+.5, z-.5).color(0, .5f, 1, a).endVertex();
+                buffer.pos(x+.5, y+.5, z-.5).color(0, .5f, 1, a).endVertex();
+                buffer.pos(x-.5, y-.5, z+.5).color(0, .5f, 1, a).endVertex();
+                buffer.pos(x+.5, y-.5, z+.5).color(0, .5f, 1, a).endVertex();
+                buffer.pos(x-.5, y+.5, z-.5).color(0, .5f, 1, a).endVertex();
+                buffer.pos(x+.5, y+.5, z+.5).color(0, .5f, 1, a).endVertex();
+                buffer.pos(x-.5, y-.5, z-.5).color(0, .5f, 1, a).endVertex();
+            }
+            tessellator.draw();
+            GlStateManager.enableDepth();
+        }
+
         return needScanSound;
     }
 

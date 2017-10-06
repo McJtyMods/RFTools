@@ -3,15 +3,25 @@ package mcjty.rftools.blocks.shaper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.RedstoneMode;
+import mcjty.rftools.shapes.ScanDataManager;
+import mcjty.rftools.shapes.ScanExtraData;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 
+import java.util.List;
 import java.util.Map;
 
 public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implements ITickable {
 
     public static final String CMD_MODE = "setMode";
+
+    private static int counter = 0;
 
     public LocatorTileEntity() {
         super(ScannerConfiguration.LOCATOR_MAXENERGY, ScannerConfiguration.LOCATOR_RECEIVEPERTICK);
@@ -20,7 +30,44 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
     @Override
     public void update() {
         if (!getWorld().isRemote) {
+            counter--;
+            markDirtyQuick();
+            if (counter <= 0) {
+                counter = 40;   // @todo configurable
+                if (getEnergyStored() < ScannerConfiguration.LOCATOR_PERSCAN) {
+                    // Do nothing
+                    return;
+                }
+                ScannerTileEntity scanner = getScanner();
+                if (scanner == null || scanner.getDataDim() == null) {
+                    // No scanner, do nothing
+                    return;
+                }
+                // @todo energy consumption per area?
+                consumeEnergy(ScannerConfiguration.LOCATOR_PERSCAN);
+                BlockPos dim = scanner.getDataDim();
+                BlockPos start = scanner.getFirstCorner();
+                AxisAlignedBB bb = new AxisAlignedBB(start, start.add(dim));
+
+                List<Entity> entities = getWorld().getEntitiesWithinAABB(EntityLivingBase.class, bb);
+                int scanId = scanner.getScanId();
+                ScanExtraData extraData = ScanDataManager.getScans().getExtraData(scanId);
+                extraData.clear();
+
+                BlockPos center = scanner.getScanCenter();
+                for (Entity entity : entities) {
+                    extraData.addBeacon(entity.getPosition().subtract(center));
+                }
+            }
         }
+    }
+
+    private ScannerTileEntity getScanner() {
+        TileEntity te = getWorld().getTileEntity(getPos().down());
+        if (te instanceof ScannerTileEntity) {
+            return (ScannerTileEntity) te;
+        }
+        return null;
     }
 
     @Override
@@ -32,12 +79,14 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
     @Override
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
+        counter = tagCompound.getInteger("counter");
     }
 
 
     @Override
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
+        tagCompound.setInteger("counter", counter);
     }
 
 

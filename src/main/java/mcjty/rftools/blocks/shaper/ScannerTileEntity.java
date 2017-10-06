@@ -14,6 +14,7 @@ import mcjty.rftools.items.modifier.ModifierFilterOperation;
 import mcjty.rftools.items.modifier.ModifierItem;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
+import mcjty.rftools.shapes.Scan;
 import mcjty.rftools.shapes.ScanDataManager;
 import mcjty.rftools.shapes.Shape;
 import mcjty.rftools.shapes.StatePalette;
@@ -138,7 +139,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     public List<IBlockState> getMaterialPalette() {
-        ScanDataManager.Scan scan = ScanDataManager.getScans().loadScan(getScanId());
+        Scan scan = ScanDataManager.getScans().loadScan(getScanId());
         return scan.getMaterialPalette();
     }
 
@@ -249,8 +250,17 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         int dimX = dataDim.getX();
         int dimY = dataDim.getY();
         int dimZ = dataDim.getZ();
-        startScanArea(getPos().add(dataOffset.getX(), dataOffset.getY(), dataOffset.getZ()), dimX, dimY, dimZ);
-//        scanArea(getPos().add(dataOffset.getX(), dataOffset.getY(), dataOffset.getZ()), dimX, dimY, dimZ);
+        startScanArea(getScanCenter(), dimX, dimY, dimZ);
+    }
+
+    public BlockPos getScanCenter() {
+        return getPos().add(dataOffset.getX(), dataOffset.getY(), dataOffset.getZ());
+    }
+
+    public BlockPos getFirstCorner() {
+        return getPos().add(dataOffset.getX()-dataDim.getX()/2,
+                dataOffset.getY()-dataDim.getY()/2,
+                dataOffset.getZ()-dataDim.getZ()/2);
     }
 
     private IBlockState mapState(List<ModifierEntry> modifiers, Map<IBlockState, IBlockState> modifierMapping, BlockPos pos, IBlockState inState) {

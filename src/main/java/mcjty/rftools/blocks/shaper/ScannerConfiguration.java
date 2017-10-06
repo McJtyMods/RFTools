@@ -11,7 +11,7 @@ public class ScannerConfiguration {
 
     public static int LOCATOR_MAXENERGY = 500000;
     public static int LOCATOR_RECEIVEPERTICK = 20000;
-    public static int LOCATOR_PERTICK = 2000;
+    public static int LOCATOR_PERSCAN = 20000;
 
     public static int PROJECTOR_MAXENERGY = 500000;
     public static int PROJECTOR_RECEIVEPERTICK = 10000;
@@ -43,8 +43,8 @@ public class ScannerConfiguration {
                 "Maximum RF storage that the locator can hold").getInt();
         LOCATOR_RECEIVEPERTICK = cfg.get(CATEGORY_SCANNER, "locatorRFPerTick", LOCATOR_RECEIVEPERTICK,
                 "RF per tick that the locator can receive").getInt();
-        LOCATOR_PERTICK = cfg.get(CATEGORY_SCANNER, "locatorUsePerTick", LOCATOR_PERTICK,
-                "Amount of RF needed per tick while the locator works").getInt();
+        LOCATOR_PERSCAN = cfg.get(CATEGORY_SCANNER, "locatorUsePerTick", LOCATOR_PERSCAN,
+                "Amount of RF needed for a scan").getInt();
         PROJECTOR_MAXENERGY = cfg.get(CATEGORY_SCANNER, "projectorMaxRF", PROJECTOR_MAXENERGY,
                 "Maximum RF storage that the projector can hold").getInt();
         PROJECTOR_RECEIVEPERTICK = cfg.get(CATEGORY_SCANNER, "projectorRFPerTick", PROJECTOR_RECEIVEPERTICK,

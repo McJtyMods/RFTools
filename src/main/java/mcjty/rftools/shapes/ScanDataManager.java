@@ -4,14 +4,10 @@ import mcjty.lib.tools.ChatTools;
 import mcjty.lib.tools.WorldTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.init.Blocks;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
@@ -20,13 +16,10 @@ import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ScanDataManager extends WorldSavedData {
@@ -37,6 +30,9 @@ public class ScanDataManager extends WorldSavedData {
     private int lastId = 0;
 
     private final Map<Integer, Scan> scans = new HashMap<>();
+
+    // This data is not persisted
+    private final Map<Integer, ScanExtraData> scanData = new HashMap<>();
 
     public ScanDataManager(String identifier) {
         super(identifier);
@@ -80,6 +76,25 @@ public class ScanDataManager extends WorldSavedData {
         return instance;
     }
 
+    public ScanExtraData getExtraData(int id) {
+        ScanExtraData data = scanData.get(id);
+        if (data == null) {
+            data = new ScanExtraData();
+            scanData.put(id, data);
+        }
+        return data;
+    }
+
+    // Client side only
+    public void requestExtraDataClient(int id) {
+        RFToolsMessages.INSTANCE.sendToServer(new PacketRequestExtraData(id));
+    }
+
+    // Client side only
+    public void registerExtraDataFromServer(int id, ScanExtraData extraData) {
+        scanData.put(id, extraData);
+    }
+
     public int getScanDirtyCounterClient(int id) {
         Scan scan;
         if (!scans.containsKey(id)) {
@@ -121,7 +136,7 @@ public class ScanDataManager extends WorldSavedData {
     public Scan loadScan(int id) {
         World world = DimensionManager.getWorld(0);
         Scan scan = scans.get(id);
-        if (scan == null || scan.data == null) {
+        if (scan == null || scan.getDataInt() == null) {
             if (scan == null) {
                 scan = new Scan();
             }
@@ -162,7 +177,7 @@ public class ScanDataManager extends WorldSavedData {
                 ChatTools.addChatMessage(sender, new TextComponentString(
                         TextFormatting.YELLOW + "Scan: " + TextFormatting.WHITE + scanid +
                                 TextFormatting.YELLOW + "   Dim: " + TextFormatting.WHITE + dim.getX() + "," + dim.getY() + "," + dim.getZ() +
-                                TextFormatting.YELLOW + "   Size: " + TextFormatting.WHITE + scan.data.length + " bytes"));
+                                TextFormatting.YELLOW + "   Size: " + TextFormatting.WHITE + scan.getData().length + " bytes"));
             }
         }
     }
@@ -204,101 +219,4 @@ public class ScanDataManager extends WorldSavedData {
         return tagCompound;
     }
 
-    public static class Scan {
-        private byte[] data;
-        private List<IBlockState> materialPalette = new ArrayList<>();
-        private BlockPos dataDim;
-        private BlockPos dataOffset = new BlockPos(0, 0, 0);
-        private int dirtyCounter = 0;
-        private int dirtyRequestTimeout = 0;   // Client side only
-
-        public static final byte[] EMPTY = new byte[0];
-
-        public byte[] getData() {
-            if (data == null) {
-                return EMPTY;
-            }
-            return data;
-        }
-
-
-        public void setData(byte[] data, List<IBlockState> materialPalette, BlockPos dim, BlockPos offset) {
-            this.data = data;
-            this.materialPalette = materialPalette;
-            this.dataDim = dim;
-            this.dataOffset = offset;
-            dirtyCounter++;
-        }
-
-        void setDirtyCounter(int dirtyCounter) {
-            this.dirtyCounter = dirtyCounter;
-        }
-
-        public int getDirtyCounter() {
-            return dirtyCounter;
-        }
-
-        public List<IBlockState> getMaterialPalette() {
-            return materialPalette;
-        }
-
-        public BlockPos getDataDim() {
-            return dataDim;
-        }
-
-        public BlockPos getDataOffset() {
-            return dataOffset;
-        }
-
-        public void writeToNBT(NBTTagCompound tagCompound) {
-            tagCompound.setInteger("dirty", dirtyCounter);
-        }
-
-        public void writeToNBTExternal(NBTTagCompound tagCompound) {
-            tagCompound.setByteArray("data", data);
-            NBTTagList pal = new NBTTagList();
-            for (IBlockState state : materialPalette) {
-                NBTTagCompound tc = new NBTTagCompound();
-                Block block = state.getBlock();
-                if (block == null || block.getRegistryName() == null) {
-                    tc.setString("r", Blocks.STONE.getRegistryName().toString());
-                    tc.setInteger("m", 0);
-                } else {
-                    tc.setString("r", block.getRegistryName().toString());
-                    tc.setInteger("m", block.getMetaFromState(state));
-                }
-                pal.appendTag(tc);
-            }
-            tagCompound.setTag("scanpal", pal);
-            if (dataDim != null) {
-                tagCompound.setInteger("scandimx", dataDim.getX());
-                tagCompound.setInteger("scandimy", dataDim.getY());
-                tagCompound.setInteger("scandimz", dataDim.getZ());
-            }
-            if (dataOffset != null) {
-                tagCompound.setInteger("scanoffx", dataOffset.getX());
-                tagCompound.setInteger("scanoffy", dataOffset.getY());
-                tagCompound.setInteger("scanoffz", dataOffset.getZ());
-            }
-        }
-
-        public void readFromNBT(NBTTagCompound tagCompound) {
-            dirtyCounter = tagCompound.getInteger("dirty");
-        }
-
-        public void readFromNBTExternal(NBTTagCompound tagCompound) {
-            NBTTagList list = tagCompound.getTagList("scanpal", Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < list.tagCount(); i++) {
-                NBTTagCompound tc = list.getCompoundTagAt(i);
-                Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(tc.getString("r")));
-                if (block == null) {
-                    block = Blocks.STONE;
-                }
-                materialPalette.add(block.getStateFromMeta(tc.getInteger("m")));
-            }
-            data = tagCompound.getByteArray("data");
-            dataDim = new BlockPos(tagCompound.getInteger("scandimx"), tagCompound.getInteger("scandimy"), tagCompound.getInteger("scandimz"));
-            dataOffset = new BlockPos(tagCompound.getInteger("scanoffx"), tagCompound.getInteger("scanoffy"), tagCompound.getInteger("scanoffz"));
-        }
-    }
 }
