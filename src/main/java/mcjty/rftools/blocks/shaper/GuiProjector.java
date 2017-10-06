@@ -84,11 +84,12 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
         toplevel.addChild(energyBar);
 
-        Label angleI = new Label(mc, this).setText("Angle:");
-        angleI.setLayoutHint(new PositionalLayout.PositionalHint(23, 30, 18, 15));
+        Label angleI = new Label(mc, this).setText("Angle");
+        angleI.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
+        angleI.setLayoutHint(new PositionalLayout.PositionalHint(16, 30, 32, 15));
         angleLabel = new ScrollableLabel(mc, this).setRealMinimum(0).setRealMaximum(360)
                 .setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT)
-                .setLayoutHint(new PositionalLayout.PositionalHint(38, 30, 30, 15));
+                .setLayoutHint(new PositionalLayout.PositionalHint(44, 30, 24, 15));
         angleLabel.setRealValue(tileEntity.getAngleInt());
         Button angleM = new Button(mc, this).setText("-").setLayoutHint(new PositionalLayout.PositionalHint(5, 30, 10, 15))
                 .addButtonEvent(parent -> min(angleLabel));
@@ -98,11 +99,12 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
                 .setLayoutHint(new PositionalLayout.PositionalHint(5, 46, 76, 15));
         toplevel.addChild(angleI).addChild(angleLabel).addChild(angleSlider).addChild(angleM).addChild(angleP);
 
-        Label scaleI = new Label(mc, this).setText("Scale:");
-        scaleI.setLayoutHint(new PositionalLayout.PositionalHint(23, 62, 18, 15));
+        Label scaleI = new Label(mc, this).setText("Scale");
+        scaleI.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
+        scaleI.setLayoutHint(new PositionalLayout.PositionalHint(16, 62, 32, 15));
         scaleLabel = new ScrollableLabel(mc, this).setRealMinimum(0).setRealMaximum(100)
                 .setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT)
-                .setLayoutHint(new PositionalLayout.PositionalHint(38, 62, 30, 15));
+                .setLayoutHint(new PositionalLayout.PositionalHint(44, 62, 24, 15));
         scaleLabel.setRealValue(tileEntity.getScaleInt());
         Button scaleM = new Button(mc, this).setText("-").setLayoutHint(new PositionalLayout.PositionalHint(5, 62, 10, 15))
                 .addButtonEvent(parent -> min(scaleLabel));
@@ -112,11 +114,12 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
                 .setLayoutHint(new PositionalLayout.PositionalHint(5, 78, 76, 15));
         toplevel.addChild(scaleI).addChild(scaleLabel).addChild(scaleSlider).addChild(scaleM).addChild(scaleP);
 
-        Label offsetI = new Label(mc, this).setText("Offs:");
-        offsetI.setLayoutHint(new PositionalLayout.PositionalHint(23, 94, 18, 15));
+        Label offsetI = new Label(mc, this).setText("Offset");
+        offsetI.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
+        offsetI.setLayoutHint(new PositionalLayout.PositionalHint(16, 94, 32, 15));
         offsetLabel = new ScrollableLabel(mc, this).setRealMinimum(0).setRealMaximum(100)
                 .setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT)
-                .setLayoutHint(new PositionalLayout.PositionalHint(38, 94, 30, 15));
+                .setLayoutHint(new PositionalLayout.PositionalHint(44, 94, 24, 15));
         offsetLabel.setRealValue(tileEntity.getOffsetInt());
         Button offsetM = new Button(mc, this).setText("-").setLayoutHint(new PositionalLayout.PositionalHint(5, 94, 10, 15))
                 .addButtonEvent(parent -> min(offsetLabel));
