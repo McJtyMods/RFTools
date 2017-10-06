@@ -327,11 +327,10 @@ public class ShapeRenderer {
             }
             ScanExtraData extraData = ScanDataManager.getScansClient().getExtraData(scanId);
             GlStateManager.glLineWidth(3);
-            GlStateManager.disableDepth();
             buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
             for (BlockPos pos : extraData.getBeacons()) {
                 int x = pos.getX();
-                int y = pos.getY();
+                int y = pos.getY()+1;
                 int z = pos.getZ();
                 float a = 0.5f;
                 buffer.pos(x-.5, y-.5, z-.5).color(0, .5f, 1, a).endVertex();
@@ -350,7 +349,6 @@ public class ShapeRenderer {
                 buffer.pos(x-.5, y-.5, z-.5).color(0, .5f, 1, a).endVertex();
             }
             tessellator.draw();
-            GlStateManager.enableDepth();
         }
 
         return needScanSound;
@@ -417,6 +415,14 @@ public class ShapeRenderer {
 //        System.out.println("y = " + offsety + ", avg = " + avg + ", quads = " + quadcnt);
     }
 
+    private static RenderData.RenderElement beaconElement = null;
+
+    private static RenderData.RenderElement getBeaconElement() {
+        if (beaconElement == null) {
+            beaconElement = new RenderData.RenderElement();
+        }
+        return beaconElement;
+    }
 
     private static void setupScissor(IShapeParentGui gui) {
         Minecraft mc = Minecraft.getMinecraft();
