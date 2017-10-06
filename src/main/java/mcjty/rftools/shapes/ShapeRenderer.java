@@ -1,25 +1,28 @@
 package mcjty.rftools.shapes;
 
-import mcjty.rftools.blocks.builder.BuilderSetup;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.block.Block;
-import net.minecraft.block.material.MapColor;
+import mcjty.rftools.varia.Check32;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import java.util.*;
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ShapeRenderer {
 
@@ -33,81 +36,40 @@ public class ShapeRenderer {
     private float yangle = 25.0f;
     private float zangle = 0.0f;
 
-    private final String name;    // For debug
-    private final int id;         // Unique ID for this renderer
-    private static int lastId = 0;
-    private long checksum = -1;
-    private boolean prevShowMat = false;
+    private ShapeID shapeID;
 
     private int waitForNewRequest = 0;
 
 
-    public static class RenderData {
-//        private Map<Long, IBlockState> positions = null;
-        private ShapeRenderer.RenderColumn columns[] = null;
-        public int shapeCount = 0;
-        public String previewMessage = "";
-        private int glList = -1;
-        private long touchTime = 0;
+    public ShapeRenderer(ShapeID shapeID) {
+        this.shapeID = shapeID;
     }
 
-    private static final Map<Integer, RenderData> renderDataMap = new HashMap<>();
-
-    public ShapeRenderer(String name) {
-        this.name = name;
-        this.id = lastId++;
+    public void setShapeID(ShapeID shapeID) {
+        this.shapeID = shapeID;
     }
 
-    public int getId() {
-        return id;
+    public ShapeID getShapeID() {
+        return shapeID;
     }
 
     public int getCount() {
-        if (renderDataMap.containsKey(id)) {
-            return renderDataMap.get(id).shapeCount;
+        RenderData data = ShapeDataManager.getRenderData(shapeID);
+        if (data != null) {
+            return data.getBlockCount();
         }
         return 0;
     }
 
-    public static RenderData getRenderData(int id) {
-        RenderData data = renderDataMap.get(id);
-        if (data == null) {
-            data = new RenderData();
-            renderDataMap.put(id, data);
-        }
-        data.touchTime = System.currentTimeMillis();
+    public static RenderData getRenderDataAndCreate(ShapeID shapeID) {
+        RenderData data = ShapeDataManager.getRenderDataAndCreate(shapeID);
+        data.touch();
         return data;
     }
 
-    private static int cleanupCounter = 20;
-    public static void cleanupOldRenderers() {
-        cleanupCounter--;
-        if (cleanupCounter >= 0) {
-            return;
-        }
-        cleanupCounter = 20;
-        long current = System.currentTimeMillis();
-        Set<Integer> toRemove = new HashSet<>();
-        for (Map.Entry<Integer, RenderData> entry : renderDataMap.entrySet()) {
-            if (entry.getValue().touchTime + 5000 < current) {
-                System.out.println("Removing id = " + entry.getKey());
-                toRemove.add(entry.getKey());
-            }
-        }
-        for (Integer id : toRemove) {
-            RenderData data = renderDataMap.get(id);
-            if (data.glList != -1) {
-                GLAllocation.deleteDisplayLists(data.glList);
-            }
-            renderDataMap.remove(id);
-        }
-    }
-
-    public static void setRenderData(int id, Map<Long, IBlockState> positions, ShapeRenderer.RenderColumn columns[], int count, String msg) {
-        RenderData data = getRenderData(id);
-//        data.positions = positions;//new HashMap<>(positions);
-        data.columns = columns;
-        data.shapeCount = count;
+    public static void setRenderData(ShapeID id, @Nullable RenderData.RenderPlane plane, int offsetY, int dy, String msg) {
+        RenderData data = getRenderDataAndCreate(id);
+        data.setPlaneData(plane, offsetY, dy);
         data.previewMessage = msg;
     }
 
@@ -151,18 +113,8 @@ public class ShapeRenderer {
         }
     }
 
-    public void invalidateGlList() {
-        RenderData data = renderDataMap.get(id);
-        if (data == null) {
-            return;
-        }
-        if (data.glList != -1) {
-            GLAllocation.deleteDisplayLists(data.glList);
-        }
-        data.glList = -1;
-    }
-
-    public void renderShapeInWorld(ItemStack stack, double x, double y, double z, float offset, float scale, float angle) {
+    public boolean renderShapeInWorld(ItemStack stack, double x, double y, double z, float offset, float scale, float angle,
+                                   boolean scan) {
         GlStateManager.pushMatrix();
         GlStateManager.translate((float) x + 0.5F, (float) y + 1F + offset, (float) z + 0.5F);
         GlStateManager.scale(scale, scale, scale);
@@ -176,6 +128,8 @@ public class ShapeRenderer {
         GlStateManager.disableTexture2D();
 
         Tessellator tessellator = Tessellator.getInstance();
+        VertexBuffer buffer = tessellator.getBuffer();
+        boolean doSound = renderFaces(tessellator, buffer, stack, scan);
         BufferBuilder buffer = tessellator.getBuffer();
         renderFaces(tessellator, buffer, stack, true);
 
@@ -186,9 +140,10 @@ public class ShapeRenderer {
         Minecraft.getMinecraft().entityRenderer.enableLightmap();
 
         GlStateManager.popMatrix();
+        return doSound;
     }
 
-    public void renderShape(IShapeParentGui gui, ItemStack stack, int x, int y, boolean showAxis, boolean showOuter, boolean showMat) {
+    public void renderShape(IShapeParentGui gui, ItemStack stack, int x, int y, boolean showAxis, boolean showOuter, boolean showScan, boolean showGuidelines) {
         setupScissor(gui);
 
         GlStateManager.pushMatrix();
@@ -208,7 +163,7 @@ public class ShapeRenderer {
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
-        renderFaces(tessellator, buffer, stack, showMat);
+        renderFaces(tessellator, buffer, stack, showScan);
         BlockPos dimension = ShapeCardItem.getDimension(stack);
         renderHelpers(tessellator, buffer, dimension.getX(), dimension.getY(), dimension.getZ(), showAxis, showOuter);
 
@@ -216,25 +171,25 @@ public class ShapeRenderer {
 
         GlStateManager.popMatrix();
 
-        GlStateManager.glLineWidth(3);
-        buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-        buffer.pos(x-62, y+180, 0)  .color(1f, 0f, 0f, 1f).endVertex();
-        buffer.pos(x-39, y+180, 0)  .color(1f, 0f, 0f, 1f).endVertex();
-        buffer.pos(x-62, y+195, 0)  .color(0f, 0.8f, 0f, 1f).endVertex();
-        buffer.pos(x-39, y+195, 0)  .color(0f, 0.8f, 0f, 1f).endVertex();
-        buffer.pos(x-62, y+210, 0)  .color(0f, 0f, 1f, 1f).endVertex();
-        buffer.pos(x-39, y+210, 0)  .color(0f, 0f, 1f, 1f).endVertex();
-        tessellator.draw();
-
+        if (showGuidelines) {
+            GlStateManager.glLineWidth(3);
+            buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+            buffer.pos(x - 62, y + 180, 0).color(1f, 0f, 0f, 1f).endVertex();
+            buffer.pos(x - 39, y + 180, 0).color(1f, 0f, 0f, 1f).endVertex();
+            buffer.pos(x - 62, y + 195, 0).color(0f, 0.8f, 0f, 1f).endVertex();
+            buffer.pos(x - 39, y + 195, 0).color(0f, 0.8f, 0f, 1f).endVertex();
+            buffer.pos(x - 62, y + 210, 0).color(0f, 0f, 1f, 1f).endVertex();
+            buffer.pos(x - 39, y + 210, 0).color(0f, 0f, 1f, 1f).endVertex();
+            tessellator.draw();
+        }
 
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
         RenderHelper.enableGUIStandardItemLighting();
 
-        RenderData data = renderDataMap.get(id);
+        RenderData data = ShapeDataManager.getRenderData(shapeID);
         if (data != null && !data.previewMessage.isEmpty()) {
             Minecraft.getMinecraft().fontRenderer.drawString(data.previewMessage, gui.getPreviewLeft()+84, gui.getPreviewTop()+50, 0xffff0000);
-            return;
         }
 
     }
@@ -252,16 +207,7 @@ public class ShapeRenderer {
 
 
 
-    private static final Quad[] QUADS = new Quad[] {
-            new Quad(new Vt(0, 0, 0), new Vt(1, 0, 0), new Vt(1, 0, 1), new Vt(0, 0, 1)),       // DOWN
-            new Quad(new Vt(0, 1, 1), new Vt(1, 1, 1), new Vt(1, 1, 0), new Vt(0, 1, 0)),       // UP
-            new Quad(new Vt(1, 1, 0), new Vt(1, 0, 0), new Vt(0, 0, 0), new Vt(0, 1, 0)),       // NORTH
-            new Quad(new Vt(1, 0, 1), new Vt(1, 1, 1), new Vt(0, 1, 1), new Vt(0, 0, 1)),       // SOUTH
-            new Quad(new Vt(0, 0, 1), new Vt(0, 1, 1), new Vt(0, 1, 0), new Vt(0, 0, 0)),       // WEST
-            new Quad(new Vt(1, 0, 0), new Vt(1, 1, 0), new Vt(1, 1, 1), new Vt(1, 0, 1)),       // EAST
-    };
-
-    static void renderOuterBox(Tessellator tessellator, BufferBuilder buffer, int xlen, int ylen, int zlen) {
+    static void renderOuterBox(Tessellator tessellator, VertexBuffer buffer, int xlen, int ylen, int zlen) {
         GlStateManager.glLineWidth(1.0f);
         buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
 //        buffer.setTranslation(0.5, 0.5, 0.5);
@@ -314,153 +260,86 @@ public class ShapeRenderer {
         tessellator.draw();
     }
 
-    private long calculateChecksum(ItemStack stack) {
-        return ShapeCardItem.getCheck(stack);
-    }
-
-    private static class Col {
-        private final float r;
-        private final float g;
-        private final float b;
-
-        public Col(float r, float g, float b) {
-            this.r = r;
-            this.g = g;
-            this.b = b;
+    private int calculateChecksum(ItemStack stack) {
+        Check32 crc = new Check32();
+        if (ItemStackTools.isValid(stack)) {
+            ShapeCardItem.getFormulaCheckClient(stack, crc);
         }
-
-        public float getR() {
-            return r;
-        }
-
-        public float getG() {
-            return g;
-        }
-
-        public float getB() {
-            return b;
-        }
-    }
-
-    private static final Col COL_DEFAULT = new Col(.5f,.3f,.5f);
-    private static final Col COL_LAVA = new Col(0xd4/255.0f,0x5a/255.0f,0x12/255.0f);
-    private static final Col COL_SCANNER = new Col(0x00/255.0f,0x00/255.0f,0xe2/255.0f);
-
-    private Col getColor(Map<IBlockState, Col> pallete, IBlockState state) {
-        if (state == null) {
-            return COL_DEFAULT;
-        }
-        if (pallete.containsKey(state)) {
-            return pallete.get(state);
-        }
-        Col col;
-        Block block = state.getBlock();
-        MapColor mapColor = block.getMapColor(state, null, null);
-        if (block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
-            col = COL_LAVA;
-        } else if (block == BuilderSetup.scannerBlock) {
-            col = COL_SCANNER;
-        } else if (mapColor != null) {
-            col = new Col(((mapColor.colorValue>>16) & 0xff) / 255.0f, ((mapColor.colorValue>>8) & 0xff) / 255.0f, (mapColor.colorValue & 0xff) / 255.0f);
-        } else {
-            col = COL_DEFAULT;
-        }
-        float r = col.getR();
-        float g = col.getG();
-        float b = col.getB();
-        if (r * 1.2f > 1.0f) {
-            r = 0.99f/1.2f;
-        }
-        if (g * 1.2f > 1.0f) {
-            g = 0.99f/1.2f;
-        }
-        if (b * 1.2f > 1.0f) {
-            b = 0.99f/1.2f;
-        }
-        col = new Col(r, g, b);
-        pallete.put(state, col);
-        return col;
+        return crc.get();
     }
 
 
-//    private void renderFacesVBO(Tessellator tessellator, final VertexBuffer buffer,
-//                                ItemStack stack, boolean showMat) {
-//        if (vboBuffer == null) {
-//            vboBuffer = new VertexBuffer(2097152);
-//        }
-//        buffer
-//    }
-//
-    private void renderFaces(Tessellator tessellator, final BufferBuilder buffer,
-                     ItemStack stack, boolean showMat) {
+    private boolean renderFaces(Tessellator tessellator, final VertexBuffer buffer,
+                     ItemStack stack, boolean showScan) {
 
-        RenderData data = getRenderData(id);
-        int glList = data.glList;
+        RenderData data = getRenderDataAndCreate(shapeID);
 
-        if (data.columns == null || waitForNewRequest > 0) {
+        if (data.isWantData() || waitForNewRequest > 0) {
             if (waitForNewRequest <= 0) {
                 // No positions, send a new request
-                RFToolsMessages.INSTANCE.sendToServer(new PacketRequestShapeData(stack, id));
-                waitForNewRequest = 10;
-                data.columns = null;
+                RFToolsMessages.INSTANCE.sendToServer(new PacketRequestShapeData(stack, shapeID));
+                waitForNewRequest = 20;
+                data.setWantData(false);
             } else {
                 waitForNewRequest--;
-                if (data.columns != null) {
-                    // Positions have arrived, create displayList
-                    // Data is received
-                    waitForNewRequest = 0;
-                    checksum = calculateChecksum(stack);
-                    createDisplayList(tessellator, buffer, showMat);
+            }
+        } else {
+            long check = calculateChecksum(stack);
+            if (!data.hasData() || check != data.getChecksum()) {
+                // Checksum failed, we want new data
+                data.setChecksum(check);
+                data.setWantData(true);
+            }
+        }
+
+        boolean needScanSound = false;
+        if (data.getPlanes() != null) {
+            long time = System.currentTimeMillis();
+            for (RenderData.RenderPlane plane : data.getPlanes()) {
+                if (plane != null) {
+                    if (plane.isDirty()) {
+                        createRenderData(tessellator, buffer, plane, data);
+                        plane.markClean();
+                    }
+                    boolean flash = showScan && (plane.getBirthtime() > time-200);
+                    if (flash) {
+                        needScanSound = true;
+                        GlStateManager.enableBlend();
+                        GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE);
+//                        GlStateManager.colorMask(false, false, true, true);
+                    }
+                    plane.render();
+                    if (flash) {
+                        GlStateManager.disableBlend();
+                        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+//                        GlStateManager.colorMask(true, true, true, true);
+                    }
                 }
             }
-            if (glList != -1) {
-                // Render old data while we're waiting
-                GlStateManager.callList(glList);
-            }
-            return;
         }
-
-        long check = calculateChecksum(stack);
-        if (glList == -1 || check != checksum || showMat != prevShowMat) {
-            // Checksum failed, set positions to null
-            data.columns = null;
-        }
-
-        if (glList != -1) {
-            GlStateManager.callList(glList);
-        }
+        return needScanSound;
     }
 
-    private void createDisplayList(Tessellator tessellator, BufferBuilder buffer, boolean showMat) {
-        prevShowMat = showMat;
-        invalidateGlList();
-        RenderData data = getRenderData(id);
-        data.glList = GLAllocation.generateDisplayLists(1);
-        GlStateManager.glNewList(data.glList, GL11.GL_COMPILE);
-
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-//        GlStateManager.enableBlend();
-//        GlStateManager.enableAlpha();
-
-//            Map<Long, IBlockState> stateMap = new HashMap<>();
-//            TLongHashSet positions = ShapeCardItem.getPositions(stack, shape, false, new BlockPos(0, 0, 0), new BlockPos(0, 0, 0), stateMap);
-        Map<IBlockState, Col> pallete = new HashMap<>();
+    private void createRenderData(Tessellator tessellator, VertexBuffer buffer, RenderData.RenderPlane plane, RenderData data) {
+        Map<IBlockState, ShapeBlockInfo> palette = new HashMap<>();
 
         double origOffsetX = buffer.xOffset;
         double origOffsetY = buffer.yOffset;
         double origOffsetZ = buffer.zOffset;
 
-//        Map<Long, IBlockState> positions = data.positions;
         int avgcnt = 0;
         int total = 0;
-        RenderColumn[] columns = data.columns;
-        for (RenderColumn column : columns) {
-            BlockPos coordinate = column.getBottomPos();
-            int x = coordinate.getX();
-            int y = coordinate.getY();
-            int z = coordinate.getZ();
-            List<Pair<Integer, IBlockState>> columnData = column.getData();
-            for (int i = 0 ; i < columnData.size() ; i++) {
+        int y = plane.getY();
+        int offsety = plane.getOffsety();
+
+        buffer = data.createRenderList(buffer, offsety);
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+
+        for (RenderData.RenderStrip strip : plane.getStrips()) {
+            int z = plane.getStartz();
+            int x = strip.getX();
+            List<Pair<Integer, IBlockState>> columnData = strip.getData();
+            for (int i = 0; i < columnData.size(); i++) {
                 Pair<Integer, IBlockState> pair = columnData.get(i);
                 int cnt = pair.getKey();
                 IBlockState state = pair.getValue();
@@ -468,102 +347,40 @@ public class ShapeRenderer {
                     buffer.setTranslation(origOffsetX + x, origOffsetY + y, origOffsetZ + z);
                     avgcnt += cnt;
                     total++;
-                    if (showMat) {
-                        Col col = getColor(pallete, state);
-                        float r = col.getR();
-                        float g = col.getG();
-                        float b = col.getB();
-                        if (column.isEmptyAt(i+1)) {
-                            addSideFullTexture(buffer, EnumFacing.UP.ordinal(), cnt, r * .8f, g * .8f, b * .8f);
+                    ShapeBlockInfo info = ShapeBlockInfo.getBlockInfo(palette, state);
+                    ShapeBlockInfo.Col col = info.getCol();
+                    float r = col.getR();
+                    float g = col.getG();
+                    float b = col.getB();
+                    ShapeBlockInfo.IBlockRender bd = info.getRender();
+                    if (bd == null) {
+                        addSideFullTextureU(buffer, cnt, r * .8f, g * .8f, b * .8f);
+                        addSideFullTextureD(buffer, cnt, r * .8f, g * .8f, b * .8f);
+                        if (strip.isEmptyAt(i - 1, palette)) {
+                            addSideFullTextureN(buffer, cnt, r * 1.2f, g * 1.2f, b * 1.2f);
                         }
-                        if (column.isEmptyAt(i-1)) {
-                            addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), r * .8f, g * .8f, b * .8f);
+                        if (strip.isEmptyAt(i + 1, palette)) {
+                            addSideFullTextureS(buffer, cnt, r * 1.2f, g * 1.2f, b * 1.2f);
                         }
-                        addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), cnt, r * 1.2f, g * 1.2f, b * 1.2f);
-                        addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), cnt, r * 1.2f, g * 1.2f, b * 1.2f);
-                        addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), cnt, r, g, b);
-                        addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), cnt, r, g, b);
+                        addSideFullTextureW(buffer, cnt, r, g, b);
+                        addSideFullTextureE(buffer, cnt, r, g, b);
                     } else {
-                        float d = .2f;
-                        float l = ((x + y + z) & 1) == 1 ? .9f : .6f;
-                        if (column.isEmptyAt(i+1)) {
-                            addSideFullTexture(buffer, EnumFacing.UP.ordinal(), cnt, d, l, d);
+                        for (int c = 0 ; c < cnt ; c++) {
+                            bd.render(buffer, c, r, g, b);
                         }
-                        if (column.isEmptyAt(i-1)) {
-                            addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), d, l, d);
-                        }
-                        addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), cnt, d, d, l);
-                        addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), cnt, d, d, l);
-                        addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), cnt, l, d, d);
-                        addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), cnt, l, d, d);
                     }
                 }
-                y += cnt;
+                z += cnt;
             }
         }
-        float avg = avgcnt / (float) total;
-        System.out.println("avg = " + avg);
+
         buffer.setTranslation(origOffsetX, origOffsetY, origOffsetZ);
+        data.performRenderToList(tessellator, buffer, offsety);
 
-
-//        for (Map.Entry<Long, IBlockState> entry : positions.entrySet()) {
-//            long p = entry.getKey();
-//            BlockPos coordinate = BlockPos.fromLong(p);
-//            int x = coordinate.getX();
-//            int y = coordinate.getY();
-//            int z = coordinate.getZ();
-//
-//            buffer.setTranslation(origOffsetX + x, origOffsetY + y, origOffsetZ + z);
-//            if (showMat) {
-//                Col col = getColor(pallete, entry.getValue());
-//                float r = col.getR();
-//                float g = col.getG();
-//                float b = col.getB();
-//                if (!positions.containsKey(coordinate.up().toLong())) {
-//                    addSideFullTexture(buffer, EnumFacing.UP.ordinal(), r * .8f, g * .8f, b * .8f);
-//                }
-//                if (!positions.containsKey(coordinate.down().toLong())) {
-//                    addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), r * .8f, g * .8f, b * .8f);
-//                }
-//                if (!positions.containsKey(coordinate.north().toLong())) {
-//                    addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), r * 1.2f, g * 1.2f, b * 1.2f);
-//                }
-//                if (!positions.containsKey(coordinate.south().toLong())) {
-//                    addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), r * 1.2f, g * 1.2f, b * 1.2f);
-//                }
-//                if (!positions.containsKey(coordinate.west().toLong())) {
-//                    addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), r, g, b);
-//                }
-//                if (!positions.containsKey(coordinate.east().toLong())) {
-//                    addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), r, g, b);
-//                }
-//            } else {
-//                float d = .2f;
-//                float l = ((x + y + z) & 1) == 1 ? .9f : .6f;
-//                if (!positions.containsKey(coordinate.up().toLong())) {
-//                    addSideFullTexture(buffer, EnumFacing.UP.ordinal(), d, l, d);
-//                }
-//                if (!positions.containsKey(coordinate.down().toLong())) {
-//                    addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), d, l, d);
-//                }
-//                if (!positions.containsKey(coordinate.north().toLong())) {
-//                    addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), d, d, l);
-//                }
-//                if (!positions.containsKey(coordinate.south().toLong())) {
-//                    addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), d, d, l);
-//                }
-//                if (!positions.containsKey(coordinate.west().toLong())) {
-//                    addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), l, d, d);
-//                }
-//                if (!positions.containsKey(coordinate.east().toLong())) {
-//                    addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), l, d, d);
-//                }
-//            }
-//            buffer.setTranslation(origOffsetX - x, origOffsetY - y, origOffsetZ - z);
-//        }
-        tessellator.draw();
-        GlStateManager.glEndList();
+//        float avg = avgcnt / (float) total;
+//        System.out.println("y = " + offsety + ", avg = " + avg + ", quads = " + quadcnt);
     }
+
 
     private static void setupScissor(IShapeParentGui gui) {
         Minecraft mc = Minecraft.getMinecraft();
@@ -579,64 +396,53 @@ public class ShapeRenderer {
         GL11.glScissor(sx, sy, sw, sh);
     }
 
-
-    public static void addSideFullTexture(BufferBuilder buffer, int side, float r, float g, float b) {
-        Quad quad = QUADS[side];
+    public static void addSideFullTextureD(VertexBuffer buffer, int cnt, float r, float g, float b) {
         float a = 0.5f;
-        buffer.pos(quad.v1.x, quad.v1.y, quad.v1.z).color(r, g, b, a).endVertex();
-        buffer.pos(quad.v2.x, quad.v2.y, quad.v2.z).color(r, g, b, a).endVertex();
-        buffer.pos(quad.v3.x, quad.v3.y, quad.v3.z).color(r, g, b, a).endVertex();
-        buffer.pos(quad.v4.x, quad.v4.y, quad.v4.z).color(r, g, b, a).endVertex();
+        buffer.pos(0, 0, 0).color(r, g, b, a).endVertex();
+        buffer.pos(1, 0, 0).color(r, g, b, a).endVertex();
+        buffer.pos(1, 0, cnt).color(r, g, b, a).endVertex();
+        buffer.pos(0, 0, cnt).color(r, g, b, a).endVertex();
     }
 
-    public static void addSideFullTexture(BufferBuilder buffer, int side, int cnt, float r, float g, float b) {
-        Quad quad = QUADS[side];
+    public static void addSideFullTextureU(VertexBuffer buffer, int cnt, float r, float g, float b) {
         float a = 0.5f;
-        buffer.pos(quad.v1.x, quad.v1.y * cnt, quad.v1.z).color(r, g, b, a).endVertex();
-        buffer.pos(quad.v2.x, quad.v2.y * cnt, quad.v2.z).color(r, g, b, a).endVertex();
-        buffer.pos(quad.v3.x, quad.v3.y * cnt, quad.v3.z).color(r, g, b, a).endVertex();
-        buffer.pos(quad.v4.x, quad.v4.y * cnt, quad.v4.z).color(r, g, b, a).endVertex();
+        buffer.pos(0, 1, cnt).color(r, g, b, a).endVertex();
+        buffer.pos(1, 1, cnt).color(r, g, b, a).endVertex();
+        buffer.pos(1, 1, 0).color(r, g, b, a).endVertex();
+        buffer.pos(0, 1, 0).color(r, g, b, a).endVertex();
     }
 
-    private static class Vt {
-        public final float x;
-        public final float y;
-        public final float z;
-
-        public Vt(float x, float y, float z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
+    public static void addSideFullTextureE(VertexBuffer buffer, int cnt, float r, float g, float b) {
+        float a = 0.5f;
+        buffer.pos(1, 0, 0).color(r, g, b, a).endVertex();
+        buffer.pos(1, 1, 0).color(r, g, b, a).endVertex();
+        buffer.pos(1, 1, cnt).color(r, g, b, a).endVertex();
+        buffer.pos(1, 0, cnt).color(r, g, b, a).endVertex();
     }
 
-    private static class Quad {
-        public final Vt v1;
-        public final Vt v2;
-        public final Vt v3;
-        public final Vt v4;
-
-        public Quad(Vt v1, Vt v2, Vt v3, Vt v4) {
-            this.v1 = v1;
-            this.v2 = v2;
-            this.v3 = v3;
-            this.v4 = v4;
-        }
+    public static void addSideFullTextureW(VertexBuffer buffer, int cnt, float r, float g, float b) {
+        float a = 0.5f;
+        buffer.pos(0, 0, cnt).color(r, g, b, a).endVertex();
+        buffer.pos(0, 1, cnt).color(r, g, b, a).endVertex();
+        buffer.pos(0, 1, 0).color(r, g, b, a).endVertex();
+        buffer.pos(0, 0, 0).color(r, g, b, a).endVertex();
     }
 
-    public static class RenderColumn {
-        private final List<Pair<Integer, IBlockState>> data = new ArrayList<>();
-        private final BlockPos bottomPos;
-        private IBlockState last;
-        private int cnt = 0;
+    public static void addSideFullTextureN(VertexBuffer buffer, int cnt, float r, float g, float b) {
+        float a = 0.5f;
+        buffer.pos(1, 1, 0).color(r, g, b, a).endVertex();
+        buffer.pos(1, 0, 0).color(r, g, b, a).endVertex();
+        buffer.pos(0, 0, 0).color(r, g, b, a).endVertex();
+        buffer.pos(0, 1, 0).color(r, g, b, a).endVertex();
+    }
 
-        public RenderColumn(BlockPos bottomPos) {
-            this.bottomPos = bottomPos;
-        }
-
-        public BlockPos getBottomPos() {
-            return bottomPos;
-        }
+    public static void addSideFullTextureS(VertexBuffer buffer, int cnt, float r, float g, float b) {
+        float a = 0.5f;
+        buffer.pos(1, 0, cnt).color(r, g, b, a).endVertex();
+        buffer.pos(1, 1, cnt).color(r, g, b, a).endVertex();
+        buffer.pos(0, 1, cnt).color(r, g, b, a).endVertex();
+        buffer.pos(0, 0, cnt).color(r, g, b, a).endVertex();
+    }
 
         public List<Pair<Integer, IBlockState>> getData() {
             return data;

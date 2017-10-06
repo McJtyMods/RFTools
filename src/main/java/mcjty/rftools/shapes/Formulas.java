@@ -1,17 +1,14 @@
 package mcjty.rftools.shapes;
 
-import mcjty.rftools.blocks.shaper.ScannerTileEntity;
-import mcjty.rftools.blocks.shield.ShieldConfiguration;
+import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import mcjty.rftools.items.builder.ShapeCardItem;
+import mcjty.rftools.varia.Check32;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
@@ -66,13 +63,18 @@ public class Formulas {
         private int dy;
         private int dz;
         private IBlockState lastState = null;
-        private World scannerWorld;
-        private BlockPos scannerPos;
+
+        @Override
+        public void getCheckSumClient(NBTTagCompound tc, Check32 crc) {
+            ShapeCardItem.getLocalChecksum(tc, crc);
+            int scanId = tc.getInteger("scanid");
+            crc.add(scanId);
+            crc.add(ScanDataManager.getScansClient().getScanDirtyCounterClient(scanId));
+        }
 
         @Override
         public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
             data = null;
-            scannerWorld = null;
 
             if (card == null) {
                 return;
@@ -93,34 +95,25 @@ public class Formulas {
 
             palette.clear();
 
-            int dim = card.getInteger("datadim");
-            scannerWorld = DimensionManager.getWorld(dim);
-            if (scannerWorld != null) {
-                int x = card.getInteger("datax");
-                int y = card.getInteger("datay");
-                int z = card.getInteger("dataz");
-                scannerPos = new BlockPos(x, y, z);
-                if (scannerWorld.isBlockLoaded(scannerPos)) {
-                    TileEntity te = scannerWorld.getTileEntity(scannerPos);
-                    if (te instanceof ScannerTileEntity) {
-                        palette = new ArrayList<>(((ScannerTileEntity) te).getMaterialPalette());
-                        byte[] datas = ((ScannerTileEntity) te).getData();
-                        data = new byte[dx * dy * dz];
-                        int j = 0;
-                        for (int i = 0; i < datas.length / 2; i++) {
-                            int cnt = (datas[i * 2]) & 0xff;
-                            int c = datas[i * 2 + 1] & 0xff;
-                            if (c == 255) {
-                                c = 0;
-                            }
-                            while (cnt > 0 && j < data.length) {
-                                data[j++] = (byte) c;
-                                cnt--;
-                            }
-                            if (j >= data.length) {
-                                break;
-                            }
-                        }
+            int scanId = card.getInteger("scanid");
+            if (scanId != 0) {
+                ScanDataManager.Scan scan = ScanDataManager.getScans().loadScan(scanId);
+                palette = new ArrayList<>(scan.getMaterialPalette());
+                byte[] datas = scan.getData();
+                data = new byte[dx * dy * dz];
+                int j = 0;
+                for (int i = 0; i < datas.length / 2; i++) {
+                    int cnt = (datas[i * 2]) & 0xff;
+                    int c = datas[i * 2 + 1] & 0xff;
+                    if (c == 255) {
+                        c = 0;
+                    }
+                    while (cnt > 0 && j < data.length) {
+                        data[j++] = (byte) c;
+                        cnt--;
+                    }
+                    if (j >= data.length) {
+                        break;
                     }
                 }
             }
@@ -128,21 +121,24 @@ public class Formulas {
         }
 
         @Override
-        public boolean isInside(int x, int y, int z) {
-//            if (data == null) {
-//                return false;
-//            }
-//            if (x < x1 || x >= x1+dx || y < y1 || y >= y1+dy || z < z1 || z >= z1+dz) {
-//                return false;
-//            }
+        public boolean isInsideSafe(int x, int y, int z) {
+            if (x < x1 || x >= x1+dx || y < y1 || y >= y1+dy || z < z1 || z >= z1+dz) {
+                return false;
+            }
+            return isInside(x, y, z);
+        }
 
-            int index = (y-y1) * dx * dz + (x-x1) * dz + (z-z1);
+        @Override
+        public boolean isInside(int x, int y, int z) {
+            if (data == null) {
+                return false;
+            }
+            int index = (x-x1) * dy * dz + (z-z1) * dy + (y-y1);
             if (data[index] == 0) {
                 return false;
             } else {
                 int idx = ((data[index]) & 0xff)-1;
                 lastState = palette.get(idx);
-//                lastState = idx < palette.size() ? palette.get(idx) : null;
                 return true;
             }
         }
@@ -158,8 +154,6 @@ public class Formulas {
         public IFormula createFormula() {
             return new IFormula() {
                 private BlockPos thisCoord;
-                private BlockPos dimension;
-                private BlockPos offset;
                 private IBlockState blockState;
                 private List<IFormula> formulas = new ArrayList<>();
                 private List<Bounds> bounds = new ArrayList<>();
@@ -169,8 +163,6 @@ public class Formulas {
                 @Override
                 public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
                     this.thisCoord = thisCoord;
-                    this.dimension = dimension;
-                    this.offset = offset;
 
                     if (card == null) {
                         return;
@@ -182,7 +174,6 @@ public class Formulas {
                     if (dx <= 0 || dy <= 0 || dz <= 0) {
                         return;
                     }
-
 
                     NBTTagList children = card.getTagList("children", Constants.NBT.TAG_COMPOUND);
                     for (int i = 0 ; i < children.tagCount() ; i++) {
@@ -196,8 +187,8 @@ public class Formulas {
                         ShapeRotation rotation = ShapeRotation.getByName(rot);
                         modifiers.add(new ShapeModifier(operation, flip, rotation));
 
-                        BlockPos dim = ShapeCardItem.getClampedDimension(childTag, ShieldConfiguration.maxShieldDimension);
-                        BlockPos off = ShapeCardItem.getClampedOffset(childTag, ShieldConfiguration.maxShieldOffset);
+                        BlockPos dim = ShapeCardItem.getClampedDimension(childTag, ScannerConfiguration.maxScannerDimension);
+                        BlockPos off = ShapeCardItem.getClampedOffset(childTag, ScannerConfiguration.maxScannerOffset);
                         BlockPos o = off.add(offset);
                         formula.setup(thisCoord, dim, o, childTag);
                         formulas.add(formula);
@@ -215,6 +206,26 @@ public class Formulas {
                             }
                         }
                         blockStates.add(state);
+                    }
+                }
+
+                @Override
+                public void getCheckSumClient(NBTTagCompound tc, Check32 crc) {
+                    ShapeCardItem.getLocalChecksum(tc, crc);
+                    NBTTagList children = tc.getTagList("children", Constants.NBT.TAG_COMPOUND);
+                    for (int i = 0 ; i < children.tagCount() ; i++) {
+                        NBTTagCompound childTag = children.getCompoundTagAt(i);
+                        IFormula formula = ShapeCardItem.createCorrectFormula(childTag);
+                        formula.getCheckSumClient(childTag, crc);
+                        crc.add(childTag.getBoolean("mod_flipy") ? 1 : 0);
+
+                        String rot = childTag.getString("mod_rot");
+                        ShapeRotation rotation = ShapeRotation.getByName(rot);
+                        crc.add(rotation.ordinal());
+
+                        String op = childTag.getString("mod_op");
+                        ShapeOperation operation = ShapeOperation.getByName(op);
+                        crc.add(operation.ordinal());
                     }
                 }
 

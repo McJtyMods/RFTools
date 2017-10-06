@@ -15,10 +15,9 @@ import mcjty.rftools.blocks.security.PacketGetSecurityInfo;
 import mcjty.rftools.blocks.security.PacketGetSecurityName;
 import mcjty.rftools.blocks.security.PacketSecurityInfoReady;
 import mcjty.rftools.blocks.security.PacketSecurityNameReady;
+import mcjty.rftools.blocks.shaper.PacketProjectorClientNotification;
 import mcjty.rftools.items.modifier.PacketUpdateModifier;
-import mcjty.rftools.shapes.PacketRequestShapeData;
-import mcjty.rftools.shapes.PacketReturnShapeData;
-import mcjty.rftools.shapes.PacketSendComposerData;
+import mcjty.rftools.shapes.*;
 import mcjty.rftools.blocks.shield.PacketFiltersReady;
 import mcjty.rftools.blocks.shield.PacketGetFilters;
 import mcjty.rftools.blocks.spawner.SpawnerInfoPacketClient;
@@ -34,7 +33,6 @@ import mcjty.rftools.items.netmonitor.PacketGetConnectedBlocks;
 import mcjty.rftools.items.teleportprobe.*;
 import mcjty.rftools.jei.PacketSendRecipe;
 import mcjty.rftools.playerprops.PacketSendBuffsToClient;
-import mcjty.rftools.shapes.PacketUpdateNBTShapeCard;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -81,6 +79,7 @@ public class RFToolsMessages {
         net.registerMessage(PacketOpenGui.Handler.class, PacketOpenGui.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketUpdateModifier.Handler.class, PacketUpdateModifier.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketRequestShapeData.Handler.class, PacketRequestShapeData.class, PacketHandler.nextID(), Side.SERVER);
+        net.registerMessage(PacketRequestScanDirty.Handler.class, PacketRequestScanDirty.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketUpdateNBTShapeCard.Handler.class, PacketUpdateNBTShapeCard.class, PacketHandler.nextID(), Side.SERVER);
 
         // Client side
@@ -107,6 +106,8 @@ public class RFToolsMessages {
         net.registerMessage(PacketHudLogReady.Handler.class, PacketHudLogReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketReturnRfInRange.Handler.class, PacketReturnRfInRange.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketReturnShapeData.Handler.class, PacketReturnShapeData.class, PacketHandler.nextID(), Side.CLIENT);
+        net.registerMessage(PacketReturnScanDirty.Handler.class, PacketReturnScanDirty.class, PacketHandler.nextID(), Side.CLIENT);
+        net.registerMessage(PacketProjectorClientNotification.Handler.class, PacketProjectorClientNotification.class, PacketHandler.nextID(), Side.CLIENT);
 
         PacketHandler.register(PacketHandler.nextPacketID(), StorageInfoPacketServer.class, StorageInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), PowerCellInfoPacketServer.class, PowerCellInfoPacketClient.class);

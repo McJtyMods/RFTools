@@ -13,9 +13,10 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.builder.BuilderConfiguration;
+import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.IShapeParentGui;
+import mcjty.rftools.shapes.ShapeID;
 import mcjty.rftools.shapes.ShapeRenderer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -39,14 +40,15 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
 
     private ToggleButton showAxis;
     private ToggleButton showOuter;
-    private ToggleButton showMat;
+    private ToggleButton showScan;
 
     private Button scanButton;
 
     private Label offsetLabel;
     private Label dimensionLabel;
+    private Label progressLabel;
 
-    private ShapeRenderer shapeRenderer = new ShapeRenderer("scanner");
+    private ShapeRenderer shapeRenderer = null;
     private int filterCnt = 0;
 
     public GuiScanner(ScannerTileEntity shaperTileEntity, ScannerContainer container) {
@@ -56,11 +58,23 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
         ySize = SCANNER_HEIGHT;
     }
 
+    private ShapeRenderer getShapeRenderer() {
+        if (shapeRenderer == null) {
+            shapeRenderer = new ShapeRenderer(getShapeID());
+        }
+        return shapeRenderer;
+    }
+
+    private ShapeID getShapeID() {
+        return new ShapeID(0, null, ShapeCardItem.getScanId(tileEntity.getRenderStack()));
+    }
+
+
     @Override
     public void initGui() {
         super.initGui();
 
-        shapeRenderer.initView(250, 70);
+        getShapeRenderer().initView(250, 70);
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
@@ -78,9 +92,9 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
         showOuter = new ToggleButton(mc, this).setCheckMarker(true).setText("B").setLayoutHint(new PositionalLayout.PositionalHint(31, 176, 24, 16));
         showOuter.setPressed(true);
         toplevel.addChild(showOuter);
-        showMat = new ToggleButton(mc, this).setCheckMarker(true).setText("M").setLayoutHint(new PositionalLayout.PositionalHint(57, 176, 24, 16));
-        showMat.setPressed(true);
-        toplevel.addChild(showMat);
+        showScan = new ToggleButton(mc, this).setCheckMarker(true).setText("S").setLayoutHint(new PositionalLayout.PositionalHint(57, 176, 24, 16));
+        showScan.setPressed(true);
+        toplevel.addChild(showScan);
 
         scanButton = new Button(mc, this).setText("Scan")
                 .addButtonEvent(parent -> scan())
@@ -108,6 +122,9 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
         dimensionLabel = new Label(mc, this).setText("Dim: " + BlockPosTools.toString(tileEntity.getDataDim())).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
         dimensionLabel.setLayoutHint(new PositionalLayout.PositionalHint(4, 105, 80, 14));
         toplevel.addChild(dimensionLabel);
+        progressLabel = new Label(mc, this).setText("");
+        progressLabel.setLayoutHint(new PositionalLayout.PositionalHint(4, 135, 80, 14));
+        toplevel.addChild(progressLabel);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
@@ -154,17 +171,6 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
     }
 
     private void move(int x, int y, int z) {
-        Slot slot = inventorySlots.getSlot(ScannerContainer.SLOT_OUT);
-        if (slot.getHasStack()) {
-            ItemStack stack = slot.getStack();
-            if (!stack.isEmpty()) {
-                BlockPos offset = tileEntity.getDataOffset();
-                int offsetX = offset.getX() + x;
-                int offsetY = offset.getY() + y;
-                int offsetZ = offset.getZ() + z;
-                sendServerCommand(network, ScannerTileEntity.CMD_SCAN, new Argument("offsetX", offsetX), new Argument("offsetY", offsetY), new Argument("offsetZ", offsetZ));
-            }
-        }
         BlockPos offset = tileEntity.getDataOffset();
         int offsetX = offset.getX() + x;
         int offsetY = offset.getY() + y;
@@ -180,7 +186,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
         x -= guiLeft;
         y -= guiTop;
 
-        shapeRenderer.handleShapeDragging(x, y);
+        getShapeRenderer().handleShapeDragging(x, y);
     }
 
     @Override
@@ -196,7 +202,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int x, int y) {
 
-        shapeRenderer.handleMouseWheel();
+        getShapeRenderer().handleMouseWheel();
 
         offsetLabel.setText("Off: " + BlockPosTools.toString(tileEntity.getDataOffset()));
         dimensionLabel.setText("Dim: " + BlockPosTools.toString(tileEntity.getDataDim()));
@@ -208,24 +214,27 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
         tileEntity.requestRfFromServer(RFTools.MODID);
 
         boolean instack = inventorySlots.getSlot(ScannerContainer.SLOT_IN).getHasStack();
-        if (currentRF < BuilderConfiguration.SCANNER_ONESCAN) {
+        if (currentRF < ScannerConfiguration.SCANNER_PERTICK) {
             instack = false;
+        }
+        if (tileEntity.getScanProgress() >= 0) {
+            instack = false;
+            progressLabel.setText(tileEntity.getScanProgress() + "%");
+        } else {
+            progressLabel.setText("");
         }
         scanButton.setEnabled(instack);
 
         ItemStack stack = tileEntity.getRenderStack();
-//        Slot slot = inventorySlots.getSlot(ScannerContainer.SLOT_OUT);
-//        if (slot.getHasStack()) {
-//            ItemStack stack = slot.getStack();
-            if (!stack.isEmpty()) {
-                int cnt = countFilters();
-                if (cnt != filterCnt) {
-                    filterCnt = cnt;
-                    move(0, 0, 0);
-                }
+        if (!stack.isEmpty()) {
+            int cnt = countFilters();
+            if (cnt != filterCnt) {
+                filterCnt = cnt;
+                move(0, 0, 0);
+            }
 
-                shapeRenderer.renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed(), showMat.isPressed());
-//            }
+            getShapeRenderer().setShapeID(getShapeID());
+            getShapeRenderer().renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed(), showScan.isPressed(), false);
         }
     }
 

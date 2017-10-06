@@ -20,6 +20,7 @@ import mcjty.rftools.blocks.generator.CoalGeneratorConfiguration;
 import mcjty.rftools.blocks.infuser.MachineInfuserConfiguration;
 import mcjty.rftools.blocks.powercell.PowerCellConfiguration;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
+import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import mcjty.rftools.blocks.shield.ShieldConfiguration;
 import mcjty.rftools.blocks.spawner.SpawnerConfiguration;
 import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
@@ -141,6 +142,7 @@ public abstract class CommonProxy {
             cfg.addCustomCategoryComment(ScreenConfiguration.CATEGORY_SCREEN, "Settings for the screen system");
             cfg.addCustomCategoryComment(MachineInfuserConfiguration.CATEGORY_INFUSER, "Settings for the infuser");
             cfg.addCustomCategoryComment(BuilderConfiguration.CATEGORY_BUILDER, "Settings for the builder");
+            cfg.addCustomCategoryComment(ScannerConfiguration.CATEGORY_SCANNER, "Settings for the scanner, composer, and projector");
             cfg.addCustomCategoryComment(PowerCellConfiguration.CATEGORY_POWERCELL, "Settings for the powercell");
             cfg.addCustomCategoryComment(ShieldConfiguration.CATEGORY_SHIELD, "Settings for the shield system");
             cfg.addCustomCategoryComment(EnvironmentalConfiguration.CATEGORY_ENVIRONMENTAL, "Settings for the environmental controller");
@@ -162,6 +164,7 @@ public abstract class CommonProxy {
             ScreenConfiguration.init(cfg);
             MachineInfuserConfiguration.init(cfg);
             BuilderConfiguration.init(cfg);
+            ScannerConfiguration.init(cfg);
             PowerCellConfiguration.init(cfg);
             ShieldConfiguration.init(cfg);
             EnvironmentalConfiguration.init(cfg);

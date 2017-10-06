@@ -9,6 +9,7 @@ import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.*;
 import net.minecraft.client.Minecraft;
@@ -39,13 +40,13 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
 
     private ToggleButton showAxis;
     private ToggleButton showOuter;
-    private ToggleButton showMat;
+    private ToggleButton showScan;
 
     // For GuiShapeCard: the current card to edit
     public static BlockPos shaperBlock = null;
     public static int shaperStackSlot = 0;
 
-    private ShapeRenderer shapeRenderer = new ShapeRenderer("composer");
+    private ShapeRenderer shapeRenderer = null;
 
     private Window sideWindow;
 
@@ -57,13 +58,28 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
         ySize = SHAPER_HEIGHT;
     }
 
+    private ShapeRenderer getShapeRenderer() {
+        if (shapeRenderer == null) {
+            shapeRenderer = new ShapeRenderer(getShapeID());
+        }
+        return shapeRenderer;
+    }
+
+    private ShapeID getShapeID() {
+        Slot slot = inventorySlots.getSlot(ComposerContainer.SLOT_OUT);
+        ItemStack stack = slot.getHasStack() ? slot.getStack() : ItemStackTools.getEmptyStack();
+
+        return new ShapeID(tileEntity.getWorld().provider.getDimension(), tileEntity.getPos(), ShapeCardItem.getScanId(stack));
+    }
+
+
     @Override
     public void initGui() {
         super.initGui();
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
-        shapeRenderer.initView(250, 70);
+        getShapeRenderer().initView(250, 70);
 
         ShapeModifier[] modifiers = tileEntity.getModifiers();
 
@@ -103,9 +119,9 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
         showOuter = new ToggleButton(mc, this).setCheckMarker(true).setText("B").setLayoutHint(new PositionalLayout.PositionalHint(31, 176, 24, 16));
         showOuter.setPressed(true);
         toplevel.addChild(showOuter);
-        showMat = new ToggleButton(mc, this).setCheckMarker(true).setText("M").setLayoutHint(new PositionalLayout.PositionalHint(57, 176, 24, 16));
-        showMat.setPressed(true);
-        toplevel.addChild(showMat);
+        showScan = new ToggleButton(mc, this).setCheckMarker(true).setText("S").setLayoutHint(new PositionalLayout.PositionalHint(57, 176, 24, 16));
+        showScan.setPressed(true);
+        toplevel.addChild(showScan);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
@@ -192,13 +208,13 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
         x -= guiLeft;
         y -= guiTop;
 
-        shapeRenderer.handleShapeDragging(x, y);
+        getShapeRenderer().handleShapeDragging(x, y);
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int x, int y) {
 
-        shapeRenderer.handleMouseWheel();
+        getShapeRenderer().handleMouseWheel();
 
         drawWindow();
 
@@ -206,7 +222,8 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
         if (slot.getHasStack()) {
             ItemStack stack = slot.getStack();
             if (!stack.isEmpty()) {
-                shapeRenderer.renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed(), showMat.isPressed());
+                getShapeRenderer().setShapeID(getShapeID());
+                getShapeRenderer().renderShape(this, stack, guiLeft, guiTop, showAxis.isPressed(), showOuter.isPressed(), showScan.isPressed(), true);
             }
         }
     }

@@ -83,7 +83,6 @@ public class PacketUpdateNBTShapeCard implements IMessage {
                         break;
                 }
             }
-            ShapeCardItem.dirty(tagCompound);
         }
 
     }

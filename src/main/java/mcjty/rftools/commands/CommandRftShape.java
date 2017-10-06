@@ -5,6 +5,7 @@ public class CommandRftShape extends DefaultCommand {
         super();
         registerCommand(new CmdSaveCard());
         registerCommand(new CmdLoadCard());
+        registerCommand(new CmdListScans());
     }
 
     @Override

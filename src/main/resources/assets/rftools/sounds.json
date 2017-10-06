@@ -3,5 +3,6 @@
     "teleport_error" : {"category": "block", "sounds": ["rftools:teleport_error"]},
     "elevator_start" : {"category": "block", "sounds": ["rftools:elevator_start"]},
     "elevator_loop" : {"category": "block", "sounds": ["rftools:elevator_loop"]},
-    "elevator_stop" : {"category": "block", "sounds": ["rftools:elevator_stop"]}
+    "elevator_stop" : {"category": "block", "sounds": ["rftools:elevator_stop"]},
+    "scan" : {"category": "block", "sounds": ["rftools:scan"]}
 }

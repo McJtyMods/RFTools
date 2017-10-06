@@ -11,6 +11,7 @@ import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.elevator.ElevatorSounds;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.ScreenSetup;
+import mcjty.rftools.blocks.shaper.ProjectorSounds;
 import mcjty.rftools.blocks.shield.BakedModelLoader;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.keys.KeyBindings;
@@ -36,7 +37,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import java.awt.*;
+import java.awt.Font;
 import java.util.concurrent.Callable;
 
 public class ClientProxy extends CommonProxy {
@@ -74,6 +75,7 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent
     public void registerSounds(RegistryEvent.Register<SoundEvent> sounds) {
         ElevatorSounds.init(sounds.getRegistry());
+        ProjectorSounds.init();
     }
 
     @Override

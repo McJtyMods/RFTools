@@ -3,6 +3,7 @@ package mcjty.rftools.shapes;
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.varia.RLE;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -14,21 +15,20 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class PacketReturnShapeData implements IMessage {
-    private int id;
+    private ShapeID id;
     private RLE positions;
     private StatePalette statePalette;
     private int count;
+    private int offsetY;
     private String msg;
     private BlockPos dimension;
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        id = buf.readInt();
+        id = new ShapeID(buf);
         count = buf.readInt();
+        offsetY = buf.readInt();
         msg = NetworkTools.readStringUTF8(buf);
         dimension = NetworkTools.readPos(buf);
 
@@ -59,8 +59,9 @@ public class PacketReturnShapeData implements IMessage {
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(id);
+        id.toBytes(buf);
         buf.writeInt(count);
+        buf.writeInt(offsetY);
         NetworkTools.writeStringUTF8(buf, msg);
         NetworkTools.writePos(buf, dimension);
 
@@ -88,12 +89,13 @@ public class PacketReturnShapeData implements IMessage {
     public PacketReturnShapeData() {
     }
 
-    public PacketReturnShapeData(int id, RLE positions, StatePalette statePalette, BlockPos dimension, int count, String msg) {
+    public PacketReturnShapeData(ShapeID id, RLE positions, StatePalette statePalette, BlockPos dimension, int count, int offsetY, String msg) {
         this.id = id;
         this.positions = positions;
         this.statePalette = statePalette;
         this.dimension = dimension;
         this.count = count;
+        this.offsetY = offsetY;
         this.msg = msg;
     }
 
@@ -105,47 +107,47 @@ public class PacketReturnShapeData implements IMessage {
         }
 
         private void handle(PacketReturnShapeData message) {
-//            Map<Long, IBlockState> positions = new HashMap<>();
             int dx = message.dimension.getX();
             int dy = message.dimension.getY();
             int dz = message.dimension.getZ();
 
-            ShapeRenderer.RenderColumn columns[] = new ShapeRenderer.RenderColumn[dx * dz];
             RLE rle = message.positions;
+            RenderData.RenderPlane plane = null;
 
             if (rle != null) {
+                IBlockState dummy = BuilderSetup.supportBlock.getDefaultState();
+
                 rle.reset();
+//                for (int oy = 0; oy < dy; oy++) {
+                int oy = message.offsetY;
+                int y = oy - dy / 2;
+
+                RenderData.RenderStrip strips[] = new RenderData.RenderStrip[dx];
                 for (int ox = 0; ox < dx; ox++) {
                     int x = ox - dx / 2;
+
+                    RenderData.RenderStrip strip = new RenderData.RenderStrip(x);
+                    strips[ox] = strip;
+
                     for (int oz = 0; oz < dz; oz++) {
-                        int z = oz - dz / 2;
-
-                        ShapeRenderer.RenderColumn column = new ShapeRenderer.RenderColumn(new BlockPos(x, -dy/2, z));
-                        columns[ox*dz+oz] = column;
-
-                        for (int oy = 0; oy < dy; oy++) {
-//                            int y = oy - dy / 2;
-                            int data = rle.read();
-                            if (data < 255) {
-                                if (data == 0) {
-//                                    positions.put(BlockPosHelper.toLong(x, y, z), null);
-                                    column.add(null);
-                                } else {
-                                    data--;
-//                                    positions.put(BlockPosHelper.toLong(x, y, z), message.statePalette.getPalette().get(data));
-                                    column.add(message.statePalette.getPalette().get(data));
-                                }
+                        int data = rle.read();
+                        if (data < 255) {
+                            if (data == 0) {
+                                strip.add(dummy);
                             } else {
-                                column.add(null);
+                                data--;
+                                strip.add(message.statePalette.getPalette().get(data));
                             }
+                        } else {
+                            strip.add(null);
                         }
-
-                        column.close();
                     }
+
+                    strip.close();
+                    plane = new RenderData.RenderPlane(strips, y, oy, -dz / 2, message.count);
                 }
             }
-            ShapeRenderer.setRenderData(message.id, null/* positions*/, columns, message.count, message.msg);
+            ShapeRenderer.setRenderData(message.id, plane, message.offsetY, dy, message.msg);
         }
-
     }
 }

@@ -20,6 +20,7 @@ import mcjty.rftools.playerprops.BuffProperties;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import mcjty.rftools.playerprops.PropertiesDispatcher;
+import mcjty.rftools.shapes.ShapeDataManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -95,6 +96,7 @@ public class ForgeEventHandlers {
     public void onWorldTick(TickEvent.WorldTickEvent event) {
         if (event.phase == TickEvent.Phase.START && event.world.provider.getDimension() == 0) {
             performDelayedTeleports();
+            ShapeDataManager.handleWork();
         }
     }
 

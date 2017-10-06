@@ -7,10 +7,10 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
-import mcjty.rftools.blocks.shaper.ScannerTileEntity;
 import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.shapes.*;
 import mcjty.rftools.varia.ItemStackTools;
+import mcjty.rftools.varia.Check32;
 import mcjty.rftools.varia.RLE;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -23,7 +23,6 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -31,7 +30,6 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
@@ -152,23 +150,12 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         return EnumActionResult.SUCCESS;
     }
 
-    public static GlobalCoordinate getData(NBTTagCompound tagCompound) {
-        if (!tagCompound.hasKey("datadim")) {
-            return null;
-        }
-        int dim = tagCompound.getInteger("datadim");
-        int x = tagCompound.getInteger("datax");
-        int y = tagCompound.getInteger("datay");
-        int z = tagCompound.getInteger("dataz");
-        return new GlobalCoordinate(new BlockPos(x, y, z), dim);
+    public static int getData(NBTTagCompound tagCompound) {
+        return tagCompound.getInteger("scanid");
     }
 
-    public static void setData(NBTTagCompound tagCompound, int dimension, BlockPos pos) {
-        tagCompound.setInteger("datadim", dimension);
-        tagCompound.setInteger("datax", pos.getX());
-        tagCompound.setInteger("datay", pos.getY());
-        tagCompound.setInteger("dataz", pos.getZ());
-        dirty(tagCompound);
+    public static void setData(NBTTagCompound tagCompound, int scanID) {
+        tagCompound.setInteger("scanid", scanID);
     }
 
     public static void setModifier(NBTTagCompound tag, ShapeModifier modifier) {
@@ -195,29 +182,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
 
     public static void setChildren(ItemStack itemStack, NBTTagList list) {
         NBTTagCompound tagCompound = getCompound(itemStack);
-        NBTTagList listThis = tagCompound.getTagList("children", Constants.NBT.TAG_COMPOUND);
-        boolean same = true;
-        for (int i = 0 ; i < list.tagCount() ; i++) {
-            NBTTagCompound child1 = listThis.getCompoundTagAt(i);
-            int c1 = getCheck(child1);
-            NBTTagCompound child2 = list.getCompoundTagAt(i);
-            int c2 = getCheck(child1);
-            if (c1 != c2) {
-                same = false;
-                break;
-            }
-            if (!(child1.getString("mod_op").equals(child2.getString("mod_op")) &&
-                    child1.getString("mod_rot").equals(child2.getString("mod_rot")) &&
-                    child1.getBoolean("mod_flipy") == child2.getBoolean("mod_flipy") &&
-                    child1.getString("ghost_block").equals(child2.getString("ghost_block")) &&
-                    child1.getInteger("ghost_meta") == child2.getInteger("ghost_meta"))) {
-                same = false;
-            }
-        }
         tagCompound.setTag("children", list);
-        if (!same) {
-            dirty(tagCompound);
-        }
     }
 
     public static void setDimension(ItemStack itemStack, int x, int y, int z) {
@@ -228,7 +193,6 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         tagCompound.setInteger("dimX", x);
         tagCompound.setInteger("dimY", y);
         tagCompound.setInteger("dimZ", z);
-        dirty(tagCompound);
     }
 
 
@@ -240,7 +204,6 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         tagCompound.setInteger("offsetX", x);
         tagCompound.setInteger("offsetY", y);
         tagCompound.setInteger("offsetZ", z);
-        dirty(tagCompound);
     }
 
     private static NBTTagCompound getCompound(ItemStack itemStack) {
@@ -291,7 +254,6 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
             return;
         }
         tagCompound.setInteger("mode", mode);
-        dirty(tagCompound);
     }
 
     public static void setCurrentBlock(ItemStack itemStack, GlobalCoordinate c) {
@@ -355,11 +317,8 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
 
         if (shape.isScan()) {
             NBTTagCompound card = itemStack.getTagCompound();
-            int dim = card.getInteger("datadim");
-            int x = card.getInteger("datax");
-            int y = card.getInteger("datay");
-            int z = card.getInteger("dataz");
-            list.add(TextFormatting.DARK_GREEN + "Scanner at: " + x + "," + y + "," + z + " (dim " + dim + ")");
+            int scanid = card.getInteger("scanid");
+            list.add(TextFormatting.DARK_GREEN + "Scan id: " + scanid);
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
@@ -595,24 +554,39 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         return formula.correctFormula(solid);
     }
 
-    public static int getCheck(ItemStack stack) {
-        NBTTagCompound tagCompound = getCompound(stack);
-        return getCheck(tagCompound);
-    }
-
-    public static int getCheck(NBTTagCompound tagCompound) {
-        int check = tagCompound.getInteger("check");
-        NBTTagList children = tagCompound.getTagList("children", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < children.tagCount() ; i++) {
-            NBTTagCompound child = children.getCompoundTagAt(i);
-            check += getCheck(child) << 6;
+    public static int getScanId(ItemStack stack) {
+        if (ItemStackTools.isEmpty(stack)) {
+            return 0;
         }
-        return check;
+        NBTTagCompound tagCompound = getCompound(stack);
+        return tagCompound.getInteger("scanid");
     }
 
-    public static void dirty(NBTTagCompound tag) {
-        tag.setInteger("check", tag.getInteger("check") + 1);
+    public static int getFormulaCheckClient(ItemStack stack) {
+        Check32 crc = new Check32();
+        getFormulaCheckClient(stack, crc);
+        return crc.get();
     }
+
+    public static void getFormulaCheckClient(ItemStack stack, Check32 crc) {
+        Shape shape = getShape(stack);
+        IFormula formula = shape.getFormulaFactory().createFormula();
+        formula.getCheckSumClient(stack.getTagCompound(), crc);
+    }
+
+    public static void getLocalChecksum(NBTTagCompound tagCompound, Check32 crc) {
+        if (tagCompound == null) {
+            return;
+        }
+        crc.add(getShape(tagCompound).ordinal());
+        BlockPos dim = getDimension(tagCompound);
+        crc.add(dim.getX());
+        crc.add(dim.getY());
+        crc.add(dim.getZ());
+        crc.add(isSolid(tagCompound) ? 1 : 0);
+    }
+
+
 
     public static void setShape(ItemStack stack, Shape shape, boolean solid) {
         NBTTagCompound tagCompound = getCompound(stack);
@@ -622,7 +596,6 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         }
         tagCompound.setString("shapenew", shape.getDescription());
         tagCompound.setBoolean("solid", solid);
-        dirty(tagCompound);
     }
 
     public static BlockPos getDimension(ItemStack stack) {
@@ -730,30 +703,6 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         return new BlockPos(minCorner.getX() + dx, minCorner.getY() + dy, minCorner.getZ() + dz);
     }
 
-    public static int countBlocks(ItemStack shapeCard, Shape shape, boolean solid, BlockPos dimension) {
-        final int[] cnt = {0};
-        BlockPos offset = new BlockPos(0, 128, 0);
-        BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
-        composeFormula(shapeCard, shape.getFormulaFactory().createFormula(), null, new BlockPos(0, 0, 0), clamped, offset, new AbstractMap<BlockPos, IBlockState>() {
-            @Override
-            public IBlockState put(BlockPos key, IBlockState value) {
-                cnt[0]++;
-                return value;
-            }
-
-            @Override
-            public Set<Entry<BlockPos, IBlockState>> entrySet() {
-                return Collections.emptySet();
-            }
-
-            @Override
-            public int size() {
-                return 0;
-            }
-        }, MAXIMUM_COUNT+1, solid, false, null);
-        return cnt[0];
-    }
-
     public static boolean xInChunk(int x, ChunkPos chunk) {
         if (chunk == null) {
             return true;
@@ -788,44 +737,48 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         }
     }
 
-    public static int getRenderPositions(ItemStack stack, Shape shape, boolean solid, RLE positions, StatePalette statePalette) {
+    public static int getRenderPositions(ItemStack stack, boolean solid, RLE positions, StatePalette statePalette, IFormula formula, int oy) {
         BlockPos dimension = ShapeCardItem.getDimension(stack);
         BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
 
-        IFormula formula = shape.getFormulaFactory().createFormula();
         int dx = clamped.getX();
         int dy = clamped.getY();
         int dz = clamped.getZ();
 
-        formula = formula.correctFormula(solid);
-        formula.setup(new BlockPos(0, 0, 0), clamped, new BlockPos(0, 0, 0), stack != null ? stack.getTagCompound() : null);
+        Map<IBlockState, ShapeBlockInfo> palette = new HashMap<>();
 
         int cnt = 0;
+        int y = oy - dy / 2;
         for (int ox = 0; ox < dx; ox++) {
-            int x = ox - dx/2;
+            int x = ox - dx / 2;
             for (int oz = 0; oz < dz; oz++) {
-                int z = oz - dz/2;
-                for (int oy = 0; oy < dy; oy++) {
-                    int y = oy - dy/2;
-                    int v = 255;
-                    if (formula.isInside(x, y, z)) {
-                        cnt++;
-                        IBlockState lastState = formula.getLastState();
-                        if (solid) {
-                            if (ox == 0 || ox == dx - 1 || oy == 0 || oy == dy - 1 || oz == 0 || oz == dz - 1) {
-                                v = statePalette.alloc(lastState, -1) + 1;
-                            } else if (!formula.isInside(x - 1, y, z) || !formula.isInside(x + 1, y, z) || !formula.isInside(x, y - 1, z) || !formula.isInside(x, y + 1, z) || !formula.isInside(x, y, z - 1) || !formula.isInside(x, y, z + 1)) {
-                                v = statePalette.alloc(lastState, -1) + 1;
-                            }
-                        } else {
+                int z = oz - dz / 2;
+                int v = 255;
+                if (formula.isInside(x, y, z)) {
+                    cnt++;
+                    IBlockState lastState = formula.getLastState();
+                    if (solid) {
+                        if (ox == 0 || ox == dx - 1 || oy == 0 || oy == dy - 1 || oz == 0 || oz == dz - 1) {
+                            v = statePalette.alloc(lastState, -1) + 1;
+                        } else if (isClear(formula, x - 1, y, z, palette) || isClear(formula, x + 1, y, z, palette) || isClear(formula, x, y - 1, z, palette) || isClear(formula, x, y + 1, z, palette) || isClear(formula, x, y, z - 1, palette) || isClear(formula, x, y, z + 1, palette)) {
                             v = statePalette.alloc(lastState, -1) + 1;
                         }
+                    } else {
+                        v = statePalette.alloc(lastState, -1) + 1;
                     }
-                    positions.add(v);
                 }
+                positions.add(v);
             }
         }
         return cnt;
+    }
+
+    private static boolean isClear(IFormula formula, int x, int y, int z, Map<IBlockState, ShapeBlockInfo> palette) {
+        if (!formula.isInside(x, y, z)) {
+            return true;
+        }
+        ShapeBlockInfo bd = ShapeBlockInfo.getBlockInfo(palette, formula.getLastState());
+        return bd.isNonSolid();
     }
 
     // Used for saving
@@ -857,7 +810,6 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
                         }
                         v = statePalette.alloc(lastState, 0) + 1;
                     }
-                    System.out.println("v = " + v);
                     positions.add(v);
                 }
             }
@@ -961,25 +913,11 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         }
 
         NBTTagCompound compound = ShapeCardItem.getCompound(card);
-        GlobalCoordinate scannerPos = ShapeCardItem.getData(compound);
-        if (scannerPos == null) {
-            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "This card is not linked to a scanner!"), false);
+        int scanId = ShapeCardItem.getData(compound);
+        if (scanId == 0) {
+            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "This card is not linked to scan data!"));
             return;
         }
-
-        World world = DimensionManager.getWorld(scannerPos.getDimension());
-        if (world == null || !world.isBlockLoaded(scannerPos.getCoordinate())) {
-            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "The scanner is out of reach or not chunkloaded!"), false);
-            return;
-        }
-
-        TileEntity te = world.getTileEntity(scannerPos.getCoordinate());
-        if (!(te instanceof ScannerTileEntity)) {
-            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Not a valid scanner!"), false);
-            return;
-        }
-
-        ScannerTileEntity scanner = (ScannerTileEntity) te;
 
         File file = new File(filename);
         FileInputStream stream;
@@ -1024,7 +962,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
                 System.out.println("b = " + b);
             }
 
-            scanner.setDataFromFile(card, dim, off, decoded, statePalette);
+            setDataFromFile(player.getEntityWorld(), scanId, card, dim, off, decoded, statePalette);
         } catch (FileNotFoundException e) {
             player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Cannot read from file '" + filename + "'!"), false);
             return;
@@ -1040,6 +978,16 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         }
 
     }
+
+    private static void setDataFromFile(World world, int scanId, ItemStack card, BlockPos dimension, BlockPos offset, byte[] data, StatePalette palette) {
+        ScanDataManager scans = ScanDataManager.getScans();
+        scans.getOrCreateScan(scanId).setData(data, palette.getPalette(), dimension, offset);
+        scans.save(world, scanId);
+        ShapeCardItem.setDimension(card, dimension.getX(), dimension.getY(), dimension.getZ());
+        ShapeCardItem.setOffset(card, offset.getX(), offset.getY(), offset.getZ());
+        ShapeCardItem.setShape(card, Shape.SHAPE_SCAN, true);
+    }
+
 
     private static BlockPos parse(String s) {
         String[] split = StringUtils.split(s, ',');

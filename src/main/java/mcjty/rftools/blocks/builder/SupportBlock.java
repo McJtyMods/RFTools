@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.builder;
 import mcjty.lib.McJtyRegister;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyInteger;
@@ -39,7 +40,7 @@ public class SupportBlock extends Block {
     public static PropertyInteger STATUS = PropertyInteger.create("status", 0, 2);
 
     public SupportBlock() {
-        super(Material.GLASS);
+        super(Material.GLASS, MapColor.CYAN);
         setUnlocalizedName("rftools.support_block");
         setRegistryName("support_block");
         setCreativeTab(RFTools.tabRfTools);

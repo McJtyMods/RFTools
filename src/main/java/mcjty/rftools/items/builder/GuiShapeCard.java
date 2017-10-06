@@ -13,12 +13,18 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketUpdateNBTItemInventory;
+import mcjty.lib.tools.ItemStackTools;
+import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.blocks.shaper.ComposerTileEntity;
 import mcjty.rftools.blocks.shaper.GuiComposer;
 import mcjty.rftools.network.PacketOpenGui;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.IShapeParentGui;
 import mcjty.rftools.shapes.PacketUpdateNBTShapeCard;
+import mcjty.rftools.shapes.ShapeRenderer;
+import mcjty.rftools.shapes.IShapeParentGui;
+import mcjty.rftools.shapes.PacketUpdateNBTShapeCard;
+import mcjty.rftools.shapes.ShapeID;
 import mcjty.rftools.shapes.ShapeRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -75,10 +81,17 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
     private boolean countDirty = true;
     private boolean fromshaper;
 
-    private ShapeRenderer shapeRenderer = new ShapeRenderer("card");
+    private ShapeRenderer shapeRenderer = null;
 
     public GuiShapeCard(boolean fromshaper) {
         this.fromshaper = fromshaper;
+    }
+
+    private ShapeRenderer getShapeRenderer() {
+        if (shapeRenderer == null) {
+            shapeRenderer = new ShapeRenderer(new ShapeID(0, null, ShapeCardItem.getScanId(getStackToEdit())));
+        }
+        return shapeRenderer;
     }
 
     @Override
@@ -123,13 +136,13 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
 
-        shapeRenderer.initView(300, 100);
-
         ItemStack heldItem = getStackToEdit();
         if (heldItem.isEmpty()) {
             // Cannot happen!
             return;
         }
+
+        getShapeRenderer().initView(300, 100);
 
         shapeLabel = new ChoiceLabel(mc, this).setDesiredWidth(100).setDesiredHeight(16).addChoices(
                 mcjty.rftools.shapes.Shape.SHAPE_BOX.getDescription(),
@@ -345,7 +358,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         x -= guiLeft;
         y -= guiTop;
 
-        shapeRenderer.handleShapeDragging(x, y);
+        getShapeRenderer().handleShapeDragging(x, y);
     }
 
     @Override
@@ -365,7 +378,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
     @Override
     public void drawScreen(int xSize_lo, int ySize_lo, float par3) {
 
-        shapeRenderer.handleMouseWheel();
+        getShapeRenderer().handleMouseWheel();
 
         super.drawScreen(xSize_lo, ySize_lo, par3);
 
@@ -374,7 +387,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         updateCounter--;
         if (updateCounter <= 0) {
             updateCounter = 10;
-            int count = shapeRenderer.getCount();
+            int count = getShapeRenderer().getCount();
             if (count >= ShapeCardItem.MAXIMUM_COUNT) {
                 blocksLabel.setText("#Blocks: ++" + count);
             } else {
@@ -399,9 +412,8 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
 
         ItemStack stack = getStackToEdit();
         if (!stack.isEmpty()) {
-            shapeRenderer.renderShape(this, stack, guiLeft, guiTop, true, true, true);
+            getShapeRenderer().renderShape(this, stack, guiLeft, guiTop, true, true, true, false);
         }
-
 
         List<String> tooltips = window.getTooltips();
         if (tooltips != null) {
