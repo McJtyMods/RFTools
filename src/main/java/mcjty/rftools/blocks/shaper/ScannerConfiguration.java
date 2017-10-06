@@ -9,6 +9,10 @@ public class ScannerConfiguration {
     public static int SCANNER_RECEIVEPERTICK = 20000;
     public static int SCANNER_PERTICK = 1000;
 
+    public static int LOCATOR_MAXENERGY = 500000;
+    public static int LOCATOR_RECEIVEPERTICK = 20000;
+    public static int LOCATOR_PERTICK = 2000;
+
     public static int PROJECTOR_MAXENERGY = 500000;
     public static int PROJECTOR_RECEIVEPERTICK = 10000;
     public static int PROJECTOR_USEPERTICK = 1000;
@@ -35,6 +39,12 @@ public class ScannerConfiguration {
                 "RF per tick that the scanner can receive").getInt();
         SCANNER_PERTICK = cfg.get(CATEGORY_SCANNER, "scannerUsePerTick", SCANNER_PERTICK,
                 "Amount of RF needed per tick during the scan").getInt();
+        LOCATOR_MAXENERGY = cfg.get(CATEGORY_SCANNER, "locatorMaxRF", LOCATOR_MAXENERGY,
+                "Maximum RF storage that the locator can hold").getInt();
+        LOCATOR_RECEIVEPERTICK = cfg.get(CATEGORY_SCANNER, "locatorRFPerTick", LOCATOR_RECEIVEPERTICK,
+                "RF per tick that the locator can receive").getInt();
+        LOCATOR_PERTICK = cfg.get(CATEGORY_SCANNER, "locatorUsePerTick", LOCATOR_PERTICK,
+                "Amount of RF needed per tick while the locator works").getInt();
         PROJECTOR_MAXENERGY = cfg.get(CATEGORY_SCANNER, "projectorMaxRF", PROJECTOR_MAXENERGY,
                 "Maximum RF storage that the projector can hold").getInt();
         PROJECTOR_RECEIVEPERTICK = cfg.get(CATEGORY_SCANNER, "projectorRFPerTick", PROJECTOR_RECEIVEPERTICK,

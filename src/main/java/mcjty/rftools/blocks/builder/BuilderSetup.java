@@ -6,6 +6,7 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.blocks.shaper.LocatorBlock;
 import mcjty.rftools.blocks.shaper.ProjectorBlock;
 import mcjty.rftools.blocks.shaper.ScannerBlock;
 import mcjty.rftools.blocks.shaper.ComposerBlock;
@@ -37,6 +38,7 @@ public class BuilderSetup {
     public static ComposerBlock composerBlock;
     public static ScannerBlock scannerBlock;
     public static ProjectorBlock projectorBlock;
+    public static LocatorBlock locatorBlock;
 
     public static SpaceChamberCardItem spaceChamberCardItem;
     public static ShapeCardItem shapeCardItem;
@@ -51,6 +53,7 @@ public class BuilderSetup {
         composerBlock = new ComposerBlock();
         scannerBlock = new ScannerBlock();
         projectorBlock = new ProjectorBlock();
+        locatorBlock = new LocatorBlock();
 
         initItems();
 
@@ -67,6 +70,7 @@ public class BuilderSetup {
         composerBlock.initModel();
         scannerBlock.initModel();
         projectorBlock.initModel();
+        locatorBlock.initModel();
 
         spaceChamberCardItem.initModel();
         shapeCardItem.initModel();
@@ -88,6 +92,7 @@ public class BuilderSetup {
 
         GameRegistry.addRecipe(new ItemStack(composerBlock), "pbp", "bMb", "pbp", 'M', ModBlocks.machineFrame, 'p', Items.PAPER, 'b', Items.BRICK);
         GameRegistry.addRecipe(new ItemStack(scannerBlock), "beb", "qMq", "brb", 'M', ModBlocks.machineFrame, 'r', Items.REDSTONE, 'b', ModItems.infusedDiamond, 'e', Items.ENDER_PEARL, 'q', Items.QUARTZ);
+        GameRegistry.addRecipe(new ItemStack(locatorBlock), "heh", "qMq", "brb", 'M', ModBlocks.machineFrame, 'r', Items.REDSTONE, 'b', ModItems.infusedDiamond, 'e', Items.ENDER_PEARL, 'q', Items.QUARTZ, 'h', Blocks.SKULL);
         GameRegistry.addRecipe(new ItemStack(projectorBlock), "beb", "qMq", "brb", 'M', ModBlocks.machineFrame, 'r', Items.REDSTONE, 'b', ModItems.infusedDiamond, 'e', Blocks.GLASS, 'q', Items.GLOWSTONE_DUST);
 
         GameRegistry.addRecipe(new ItemStack(spaceChamberCardItem), " b ", "rir", " b ", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,

@@ -147,6 +147,7 @@ tile.rftools.builder.name=Builder
 tile.rftools.composer.name=Composer
 tile.rftools.projector.name=Projector
 tile.rftools.scanner.name=Scanner
+tile.rftools.locator.name=Locator
 tile.rftools.support_block.name=Support Block
 tile.rftools.space_chamber.name=Space Chamber Corner Block
 tile.rftools.space_chamber_controller.name=Space Chamber Controller Block
