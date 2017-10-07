@@ -7,7 +7,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PacketReturnExtraData implements IMessage {
@@ -25,10 +24,8 @@ public class PacketReturnExtraData implements IMessage {
             data = new ScanExtraData();
             for (int i = 0; i < size; i++) {
                 long p = buf.readLong();
-                float r = buf.readFloat();
-                float g = buf.readFloat();
-                float b = buf.readFloat();
-                data.addBeacon(BlockPos.fromLong(p), r, g, b);
+                BeaconType type = BeaconType.VALUES[buf.readByte()];
+                data.addBeacon(BlockPos.fromLong(p), type);
             }
         }
     }
@@ -43,9 +40,7 @@ public class PacketReturnExtraData implements IMessage {
             buf.writeInt(beacons.size());
             for (ScanExtraData.Beacon beacon : beacons) {
                 buf.writeLong(beacon.getPos().toLong());
-                buf.writeFloat(beacon.getR());
-                buf.writeFloat(beacon.getG());
-                buf.writeFloat(beacon.getB());
+                buf.writeByte(beacon.getType().ordinal());
             }
         }
     }

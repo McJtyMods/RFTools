@@ -326,32 +326,16 @@ public class ShapeRenderer {
                 ScanDataManager.getScansClient().requestExtraDataClient(scanId);
             }
             ScanExtraData extraData = ScanDataManager.getScansClient().getExtraDataClient(scanId);
-            GlStateManager.glLineWidth(3);
-            buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
             for (ScanExtraData.Beacon beacon : extraData.getBeacons()) {
                 int x = beacon.getPos().getX();
                 int y = beacon.getPos().getY()+1;
                 int z = beacon.getPos().getZ();
-                float r = beacon.getR();
-                float g = beacon.getG();
-                float b = beacon.getB();
-                float a = 0.5f;
-                buffer.pos(x-.5, y-.5, z-.5).color(r, g, b, a).endVertex();
-                buffer.pos(x+.5, y+.5, z+.5).color(r, g, b, a).endVertex();
-                buffer.pos(x+.5, y-.5, z-.5).color(r, g, b, a).endVertex();
-                buffer.pos(x-.5, y+.5, z+.5).color(r, g, b, a).endVertex();
-                buffer.pos(x-.5, y+.5, z-.5).color(r, g, b, a).endVertex();
-                buffer.pos(x+.5, y-.5, z+.5).color(r, g, b, a).endVertex();
-                buffer.pos(x-.5, y-.5, z+.5).color(r, g, b, a).endVertex();
-                buffer.pos(x+.5, y+.5, z-.5).color(r, g, b, a).endVertex();
-                buffer.pos(x+.5, y+.5, z-.5).color(r, g, b, a).endVertex();
-                buffer.pos(x-.5, y-.5, z+.5).color(r, g, b, a).endVertex();
-                buffer.pos(x+.5, y-.5, z+.5).color(r, g, b, a).endVertex();
-                buffer.pos(x-.5, y+.5, z-.5).color(r, g, b, a).endVertex();
-                buffer.pos(x+.5, y+.5, z+.5).color(r, g, b, a).endVertex();
-                buffer.pos(x-.5, y-.5, z-.5).color(r, g, b, a).endVertex();
+                BeaconType type = beacon.getType();
+                GlStateManager.translate(x, y, z);
+                RenderData.RenderElement element = getBeaconElement(tessellator, buffer, type);
+                element.render();
+                GlStateManager.translate(-x, -y, -z);
             }
-            tessellator.draw();
         }
 
         return needScanSound;
@@ -418,13 +402,36 @@ public class ShapeRenderer {
 //        System.out.println("y = " + offsety + ", avg = " + avg + ", quads = " + quadcnt);
     }
 
-    private static RenderData.RenderElement beaconElement = null;
+    private static RenderData.RenderElement beaconElement[] = null;
 
-    private static RenderData.RenderElement getBeaconElement() {
+    private static RenderData.RenderElement getBeaconElement(Tessellator tessellator, VertexBuffer buffer, BeaconType type) {
         if (beaconElement == null) {
-            beaconElement = new RenderData.RenderElement();
+            beaconElement = new RenderData.RenderElement[BeaconType.VALUES.length];
+            for (int i = 0 ; i < BeaconType.VALUES.length ; i++) {
+                beaconElement[i] = null;
+            }
         }
-        return beaconElement;
+
+
+        if (beaconElement[type.ordinal()] == null) {
+            beaconElement[type.ordinal()] = new RenderData.RenderElement();
+            beaconElement[type.ordinal()].createRenderList(buffer);
+            GlStateManager.glLineWidth(3);
+            buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+            float r = type.getR();
+            float g = type.getG();
+            float b = type.getB();
+
+            addSideFullTextureN(buffer, r, g, b);
+            addSideFullTextureS(buffer, r, g, b);
+            addSideFullTextureW(buffer, r, g, b);
+            addSideFullTextureE(buffer, r, g, b);
+            addSideFullTextureU(buffer, r, g, b);
+            addSideFullTextureD(buffer, r, g, b);
+
+            beaconElement[type.ordinal()].performRenderToList(tessellator, buffer);
+        }
+        return beaconElement[type.ordinal()];
     }
 
     private static void setupScissor(IShapeParentGui gui) {
@@ -487,6 +494,69 @@ public class ShapeRenderer {
         buffer.pos(1, 1, cnt).color(r, g, b, a).endVertex();
         buffer.pos(0, 1, cnt).color(r, g, b, a).endVertex();
         buffer.pos(0, 0, cnt).color(r, g, b, a).endVertex();
+    }
+
+
+
+
+    public static void addSideFullTextureD(VertexBuffer buffer, float r, float g, float b) {
+        float a = 0.5f;
+        float l = -.3f;
+        float h = .3f;
+        buffer.pos(l, l, l).color(r, g, b, a).endVertex();
+        buffer.pos(h, l, l).color(r, g, b, a).endVertex();
+        buffer.pos(h, l, h).color(r, g, b, a).endVertex();
+        buffer.pos(l, l, h).color(r, g, b, a).endVertex();
+    }
+
+    public static void addSideFullTextureU(VertexBuffer buffer, float r, float g, float b) {
+        float a = 0.5f;
+        float l = -.3f;
+        float h = .3f;
+        buffer.pos(l, h, h).color(r, g, b, a).endVertex();
+        buffer.pos(h, h, h).color(r, g, b, a).endVertex();
+        buffer.pos(h, h, l).color(r, g, b, a).endVertex();
+        buffer.pos(l, h, l).color(r, g, b, a).endVertex();
+    }
+
+    public static void addSideFullTextureE(VertexBuffer buffer, float r, float g, float b) {
+        float a = 0.5f;
+        float l = -.3f;
+        float h = .3f;
+        buffer.pos(h, l, l).color(r, g, b, a).endVertex();
+        buffer.pos(h, h, l).color(r, g, b, a).endVertex();
+        buffer.pos(h, h, h).color(r, g, b, a).endVertex();
+        buffer.pos(h, l, h).color(r, g, b, a).endVertex();
+    }
+
+    public static void addSideFullTextureW(VertexBuffer buffer, float r, float g, float b) {
+        float a = 0.5f;
+        float l = -.3f;
+        float h = .3f;
+        buffer.pos(l, l, h).color(r, g, b, a).endVertex();
+        buffer.pos(l, h, h).color(r, g, b, a).endVertex();
+        buffer.pos(l, h, l).color(r, g, b, a).endVertex();
+        buffer.pos(l, l, l).color(r, g, b, a).endVertex();
+    }
+
+    public static void addSideFullTextureN(VertexBuffer buffer, float r, float g, float b) {
+        float a = 0.5f;
+        float l = -.3f;
+        float h = .3f;
+        buffer.pos(h, h, l).color(r, g, b, a).endVertex();
+        buffer.pos(h, l, l).color(r, g, b, a).endVertex();
+        buffer.pos(l, l, l).color(r, g, b, a).endVertex();
+        buffer.pos(l, h, l).color(r, g, b, a).endVertex();
+    }
+
+    public static void addSideFullTextureS(VertexBuffer buffer, float r, float g, float b) {
+        float a = 0.5f;
+        float l = -.3f;
+        float h = .3f;
+        buffer.pos(h, l, h).color(r, g, b, a).endVertex();
+        buffer.pos(h, h, h).color(r, g, b, a).endVertex();
+        buffer.pos(l, h, h).color(r, g, b, a).endVertex();
+        buffer.pos(l, l, h).color(r, g, b, a).endVertex();
     }
 
 }

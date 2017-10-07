@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.shaper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.RedstoneMode;
+import mcjty.rftools.shapes.BeaconType;
 import mcjty.rftools.shapes.ScanDataManager;
 import mcjty.rftools.shapes.ScanExtraData;
 import net.minecraft.entity.Entity;
@@ -59,11 +60,11 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
                 BlockPos center = scanner.getScanCenter();
                 for (Entity entity : entities) {
                     if (entity instanceof EntityAnimal) {
-                        extraData.addBeacon(entity.getPosition().subtract(center), 0, 1, .3f);
+                        extraData.addBeacon(entity.getPosition().subtract(center), BeaconType.BEACON_PASSIVE);
                     } else if (entity instanceof EntityPlayer) {
-                        extraData.addBeacon(entity.getPosition().subtract(center), .8f, 0, 1);
+                        extraData.addBeacon(entity.getPosition().subtract(center), BeaconType.BEACON_PLAYER);
                     } else {
-                        extraData.addBeacon(entity.getPosition().subtract(center), 1, 0, 0);
+                        extraData.addBeacon(entity.getPosition().subtract(center), BeaconType.BEACON_HOSTILE);
                     }
                 }
             }

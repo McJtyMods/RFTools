@@ -16,8 +16,8 @@ public class ScanExtraData {
         beacons.clear();
     }
 
-    public void addBeacon(BlockPos beacon, float r, float g, float b) {
-        beacons.add(new Beacon(beacon, r, g, b));
+    public void addBeacon(BlockPos beacon, BeaconType type) {
+        beacons.add(new Beacon(beacon, type));
     }
 
     public List<Beacon> getBeacons() {
@@ -26,31 +26,19 @@ public class ScanExtraData {
 
     public static class Beacon {
         private final BlockPos pos;
-        private final float r;
-        private final float g;
-        private final float b;
+        private final BeaconType type;
 
-        public Beacon(BlockPos pos, float r, float g, float b) {
+        public Beacon(BlockPos pos, BeaconType type) {
             this.pos = pos;
-            this.r = r;
-            this.g = g;
-            this.b = b;
+            this.type = type;
         }
 
         public BlockPos getPos() {
             return pos;
         }
 
-        public float getR() {
-            return r;
-        }
-
-        public float getG() {
-            return g;
-        }
-
-        public float getB() {
-            return b;
+        public BeaconType getType() {
+            return type;
         }
     }
 }
