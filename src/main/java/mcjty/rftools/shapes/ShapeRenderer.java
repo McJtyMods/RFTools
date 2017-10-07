@@ -422,12 +422,24 @@ public class ShapeRenderer {
             float g = type.getG();
             float b = type.getB();
 
-            addSideFullTextureN(buffer, r, g, b);
-            addSideFullTextureS(buffer, r, g, b);
-            addSideFullTextureW(buffer, r, g, b);
-            addSideFullTextureE(buffer, r, g, b);
-            addSideFullTextureU(buffer, r, g, b);
-            addSideFullTextureD(buffer, r, g, b);
+            double origOffsetX = buffer.xOffset;
+            double origOffsetY = buffer.yOffset;
+            double origOffsetZ = buffer.zOffset;
+            buffer.setTranslation(origOffsetX, origOffsetY-.7f, origOffsetZ);
+            addSideN(buffer, r, g, b, .3f);
+            addSideS(buffer, r, g, b, .3f);
+            addSideW(buffer, r, g, b, .3f);
+            addSideE(buffer, r, g, b, .3f);
+            addSideU(buffer, r, g, b, .3f);
+            addSideD(buffer, r, g, b, .3f);
+            buffer.setTranslation(origOffsetX, origOffsetY-.2f, origOffsetZ);
+            addSideN(buffer, r, g, b, .2f);
+            addSideS(buffer, r, g, b, .2f);
+            addSideW(buffer, r, g, b, .2f);
+            addSideE(buffer, r, g, b, .2f);
+            addSideU(buffer, r, g, b, .2f);
+            addSideD(buffer, r, g, b, .2f);
+            buffer.setTranslation(origOffsetX, origOffsetY, origOffsetZ);
 
             beaconElement[type.ordinal()].performRenderToList(tessellator, buffer);
         }
@@ -499,60 +511,60 @@ public class ShapeRenderer {
 
 
 
-    public static void addSideFullTextureD(VertexBuffer buffer, float r, float g, float b) {
+    public static void addSideD(VertexBuffer buffer, float r, float g, float b, float size) {
         float a = 0.5f;
-        float l = -.3f;
-        float h = .3f;
+        float l = -size;
+        float h = size;
         buffer.pos(l, l, l).color(r, g, b, a).endVertex();
         buffer.pos(h, l, l).color(r, g, b, a).endVertex();
         buffer.pos(h, l, h).color(r, g, b, a).endVertex();
         buffer.pos(l, l, h).color(r, g, b, a).endVertex();
     }
 
-    public static void addSideFullTextureU(VertexBuffer buffer, float r, float g, float b) {
+    public static void addSideU(VertexBuffer buffer, float r, float g, float b, float size) {
         float a = 0.5f;
-        float l = -.3f;
-        float h = .3f;
+        float l = -size;
+        float h = size;
         buffer.pos(l, h, h).color(r, g, b, a).endVertex();
         buffer.pos(h, h, h).color(r, g, b, a).endVertex();
         buffer.pos(h, h, l).color(r, g, b, a).endVertex();
         buffer.pos(l, h, l).color(r, g, b, a).endVertex();
     }
 
-    public static void addSideFullTextureE(VertexBuffer buffer, float r, float g, float b) {
+    public static void addSideE(VertexBuffer buffer, float r, float g, float b, float size) {
         float a = 0.5f;
-        float l = -.3f;
-        float h = .3f;
+        float l = -size;
+        float h = size;
         buffer.pos(h, l, l).color(r, g, b, a).endVertex();
         buffer.pos(h, h, l).color(r, g, b, a).endVertex();
         buffer.pos(h, h, h).color(r, g, b, a).endVertex();
         buffer.pos(h, l, h).color(r, g, b, a).endVertex();
     }
 
-    public static void addSideFullTextureW(VertexBuffer buffer, float r, float g, float b) {
+    public static void addSideW(VertexBuffer buffer, float r, float g, float b, float size) {
         float a = 0.5f;
-        float l = -.3f;
-        float h = .3f;
+        float l = -size;
+        float h = size;
         buffer.pos(l, l, h).color(r, g, b, a).endVertex();
         buffer.pos(l, h, h).color(r, g, b, a).endVertex();
         buffer.pos(l, h, l).color(r, g, b, a).endVertex();
         buffer.pos(l, l, l).color(r, g, b, a).endVertex();
     }
 
-    public static void addSideFullTextureN(VertexBuffer buffer, float r, float g, float b) {
+    public static void addSideN(VertexBuffer buffer, float r, float g, float b, float size) {
         float a = 0.5f;
-        float l = -.3f;
-        float h = .3f;
+        float l = -size;
+        float h = size;
         buffer.pos(h, h, l).color(r, g, b, a).endVertex();
         buffer.pos(h, l, l).color(r, g, b, a).endVertex();
         buffer.pos(l, l, l).color(r, g, b, a).endVertex();
         buffer.pos(l, h, l).color(r, g, b, a).endVertex();
     }
 
-    public static void addSideFullTextureS(VertexBuffer buffer, float r, float g, float b) {
+    public static void addSideS(VertexBuffer buffer, float r, float g, float b, float size) {
         float a = 0.5f;
-        float l = -.3f;
-        float h = .3f;
+        float l = -size;
+        float h = size;
         buffer.pos(h, l, h).color(r, g, b, a).endVertex();
         buffer.pos(h, h, h).color(r, g, b, a).endVertex();
         buffer.pos(l, h, h).color(r, g, b, a).endVertex();
