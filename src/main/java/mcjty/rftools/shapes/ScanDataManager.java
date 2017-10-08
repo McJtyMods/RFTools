@@ -73,6 +73,13 @@ public class ScanDataManager extends WorldSavedData {
         if (data == null) {
             data = new ScanExtraData();
             scanData.put(id, data);
+        } else {
+            // @todo configurable and dependend on locator speed
+            if (data.getBirthTime() + 3000 < System.currentTimeMillis()) {
+                data = new ScanExtraData();
+                scanData.put(id, data);
+                System.out.println("ScanDataManager.getExtraData: CLEAN");
+            }
         }
         return data;
     }

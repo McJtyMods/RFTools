@@ -11,6 +11,11 @@ import java.util.List;
 public class ScanExtraData {
 
     private final List<Beacon> beacons = new ArrayList<>();
+    private long birthTime;
+
+    public ScanExtraData() {
+        this.birthTime = System.currentTimeMillis();
+    }
 
     public void clear() {
         beacons.clear();
@@ -18,6 +23,14 @@ public class ScanExtraData {
 
     public void addBeacon(BlockPos beacon, BeaconType type) {
         beacons.add(new Beacon(beacon, type));
+    }
+
+    public void touch() {
+        birthTime = System.currentTimeMillis();
+    }
+
+    public long getBirthTime() {
+        return birthTime;
     }
 
     public List<Beacon> getBeacons() {

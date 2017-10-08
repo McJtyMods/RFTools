@@ -55,6 +55,7 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
                 List<Entity> entities = getWorld().getEntitiesWithinAABB(EntityLivingBase.class, bb);
                 int scanId = scanner.getScanId();
                 ScanExtraData extraData = ScanDataManager.getScans().getExtraData(scanId);
+                extraData.touch();
                 extraData.clear();
 
                 BlockPos center = scanner.getScanCenter();

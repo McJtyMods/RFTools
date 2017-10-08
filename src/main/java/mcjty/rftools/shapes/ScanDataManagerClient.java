@@ -35,6 +35,12 @@ public class ScanDataManagerClient {
         if (data == null) {
             data = new ScanExtraData();
             scanDataClient.put(id, data);
+        } else {
+//            // @todo configurable and dependend on locator speed
+//            if (data.getBirthTime() + 3000 < System.currentTimeMillis()) {
+//                data = new ScanExtraData(System.currentTimeMillis());
+//                scanDataClient.put(id, data);
+//            }
         }
         return data;
     }
