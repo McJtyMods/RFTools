@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 //@Optional.InterfaceList({
-//        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"),
+//        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers"),
 //        @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")})
 public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity implements ITickable { // implements SimpleComponent, IPeripheral {
 
@@ -74,19 +74,19 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
 //    }
 //
 //    @Override
-//    @Optional.Method(modid = "OpenComputers")
+//    @Optional.Method(modid = "opencomputers")
 //    public String getComponentName() {
 //        return COMPONENT_NAME;
 //    }
 //
 //    @Callback(doc = "Get the amount of screens controlled by this controller", getter = true)
-//    @Optional.Method(modid = "OpenComputers")
+//    @Optional.Method(modid = "opencomputers")
 //    public Object[] getScreenCount(Context context, Arguments args) throws Exception {
 //        return new Object[] { connectedScreens.size() };
 //    }
 //
 //    @Callback(doc = "Get a table with coordinates (every coordinate is a table indexed with 'x', 'y', and 'z') for all connected screens", getter = true)
-//    @Optional.Method(modid = "OpenComputers")
+//    @Optional.Method(modid = "opencomputers")
 //    public Object[] getScreens(Context context, Arguments args) throws Exception {
 //        List<Map<String,Integer>> result = new ArrayList<Map<String, Integer>>();
 //        for (Coordinate screen : connectedScreens) {
@@ -101,7 +101,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
 //    }
 //
 //    @Callback(doc = "Given a screen coordinate (table indexed by 'x', 'y', and 'z') return the index of that screen", getter = true)
-//    @Optional.Method(modid = "OpenComputers")
+//    @Optional.Method(modid = "opencomputers")
 //    public Object[] getScreenIndex(Context context, Arguments args) throws Exception {
 //        Map screen = args.checkTable(0);
 //        if (!screen.containsKey("x") || !screen.containsKey("y") || !screen.containsKey("z")) {
@@ -124,7 +124,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
 //    }
 //
 //    @Callback(doc = "Given a screen index return the coordinate (table indexed by 'x', 'y', and 'z') of that screen", getter = true)
-//    @Optional.Method(modid = "OpenComputers")
+//    @Optional.Method(modid = "opencomputers")
 //    public Object[] getScreenCoordinate(Context context, Arguments args) throws Exception {
 //        int index = args.checkInteger(0);
 //        if (index < 0 || index >= connectedScreens.size()) {
@@ -141,7 +141,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
 //
 //
 //    @Callback(doc = "Add text to all screens listening to the given 'tag'. Parameters are: 'tag', 'text' and 'color' (RGB value)")
-//    @Optional.Method(modid = "OpenComputers")
+//    @Optional.Method(modid = "opencomputers")
 //    public Object[] addText(Context context, Arguments args) throws Exception {
 //        String tag = args.checkString(0);
 //        String text = args.checkString(1);
@@ -151,7 +151,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
 //    }
 //
 //    @Callback(doc = "Set text to all screens listening to the given 'tag'. Parameters are: 'tag', 'text' and 'color' (RGB value)")
-//    @Optional.Method(modid = "OpenComputers")
+//    @Optional.Method(modid = "opencomputers")
 //    public Object[] setText(Context context, Arguments args) throws Exception {
 //        String tag = args.checkString(0);
 //        String text = args.checkString(1);
@@ -183,7 +183,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
 //    }
 //
 //    @Callback(doc = "Clear text to all screens listening to the given 'tag'. The 'tag' is the only parameter")
-//    @Optional.Method(modid = "OpenComputers")
+//    @Optional.Method(modid = "opencomputers")
 //    public Object[] clearText(Context context, Arguments args) throws Exception {
 //        String tag = args.checkString(0);
 //
@@ -207,7 +207,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
 //    }
 //
 //    @Callback(doc = "Get a table of all tags supported by all connected screens", getter = true)
-//    @Optional.Method(modid = "OpenComputers")
+//    @Optional.Method(modid = "opencomputers")
 //    public Object[] getTags(Context context, Arguments args) throws Exception {
 //        List<String> tags = new ArrayList<String>();
 //        for (Coordinate screen : connectedScreens) {

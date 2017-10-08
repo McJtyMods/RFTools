@@ -170,7 +170,7 @@ public class RFTools implements ModBase {
             FMLInterModComms.sendFunctionMessage("xnet", "getXNet", "mcjty.rftools.xnet.XNetSupport$GetXNet");
         }
 
-        if (Loader.isModLoaded("OpenComputers")) {
+        if (Loader.isModLoaded("opencomputers")) {
             OpenComputersIntegration.init();
         }
     }
