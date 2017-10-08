@@ -3,7 +3,6 @@ package mcjty.rftools.shapes;
 import mcjty.lib.tools.ChatTools;
 import mcjty.lib.tools.WorldTools;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -33,7 +32,6 @@ public class ScanDataManager extends WorldSavedData {
 
     // This data is not persisted
     private final Map<Integer, ScanExtraData> scanData = new HashMap<>();
-    private final Map<Integer, ScanExtraData> scanDataClient = new HashMap<>();
 
     public ScanDataManager(String identifier) {
         super(identifier);
@@ -70,13 +68,6 @@ public class ScanDataManager extends WorldSavedData {
         }
     }
 
-    public static ScanDataManager getScansClient() {
-        if (instance == null) {
-            instance = new ScanDataManager(SCANDATA_NETWORK_NAME);
-        }
-        return instance;
-    }
-
     public ScanExtraData getExtraData(int id) {
         ScanExtraData data = scanData.get(id);
         if (data == null) {
@@ -84,41 +75,6 @@ public class ScanDataManager extends WorldSavedData {
             scanData.put(id, data);
         }
         return data;
-    }
-
-    public ScanExtraData getExtraDataClient(int id) {
-        ScanExtraData data = scanDataClient.get(id);
-        if (data == null) {
-            data = new ScanExtraData();
-            scanDataClient.put(id, data);
-        }
-        return data;
-    }
-
-    // Client side only
-    public void requestExtraDataClient(int id) {
-        RFToolsMessages.INSTANCE.sendToServer(new PacketRequestExtraData(id));
-    }
-
-    // Client side only
-    public void registerExtraDataFromServer(int id, ScanExtraData extraData) {
-        scanDataClient.put(id, extraData);
-    }
-
-    public int getScanDirtyCounterClient(int id) {
-        Scan scan;
-        if (!scans.containsKey(id)) {
-            scan = new Scan();
-            scans.put(id, scan);
-        } else {
-            scan = scans.get(id);
-        }
-        scan.dirtyRequestTimeout--;
-        if (scan.dirtyRequestTimeout <= 0) {
-            RFToolsMessages.INSTANCE.sendToServer(new PacketRequestScanDirty(id));
-            scan.dirtyRequestTimeout = 20;
-        }
-        return scan.getDirtyCounter();
     }
 
     public static ScanDataManager getScans() {

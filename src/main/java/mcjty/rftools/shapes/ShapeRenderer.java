@@ -55,7 +55,7 @@ public class ShapeRenderer {
     }
 
     public int getCount() {
-        RenderData data = ShapeDataManager.getRenderData(shapeID);
+        RenderData data = ShapeDataManagerClient.getRenderData(shapeID);
         if (data != null) {
             return data.getBlockCount();
         }
@@ -63,7 +63,7 @@ public class ShapeRenderer {
     }
 
     public static RenderData getRenderDataAndCreate(ShapeID shapeID) {
-        RenderData data = ShapeDataManager.getRenderDataAndCreate(shapeID);
+        RenderData data = ShapeDataManagerClient.getRenderDataAndCreate(shapeID);
         data.touch();
         return data;
     }
@@ -186,7 +186,7 @@ public class ShapeRenderer {
         GlStateManager.disableBlend();
         RenderHelper.enableGUIStandardItemLighting();
 
-        RenderData data = ShapeDataManager.getRenderData(shapeID);
+        RenderData data = ShapeDataManagerClient.getRenderData(shapeID);
         if (data != null && !data.previewMessage.isEmpty()) {
             Minecraft.getMinecraft().fontRenderer.drawString(data.previewMessage, gui.getPreviewLeft()+84, gui.getPreviewTop()+50, 0xffff0000);
         }
@@ -323,9 +323,9 @@ public class ShapeRenderer {
             extraDataCounter--;
             if (extraDataCounter <= 0) {
                 extraDataCounter = 10;
-                ScanDataManager.getScansClient().requestExtraDataClient(scanId);
+                ScanDataManagerClient.getScansClient().requestExtraDataClient(scanId);
             }
-            ScanExtraData extraData = ScanDataManager.getScansClient().getExtraDataClient(scanId);
+            ScanExtraData extraData = ScanDataManagerClient.getScansClient().getExtraDataClient(scanId);
             for (ScanExtraData.Beacon beacon : extraData.getBeacons()) {
                 int x = beacon.getPos().getX();
                 int y = beacon.getPos().getY()+1;

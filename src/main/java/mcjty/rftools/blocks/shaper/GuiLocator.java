@@ -18,7 +18,7 @@ import java.awt.Rectangle;
 
 public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
 
-    public static final int LOCATOR_WIDTH = 256;
+    public static final int LOCATOR_WIDTH = 173;
     public static final int LOCATOR_HEIGHT = 238;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/locator.png");

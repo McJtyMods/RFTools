@@ -38,7 +38,7 @@ public class PacketReturnScanDirty implements IMessage {
         }
 
         private void handle(PacketReturnScanDirty message) {
-            ScanDataManager.getScansClient().getOrCreateScan(message.scanId).setDirtyCounter(message.dirtyCounter);
+            ScanDataManagerClient.getScansClient().getOrCreateScan(message.scanId).setDirtyCounter(message.dirtyCounter);
         }
     }
 }

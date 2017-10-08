@@ -61,7 +61,7 @@ public class PacketRequestShapeData implements IMessage {
             formula.setup(new BlockPos(0, 0, 0), clamped, new BlockPos(0, 0, 0), message.card.getTagCompound());
 
             for (int y = 0 ; y < dy ; y++) {
-                ShapeDataManager.pushWork(message.id, card, y, formula, ctx.getServerHandler().player);
+                ShapeDataManagerServer.pushWork(message.id, card, y, formula, ctx.getServerHandler().player);
             }
 
 

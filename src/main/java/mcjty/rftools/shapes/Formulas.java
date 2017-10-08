@@ -69,7 +69,7 @@ public class Formulas {
             ShapeCardItem.getLocalChecksum(tc, crc);
             int scanId = tc.getInteger("scanid");
             crc.add(scanId);
-            crc.add(ScanDataManager.getScansClient().getScanDirtyCounterClient(scanId));
+            crc.add(ScanDataManagerClient.getScansClient().getScanDirtyCounterClient(scanId));
         }
 
         @Override

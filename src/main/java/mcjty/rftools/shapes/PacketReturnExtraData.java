@@ -61,7 +61,7 @@ public class PacketReturnExtraData implements IMessage {
         }
 
         private void handle(PacketReturnExtraData message) {
-            ScanDataManager.getScansClient().registerExtraDataFromServer(message.scanId, message.data);
+            ScanDataManagerClient.getScansClient().registerExtraDataFromServer(message.scanId, message.data);
         }
     }
 }
