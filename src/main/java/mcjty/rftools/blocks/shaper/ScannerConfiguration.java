@@ -12,6 +12,11 @@ public class ScannerConfiguration {
     public static int LOCATOR_MAXENERGY = 500000;
     public static int LOCATOR_RECEIVEPERTICK = 20000;
     public static int LOCATOR_PERSCAN = 20000;
+    public static int LOCATOR_PERSCAN_HOSTILE = 10000;
+    public static int LOCATOR_PERSCAN_PASSIVE = 4000;
+    public static int LOCATOR_PERSCAN_PLAYER = 20000;
+
+    public static int ticksPerLocatorScan = 40;
 
     public static int PROJECTOR_MAXENERGY = 500000;
     public static int PROJECTOR_RECEIVEPERTICK = 10000;
@@ -43,14 +48,25 @@ public class ScannerConfiguration {
                 "Maximum RF storage that the locator can hold").getInt();
         LOCATOR_RECEIVEPERTICK = cfg.get(CATEGORY_SCANNER, "locatorRFPerTick", LOCATOR_RECEIVEPERTICK,
                 "RF per tick that the locator can receive").getInt();
+
         LOCATOR_PERSCAN = cfg.get(CATEGORY_SCANNER, "locatorUsePerTick", LOCATOR_PERSCAN,
                 "Amount of RF needed for a scan").getInt();
+        LOCATOR_PERSCAN_HOSTILE = cfg.get(CATEGORY_SCANNER, "locatorUsePerTickHostile", LOCATOR_PERSCAN_HOSTILE,
+                "Additional amount of RF needed for a scan for hostile entities").getInt();
+        LOCATOR_PERSCAN_PASSIVE = cfg.get(CATEGORY_SCANNER, "locatorUsePerTickPassive", LOCATOR_PERSCAN_PASSIVE,
+                "Additional amount of RF needed for a scan for passive entities").getInt();
+        LOCATOR_PERSCAN_PLAYER = cfg.get(CATEGORY_SCANNER, "locatorUsePerTickPlayer", LOCATOR_PERSCAN_PLAYER,
+                "Additional amount of RF needed for a scan for players").getInt();
+
         PROJECTOR_MAXENERGY = cfg.get(CATEGORY_SCANNER, "projectorMaxRF", PROJECTOR_MAXENERGY,
                 "Maximum RF storage that the projector can hold").getInt();
         PROJECTOR_RECEIVEPERTICK = cfg.get(CATEGORY_SCANNER, "projectorRFPerTick", PROJECTOR_RECEIVEPERTICK,
                 "RF per tick that the projector can receive").getInt();
         PROJECTOR_USEPERTICK = cfg.get(CATEGORY_SCANNER, "projectorUsePerTick", PROJECTOR_USEPERTICK,
                 "RF/t for the projector while it is in use").getInt();
+
+        ticksPerLocatorScan = cfg.get(CATEGORY_SCANNER, "ticksPerLocatorScan", ticksPerLocatorScan,
+                "Number of ticks between every scan of the locator").getInt();
 
         maxScannerOffset = cfg.get(CATEGORY_SCANNER, "maxScannerOffset", maxScannerOffset,
                 "Maximum offset of the shape when a shape card is used in the scanner/projector").getInt();

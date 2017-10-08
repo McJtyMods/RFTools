@@ -36,8 +36,9 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
             counter--;
             markDirtyQuick();
             if (counter <= 0) {
-                counter = 40;   // @todo configurable
-                if (getEnergyStored() < ScannerConfiguration.LOCATOR_PERSCAN) {
+                counter = ScannerConfiguration.ticksPerLocatorScan;
+                int energy = getEnergyPerScan();
+                if (getEnergyStored() < energy) {
                     // Do nothing
                     return;
                 }
@@ -47,7 +48,7 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
                     return;
                 }
                 // @todo energy consumption per area?
-                consumeEnergy(ScannerConfiguration.LOCATOR_PERSCAN);
+                consumeEnergy(energy);
                 BlockPos dim = scanner.getDataDim();
                 BlockPos start = scanner.getFirstCorner();
                 AxisAlignedBB bb = new AxisAlignedBB(start, start.add(dim));
@@ -70,6 +71,11 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
                 }
             }
         }
+    }
+
+    public int getEnergyPerScan() {
+        // @todo
+        return ScannerConfiguration.LOCATOR_PERSCAN + ScannerConfiguration.LOCATOR_PERSCAN_HOSTILE + ScannerConfiguration.LOCATOR_PERSCAN_PASSIVE + ScannerConfiguration.LOCATOR_PERSCAN_PLAYER;
     }
 
     private ScannerTileEntity getScanner() {

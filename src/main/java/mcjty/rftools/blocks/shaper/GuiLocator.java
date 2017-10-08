@@ -5,6 +5,7 @@ import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.entity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.PositionalLayout;
+import mcjty.lib.gui.widgets.ColorChoiceLabel;
 import mcjty.lib.gui.widgets.EnergyBar;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.gui.widgets.Panel;
@@ -18,14 +19,18 @@ import java.awt.Rectangle;
 
 public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
 
-    public static final int LOCATOR_WIDTH = 173;
-    public static final int LOCATOR_HEIGHT = 238;
+    private static final int LOCATOR_WIDTH = 173;
+    private static final int LOCATOR_HEIGHT = 238;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/locator.png");
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     private EnergyBar energyBar;
     private ImageChoiceLabel redstoneMode;
+
+    private ColorChoiceLabel hostile;
+    private ColorChoiceLabel passive;
+    private ColorChoiceLabel player;
 
     public GuiLocator(LocatorTileEntity tileEntity, EmptyContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, tileEntity, container, RFTools.GUI_MANUAL_MAIN, "locator");

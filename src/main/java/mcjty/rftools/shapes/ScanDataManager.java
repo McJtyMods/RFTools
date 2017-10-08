@@ -3,6 +3,7 @@ package mcjty.rftools.shapes;
 import mcjty.lib.tools.ChatTools;
 import mcjty.lib.tools.WorldTools;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -74,8 +75,8 @@ public class ScanDataManager extends WorldSavedData {
             data = new ScanExtraData();
             scanData.put(id, data);
         } else {
-            // @todo configurable and dependend on locator speed
-            if (data.getBirthTime() + 3000 < System.currentTimeMillis()) {
+            // 25% longer to accomodate for delay on locator
+            if (data.getBirthTime() + (ScannerConfiguration.ticksPerLocatorScan*75) < System.currentTimeMillis()) {
                 data = new ScanExtraData();
                 scanData.put(id, data);
                 System.out.println("ScanDataManager.getExtraData: CLEAN");
