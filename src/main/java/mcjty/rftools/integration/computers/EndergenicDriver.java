@@ -3,7 +3,7 @@ package mcjty.rftools.integration.computers;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
-import li.cil.oc.api.prefab.ManagedEnvironment;
+import li.cil.oc.api.prefab.AbstractManagedEnvironment;
 import mcjty.lib.integration.computers.AbstractOCDriver;
 import mcjty.rftools.blocks.endergen.EndergenicTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -126,7 +126,7 @@ public class EndergenicDriver {
         }
 
         @Override
-        public ManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing side, TileEntity tile) {
+        public AbstractManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing side, TileEntity tile) {
             return new InternalManagedEnvironment((EndergenicTileEntity) tile);
         }
     }
