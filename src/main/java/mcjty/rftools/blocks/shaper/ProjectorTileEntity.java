@@ -207,6 +207,14 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
                 }
                 break;
             }
+            case GRAYON:
+                grayscale = true;
+                markForNotification();
+                break;
+            case GRAYOFF:
+                grayscale = false;
+                markForNotification();
+                break;
         }
     }
 
@@ -431,6 +439,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
         sound = message.isSound();
         if (grayscale != message.isGrayscale()) {
             grayscale = message.isGrayscale();
+            shapeRenderer = null;
             scanNeeded = true;
         }
         if (counter != message.getCounter()) {
