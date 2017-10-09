@@ -11,10 +11,10 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public class RFToolsManualItem extends GenericRFToolsItem {
+public class RFToolsShapeManualItem extends GenericRFToolsItem {
 
-    public RFToolsManualItem() {
-        super("rftools_manual");
+    public RFToolsShapeManualItem() {
+        super("rftools_shape_manual");
         setMaxStackSize(1);
     }
 
@@ -26,14 +26,18 @@ public class RFToolsManualItem extends GenericRFToolsItem {
     @Override
     public void clAddInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
         super.clAddInformation(stack, playerIn, tooltip, advanced);
-        tooltip.add("RFTools basic manual");
+        tooltip.add("RFTools shape manual");
+        tooltip.add("The Builder, Shield, Shapecards,");
+        tooltip.add("The Scanner, Projector, Composor,");
+        tooltip.add("and Locator");
     }
+
 
     @Override
     protected ActionResult<ItemStack> clOnItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (world.isRemote) {
-            player.openGui(RFTools.instance, RFTools.GUI_MANUAL_MAIN, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
+            player.openGui(RFTools.instance, RFTools.GUI_MANUAL_SHAPE, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
             return new ActionResult<>(EnumActionResult.SUCCESS, stack);
         }
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);

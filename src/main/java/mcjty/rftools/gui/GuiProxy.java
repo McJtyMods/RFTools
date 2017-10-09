@@ -34,7 +34,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 public class GuiProxy implements IGuiHandler {
     @Override
     public Object getServerGuiElement(int guiid, EntityPlayer entityPlayer, World world, int x, int y, int z) {
-        if (guiid == RFTools.GUI_MANUAL_MAIN || guiid == RFTools.GUI_TELEPORTPROBE || guiid == RFTools.GUI_ADVANCEDPORTER
+        if (guiid == RFTools.GUI_MANUAL_MAIN || guiid == RFTools.GUI_MANUAL_SHAPE || guiid == RFTools.GUI_TELEPORTPROBE || guiid == RFTools.GUI_ADVANCEDPORTER
                 || guiid == RFTools.GUI_SHAPECARD || guiid == RFTools.GUI_SHAPECARD_COMPOSER
                 || guiid == RFTools.GUI_CHAMBER_DETAILS || guiid == RFTools.GUI_DEVELOPERS_DELIGHT || guiid == RFTools.GUI_LIST_BLOCKS) {
             return null;
@@ -80,6 +80,8 @@ public class GuiProxy implements IGuiHandler {
     public Object getClientGuiElement(int guiid, EntityPlayer entityPlayer, World world, int x, int y, int z) {
         if (guiid == RFTools.GUI_MANUAL_MAIN) {
             return new GuiRFToolsManual(GuiRFToolsManual.MANUAL_MAIN);
+        } else if (guiid == RFTools.GUI_MANUAL_SHAPE) {
+            return new GuiRFToolsManual(GuiRFToolsManual.MANUAL_SHAPE);
         } else if (guiid == RFTools.GUI_TELEPORTPROBE) {
             return new GuiTeleportProbe();
         } else if (guiid == RFTools.GUI_ADVANCEDPORTER) {

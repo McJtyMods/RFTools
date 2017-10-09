@@ -59,7 +59,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
     private ShapeRenderer shapeRenderer = null;
 
     public GuiProjector(ProjectorTileEntity te, ProjectorContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, RFTools.GUI_MANUAL_MAIN, "projector");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, RFTools.GUI_MANUAL_SHAPE, "projector");
 
         xSize = PROJECTOR_WIDTH;
         ySize = PROJECTOR_HEIGHT;

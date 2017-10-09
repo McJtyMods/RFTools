@@ -92,6 +92,7 @@ public class RFTools implements ModBase {
      * Set our custom inventory Gui index to the next available Gui index
      */
     public static final int GUI_MANUAL_MAIN = modGuiIndex++;
+    public static final int GUI_MANUAL_SHAPE = modGuiIndex++;
     public static final int GUI_COALGENERATOR = modGuiIndex++;
     public static final int GUI_CRAFTER = modGuiIndex++;
     public static final int GUI_MODULAR_STORAGE = modGuiIndex++;

@@ -52,7 +52,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
     private int filterCnt = 0;
 
     public GuiScanner(ScannerTileEntity shaperTileEntity, ScannerContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, shaperTileEntity, container, RFTools.GUI_MANUAL_MAIN, "scanner");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, shaperTileEntity, container, RFTools.GUI_MANUAL_SHAPE, "scanner");
 
         xSize = SCANNER_WIDTH;
         ySize = SCANNER_HEIGHT;

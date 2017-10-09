@@ -45,7 +45,7 @@ public class GuiChamberDetails extends GuiItemScreen {
     private Label info2Label;
 
     public GuiChamberDetails() {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, CHAMBER_XSIZE, CHAMBER_YSIZE, RFTools.GUI_MANUAL_MAIN, "chambercard");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, CHAMBER_XSIZE, CHAMBER_YSIZE, RFTools.GUI_MANUAL_SHAPE, "chambercard");
         requestChamberInfoFromServer();
     }
 

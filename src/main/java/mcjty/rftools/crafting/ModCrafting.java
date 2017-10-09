@@ -78,6 +78,7 @@ public final class ModCrafting {
         GameRegistry.addRecipe(new ItemStack(ModBlocks.machineBase), "   ", "ggg", "sss", 'g', Items.GOLD_NUGGET, 's', Blocks.STONE);
 
         GameRegistry.addRecipe(new ItemStack(ModItems.rfToolsManualItem), " r ", "rbr", " r ", 'r', Items.REDSTONE, 'b', Items.BOOK);
+        GameRegistry.addRecipe(new ItemStack(ModItems.rfToolsShapeManualItem), " B ", "rbr", " r ", 'r', Items.REDSTONE, 'b', Items.BOOK, 'B', Items.BRICK);
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModItems.smartWrenchItem), "  i", " l ", "l  ", 'i', Items.IRON_INGOT, 'l', "dyeBlue"));
         GameRegistry.addRecipe(new ItemStack(ModItems.infusedDiamond), "sss", "sds", "sss", 's', ModItems.dimensionalShardItem, 'd', Items.DIAMOND);
 

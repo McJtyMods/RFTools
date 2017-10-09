@@ -3,6 +3,7 @@ package mcjty.rftools.items;
 import mcjty.rftools.items.creativeonly.DevelopersDelightItem;
 import mcjty.rftools.items.creativeonly.ShardWandItem;
 import mcjty.rftools.items.manual.RFToolsManualItem;
+import mcjty.rftools.items.manual.RFToolsShapeManualItem;
 import mcjty.rftools.items.modifier.ModifierItem;
 import mcjty.rftools.items.netmonitor.NetworkMonitorItem;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
@@ -12,6 +13,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public final class ModItems {
 
     public static RFToolsManualItem rfToolsManualItem;
+    public static RFToolsShapeManualItem rfToolsShapeManualItem;
     public static SmartWrenchItem smartWrenchItem;
     public static DimensionalShardItem dimensionalShardItem;
     public static ShardWandItem shardWandItem;
@@ -29,6 +31,7 @@ public final class ModItems {
     private static void setupVariousItems() {
         smartWrenchItem = new SmartWrenchItem();
         rfToolsManualItem = new RFToolsManualItem();
+        rfToolsShapeManualItem = new RFToolsShapeManualItem();
         dimensionalShardItem = new DimensionalShardItem();
         shardWandItem = new ShardWandItem();
         infusedDiamond = new InfusedDiamond();
@@ -43,6 +46,7 @@ public final class ModItems {
     public static void initClient() {
         smartWrenchItem.initModel();
         rfToolsManualItem.initModel();
+        rfToolsShapeManualItem.initModel();
         dimensionalShardItem.initModel();
         shardWandItem.initModel();
         infusedDiamond.initModel();

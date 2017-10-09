@@ -61,7 +61,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
 
     private static List<ShieldFilter> fromServer_filters = new ArrayList<ShieldFilter>();
     public static void storeFiltersForClient(List<ShieldFilter> filters) {
-        fromServer_filters = new ArrayList<ShieldFilter>(filters);
+        fromServer_filters = new ArrayList<>(filters);
     }
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/shieldprojector.png");
@@ -84,7 +84,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
     }
 
     public GuiShield(ShieldTEBase shieldTileEntity, ShieldContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, shieldTileEntity, container, RFTools.GUI_MANUAL_MAIN, "shield");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, shieldTileEntity, container, RFTools.GUI_MANUAL_SHAPE, "shield");
         shieldTileEntity.setCurrentRF(shieldTileEntity.getEnergyStored(EnumFacing.DOWN));
 
         xSize = SHIELD_WIDTH;
