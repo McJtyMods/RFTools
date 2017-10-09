@@ -21,8 +21,8 @@ public class ScanExtraData {
         beacons.clear();
     }
 
-    public void addBeacon(BlockPos beacon, BeaconType type) {
-        beacons.add(new Beacon(beacon, type));
+    public void addBeacon(BlockPos beacon, BeaconType type, boolean doBeacon) {
+        beacons.add(new Beacon(beacon, type, doBeacon));
     }
 
     public void touch() {
@@ -40,10 +40,12 @@ public class ScanExtraData {
     public static class Beacon {
         private final BlockPos pos;
         private final BeaconType type;
+        private final boolean doBeacon;
 
-        public Beacon(BlockPos pos, BeaconType type) {
+        public Beacon(BlockPos pos, BeaconType type, boolean doBeacon) {
             this.pos = pos;
             this.type = type;
+            this.doBeacon = doBeacon;
         }
 
         public BlockPos getPos() {
@@ -52,6 +54,10 @@ public class ScanExtraData {
 
         public BeaconType getType() {
             return type;
+        }
+
+        public boolean isDoBeacon() {
+            return doBeacon;
         }
     }
 }

@@ -75,11 +75,10 @@ public class ScanDataManager extends WorldSavedData {
             data = new ScanExtraData();
             scanData.put(id, data);
         } else {
-            // 25% longer to accomodate for delay on locator
-            if (data.getBirthTime() + (ScannerConfiguration.ticksPerLocatorScan*75) < System.currentTimeMillis()) {
+            // Longer to accomodate for delay on locator
+            if (data.getBirthTime() + (ScannerConfiguration.ticksPerLocatorScan*100) < System.currentTimeMillis()) {
                 data = new ScanExtraData();
                 scanData.put(id, data);
-                System.out.println("ScanDataManager.getExtraData: CLEAN");
             }
         }
         return data;

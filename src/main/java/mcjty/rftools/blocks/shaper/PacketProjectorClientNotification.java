@@ -18,6 +18,7 @@ public class PacketProjectorClientNotification implements IMessage {
     private boolean projecting;
     private boolean scanline;
     private boolean sound;
+    private boolean grayscale;
     private int counter;
 
     @Override
@@ -30,6 +31,7 @@ public class PacketProjectorClientNotification implements IMessage {
         projecting = buf.readBoolean();
         scanline = buf.readBoolean();
         sound = buf.readBoolean();
+        grayscale = buf.readBoolean();
         counter = buf.readInt();
     }
 
@@ -43,6 +45,7 @@ public class PacketProjectorClientNotification implements IMessage {
         buf.writeBoolean(projecting);
         buf.writeBoolean(scanline);
         buf.writeBoolean(sound);
+        buf.writeBoolean(grayscale);
         buf.writeInt(counter);
     }
 
@@ -78,6 +81,10 @@ public class PacketProjectorClientNotification implements IMessage {
         return sound;
     }
 
+    public boolean isGrayscale() {
+        return grayscale;
+    }
+
     public PacketProjectorClientNotification() {
     }
 
@@ -90,6 +97,7 @@ public class PacketProjectorClientNotification implements IMessage {
         projecting = tileEntity.isProjecting();
         scanline = tileEntity.isScanline();
         sound = tileEntity.isSound();
+        grayscale = tileEntity.isGrayscale();
         counter = tileEntity.getCounter();
     }
 
@@ -103,7 +111,7 @@ public class PacketProjectorClientNotification implements IMessage {
         private void handle(PacketProjectorClientNotification message) {
             TileEntity te = RFTools.proxy.getClientWorld().getTileEntity(message.pos);
             if (te instanceof ProjectorTileEntity) {
-                ((ProjectorTileEntity) te).updateFromServer(message);;
+                ((ProjectorTileEntity) te).updateFromServer(message);
             }
         }
     }

@@ -130,7 +130,7 @@ public class ShapeRenderer {
 
         Tessellator tessellator = Tessellator.getInstance();
         VertexBuffer buffer = tessellator.getBuffer();
-        boolean doSound = renderFaces(tessellator, buffer, stack, scan, shape.getScanId());
+        boolean doSound = renderFaces(tessellator, buffer, stack, scan, shape.isGrayscale(), shape.getScanId());
 
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
@@ -162,7 +162,7 @@ public class ShapeRenderer {
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
-        renderFaces(tessellator, buffer, stack, showScan, -1);
+        renderFaces(tessellator, buffer, stack, showScan, false, -1);
         BlockPos dimension = ShapeCardItem.getDimension(stack);
         renderHelpers(tessellator, buffer, dimension.getX(), dimension.getY(), dimension.getZ(), showAxis, showOuter);
 
@@ -270,7 +270,7 @@ public class ShapeRenderer {
     private int extraDataCounter = 0;
 
     private boolean renderFaces(Tessellator tessellator, final VertexBuffer buffer,
-                     ItemStack stack, boolean showScan, int scanId) {
+                     ItemStack stack, boolean showScan, boolean grayscale, int scanId) {
 
         RenderData data = getRenderDataAndCreate(shapeID);
 
@@ -298,7 +298,7 @@ public class ShapeRenderer {
             for (RenderData.RenderPlane plane : data.getPlanes()) {
                 if (plane != null) {
                     if (plane.isDirty()) {
-                        createRenderData(tessellator, buffer, plane, data);
+                        createRenderData(tessellator, buffer, plane, data, grayscale);
                         plane.markClean();
                     }
                     boolean flash = showScan && (plane.getBirthtime() > time-ScannerConfiguration.projectorFlashTimeout);
@@ -332,7 +332,7 @@ public class ShapeRenderer {
                 int z = beacon.getPos().getZ();
                 BeaconType type = beacon.getType();
                 GlStateManager.translate(x, y, z);
-                RenderData.RenderElement element = getBeaconElement(tessellator, buffer, type);
+                RenderData.RenderElement element = getBeaconElement(tessellator, buffer, type, beacon.isDoBeacon());
                 element.render();
                 GlStateManager.translate(-x, -y, -z);
             }
@@ -341,7 +341,8 @@ public class ShapeRenderer {
         return needScanSound;
     }
 
-    private void createRenderData(Tessellator tessellator, VertexBuffer buffer, RenderData.RenderPlane plane, RenderData data) {
+    private void createRenderData(Tessellator tessellator, VertexBuffer buffer, RenderData.RenderPlane plane, RenderData data,
+                                  boolean grayscale) {
         Map<IBlockState, ShapeBlockInfo> palette = new HashMap<>();
 
         double origOffsetX = buffer.xOffset;
@@ -373,6 +374,11 @@ public class ShapeRenderer {
                     float r = col.getR();
                     float g = col.getG();
                     float b = col.getB();
+                    if (grayscale) {
+//                        float a = (r+g+b)/3.0f;
+                        float a = 0.21f*r+0.72f*g+0.07f*b;
+                        r = g = b = a;
+                    }
                     ShapeBlockInfo.IBlockRender bd = info.getRender();
                     if (bd == null) {
                         addSideFullTextureU(buffer, cnt, r * .8f, g * .8f, b * .8f);
@@ -403,19 +409,27 @@ public class ShapeRenderer {
     }
 
     private static RenderData.RenderElement beaconElement[] = null;
+    private static RenderData.RenderElement beaconElementBeacon[] = null;
 
-    private static RenderData.RenderElement getBeaconElement(Tessellator tessellator, VertexBuffer buffer, BeaconType type) {
+    private static RenderData.RenderElement getBeaconElement(Tessellator tessellator, VertexBuffer buffer, BeaconType type, boolean doBeacon) {
         if (beaconElement == null) {
             beaconElement = new RenderData.RenderElement[BeaconType.VALUES.length];
+            beaconElementBeacon = new RenderData.RenderElement[BeaconType.VALUES.length];
             for (int i = 0 ; i < BeaconType.VALUES.length ; i++) {
                 beaconElement[i] = null;
+                beaconElementBeacon[i] = null;
             }
         }
 
-
-        if (beaconElement[type.ordinal()] == null) {
-            beaconElement[type.ordinal()] = new RenderData.RenderElement();
-            beaconElement[type.ordinal()].createRenderList(buffer);
+        RenderData.RenderElement[] elements;
+        if (doBeacon) {
+            elements = ShapeRenderer.beaconElementBeacon;
+        } else {
+            elements = ShapeRenderer.beaconElement;
+        }
+        if (elements[type.ordinal()] == null) {
+            elements[type.ordinal()] = new RenderData.RenderElement();
+            elements[type.ordinal()].createRenderList(buffer);
             GlStateManager.glLineWidth(3);
             buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
             float r = type.getR();
@@ -439,11 +453,20 @@ public class ShapeRenderer {
             addSideE(buffer, r, g, b, .2f);
             addSideU(buffer, r, g, b, .2f);
             addSideD(buffer, r, g, b, .2f);
+
+            if (doBeacon) {
+                buffer.setTranslation(origOffsetX, origOffsetY+.2f, origOffsetZ);
+                addSideN(buffer, r, g, b, .1f, ScannerConfiguration.beaconHeight);
+                addSideS(buffer, r, g, b, .1f, ScannerConfiguration.beaconHeight);
+                addSideW(buffer, r, g, b, .1f, ScannerConfiguration.beaconHeight);
+                addSideE(buffer, r, g, b, .1f, ScannerConfiguration.beaconHeight);
+            }
+
             buffer.setTranslation(origOffsetX, origOffsetY, origOffsetZ);
 
-            beaconElement[type.ordinal()].performRenderToList(tessellator, buffer);
+            elements[type.ordinal()].performRenderToList(tessellator, buffer);
         }
-        return beaconElement[type.ordinal()];
+        return elements[type.ordinal()];
     }
 
     private static void setupScissor(IShapeParentGui gui) {
@@ -569,6 +592,50 @@ public class ShapeRenderer {
         buffer.pos(h, h, h).color(r, g, b, a).endVertex();
         buffer.pos(l, h, h).color(r, g, b, a).endVertex();
         buffer.pos(l, l, h).color(r, g, b, a).endVertex();
+    }
+
+
+
+
+
+    public static void addSideE(VertexBuffer buffer, float r, float g, float b, float size, float height) {
+        float a = 0.5f;
+        float l = -size;
+        float h = size;
+        buffer.pos(h, 0, l).color(r, g, b, a).endVertex();
+        buffer.pos(h, height, l).color(r, g, b, a).endVertex();
+        buffer.pos(h, height, h).color(r, g, b, a).endVertex();
+        buffer.pos(h, 0, h).color(r, g, b, a).endVertex();
+    }
+
+    public static void addSideW(VertexBuffer buffer, float r, float g, float b, float size, float height) {
+        float a = 0.5f;
+        float l = -size;
+        float h = size;
+        buffer.pos(l, 0, h).color(r, g, b, a).endVertex();
+        buffer.pos(l, height, h).color(r, g, b, a).endVertex();
+        buffer.pos(l, height, l).color(r, g, b, a).endVertex();
+        buffer.pos(l, 0, l).color(r, g, b, a).endVertex();
+    }
+
+    public static void addSideN(VertexBuffer buffer, float r, float g, float b, float size, float height) {
+        float a = 0.5f;
+        float l = -size;
+        float h = size;
+        buffer.pos(h, height, l).color(r, g, b, a).endVertex();
+        buffer.pos(h, 0, l).color(r, g, b, a).endVertex();
+        buffer.pos(l, 0, l).color(r, g, b, a).endVertex();
+        buffer.pos(l, height, l).color(r, g, b, a).endVertex();
+    }
+
+    public static void addSideS(VertexBuffer buffer, float r, float g, float b, float size, float height) {
+        float a = 0.5f;
+        float l = -size;
+        float h = size;
+        buffer.pos(h, 0, h).color(r, g, b, a).endVertex();
+        buffer.pos(h, height, h).color(r, g, b, a).endVertex();
+        buffer.pos(l, height, h).color(r, g, b, a).endVertex();
+        buffer.pos(l, 0, h).color(r, g, b, a).endVertex();
     }
 
 }

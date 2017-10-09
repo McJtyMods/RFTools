@@ -42,6 +42,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
     private boolean projecting = false;
     private boolean scanline = true;
     private boolean sound = true;
+    private boolean grayscale = false;
     private int counter = 0;    // Counter to detect that we need to do a new 'scan' client-side
 
     // Needed client side but set on client when 'counter' changes
@@ -120,9 +121,9 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
     public ShapeID getShapeID() {
         int scanId = ShapeCardItem.getScanId(getRenderStack());
         if (scanId == 0) {
-            return new ShapeID(getWorld().provider.getDimension(), getPos(), scanId);
+            return new ShapeID(getWorld().provider.getDimension(), getPos(), scanId, isGrayscale());
         } else {
-            return new ShapeID(0, null, scanId);
+            return new ShapeID(0, null, scanId, isGrayscale());
         }
     }
 
@@ -251,6 +252,12 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
         autoRotate = tagCompound.getBoolean("rot");
         scanline = tagCompound.getBoolean("scan");
         sound = tagCompound.getBoolean("sound");
+        boolean gs = tagCompound.getBoolean("grayscale");
+        if (gs != grayscale) {
+            grayscale = gs;
+            shapeRenderer = null;
+            scanNeeded = true;
+        }
         projecting = tagCompound.getBoolean("projecting");
         active = tagCompound.getBoolean("active");
         counter = tagCompound.getInteger("counter");
@@ -287,6 +294,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
         tagCompound.setBoolean("rot", autoRotate);
         tagCompound.setBoolean("scan", scanline);
         tagCompound.setBoolean("sound", sound);
+        tagCompound.setBoolean("grayscale", grayscale);
         tagCompound.setBoolean("projecting", projecting);
         tagCompound.setBoolean("active", active);
         tagCompound.setInteger("counter", counter);
@@ -364,6 +372,10 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
         return sound;
     }
 
+    public boolean isGrayscale() {
+        return grayscale;
+    }
+
     public boolean isProjecting() {
         return projecting;
     }
@@ -373,14 +385,8 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
     }
 
     public ShapeRenderer getShapeRenderer() {
-        ItemStack renderStack = getRenderStack();
         if (shapeRenderer == null) {
-            int scanId = ShapeCardItem.getScanId(renderStack);
-            if (scanId == 0) {
-                shapeRenderer = new ShapeRenderer(new ShapeID(getWorld().provider.getDimension(), getPos(), scanId));
-            } else {
-                shapeRenderer = new ShapeRenderer(new ShapeID(0, null, scanId));
-            }
+            shapeRenderer = new ShapeRenderer(getShapeID());
         }
         return shapeRenderer;
     }
@@ -423,6 +429,10 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
         projecting = message.isProjecting();
         scanline = message.isScanline();
         sound = message.isSound();
+        if (grayscale != message.isGrayscale()) {
+            grayscale = message.isGrayscale();
+            scanNeeded = true;
+        }
         if (counter != message.getCounter()) {
             counter = message.getCounter();
             scanNeeded = true;
@@ -466,6 +476,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
             autoRotate = args.get("auto").getBoolean();
             scanline = args.get("scan").getBoolean();
             sound = args.get("sound").getBoolean();
+            grayscale = args.get("grayscale").getBoolean();
             markDirtyClient();
             return true;
         }

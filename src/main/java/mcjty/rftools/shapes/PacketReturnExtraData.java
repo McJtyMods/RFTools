@@ -25,7 +25,8 @@ public class PacketReturnExtraData implements IMessage {
             for (int i = 0; i < size; i++) {
                 long p = buf.readLong();
                 BeaconType type = BeaconType.VALUES[buf.readByte()];
-                data.addBeacon(BlockPos.fromLong(p), type);
+                boolean doBeacon = buf.readBoolean();
+                data.addBeacon(BlockPos.fromLong(p), type, doBeacon);
             }
         }
     }
@@ -41,6 +42,7 @@ public class PacketReturnExtraData implements IMessage {
             for (ScanExtraData.Beacon beacon : beacons) {
                 buf.writeLong(beacon.getPos().toLong());
                 buf.writeByte(beacon.getType().ordinal());
+                buf.writeBoolean(beacon.isDoBeacon());
             }
         }
     }

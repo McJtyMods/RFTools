@@ -9,12 +9,13 @@ public class ScannerConfiguration {
     public static int SCANNER_RECEIVEPERTICK = 20000;
     public static int SCANNER_PERTICK = 1000;
 
-    public static int LOCATOR_MAXENERGY = 500000;
+    public static int LOCATOR_MAXENERGY = 2000000;
     public static int LOCATOR_RECEIVEPERTICK = 20000;
-    public static int LOCATOR_PERSCAN = 20000;
-    public static int LOCATOR_PERSCAN_HOSTILE = 10000;
-    public static int LOCATOR_PERSCAN_PASSIVE = 4000;
-    public static int LOCATOR_PERSCAN_PLAYER = 20000;
+    public static int LOCATOR_PERSCAN_BASE = 5000;
+    public static double LOCATOR_PERSCAN_CHUNK = 0.1;
+    public static double LOCATOR_PERSCAN_HOSTILE = 1;
+    public static double LOCATOR_PERSCAN_PASSIVE = 0.5;
+    public static double LOCATOR_PERSCAN_PLAYER = 2;
 
     public static int ticksPerLocatorScan = 40;
 
@@ -23,6 +24,7 @@ public class ScannerConfiguration {
     public static int PROJECTOR_USEPERTICK = 1000;
 
     public static boolean useVBO = true;
+    public static int beaconHeight = 30;
 
     // Maximum dimension when the shape card is used for projection/scanner
     public static int maxScannerDimension = 512;
@@ -49,14 +51,16 @@ public class ScannerConfiguration {
         LOCATOR_RECEIVEPERTICK = cfg.get(CATEGORY_SCANNER, "locatorRFPerTick", LOCATOR_RECEIVEPERTICK,
                 "RF per tick that the locator can receive").getInt();
 
-        LOCATOR_PERSCAN = cfg.get(CATEGORY_SCANNER, "locatorUsePerTick", LOCATOR_PERSCAN,
-                "Amount of RF needed for a scan").getInt();
+        LOCATOR_PERSCAN_BASE = cfg.get(CATEGORY_SCANNER, "locatorUsePerTickBase", LOCATOR_PERSCAN_BASE,
+                "Fixed amount of RF needed for a scan").getInt();
+        LOCATOR_PERSCAN_CHUNK = cfg.get(CATEGORY_SCANNER, "locatorUsePerTickChunk", LOCATOR_PERSCAN_CHUNK,
+                "Base amount of RF needed for a scan per 16x16x16 subchunk").getDouble();
         LOCATOR_PERSCAN_HOSTILE = cfg.get(CATEGORY_SCANNER, "locatorUsePerTickHostile", LOCATOR_PERSCAN_HOSTILE,
-                "Additional amount of RF needed for a scan for hostile entities").getInt();
+                "Additional amount of RF per 16x16x16 subchunk needed for a scan for hostile entities").getDouble();
         LOCATOR_PERSCAN_PASSIVE = cfg.get(CATEGORY_SCANNER, "locatorUsePerTickPassive", LOCATOR_PERSCAN_PASSIVE,
-                "Additional amount of RF needed for a scan for passive entities").getInt();
+                "Additional amount of RF per 16x16x16 subchunk needed for a scan for passive entities").getDouble();
         LOCATOR_PERSCAN_PLAYER = cfg.get(CATEGORY_SCANNER, "locatorUsePerTickPlayer", LOCATOR_PERSCAN_PLAYER,
-                "Additional amount of RF needed for a scan for players").getInt();
+                "Additional amount of RF per 16x16x16 subchunk needed for a scan for players").getDouble();
 
         PROJECTOR_MAXENERGY = cfg.get(CATEGORY_SCANNER, "projectorMaxRF", PROJECTOR_MAXENERGY,
                 "Maximum RF storage that the projector can hold").getInt();
@@ -67,6 +71,8 @@ public class ScannerConfiguration {
 
         ticksPerLocatorScan = cfg.get(CATEGORY_SCANNER, "ticksPerLocatorScan", ticksPerLocatorScan,
                 "Number of ticks between every scan of the locator").getInt();
+        beaconHeight = cfg.get(CATEGORY_SCANNER, "beaconHeight", beaconHeight,
+                "Height of the beacon in case beacons are used").getInt();
 
         maxScannerOffset = cfg.get(CATEGORY_SCANNER, "maxScannerOffset", maxScannerOffset,
                 "Maximum offset of the shape when a shape card is used in the scanner/projector").getInt();
