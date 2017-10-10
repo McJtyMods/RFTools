@@ -263,6 +263,12 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
                 dataOffset.getZ()-dataDim.getZ()/2);
     }
 
+    public BlockPos getLastCorner() {
+        return getPos().add(dataOffset.getX()+dataDim.getX()/2,
+                dataOffset.getY()+dataDim.getY()/2,
+                dataOffset.getZ()+dataDim.getZ()/2);
+    }
+
     private IBlockState mapState(List<ModifierEntry> modifiers, Map<IBlockState, IBlockState> modifierMapping, BlockPos pos, IBlockState inState) {
         if (modifiers.isEmpty()) {
             return inState;

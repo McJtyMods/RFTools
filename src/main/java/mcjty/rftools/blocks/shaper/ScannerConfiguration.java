@@ -16,11 +16,13 @@ public class ScannerConfiguration {
     public static double LOCATOR_PERSCAN_HOSTILE = 1;
     public static double LOCATOR_PERSCAN_PASSIVE = 0.5;
     public static double LOCATOR_PERSCAN_PLAYER = 2;
+    public static double LOCATOR_PERSCAN_ENERGY = 5;
     public static double LOCATOR_FILTER_COST = 0.5;
 
     public static int ticksPerLocatorScan = 40;
     public static int locatorBeaconHeight = 30;
     public static int locatorEntitySafety = 10;
+    public static int locatorMaxEnergyChunks = 5*5;
 
     public static int PROJECTOR_MAXENERGY = 500000;
     public static int PROJECTOR_RECEIVEPERTICK = 10000;
@@ -63,6 +65,8 @@ public class ScannerConfiguration {
                 "Additional amount of RF per 16x16x16 subchunk needed for a scan for passive entities").getDouble();
         LOCATOR_PERSCAN_PLAYER = cfg.get(CATEGORY_SCANNER, "locatorUsePerTickPlayer", LOCATOR_PERSCAN_PLAYER,
                 "Additional amount of RF per 16x16x16 subchunk needed for a scan for players").getDouble();
+        LOCATOR_PERSCAN_ENERGY = cfg.get(CATEGORY_SCANNER, "locatorUsePerTickEnergy", LOCATOR_PERSCAN_ENERGY,
+                "Additional amount of RF per 16x16x16 subchunk needed for a scan for low energy").getDouble();
         LOCATOR_FILTER_COST = cfg.get(CATEGORY_SCANNER, "locatorFilterCost", LOCATOR_FILTER_COST,
                 "Additional amount of RF per 16x16x16 subchunk needed for a filtered scan").getDouble();
 
@@ -79,6 +83,8 @@ public class ScannerConfiguration {
                 "Height of the beacon in case beacons are used").getInt();
         locatorEntitySafety = cfg.get(CATEGORY_SCANNER, "locatorEntitySafety", locatorEntitySafety,
                 "Maximum amount of entities in a single block to show markers/beacons for").getInt();
+        locatorMaxEnergyChunks = cfg.get(CATEGORY_SCANNER, "locatorMaxEnergyChunks", locatorMaxEnergyChunks,
+                "Maximum amount of 16x16 chunks we support for energy scanning").getInt();
 
         maxScannerOffset = cfg.get(CATEGORY_SCANNER, "maxScannerOffset", maxScannerOffset,
                 "Maximum offset of the shape when a shape card is used in the scanner/projector").getInt();

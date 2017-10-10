@@ -12,16 +12,17 @@ import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.BeaconType;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
 
-    private static final int LOCATOR_WIDTH = 173;
+    private static final int LOCATOR_WIDTH = 256;
     private static final int LOCATOR_HEIGHT = 238;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/locator.png");
@@ -38,6 +39,11 @@ public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
     private ToggleButton playerBeacon;
 
     private TextField filter;
+
+    private ColorChoiceLabel energy;
+    private ToggleButton energyBeacon;
+    private TextField minEnergy;
+    private TextField maxEnergy;
 
     private Label energyLabel;
 
@@ -67,19 +73,19 @@ public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
         hostile = new ColorChoiceLabel(mc, this);
         hostileBeacon = new ToggleButton(mc, this);
         addBeaconSetting(toplevel, hostile, hostileBeacon, 30, "Hostile");
-        hostile.setCurrentColor(tileEntity.getHostile().getColor());
+        hostile.setCurrentColor(tileEntity.getHostileType().getColor());
         hostileBeacon.setPressed(tileEntity.isHostileBeacon());
 
         passive = new ColorChoiceLabel(mc, this);
         passiveBeacon = new ToggleButton(mc, this);
         addBeaconSetting(toplevel, passive, passiveBeacon, 46, "Passive");
-        passive.setCurrentColor(tileEntity.getPassive().getColor());
+        passive.setCurrentColor(tileEntity.getPassiveType().getColor());
         passiveBeacon.setPressed(tileEntity.isPassiveBeacon());
 
         player = new ColorChoiceLabel(mc, this);
         playerBeacon = new ToggleButton(mc, this);
         addBeaconSetting(toplevel, player, playerBeacon, 62, "Player");
-        player.setCurrentColor(tileEntity.getPlayer().getColor());
+        player.setCurrentColor(tileEntity.getPlayerType().getColor());
         playerBeacon.setPressed(tileEntity.isPlayerBeacon());
 
         toplevel.addChild(new Label<>(mc, this)
@@ -90,6 +96,25 @@ public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
         filter.setText(tileEntity.getFilter());
         filter.addTextEvent((parent, newText) -> update());
         toplevel.addChild(filter);
+
+        energy = new ColorChoiceLabel(mc, this);
+        energyBeacon = new ToggleButton(mc, this);
+        addBeaconSetting(toplevel, energy, energyBeacon, 98, "Energy");
+        energy.setCurrentColor(tileEntity.getEnergyType().getColor());
+        energyBeacon.setPressed(tileEntity.isEnergyBeacon());
+
+        toplevel.addChild(new Label<>(mc, this).setText("<").setLayoutHint(new PositionalLayout.PositionalHint(153, 98, 10, 14)));
+        minEnergy = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(162, 98, 25, 14));
+        minEnergy.setText(tileEntity.getMinEnergy() == null ? "" : Integer.toString(tileEntity.getMinEnergy()));
+        minEnergy.addTextEvent((parent, newText) -> update());
+        toplevel.addChild(new Label<>(mc, this).setText("%").setLayoutHint(new PositionalLayout.PositionalHint(187, 98, 10, 14)));
+        toplevel.addChild(minEnergy);
+        toplevel.addChild(new Label<>(mc, this).setText(">").setLayoutHint(new PositionalLayout.PositionalHint(205, 98, 10, 14)));
+        maxEnergy = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(214, 98, 25, 14));
+        maxEnergy.setText(tileEntity.getMaxEnergy() == null ? "" : Integer.toString(tileEntity.getMaxEnergy()));
+        maxEnergy.addTextEvent((parent, newText) -> update());
+        toplevel.addChild(maxEnergy);
+        toplevel.addChild(new Label<>(mc, this).setText("%").setLayoutHint(new PositionalLayout.PositionalHint(238, 98, 10, 14)));
 
         toplevel.addChild(new Label<>(mc, this)
                 .setColor(0x993300)
@@ -130,14 +155,31 @@ public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
     }
 
     private void update() {
+        List<Argument> arguments = new ArrayList<>();
+        arguments.add(new Argument("hostile", COLOR_TO_TYPE.get(hostile.getCurrentColor()).getCode()));
+        arguments.add(new Argument("passive", COLOR_TO_TYPE.get(passive.getCurrentColor()).getCode()));
+        arguments.add(new Argument("player", COLOR_TO_TYPE.get(player.getCurrentColor()).getCode()));
+        arguments.add(new Argument("energy", COLOR_TO_TYPE.get(energy.getCurrentColor()).getCode()));
+        arguments.add(new Argument("hostileBeacon", hostileBeacon.isPressed()));
+        arguments.add(new Argument("passiveBeacon", passiveBeacon.isPressed()));
+        arguments.add(new Argument("playerBeacon", playerBeacon.isPressed()));
+        arguments.add(new Argument("energyBeacon", energyBeacon.isPressed()));
+        arguments.add(new Argument("filter", filter.getText()));
+        if (!minEnergy.getText().trim().isEmpty()) {
+            try {
+                arguments.add(new Argument("minEnergy", Integer.parseInt(minEnergy.getText())));
+            } catch (NumberFormatException e) {
+            }
+        }
+        if (!maxEnergy.getText().trim().isEmpty()) {
+            try {
+                arguments.add(new Argument("maxEnergy", Integer.parseInt(maxEnergy.getText())));
+            } catch (NumberFormatException e) {
+            }
+        }
+
         sendServerCommand(RFToolsMessages.INSTANCE, LocatorTileEntity.CMD_SETTINGS,
-                new Argument("hostile", COLOR_TO_TYPE.get(hostile.getCurrentColor()).getCode()),
-                new Argument("passive", COLOR_TO_TYPE.get(passive.getCurrentColor()).getCode()),
-                new Argument("player", COLOR_TO_TYPE.get(player.getCurrentColor()).getCode()),
-                new Argument("hostileBeacon", hostileBeacon.isPressed()),
-                new Argument("passiveBeacon", passiveBeacon.isPressed()),
-                new Argument("playerBeacon", playerBeacon.isPressed()),
-                new Argument("filter", filter.getText())
+                arguments.toArray(new Argument[arguments.size()])
         );
     }
 
