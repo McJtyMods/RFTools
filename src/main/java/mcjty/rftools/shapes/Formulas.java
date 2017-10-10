@@ -117,7 +117,50 @@ public class Formulas {
                     }
                 }
             }
+        }
 
+        @Override
+        public IFormulaIndex createIndex(int x, int y, int z) {
+            int index = (x-x1) * dy * dz + (z-z1) * dy + (y-y1);
+            return new IndexedFormulaIndex(index, dy, dz);
+        }
+
+        @Override
+        public boolean isInside(IFormulaIndex formulaIndex) {
+            if (data == null) {
+                return false;
+            }
+            IndexedFormulaIndex i = (IndexedFormulaIndex) formulaIndex;
+            int index = i.getIndex();
+            return isInsideInternal(index);
+        }
+
+        private boolean isInsideInternal(int index) {
+            if (data[index] == 0) {
+                return false;
+            } else {
+                int idx = ((data[index]) & 0xff)-1;
+                lastState = palette.get(idx);
+                return true;
+            }
+        }
+
+        @Override
+        public boolean isVisibleFromSomeSide(IFormulaIndex formulaIndex) {
+            IndexedFormulaIndex i = (IndexedFormulaIndex) formulaIndex;
+            int index = i.getIndex();
+            return isClear(index-1) || isClear(index+1) || isClear(index-dy) || isClear(index+dy) || isClear(index-dy*dz) || isClear(index+dy*dz);
+        }
+
+        private boolean isClear(int index) {
+            if (!isInsideInternal(index)) {
+                return true;
+            }
+            if (lastState != null) {
+                return ShapeBlockInfo.isNonSolidBlock(lastState.getBlock());
+            } else {
+                return false;
+            }
         }
 
         @Override
@@ -134,13 +177,7 @@ public class Formulas {
                 return false;
             }
             int index = (x-x1) * dy * dz + (z-z1) * dy + (y-y1);
-            if (data[index] == 0) {
-                return false;
-            } else {
-                int idx = ((data[index]) & 0xff)-1;
-                lastState = palette.get(idx);
-                return true;
-            }
+            return isInsideInternal(index);
         }
 
         @Override

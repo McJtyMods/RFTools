@@ -747,20 +747,18 @@ public class ShapeCardItem extends GenericRFToolsItem {
 
         Map<IBlockState, ShapeBlockInfo> palette = new HashMap<>();
 
+        IFormulaIndex index = formula.createIndex(-dx/2, oy-dy/2, -dz/2);
         int cnt = 0;
-        int y = oy - dy / 2;
         for (int ox = 0; ox < dx; ox++) {
-            int x = ox - dx / 2;
             for (int oz = 0; oz < dz; oz++) {
-                int z = oz - dz / 2;
                 int v = 255;
-                if (formula.isInside(x, y, z)) {
+                if (formula.isInside(index)) {
                     cnt++;
                     IBlockState lastState = formula.getLastState();
                     if (solid) {
                         if (ox == 0 || ox == dx - 1 || oy == 0 || oy == dy - 1 || oz == 0 || oz == dz - 1) {
                             v = statePalette.alloc(lastState, -1) + 1;
-                        } else if (isClear(formula, x - 1, y, z) || isClear(formula, x + 1, y, z) || isClear(formula, x, y - 1, z) || isClear(formula, x, y + 1, z) || isClear(formula, x, y, z - 1) || isClear(formula, x, y, z + 1)) {
+                        } else if (formula.isVisibleFromSomeSide(index)) {
                             v = statePalette.alloc(lastState, -1) + 1;
                         }
                     } else {
@@ -768,21 +766,11 @@ public class ShapeCardItem extends GenericRFToolsItem {
                     }
                 }
                 positions.add(v);
+                index.incZ();
             }
+            index.incX();
         }
         return cnt;
-    }
-
-    private static boolean isClear(IFormula formula, int x, int y, int z) {
-        if (!formula.isInside(x, y, z)) {
-            return true;
-        }
-        IBlockState state = formula.getLastState();
-        if (state != null) {
-            return ShapeBlockInfo.isNonSolidBlock(state.getBlock());
-        } else {
-            return false;
-        }
     }
 
     // Used for saving
