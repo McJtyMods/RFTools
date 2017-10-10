@@ -121,7 +121,7 @@ public class ShapeRenderer {
         GlStateManager.scale(scale, scale, scale);
         GlStateManager.rotate(angle, 0, 1, 0);
 
-        net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
+//        net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
         Minecraft.getMinecraft().entityRenderer.disableLightmap();
         GlStateManager.disableBlend();
         GlStateManager.enableCull();
@@ -135,7 +135,7 @@ public class ShapeRenderer {
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
         GlStateManager.enableLighting();
-        RenderHelper.enableStandardItemLighting();
+//        RenderHelper.enableStandardItemLighting();
         Minecraft.getMinecraft().entityRenderer.enableLightmap();
 
         GlStateManager.popMatrix();
