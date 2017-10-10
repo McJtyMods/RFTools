@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.shaper;
 
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.varia.Counter;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.shapes.BeaconType;
 import mcjty.rftools.shapes.ScanDataManager;
@@ -69,19 +70,27 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
                 extraData.touch();
                 extraData.clear();
 
+                Counter<BlockPos> counter = new Counter<>();
+
                 BlockPos center = scanner.getScanCenter();
                 for (Entity entity : entities) {
-                    if (entity instanceof EntityAnimal) {
-                        if (passive != BeaconType.BEACON_OFF) {
-                            extraData.addBeacon(entity.getPosition().subtract(center), passive, passiveBeacon);
-                        }
-                    } else if (entity instanceof EntityPlayer) {
-                        if (player != BeaconType.BEACON_OFF) {
-                            extraData.addBeacon(entity.getPosition().subtract(center), player, playerBeacon);
-                        }
-                    } else {
-                        if (hostile != BeaconType.BEACON_OFF) {
-                            extraData.addBeacon(entity.getPosition().subtract(center), hostile, hostileBeacon);
+                    BlockPos pos = entity.getPosition().subtract(center);
+                    if (counter.getOrDefault(pos, 0) < ScannerConfiguration.locatorEntitySafety) {
+                        if (entity instanceof EntityAnimal) {
+                            if (passive != BeaconType.BEACON_OFF) {
+                                extraData.addBeacon(pos, passive, passiveBeacon);
+                                counter.increment(pos);
+                            }
+                        } else if (entity instanceof EntityPlayer) {
+                            if (player != BeaconType.BEACON_OFF) {
+                                extraData.addBeacon(pos, player, playerBeacon);
+                                counter.increment(pos);
+                            }
+                        } else {
+                            if (hostile != BeaconType.BEACON_OFF) {
+                                extraData.addBeacon(pos, hostile, hostileBeacon);
+                                counter.increment(pos);
+                            }
                         }
                     }
                 }

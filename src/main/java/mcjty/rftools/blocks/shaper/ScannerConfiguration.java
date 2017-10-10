@@ -18,13 +18,14 @@ public class ScannerConfiguration {
     public static double LOCATOR_PERSCAN_PLAYER = 2;
 
     public static int ticksPerLocatorScan = 40;
+    public static int locatorBeaconHeight = 30;
+    public static int locatorEntitySafety = 10;
 
     public static int PROJECTOR_MAXENERGY = 500000;
     public static int PROJECTOR_RECEIVEPERTICK = 10000;
     public static int PROJECTOR_USEPERTICK = 1000;
 
     public static boolean useVBO = true;
-    public static int beaconHeight = 30;
 
     // Maximum dimension when the shape card is used for projection/scanner
     public static int maxScannerDimension = 512;
@@ -71,8 +72,10 @@ public class ScannerConfiguration {
 
         ticksPerLocatorScan = cfg.get(CATEGORY_SCANNER, "ticksPerLocatorScan", ticksPerLocatorScan,
                 "Number of ticks between every scan of the locator").getInt();
-        beaconHeight = cfg.get(CATEGORY_SCANNER, "beaconHeight", beaconHeight,
+        locatorBeaconHeight = cfg.get(CATEGORY_SCANNER, "locatorBeaconHeight", locatorBeaconHeight,
                 "Height of the beacon in case beacons are used").getInt();
+        locatorEntitySafety = cfg.get(CATEGORY_SCANNER, "locatorEntitySafety", locatorEntitySafety,
+                "Maximum amount of entities in a single block to show markers/beacons for").getInt();
 
         maxScannerOffset = cfg.get(CATEGORY_SCANNER, "maxScannerOffset", maxScannerOffset,
                 "Maximum offset of the shape when a shape card is used in the scanner/projector").getInt();

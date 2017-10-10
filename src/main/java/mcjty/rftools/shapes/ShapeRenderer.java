@@ -456,10 +456,10 @@ public class ShapeRenderer {
 
             if (doBeacon) {
                 buffer.setTranslation(origOffsetX, origOffsetY+.2f, origOffsetZ);
-                addSideN(buffer, r, g, b, .1f, ScannerConfiguration.beaconHeight);
-                addSideS(buffer, r, g, b, .1f, ScannerConfiguration.beaconHeight);
-                addSideW(buffer, r, g, b, .1f, ScannerConfiguration.beaconHeight);
-                addSideE(buffer, r, g, b, .1f, ScannerConfiguration.beaconHeight);
+                addSideN(buffer, r, g, b, .1f, ScannerConfiguration.locatorBeaconHeight);
+                addSideS(buffer, r, g, b, .1f, ScannerConfiguration.locatorBeaconHeight);
+                addSideW(buffer, r, g, b, .1f, ScannerConfiguration.locatorBeaconHeight);
+                addSideE(buffer, r, g, b, .1f, ScannerConfiguration.locatorBeaconHeight);
             }
 
             buffer.setTranslation(origOffsetX, origOffsetY, origOffsetZ);
