@@ -135,6 +135,29 @@ public class Formulas {
             return isInsideInternal(index);
         }
 
+        @Override
+        public boolean isBorder(IFormulaIndex formulaIndex) {
+            // Indices here are guaranteed to be always inside boundaries
+            IndexedFormulaIndex i = (IndexedFormulaIndex) formulaIndex;
+            int index = i.getIndex();
+            if (!isInsideInternal(index-1) || !isInsideInternal(index+1) || !isInsideInternal(index-dy) || !isInsideInternal(index+dy) || !isInsideInternal(index-dy*dz) || !isInsideInternal(index+dy*dz)) {
+                return isInsideInternal(index);
+            }
+            return false;
+        }
+
+        @Override
+        public boolean isBorder(int x, int y, int z) {
+            if (x <= x1 || x >= x1+dx-1 || y <= y1 || y >= y1+dy-1 || z <= z1 || z >= z1+dz-1) {
+                return isInsideSafe(x, y, z);
+            }
+            int index = (x-x1) * dy * dz + (z-z1) * dy + (y-y1);
+            if (!isInsideInternal(index-1) || !isInsideInternal(index+1) || !isInsideInternal(index-dy) || !isInsideInternal(index+dy) || !isInsideInternal(index-dy*dz) || !isInsideInternal(index+dy*dz)) {
+                return isInsideInternal(index);
+            }
+            return false;
+        }
+
         private boolean isInsideInternal(int index) {
             if (data[index] == 0) {
                 return false;

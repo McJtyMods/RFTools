@@ -23,6 +23,11 @@ public interface IFormula {
         return isInside(d.getX(), d.getY(), d.getZ());
     }
 
+    default boolean isBorder(IFormulaIndex index) {
+        DefaultFormulaIndex d = (DefaultFormulaIndex) index;
+        return isBorder(d.getX(), d.getY(), d.getZ());
+    }
+
     default boolean isVisibleFromSomeSide(IFormulaIndex index) {
         DefaultFormulaIndex d = (DefaultFormulaIndex) index;
         int x = d.getX();
@@ -89,8 +94,18 @@ public interface IFormula {
                 }
 
                 @Override
+                public boolean isInside(IFormulaIndex index) {
+                    return IFormula.this.isBorder(index);
+                }
+
+                @Override
                 public boolean isBorder(int x, int y, int z) {
                     return IFormula.this.isBorder(x, y, z);
+                }
+
+                @Override
+                public boolean isBorder(IFormulaIndex index) {
+                    return IFormula.this.isBorder(index);
                 }
             };
         }
