@@ -86,15 +86,9 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
         initRedstoneMode();
         toplevel.addChild(redstoneMode);
 
-        showAxis = new ToggleButton(mc, this).setCheckMarker(true).setText("A").setLayoutHint(new PositionalLayout.PositionalHint(5, 176, 24, 16));
-        showAxis.setPressed(true);
-        toplevel.addChild(showAxis);
-        showOuter = new ToggleButton(mc, this).setCheckMarker(true).setText("B").setLayoutHint(new PositionalLayout.PositionalHint(31, 176, 24, 16));
-        showOuter.setPressed(true);
-        toplevel.addChild(showOuter);
-        showScan = new ToggleButton(mc, this).setCheckMarker(true).setText("S").setLayoutHint(new PositionalLayout.PositionalHint(57, 176, 24, 16));
-        showScan.setPressed(true);
-        toplevel.addChild(showScan);
+        showAxis = ShapeGuiTools.createAxisButton(this, toplevel, 5, 176);
+        showOuter = ShapeGuiTools.createBoxButton(this, toplevel, 31, 176);
+        showScan = ShapeGuiTools.createScanButton(this, toplevel, 57, 176);
 
         scanButton = new Button(mc, this).setText("Scan")
                 .addButtonEvent(parent -> scan())
