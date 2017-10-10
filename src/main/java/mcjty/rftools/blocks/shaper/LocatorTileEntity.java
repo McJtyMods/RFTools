@@ -66,7 +66,7 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
                     // Do nothing
                     return;
                 }
-                // @todo energy consumption per area?
+
                 consumeEnergy(energy);
                 BlockPos dim = scanner.getDataDim();
                 BlockPos start = scanner.getFirstCorner();
