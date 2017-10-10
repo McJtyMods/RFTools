@@ -745,8 +745,6 @@ public class ShapeCardItem extends GenericRFToolsItem {
         int dy = clamped.getY();
         int dz = clamped.getZ();
 
-        Map<IBlockState, ShapeBlockInfo> palette = new HashMap<>();
-
         int cnt = 0;
         int y = oy - dy / 2;
         for (int ox = 0; ox < dx; ox++) {
