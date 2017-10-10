@@ -99,7 +99,7 @@ public class Formulas {
             if (scanId != 0) {
                 Scan scan = ScanDataManager.getScans().loadScan(scanId);
                 palette = new ArrayList<>(scan.getMaterialPalette());
-                byte[] datas = scan.getData();
+                byte[] datas = scan.getRledata();
                 data = new byte[dx * dy * dz];
                 int j = 0;
                 for (int i = 0; i < datas.length / 2; i++) {
@@ -117,33 +117,6 @@ public class Formulas {
                     }
                 }
             }
-        }
-
-        @Override
-        public IFormulaIndex createIndex(int x, int y, int z) {
-            int index = (x-x1) * dy * dz + (z-z1) * dy + (y-y1);
-            return new IndexedFormulaIndex(index, dy, dz);
-        }
-
-        @Override
-        public boolean isInside(IFormulaIndex formulaIndex) {
-            if (data == null) {
-                return false;
-            }
-            IndexedFormulaIndex i = (IndexedFormulaIndex) formulaIndex;
-            int index = i.getIndex();
-            return isInsideInternal(index);
-        }
-
-        @Override
-        public boolean isBorder(IFormulaIndex formulaIndex) {
-            // Indices here are guaranteed to be always inside boundaries
-            IndexedFormulaIndex i = (IndexedFormulaIndex) formulaIndex;
-            int index = i.getIndex();
-            if (!isInsideInternal(index-1) || !isInsideInternal(index+1) || !isInsideInternal(index-dy) || !isInsideInternal(index+dy) || !isInsideInternal(index-dy*dz) || !isInsideInternal(index+dy*dz)) {
-                return isInsideInternal(index);
-            }
-            return false;
         }
 
         @Override
@@ -165,24 +138,6 @@ public class Formulas {
                 int idx = ((data[index]) & 0xff)-1;
                 lastState = palette.get(idx);
                 return true;
-            }
-        }
-
-        @Override
-        public boolean isVisibleFromSomeSide(IFormulaIndex formulaIndex) {
-            IndexedFormulaIndex i = (IndexedFormulaIndex) formulaIndex;
-            int index = i.getIndex();
-            return isClear(index-1) || isClear(index+1) || isClear(index-dy) || isClear(index+dy) || isClear(index-dy*dz) || isClear(index+dy*dz);
-        }
-
-        private boolean isClear(int index) {
-            if (!isInsideInternal(index)) {
-                return true;
-            }
-            if (lastState != null) {
-                return ShapeBlockInfo.isNonSolidBlock(lastState.getBlock());
-            } else {
-                return false;
             }
         }
 

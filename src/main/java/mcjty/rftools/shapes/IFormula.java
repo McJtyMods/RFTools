@@ -14,41 +14,6 @@ public interface IFormula {
         ShapeCardItem.getLocalChecksum(cardTag, crc);
     }
 
-    default IFormulaIndex createIndex(int x, int y, int z) {
-        return new DefaultFormulaIndex(x, y, z);
-    }
-
-    default boolean isInside(IFormulaIndex index) {
-        DefaultFormulaIndex d = (DefaultFormulaIndex) index;
-        return isInside(d.getX(), d.getY(), d.getZ());
-    }
-
-    default boolean isBorder(IFormulaIndex index) {
-        DefaultFormulaIndex d = (DefaultFormulaIndex) index;
-        return isBorder(d.getX(), d.getY(), d.getZ());
-    }
-
-    default boolean isVisibleFromSomeSide(IFormulaIndex index) {
-        DefaultFormulaIndex d = (DefaultFormulaIndex) index;
-        int x = d.getX();
-        int y = d.getY();
-        int z = d.getZ();
-        return isClear(this, x - 1, y, z) || isClear(this, x + 1, y, z) || isClear(this, x, y - 1, z) || isClear(this, x, y + 1, z) || isClear(this, x, y, z - 1) || isClear(this, x, y, z + 1);
-    }
-
-    static boolean isClear(IFormula formula, int x, int y, int z) {
-        if (!formula.isInside(x, y, z)) {
-            return true;
-        }
-        IBlockState state = formula.getLastState();
-        if (state != null) {
-            return ShapeBlockInfo.isNonSolidBlock(state.getBlock());
-        } else {
-            return false;
-        }
-    }
-
-
     boolean isInside(int x, int y, int z);
 
     default boolean isInsideSafe(int x, int y, int z) {
@@ -94,18 +59,8 @@ public interface IFormula {
                 }
 
                 @Override
-                public boolean isInside(IFormulaIndex index) {
-                    return IFormula.this.isBorder(index);
-                }
-
-                @Override
                 public boolean isBorder(int x, int y, int z) {
                     return IFormula.this.isBorder(x, y, z);
-                }
-
-                @Override
-                public boolean isBorder(IFormulaIndex index) {
-                    return IFormula.this.isBorder(index);
                 }
             };
         }

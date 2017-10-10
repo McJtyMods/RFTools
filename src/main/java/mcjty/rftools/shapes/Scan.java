@@ -15,7 +15,7 @@ import java.util.List;
 
 public class Scan {
 
-    private byte[] data;
+    private byte[] rledata;
     private List<IBlockState> materialPalette = new ArrayList<>();
     private BlockPos dataDim;
     private BlockPos dataOffset = new BlockPos(0, 0, 0);
@@ -25,19 +25,19 @@ public class Scan {
 
     public static final byte[] EMPTY = new byte[0];
 
-    public byte[] getData() {
-        if (data == null) {
+    public byte[] getRledata() {
+        if (rledata == null) {
             return EMPTY;
         }
-        return data;
+        return rledata;
     }
 
     public byte[] getDataInt() {
-        return data;
+        return rledata;
     }
 
     public void setData(byte[] data, List<IBlockState> materialPalette, BlockPos dim, BlockPos offset) {
-        this.data = data;
+        this.rledata = data;
         this.materialPalette = materialPalette;
         this.dataDim = dim;
         this.dataOffset = offset;
@@ -69,7 +69,7 @@ public class Scan {
     }
 
     public void writeToNBTExternal(NBTTagCompound tagCompound) {
-        tagCompound.setByteArray("data", data);
+        tagCompound.setByteArray("data", rledata == null ? new byte[0] : rledata);
         NBTTagList pal = new NBTTagList();
         for (IBlockState state : materialPalette) {
             NBTTagCompound tc = new NBTTagCompound();
@@ -110,7 +110,7 @@ public class Scan {
             }
             materialPalette.add(block.getStateFromMeta(tc.getInteger("m")));
         }
-        data = tagCompound.getByteArray("data");
+        rledata = tagCompound.getByteArray("data");
         dataDim = new BlockPos(tagCompound.getInteger("scandimx"), tagCompound.getInteger("scandimy"), tagCompound.getInteger("scandimz"));
         dataOffset = new BlockPos(tagCompound.getInteger("scanoffx"), tagCompound.getInteger("scanoffy"), tagCompound.getInteger("scanoffz"));
     }

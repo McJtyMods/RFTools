@@ -101,6 +101,7 @@ public class ScanDataManager extends WorldSavedData {
         Scan scan = scans.get(id);
         if (scan == null) {
             scan = new Scan();
+            scans.put(id, scan);
         }
         return scan;
     }
@@ -150,7 +151,7 @@ public class ScanDataManager extends WorldSavedData {
                 ChatTools.addChatMessage(sender, new TextComponentString(
                         TextFormatting.YELLOW + "Scan: " + TextFormatting.WHITE + scanid +
                                 TextFormatting.YELLOW + "   Dim: " + TextFormatting.WHITE + dim.getX() + "," + dim.getY() + "," + dim.getZ() +
-                                TextFormatting.YELLOW + "   Size: " + TextFormatting.WHITE + scan.getData().length + " bytes"));
+                                TextFormatting.YELLOW + "   Size: " + TextFormatting.WHITE + scan.getRledata().length + " bytes"));
             }
         }
     }
