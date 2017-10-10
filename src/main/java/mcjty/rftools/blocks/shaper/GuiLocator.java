@@ -37,6 +37,8 @@ public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
     private ToggleButton passiveBeacon;
     private ToggleButton playerBeacon;
 
+    private TextField filter;
+
     private Label energyLabel;
 
     public static int energyConsumption = 0;
@@ -79,6 +81,15 @@ public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
         addBeaconSetting(toplevel, player, playerBeacon, 62, "Player");
         player.setCurrentColor(tileEntity.getPlayer().getColor());
         playerBeacon.setPressed(tileEntity.isPlayerBeacon());
+
+        toplevel.addChild(new Label<>(mc, this)
+                .setText("Filter")
+                .setLayoutHint(new PositionalLayout.PositionalHint(8, 82, 40, 14)));
+        filter = new TextField(mc, this);
+        filter.setLayoutHint(new PositionalLayout.PositionalHint(50, 82, 90, 14));
+        filter.setText(tileEntity.getFilter());
+        filter.addTextEvent((parent, newText) -> update());
+        toplevel.addChild(filter);
 
         toplevel.addChild(new Label<>(mc, this)
                 .setColor(0x993300)
@@ -125,7 +136,8 @@ public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
                 new Argument("player", COLOR_TO_TYPE.get(player.getCurrentColor()).getCode()),
                 new Argument("hostileBeacon", hostileBeacon.isPressed()),
                 new Argument("passiveBeacon", passiveBeacon.isPressed()),
-                new Argument("playerBeacon", playerBeacon.isPressed())
+                new Argument("playerBeacon", playerBeacon.isPressed()),
+                new Argument("filter", filter.getText())
         );
     }
 

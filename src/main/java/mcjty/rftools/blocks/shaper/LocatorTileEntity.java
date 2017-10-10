@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.shaper;
 
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.tools.EntityTools;
 import mcjty.lib.varia.Counter;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.shapes.BeaconType;
@@ -34,6 +35,8 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
     private boolean passiveBeacon = false;
     private BeaconType player = BeaconType.BEACON_OFF;
     private boolean playerBeacon = false;
+
+    private String filter = "";
 
     public LocatorTileEntity() {
         super(ScannerConfiguration.LOCATOR_MAXENERGY, ScannerConfiguration.LOCATOR_RECEIVEPERTICK);
@@ -71,11 +74,21 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
                 extraData.clear();
 
                 Counter<BlockPos> counter = new Counter<>();
+                boolean dofilter = filter != null && !filter.trim().isEmpty();
+                String filt = "";
+                if (dofilter) {
+                    filt = filter.toLowerCase();
+                }
 
                 BlockPos center = scanner.getScanCenter();
                 for (Entity entity : entities) {
                     BlockPos pos = entity.getPosition().subtract(center);
                     if (counter.getOrDefault(pos, 0) < ScannerConfiguration.locatorEntitySafety) {
+                        if (dofilter) {
+                            if (!checkFilter(filt, entity)) {
+                                continue;
+                            }
+                        }
                         if (entity instanceof EntityAnimal) {
                             if (passive != BeaconType.BEACON_OFF) {
                                 extraData.addBeacon(pos, passive, passiveBeacon);
@@ -96,6 +109,23 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
                 }
             }
         }
+    }
+
+    private boolean checkFilter(String filt, Entity entity) {
+        String name = EntityTools.getEntityName(entity).toLowerCase();
+        if (name.contains(filt)) {
+            return true;
+        }
+
+        // Check if the entity has a name tag
+        if (entity.hasCustomName()) {
+            String nameTag = entity.getCustomNameTag().toLowerCase();
+            if (nameTag.contains(filt)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public int getEnergyPerScan() {
@@ -127,6 +157,9 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
         if (player != BeaconType.BEACON_OFF) {
             energy += (int) (energy + chunks * ScannerConfiguration.LOCATOR_PERSCAN_PLAYER);
         }
+        if (filter == null || !filter.trim().isEmpty()) {
+            energy += (int) (energy + chunks * ScannerConfiguration.LOCATOR_FILTER_COST);
+        }
         return energy;
     }
 
@@ -141,6 +174,15 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
     @Override
     protected boolean needsRedstoneMode() {
         return true;
+    }
+
+    public String getFilter() {
+        return filter;
+    }
+
+    public void setFilter(String filter) {
+        this.filter = filter;
+        markDirtyQuick();
     }
 
     public BeaconType getHostile() {
@@ -177,6 +219,7 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
         hostileBeacon = tagCompound.getBoolean("hostileBeacon");
         passiveBeacon = tagCompound.getBoolean("passiveBeacon");
         playerBeacon = tagCompound.getBoolean("playerBeacon");
+        filter = tagCompound.getString("filter");
     }
 
 
@@ -190,6 +233,7 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
         tagCompound.setBoolean("hostileBeacon", hostileBeacon);
         tagCompound.setBoolean("passiveBeacon", passiveBeacon);
         tagCompound.setBoolean("playerBeacon", playerBeacon);
+        tagCompound.setString("filter", filter);
     }
 
 
@@ -210,6 +254,7 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
             hostileBeacon = args.get("hostileBeacon").getBoolean();
             passiveBeacon = args.get("passiveBeacon").getBoolean();
             playerBeacon = args.get("playerBeacon").getBoolean();
+            filter = args.get("filter").getString();
             markDirtyClient();
             return true;
         }

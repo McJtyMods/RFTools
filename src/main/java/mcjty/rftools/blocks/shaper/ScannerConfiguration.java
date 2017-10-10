@@ -16,6 +16,7 @@ public class ScannerConfiguration {
     public static double LOCATOR_PERSCAN_HOSTILE = 1;
     public static double LOCATOR_PERSCAN_PASSIVE = 0.5;
     public static double LOCATOR_PERSCAN_PLAYER = 2;
+    public static double LOCATOR_FILTER_COST = 0.5;
 
     public static int ticksPerLocatorScan = 40;
     public static int locatorBeaconHeight = 30;
@@ -62,6 +63,8 @@ public class ScannerConfiguration {
                 "Additional amount of RF per 16x16x16 subchunk needed for a scan for passive entities").getDouble();
         LOCATOR_PERSCAN_PLAYER = cfg.get(CATEGORY_SCANNER, "locatorUsePerTickPlayer", LOCATOR_PERSCAN_PLAYER,
                 "Additional amount of RF per 16x16x16 subchunk needed for a scan for players").getDouble();
+        LOCATOR_FILTER_COST = cfg.get(CATEGORY_SCANNER, "locatorFilterCost", LOCATOR_FILTER_COST,
+                "Additional amount of RF per 16x16x16 subchunk needed for a filtered scan").getDouble();
 
         PROJECTOR_MAXENERGY = cfg.get(CATEGORY_SCANNER, "projectorMaxRF", PROJECTOR_MAXENERGY,
                 "Maximum RF storage that the projector can hold").getInt();
