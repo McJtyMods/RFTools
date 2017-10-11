@@ -22,9 +22,8 @@ public class StatePalette {
         }
         int idx = palette.size();
         if (idx > 253) {
-            // @todo overflow. How to handle gracefully?
-            System.out.println("Scanner palette overflow!");
-            return idx;
+            // Overflow! Return first entry
+            return 0;
         }
         palette.add(state);
         paletteIndex.put(state, idx);

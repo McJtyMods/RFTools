@@ -366,6 +366,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         progress.rle = new RLE();
         progress.tl = new BlockPos(center.getX() - dimX/2, center.getY() - dimY/2, center.getZ() - dimZ/2);
         progress.materialPalette = new StatePalette();
+        progress.materialPalette.alloc(BuilderSetup.supportBlock.getDefaultState(), 0);
         progress.x = progress.tl.getX();
         progress.dimX = dimX;
         progress.dimY = dimY;
