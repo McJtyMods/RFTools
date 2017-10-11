@@ -1,0 +1,28 @@
+{
+  "result": {
+    "item": "rftools:projector"
+  },
+  "pattern": [
+    "beb",
+    "qMq",
+    "brb"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "b": {
+      "item": "rftools:infused_diamond"
+    },
+    "e": {
+      "item": "minecraft:ender_pearl"
+    },
+    "q": {
+      "item": "minecraft:glowstone_dust"
+    },
+    "M": {
+      "item": "rftools:machine_frame"
+    }
+  }
+}
