@@ -41,7 +41,7 @@ public class LocatorBlock extends GenericRFToolsBlock<LocatorTileEntity, EmptyCo
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(TextFormatting.WHITE + "Place this block on top of a Scanner");
             list.add(TextFormatting.WHITE + "to extend its functionality with the ability");
-            list.add(TextFormatting.WHITE + "to locate entities");
+            list.add(TextFormatting.WHITE + "to locate entities and machines using power");
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
