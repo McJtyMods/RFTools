@@ -30,13 +30,14 @@ public class GuiRFToolsManual extends GuiScreen {
     private Button nextButton;
 
     public static int MANUAL_MAIN = 0;
+    public static int MANUAL_SHAPE = 1;
     private ResourceLocation manualText;
 
     // If this is set when the manual opens the given page will be located.
     public static String locatePage = null;
 
     private static final ResourceLocation manualMainText = new ResourceLocation(RFTools.MODID, "text/manual.txt");
-    private static final ResourceLocation manualDimensionText = new ResourceLocation(RFTools.MODID, "text/manual_dimension.txt");
+    private static final ResourceLocation manualShapeText = new ResourceLocation(RFTools.MODID, "text/manual_shape.txt");
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiRFToolsManual(int manual) {
@@ -47,11 +48,11 @@ public class GuiRFToolsManual extends GuiScreen {
             } else {
                 manualText = new ResourceLocation(RFTools.MODID, "text/manual-" + gameLocale + ".txt");
             }
-        } else {
+        } else if (manual == MANUAL_SHAPE) {
             if (gameLocale.equals("en_us")) {
-                manualText = manualDimensionText;
+                manualText = manualShapeText;
             } else {
-                manualText = new ResourceLocation(RFTools.MODID, "text/manual_dimension-" + gameLocale + ".txt");
+                manualText = new ResourceLocation(RFTools.MODID, "text/manual_shape-" + gameLocale + ".txt");
             }
         }
     }

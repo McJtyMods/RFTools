@@ -12,7 +12,9 @@ public enum ProjectorOpcode {
     SCAN("Scn", "Perform a refresh of the scan (pulse only)", false),
     OFFSET("Ofs", "Gradually move the offset of the scan to the destination value", true),
     ROT("Rot", "Gradually rotate the angle of the scan to the destination value", true),
-    SCALE("Scl", "Gradually scale the scan to the destination value", true);
+    SCALE("Scl", "Gradually scale the scan to the destination value", true),
+    GRAYON("Gr+", "Turn on grayscale mode", false),
+    GRAYOFF("Gr-", "Turn off grayscale mode", false);
 
     private final String code;
     private final String description;

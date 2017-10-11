@@ -119,70 +119,9 @@ public class RenderData {
         }
     }
 
-    // A render plane is a horizonal plane of data. It is made out of strips
-    public static class RenderPlane {
-        private RenderStrip[] strips;
-        private int y;
-        private int offsety;
-        private int startz;
-        private boolean dirty = true;
-        private int count = 0;
-        private long birthtime;
-
-        private int glList = -1;
-        private net.minecraft.client.renderer.vertex.VertexBuffer vbo;
-
-        public RenderPlane(RenderStrip[] strips, int y, int offsety, int startz, int count) {
-            this.strips = strips;
-            this.y = y;
-            this.offsety = offsety;
-            this.startz = startz;
-            this.count = count;
-            birthtime = System.currentTimeMillis();
-        }
-
-        public void refreshData(RenderPlane other) {
-            this.strips = other.strips;
-            this.y = other.y;
-            this.offsety = other.offsety;
-            this.startz = other.startz;
-            this.count = other.count;
-            this.dirty = true;
-            birthtime = System.currentTimeMillis();
-            cleanup();
-        }
-
-        public long getBirthtime() {
-            return birthtime;
-        }
-
-        public int getCount() {
-            return count;
-        }
-
-        public void markClean() {
-            dirty = false;
-        }
-
-        public boolean isDirty() {
-            return dirty;
-        }
-
-        public RenderStrip[] getStrips() {
-            return strips;
-        }
-
-        public int getOffsety() {
-            return offsety;
-        }
-
-        public int getY() {
-            return y;
-        }
-
-        public int getStartz() {
-            return startz;
-        }
+    public static class RenderElement {
+        protected int glList = -1;
+        protected net.minecraft.client.renderer.vertex.VertexBuffer vbo;
 
         public void cleanup() {
             if (useVBO) {
@@ -239,6 +178,69 @@ public class RenderData {
                 tessellator.draw();
                 GlStateManager.glEndList();
             }
+        }
+    }
+
+    // A render plane is a horizonal plane of data. It is made out of strips
+    public static class RenderPlane extends RenderElement {
+        private RenderStrip[] strips;
+        private int y;
+        private int offsety;
+        private int startz;
+        private boolean dirty = true;
+        private int count = 0;
+        private long birthtime;
+
+        public RenderPlane(RenderStrip[] strips, int y, int offsety, int startz, int count) {
+            this.strips = strips;
+            this.y = y;
+            this.offsety = offsety;
+            this.startz = startz;
+            this.count = count;
+            birthtime = System.currentTimeMillis();
+        }
+
+        public void refreshData(RenderPlane other) {
+            this.strips = other.strips;
+            this.y = other.y;
+            this.offsety = other.offsety;
+            this.startz = other.startz;
+            this.count = other.count;
+            this.dirty = true;
+            birthtime = System.currentTimeMillis();
+            super.cleanup();
+        }
+
+        public long getBirthtime() {
+            return birthtime;
+        }
+
+        public int getCount() {
+            return count;
+        }
+
+        public void markClean() {
+            dirty = false;
+        }
+
+        public boolean isDirty() {
+            return dirty;
+        }
+
+        public RenderStrip[] getStrips() {
+            return strips;
+        }
+
+        public int getOffsety() {
+            return offsety;
+        }
+
+        public int getY() {
+            return y;
+        }
+
+        public int getStartz() {
+            return startz;
         }
 
 

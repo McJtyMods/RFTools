@@ -86,6 +86,7 @@ public class RFTools implements ModBase {
      * Set our custom inventory Gui index to the next available Gui index
      */
     public static final int GUI_MANUAL_MAIN = modGuiIndex++;
+    public static final int GUI_MANUAL_SHAPE = modGuiIndex++;
     public static final int GUI_COALGENERATOR = modGuiIndex++;
     public static final int GUI_CRAFTER = modGuiIndex++;
     public static final int GUI_MODULAR_STORAGE = modGuiIndex++;
@@ -137,6 +138,7 @@ public class RFTools implements ModBase {
     public static final int GUI_COMPOSER = modGuiIndex++;
     public static final int GUI_SCANNER = modGuiIndex++;
     public static final int GUI_PROJECTOR = modGuiIndex++;
+    public static final int GUI_LOCATOR = modGuiIndex++;
 
     /**
      * Run before anything else. Read your config, create blocks, items, etc, and

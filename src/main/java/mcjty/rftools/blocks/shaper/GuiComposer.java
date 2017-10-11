@@ -49,7 +49,7 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
 
 
     public GuiComposer(ComposerTileEntity composerTileEntity, ComposerContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, composerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "shaper");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, composerTileEntity, container, RFTools.GUI_MANUAL_SHAPE, "shaper");
 
         xSize = SHAPER_WIDTH;
         ySize = SHAPER_HEIGHT;
@@ -66,7 +66,7 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
         Slot slot = inventorySlots.getSlot(ComposerContainer.SLOT_OUT);
         ItemStack stack = slot.getHasStack() ? slot.getStack() : ItemStack.EMPTY;
 
-        return new ShapeID(tileEntity.getWorld().provider.getDimension(), tileEntity.getPos(), ShapeCardItem.getScanId(stack));
+        return new ShapeID(tileEntity.getWorld().provider.getDimension(), tileEntity.getPos(), ShapeCardItem.getScanId(stack), false);
     }
 
 
@@ -110,15 +110,9 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
         outConfigButton.setTooltips("Click to open the card gui");
         toplevel.addChild(outConfigButton);
 
-        showAxis = new ToggleButton(mc, this).setCheckMarker(true).setText("A").setLayoutHint(new PositionalLayout.PositionalHint(5, 176, 24, 16));
-        showAxis.setPressed(true);
-        toplevel.addChild(showAxis);
-        showOuter = new ToggleButton(mc, this).setCheckMarker(true).setText("B").setLayoutHint(new PositionalLayout.PositionalHint(31, 176, 24, 16));
-        showOuter.setPressed(true);
-        toplevel.addChild(showOuter);
-        showScan = new ToggleButton(mc, this).setCheckMarker(true).setText("S").setLayoutHint(new PositionalLayout.PositionalHint(57, 176, 24, 16));
-        showScan.setPressed(true);
-        toplevel.addChild(showScan);
+        showAxis = ShapeGuiTools.createAxisButton(this, toplevel, 5, 176);
+        showOuter = ShapeGuiTools.createBoxButton(this, toplevel, 31, 176);
+        showScan = ShapeGuiTools.createScanButton(this, toplevel, 57, 176);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 

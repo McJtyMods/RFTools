@@ -8,52 +8,10 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 
 /// Server side handling for shape data
-public class ShapeDataManager {
-
-    // Client-side
-    private static final Map<ShapeID, RenderData> renderDataMap = new HashMap<>();
-
-    @Nullable
-    public static RenderData getRenderData(ShapeID shapeID) {
-        return renderDataMap.get(shapeID);
-    }
-
-    @Nonnull
-    public static RenderData getRenderDataAndCreate(ShapeID shapeID) {
-        RenderData data = renderDataMap.get(shapeID);
-        if (data == null) {
-            data = new RenderData();
-            renderDataMap.put(shapeID, data);
-        }
-        return data;
-    }
-
-    private static int cleanupCounter = 20;
-
-    public static void cleanupOldRenderers() {
-        cleanupCounter--;
-        if (cleanupCounter >= 0) {
-            return;
-        }
-        cleanupCounter = 20;
-        Set<ShapeID> toRemove = new HashSet<>();
-        for (Map.Entry<ShapeID, RenderData> entry : renderDataMap.entrySet()) {
-            if (entry.getValue().tooOld()) {
-                System.out.println("Removing id = " + entry.getKey());
-                toRemove.add(entry.getKey());
-            }
-        }
-        for (ShapeID id : toRemove) {
-            RenderData data = renderDataMap.get(id);
-            data.cleanup();
-            renderDataMap.remove(id);
-        }
-    }
+public class ShapeDataManagerServer {
 
 
     private static class WorkUnit {
@@ -96,13 +54,8 @@ public class ShapeDataManager {
     }
 
     private static class WorkQueue {
-        private final ShapeID shapeID;
         private final ArrayDeque<WorkUnit> workQueue = new ArrayDeque<>();
         private final Map<Integer, WorkUnit> workingOn = new HashMap<>();
-
-        public WorkQueue(ShapeID shapeID) {
-            this.shapeID = shapeID;
-        }
     }
 
     // Server-side
@@ -111,7 +64,7 @@ public class ShapeDataManager {
     public static void pushWork(ShapeID shapeID, ItemStack stack, int offsetY, IFormula formula, EntityPlayerMP player) {
         WorkQueue queue = workQueues.get(shapeID);
         if (queue == null) {
-            queue = new WorkQueue(shapeID);
+            queue = new WorkQueue();
             workQueues.put(shapeID, queue);
         }
         if (queue.workingOn.containsKey(offsetY)) {

@@ -9,6 +9,21 @@ public class ScannerConfiguration {
     public static int SCANNER_RECEIVEPERTICK = 20000;
     public static int SCANNER_PERTICK = 1000;
 
+    public static int LOCATOR_MAXENERGY = 2000000;
+    public static int LOCATOR_RECEIVEPERTICK = 20000;
+    public static int LOCATOR_PERSCAN_BASE = 5000;
+    public static double LOCATOR_PERSCAN_CHUNK = 0.1;
+    public static double LOCATOR_PERSCAN_HOSTILE = 1;
+    public static double LOCATOR_PERSCAN_PASSIVE = 0.5;
+    public static double LOCATOR_PERSCAN_PLAYER = 2;
+    public static double LOCATOR_PERSCAN_ENERGY = 5;
+    public static double LOCATOR_FILTER_COST = 0.5;
+
+    public static int ticksPerLocatorScan = 40;
+    public static int locatorBeaconHeight = 30;
+    public static int locatorEntitySafety = 10;
+    public static int locatorMaxEnergyChunks = 5*5;
+
     public static int PROJECTOR_MAXENERGY = 500000;
     public static int PROJECTOR_RECEIVEPERTICK = 10000;
     public static int PROJECTOR_USEPERTICK = 1000;
@@ -35,12 +50,41 @@ public class ScannerConfiguration {
                 "RF per tick that the scanner can receive").getInt();
         SCANNER_PERTICK = cfg.get(CATEGORY_SCANNER, "scannerUsePerTick", SCANNER_PERTICK,
                 "Amount of RF needed per tick during the scan").getInt();
+        LOCATOR_MAXENERGY = cfg.get(CATEGORY_SCANNER, "locatorMaxRF", LOCATOR_MAXENERGY,
+                "Maximum RF storage that the locator can hold").getInt();
+        LOCATOR_RECEIVEPERTICK = cfg.get(CATEGORY_SCANNER, "locatorRFPerTick", LOCATOR_RECEIVEPERTICK,
+                "RF per tick that the locator can receive").getInt();
+
+        LOCATOR_PERSCAN_BASE = cfg.get(CATEGORY_SCANNER, "locatorUsePerTickBase", LOCATOR_PERSCAN_BASE,
+                "Fixed amount of RF needed for a scan").getInt();
+        LOCATOR_PERSCAN_CHUNK = cfg.get(CATEGORY_SCANNER, "locatorUsePerTickChunk", LOCATOR_PERSCAN_CHUNK,
+                "Base amount of RF needed for a scan per 16x16x16 subchunk").getDouble();
+        LOCATOR_PERSCAN_HOSTILE = cfg.get(CATEGORY_SCANNER, "locatorUsePerTickHostile", LOCATOR_PERSCAN_HOSTILE,
+                "Additional amount of RF per 16x16x16 subchunk needed for a scan for hostile entities").getDouble();
+        LOCATOR_PERSCAN_PASSIVE = cfg.get(CATEGORY_SCANNER, "locatorUsePerTickPassive", LOCATOR_PERSCAN_PASSIVE,
+                "Additional amount of RF per 16x16x16 subchunk needed for a scan for passive entities").getDouble();
+        LOCATOR_PERSCAN_PLAYER = cfg.get(CATEGORY_SCANNER, "locatorUsePerTickPlayer", LOCATOR_PERSCAN_PLAYER,
+                "Additional amount of RF per 16x16x16 subchunk needed for a scan for players").getDouble();
+        LOCATOR_PERSCAN_ENERGY = cfg.get(CATEGORY_SCANNER, "locatorUsePerTickEnergy", LOCATOR_PERSCAN_ENERGY,
+                "Additional amount of RF per 16x16x16 subchunk needed for a scan for low energy").getDouble();
+        LOCATOR_FILTER_COST = cfg.get(CATEGORY_SCANNER, "locatorFilterCost", LOCATOR_FILTER_COST,
+                "Additional amount of RF per 16x16x16 subchunk needed for a filtered scan").getDouble();
+
         PROJECTOR_MAXENERGY = cfg.get(CATEGORY_SCANNER, "projectorMaxRF", PROJECTOR_MAXENERGY,
                 "Maximum RF storage that the projector can hold").getInt();
         PROJECTOR_RECEIVEPERTICK = cfg.get(CATEGORY_SCANNER, "projectorRFPerTick", PROJECTOR_RECEIVEPERTICK,
                 "RF per tick that the projector can receive").getInt();
         PROJECTOR_USEPERTICK = cfg.get(CATEGORY_SCANNER, "projectorUsePerTick", PROJECTOR_USEPERTICK,
                 "RF/t for the projector while it is in use").getInt();
+
+        ticksPerLocatorScan = cfg.get(CATEGORY_SCANNER, "ticksPerLocatorScan", ticksPerLocatorScan,
+                "Number of ticks between every scan of the locator").getInt();
+        locatorBeaconHeight = cfg.get(CATEGORY_SCANNER, "locatorBeaconHeight", locatorBeaconHeight,
+                "Height of the beacon in case beacons are used").getInt();
+        locatorEntitySafety = cfg.get(CATEGORY_SCANNER, "locatorEntitySafety", locatorEntitySafety,
+                "Maximum amount of entities in a single block to show markers/beacons for").getInt();
+        locatorMaxEnergyChunks = cfg.get(CATEGORY_SCANNER, "locatorMaxEnergyChunks", locatorMaxEnergyChunks,
+                "Maximum amount of 16x16 chunks we support for energy scanning").getInt();
 
         maxScannerOffset = cfg.get(CATEGORY_SCANNER, "maxScannerOffset", maxScannerOffset,
                 "Maximum offset of the shape when a shape card is used in the scanner/projector").getInt();

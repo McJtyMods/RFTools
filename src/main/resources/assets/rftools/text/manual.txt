@@ -11,22 +11,20 @@ Table of contents:
 {l:powercell}Power storage
 {l:stomon}Storage Scanner
 {l:storage}Storage System
-{l:filter}Item Filter
 {/}
 
 
+{l:filter}Item Filter
 {l:elevator}Elevator
 {l:crafter}Automatic Crafter
 {l:protect}Block Protector
 {l:prelay}RF Power Relay
 {l:telepo}Teleporting System
 {l:power}Advanced Power Generator
-{l:shield}Shield System
 {l:screens}Modular Screens
 {l:envctrl}Environmental Control
 {l:booster}Booster
 {l:spawner}Spawner System
-{l:builder}Builder
 {-------------------------------------------------------------}
 {b}General Tips
 {n:general}
@@ -684,68 +682,6 @@ generator and the system starts.
 
 This injector has an internal buffer that can only store ender pearls.
 {-------------------------------------------------------------}
-{b}Shield System
-{n:shield}
-RFTools implements a 'simple' shield system that can filter mobs, animals,
-players, and items. You start by building the shape of your shield with
-connected Shield Template Blocks of the same color. Then you put a Shield
-Block next to one of these templates and you give it power.
-
-A tier 1 shield can handle 256 blocks. Tier 2 ups this to 1024. The tier 3
-ups this to 4096 and deals 4 times as much damage at twice the power.
-
-To compose the shield right click the shield block with a wrench. The
-shield block will compose the shield in the specified shape. If you hit
-the shield with left click it will also connect on corners. Wrench the
-shield again to get the template blocks back. By doing that you
-can change the shape of your shield in case you're not happy with it.
-{-------------------------------------------------------------}
-To craft the Shield Template Blocks you use the following recipe:
-{rb:shield_template_block}
-
-Note that there are four different template blocks so you can use them
-to make adjacent distinct shields. Every projector will only take one color.
-
-To craft the Shield Block you use the following recipe:
-{rb:shield_block1}
-{-------------------------------------------------------------}
-The shield has four visualization options:
-
-    Invisible: the shield is totally invisible
-    Shield: a transparent generic shield texture is used
-    Solid: the shield is solid
-    Transparent: the shield is transparent
-
-In the gui you can also insert rules for different types of
-entities. For every rule you have the following actions:
-
-    Pass: entity can pass through
-    Solid: entity is blocked
-    Damage: entity gets damage
-    SolDmg: entity is blocked and gets damage
-{-------------------------------------------------------------}
-You can also set the type of damage. By default the damage
-will be 'generic' but you can also set it to 'player'. This
-will consume more energy but you will get XP orbs as well
-as loot that you normally only get when a mob is killed
-by the player.
-
-If you select 'player' damage then you can also enable looting
-by inserting dimensional shards. These are used up for every
-looting kill.
-{-------------------------------------------------------------}
-If you hit the shield projector with your left mouse instead of
-the right mouse it will also scan on the corners for template
-blocks. Additionally using the smart wrench it is possible
-to add or remove shield templates to an already formed shield.
-Note that doing this will not be remembered if you decompose
-the shield again.
-
-Note that the shield also supports space cards. In that case you
-don't have to use shield template blocks but instead you can
-insert the appropriate space card to define the shape of
-the shield.
-{-------------------------------------------------------------}
 {b}Item Filter
 {n:filter}
 {rb:item_filter}
@@ -862,71 +798,4 @@ can beam matter (and thus the spawning rate).
 The leaf block in the spawner GUI indicates any type of living
 material (meat, wheat, seeds, ...). Some types of living material
 give a bigger bonus.
-{-------------------------------------------------------------}
-{b}Builder
-{n:builder}
-{rb:builder}
-The Builder is one of the most versatile machine in RFTools. It can do:
-    - Move a structure from one spot (even other dimension) to another
-    - Rebuild a structure from one spot to another
-    - Swap structures between two spots
-    - Build geometrical shapes (dome, torus, box, ...)
-    - Clear out areas in a certain shape (void blocks)
-    - Quarry an area in a certain shape (silk touch, fortune, ...)
-    - Collect items and XP in an area
-    - Pump liquids
-{-------------------------------------------------------------}
-A chest or tank on top or below is sometimes needed to supply or collect.
-Using the GUI you can control where the builder should place the blocks
-(always at the back of the builder). This only works for space cards.
-
-Other GUI options are:
-{i:textures/gui/guielements.png,160,48,Silent mode: mute sounds from moving blocks}
-{i:textures/gui/guielements.png,96,48,Support mode: create preview/support blocks}
-Help to identify what will happen and help with gravity affected blocks.
-{i:textures/gui/guielements.png,128,48,Entity mode: also move entities}
-{i:textures/gui/guielements.png,192,48,Loop mode:}
-In this mode the builder will keep running as long as it has a redstone
-signal and keep on moving or copying if there is room to do so. If
-this is off the builder will do one pass and stop.
-{-------------------------------------------------------------}
-The builder also supports a standard RFTools filter. If that filter is
-inserted then it will only quarry or void blocks that match the filter.
-Note that this works only on the block in the world, not the end result
-of the block. i.e. to filter on diamonds you need to insert the diamond
-ore block in the filter. All filter options like whitelist/blacklist
-and filter by mod are supported.
-{-------------------------------------------------------------}
-For moving, swapping and copying structures you need a space card
-linked to a space chamber.
-
-You can use Space Chamber blocks to mark the corners of the source
-area that you want to work. One of these corners should be a
-Space Chamber Controller block.
-{rb:space_chamber}
-{rb:space_chamber_controller}
-{-------------------------------------------------------------}
-{n:chambercard}
-{ri:space_chamber_card}
-Right selecting the controller block with a wrench will let it form the
-chamber. If all is correct you will get a message saying so. Then you need
-to use a Space Chamber Card (right click it on the controller) to link the
-controller to the card.
-
-Put that card in the builder, set the right mode and other
-parameters and give it a redstone signal.
-
-If you right click a linked space chamber card it will give you an overview
-of all blocks and entities together with the cost of moving them.
-{-------------------------------------------------------------}
-For building geometrical shapes, voiding and quarrying areas you
-need shape cards:
-{ri:shape_card}
-
-Right clicking such a card will open a GUI where you can set the shape as
-well as the dimensions. A shape card can be upgraded in the crafting table
-to make the void card and one of the quarry cards.
-
-Note that several options in the GUI of the builder are unused if you use
-shape cards.
 {-------------------------------------------------------------}

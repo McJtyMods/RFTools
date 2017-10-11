@@ -41,7 +41,7 @@ public class GuiModifier extends GenericGuiContainer {
 
 
     public GuiModifier(ModifierContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, null, container, RFTools.GUI_MANUAL_MAIN, "modifier");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, null, container, RFTools.GUI_MANUAL_SHAPE, "modifier");
         xSize = MODIFIER_WIDTH;
         ySize = MODIFIER_HEIGHT;
     }

@@ -69,7 +69,7 @@ public class Formulas {
             ShapeCardItem.getLocalChecksum(tc, crc);
             int scanId = tc.getInteger("scanid");
             crc.add(scanId);
-            crc.add(ScanDataManager.getScansClient().getScanDirtyCounterClient(scanId));
+            crc.add(ScanDataManagerClient.getScansClient().getScanDirtyCounterClient(scanId));
         }
 
         @Override
@@ -97,9 +97,9 @@ public class Formulas {
 
             int scanId = card.getInteger("scanid");
             if (scanId != 0) {
-                ScanDataManager.Scan scan = ScanDataManager.getScans().loadScan(scanId);
+                Scan scan = ScanDataManager.getScans().loadScan(scanId);
                 palette = new ArrayList<>(scan.getMaterialPalette());
-                byte[] datas = scan.getData();
+                byte[] datas = scan.getRledata();
                 data = new byte[dx * dy * dz];
                 int j = 0;
                 for (int i = 0; i < datas.length / 2; i++) {
@@ -117,7 +117,46 @@ public class Formulas {
                     }
                 }
             }
+        }
 
+        @Override
+        public boolean isBorder(int x, int y, int z) {
+            if (x <= x1 || x >= x1+dx-1 || y <= y1 || y >= y1+dy-1 || z <= z1 || z >= z1+dz-1) {
+                return isInsideSafe(x, y, z);
+            }
+            int index = (x-x1) * dy * dz + (z-z1) * dy + (y-y1);
+            if (!isInsideInternal(index-1) || !isInsideInternal(index+1) || !isInsideInternal(index-dy) || !isInsideInternal(index+dy) || !isInsideInternal(index-dy*dz) || !isInsideInternal(index+dy*dz)) {
+                return isInsideInternal(index);
+            }
+            return false;
+        }
+
+        @Override
+        public boolean isVisible(int x, int y, int z) {
+            int index = (x-x1) * dy * dz + (z-z1) * dy + (y-y1);
+            return isClear(index-1) || isClear(index+1) || isClear(index-dy) || isClear(index+dy) || isClear(index-dy*dz) || isClear(index+dy*dz);
+        }
+
+        public boolean isClear(int index) {
+            if (!isInsideInternal(index)) {
+                return true;
+            }
+            IBlockState state = getLastState();
+            if (state != null) {
+                return ShapeBlockInfo.isNonSolidBlock(state.getBlock());
+            } else {
+                return false;
+            }
+        }
+
+        private boolean isInsideInternal(int index) {
+            if (data[index] == 0) {
+                return false;
+            } else {
+                int idx = ((data[index]) & 0xff)-1;
+                lastState = palette.get(idx);
+                return true;
+            }
         }
 
         @Override
@@ -134,13 +173,7 @@ public class Formulas {
                 return false;
             }
             int index = (x-x1) * dy * dz + (z-z1) * dy + (y-y1);
-            if (data[index] == 0) {
-                return false;
-            } else {
-                int idx = ((data[index]) & 0xff)-1;
-                lastState = palette.get(idx);
-                return true;
-            }
+            return isInsideInternal(index);
         }
 
         @Override

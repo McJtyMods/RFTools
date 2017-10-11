@@ -11,11 +11,13 @@ public final class ShapeID {
     private final int dimension;
     @Nullable private final BlockPos pos;     // null if there is a scanId (shapecard in hand or projector)
     private final int scanId;
+    private final boolean grayscale;
 
-    public ShapeID(int dimension, BlockPos pos, int scanId) {
+    public ShapeID(int dimension, BlockPos pos, int scanId, boolean grayscale) {
         this.dimension = dimension;
         this.pos = pos;
         this.scanId = scanId;
+        this.grayscale = grayscale;
     }
 
     public ShapeID(ByteBuf buf) {
@@ -26,6 +28,7 @@ public final class ShapeID {
             p = NetworkTools.readPos(buf);
         }
         scanId = buf.readInt();
+        grayscale = buf.readBoolean();
         dimension = dim;
         pos = p;
     }
@@ -39,6 +42,7 @@ public final class ShapeID {
             NetworkTools.writePos(buf, getPos());
         }
         buf.writeInt(scanId);
+        buf.writeBoolean(grayscale);
     }
 
     public int getDimension() {
@@ -54,6 +58,10 @@ public final class ShapeID {
         return scanId;
     }
 
+    public boolean isGrayscale() {
+        return grayscale;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -63,6 +71,7 @@ public final class ShapeID {
 
         if (dimension != shapeID.dimension) return false;
         if (scanId != shapeID.scanId) return false;
+        if (grayscale != shapeID.grayscale) return false;
         if (pos != null ? !pos.equals(shapeID.pos) : shapeID.pos != null) return false;
 
         return true;
@@ -73,6 +82,7 @@ public final class ShapeID {
         int result = dimension;
         result = 31 * result + (pos != null ? pos.hashCode() : 0);
         result = 31 * result + scanId;
+        result = 31 * result + (grayscale ? 1 : 0);
         return result;
     }
 

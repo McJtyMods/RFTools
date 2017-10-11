@@ -1,6 +1,8 @@
 package mcjty.rftools.shapes;
 
 import mcjty.rftools.blocks.shaper.ScannerConfiguration;
+import mcjty.lib.tools.ItemStackTools;
+import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.varia.Check32;
@@ -54,7 +56,7 @@ public class ShapeRenderer {
     }
 
     public int getCount() {
-        RenderData data = ShapeDataManager.getRenderData(shapeID);
+        RenderData data = ShapeDataManagerClient.getRenderData(shapeID);
         if (data != null) {
             return data.getBlockCount();
         }
@@ -62,7 +64,7 @@ public class ShapeRenderer {
     }
 
     public static RenderData getRenderDataAndCreate(ShapeID shapeID) {
-        RenderData data = ShapeDataManager.getRenderDataAndCreate(shapeID);
+        RenderData data = ShapeDataManagerClient.getRenderDataAndCreate(shapeID);
         data.touch();
         return data;
     }
@@ -114,13 +116,13 @@ public class ShapeRenderer {
     }
 
     public boolean renderShapeInWorld(ItemStack stack, double x, double y, double z, float offset, float scale, float angle,
-                                   boolean scan) {
+                                   boolean scan, ShapeID shape) {
         GlStateManager.pushMatrix();
         GlStateManager.translate((float) x + 0.5F, (float) y + 1F + offset, (float) z + 0.5F);
         GlStateManager.scale(scale, scale, scale);
         GlStateManager.rotate(angle, 0, 1, 0);
 
-        net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
+//        net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
         Minecraft.getMinecraft().entityRenderer.disableLightmap();
         GlStateManager.disableBlend();
         GlStateManager.enableCull();
@@ -130,11 +132,13 @@ public class ShapeRenderer {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
         boolean doSound = renderFaces(tessellator, buffer, stack, scan);
+        VertexBuffer buffer = tessellator.getBuffer();
+        boolean doSound = renderFaces(tessellator, buffer, stack, scan, shape.isGrayscale(), shape.getScanId());
 
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
         GlStateManager.enableLighting();
-        RenderHelper.enableStandardItemLighting();
+//        RenderHelper.enableStandardItemLighting();
         Minecraft.getMinecraft().entityRenderer.enableLightmap();
 
         GlStateManager.popMatrix();
@@ -161,7 +165,7 @@ public class ShapeRenderer {
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
-        renderFaces(tessellator, buffer, stack, showScan);
+        renderFaces(tessellator, buffer, stack, showScan, false, -1);
         BlockPos dimension = ShapeCardItem.getDimension(stack);
         renderHelpers(tessellator, buffer, dimension.getX(), dimension.getY(), dimension.getZ(), showAxis, showOuter);
 
@@ -185,7 +189,7 @@ public class ShapeRenderer {
         GlStateManager.disableBlend();
         RenderHelper.enableGUIStandardItemLighting();
 
-        RenderData data = ShapeDataManager.getRenderData(shapeID);
+        RenderData data = ShapeDataManagerClient.getRenderData(shapeID);
         if (data != null && !data.previewMessage.isEmpty()) {
             Minecraft.getMinecraft().fontRenderer.drawString(data.previewMessage, gui.getPreviewLeft()+84, gui.getPreviewTop()+50, 0xffff0000);
         }
@@ -266,9 +270,12 @@ public class ShapeRenderer {
         return crc.get();
     }
 
+    private int extraDataCounter = 0;
 
     private boolean renderFaces(Tessellator tessellator, final BufferBuilder buffer,
                      ItemStack stack, boolean showScan) {
+    private boolean renderFaces(Tessellator tessellator, final VertexBuffer buffer,
+                     ItemStack stack, boolean showScan, boolean grayscale, int scanId) {
 
         RenderData data = getRenderDataAndCreate(shapeID);
 
@@ -296,7 +303,7 @@ public class ShapeRenderer {
             for (RenderData.RenderPlane plane : data.getPlanes()) {
                 if (plane != null) {
                     if (plane.isDirty()) {
-                        createRenderData(tessellator, buffer, plane, data);
+                        createRenderData(tessellator, buffer, plane, data, grayscale);
                         plane.markClean();
                     }
                     boolean flash = showScan && (plane.getBirthtime() > time-ScannerConfiguration.projectorFlashTimeout);
@@ -315,10 +322,33 @@ public class ShapeRenderer {
                 }
             }
         }
+
+        // Possibly request extra data for the scan
+        if (scanId != -1) {
+            extraDataCounter--;
+            if (extraDataCounter <= 0) {
+                extraDataCounter = 10;
+                ScanDataManagerClient.getScansClient().requestExtraDataClient(scanId);
+            }
+            ScanExtraData extraData = ScanDataManagerClient.getScansClient().getExtraDataClient(scanId);
+            for (ScanExtraData.Beacon beacon : extraData.getBeacons()) {
+                int x = beacon.getPos().getX();
+                int y = beacon.getPos().getY()+1;
+                int z = beacon.getPos().getZ();
+                BeaconType type = beacon.getType();
+                GlStateManager.translate(x, y, z);
+                RenderData.RenderElement element = getBeaconElement(tessellator, buffer, type, beacon.isDoBeacon());
+                element.render();
+                GlStateManager.translate(-x, -y, -z);
+            }
+        }
+
         return needScanSound;
     }
 
     private void createRenderData(Tessellator tessellator, BufferBuilder buffer, RenderData.RenderPlane plane, RenderData data) {
+    private void createRenderData(Tessellator tessellator, VertexBuffer buffer, RenderData.RenderPlane plane, RenderData data,
+                                  boolean grayscale) {
         Map<IBlockState, ShapeBlockInfo> palette = new HashMap<>();
 
         double origOffsetX = buffer.xOffset;
@@ -350,6 +380,11 @@ public class ShapeRenderer {
                     float r = col.getR();
                     float g = col.getG();
                     float b = col.getB();
+                    if (grayscale) {
+//                        float a = (r+g+b)/3.0f;
+                        float a = 0.21f*r+0.72f*g+0.07f*b;
+                        r = g = b = a;
+                    }
                     ShapeBlockInfo.IBlockRender bd = info.getRender();
                     if (bd == null) {
                         addSideFullTextureU(buffer, cnt, r * .8f, g * .8f, b * .8f);
@@ -379,6 +414,66 @@ public class ShapeRenderer {
 //        System.out.println("y = " + offsety + ", avg = " + avg + ", quads = " + quadcnt);
     }
 
+    private static RenderData.RenderElement beaconElement[] = null;
+    private static RenderData.RenderElement beaconElementBeacon[] = null;
+
+    private static RenderData.RenderElement getBeaconElement(Tessellator tessellator, VertexBuffer buffer, BeaconType type, boolean doBeacon) {
+        if (beaconElement == null) {
+            beaconElement = new RenderData.RenderElement[BeaconType.VALUES.length];
+            beaconElementBeacon = new RenderData.RenderElement[BeaconType.VALUES.length];
+            for (int i = 0 ; i < BeaconType.VALUES.length ; i++) {
+                beaconElement[i] = null;
+                beaconElementBeacon[i] = null;
+            }
+        }
+
+        RenderData.RenderElement[] elements;
+        if (doBeacon) {
+            elements = ShapeRenderer.beaconElementBeacon;
+        } else {
+            elements = ShapeRenderer.beaconElement;
+        }
+        if (elements[type.ordinal()] == null) {
+            elements[type.ordinal()] = new RenderData.RenderElement();
+            elements[type.ordinal()].createRenderList(buffer);
+            GlStateManager.glLineWidth(3);
+            buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+            float r = type.getR();
+            float g = type.getG();
+            float b = type.getB();
+
+            double origOffsetX = buffer.xOffset;
+            double origOffsetY = buffer.yOffset;
+            double origOffsetZ = buffer.zOffset;
+            buffer.setTranslation(origOffsetX, origOffsetY-.7f, origOffsetZ);
+            addSideN(buffer, r, g, b, .3f);
+            addSideS(buffer, r, g, b, .3f);
+            addSideW(buffer, r, g, b, .3f);
+            addSideE(buffer, r, g, b, .3f);
+            addSideU(buffer, r, g, b, .3f);
+            addSideD(buffer, r, g, b, .3f);
+            buffer.setTranslation(origOffsetX, origOffsetY-.2f, origOffsetZ);
+            addSideN(buffer, r, g, b, .2f);
+            addSideS(buffer, r, g, b, .2f);
+            addSideW(buffer, r, g, b, .2f);
+            addSideE(buffer, r, g, b, .2f);
+            addSideU(buffer, r, g, b, .2f);
+            addSideD(buffer, r, g, b, .2f);
+
+            if (doBeacon) {
+                buffer.setTranslation(origOffsetX, origOffsetY+.2f, origOffsetZ);
+                addSideN(buffer, r, g, b, .1f, ScannerConfiguration.locatorBeaconHeight);
+                addSideS(buffer, r, g, b, .1f, ScannerConfiguration.locatorBeaconHeight);
+                addSideW(buffer, r, g, b, .1f, ScannerConfiguration.locatorBeaconHeight);
+                addSideE(buffer, r, g, b, .1f, ScannerConfiguration.locatorBeaconHeight);
+            }
+
+            buffer.setTranslation(origOffsetX, origOffsetY, origOffsetZ);
+
+            elements[type.ordinal()].performRenderToList(tessellator, buffer);
+        }
+        return elements[type.ordinal()];
+    }
 
     private static void setupScissor(IShapeParentGui gui) {
         Minecraft mc = Minecraft.getMinecraft();
@@ -441,4 +536,112 @@ public class ShapeRenderer {
         buffer.pos(0, 1, cnt).color(r, g, b, a).endVertex();
         buffer.pos(0, 0, cnt).color(r, g, b, a).endVertex();
     }
+
+
+
+
+    public static void addSideD(VertexBuffer buffer, float r, float g, float b, float size) {
+        float a = 0.5f;
+        float l = -size;
+        float h = size;
+        buffer.pos(l, l, l).color(r, g, b, a).endVertex();
+        buffer.pos(h, l, l).color(r, g, b, a).endVertex();
+        buffer.pos(h, l, h).color(r, g, b, a).endVertex();
+        buffer.pos(l, l, h).color(r, g, b, a).endVertex();
+    }
+
+    public static void addSideU(VertexBuffer buffer, float r, float g, float b, float size) {
+        float a = 0.5f;
+        float l = -size;
+        float h = size;
+        buffer.pos(l, h, h).color(r, g, b, a).endVertex();
+        buffer.pos(h, h, h).color(r, g, b, a).endVertex();
+        buffer.pos(h, h, l).color(r, g, b, a).endVertex();
+        buffer.pos(l, h, l).color(r, g, b, a).endVertex();
+    }
+
+    public static void addSideE(VertexBuffer buffer, float r, float g, float b, float size) {
+        float a = 0.5f;
+        float l = -size;
+        float h = size;
+        buffer.pos(h, l, l).color(r, g, b, a).endVertex();
+        buffer.pos(h, h, l).color(r, g, b, a).endVertex();
+        buffer.pos(h, h, h).color(r, g, b, a).endVertex();
+        buffer.pos(h, l, h).color(r, g, b, a).endVertex();
+    }
+
+    public static void addSideW(VertexBuffer buffer, float r, float g, float b, float size) {
+        float a = 0.5f;
+        float l = -size;
+        float h = size;
+        buffer.pos(l, l, h).color(r, g, b, a).endVertex();
+        buffer.pos(l, h, h).color(r, g, b, a).endVertex();
+        buffer.pos(l, h, l).color(r, g, b, a).endVertex();
+        buffer.pos(l, l, l).color(r, g, b, a).endVertex();
+    }
+
+    public static void addSideN(VertexBuffer buffer, float r, float g, float b, float size) {
+        float a = 0.5f;
+        float l = -size;
+        float h = size;
+        buffer.pos(h, h, l).color(r, g, b, a).endVertex();
+        buffer.pos(h, l, l).color(r, g, b, a).endVertex();
+        buffer.pos(l, l, l).color(r, g, b, a).endVertex();
+        buffer.pos(l, h, l).color(r, g, b, a).endVertex();
+    }
+
+    public static void addSideS(VertexBuffer buffer, float r, float g, float b, float size) {
+        float a = 0.5f;
+        float l = -size;
+        float h = size;
+        buffer.pos(h, l, h).color(r, g, b, a).endVertex();
+        buffer.pos(h, h, h).color(r, g, b, a).endVertex();
+        buffer.pos(l, h, h).color(r, g, b, a).endVertex();
+        buffer.pos(l, l, h).color(r, g, b, a).endVertex();
+    }
+
+
+
+
+
+    public static void addSideE(VertexBuffer buffer, float r, float g, float b, float size, float height) {
+        float a = 0.5f;
+        float l = -size;
+        float h = size;
+        buffer.pos(h, 0, l).color(r, g, b, a).endVertex();
+        buffer.pos(h, height, l).color(r, g, b, a).endVertex();
+        buffer.pos(h, height, h).color(r, g, b, a).endVertex();
+        buffer.pos(h, 0, h).color(r, g, b, a).endVertex();
+    }
+
+    public static void addSideW(VertexBuffer buffer, float r, float g, float b, float size, float height) {
+        float a = 0.5f;
+        float l = -size;
+        float h = size;
+        buffer.pos(l, 0, h).color(r, g, b, a).endVertex();
+        buffer.pos(l, height, h).color(r, g, b, a).endVertex();
+        buffer.pos(l, height, l).color(r, g, b, a).endVertex();
+        buffer.pos(l, 0, l).color(r, g, b, a).endVertex();
+    }
+
+    public static void addSideN(VertexBuffer buffer, float r, float g, float b, float size, float height) {
+        float a = 0.5f;
+        float l = -size;
+        float h = size;
+        buffer.pos(h, height, l).color(r, g, b, a).endVertex();
+        buffer.pos(h, 0, l).color(r, g, b, a).endVertex();
+        buffer.pos(l, 0, l).color(r, g, b, a).endVertex();
+        buffer.pos(l, height, l).color(r, g, b, a).endVertex();
+    }
+
+    public static void addSideS(VertexBuffer buffer, float r, float g, float b, float size, float height) {
+        float a = 0.5f;
+        float l = -size;
+        float h = size;
+        buffer.pos(h, 0, h).color(r, g, b, a).endVertex();
+        buffer.pos(h, height, h).color(r, g, b, a).endVertex();
+        buffer.pos(l, height, h).color(r, g, b, a).endVertex();
+        buffer.pos(l, 0, h).color(r, g, b, a).endVertex();
+    }
+
 }

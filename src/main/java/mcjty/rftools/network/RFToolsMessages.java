@@ -15,6 +15,8 @@ import mcjty.rftools.blocks.security.PacketGetSecurityInfo;
 import mcjty.rftools.blocks.security.PacketGetSecurityName;
 import mcjty.rftools.blocks.security.PacketSecurityInfoReady;
 import mcjty.rftools.blocks.security.PacketSecurityNameReady;
+import mcjty.rftools.blocks.shaper.PacketRequestLocatorEnergyConsumption;
+import mcjty.rftools.blocks.shaper.PacketReturnLocatorEnergyConsumption;
 import mcjty.rftools.blocks.shaper.PacketProjectorClientNotification;
 import mcjty.rftools.items.modifier.PacketUpdateModifier;
 import mcjty.rftools.shapes.*;
@@ -81,6 +83,8 @@ public class RFToolsMessages {
         net.registerMessage(PacketRequestShapeData.Handler.class, PacketRequestShapeData.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketRequestScanDirty.Handler.class, PacketRequestScanDirty.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketUpdateNBTShapeCard.Handler.class, PacketUpdateNBTShapeCard.class, PacketHandler.nextID(), Side.SERVER);
+        net.registerMessage(PacketRequestExtraData.Handler.class, PacketRequestExtraData.class, PacketHandler.nextID(), Side.SERVER);
+        net.registerMessage(PacketRequestLocatorEnergyConsumption.Handler.class, PacketRequestLocatorEnergyConsumption.class, PacketHandler.nextID(), Side.SERVER);
 
         // Client side
         net.registerMessage(PacketPlayersReady.Handler.class, PacketPlayersReady.class, PacketHandler.nextID(), Side.CLIENT);
@@ -108,6 +112,8 @@ public class RFToolsMessages {
         net.registerMessage(PacketReturnShapeData.Handler.class, PacketReturnShapeData.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketReturnScanDirty.Handler.class, PacketReturnScanDirty.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketProjectorClientNotification.Handler.class, PacketProjectorClientNotification.class, PacketHandler.nextID(), Side.CLIENT);
+        net.registerMessage(PacketReturnExtraData.Handler.class, PacketReturnExtraData.class, PacketHandler.nextID(), Side.CLIENT);
+        net.registerMessage(PacketReturnLocatorEnergyConsumption.Handler.class, PacketReturnLocatorEnergyConsumption.class, PacketHandler.nextID(), Side.CLIENT);
 
         PacketHandler.register(PacketHandler.nextPacketID(), StorageInfoPacketServer.class, StorageInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), PowerCellInfoPacketServer.class, PowerCellInfoPacketClient.class);

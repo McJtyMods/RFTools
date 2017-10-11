@@ -160,7 +160,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return true;
     }
 
-    private static FakePlayer getHarvester() {
+    public static FakePlayer getHarvester() {
         if (harvester == null) {
             harvester = FakePlayerFactory.get(DimensionManager.getWorld(0), new GameProfile(new UUID(111, 333), "rftools_builder"));
         }
@@ -1118,7 +1118,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     }
 
-    private static boolean allowedToBreak(IBlockState state, World world, BlockPos pos, EntityPlayer entityPlayer) {
+    public static boolean allowedToBreak(IBlockState state, World world, BlockPos pos, EntityPlayer entityPlayer) {
         if (!state.getBlock().canEntityDestroy(state, world, pos, entityPlayer)) {
             return false;
         }

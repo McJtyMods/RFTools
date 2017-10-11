@@ -46,6 +46,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
     private ToggleButton autoRotate;
     private ToggleButton scanline;
     private ToggleButton sound;
+    private ToggleButton grayScale;
 
     private ChoiceLabel[] rsLabelOn = new ChoiceLabel[4];
     private ChoiceLabel[] rsLabelOff = new ChoiceLabel[4];
@@ -57,7 +58,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
     private ShapeRenderer shapeRenderer = null;
 
     public GuiProjector(ProjectorTileEntity te, ProjectorContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, RFTools.GUI_MANUAL_MAIN, "projector");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, RFTools.GUI_MANUAL_SHAPE, "projector");
 
         xSize = PROJECTOR_WIDTH;
         ySize = PROJECTOR_HEIGHT;
@@ -131,21 +132,27 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
         autoRotate = new ToggleButton(mc, this).setCheckMarker(true)
                 .setText("Auto")
                 .setTooltips("Automatic client-side rotation")
-                .setLayoutHint(new PositionalLayout.PositionalHint(5, 128, 48, 16));
+                .setLayoutHint(new PositionalLayout.PositionalHint(2, 128, 39, 16));
         autoRotate.setPressed(tileEntity.isAutoRotate());
         toplevel.addChild(autoRotate);
         scanline = new ToggleButton(mc, this).setCheckMarker(true)
                 .setText("SL")
                 .setTooltips("Enable/disable visual scanlines when", "the scan is refreshed")
-                .setLayoutHint(new PositionalLayout.PositionalHint(5, 146, 48, 16));
+                .setLayoutHint(new PositionalLayout.PositionalHint(42, 128, 39, 16));
         scanline.setPressed(tileEntity.isScanline());
         toplevel.addChild(scanline);
         sound = new ToggleButton(mc, this).setCheckMarker(true)
                 .setText("Snd")
                 .setTooltips("Enable/disable sound during", "visual scan")
-                .setLayoutHint(new PositionalLayout.PositionalHint(5, 164, 48, 16));
+                .setLayoutHint(new PositionalLayout.PositionalHint(2, 146, 39, 16));
         sound.setPressed(tileEntity.isSound());
         toplevel.addChild(sound);
+        grayScale = new ToggleButton(mc, this).setCheckMarker(true)
+                .setText("Gray")
+                .setTooltips("Enable/disable grayscale", "mode")
+                .setLayoutHint(new PositionalLayout.PositionalHint(42, 146, 39, 16));
+        grayScale.setPressed(tileEntity.isGrayscale());
+        toplevel.addChild(grayScale);
 
         angleLabel.addValueEvent((parent, newValue) -> update());
         scaleLabel.addValueEvent((parent, newValue) -> update());
@@ -153,17 +160,11 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
         autoRotate.addButtonEvent(parent -> update());
         scanline.addButtonEvent(parent -> update());
         sound.addButtonEvent(parent -> update());
+        grayScale.addButtonEvent(parent -> update());
 
-
-        showAxis = new ToggleButton(mc, this).setCheckMarker(true).setText("A").setLayoutHint(new PositionalLayout.PositionalHint(5, 200, 24, 16));
-        showAxis.setPressed(true);
-        toplevel.addChild(showAxis);
-        showOuter = new ToggleButton(mc, this).setCheckMarker(true).setText("B").setLayoutHint(new PositionalLayout.PositionalHint(31, 200, 24, 16));
-        showOuter.setPressed(true);
-        toplevel.addChild(showOuter);
-        showScan = new ToggleButton(mc, this).setCheckMarker(true).setText("S").setLayoutHint(new PositionalLayout.PositionalHint(57, 200, 24, 16));
-        showScan.setPressed(true);
-        toplevel.addChild(showScan);
+        showAxis = ShapeGuiTools.createAxisButton(this, toplevel, 5, 200);
+        showOuter = ShapeGuiTools.createBoxButton(this, toplevel, 31, 200);
+        showScan = ShapeGuiTools.createScanButton(this, toplevel, 57, 200);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
@@ -279,7 +280,8 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
                 new Argument("angle", angleLabel.getRealValue()),
                 new Argument("auto", autoRotate.isPressed()),
                 new Argument("scan", scanline.isPressed()),
-                new Argument("sound", sound.isPressed())
+                new Argument("sound", sound.isPressed()),
+                new Argument("grayscale", grayScale.isPressed())
                 );
     }
 

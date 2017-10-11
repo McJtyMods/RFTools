@@ -31,6 +31,26 @@ public interface IFormula {
         return false;
     }
 
+    /// Return true if this coordinate is visible from at least one side.
+    /// WARNING! This function assumes that x,y,z is not a coordinate at the side of the outer box!
+    default boolean isVisible(int x, int y, int z) {
+        return isClear(x - 1, y, z) || isClear(x + 1, y, z) || isClear(x, y - 1, z) || isClear(x, y + 1, z) || isClear(x, y, z - 1) || isClear(x, y, z + 1);
+    }
+
+    default boolean isClear(int x, int y, int z) {
+        if (!isInside(x, y, z)) {
+            return true;
+        }
+        IBlockState state = getLastState();
+        if (state != null) {
+            return ShapeBlockInfo.isNonSolidBlock(state.getBlock());
+        } else {
+            return false;
+        }
+    }
+
+
+
     default boolean isCustom() { return false; }
 
     default IFormula correctFormula(boolean solid) {

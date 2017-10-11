@@ -9,7 +9,9 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.init.Blocks;
 
 import javax.annotation.Nonnull;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class ShapeBlockInfo {
 
@@ -38,11 +40,62 @@ public class ShapeBlockInfo {
     private final Col col;
     private final IBlockRender render;
 
+    // WARNING! Keep up-to-date together with getBlockRender!
+    private static final Set<Block> nonSolidBlocks = new HashSet<>();
+
+    static {
+        nonSolidBlocks.add(Blocks.TORCH);
+        nonSolidBlocks.add(Blocks.TORCH);
+        nonSolidBlocks.add(Blocks.STONE_SLAB);
+        nonSolidBlocks.add(Blocks.WOODEN_SLAB);
+        nonSolidBlocks.add(Blocks.PURPUR_SLAB);
+        nonSolidBlocks.add(Blocks.STONE_SLAB2);
+        nonSolidBlocks.add(Blocks.SNOW_LAYER);
+        nonSolidBlocks.add(Blocks.COBBLESTONE_WALL);
+        nonSolidBlocks.add(Blocks.IRON_BARS);
+        nonSolidBlocks.add(Blocks.LADDER);
+        nonSolidBlocks.add(Blocks.VINE);
+        nonSolidBlocks.add(Blocks.RED_FLOWER);
+        nonSolidBlocks.add(Blocks.YELLOW_FLOWER);
+        nonSolidBlocks.add(Blocks.WHEAT);
+        nonSolidBlocks.add(Blocks.CARROTS);
+        nonSolidBlocks.add(Blocks.POTATOES);
+        nonSolidBlocks.add(Blocks.BEETROOTS);
+        nonSolidBlocks.add(Blocks.TALLGRASS);
+        nonSolidBlocks.add(Blocks.RAIL);
+        nonSolidBlocks.add(Blocks.ACTIVATOR_RAIL);
+        nonSolidBlocks.add(Blocks.DETECTOR_RAIL);
+        nonSolidBlocks.add(Blocks.GOLDEN_RAIL);
+        nonSolidBlocks.add(Blocks.RED_MUSHROOM);
+        nonSolidBlocks.add(Blocks.BROWN_MUSHROOM);
+        nonSolidBlocks.add(Blocks.FIRE);
+        nonSolidBlocks.add(Blocks.REDSTONE_WIRE);
+        nonSolidBlocks.add(Blocks.CHEST);
+        nonSolidBlocks.add(Blocks.TRAPPED_CHEST);
+        nonSolidBlocks.add(Blocks.TRAPDOOR);
+        nonSolidBlocks.add(Blocks.ACACIA_FENCE);
+        nonSolidBlocks.add(Blocks.ACACIA_FENCE_GATE);
+        nonSolidBlocks.add(Blocks.BIRCH_FENCE);
+        nonSolidBlocks.add(Blocks.BIRCH_FENCE_GATE);
+        nonSolidBlocks.add(Blocks.DARK_OAK_FENCE);
+        nonSolidBlocks.add(Blocks.DARK_OAK_FENCE_GATE);
+        nonSolidBlocks.add(Blocks.JUNGLE_FENCE);
+        nonSolidBlocks.add(Blocks.JUNGLE_FENCE_GATE);
+        nonSolidBlocks.add(Blocks.OAK_FENCE);
+        nonSolidBlocks.add(Blocks.OAK_FENCE_GATE);
+        nonSolidBlocks.add(Blocks.NETHER_BRICK_FENCE);
+    }
+
+    public static boolean isNonSolidBlock(Block b) {
+        return nonSolidBlocks.contains(b);
+    }
+
     public ShapeBlockInfo(Col col, IBlockRender render) {
         this.col = col;
         this.render = render;
     }
 
+    // WARNING! Keep up-to-date together with nonSolidBlocks!
     private static IBlockRender getBlockRender(IBlockState state) {
         if (state == null) {
             return null;
