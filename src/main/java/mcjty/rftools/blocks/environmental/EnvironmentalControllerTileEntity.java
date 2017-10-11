@@ -109,6 +109,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         return true;
     }
 
+
     //    @Override
 //    @Optional.Method(modid = "ComputerCraft")
 //    public String getType() {
@@ -330,14 +331,8 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
 
         int rfNeeded = getTotalRfPerTick();
         if (rfNeeded > rf || environmentModules.isEmpty()) {
-            for (EnvironmentModule module : environmentModules) {
-                module.activate(false);
-            }
+            deactivate();
             powerTimeout = 20;
-            if (active) {
-                active = false;
-                markDirtyClient();
-            }
         } else {
             consumeEnergy(rfNeeded);
             for (EnvironmentModule module : environmentModules) {
@@ -348,6 +343,16 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
                 active = true;
                 markDirtyClient();
             }
+        }
+    }
+
+    public void deactivate() {
+        for (EnvironmentModule module : environmentModules) {
+            module.activate(false);
+        }
+        if (active) {
+            active = false;
+            markDirtyClient();
         }
     }
 

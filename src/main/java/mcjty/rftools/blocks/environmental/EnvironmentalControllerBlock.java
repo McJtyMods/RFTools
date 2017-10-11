@@ -153,6 +153,15 @@ public class EnvironmentalControllerBlock extends GenericRFToolsBlock<Environmen
     }
 
     @Override
+    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof EnvironmentalControllerTileEntity) {
+            ((EnvironmentalControllerTileEntity) te).deactivate();
+        }
+        super.breakBlock(world, pos, state);
+    }
+
+    @Override
     public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
         return layer == BlockRenderLayer.SOLID || layer == BlockRenderLayer.TRANSLUCENT;
     }
