@@ -36,6 +36,7 @@ public class ShapeBlockInfo {
     private static final IBlockRender BD_REDSTONE = new DefaultRender(.3f, .1f);
     private static final IBlockRender BD_CHEST = new DefaultRender(.05f, .8f);
     private static final IBlockRender BD_TRAPDOOR = new DefaultRender(.05f, .1f);
+    private static final IBlockRender BD_BUTTON = new DefaultRender(.4f, .1f);
 
     private final Col col;
     private final IBlockRender render;
@@ -73,6 +74,8 @@ public class ShapeBlockInfo {
         nonSolidBlocks.add(Blocks.CHEST);
         nonSolidBlocks.add(Blocks.TRAPPED_CHEST);
         nonSolidBlocks.add(Blocks.TRAPDOOR);
+        nonSolidBlocks.add(Blocks.WOODEN_PRESSURE_PLATE);
+        nonSolidBlocks.add(Blocks.STONE_PRESSURE_PLATE);
         nonSolidBlocks.add(Blocks.ACACIA_FENCE);
         nonSolidBlocks.add(Blocks.ACACIA_FENCE_GATE);
         nonSolidBlocks.add(Blocks.BIRCH_FENCE);
@@ -84,6 +87,9 @@ public class ShapeBlockInfo {
         nonSolidBlocks.add(Blocks.OAK_FENCE);
         nonSolidBlocks.add(Blocks.OAK_FENCE_GATE);
         nonSolidBlocks.add(Blocks.NETHER_BRICK_FENCE);
+        nonSolidBlocks.add(Blocks.LEVER);
+        nonSolidBlocks.add(Blocks.STONE_BUTTON);
+        nonSolidBlocks.add(Blocks.WOODEN_BUTTON);
     }
 
     public static boolean isNonSolidBlock(Block b) {
@@ -133,8 +139,10 @@ public class ShapeBlockInfo {
             render = BD_REDSTONE;
         } else if (block == Blocks.CHEST || block == Blocks.TRAPPED_CHEST) {
             render = BD_CHEST;
-        } else if (block == Blocks.TRAPDOOR) {
+        } else if (block == Blocks.TRAPDOOR || block == Blocks.WOODEN_PRESSURE_PLATE || block == Blocks.STONE_PRESSURE_PLATE) {
             render = BD_TRAPDOOR;
+        } else if (block == Blocks.LEVER || block == Blocks.STONE_BUTTON || block == Blocks.WOODEN_BUTTON) {
+            render = BD_BUTTON;
         } else if (block == Blocks.ACACIA_FENCE || block == Blocks.ACACIA_FENCE_GATE ||
                 block == Blocks.BIRCH_FENCE || block == Blocks.BIRCH_FENCE_GATE ||
                 block == Blocks.DARK_OAK_FENCE || block == Blocks.DARK_OAK_FENCE_GATE ||

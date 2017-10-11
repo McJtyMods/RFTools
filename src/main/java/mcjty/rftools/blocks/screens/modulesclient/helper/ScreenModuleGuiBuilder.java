@@ -33,7 +33,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
         this.mc = mc;
         this.moduleGuiChanged = moduleGuiChanged;
         this.currentData = currentData;
-        panel = new Panel(mc, gui).setLayout(new VerticalLayout().setVerticalMargin(5));
+        panel = new Panel(mc, gui).setLayout(new VerticalLayout().setVerticalMargin(3).setSpacing(1));
     }
 
     public NBTTagCompound getCurrentData() {

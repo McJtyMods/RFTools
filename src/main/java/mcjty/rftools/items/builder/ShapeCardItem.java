@@ -558,8 +558,26 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         if (stack.isEmpty()) {
             return 0;
         }
-        NBTTagCompound tagCompound = getCompound(stack);
-        return tagCompound.getInteger("scanid");
+        return getScanId(getCompound(stack));
+    }
+
+    private static int getScanId(NBTTagCompound tagCompound) {
+        if (tagCompound.hasKey("scanid")) {
+            return tagCompound.getInteger("scanid");
+        }
+        Shape shape = getShape(tagCompound);
+        if (shape == Shape.SHAPE_COMPOSITION) {
+            // See if there is a scan in the composition that has a scan id
+            NBTTagList children = tagCompound.getTagList("children", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0 ; i < children.tagCount() ; i++) {
+                NBTTagCompound childTag = children.getCompoundTagAt(i);
+                int id = getScanId(childTag);
+                if (id != 0) {
+                    return id;
+                }
+            }
+        }
+        return 0;
     }
 
     public static int getFormulaCheckClient(ItemStack stack) {
@@ -785,13 +803,14 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         formula = formula.correctFormula(solid);
         formula.setup(new BlockPos(0, 0, 0), clamped, new BlockPos(0, 0, 0), stack != null ? stack.getTagCompound() : null);
 
+        // For saving shape cards we need to do X/Z/Y (scanner order) instead of the usual Y/X/Z (render order)
         int cnt = 0;
-        for (int oy = 0; oy < dy; oy++) {
-            int y = oy - dy/2;
-            for (int ox = 0; ox < dx; ox++) {
-                int x = ox - dx/2;
-                for (int oz = 0; oz < dz; oz++) {
-                    int z = oz - dz/2;
+        for (int ox = 0; ox < dx; ox++) {
+            int x = ox - dx/2;
+            for (int oz = 0; oz < dz; oz++) {
+                int z = oz - dz/2;
+                for (int oy = 0; oy < dy; oy++) {
+                    int y = oy - dy/2;
                     int v = 255;
                     if (formula.isInside(x, y, z)) {
                         cnt++;
@@ -893,6 +912,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         byte[] encoded = Base64.getEncoder().encode(data);
         writer.write(new String(encoded));
         writer.close();
+        ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.GREEN + "Saved shape to file '" + filename));
     }
 
     public static void load(EntityPlayer player, ItemStack card, String filename) {
@@ -949,9 +969,6 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
             }
             s = reader.readLine();
             byte[] decoded = Base64.getDecoder().decode(s.getBytes());
-            for (byte b : decoded) {
-                System.out.println("b = " + b);
-            }
 
             setDataFromFile(player.getEntityWorld(), scanId, card, dim, off, decoded, statePalette);
         } catch (FileNotFoundException e) {
@@ -967,7 +984,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
             player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "File '" + filename + "' contains invalid entries!"), false);
             return;
         }
-
+        ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.GREEN + "Loaded shape from file '" + filename));
     }
 
     private static void setDataFromFile(World world, int scanId, ItemStack card, BlockPos dimension, BlockPos offset, byte[] data, StatePalette palette) {
