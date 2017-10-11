@@ -81,10 +81,8 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
     }
 
     public GuiShield(ShieldTEBase shieldTileEntity, ShieldContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, shieldTileEntity, container, RFTools.GUI_MANUAL_MAIN, "shield");
-        shieldTileEntity.setCurrentRF(shieldTileEntity.getEnergyStored());
         super(RFTools.instance, RFToolsMessages.INSTANCE, shieldTileEntity, container, RFTools.GUI_MANUAL_SHAPE, "shield");
-        shieldTileEntity.setCurrentRF(shieldTileEntity.getEnergyStored(EnumFacing.DOWN));
+        shieldTileEntity.setCurrentRF(shieldTileEntity.getEnergyStored());
 
         xSize = SHIELD_WIDTH;
         ySize = SHIELD_HEIGHT;

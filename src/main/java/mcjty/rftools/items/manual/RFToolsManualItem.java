@@ -2,6 +2,7 @@ package mcjty.rftools.items.manual;
 
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.GenericRFToolsItem;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
@@ -24,8 +25,8 @@ public class RFToolsManualItem extends GenericRFToolsItem {
     }
 
     @Override
-    public void clAddInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
-        super.clAddInformation(stack, playerIn, tooltip, advanced);
+    public void addInformation(ItemStack stack, World playerIn, List<String> tooltip, ITooltipFlag advanced) {
+        super.addInformation(stack, playerIn, tooltip, advanced);
         tooltip.add("RFTools basic manual");
     }
 

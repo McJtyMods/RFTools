@@ -2,6 +2,7 @@ package mcjty.rftools.items.manual;
 
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.GenericRFToolsItem;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
@@ -24,8 +25,8 @@ public class RFToolsShapeManualItem extends GenericRFToolsItem {
     }
 
     @Override
-    public void clAddInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
-        super.clAddInformation(stack, playerIn, tooltip, advanced);
+    public void addInformation(ItemStack stack, World playerIn, List<String> tooltip, ITooltipFlag advanced) {
+        super.addInformation(stack, playerIn, tooltip, advanced);
         tooltip.add("RFTools shape manual");
         tooltip.add("The Builder, Shield, Shapecards,");
         tooltip.add("The Scanner, Projector, Composor,");
@@ -34,7 +35,7 @@ public class RFToolsShapeManualItem extends GenericRFToolsItem {
 
 
     @Override
-    protected ActionResult<ItemStack> clOnItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (world.isRemote) {
             player.openGui(RFTools.instance, RFTools.GUI_MANUAL_SHAPE, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);

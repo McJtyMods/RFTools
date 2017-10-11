@@ -1,8 +1,6 @@
 package mcjty.rftools.shapes;
 
 import mcjty.rftools.blocks.shaper.ScannerConfiguration;
-import mcjty.lib.tools.ItemStackTools;
-import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.varia.Check32;
@@ -131,8 +129,6 @@ public class ShapeRenderer {
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
-        boolean doSound = renderFaces(tessellator, buffer, stack, scan);
-        VertexBuffer buffer = tessellator.getBuffer();
         boolean doSound = renderFaces(tessellator, buffer, stack, scan, shape.isGrayscale(), shape.getScanId());
 
         GlStateManager.enableTexture2D();
@@ -273,8 +269,6 @@ public class ShapeRenderer {
     private int extraDataCounter = 0;
 
     private boolean renderFaces(Tessellator tessellator, final BufferBuilder buffer,
-                     ItemStack stack, boolean showScan) {
-    private boolean renderFaces(Tessellator tessellator, final VertexBuffer buffer,
                      ItemStack stack, boolean showScan, boolean grayscale, int scanId) {
 
         RenderData data = getRenderDataAndCreate(shapeID);
@@ -346,8 +340,7 @@ public class ShapeRenderer {
         return needScanSound;
     }
 
-    private void createRenderData(Tessellator tessellator, BufferBuilder buffer, RenderData.RenderPlane plane, RenderData data) {
-    private void createRenderData(Tessellator tessellator, VertexBuffer buffer, RenderData.RenderPlane plane, RenderData data,
+    private void createRenderData(Tessellator tessellator, BufferBuilder buffer, RenderData.RenderPlane plane, RenderData data,
                                   boolean grayscale) {
         Map<IBlockState, ShapeBlockInfo> palette = new HashMap<>();
 
@@ -417,7 +410,7 @@ public class ShapeRenderer {
     private static RenderData.RenderElement beaconElement[] = null;
     private static RenderData.RenderElement beaconElementBeacon[] = null;
 
-    private static RenderData.RenderElement getBeaconElement(Tessellator tessellator, VertexBuffer buffer, BeaconType type, boolean doBeacon) {
+    private static RenderData.RenderElement getBeaconElement(Tessellator tessellator, BufferBuilder buffer, BeaconType type, boolean doBeacon) {
         if (beaconElement == null) {
             beaconElement = new RenderData.RenderElement[BeaconType.VALUES.length];
             beaconElementBeacon = new RenderData.RenderElement[BeaconType.VALUES.length];
@@ -540,7 +533,7 @@ public class ShapeRenderer {
 
 
 
-    public static void addSideD(VertexBuffer buffer, float r, float g, float b, float size) {
+    public static void addSideD(BufferBuilder buffer, float r, float g, float b, float size) {
         float a = 0.5f;
         float l = -size;
         float h = size;
@@ -550,7 +543,7 @@ public class ShapeRenderer {
         buffer.pos(l, l, h).color(r, g, b, a).endVertex();
     }
 
-    public static void addSideU(VertexBuffer buffer, float r, float g, float b, float size) {
+    public static void addSideU(BufferBuilder buffer, float r, float g, float b, float size) {
         float a = 0.5f;
         float l = -size;
         float h = size;
@@ -560,7 +553,7 @@ public class ShapeRenderer {
         buffer.pos(l, h, l).color(r, g, b, a).endVertex();
     }
 
-    public static void addSideE(VertexBuffer buffer, float r, float g, float b, float size) {
+    public static void addSideE(BufferBuilder buffer, float r, float g, float b, float size) {
         float a = 0.5f;
         float l = -size;
         float h = size;
@@ -570,7 +563,7 @@ public class ShapeRenderer {
         buffer.pos(h, l, h).color(r, g, b, a).endVertex();
     }
 
-    public static void addSideW(VertexBuffer buffer, float r, float g, float b, float size) {
+    public static void addSideW(BufferBuilder buffer, float r, float g, float b, float size) {
         float a = 0.5f;
         float l = -size;
         float h = size;
@@ -580,7 +573,7 @@ public class ShapeRenderer {
         buffer.pos(l, l, l).color(r, g, b, a).endVertex();
     }
 
-    public static void addSideN(VertexBuffer buffer, float r, float g, float b, float size) {
+    public static void addSideN(BufferBuilder buffer, float r, float g, float b, float size) {
         float a = 0.5f;
         float l = -size;
         float h = size;
@@ -590,7 +583,7 @@ public class ShapeRenderer {
         buffer.pos(l, h, l).color(r, g, b, a).endVertex();
     }
 
-    public static void addSideS(VertexBuffer buffer, float r, float g, float b, float size) {
+    public static void addSideS(BufferBuilder buffer, float r, float g, float b, float size) {
         float a = 0.5f;
         float l = -size;
         float h = size;
@@ -604,7 +597,7 @@ public class ShapeRenderer {
 
 
 
-    public static void addSideE(VertexBuffer buffer, float r, float g, float b, float size, float height) {
+    public static void addSideE(BufferBuilder buffer, float r, float g, float b, float size, float height) {
         float a = 0.5f;
         float l = -size;
         float h = size;
@@ -614,7 +607,7 @@ public class ShapeRenderer {
         buffer.pos(h, 0, h).color(r, g, b, a).endVertex();
     }
 
-    public static void addSideW(VertexBuffer buffer, float r, float g, float b, float size, float height) {
+    public static void addSideW(BufferBuilder buffer, float r, float g, float b, float size, float height) {
         float a = 0.5f;
         float l = -size;
         float h = size;
@@ -624,7 +617,7 @@ public class ShapeRenderer {
         buffer.pos(l, 0, l).color(r, g, b, a).endVertex();
     }
 
-    public static void addSideN(VertexBuffer buffer, float r, float g, float b, float size, float height) {
+    public static void addSideN(BufferBuilder buffer, float r, float g, float b, float size, float height) {
         float a = 0.5f;
         float l = -size;
         float h = size;
@@ -634,7 +627,7 @@ public class ShapeRenderer {
         buffer.pos(l, height, l).color(r, g, b, a).endVertex();
     }
 
-    public static void addSideS(VertexBuffer buffer, float r, float g, float b, float size, float height) {
+    public static void addSideS(BufferBuilder buffer, float r, float g, float b, float size, float height) {
         float a = 0.5f;
         float l = -size;
         float h = size;

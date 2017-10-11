@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.shaper;
 
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.lib.tools.EntityTools;
 import mcjty.lib.varia.Counter;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.RedstoneMode;
@@ -167,7 +166,7 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private boolean checkFilter(String filt, Entity entity) {
-        String name = EntityTools.getEntityName(entity).toLowerCase();
+        String name = entity.getName().toLowerCase();
         if (name.contains(filt)) {
             return true;
         }

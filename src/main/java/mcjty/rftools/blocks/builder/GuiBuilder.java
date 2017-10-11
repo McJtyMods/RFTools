@@ -40,10 +40,8 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     private static final ResourceLocation guiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiBuilder(BuilderTileEntity builderTileEntity, BuilderContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, builderTileEntity, container, RFTools.GUI_MANUAL_MAIN, "builder");
-        setCurrentRF(builderTileEntity.getEnergyStored());
         super(RFTools.instance, RFToolsMessages.INSTANCE, builderTileEntity, container, RFTools.GUI_MANUAL_SHAPE, "builder");
-        setCurrentRF(builderTileEntity.getEnergyStored(EnumFacing.DOWN));
+        setCurrentRF(builderTileEntity.getEnergyStored());
 
         xSize = BUILDER_WIDTH;
         ySize = BUILDER_HEIGHT;
