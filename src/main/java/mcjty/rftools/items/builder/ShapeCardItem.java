@@ -558,8 +558,26 @@ public class ShapeCardItem extends GenericRFToolsItem {
         if (ItemStackTools.isEmpty(stack)) {
             return 0;
         }
-        NBTTagCompound tagCompound = getCompound(stack);
-        return tagCompound.getInteger("scanid");
+        return getScanId(getCompound(stack));
+    }
+
+    private static int getScanId(NBTTagCompound tagCompound) {
+        if (tagCompound.hasKey("scanid")) {
+            return tagCompound.getInteger("scanid");
+        }
+        Shape shape = getShape(tagCompound);
+        if (shape == Shape.SHAPE_COMPOSITION) {
+            // See if there is a scan in the composition that has a scan id
+            NBTTagList children = tagCompound.getTagList("children", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0 ; i < children.tagCount() ; i++) {
+                NBTTagCompound childTag = children.getCompoundTagAt(i);
+                int id = getScanId(childTag);
+                if (id != 0) {
+                    return id;
+                }
+            }
+        }
+        return 0;
     }
 
     public static int getFormulaCheckClient(ItemStack stack) {
