@@ -1,0 +1,10 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "rftools:empty_model"
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}]
+  }
+}
