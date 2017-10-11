@@ -422,7 +422,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         this.dataDim = new BlockPos(progress.dimX, progress.dimY, progress.dimZ);
         ScanDataManager scan = ScanDataManager.getScans();
         scan.getOrCreateScan(getScanId()).setData(progress.rle.getData(), progress.materialPalette.getPalette(), dataDim, dataOffset);
-        scan.save(getWorld(), getScanId());
+        scan.save(getScanId());
         if (ItemStackTools.isEmpty(renderStack)) {
             renderStack = new ItemStack(BuilderSetup.shapeCardItem);
         }

@@ -968,7 +968,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
             s = reader.readLine();
             byte[] decoded = Base64.getDecoder().decode(s.getBytes());
 
-            setDataFromFile(player.getEntityWorld(), scanId, card, dim, off, decoded, statePalette);
+            setDataFromFile(scanId, card, dim, off, decoded, statePalette);
         } catch (FileNotFoundException e) {
             ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Cannot read from file '" + filename + "'!"));
             return;
@@ -985,10 +985,10 @@ public class ShapeCardItem extends GenericRFToolsItem {
         ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.GREEN + "Loaded shape from file '" + filename));
     }
 
-    private static void setDataFromFile(World world, int scanId, ItemStack card, BlockPos dimension, BlockPos offset, byte[] data, StatePalette palette) {
+    private static void setDataFromFile(int scanId, ItemStack card, BlockPos dimension, BlockPos offset, byte[] data, StatePalette palette) {
         ScanDataManager scans = ScanDataManager.getScans();
         scans.getOrCreateScan(scanId).setData(data, palette.getPalette(), dimension, offset);
-        scans.save(world, scanId);
+        scans.save(scanId);
         ShapeCardItem.setDimension(card, dimension.getX(), dimension.getY(), dimension.getZ());
         ShapeCardItem.setOffset(card, offset.getX(), offset.getY(), offset.getZ());
         ShapeCardItem.setShape(card, Shape.SHAPE_SCAN, true);

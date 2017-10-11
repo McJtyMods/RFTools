@@ -38,7 +38,8 @@ public class ScanDataManager extends WorldSavedData {
         super(identifier);
     }
 
-    public void save(World world, int scanId) {
+    public void save(int scanId) {
+        World world = DimensionManager.getWorld(0);
         File dataDir = new File(((WorldServer) world).getChunkSaveLocation(), "rftoolsscans");
         dataDir.mkdirs();
         File file = new File(dataDir, "scan" + scanId);
