@@ -5,10 +5,14 @@ Table of contents:
 {l:chambercard}Space Chamber
 {l:shapecard}Shape cards
 {l:scanner}Area Scanner
+{l:composer}Composer
+{l:projector}Projector
+{l:locator}Locator
+{l:saving}Saving and Loading
 {-------------------------------------------------------------}
 {b}Shield System
 {n:shield}
-RFTools implements a 'simple' shield system that can filter mobs, animals,
+RFTools implements a 'simple' shield system that can block mobs, animals,
 players, and items. You start by building the shape of your shield with
 connected Shield Template Blocks of the same color. Then you put a Shield
 Block next to one of these templates and you give it power.
@@ -22,11 +26,9 @@ the shield with left click it will also connect on corners. Wrench the
 shield again to get the template blocks back. By doing that you
 can change the shape of your shield in case you're not happy with it.
 {-------------------------------------------------------------}
-To craft the Shield Template Blocks you use the following recipe:
-{rb:shield_template_block}
-
 Note that there are four different template blocks so you can use them
-to make adjacent distinct shields. Every projector will only take one color.
+to make adjacent distinct shields. Every shield projector will only
+take one color.
 
 To craft the Shield Block you use the following recipe:
 {rb:shield_block1}
@@ -62,8 +64,9 @@ if you decompose the shield again.
 
 Note that the shield also supports shape cards. In that case you don't
 have to use shield template blocks but instead you can insert the
-appropriate shape card to define the shape of the shield. More on this
-in the shape card section.
+appropriate shape card to define the shape of the shield. If the shape
+card has 'block' information then the shield will mimic those blocks
+if it is set to 'mimic' mode. More on this in the shape card section.
 {-------------------------------------------------------------}
 {b}Builder
 {n:builder}
@@ -105,7 +108,9 @@ inserted then it will only quarry or void blocks that match the filter.
 Note that this works only on the block in the world, not the end result
 of the block. i.e. to filter on diamonds you need to insert the diamond
 ore block in the filter. All filter options like whitelist/blacklist
-and filter by mod are supported.
+and filter by mod are supported. Some common blocks like stone, dirt,
+gravel, and some others you can also void directly in the shape
+card GUI.
 
 In addition the Builder also has a redstone control option.
 {-------------------------------------------------------------}
@@ -115,7 +120,6 @@ linked to a space chamber.
 You can use Space Chamber blocks to mark the corners of the source
 area that you want to work. One of these corners should be a
 Space Chamber Controller block.
-{rb:space_chamber}
 {rb:space_chamber_controller}
 {-------------------------------------------------------------}
 {n:chambercard}
@@ -218,6 +222,10 @@ item. Instead it is stored in memory and saved to a folder in your
 world ('rftoolsscans'). Both the scanner and the shape cards are linked
 to that scan. So if you later rescan using the same scanner it will update
 those shape cards as well.
+
+There is also a command to list all available scans in the game:
+
+    /rftshape listscans
 {-------------------------------------------------------------}
 There are two other slots at the top of the Scanner. The filter slot
 can contain an item filter with which you can make sure that certain blocks
@@ -227,4 +235,112 @@ from the scan that way.
 The other slot is for the 'modifier'. This is a more advanced way to filter
 items. With this you can also void certain blocks from the scan but you can
 also replace them with other blocks.
+{-------------------------------------------------------------}
+Shape cards that are linked to a scan (type 'Scan') can be used for the
+following:
+
+    Place them in a Builder to rebuild the shape in another location
+    (provide appropriate materials in a chest on top or below)
+
+    Place them in a Shield to mimic the scanned area
+
+    Place them in Projector to make a scaled down projection of the
+    scanned area
+
+    Use them in the Composer to make other shapes out of them
+
+    Save them on disk using /rftshape save <filename>
+{-------------------------------------------------------------}
+{b}Composer
+{n:composer}
+{rb:composer}
+
+The Composer is an advanced block that can be used to combine
+different shape cards using various operations into a new more
+complex shape card. You can combine normal geometric shapes (cubes,
+spheres, ...) but also scan shapecards and even another composition.
+{-------------------------------------------------------------}
+To start using the Composer you must first insert the destination
+shape card in the bottom slot. Before doing that (or afterwards
+by pressing the '?' button in the Composer GUI) you have to edit
+the desired dimensions in that shape card.
+
+After that you can insert other shape cards into the slots above
+and select the appropriate transformations and operations. In the
+preview window on the right you can see the end result you will get.
+
+Note that you can always press the '?' button on the left of a
+shape card to go the individual GUI of that shape card.
+{-------------------------------------------------------------}
+A composite shape card can also be used in various machines in RFTools
+that work with shape cards. You can (for example) use this to quarry
+an area in a complex shape. Or build a specific shape. At the right of
+each shape card slot there is also a material slot where you can place
+the material to be used for the shape of that shape card.
+
+Another use of the Composer is to use a scan shape card. Set it
+to 'hollow' to remove all the interiors and then subtract a hollow
+box from it. That way you can see through the scan and see all caves
+and ravines more easily.
+
+The Composer can also be used to rotate and flip basic shapes.
+{-------------------------------------------------------------}
+{b}Projector
+{n:projector}
+{rb:projector}
+
+With the Projector you can project a small scale replica of a
+shape card. Usually this is done with scan shape cards but you can
+project any shape card. Even composite ones.
+{-------------------------------------------------------------}
+There are various parameters that can be controlled with the
+Projector like angle, scale, offset, ... Using the GUI of the
+Projector you can also control what should happen if any of the
+four sides receives a redstone signal (or doesn't). This way
+you can let the Projector turn on/off with a button and rotate
+with another button (for example).
+{-------------------------------------------------------------}
+{b}Locator
+{n:locator}
+{rb:locator}
+
+The Locator is a companion block to the Scanner and has to be
+placed exactly on top of a Scanner to work. When it is present it
+will scan the area and look for entities and/or machines that use
+power.
+{-------------------------------------------------------------}
+The result of a Locator will be shown by the Projector that is showing
+the associated scan. By default entities or power using machines will
+be shown with small icons but you can also enable beacons in the
+Locator GUI.
+
+Power usage of the Locator depends on what you're showing and how
+big the scanned area is. It will do a new scan every 40 ticks.
+{-------------------------------------------------------------}
+Using the 'energy' feature in the Locator you can search blocks
+that are low (or high) on power. This feature is limited to scans
+that are not more then 5x5 chunks because it is not that cheap to
+calculate.
+
+Note that the Projector will also correctly show beacons/markers
+from a Locator even if the scan shape card is used indirectly
+through a composite shape card. But this only works correctly if
+the scan card is not transformed and has same size as the composite
+card.
+{-------------------------------------------------------------}
+{b}Saving and Loading
+{n:saving}
+It is possible to save and load shape cards to a file so you can
+transfer your structures to other worlds. To save a shapecard do
+the following with a shape card in your hand:
+
+    /rftshape save file.txt
+
+To load such a shape you need a shape card that is linked to a
+scan (usually with a Scanner) and then you can do:
+
+    /rftshape load file.txt
+
+Note that shape cards are always loaded as type 'scan' even
+if the type was different when you saved it.
 {-------------------------------------------------------------}
