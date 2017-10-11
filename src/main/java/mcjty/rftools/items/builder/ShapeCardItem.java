@@ -758,7 +758,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
                     if (solid) {
                         if (ox == 0 || ox == dx - 1 || oy == 0 || oy == dy - 1 || oz == 0 || oz == dz - 1) {
                             v = statePalette.alloc(lastState, -1) + 1;
-                        } else if (isClear(formula, x - 1, y, z) || isClear(formula, x + 1, y, z) || isClear(formula, x, y - 1, z) || isClear(formula, x, y + 1, z) || isClear(formula, x, y, z - 1) || isClear(formula, x, y, z + 1)) {
+                        } else if (formula.isVisible(x, y, z)) {
                             v = statePalette.alloc(lastState, -1) + 1;
                         }
                     } else {
@@ -769,18 +769,6 @@ public class ShapeCardItem extends GenericRFToolsItem {
             }
         }
         return cnt;
-    }
-
-    private static boolean isClear(IFormula formula, int x, int y, int z) {
-        if (!formula.isInside(x, y, z)) {
-            return true;
-        }
-        IBlockState state = formula.getLastState();
-        if (state != null) {
-            return ShapeBlockInfo.isNonSolidBlock(state.getBlock());
-        } else {
-            return false;
-        }
     }
 
 

@@ -131,6 +131,24 @@ public class Formulas {
             return false;
         }
 
+        @Override
+        public boolean isVisible(int x, int y, int z) {
+            int index = (x-x1) * dy * dz + (z-z1) * dy + (y-y1);
+            return isClear(index-1) || isClear(index+1) || isClear(index-dy) || isClear(index+dy) || isClear(index-dy*dz) || isClear(index+dy*dz);
+        }
+
+        public boolean isClear(int index) {
+            if (!isInsideInternal(index)) {
+                return true;
+            }
+            IBlockState state = getLastState();
+            if (state != null) {
+                return ShapeBlockInfo.isNonSolidBlock(state.getBlock());
+            } else {
+                return false;
+            }
+        }
+
         private boolean isInsideInternal(int index) {
             if (data[index] == 0) {
                 return false;
