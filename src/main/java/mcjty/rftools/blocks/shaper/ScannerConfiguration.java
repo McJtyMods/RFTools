@@ -36,7 +36,7 @@ public class ScannerConfiguration {
 
     public static int surfaceAreaPerTick = 512*256*2;
     public static int planeSurfacePerTick = 200*200;
-    public static int clientRenderDataTimeout = 5000;
+    public static int clientRenderDataTimeout = 10000;
 
     public static int projectorFlashTimeout = 400;
 

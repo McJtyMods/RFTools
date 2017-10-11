@@ -38,13 +38,13 @@ import java.util.function.Function;
         dependencies =
                         "required-after:mcjtylib_ng@[" + RFTools.MIN_MCJTYLIB_VER + ",);" +
                         "before:xnet@[" + RFTools.MIN_XNET_VER + ",);" +
-                        "after:forge@[" + RFTools.MIN_FORGE11_VER + ",)",
+                        "after:forge@[" + RFTools.MIN_FORGE_VER + ",)",
         acceptedMinecraftVersions = "[1.12,1.13)",
         version = RFTools.VERSION)
 public class RFTools implements ModBase {
     public static final String MODID = "rftools";
-    public static final String VERSION = "7.00alpha2";
-    public static final String MIN_FORGE11_VER = "13.20.0.2266";
+    public static final String VERSION = "7.00";
+    public static final String MIN_FORGE_VER = "14.22.0.2464";
     public static final String MIN_MCJTYLIB_VER = "2.4.4";
     public static final String MIN_XNET_VER = "1.3.4";
 

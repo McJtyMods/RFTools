@@ -912,7 +912,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         byte[] encoded = Base64.getEncoder().encode(data);
         writer.write(new String(encoded));
         writer.close();
-        ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.GREEN + "Saved shape to file '" + filename));
+        player.sendStatusMessage(new TextComponentString(TextFormatting.GREEN + "Saved shape to file '" + filename), false);
     }
 
     public static void load(EntityPlayer player, ItemStack card, String filename) {
@@ -984,7 +984,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
             player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "File '" + filename + "' contains invalid entries!"), false);
             return;
         }
-        ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.GREEN + "Loaded shape from file '" + filename));
+        player.sendStatusMessage(new TextComponentString(TextFormatting.GREEN + "Loaded shape from file '" + filename), false);
     }
 
     private static void setDataFromFile(World world, int scanId, ItemStack card, BlockPos dimension, BlockPos offset, byte[] data, StatePalette palette) {

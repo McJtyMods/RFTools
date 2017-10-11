@@ -239,7 +239,7 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
             return true;
         } else {
             TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
-            if(isBlockContainer && !tileEntityClass.isInstance(te)) {
+            if(!tileEntityClass.isInstance(te)) {
                 return false;
             } else if(checkAccess(world, player, te)) {
                 return true;
