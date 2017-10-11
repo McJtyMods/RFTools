@@ -803,13 +803,14 @@ public class ShapeCardItem extends GenericRFToolsItem {
         formula = formula.correctFormula(solid);
         formula.setup(new BlockPos(0, 0, 0), clamped, new BlockPos(0, 0, 0), stack != null ? stack.getTagCompound() : null);
 
+        // For saving shape cards we need to do X/Z/Y (scanner order) instead of the usual Y/X/Z (render order)
         int cnt = 0;
-        for (int oy = 0; oy < dy; oy++) {
-            int y = oy - dy/2;
-            for (int ox = 0; ox < dx; ox++) {
-                int x = ox - dx/2;
-                for (int oz = 0; oz < dz; oz++) {
-                    int z = oz - dz/2;
+        for (int ox = 0; ox < dx; ox++) {
+            int x = ox - dx/2;
+            for (int oz = 0; oz < dz; oz++) {
+                int z = oz - dz/2;
+                for (int oy = 0; oy < dy; oy++) {
+                    int y = oy - dy/2;
                     int v = 255;
                     if (formula.isInside(x, y, z)) {
                         cnt++;
@@ -909,6 +910,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
         byte[] encoded = Base64.getEncoder().encode(data);
         writer.write(new String(encoded));
         writer.close();
+        ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.GREEN + "Saved shape to file '" + filename));
     }
 
     public static void load(EntityPlayer player, ItemStack card, String filename) {
@@ -965,9 +967,6 @@ public class ShapeCardItem extends GenericRFToolsItem {
             }
             s = reader.readLine();
             byte[] decoded = Base64.getDecoder().decode(s.getBytes());
-            for (byte b : decoded) {
-                System.out.println("b = " + b);
-            }
 
             setDataFromFile(player.getEntityWorld(), scanId, card, dim, off, decoded, statePalette);
         } catch (FileNotFoundException e) {
@@ -983,7 +982,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
             ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "File '" + filename + "' contains invalid entries!"));
             return;
         }
-
+        ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.GREEN + "Loaded shape from file '" + filename));
     }
 
     private static void setDataFromFile(World world, int scanId, ItemStack card, BlockPos dimension, BlockPos offset, byte[] data, StatePalette palette) {

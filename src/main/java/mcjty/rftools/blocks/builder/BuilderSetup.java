@@ -92,7 +92,7 @@ public class BuilderSetup {
 
         GameRegistry.addRecipe(new ItemStack(composerBlock), "pbp", "bMb", "pbp", 'M', ModBlocks.machineFrame, 'p', Items.PAPER, 'b', Items.BRICK);
         GameRegistry.addRecipe(new ItemStack(scannerBlock), "beb", "qMq", "brb", 'M', ModBlocks.machineFrame, 'r', Items.REDSTONE, 'b', ModItems.infusedDiamond, 'e', Items.ENDER_PEARL, 'q', Items.QUARTZ);
-        GameRegistry.addRecipe(new ItemStack(locatorBlock), "heh", "qMq", "brb", 'M', ModBlocks.machineFrame, 'r', Items.REDSTONE, 'b', ModItems.infusedDiamond, 'e', Items.ENDER_PEARL, 'q', Items.QUARTZ, 'h', Blocks.SKULL);
+        GameRegistry.addRecipe(new ItemStack(locatorBlock), "heh", "qMq", "brb", 'M', ModBlocks.machineFrame, 'r', Items.REDSTONE, 'b', ModItems.infusedDiamond, 'e', Items.ENDER_PEARL, 'q', Items.QUARTZ, 'h', Items.COMPARATOR);
         GameRegistry.addRecipe(new ItemStack(projectorBlock), "beb", "qMq", "brb", 'M', ModBlocks.machineFrame, 'r', Items.REDSTONE, 'b', ModItems.infusedDiamond, 'e', Blocks.GLASS, 'q', Items.GLOWSTONE_DUST);
 
         GameRegistry.addRecipe(new ItemStack(spaceChamberCardItem), " b ", "rir", " b ", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
