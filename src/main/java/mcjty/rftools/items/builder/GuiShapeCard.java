@@ -26,6 +26,7 @@ import mcjty.rftools.shapes.ShapeRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
@@ -139,6 +140,8 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
             return;
         }
 
+//        int xx = 300 * this.mc.displayWidth / 930;
+//        int yy = 100 * this.mc.displayHeight / 410;
         getShapeRenderer().initView(300, 100);
 
         shapeLabel = new ChoiceLabel(mc, this).setDesiredWidth(100).setDesiredHeight(16).addChoices(

@@ -75,6 +75,8 @@ public class ShapeRenderer {
     }
 
     public void initView(float dx, float dy) {
+        dx = dx * Minecraft.getMinecraft().displayWidth / 930;
+        dy = dy * Minecraft.getMinecraft().displayHeight / 410;
         this.dx = dx;
         this.dy = dy;
     }
