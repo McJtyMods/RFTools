@@ -1,7 +1,6 @@
 package mcjty.rftools.items.modifier;
 
-import mcjty.lib.tools.ItemStackList;
-import mcjty.lib.tools.ItemStackTools;
+import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.items.ModItems;
@@ -73,12 +72,12 @@ public class ModifierItem extends GenericRFToolsItem {
         for (ModifierEntry modifier : modifiers) {
             NBTTagCompound tag = new NBTTagCompound();
 
-            if (ItemStackTools.isValid(modifier.getIn())) {
+            if (!modifier.getIn().isEmpty()) {
                 NBTTagCompound tc = new NBTTagCompound();
                 modifier.getIn().writeToNBT(tc);
                 tag.setTag("in", tc);
             }
-            if (ItemStackTools.isValid(modifier.getOut())) {
+            if (!modifier.getOut().isEmpty()) {
                 NBTTagCompound tc = new NBTTagCompound();
                 modifier.getOut().writeToNBT(tc);
                 tag.setTag("out", tc);
@@ -104,7 +103,7 @@ public class ModifierItem extends GenericRFToolsItem {
         ItemStackList stacks = ItemStackList.create(ModifierContainer.COUNT_SLOTS);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            stacks.set(i, ItemStackTools.loadFromNBT(nbtTagCompound));
+            stacks.set(i, new ItemStack(nbtTagCompound));
         }
         return stacks;
     }
@@ -132,8 +131,8 @@ public class ModifierItem extends GenericRFToolsItem {
         ItemStack stackIn = stacks.get(ModifierContainer.SLOT_FILTER);
         ItemStack stackOut = stacks.get(ModifierContainer.SLOT_REPLACEMENT);
         modifiers.add(new ModifierEntry(stackIn, stackOut, type, op));
-        stacks.set(ModifierContainer.SLOT_FILTER, ItemStackTools.getEmptyStack());
-        stacks.set(ModifierContainer.SLOT_REPLACEMENT, ItemStackTools.getEmptyStack());
+        stacks.set(ModifierContainer.SLOT_FILTER, ItemStack.EMPTY);
+        stacks.set(ModifierContainer.SLOT_REPLACEMENT, ItemStack.EMPTY);
         ModifierInventory.convertItemsToNBT(tagCompound, stacks);
         updateModifiers(stack, modifiers);
     }
@@ -145,18 +144,18 @@ public class ModifierItem extends GenericRFToolsItem {
         ItemStack out = entry.getOut();
         NBTTagCompound tagCompound = stack.getTagCompound();
         ItemStackList stacks = getItemStacks(tagCompound);
-        if (ItemStackTools.isValid(in) && ItemStackTools.isValid(stacks.get(ModifierContainer.SLOT_FILTER))) {
+        if (!in.isEmpty() && !stacks.get(ModifierContainer.SLOT_FILTER).isEmpty()) {
             // Something is in the way
             return;
         }
-        if (ItemStackTools.isValid(out) && ItemStackTools.isValid(stacks.get(ModifierContainer.SLOT_REPLACEMENT))) {
+        if (!out.isEmpty() && !stacks.get(ModifierContainer.SLOT_REPLACEMENT).isEmpty()) {
             // Something is in the way
             return;
         }
-        if (ItemStackTools.isValid(in)) {
+        if (!in.isEmpty()) {
             stacks.set(ModifierContainer.SLOT_FILTER, in.copy());
         }
-        if (ItemStackTools.isValid(out)) {
+        if (!out.isEmpty()) {
             stacks.set(ModifierContainer.SLOT_REPLACEMENT, out.copy());
         }
         ModifierInventory.convertItemsToNBT(tagCompound, stacks);

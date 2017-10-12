@@ -9,8 +9,8 @@ import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
 import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.shapes.*;
-import mcjty.rftools.varia.ItemStackTools;
 import mcjty.rftools.varia.Check32;
+import mcjty.rftools.varia.ItemStackTools;
 import mcjty.rftools.varia.RLE;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -564,7 +564,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
 
     // Also find scanId's from children
     public static int getScanIdRecursive(ItemStack stack) {
-        if (ItemStackTools.isEmpty(stack)) {
+        if (stack.isEmpty()) {
             return 0;
         }
         return getScanIdRecursive(getCompound(stack));

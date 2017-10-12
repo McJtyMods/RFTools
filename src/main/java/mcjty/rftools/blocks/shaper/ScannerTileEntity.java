@@ -304,7 +304,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
                     }
                     case FILTER_ORE: {
                         ItemStack inputItem = inState.getBlock().getItem(getWorld(), pos, inState);
-                        if (ItemStackTools.isValid(inputItem)) {
+                        if (!inputItem.isEmpty()) {
                             int[] oreIDs = OreDictionary.getOreIDs(inputItem);
                             for (int id : oreIDs) {
                                 if (OreDictionary.getOreName(id).startsWith("ore")) {
@@ -428,10 +428,8 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         this.dataDim = new BlockPos(progress.dimX, progress.dimY, progress.dimZ);
         ScanDataManager scan = ScanDataManager.getScans();
         scan.getOrCreateScan(getScanId()).setData(progress.rle.getData(), progress.materialPalette.getPalette(), dataDim, dataOffset);
-        scan.save(getWorld(), getScanId());
-        if (renderStack.isEmpty()) {
         scan.save(getScanId());
-        if (ItemStackTools.isEmpty(renderStack)) {
+        if (renderStack.isEmpty()) {
             renderStack = new ItemStack(BuilderSetup.shapeCardItem);
         }
         updateScanCard(renderStack);

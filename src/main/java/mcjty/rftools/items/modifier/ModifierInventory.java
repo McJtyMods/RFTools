@@ -1,9 +1,6 @@
 package mcjty.rftools.items.modifier;
 
 import mcjty.lib.varia.ItemStackList;
-import mcjty.lib.compat.CompatInventory;
-import mcjty.lib.tools.ItemStackList;
-import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -22,11 +19,6 @@ public class ModifierInventory implements IInventory {
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
             entityPlayer.getHeldItem(EnumHand.MAIN_HAND).setTagCompound(tagCompound);
-        }
-        NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
-            NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            stacks.set(i, new ItemStack(nbtTagCompound));
         }
     }
 
@@ -89,15 +81,6 @@ public class ModifierInventory implements IInventory {
     @Override
     public int getInventoryStackLimit() {
         return 1;
-    }
-
-    @Override
-    public void markDirty() {
-        ItemStack heldItem = entityPlayer.getHeldItem(EnumHand.MAIN_HAND);
-        if (!heldItem.isEmpty()) {
-            NBTTagCompound tagCompound = heldItem.getTagCompound();
-            convertItemsToNBT(tagCompound, stacks);
-        }
     }
 
     public static void convertItemsToNBT(NBTTagCompound tagCompound, ItemStackList stacks) {
