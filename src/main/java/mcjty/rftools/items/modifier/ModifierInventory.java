@@ -45,7 +45,6 @@ public class ModifierInventory implements IInventory {
             if (stacks.get(index).getCount() <= amount) {
                 ItemStack old = stacks.get(index);
                 stacks.set(index, ItemStack.EMPTY);
-                stacks.set(index, ItemStackTools.getEmptyStack());
                 convertItemsToNBT(tagCompound, stacks);
                 markDirty();
                 return old;
@@ -53,8 +52,6 @@ public class ModifierInventory implements IInventory {
             ItemStack its = stacks.get(index).splitStack(amount);
             if (stacks.get(index).isEmpty()) {
                 stacks.set(index, ItemStack.EMPTY);
-            if (ItemStackTools.isEmpty(stacks.get(index))) {
-                stacks.set(index, ItemStackTools.getEmptyStack());
                 convertItemsToNBT(tagCompound, stacks);
             }
             markDirty();
