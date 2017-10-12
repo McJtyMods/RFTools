@@ -10,8 +10,12 @@ import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketUpdateNBTItemInventory;
+import mcjty.lib.tools.ItemStackTools;
+import mcjty.lib.tools.MinecraftTools;
+import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.shaper.ComposerTileEntity;
 import mcjty.rftools.blocks.shaper.GuiComposer;
+import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import mcjty.rftools.network.PacketOpenGui;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.IShapeParentGui;
@@ -22,6 +26,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -134,6 +139,8 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
             return;
         }
 
+//        int xx = 300 * this.mc.displayWidth / 930;
+//        int yy = 100 * this.mc.displayHeight / 410;
         getShapeRenderer().initView(300, 100);
 
         shapeLabel = new ChoiceLabel(mc, this).setDesiredWidth(100).setDesiredHeight(16).addChoices(
@@ -260,10 +267,6 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         return "Solid".equals(solidLabel.getCurrentChoice());
     }
 
-    private BlockPos getCurrentDimension() {
-        return new BlockPos(parseInt(dimX.getText()), parseInt(dimY.getText()), parseInt(dimZ.getText()));
-    }
-
     private static int parseInt(String s) {
         try {
             return Integer.parseInt(s);
@@ -273,6 +276,29 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
     }
 
     private void updateSettings() {
+        int dx = parseInt(dimX.getText());
+        int dy = parseInt(dimY.getText());
+        int dz = parseInt(dimZ.getText());
+        int max = Math.max(ScannerConfiguration.maxScannerDimension, BuilderConfiguration.maxBuilderDimension);
+        if (dx < 0) {
+            dx = 0;
+        } else if (dx > max) {
+            dx = max;
+        }
+        dimX.setText(Integer.toString(dx));
+        if (dz < 0) {
+             dz = 0;
+        } else if (dz > max) {
+            dz = max;
+        }
+        dimZ.setText(Integer.toString(dz));
+        if (dy < 0) {
+            dy = 0;
+        } else if (dy > 256) {
+            dy = 256;
+        }
+        dimY.setText(Integer.toString(dy));
+
         if (isTorus()) {
             dimZ.setText(dimX.getText());
         }
@@ -284,7 +310,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
                     tag = new NBTTagCompound();
                 }
                 ShapeCardItem.setShape(stack, getCurrentShape(), isSolid());
-                ShapeCardItem.setDimension(stack, parseInt(dimX.getText()), parseInt(dimY.getText()), parseInt(dimZ.getText()));
+                ShapeCardItem.setDimension(stack, dx, dy, dz);
                 ShapeCardItem.setOffset(stack, parseInt(offsetX.getText()), parseInt(offsetY.getText()), parseInt(offsetZ.getText()));
                 RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItemInventory(
                         GuiComposer.shaperBlock, GuiComposer.shaperStackSlot, tag));
@@ -293,9 +319,9 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
             RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTShapeCard(
                     new Argument("shapenew", getCurrentShape().getDescription()),
                     new Argument("solid", isSolid()),
-                    new Argument("dimX", parseInt(dimX.getText())),
-                    new Argument("dimY", parseInt(dimY.getText())),
-                    new Argument("dimZ", parseInt(dimZ.getText())),
+                    new Argument("dimX", dx),
+                    new Argument("dimY", dy),
+                    new Argument("dimZ", dz),
                     new Argument("offsetX", parseInt(offsetX.getText())),
                     new Argument("offsetY", parseInt(offsetY.getText())),
                     new Argument("offsetZ", parseInt(offsetZ.getText()))

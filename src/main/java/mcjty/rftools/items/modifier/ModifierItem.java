@@ -1,5 +1,7 @@
 package mcjty.rftools.items.modifier;
 
+import mcjty.lib.tools.ItemStackList;
+import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.items.ModItems;
@@ -44,6 +46,122 @@ public class ModifierItem extends GenericRFToolsItem {
             }
         }
         return null;
+    }
+
+    public static void performCommand(EntityPlayer player, ItemStack stack, ModifierCommand cmd, int index, ModifierFilterType type, ModifierFilterOperation op) {
+        stack = stack.copy();
+        switch (cmd) {
+            case ADD:
+                addOp(stack, type, op);
+                break;
+            case DEL:
+                delOp(stack, index);
+                break;
+            case UP:
+                upOp(stack, index);
+                break;
+            case DOWN:
+                downOp(stack, index);
+                break;
+        }
+        player.setHeldItem(EnumHand.MAIN_HAND, stack);
+        player.openContainer.detectAndSendChanges();
+    }
+
+    private static NBTTagList getTagList(List<ModifierEntry> modifiers) {
+        NBTTagList taglist = new NBTTagList();
+        for (ModifierEntry modifier : modifiers) {
+            NBTTagCompound tag = new NBTTagCompound();
+
+            if (ItemStackTools.isValid(modifier.getIn())) {
+                NBTTagCompound tc = new NBTTagCompound();
+                modifier.getIn().writeToNBT(tc);
+                tag.setTag("in", tc);
+            }
+            if (ItemStackTools.isValid(modifier.getOut())) {
+                NBTTagCompound tc = new NBTTagCompound();
+                modifier.getOut().writeToNBT(tc);
+                tag.setTag("out", tc);
+            }
+
+            tag.setString("type", modifier.getType().getCode());
+            tag.setString("op", modifier.getOp().getCode());
+
+            taglist.appendTag(tag);
+
+        }
+
+        return taglist;
+    }
+
+    private static void updateModifiers(ItemStack stack, List<ModifierEntry> modifiers) {
+        NBTTagList tagList = getTagList(modifiers);
+        stack.getTagCompound().setTag("ops", tagList);
+    }
+
+    public static ItemStackList getItemStacks(NBTTagCompound tagCompound) {
+        NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+        ItemStackList stacks = ItemStackList.create(ModifierContainer.COUNT_SLOTS);
+        for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
+            NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
+            stacks.set(i, ItemStackTools.loadFromNBT(nbtTagCompound));
+        }
+        return stacks;
+    }
+
+    private static void upOp(ItemStack stack, int index) {
+        List<ModifierEntry> modifiers = getModifiers(stack);
+        ModifierEntry entry = modifiers.get(index);
+        modifiers.remove(index);
+        modifiers.add(index-1, entry);
+        updateModifiers(stack, modifiers);
+    }
+
+    private static void downOp(ItemStack stack, int index) {
+        List<ModifierEntry> modifiers = getModifiers(stack);
+        ModifierEntry entry = modifiers.get(index);
+        modifiers.remove(index);
+        modifiers.add(index+1, entry);
+        updateModifiers(stack, modifiers);
+    }
+
+    private static void addOp(ItemStack stack, ModifierFilterType type, ModifierFilterOperation op) {
+        List<ModifierEntry> modifiers = getModifiers(stack);
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        ItemStackList stacks = getItemStacks(tagCompound);
+        ItemStack stackIn = stacks.get(ModifierContainer.SLOT_FILTER);
+        ItemStack stackOut = stacks.get(ModifierContainer.SLOT_REPLACEMENT);
+        modifiers.add(new ModifierEntry(stackIn, stackOut, type, op));
+        stacks.set(ModifierContainer.SLOT_FILTER, ItemStackTools.getEmptyStack());
+        stacks.set(ModifierContainer.SLOT_REPLACEMENT, ItemStackTools.getEmptyStack());
+        ModifierInventory.convertItemsToNBT(tagCompound, stacks);
+        updateModifiers(stack, modifiers);
+    }
+
+    private static void delOp(ItemStack stack, int index) {
+        List<ModifierEntry> modifiers = getModifiers(stack);
+        ModifierEntry entry = modifiers.get(index);
+        ItemStack in = entry.getIn();
+        ItemStack out = entry.getOut();
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        ItemStackList stacks = getItemStacks(tagCompound);
+        if (ItemStackTools.isValid(in) && ItemStackTools.isValid(stacks.get(ModifierContainer.SLOT_FILTER))) {
+            // Something is in the way
+            return;
+        }
+        if (ItemStackTools.isValid(out) && ItemStackTools.isValid(stacks.get(ModifierContainer.SLOT_REPLACEMENT))) {
+            // Something is in the way
+            return;
+        }
+        if (ItemStackTools.isValid(in)) {
+            stacks.set(ModifierContainer.SLOT_FILTER, in.copy());
+        }
+        if (ItemStackTools.isValid(out)) {
+            stacks.set(ModifierContainer.SLOT_REPLACEMENT, out.copy());
+        }
+        ModifierInventory.convertItemsToNBT(tagCompound, stacks);
+        modifiers.remove(index);
+        updateModifiers(stack, modifiers);
     }
 
     public static List<ModifierEntry> getModifiers(ItemStack item) {

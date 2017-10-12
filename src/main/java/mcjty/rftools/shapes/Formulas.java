@@ -259,6 +259,16 @@ public class Formulas {
                         String op = childTag.getString("mod_op");
                         ShapeOperation operation = ShapeOperation.getByName(op);
                         crc.add(operation.ordinal());
+
+                        if (childTag.hasKey("ghost_block")) {
+                            IBlockState state = null;
+                            Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(childTag.getString("ghost_block")));
+                            if (block != null) {
+                                crc.add(Block.getIdFromBlock(block));
+                                int meta = childTag.getInteger("ghost_meta");
+                                crc.add(meta);
+                            }
+                        }
                     }
                 }
 

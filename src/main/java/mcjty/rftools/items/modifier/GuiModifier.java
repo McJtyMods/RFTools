@@ -8,18 +8,18 @@ import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.tools.ItemStackTools;
+import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.util.Collections;
 import java.util.List;
 
@@ -180,6 +180,7 @@ public class GuiModifier extends GenericGuiContainer {
         inventorySlots.getSlot(ModifierContainer.SLOT_FILTER).putStack(ItemStack.EMPTY);
         inventorySlots.getSlot(ModifierContainer.SLOT_REPLACEMENT).putStack(ItemStack.EMPTY);
         updateModifiers(modifiers);
+        RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateModifier(ModifierCommand.ADD, 0, ModifierFilterType.getByCode(mode.getCurrentChoice()), ModifierFilterOperation.getByCode(op.getCurrentChoice())));
     }
 
     private void delOp() {
@@ -211,6 +212,7 @@ public class GuiModifier extends GenericGuiContainer {
 
         modifiers.remove(list.getSelected());
         updateModifiers(modifiers);
+        RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateModifier(ModifierCommand.DEL, list.getSelected(), ModifierFilterType.getByCode(mode.getCurrentChoice()), ModifierFilterOperation.getByCode(op.getCurrentChoice())));
     }
 
     private void upOp() {
@@ -220,13 +222,8 @@ public class GuiModifier extends GenericGuiContainer {
         if (!isValidItem()) {
             return;
         }
-
-        List<ModifierEntry> modifiers = getModifiers();
-        ModifierEntry entry = modifiers.get(list.getSelected());
-        modifiers.remove(list.getSelected());
-        modifiers.add(list.getSelected()-1, entry);
+        RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateModifier(ModifierCommand.UP, list.getSelected(), ModifierFilterType.getByCode(mode.getCurrentChoice()), ModifierFilterOperation.getByCode(op.getCurrentChoice())));
         list.setSelected(list.getSelected()-1);
-        updateModifiers(modifiers);
     }
 
     private void downOp() {
@@ -236,13 +233,8 @@ public class GuiModifier extends GenericGuiContainer {
         if (!isValidItem()) {
             return;
         }
-
-        List<ModifierEntry> modifiers = getModifiers();
-        ModifierEntry entry = modifiers.get(list.getSelected());
-        modifiers.remove(list.getSelected());
-        modifiers.add(list.getSelected()+1, entry);
+        RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateModifier(ModifierCommand.DOWN, list.getSelected(), ModifierFilterType.getByCode(mode.getCurrentChoice()), ModifierFilterOperation.getByCode(op.getCurrentChoice())));
         list.setSelected(list.getSelected()+1);
-        updateModifiers(modifiers);
     }
 
     @Override

@@ -1,6 +1,9 @@
 package mcjty.rftools.items.modifier;
 
 import mcjty.lib.varia.ItemStackList;
+import mcjty.lib.compat.CompatInventory;
+import mcjty.lib.tools.ItemStackList;
+import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -8,11 +11,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.common.util.Constants;
 
 public class ModifierInventory implements IInventory {
 
-    private ItemStackList stacks = ItemStackList.create(ModifierContainer.COUNT_SLOTS);
     private final EntityPlayer entityPlayer;
 
     public ModifierInventory(EntityPlayer player) {
@@ -36,11 +37,15 @@ public class ModifierInventory implements IInventory {
 
     @Override
     public ItemStack getStackInSlot(int index) {
+        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
+        ItemStackList stacks = ModifierItem.getItemStacks(tagCompound);
         return stacks.get(index);
     }
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
+        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
+        ItemStackList stacks = ModifierItem.getItemStacks(tagCompound);
         if (index >= stacks.size()) {
             return ItemStack.EMPTY;
         }
@@ -62,7 +67,14 @@ public class ModifierInventory implements IInventory {
     }
 
     @Override
+    public void markDirty() {
+
+    }
+
+    @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
+        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
+        ItemStackList stacks = ModifierItem.getItemStacks(tagCompound);
         if (index >= stacks.size()) {
             return;
         }

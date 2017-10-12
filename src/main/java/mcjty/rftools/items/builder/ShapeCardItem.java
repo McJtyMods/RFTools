@@ -558,10 +558,19 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         if (stack.isEmpty()) {
             return 0;
         }
-        return getScanId(getCompound(stack));
+        NBTTagCompound tagCompound = getCompound(stack);
+        return tagCompound.getInteger("scanid");
     }
 
-    private static int getScanId(NBTTagCompound tagCompound) {
+    // Also find scanId's from children
+    public static int getScanIdRecursive(ItemStack stack) {
+        if (ItemStackTools.isEmpty(stack)) {
+            return 0;
+        }
+        return getScanIdRecursive(getCompound(stack));
+    }
+
+    private static int getScanIdRecursive(NBTTagCompound tagCompound) {
         if (tagCompound.hasKey("scanid")) {
             return tagCompound.getInteger("scanid");
         }
@@ -571,7 +580,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
             NBTTagList children = tagCompound.getTagList("children", Constants.NBT.TAG_COMPOUND);
             for (int i = 0 ; i < children.tagCount() ; i++) {
                 NBTTagCompound childTag = children.getCompoundTagAt(i);
-                int id = getScanId(childTag);
+                int id = getScanIdRecursive(childTag);
                 if (id != 0) {
                     return id;
                 }
@@ -970,7 +979,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
             s = reader.readLine();
             byte[] decoded = Base64.getDecoder().decode(s.getBytes());
 
-            setDataFromFile(player.getEntityWorld(), scanId, card, dim, off, decoded, statePalette);
+            setDataFromFile(scanId, card, dim, off, decoded, statePalette);
         } catch (FileNotFoundException e) {
             player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Cannot read from file '" + filename + "'!"), false);
             return;
@@ -987,10 +996,10 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         player.sendStatusMessage(new TextComponentString(TextFormatting.GREEN + "Loaded shape from file '" + filename), false);
     }
 
-    private static void setDataFromFile(World world, int scanId, ItemStack card, BlockPos dimension, BlockPos offset, byte[] data, StatePalette palette) {
+    private static void setDataFromFile(int scanId, ItemStack card, BlockPos dimension, BlockPos offset, byte[] data, StatePalette palette) {
         ScanDataManager scans = ScanDataManager.getScans();
         scans.getOrCreateScan(scanId).setData(data, palette.getPalette(), dimension, offset);
-        scans.save(world, scanId);
+        scans.save(scanId);
         ShapeCardItem.setDimension(card, dimension.getX(), dimension.getY(), dimension.getZ());
         ShapeCardItem.setOffset(card, offset.getX(), offset.getY(), offset.getZ());
         ShapeCardItem.setShape(card, Shape.SHAPE_SCAN, true);
