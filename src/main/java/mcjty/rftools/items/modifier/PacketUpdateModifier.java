@@ -1,7 +1,6 @@
 package mcjty.rftools.items.modifier;
 
 import io.netty.buffer.ByteBuf;
-import mcjty.lib.network.NetworkTools;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.rftools.items.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,23 +12,33 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class PacketUpdateModifier implements IMessage {
-    private ItemStack stack;
+    private ModifierCommand cmd = ModifierCommand.ADD;
+    private int index;
+    private ModifierFilterType type;
+    private ModifierFilterOperation op;
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        stack = NetworkTools.readItemStack(buf);
+        cmd = ModifierCommand.values()[buf.readByte()];
+        index = buf.readInt();
+        type = ModifierFilterType.values()[buf.readByte()];
+        op = ModifierFilterOperation.values()[buf.readByte()];
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        NetworkTools.writeItemStack(buf, stack);
+        buf.writeByte(cmd == null ? 0 : cmd.ordinal());
+        buf.writeInt(index);
+        buf.writeByte(type == null ? 0 : type.ordinal());
+        buf.writeByte(op == null ? 0 : op.ordinal());
     }
 
     public PacketUpdateModifier() {
     }
 
-    public PacketUpdateModifier(ItemStack stack) {
-        this.stack = stack;
+    public PacketUpdateModifier(ModifierCommand cmd, int index, ModifierFilterType type, ModifierFilterOperation op) {
+        this.cmd = cmd;
+        this.index = index;
     }
 
     public static class Handler implements IMessageHandler<PacketUpdateModifier, IMessage> {
@@ -43,7 +52,7 @@ public class PacketUpdateModifier implements IMessage {
             EntityPlayer player = ctx.getServerHandler().player;
             ItemStack heldItem = player.getHeldItem(EnumHand.MAIN_HAND);
             if (ItemStackTools.isValid(heldItem) && heldItem.getItem() == ModItems.modifierItem) {
-                player.setHeldItem(EnumHand.MAIN_HAND, message.stack);
+                ModifierItem.performCommand(player, heldItem, message.cmd, message.index, message.type, message.op);
             }
         }
     }

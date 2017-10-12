@@ -3,18 +3,15 @@ package mcjty.rftools.items.modifier;
 import mcjty.lib.compat.CompatInventory;
 import mcjty.lib.tools.ItemStackList;
 import mcjty.lib.tools.ItemStackTools;
-import mcjty.rftools.items.storage.StorageFilterContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.common.util.Constants;
 
 public class ModifierInventory implements CompatInventory {
 
-    private ItemStackList stacks = ItemStackList.create(ModifierContainer.COUNT_SLOTS);
     private final EntityPlayer entityPlayer;
 
     public ModifierInventory(EntityPlayer player) {
@@ -23,11 +20,6 @@ public class ModifierInventory implements CompatInventory {
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
             entityPlayer.getHeldItem(EnumHand.MAIN_HAND).setTagCompound(tagCompound);
-        }
-        NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
-            NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            stacks.set(i, ItemStackTools.loadFromNBT(nbtTagCompound));
         }
     }
 
@@ -38,11 +30,15 @@ public class ModifierInventory implements CompatInventory {
 
     @Override
     public ItemStack getStackInSlot(int index) {
+        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
+        ItemStackList stacks = ModifierItem.getItemStacks(tagCompound);
         return stacks.get(index);
     }
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
+        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
+        ItemStackList stacks = ModifierItem.getItemStacks(tagCompound);
         if (index >= stacks.size()) {
             return ItemStackTools.getEmptyStack();
         }
@@ -64,7 +60,14 @@ public class ModifierInventory implements CompatInventory {
     }
 
     @Override
+    public void markDirty() {
+
+    }
+
+    @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
+        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
+        ItemStackList stacks = ModifierItem.getItemStacks(tagCompound);
         if (index >= stacks.size()) {
             return;
         }
@@ -79,15 +82,6 @@ public class ModifierInventory implements CompatInventory {
     @Override
     public int getInventoryStackLimit() {
         return 1;
-    }
-
-    @Override
-    public void markDirty() {
-        ItemStack heldItem = entityPlayer.getHeldItem(EnumHand.MAIN_HAND);
-        if (ItemStackTools.isValid((heldItem))) {
-            NBTTagCompound tagCompound = heldItem.getTagCompound();
-            convertItemsToNBT(tagCompound, stacks);
-        }
     }
 
     public static void convertItemsToNBT(NBTTagCompound tagCompound, ItemStackList stacks) {

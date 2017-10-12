@@ -5,9 +5,6 @@ import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Button;
-import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.tools.MinecraftTools;
 import mcjty.rftools.RFTools;
@@ -16,12 +13,10 @@ import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.util.Collections;
 import java.util.List;
 
@@ -137,51 +132,11 @@ public class GuiModifier extends GenericGuiContainer {
         return ModifierItem.getModifiers(item);
     }
 
-    private NBTTagList getTagList(List<ModifierEntry> modifiers) {
-        NBTTagList taglist = new NBTTagList();
-        for (ModifierEntry modifier : modifiers) {
-            NBTTagCompound tag = new NBTTagCompound();
-
-            if (ItemStackTools.isValid(modifier.getIn())) {
-                NBTTagCompound tc = new NBTTagCompound();
-                modifier.getIn().writeToNBT(tc);
-                tag.setTag("in", tc);
-            }
-            if (ItemStackTools.isValid(modifier.getOut())) {
-                NBTTagCompound tc = new NBTTagCompound();
-                modifier.getOut().writeToNBT(tc);
-                tag.setTag("out", tc);
-            }
-
-            tag.setString("type", modifier.getType().getCode());
-            tag.setString("op", modifier.getOp().getCode());
-
-            taglist.appendTag(tag);
-
-        }
-
-        return taglist;
-    }
-
-    private void updateModifiers(List<ModifierEntry> modifiers) {
-        NBTTagList tagList = getTagList(modifiers);
-        ItemStack item = getItem();
-        item.getTagCompound().setTag("ops", tagList);
-        RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateModifier(item));
-    }
-
     private void addOp() {
         if (!isValidItem()) {
             return;
         }
-
-        List<ModifierEntry> modifiers = getModifiers();
-        ItemStack stackIn = inventorySlots.getSlot(ModifierContainer.SLOT_FILTER).getStack();
-        ItemStack stackOut = inventorySlots.getSlot(ModifierContainer.SLOT_REPLACEMENT).getStack();
-        modifiers.add(new ModifierEntry(stackIn, stackOut, ModifierFilterType.getByCode(mode.getCurrentChoice()), ModifierFilterOperation.getByCode(op.getCurrentChoice())));
-        inventorySlots.getSlot(ModifierContainer.SLOT_FILTER).putStack(ItemStackTools.getEmptyStack());
-        inventorySlots.getSlot(ModifierContainer.SLOT_REPLACEMENT).putStack(ItemStackTools.getEmptyStack());
-        updateModifiers(modifiers);
+        RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateModifier(ModifierCommand.ADD, 0, ModifierFilterType.getByCode(mode.getCurrentChoice()), ModifierFilterOperation.getByCode(op.getCurrentChoice())));
     }
 
     private void delOp() {
@@ -191,28 +146,7 @@ public class GuiModifier extends GenericGuiContainer {
         if (!isValidItem()) {
             return;
         }
-
-        List<ModifierEntry> modifiers = getModifiers();
-        ModifierEntry entry = modifiers.get(list.getSelected());
-        ItemStack in = entry.getIn();
-        ItemStack out = entry.getOut();
-        if (ItemStackTools.isValid(in) && inventorySlots.getSlot(ModifierContainer.SLOT_FILTER).getHasStack()) {
-            // Something is in the way
-            return;
-        }
-        if (ItemStackTools.isValid(out) && inventorySlots.getSlot(ModifierContainer.SLOT_REPLACEMENT).getHasStack()) {
-            // Something is in the way
-            return;
-        }
-        if (ItemStackTools.isValid(in)) {
-            inventorySlots.getSlot(ModifierContainer.SLOT_FILTER).putStack(in);
-        }
-        if (ItemStackTools.isValid(out)) {
-            inventorySlots.getSlot(ModifierContainer.SLOT_REPLACEMENT).putStack(out);
-        }
-
-        modifiers.remove(list.getSelected());
-        updateModifiers(modifiers);
+        RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateModifier(ModifierCommand.DEL, list.getSelected(), ModifierFilterType.getByCode(mode.getCurrentChoice()), ModifierFilterOperation.getByCode(op.getCurrentChoice())));
     }
 
     private void upOp() {
@@ -222,13 +156,8 @@ public class GuiModifier extends GenericGuiContainer {
         if (!isValidItem()) {
             return;
         }
-
-        List<ModifierEntry> modifiers = getModifiers();
-        ModifierEntry entry = modifiers.get(list.getSelected());
-        modifiers.remove(list.getSelected());
-        modifiers.add(list.getSelected()-1, entry);
+        RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateModifier(ModifierCommand.UP, list.getSelected(), ModifierFilterType.getByCode(mode.getCurrentChoice()), ModifierFilterOperation.getByCode(op.getCurrentChoice())));
         list.setSelected(list.getSelected()-1);
-        updateModifiers(modifiers);
     }
 
     private void downOp() {
@@ -238,13 +167,8 @@ public class GuiModifier extends GenericGuiContainer {
         if (!isValidItem()) {
             return;
         }
-
-        List<ModifierEntry> modifiers = getModifiers();
-        ModifierEntry entry = modifiers.get(list.getSelected());
-        modifiers.remove(list.getSelected());
-        modifiers.add(list.getSelected()+1, entry);
+        RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateModifier(ModifierCommand.DOWN, list.getSelected(), ModifierFilterType.getByCode(mode.getCurrentChoice()), ModifierFilterOperation.getByCode(op.getCurrentChoice())));
         list.setSelected(list.getSelected()+1);
-        updateModifiers(modifiers);
     }
 
     @Override
