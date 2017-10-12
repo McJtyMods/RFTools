@@ -300,12 +300,14 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
                     }
                     case FILTER_ORE: {
                         ItemStack inputItem = inState.getBlock().getItem(getWorld(), pos, inState);
-                        int[] oreIDs = OreDictionary.getOreIDs(inputItem);
-                        for (int id : oreIDs) {
-                            if (OreDictionary.getOreName(id).startsWith("ore")) {
-                                outState = getOutput(inState, modifier);
-                                stop = true;
-                                break;
+                        if (ItemStackTools.isValid(inputItem)) {
+                            int[] oreIDs = OreDictionary.getOreIDs(inputItem);
+                            for (int id : oreIDs) {
+                                if (OreDictionary.getOreName(id).startsWith("ore")) {
+                                    outState = getOutput(inState, modifier);
+                                    stop = true;
+                                    break;
+                                }
                             }
                         }
                         break;
