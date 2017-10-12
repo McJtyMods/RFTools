@@ -78,7 +78,6 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
     private ToggleButton netherrack;
     private ToggleButton oredict;
 
-    private boolean countDirty = true;
     private boolean fromshaper;
 
     private ShapeRenderer shapeRenderer = null;
@@ -142,9 +141,19 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
             return;
         }
 
-//        int xx = 300 * this.mc.displayWidth / 930;
-//        int yy = 100 * this.mc.displayHeight / 410;
-        getShapeRenderer().initView(300, 100);
+        Minecraft mc = Minecraft.getMinecraft();
+
+        final ScaledResolution scaledresolution = new ScaledResolution(mc);
+        int xScale = scaledresolution.getScaledWidth();
+        int yScale = scaledresolution.getScaledHeight();
+        int sx = (getPreviewLeft() + 84) * mc.displayWidth / xScale;
+        int sy = (mc.displayHeight) - (getPreviewTop() + 136) * mc.displayHeight / yScale;
+        int sw = 161 * mc.displayWidth / xScale;
+        int sh = 130 * mc.displayHeight / yScale;
+        int vx = sx + sw/2;
+        int vy = sy + sh/2;
+
+        getShapeRenderer().initView(getPreviewLeft(), getPreviewTop());
 
         shapeLabel = new ChoiceLabel(mc, this).setDesiredWidth(100).setDesiredHeight(16).addChoices(
                 mcjty.rftools.shapes.Shape.SHAPE_BOX.getDescription(),
@@ -199,15 +208,9 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         offsetY = new TextField(mc, this).addTextEvent((parent, newText) -> updateSettings()).setText(String.valueOf(offset.getY()));
         offsetZ = new TextField(mc, this).addTextEvent((parent, newText) -> updateSettings()).setText(String.valueOf(offset.getZ()));
         Panel offsetPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(0)).addChild(new Label(mc, this).setText("Offset:").setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT).setDesiredWidth(40)).setDesiredHeight(18).addChild(offsetX).addChild(offsetY).addChild(offsetZ);
-        Panel infoPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(0)).setDesiredHeight(18)
-                .addChild(new Label<>(mc, this).setText("INFO")).setDesiredWidth(30)
-                .addChild(new Label<>(mc, this).setText("X").setDesiredWidth(30))
-                .addChild(new Label<>(mc, this).setText("Y").setDesiredWidth(30))
-                .addChild(new Label<>(mc, this).setText("Z").setDesiredWidth(30));
 
         Panel settingsPanel = new Panel(mc, this).setLayout(new VerticalLayout().setSpacing(1).setVerticalMargin(1).setHorizontalMargin(0))
                 .addChild(dimPanel).addChild(offsetPanel);
-//        .addChild(infoPanel).addChild(dimPanel).addChild(offsetPanel);
 
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
@@ -378,6 +381,8 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
         x -= guiLeft;
         y -= guiTop;
+
+        System.out.println("mx,my = " + Mouse.getEventX() + "," + Mouse.getEventY() + "   ->   x,y = " + x + "," + y);
 
         getShapeRenderer().handleShapeDragging(x, y);
     }

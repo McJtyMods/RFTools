@@ -76,7 +76,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
     public void initGui() {
         super.initGui();
 
-        getShapeRenderer().initView(250, 70);
+        getShapeRenderer().initView(getPreviewLeft(), getPreviewTop());
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 

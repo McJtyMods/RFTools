@@ -74,11 +74,21 @@ public class ShapeRenderer {
         data.previewMessage = msg;
     }
 
-    public void initView(float dx, float dy) {
-        dx = dx * Minecraft.getMinecraft().displayWidth / 930;
-        dy = dy * Minecraft.getMinecraft().displayHeight / 410;
-        this.dx = dx;
-        this.dy = dy;
+    public void initView(int dx, int dy) {
+        Minecraft mc = Minecraft.getMinecraft();
+
+        final ScaledResolution scaledresolution = new ScaledResolution(mc);
+        int xScale = scaledresolution.getScaledWidth();
+        int yScale = scaledresolution.getScaledHeight();
+        int sx = (dx + 84) * mc.displayWidth / xScale;
+        int sy = (mc.displayHeight) - (dy + 136) * mc.displayHeight / yScale;
+        int sw = 161 * mc.displayWidth / xScale;
+        int sh = 130 * mc.displayHeight / yScale;
+        int vx = sx + sw/2;
+        int vy = sy + sh/2;
+
+        this.dx = vx/scaledresolution.getScaleFactor();
+        this.dy = vy/scaledresolution.getScaleFactor();
     }
 
     public void handleShapeDragging(int x, int y) {
@@ -87,6 +97,7 @@ public class ShapeRenderer {
                 if (prevX != -1 && Mouse.isButtonDown(0)) {
                     dx += (x - prevX);
                     dy += (y - prevY);
+                    System.out.println("drag: dx,dx = " + dx + "," + dy);
                 }
             } else {
                 if (prevX != -1 && Mouse.isButtonDown(0)) {
