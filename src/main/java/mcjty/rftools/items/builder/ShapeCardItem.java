@@ -558,10 +558,19 @@ public class ShapeCardItem extends GenericRFToolsItem {
         if (ItemStackTools.isEmpty(stack)) {
             return 0;
         }
-        return getScanId(getCompound(stack));
+        NBTTagCompound tagCompound = getCompound(stack);
+        return tagCompound.getInteger("scanid");
     }
 
-    private static int getScanId(NBTTagCompound tagCompound) {
+    // Also find scanId's from children
+    public static int getScanIdRecursive(ItemStack stack) {
+        if (ItemStackTools.isEmpty(stack)) {
+            return 0;
+        }
+        return getScanIdRecursive(getCompound(stack));
+    }
+
+    private static int getScanIdRecursive(NBTTagCompound tagCompound) {
         if (tagCompound.hasKey("scanid")) {
             return tagCompound.getInteger("scanid");
         }
@@ -571,7 +580,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
             NBTTagList children = tagCompound.getTagList("children", Constants.NBT.TAG_COMPOUND);
             for (int i = 0 ; i < children.tagCount() ; i++) {
                 NBTTagCompound childTag = children.getCompoundTagAt(i);
-                int id = getScanId(childTag);
+                int id = getScanIdRecursive(childTag);
                 if (id != 0) {
                     return id;
                 }

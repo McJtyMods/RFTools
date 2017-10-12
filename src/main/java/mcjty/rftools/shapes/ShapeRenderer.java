@@ -321,13 +321,14 @@ public class ShapeRenderer {
         }
 
         // Possibly request extra data for the scan
-        if (scanId != -1) {
+        int recursiveScanId = ShapeCardItem.getScanIdRecursive(stack);
+        if (recursiveScanId > 0) {
             extraDataCounter--;
             if (extraDataCounter <= 0) {
                 extraDataCounter = 10;
-                ScanDataManagerClient.getScansClient().requestExtraDataClient(scanId);
+                ScanDataManagerClient.getScansClient().requestExtraDataClient(recursiveScanId);
             }
-            ScanExtraData extraData = ScanDataManagerClient.getScansClient().getExtraDataClient(scanId);
+            ScanExtraData extraData = ScanDataManagerClient.getScansClient().getExtraDataClient(recursiveScanId);
             for (ScanExtraData.Beacon beacon : extraData.getBeacons()) {
                 int x = beacon.getPos().getX();
                 int y = beacon.getPos().getY()+1;
