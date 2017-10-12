@@ -46,12 +46,14 @@ public class ModifierInventory implements CompatInventory {
             if (ItemStackTools.getStackSize(stacks.get(index)) <= amount) {
                 ItemStack old = stacks.get(index);
                 stacks.set(index, ItemStackTools.getEmptyStack());
+                convertItemsToNBT(tagCompound, stacks);
                 markDirty();
                 return old;
             }
             ItemStack its = stacks.get(index).splitStack(amount);
             if (ItemStackTools.isEmpty(stacks.get(index))) {
                 stacks.set(index, ItemStackTools.getEmptyStack());
+                convertItemsToNBT(tagCompound, stacks);
             }
             markDirty();
             return its;
@@ -76,6 +78,7 @@ public class ModifierInventory implements CompatInventory {
         if (ItemStackTools.isValid(stack) && ItemStackTools.getStackSize(stack) > getInventoryStackLimit()) {
             ItemStackTools.setStackSize(stack, getInventoryStackLimit());
         }
+        convertItemsToNBT(tagCompound, stacks);
         markDirty();
     }
 
