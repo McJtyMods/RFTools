@@ -58,6 +58,13 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
         ySize = SCANNER_HEIGHT;
     }
 
+    public GuiScanner(RemoteScannerTileEntity shaperTileEntity, ScannerContainer container) {
+        super(RFTools.instance, RFToolsMessages.INSTANCE, shaperTileEntity, container, RFTools.GUI_MANUAL_SHAPE, "remote_scanner");
+
+        xSize = SCANNER_WIDTH;
+        ySize = SCANNER_HEIGHT;
+    }
+
     private ShapeRenderer getShapeRenderer() {
         if (shapeRenderer == null) {
             shapeRenderer = new ShapeRenderer(getShapeID());
@@ -74,7 +81,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
     public void initGui() {
         super.initGui();
 
-        getShapeRenderer().initView(250, 70);
+        getShapeRenderer().initView(getPreviewLeft(), guiTop+100);
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 

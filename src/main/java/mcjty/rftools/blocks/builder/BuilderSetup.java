@@ -10,6 +10,10 @@ import mcjty.rftools.blocks.shaper.ProjectorBlock;
 import mcjty.rftools.blocks.shaper.ScannerBlock;
 import mcjty.rftools.blocks.shaper.ComposerBlock;
 import mcjty.rftools.blocks.shaper.ScannerBlock;
+import mcjty.rftools.blocks.shaper.*;
+import mcjty.rftools.crafting.PreservingShapedOreRecipe;
+import mcjty.rftools.crafting.PreservingShapedRecipe;
+import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.builder.SpaceChamberCardItem;
 import mcjty.rftools.proxy.CommonProxy;
@@ -29,6 +33,7 @@ public class BuilderSetup {
     public static SupportBlock supportBlock;
     public static ComposerBlock composerBlock;
     public static ScannerBlock scannerBlock;
+    public static RemoteScannerBlock remoteScannerBlock;
     public static ProjectorBlock projectorBlock;
     public static LocatorBlock locatorBlock;
 
@@ -44,6 +49,7 @@ public class BuilderSetup {
         supportBlock = new SupportBlock();
         composerBlock = new ComposerBlock();
         scannerBlock = new ScannerBlock();
+        remoteScannerBlock = new RemoteScannerBlock();
         projectorBlock = new ProjectorBlock();
         locatorBlock = new LocatorBlock();
 
@@ -61,6 +67,7 @@ public class BuilderSetup {
         supportBlock.initModel();
         composerBlock.initModel();
         scannerBlock.initModel();
+        remoteScannerBlock.initModel();
         projectorBlock.initModel();
         locatorBlock.initModel();
 

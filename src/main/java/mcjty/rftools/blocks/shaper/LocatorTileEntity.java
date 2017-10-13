@@ -18,6 +18,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import java.util.List;
 import java.util.Map;
@@ -66,12 +67,19 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
                     return;
                 }
 
-                consumeEnergy(energy);
                 BlockPos dim = scanner.getDataDim();
                 BlockPos start = scanner.getFirstCorner();
+                if (start == null) {
+                    // No valid destination. Don't do anything
+                    return;
+                }
+
+                World scanWorld = scanner.getScanWorld(scanner.getScanDimension());
+
+                consumeEnergy(energy);
                 AxisAlignedBB bb = new AxisAlignedBB(start, start.add(dim));
 
-                List<Entity> entities = getWorld().getEntitiesWithinAABB(EntityLivingBase.class, bb);
+                List<Entity> entities = scanWorld.getEntitiesWithinAABB(EntityLivingBase.class, bb);
                 int scanId = scanner.getScanId();
                 ScanExtraData extraData = ScanDataManager.getScans().getExtraData(scanId);
                 extraData.touch();
@@ -79,12 +87,12 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
 
                 BlockPos center = scanner.getScanCenter();
                 findEntityBeacons(entities, extraData, center);
-                findEnergyBeacons(scanner, extraData, dim, start, center);
+                findEnergyBeacons(scanner, extraData, dim, start, center, scanWorld);
             }
         }
     }
 
-    private void findEnergyBeacons(ScannerTileEntity scanner, ScanExtraData extraData, BlockPos dim, BlockPos start, BlockPos center) {
+    private void findEnergyBeacons(ScannerTileEntity scanner, ScanExtraData extraData, BlockPos dim, BlockPos start, BlockPos center, World scanWorld) {
         if (energyType != BeaconType.BEACON_OFF) {
             int dx = (dim.getX() + 15) / 16;
             int dz = (dim.getZ() + 15) / 16;
@@ -106,7 +114,7 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
                                 if (rx >= start.getX() && rx < end.getX() && rz >= start.getZ() && rz < end.getZ()) {
                                     for (int ry = start.getY() ; ry < end.getY() ; ry++) {
                                         mpos.setPos(rx, ry, rz);
-                                        TileEntity tileEntity = getWorld().getTileEntity(mpos);
+                                        TileEntity tileEntity = scanWorld.getTileEntity(mpos);
                                         if (EnergyTools.isEnergyTE(tileEntity)) {
                                             BlockPos pos = mpos.subtract(center);
                                             EnergyTools.EnergyLevelMulti el = EnergyTools.getEnergyLevelMulti(tileEntity);

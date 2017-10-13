@@ -5,6 +5,7 @@ Table of contents:
 {l:chambercard}Space Chamber
 {l:shapecard}Shape cards
 {l:scanner}Area Scanner
+{l:remote_scanner}Remote Area Scanner
 {l:composer}Composer
 {l:projector}Projector
 {l:locator}Locator
@@ -250,6 +251,13 @@ following:
     Use them in the Composer to make other shapes out of them
 
     Save them on disk using /rftshape save <filename>
+{-------------------------------------------------------------}
+{b}Remote Scanner
+{n:remote_scanner}
+{rb:remote_scanner}
+The Remote Scanner is an advanced version of the normal Scanner that can
+detect a dialed matter transmitter one or two blocks above it and scan the
+remote area. This uses more power though.
 {-------------------------------------------------------------}
 {b}Composer
 {n:composer}

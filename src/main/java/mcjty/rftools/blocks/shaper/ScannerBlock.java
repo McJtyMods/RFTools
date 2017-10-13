@@ -27,6 +27,12 @@ public class ScannerBlock extends GenericRFToolsBlock<ScannerTileEntity, Scanner
         super(Material.IRON, ScannerTileEntity.class, ScannerContainer.class, "scanner", true);
     }
 
+    public ScannerBlock(Class<? extends ScannerTileEntity> tileEntityClass,
+                        Class<? extends ScannerContainer> containerClass,
+                        String name) {
+        super(Material.IRON, tileEntityClass, containerClass, name, true);
+    }
+
     @Override
     public boolean needsRedstoneCheck() {
         return true;

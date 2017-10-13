@@ -72,7 +72,6 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
     private ToggleButton netherrack;
     private ToggleButton oredict;
 
-    private boolean countDirty = true;
     private boolean fromshaper;
 
     private ShapeRenderer shapeRenderer = null;
@@ -136,9 +135,12 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
             return;
         }
 
-//        int xx = 300 * this.mc.displayWidth / 930;
-//        int yy = 100 * this.mc.displayHeight / 410;
-        getShapeRenderer().initView(300, 100);
+        isQuarryCard = ShapeCardItem.isQuarry(heldItem.getItemDamage());
+        if (isQuarryCard) {
+            ySize = 160 + 28;
+        }
+
+        getShapeRenderer().initView(getPreviewLeft(), guiTop);
 
         shapeLabel = new ChoiceLabel(mc, this).setDesiredWidth(100).setDesiredHeight(16).addChoices(
                 mcjty.rftools.shapes.Shape.SHAPE_BOX.getDescription(),
@@ -161,11 +163,6 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         ).addChoiceEvent((parent, newChoice) -> updateSettings());
 
         Panel shapePanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(shapeLabel).addChild(solidLabel);
-
-        isQuarryCard = ShapeCardItem.isQuarry(heldItem.getItemDamage());
-        if (isQuarryCard) {
-            ySize = 160 + 28;
-        }
 
         mcjty.rftools.shapes.Shape shape = ShapeCardItem.getShape(heldItem);
         shapeLabel.setChoice(shape.getDescription());
@@ -193,15 +190,9 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         offsetY = new TextField(mc, this).addTextEvent((parent, newText) -> updateSettings()).setText(String.valueOf(offset.getY()));
         offsetZ = new TextField(mc, this).addTextEvent((parent, newText) -> updateSettings()).setText(String.valueOf(offset.getZ()));
         Panel offsetPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(0)).addChild(new Label(mc, this).setText("Offset:").setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT).setDesiredWidth(40)).setDesiredHeight(18).addChild(offsetX).addChild(offsetY).addChild(offsetZ);
-        Panel infoPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(0)).setDesiredHeight(18)
-                .addChild(new Label<>(mc, this).setText("INFO")).setDesiredWidth(30)
-                .addChild(new Label<>(mc, this).setText("X").setDesiredWidth(30))
-                .addChild(new Label<>(mc, this).setText("Y").setDesiredWidth(30))
-                .addChild(new Label<>(mc, this).setText("Z").setDesiredWidth(30));
 
         Panel settingsPanel = new Panel(mc, this).setLayout(new VerticalLayout().setSpacing(1).setVerticalMargin(1).setHorizontalMargin(0))
                 .addChild(dimPanel).addChild(offsetPanel);
-//        .addChild(infoPanel).addChild(dimPanel).addChild(offsetPanel);
 
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
@@ -372,6 +363,8 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
         x -= guiLeft;
         y -= guiTop;
+
+        System.out.println("mx,my = " + Mouse.getEventX() + "," + Mouse.getEventY() + "   ->   x,y = " + x + "," + y);
 
         getShapeRenderer().handleShapeDragging(x, y);
     }

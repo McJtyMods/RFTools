@@ -13,7 +13,6 @@ import mcjty.rftools.items.modifier.ModifierFilterOperation;
 import mcjty.rftools.items.modifier.ModifierItem;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
-import mcjty.rftools.shapes.Scan;
 import mcjty.rftools.shapes.ScanDataManager;
 import mcjty.rftools.shapes.Shape;
 import mcjty.rftools.shapes.StatePalette;
@@ -28,6 +27,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -63,8 +64,8 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     public void update() {
         if (!getWorld().isRemote) {
             if (progress != null) {
-                if (getEnergyStored() >= ScannerConfiguration.SCANNER_PERTICK) {
-                    consumeEnergy(ScannerConfiguration.SCANNER_PERTICK);
+                if (getEnergyStored() >= getEnergyPerTick()) {
+                    consumeEnergy(getEnergyPerTick());
                     int done = 0;
                     while (progress != null && done < ScannerConfiguration.surfaceAreaPerTick) {
                         progressScan();
@@ -75,6 +76,10 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
                 scan();
             }
         }
+    }
+
+    protected int getEnergyPerTick() {
+        return ScannerConfiguration.SCANNER_PERTICK;
     }
 
     public int getScanProgress() {
@@ -140,11 +145,6 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
             markDirtyQuick();
         }
         return scanId;
-    }
-
-    public List<IBlockState> getMaterialPalette() {
-        Scan scan = ScanDataManager.getScans().loadScan(getScanId());
-        return scan.getMaterialPalette();
     }
 
     public BlockPos getDataDim() {
@@ -251,24 +251,55 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
             return;
         }
 
+        BlockPos machinePos = getScanPos();
+        if (machinePos == null) {
+            // No valid destination. We cannot scan
+            return;
+        }
+
         int dimX = dataDim.getX();
         int dimY = dataDim.getY();
         int dimZ = dataDim.getZ();
-        startScanArea(getScanCenter(), dimX, dimY, dimZ);
+        startScanArea(getScanCenter(), getScanDimension(), dimX, dimY, dimZ);
+    }
+
+    public World getScanWorld(int dimension) {
+        World w = DimensionManager.getWorld(dimension);
+        if (w == null) {
+            w = getWorld().getMinecraftServer().worldServerForDimension(dimension);
+        }
+        return w;
+    }
+
+    protected BlockPos getScanPos() {
+        return getPos();
+    }
+
+    public int getScanDimension() {
+        return getWorld().provider.getDimension();
     }
 
     public BlockPos getScanCenter() {
-        return getPos().add(dataOffset.getX(), dataOffset.getY(), dataOffset.getZ());
+        if (getScanPos() == null) {
+            return null;
+        }
+        return getScanPos().add(dataOffset.getX(), dataOffset.getY(), dataOffset.getZ());
     }
 
     public BlockPos getFirstCorner() {
-        return getPos().add(dataOffset.getX()-dataDim.getX()/2,
+        if (getScanPos() == null) {
+            return null;
+        }
+        return getScanPos().add(dataOffset.getX()-dataDim.getX()/2,
                 dataOffset.getY()-dataDim.getY()/2,
                 dataOffset.getZ()-dataDim.getZ()/2);
     }
 
     public BlockPos getLastCorner() {
-        return getPos().add(dataOffset.getX()+dataDim.getX()/2,
+        if (getScanPos() == null) {
+            return null;
+        }
+        return getScanPos().add(dataOffset.getX()+dataDim.getX()/2,
                 dataOffset.getY()+dataDim.getY()/2,
                 dataOffset.getZ()+dataDim.getZ()/2);
     }
@@ -363,9 +394,10 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         int dimY;
         int dimZ;
         int x;
+        int dimension;
     }
 
-    private void startScanArea(BlockPos center, int dimX, int dimY, int dimZ) {
+    private void startScanArea(BlockPos center, int dimension, int dimX, int dimY, int dimZ) {
         progress = new ScanProgress();
         progress.modifiers = ModifierItem.getModifiers(getStackInSlot(ScannerContainer.SLOT_MODIFIER));
         progress.modifierMapping = new HashMap<>();
@@ -377,6 +409,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         progress.dimX = dimX;
         progress.dimY = dimY;
         progress.dimZ = dimZ;
+        progress.dimension = dimension;
         markDirtyClient();
     }
 
@@ -388,18 +421,19 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         int dimX = progress.dimX;
         int dimY = progress.dimY;
         int dimZ = progress.dimZ;
+        World world = getScanWorld(progress.dimension);
         BlockPos.MutableBlockPos mpos = progress.mpos;
         for (int z = tl.getZ() ; z < tl.getZ() + dimZ ; z++) {
             for (int y = tl.getY() ; y < tl.getY() + dimY ; y++) {
                 mpos.setPos(progress.x, y, z);
                 int c;
-                if (getWorld().isAirBlock(mpos)) {
+                if (world.isAirBlock(mpos)) {
                     c = 0;
                 } else {
-                    IBlockState state = getWorld().getBlockState(mpos);
+                    IBlockState state = world.getBlockState(mpos);
                     getFilterCache();
                     if (filterCache != null) {
-                        ItemStack item = state.getBlock().getItem(getWorld(), mpos, state);
+                        ItemStack item = state.getBlock().getItem(world, mpos, state);
                         if (!filterCache.match(item)) {
                             state = null;
                         }
