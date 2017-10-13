@@ -81,7 +81,7 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
-        getShapeRenderer().initView(getPreviewLeft(), getPreviewTop());
+        getShapeRenderer().initView(getPreviewLeft(), guiTop+100);
 
         ShapeModifier[] modifiers = tileEntity.getModifiers();
 

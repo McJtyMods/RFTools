@@ -74,7 +74,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
     public void initGui() {
         super.initGui();
 
-        getShapeRenderer().initView(getPreviewLeft(), getPreviewTop());
+        getShapeRenderer().initView(getPreviewLeft(), guiTop+100);
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 

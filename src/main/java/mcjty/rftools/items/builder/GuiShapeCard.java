@@ -141,19 +141,12 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
             return;
         }
 
-        Minecraft mc = Minecraft.getMinecraft();
+        isQuarryCard = ShapeCardItem.isQuarry(heldItem.getItemDamage());
+        if (isQuarryCard) {
+            ySize = 160 + 28;
+        }
 
-        final ScaledResolution scaledresolution = new ScaledResolution(mc);
-        int xScale = scaledresolution.getScaledWidth();
-        int yScale = scaledresolution.getScaledHeight();
-        int sx = (getPreviewLeft() + 84) * mc.displayWidth / xScale;
-        int sy = (mc.displayHeight) - (getPreviewTop() + 136) * mc.displayHeight / yScale;
-        int sw = 161 * mc.displayWidth / xScale;
-        int sh = 130 * mc.displayHeight / yScale;
-        int vx = sx + sw/2;
-        int vy = sy + sh/2;
-
-        getShapeRenderer().initView(getPreviewLeft(), getPreviewTop());
+        getShapeRenderer().initView(getPreviewLeft(), guiTop);
 
         shapeLabel = new ChoiceLabel(mc, this).setDesiredWidth(100).setDesiredHeight(16).addChoices(
                 mcjty.rftools.shapes.Shape.SHAPE_BOX.getDescription(),
@@ -176,11 +169,6 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         ).addChoiceEvent((parent, newChoice) -> updateSettings());
 
         Panel shapePanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(shapeLabel).addChild(solidLabel);
-
-        isQuarryCard = ShapeCardItem.isQuarry(heldItem.getItemDamage());
-        if (isQuarryCard) {
-            ySize = 160 + 28;
-        }
 
         mcjty.rftools.shapes.Shape shape = ShapeCardItem.getShape(heldItem);
         shapeLabel.setChoice(shape.getDescription());
