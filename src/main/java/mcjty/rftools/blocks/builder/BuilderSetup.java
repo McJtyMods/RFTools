@@ -6,10 +6,7 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
-import mcjty.rftools.blocks.shaper.LocatorBlock;
-import mcjty.rftools.blocks.shaper.ProjectorBlock;
-import mcjty.rftools.blocks.shaper.ScannerBlock;
-import mcjty.rftools.blocks.shaper.ComposerBlock;
+import mcjty.rftools.blocks.shaper.*;
 import mcjty.rftools.crafting.PreservingShapedOreRecipe;
 import mcjty.rftools.crafting.PreservingShapedRecipe;
 import mcjty.rftools.items.ModItems;
@@ -37,6 +34,7 @@ public class BuilderSetup {
     public static SupportBlock supportBlock;
     public static ComposerBlock composerBlock;
     public static ScannerBlock scannerBlock;
+    public static RemoteScannerBlock remoteScannerBlock;
     public static ProjectorBlock projectorBlock;
     public static LocatorBlock locatorBlock;
 
@@ -52,6 +50,7 @@ public class BuilderSetup {
         supportBlock = new SupportBlock();
         composerBlock = new ComposerBlock();
         scannerBlock = new ScannerBlock();
+        remoteScannerBlock = new RemoteScannerBlock();
         projectorBlock = new ProjectorBlock();
         locatorBlock = new LocatorBlock();
 
@@ -69,6 +68,7 @@ public class BuilderSetup {
         supportBlock.initModel();
         composerBlock.initModel();
         scannerBlock.initModel();
+        remoteScannerBlock.initModel();
         projectorBlock.initModel();
         locatorBlock.initModel();
 
@@ -92,6 +92,7 @@ public class BuilderSetup {
 
         GameRegistry.addRecipe(new ItemStack(composerBlock), "pbp", "bMb", "pbp", 'M', ModBlocks.machineFrame, 'p', Items.PAPER, 'b', Items.BRICK);
         GameRegistry.addRecipe(new ItemStack(scannerBlock), "beb", "qMq", "brb", 'M', ModBlocks.machineFrame, 'r', Items.REDSTONE, 'b', ModItems.infusedDiamond, 'e', Items.ENDER_PEARL, 'q', Items.QUARTZ);
+        GameRegistry.addRecipe(new ItemStack(remoteScannerBlock), "iii", "iMi", "iii", 'M', scannerBlock, 'i', ModItems.infusedEnderpearl);
         GameRegistry.addRecipe(new ItemStack(locatorBlock), "heh", "qMq", "brb", 'M', ModBlocks.machineFrame, 'r', Items.REDSTONE, 'b', ModItems.infusedDiamond, 'e', Items.ENDER_PEARL, 'q', Items.QUARTZ, 'h', Items.COMPARATOR);
         GameRegistry.addRecipe(new ItemStack(projectorBlock), "beb", "qMq", "brb", 'M', ModBlocks.machineFrame, 'r', Items.REDSTONE, 'b', ModItems.infusedDiamond, 'e', Blocks.GLASS, 'q', Items.GLOWSTONE_DUST);
 

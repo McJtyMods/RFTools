@@ -18,6 +18,7 @@ public final class ModItems {
     public static DimensionalShardItem dimensionalShardItem;
     public static ShardWandItem shardWandItem;
     public static InfusedDiamond infusedDiamond;
+    public static InfusedEnderpearl infusedEnderpearl;
     public static SyringeItem syringeItem;
     public static PeaceEssenceItem peaceEssenceItem;
     public static DevelopersDelightItem developersDelightItem;
@@ -35,6 +36,7 @@ public final class ModItems {
         dimensionalShardItem = new DimensionalShardItem();
         shardWandItem = new ShardWandItem();
         infusedDiamond = new InfusedDiamond();
+        infusedEnderpearl = new InfusedEnderpearl();
         syringeItem = new SyringeItem();
         peaceEssenceItem = new PeaceEssenceItem();
         developersDelightItem = new DevelopersDelightItem();
@@ -50,6 +52,7 @@ public final class ModItems {
         dimensionalShardItem.initModel();
         shardWandItem.initModel();
         infusedDiamond.initModel();
+        infusedEnderpearl.initModel();
         syringeItem.initModel();
         peaceEssenceItem.initModel();
         developersDelightItem.initModel();
