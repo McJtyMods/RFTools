@@ -1,0 +1,19 @@
+{
+  "result": {
+    "item": "rftools:remote_scanner"
+  },
+  "pattern": [
+    "bbb",
+    "bMb",
+    "bbb"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "b": {
+      "item": "rftools:infused_enderpearl"
+    },
+    "M": {
+      "item": "rftools:scanner"
+    }
+  }
+}

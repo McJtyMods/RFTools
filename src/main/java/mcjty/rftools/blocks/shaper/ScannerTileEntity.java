@@ -266,7 +266,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     public World getScanWorld(int dimension) {
         World w = DimensionManager.getWorld(dimension);
         if (w == null) {
-            w = getWorld().getMinecraftServer().worldServerForDimension(dimension);
+            w = getWorld().getMinecraftServer().getWorld(dimension);
         }
         return w;
     }
