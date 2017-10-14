@@ -370,8 +370,6 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         x -= guiLeft;
         y -= guiTop;
 
-        System.out.println("mx,my = " + Mouse.getEventX() + "," + Mouse.getEventY() + "   ->   x,y = " + x + "," + y);
-
         getShapeRenderer().handleShapeDragging(x, y);
     }
 
