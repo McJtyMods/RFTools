@@ -74,6 +74,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
 
     private boolean fromshaper;
 
+    private ShapeID shapeID = null;
     private ShapeRenderer shapeRenderer = null;
 
     public GuiShapeCard(boolean fromshaper) {
@@ -81,10 +82,22 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
     }
 
     private ShapeRenderer getShapeRenderer() {
+        if (shapeID == null) {
+            shapeID = getShapeID();
+        } else if (!shapeID.equals(getShapeID())) {
+            shapeID = getShapeID();
+            shapeRenderer = null;
+        }
         if (shapeRenderer == null) {
-            shapeRenderer = new ShapeRenderer(new ShapeID(0, null, ShapeCardItem.getScanId(getStackToEdit()), false));
+            shapeRenderer = new ShapeRenderer(shapeID);
+            shapeRenderer.initView(getPreviewLeft(), guiTop);
         }
         return shapeRenderer;
+    }
+
+    private ShapeID getShapeID() {
+        ItemStack stackToEdit = getStackToEdit();
+        return new ShapeID(0, null, ShapeCardItem.getScanId(stackToEdit), false, ShapeCardItem.isSolid(stackToEdit));
     }
 
     @Override
@@ -363,8 +376,6 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
         x -= guiLeft;
         y -= guiTop;
-
-        System.out.println("mx,my = " + Mouse.getEventX() + "," + Mouse.getEventY() + "   ->   x,y = " + x + "," + y);
 
         getShapeRenderer().handleShapeDragging(x, y);
     }

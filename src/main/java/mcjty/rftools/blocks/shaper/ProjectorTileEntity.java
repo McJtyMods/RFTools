@@ -120,10 +120,11 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
 
     public ShapeID getShapeID() {
         int scanId = ShapeCardItem.getScanId(getRenderStack());
+        boolean isSolid = ShapeCardItem.isSolid(getRenderStack());
         if (scanId == 0) {
-            return new ShapeID(getWorld().provider.getDimension(), getPos(), scanId, isGrayscale());
+            return new ShapeID(getWorld().provider.getDimension(), getPos(), scanId, isGrayscale(), isSolid);
         } else {
-            return new ShapeID(0, null, scanId, isGrayscale());
+            return new ShapeID(0, null, scanId, isGrayscale(), isSolid);
         }
     }
 
