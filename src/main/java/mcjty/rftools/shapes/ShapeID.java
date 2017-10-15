@@ -12,12 +12,14 @@ public final class ShapeID {
     @Nullable private final BlockPos pos;     // null if there is a scanId (shapecard in hand or projector)
     private final int scanId;
     private final boolean grayscale;
+    private final boolean solid;
 
-    public ShapeID(int dimension, BlockPos pos, int scanId, boolean grayscale) {
+    public ShapeID(int dimension, BlockPos pos, int scanId, boolean grayscale, boolean solid) {
         this.dimension = dimension;
         this.pos = pos;
         this.scanId = scanId;
         this.grayscale = grayscale;
+        this.solid = solid;
     }
 
     public ShapeID(ByteBuf buf) {
@@ -29,6 +31,7 @@ public final class ShapeID {
         }
         scanId = buf.readInt();
         grayscale = buf.readBoolean();
+        solid = buf.readBoolean();
         dimension = dim;
         pos = p;
     }
@@ -43,6 +46,7 @@ public final class ShapeID {
         }
         buf.writeInt(scanId);
         buf.writeBoolean(grayscale);
+        buf.writeBoolean(solid);
     }
 
     public int getDimension() {
@@ -62,19 +66,23 @@ public final class ShapeID {
         return grayscale;
     }
 
+    public boolean isSolid() {
+        return solid;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ShapeID)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
         ShapeID shapeID = (ShapeID) o;
 
         if (dimension != shapeID.dimension) return false;
         if (scanId != shapeID.scanId) return false;
         if (grayscale != shapeID.grayscale) return false;
-        if (pos != null ? !pos.equals(shapeID.pos) : shapeID.pos != null) return false;
+        if (solid != shapeID.solid) return false;
+        return pos != null ? pos.equals(shapeID.pos) : shapeID.pos == null;
 
-        return true;
     }
 
     @Override
@@ -83,6 +91,7 @@ public final class ShapeID {
         result = 31 * result + (pos != null ? pos.hashCode() : 0);
         result = 31 * result + scanId;
         result = 31 * result + (grayscale ? 1 : 0);
+        result = 31 * result + (solid ? 1 : 0);
         return result;
     }
 
@@ -92,6 +101,8 @@ public final class ShapeID {
                 "dimension=" + dimension +
                 ", pos=" + pos +
                 ", scanId=" + scanId +
+                ", grayscale=" + grayscale +
+                ", solid=" + solid +
                 '}';
     }
 }

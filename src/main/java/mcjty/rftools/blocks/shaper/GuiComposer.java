@@ -71,7 +71,7 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
         Slot slot = inventorySlots.getSlot(ComposerContainer.SLOT_OUT);
         ItemStack stack = slot.getHasStack() ? slot.getStack() : ItemStackTools.getEmptyStack();
 
-        return new ShapeID(tileEntity.getWorld().provider.getDimension(), tileEntity.getPos(), ShapeCardItem.getScanId(stack), false);
+        return new ShapeID(tileEntity.getWorld().provider.getDimension(), tileEntity.getPos(), ShapeCardItem.getScanId(stack), false, ShapeCardItem.isSolid(stack));
     }
 
 

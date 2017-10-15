@@ -150,10 +150,6 @@ public class ShapeCardItem extends GenericRFToolsItem {
         return EnumActionResult.SUCCESS;
     }
 
-    public static int getData(NBTTagCompound tagCompound) {
-        return tagCompound.getInteger("scanid");
-    }
-
     public static void setData(NBTTagCompound tagCompound, int scanID) {
         tagCompound.setInteger("scanid", scanID);
     }
@@ -527,6 +523,9 @@ public class ShapeCardItem extends GenericRFToolsItem {
     }
 
     public static boolean isSolid(ItemStack stack) {
+        if (ItemStackTools.isEmpty(stack)) {
+            return true;
+        }
         NBTTagCompound tagCompound = stack.getTagCompound();
         return isSolid(tagCompound);
     }
@@ -559,6 +558,10 @@ public class ShapeCardItem extends GenericRFToolsItem {
             return 0;
         }
         NBTTagCompound tagCompound = getCompound(stack);
+        Shape shape = getShape(tagCompound);
+        if (shape != Shape.SHAPE_SCAN) {
+            return 0;
+        }
         return tagCompound.getInteger("scanid");
     }
 
@@ -571,10 +574,10 @@ public class ShapeCardItem extends GenericRFToolsItem {
     }
 
     private static int getScanIdRecursive(NBTTagCompound tagCompound) {
-        if (tagCompound.hasKey("scanid")) {
+        Shape shape = getShape(tagCompound);
+        if (tagCompound.hasKey("scanid") && shape == Shape.SHAPE_SCAN) {
             return tagCompound.getInteger("scanid");
         }
-        Shape shape = getShape(tagCompound);
         if (shape == Shape.SHAPE_COMPOSITION) {
             // See if there is a scan in the composition that has a scan id
             NBTTagList children = tagCompound.getTagList("children", Constants.NBT.TAG_COMPOUND);
@@ -931,7 +934,7 @@ public class ShapeCardItem extends GenericRFToolsItem {
         }
 
         NBTTagCompound compound = ShapeCardItem.getCompound(card);
-        int scanId = ShapeCardItem.getData(compound);
+        int scanId = compound.getInteger("scanid");
         if (scanId == 0) {
             ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "This card is not linked to scan data!"));
             return;
