@@ -161,10 +161,10 @@ public class ShapeRenderer {
         GlStateManager.pushMatrix();
 
         GlStateManager.translate(dx, dy, 200);
-        GlStateManager.rotate(180-xangle, 1f, 0, 0); //xangle += .16f;
-        GlStateManager.rotate(yangle, 0, 1f, 0); //yangle += .09f;
-        GlStateManager.rotate(zangle, 0, 0, 1f); //zangle += .31f;
-        GlStateManager.scale(scale, scale, scale);
+        GlStateManager.rotate(180-xangle, 1f, 0, 0);
+        GlStateManager.rotate(yangle, 0, 1f, 0);
+        GlStateManager.rotate(zangle, 0, 0, 1f);
+        GlStateManager.scale(-scale, scale, scale);
 
         GlStateManager.disableBlend();
         GlStateManager.disableCull();
