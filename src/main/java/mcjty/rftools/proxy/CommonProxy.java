@@ -116,10 +116,7 @@ public abstract class CommonProxy {
 
         RFTools.screenModuleRegistry.registerBuiltins();
 
-        ForgeChunkManager.setForcedChunkLoadingCallback(RFTools.instance, new ForgeChunkManager.LoadingCallback() {
-            @Override
-            public void ticketsLoaded(List<ForgeChunkManager.Ticket> tickets, World world) {
-            }
+        ForgeChunkManager.setForcedChunkLoadingCallback(RFTools.instance, (tickets, world) -> {
         });
     }
 
