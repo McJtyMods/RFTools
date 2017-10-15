@@ -523,7 +523,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
     }
 
     public static boolean isSolid(ItemStack stack) {
-        if (ItemStackTools.isEmpty(stack)) {
+        if (stack.isEmpty()) {
             return true;
         }
         NBTTagCompound tagCompound = stack.getTagCompound();
