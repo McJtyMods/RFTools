@@ -5,8 +5,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockSlab;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
@@ -160,7 +162,13 @@ public class ShapeBlockInfo {
         }
         Col col;
         Block block = state.getBlock();
-        MapColor mapColor = block.getMapColor(state, null, null);
+        // The given world and pos are wrong but they help to avoid crashes for some code
+        MapColor mapColor = null;
+        try {
+            mapColor = block.getMapColor(state, Minecraft.getMinecraft().world, new BlockPos(0, 0, 0));
+        } catch (Exception e) {
+            mapColor = MapColor.RED;
+        }
         if (block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
             col = COL_LAVA;
         } else if (block == Blocks.NETHER_BRICK || block == Blocks.NETHER_BRICK_FENCE || block == Blocks.NETHER_BRICK_STAIRS) {
