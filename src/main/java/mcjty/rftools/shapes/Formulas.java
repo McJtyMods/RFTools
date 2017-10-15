@@ -124,6 +124,9 @@ public class Formulas {
             if (x <= x1 || x >= x1+dx-1 || y <= y1 || y >= y1+dy-1 || z <= z1 || z >= z1+dz-1) {
                 return isInsideSafe(x, y, z);
             }
+            if (data == null) {
+                return false;
+            }
             int index = (x-x1) * dy * dz + (z-z1) * dy + (y-y1);
             if (!isInsideInternal(index-1) || !isInsideInternal(index+1) || !isInsideInternal(index-dy) || !isInsideInternal(index+dy) || !isInsideInternal(index-dy*dz) || !isInsideInternal(index+dy*dz)) {
                 return isInsideInternal(index);

@@ -34,6 +34,7 @@ public interface IFormula {
     /// Return true if this coordinate is visible from at least one side.
     /// WARNING! This function assumes that x,y,z is not a coordinate at the side of the outer box!
     default boolean isVisible(int x, int y, int z) {
+        // We know data != null here because isVisible is only called if isInside is already true
         return isClear(x - 1, y, z) || isClear(x + 1, y, z) || isClear(x, y - 1, z) || isClear(x, y + 1, z) || isClear(x, y, z - 1) || isClear(x, y, z + 1);
     }
 
