@@ -3,7 +3,7 @@ package mcjty.rftools.integration.computers;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
-import li.cil.oc.api.prefab.AbstractManagedEnvironment;
+import li.cil.oc.api.prefab.ManagedEnvironment;
 import mcjty.lib.base.GeneralConfig;
 import mcjty.lib.integration.computers.AbstractOCDriver;
 import mcjty.rftools.blocks.infuser.MachineInfuserTileEntity;
@@ -57,7 +57,7 @@ public class MachineInfuserDriver {
         }
 
         @Override
-        public AbstractManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing side, TileEntity tile) {
+        public ManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing side, TileEntity tile) {
             return new InternalManagedEnvironment((MachineInfuserTileEntity) tile);
         }
     }
