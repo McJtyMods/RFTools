@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 //@Optional.InterfaceList({
-//        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"),
+//        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers"),
 //        @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")})
 public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity implements SmartWrenchSelector, ITickable,
         IMachineInformation /*, SimpleComponent, IPeripheral*/ {
@@ -80,19 +80,19 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
 //    }
 //
 //    @Override
-//    @Optional.Method(modid = "OpenComputers")
+//    @Optional.Method(modid = "opencomputers")
 //    public String getComponentName() {
 //        return COMPONENT_NAME;
 //    }
 //
 //    @Callback(doc = "Get the current redstone mode. Values are 'Ignored', 'Off', or 'On'", getter = true)
-//    @Optional.Method(modid = "OpenComputers")
+//    @Optional.Method(modid = "opencomputers")
 //    public Object[] getRedstoneMode(Context context, Arguments args) throws Exception {
 //        return new Object[] { getRedstoneMode().getDescription() };
 //    }
 //
 //    @Callback(doc = "Set the current redstone mode. Values are 'Ignored', 'Off', or 'On'", setter = true)
-//    @Optional.Method(modid = "OpenComputers")
+//    @Optional.Method(modid = "opencomputers")
 //    public Object[] setRedstoneMode(Context context, Arguments args) throws Exception {
 //        String mode = args.checkString(0);
 //        return setRedstoneMode(mode);
