@@ -61,6 +61,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -261,7 +262,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             list.add("    Chunk:  " + curChunk + " of " + totChunks);
         }
         if (lastError != null && !lastError.isEmpty()) {
-            list.add(TextFormatting.RED + lastError);
+            String[] errors = StringUtils.split(lastError, "\n");
+            for (String error : errors) {
+                list.add(TextFormatting.RED + error);
+            }
         }
         return list;
     }
@@ -1057,7 +1061,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (isEmptyOrReplacable(getWorld(), srcPos)) {
             ItemStack stack = consumeBlock(getWorld(), srcPos, pickState);
             if (ItemStackTools.isEmpty(stack)) {
-                return waitOrSkip("Cannot find block!");    // We could not find a block. Wait
+                return waitOrSkip("Cannot find block!\nor missing inventory\non top or below");    // We could not find a block. Wait
             }
 
             FakePlayer fakePlayer = getHarvester();
@@ -1182,7 +1186,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     if (checkAndInsertItems(block, drops)) {
                         clearOrDirtBlock(rfNeeded, sx, sy, sz, block, clear);
                     } else {
-                        return waitOrSkip("Not enough room!");    // Not enough room. Wait
+                        return waitOrSkip("Not enough room!\nor no usable storage\non top or below!");    // Not enough room. Wait
                     }
                 }
             }
@@ -1253,7 +1257,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     if (checkAndInsertItems(block, drops)) {
                         clearOrDirtBlock(rfNeeded, sx, sy, sz, block, clear);
                     } else {
-                        return waitOrSkip("Not enough room!");    // Not enough room. Wait
+                        return waitOrSkip("Not enough room!\nor no usable storage\non top or below!");    // Not enough room. Wait
                     }
                 }
             }
@@ -1280,7 +1284,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (isEmptyOrReplacable(getWorld(), srcPos)) {
             FluidStack stack = consumeLiquid(getWorld(), srcPos);
             if (stack == null) {
-                return waitOrSkip("Cannot find liquid!");    // We could not find a block. Wait
+                return waitOrSkip("Cannot find liquid!\nor no usable tank\nabove or below");    // We could not find a block. Wait
             }
 
             // We assume here the liquid is placable.
@@ -1328,7 +1332,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     }
                     return skip();
                 }
-                return waitOrSkip("No tank room available!");    // No room in tanks or not a valid tank: wait
+                return waitOrSkip("No room for liquid\nor no usable tank\nabove or below!");    // No room in tanks or not a valid tank: wait
             }
         }
         return skip();
