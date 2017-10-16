@@ -3,7 +3,7 @@ package mcjty.rftools.integration.computers;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
-import li.cil.oc.api.prefab.AbstractManagedEnvironment;
+import li.cil.oc.api.prefab.ManagedEnvironment;
 import mcjty.lib.integration.computers.AbstractOCDriver;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.blocks.generator.CoalGeneratorTileEntity;
@@ -73,7 +73,7 @@ public class CoalGeneratorDriver {
         }
 
         @Override
-        public AbstractManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing side, TileEntity tile) {
+        public ManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing side, TileEntity tile) {
             return new InternalManagedEnvironment((CoalGeneratorTileEntity) tile);
         }
     }
