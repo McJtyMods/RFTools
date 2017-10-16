@@ -97,7 +97,6 @@ public class ShapeRenderer {
                 if (prevX != -1 && Mouse.isButtonDown(0)) {
                     dx += (x - prevX);
                     dy += (y - prevY);
-                    System.out.println("drag: dx,dx = " + dx + "," + dy);
                 }
             } else {
                 if (prevX != -1 && Mouse.isButtonDown(0)) {
