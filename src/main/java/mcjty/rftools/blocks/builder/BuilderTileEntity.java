@@ -97,9 +97,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     public static final String[] MODES = new String[]{"Copy", "Move", "Swap", "Back", "Collect"};
 
-    private static final boolean WAIT = true;
-    private static final boolean SKIP = false;
-
     public static final String ROTATE_0 = "0";
     public static final String ROTATE_90 = "90";
     public static final String ROTATE_180 = "180";
@@ -110,6 +107,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public static final int ANCHOR_NW = 2;
     public static final int ANCHOR_NE = 3;
 
+    private String lastError = null;
     private int mode = MODE_COPY;
     private int rotate = 0;
     private int anchor = ANCHOR_SW;
@@ -261,6 +259,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             int totChunks = (maxChunkX - minChunkX + 1) * (maxChunkZ - minChunkZ + 1);
             int curChunk = (curZ - minChunkZ) * (maxChunkX - minChunkX) + curX - minChunkX;
             list.add("    Chunk:  " + curChunk + " of " + totChunks);
+        }
+        if (lastError != null && !lastError.isEmpty()) {
+            list.add(TextFormatting.RED + lastError);
         }
         return list;
     }
@@ -429,8 +430,26 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         markDirtyClient();
     }
 
-    private boolean waitOrSkip() {
+    private boolean waitOrSkip(String error) {
+        if (waitMode) {
+            lastError = error;
+        }
         return waitMode;
+    }
+
+    private boolean skip() {
+        lastError = null;
+        return false;
+    }
+
+    private boolean suspend() {
+        lastError = null;
+        return true;
+    }
+
+    private boolean suspend(String error) {
+        lastError = error;
+        return true;
     }
 
     public boolean hasLoopMode() {
@@ -952,7 +971,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         int sz = scan.getZ();
         if (!chunkLoad(sx, sz)) {
             // The chunk is not available and we could not chunkload it. We have to wait.
-            return WAIT;
+            return suspend("Chunk not available!");
         }
 
         int rfNeeded;
@@ -1008,7 +1027,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         if (rfNeeded > getEnergyStored(EnumFacing.DOWN)) {
             // Not enough energy.
-            return WAIT;
+            return suspend("Not enough power!");
         }
 
         switch (getCardType()) {
@@ -1031,14 +1050,14 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             case ShapeCardItem.CARD_SHAPE:
                 return buildBlock(rfNeeded, srcPos, pickState);
         }
-        return WAIT;
+        return suspend();
     }
 
     private boolean buildBlock(int rfNeeded, BlockPos srcPos, IBlockState pickState) {
         if (isEmptyOrReplacable(getWorld(), srcPos)) {
             ItemStack stack = consumeBlock(getWorld(), srcPos, pickState);
             if (ItemStackTools.isEmpty(stack)) {
-                return waitOrSkip();    // We could not find a block. Wait
+                return waitOrSkip("Cannot find block!");    // We could not find a block. Wait
             }
 
             FakePlayer fakePlayer = getHarvester();
@@ -1051,7 +1070,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
             consumeEnergy(rfNeeded);
         }
-        return SKIP;
+        return skip();
     }
 
     private IBlockState placeBlockAt(World world, BlockPos pos, ItemStack stack, @Nullable Integer origMeta, FakePlayer fakePlayer) {
@@ -1109,20 +1128,20 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         int sz = srcPos.getZ();
         if (sx >= xCoord - 1 && sx <= xCoord + 1 && sy >= yCoord - 1 && sy <= yCoord + 1 && sz >= zCoord - 1 && sz <= zCoord + 1) {
             // Skip a 3x3x3 block around the builder.
-            return SKIP;
+            return skip();
         }
         if (isEmpty(srcState, block)) {
-            return SKIP;
+            return skip();
         }
         if (block.getBlockHardness(srcState, getWorld(), srcPos) >= 0) {
             boolean clear = ShapeCardItem.isClearingQuarry(getCardType());
             if ((!clear) && block == getReplacementBlock()) {
                 // We can skip dirt if we are not clearing.
-                return SKIP;
+                return skip();
             }
             if ((!BuilderConfiguration.quarryTileEntities) && getWorld().getTileEntity(srcPos) != null) {
                 // Skip tile entities
-                return SKIP;
+                return skip();
             }
 
             FakePlayer fakePlayer = getHarvester();
@@ -1134,7 +1153,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                         boolean match = filterCache.match(block.getItem(getWorld(), srcPos, srcState));
                         if (!match) {
                             consumeEnergy(Math.min(rfNeeded, BuilderConfiguration.builderRfPerSkipped));
-                            return SKIP;   // Skip this
+                            return skip();   // Skip this
                         }
                     }
                 }
@@ -1163,12 +1182,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     if (checkAndInsertItems(block, drops)) {
                         clearOrDirtBlock(rfNeeded, sx, sy, sz, block, clear);
                     } else {
-                        return waitOrSkip();    // Not enough room. Wait
+                        return waitOrSkip("Not enough room!");    // Not enough room. Wait
                     }
                 }
             }
         }
-        return SKIP;
+        return skip();
     }
 
     private void getFilterCache() {
@@ -1196,20 +1215,20 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         int sz = srcPos.getZ();
         if (sx >= xCoord - 1 && sx <= xCoord + 1 && sy >= yCoord - 1 && sy <= yCoord + 1 && sz >= zCoord - 1 && sz <= zCoord + 1) {
             // Skip a 3x3x3 block around the builder.
-            return SKIP;
+            return skip();
         }
         if (isEmpty(srcState, block)) {
-            return SKIP;
+            return skip();
         }
         if (block.getBlockHardness(srcState, getWorld(), srcPos) >= 0) {
             boolean clear = ShapeCardItem.isClearingQuarry(getCardType());
             if ((!clear) && block == getReplacementBlock()) {
                 // We can skip dirt if we are not clearing.
-                return SKIP;
+                return skip();
             }
             if ((!BuilderConfiguration.quarryTileEntities) && getWorld().getTileEntity(srcPos) != null) {
                 // Skip tile entities
-                return SKIP;
+                return skip();
             }
 
             FakePlayer fakePlayer = getHarvester();
@@ -1221,7 +1240,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                         boolean match = filterCache.match(block.getItem(getWorld(), srcPos, srcState));
                         if (!match) {
                             consumeEnergy(Math.min(rfNeeded, BuilderConfiguration.builderRfPerSkipped));
-                            return SKIP;   // Skip this
+                            return skip();   // Skip this
                         }
                     }
                 }
@@ -1234,7 +1253,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     if (checkAndInsertItems(block, drops)) {
                         clearOrDirtBlock(rfNeeded, sx, sy, sz, block, clear);
                     } else {
-                        return waitOrSkip();    // Not enough room. Wait
+                        return waitOrSkip("Not enough room!");    // Not enough room. Wait
                     }
                 }
             }
@@ -1261,7 +1280,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (isEmptyOrReplacable(getWorld(), srcPos)) {
             FluidStack stack = consumeLiquid(getWorld(), srcPos);
             if (stack == null) {
-                return waitOrSkip();    // We could not find a block. Wait
+                return waitOrSkip("Cannot find liquid!");    // We could not find a block. Wait
             }
 
             // We assume here the liquid is placable.
@@ -1275,21 +1294,21 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
             consumeEnergy(rfNeeded);
         }
-        return SKIP;
+        return skip();
     }
 
     private boolean pumpBlock(int rfNeeded, BlockPos srcPos, Block block) {
         Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
         if (fluid == null) {
-            return SKIP;
+            return skip();
         }
         if (!isFluidBlock(block)) {
-            return SKIP;
+            return skip();
         }
 
         IBlockState srcState = getWorld().getBlockState(srcPos);
         if (getFluidLevel(srcState) != 0) {
-            return SKIP;
+            return skip();
         }
 
 
@@ -1307,12 +1326,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     if (!silent) {
                         SoundTools.playSound(getWorld(), block.getSoundType().getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
                     }
-                    return SKIP;
+                    return skip();
                 }
-                return waitOrSkip();    // No room in tanks or not a valid tank: wait
+                return waitOrSkip("No tank room available!");    // No room in tanks or not a valid tank: wait
             }
         }
-        return SKIP;
+        return skip();
     }
 
     private boolean voidBlock(int rfNeeded, BlockPos srcPos, Block block) {
@@ -1325,7 +1344,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         int sz = srcPos.getZ();
         if (sx >= xCoord - 1 && sx <= xCoord + 1 && sy >= yCoord - 1 && sy <= yCoord + 1 && sz >= zCoord - 1 && sz <= zCoord + 1) {
             // Skip a 3x3x3 block around the builder.
-            return SKIP;
+            return skip();
         }
         FakePlayer fakePlayer = getHarvester();
         if (allowedToBreak(srcState, getWorld(), srcPos, fakePlayer)) {
@@ -1337,7 +1356,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                         boolean match = filterCache.match(block.getItem(getWorld(), srcPos, srcState));
                         if (!match) {
                             consumeEnergy(Math.min(rfNeeded, BuilderConfiguration.builderRfPerSkipped));
-                            return SKIP;   // Skip this
+                            return skip();   // Skip this
                         }
                     }
                 }
@@ -1349,7 +1368,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 consumeEnergy(rfNeeded);
             }
         }
-        return SKIP;
+        return skip();
     }
 
     private void handleBlock(World world) {
@@ -2028,6 +2047,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private void restartScan() {
+        lastError = null;
         chunkUnload();
         if (loopMode || (isMachineEnabled() && scan == null)) {
             if (getCardType() == ShapeCardItem.CARD_SPACE) {
@@ -2251,6 +2271,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
 
         readBufferFromNBT(tagCompound, inventoryHelper);
+        if (tagCompound.hasKey("lastError")) {
+            lastError = tagCompound.getString("lastError");
+        } else {
+            lastError = null;
+        }
         mode = tagCompound.getInteger("mode");
         anchor = tagCompound.getInteger("anchor");
         rotate = tagCompound.getInteger("rotate");
@@ -2273,6 +2298,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
+        if (lastError != null) {
+            tagCompound.setString("lastError", lastError);
+        }
         tagCompound.setInteger("mode", mode);
         tagCompound.setInteger("anchor", anchor);
         tagCompound.setInteger("rotate", rotate);
