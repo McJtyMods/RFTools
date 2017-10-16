@@ -44,7 +44,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 //@Optional.InterfaceList({
-//        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"),
+//        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers"),
 //        @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")})
 public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, SmartWrenchSelector, ITickable,
         IMachineInformation { // @todo }, SimpleComponent, IPeripheral {
@@ -169,20 +169,20 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
 //    }
 //
 //    @Override
-//    @Optional.Method(modid = "OpenComputers")
+//    @Optional.Method(modid = "opencomputers")
 //    public String getComponentName() {
 //        return COMPONENT_NAME;
 //    }
 //
 //
 //    @Callback(doc = "Get the current damage mode for the shield. 'Generic' means normal damage while 'Player' means damage like a player would do", getter = true)
-//    @Optional.Method(modid = "OpenComputers")
+//    @Optional.Method(modid = "opencomputers")
 //    public Object[] getDamageMode(Context context, Arguments args) throws Exception {
 //        return new Object[] { getDamageMode().getDescription() };
 //    }
 //
 //    @Callback(doc = "Set the current damage mode for the shield. 'Generic' means normal damage while 'Player' means damage like a player would do", setter = true)
-//    @Optional.Method(modid = "OpenComputers")
+//    @Optional.Method(modid = "opencomputers")
 //    public Object[] setDamageMode(Context context, Arguments args) throws Exception {
 //        String mode = args.checkString(0);
 //        return setDamageMode(mode);
@@ -198,13 +198,13 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     }
 
 //    @Callback(doc = "Get the current redstone mode. Values are 'Ignored', 'Off', or 'On'", getter = true)
-//    @Optional.Method(modid = "OpenComputers")
+//    @Optional.Method(modid = "opencomputers")
 //    public Object[] getRedstoneMode(Context context, Arguments args) throws Exception {
 //        return new Object[] { getRedstoneMode().getDescription() };
 //    }
 //
 //    @Callback(doc = "Set the current redstone mode. Values are 'Ignored', 'Off', or 'On'", setter = true)
-//    @Optional.Method(modid = "OpenComputers")
+//    @Optional.Method(modid = "opencomputers")
 //    public Object[] setRedstoneMode(Context context, Arguments args) throws Exception {
 //        String mode = args.checkString(0);
 //        return setRedstoneMode(mode);
@@ -221,13 +221,13 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
 
 
 //    @Callback(doc = "Get the current shield rendering mode. Values are 'Invisible', 'Shield', or 'Solid'", getter = true)
-//    @Optional.Method(modid = "OpenComputers")
+//    @Optional.Method(modid = "opencomputers")
 //    public Object[] getShieldRenderingMode(Context context, Arguments args) throws Exception {
 //        return new Object[] { getShieldRenderingMode().getDescription() };
 //    }
 //
 //    @Callback(doc = "Set the current shield rendering mode. Values are 'Invisible', 'Shield', or 'Solid'", setter = true)
-//    @Optional.Method(modid = "OpenComputers")
+//    @Optional.Method(modid = "opencomputers")
 //    public Object[] setShieldRenderingMode(Context context, Arguments args) throws Exception {
 //        String mode = args.checkString(0);
 //        return setShieldRenderingMode(mode);
@@ -243,25 +243,25 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     }
 
 //    @Callback(doc = "Return true if the shield is active", getter = true)
-//    @Optional.Method(modid = "OpenComputers")
+//    @Optional.Method(modid = "opencomputers")
 //    public Object[] isShieldActive(Context context, Arguments args) throws Exception {
 //        return new Object[] { isShieldActive() };
 //    }
 //
 //    @Callback(doc = "Return true if the shield is composed (i.e. formed)", getter = true)
-//    @Optional.Method(modid = "OpenComputers")
+//    @Optional.Method(modid = "opencomputers")
 //    public Object[] isShieldComposed(Context context, Arguments args) throws Exception {
 //        return new Object[] { isShieldComposed() };
 //    }
 //
 //    @Callback(doc = "Form the shield (compose it)")
-//    @Optional.Method(modid = "OpenComputers")
+//    @Optional.Method(modid = "opencomputers")
 //    public Object[] composeShield(Context context, Arguments args) throws Exception {
 //        return composeShieldComp(false);
 //    }
 //
 //    @Callback(doc = "Form the shield (compose it). This version works in disconnected mode (template blocks will connect on corners too)")
-//    @Optional.Method(modid = "OpenComputers")
+//    @Optional.Method(modid = "opencomputers")
 //    public Object[] composeShieldDsc(Context context, Arguments args) throws Exception {
 //        return composeShieldComp(true);
 //    }
@@ -276,7 +276,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     }
 
 //    @Callback(doc = "Break down the shield (decompose it)")
-//    @Optional.Method(modid = "OpenComputers")
+//    @Optional.Method(modid = "opencomputers")
 //    public Object[] decomposeShield(Context context, Arguments args) throws Exception {
 //        return decomposeShieldComp();
 //    }
