@@ -891,7 +891,20 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         }
     }
 
+    private static boolean validFile(EntityPlayer player, String filename) {
+        if (filename.contains("\\") || filename.contains("/") || filename.contains(":")) {
+            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Invalid filename '" + filename + "'! Cannot be a path!"));
+            return false;
+        }
+        return true;
+    }
+
+
     public static void save(EntityPlayer player, ItemStack card, String filename) {
+        if (!validFile(player, filename)) {
+            return;
+        }
+
         Shape shape = ShapeCardItem.getShape(card);
         boolean solid = ShapeCardItem.isSolid(card);
         BlockPos offset = ShapeCardItem.getOffset(card);
@@ -903,7 +916,9 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
 
         byte[] data = positions.getData();
 
-        File file = new File(filename);
+        File dataDir = new File("rftoolsscans");
+        dataDir.mkdirs();
+        File file = new File(dataDir, filename);
         FileOutputStream stream;
         try {
             stream = new FileOutputStream(file);
@@ -925,9 +940,14 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         writer.write(new String(encoded));
         writer.close();
         player.sendStatusMessage(new TextComponentString(TextFormatting.GREEN + "Saved shape to file '" + filename), false);
+        ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.GREEN + "Saved shape to file '" + file.getPath() + "'"));
     }
 
     public static void load(EntityPlayer player, ItemStack card, String filename) {
+        if (!validFile(player, filename)) {
+            return;
+        }
+
         Shape shape = ShapeCardItem.getShape(card);
 
         if (shape != Shape.SHAPE_SCAN) {
@@ -942,7 +962,9 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
             return;
         }
 
-        File file = new File(filename);
+        File dataDir = new File("rftoolsscans");
+        dataDir.mkdirs();
+        File file = new File(dataDir, filename);
         FileInputStream stream;
 
         try {
@@ -997,6 +1019,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
             return;
         }
         player.sendStatusMessage(new TextComponentString(TextFormatting.GREEN + "Loaded shape from file '" + filename), false);
+        ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.GREEN + "Loaded shape from file '" + file.getPath() + "'"));
     }
 
     private static void setDataFromFile(int scanId, ItemStack card, BlockPos dimension, BlockPos offset, byte[] data, StatePalette palette) {
