@@ -1059,8 +1059,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (isEmptyOrReplacable(getWorld(), srcPos)) {
             ItemStack stack = consumeBlock(getWorld(), srcPos, pickState);
             if (stack.isEmpty()) {
-                return true;    // We could not find a block. Wait
-            if (ItemStackTools.isEmpty(stack)) {
                 return waitOrSkip("Cannot find block!\nor missing inventory\non top or below");    // We could not find a block. Wait
             }
 

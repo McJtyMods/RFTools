@@ -157,7 +157,7 @@ public class RenderWorldLastEventHandler {
         Map<BlockPos, Pair<Long, BlockPos>> scans = BuilderTileEntity.getScanLocClient();
         if (!scans.isEmpty()) {
             Minecraft mc = Minecraft.getMinecraft();
-            EntityPlayerSP p = MinecraftTools.getPlayer(mc);
+            EntityPlayerSP p = mc.player;
             double doubleX = p.lastTickPosX + (p.posX - p.lastTickPosX) * evt.getPartialTicks();
             double doubleY = p.lastTickPosY + (p.posY - p.lastTickPosY) * evt.getPartialTicks();
             double doubleZ = p.lastTickPosZ + (p.posZ - p.lastTickPosZ) * evt.getPartialTicks();
@@ -171,7 +171,7 @@ public class RenderWorldLastEventHandler {
             GlStateManager.disableTexture2D();
 
             Tessellator tessellator = Tessellator.getInstance();
-            VertexBuffer buffer = tessellator.getBuffer();
+            BufferBuilder buffer = tessellator.getBuffer();
             buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
 
             for (Map.Entry<BlockPos, Pair<Long, BlockPos>> entry : scans.entrySet()) {

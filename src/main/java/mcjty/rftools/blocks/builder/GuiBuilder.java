@@ -54,8 +54,6 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         super.initGui();
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored();
-        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(10, 6, 9, 59)).setShowText(false);
-        int maxEnergyStored = tileEntity.getMaxEnergyStored(EnumFacing.DOWN);
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(10, 6, 8, 59)).setShowText(false);
         energyBar.setValue(getCurrentRF());
 

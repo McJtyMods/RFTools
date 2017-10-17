@@ -893,7 +893,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
 
     private static boolean validFile(EntityPlayer player, String filename) {
         if (filename.contains("\\") || filename.contains("/") || filename.contains(":")) {
-            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "Invalid filename '" + filename + "'! Cannot be a path!"));
+            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Invalid filename '" + filename + "'! Cannot be a path!"), false);
             return false;
         }
         return true;
@@ -939,8 +939,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         byte[] encoded = Base64.getEncoder().encode(data);
         writer.write(new String(encoded));
         writer.close();
-        player.sendStatusMessage(new TextComponentString(TextFormatting.GREEN + "Saved shape to file '" + filename), false);
-        ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.GREEN + "Saved shape to file '" + file.getPath() + "'"));
+        player.sendStatusMessage(new TextComponentString(TextFormatting.GREEN + "Saved shape to file '" + file.getPath() + "'"), false);
     }
 
     public static void load(EntityPlayer player, ItemStack card, String filename) {
@@ -1018,8 +1017,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
             player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "File '" + filename + "' contains invalid entries!"), false);
             return;
         }
-        player.sendStatusMessage(new TextComponentString(TextFormatting.GREEN + "Loaded shape from file '" + filename), false);
-        ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.GREEN + "Loaded shape from file '" + file.getPath() + "'"));
+        player.sendStatusMessage(new TextComponentString(TextFormatting.GREEN + "Loaded shape from file '" + file.getPath() + "'"), false);
     }
 
     private static void setDataFromFile(int scanId, ItemStack card, BlockPos dimension, BlockPos offset, byte[] data, StatePalette palette) {
