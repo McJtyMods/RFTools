@@ -60,6 +60,8 @@ public class BuilderConfiguration {
                 "RF per tick that the builder can receive").getInt();
         builderRfPerOperation = cfg.get(CATEGORY_BUILDER, "builderRfPerOperation", builderRfPerOperation,
                 "RF per block operation for the builder when used to build").getInt();
+        builderRfPerLiquid = cfg.get(CATEGORY_BUILDER, "builderRfPerLiquid", builderRfPerLiquid,
+                "Base RF per block operation for the builder when used as a pump").getInt();
         builderRfPerQuarry = cfg.get(CATEGORY_BUILDER, "builderRfPerQuarry", builderRfPerQuarry,
                 "Base RF per block operation for the builder when used as a quarry or voider (actual cost depends on hardness of block)").getInt();
         builderRfPerSkipped = cfg.get(CATEGORY_BUILDER, "builderRfPerSkipped", builderRfPerSkipped,
