@@ -540,8 +540,8 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
             clientScreenModules = new ArrayList<>();
             for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
                 ItemStack itemStack = inventoryHelper.getStackInSlot(i);
-                if (!itemStack.isEmpty() && itemStack.getItem() instanceof IModuleProvider) {
-                    IModuleProvider moduleProvider = (IModuleProvider) itemStack.getItem();
+                if (!itemStack.isEmpty() && ScreenBlock.hasModuleProvider(itemStack)) {
+                    IModuleProvider moduleProvider = ScreenBlock.getModuleProvider(itemStack);
                     IClientScreenModule clientScreenModule;
                     try {
                         clientScreenModule = moduleProvider.getClientScreenModule().newInstance();
@@ -589,8 +589,8 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
             screenModules = new ArrayList<IScreenModule>();
             for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
                 ItemStack itemStack = inventoryHelper.getStackInSlot(i);
-                if (!itemStack.isEmpty() && itemStack.getItem() instanceof IModuleProvider) {
-                    IModuleProvider moduleProvider = (IModuleProvider) itemStack.getItem();
+                if (!itemStack.isEmpty() && ScreenBlock.hasModuleProvider(itemStack)) {
+                    IModuleProvider moduleProvider = ScreenBlock.getModuleProvider(itemStack);
                     IScreenModule screenModule;
                     try {
                         screenModule = moduleProvider.getServerScreenModule().newInstance();

@@ -114,8 +114,8 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
     private void refreshButtons() {
         for (int i = 0 ; i < ScreenContainer.SCREEN_MODULES ; i++) {
             final ItemStack slot = tileEntity.getStackInSlot(i);
-            if (!slot.isEmpty() && slot.getItem() != null && slot.getItem() instanceof IModuleProvider) {
-                IModuleProvider moduleProvider = (IModuleProvider) slot.getItem();
+            if (!slot.isEmpty() && ScreenBlock.hasModuleProvider(slot)) {
+                IModuleProvider moduleProvider = ScreenBlock.getModuleProvider(slot);
                 Class<? extends IClientScreenModule> clientScreenModuleClass = moduleProvider.getClientScreenModule();
                 if (!clientScreenModuleClass.isInstance(clientScreenModules[i])) {
                     installModuleGui(i, slot, moduleProvider, clientScreenModuleClass);

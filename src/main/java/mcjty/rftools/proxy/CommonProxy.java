@@ -8,6 +8,7 @@ import mcjty.lib.varia.WrenchChecker;
 import mcjty.rftools.ForgeEventHandlers;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorConfiguration;
 import mcjty.rftools.blocks.booster.BoosterConfiguration;
@@ -105,6 +106,20 @@ public abstract class CommonProxy {
             throw new UnsupportedOperationException();
         });
 
+        CapabilityManager.INSTANCE.register(IModuleProvider.class, new Capability.IStorage<IModuleProvider>() {
+            @Override
+            public NBTBase writeNBT(Capability<IModuleProvider> capability, IModuleProvider instance, EnumFacing side) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void readNBT(Capability<IModuleProvider> capability, IModuleProvider instance, EnumFacing side, NBTBase nbt) {
+                throw new UnsupportedOperationException();
+            }
+
+        }, () -> {
+            throw new UnsupportedOperationException();
+        });
 
         readMainConfig();
 
