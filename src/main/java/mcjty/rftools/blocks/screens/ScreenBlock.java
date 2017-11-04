@@ -139,12 +139,25 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
     }
 
+    public static boolean hasModuleProvider(ItemStack stack) {
+        return stack.getItem() instanceof IModuleProvider || stack.hasCapability(IModuleProvider.CAPABILITY, null);
+    }
+
+    public static IModuleProvider getModuleProvider(ItemStack stack) {
+        Item item = stack.getItem();
+        if(item instanceof IModuleProvider) {
+            return (IModuleProvider) item;
+        } else {
+            return stack.getCapability(IModuleProvider.CAPABILITY, null);
+        }
+    }
+
     @Override
     protected IModuleSupport getModuleSupport() {
         return new ModuleSupport(ScreenContainer.SLOT_MODULES, ScreenContainer.SLOT_MODULES + ScreenContainer.SCREEN_MODULES - 1) {
             @Override
             public boolean isModule(ItemStack itemStack) {
-                return itemStack.getItem() instanceof IModuleProvider;
+                return hasModuleProvider(itemStack);
             }
         };
     }
