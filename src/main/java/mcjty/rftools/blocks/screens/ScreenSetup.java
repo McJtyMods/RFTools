@@ -26,6 +26,7 @@ public class ScreenSetup {
     public static FluidModuleItem fluidModuleItem;
     public static FluidPlusModuleItem fluidPlusModuleItem;
     public static MachineInformationModuleItem machineInformationModuleItem;
+    public static ComputerModuleItem computerModuleItem;
     public static ButtonModuleItem buttonModuleItem;
     public static ElevatorButtonModuleItem elevatorButtonModuleItem;
     public static RedstoneModuleItem redstoneModuleItem;
@@ -54,6 +55,7 @@ public class ScreenSetup {
         fluidModuleItem = new FluidModuleItem();
         fluidPlusModuleItem = new FluidPlusModuleItem();
         machineInformationModuleItem = new MachineInformationModuleItem();
+        computerModuleItem = new ComputerModuleItem();
         buttonModuleItem = new ButtonModuleItem();
         elevatorButtonModuleItem = new ElevatorButtonModuleItem();
         redstoneModuleItem = new RedstoneModuleItem();
@@ -79,6 +81,7 @@ public class ScreenSetup {
         fluidModuleItem.initModel();
         fluidPlusModuleItem.initModel();
         machineInformationModuleItem.initModel();
+        computerModuleItem.initModel();
         buttonModuleItem.initModel();
         elevatorButtonModuleItem.initModel();
         redstoneModuleItem.initModel();
