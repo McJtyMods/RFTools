@@ -12,6 +12,7 @@ import mcjty.rftools.api.screens.data.*;
 import mcjty.rftools.blocks.screens.data.ModuleDataBoolean;
 import mcjty.rftools.blocks.screens.data.ModuleDataInteger;
 import mcjty.rftools.blocks.screens.data.ModuleDataString;
+import mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
 import mcjty.rftools.blocks.screens.modules.ScreenModuleHelper;
 import mcjty.rftools.blocks.screens.modulesclient.TextClientScreenModule;
 import mcjty.rftools.network.RFToolsMessages;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ScreenTileEntity extends GenericTileEntity implements ITickable, DefaultSidedInventory {
 
@@ -46,7 +48,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     private List<IClientScreenModule> clientScreenModules = null;
 
     // A list of tags linked to computer modules.
-//    private final Map<String,List<ComputerScreenModule>> computerModules = new HashMap<String, List<ComputerScreenModule>>();
+    private final Map<String,List<ComputerScreenModule>> computerModules = new HashMap<String, List<ComputerScreenModule>>();
 
     private boolean needsServerData = false;
     private boolean showHelp = true;
@@ -200,7 +202,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         screenModules = null;
         clickedModules.clear();
         showHelp = true;
-//        computerModules.clear();
+        computerModules.clear();
     }
 
     public static class ModuleRaytraceResult {
@@ -501,7 +503,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         stack.setTagCompound(tagCompound);
         screenModules = null;
         clientScreenModules = null;
-//        computerModules.clear();
+        computerModules.clear();
         markDirty();
     }
 
@@ -605,14 +607,14 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
                     screenModules.add(screenModule);
                     totalRfPerTick += screenModule.getRfPerTick();
 
-//                    if (screenModule instanceof ComputerScreenModule) {
-//                        ComputerScreenModule computerScreenModule = (ComputerScreenModule) screenModule;
-//                        String tag = computerScreenModule.getTag();
-//                        if (!computerModules.containsKey(tag)) {
-//                            computerModules.put(tag, new ArrayList<ComputerScreenModule>());
-//                        }
-//                        computerModules.get(tag).add(computerScreenModule);
-//                    }
+                    if (screenModule instanceof ComputerScreenModule) {
+                        ComputerScreenModule computerScreenModule = (ComputerScreenModule) screenModule;
+                        String tag = computerScreenModule.getTag();
+                        if (!computerModules.containsKey(tag)) {
+                            computerModules.put(tag, new ArrayList<ComputerScreenModule>());
+                        }
+                        computerModules.get(tag).add(computerScreenModule);
+                    }
                 } else {
                     screenModules.add(null);        // To keep the indexing correct so that the modules correspond with there slot number.
                 }
@@ -622,13 +624,13 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         return screenModules;
     }
 
-//    public List<ComputerScreenModule> getComputerModules(String tag) {
-//        return computerModules.get(tag);
-//    }
-//
-//    public Set<String> getTags() {
-//        return computerModules.keySet();
-//    }
+    public List<ComputerScreenModule> getComputerModules(String tag) {
+        return computerModules.get(tag);
+    }
+
+    public Set<String> getTags() {
+        return computerModules.keySet();
+    }
 
     private IScreenDataHelper screenDataHelper = new IScreenDataHelper() {
         @Override

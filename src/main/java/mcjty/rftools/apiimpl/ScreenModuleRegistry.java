@@ -5,6 +5,7 @@ import mcjty.rftools.api.screens.data.IModuleDataFactory;
 import mcjty.rftools.blocks.screens.data.ModuleDataBoolean;
 import mcjty.rftools.blocks.screens.data.ModuleDataInteger;
 import mcjty.rftools.blocks.screens.data.ModuleDataString;
+import mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
 import mcjty.rftools.blocks.screens.modules.ElevatorButtonScreenModule;
 import mcjty.rftools.blocks.screens.modules.ItemStackScreenModule;
 import mcjty.rftools.blocks.screens.modules.ScreenModuleHelper;
@@ -27,6 +28,7 @@ public class ScreenModuleRegistry implements IScreenModuleRegistry {
         dataFactoryMap.put(ItemStackScreenModule.ModuleDataStacks.ID, ItemStackScreenModule.ModuleDataStacks::new);
         dataFactoryMap.put(StorageControlScreenModule.ModuleDataStacks.ID, StorageControlScreenModule.ModuleDataStacks::new);
         dataFactoryMap.put(ElevatorButtonScreenModule.ModuleElevatorInfo.ID, ElevatorButtonScreenModule.ModuleElevatorInfo::new);
+        dataFactoryMap.put(ComputerScreenModule.ModuleComputerInfo.ID, ComputerScreenModule.ModuleComputerInfo::new);
     }
 
     @Override
