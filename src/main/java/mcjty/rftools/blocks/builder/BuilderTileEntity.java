@@ -84,7 +84,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public static final String CMD_SETHILIGHT = "setHilight";
     public static final String CMD_SETLOOP = "setLoop";
     public static final String CMD_GETLEVEL = "getLevel";
-    public static final String CMD_MODE = "setMode";
+    public static final String CMD_SETRSMODE = "setRsMode";
     public static final String CMD_RESTART = "restart";
     public static final String CLIENTCMD_GETLEVEL = "getLevel";
 
@@ -2341,7 +2341,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (rc) {
             return true;
         }
-        if (CMD_MODE.equals(command)) {
+        if (CMD_SETRSMODE.equals(command)) {
             String m = args.get("rs").getString();
             setRSMode(RedstoneMode.getMode(m));
             return true;

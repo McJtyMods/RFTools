@@ -89,13 +89,12 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
 
     private void changeRedstoneMode() {
         tileEntity.setRSMode(RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()]);
-        sendServerCommand(RFToolsMessages.INSTANCE, BuilderTileEntity.CMD_MODE,
+        sendServerCommand(RFToolsMessages.INSTANCE, BuilderTileEntity.CMD_SETRSMODE,
                 new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()));
     }
 
     private void restart() {
-        sendServerCommand(RFToolsMessages.INSTANCE, BuilderTileEntity.CMD_RESTART,
-                new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()));
+        sendServerCommand(RFToolsMessages.INSTANCE, BuilderTileEntity.CMD_RESTART);
     }
 
     private Panel setupPositionPanel() {
