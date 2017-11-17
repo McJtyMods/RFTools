@@ -83,7 +83,7 @@ artifacts {
 dependencies {
     deobfCompile "mezz.jei:jei_1.12:4.7.0.67"
     deobfCompile "mcp.mobius.waila:Hwyla:1.8.18-B32_1.12:api"
-    deobfCompile "mcjty.theoneprobe:TheOneProbe-1.12:1.12-1.4.11-5"
+    deobfCompile "mcjty.theoneprobe:TheOneProbe-1.12:1.12-1.4.19-11"
     deobfCompile "cofh:RedstoneFlux:1.12-2.0.0.1:universal"
     compile "team.chisel.ctm:CTM:MC1.12-0.2.1.5"
 
