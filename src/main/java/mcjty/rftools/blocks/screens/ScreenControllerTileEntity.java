@@ -2,20 +2,29 @@ package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.Optional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//@Optional.InterfaceList({
-//        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers"),
-//        @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")})
-public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity implements ITickable { // implements SimpleComponent, IPeripheral {
+import li.cil.oc.api.machine.Arguments;
+import li.cil.oc.api.machine.Callback;
+import li.cil.oc.api.machine.Context;
+import li.cil.oc.api.network.SimpleComponent;
+
+@Optional.InterfaceList({
+        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers"),
+//        @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft"),
+})
+public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity implements ITickable, SimpleComponent { // implements IPeripheral {
 
     public static final String CMD_SCAN = "scan";
     public static final String CMD_DETACH = "detach";
@@ -72,153 +81,153 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
 //    public boolean equals(IPeripheral other) {
 //        return false;
 //    }
-//
-//    @Override
-//    @Optional.Method(modid = "opencomputers")
-//    public String getComponentName() {
-//        return COMPONENT_NAME;
-//    }
-//
-//    @Callback(doc = "Get the amount of screens controlled by this controller", getter = true)
-//    @Optional.Method(modid = "opencomputers")
-//    public Object[] getScreenCount(Context context, Arguments args) throws Exception {
-//        return new Object[] { connectedScreens.size() };
-//    }
-//
-//    @Callback(doc = "Get a table with coordinates (every coordinate is a table indexed with 'x', 'y', and 'z') for all connected screens", getter = true)
-//    @Optional.Method(modid = "opencomputers")
-//    public Object[] getScreens(Context context, Arguments args) throws Exception {
-//        List<Map<String,Integer>> result = new ArrayList<Map<String, Integer>>();
-//        for (Coordinate screen : connectedScreens) {
-//            Map<String,Integer> coordinate = new HashMap<String, Integer>();
-//            coordinate.put("x", screen.getX());
-//            coordinate.put("y", screen.getY());
-//            coordinate.put("z", screen.getZ());
-//            result.add(coordinate);
-//        }
-//
-//        return new Object[] { result };
-//    }
-//
-//    @Callback(doc = "Given a screen coordinate (table indexed by 'x', 'y', and 'z') return the index of that screen", getter = true)
-//    @Optional.Method(modid = "opencomputers")
-//    public Object[] getScreenIndex(Context context, Arguments args) throws Exception {
-//        Map screen = args.checkTable(0);
-//        if (!screen.containsKey("x") || !screen.containsKey("y") || !screen.containsKey("z")) {
-//            throw new IllegalArgumentException("Screen map doesn't contain the right x,y,z coordinate!");
-//        }
-//        Coordinate recC = new Coordinate(((Double) screen.get("x")).intValue(), ((Double) screen.get("y")).intValue(), ((Double) screen.get("z")).intValue());
-//        return getScreenIndex(recC);
-//    }
-//
-//    private Object[] getScreenIndex(Coordinate coordinate) {
-//        int i = 0;
-//        for (Coordinate connectedScreen : connectedScreens) {
-//            if (connectedScreen.equals(coordinate)) {
-//                return new Object[] { i };
-//            }
-//            i++;
-//        }
-//
-//        return null;
-//    }
-//
-//    @Callback(doc = "Given a screen index return the coordinate (table indexed by 'x', 'y', and 'z') of that screen", getter = true)
-//    @Optional.Method(modid = "opencomputers")
-//    public Object[] getScreenCoordinate(Context context, Arguments args) throws Exception {
-//        int index = args.checkInteger(0);
-//        if (index < 0 || index >= connectedScreens.size()) {
-//            throw new IllegalArgumentException("Screen index out of range!");
-//        }
-//        Coordinate screen = connectedScreens.get(index);
-//        Map<String,Integer> coordinate = new HashMap<String, Integer>();
-//        coordinate.put("x", screen.getX());
-//        coordinate.put("y", screen.getY());
-//        coordinate.put("z", screen.getZ());
-//
-//        return new Object[] { coordinate };
-//    }
-//
-//
-//    @Callback(doc = "Add text to all screens listening to the given 'tag'. Parameters are: 'tag', 'text' and 'color' (RGB value)")
-//    @Optional.Method(modid = "opencomputers")
-//    public Object[] addText(Context context, Arguments args) throws Exception {
-//        String tag = args.checkString(0);
-//        String text = args.checkString(1);
-//        int color = args.checkInteger(2);
-//
-//        return addText(tag, text, color);
-//    }
-//
-//    @Callback(doc = "Set text to all screens listening to the given 'tag'. Parameters are: 'tag', 'text' and 'color' (RGB value)")
-//    @Optional.Method(modid = "opencomputers")
-//    public Object[] setText(Context context, Arguments args) throws Exception {
-//        String tag = args.checkString(0);
-//        String text = args.checkString(1);
-//        int color = args.checkInteger(2);
-//
-//        clearText(tag);
-//        return addText(tag, text, color);
-//    }
-//
-//    private Object[] setText(String tag, String text, int color) {
-//        clearText(tag);
-//        return addText(tag, text, color);
-//    }
-//
-//    private Object[] addText(String tag, String text, int color) {
-//        for (Coordinate screen : connectedScreens) {
-//            TileEntity te = getWorld().getTileEntity(screen.getX(), screen.getY(), screen.getZ());
-//            if (te instanceof ScreenTileEntity) {
-//                ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
-//                List<ComputerScreenModule> computerScreenModules = screenTileEntity.getComputerModules(tag);
-//                if (computerScreenModules != null) {
-//                    for (ComputerScreenModule screenModule : computerScreenModules) {
-//                        screenModule.addText(text, color);
-//                    }
-//                }
-//            }
-//        }
-//        return null;
-//    }
-//
-//    @Callback(doc = "Clear text to all screens listening to the given 'tag'. The 'tag' is the only parameter")
-//    @Optional.Method(modid = "opencomputers")
-//    public Object[] clearText(Context context, Arguments args) throws Exception {
-//        String tag = args.checkString(0);
-//
-//        return clearText(tag);
-//    }
-//
-//    private Object[] clearText(String tag) {
-//        for (Coordinate screen : connectedScreens) {
-//            TileEntity te = getWorld().getTileEntity(screen.getX(), screen.getY(), screen.getZ());
-//            if (te instanceof ScreenTileEntity) {
-//                ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
-//                List<ComputerScreenModule> computerScreenModules = screenTileEntity.getComputerModules(tag);
-//                if (computerScreenModules != null) {
-//                    for (ComputerScreenModule screenModule : computerScreenModules) {
-//                        screenModule.clearText();
-//                    }
-//                }
-//            }
-//        }
-//        return null;
-//    }
-//
-//    @Callback(doc = "Get a table of all tags supported by all connected screens", getter = true)
-//    @Optional.Method(modid = "opencomputers")
-//    public Object[] getTags(Context context, Arguments args) throws Exception {
-//        List<String> tags = new ArrayList<String>();
-//        for (Coordinate screen : connectedScreens) {
-//            TileEntity te = getWorld().getTileEntity(screen.getX(), screen.getY(), screen.getZ());
-//            if (te instanceof ScreenTileEntity) {
-//                ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
-//                tags.addAll(screenTileEntity.getTags());
-//            }
-//        }
-//        return new Object[] { tags };
-//    }
+
+    @Override
+    @Optional.Method(modid = "opencomputers")
+    public String getComponentName() {
+        return COMPONENT_NAME;
+    }
+
+    @Callback(doc = "Get the amount of screens controlled by this controller", getter = true)
+    @Optional.Method(modid = "opencomputers")
+    public Object[] getScreenCount(Context context, Arguments args) throws Exception {
+        return new Object[] { connectedScreens.size() };
+    }
+
+    @Callback(doc = "Get a table with coordinates (every coordinate is a table indexed with 'x', 'y', and 'z') for all connected screens", getter = true)
+    @Optional.Method(modid = "opencomputers")
+    public Object[] getScreens(Context context, Arguments args) throws Exception {
+        List<Map<String,Integer>> result = new ArrayList<Map<String, Integer>>();
+        for (BlockPos screen : connectedScreens) {
+            Map<String,Integer> coordinate = new HashMap<String, Integer>();
+            coordinate.put("x", screen.getX());
+            coordinate.put("y", screen.getY());
+            coordinate.put("z", screen.getZ());
+            result.add(coordinate);
+        }
+
+        return new Object[] { result };
+    }
+
+    @Callback(doc = "Given a screen coordinate (table indexed by 'x', 'y', and 'z') return the index of that screen", getter = true)
+    @Optional.Method(modid = "opencomputers")
+    public Object[] getScreenIndex(Context context, Arguments args) throws Exception {
+        Map screen = args.checkTable(0);
+        if (!screen.containsKey("x") || !screen.containsKey("y") || !screen.containsKey("z")) {
+            throw new IllegalArgumentException("Screen map doesn't contain the right x,y,z coordinate!");
+        }
+        BlockPos recC = new BlockPos(((Double) screen.get("x")).intValue(), ((Double) screen.get("y")).intValue(), ((Double) screen.get("z")).intValue());
+        return getScreenIndex(recC);
+    }
+
+    private Object[] getScreenIndex(BlockPos coordinate) {
+        int i = 0;
+        for (BlockPos connectedScreen : connectedScreens) {
+            if (connectedScreen.equals(coordinate)) {
+                return new Object[] { i };
+            }
+            i++;
+        }
+
+        return null;
+    }
+
+    @Callback(doc = "Given a screen index return the coordinate (table indexed by 'x', 'y', and 'z') of that screen", getter = true)
+    @Optional.Method(modid = "opencomputers")
+    public Object[] getScreenCoordinate(Context context, Arguments args) throws Exception {
+        int index = args.checkInteger(0);
+        if (index < 0 || index >= connectedScreens.size()) {
+            throw new IllegalArgumentException("Screen index out of range!");
+        }
+        BlockPos screen = connectedScreens.get(index);
+        Map<String,Integer> coordinate = new HashMap<String, Integer>();
+        coordinate.put("x", screen.getX());
+        coordinate.put("y", screen.getY());
+        coordinate.put("z", screen.getZ());
+
+        return new Object[] { coordinate };
+    }
+
+
+    @Callback(doc = "Add text to all screens listening to the given 'tag'. Parameters are: 'tag', 'text' and 'color' (RGB value)")
+    @Optional.Method(modid = "opencomputers")
+    public Object[] addText(Context context, Arguments args) throws Exception {
+        String tag = args.checkString(0);
+        String text = args.checkString(1);
+        int color = args.checkInteger(2);
+
+        return addText(tag, text, color);
+    }
+
+    @Callback(doc = "Set text to all screens listening to the given 'tag'. Parameters are: 'tag', 'text' and 'color' (RGB value)")
+    @Optional.Method(modid = "opencomputers")
+    public Object[] setText(Context context, Arguments args) throws Exception {
+        String tag = args.checkString(0);
+        String text = args.checkString(1);
+        int color = args.checkInteger(2);
+
+        clearText(tag);
+        return addText(tag, text, color);
+    }
+
+    private Object[] setText(String tag, String text, int color) {
+        clearText(tag);
+        return addText(tag, text, color);
+    }
+
+    private Object[] addText(String tag, String text, int color) {
+        for (BlockPos screen : connectedScreens) {
+            TileEntity te = getWorld().getTileEntity(screen);
+            if (te instanceof ScreenTileEntity) {
+                ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
+                List<ComputerScreenModule> computerScreenModules = screenTileEntity.getComputerModules(tag);
+                if (computerScreenModules != null) {
+                    for (ComputerScreenModule screenModule : computerScreenModules) {
+                        screenModule.addText(text, color);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    @Callback(doc = "Clear text to all screens listening to the given 'tag'. The 'tag' is the only parameter")
+    @Optional.Method(modid = "opencomputers")
+    public Object[] clearText(Context context, Arguments args) throws Exception {
+        String tag = args.checkString(0);
+
+        return clearText(tag);
+    }
+
+    private Object[] clearText(String tag) {
+        for (BlockPos screen : connectedScreens) {
+            TileEntity te = getWorld().getTileEntity(screen);
+            if (te instanceof ScreenTileEntity) {
+                ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
+                List<ComputerScreenModule> computerScreenModules = screenTileEntity.getComputerModules(tag);
+                if (computerScreenModules != null) {
+                    for (ComputerScreenModule screenModule : computerScreenModules) {
+                        screenModule.clearText();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    @Callback(doc = "Get a table of all tags supported by all connected screens", getter = true)
+    @Optional.Method(modid = "opencomputers")
+    public Object[] getTags(Context context, Arguments args) throws Exception {
+        List<String> tags = new ArrayList<String>();
+        for (BlockPos screen : connectedScreens) {
+            TileEntity te = getWorld().getTileEntity(screen);
+            if (te instanceof ScreenTileEntity) {
+                ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
+                tags.addAll(screenTileEntity.getTags());
+            }
+        }
+        return new Object[] { tags };
+    }
 
 
     @Override
