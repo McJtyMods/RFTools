@@ -462,6 +462,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         if (modes[from.ordinal()] != Mode.MODE_INPUT) {
             return 0;
         }
+        maxReceive = Math.min(maxReceive, getRfPerTickPerSide());
         int networkId = getNetworkId();
         int received;
         if (networkId == -1) {
