@@ -1,6 +1,7 @@
 package mcjty.rftools.network;
 
 import mcjty.lib.network.PacketHandler;
+import mcjty.lib.network.PacketUpdateNBTItemInventoryHandler;
 import mcjty.rftools.blocks.builder.PacketChamberInfoReady;
 import mcjty.rftools.blocks.builder.PacketGetChamberInfo;
 import mcjty.rftools.blocks.builder.PacketPositionToClient;
@@ -19,7 +20,9 @@ import mcjty.rftools.blocks.security.PacketSecurityNameReady;
 import mcjty.rftools.blocks.shaper.PacketRequestLocatorEnergyConsumption;
 import mcjty.rftools.blocks.shaper.PacketReturnLocatorEnergyConsumption;
 import mcjty.rftools.blocks.shaper.PacketProjectorClientNotification;
+import mcjty.rftools.items.builder.PacketUpdateNBTItemInventoryShape;
 import mcjty.rftools.items.modifier.PacketUpdateModifier;
+import mcjty.rftools.items.storage.PacketUpdateNBTItemFilter;
 import mcjty.rftools.shapes.*;
 import mcjty.rftools.blocks.shield.PacketFiltersReady;
 import mcjty.rftools.blocks.shield.PacketGetFilters;
@@ -86,6 +89,9 @@ public class RFToolsMessages {
         net.registerMessage(PacketUpdateNBTShapeCard.Handler.class, PacketUpdateNBTShapeCard.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketRequestExtraData.Handler.class, PacketRequestExtraData.class, PacketHandler.nextID(), Side.SERVER);
         net.registerMessage(PacketRequestLocatorEnergyConsumption.Handler.class, PacketRequestLocatorEnergyConsumption.class, PacketHandler.nextID(), Side.SERVER);
+        net.registerMessage(PacketUpdateNBTItemInventoryShape.Handler.class, PacketUpdateNBTItemInventoryShape.class, PacketHandler.nextID(), Side.SERVER);
+        net.registerMessage(PacketUpdateNBTItemFilter.Handler.class, PacketUpdateNBTItemFilter.class, PacketHandler.nextID(), Side.SERVER);
+        net.registerMessage(PacketUpdateNBTItemStorage.Handler.class, PacketUpdateNBTItemStorage.class, PacketHandler.nextID(), Side.SERVER);
 
         // Client side
         net.registerMessage(PacketPlayersReady.Handler.class, PacketPlayersReady.class, PacketHandler.nextID(), Side.CLIENT);

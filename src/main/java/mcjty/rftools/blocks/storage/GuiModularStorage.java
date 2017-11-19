@@ -280,7 +280,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
                     new Argument("filter", filter.getText()),
                     new Argument("groupMode", groupMode.getCurrentChoiceIndex() == 1));
         } else {
-            RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItem(
+            RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItemStorage(
                     new Argument("sortMode", sortMode.getCurrentChoice()),
                     new Argument("viewMode", viewMode.getCurrentChoice()),
                     new Argument("filter", filter.getText()),
