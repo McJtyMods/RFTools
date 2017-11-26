@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "rftools:rftools_shape_manual"
+  },
+  "pattern": [
+    " B ",
+    "rbr",
+    " r "
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "b": {
+      "item": "minecraft:book"
+    },
+    "B": {
+      "item": "minecraft:brick"
+    }
+  }
+}
