@@ -88,7 +88,7 @@ public class GuiStorageFilter extends GenericGuiContainer {
     }
 
     private void updateSettings() {
-        RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItem(
+        RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItemFilter(
                 new Argument("blacklistMode", blacklistMode.getCurrentChoice()),
                 new Argument("oredictMode", oredictMode.getCurrentChoiceIndex() == 1),
                 new Argument("damageMode", damageMode.getCurrentChoiceIndex() == 1),

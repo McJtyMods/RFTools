@@ -319,7 +319,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
                 ShapeCardItem.setShape(stack, getCurrentShape(), isSolid());
                 ShapeCardItem.setDimension(stack, dx, dy, dz);
                 ShapeCardItem.setOffset(stack, parseInt(offsetX.getText()), parseInt(offsetY.getText()), parseInt(offsetZ.getText()));
-                RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItemInventory(
+                RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItemInventoryShape(
                         GuiComposer.shaperBlock, GuiComposer.shaperStackSlot, tag));
             }
         } else {
@@ -351,7 +351,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
                 tag.setBoolean("voidsand", sand.isPressed());
                 tag.setBoolean("voidnetherrack", netherrack.isPressed());
                 tag.setBoolean("oredict", oredict.isPressed());
-                RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItemInventory(
+                RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItemInventoryShape(
                         GuiComposer.shaperBlock, GuiComposer.shaperStackSlot, tag));
             }
         } else {
