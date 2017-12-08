@@ -36,8 +36,8 @@ public class StorageConnectorSettings extends AbstractConnectorSettings {
     private Mode mode = Mode.INVENTORY;
     private InventoryAccessSettings accessSettings = new InventoryAccessSettings();
 
-    public StorageConnectorSettings(boolean advanced, @Nonnull EnumFacing side) {
-        super(advanced, side);
+    public StorageConnectorSettings(@Nonnull EnumFacing side) {
+        super(side);
     }
 
     public Mode getMode() {
@@ -127,13 +127,14 @@ public class StorageConnectorSettings extends AbstractConnectorSettings {
     @Override
     public boolean isEnabled(String tag) {
         if (tag.equals(TAG_FACING)) {
-            return isAdvanced();
+            return advanced;
         }
         return true;
     }
 
     @Override
     public void createGui(IEditorGui gui) {
+        advanced = gui.isAdvanced();
         sideGui(gui);
         gui.shift(30)
                 .choices(TAG_MODE, "Set to 'inventory' or 'storage'", mode, Mode.values());
