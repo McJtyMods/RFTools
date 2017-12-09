@@ -6,6 +6,7 @@ import net.minecraft.item.ItemBlock;
 public class DimensionalShardItemBlock extends ItemBlock {
     public DimensionalShardItemBlock(Block block) {
         super(block);
+        setHasSubtypes(true);
     }
 
     @Override
