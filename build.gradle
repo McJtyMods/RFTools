@@ -83,7 +83,7 @@ dependencies {
     compile "team.chisel.ctm:CTM:MC1.11.2-0.2.1.10"
     deobfCompile "com.github.mcjty:compatlayer:1.11.2-0.2.9"
     deobfCompile "com.github.mcjty:intwheel:1.1x-1.2.6"
-    deobfCompile "com.github.mcjty:xnet:1.4.1"
+    deobfCompile "com.github.mcjty:xnet:1.5.0"
     deobfCompile "com.github.mcjty:mcjtylib:1.1x-2.5.0-SNAPSHOT"
 
     compile "li.cil.oc:OpenComputers:MC1.10.2-1.6.+:api"
