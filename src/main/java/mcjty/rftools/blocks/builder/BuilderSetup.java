@@ -2,13 +2,13 @@ package mcjty.rftools.blocks.builder;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.shaper.*;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.builder.SpaceChamberCardItem;
 import mcjty.rftools.proxy.CommonProxy;
-import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -141,7 +141,7 @@ public class BuilderSetup {
     public static BlockInformation getBlockInformation(Block block) {
         BlockInformation information = blockInformationMap.get(block.getRegistryName().toString());
         if (information == null) {
-            String modid = RFToolsTools.getModidForBlock(block);
+            String modid = BlockTools.getModidForBlock(block);
             information = blockInformationMap.get("modid:" + modid);
         }
         return information;

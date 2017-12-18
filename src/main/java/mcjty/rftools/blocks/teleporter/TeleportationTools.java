@@ -9,10 +9,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
@@ -20,7 +18,6 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 
 public class TeleportationTools {
@@ -145,7 +142,7 @@ public class TeleportationTools {
         }
 
         if (oldId != dest.getDimension()) {
-            TeleportationTools.teleportToDimension(player, dest.getDimension(), c.getX() + 0.5, c.getY() + 1.5, c.getZ() + 0.5);
+            mcjty.lib.varia.TeleportationTools.teleportToDimension(player, dest.getDimension(), c.getX() + 0.5, c.getY() + 1.5, c.getZ() + 0.5);
         } else {
             player.setPositionAndUpdate(c.getX()+0.5, c.getY()+1, c.getZ()+0.5);
         }
@@ -180,21 +177,9 @@ public class TeleportationTools {
         return boostNeeded;
     }
 
-    /**
-     * Get a world for a dimension, possibly loading it from the configuration manager.
-     */
-    public static World getWorldForDimension(World world, int id) {
-        World w = DimensionManager.getWorld(id);
-        if (w == null) {
-            w = world.getMinecraftServer().getWorld(id);
-        }
-        return w;
-    }
-
-
     // Server side only
     public static int dial(World worldObj, DialingDeviceTileEntity dialingDeviceTileEntity, String player, BlockPos transmitter, int transDim, BlockPos coordinate, int dimension, boolean once) {
-        World transWorld = getWorldForDimension(worldObj, transDim);
+        World transWorld = mcjty.lib.varia.TeleportationTools.getWorldForDimension(transDim);
         if (transWorld == null) {
             return DialingDeviceTileEntity.DIAL_INVALID_SOURCE_MASK;
         }
@@ -218,7 +203,7 @@ public class TeleportationTools {
         }
 
         BlockPos c = teleportDestination.getCoordinate();
-        World recWorld = getWorldForDimension(worldObj, teleportDestination.getDimension());
+        World recWorld = mcjty.lib.varia.TeleportationTools.getWorldForDimension(teleportDestination.getDimension());
         if (recWorld == null) {
             recWorld = worldObj.getMinecraftServer().getWorld(teleportDestination.getDimension());
             if (recWorld == null) {
@@ -355,24 +340,6 @@ public class TeleportationTools {
             return false;
         }
         return true;
-    }
-
-    public static void teleportToDimension(EntityPlayer player, int dimension, double x, double y, double z) {
-        int oldDimension = player.getEntityWorld().provider.getDimension();
-        EntityPlayerMP entityPlayerMP = (EntityPlayerMP) player;
-        MinecraftServer server = player.getEntityWorld().getMinecraftServer();
-        WorldServer worldServer = server.getWorld(dimension);
-        player.addExperienceLevel(0);
-
-
-        worldServer.getMinecraftServer().getPlayerList().transferPlayerToDimension(entityPlayerMP, dimension, new RfToolsTeleporter(worldServer, x, y, z));
-        player.setPositionAndUpdate(x, y, z);
-        if (oldDimension == 1) {
-            // For some reason teleporting out of the end does weird things.
-            player.setPositionAndUpdate(x, y, z);
-            worldServer.spawnEntity(player);
-            worldServer.updateEntityWithOptionalForce(player, false);
-        }
     }
 
     public static TeleportDestination findDestination(World worldObj, BlockPos coordinate, int dimension) {

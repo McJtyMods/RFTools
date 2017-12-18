@@ -6,6 +6,8 @@ import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.lib.varia.BlockTools;
+import mcjty.lib.varia.ItemStackTools;
 import mcjty.lib.varia.SoundTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.general.IInventoryTracker;
@@ -13,7 +15,6 @@ import mcjty.rftools.api.storage.IStorageScanner;
 import mcjty.rftools.blocks.crafter.CraftingRecipe;
 import mcjty.rftools.craftinggrid.*;
 import mcjty.rftools.jei.JEIRecipeAcceptor;
-import mcjty.rftools.varia.ItemStackTools;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -460,7 +461,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     private static Predicate<ItemStack> makeSearchPredicate(String split) {
         if (split.startsWith("@")) {
-            return s -> RFToolsTools.getModid(s).toLowerCase().startsWith(split.substring(1));
+            return s -> BlockTools.getModid(s).toLowerCase().startsWith(split.substring(1));
         } else {
             return s -> s.getDisplayName().toLowerCase().contains(split);
         }

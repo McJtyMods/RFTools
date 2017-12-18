@@ -42,7 +42,7 @@ public class NoTeleportAreaManager {
             NoTeleportArea area = entry.getValue();
             GlobalCoordinate entryCoordinate = entry.getKey();
             if (area.in(coordinate, entryCoordinate)) {
-                World world = TeleportationTools.getWorldForDimension(entity.getEntityWorld(), entryCoordinate.getDimension());
+                World world = mcjty.lib.varia.TeleportationTools.getWorldForDimension(entryCoordinate.getDimension());
                 TileEntity te = world.getTileEntity(entryCoordinate.getCoordinate());
                 if (te instanceof EnvironmentalControllerTileEntity) {
                     EnvironmentalControllerTileEntity controllerTileEntity = (EnvironmentalControllerTileEntity) te;

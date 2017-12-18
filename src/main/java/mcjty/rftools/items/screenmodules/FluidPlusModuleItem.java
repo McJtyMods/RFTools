@@ -1,5 +1,6 @@
 package mcjty.rftools.items.screenmodules;
 
+import mcjty.lib.varia.CapabilityTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.api.screens.IClientScreenModule;
@@ -9,7 +10,6 @@ import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.FluidPlusBarScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.FluidPlusBarClientScreenModule;
 import mcjty.rftools.items.GenericRFToolsItem;
-import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
@@ -95,7 +95,7 @@ public class FluidPlusModuleItem extends GenericRFToolsItem implements IModulePr
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
         }
-        if (RFToolsTools.hasFluidCapabilitySafe(te) != null) {
+        if (CapabilityTools.hasFluidCapabilitySafe(te) != null) {
             tagCompound.setInteger("monitordim", world.provider.getDimension());
             tagCompound.setInteger("monitorx", pos.getX());
             tagCompound.setInteger("monitory", pos.getY());

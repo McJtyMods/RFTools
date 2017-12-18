@@ -190,7 +190,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
         }
         consumeEnergy(cost);
 
-        World w = TeleportationTools.getWorldForDimension(getWorld(), dim);
+        World w = mcjty.lib.varia.TeleportationTools.getWorldForDimension(dim);
         if (w == null) {
             TeleportDestinations destinations = TeleportDestinations.getDestinations(getWorld());
             destinations.cleanupInvalid(getWorld());

@@ -1840,32 +1840,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (!TeleportationTools.allowTeleport(entity, world.provider.getDimension(), entity.getPosition(), destWorld.provider.getDimension(), new BlockPos(newX, newY, newZ))) {
             return;
         }
-        if (entity instanceof EntityPlayer) {
-            if (world.provider.getDimension() != destWorld.provider.getDimension()) {
-                TeleportationTools.teleportToDimension((EntityPlayer) entity, destWorld.provider.getDimension(), newX, newY, newZ);
-            }
-            entity.setPositionAndUpdate(newX, newY, newZ);
-        } else {
-            if (world.provider.getDimension() != destWorld.provider.getDimension()) {
-                NBTTagCompound tagCompound = new NBTTagCompound();
-                float rotationYaw = entity.rotationYaw;
-                float rotationPitch = entity.rotationPitch;
-                entity.writeToNBT(tagCompound);
-                Class<? extends Entity> entityClass = entity.getClass();
-                world.removeEntity(entity);
-
-                try {
-                    Entity newEntity = entityClass.getConstructor(World.class).newInstance(destWorld);
-                    newEntity.readFromNBT(tagCompound);
-                    newEntity.setLocationAndAngles(newX, newY, newZ, rotationYaw, rotationPitch);
-                    destWorld.spawnEntity(newEntity);
-                } catch (Exception e) {
-                }
-            } else {
-                entity.setLocationAndAngles(newX, newY, newZ, entity.rotationYaw, entity.rotationPitch);
-                destWorld.updateEntityWithOptionalForce(entity, false);
-            }
-        }
+        mcjty.lib.varia.TeleportationTools.teleportEntity(entity, destWorld, newX, newY, newZ, null);
     }
 
 

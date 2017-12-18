@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.monitor;
 
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.rftools.varia.RFToolsTools;
+import mcjty.lib.varia.CapabilityTools;
 import mcjty.typed.Type;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -131,7 +131,7 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
         long maxContents = 0;
 
         TileEntity tileEntity = getWorld().getTileEntity(monitor);
-        net.minecraftforge.fluids.capability.IFluidHandler fluidHandler = RFToolsTools.hasFluidCapabilitySafe(tileEntity);
+        net.minecraftforge.fluids.capability.IFluidHandler fluidHandler = CapabilityTools.hasFluidCapabilitySafe(tileEntity);
         if (fluidHandler != null) {
             IFluidTankProperties[] properties = fluidHandler.getTankProperties();
             if (properties != null && properties.length > 0) {

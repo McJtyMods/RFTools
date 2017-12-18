@@ -1,7 +1,7 @@
 package mcjty.rftools.craftinggrid;
 
 import mcjty.lib.container.InventoryHelper;
-import mcjty.rftools.varia.RFToolsTools;
+import mcjty.lib.varia.CapabilityTools;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -18,8 +18,8 @@ public class TileEntityItemSource implements IItemSource {
     private List<Pair<Object, Integer>> inventories = new ArrayList<>();
 
     public TileEntityItemSource add(TileEntity te, int offset) {
-        if (RFToolsTools.hasItemCapabilitySafe(te)) {
-            IItemHandler capability = RFToolsTools.getItemCapabilitySafe(te);
+        if (CapabilityTools.hasItemCapabilitySafe(te)) {
+            IItemHandler capability = CapabilityTools.getItemCapabilitySafe(te);
             inventories.add(Pair.of(capability, offset));
         } else if (te instanceof IInventory) {
             inventories.add(Pair.of(te, offset));

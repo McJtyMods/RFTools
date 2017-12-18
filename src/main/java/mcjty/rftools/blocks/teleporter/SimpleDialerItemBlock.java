@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.teleporter;
 
-import mcjty.lib.varia.GlobalCoordinate;
-import mcjty.lib.varia.Logging;
+import mcjty.lib.varia.*;
 import mcjty.rftools.blocks.logic.generic.LogicItemBlock;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -86,7 +85,7 @@ public class SimpleDialerItemBlock extends LogicItemBlock {
         if (coordinate != null) {
             TeleportDestination destination = destinations.getDestination(coordinate);
             if (destination != null) {
-                World worldForDimension = TeleportationTools.getWorldForDimension(world, destination.getDimension());
+                World worldForDimension = mcjty.lib.varia.TeleportationTools.getWorldForDimension(destination.getDimension());
                 if (worldForDimension != null) {
                     TileEntity recTe = worldForDimension.getTileEntity(destination.getCoordinate());
                     if (recTe instanceof MatterReceiverTileEntity) {

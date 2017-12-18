@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.screens.modules;
 
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.lib.varia.CapabilityTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.api.screens.data.IModuleDataContents;
@@ -34,7 +35,7 @@ public class FluidBarScreenModule implements IScreenModule<IModuleDataContents> 
         int maxContents = 0;
 
         TileEntity te = world.getTileEntity(coordinate);
-        net.minecraftforge.fluids.capability.IFluidHandler handler = RFToolsTools.hasFluidCapabilitySafe(te);
+        net.minecraftforge.fluids.capability.IFluidHandler handler = CapabilityTools.hasFluidCapabilitySafe(te);
         if (handler != null) {
             IFluidTankProperties[] properties = handler.getTankProperties();
             if (properties != null && properties.length > 0) {

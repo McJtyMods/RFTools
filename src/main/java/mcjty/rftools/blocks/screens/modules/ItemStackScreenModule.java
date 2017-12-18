@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.screens.modules;
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.lib.varia.CapabilityTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
@@ -94,8 +95,8 @@ public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModul
             return null;
         }
 
-        if (RFToolsTools.hasItemCapabilitySafe(te)) {
-            IItemHandler itemHandler = RFToolsTools.getItemCapabilitySafe(te);
+        if (CapabilityTools.hasItemCapabilitySafe(te)) {
+            IItemHandler itemHandler = CapabilityTools.getItemCapabilitySafe(te);
             ItemStack stack1 = getItemStack(itemHandler, slot1);
             ItemStack stack2 = getItemStack(itemHandler, slot2);
             ItemStack stack3 = getItemStack(itemHandler, slot3);

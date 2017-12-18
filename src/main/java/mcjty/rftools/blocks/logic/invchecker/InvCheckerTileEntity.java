@@ -6,9 +6,9 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.lib.varia.CapabilityTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
-import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -117,8 +117,8 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
         TileEntity te = getWorld().getTileEntity(inputPos);
         if (InventoryHelper.isInventory(te)) {
             ItemStack stack = ItemStack.EMPTY;
-            if (RFToolsTools.hasItemCapabilitySafe(te)) {
-                IItemHandler capability = RFToolsTools.getItemCapabilitySafe(te);
+            if (CapabilityTools.hasItemCapabilitySafe(te)) {
+                IItemHandler capability = CapabilityTools.getItemCapabilitySafe(te);
                 if (capability == null) {
                     Block errorBlock = getWorld().getBlockState(inputPos).getBlock();
                     Logging.logError("Block: " + errorBlock.getLocalizedName() + " at " + BlockPosTools.toString(inputPos) + " returns null for getCapability(). Report to mod author");

@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.teleporter;
 
-import mcjty.lib.varia.GlobalCoordinate;
-import mcjty.lib.varia.Logging;
+import mcjty.lib.varia.*;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -66,7 +65,7 @@ public class TeleportDestinations extends WorldSavedData {
     public void cleanupInvalid(World world) {
         Set<GlobalCoordinate> keys = new HashSet<GlobalCoordinate>(destinations.keySet());
         for (GlobalCoordinate key : keys) {
-            World transWorld = TeleportationTools.getWorldForDimension(world, key.getDimension());
+            World transWorld = mcjty.lib.varia.TeleportationTools.getWorldForDimension(key.getDimension());
             boolean removed = false;
             if (transWorld == null) {
                 Logging.log("Receiver on dimension " + key.getDimension() + " removed because world can't be loaded!");

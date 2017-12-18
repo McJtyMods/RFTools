@@ -1,7 +1,7 @@
 package mcjty.rftools.shapes;
 
+import mcjty.lib.varia.Check32;
 import mcjty.rftools.items.builder.ShapeCardItem;
-import mcjty.rftools.varia.Check32;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;

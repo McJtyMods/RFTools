@@ -2,7 +2,6 @@ package mcjty.rftools.items.teleportprobe;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -56,7 +55,7 @@ public class PacketForceTeleport implements IMessage {
             int z = message.pos.getZ();
             int currentId = player.getEntityWorld().provider.getDimension();
             if (currentId != message.dim) {
-                TeleportationTools.teleportToDimension(player, message.dim, x + .5, y + 1, z + .5);
+                mcjty.lib.varia.TeleportationTools.teleportToDimension(player, message.dim, x + .5, y + 1, z + .5);
             } else {
                 player.setPositionAndUpdate(x+.5, y + 1.5, z+.5);
             }

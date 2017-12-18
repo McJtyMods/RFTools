@@ -156,7 +156,7 @@ public class PowerCellNetwork extends WorldSavedData {
             Iterable<GlobalCoordinate> copy = new HashSet<GlobalCoordinate>(blocks);
             blocks.clear();
             for (GlobalCoordinate c : copy) {
-                World world = TeleportationTools.getWorldForDimension(w, c.getDimension());
+                World world = mcjty.lib.varia.TeleportationTools.getWorldForDimension(c.getDimension());
                 IBlockState state = world.getBlockState(c.getCoordinate());
                 if (state.getBlock() == PowerCellSetup.powerCellBlock) {
                     blocks.add(c);

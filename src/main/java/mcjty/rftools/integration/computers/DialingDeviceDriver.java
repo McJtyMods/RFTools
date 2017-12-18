@@ -5,7 +5,9 @@ import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.prefab.AbstractManagedEnvironment;
 import mcjty.lib.integration.computers.AbstractOCDriver;
+import mcjty.lib.varia.*;
 import mcjty.rftools.blocks.teleporter.*;
+import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -89,7 +91,7 @@ public class DialingDeviceDriver {
                 boolean once = a.checkBoolean(3);
 
                 TileEntity transmitterTE = tile.getWorld().getTileEntity(fromCoordinateMap(transmitterSPos));
-                TileEntity receiverTE = TeleportationTools.getWorldForDimension(tile.getWorld(), targetDim).getTileEntity(fromCoordinateMap(receiverSPos));
+                TileEntity receiverTE = mcjty.lib.varia.TeleportationTools.getWorldForDimension(targetDim).getTileEntity(fromCoordinateMap(receiverSPos));
 
                 if (!(transmitterTE instanceof MatterTransmitterTileEntity)) {
                     return new Object[]{null, "Invalid matter transmitter"};

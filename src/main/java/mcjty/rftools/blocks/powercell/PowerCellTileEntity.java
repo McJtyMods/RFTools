@@ -670,7 +670,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         System.out.println("blocks.size() = " + blocks.size());
         blocks.forEach(b -> {
             String msg;
-            World w = TeleportationTools.getWorldForDimension(player.getEntityWorld(), b.getDimension());
+            World w = mcjty.lib.varia.TeleportationTools.getWorldForDimension(b.getDimension());
             if (w == null) {
                 msg = "dimension missing!";
             } else {

@@ -1,5 +1,6 @@
 package mcjty.rftools.items.screenmodules;
 
+import mcjty.lib.varia.CapabilityTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.api.screens.IClientScreenModule;
@@ -9,7 +10,6 @@ import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ItemStackPlusScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ItemStackPlusClientScreenModule;
 import mcjty.rftools.items.GenericRFToolsItem;
-import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
@@ -82,7 +82,7 @@ public class InventoryPlusModuleItem extends GenericRFToolsItem implements IModu
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
         }
-        if (RFToolsTools.hasItemCapabilitySafe(te) || te instanceof IInventory) {
+        if (CapabilityTools.hasItemCapabilitySafe(te) || te instanceof IInventory) {
             tagCompound.setInteger("monitordim", world.provider.getDimension());
             tagCompound.setInteger("monitorx", pos.getX());
             tagCompound.setInteger("monitory", pos.getY());
