@@ -209,8 +209,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         markDirty();
 
         IBlockState state = getWorld().getBlockState(getPos());
-        int meta = state.getBlock().getMetaFromState(state);
-        EnumFacing k = BlockTools.getOrientation(meta);
+        EnumFacing k = BlockTools.getOrientation(state);
         int sx = getPos().getX();
         int sy = getPos().getY();
         int sz = getPos().getZ();

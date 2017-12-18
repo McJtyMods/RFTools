@@ -17,7 +17,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import static net.minecraft.util.EnumFacing.*;
-import static net.minecraft.util.EnumFacing.WEST;
 
 public class ProjectorBlock extends GenericRFToolsBlock<ProjectorTileEntity, ProjectorContainer> {
 
@@ -48,8 +47,7 @@ public class ProjectorBlock extends GenericRFToolsBlock<ProjectorTileEntity, Pro
         TileEntity te = world.getTileEntity(pos);
         if (state.getBlock() instanceof ProjectorBlock && te instanceof ProjectorTileEntity) {
             ProjectorTileEntity projector = (ProjectorTileEntity)te;
-            int meta = getMetaFromState(state);
-            EnumFacing horiz = BlockTools.getOrientationHoriz(meta);
+            EnumFacing horiz = BlockTools.getOrientationHoriz(state);
             EnumFacing north = reorient(EnumFacing.NORTH, horiz);
             EnumFacing south = reorient(EnumFacing.SOUTH, horiz);
             EnumFacing west = reorient(EnumFacing.WEST, horiz);

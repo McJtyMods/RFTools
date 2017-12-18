@@ -111,9 +111,8 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
         }
 
         IBlockState state = getWorld().getBlockState(getPos());
-        int meta = state.getBlock().getMetaFromState(state);
         for (EnumFacing facing : EnumFacing.VALUES) {
-            int side = BlockTools.reorient(facing, meta).ordinal();
+            int side = BlockTools.reorient(facing, state).ordinal();
 //            int side = facing.ordinal();
             if (rf[side] > 0 && !inputMode[side]) {
                 TileEntity te = getWorld().getTileEntity(getPos().offset(facing));

@@ -28,8 +28,7 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
 
     public EndergenicTileEntity findEndergenicTileEntity() {
         IBlockState state = getWorld().getBlockState(getPos());
-        int meta = state.getBlock().getMetaFromState(state);
-        EnumFacing k = BlockTools.getOrientation(meta);
+        EnumFacing k = BlockTools.getOrientation(state);
         EndergenicTileEntity te = getEndergenicGeneratorAt(k.getOpposite());
         if (te != null) {
             return te;
