@@ -14,8 +14,8 @@ import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
 import mcjty.rftools.blocks.shield.filters.*;
 import mcjty.rftools.items.ModItems;
-import mcjty.rftools.shapes.Shape;
 import mcjty.rftools.items.builder.ShapeCardItem;
+import mcjty.rftools.shapes.Shape;
 import mcjty.typed.Type;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -67,8 +67,8 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
 
     // If true the shield is currently made.
     private boolean shieldComposed = false;
-    // The meta value for the template blocks that were used.
-    private int templateMeta = 0;
+    // The state for the template blocks that were used.
+    private IBlockState templateState = null;
     // If true the shield is currently active.
     private boolean shieldActive = false;
     // Timeout in case power is low. Here we wait a bit before trying again.
@@ -648,10 +648,10 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             ShapeCardItem.composeFormula(shapeItem, shape.getFormulaFactory().createFormula(), getWorld(), getPos(), dimension, offset, col, supportedBlocks, solid, false, null);
             coordinates = col;
         } else {
-            templateMeta = findTemplateMeta();
+            templateState = findTemplateState();
 
             Map<BlockPos, IBlockState> col = new HashMap<>();
-            findTemplateBlocks(col, templateMeta, ctrl, getPos());
+            findTemplateBlocks(col, templateState, ctrl, getPos());
             coordinates = col;
         }
 
@@ -686,19 +686,17 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         return !inventoryHelper.getStackInSlot(ShieldContainer.SLOT_SHAPE).isEmpty();
     }
 
-    private int findTemplateMeta() {
-        int meta = -1;
+    private IBlockState findTemplateState() {
         for (EnumFacing dir : EnumFacing.VALUES) {
             BlockPos p = getPos().offset(dir);
             if (p.getY() >= 0 && p.getY() < getWorld().getHeight()) {
                 IBlockState state = getWorld().getBlockState(p);
                 if (ShieldSetup.shieldTemplateBlock.equals(state.getBlock())) {
-                    meta = state.getBlock().getMetaFromState(state);
-                    break;
+                    return state;
                 }
             }
         }
-        return meta;
+        return null;
     }
 
     @Override
@@ -727,7 +725,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             Map<BlockPos, IBlockState> templateBlocks = new HashMap<>();
             IBlockState state = getWorld().getBlockState(pos);
             templateBlocks.put(pos, null);
-            findTemplateBlocks(templateBlocks, state.getBlock().getMetaFromState(state), false, pos);
+            findTemplateBlocks(templateBlocks, state, false, pos);
 
             int[] camoId = calculateCamoId();
             int cddata = calculateShieldCollisionData();
@@ -746,7 +744,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             if (isShapedShield()) {
                 getWorld().setBlockToAir(pos);
             } else {
-                getWorld().setBlockState(pos, ShieldSetup.shieldTemplateBlock.getStateFromMeta(templateMeta), 2);
+                getWorld().setBlockState(pos, templateState, 2);
             }
         } else {
             Logging.message(player, TextFormatting.YELLOW + "The selected shield can't do anything with this block!");
@@ -825,13 +823,12 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
                 if (isShapedShield()) {
                     getWorld().setBlockToAir(pp);
                 } else {
-                    IBlockState templateBlock = ShieldSetup.shieldTemplateBlock.getStateFromMeta(templateMeta);
-                    getWorld().setBlockState(new BlockPos(pp), templateBlock, 2);
+                    getWorld().setBlockState(new BlockPos(pp), templateState, 2);
                 }
             } else {
                 if (!isShapedShield()) {
                     // No room, just spawn the block
-                    BlockTools.spawnItemStack(getWorld(), cx, cy, cz, new ItemStack(ShieldSetup.shieldTemplateBlock, 1, templateMeta));
+                    BlockTools.spawnItemStack(getWorld(), cx, cy, cz, templateState.getBlock().getItem(getWorld(), new BlockPos(cx, cy, cz), templateState));
                 }
             }
         }
@@ -845,41 +842,38 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     /**
      * Find all template blocks recursively.
      * @param coordinateSet the set with coordinates to update during the search
-     * @param meta the metavalue for the shield template block we support
+     * @param templateState the state for the shield template block we support
      * @param ctrl if true also scan for blocks in corners
      */
-    private void findTemplateBlocks(Map<BlockPos, IBlockState> coordinateSet, int meta, boolean ctrl, BlockPos start) {
+    private void findTemplateBlocks(Map<BlockPos, IBlockState> coordinateSet, IBlockState templateState, boolean ctrl, BlockPos start) {
         Deque<BlockPos> todo = new ArrayDeque<>();
 
         if (ctrl) {
-            addToTodoCornered(coordinateSet, todo, start, meta);
+            addToTodoCornered(coordinateSet, todo, start, templateState);
             while (!todo.isEmpty() && coordinateSet.size() < supportedBlocks) {
                 BlockPos coordinate = todo.pollFirst();
                 coordinateSet.put(coordinate, null);
-                addToTodoCornered(coordinateSet, todo, coordinate, meta);
+                addToTodoCornered(coordinateSet, todo, coordinate, templateState);
             }
         } else {
-            addToTodoStraight(coordinateSet, todo, start, meta);
+            addToTodoStraight(coordinateSet, todo, start, templateState);
             while (!todo.isEmpty() && coordinateSet.size() < supportedBlocks) {
                 BlockPos coordinate = todo.pollFirst();
                 coordinateSet.put(coordinate, null);
-                addToTodoStraight(coordinateSet, todo, coordinate, meta);
+                addToTodoStraight(coordinateSet, todo, coordinate, templateState);
             }
         }
     }
 
-    private void addToTodoStraight(Map<BlockPos, IBlockState> coordinateSet, Deque<BlockPos> todo, BlockPos coordinate, int meta) {
+    private void addToTodoStraight(Map<BlockPos, IBlockState> coordinateSet, Deque<BlockPos> todo, BlockPos coordinate, IBlockState templateState) {
         for (EnumFacing dir : EnumFacing.VALUES) {
             BlockPos pp = coordinate.offset(dir);
             if (pp.getY() >= 0 && pp.getY() < getWorld().getHeight()) {
                 if (!coordinateSet.containsKey(pp)) {
                     IBlockState state = getWorld().getBlockState(pp);
-                    if (ShieldSetup.shieldTemplateBlock.equals(state.getBlock())) {
-                        int m = state.getBlock().getMetaFromState(state);
-                        if (m == meta) {
-                            if (!todo.contains(pp)) {
-                                todo.addLast(pp);
-                            }
+                    if (state == templateState) {
+                        if (!todo.contains(pp)) {
+                            todo.addLast(pp);
                         }
                     }
                 }
@@ -887,7 +881,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         }
     }
 
-    private void addToTodoCornered(Map<BlockPos, IBlockState> coordinateSet, Deque<BlockPos> todo, BlockPos coordinate, int meta) {
+    private void addToTodoCornered(Map<BlockPos, IBlockState> coordinateSet, Deque<BlockPos> todo, BlockPos coordinate, IBlockState templateState) {
         int x = coordinate.getX();
         int y = coordinate.getY();
         int z = coordinate.getZ();
@@ -900,12 +894,9 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
                             c.setPos(xx, yy, zz);
                             if (!coordinateSet.containsKey(c)) {
                                 IBlockState state = getWorld().getBlockState(c);
-                                if (ShieldSetup.shieldTemplateBlock.equals(state.getBlock())) {
-                                    int m = state.getBlock().getMetaFromState(state);
-                                    if (m == meta) {
-                                        if (!todo.contains(c)) {
-                                            todo.addLast(c.toImmutable());
-                                        }
+                                if (state == templateState) {
+                                    if (!todo.contains(c)) {
+                                        todo.addLast(c.toImmutable());
                                     }
                                 }
                             }
@@ -952,7 +943,14 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         shieldComposed = tagCompound.getBoolean("composed");
         shieldActive = tagCompound.getBoolean("active");
         powerTimeout = tagCompound.getInteger("powerTimeout");
-        templateMeta = tagCompound.getInteger("templateMeta");
+        if (tagCompound.hasKey("templateColor")) {
+            int templateColor = tagCompound.getInteger("templateColor");
+            templateState = ShieldSetup.shieldTemplateBlock.getDefaultState().withProperty(ShieldTemplateBlock.COLOR, ShieldTemplateBlock.TemplateColor.values()[templateColor]);
+        } else if (tagCompound.hasKey("templateMeta")) {
+            // Deprecated @todo remove with 1.13
+            int meta = tagCompound.getInteger("templateMeta");
+            templateState = ShieldSetup.shieldTemplateBlock.getStateFromMeta(meta);
+        }
 
         shieldRenderingMode = ShieldRenderingMode.values()[tagCompound.getInteger("visMode")];
         rsMode = RedstoneMode.values()[(tagCompound.getByte("rsMode"))];
@@ -973,7 +971,9 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         tagCompound.setBoolean("composed", shieldComposed);
         tagCompound.setBoolean("active", shieldActive);
         tagCompound.setInteger("powerTimeout", powerTimeout);
-        tagCompound.setInteger("templateMeta", templateMeta);
+        if (templateState != null) {
+            tagCompound.setInteger("templateColor", templateState.getValue(ShieldTemplateBlock.COLOR).ordinal());
+        }
 
         tagCompound.setInteger("visMode", shieldRenderingMode.ordinal());
         tagCompound.setByte("rsMode", (byte) rsMode.ordinal());
@@ -991,7 +991,14 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         shieldComposed = tagCompound.getBoolean("composed");
         shieldActive = tagCompound.getBoolean("active");
         powerTimeout = tagCompound.getInteger("powerTimeout");
-        templateMeta = tagCompound.getInteger("templateMeta");
+        if (tagCompound.hasKey("templateColor")) {
+            int templateColor = tagCompound.getInteger("templateColor");
+            templateState = ShieldSetup.shieldTemplateBlock.getDefaultState().withProperty(ShieldTemplateBlock.COLOR, ShieldTemplateBlock.TemplateColor.values()[templateColor]);
+        } else if (tagCompound.hasKey("templateMeta")) {
+            // Deprecated @todo remove with 1.13
+            int meta = tagCompound.getInteger("templateMeta");
+            templateState = ShieldSetup.shieldTemplateBlock.getStateFromMeta(meta);
+        }
 
         shieldBlocks.clear();
         blockStateTable.clear();
@@ -1067,7 +1074,9 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         tagCompound.setBoolean("composed", shieldComposed);
         tagCompound.setBoolean("active", shieldActive);
         tagCompound.setInteger("powerTimeout", powerTimeout);
-        tagCompound.setInteger("templateMeta", templateMeta);
+        if (templateState != null) {
+            tagCompound.setInteger("templateColor", templateState.getValue(ShieldTemplateBlock.COLOR).ordinal());
+        }
         byte[] blocks = new byte[shieldBlocks.size() * 8];
         int j = 0;
         for (RelCoordinateShield c : shieldBlocks) {
