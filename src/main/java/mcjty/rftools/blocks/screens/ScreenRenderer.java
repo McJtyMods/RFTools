@@ -20,6 +20,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -41,20 +42,31 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
 
     @Override
     public void render(ScreenTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-//        GlStateManager.pushAttrib();
         GlStateManager.pushMatrix();
         float f3;
 
-        int meta = tileEntity == null ? 0 : tileEntity.getBlockMetadata();
+        EnumFacing facing = EnumFacing.SOUTH;
+        if (tileEntity != null) {
+            IBlockState state = Minecraft.getMinecraft().world.getBlockState(tileEntity.getPos());
+            facing = state.getValue(GenericBlock.FACING);
+        }
 
-        if (meta == 2) {
-            f3 = 180.0F;
-        } else if (meta == 4) {
-            f3 = 90.0F;
-        } else if (meta == 5) {
-            f3 = -90.0F;
-        } else {
-            f3 = 0.0F;
+        switch (facing) {
+            case NORTH:
+                f3 = 180.0F;
+                break;
+            case WEST:
+                f3 = 90.0F;
+                break;
+            case EAST:
+                f3 = -90.0F;
+                break;
+            case DOWN:
+            case UP:
+            case SOUTH:
+            default:
+                f3 = 0.0F;
+                break;
         }
 
         // TileEntity can be null if this is used for an item renderer.
@@ -90,7 +102,6 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         GlStateManager.depthMask(true);
 
         GlStateManager.popMatrix();
-//        GlStateManager.popAttrib();
     }
 
     private Map<Integer, IModuleData> updateScreenData(ScreenTileEntity screenTileEntity) {
