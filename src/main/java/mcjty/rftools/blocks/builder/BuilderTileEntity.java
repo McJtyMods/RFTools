@@ -34,7 +34,6 @@ import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -63,7 +62,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
@@ -1063,8 +1061,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
 
             FakePlayer fakePlayer = getHarvester();
-            Integer origMeta = pickState != null ? pickState.getBlock().getMetaFromState(pickState) : null;
-            IBlockState newState = placeBlockAt(getWorld(), srcPos, stack, origMeta, fakePlayer);
+            IBlockState newState = BlockTools.placeStackAt(fakePlayer, stack, getWorld(), srcPos, pickState);
 
             if (!silent) {
                 SoundTools.playSound(getWorld(), newState.getBlock().getSoundType().getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
@@ -1073,23 +1070,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             consumeEnergy(rfNeeded);
         }
         return skip();
-    }
-
-    private IBlockState placeBlockAt(World world, BlockPos pos, ItemStack stack, @Nullable Integer origMeta, FakePlayer fakePlayer) {
-        Item item = stack.getItem();
-        if (item instanceof ItemBlock) {
-            ItemBlock itemBlock = (ItemBlock) item;
-            if (origMeta == null) {
-                origMeta = itemBlock.getDamage(stack);
-            }
-            IBlockState newState = itemBlock.getBlock().getStateFromMeta(origMeta);
-            itemBlock.placeBlockAt(stack, fakePlayer, world, pos, EnumFacing.UP, 0, 0, 0, newState);
-            return newState;
-        } else {
-            fakePlayer.setHeldItem(EnumHand.MAIN_HAND, stack);
-            item.onItemUse(fakePlayer, world, pos.down(), EnumHand.MAIN_HAND, EnumFacing.UP, (float) 0, (float) 0, (float) 0);
-            return world.getBlockState(pos);
-        }
     }
 
     private Set<Block> getCachedVoidableBlocks() {
@@ -1472,7 +1452,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         } else {
             Block block = state.getBlock();
             ItemStack srcItem = block.getItem(srcWorld, srcPos, state);
-            int meta = block.getMetaFromState(state);
             for (int i = 0; i < inventory.getSizeInventory(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
                 if (!stack.isEmpty() && stack.isItemEqual(srcItem)) {
@@ -1692,38 +1671,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return rotate;
     }
 
-    private int rotateMeta(Block block, int meta, BuilderSetup.BlockInformation information, int rotMode) {
-        Item item = Item.getItemFromBlock(block);
-        if (item != null && item.getHasSubtypes()) {
-            // If the item has subtypes we cannot rotate it.
-            return meta;
-        }
-
-        switch (information.getRotateInfo()) {
-            // @todo do this the proper way!
-            case BuilderSetup.BlockInformation.ROTATE_mfff:
-//                switch (rotMode) {
-//                    case 0: return meta;
-//                    case 1: {
-//                        EnumFacing dir = ForgeDirection.values()[meta & 7];
-//                        return (meta & 8) | dir.getRotation(ForgeDirection.UP).ordinal();
-//                    }
-//                    case 2: {
-//                        ForgeDirection dir = ForgeDirection.values()[meta & 7];
-//                        return (meta & 8) | dir.getOpposite().ordinal();
-//                    }
-//                    case 3: {
-//                        ForgeDirection dir = ForgeDirection.values()[meta & 7];
-//                        return (meta & 8) | dir.getOpposite().getRotation(ForgeDirection.UP).ordinal();
-//                    }
-//                }
-                break;
-            case BuilderSetup.BlockInformation.ROTATE_mmmm:
-                return meta;
-        }
-        return meta;
-    }
-
     private void copyBlock(World world, BlockPos srcPos, World destWorld, BlockPos destPos) {
         int rf = getEnergyStored();
         int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
@@ -1743,12 +1690,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
 
             Block origBlock = state.getBlock();
-            int origMeta = origBlock.getMetaFromState(state);
-            BuilderSetup.BlockInformation information = getBlockInformation(world, srcPos, origBlock, null);
-            origMeta = rotateMeta(origBlock, origMeta, information, rotate);
 
             FakePlayer fakePlayer = getHarvester();
-            IBlockState newState = placeBlockAt(destWorld, destPos, consumedStack, origMeta, fakePlayer);
+            IBlockState newState = BlockTools.placeStackAt(fakePlayer, consumedStack, destWorld, destPos, state);
             destWorld.setBlockState(destPos, newState, 3);  // placeBlockAt can reset the orientation. Restore it here
 
             if (!silent) {
@@ -1875,9 +1819,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 consumeEnergy(rfNeeded);
             }
 
-            int origMeta = origBlock.getMetaFromState(state);
-            origMeta = rotateMeta(origBlock, origMeta, information, rotMode);
-
             NBTTagCompound tc = null;
             if (origTileEntity != null) {
                 tc = new NBTTagCompound();
@@ -1886,10 +1827,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
             clearBlock(world, srcPos);
 
-            IBlockState newDestState = origBlock.getStateFromMeta(origMeta);
-            destWorld.setBlockState(destPos, newDestState, 3);
+            destWorld.setBlockState(destPos, state, 3);
             if (origTileEntity != null && tc != null) {
-                setTileEntityNBT(destWorld, tc, destPos, newDestState);
+                setTileEntityNBT(destWorld, tc, destPos, state);
             }
             if (!silent) {
                 SoundTools.playSound(world, origBlock.getSoundType().getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
@@ -1943,17 +1883,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             consumeEnergy(rfNeeded);
         }
 
-        int srcMeta = srcBlock.getMetaFromState(srcState);
-        srcMeta = rotateMeta(srcBlock, srcMeta, srcInformation, oppositeRotate());
-        int dstMeta = dstBlock.getMetaFromState(dstState);
-        dstMeta = rotateMeta(dstBlock, dstMeta, dstInformation, rotate);
-
         world.removeTileEntity(srcPos);
         world.setBlockToAir(srcPos);
         destWorld.removeTileEntity(dstPos);
         destWorld.setBlockToAir(dstPos);
 
-        IBlockState newDstState = srcBlock.getStateFromMeta(srcMeta);
+        IBlockState newDstState = srcState;
         destWorld.setBlockState(dstPos, newDstState, 3);
 //        destWorld.setBlockMetadataWithNotify(destX, destY, destZ, srcMeta, 3);
         if (srcTileEntity != null) {
@@ -1963,7 +1898,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             destWorld.notifyBlockUpdate(dstPos, newDstState, newDstState, 3);
         }
 
-        IBlockState newSrcState = dstBlock.getStateFromMeta(dstMeta);
+        IBlockState newSrcState = dstState;
         world.setBlockState(srcPos, newSrcState, 3);
 //        world.setBlockMetadataWithNotify(x, y, z, dstMeta, 3);
         if (dstTileEntity != null) {
