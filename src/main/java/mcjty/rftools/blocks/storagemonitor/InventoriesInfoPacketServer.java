@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.network.clientinfo.InfoPacketClient;
 import mcjty.lib.network.clientinfo.InfoPacketServer;
-import mcjty.rftools.BlockInfo;
+import mcjty.lib.varia.BlockTools;
 import mcjty.rftools.blocks.storage.ModularStorageContainer;
 import mcjty.rftools.blocks.storage.ModularStorageTileEntity;
 import mcjty.rftools.varia.RFToolsTools;
@@ -93,7 +93,7 @@ public class InventoriesInfoPacketServer implements InfoPacketServer {
             displayName = "[REMOVED]";
             block = null;
         } else {
-            displayName = BlockInfo.getReadableName(state);
+            displayName = BlockTools.getReadableName(world, pos);
             TileEntity storageTe = world.getTileEntity(pos);
             if (storageTe instanceof ModularStorageTileEntity) {
                 ModularStorageTileEntity storageTileEntity = (ModularStorageTileEntity) storageTe;

@@ -1,9 +1,9 @@
 package mcjty.rftools.items.screenmodules;
 
 import mcjty.lib.crafting.INBTPreservingIngredient;
+import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.CapabilityTools;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.BlockInfo;
 import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.api.screens.IScreenModule;
@@ -84,7 +84,7 @@ public class InventoryModuleItem extends GenericRFToolsItem implements IModulePr
             Block block = state.getBlock();
             String name = "<invalid>";
             if (block != null && !block.isAir(state, world, pos)) {
-                name = BlockInfo.getReadableName(world.getBlockState(pos));
+                name = BlockTools.getReadableName(world, pos);
             }
             tagCompound.setString("monitorname", name);
             if (world.isRemote) {

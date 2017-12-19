@@ -8,9 +8,7 @@ import mcjty.lib.gui.events.DefaultSelectionEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Button;
-import mcjty.lib.gui.widgets.Panel;
-import mcjty.rftools.BlockInfo;
+import mcjty.lib.varia.BlockTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.crafter.CraftingRecipe;
 import mcjty.rftools.network.RFToolsMessages;
@@ -26,7 +24,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import org.lwjgl.input.Mouse;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 
 public class GuiCraftingGrid {
@@ -222,7 +220,7 @@ public class GuiCraftingGrid {
     }
 
     private void addRecipeLine(ItemStack craftingResult) {
-        String readableName = BlockInfo.getReadableName(craftingResult, 0);
+        String readableName = BlockTools.getReadableName(craftingResult);
         int color = StyleConfig.colorTextInListNormal;
         if (craftingResult.isEmpty()) {
             readableName = "<recipe>";

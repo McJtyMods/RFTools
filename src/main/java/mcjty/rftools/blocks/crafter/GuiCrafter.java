@@ -10,13 +10,10 @@ import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Button;
-import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.network.Argument;
+import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.ItemStackList;
 import mcjty.lib.varia.RedstoneMode;
-import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.renderer.GlStateManager;
@@ -30,7 +27,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     public static final int CRAFTER_WIDTH = 256;
@@ -216,7 +213,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     }
 
     private void addRecipeLine(ItemStack craftingResult) {
-        String readableName = BlockInfo.getReadableName(craftingResult, 0);
+        String readableName = BlockTools.getReadableName(craftingResult);
         int color = StyleConfig.colorTextInListNormal;
         if (craftingResult.isEmpty()) {
             readableName = "<no recipe>";

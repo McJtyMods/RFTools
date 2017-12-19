@@ -1,9 +1,6 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.BlockInfo;
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -89,29 +86,6 @@ public class ModularStorageConfiguration {
             String key = entry.getKey();
             if (!categoryMapper.containsKey(key)) {
                 categoryMapper.put(key, entry.getValue().getString());
-            }
-        }
-    }
-
-
-
-    public static void dumpClasses(boolean docode) {
-        Logging.log("#### Dumping item and block classification");
-        for (Object o : Block.REGISTRY) {
-            Block block = (Block) o;
-            if (docode) {
-                formateAsCode(block.getClass(), getCategory(block.getClass()));
-            } else {
-                formatClassification("B", BlockInfo.getReadableName(block, 0), block.getClass(), getCategory(block.getClass()));
-            }
-        }
-
-        for (Object o : Item.REGISTRY) {
-            Item item = (Item) o;
-            if (docode) {
-                formateAsCode(item.getClass(), getCategory(item.getClass()));
-            } else {
-                formatClassification("I", BlockInfo.getReadableName(item, 0), item.getClass(), getCategory(item.getClass()));
             }
         }
     }

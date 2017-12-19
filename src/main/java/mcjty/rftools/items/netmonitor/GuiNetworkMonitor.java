@@ -8,10 +8,8 @@ import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
@@ -20,7 +18,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -179,7 +177,7 @@ public class GuiNetworkMonitor extends GuiItemScreen {
                 int color = getTextColor(blockInfo);
 
                 IBlockState state = mc.world.getBlockState(coordinate);
-                String displayName = BlockInfo.getReadableName(state);
+                String displayName = BlockTools.getReadableName(mc.world, coordinate);
 
                 if (filter != null) {
                     if (!displayName.toLowerCase().contains(filter)) {

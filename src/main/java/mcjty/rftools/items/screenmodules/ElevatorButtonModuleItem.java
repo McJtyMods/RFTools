@@ -1,7 +1,7 @@
 package mcjty.rftools.items.screenmodules;
 
+import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.BlockInfo;
 import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.api.screens.IScreenModule;
@@ -94,7 +94,7 @@ public class ElevatorButtonModuleItem extends GenericRFToolsItem implements IMod
             Block block = state.getBlock();
             String name = "<invalid>";
             if (block != null && !block.isAir(state, world, pos)) {
-                name = BlockInfo.getReadableName(world.getBlockState(pos));
+                name = BlockTools.getReadableName(world, pos);
             }
             tagCompound.setString("elevatorname", name);
             if (world.isRemote) {

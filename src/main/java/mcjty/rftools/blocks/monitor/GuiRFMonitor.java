@@ -9,17 +9,15 @@ import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.varia.BlockPosTools;
-import mcjty.rftools.BlockInfo;
+import mcjty.lib.varia.BlockTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -133,7 +131,7 @@ public class GuiRFMonitor extends GenericGuiContainer<RFMonitorBlockTileEntity> 
 
             int color = StyleConfig.colorTextInListNormal;
 
-            String displayName = BlockInfo.getReadableName(state);
+            String displayName = BlockTools.getReadableName(mc.world, coordinate);
 
             if (coordinate.equals(tileEntity.getMonitor())) {
                 sel = index;
