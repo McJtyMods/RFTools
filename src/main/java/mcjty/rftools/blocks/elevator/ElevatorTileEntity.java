@@ -733,7 +733,11 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         if (tagCompound.hasKey("bminX")) {
             bounds = new Bounds(tagCompound.getInteger("bminX"), tagCompound.getInteger("bminZ"), tagCompound.getInteger("bmaxX"), tagCompound.getInteger("bmaxZ"));
         }
-        if (tagCompound.hasKey("movingBlock")) {
+        if (tagCompound.hasKey("movingId")) {
+            Integer id = tagCompound.getInteger("movingId");
+            movingState = Block.getStateById(id);
+        } else if (tagCompound.hasKey("movingBlock")) {
+            // Deprecated (@todo remove in 1.13)
             String id = tagCompound.getString("movingBlock");
             int meta = tagCompound.getInteger("movingMeta");
             movingState = Block.REGISTRY.getObject(new ResourceLocation(id)).getStateFromMeta(meta);
@@ -768,8 +772,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         }
         tagCompound.setByteArray("relcoords", blocks);
         if (movingState != null) {
-            tagCompound.setString("movingBlock", movingState.getBlock().getRegistryName().toString());
-            tagCompound.setInteger("movingMeta", movingState.getBlock().getMetaFromState(movingState));
+            tagCompound.setInteger("movingId", movingState.getBlock().getStateId(movingState));
         }
         if (!getWorld().isRemote) {
             // Only do this server side
