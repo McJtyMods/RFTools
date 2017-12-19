@@ -4,6 +4,8 @@ import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.api.smartwrench.SmartWrenchMode;
 import mcjty.lib.gui.HudRenderHelper;
 import mcjty.lib.gui.RenderGlowEffect;
+import mcjty.lib.network.Arguments;
+import mcjty.lib.network.PacketSendServerCommand;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorTileEntity;
 import mcjty.rftools.blocks.builder.BuilderSetup;
@@ -12,7 +14,7 @@ import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.netmonitor.NetworkMonitorItem;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
-import mcjty.rftools.network.PacketGetRfInRange;
+import mcjty.rftools.network.MachineInfo;
 import mcjty.rftools.network.PacketReturnRfInRange;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.ShapeDataManagerClient;
@@ -252,16 +254,16 @@ public class RenderWorldLastEventHandler {
 
             if (System.currentTimeMillis() - lastTime > 500) {
                 lastTime = System.currentTimeMillis();
-                RFToolsMessages.INSTANCE.sendToServer(new PacketGetRfInRange(player.getPosition()));
+                RFToolsMessages.INSTANCE.sendToServer(new PacketSendServerCommand(RFTools.MODID, CommandHandler.CMD_GETRFINRANGE, Arguments.EMPTY));
             }
 
             if (PacketReturnRfInRange.clientLevels == null) {
                 return;
             }
-            for (Map.Entry<BlockPos, PacketGetRfInRange.MachineInfo> entry : PacketReturnRfInRange.clientLevels.entrySet()) {
+            for (Map.Entry<BlockPos, MachineInfo> entry : PacketReturnRfInRange.clientLevels.entrySet()) {
                 BlockPos pos = entry.getKey();
                 List<String> log = new ArrayList<>();
-                PacketGetRfInRange.MachineInfo info = entry.getValue();
+                MachineInfo info = entry.getValue();
                 log.add(TextFormatting.BLUE + "RF:  " + TextFormatting.WHITE + info.getEnergy());
                 log.add(TextFormatting.BLUE + "Max: " + TextFormatting.WHITE + info.getMaxEnergy());
                 if (info.getEnergyPerTick() != null) {

@@ -8,7 +8,10 @@ import mcjty.lib.gui.events.DefaultSelectionEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
+import mcjty.lib.network.Arguments;
+import mcjty.lib.network.PacketSendServerCommand;
 import mcjty.lib.varia.BlockTools;
+import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.crafter.CraftingRecipe;
 import mcjty.rftools.network.RFToolsMessages;
@@ -102,12 +105,14 @@ public class GuiCraftingGrid {
     }
 
     private void craft(int n) {
-        RFToolsMessages.INSTANCE.sendToServer(new PacketCraftFromGrid(pos, n, false));
+        RFToolsMessages.INSTANCE.sendToServer(new PacketSendServerCommand(RFTools.MODID, CommandHandler.CMD_CRAFTFROMGRID,
+                Arguments.builder().value(n).value(false).value(pos).build()));
     }
 
     private void testCraft(int n) {
         if (lastTestAmount != n || lastTestTimer <= 0) {
-            RFToolsMessages.INSTANCE.sendToServer(new PacketCraftFromGrid(pos, n, true));
+            RFToolsMessages.INSTANCE.sendToServer(new PacketSendServerCommand(RFTools.MODID, CommandHandler.CMD_CRAFTFROMGRID,
+                    Arguments.builder().value(n).value(true).value(pos).build()));
             lastTestAmount = n;
             lastTestTimer = 20;
         }

@@ -1,5 +1,9 @@
 package mcjty.rftools.shapes;
 
+import mcjty.lib.network.Arguments;
+import mcjty.lib.network.PacketSendServerCommand;
+import mcjty.rftools.CommandHandler;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 
 import javax.annotation.Nonnull;
@@ -47,7 +51,8 @@ public class ScanDataManagerClient {
 
     // Client side only
     public void requestExtraDataClient(int id) {
-        RFToolsMessages.INSTANCE.sendToServer(new PacketRequestExtraData(id));
+        RFToolsMessages.INSTANCE.sendToServer(new PacketSendServerCommand(RFTools.MODID, CommandHandler.CMD_REQUESTSHAPEDATA,
+                Arguments.builder().value(id).build()));
     }
 
     // Client side only
@@ -65,7 +70,8 @@ public class ScanDataManagerClient {
         }
         scan.dirtyRequestTimeout--;
         if (scan.dirtyRequestTimeout <= 0) {
-            RFToolsMessages.INSTANCE.sendToServer(new PacketRequestScanDirty(id));
+            RFToolsMessages.INSTANCE.sendToServer(new PacketSendServerCommand(RFTools.MODID, CommandHandler.CMD_REQUESTSCANDIRTY,
+                    Arguments.builder().value(id).build()));
             scan.dirtyRequestTimeout = 20;
         }
         return scan.getDirtyCounter();

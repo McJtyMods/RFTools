@@ -161,7 +161,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
 
     @Override
     @Nonnull
-    public int[] craft(EntityPlayerMP player, int n, boolean test) {
+    public int[] craft(EntityPlayer player, int n, boolean test) {
         InventoriesItemSource itemSource = new InventoriesItemSource()
                 .add(player.inventory, 0).add(this, ModularStorageContainer.SLOT_STORAGE);
 

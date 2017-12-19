@@ -9,20 +9,16 @@ import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Button;
-import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
-import mcjty.lib.network.PacketUpdateNBTItem;
+import mcjty.lib.network.Arguments;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.modules.DefaultTypeModule;
 import mcjty.rftools.blocks.storage.modules.TypeModule;
 import mcjty.rftools.blocks.storage.sorters.ItemSorter;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import mcjty.rftools.craftinggrid.GuiCraftingGrid;
-import mcjty.rftools.craftinggrid.PacketRequestGridSync;
 import mcjty.rftools.items.storage.StorageModuleItem;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
@@ -43,7 +39,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -173,7 +169,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         }
 
         craftingGrid.initGui(modBase, network, mc, this, pos, provider, guiLeft, guiTop, xSize, ySize);
-        network.sendToServer(new PacketRequestGridSync(pos));
+        sendServerCommand(RFTools.MODID, CommandHandler.CMD_REQUESTGRIDSYNC, Arguments.builder().value(pos).build());
     }
 
     private Panel setupModePanel() {
@@ -253,7 +249,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         if (tileEntity != null) {
             sendServerCommand(RFToolsMessages.INSTANCE, ModularStorageTileEntity.CMD_CYCLE);
         } else {
-            RFToolsMessages.INSTANCE.sendToServer(new PacketCycleStorage());
+            sendServerCommand(RFTools.MODID, CommandHandler.CMD_CYCLESTORAGE);
         }
     }
 
@@ -261,7 +257,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         if (tileEntity != null) {
             sendServerCommand(RFToolsMessages.INSTANCE, ModularStorageTileEntity.CMD_COMPACT);
         } else {
-            RFToolsMessages.INSTANCE.sendToServer(new PacketCompact());
+            sendServerCommand(RFTools.MODID, CommandHandler.CMD_COMPACT);
         }
     }
 
@@ -373,7 +369,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
                 if (tileEntity != null) {
                     sendServerCommand(RFToolsMessages.INSTANCE, ModularStorageTileEntity.CMD_CLEARGRID);
                 } else {
-                    RFToolsMessages.INSTANCE.sendToServer(new PacketClearGrid());
+                    sendServerCommand(RFTools.MODID, CommandHandler.CMD_CLEARGRID);
                 }
             }
         }

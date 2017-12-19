@@ -1,9 +1,20 @@
 package mcjty.rftools.varia;
 
+import mcjty.lib.api.information.IMachineInformation;
+import mcjty.lib.varia.EnergyTools;
+import mcjty.rftools.network.MachineInfo;
+import mcjty.rftools.network.PacketReturnRfInRange;
+import mcjty.rftools.network.RFToolsMessages;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class RFToolsTools {
 
@@ -64,5 +75,30 @@ public class RFToolsTools {
         int monitory = tagCompound.getInteger("monitory");
         int monitorz = tagCompound.getInteger("monitorz");
         return new BlockPos(monitorx, monitory, monitorz);
+    }
+
+    public static void returnRfInRange(EntityPlayer player) {
+        BlockPos pos = player.getPosition();
+        World world = player.getEntityWorld();
+        Map<BlockPos, MachineInfo> result = new HashMap<>();
+        int range = 12;
+        for (int x = -range; x <= range; x++) {
+            for (int y = -range; y <= range; y++) {
+                for (int z = -range; z <= range; z++) {
+                    BlockPos p = pos.add(x, y, z);
+                    TileEntity te = world.getTileEntity(p);
+                    if (EnergyTools.isEnergyTE(te)) {
+                        EnergyTools.EnergyLevel level = EnergyTools.getEnergyLevel(te);
+                        Integer usage = null;
+                        if (te instanceof IMachineInformation) {
+                            usage = ((IMachineInformation) te).getEnergyDiffPerTick();
+                        }
+                        result.put(p, new MachineInfo(level.getEnergy(), level.getMaxEnergy(), usage));
+                    }
+                }
+            }
+        }
+
+        RFToolsMessages.INSTANCE.sendTo(new PacketReturnRfInRange(result), (EntityPlayerMP) player);
     }
 }

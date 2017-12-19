@@ -12,17 +12,14 @@ import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Button;
-import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
+import mcjty.lib.network.Arguments;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.craftinggrid.GuiCraftingGrid;
-import mcjty.rftools.craftinggrid.PacketRequestGridSync;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.FontRenderer;
@@ -38,10 +35,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.*;
-import java.util.List;
 import java.util.function.Predicate;
 
 
@@ -221,7 +217,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
         BlockPos pos = tileEntity.getCraftingGridContainerPos();
         craftingGrid.initGui(modBase, network, mc, this, pos, tileEntity.getCraftingGridProvider(), guiLeft, guiTop, xSize, ySize);
-        network.sendToServer(new PacketRequestGridSync(pos));
+        sendServerCommand(RFTools.MODID, CommandHandler.CMD_REQUESTGRIDSYNC, Arguments.builder().value(pos).build());
 
         if (StorageScannerConfiguration.hilightStarredOnGuiOpen) {
             storageList.setSelected(0);

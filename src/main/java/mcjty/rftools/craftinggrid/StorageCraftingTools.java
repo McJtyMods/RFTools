@@ -2,12 +2,21 @@ package mcjty.rftools.craftinggrid;
 
 import gnu.trove.set.hash.TIntHashSet;
 import mcjty.rftools.blocks.crafter.CraftingRecipe;
+import mcjty.rftools.blocks.storage.ModularStorageItemContainer;
+import mcjty.rftools.blocks.storage.ModularStorageSetup;
+import mcjty.rftools.blocks.storage.RemoteStorageItemContainer;
+import mcjty.rftools.blocks.storagemonitor.StorageScannerContainer;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.stats.StatList;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
@@ -20,7 +29,7 @@ import java.util.List;
 public class StorageCraftingTools {
 
     @Nonnull
-    private static int[] tryRecipe(EntityPlayerMP player, CraftingRecipe craftingRecipe, int n, IItemSource itemSource, boolean strictDamage) {
+    private static int[] tryRecipe(EntityPlayer player, CraftingRecipe craftingRecipe, int n, IItemSource itemSource, boolean strictDamage) {
         InventoryCrafting workInventory = new InventoryCrafting(new Container() {
             @Override
             public boolean canInteractWith(EntityPlayer var1) {
@@ -88,7 +97,7 @@ public class StorageCraftingTools {
         return missingCount;
     }
 
-    private static List<ItemStack> testAndConsumeCraftingItems(EntityPlayerMP player, CraftingRecipe craftingRecipe,
+    private static List<ItemStack> testAndConsumeCraftingItems(EntityPlayer player, CraftingRecipe craftingRecipe,
                                                                IItemSource itemSource, boolean strictDamage) {
         InventoryCrafting workInventory = new InventoryCrafting(new Container() {
             @Override
@@ -188,7 +197,7 @@ public class StorageCraftingTools {
         return count;
     }
 
-    private static void undo(EntityPlayerMP player, IItemSource itemSource, List<Pair<IItemKey, ItemStack>> undo) {
+    private static void undo(EntityPlayer player, IItemSource itemSource, List<Pair<IItemKey, ItemStack>> undo) {
         for (Pair<IItemKey, ItemStack> pair : undo) {
             ItemStack stack = pair.getValue();
             if (!itemSource.insertStack(pair.getKey(), stack)) {
@@ -205,7 +214,7 @@ public class StorageCraftingTools {
         player.openContainer.detectAndSendChanges();
     }
 
-    public static void craftItems(EntityPlayerMP player, int n, CraftingRecipe craftingRecipe, IItemSource itemSource) {
+    public static void craftItems(EntityPlayer player, int n, CraftingRecipe craftingRecipe, IItemSource itemSource) {
         IRecipe recipe = craftingRecipe.getCachedRecipe(player.getEntityWorld());
         if (recipe == null) {
             // @todo give error?
@@ -245,7 +254,7 @@ public class StorageCraftingTools {
 
 
     @Nonnull
-    public static int[] testCraftItems(EntityPlayerMP player, int n, CraftingRecipe craftingRecipe, IItemSource itemSource) {
+    public static int[] testCraftItems(EntityPlayer player, int n, CraftingRecipe craftingRecipe, IItemSource itemSource) {
         IRecipe recipe = craftingRecipe.getCachedRecipe(player.getEntityWorld());
         if (recipe == null) {
             // @todo give error?
@@ -286,5 +295,63 @@ public class StorageCraftingTools {
             return result;
         }
         return new int[0];
+    }
+
+    public static void craftFromGrid(EntityPlayer player, int count, boolean test, BlockPos pos) {
+        player.addStat(StatList.CRAFTING_TABLE_INTERACTION);
+        int[] testResult = new int[0];
+        if (pos == null) {
+            // Handle tablet version
+            ItemStack mainhand = player.getHeldItemMainhand();
+            if (!mainhand.isEmpty() && mainhand.getItem() == ModularStorageSetup.storageModuleTabletItem) {
+                if (player.openContainer instanceof ModularStorageItemContainer) {
+                    ModularStorageItemContainer storageItemContainer = (ModularStorageItemContainer) player.openContainer;
+                    testResult = storageItemContainer.getCraftingGridProvider().craft(player, count, test);
+                } else if (player.openContainer instanceof RemoteStorageItemContainer) {
+                    RemoteStorageItemContainer storageItemContainer = (RemoteStorageItemContainer) player.openContainer;
+                    testResult = storageItemContainer.getCraftingGridProvider().craft(player, count, test);
+                } else if (player.openContainer instanceof StorageScannerContainer) {
+                    StorageScannerContainer storageItemContainer = (StorageScannerContainer) player.openContainer;
+                    testResult = storageItemContainer.getStorageScannerTileEntity().craft(player, count, test);
+                }
+            }
+        } else {
+            TileEntity te = player.getEntityWorld().getTileEntity(pos);
+            if (te instanceof CraftingGridProvider) {
+                testResult = ((CraftingGridProvider) te).craft(player, count, test);
+            }
+        }
+        if (testResult.length > 0) {
+            RFToolsMessages.INSTANCE.sendTo(new PacketCraftTestResultToClient(testResult), (EntityPlayerMP) player);
+        }
+    }
+
+    public static void requestGridSync(EntityPlayer player, BlockPos pos) {
+        World world = player.getEntityWorld();
+        CraftingGridProvider provider = null;
+        if (pos == null) {
+            // Handle tablet version
+            ItemStack mainhand = player.getHeldItemMainhand();
+            if (!mainhand.isEmpty() && mainhand.getItem() == ModularStorageSetup.storageModuleTabletItem) {
+                if (player.openContainer instanceof ModularStorageItemContainer) {
+                    ModularStorageItemContainer storageItemContainer = (ModularStorageItemContainer) player.openContainer;
+                    provider = storageItemContainer.getCraftingGridProvider();
+                } else if (player.openContainer instanceof RemoteStorageItemContainer) {
+                    RemoteStorageItemContainer storageItemContainer = (RemoteStorageItemContainer) player.openContainer;
+                    provider = storageItemContainer.getCraftingGridProvider();
+                } else if (player.openContainer instanceof StorageScannerContainer) {
+                    StorageScannerContainer storageItemContainer = (StorageScannerContainer) player.openContainer;
+                    provider = storageItemContainer.getStorageScannerTileEntity();
+                }
+            }
+        } else {
+            TileEntity te = world.getTileEntity(pos);
+            if (te instanceof CraftingGridProvider) {
+                provider = ((CraftingGridProvider) te);
+            }
+        }
+        if (provider != null) {
+            RFToolsMessages.INSTANCE.sendTo(new PacketGridToClient(pos, provider.getCraftingGrid()), (EntityPlayerMP) player);
+        }
     }
 }

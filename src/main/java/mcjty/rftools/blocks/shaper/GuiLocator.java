@@ -8,7 +8,9 @@ import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.network.Argument;
+import mcjty.lib.network.Arguments;
 import mcjty.lib.varia.RedstoneMode;
+import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.BeaconType;
@@ -212,7 +214,8 @@ public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
         cnt--;
         if (cnt < 0) {
             cnt = 10;
-            RFToolsMessages.INSTANCE.sendToServer(new PacketRequestLocatorEnergyConsumption(tileEntity.getPos()));
+            sendServerCommand(RFTools.MODID, CommandHandler.CMD_REQUESTLOCATORENERGY,
+                    Arguments.builder().value(tileEntity.getPos()).build());
         }
         energyLabel.setText(energyConsumption + " RF");
     }

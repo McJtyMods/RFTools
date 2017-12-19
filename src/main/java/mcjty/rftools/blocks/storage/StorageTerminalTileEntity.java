@@ -9,7 +9,6 @@ import mcjty.rftools.craftinggrid.*;
 import mcjty.rftools.jei.JEIRecipeAcceptor;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -51,7 +50,7 @@ public class StorageTerminalTileEntity extends LogicTileEntity implements Defaul
 
     @Override
     @Nonnull
-    public int[] craft(EntityPlayerMP player, int n, boolean test) {
+    public int[] craft(EntityPlayer player, int n, boolean test) {
         ItemStack module = inventoryHelper.getStackInSlot(StorageTerminalContainer.SLOT_MODULE);
         if (module.isEmpty()) {
             // No module. Should not be possible

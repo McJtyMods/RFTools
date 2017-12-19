@@ -5,17 +5,19 @@ import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.DefaultSelectionEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
-import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.*;
+import mcjty.lib.network.Arguments;
+import mcjty.lib.network.PacketSendServerCommand;
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.rftools.CommandHandler;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.TeleportDestinationClientInfo;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.math.BlockPos;
 import org.lwjgl.input.Mouse;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +73,8 @@ public class GuiTeleportProbe extends GuiScreen {
     private void teleport(int index) {
         TeleportDestinationClientInfo destination = destinationList.get(index);
         BlockPos c = destination.getCoordinate();
-        RFToolsMessages.INSTANCE.sendToServer(new PacketForceTeleport(c, destination.getDimension()));
+        RFToolsMessages.INSTANCE.sendToServer(new PacketSendServerCommand(RFTools.MODID, CommandHandler.CMD_FORCETELEPORT,
+                Arguments.builder().value(destination.getDimension()).value(c).build()));
     }
 
     public static void setReceivers(List<TeleportDestinationClientInfo> destinationList) {

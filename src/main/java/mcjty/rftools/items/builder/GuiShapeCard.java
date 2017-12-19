@@ -9,12 +9,14 @@ import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.network.Argument;
-import mcjty.lib.network.PacketUpdateNBTItemInventory;
+import mcjty.lib.network.Arguments;
+import mcjty.lib.network.PacketSendServerCommand;
+import mcjty.rftools.CommandHandler;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.shaper.ComposerTileEntity;
 import mcjty.rftools.blocks.shaper.GuiComposer;
 import mcjty.rftools.blocks.shaper.ScannerConfiguration;
-import mcjty.rftools.network.PacketOpenGui;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.IShapeParentGui;
 import mcjty.rftools.shapes.PacketUpdateNBTShapeCard;
@@ -121,7 +123,8 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
     @Override
     public void onGuiClosed() {
         if (fromshaper) {
-            RFToolsMessages.INSTANCE.sendToServer(new PacketOpenGui(GuiComposer.shaperBlock));
+            RFToolsMessages.INSTANCE.sendToServer(new PacketSendServerCommand(RFTools.MODID, CommandHandler.CMD_OPENGUI,
+                    Arguments.builder().value(GuiComposer.shaperBlock).build()));
         }
     }
 

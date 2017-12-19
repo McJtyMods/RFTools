@@ -7,10 +7,13 @@ import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
+import mcjty.lib.network.Arguments;
+import mcjty.lib.network.PacketSendServerCommand;
+import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 public class GuiAdvancedPorter extends GuiItemScreen {
 
@@ -61,7 +64,8 @@ public class GuiAdvancedPorter extends GuiItemScreen {
                     .addChild(destination)
                     .addChild(new Button(mc, this).setText("Set").setDesiredWidth(30).setDesiredHeight(16).addButtonEvent(parent -> {
                         if (targets[i] != -1) {
-                            RFToolsMessages.INSTANCE.sendToServer(new PacketSetTarget(targets[i]));
+                            RFToolsMessages.INSTANCE.sendToServer(new PacketSendServerCommand(RFTools.MODID, CommandHandler.CMD_SETTARGET,
+                                    Arguments.builder().value(targets[i]).build()));
                             target = targets[i];
                         }
                     }))
@@ -69,13 +73,14 @@ public class GuiAdvancedPorter extends GuiItemScreen {
                         if (targets[i] != -1 && targets[i] == target) {
                             target = -1;
                         }
-                        RFToolsMessages.INSTANCE.sendToServer(new PacketClearTarget(i));
+                        RFToolsMessages.INSTANCE.sendToServer(new PacketSendServerCommand(RFTools.MODID, CommandHandler.CMD_CLEARTARGET, Arguments.builder().value(i).build()));
                         targets[i] = -1;
                     })).setDesiredHeight(16);
     }
 
     private void updateInfoFromServer() {
-        RFToolsMessages.INSTANCE.sendToServer(new PacketGetTargets());
+        RFToolsMessages.INSTANCE.sendToServer(new PacketSendServerCommand(RFTools.MODID, CommandHandler.CMD_GETTARGETS,
+                Arguments.EMPTY));
     }
 
     private void setTarget(int i) {

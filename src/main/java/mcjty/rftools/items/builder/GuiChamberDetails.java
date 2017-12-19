@@ -8,8 +8,10 @@ import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
+import mcjty.lib.network.Arguments;
+import mcjty.lib.network.PacketSendServerCommand;
+import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.builder.PacketGetChamberInfo;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -60,7 +62,8 @@ public class GuiChamberDetails extends GuiItemScreen {
     }
 
     private void requestChamberInfoFromServer() {
-        RFToolsMessages.INSTANCE.sendToServer(new PacketGetChamberInfo());
+        RFToolsMessages.INSTANCE.sendToServer(new PacketSendServerCommand(RFTools.MODID, CommandHandler.CMD_GETCHAMBERINFO,
+                Arguments.EMPTY));
     }
 
     @Override

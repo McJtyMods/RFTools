@@ -12,10 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PacketReturnRfInRange implements IMessage {
-    private Map<BlockPos, PacketGetRfInRange.MachineInfo> levels;
+    private Map<BlockPos, MachineInfo> levels;
 
     // Clientside
-    public static Map<BlockPos, PacketGetRfInRange.MachineInfo> clientLevels;
+    public static Map<BlockPos, MachineInfo> clientLevels;
 
     @Override
     public void fromBytes(ByteBuf buf) {
@@ -29,16 +29,16 @@ public class PacketReturnRfInRange implements IMessage {
             if (buf.readBoolean()) {
                 usage = buf.readInt();
             }
-            levels.put(pos, new PacketGetRfInRange.MachineInfo(e, m, usage));
+            levels.put(pos, new MachineInfo(e, m, usage));
         }
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(levels.size());
-        for (Map.Entry<BlockPos, PacketGetRfInRange.MachineInfo> entry : levels.entrySet()) {
+        for (Map.Entry<BlockPos, MachineInfo> entry : levels.entrySet()) {
             NetworkTools.writePos(buf, entry.getKey());
-            PacketGetRfInRange.MachineInfo info = entry.getValue();
+            MachineInfo info = entry.getValue();
             buf.writeInt(info.getEnergy());
             buf.writeInt(info.getMaxEnergy());
             if (info.getEnergyPerTick() != null) {
@@ -50,14 +50,14 @@ public class PacketReturnRfInRange implements IMessage {
         }
     }
 
-    public Map<BlockPos, PacketGetRfInRange.MachineInfo> getLevels() {
+    public Map<BlockPos, MachineInfo> getLevels() {
         return levels;
     }
 
     public PacketReturnRfInRange() {
     }
 
-    public PacketReturnRfInRange(Map<BlockPos, PacketGetRfInRange.MachineInfo> levels) {
+    public PacketReturnRfInRange(Map<BlockPos, MachineInfo> levels) {
         this.levels = levels;
     }
 

@@ -131,13 +131,13 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     @Override
     @Nonnull
-    public int[] craft(EntityPlayerMP player, int n, boolean test) {
+    public int[] craft(EntityPlayer player, int n, boolean test) {
         CraftingRecipe activeRecipe = craftingGrid.getActiveRecipe();
         return craft(player, n, test, activeRecipe);
     }
 
     @Nonnull
-    public int[] craft(EntityPlayerMP player, int n, boolean test, CraftingRecipe activeRecipe) {
+    public int[] craft(EntityPlayer player, int n, boolean test, CraftingRecipe activeRecipe) {
         TileEntityItemSource itemSource = new TileEntityItemSource()
                 .addInventory(player.inventory, 0);
         inventories.stream()

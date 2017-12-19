@@ -6,12 +6,10 @@ import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
-import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
+import mcjty.lib.network.Arguments;
+import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.inventory.Slot;
@@ -19,7 +17,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileEntity> {
     public static final int SECURITYMANAGER_WIDTH = 244;
@@ -86,7 +84,7 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
         }
         listDirty--;
         if (listDirty <= 0) {
-            RFToolsMessages.INSTANCE.sendToServer(new PacketGetSecurityInfo(id));
+            sendServerCommand(RFTools.MODID, CommandHandler.CMD_GETSECURITYINFO, Arguments.builder().value(id).build());
             listDirty = 20;
         }
     }

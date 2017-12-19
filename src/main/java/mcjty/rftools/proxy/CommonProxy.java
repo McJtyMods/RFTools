@@ -5,6 +5,7 @@ import mcjty.lib.McJtyLib;
 import mcjty.lib.base.GeneralConfig;
 import mcjty.lib.network.PacketHandler;
 import mcjty.lib.varia.WrenchChecker;
+import mcjty.rftools.CommandHandler;
 import mcjty.rftools.ForgeEventHandlers;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
@@ -68,7 +69,8 @@ public abstract class CommonProxy {
 
     public void preInit(FMLPreInitializationEvent e) {
         MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
-        McJtyLib.preInit(e, RFTools.instance);
+        McJtyLib.preInit(e);
+        CommandHandler.registerCommands();
         reflect();
 
         GeneralConfig.preInit(e);

@@ -1,7 +1,10 @@
 package mcjty.rftools.blocks.security;
 
 import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.network.Arguments;
+import mcjty.lib.network.PacketSendServerCommand;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.network.RFToolsMessages;
@@ -49,7 +52,8 @@ public class SecurityCardItem extends GenericRFToolsItem {
         if (channel != -1) {
             if (System.currentTimeMillis() - lastTime > 250) {
                 lastTime = System.currentTimeMillis();
-                RFToolsMessages.INSTANCE.sendToServer(new PacketGetSecurityName(channel));
+                RFToolsMessages.INSTANCE.sendToServer(new PacketSendServerCommand(RFTools.MODID, CommandHandler.CMD_GETSECURITYNAME,
+                        Arguments.builder().value(channel).build()));
             }
             list.add(TextFormatting.YELLOW + "Channel: " + channel + " (" + channelNameFromServer + ")");
         } else {

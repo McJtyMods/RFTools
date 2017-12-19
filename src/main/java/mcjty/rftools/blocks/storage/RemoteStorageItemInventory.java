@@ -7,7 +7,6 @@ import mcjty.rftools.craftinggrid.InventoriesItemSource;
 import mcjty.rftools.craftinggrid.StorageCraftingTools;
 import mcjty.rftools.jei.JEIRecipeAcceptor;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -91,7 +90,7 @@ public class RemoteStorageItemInventory implements CraftingGridProvider, JEIReci
 
     @Override
     @Nonnull
-    public int[] craft(EntityPlayerMP player, int n, boolean test) {
+    public int[] craft(EntityPlayer player, int n, boolean test) {
         InventoriesItemSource itemSource = new InventoriesItemSource()
                 .add(player.inventory, 0).add(this, 0);
         if (test) {

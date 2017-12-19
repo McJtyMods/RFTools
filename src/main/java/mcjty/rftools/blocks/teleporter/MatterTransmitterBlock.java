@@ -3,10 +3,12 @@ package mcjty.rftools.blocks.teleporter;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.network.Arguments;
+import mcjty.lib.network.PacketSendServerCommand;
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
-import mcjty.rftools.network.PacketGetDestinationInfo;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.network.ReturnDestinationInfoHelper;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -76,7 +78,8 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock<MatterTransmitte
                 int destId = tagCompound.getInteger("destId");
                 if (System.currentTimeMillis() - lastTime > 500) {
                     lastTime = System.currentTimeMillis();
-                    RFToolsMessages.INSTANCE.sendToServer(new PacketGetDestinationInfo(destId));
+                    RFToolsMessages.INSTANCE.sendToServer(new PacketSendServerCommand(RFTools.MODID, CommandHandler.CMD_GETDESTINATIONINFO,
+                            Arguments.builder().value(destId).build()));
                 }
 
                 String destname = "?";
@@ -142,7 +145,8 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock<MatterTransmitte
             if (matterTransmitterTileEntity.isDialed()) {
                 if (System.currentTimeMillis() - lastTime > 500) {
                     lastTime = System.currentTimeMillis();
-                    RFToolsMessages.INSTANCE.sendToServer(new PacketGetDestinationInfo(matterTransmitterTileEntity.getTeleportId()));
+                    RFToolsMessages.INSTANCE.sendToServer(new PacketSendServerCommand(RFTools.MODID, CommandHandler.CMD_GETDESTINATIONINFO,
+                            Arguments.builder().value(matterTransmitterTileEntity.getTeleportId()).build()));
                 }
 
                 String name = "?";
