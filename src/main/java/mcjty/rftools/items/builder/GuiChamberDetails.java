@@ -8,19 +8,17 @@ import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.varia.BlockMeta;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.builder.PacketGetChamberInfo;
 import mcjty.rftools.network.RFToolsMessages;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,9 +28,9 @@ public class GuiChamberDetails extends GuiItemScreen {
     private static final int CHAMBER_XSIZE = 390;
     private static final int CHAMBER_YSIZE = 210;
 
-    private static Map<BlockMeta,Integer> items = null;
-    private static Map<BlockMeta,Integer> costs = null;
-    private static Map<BlockMeta,ItemStack> stacks = null;
+    private static Map<IBlockState,Integer> items = null;
+    private static Map<IBlockState,Integer> costs = null;
+    private static Map<IBlockState,ItemStack> stacks = null;
     private static Map<String,Integer> entities = null;
     private static Map<String,Integer> entityCosts = null;
     private static Map<String,Entity> realEntities = null;
@@ -47,8 +45,8 @@ public class GuiChamberDetails extends GuiItemScreen {
         requestChamberInfoFromServer();
     }
 
-    public static void setItemsWithCount(Map<BlockMeta,Integer> items, Map<BlockMeta,Integer> costs,
-                                         Map<BlockMeta,ItemStack> stacks,
+    public static void setItemsWithCount(Map<IBlockState,Integer> items, Map<IBlockState,Integer> costs,
+                                         Map<IBlockState,ItemStack> stacks,
                                          Map<String,Integer> entities, Map<String,Integer> entityCosts,
                                          Map<String,Entity> realEntities,
                                          Map<String,String> playerNames) {
@@ -91,8 +89,8 @@ public class GuiChamberDetails extends GuiItemScreen {
         }
 
         int totalCost = 0;
-        for (Map.Entry<BlockMeta, Integer> entry : items.entrySet()) {
-            BlockMeta bm = entry.getKey();
+        for (Map.Entry<IBlockState, Integer> entry : items.entrySet()) {
+            IBlockState bm = entry.getKey();
             int count = entry.getValue();
             int cost = costs.get(bm);
             Panel panel = new Panel(mc,this).setLayout(new HorizontalLayout()).setDesiredHeight(16);
@@ -100,7 +98,8 @@ public class GuiChamberDetails extends GuiItemScreen {
             if (stacks.containsKey(bm)) {
                 stack = stacks.get(bm);
             } else {
-                stack = new ItemStack(bm.getBlock(), 0, bm.getMeta());
+                // @todo uses meta
+                stack = new ItemStack(bm.getBlock(), 0, bm.getBlock().getMetaFromState(bm));
             }
             BlockRender blockRender = new BlockRender(mc, this).setRenderItem(stack).setOffsetX(-1).setOffsetY(-1);
 

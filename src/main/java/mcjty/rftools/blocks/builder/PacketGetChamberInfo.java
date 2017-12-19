@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.builder;
 
 import io.netty.buffer.ByteBuf;
-import mcjty.lib.varia.BlockMeta;
 import mcjty.lib.varia.Counter;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
@@ -68,9 +67,9 @@ public class PacketGetChamberInfo implements IMessage {
                 return;
             }
 
-            Counter<BlockMeta> blocks = new Counter<>();
-            Counter<BlockMeta> costs = new Counter<>();
-            Map<BlockMeta,ItemStack> stacks = new HashMap<>();
+            Counter<IBlockState> blocks = new Counter<>();
+            Counter<IBlockState> costs = new Counter<>();
+            Map<IBlockState,ItemStack> stacks = new HashMap<>();
 
             BlockPos minCorner = chamberChannel.getMinCorner();
             BlockPos maxCorner = chamberChannel.getMaxCorner();
@@ -114,7 +113,7 @@ public class PacketGetChamberInfo implements IMessage {
             }
         }
 
-        private void findBlocks(World world, Counter<BlockMeta> blocks, Counter<BlockMeta> costs, Map<BlockMeta, ItemStack> stacks, BlockPos minCorner, BlockPos maxCorner) {
+        private void findBlocks(World world, Counter<IBlockState> blocks, Counter<IBlockState> costs, Map<IBlockState, ItemStack> stacks, BlockPos minCorner, BlockPos maxCorner) {
             for (int x = minCorner.getX() ; x <= maxCorner.getX() ; x++) {
                 for (int y = minCorner.getY() ; y <= maxCorner.getY() ; y++) {
                     for (int z = minCorner.getZ() ; z <= maxCorner.getZ() ; z++) {
@@ -122,23 +121,21 @@ public class PacketGetChamberInfo implements IMessage {
                         IBlockState state = world.getBlockState(p);
                         Block block = state.getBlock();
                         if (!BuilderTileEntity.isEmpty(state, block)) {
-                            int meta = block.getMetaFromState(state);
-                            BlockMeta bm = new BlockMeta(block, meta);
-                            blocks.increment(bm);
+                            blocks.increment(state);
 
-                            if (!stacks.containsKey(bm)) {
+                            if (!stacks.containsKey(state)) {
                                 ItemStack item = block.getItem(world, p, state);
                                 if (!item.isEmpty()) {
-                                    stacks.put(bm, item);
+                                    stacks.put(state, item);
                                 }
                             }
 
                             TileEntity te = world.getTileEntity(p);
                             BuilderSetup.BlockInformation info = BuilderTileEntity.getBlockInformation(world, p, block, te);
                             if (info.getBlockLevel() == SupportBlock.STATUS_ERROR) {
-                                costs.put(bm, -1);
+                                costs.put(state, -1);
                             } else {
-                                costs.increment(bm, (int) (BuilderConfiguration.builderRfPerOperation * info.getCostFactor()));
+                                costs.increment(state, (int) (BuilderConfiguration.builderRfPerOperation * info.getCostFactor()));
                             }
                         }
                     }

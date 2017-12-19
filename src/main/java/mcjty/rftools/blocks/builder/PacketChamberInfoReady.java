@@ -2,11 +2,11 @@ package mcjty.rftools.blocks.builder;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.lib.varia.BlockMeta;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.builder.GuiChamberDetails;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,9 +22,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PacketChamberInfoReady implements IMessage {
-    private Map<BlockMeta,Integer> blocks;
-    private Map<BlockMeta,Integer> costs;
-    private Map<BlockMeta,ItemStack> stacks;
+    private Map<IBlockState,Integer> blocks;
+    private Map<IBlockState,Integer> costs;
+    private Map<IBlockState,ItemStack> stacks;
     private Map<String,Integer> entities;
     private Map<String,Integer> entityCosts;
     private Map<String,Entity> realEntities;
@@ -41,12 +41,9 @@ public class PacketChamberInfoReady implements IMessage {
         costs = new HashMap<>(size);
         stacks = new HashMap<>();
         for (int i = 0 ; i < size ; i++) {
-            int id = buf.readInt();
-            byte meta = buf.readByte();
+            IBlockState bm = Block.getStateById(buf.readInt());
             int count = buf.readInt();
             int cost = buf.readInt();
-            Block block = Block.REGISTRY.getObjectById(id);
-            BlockMeta bm = new BlockMeta(block, meta);
             blocks.put(bm, count);
             costs.put(bm, cost);
             if (buf.readBoolean()) {
@@ -87,11 +84,9 @@ public class PacketChamberInfoReady implements IMessage {
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(blocks.size());
-        for (Map.Entry<BlockMeta, Integer> entry : blocks.entrySet()) {
-            BlockMeta bm = entry.getKey();
-            Block block = bm.getBlock();
-            buf.writeInt(Block.REGISTRY.getIDForObject(block));
-            buf.writeByte(bm.getMeta());
+        for (Map.Entry<IBlockState, Integer> entry : blocks.entrySet()) {
+            IBlockState bm = entry.getKey();
+            buf.writeInt(bm.getBlock().getStateId(bm));
             buf.writeInt(entry.getValue());
             buf.writeInt(costs.get(bm));
             if (stacks.containsKey(bm)) {
@@ -148,8 +143,8 @@ public class PacketChamberInfoReady implements IMessage {
     public PacketChamberInfoReady() {
     }
 
-    public PacketChamberInfoReady(Map<BlockMeta,Integer> blocks, Map<BlockMeta,Integer> costs,
-                                  Map<BlockMeta,ItemStack> stacks,
+    public PacketChamberInfoReady(Map<IBlockState,Integer> blocks, Map<IBlockState,Integer> costs,
+                                  Map<IBlockState,ItemStack> stacks,
                                   Map<String,Integer> entities, Map<String,Integer> entityCosts,
                                   Map<String,Entity> realEntities) {
         this.blocks = new HashMap<>(blocks);
