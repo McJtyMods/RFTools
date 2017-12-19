@@ -160,14 +160,14 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
 
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        int meta = state.getBlock().getMetaFromState(state);
-        if (meta == EnumFacing.NORTH.ordinal()) {
+        EnumFacing facing = state.getValue(GenericBlock.FACING);
+        if (facing == EnumFacing.NORTH) {
             return NORTH_AABB;
-        } else if (meta == EnumFacing.SOUTH.ordinal()) {
+        } else if (facing == EnumFacing.SOUTH) {
             return SOUTH_AABB;
-        } else if (meta == EnumFacing.WEST.ordinal()) {
+        } else if (facing == EnumFacing.WEST) {
             return WEST_AABB;
-        } else if (meta == EnumFacing.EAST.ordinal()) {
+        } else if (facing == EnumFacing.EAST) {
             return EAST_AABB;
         } else {
             return BLOCK_AABB;
