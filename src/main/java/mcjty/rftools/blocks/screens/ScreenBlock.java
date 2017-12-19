@@ -176,7 +176,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
         }
     }
 
-    private void setInvisibleBlockSafe(World world, BlockPos pos, int dx, int dy, int dz, int meta) {
+    private void setInvisibleBlockSafe(World world, BlockPos pos, int dx, int dy, int dz, EnumFacing facing) {
         int yy = pos.getY() + dy;
         if (yy < 0 || yy >= world.getHeight()) {
             return;
@@ -185,7 +185,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
         int zz = pos.getZ() + dz;
         BlockPos posO = new BlockPos(xx, yy, zz);
         if (world.isAirBlock(posO)) {
-            world.setBlockState(posO, ScreenSetup.screenHitBlock.getStateFromMeta(meta), 3);
+            world.setBlockState(posO, ScreenSetup.screenHitBlock.getDefaultState().withProperty(GenericBlock.FACING, facing), 3);
             ScreenHitTileEntity screenHitTileEntity = (ScreenHitTileEntity) world.getTileEntity(posO);
             screenHitTileEntity.setRelativeLocation(-dx, -dy, -dz);
         }
@@ -193,43 +193,43 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
 
     private void setInvisibleBlocks(World world, BlockPos pos, int size) {
         IBlockState state = world.getBlockState(pos);
-        int meta = state.getBlock().getMetaFromState(state);
+        EnumFacing facing = state.getValue(GenericBlock.FACING);
 
-        if (meta == 2) {
+        if (facing == EnumFacing.NORTH) {
             for (int i = 0 ; i <= size ; i++) {
                 for (int j = 0 ; j <= size ; j++) {
                     if (i != 0 || j != 0) {
-                        setInvisibleBlockSafe(world, pos, -i, -j, 0, meta);
+                        setInvisibleBlockSafe(world, pos, -i, -j, 0, facing);
                     }
                 }
             }
         }
 
-        if (meta == 3) {
+        if (facing == EnumFacing.SOUTH) {
             for (int i = 0 ; i <= size ; i++) {
                 for (int j = 0 ; j <= size ; j++) {
                     if (i != 0 || j != 0) {
-                        setInvisibleBlockSafe(world, pos, i, -j, 0, meta);
+                        setInvisibleBlockSafe(world, pos, i, -j, 0, facing);
                     }
                 }
             }
         }
 
-        if (meta == 4) {
+        if (facing == EnumFacing.WEST) {
             for (int i = 0 ; i <= size ; i++) {
                 for (int j = 0 ; j <= size ; j++) {
                     if (i != 0 || j != 0) {
-                        setInvisibleBlockSafe(world, pos, 0, -i, j, meta);
+                        setInvisibleBlockSafe(world, pos, 0, -i, j, facing);
                     }
                 }
             }
         }
 
-        if (meta == 5) {
+        if (facing == EnumFacing.EAST) {
             for (int i = 0 ; i <= size ; i++) {
                 for (int j = 0 ; j <= size ; j++) {
                     if (i != 0 || j != 0) {
-                        setInvisibleBlockSafe(world, pos, 0, -i, -j, meta);
+                        setInvisibleBlockSafe(world, pos, 0, -i, -j, facing);
                     }
                 }
             }
@@ -408,14 +408,14 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
 
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        int meta = state.getBlock().getMetaFromState(state);
-        if (meta == EnumFacing.NORTH.ordinal()) {
+        EnumFacing facing = state.getValue(GenericBlock.FACING);
+        if (facing == EnumFacing.NORTH) {
             return NORTH_AABB;
-        } else if (meta == EnumFacing.SOUTH.ordinal()) {
+        } else if (facing == EnumFacing.SOUTH) {
             return SOUTH_AABB;
-        } else if (meta == EnumFacing.WEST.ordinal()) {
+        } else if (facing == EnumFacing.WEST) {
             return WEST_AABB;
-        } else if (meta == EnumFacing.EAST.ordinal()) {
+        } else if (facing == EnumFacing.EAST) {
             return EAST_AABB;
         } else {
             return BLOCK_AABB;
