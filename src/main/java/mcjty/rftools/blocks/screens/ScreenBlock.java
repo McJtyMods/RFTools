@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.api.IModuleSupport;
+import mcjty.lib.container.GenericBlock;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.lib.varia.ModuleSupport;
@@ -244,8 +245,9 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
         }
     }
 
-    private void clearInvisibleBlocks(World world, BlockPos pos, int meta, int size) {
-        if (meta == 2) {
+    private void clearInvisibleBlocks(World world, BlockPos pos, IBlockState state, int size) {
+        EnumFacing facing = state.getValue(GenericBlock.FACING);
+        if (facing == EnumFacing.NORTH) {
             for (int i = 0 ; i <= size ; i++) {
                 for (int j = 0 ; j <= size ; j++) {
                     if (i != 0 || j != 0) {
@@ -255,7 +257,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
             }
         }
 
-        if (meta == 3) {
+        if (facing == EnumFacing.SOUTH) {
             for (int i = 0 ; i <= size ; i++) {
                 for (int j = 0 ; j <= size ; j++) {
                     if (i != 0 || j != 0) {
@@ -265,7 +267,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
             }
         }
 
-        if (meta == 4) {
+        if (facing == EnumFacing.WEST) {
             for (int i = 0 ; i <= size ; i++) {
                 for (int j = 0 ; j <= size ; j++) {
                     if (i != 0 || j != 0) {
@@ -275,7 +277,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
             }
         }
 
-        if (meta == 5) {
+        if (facing == EnumFacing.EAST) {
             for (int i = 0 ; i <= size ; i++) {
                 for (int j = 0 ; j <= size ; j++) {
                     if (i != 0 || j != 0) {
@@ -322,8 +324,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
     public void cycleSizeTranspMode(World world, BlockPos pos) {
         ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos);
         IBlockState state = world.getBlockState(pos);
-        int meta = state.getBlock().getMetaFromState(state);
-        clearInvisibleBlocks(world, pos, meta, screenTileEntity.getSize());
+        clearInvisibleBlocks(world, pos, state, screenTileEntity.getSize());
         for (int i = 0 ; i < transitions.length ; i++) {
             Setup setup = transitions[i];
             if (setup.isTransparent() == screenTileEntity.isTransparent() && setup.getSize() == screenTileEntity.getSize()) {
@@ -339,8 +340,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
     public void cycleSizeMode(World world, BlockPos pos) {
         ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos);
         IBlockState state = world.getBlockState(pos);
-        int meta = state.getBlock().getMetaFromState(state);
-        clearInvisibleBlocks(world, pos, meta, screenTileEntity.getSize());
+        clearInvisibleBlocks(world, pos, state, screenTileEntity.getSize());
         for (int i = 0 ; i < transitions.length ; i++) {
             Setup setup = transitions[i];
             if (setup.isTransparent() == screenTileEntity.isTransparent() && setup.getSize() == screenTileEntity.getSize()) {
@@ -356,8 +356,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
     public void cycleTranspMode(World world, BlockPos pos) {
         ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos);
         IBlockState state = world.getBlockState(pos);
-        int meta = state.getBlock().getMetaFromState(state);
-        clearInvisibleBlocks(world, pos, meta, screenTileEntity.getSize());
+        clearInvisibleBlocks(world, pos, state, screenTileEntity.getSize());
         for (int i = 0 ; i < transitions.length ; i++) {
             Setup setup = transitions[i];
             if (setup.isTransparent() == screenTileEntity.isTransparent() && setup.getSize() == screenTileEntity.getSize()) {
@@ -533,8 +532,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
         if (te instanceof ScreenTileEntity) {
             ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
             if (screenTileEntity.getSize() > ScreenTileEntity.SIZE_NORMAL) {
-                int meta = state.getBlock().getMetaFromState(state);
-                clearInvisibleBlocks(world, pos, meta, screenTileEntity.getSize());
+                clearInvisibleBlocks(world, pos, state, screenTileEntity.getSize());
             }
         }
         super.breakBlock(world, pos, state);
