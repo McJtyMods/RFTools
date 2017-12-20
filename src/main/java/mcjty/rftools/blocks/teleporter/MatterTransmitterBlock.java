@@ -10,7 +10,6 @@ import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.rftools.network.ReturnDestinationInfoHelper;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
@@ -37,9 +36,20 @@ import java.util.List;
 
 public class MatterTransmitterBlock extends GenericRFToolsBlock<MatterTransmitterTileEntity, EmptyContainer> implements Infusable {
 
+    @SideOnly(Side.CLIENT)
+    public static Integer clientSideId = null;
+    @SideOnly(Side.CLIENT)
+    public static String clientSideName = "?";
+
     public MatterTransmitterBlock() {
         super(Material.IRON, MatterTransmitterTileEntity.class, EmptyContainer.class, "matter_transmitter", false);
         setDefaultState(this.blockState.getBaseState());
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void setDestinationInfo(Integer id, String name) {
+        MatterTransmitterBlock.clientSideId = id;
+        MatterTransmitterBlock.clientSideName = name;
     }
 
     @SideOnly(Side.CLIENT)
@@ -83,8 +93,8 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock<MatterTransmitte
                 }
 
                 String destname = "?";
-                if (ReturnDestinationInfoHelper.id != null && ReturnDestinationInfoHelper.id == destId) {
-                    destname = ReturnDestinationInfoHelper.name;
+                if (clientSideId != null && clientSideId == destId) {
+                    destname = clientSideName;
                 }
                 list.add(TextFormatting.YELLOW + "[DIALED to " + destname + "]");
             }
@@ -150,8 +160,8 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock<MatterTransmitte
                 }
 
                 String name = "?";
-                if (ReturnDestinationInfoHelper.id != null && ReturnDestinationInfoHelper.id == matterTransmitterTileEntity.getTeleportId()) {
-                    name = ReturnDestinationInfoHelper.name;
+                if (clientSideId != null && clientSideId == matterTransmitterTileEntity.getTeleportId()) {
+                    name = clientSideName;
                 }
                 currenttip.add(TextFormatting.YELLOW + "[DIALED to " + name + "]");
             }

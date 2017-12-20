@@ -1,9 +1,12 @@
 package mcjty.rftools.items.teleportprobe;
 
+import mcjty.lib.network.Arguments;
+import mcjty.lib.network.PacketSendClientCommand;
 import mcjty.lib.varia.GlobalCoordinate;
+import mcjty.rftools.ClientCommandHandler;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.TeleportDestination;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
-import mcjty.rftools.network.PacketReturnDestinationInfo;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -94,10 +97,8 @@ public class PorterTools {
                         tagCompound.setInteger("target", target);
                         ITextComponent component = new TextComponentString(TextFormatting.GREEN + "Target: "+
                         TextFormatting.WHITE + name);
-                        if (playerEntity instanceof EntityPlayer) {
+                        if (playerEntity != null) {
                             playerEntity.sendStatusMessage(component, false);
-                        } else {
-                            playerEntity.sendMessage(component);
                         }
                         donext = 2;
                     } else if (target == curtarget) {
@@ -113,7 +114,8 @@ public class PorterTools {
         World world = player.getEntityWorld();
         TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
         String name = TeleportDestinations.getDestinationName(destinations, receiverId);
-        RFToolsMessages.INSTANCE.sendTo(new PacketReturnDestinationInfo(receiverId, name), (EntityPlayerMP) player);
+        RFToolsMessages.INSTANCE.sendTo(new PacketSendClientCommand(RFTools.MODID, ClientCommandHandler.CMD_RETURN_DESTINATION_INFO,
+                Arguments.builder().value(receiverId).value(name).build()), (EntityPlayerMP) player);
     }
 
     public static void setTarget(EntityPlayer player, int target) {

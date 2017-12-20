@@ -4,9 +4,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import mcjty.lib.McJtyLibClient;
 import mcjty.lib.font.FontLoader;
 import mcjty.lib.font.TrueTypeFont;
-import mcjty.rftools.RFTools;
-import mcjty.rftools.RenderGameOverlayEventHandler;
-import mcjty.rftools.RenderWorldLastEventHandler;
+import mcjty.rftools.*;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.elevator.ElevatorSounds;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
@@ -53,6 +51,7 @@ public class ClientProxy extends CommonProxy {
         OBJLoader.INSTANCE.addDomain(RFTools.MODID);
         ModelLoaderRegistry.registerLoader(new BakedModelLoader());
         McJtyLibClient.preInit(e);
+        ClientCommandHandler.registerCommands();
     }
 
     @Override

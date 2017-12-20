@@ -81,7 +81,6 @@ public class RFToolsMessages {
         net.registerMessage(PacketTransmittersReady.Handler.class, PacketTransmittersReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketReceiversReady.Handler.class, PacketReceiversReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketAllReceiversReady.Handler.class, PacketAllReceiversReady.class, PacketHandler.nextID(), Side.CLIENT);
-        net.registerMessage(PacketReturnDestinationInfo.Handler.class, PacketReturnDestinationInfo.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketTargetsReady.Handler.class, PacketTargetsReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketReturnScreenData.Handler.class, PacketReturnScreenData.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketChamberInfoReady.Handler.class, PacketChamberInfoReady.class, PacketHandler.nextID(), Side.CLIENT);
