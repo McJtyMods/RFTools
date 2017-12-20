@@ -2,7 +2,8 @@ package mcjty.rftools.blocks.logic.counter;
 
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
-import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
+import mcjty.lib.network.Arguments;
+import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
 import mcjty.rftools.network.RFToolsMessages;
@@ -29,6 +30,9 @@ import org.lwjgl.input.Keyboard;
 import java.util.List;
 
 public class CounterBlock extends LogicSlabBlock<CounterTileEntity, EmptyContainer> {
+
+    // Client side
+    public static int cntReceived = 0;
 
     public CounterBlock() {
         super(Material.IRON, "counter_block", CounterTileEntity.class, EmptyContainer.class);
@@ -87,11 +91,11 @@ public class CounterBlock extends LogicSlabBlock<CounterTileEntity, EmptyContain
         if (System.currentTimeMillis() - lastTime > 500) {
             CounterTileEntity te = (CounterTileEntity) accessor.getTileEntity();
             lastTime = System.currentTimeMillis();
-            RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new CounterInfoPacketServer(te.getWorld().provider.getDimension(),
-                                                                                                                        te.getPos())));
+            RFToolsMessages.sendToServer(CommandHandler.CMD_GET_COUNTER_INFO,
+                    Arguments.builder().value(te.getWorld().provider.getDimension()).value(te.getPos()));
         }
 
-        currenttip.add(TextFormatting.GREEN + "Current: " + CounterInfoPacketClient.cntReceived);
+        currenttip.add(TextFormatting.GREEN + "Current: " + cntReceived);
         return currenttip;
     }
 

@@ -7,10 +7,8 @@ import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.network.Arguments;
-import mcjty.lib.network.PacketSendServerCommand;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.CommandHandler;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.TeleportDestinationClientInfo;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.gui.GuiScreen;
@@ -73,8 +71,8 @@ public class GuiTeleportProbe extends GuiScreen {
     private void teleport(int index) {
         TeleportDestinationClientInfo destination = destinationList.get(index);
         BlockPos c = destination.getCoordinate();
-        RFToolsMessages.INSTANCE.sendToServer(new PacketSendServerCommand(RFTools.MODID, CommandHandler.CMD_FORCETELEPORT,
-                Arguments.builder().value(destination.getDimension()).value(c).build()));
+        RFToolsMessages.sendToServer(CommandHandler.CMD_FORCE_TELEPORT,
+                Arguments.builder().value(destination.getDimension()).value(c));
     }
 
     public static void setReceivers(List<TeleportDestinationClientInfo> destinationList) {

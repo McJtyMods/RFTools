@@ -214,7 +214,7 @@ public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
         cnt--;
         if (cnt < 0) {
             cnt = 10;
-            sendServerCommand(RFTools.MODID, CommandHandler.CMD_REQUESTLOCATORENERGY,
+            sendServerCommand(RFTools.MODID, CommandHandler.CMD_REQUEST_LOCATOR_ENERGY,
                     Arguments.builder().value(tileEntity.getPos()).build());
         }
         energyLabel.setText(energyConsumption + " RF");

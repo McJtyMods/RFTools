@@ -1,10 +1,11 @@
 package mcjty.rftools.blocks.shaper;
 
 import mcjty.lib.container.GenericBlock;
+import mcjty.lib.network.Arguments;
+import mcjty.rftools.ClientCommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.PacketReturnExtraData;
-import mcjty.rftools.shapes.PacketReturnScanDirty;
 import mcjty.rftools.shapes.ScanDataManager;
 import mcjty.rftools.shapes.ScanExtraData;
 import net.minecraft.block.Block;
@@ -35,12 +36,14 @@ public class ShaperTools {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof LocatorTileEntity) {
             int energy = ((LocatorTileEntity) te).getEnergyPerScan();
-            RFToolsMessages.INSTANCE.sendTo(new PacketReturnLocatorEnergyConsumption(energy), (EntityPlayerMP) player);
+            RFToolsMessages.sendToClient(player, ClientCommandHandler.CMD_RETURN_ENERGY_CONSUMPTION,
+                    Arguments.builder().value(energy));
         }
     }
 
     public static void requestScanDirty(EntityPlayer player, int scanId) {
         int counter = ScanDataManager.getScans().loadScan(scanId).getDirtyCounter();
-        RFToolsMessages.INSTANCE.sendTo(new PacketReturnScanDirty(scanId, counter), (EntityPlayerMP) player);
+        RFToolsMessages.sendToClient(player, ClientCommandHandler.CMD_RETURN_SCAN_DIRTY,
+                Arguments.builder().value(scanId).value(counter));
     }
 }

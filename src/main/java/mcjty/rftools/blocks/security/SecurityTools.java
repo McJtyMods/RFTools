@@ -1,5 +1,7 @@
 package mcjty.rftools.blocks.security;
 
+import mcjty.lib.network.Arguments;
+import mcjty.rftools.ClientCommandHandler;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -21,6 +23,7 @@ public class SecurityTools {
         if (channel == null) {
             return;
         }
-        RFToolsMessages.INSTANCE.sendTo(new PacketSecurityNameReady(channel), (EntityPlayerMP) player);
+        RFToolsMessages.sendToClient(player, ClientCommandHandler.CMD_RETURN_SECURITY_NAME,
+                Arguments.builder().value(channel.getName()));
     }
 }

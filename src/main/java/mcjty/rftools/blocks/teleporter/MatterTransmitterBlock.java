@@ -4,7 +4,6 @@ import mcjty.lib.api.Infusable;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.network.Arguments;
-import mcjty.lib.network.PacketSendServerCommand;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
@@ -88,8 +87,7 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock<MatterTransmitte
                 int destId = tagCompound.getInteger("destId");
                 if (System.currentTimeMillis() - lastTime > 500) {
                     lastTime = System.currentTimeMillis();
-                    RFToolsMessages.INSTANCE.sendToServer(new PacketSendServerCommand(RFTools.MODID, CommandHandler.CMD_GETDESTINATIONINFO,
-                            Arguments.builder().value(destId).build()));
+                    RFToolsMessages.sendToServer(CommandHandler.CMD_GET_DESTINATION_INFO, Arguments.builder().value(destId));
                 }
 
                 String destname = "?";
@@ -155,8 +153,8 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock<MatterTransmitte
             if (matterTransmitterTileEntity.isDialed()) {
                 if (System.currentTimeMillis() - lastTime > 500) {
                     lastTime = System.currentTimeMillis();
-                    RFToolsMessages.INSTANCE.sendToServer(new PacketSendServerCommand(RFTools.MODID, CommandHandler.CMD_GETDESTINATIONINFO,
-                            Arguments.builder().value(matterTransmitterTileEntity.getTeleportId()).build()));
+                    RFToolsMessages.sendToServer(CommandHandler.CMD_GET_DESTINATION_INFO,
+                            Arguments.builder().value(matterTransmitterTileEntity.getTeleportId()));
                 }
 
                 String name = "?";

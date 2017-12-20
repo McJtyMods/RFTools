@@ -169,7 +169,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         }
 
         craftingGrid.initGui(modBase, network, mc, this, pos, provider, guiLeft, guiTop, xSize, ySize);
-        sendServerCommand(RFTools.MODID, CommandHandler.CMD_REQUESTGRIDSYNC, Arguments.builder().value(pos).build());
+        sendServerCommand(RFTools.MODID, CommandHandler.CMD_REQUEST_GRID_SYNC, Arguments.builder().value(pos).build());
     }
 
     private Panel setupModePanel() {
@@ -249,7 +249,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         if (tileEntity != null) {
             sendServerCommand(RFToolsMessages.INSTANCE, ModularStorageTileEntity.CMD_CYCLE);
         } else {
-            sendServerCommand(RFTools.MODID, CommandHandler.CMD_CYCLESTORAGE);
+            sendServerCommand(RFTools.MODID, CommandHandler.CMD_CYCLE_STORAGE);
         }
     }
 
@@ -369,7 +369,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
                 if (tileEntity != null) {
                     sendServerCommand(RFToolsMessages.INSTANCE, ModularStorageTileEntity.CMD_CLEARGRID);
                 } else {
-                    sendServerCommand(RFTools.MODID, CommandHandler.CMD_CLEARGRID);
+                    sendServerCommand(RFTools.MODID, CommandHandler.CMD_CLEAR_GRID);
                 }
             }
         }

@@ -4,8 +4,6 @@ import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.api.smartwrench.SmartWrenchMode;
 import mcjty.lib.gui.HudRenderHelper;
 import mcjty.lib.gui.RenderGlowEffect;
-import mcjty.lib.network.Arguments;
-import mcjty.lib.network.PacketSendServerCommand;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorTileEntity;
 import mcjty.rftools.blocks.builder.BuilderSetup;
@@ -254,7 +252,7 @@ public class RenderWorldLastEventHandler {
 
             if (System.currentTimeMillis() - lastTime > 500) {
                 lastTime = System.currentTimeMillis();
-                RFToolsMessages.INSTANCE.sendToServer(new PacketSendServerCommand(RFTools.MODID, CommandHandler.CMD_GETRFINRANGE, Arguments.EMPTY));
+                RFToolsMessages.sendToServer(CommandHandler.CMD_GET_RF_IN_RANGE);
             }
 
             if (PacketReturnRfInRange.clientLevels == null) {

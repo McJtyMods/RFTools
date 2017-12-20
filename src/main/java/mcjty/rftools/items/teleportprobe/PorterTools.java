@@ -1,10 +1,8 @@
 package mcjty.rftools.items.teleportprobe;
 
 import mcjty.lib.network.Arguments;
-import mcjty.lib.network.PacketSendClientCommand;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.ClientCommandHandler;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.TeleportDestination;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import mcjty.rftools.network.RFToolsMessages;
@@ -114,8 +112,8 @@ public class PorterTools {
         World world = player.getEntityWorld();
         TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
         String name = TeleportDestinations.getDestinationName(destinations, receiverId);
-        RFToolsMessages.INSTANCE.sendTo(new PacketSendClientCommand(RFTools.MODID, ClientCommandHandler.CMD_RETURN_DESTINATION_INFO,
-                Arguments.builder().value(receiverId).value(name).build()), (EntityPlayerMP) player);
+        RFToolsMessages.sendToClient(player, ClientCommandHandler.CMD_RETURN_DESTINATION_INFO,
+                Arguments.builder().value(receiverId).value(name));
     }
 
     public static void setTarget(EntityPlayer player, int target) {

@@ -2,8 +2,9 @@ package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.container.GenericGuiContainer;
-import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
+import mcjty.lib.network.Arguments;
 import mcjty.lib.varia.ModuleSupport;
+import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.network.RFToolsMessages;
@@ -45,6 +46,10 @@ public class ModularStorageBlock extends GenericRFToolsBlock<ModularStorageTileE
 
     public static final PropertyEnum<ModularTypeModule> TYPEMODULE = PropertyEnum.create("type", ModularTypeModule.class);
     public static final PropertyEnum<ModularAmountOverlay> AMOUNT = PropertyEnum.create("amount", ModularAmountOverlay.class);
+
+    // Clientside
+    public static int cntReceived = 1;
+    public static String nameModuleReceived = "";
 
     public ModularStorageBlock() {
         super(Material.IRON, ModularStorageTileEntity.class, ModularStorageContainer.class, "modular_storage", true);
@@ -230,13 +235,14 @@ public class ModularStorageBlock extends GenericRFToolsBlock<ModularStorageTileE
             } else {
                 if (System.currentTimeMillis() - lastTime > 500) {
                     lastTime = System.currentTimeMillis();
-                    RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new StorageInfoPacketServer(modularStorageTileEntity.getWorld().provider.getDimension(),
-                            modularStorageTileEntity.getPos())));
+                    RFToolsMessages.sendToServer(CommandHandler.CMD_REQUEST_STORAGE_INFO,
+                            Arguments.builder().value(modularStorageTileEntity.getWorld().provider.getDimension())
+                                .value(modularStorageTileEntity.getPos()));
                 }
-                if (!StorageInfoPacketClient.nameModuleReceived.isEmpty()) {
-                    currenttip.add(TextFormatting.YELLOW + "Module: " + TextFormatting.WHITE + StorageInfoPacketClient.nameModuleReceived);
+                if (!nameModuleReceived.isEmpty()) {
+                    currenttip.add(TextFormatting.YELLOW + "Module: " + TextFormatting.WHITE + nameModuleReceived);
                 }
-                int stacks = StorageInfoPacketClient.cntReceived;
+                int stacks = cntReceived;
                 if (stacks == -1) {
                     currenttip.add(TextFormatting.YELLOW + "Maximum size: " + maxSize);
                 } else {

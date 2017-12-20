@@ -5,8 +5,10 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.network.Arguments;
 import mcjty.lib.network.PacketRequestIntegerFromServer;
 import mcjty.lib.varia.*;
+import mcjty.rftools.ClientCommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.hud.IHudSupport;
@@ -756,7 +758,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     double d1 = y - player.posY;
                     double d2 = z - player.posZ;
                     if (d0 * d0 + d1 * d1 + d2 * d2 < sqradius) {
-                        RFToolsMessages.INSTANCE.sendTo(new PacketPositionToClient(getPos(), scan), player);
+                        RFToolsMessages.sendToClient(player, ClientCommandHandler.CMD_POSITION_TO_CLIENT,
+                                Arguments.builder().value(getPos()).value(scan));
                     }
                 }
             }

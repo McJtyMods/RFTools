@@ -9,11 +9,12 @@ import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
-import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
+import mcjty.lib.network.Arguments;
+import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 public class GuiCounter extends GenericGuiContainer<CounterTileEntity> {
     public static final int COUNTER_WIDTH = 200;
@@ -91,15 +92,14 @@ public class GuiCounter extends GenericGuiContainer<CounterTileEntity> {
             requestCurrentCounter();
         }
 
-        currentField.setText(String.valueOf(CounterInfoPacketClient.cntReceived));
+        currentField.setText(String.valueOf(CounterBlock.cntReceived));
 
         drawWindow();
     }
 
     private void requestCurrentCounter() {
         lastTime = System.currentTimeMillis();
-        RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new CounterInfoPacketServer(
-                tileEntity.getWorld().provider.getDimension(),
-                tileEntity.getPos())));
+        RFToolsMessages.sendToServer(CommandHandler.CMD_GET_COUNTER_INFO,
+                Arguments.builder().value(tileEntity.getWorld().provider.getDimension()).value(tileEntity.getPos()));
     }
 }

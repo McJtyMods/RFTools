@@ -8,7 +8,6 @@ import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Arguments;
-import mcjty.lib.network.PacketSendServerCommand;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
@@ -64,8 +63,7 @@ public class GuiAdvancedPorter extends GuiItemScreen {
                     .addChild(destination)
                     .addChild(new Button(mc, this).setText("Set").setDesiredWidth(30).setDesiredHeight(16).addButtonEvent(parent -> {
                         if (targets[i] != -1) {
-                            RFToolsMessages.INSTANCE.sendToServer(new PacketSendServerCommand(RFTools.MODID, CommandHandler.CMD_SETTARGET,
-                                    Arguments.builder().value(targets[i]).build()));
+                            RFToolsMessages.sendToServer(CommandHandler.CMD_SET_TARGET, Arguments.builder().value(targets[i]));
                             target = targets[i];
                         }
                     }))
@@ -73,14 +71,13 @@ public class GuiAdvancedPorter extends GuiItemScreen {
                         if (targets[i] != -1 && targets[i] == target) {
                             target = -1;
                         }
-                        RFToolsMessages.INSTANCE.sendToServer(new PacketSendServerCommand(RFTools.MODID, CommandHandler.CMD_CLEARTARGET, Arguments.builder().value(i).build()));
+                        RFToolsMessages.sendToServer(CommandHandler.CMD_CLEAR_TARGET, Arguments.builder().value(i));
                         targets[i] = -1;
                     })).setDesiredHeight(16);
     }
 
     private void updateInfoFromServer() {
-        RFToolsMessages.INSTANCE.sendToServer(new PacketSendServerCommand(RFTools.MODID, CommandHandler.CMD_GETTARGETS,
-                Arguments.EMPTY));
+        RFToolsMessages.sendToServer(CommandHandler.CMD_GET_TARGETS);
     }
 
     private void setTarget(int i) {

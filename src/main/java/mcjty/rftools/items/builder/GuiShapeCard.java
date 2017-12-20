@@ -123,8 +123,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
     @Override
     public void onGuiClosed() {
         if (fromshaper) {
-            RFToolsMessages.INSTANCE.sendToServer(new PacketSendServerCommand(RFTools.MODID, CommandHandler.CMD_OPENGUI,
-                    Arguments.builder().value(GuiComposer.shaperBlock).build()));
+            RFToolsMessages.sendToServer(CommandHandler.CMD_OPENGUI, Arguments.builder().value(GuiComposer.shaperBlock));
         }
     }
 

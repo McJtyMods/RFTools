@@ -84,7 +84,7 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
         }
         listDirty--;
         if (listDirty <= 0) {
-            sendServerCommand(RFTools.MODID, CommandHandler.CMD_GETSECURITYINFO, Arguments.builder().value(id).build());
+            sendServerCommand(RFTools.MODID, CommandHandler.CMD_GET_SECURITY_INFO, Arguments.builder().value(id).build());
             listDirty = 20;
         }
     }

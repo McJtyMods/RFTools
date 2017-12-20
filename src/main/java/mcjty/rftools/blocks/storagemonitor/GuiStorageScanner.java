@@ -217,7 +217,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
         BlockPos pos = tileEntity.getCraftingGridContainerPos();
         craftingGrid.initGui(modBase, network, mc, this, pos, tileEntity.getCraftingGridProvider(), guiLeft, guiTop, xSize, ySize);
-        sendServerCommand(RFTools.MODID, CommandHandler.CMD_REQUESTGRIDSYNC, Arguments.builder().value(pos).build());
+        sendServerCommand(RFTools.MODID, CommandHandler.CMD_REQUEST_GRID_SYNC, Arguments.builder().value(pos).build());
 
         if (StorageScannerConfiguration.hilightStarredOnGuiOpen) {
             storageList.setSelected(0);

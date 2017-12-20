@@ -5,11 +5,14 @@ import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.compat.RedstoneFluxCompatibility;
 import mcjty.lib.entity.GenericEnergyProviderTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.network.Arguments;
+import mcjty.lib.network.PacketSendClientCommand;
 import mcjty.lib.network.PacketServerCommand;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.ClientCommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.hud.IHudSupport;
 import mcjty.rftools.network.PacketGetHudLog;
@@ -523,7 +526,9 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
             getWorld().getPlayers(EntityPlayer.class, p -> getPos().distanceSq(p.posX, p.posY, p.posZ) < 32*32)
                     .stream()
                     .forEach(p -> RFToolsMessages.INSTANCE.sendTo(
-                            new PacketEndergenicFlash(getPos(), goodCounter, badCounter), (EntityPlayerMP) p));
+                            new PacketSendClientCommand(RFTools.MODID, ClientCommandHandler.CMD_FLASH_ENDERGENIC,
+                                    Arguments.builder().value(getPos()).value(goodCounter).value(badCounter).build()),
+                            (EntityPlayerMP) p));
         }
     }
 

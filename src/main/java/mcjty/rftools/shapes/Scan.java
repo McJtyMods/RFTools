@@ -44,7 +44,7 @@ public class Scan {
         dirtyCounter++;
     }
 
-    void setDirtyCounter(int dirtyCounter) {
+    public void setDirtyCounter(int dirtyCounter) {
         this.dirtyCounter = dirtyCounter;
     }
 

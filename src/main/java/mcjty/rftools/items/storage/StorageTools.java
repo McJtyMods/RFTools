@@ -2,16 +2,22 @@ package mcjty.rftools.items.storage;
 
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.network.Arguments;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.ClientCommandHandler;
 import mcjty.rftools.blocks.storage.*;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerContainer;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
 
 public class StorageTools {
 
@@ -91,5 +97,24 @@ public class StorageTools {
         } else {
             Logging.message(player, TextFormatting.YELLOW + "Remote storage it not available (out of power or out of reach)!");
         }
+    }
+
+    public static void returnStorageInfo(EntityPlayer player, int dimension, BlockPos pos) {
+        WorldServer world = DimensionManager.getWorld(dimension);
+        int cnt = -1;
+        String nameModule = "";
+        if (world != null) {
+            TileEntity te = world.getTileEntity(pos);
+            if (te instanceof ModularStorageTileEntity) {
+                ModularStorageTileEntity modularStorageTileEntity = (ModularStorageTileEntity) te;
+                cnt = modularStorageTileEntity.getNumStacks();
+                ItemStack storageModule = modularStorageTileEntity.getStackInSlot(ModularStorageContainer.SLOT_STORAGE_MODULE);
+                if (!storageModule.isEmpty() && storageModule.getTagCompound().hasKey("display")) {
+                    nameModule = storageModule.getDisplayName();
+                }
+            }
+        }
+        RFToolsMessages.sendToClient(player, ClientCommandHandler.CMD_RETURN_STORAGE_INFO,
+                Arguments.builder().value(cnt).value(nameModule));
     }
 }

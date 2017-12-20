@@ -1,28 +1,24 @@
 package mcjty.rftools.network;
 
+import mcjty.lib.network.Arguments;
 import mcjty.lib.network.PacketHandler;
+import mcjty.lib.network.PacketSendClientCommand;
+import mcjty.lib.network.PacketSendServerCommand;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.builder.PacketChamberInfoReady;
-import mcjty.rftools.blocks.builder.PacketPositionToClient;
 import mcjty.rftools.blocks.crafter.PacketCrafter;
-import mcjty.rftools.blocks.endergen.PacketEndergenicFlash;
-import mcjty.rftools.blocks.logic.counter.CounterInfoPacketClient;
-import mcjty.rftools.blocks.logic.counter.CounterInfoPacketServer;
 import mcjty.rftools.blocks.monitor.*;
 import mcjty.rftools.blocks.powercell.PowerCellInfoPacketClient;
 import mcjty.rftools.blocks.powercell.PowerCellInfoPacketServer;
 import mcjty.rftools.blocks.screens.network.*;
 import mcjty.rftools.blocks.security.PacketSecurityInfoReady;
-import mcjty.rftools.blocks.security.PacketSecurityNameReady;
 import mcjty.rftools.blocks.shaper.PacketProjectorClientNotification;
-import mcjty.rftools.blocks.shaper.PacketReturnLocatorEnergyConsumption;
 import mcjty.rftools.blocks.shield.PacketFiltersReady;
 import mcjty.rftools.blocks.shield.PacketGetFilters;
 import mcjty.rftools.blocks.spawner.SpawnerInfoPacketClient;
 import mcjty.rftools.blocks.spawner.SpawnerInfoPacketServer;
 import mcjty.rftools.blocks.storage.PacketSyncSlotsToClient;
 import mcjty.rftools.blocks.storage.PacketUpdateNBTItemStorage;
-import mcjty.rftools.blocks.storage.StorageInfoPacketClient;
-import mcjty.rftools.blocks.storage.StorageInfoPacketServer;
 import mcjty.rftools.blocks.storagemonitor.*;
 import mcjty.rftools.blocks.teleporter.*;
 import mcjty.rftools.craftinggrid.PacketCraftTestResultToClient;
@@ -41,8 +37,12 @@ import mcjty.rftools.items.teleportprobe.PacketTargetsReady;
 import mcjty.rftools.jei.PacketSendRecipe;
 import mcjty.rftools.playerprops.PacketSendBuffsToClient;
 import mcjty.rftools.shapes.*;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
+
+import javax.annotation.Nonnull;
 
 public class RFToolsMessages {
     public static SimpleNetworkWrapper INSTANCE;
@@ -89,30 +89,39 @@ public class RFToolsMessages {
         net.registerMessage(PacketFiltersReady.Handler.class, PacketFiltersReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketSendBuffsToClient.Handler.class, PacketSendBuffsToClient.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketSecurityInfoReady.Handler.class, PacketSecurityInfoReady.class, PacketHandler.nextID(), Side.CLIENT);
-        net.registerMessage(PacketSecurityNameReady.Handler.class, PacketSecurityNameReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketDelightingInfoReady.Handler.class, PacketDelightingInfoReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketConnectedBlocksReady.Handler.class, PacketConnectedBlocksReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketSyncSlotsToClient.Handler.class, PacketSyncSlotsToClient.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketGridToClient.Handler.class, PacketGridToClient.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketCraftTestResultToClient.Handler.class, PacketCraftTestResultToClient.class, PacketHandler.nextID(), Side.CLIENT);
-        net.registerMessage(PacketEndergenicFlash.Handler.class, PacketEndergenicFlash.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketHudLogReady.Handler.class, PacketHudLogReady.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketReturnRfInRange.Handler.class, PacketReturnRfInRange.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketReturnShapeData.Handler.class, PacketReturnShapeData.class, PacketHandler.nextID(), Side.CLIENT);
-        net.registerMessage(PacketReturnScanDirty.Handler.class, PacketReturnScanDirty.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketProjectorClientNotification.Handler.class, PacketProjectorClientNotification.class, PacketHandler.nextID(), Side.CLIENT);
         net.registerMessage(PacketReturnExtraData.Handler.class, PacketReturnExtraData.class, PacketHandler.nextID(), Side.CLIENT);
-        net.registerMessage(PacketReturnLocatorEnergyConsumption.Handler.class, PacketReturnLocatorEnergyConsumption.class, PacketHandler.nextID(), Side.CLIENT);
-        net.registerMessage(PacketPositionToClient.Handler.class, PacketPositionToClient.class, PacketHandler.nextID(), Side.CLIENT);
 
-        PacketHandler.register(PacketHandler.nextPacketID(), StorageInfoPacketServer.class, StorageInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), PowerCellInfoPacketServer.class, PowerCellInfoPacketClient.class);
-        PacketHandler.register(PacketHandler.nextPacketID(), CounterInfoPacketServer.class, CounterInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), InventoriesInfoPacketServer.class, InventoriesInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), SearchItemsInfoPacketServer.class, SearchItemsInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), GetContentsInfoPacketServer.class, GetContentsInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), SpawnerInfoPacketServer.class, SpawnerInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), ScreenInfoPacketServer.class, ScreenInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), ScannerInfoPacketServer.class, ScannerInfoPacketClient.class);
+    }
+
+    public static void sendToServer(String command, @Nonnull Arguments.Builder argumentBuilder) {
+        INSTANCE.sendToServer(new PacketSendServerCommand(RFTools.MODID, command, argumentBuilder.build()));
+    }
+
+    public static void sendToServer(String command) {
+        INSTANCE.sendToServer(new PacketSendServerCommand(RFTools.MODID, command, Arguments.EMPTY));
+    }
+
+    public static void sendToClient(EntityPlayer player, String command, @Nonnull Arguments.Builder argumentBuilder) {
+        INSTANCE.sendTo(new PacketSendClientCommand(RFTools.MODID, command, argumentBuilder.build()), (EntityPlayerMP) player);
+    }
+
+    public static void sendToClient(EntityPlayer player, String command) {
+        INSTANCE.sendTo(new PacketSendClientCommand(RFTools.MODID, command, Arguments.EMPTY), (EntityPlayerMP) player);
     }
 }
