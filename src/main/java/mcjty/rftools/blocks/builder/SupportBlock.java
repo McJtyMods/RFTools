@@ -44,7 +44,7 @@ public class SupportBlock extends Block {
         setUnlocalizedName("rftools.support_block");
         setRegistryName("support_block");
         setCreativeTab(RFTools.tabRfTools);
-        McJtyRegister.registerLater(this, RFTools.instance, ItemBlock.class, null);
+        McJtyRegister.registerLater(this, RFTools.instance, ItemBlock.class);
     }
 
     public static boolean activateBlock(Block block, World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
