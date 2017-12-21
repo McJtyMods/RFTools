@@ -70,7 +70,7 @@ public class DimensionalShardBlock extends Block {
         setRegistryName("dimensional_shard_ore");
         setLightLevel(0.5f);
         setCreativeTab(RFTools.tabRfTools);
-        McJtyRegister.registerLater(this, RFTools.instance, DimensionalShardItemBlock.class, null);
+        McJtyRegister.registerLater(this, RFTools.instance, DimensionalShardItemBlock.class);
     }
 
     @SideOnly(Side.CLIENT)

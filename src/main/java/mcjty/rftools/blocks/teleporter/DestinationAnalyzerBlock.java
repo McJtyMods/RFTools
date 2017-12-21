@@ -34,7 +34,7 @@ public class DestinationAnalyzerBlock extends Block {
         setSoundType(SoundType.METAL);
         setHarvestLevel("pickaxe", 0);
         setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
-        McJtyRegister.registerLater(this, RFTools.instance, ItemBlock.class, null);
+        McJtyRegister.registerLater(this, RFTools.instance, ItemBlock.class);
     }
 
     @SideOnly(Side.CLIENT)

@@ -24,7 +24,7 @@ public class SpaceChamberBlock extends Block {
         setUnlocalizedName("rftools.space_chamber");
         setRegistryName("space_chamber");
         setCreativeTab(RFTools.tabRfTools);
-        McJtyRegister.registerLater(this, RFTools.instance, ItemBlock.class, null);
+        McJtyRegister.registerLater(this, RFTools.instance, ItemBlock.class);
     }
 
     @SideOnly(Side.CLIENT)

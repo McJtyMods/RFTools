@@ -22,7 +22,7 @@ public class MachineBase extends Block {
         setUnlocalizedName("rftools.machine_base");
         setRegistryName("machine_base");
         setCreativeTab(RFTools.tabRfTools);
-        McJtyRegister.registerLater(this, RFTools.instance, ItemBlock.class, null);
+        McJtyRegister.registerLater(this, RFTools.instance, ItemBlock.class);
     }
 
     public static final AxisAlignedBB BLOCK_AABB = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 0.3F, 1.0F);
