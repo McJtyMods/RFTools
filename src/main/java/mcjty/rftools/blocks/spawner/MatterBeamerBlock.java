@@ -50,8 +50,8 @@ public class MatterBeamerBlock extends GenericRFToolsBlock<MatterBeamerTileEntit
     }
 
     @Override
-    public boolean hasNoRotation() {
-        return true;
+    public RotationType getRotationType() {
+        return RotationType.NONE;
     }
 
     @SideOnly(Side.CLIENT)

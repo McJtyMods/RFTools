@@ -4,6 +4,7 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.varia.BlockTools;
+import mcjty.lib.varia.OrientationTools;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -28,7 +29,7 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
 
     public EndergenicTileEntity findEndergenicTileEntity() {
         IBlockState state = getWorld().getBlockState(getPos());
-        EnumFacing k = BlockTools.getOrientation(state);
+        EnumFacing k = OrientationTools.getOrientation(state);
         EndergenicTileEntity te = getEndergenicGeneratorAt(k.getOpposite());
         if (te != null) {
             return te;

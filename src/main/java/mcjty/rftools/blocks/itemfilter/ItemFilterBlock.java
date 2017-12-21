@@ -24,8 +24,8 @@ public class ItemFilterBlock extends GenericRFToolsBlock<ItemFilterTileEntity, I
     }
 
     @Override
-    public boolean hasNoRotation() {
-        return true;
+    public RotationType getRotationType() {
+        return RotationType.NONE;
     }
 
     @SideOnly(Side.CLIENT)

@@ -72,8 +72,8 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
     }
 
     @Override
-    public boolean hasNoRotation() {
-        return true;
+    public RotationType getRotationType() {
+        return RotationType.NONE;
     }
 
     @Override

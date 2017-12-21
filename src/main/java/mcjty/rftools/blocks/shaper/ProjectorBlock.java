@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.shaper;
 
 import mcjty.lib.container.GenericGuiContainer;
-import mcjty.lib.varia.BlockTools;
+import mcjty.lib.varia.OrientationTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.Block;
@@ -32,8 +32,8 @@ public class ProjectorBlock extends GenericRFToolsBlock<ProjectorTileEntity, Pro
     }
 
     @Override
-    public boolean isHorizRotation() {
-        return true;
+    public RotationType getRotationType() {
+        return RotationType.HORIZROTATION;
     }
 
     @Override
@@ -47,7 +47,7 @@ public class ProjectorBlock extends GenericRFToolsBlock<ProjectorTileEntity, Pro
         TileEntity te = world.getTileEntity(pos);
         if (state.getBlock() instanceof ProjectorBlock && te instanceof ProjectorTileEntity) {
             ProjectorTileEntity projector = (ProjectorTileEntity)te;
-            EnumFacing horiz = BlockTools.getOrientationHoriz(state);
+            EnumFacing horiz = OrientationTools.getOrientationHoriz(state);
             EnumFacing north = reorient(EnumFacing.NORTH, horiz);
             EnumFacing south = reorient(EnumFacing.SOUTH, horiz);
             EnumFacing west = reorient(EnumFacing.WEST, horiz);

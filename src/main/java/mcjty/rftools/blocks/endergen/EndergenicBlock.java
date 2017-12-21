@@ -39,8 +39,8 @@ public class EndergenicBlock extends GenericRFToolsBlock<EndergenicTileEntity, E
     }
 
     @Override
-    public boolean hasNoRotation() {
-        return true;
+    public RotationType getRotationType() {
+        return RotationType.NONE;
     }
 
     @SideOnly(Side.CLIENT)

@@ -86,7 +86,7 @@ public class RFMonitorBlock extends GenericRFToolsBlock<RFMonitorBlockTileEntity
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(FACING, getFacing(meta & 7)).withProperty(OUTPUTPOWER, (meta & 8) != 0);
+        return getDefaultState().withProperty(FACING, EnumFacing.VALUES[meta & 7]).withProperty(OUTPUTPOWER, (meta & 8) != 0);
     }
 
     @Override

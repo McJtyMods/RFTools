@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.elevator;
 
 
 import mcjty.lib.api.Infusable;
+import mcjty.lib.container.BaseBlock;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericBlock;
 import mcjty.lib.container.GenericGuiContainer;
@@ -38,8 +39,8 @@ public class ElevatorBlock extends GenericRFToolsBlock<ElevatorTileEntity, Empty
     }
 
     @Override
-    public boolean isHorizRotation() {
-        return true;
+    public RotationType getRotationType() {
+        return RotationType.HORIZROTATION;
     }
 
     @Override

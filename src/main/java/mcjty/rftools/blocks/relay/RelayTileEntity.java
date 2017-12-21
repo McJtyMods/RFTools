@@ -6,6 +6,7 @@ import mcjty.lib.entity.GenericEnergyHandlerTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.EnergyTools;
+import mcjty.lib.varia.OrientationTools;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -112,7 +113,7 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
 
         IBlockState state = getWorld().getBlockState(getPos());
         for (EnumFacing facing : EnumFacing.VALUES) {
-            int side = BlockTools.reorient(facing, state).ordinal();
+            int side = OrientationTools.reorient(facing, state).ordinal();
 //            int side = facing.ordinal();
             if (rf[side] > 0 && !inputMode[side]) {
                 TileEntity te = getWorld().getTileEntity(getPos().offset(facing));
@@ -158,8 +159,7 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
 
         boolean[] inputMode = redstoneSignal ? inputModeOn : inputModeOff;
         IBlockState state = getWorld().getBlockState(getPos());
-        int meta = state.getBlock().getMetaFromState(state);
-        int side = BlockTools.reorient(from, meta).ordinal();
+        int side = OrientationTools.reorient(from, state).ordinal();
         if (inputMode[side]) {
             int[] rf = redstoneSignal ? rfOn : rfOff;
             int actual = super.receiveEnergy(Math.min(maxReceive, rf[side]), simulate);

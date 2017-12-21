@@ -4,9 +4,9 @@ import mcjty.lib.api.MachineInformation;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
-import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.EntityTools;
 import mcjty.lib.varia.Logging;
+import mcjty.lib.varia.OrientationTools;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.ModItems;
@@ -209,7 +209,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         markDirty();
 
         IBlockState state = getWorld().getBlockState(getPos());
-        EnumFacing k = BlockTools.getOrientation(state);
+        EnumFacing k = OrientationTools.getOrientation(state);
         int sx = getPos().getX();
         int sy = getPos().getY();
         int sz = getPos().getZ();

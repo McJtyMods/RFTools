@@ -38,8 +38,8 @@ public class BuilderBlock extends GenericRFToolsBlock<BuilderTileEntity, Builder
     }
 
     @Override
-    public boolean isHorizRotation() {
-        return true;
+    public RotationType getRotationType() {
+        return RotationType.HORIZROTATION;
     }
 
     @Override

@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.booster;
 
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.api.Infusable;
+import mcjty.lib.container.BaseBlock;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
@@ -27,8 +28,8 @@ public class BoosterBlock extends GenericRFToolsBlock<BoosterTileEntity, Booster
     }
 
     @Override
-    public boolean hasNoRotation() {
-        return true;
+    public RotationType getRotationType() {
+        return RotationType.NONE;
     }
 
     @Override
