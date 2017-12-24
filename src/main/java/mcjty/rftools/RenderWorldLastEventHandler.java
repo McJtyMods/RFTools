@@ -2,8 +2,8 @@ package mcjty.rftools;
 
 import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.api.smartwrench.SmartWrenchMode;
+import mcjty.lib.gui.BlockOutlineRenderer;
 import mcjty.lib.gui.HudRenderHelper;
-import mcjty.lib.gui.RenderGlowEffect;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorTileEntity;
 import mcjty.rftools.blocks.builder.BuilderSetup;
@@ -20,12 +20,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -63,7 +61,7 @@ public class RenderWorldLastEventHandler {
                 GlobalCoordinate current = SmartWrenchItem.getCurrentBlock(heldItem);
                 if (current != null) {
                     if (current.getDimension() == mc.world.provider.getDimension()) {
-                        TileEntity te = mc.world.getTileEntity(current.getCoordinate());
+                        TileEntity te = mc.world.getTileEntity(current);
                         if (te instanceof BlockProtectorTileEntity) {
                             BlockProtectorTileEntity blockProtectorTileEntity = (BlockProtectorTileEntity) te;
                             Set<BlockPos> coordinates = blockProtectorTileEntity.getProtectedBlocks();
@@ -82,13 +80,13 @@ public class RenderWorldLastEventHandler {
                     Set<BlockPos> coordinates = new HashSet<>();
                     coordinates.add(new BlockPos(0, 0, 0));
                     if (mode == ShapeCardItem.MODE_CORNER2) {
-                        BlockPos cur = current.getCoordinate();
+                        BlockPos cur = current;
                         BlockPos c = ShapeCardItem.getCorner1(heldItem);
                         if (c != null) {
                             coordinates.add(new BlockPos(c.getX() - cur.getX(), c.getY() - cur.getY(), c.getZ() - cur.getZ()));
                         }
                     }
-                    renderHighlightedBlocks(evt, p, current.getCoordinate(), coordinates);
+                    renderHighlightedBlocks(evt, p, current, coordinates);
                 }
             }
         }
@@ -97,60 +95,7 @@ public class RenderWorldLastEventHandler {
     public static final ResourceLocation YELLOWGLOW = new ResourceLocation(RFTools.MODID, "textures/blocks/yellowglow.png");
 
     private static void renderHighlightedBlocks(RenderWorldLastEvent evt, EntityPlayerSP p, BlockPos base, Set<BlockPos> coordinates) {
-        double doubleX = p.lastTickPosX + (p.posX - p.lastTickPosX) * evt.getPartialTicks();
-        double doubleY = p.lastTickPosY + (p.posY - p.lastTickPosY) * evt.getPartialTicks();
-        double doubleZ = p.lastTickPosZ + (p.posZ - p.lastTickPosZ) * evt.getPartialTicks();
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(-doubleX, -doubleY, -doubleZ);
-
-        GlStateManager.disableDepth();
-        GlStateManager.enableTexture2D();
-
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
-
-        Minecraft.getMinecraft().getTextureManager().bindTexture(YELLOWGLOW);
-
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_LMAP_COLOR);
-//        tessellator.setColorRGBA(255, 255, 255, 64);
-//        tessellator.setBrightness(240);
-
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-        for (BlockPos coordinate : coordinates) {
-            float x = base.getX() + coordinate.getX();
-            float y = base.getY() + coordinate.getY();
-            float z = base.getZ() + coordinate.getZ();
-            buffer.setTranslation(buffer.xOffset + x, buffer.yOffset + y, buffer.zOffset + z);
-
-            RenderGlowEffect.addSideFullTexture(buffer, EnumFacing.UP.ordinal(), 1.1f, -0.05f);
-            RenderGlowEffect.addSideFullTexture(buffer, EnumFacing.DOWN.ordinal(), 1.1f, -0.05f);
-            RenderGlowEffect.addSideFullTexture(buffer, EnumFacing.NORTH.ordinal(), 1.1f, -0.05f);
-            RenderGlowEffect.addSideFullTexture(buffer, EnumFacing.SOUTH.ordinal(), 1.1f, -0.05f);
-            RenderGlowEffect.addSideFullTexture(buffer, EnumFacing.WEST.ordinal(), 1.1f, -0.05f);
-            RenderGlowEffect.addSideFullTexture(buffer, EnumFacing.EAST.ordinal(), 1.1f, -0.05f);
-            buffer.setTranslation(buffer.xOffset - x, buffer.yOffset - y, buffer.zOffset - z);
-        }
-        tessellator.draw();
-
-        GlStateManager.disableBlend();
-        GlStateManager.disableTexture2D();
-        GlStateManager.color(.5f, .3f, 0);
-        GlStateManager.glLineWidth(2);
-
-        buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-
-        for (BlockPos coordinate : coordinates) {
-            mcjty.lib.gui.RenderHelper.renderHighLightedBlocksOutline(buffer,
-                    base.getX() + coordinate.getX(), base.getY() + coordinate.getY(), base.getZ() + coordinate.getZ(),
-                    .5f, .3f, 0f, 1.0f);
-        }
-        tessellator.draw();
-
-        GlStateManager.enableTexture2D();
-        GlStateManager.popMatrix();
+        BlockOutlineRenderer.renderHighlightedBlocks(p, base, coordinates, YELLOWGLOW, evt.getPartialTicks());
     }
 
     private static void renderBuilderProgress(RenderWorldLastEvent evt) {
@@ -206,31 +151,7 @@ public class RenderWorldLastEventHandler {
             return;
         }
 
-        EntityPlayerSP p = mc.player;
-        double doubleX = p.lastTickPosX + (p.posX - p.lastTickPosX) * evt.getPartialTicks();
-        double doubleY = p.lastTickPosY + (p.posY - p.lastTickPosY) * evt.getPartialTicks();
-        double doubleZ = p.lastTickPosZ + (p.posZ - p.lastTickPosZ) * evt.getPartialTicks();
-
-        GlStateManager.pushMatrix();
-        GlStateManager.color(1.0f, 0, 0);
-        GlStateManager.glLineWidth(3);
-        GlStateManager.translate(-doubleX, -doubleY, -doubleZ);
-
-        GlStateManager.disableDepth();
-        GlStateManager.disableTexture2D();
-
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
-        float mx = c.getX();
-        float my = c.getY();
-        float mz = c.getZ();
-        buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-        mcjty.lib.gui.RenderHelper.renderHighLightedBlocksOutline(buffer, mx, my, mz, 1.0f, 0.0f, 0.0f, 1.0f);
-
-        tessellator.draw();
-
-        GlStateManager.enableTexture2D();
-        GlStateManager.popMatrix();
+        BlockOutlineRenderer.renderHilightedBlock(c, evt.getPartialTicks());
     }
 
     private static void renderPower(RenderWorldLastEvent evt) {
@@ -292,32 +213,11 @@ public class RenderWorldLastEventHandler {
         }
     }
 
-    private static void renderBoxOutline(BlockPos pos) {
+    private static void renderBoxOutline (BlockPos pos) {
         BlockPos c = RFTools.instance.clientInfo.getHilightedBlock();
         if (c != null && c.equals(pos)) {
             return;
         }
-
-        RenderHelper.disableStandardItemLighting();
-        Minecraft.getMinecraft().entityRenderer.disableLightmap();
-        GlStateManager.disableTexture2D();
-        GlStateManager.disableBlend();
-        GlStateManager.disableLighting();
-        GlStateManager.disableAlpha();
-        GlStateManager.glLineWidth(2);
-        GlStateManager.color(1, 1, 1);
-
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
-        float mx = pos.getX();
-        float my = pos.getY();
-        float mz = pos.getZ();
-        buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-        mcjty.lib.gui.RenderHelper.renderHighLightedBlocksOutline(buffer, mx, my, mz, .9f, .7f, 0, 1);
-
-        tessellator.draw();
-
-        Minecraft.getMinecraft().entityRenderer.enableLightmap();
-        GlStateManager.enableTexture2D();
+        BlockOutlineRenderer.renderBoxOutline(pos);
     }
 }
