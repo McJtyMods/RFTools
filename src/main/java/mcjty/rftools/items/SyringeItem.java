@@ -47,25 +47,22 @@ public class SyringeItem extends GenericRFToolsItem {
             ModelBakery.registerItemVariants(this, new ModelResourceLocation(new ResourceLocation(domain, path + i), "inventory"));
         }
 
-        ModelLoader.setCustomMeshDefinition(this, new ItemMeshDefinition() {
-            @Override
-            public ModelResourceLocation getModelLocation(ItemStack stack) {
-                NBTTagCompound tagCompound = stack.getTagCompound();
-                int level = 0;
-                if (tagCompound != null) {
-                    level = tagCompound.getInteger("level");
-                }
-                if (level <= 0) {
-                    level = 0;
-                } else if (level >= GeneralConfiguration.maxMobInjections) {
-                    level = 5;
-                } else {
-                    level = ((level-1) * 4 / (GeneralConfiguration.maxMobInjections-1)) + 1;
-                }
-                String domain = getRegistryName().getResourceDomain();
-                String path = getRegistryName().getResourcePath();
-                return new ModelResourceLocation(new ResourceLocation(domain, path + level), "inventory");
+        ModelLoader.setCustomMeshDefinition(this, stack -> {
+            NBTTagCompound tagCompound = stack.getTagCompound();
+            int level = 0;
+            if (tagCompound != null) {
+                level = tagCompound.getInteger("level");
             }
+            if (level <= 0) {
+                level = 0;
+            } else if (level >= GeneralConfiguration.maxMobInjections) {
+                level = 5;
+            } else {
+                level = ((level-1) * 4 / (GeneralConfiguration.maxMobInjections-1)) + 1;
+            }
+            String domain = getRegistryName().getResourceDomain();
+            String path = getRegistryName().getResourcePath();
+            return new ModelResourceLocation(new ResourceLocation(domain, path + level), "inventory");
         });
     }
 

@@ -54,15 +54,12 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
 
         ModelBakery.registerItemVariants(this, selectedModel, normalModel);
 
-        ModelLoader.setCustomMeshDefinition(this, new ItemMeshDefinition() {
-            @Override
-            public ModelResourceLocation getModelLocation(ItemStack stack) {
-                SmartWrenchMode mode = getCurrentMode(stack);
-                if (mode == SmartWrenchMode.MODE_SELECT) {
-                    return selectedModel;
-                } else {
-                    return normalModel;
-                }
+        ModelLoader.setCustomMeshDefinition(this, stack -> {
+            SmartWrenchMode mode = getCurrentMode(stack);
+            if (mode == SmartWrenchMode.MODE_SELECT) {
+                return selectedModel;
+            } else {
+                return normalModel;
             }
         });
     }

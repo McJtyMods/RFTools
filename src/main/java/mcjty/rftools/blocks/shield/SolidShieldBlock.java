@@ -32,18 +32,15 @@ public class SolidShieldBlock extends AbstractShieldBlock {
 
     @SideOnly(Side.CLIENT)
     public void initBlockColors() {
-        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(new IBlockColor() {
-            @Override
-            public int colorMultiplier(IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) {
-                if (pos != null && worldIn != null) {
-                    TileEntity te = worldIn.getTileEntity(pos);
-                    if (te instanceof NoTickShieldBlockTileEntity) {
-                        NoTickShieldBlockTileEntity tileEntity = (NoTickShieldBlockTileEntity) te;
-                        return tileEntity.getShieldColor();
-                    }
+        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler((state, worldIn, pos, tintIndex) -> {
+            if (pos != null && worldIn != null) {
+                TileEntity te = worldIn.getTileEntity(pos);
+                if (te instanceof NoTickShieldBlockTileEntity) {
+                    NoTickShieldBlockTileEntity tileEntity = (NoTickShieldBlockTileEntity) te;
+                    return tileEntity.getShieldColor();
                 }
-                return 0xffffff;
             }
+            return 0xffffff;
         }, this);
     }
 

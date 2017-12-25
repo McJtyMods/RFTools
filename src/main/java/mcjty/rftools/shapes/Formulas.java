@@ -185,185 +185,182 @@ public class Formulas {
         }
     };
 
-    static final IFormulaFactory FORMULA_COMPOSITION = new IFormulaFactory() {
-        @Override
-        public IFormula createFormula() {
-            return new IFormula() {
-                private BlockPos thisCoord;
-                private IBlockState blockState;
-                private List<IFormula> formulas = new ArrayList<>();
-                private List<Bounds> bounds = new ArrayList<>();
-                private List<ShapeModifier> modifiers = new ArrayList<>();
-                private List<IBlockState> blockStates = new ArrayList<>();
+    static final IFormulaFactory FORMULA_COMPOSITION = () -> {
+        return new IFormula() {
+            private BlockPos thisCoord;
+            private IBlockState blockState;
+            private List<IFormula> formulas = new ArrayList<>();
+            private List<Bounds> bounds = new ArrayList<>();
+            private List<ShapeModifier> modifiers = new ArrayList<>();
+            private List<IBlockState> blockStates = new ArrayList<>();
 
-                @Override
-                public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
-                    this.thisCoord = thisCoord;
+            @Override
+            public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
+                this.thisCoord = thisCoord;
 
-                    if (card == null) {
-                        return;
+                if (card == null) {
+                    return;
+                }
+
+                int dx = dimension.getX();
+                int dy = dimension.getY();
+                int dz = dimension.getZ();
+                if (dx <= 0 || dy <= 0 || dz <= 0) {
+                    return;
+                }
+
+                NBTTagList children = card.getTagList("children", Constants.NBT.TAG_COMPOUND);
+                for (int i = 0 ; i < children.tagCount() ; i++) {
+                    NBTTagCompound childTag = children.getCompoundTagAt(i);
+                    IFormula formula = ShapeCardItem.createCorrectFormula(childTag);
+
+                    String op = childTag.getString("mod_op");
+                    ShapeOperation operation = ShapeOperation.getByName(op);
+                    boolean flip = childTag.getBoolean("mod_flipy");
+                    String rot = childTag.getString("mod_rot");
+                    ShapeRotation rotation = ShapeRotation.getByName(rot);
+                    modifiers.add(new ShapeModifier(operation, flip, rotation));
+
+                    BlockPos dim = ShapeCardItem.getClampedDimension(childTag, ScannerConfiguration.maxScannerDimension);
+                    BlockPos off = ShapeCardItem.getClampedOffset(childTag, ScannerConfiguration.maxScannerOffset);
+                    BlockPos o = off.add(offset);
+                    formula.setup(thisCoord, dim, o, childTag);
+                    formulas.add(formula);
+
+                    dim = rotation.transformDimension(dim);
+                    BlockPos tl = new BlockPos(o.getX() - dim.getX()/2, o.getY() - dim.getY()/2, o.getZ() - dim.getZ()/2);
+                    bounds.add(new Bounds(tl, tl.add(dim), o));
+
+                    IBlockState state = null;
+                    if (childTag.hasKey("ghost_block")) {
+                        Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(childTag.getString("ghost_block")));
+                        if (block != null) {
+                            int meta = childTag.getInteger("ghost_meta");
+                            state = block.getStateFromMeta(meta);
+                        }
                     }
+                    blockStates.add(state);
+                }
+            }
 
-                    int dx = dimension.getX();
-                    int dy = dimension.getY();
-                    int dz = dimension.getZ();
-                    if (dx <= 0 || dy <= 0 || dz <= 0) {
-                        return;
-                    }
+            @Override
+            public void getCheckSumClient(NBTTagCompound tc, Check32 crc) {
+                ShapeCardItem.getLocalChecksum(tc, crc);
+                NBTTagList children = tc.getTagList("children", Constants.NBT.TAG_COMPOUND);
+                for (int i = 0 ; i < children.tagCount() ; i++) {
+                    NBTTagCompound childTag = children.getCompoundTagAt(i);
+                    IFormula formula = ShapeCardItem.createCorrectFormula(childTag);
+                    formula.getCheckSumClient(childTag, crc);
+                    crc.add(childTag.getBoolean("mod_flipy") ? 1 : 0);
 
-                    NBTTagList children = card.getTagList("children", Constants.NBT.TAG_COMPOUND);
-                    for (int i = 0 ; i < children.tagCount() ; i++) {
-                        NBTTagCompound childTag = children.getCompoundTagAt(i);
-                        IFormula formula = ShapeCardItem.createCorrectFormula(childTag);
+                    String rot = childTag.getString("mod_rot");
+                    ShapeRotation rotation = ShapeRotation.getByName(rot);
+                    crc.add(rotation.ordinal());
 
-                        String op = childTag.getString("mod_op");
-                        ShapeOperation operation = ShapeOperation.getByName(op);
-                        boolean flip = childTag.getBoolean("mod_flipy");
-                        String rot = childTag.getString("mod_rot");
-                        ShapeRotation rotation = ShapeRotation.getByName(rot);
-                        modifiers.add(new ShapeModifier(operation, flip, rotation));
+                    String op = childTag.getString("mod_op");
+                    ShapeOperation operation = ShapeOperation.getByName(op);
+                    crc.add(operation.ordinal());
 
-                        BlockPos dim = ShapeCardItem.getClampedDimension(childTag, ScannerConfiguration.maxScannerDimension);
-                        BlockPos off = ShapeCardItem.getClampedOffset(childTag, ScannerConfiguration.maxScannerOffset);
-                        BlockPos o = off.add(offset);
-                        formula.setup(thisCoord, dim, o, childTag);
-                        formulas.add(formula);
-
-                        dim = rotation.transformDimension(dim);
-                        BlockPos tl = new BlockPos(o.getX() - dim.getX()/2, o.getY() - dim.getY()/2, o.getZ() - dim.getZ()/2);
-                        bounds.add(new Bounds(tl, tl.add(dim), o));
-
+                    if (childTag.hasKey("ghost_block")) {
                         IBlockState state = null;
-                        if (childTag.hasKey("ghost_block")) {
-                            Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(childTag.getString("ghost_block")));
-                            if (block != null) {
-                                int meta = childTag.getInteger("ghost_meta");
-                                state = block.getStateFromMeta(meta);
-                            }
-                        }
-                        blockStates.add(state);
-                    }
-                }
-
-                @Override
-                public void getCheckSumClient(NBTTagCompound tc, Check32 crc) {
-                    ShapeCardItem.getLocalChecksum(tc, crc);
-                    NBTTagList children = tc.getTagList("children", Constants.NBT.TAG_COMPOUND);
-                    for (int i = 0 ; i < children.tagCount() ; i++) {
-                        NBTTagCompound childTag = children.getCompoundTagAt(i);
-                        IFormula formula = ShapeCardItem.createCorrectFormula(childTag);
-                        formula.getCheckSumClient(childTag, crc);
-                        crc.add(childTag.getBoolean("mod_flipy") ? 1 : 0);
-
-                        String rot = childTag.getString("mod_rot");
-                        ShapeRotation rotation = ShapeRotation.getByName(rot);
-                        crc.add(rotation.ordinal());
-
-                        String op = childTag.getString("mod_op");
-                        ShapeOperation operation = ShapeOperation.getByName(op);
-                        crc.add(operation.ordinal());
-
-                        if (childTag.hasKey("ghost_block")) {
-                            IBlockState state = null;
-                            Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(childTag.getString("ghost_block")));
-                            if (block != null) {
-                                crc.add(Block.getIdFromBlock(block));
-                                int meta = childTag.getInteger("ghost_meta");
-                                crc.add(meta);
-                            }
+                        Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(childTag.getString("ghost_block")));
+                        if (block != null) {
+                            crc.add(Block.getIdFromBlock(block));
+                            int meta = childTag.getInteger("ghost_meta");
+                            crc.add(meta);
                         }
                     }
                 }
+            }
 
-                @Override
-                public IBlockState getLastState() {
-                    return blockState;
-                }
+            @Override
+            public IBlockState getLastState() {
+                return blockState;
+            }
 
-                @Override
-                public boolean isInside(int x, int y, int z) {
-                    blockState = null;
-                    x -= thisCoord.getX();
-                    y -= thisCoord.getY();
-                    z -= thisCoord.getZ();
-                    boolean ok = false;
-                    for (int i = 0 ; i < formulas.size() ; i++) {
-                        IFormula formula = formulas.get(i);
-                        Bounds bounds = this.bounds.get(i);
-                        ShapeModifier modifier = modifiers.get(i);
+            @Override
+            public boolean isInside(int x, int y, int z) {
+                blockState = null;
+                x -= thisCoord.getX();
+                y -= thisCoord.getY();
+                z -= thisCoord.getZ();
+                boolean ok = false;
+                for (int i = 0 ; i < formulas.size() ; i++) {
+                    IFormula formula = formulas.get(i);
+                    Bounds bounds = this.bounds.get(i);
+                    ShapeModifier modifier = modifiers.get(i);
 
-                        boolean inside = false;
-                        if (bounds.in(x, y, z)) {
-                            int tx = x;
-                            int ty = y;
-                            int tz = z;
-                            BlockPos o = bounds.getOffset();
-                            switch (modifier.getRotation()) {
-                                default:
-                                case NONE:
-                                    break;
-                                case X:
-                                    tx = x;
-                                    ty = (z-o.getZ()) + o.getY();
-                                    tz = (y-o.getY()) + o.getZ();
-                                    break;
-                                case Y:
-                                    tx = (z-o.getZ()) + o.getX();;
-                                    ty = y;
-                                    tz = (x-o.getX()) + o.getZ();
-                                    break;
-                                case Z:
-                                    tx = (y-o.getY()) + o.getX();;
-                                    ty = (x-o.getX()) + o.getY();
-                                    tz = z;
-                                    break;
-                            }
-
-                            if (modifier.isFlipY()) {
-                                ty = o.getY() - (ty-o.getY());
-                            }
-
-                            inside = formula.isInside(tx+thisCoord.getX(), ty+thisCoord.getY(), tz+thisCoord.getZ());
+                    boolean inside = false;
+                    if (bounds.in(x, y, z)) {
+                        int tx = x;
+                        int ty = y;
+                        int tz = z;
+                        BlockPos o = bounds.getOffset();
+                        switch (modifier.getRotation()) {
+                            default:
+                            case NONE:
+                                break;
+                            case X:
+                                tx = x;
+                                ty = (z-o.getZ()) + o.getY();
+                                tz = (y-o.getY()) + o.getZ();
+                                break;
+                            case Y:
+                                tx = (z-o.getZ()) + o.getX();;
+                                ty = y;
+                                tz = (x-o.getX()) + o.getZ();
+                                break;
+                            case Z:
+                                tx = (y-o.getY()) + o.getX();;
+                                ty = (x-o.getX()) + o.getY();
+                                tz = z;
+                                break;
                         }
 
-                        switch (modifier.getOperation()) {
-                            case UNION:
-                                if (inside) {
-                                    ok = true;
+                        if (modifier.isFlipY()) {
+                            ty = o.getY() - (ty-o.getY());
+                        }
+
+                        inside = formula.isInside(tx+thisCoord.getX(), ty+thisCoord.getY(), tz+thisCoord.getZ());
+                    }
+
+                    switch (modifier.getOperation()) {
+                        case UNION:
+                            if (inside) {
+                                ok = true;
+                                blockState = blockStates.get(i);
+                                if (blockState == null) {
+                                    blockState = formula.getLastState();
+                                }
+                            }
+                            break;
+                        case SUBTRACT:
+                            if (inside) {
+                                ok = false;
+                            }
+                            break;
+                        case INTERSECT:
+                            if (inside && ok) {
+                                if (blockState == null) {
                                     blockState = blockStates.get(i);
                                     if (blockState == null) {
                                         blockState = formula.getLastState();
                                     }
                                 }
-                                break;
-                            case SUBTRACT:
-                                if (inside) {
-                                    ok = false;
-                                }
-                                break;
-                            case INTERSECT:
-                                if (inside && ok) {
-                                    if (blockState == null) {
-                                        blockState = blockStates.get(i);
-                                        if (blockState == null) {
-                                            blockState = formula.getLastState();
-                                        }
-                                    }
-                                } else {
-                                    ok = false;
-                                }
-                                break;
-                        }
+                            } else {
+                                ok = false;
+                            }
+                            break;
                     }
-                    return ok;
                 }
+                return ok;
+            }
 
-                @Override
-                public boolean isCustom() {
-                    return true;
-                }
-            };
-        }
+            @Override
+            public boolean isCustom() {
+                return true;
+            }
+        };
     };
 
     static final IFormulaFactory FORMULA_TORUS = () -> new IFormula() {

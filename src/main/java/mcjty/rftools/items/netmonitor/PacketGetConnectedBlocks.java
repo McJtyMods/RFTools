@@ -65,24 +65,7 @@ public class PacketGetConnectedBlocks implements IMessage {
 
         private Map<BlockPos,BlockInfo> compactConnectedBlocks(Map<BlockPos,BlockInfo> old, final BlockPos pos, int max) {
             List<BlockPos> list = new ArrayList<>(old.keySet());
-            Collections.sort(list, new Comparator<BlockPos>() {
-                @Override
-                public int compare(BlockPos o1, BlockPos o2) {
-                    double sqdist1 = calcDist(o1);
-                    double sqdist2 = calcDist(o2);
-                    if (sqdist1 < sqdist2) {
-                        return -1;
-                    } else if (sqdist1 > sqdist2) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-                }
-
-                private int calcDist(BlockPos o1) {
-                    return (o1.getX()-pos.getX()) * (o1.getX()-pos.getX()) + (o1.getY()-pos.getY()) * (o1.getY()-pos.getY()) + (o1.getZ()-pos.getZ()) * (o1.getZ()-pos.getZ());
-                }
-            });
+            Collections.sort(list, Comparator.comparingInt(o1 -> (o1.getX()-pos.getX()) * (o1.getX()-pos.getX()) + (o1.getY()-pos.getY()) * (o1.getY()-pos.getY()) + (o1.getZ()-pos.getZ()) * (o1.getZ()-pos.getZ())));
 
             Map<BlockPos,BlockInfo> connectedBlocks = new HashMap<>();
             for (BlockPos coordinate : list) {

@@ -14,14 +14,11 @@ import static mcjty.rftools.GeneralConfiguration.CRAFT_HARD;
 public class DimshardHardConditionFactory implements IConditionFactory {
     @Override
     public BooleanSupplier parse(JsonContext context, JsonObject json) {
-        return new BooleanSupplier() {
-            @Override
-            public boolean getAsBoolean() {
-                if (RFTools.instance.rftoolsDimensions) {
-                    return GeneralConfiguration.dimensionalShardRecipeWithDimensions == CRAFT_HARD;
-                } else {
-                    return GeneralConfiguration.dimensionalShardRecipeWithoutDimensions == CRAFT_HARD;
-                }
+        return () -> {
+            if (RFTools.instance.rftoolsDimensions) {
+                return GeneralConfiguration.dimensionalShardRecipeWithDimensions == CRAFT_HARD;
+            } else {
+                return GeneralConfiguration.dimensionalShardRecipeWithoutDimensions == CRAFT_HARD;
             }
         };
     }
