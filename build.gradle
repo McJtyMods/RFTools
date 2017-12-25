@@ -91,7 +91,7 @@ dependencies {
     deobfCompile "com.github.mcjty:xnet:1.12-1.5.1"
     deobfCompile "com.github.mcjty:mcjtylib:1.12-2.5.5-SNAPSHOT"
 
-    compile "li.cil.oc:OpenComputers:MC1.12.1-1.7.+:api"
+    provided "li.cil.oc:OpenComputers:MC1.12.1-1.7.+:api"
 }
 
 jar {
