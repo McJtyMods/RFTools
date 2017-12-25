@@ -1,4 +1,8 @@
 {
+  "conditions": [{
+    "type": "minecraft:item_exists",
+    "item": "rftools:security_card"
+  }],
   "result": {
     "item": "rftools:security_card"
   },

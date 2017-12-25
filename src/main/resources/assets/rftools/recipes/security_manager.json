@@ -1,4 +1,8 @@
 {
+  "conditions": [{
+    "type": "minecraft:item_exists",
+    "item": "rftools:security_manager"
+  }],
   "result": {
     "item": "rftools:security_manager"
   },
