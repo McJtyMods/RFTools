@@ -10,6 +10,7 @@ public class SecuritySetup {
     public static OrphaningCardItem orphaningCardItem;
 
     public static void init() {
+        if(!SecurityConfiguration.enabled) return;
         securityManagerBlock = new SecurityManagerBlock();
         orphaningCardItem = new OrphaningCardItem();
         securityCardItem = new SecurityCardItem();
@@ -17,6 +18,7 @@ public class SecuritySetup {
 
     @SideOnly(Side.CLIENT)
     public static void initClient() {
+        if(!SecurityConfiguration.enabled) return;
         securityManagerBlock.initModel();
         orphaningCardItem.initModel();
         securityCardItem.initModel();

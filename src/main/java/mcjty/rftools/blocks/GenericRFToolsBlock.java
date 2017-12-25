@@ -9,6 +9,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.blockprotector.BlockProtectors;
 import mcjty.rftools.blocks.security.OrphaningCardItem;
 import mcjty.rftools.blocks.security.SecurityChannels;
+import mcjty.rftools.blocks.security.SecurityConfiguration;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -56,7 +57,7 @@ public abstract class GenericRFToolsBlock<T extends GenericTileEntity, C extends
 
     @Override
     protected boolean checkAccess(World world, EntityPlayer player, TileEntity te) {
-        if (te instanceof GenericTileEntity) {
+        if (SecurityConfiguration.enabled && te instanceof GenericTileEntity) {
             GenericTileEntity genericTileEntity = (GenericTileEntity) te;
             if ((!OrphaningCardItem.isPrivileged(player, world)) && (!player.getPersistentID().equals(genericTileEntity.getOwnerUUID()))) {
                 int securityChannel = genericTileEntity.getSecurityChannel();

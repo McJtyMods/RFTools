@@ -22,6 +22,7 @@ import mcjty.rftools.blocks.generator.CoalGeneratorConfiguration;
 import mcjty.rftools.blocks.infuser.MachineInfuserConfiguration;
 import mcjty.rftools.blocks.powercell.PowerCellConfiguration;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
+import mcjty.rftools.blocks.security.SecurityConfiguration;
 import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import mcjty.rftools.blocks.shield.ShieldConfiguration;
 import mcjty.rftools.blocks.spawner.SpawnerConfiguration;
@@ -149,6 +150,7 @@ public abstract class CommonProxy {
         try {
             cfg.load();
             cfg.addCustomCategoryComment(GeneralConfiguration.CATEGORY_GENERAL, "General settings");
+            cfg.addCustomCategoryComment(SecurityConfiguration.CATEGORY_SECURITY, "Settings for the block security system");
             cfg.addCustomCategoryComment(CoalGeneratorConfiguration.CATEGORY_COALGEN, "Settings for the coal generator");
             cfg.addCustomCategoryComment(CrafterConfiguration.CATEGORY_CRAFTER, "Settings for the crafter");
             cfg.addCustomCategoryComment(ModularStorageConfiguration.CATEGORY_STORAGE, "Settings for the modular storage system");
@@ -172,6 +174,7 @@ public abstract class CommonProxy {
             cfg.addCustomCategoryComment(BoosterConfiguration.CATEGORY_BOOSTER, "Settings for the booster");
 
             GeneralConfiguration.init(cfg);
+            SecurityConfiguration.init(cfg);
             CoalGeneratorConfiguration.init(cfg);
             CrafterConfiguration.init(cfg);
             ModularStorageConfiguration.init(cfg);

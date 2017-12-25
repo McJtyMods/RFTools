@@ -4,6 +4,7 @@ import mcjty.lib.McJtyLib;
 import mcjty.lib.network.Arguments;
 import mcjty.rftools.blocks.builder.BuilderTools;
 import mcjty.rftools.blocks.logic.counter.CounterTileEntity;
+import mcjty.rftools.blocks.security.SecurityConfiguration;
 import mcjty.rftools.blocks.security.SecurityTools;
 import mcjty.rftools.blocks.shaper.ShaperTools;
 import mcjty.rftools.craftinggrid.StorageCraftingTools;
@@ -104,14 +105,16 @@ public class CommandHandler {
             BuilderTools.returnChamberInfo(player);
             return true;
         });
-        McJtyLib.registerCommand(RFTools.MODID, CMD_GET_SECURITY_INFO, (player, arguments) -> {
-            SecurityTools.returnSecurityInfo(player, arguments.getInt());
-            return true;
-        });
-        McJtyLib.registerCommand(RFTools.MODID, CMD_GET_SECURITY_NAME, (player, arguments) -> {
-            SecurityTools.returnSecurityName(player, arguments.getInt());
-            return true;
-        });
+        if(SecurityConfiguration.enabled) {
+            McJtyLib.registerCommand(RFTools.MODID, CMD_GET_SECURITY_INFO, (player, arguments) -> {
+                SecurityTools.returnSecurityInfo(player, arguments.getInt());
+                return true;
+            });
+            McJtyLib.registerCommand(RFTools.MODID, CMD_GET_SECURITY_NAME, (player, arguments) -> {
+                SecurityTools.returnSecurityName(player, arguments.getInt());
+                return true;
+            });
+        }
         McJtyLib.registerCommand(RFTools.MODID, CMD_CRAFT_FROM_GRID, (player, arguments) -> {
             StorageCraftingTools.craftFromGrid(player, arguments.getInt(), arguments.getBoolean(), arguments.getBlockPos());
             return true;
