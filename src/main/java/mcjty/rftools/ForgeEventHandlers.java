@@ -5,7 +5,7 @@ import mcjty.lib.api.smartwrench.SmartWrench;
 import mcjty.lib.api.smartwrench.SmartWrenchMode;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.WrenchChecker;
-import mcjty.rftools.blocks.blockprotector.BlockProtectorTileEntity;
+import mcjty.rftools.blocks.blockprotector.BlockProtectorConfiguration;
 import mcjty.rftools.blocks.blockprotector.BlockProtectors;
 import mcjty.rftools.blocks.endergen.EndergenicTileEntity;
 import mcjty.rftools.blocks.environmental.NoTeleportAreaManager;
@@ -29,24 +29,19 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
-import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -176,7 +171,7 @@ public class ForgeEventHandlers {
         if (heldItem.isEmpty() || heldItem.getItem() == null) {
             return;
         }
-        if (player.isSneaking() && WrenchChecker.isAWrench(heldItem.getItem())) {
+        if (BlockProtectorConfiguration.enabled && player.isSneaking() && WrenchChecker.isAWrench(heldItem.getItem())) {
             // If the block is protected we prevent sneak-wrenching it.
             if (heldItem.getItem() instanceof SmartWrenchItem) {
                 // But if it is a smart wrench in select mode we allow it
@@ -196,19 +191,6 @@ public class ForgeEventHandlers {
 
     }
 
-    @SubscribeEvent
-    public void onBlockBreakEvent(BlockEvent.BreakEvent event) {
-        int x = event.getPos().getX();
-        int y = event.getPos().getY();
-        int z = event.getPos().getZ();
-        World world = event.getWorld();
-
-        Collection<GlobalCoordinate> protectors = BlockProtectors.getProtectors(world, x, y, z);
-        if (BlockProtectors.checkHarvestProtection(x, y, z, world, protectors)) {
-            event.setCanceled(true);
-        }
-    }
-
     private void checkCreativeClick(PlayerInteractEvent event) {
         if (event.getEntityPlayer().isCreative()) {
             // In creative we don't want our screens to be destroyed by left click unless he/she is sneaking
@@ -226,47 +208,6 @@ public class ForgeEventHandlers {
                 }
             }
         }
-    }
-
-
-    @SubscribeEvent
-    public void onDetonate(ExplosionEvent.Detonate event) {
-        Explosion explosion = event.getExplosion();
-        Vec3d explosionVector = explosion.getPosition();
-        Collection<GlobalCoordinate> protectors = BlockProtectors.getProtectors(event.getWorld(), (int) explosionVector.x, (int) explosionVector.y, (int) explosionVector.z);
-
-        if (protectors.isEmpty()) {
-            return;
-        }
-
-        List<BlockPos> affectedBlocks = event.getAffectedBlocks();
-        List<BlockPos> toremove = new ArrayList<>();
-
-        int rf = 0;
-        for (GlobalCoordinate protector : protectors) {
-            BlockPos pos = protector.getCoordinate();
-            TileEntity te = event.getWorld().getTileEntity(pos);
-            if (te instanceof BlockProtectorTileEntity) {
-                BlockProtectorTileEntity blockProtectorTileEntity = (BlockProtectorTileEntity) te;
-                for (BlockPos block : affectedBlocks) {
-                    BlockPos relative = blockProtectorTileEntity.absoluteToRelative(block);
-                    boolean b = blockProtectorTileEntity.isProtected(relative);
-                    if (b) {
-                        Vec3d blockVector = new Vec3d(block);
-                        double distanceTo = explosionVector.distanceTo(blockVector);
-                        int rfneeded = blockProtectorTileEntity.attemptExplosionProtection((float) (distanceTo / explosion.size), explosion.size);
-                        if (rfneeded > 0) {
-                            toremove.add(block);
-                            rf += rfneeded;
-                        } else {
-                            blockProtectorTileEntity.removeProtection(relative);
-                        }
-                    }
-                }
-            }
-        }
-
-        affectedBlocks.removeAll(toremove);
     }
 
     @SubscribeEvent
@@ -321,19 +262,6 @@ public class ForgeEventHandlers {
             }
             EndergenicTileEntity.todoEndergenics.clear();
             EndergenicTileEntity.endergenicsAdded.clear();
-        }
-    }
-
-    @SubscribeEvent
-    public void onLivingDestroyBlock(LivingDestroyBlockEvent event) {
-        int x = event.getPos().getX();
-        int y = event.getPos().getY();
-        int z = event.getPos().getZ();
-        World world = event.getEntity().getEntityWorld();
-
-        Collection<GlobalCoordinate> protectors = BlockProtectors.getProtectors(world, x, y, z);
-        if (BlockProtectors.checkHarvestProtection(x, y, z, world, protectors)) {
-            event.setCanceled(true);
         }
     }
 }

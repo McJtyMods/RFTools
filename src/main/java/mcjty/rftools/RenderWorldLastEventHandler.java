@@ -5,6 +5,7 @@ import mcjty.lib.api.smartwrench.SmartWrenchMode;
 import mcjty.lib.gui.BlockOutlineRenderer;
 import mcjty.lib.gui.HudRenderHelper;
 import mcjty.lib.varia.GlobalCoordinate;
+import mcjty.rftools.blocks.blockprotector.BlockProtectorConfiguration;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorTileEntity;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
@@ -57,7 +58,7 @@ public class RenderWorldLastEventHandler {
             return;
         }
         if (heldItem.getItem() == ModItems.smartWrenchItem) {
-            if (SmartWrenchItem.getCurrentMode(heldItem) == SmartWrenchMode.MODE_SELECT) {
+            if (BlockProtectorConfiguration.enabled && SmartWrenchItem.getCurrentMode(heldItem) == SmartWrenchMode.MODE_SELECT) {
                 GlobalCoordinate current = SmartWrenchItem.getCurrentBlock(heldItem);
                 if (current != null) {
                     if (current.getDimension() == mc.world.provider.getDimension()) {

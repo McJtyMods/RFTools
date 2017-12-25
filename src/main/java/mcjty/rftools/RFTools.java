@@ -7,6 +7,7 @@ import mcjty.rftools.api.screens.IScreenModuleRegistry;
 import mcjty.rftools.api.teleportation.ITeleportationManager;
 import mcjty.rftools.apiimpl.ScreenModuleRegistry;
 import mcjty.rftools.apiimpl.TeleportationManager;
+import mcjty.rftools.blocks.blockprotector.BlockProtectorConfiguration;
 import mcjty.rftools.blocks.blockprotector.BlockProtectors;
 import mcjty.rftools.blocks.logic.wireless.RedstoneChannels;
 import mcjty.rftools.blocks.powercell.PowerCellNetwork;
@@ -203,7 +204,8 @@ public class RFTools implements ModBase {
         ScanDataManager.clearInstance();
         if(SecurityConfiguration.enabled)
             SecurityChannels.clearInstance();
-        BlockProtectors.clearInstance();
+        if(BlockProtectorConfiguration.enabled)
+            BlockProtectors.clearInstance();
     }
 
     /**
