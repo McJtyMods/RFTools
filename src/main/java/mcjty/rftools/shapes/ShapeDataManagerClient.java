@@ -38,7 +38,7 @@ public class ShapeDataManagerClient {
         Set<ShapeID> toRemove = new HashSet<>();
         for (Map.Entry<ShapeID, RenderData> entry : renderDataMap.entrySet()) {
             if (entry.getValue().tooOld()) {
-                System.out.println("Removing id = " + entry.getKey());
+//                System.out.println("Removing id = " + entry.getKey());
                 toRemove.add(entry.getKey());
             }
         }

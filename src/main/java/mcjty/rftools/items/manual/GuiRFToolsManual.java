@@ -67,13 +67,13 @@ public class GuiRFToolsManual extends GuiScreen {
         textPage = new TextPage(RFTools.instance, mc, this).setText(manualText).setArrowImage(iconGuiElements, 144, 0).setCraftingGridImage(iconGuiElements, 0, 192);
 
         prevButton = new Button(mc, this).setText("<").addButtonEvent(parent -> {
-            System.out.println("GuiRFToolsManual.buttonClicked: <");
+//            System.out.println("GuiRFToolsManual.buttonClicked: <");
             textPage.prevPage();
             window.setTextFocus(textPage);
         });
         pageLabel = new Label(mc, this).setText("0 / 0");
         nextButton = new Button(mc, this).setText(">").addButtonEvent(parent -> {
-            System.out.println("GuiRFToolsManual.buttonClicked: >");
+//            System.out.println("GuiRFToolsManual.buttonClicked: >");
             textPage.nextPage();
             window.setTextFocus(textPage);
         });

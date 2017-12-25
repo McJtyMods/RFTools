@@ -667,7 +667,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     public static void dumpNetwork(EntityPlayer player, PowerCellTileEntity powerCellTileEntity) {
         PowerCellNetwork.Network network = powerCellTileEntity.getNetwork();
         Set<GlobalCoordinate> blocks = network.getBlocks();
-        System.out.println("blocks.size() = " + blocks.size());
+//        System.out.println("blocks.size() = " + blocks.size());
         blocks.forEach(b -> {
             String msg;
             World w = mcjty.lib.varia.TeleportationTools.getWorldForDimension(b.getDimension());
