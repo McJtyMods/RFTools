@@ -5,6 +5,7 @@ import mcjty.rftools.blocks.builder.BuilderTileEntity;
 import mcjty.rftools.blocks.endergen.EndergenicTileEntity;
 import mcjty.rftools.blocks.logic.counter.CounterBlock;
 import mcjty.rftools.blocks.security.SecurityCardItem;
+import mcjty.rftools.blocks.security.SecurityConfiguration;
 import mcjty.rftools.blocks.shaper.GuiLocator;
 import mcjty.rftools.blocks.storage.ModularStorageBlock;
 import mcjty.rftools.blocks.teleporter.MatterTransmitterBlock;
@@ -28,10 +29,12 @@ public class ClientCommandHandler {
             MatterTransmitterBlock.setDestinationInfo(arguments.getInt(), arguments.getString());
             return true;
         });
-        McJtyLib.registerClientCommand(RFTools.MODID, CMD_RETURN_SECURITY_NAME, (player, arguments) -> {
-            SecurityCardItem.channelNameFromServer = arguments.getString();
-            return true;
-        });
+        if(SecurityConfiguration.enabled) {
+            McJtyLib.registerClientCommand(RFTools.MODID, CMD_RETURN_SECURITY_NAME, (player, arguments) -> {
+                SecurityCardItem.channelNameFromServer = arguments.getString();
+                return true;
+            });
+        }
         McJtyLib.registerClientCommand(RFTools.MODID, CMD_RETURN_SCAN_DIRTY, (player, arguments) -> {
             ScanDataManagerClient.getScansClient().getOrCreateScan(arguments.getInt())
                     .setDirtyCounter(arguments.getInt());
