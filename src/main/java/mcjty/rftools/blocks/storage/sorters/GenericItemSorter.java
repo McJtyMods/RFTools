@@ -32,7 +32,7 @@ public class GenericItemSorter implements ItemSorter {
 
     @Override
     public Comparator<Pair<ItemStack, Integer>> getComparator() {
-        return (o1, o2) -> compareCategory(o1, o2);
+        return GenericItemSorter::compareCategory;
     }
 
     @Override
