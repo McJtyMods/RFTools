@@ -28,6 +28,12 @@ import java.util.Random;
 
 public class DimensionalShardBlock extends CompatBlock {
 
+    @Override
+    public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state)
+    {
+        return new ItemStack(this, 1, state.getValue(ORETYPE).ordinal());
+    }
+
     public static enum OreType implements IStringSerializable {
         ORE_OVERWORLD("overworld"),
         ORE_NETHER("nether"),
