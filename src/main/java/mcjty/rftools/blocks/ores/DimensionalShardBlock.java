@@ -42,6 +42,12 @@ public class DimensionalShardBlock extends Block {
         tab.add(new ItemStack(this, 1, 2));
     }
 
+    @Override
+    public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state)
+    {
+        return new ItemStack(this, 1, state.getValue(ORETYPE).ordinal());
+    }
+
     public static enum OreType implements IStringSerializable {
         ORE_OVERWORLD("overworld"),
         ORE_NETHER("nether"),
