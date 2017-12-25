@@ -117,8 +117,8 @@ public class ScreenSetup {
                 'b', "dyeBlack"));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(machineInformationModuleItem), " f ", "rir", " b ", 'f', Blocks.FURNACE, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
                 'b', "dyeBlack"));
-//        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(computerModuleItem), " f ", "rir", " b ", 'f', Blocks.quartz_block, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
-//                'b', "dyeBlack"));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(computerModuleItem), " f ", "rir", " b ", 'f', Items.QUARTZ, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
+                'b', "dyeBlack"));
         GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(buttonModuleItem), " f ", "rir", " b ", 'f', Blocks.STONE_BUTTON, 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
                                'b', "dyeBlack"));
         GameRegistry.addRecipe(new ItemStack(buttonModuleItem), "b", 'b', buttonModuleItem);    // To clear it
