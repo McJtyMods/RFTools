@@ -55,11 +55,8 @@ public class GuiBlockProtector extends GenericGuiContainer<BlockProtectorTileEnt
 
     private void initRedstoneMode() {
         redstoneMode = new ImageChoiceLabel(mc, this);
-        redstoneMode.addChoiceEvent(new ChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, String newChoice) {
-                changeRedstoneMode();
-            }
+        redstoneMode.addChoiceEvent((parent, newChoice) -> {
+            changeRedstoneMode();
         });
         redstoneMode.addChoice(RedstoneMode.REDSTONE_IGNORED.getDescription(), "Redstone mode:\nIgnored", iconGuiElements, 0, 0);
         redstoneMode.addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0);

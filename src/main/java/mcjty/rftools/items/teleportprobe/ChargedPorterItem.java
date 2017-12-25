@@ -113,24 +113,21 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
             ModelBakery.registerItemVariants(this, new ModelResourceLocation(new ResourceLocation(domain, path + i), "inventory"));
         }
 
-        ModelLoader.setCustomMeshDefinition(this, new ItemMeshDefinition() {
-            @Override
-            public ModelResourceLocation getModelLocation(ItemStack stack) {
-                NBTTagCompound tagCompound = stack.getTagCompound();
-                int energy = 0;
-                if (tagCompound != null) {
-                    energy = tagCompound.getInteger("Energy");
-                }
-                int level = (9 * energy) / capacity;
-                if (level < 0) {
-                    level = 0;
-                } else if (level > 8) {
-                    level = 8;
-                }
-                String domain = getRegistryName().getResourceDomain();
-                String path = getRegistryName().getResourcePath();
-                return new ModelResourceLocation(new ResourceLocation(domain, path + (8 - level)), "inventory");
+        ModelLoader.setCustomMeshDefinition(this, stack -> {
+            NBTTagCompound tagCompound = stack.getTagCompound();
+            int energy = 0;
+            if (tagCompound != null) {
+                energy = tagCompound.getInteger("Energy");
             }
+            int level = (9 * energy) / capacity;
+            if (level < 0) {
+                level = 0;
+            } else if (level > 8) {
+                level = 8;
+            }
+            String domain = getRegistryName().getResourceDomain();
+            String path = getRegistryName().getResourcePath();
+            return new ModelResourceLocation(new ResourceLocation(domain, path + (8 - level)), "inventory");
         });
     }
 
