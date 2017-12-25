@@ -1594,7 +1594,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 if (contents.getFluid() != null) {
                     if (contents.amount >= 1000) {
                         FluidStack drained = tank.drain(new FluidStack(contents.getFluid(), 1000, contents.tag), true);
-                        System.out.println("drained = " + drained);
+//                        System.out.println("drained = " + drained);
                         return drained;
                     }
                 }
