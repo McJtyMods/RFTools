@@ -1,4 +1,8 @@
 {
+  "conditions": [{
+    "type": "minecraft:item_exists",
+    "item": "rftools:orphaning_card"
+  }],
   "result": {
     "item": "rftools:orphaning_card"
   },
