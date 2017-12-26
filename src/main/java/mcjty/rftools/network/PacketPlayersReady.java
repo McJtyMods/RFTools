@@ -1,4 +1,4 @@
-package mcjty.rftools.blocks.teleporter;
+package mcjty.rftools.network;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.ClientCommandHandler;

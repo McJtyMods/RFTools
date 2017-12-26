@@ -1,4 +1,4 @@
-package mcjty.rftools.blocks.teleporter;
+package mcjty.rftools.network;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.CommandHandler;
@@ -6,7 +6,6 @@ import mcjty.lib.network.NetworkTools;
 import mcjty.lib.network.PacketRequestListFromServer;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.network.RFToolsMessages;
 import mcjty.typed.Type;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
