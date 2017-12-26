@@ -7,11 +7,13 @@ public class CoalGeneratorSetup {
     public static CoalGeneratorBlock coalGeneratorBlock;
 
     public static void init() {
-        coalGeneratorBlock = new CoalGeneratorBlock();
+        if(CoalGeneratorConfiguration.enabled)
+            coalGeneratorBlock = new CoalGeneratorBlock();
     }
 
     @SideOnly(Side.CLIENT)
     public static void initClient() {
-        coalGeneratorBlock.initModel();
+        if(CoalGeneratorConfiguration.enabled)
+            coalGeneratorBlock.initModel();
     }
 }
