@@ -115,6 +115,7 @@ public class ShieldTemplateBlock extends Block {
     public static class ShieldTemplateItemBlock extends ItemBlock {
         public ShieldTemplateItemBlock(Block block) {
             super(block);
+            setHasSubtypes(true);
         }
 
         @Override
