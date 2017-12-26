@@ -6,6 +6,7 @@ import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.blockprotector.BlockProtectorConfiguration;
 import mcjty.rftools.blocks.blockprotector.BlockProtectors;
 import mcjty.rftools.blocks.security.OrphaningCardItem;
 import mcjty.rftools.blocks.security.SecurityChannels;
@@ -46,7 +47,7 @@ public abstract class GenericRFToolsBlock<T extends GenericTileEntity, C extends
     @Override
     public boolean canEntityDestroy(IBlockState state, IBlockAccess world, BlockPos pos, Entity entity) {
         boolean b = super.canEntityDestroy(state, world, pos, entity);
-        if (b) {
+        if (b && BlockProtectorConfiguration.enabled) {
             Collection<GlobalCoordinate> protectors = BlockProtectors.getProtectors(entity.getEntityWorld(), pos.getX(), pos.getY(), pos.getZ());
             if (BlockProtectors.checkHarvestProtection(pos.getX(), pos.getY(), pos.getZ(), world, protectors)) {
                 return false;
