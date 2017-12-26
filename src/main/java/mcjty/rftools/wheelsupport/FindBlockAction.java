@@ -15,7 +15,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -76,34 +75,19 @@ public class FindBlockAction implements IWheelAction {
                 }
             }
             if (storage.isEmpty()) {
-                ITextComponent component = new TextComponentString(TextFormatting.RED + "No storage tablet in inventory!");
-                if (player instanceof EntityPlayer) {
-                    ((EntityPlayer) player).sendStatusMessage(component, false);
-                } else {
-                    player.sendMessage(component);
-                }
+                player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "No storage tablet in inventory!"), false);
                 return;
             }
 
             NBTTagCompound tagCompound = storage.getTagCompound();
             if (tagCompound == null || !tagCompound.hasKey("childDamage")) {
-                ITextComponent component = new TextComponentString(TextFormatting.RED + "No storage module in tablet!");
-                if (player instanceof EntityPlayer) {
-                    ((EntityPlayer) player).sendStatusMessage(component, false);
-                } else {
-                    player.sendMessage(component);
-                }
+                player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "No storage module in tablet!"), false);
                 return;
             }
 
             int firstEmptyStack = player.inventory.getFirstEmptyStack();
             if (firstEmptyStack < 0) {
-                ITextComponent component = new TextComponentString(TextFormatting.RED + "No room in inventory for block!");
-                if (player instanceof EntityPlayer) {
-                    ((EntityPlayer) player).sendStatusMessage(component, false);
-                } else {
-                    player.sendMessage(component);
-                }
+                player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "No room in inventory for block!"), false);
                 return;
             }
 
@@ -119,12 +103,7 @@ public class FindBlockAction implements IWheelAction {
                     BlockPos mpos = new BlockPos(monitorx, monitory, monitorz);
                     WorldServer w = DimensionManager.getWorld(monitordim);
                     if (w == null || !RFToolsTools.chunkLoaded(w, mpos)) {
-                        ITextComponent component = new TextComponentString(TextFormatting.RED + "Storage scanner is out of range!");
-                        if (player instanceof EntityPlayer) {
-                            ((EntityPlayer) player).sendStatusMessage(component, false);
-                        } else {
-                            player.sendMessage(component);
-                        }
+                        player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Storage scanner is out of range!"), false);
                     } else {
                         TileEntity te = w.getTileEntity(mpos);
                         if (te instanceof StorageScannerTileEntity) {
@@ -136,12 +115,7 @@ public class FindBlockAction implements IWheelAction {
                         }
                     }
                 } else {
-                    ITextComponent component = new TextComponentString(TextFormatting.RED + "Storage module is not linked to a storage scanner!");
-                    if (player instanceof EntityPlayer) {
-                        ((EntityPlayer) player).sendStatusMessage(component, false);
-                    } else {
-                        player.sendMessage(component);
-                    }
+                    player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Storage module is not linked to a storage scanner!"), false);
                 }
             } else if (moduleDamage == StorageModuleItem.STORAGE_REMOTE) {
                 if (!tagCompound.hasKey("id")) {

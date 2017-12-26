@@ -20,7 +20,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -215,12 +214,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
             return;
         }
         if (BlockPosTools.INVALID.equals(coordinate)) {
-            ITextComponent component = new TextComponentString(TextFormatting.RED + "Module is not linked to storage scanner!");
-            if (player instanceof EntityPlayer) {
-                ((EntityPlayer) player).sendStatusMessage(component, false);
-            } else {
-                player.sendMessage(component);
-            }
+            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Module is not linked to storage scanner!"), false);
             return;
         }
         StorageScannerTileEntity scannerTileEntity = getStorageScanner(dim, coordinate);

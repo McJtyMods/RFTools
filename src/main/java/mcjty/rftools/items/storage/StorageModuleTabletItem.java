@@ -21,7 +21,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -131,22 +130,12 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
                     BlockPos pos = new BlockPos(monitorx, monitory, monitorz);
                     WorldServer w = DimensionManager.getWorld(monitordim);
                     if (w == null || !RFToolsTools.chunkLoaded(w, pos)) {
-                        ITextComponent component = new TextComponentString(TextFormatting.RED + "Storage scanner is out of range!");
-                        if (player instanceof EntityPlayer) {
-                            ((EntityPlayer) player).sendStatusMessage(component, false);
-                        } else {
-                            player.sendMessage(component);
-                        }
+                        player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Storage scanner is out of range!"), false);
                     } else {
                         player.openGui(RFTools.instance, RFTools.GUI_REMOTE_STORAGESCANNER_ITEM, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
                     }
                 } else {
-                    ITextComponent component = new TextComponentString(TextFormatting.RED + "Storage module is not linked to a storage scanner!");
-                    if (player instanceof EntityPlayer) {
-                        ((EntityPlayer) player).sendStatusMessage(component, false);
-                    } else {
-                        player.sendMessage(component);
-                    }
+                    player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Storage module is not linked to a storage scanner!"), false);
                 }
             } else if (moduleDamage == StorageModuleItem.STORAGE_REMOTE) {
                 if (!tagCompound.hasKey("id")) {

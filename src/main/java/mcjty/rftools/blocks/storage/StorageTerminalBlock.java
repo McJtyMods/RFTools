@@ -221,12 +221,7 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
                     if (!player.inventory.addItemStackToInventory(module)) {
                         player.entityDropItem(module, 1.05f);
                     }
-                    ITextComponent component = new TextComponentString("Removed module");
-                    if (player instanceof EntityPlayer) {
-                        ((EntityPlayer) player).sendStatusMessage(component, false);
-                    } else {
-                        player.sendMessage(component);
-                    }
+                    player.sendStatusMessage(new TextComponentString("Removed module"), false);
                 }
             }
         }

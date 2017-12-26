@@ -29,7 +29,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.Constants;
@@ -203,21 +202,11 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     public ItemStack injectStackFromScreen(ItemStack stack, EntityPlayer player) {
         if (getEnergyStored() < StorageScannerConfiguration.rfPerInsert) {
-            ITextComponent component = new TextComponentString(TextFormatting.RED + "Not enough power to insert items!");
-            if (player instanceof EntityPlayer) {
-                ((EntityPlayer) player).sendStatusMessage(component, false);
-            } else {
-                player.sendMessage(component);
-            }
+            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Not enough power to insert items!"), false);
             return stack;
         }
         if (!checkForRoutableInventories()) {
-            ITextComponent component = new TextComponentString(TextFormatting.RED + "There are no routable inventories!");
-            if (player instanceof EntityPlayer) {
-                ((EntityPlayer) player).sendStatusMessage(component, false);
-            } else {
-                player.sendMessage(component);
-            }
+            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "There are no routable inventories!"), false);
             return stack;
         }
         stack = injectStackInternal(stack, false, this::isInputFromScreen);
@@ -274,12 +263,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             return;
         }
         if (getEnergyStored() < StorageScannerConfiguration.rfPerRequest) {
-            ITextComponent component = new TextComponentString(TextFormatting.RED + "Not enough power to request items!");
-            if (player instanceof EntityPlayer) {
-                ((EntityPlayer) player).sendStatusMessage(component, false);
-            } else {
-                player.sendMessage(component);
-            }
+            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Not enough power to request items!"), false);
             return;
         }
 

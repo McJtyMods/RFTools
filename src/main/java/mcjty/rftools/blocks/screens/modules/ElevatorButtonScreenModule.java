@@ -14,7 +14,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -148,12 +147,7 @@ public class ElevatorButtonScreenModule implements IScreenModule<ElevatorButtonS
     public void mouseClick(World world, int x, int y, boolean clicked, EntityPlayer player) {
         if (BlockPosTools.INVALID.equals(coordinate)) {
             if (player != null) {
-                ITextComponent component = new TextComponentString(TextFormatting.RED + "Module is not linked to elevator!");
-                if (player instanceof EntityPlayer) {
-                    ((EntityPlayer) player).sendStatusMessage(component, false);
-                } else {
-                    player.sendMessage(component);
-                }
+                player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Module is not linked to elevator!"), false);
             }
             return;
         }
