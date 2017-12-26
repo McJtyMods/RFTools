@@ -306,12 +306,12 @@ public class Formulas {
                                 tz = (y-o.getY()) + o.getZ();
                                 break;
                             case Y:
-                                tx = (z-o.getZ()) + o.getX();;
+                                tx = (z-o.getZ()) + o.getX();
                                 ty = y;
                                 tz = (x-o.getX()) + o.getZ();
                                 break;
                             case Z:
-                                tx = (y-o.getY()) + o.getX();;
+                                tx = (y-o.getY()) + o.getX();
                                 ty = (x-o.getX()) + o.getY();
                                 tz = z;
                                 break;

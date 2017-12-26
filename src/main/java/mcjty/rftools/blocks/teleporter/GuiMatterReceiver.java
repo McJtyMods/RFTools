@@ -39,7 +39,7 @@ public class GuiMatterReceiver extends GenericGuiContainer<MatterReceiverTileEnt
     private List<String> players = null;
     private int listDirty = 0;
 
-    private static Set<String> fromServer_allowedPlayers = new HashSet<String>();
+    private static Set<String> fromServer_allowedPlayers = new HashSet<>();
     public static void storeAllowedPlayersForClient(List<String> players) {
         fromServer_allowedPlayers = new HashSet<>(players);
     }

@@ -20,9 +20,9 @@ public class TeleportDestinations extends WorldSavedData {
     public static final String TPDESTINATIONS_NAME = "TPDestinations";
     private static TeleportDestinations instance = null;
 
-    private final Map<GlobalCoordinate,TeleportDestination> destinations = new HashMap<GlobalCoordinate,TeleportDestination>();
-    private final Map<Integer,GlobalCoordinate> destinationById = new HashMap<Integer, GlobalCoordinate>();
-    private final Map<GlobalCoordinate,Integer> destinationIdByCoordinate = new HashMap<GlobalCoordinate, Integer>();
+    private final Map<GlobalCoordinate,TeleportDestination> destinations = new HashMap<>();
+    private final Map<Integer,GlobalCoordinate> destinationById = new HashMap<>();
+    private final Map<GlobalCoordinate,Integer> destinationIdByCoordinate = new HashMap<>();
     private int lastId = 0;
 
     public TeleportDestinations(String identifier) {
@@ -63,7 +63,7 @@ public class TeleportDestinations extends WorldSavedData {
     }
 
     public void cleanupInvalid(World world) {
-        Set<GlobalCoordinate> keys = new HashSet<GlobalCoordinate>(destinations.keySet());
+        Set<GlobalCoordinate> keys = new HashSet<>(destinations.keySet());
         for (GlobalCoordinate key : keys) {
             World transWorld = mcjty.lib.varia.TeleportationTools.getWorldForDimension(key.getDimension());
             boolean removed = false;
@@ -117,7 +117,7 @@ public class TeleportDestinations extends WorldSavedData {
             }
         }
 
-        List<TeleportDestinationClientInfo> result = new ArrayList<TeleportDestinationClientInfo>();
+        List<TeleportDestinationClientInfo> result = new ArrayList<>();
         for (TeleportDestination destination : destinations.values()) {
             TeleportDestinationClientInfo destinationClientInfo = new TeleportDestinationClientInfo(destination);
             BlockPos c = destination.getCoordinate();
@@ -204,7 +204,7 @@ public class TeleportDestinations extends WorldSavedData {
     }
 
     public void removeDestinationsInDimension(int dimension) {
-        Set<GlobalCoordinate> keysToRemove = new HashSet<GlobalCoordinate>();
+        Set<GlobalCoordinate> keysToRemove = new HashSet<>();
         for (Map.Entry<GlobalCoordinate, TeleportDestination> entry : destinations.entrySet()) {
             if (entry.getKey().getDimension() == dimension) {
                 keysToRemove.add(entry.getKey());

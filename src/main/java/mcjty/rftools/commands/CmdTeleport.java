@@ -1,6 +1,5 @@
 package mcjty.rftools.commands;
 
-import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.ITextComponent;

@@ -4,7 +4,6 @@ import mcjty.lib.api.MachineInformation;
 import mcjty.lib.compat.RedstoneFluxCompatibility;
 import mcjty.lib.entity.GenericEnergyHandlerTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.OrientationTools;
 import mcjty.rftools.RFTools;

@@ -135,7 +135,7 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
     }
 
     private void populatePlayers() {
-        List<String> newPlayers = new ArrayList<String>(fromServer_allowedPlayers);
+        List<String> newPlayers = new ArrayList<>(fromServer_allowedPlayers);
         Collections.sort(newPlayers);
         if (newPlayers.equals(players)) {
             return;

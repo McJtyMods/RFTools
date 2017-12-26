@@ -17,7 +17,7 @@ public class PacketAllReceiversReady implements IMessage {
     @Override
     public void fromBytes(ByteBuf buf) {
         int size = buf.readInt();
-        destinationList = new ArrayList<TeleportDestinationClientInfo>(size);
+        destinationList = new ArrayList<>(size);
         for (int i = 0 ; i < size ; i++) {
             destinationList.add(new TeleportDestinationClientInfo(buf));
         }
@@ -35,7 +35,7 @@ public class PacketAllReceiversReady implements IMessage {
     }
 
     public PacketAllReceiversReady(List<TeleportDestinationClientInfo> destinationList) {
-        this.destinationList = new ArrayList<TeleportDestinationClientInfo>();
+        this.destinationList = new ArrayList<>();
         this.destinationList.addAll(destinationList);
     }
 

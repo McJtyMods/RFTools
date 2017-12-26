@@ -116,7 +116,7 @@ public class BlockProtectors extends WorldSavedData {
     }
 
     public Collection<GlobalCoordinate> findProtectors(int x, int y, int z, int dimension, int radius) {
-        List<GlobalCoordinate> protectors = new ArrayList<GlobalCoordinate>();
+        List<GlobalCoordinate> protectors = new ArrayList<>();
         for (GlobalCoordinate coordinate : protectorIdByCoordinate.keySet()) {
             if (coordinate.getDimension() == dimension) {
                 BlockPos c = coordinate.getCoordinate();

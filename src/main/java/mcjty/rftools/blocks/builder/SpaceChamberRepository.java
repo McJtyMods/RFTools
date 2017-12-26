@@ -18,7 +18,7 @@ public class SpaceChamberRepository extends WorldSavedData {
 
     private int lastId = 0;
 
-    private final Map<Integer,SpaceChamberChannel> channels = new HashMap<Integer,SpaceChamberChannel>();
+    private final Map<Integer,SpaceChamberChannel> channels = new HashMap<>();
 
     public SpaceChamberRepository(String identifier) {
         super(identifier);

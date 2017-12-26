@@ -16,7 +16,7 @@ public class RedstoneChannels extends WorldSavedData {
 
     private int lastId = 0;
 
-    private final Map<Integer,RedstoneChannel> channels = new HashMap<Integer,RedstoneChannel>();
+    private final Map<Integer,RedstoneChannel> channels = new HashMap<>();
 
     public RedstoneChannels(String identifier) {
         super(identifier);

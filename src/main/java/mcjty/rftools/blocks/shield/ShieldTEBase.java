@@ -84,7 +84,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     private float costFactor = 1.0f;
 
     // Filter list.
-    private final List<ShieldFilter> filters = new ArrayList<ShieldFilter>();
+    private final List<ShieldFilter> filters = new ArrayList<>();
 
     private ShieldRenderingMode shieldRenderingMode = ShieldRenderingMode.MODE_SHIELD;
 

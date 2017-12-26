@@ -14,7 +14,6 @@ import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.items.powercell.PowerCellCardItem;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;

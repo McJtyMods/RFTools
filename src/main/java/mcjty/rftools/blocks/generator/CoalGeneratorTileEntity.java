@@ -176,7 +176,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
         } else if (RFTools.redstoneflux && RedstoneFluxCompatibility.isEnergyItem(stack.getItem())) {
             int energyStored = getEnergyStored();
             int rfToGive = CoalGeneratorConfiguration.CHARGEITEMPERTICK <= energyStored ? CoalGeneratorConfiguration.CHARGEITEMPERTICK : energyStored;
-            int received = RedstoneFluxCompatibility.receiveEnergy(stack.getItem(), stack, rfToGive, false);;
+            int received = RedstoneFluxCompatibility.receiveEnergy(stack.getItem(), stack, rfToGive, false);
             storage.extractEnergy(received, false);
         }
     }

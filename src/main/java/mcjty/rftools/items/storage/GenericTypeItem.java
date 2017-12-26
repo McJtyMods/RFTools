@@ -30,7 +30,7 @@ public class GenericTypeItem extends StorageTypeItem {
     @Override
     public List<ItemSorter> getSorters() {
         if (sorters == null) {
-            sorters = new ArrayList<ItemSorter>();
+            sorters = new ArrayList<>();
             sorters.add(new NameItemSorter());
             sorters.add(new CountItemSorter());
             sorters.add(new GenericItemSorter());

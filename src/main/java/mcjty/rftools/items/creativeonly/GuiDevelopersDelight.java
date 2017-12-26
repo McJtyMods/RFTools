@@ -45,7 +45,7 @@ public class GuiDevelopersDelight extends GuiScreen {
     private ChoiceLabel clientServerMode;
     private TextField metaData;
 
-    private List<ToggleButton> pageButtons = new ArrayList<ToggleButton>();
+    private List<ToggleButton> pageButtons = new ArrayList<>();
 
     private boolean listsDirty = true;
 
@@ -62,15 +62,15 @@ public class GuiDevelopersDelight extends GuiScreen {
     }
 
     public static void setServerBlockClasses(List<String> blockClasses) {
-        GuiDevelopersDelight.blockClasses = new ArrayList<String>(blockClasses);
+        GuiDevelopersDelight.blockClasses = new ArrayList<>(blockClasses);
     }
 
     public static void setServerTEClasses(List<String> teClasses) {
-        GuiDevelopersDelight.teClasses = new ArrayList<String>(teClasses);
+        GuiDevelopersDelight.teClasses = new ArrayList<>(teClasses);
     }
 
     public static void setServerNBTData(Map<String,DelightingInfoHelper.NBTDescription> nbtData) {
-        GuiDevelopersDelight.nbtData = new HashMap<String,DelightingInfoHelper.NBTDescription>(nbtData);
+        GuiDevelopersDelight.nbtData = new HashMap<>(nbtData);
     }
 
     public static void setMetadata(int metadata) {
@@ -82,9 +82,9 @@ public class GuiDevelopersDelight extends GuiScreen {
     }
 
     private void requestDelightingInfoFromClient() {
-        blockClasses = new ArrayList<String>();
-        teClasses = new ArrayList<String>();
-        nbtData = new HashMap<String, DelightingInfoHelper.NBTDescription>();
+        blockClasses = new ArrayList<>();
+        teClasses = new ArrayList<>();
+        nbtData = new HashMap<>();
 
         server_metadata = DelightingInfoHelper.fillDelightingData(selected.getX(), selected.getY(), selected.getZ(), mc.world, blockClasses, teClasses, nbtData);
     }

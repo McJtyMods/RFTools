@@ -255,13 +255,9 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
                 if (stacks.get(i).isEmpty()) {
                     ItemStack heldItem = player.getHeldItemMainhand();
                     if (!heldItem.isEmpty()) {
-                        stacks.set(i, heldItem.copy());
-                        ItemStack stack = stacks.get(i);
-                        if (1 <= 0) {
-                            stack.setCount(0);
-                        } else {
-                            stack.setCount(1);
-                        }
+                        ItemStack stack = heldItem.copy();
+                        stack.setCount(1);
+                        stacks.set(i, stack);
                         dirty = i;
                     }
                 } else {
