@@ -6,6 +6,7 @@ import mcjty.lib.network.PacketSendClientCommand;
 import mcjty.lib.network.PacketSendServerCommand;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.builder.PacketChamberInfoReady;
+import mcjty.rftools.blocks.crafter.CrafterConfiguration;
 import mcjty.rftools.blocks.crafter.PacketCrafter;
 import mcjty.rftools.blocks.monitor.*;
 import mcjty.rftools.blocks.powercell.PowerCellInfoPacketClient;
@@ -52,7 +53,8 @@ public class RFToolsMessages {
         INSTANCE = net;
 
         // Server side
-        net.registerMessage(PacketCrafter.Handler.class, PacketCrafter.class, PacketHandler.nextPacketID(), Side.SERVER);
+        if(CrafterConfiguration.enabled)
+            net.registerMessage(PacketCrafter.Handler.class, PacketCrafter.class, PacketHandler.nextPacketID(), Side.SERVER);
         net.registerMessage(PacketGetPlayers.Handler.class, PacketGetPlayers.class, PacketHandler.nextPacketID(), Side.SERVER);
         net.registerMessage(PacketGetReceivers.Handler.class, PacketGetReceivers.class, PacketHandler.nextPacketID(), Side.SERVER);
         net.registerMessage(PacketGetAllReceivers.Handler.class, PacketGetAllReceivers.class, PacketHandler.nextPacketID(), Side.SERVER);

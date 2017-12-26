@@ -10,6 +10,7 @@ public class CrafterSetup {
     public static CrafterBlock crafterBlock3;
 
     public static void init() {
+        if(!CrafterConfiguration.enabled) return;
         crafterBlock1 = new CrafterBlock("crafter1", CrafterBlockTileEntity1.class);
         crafterBlock2 = new CrafterBlock("crafter2", CrafterBlockTileEntity2.class);
         crafterBlock3 = new CrafterBlock("crafter3", CrafterBlockTileEntity3.class);
@@ -17,6 +18,7 @@ public class CrafterSetup {
 
     @SideOnly(Side.CLIENT)
     public static void initClient() {
+        if(!CrafterConfiguration.enabled) return;
         crafterBlock1.initModel();
         crafterBlock2.initModel();
         crafterBlock3.initModel();

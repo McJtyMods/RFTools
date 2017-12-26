@@ -1,4 +1,8 @@
 {
+  "conditions": [{
+    "type": "minecraft:item_exists",
+    "item": "rftools:crafter1"
+  }],
   "result": {
     "item": "rftools:crafter1"
   },

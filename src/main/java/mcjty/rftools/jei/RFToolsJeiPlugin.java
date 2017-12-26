@@ -1,6 +1,7 @@
 package mcjty.rftools.jei;
 
 import mcjty.lib.varia.ItemStackList;
+import mcjty.rftools.blocks.crafter.CrafterConfiguration;
 import mcjty.rftools.network.RFToolsMessages;
 import mezz.jei.api.BlankModPlugin;
 import mezz.jei.api.IModRegistry;
@@ -33,7 +34,8 @@ public class RFToolsJeiPlugin extends BlankModPlugin {
     @Override
     public void register(@Nonnull IModRegistry registry) {
         IRecipeTransferRegistry transferRegistry = registry.getRecipeTransferRegistry();
-        CrafterRecipeTransferHandler.register(transferRegistry);
+        if(CrafterConfiguration.enabled)
+            CrafterRecipeTransferHandler.register(transferRegistry);
         ModularStorageRecipeTransferHandler.register(transferRegistry);
         ModularStorageItemRecipeTransferHandler.register(transferRegistry);
         RemoteStorageItemRecipeTransferHandler.register(transferRegistry);
