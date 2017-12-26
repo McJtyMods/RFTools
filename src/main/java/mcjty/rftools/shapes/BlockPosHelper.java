@@ -14,7 +14,7 @@ public class BlockPosHelper {
     private static final long Z_MASK = (1L << NUM_Z_BITS) - 1L;
 
     public static long toLong(int x, int y, int z) {
-        return ((long)x & X_MASK) << X_SHIFT | ((long)y & Y_MASK) << Y_SHIFT | ((long)z & Z_MASK);
+        return (x & X_MASK) << X_SHIFT | (y & Y_MASK) << Y_SHIFT | (z & Z_MASK);
     }
 
 }
