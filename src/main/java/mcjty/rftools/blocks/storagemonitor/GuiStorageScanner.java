@@ -409,7 +409,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         int spacing = 3;
 
 //        Collections.sort(fromServer_inventory, (o1, o2) -> o1.stackSize == o2.stackSize ? 0 : o1.stackSize < o2.stackSize ? -1 : 1);
-        Collections.sort(fromServer_inventory, (o1, o2) -> o1.getDisplayName().compareTo(o2.getDisplayName()));
+        Collections.sort(fromServer_inventory, Comparator.comparing(ItemStack::getDisplayName));
 
         String filterText = searchField.getText().toLowerCase();
         Predicate<ItemStack> matcher = StorageScannerTileEntity.getMatcher(filterText);

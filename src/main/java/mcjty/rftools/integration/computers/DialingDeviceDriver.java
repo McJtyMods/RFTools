@@ -43,7 +43,7 @@ public class DialingDeviceDriver {
             @Callback(doc="function():table; Get a list of nearby matter transmitters")
             public Object[] getTransmitters(Context c, Arguments a) {
                 List<TransmitterInfo> transmitters = tile.searchTransmitters();
-                List<Map<String,Object>> ret = transmitters.stream().map((TransmitterInfo info) -> {
+                List<Map<String,Object>> ret = transmitters.stream().map(info -> {
                     String name = info.getName();
                     Map<String, Integer> pos = getCoordinateMap(info.getCoordinate());
                     boolean dialed = false;
@@ -67,7 +67,7 @@ public class DialingDeviceDriver {
             public Object[] getReceivers(Context c, Arguments a) {
                 TeleportDestinations receivers = TeleportDestinations.getDestinations(tile.getWorld());
                 List<Map<String, Object>> ret = receivers.getValidDestinations(tile.getWorld(), null)
-                        .stream().map((TeleportDestinationClientInfo destination) -> {
+                        .stream().map(destination -> {
                             String name = destination.getName();
                             Map<String, Integer> pos = getCoordinateMap(destination.getCoordinate());
                             int dimension = destination.getDimension();

@@ -28,11 +28,7 @@ public class CountItemSorter implements ItemSorter {
 
     @Override
     public Comparator<Pair<ItemStack, Integer>> getComparator() {
-        return (o1, o2) -> {
-            Integer c1 = o1.getLeft().getCount();
-            Integer c2 = o2.getLeft().getCount();
-            return c2.compareTo(c1);
-        };
+        return Comparator.comparing(o1 -> -o1.getLeft().getCount());
     }
 
     @Override

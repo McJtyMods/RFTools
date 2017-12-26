@@ -28,7 +28,7 @@ public class NameItemSorter implements ItemSorter {
 
     @Override
     public Comparator<Pair<ItemStack, Integer>> getComparator() {
-        return (o1, o2) -> compareNames(o1, o2);
+        return NameItemSorter::compareNames;
     }
 
     @Override

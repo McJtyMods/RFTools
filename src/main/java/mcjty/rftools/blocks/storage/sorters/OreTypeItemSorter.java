@@ -29,7 +29,7 @@ public class OreTypeItemSorter implements ItemSorter {
 
     @Override
     public Comparator<Pair<ItemStack, Integer>> getComparator() {
-        return (o1, o2) -> compareOreType(o1, o2);
+        return OreTypeItemSorter::compareOreType;
     }
 
     @Override

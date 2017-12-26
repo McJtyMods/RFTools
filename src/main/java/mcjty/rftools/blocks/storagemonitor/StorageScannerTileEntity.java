@@ -251,7 +251,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         final ItemStack finalStack = stack;
         Iterator<TileEntity> iterator = inventories.stream()
                 .filter(p -> testAccess.apply(p) && !p.equals(getPos()) && isRoutable(p) && RFToolsTools.chunkLoaded(getWorld(), p) && getInputMatcher(p).test(finalStack))
-                .map(p -> getWorld().getTileEntity(p))
+                .map(getWorld()::getTileEntity)
                 .filter(te -> te != null && !(te instanceof StorageScannerTileEntity))
                 .iterator();
         while (!stack.isEmpty() && iterator.hasNext()) {
@@ -329,7 +329,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         final int[] cc = {0};
         inventories.stream()
                 .filter(p -> isValid(p) && ((!starred) || isRoutable(p)) && RFToolsTools.chunkLoaded(getWorld(), p))
-                .map(p -> getWorld().getTileEntity(p))
+                .map(getWorld()::getTileEntity)
                 .filter(te -> te != null && !(te instanceof StorageScannerTileEntity))
                 .allMatch(te -> {
                     InventoryHelper.getItems(te, matcher)
@@ -356,7 +356,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         Set<Integer> oredictMatches = getOredictMatchers(stack, oredict);
         Iterator<TileEntity> iterator = inventories.stream()
                 .filter(p -> isValid(p) && ((!starred) || isRoutable(p)) && RFToolsTools.chunkLoaded(getWorld(), p))
-                .map(p -> getWorld().getTileEntity(p))
+                .map(getWorld()::getTileEntity)
                 .filter(te -> te != null && !(te instanceof StorageScannerTileEntity))
                 .iterator();
 
@@ -435,7 +435,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         Predicate<ItemStack> finalMatcher = matcher;
         inventories.stream()
                 .filter(this::isValid)
-                .map(p -> getWorld().getTileEntity(p))
+                .map(getWorld()::getTileEntity)
                 .filter(te -> te != null && !(te instanceof StorageScannerTileEntity))
                 .forEach(te -> InventoryHelper.getItems(te, finalMatcher).forEach(s -> output.add(te.getPos())));
         return output;

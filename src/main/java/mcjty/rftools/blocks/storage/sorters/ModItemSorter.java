@@ -32,7 +32,7 @@ public class ModItemSorter implements ItemSorter {
 
     @Override
     public Comparator<Pair<ItemStack, Integer>> getComparator() {
-        return (o1, o2) -> compareMod(o1, o2);
+        return ModItemSorter::compareMod;
     }
 
     @Override
