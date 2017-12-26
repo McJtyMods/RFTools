@@ -1,6 +1,7 @@
 {
   "result": {
-    "item": "rftools:shield_template_block"
+    "item": "rftools:shield_template_block",
+    "data": 0
   },
   "pattern": [
     "s"

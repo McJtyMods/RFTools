@@ -9,7 +9,8 @@
   "type": "minecraft:crafting_shaped",
   "key": {
     "s": {
-      "item": "rftools:shield_template_block"
+      "item": "rftools:shield_template_block",
+      "data": 0
     }
   }
 }
