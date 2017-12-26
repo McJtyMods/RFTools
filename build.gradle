@@ -51,7 +51,7 @@ repositories {
     }
 }
 
-version = "1.12-7.18"
+version = "1.12-7.19"
 def ENV = System.getenv()
 if (ENV.DRONE_BUILD_NUMBER) {
     version += ".n" + ENV.DRONE_BUILD_NUMBER
@@ -89,7 +89,7 @@ dependencies {
 
     deobfCompile "com.github.mcjty:intwheel:1.12-1.2.7"
     deobfCompile "com.github.mcjty:xnet:1.12-1.5.1"
-    deobfCompile "com.github.mcjty:mcjtylib:1.12-2.5.5-SNAPSHOT"
+    deobfCompile "com.github.mcjty:mcjtylib:1.12-2.5.6-SNAPSHOT"
 
     provided "li.cil.oc:OpenComputers:MC1.12.1-1.7.+:api"
 }
