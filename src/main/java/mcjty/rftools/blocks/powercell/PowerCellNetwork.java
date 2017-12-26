@@ -4,7 +4,6 @@ import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.apideps.RFToolsDimensionChecker;
-import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -153,7 +152,7 @@ public class PowerCellNetwork extends WorldSavedData {
         public void updateNetwork(World w) {
             advancedBlocks = 0;
             simpleBlocks = 0;
-            Iterable<GlobalCoordinate> copy = new HashSet<GlobalCoordinate>(blocks);
+            Iterable<GlobalCoordinate> copy = new HashSet<>(blocks);
             blocks.clear();
             for (GlobalCoordinate c : copy) {
                 World world = mcjty.lib.varia.TeleportationTools.getWorldForDimension(c.getDimension());

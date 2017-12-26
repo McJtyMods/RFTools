@@ -11,7 +11,7 @@ public enum ShieldRenderingMode {
     MODE_SOLID("Solid"),
     ;
 
-    private static final Map<String,ShieldRenderingMode> modeToMode = new HashMap<String, ShieldRenderingMode>();
+    private static final Map<String,ShieldRenderingMode> modeToMode = new HashMap<>();
 
     private final String description;
 

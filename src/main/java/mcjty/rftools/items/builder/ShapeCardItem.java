@@ -450,7 +450,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
     }
 
     public static Set<Block> getVoidedBlocks(ItemStack stack) {
-        Set<Block> blocks = new HashSet<Block>();
+        Set<Block> blocks = new HashSet<>();
         boolean oredict = isOreDictionary(stack);
         if (isVoiding(stack, "stone")) {
             addBlocks(blocks, Blocks.STONE, oredict);
@@ -960,11 +960,8 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         File dataDir = new File("rftoolsscans");
         dataDir.mkdirs();
         File file = new File(dataDir, filename);
-        FileInputStream stream;
 
-        try {
-            stream = new FileInputStream(file);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
             String s = reader.readLine();
             if (!"SHAPE".equals(s)) {
                 player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "This does not appear to be a valid shapecard file!"), false);

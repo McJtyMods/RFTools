@@ -95,8 +95,8 @@ public class DimensionDictionary
      */
     public static final String BOSS_ARENA = "BOSS_ARENA";
 
-    private static final TIntObjectMap<Set<String>> dimensionTypes = new TIntObjectHashMap<Set<String>>();
-    private static final Map<String, Type> types = new HashMap<String, Type>();
+    private static final TIntObjectMap<Set<String>> dimensionTypes = new TIntObjectHashMap<>();
+    private static final Map<String, Type> types = new HashMap<>();
 
     private static final Set<String> SET_UNCATEGORIZED = Collections.singleton(UNCATEGORIZED);
 
@@ -123,7 +123,7 @@ public class DimensionDictionary
         Set<String> dTypes = dimensionTypes.get(dimensionID);
         if (dTypes == null)
         {
-            dTypes = new HashSet<String>();
+            dTypes = new HashSet<>();
             dimensionTypes.put(dimensionID, dTypes);
         }
         dTypes.addAll(types);
@@ -256,7 +256,7 @@ public class DimensionDictionary
     {
         Set<String> dimTypes = getDimensionTypes(provider);
 
-        Queue<String> curTypes = new ArrayDeque<String>();
+        Queue<String> curTypes = new ArrayDeque<>();
 
         do
         {
@@ -324,7 +324,7 @@ public class DimensionDictionary
 
     private static class Type
     {
-        public final Set<String> supertypes = new HashSet<String>();
-        public final Set<String> subtypes = new HashSet<String>();
+        public final Set<String> supertypes = new HashSet<>();
+        public final Set<String> subtypes = new HashSet<>();
     }
 }

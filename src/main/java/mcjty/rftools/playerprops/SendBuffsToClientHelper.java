@@ -1,6 +1,5 @@
 package mcjty.rftools.playerprops;
 
-import mcjty.rftools.PlayerBuff;
 import mcjty.rftools.RenderGameOverlayEventHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -11,6 +10,6 @@ import java.util.ArrayList;
 public class SendBuffsToClientHelper {
 
     public static void setBuffs(PacketSendBuffsToClient buffs) {
-        RenderGameOverlayEventHandler.buffs = new ArrayList<PlayerBuff>(buffs.getBuffs());
+        RenderGameOverlayEventHandler.buffs = new ArrayList<>(buffs.getBuffs());
     }
 }

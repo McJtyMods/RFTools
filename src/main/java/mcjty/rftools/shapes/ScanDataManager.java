@@ -44,18 +44,10 @@ public class ScanDataManager extends WorldSavedData {
         Scan scan = getOrCreateScan(scanId);
         NBTTagCompound tc = new NBTTagCompound();
         scan.writeToNBTExternal(tc);
-        DataOutputStream dataoutputstream = null;
-        try {
-            dataoutputstream = new DataOutputStream(new FileOutputStream(file));
-            try {
-                CompressedStreamTools.writeCompressed(tc, dataoutputstream);
-            } catch (IOException e) {
-                throw new RuntimeException("Error writing to file 'scan" + scan + "'!", e);
-            } finally {
-                dataoutputstream.close();
-            }
+        try(DataOutputStream dataoutputstream = new DataOutputStream(new FileOutputStream(file))) {
+            CompressedStreamTools.writeCompressed(tc, dataoutputstream);
         } catch (IOException e) {
-            throw new RuntimeException("Error writing to file 'scan" + scan + "'!", e);
+            throw new UncheckedIOException("Error writing to file 'scan" + scan + "'!", e);
         }
         world.setData(SCANDATA_NETWORK_NAME, this);
         markDirty();
@@ -117,16 +109,9 @@ public class ScanDataManager extends WorldSavedData {
             dataDir.mkdirs();
             File file = new File(dataDir, "scan" + id);
             if (file.exists()) {
-                try {
-                    DataInputStream datainputstream = new DataInputStream(new FileInputStream(file));
-                    try {
-                        NBTTagCompound tag = CompressedStreamTools.readCompressed(datainputstream);
-                        scan.readFromNBTExternal(tag);
-                    } catch (IOException e) {
-                        Logging.log("Error reading scan file for id: " + id);
-                    } finally {
-                        datainputstream.close();
-                    }
+                try(DataInputStream datainputstream = new DataInputStream(new FileInputStream(file))) {
+                    NBTTagCompound tag = CompressedStreamTools.readCompressed(datainputstream);
+                    scan.readFromNBTExternal(tag);
                 } catch (IOException e) {
                     Logging.log("Error reading scan file for id: " + id);
                 }

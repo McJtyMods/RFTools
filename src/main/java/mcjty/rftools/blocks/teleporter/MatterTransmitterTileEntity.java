@@ -50,7 +50,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
     private String name = null;
     private boolean privateAccess = false;
     private boolean beamHidden = false;
-    private Set<String> allowedPlayers = new HashSet<String>();
+    private Set<String> allowedPlayers = new HashSet<>();
     private int status = TeleportationTools.STATUS_OK;
 
     // Server side: the player we're currently teleporting.

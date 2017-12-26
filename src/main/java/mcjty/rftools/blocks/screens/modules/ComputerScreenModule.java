@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.screens.modules;
 
 import java.util.ArrayList;
-import java.util.List;
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.rftools.RFTools;

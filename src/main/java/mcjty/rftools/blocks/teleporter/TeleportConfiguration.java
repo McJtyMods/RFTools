@@ -152,7 +152,7 @@ public class TeleportConfiguration {
 
     public static Set<Integer> getBlacklistedTeleportationSources() {
         if (blacklistedTeleportationSourcesSet == null) {
-            blacklistedTeleportationSourcesSet = new HashSet<Integer>();
+            blacklistedTeleportationSourcesSet = new HashSet<>();
             String[] strings = StringUtils.split(blacklistedTeleportationSources, ',');
             for (String string : strings) {
                 try {
@@ -167,7 +167,7 @@ public class TeleportConfiguration {
 
     public static Set<Integer> getBlacklistedTeleportationDestinations() {
         if (blacklistedTeleportationDestinationsSet == null) {
-            blacklistedTeleportationDestinationsSet = new HashSet<Integer>();
+            blacklistedTeleportationDestinationsSet = new HashSet<>();
             String[] strings = StringUtils.split(blacklistedTeleportationDestinations, ',');
             for (String string : strings) {
                 try {

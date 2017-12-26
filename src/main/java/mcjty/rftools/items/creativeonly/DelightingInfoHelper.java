@@ -24,13 +24,13 @@ public class DelightingInfoHelper {
         }
     }
 
-    private static void addSuperTypes(List<String> classes, Class clazz) {
+    private static void addSuperTypes(List<String> classes, Class<?> clazz) {
         if (clazz == null || Object.class.equals(clazz)) {
             return;
         }
         classes.add(clazz.getName());
         addSuperTypes(classes, clazz.getSuperclass());
-        for (Class c : clazz.getInterfaces()) {
+        for (Class<?> c : clazz.getInterfaces()) {
             addSuperTypes(classes, c);
         }
     }

@@ -3,7 +3,6 @@ package mcjty.rftools.shapes;
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.AbstractServerCommand;
 import mcjty.lib.network.Argument;
-import mcjty.rftools.items.builder.ShapeCardItem;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -39,7 +38,7 @@ public class PacketUpdateNBTShapeCard implements IMessage {
         if (arguments == null) {
             this.args = null;
         } else {
-            args = new HashMap<String, Argument>(arguments.length);
+            args = new HashMap<>(arguments.length);
             for (Argument arg : arguments) {
                 args.put(arg.getName(), arg);
             }

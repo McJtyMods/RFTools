@@ -10,7 +10,6 @@ import mcjty.rftools.ForgeEventHandlers;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.*;
 import mcjty.rftools.items.GenericRFToolsItem;
-import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;

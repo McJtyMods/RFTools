@@ -450,7 +450,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             return;
         }
 
-        transmitters = new ArrayList<TransmitterInfo>(newTransmitters);
+        transmitters = new ArrayList<>(newTransmitters);
         transmitterList.removeChildren();
 
         for (TransmitterInfo transmitterInfo : transmitters) {

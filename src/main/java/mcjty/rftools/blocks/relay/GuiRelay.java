@@ -136,7 +136,7 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
     }
 
     private void changeSettings() {
-        List<Argument> arguments = new ArrayList<Argument>();
+        List<Argument> arguments = new ArrayList<>();
         for (int i = 0 ; i < 6 ; i++) {
             addArgument(arguments, i, "On");
             addArgument(arguments, i, "Off");

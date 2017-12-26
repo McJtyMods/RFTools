@@ -3,7 +3,6 @@ package mcjty.rftools.blocks.storage;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketUpdateNBTItem;
 import mcjty.lib.network.PacketUpdateNBTItemHandler;
-import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.items.storage.StorageModuleTabletItem;
 import net.minecraft.item.ItemStack;
 

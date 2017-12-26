@@ -56,7 +56,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
     private List<ShieldFilter> filters = null;
     private int listDirty = 0;
 
-    private static List<ShieldFilter> fromServer_filters = new ArrayList<ShieldFilter>();
+    private static List<ShieldFilter> fromServer_filters = new ArrayList<>();
     public static void storeFiltersForClient(List<ShieldFilter> filters) {
         fromServer_filters = new ArrayList<>(filters);
     }
@@ -210,12 +210,12 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
     }
 
     private void populateFilters() {
-        List<ShieldFilter> newFilters = new ArrayList<ShieldFilter>(fromServer_filters);
+        List<ShieldFilter> newFilters = new ArrayList<>(fromServer_filters);
         if (newFilters.equals(filters)) {
             return;
         }
 
-        filters = new ArrayList<ShieldFilter>(newFilters);
+        filters = new ArrayList<>(newFilters);
         filterList.removeChildren();
         for (ShieldFilter filter : filters) {
             String n;

@@ -136,11 +136,7 @@ public class StorageFilterItem extends GenericRFToolsItem {
         }
         if (stacks.size() < FILTER_SLOTS) {
             ItemStack copy = s.copy();
-            if (1 <= 0) {
-                copy.setCount(0);
-            } else {
-                copy.setCount(1);
-            }
+            copy.setCount(1);
             stacks.add(copy);
             registeredItems.add(s.getItem().getRegistryName());
         }

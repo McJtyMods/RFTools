@@ -48,7 +48,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     private List<IClientScreenModule> clientScreenModules = null;
 
     // A list of tags linked to computer modules.
-    private final Map<String,List<ComputerScreenModule>> computerModules = new HashMap<String, List<ComputerScreenModule>>();
+    private final Map<String,List<ComputerScreenModule>> computerModules = new HashMap<>();
 
     private boolean needsServerData = false;
     private boolean showHelp = true;
@@ -73,7 +73,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
 
     // Cached server screen modules
     private List<IScreenModule> screenModules = null;
-    private List<ActivatedModule> clickedModules = new ArrayList<ActivatedModule>();
+    private List<ActivatedModule> clickedModules = new ArrayList<>();
 
     private static class ActivatedModule {
         private int module;
@@ -123,7 +123,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         if (clickedModules.isEmpty()) {
             return;
         }
-        List<ActivatedModule> newClickedModules = new ArrayList<ActivatedModule>();
+        List<ActivatedModule> newClickedModules = new ArrayList<>();
         for (ActivatedModule cm : clickedModules) {
             cm.ticks--;
             if (cm.ticks > 0) {
@@ -142,7 +142,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         if (clickedModules.isEmpty()) {
             return;
         }
-        List<ActivatedModule> newClickedModules = new ArrayList<ActivatedModule>();
+        List<ActivatedModule> newClickedModules = new ArrayList<>();
         for (ActivatedModule cm : clickedModules) {
             cm.ticks--;
             if (cm.ticks > 0) {
@@ -588,7 +588,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     public List<IScreenModule> getScreenModules() {
         if (screenModules == null) {
             totalRfPerTick = 0;
-            screenModules = new ArrayList<IScreenModule>();
+            screenModules = new ArrayList<>();
             for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
                 ItemStack itemStack = inventoryHelper.getStackInSlot(i);
                 if (!itemStack.isEmpty() && ScreenBlock.hasModuleProvider(itemStack)) {

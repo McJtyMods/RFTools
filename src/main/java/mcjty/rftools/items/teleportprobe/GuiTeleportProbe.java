@@ -91,7 +91,7 @@ public class GuiTeleportProbe extends GuiScreen {
             return;
         }
 
-        destinationList = new ArrayList<TeleportDestinationClientInfo>(serverDestinationList);
+        destinationList = new ArrayList<>(serverDestinationList);
 
         list.removeChildren();
 

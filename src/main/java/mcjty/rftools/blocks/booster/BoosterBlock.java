@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.booster;
 
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.api.Infusable;
-import mcjty.lib.container.BaseBlock;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
