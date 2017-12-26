@@ -4,6 +4,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import mcjty.lib.McJtyLib;
 import mcjty.lib.base.GeneralConfig;
 import mcjty.lib.network.PacketHandler;
+import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.WrenchChecker;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.ForgeEventHandlers;
@@ -49,7 +50,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -194,7 +194,7 @@ public abstract class CommonProxy {
             TeleportConfiguration.init(cfg);
 
         } catch (Exception e1) {
-            FMLLog.log(Level.ERROR, e1, "Problem loading config file!");
+            Logging.getLogger().log(Level.ERROR, "Problem loading config file!", e1);
         } finally {
             if (mainConfig.hasChanged()) {
                 mainConfig.save();
