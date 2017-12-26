@@ -8,27 +8,26 @@ import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.recipe.transfer.IRecipeTransferRegistry;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
 
-public class ModularStorageItemRecipeTransferHandler implements IRecipeTransferHandler {
+public class ModularStorageItemRecipeTransferHandler implements IRecipeTransferHandler<ModularStorageItemContainer> {
 
     public static void register(IRecipeTransferRegistry transferRegistry, IRecipeTransferHandler handler) {
         transferRegistry.addRecipeTransferHandler(handler, VanillaRecipeCategoryUid.CRAFTING);
     }
 
     @Override
-    public Class<? extends Container> getContainerClass() {
+    public Class<ModularStorageItemContainer> getContainerClass() {
         return ModularStorageItemContainer.class;
     }
 
     @Nullable
     @Override
-    public IRecipeTransferError transferRecipe(@Nonnull Container container, @Nonnull IRecipeLayout recipeLayout, @Nonnull EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
+    public IRecipeTransferError transferRecipe(@Nonnull ModularStorageItemContainer container, @Nonnull IRecipeLayout recipeLayout, @Nonnull EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
         Map<Integer, ? extends IGuiIngredient<ItemStack>> guiIngredients = recipeLayout.getItemStacks().getGuiIngredients();
 
         if (doTransfer) {
