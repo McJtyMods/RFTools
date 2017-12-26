@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.shield;
 
 import mcjty.lib.McJtyRegister;
+import mcjty.lib.container.DamageMetadataItemBlock;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -64,7 +65,7 @@ public class ShieldTemplateBlock extends Block {
         setUnlocalizedName("rftools.shield_template_block");
         setRegistryName("shield_template_block");
         setCreativeTab(RFTools.tabRfTools);
-        McJtyRegister.registerLater(this, RFTools.instance, ShieldTemplateItemBlock.class);
+        McJtyRegister.registerLater(this, RFTools.instance, DamageMetadataItemBlock.class);
         setDefaultState(this.blockState.getBaseState().withProperty(COLOR, TemplateColor.BLUE));
     }
 
@@ -110,16 +111,5 @@ public class ShieldTemplateBlock extends Block {
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, COLOR);
-    }
-
-    public static class ShieldTemplateItemBlock extends ItemBlock {
-        public ShieldTemplateItemBlock(Block block) {
-            super(block);
-        }
-
-        @Override
-        public int getMetadata(int damage) {
-            return damage;
-        }
     }
 }
