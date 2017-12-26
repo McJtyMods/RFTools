@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.endergen;
 
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.entity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
@@ -35,7 +36,7 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
 
     public GuiEndergenic(EndergenicTileEntity endergenicTileEntity, EmptyContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, endergenicTileEntity, container, RFTools.GUI_MANUAL_MAIN, "power");
-        endergenicTileEntity.setCurrentRF(endergenicTileEntity.getEnergyStored());
+        GenericEnergyStorageTileEntity.setCurrentRF(endergenicTileEntity.getEnergyStored());
         xSize = ENDERGENIC_WIDTH;
         ySize = ENDERGENIC_HEIGHT;
     }
@@ -46,7 +47,7 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored();
         energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredHeight(12).setMaxValue(maxEnergyStored).setShowText(true);
-        energyBar.setValue(tileEntity.getCurrentRF());
+        energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
         Label descriptionLabel = new Label(mc, this).setText("Averages over last 5 seconds:").setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
 
@@ -73,7 +74,7 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         drawWindow();
-        int currentRF = tileEntity.getCurrentRF();
+        int currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
         tileEntity.requestRfFromServer(RFTools.MODID);
 

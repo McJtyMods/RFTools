@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.screens;
 
-import mcjty.lib.container.GenericBlock;
+import mcjty.lib.container.BaseBlock;
 import mcjty.lib.font.TrueTypeFont;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.RFTools;
@@ -48,7 +48,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         EnumFacing facing = EnumFacing.SOUTH;
         if (tileEntity != null) {
             IBlockState state = Minecraft.getMinecraft().world.getBlockState(tileEntity.getPos());
-            facing = state.getValue(GenericBlock.FACING);
+            facing = state.getValue(BaseBlock.FACING);
         }
 
         switch (facing) {
@@ -140,7 +140,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
             return;
         }
         if (mouseOver != null) {
-            if (mouseOver.sideHit == blockState.getValue(GenericBlock.FACING)) {
+            if (mouseOver.sideHit == blockState.getValue(BaseBlock.FACING)) {
                 double xx = mouseOver.hitVec.x - pos.getX();
                 double yy = mouseOver.hitVec.y - pos.getY();
                 double zz = mouseOver.hitVec.z - pos.getZ();

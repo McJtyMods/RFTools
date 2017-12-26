@@ -40,8 +40,8 @@ public class GuiAdvancedPorter extends GuiItemScreen {
     public void initGui() {
         super.initGui();
 
-        int k = (this.width - this.xSize) / 2;
-        int l = (this.height - this.ySize) / 2;
+        int k = (this.width - xSize) / 2;
+        int l = (this.height - ySize) / 2;
 
         Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setSpacing(0));
 

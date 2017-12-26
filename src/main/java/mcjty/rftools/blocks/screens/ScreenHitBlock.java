@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.screens;
 
+import mcjty.lib.container.BaseBlock;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericBlock;
 import mcjty.rftools.RFTools;
@@ -160,7 +161,7 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
 
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        EnumFacing facing = state.getValue(GenericBlock.FACING);
+        EnumFacing facing = state.getValue(BaseBlock.FACING);
         if (facing == EnumFacing.NORTH) {
             return NORTH_AABB;
         } else if (facing == EnumFacing.SOUTH) {

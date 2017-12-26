@@ -86,7 +86,7 @@ public class PacketChamberInfoReady implements IMessage {
         buf.writeInt(blocks.size());
         for (Map.Entry<IBlockState, Integer> entry : blocks.entrySet()) {
             IBlockState bm = entry.getKey();
-            buf.writeInt(bm.getBlock().getStateId(bm));
+            buf.writeInt(Block.getStateId(bm));
             buf.writeInt(entry.getValue());
             buf.writeInt(costs.get(bm));
             if (stacks.containsKey(bm)) {

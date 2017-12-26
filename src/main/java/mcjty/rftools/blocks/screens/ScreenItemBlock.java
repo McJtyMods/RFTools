@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.screens;
 
-import mcjty.lib.container.GenericBlock;
+import mcjty.lib.container.BaseBlock;
 import mcjty.lib.container.GenericItemBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -22,7 +22,7 @@ public class ScreenItemBlock extends GenericItemBlock {
             return rc;
         }
 
-        world.setBlockState(pos, newState.getBlock().getDefaultState().withProperty(GenericBlock.FACING, side), 3);
+        world.setBlockState(pos, newState.getBlock().getDefaultState().withProperty(BaseBlock.FACING, side), 3);
         return rc;
     }
 }

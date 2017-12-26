@@ -15,6 +15,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.crafter.CraftingRecipe;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryCrafting;
@@ -181,7 +182,7 @@ public class GuiCraftingGrid {
                     GlStateManager.colorMask(true, true, true, false);
                     int xPos = slot.xPos;
                     int yPos = slot.yPos;
-                    gui.drawRect(xPos, yPos, xPos + 16, yPos + 16, 0xffff0000);
+                    Gui.drawRect(xPos, yPos, xPos + 16, yPos + 16, 0xffff0000);
                 }
             }
             for (int i = 0 ; i < 9 ; i++) {
@@ -192,7 +193,7 @@ public class GuiCraftingGrid {
                         GlStateManager.colorMask(true, true, true, false);
                         int xPos = slot.xPos;
                         int yPos = slot.yPos;
-                        gui.drawRect(xPos, yPos, xPos + 16, yPos + 16, 0xffff0000);
+                        Gui.drawRect(xPos, yPos, xPos + 16, yPos + 16, 0xffff0000);
                     }
                 }
             }

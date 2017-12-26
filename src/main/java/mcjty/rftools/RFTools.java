@@ -148,7 +148,7 @@ public class RFTools implements ModBase {
      */
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent e) {
-        this.proxy.preInit(e);
+        proxy.preInit(e);
         MainCompatHandler.registerWaila();
         MainCompatHandler.registerTOP();
         WheelSupport.registerWheel();
@@ -159,7 +159,7 @@ public class RFTools implements ModBase {
      */
     @Mod.EventHandler
     public void init(FMLInitializationEvent e) {
-        this.proxy.init(e);
+        proxy.init(e);
 
         Achievements.init();
 
@@ -213,7 +213,7 @@ public class RFTools implements ModBase {
      */
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e) {
-        this.proxy.postInit(e);
+        proxy.postInit(e);
     }
 
     @Mod.EventHandler

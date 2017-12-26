@@ -2,8 +2,8 @@ package mcjty.rftools.blocks.elevator;
 
 
 import mcjty.lib.api.Infusable;
+import mcjty.lib.container.BaseBlock;
 import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.container.GenericBlock;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
@@ -104,7 +104,7 @@ public class ElevatorBlock extends GenericRFToolsBlock<ElevatorTileEntity, Empty
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof ElevatorTileEntity) {
             ElevatorTileEntity elevatorTileEntity = (ElevatorTileEntity) te;
-            elevatorTileEntity.clearCaches(world.getBlockState(pos).getValue(GenericBlock.FACING_HORIZ));
+            elevatorTileEntity.clearCaches(world.getBlockState(pos).getValue(BaseBlock.FACING_HORIZ));
         }
         if (placer instanceof EntityPlayer) {
             // @todo achievements
@@ -117,7 +117,7 @@ public class ElevatorBlock extends GenericRFToolsBlock<ElevatorTileEntity, Empty
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof ElevatorTileEntity) {
             ElevatorTileEntity elevatorTileEntity = (ElevatorTileEntity) te;
-            elevatorTileEntity.clearCaches(state.getValue(GenericBlock.FACING_HORIZ));
+            elevatorTileEntity.clearCaches(state.getValue(BaseBlock.FACING_HORIZ));
         }
         super.breakBlock(world, pos, state);
     }

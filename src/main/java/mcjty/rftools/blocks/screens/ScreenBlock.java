@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.api.IModuleSupport;
-import mcjty.lib.container.GenericBlock;
+import mcjty.lib.container.BaseBlock;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.lib.varia.ModuleSupport;
@@ -185,7 +185,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
         int zz = pos.getZ() + dz;
         BlockPos posO = new BlockPos(xx, yy, zz);
         if (world.isAirBlock(posO)) {
-            world.setBlockState(posO, ScreenSetup.screenHitBlock.getDefaultState().withProperty(GenericBlock.FACING, facing), 3);
+            world.setBlockState(posO, ScreenSetup.screenHitBlock.getDefaultState().withProperty(BaseBlock.FACING, facing), 3);
             ScreenHitTileEntity screenHitTileEntity = (ScreenHitTileEntity) world.getTileEntity(posO);
             screenHitTileEntity.setRelativeLocation(-dx, -dy, -dz);
         }
@@ -193,7 +193,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
 
     private void setInvisibleBlocks(World world, BlockPos pos, int size) {
         IBlockState state = world.getBlockState(pos);
-        EnumFacing facing = state.getValue(GenericBlock.FACING);
+        EnumFacing facing = state.getValue(BaseBlock.FACING);
 
         if (facing == EnumFacing.NORTH) {
             for (int i = 0 ; i <= size ; i++) {
@@ -246,7 +246,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
     }
 
     private void clearInvisibleBlocks(World world, BlockPos pos, IBlockState state, int size) {
-        EnumFacing facing = state.getValue(GenericBlock.FACING);
+        EnumFacing facing = state.getValue(BaseBlock.FACING);
         if (facing == EnumFacing.NORTH) {
             for (int i = 0 ; i <= size ; i++) {
                 for (int j = 0 ; j <= size ; j++) {
@@ -408,7 +408,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
 
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        EnumFacing facing = state.getValue(GenericBlock.FACING);
+        EnumFacing facing = state.getValue(BaseBlock.FACING);
         if (facing == EnumFacing.NORTH) {
             return NORTH_AABB;
         } else if (facing == EnumFacing.SOUTH) {

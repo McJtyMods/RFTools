@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.elevator;
 
 
-import mcjty.lib.container.GenericBlock;
+import mcjty.lib.container.BaseBlock;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.Broadcaster;
@@ -74,7 +74,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
             if (getWorld().getBlockState(pos2).getBlock() == ElevatorSetup.elevatorBlock) {
                 TileEntity te = getWorld().getTileEntity(pos2);
                 if (te instanceof ElevatorTileEntity) {
-                    EnumFacing side2 = getWorld().getBlockState(pos2).getValue(GenericBlock.FACING_HORIZ);
+                    EnumFacing side2 = getWorld().getBlockState(pos2).getValue(BaseBlock.FACING_HORIZ);
                     if (side2 == side) {
                         ElevatorTileEntity tileEntity = (ElevatorTileEntity) te;
                         tileEntity.cachedControllerPos = null;
@@ -309,13 +309,13 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         if (blockState.getBlock() != ElevatorSetup.elevatorBlock) {
             return null;
         }
-        EnumFacing side = blockState.getValue(GenericBlock.FACING_HORIZ);
+        EnumFacing side = blockState.getValue(BaseBlock.FACING_HORIZ);
 
         for (int y = 0; y < getWorld().getHeight(); y++) {
             BlockPos elevatorPos = getPosAtY(getPos(), y);
             IBlockState otherState = getWorld().getBlockState(elevatorPos);
             if (otherState.getBlock() == ElevatorSetup.elevatorBlock) {
-                EnumFacing otherSide = otherState.getValue(GenericBlock.FACING_HORIZ);
+                EnumFacing otherSide = otherState.getValue(BaseBlock.FACING_HORIZ);
                 if (otherSide == side) {
                     cachedControllerPos = elevatorPos;
                     return elevatorPos;
@@ -328,13 +328,13 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     // Find the position of the elevator that has the platform.
     private BlockPos findElevatorWithPlatform() {
         // The orientation of this elevator.
-        EnumFacing side = getWorld().getBlockState(getPos()).getValue(GenericBlock.FACING_HORIZ);
+        EnumFacing side = getWorld().getBlockState(getPos()).getValue(BaseBlock.FACING_HORIZ);
 
         for (int y = 0; y < getWorld().getHeight(); y++) {
             BlockPos elevatorPos = getPosAtY(getPos(), y);
             IBlockState otherState = getWorld().getBlockState(elevatorPos);
             if (otherState.getBlock() == ElevatorSetup.elevatorBlock) {
-                EnumFacing otherSide = otherState.getValue(GenericBlock.FACING_HORIZ);
+                EnumFacing otherSide = otherState.getValue(BaseBlock.FACING_HORIZ);
                 if (otherSide == side) {
                     BlockPos frontPos = elevatorPos.offset(side);
                     if (isValidPlatformBlock(frontPos)) {
@@ -456,7 +456,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
 
     // Always called on controller TE (bottom one)
     private void getBounds(BlockPos start) {
-        EnumFacing side = getWorld().getBlockState(getPos()).getValue(GenericBlock.FACING_HORIZ);
+        EnumFacing side = getWorld().getBlockState(getPos()).getValue(BaseBlock.FACING_HORIZ);
         bounds = new Bounds();
         for (int a = 1; a < ElevatorConfiguration.maxPlatformSize; a++) {
             BlockPos offset = start.offset(side, a);
@@ -520,14 +520,14 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
 
     // Go to the specific level (levels start at 0)
     public void toLevel(int level) {
-        EnumFacing side = getWorld().getBlockState(getPos()).getValue(GenericBlock.FACING_HORIZ);
+        EnumFacing side = getWorld().getBlockState(getPos()).getValue(BaseBlock.FACING_HORIZ);
         BlockPos controllerPos = findBottomElevator();
         for (int y = controllerPos.getY() ; y < getWorld().getHeight() ; y++) {
             BlockPos pos2 = getPosAtY(controllerPos, y);
             if (getWorld().getBlockState(pos2).getBlock() == ElevatorSetup.elevatorBlock) {
                 TileEntity te2 = getWorld().getTileEntity(pos2);
                 if (te2 instanceof ElevatorTileEntity) {
-                    EnumFacing side2 = getWorld().getBlockState(pos2).getValue(GenericBlock.FACING_HORIZ);
+                    EnumFacing side2 = getWorld().getBlockState(pos2).getValue(BaseBlock.FACING_HORIZ);
                     if (side == side2) {
                         if (level == 0) {
                             ((ElevatorTileEntity) te2).movePlatformHere();
@@ -550,12 +550,12 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         if (blockState.getBlock() != ElevatorSetup.elevatorBlock) {
             return;
         }
-        EnumFacing side = blockState.getValue(GenericBlock.FACING_HORIZ);
+        EnumFacing side = blockState.getValue(BaseBlock.FACING_HORIZ);
         for (int y = controllerPos.getY() ; y < getWorld().getHeight() ; y++) {
             BlockPos pos2 = getPosAtY(controllerPos, y);
             TileEntity te2 = getWorld().getTileEntity(pos2);
             if (te2 instanceof ElevatorTileEntity) {
-                EnumFacing side2 = getWorld().getBlockState(pos2).getValue(GenericBlock.FACING_HORIZ);
+                EnumFacing side2 = getWorld().getBlockState(pos2).getValue(BaseBlock.FACING_HORIZ);
                 if (side == side2) {
                     heights.add(y);
                 }
@@ -568,7 +568,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         BlockPos controllerPos = findBottomElevator();
         TileEntity te = getWorld().getTileEntity(controllerPos);
         if (te instanceof ElevatorTileEntity) {
-            EnumFacing side = getWorld().getBlockState(controllerPos).getValue(GenericBlock.FACING_HORIZ);
+            EnumFacing side = getWorld().getBlockState(controllerPos).getValue(BaseBlock.FACING_HORIZ);
             ElevatorTileEntity controller = (ElevatorTileEntity) te;
             if (controller.cachedCurrent == -1) {
                 int level = 0;
@@ -596,7 +596,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         if (blockState.getBlock() != ElevatorSetup.elevatorBlock) {
             return false;
         }
-        EnumFacing side = blockState.getValue(GenericBlock.FACING_HORIZ);
+        EnumFacing side = blockState.getValue(BaseBlock.FACING_HORIZ);
         BlockPos frontPos = getPos().offset(side);
         return isValidPlatformBlock(frontPos);
     }
@@ -611,7 +611,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         if (blockState.getBlock() != ElevatorSetup.elevatorBlock) {
             return;
         }
-        EnumFacing side = blockState.getValue(GenericBlock.FACING_HORIZ);
+        EnumFacing side = blockState.getValue(BaseBlock.FACING_HORIZ);
         BlockPos frontPos = getPos().offset(side);
         if (isValidPlatformBlock(frontPos)) {
             // Platform is already here (or something is blocking here)
@@ -772,7 +772,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         }
         tagCompound.setByteArray("relcoords", blocks);
         if (movingState != null) {
-            tagCompound.setInteger("movingId", movingState.getBlock().getStateId(movingState));
+            tagCompound.setInteger("movingId", Block.getStateId(movingState));
         }
         if (!getWorld().isRemote) {
             // Only do this server side

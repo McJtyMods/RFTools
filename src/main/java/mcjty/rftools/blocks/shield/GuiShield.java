@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.shield;
 
 import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.entity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.DefaultSelectionEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
@@ -82,7 +83,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
 
     public GuiShield(ShieldTEBase shieldTileEntity, ShieldContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, shieldTileEntity, container, RFTools.GUI_MANUAL_SHAPE, "shield");
-        shieldTileEntity.setCurrentRF(shieldTileEntity.getEnergyStored());
+        GenericEnergyStorageTileEntity.setCurrentRF(shieldTileEntity.getEnergyStored());
 
         xSize = SHIELD_WIDTH;
         ySize = SHIELD_HEIGHT;
@@ -94,7 +95,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored();
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(12, 141, 10, 76)).setShowText(false);
-        energyBar.setValue(tileEntity.getCurrentRF());
+        energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
         initVisibilityMode();
         initActionOptions();
@@ -408,7 +409,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         populateFilters();
         enableButtons();
         drawWindow();
-        int currentRF = tileEntity.getCurrentRF();
+        int currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
         colorSelector.setCurrentColor(tileEntity.getShieldColor());
 

@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.infuser;
 
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.entity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.EnergyBar;
@@ -23,7 +24,7 @@ public class GuiMachineInfuser extends GenericGuiContainer<MachineInfuserTileEnt
 
     public GuiMachineInfuser(MachineInfuserTileEntity machineInfuserTileEntity, MachineInfuserContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, machineInfuserTileEntity, container, 0/*@todoRFTools.GUI_MANUAL_DIMENSION*/, "infuser");
-        machineInfuserTileEntity.setCurrentRF(machineInfuserTileEntity.getEnergyStored());
+        GenericEnergyStorageTileEntity.setCurrentRF(machineInfuserTileEntity.getEnergyStored());
 
         xSize = INFUSER_WIDTH;
         ySize = INFUSER_HEIGHT;
@@ -35,7 +36,7 @@ public class GuiMachineInfuser extends GenericGuiContainer<MachineInfuserTileEnt
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored();
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 8, 54)).setShowText(false);
-        energyBar.setValue(tileEntity.getCurrentRF());
+        energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
 //        arrow = new ImageLabel(mc, this).setImage(iconGuiElements, 192, 0);
 //        arrow.setLayoutHint(new PositionalLayout.PositionalHint(90, 26, 16, 16));
@@ -60,7 +61,7 @@ public class GuiMachineInfuser extends GenericGuiContainer<MachineInfuserTileEnt
 
         drawWindow();
 
-        energyBar.setValue(tileEntity.getCurrentRF());
+        energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
         tileEntity.requestRfFromServer(RFTools.MODID);
 //        tileEntity.requestResearchingFromServer();

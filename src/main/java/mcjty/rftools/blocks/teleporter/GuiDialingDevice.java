@@ -179,7 +179,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         }
         BlockPos c = transmitterInfo.getCoordinate();
         RFTools.instance.clientInfo.hilightBlock(c, System.currentTimeMillis() + 1000 * 5);//@todo StorageScannerConfiguration.hilightTime);
-        mc.getMinecraft().player.closeScreen();
+        mc.player.closeScreen();
     }
 
     private void hilightSelectedReceiver(int index) {
@@ -193,12 +193,12 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
 
         if (destination.getDimension() != mc.world.provider.getDimension() || distance > 150) {
             Logging.warn(mc.player, "Receiver is too far to hilight!");
-            mc.getMinecraft().player.closeScreen();
+            mc.player.closeScreen();
             return;
         }
         RFTools.instance.clientInfo.hilightBlock(c, System.currentTimeMillis()+1000*5);// @todo StorageScannerConfiguration.hilightTime);
         Logging.message(mc.player, "The receiver is now highlighted");
-        mc.getMinecraft().player.closeScreen();
+        mc.player.closeScreen();
     }
 
     private void setStatusError(String message) {

@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.entity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.Button;
@@ -24,7 +25,7 @@ public class GuiScreenController extends GenericGuiContainer<ScreenControllerTil
 
     public GuiScreenController(ScreenControllerTileEntity screenControllerTileEntity, ScreenControllerContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, screenControllerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "screens");
-        screenControllerTileEntity.setCurrentRF(screenControllerTileEntity.getEnergyStored());
+        GenericEnergyStorageTileEntity.setCurrentRF(screenControllerTileEntity.getEnergyStored());
 
         xSize = CONTROLLER_WIDTH;
         ySize = CONTROLLER_HEIGHT;
@@ -36,7 +37,7 @@ public class GuiScreenController extends GenericGuiContainer<ScreenControllerTil
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored();
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 8, 54)).setShowText(false);
-        energyBar.setValue(tileEntity.getCurrentRF());
+        energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
         Button scanButton = new Button(mc, this).setText("Scan").setTooltips("Find all nearby screens", "and connect to them").setLayoutHint(new PositionalLayout.PositionalHint(30, 7, 50, 14));
         scanButton.addButtonEvent(parent -> sendServerCommand(RFToolsMessages.INSTANCE, ScreenControllerTileEntity.CMD_SCAN));
@@ -58,7 +59,7 @@ public class GuiScreenController extends GenericGuiContainer<ScreenControllerTil
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         drawWindow();
 
-        energyBar.setValue(tileEntity.getCurrentRF());
+        energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
         infoLabel.setText(tileEntity.getConnectedScreens().size() + " connected screens");
 
         tileEntity.requestRfFromServer(RFTools.MODID);

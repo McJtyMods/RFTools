@@ -1,6 +1,8 @@
 package mcjty.rftools.blocks.builder;
 
 import com.mojang.authlib.GameProfile;
+
+import mcjty.lib.container.BaseBlock;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
@@ -545,7 +547,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     // Give a dimension, return a min coordinate of the box right in front of the builder
     private BlockPos positionBox(BlockPos dimension) {
         IBlockState state = getWorld().getBlockState(getPos());
-        EnumFacing direction = state.getValue(BuilderSetup.builderBlock.FACING_HORIZ);
+        EnumFacing direction = state.getValue(BaseBlock.FACING_HORIZ);
         int spanX = dimension.getX();
         int spanY = dimension.getY();
         int spanZ = dimension.getZ();
@@ -614,7 +616,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         BlockPos maxCorner = new BlockPos(Math.max(minC.getX(), maxC.getX()), Math.max(minC.getY(), maxC.getY()), Math.max(minC.getZ(), maxC.getZ()));
 
         IBlockState state = getWorld().getBlockState(getPos());
-        EnumFacing direction = state.getValue(BuilderSetup.builderBlock.FACING_HORIZ);
+        EnumFacing direction = state.getValue(BaseBlock.FACING_HORIZ);
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
