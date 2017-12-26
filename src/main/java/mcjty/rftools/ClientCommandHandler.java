@@ -2,6 +2,7 @@ package mcjty.rftools;
 
 import mcjty.lib.McJtyLib;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
+import mcjty.rftools.blocks.endergen.EndergenicConfiguration;
 import mcjty.rftools.blocks.endergen.EndergenicTileEntity;
 import mcjty.rftools.blocks.logic.counter.CounterBlock;
 import mcjty.rftools.blocks.security.SecurityCardItem;
@@ -49,15 +50,17 @@ public class ClientCommandHandler {
             ModularStorageBlock.nameModuleReceived = arguments.getString();
             return true;
         });
-        McJtyLib.registerClientCommand(RFTools.MODID, CMD_FLASH_ENDERGENIC, (player, arguments) -> {
-            BlockPos pos = arguments.getBlockPos();
-            TileEntity te = RFTools.proxy.getClientWorld().getTileEntity(pos);
-            if (te instanceof EndergenicTileEntity) {
-                EndergenicTileEntity tileEntity = (EndergenicTileEntity) te;
-                tileEntity.syncCountersFromServer(arguments.getInt(), arguments.getInt());
-            }
-            return true;
-        });
+        if(EndergenicConfiguration.enabled) {
+            McJtyLib.registerClientCommand(RFTools.MODID, CMD_FLASH_ENDERGENIC, (player, arguments) -> {
+                BlockPos pos = arguments.getBlockPos();
+                TileEntity te = RFTools.proxy.getClientWorld().getTileEntity(pos);
+                if (te instanceof EndergenicTileEntity) {
+                    EndergenicTileEntity tileEntity = (EndergenicTileEntity) te;
+                    tileEntity.syncCountersFromServer(arguments.getInt(), arguments.getInt());
+                }
+                return true;
+            });
+        }
         McJtyLib.registerClientCommand(RFTools.MODID, CMD_POSITION_TO_CLIENT, (player, arguments) -> {
             BlockPos tePos = arguments.getBlockPos();
             BlockPos scanPos = arguments.getBlockPos();

@@ -1,4 +1,8 @@
 {
+  "conditions": [{
+    "type": "minecraft:item_exists",
+    "item": "rftools:endergenic"
+  }],
   "result": {
     "item": "rftools:endergenic"
   },

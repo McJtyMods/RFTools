@@ -7,7 +7,6 @@ import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.WrenchChecker;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorConfiguration;
 import mcjty.rftools.blocks.blockprotector.BlockProtectors;
-import mcjty.rftools.blocks.endergen.EndergenicTileEntity;
 import mcjty.rftools.blocks.environmental.NoTeleportAreaManager;
 import mcjty.rftools.blocks.environmental.PeacefulAreaManager;
 import mcjty.rftools.blocks.screens.ScreenBlock;
@@ -251,17 +250,6 @@ public class ForgeEventHandlers {
                 FavoriteDestinationsProperties newFavorites = PlayerExtendedProperties.getFavoriteDestinations(event.getEntityPlayer());
                 newFavorites.copyFrom(oldFavorites);
             }
-        }
-    }
-
-    @SubscribeEvent
-    public void onPostWorldTick(TickEvent.WorldTickEvent event) {
-        if (!event.world.isRemote) {
-            for (EndergenicTileEntity endergenic : EndergenicTileEntity.todoEndergenics) {
-                endergenic.checkStateServer();
-            }
-            EndergenicTileEntity.todoEndergenics.clear();
-            EndergenicTileEntity.endergenicsAdded.clear();
         }
     }
 }

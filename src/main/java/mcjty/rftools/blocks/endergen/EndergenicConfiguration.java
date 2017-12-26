@@ -4,6 +4,7 @@ import net.minecraftforge.common.config.Configuration;
 
 public class EndergenicConfiguration {
     public static final String CATEGORY_ENDERGENIC = "endergenic";
+    public static boolean enabled = true;
     // This value indicates the chance (with 0 being no chance and 1000 being 100% chance) that an
     // endergenic pearl is lost while holding it.
     public static int chanceLost = 5;
@@ -20,6 +21,7 @@ public class EndergenicConfiguration {
     public static double powergenFactor = 2.0;
 
     public static void init(Configuration cfg) {
+        enabled = cfg.get(CATEGORY_ENDERGENIC, "enabled", enabled, "Whether the endergenic generator should exist").getBoolean();
         chanceLost = cfg.get(CATEGORY_ENDERGENIC, "endergenicChanceLost", chanceLost,
                 "The chance (in 1/10 percent, so 1000 = 100%) that an endergenic pearl is lost while trying to hold it").getInt();
         rfToHoldPearl = cfg.get(CATEGORY_ENDERGENIC, "endergenicRfHolding", rfToHoldPearl,

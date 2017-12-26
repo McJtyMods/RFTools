@@ -1,6 +1,7 @@
 package mcjty.rftools.integration.computers;
 
 import li.cil.oc.api.Driver;
+import mcjty.rftools.blocks.endergen.EndergenicConfiguration;
 import mcjty.rftools.blocks.generator.CoalGeneratorConfiguration;
 import net.minecraftforge.fml.common.Optional;
 
@@ -16,7 +17,9 @@ public class OpenComputersIntegration {
         Driver.add(new RFMonitorDriver.OCDriver());
         Driver.add(new LiquidMonitorDriver.OCDriver());
         Driver.add(new PowercellDriver.OCDriver());
-        Driver.add(new PearlInjectorDriver.OCDriver());
-        Driver.add(new EndergenicDriver.OCDriver());
+        if(EndergenicConfiguration.enabled) {
+            Driver.add(new PearlInjectorDriver.OCDriver());
+            Driver.add(new EndergenicDriver.OCDriver());
+        }
     }
 }
