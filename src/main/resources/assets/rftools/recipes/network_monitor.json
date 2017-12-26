@@ -1,4 +1,8 @@
 {
+  "conditions": [{
+    "type": "minecraft:item_exists",
+    "item": "rftools:network_monitor"
+  }],
   "result": {
     "item": "rftools:network_monitor"
   },

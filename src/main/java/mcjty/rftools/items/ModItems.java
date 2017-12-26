@@ -5,6 +5,7 @@ import mcjty.rftools.items.creativeonly.ShardWandItem;
 import mcjty.rftools.items.manual.RFToolsManualItem;
 import mcjty.rftools.items.manual.RFToolsShapeManualItem;
 import mcjty.rftools.items.modifier.ModifierItem;
+import mcjty.rftools.items.netmonitor.NetworkMonitorConfiguration;
 import mcjty.rftools.items.netmonitor.NetworkMonitorItem;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import net.minecraftforge.fml.relauncher.Side;
@@ -40,7 +41,8 @@ public final class ModItems {
         syringeItem = new SyringeItem();
         peaceEssenceItem = new PeaceEssenceItem();
         developersDelightItem = new DevelopersDelightItem();
-        networkMonitorItem = new NetworkMonitorItem();
+        if(NetworkMonitorConfiguration.enabled)
+            networkMonitorItem = new NetworkMonitorItem();
         modifierItem = new ModifierItem();
     }
 
@@ -56,7 +58,8 @@ public final class ModItems {
         syringeItem.initModel();
         peaceEssenceItem.initModel();
         developersDelightItem.initModel();
-        networkMonitorItem.initModel();
+        if(NetworkMonitorConfiguration.enabled)
+            networkMonitorItem.initModel();
         modifierItem.initModel();
     }
 }

@@ -30,6 +30,7 @@ import mcjty.rftools.items.builder.PacketUpdateNBTItemInventoryShape;
 import mcjty.rftools.items.creativeonly.PacketDelightingInfoReady;
 import mcjty.rftools.items.creativeonly.PacketGetDelightingInfo;
 import mcjty.rftools.items.modifier.PacketUpdateModifier;
+import mcjty.rftools.items.netmonitor.NetworkMonitorConfiguration;
 import mcjty.rftools.items.netmonitor.PacketConnectedBlocksReady;
 import mcjty.rftools.items.netmonitor.PacketGetConnectedBlocks;
 import mcjty.rftools.items.storage.PacketUpdateNBTItemFilter;
@@ -66,7 +67,8 @@ public class RFToolsMessages {
         net.registerMessage(PacketContentsMonitor.Handler.class, PacketContentsMonitor.class, PacketHandler.nextPacketID(), Side.SERVER);
         net.registerMessage(PacketGetFilters.Handler.class, PacketGetFilters.class, PacketHandler.nextPacketID(), Side.SERVER);
         net.registerMessage(PacketGetDelightingInfo.Handler.class, PacketGetDelightingInfo.class, PacketHandler.nextPacketID(), Side.SERVER);
-        net.registerMessage(PacketGetConnectedBlocks.Handler.class, PacketGetConnectedBlocks.class, PacketHandler.nextPacketID(), Side.SERVER);
+        if(NetworkMonitorConfiguration.enabled)
+            net.registerMessage(PacketGetConnectedBlocks.Handler.class, PacketGetConnectedBlocks.class, PacketHandler.nextPacketID(), Side.SERVER);
         net.registerMessage(PacketSendRecipe.Handler.class, PacketSendRecipe.class, PacketHandler.nextPacketID(), Side.SERVER);
         net.registerMessage(PacketGridToServer.Handler.class, PacketGridToServer.class, PacketHandler.nextPacketID(), Side.SERVER);
         net.registerMessage(PacketRequestItem.Handler.class, PacketRequestItem.class, PacketHandler.nextPacketID(), Side.SERVER);
@@ -94,7 +96,8 @@ public class RFToolsMessages {
         if(SecurityConfiguration.enabled)
             net.registerMessage(PacketSecurityInfoReady.Handler.class, PacketSecurityInfoReady.class, PacketHandler.nextPacketID(), Side.CLIENT);
         net.registerMessage(PacketDelightingInfoReady.Handler.class, PacketDelightingInfoReady.class, PacketHandler.nextPacketID(), Side.CLIENT);
-        net.registerMessage(PacketConnectedBlocksReady.Handler.class, PacketConnectedBlocksReady.class, PacketHandler.nextPacketID(), Side.CLIENT);
+        if(NetworkMonitorConfiguration.enabled)
+            net.registerMessage(PacketConnectedBlocksReady.Handler.class, PacketConnectedBlocksReady.class, PacketHandler.nextPacketID(), Side.CLIENT);
         net.registerMessage(PacketSyncSlotsToClient.Handler.class, PacketSyncSlotsToClient.class, PacketHandler.nextPacketID(), Side.CLIENT);
         net.registerMessage(PacketGridToClient.Handler.class, PacketGridToClient.class, PacketHandler.nextPacketID(), Side.CLIENT);
         net.registerMessage(PacketCraftTestResultToClient.Handler.class, PacketCraftTestResultToClient.class, PacketHandler.nextPacketID(), Side.CLIENT);
