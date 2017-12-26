@@ -1,6 +1,7 @@
 package mcjty.rftools.items.modifier;
 
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
@@ -19,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class GuiModifier extends GenericGuiContainer {
+public class GuiModifier extends GenericGuiContainer<GenericTileEntity> {
     public static final int MODIFIER_WIDTH = 180;
     public static final int MODIFIER_HEIGHT = 228;
 

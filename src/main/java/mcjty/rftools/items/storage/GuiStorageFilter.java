@@ -1,6 +1,7 @@
 package mcjty.rftools.items.storage;
 
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
@@ -16,7 +17,7 @@ import net.minecraft.util.ResourceLocation;
 import java.awt.*;
 
 
-public class GuiStorageFilter extends GenericGuiContainer {
+public class GuiStorageFilter extends GenericGuiContainer<GenericTileEntity> {
     public static final int CONTROLLER_WIDTH = 180;
     public static final int CONTROLLER_HEIGHT = 188;
 

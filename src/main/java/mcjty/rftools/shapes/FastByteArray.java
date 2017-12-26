@@ -51,6 +51,7 @@ public class FastByteArray {
         return data;
     }
 
+    @Override
     public String toString() {
         return new String(toByteArray());
     }

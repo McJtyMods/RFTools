@@ -915,26 +915,22 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         File dataDir = new File("rftoolsscans");
         dataDir.mkdirs();
         File file = new File(dataDir, filename);
-        FileOutputStream stream;
-        try {
-            stream = new FileOutputStream(file);
+        try(PrintWriter writer = new PrintWriter(new FileOutputStream(file))) {
+            writer.println("SHAPE");
+            writer.println("DIM:" + dimension.getX() + "," + dimension.getY() + "," + dimension.getZ());
+            writer.println("OFF:" + offset.getX() + "," + offset.getY() + "," + offset.getZ());
+            for (IBlockState state : statePalette.getPalette()) {
+                String r = state.getBlock().getRegistryName().toString();
+                writer.println(r + "@" + state.getBlock().getMetaFromState(state));
+            }
+            writer.println("DATA");
+
+            byte[] encoded = Base64.getEncoder().encode(data);
+            writer.write(new String(encoded));
         } catch (FileNotFoundException e) {
             player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Cannot write to file '" + filename + "'!"), false);
             return;
         }
-        PrintWriter writer = new PrintWriter(stream);
-        writer.println("SHAPE");
-        writer.println("DIM:" + dimension.getX() + "," + dimension.getY() + "," + dimension.getZ());
-        writer.println("OFF:" + offset.getX() + "," + offset.getY() + "," + offset.getZ());
-        for (IBlockState state : statePalette.getPalette()) {
-            String r = state.getBlock().getRegistryName().toString();
-            writer.println(r + "@" + state.getBlock().getMetaFromState(state));
-        }
-        writer.println("DATA");
-
-        byte[] encoded = Base64.getEncoder().encode(data);
-        writer.write(new String(encoded));
-        writer.close();
         player.sendStatusMessage(new TextComponentString(TextFormatting.GREEN + "Saved shape to file '" + file.getPath() + "'"), false);
     }
 

@@ -85,6 +85,7 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
 
     }
 
+    @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
@@ -105,6 +106,7 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
         return super.onItemRightClick(world, player, hand);
     }
 
+    @Override
     public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
