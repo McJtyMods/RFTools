@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.ores;
 
 import mcjty.lib.McJtyRegister;
+import mcjty.lib.container.DamageMetadataItemBlock;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.ModItems;
 import net.minecraft.block.Block;
@@ -70,7 +71,7 @@ public class DimensionalShardBlock extends Block {
         setRegistryName("dimensional_shard_ore");
         setLightLevel(0.5f);
         setCreativeTab(RFTools.tabRfTools);
-        McJtyRegister.registerLater(this, RFTools.instance, DimensionalShardItemBlock.class);
+        McJtyRegister.registerLater(this, RFTools.instance, DamageMetadataItemBlock.class);
     }
 
     @SideOnly(Side.CLIENT)
