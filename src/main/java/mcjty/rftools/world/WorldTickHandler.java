@@ -17,8 +17,8 @@ public class WorldTickHandler {
 
     public static WorldTickHandler instance = new WorldTickHandler();
 
-    public static TIntObjectHashMap<ArrayDeque<RetroChunkCoord>> chunksToGen = new TIntObjectHashMap<ArrayDeque<RetroChunkCoord>>();
-    public static TIntObjectHashMap<ArrayDeque<Pair<Integer,Integer>>> chunksToPreGen = new TIntObjectHashMap<ArrayDeque<Pair<Integer,Integer>>>();
+    public static TIntObjectHashMap<ArrayDeque<RetroChunkCoord>> chunksToGen = new TIntObjectHashMap<>();
+    public static TIntObjectHashMap<ArrayDeque<Pair<Integer,Integer>>> chunksToPreGen = new TIntObjectHashMap<>();
 
     @SubscribeEvent
     public void tickEnd(TickEvent.WorldTickEvent event) {
@@ -60,7 +60,7 @@ public class WorldTickHandler {
 
     public static class RetroChunkCoord {
 
-        private static final THashSet<String> emptySet = new THashSet<String>(0);
+        private static final THashSet<String> emptySet = new THashSet<>(0);
         public final Pair<Integer,Integer> coord;
         public final THashSet<String> generatedFeatures;
 
@@ -71,7 +71,7 @@ public class WorldTickHandler {
                 generatedFeatures = emptySet;
             } else {
                 int e = features.tagCount();
-                generatedFeatures = new THashSet<String>(e);
+                generatedFeatures = new THashSet<>(e);
                 for (int i = 0 ; i < e; ++i) {
                     generatedFeatures.add(features.getStringTagAt(i));
                 }

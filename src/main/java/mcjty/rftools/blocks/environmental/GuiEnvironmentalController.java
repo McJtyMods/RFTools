@@ -16,7 +16,7 @@ import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.teleporter.PacketGetPlayers;
+import mcjty.rftools.network.PacketGetPlayers;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
@@ -219,13 +219,13 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
     }
 
     private void populatePlayers() {
-        List<String> newPlayers = new ArrayList<String>(fromServer_players);
+        List<String> newPlayers = new ArrayList<>(fromServer_players);
         Collections.sort(newPlayers);
         if (newPlayers.equals(playersList)) {
             return;
         }
 
-        players  = new ArrayList<String>(newPlayers);
+        players  = new ArrayList<>(newPlayers);
         playersList.removeChildren();
         for (String player : players) {
             playersList.addChild(new Label(mc, this).setText(player).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));

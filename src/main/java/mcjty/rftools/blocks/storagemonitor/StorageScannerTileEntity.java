@@ -390,7 +390,6 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                 break;
             }
         }
-        ;
 
         return cnt;
     }

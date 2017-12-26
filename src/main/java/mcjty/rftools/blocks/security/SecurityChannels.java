@@ -129,7 +129,7 @@ public class SecurityChannels extends WorldSavedData {
     public static class SecurityChannel {
         private String name = "";
         private boolean whitelist = true;
-        private final List<String> players = new ArrayList<String>();
+        private final List<String> players = new ArrayList<>();
 
         public String getName() {
             return name;

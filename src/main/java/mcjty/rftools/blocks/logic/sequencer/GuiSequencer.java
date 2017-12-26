@@ -23,7 +23,7 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
     public static final int SEQUENCER_WIDTH = 160;
     public static final int SEQUENCER_HEIGHT = 184;
 
-    private List<ImageChoiceLabel> bits = new ArrayList<ImageChoiceLabel>();
+    private List<ImageChoiceLabel> bits = new ArrayList<>();
     private ChoiceLabel mode;
     private TextField speedField;
 

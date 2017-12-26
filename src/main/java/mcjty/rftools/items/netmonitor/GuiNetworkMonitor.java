@@ -63,7 +63,7 @@ public class GuiNetworkMonitor extends GuiItemScreen {
     }
 
     public static void setServerConnectedBlocks(Map<BlockPos, BlockInfo> serverConnectedBlocks) {
-        GuiNetworkMonitor.serverConnectedBlocks = new HashMap<BlockPos, BlockInfo>(serverConnectedBlocks);
+        GuiNetworkMonitor.serverConnectedBlocks = new HashMap<>(serverConnectedBlocks);
     }
 
     private void requestConnectedBlocksFromServer() {
@@ -157,10 +157,10 @@ public class GuiNetworkMonitor extends GuiItemScreen {
         if (serverConnectedBlocks.equals(connectedBlocks)) {
             refreshList(recalcPerTick);
         } else {
-            connectedBlocks = new HashMap<BlockPos, BlockInfo>(serverConnectedBlocks);
+            connectedBlocks = new HashMap<>(serverConnectedBlocks);
             Map<BlockPos, EnergyBar> oldLabelMap = labelMap;
-            labelMap = new HashMap<BlockPos, EnergyBar>();
-            indexToCoordinate = new HashMap<Integer, BlockPos>();
+            labelMap = new HashMap<>();
+            indexToCoordinate = new HashMap<>();
             list.removeChildren();
 
             int index = 0;
@@ -207,7 +207,7 @@ public class GuiNetworkMonitor extends GuiItemScreen {
 
         if (rftick && recalcPerTick) {
             previousRfMillis = millis;
-            previousRf = new HashMap<BlockPos, Integer>(connectedBlocks.size());
+            previousRf = new HashMap<>(connectedBlocks.size());
             for (Map.Entry<BlockPos, BlockInfo> me : connectedBlocks.entrySet()) {
                 previousRf.put(me.getKey(), me.getValue().getEnergyStored());
             }

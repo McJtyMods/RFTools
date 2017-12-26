@@ -64,10 +64,9 @@ public class BuilderTools {
 
     private static void findEntities(World world, BlockPos minCorner, BlockPos maxCorner,
                                  Counter<String> entitiesWithCount, Counter<String> entitiesWithCost, Map<String, Entity> firstEntity) {
-        List entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(
+        List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(
                 minCorner.getX(), minCorner.getY(), minCorner.getZ(), maxCorner.getX() + 1, maxCorner.getY() + 1, maxCorner.getZ() + 1));
-        for (Object o : entities) {
-            Entity entity = (Entity) o;
+        for (Entity entity : entities) {
             String canonicalName = entity.getClass().getCanonicalName();
             if (entity instanceof EntityItem) {
                 EntityItem entityItem = (EntityItem) entity;

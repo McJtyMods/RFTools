@@ -8,7 +8,6 @@ import net.minecraftforge.common.crafting.JsonContext;
 
 import java.util.function.BooleanSupplier;
 
-import static mcjty.rftools.GeneralConfiguration.CRAFT_EASY;
 import static mcjty.rftools.GeneralConfiguration.CRAFT_HARD;
 
 public class DimshardHardConditionFactory implements IConditionFactory {

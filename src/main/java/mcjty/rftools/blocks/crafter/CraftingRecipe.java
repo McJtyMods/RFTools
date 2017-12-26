@@ -11,9 +11,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class CraftingRecipe {
     private InventoryCrafting inv = new InventoryCrafting(new Container() {
         @Override

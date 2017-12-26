@@ -461,14 +461,9 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
                 slotIdx = i + CrafterContainer.SLOT_BUFFEROUT - CrafterContainer.BUFFER_SIZE;
             }
             if (inventoryHelper.containsItem(slotIdx)) {
-                ItemStack stack = inventoryHelper.getStackInSlot(slotIdx);
-                ghostSlots.set(i, stack.copy());
-                ItemStack stack1 = ghostSlots.get(i);
-                if (1 <= 0) {
-                    stack1.setCount(0);
-                } else {
-                    stack1.setCount(1);
-                }
+                ItemStack stack = inventoryHelper.getStackInSlot(slotIdx).copy();
+                stack.setCount(1);
+                ghostSlots.set(i, stack);
             }
         }
         markDirtyClient();

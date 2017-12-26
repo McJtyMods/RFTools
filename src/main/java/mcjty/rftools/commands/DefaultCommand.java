@@ -1,6 +1,5 @@
 package mcjty.rftools.commands;
 
-import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,7 +14,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 public abstract class DefaultCommand implements ICommand {
-    protected final Map<String,RfToolsCommand> commands = new HashMap<String, RfToolsCommand>();
+    protected final Map<String,RfToolsCommand> commands = new HashMap<>();
 
     public DefaultCommand() {
         registerCommand(new CmdHelp());
@@ -82,7 +81,7 @@ public abstract class DefaultCommand implements ICommand {
 
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
         World world = sender.getEntityWorld();
         if (args.length <= 0) {
             if (!world.isRemote) {

@@ -68,15 +68,11 @@ public class StorageFilterInventory implements IInventory {
 
         if (StorageFilterContainer.factory.isGhostSlot(index)) {
             if (!stack.isEmpty()) {
-                stacks.set(index, stack.copy());
+                ItemStack stack1 = stack.copy();
                 if (index < 9) {
-                    ItemStack stack1 = stacks.get(index);
-                    if (1 <= 0) {
-                        stack1.setCount(0);
-                    } else {
-                        stack1.setCount(1);
-                    }
+                    stack1.setCount(1);
                 }
+                stacks.set(index, stack1);
             } else {
                 stacks.set(index, ItemStack.EMPTY);
             }

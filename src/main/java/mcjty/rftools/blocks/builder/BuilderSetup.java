@@ -72,8 +72,7 @@ public class BuilderSetup {
     }
 
     private static void readBuilderBlocksInternal() {
-        try {
-            InputStream inputstream = RFTools.class.getResourceAsStream("/assets/rftools/text/builder.json");
+        try(InputStream inputstream = RFTools.class.getResourceAsStream("/assets/rftools/text/builder.json")) {
             parseBuilderJson(inputstream);
         } catch (IOException e) {
             Logging.logError("Error reading builder.json", e);
@@ -82,9 +81,8 @@ public class BuilderSetup {
 
     private static void readBuilderBlocksConfig() {
         File modConfigDir = CommonProxy.modConfigDir;
-        try {
-            File file = new File(modConfigDir.getPath() + File.separator + "rftools", "userbuilder.json");
-            FileInputStream inputstream = new FileInputStream(file);
+        File file = new File(modConfigDir.getPath() + File.separator + "rftools", "userbuilder.json");
+        try(FileInputStream inputstream = new FileInputStream(file)) {
             parseBuilderJson(inputstream);
         } catch (IOException e) {
             Logging.log("Could not read 'userbuilder.json', this is not an error!");

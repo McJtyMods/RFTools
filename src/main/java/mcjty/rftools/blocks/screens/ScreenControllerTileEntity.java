@@ -90,16 +90,16 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
 
     @Callback(doc = "Get the amount of screens controlled by this controller", getter = true)
     @Optional.Method(modid = "opencomputers")
-    public Object[] getScreenCount(Context context, Arguments args) throws Exception {
+    public Object[] getScreenCount(Context context, Arguments args) {
         return new Object[] { connectedScreens.size() };
     }
 
     @Callback(doc = "Get a table with coordinates (every coordinate is a table indexed with 'x', 'y', and 'z') for all connected screens", getter = true)
     @Optional.Method(modid = "opencomputers")
-    public Object[] getScreens(Context context, Arguments args) throws Exception {
-        List<Map<String,Integer>> result = new ArrayList<Map<String, Integer>>();
+    public Object[] getScreens(Context context, Arguments args) {
+        List<Map<String,Integer>> result = new ArrayList<>();
         for (BlockPos screen : connectedScreens) {
-            Map<String,Integer> coordinate = new HashMap<String, Integer>();
+            Map<String,Integer> coordinate = new HashMap<>();
             coordinate.put("x", screen.getX());
             coordinate.put("y", screen.getY());
             coordinate.put("z", screen.getZ());
@@ -140,7 +140,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
             throw new IllegalArgumentException("Screen index out of range!");
         }
         BlockPos screen = connectedScreens.get(index);
-        Map<String,Integer> coordinate = new HashMap<String, Integer>();
+        Map<String,Integer> coordinate = new HashMap<>();
         coordinate.put("x", screen.getX());
         coordinate.put("y", screen.getY());
         coordinate.put("z", screen.getZ());
@@ -151,7 +151,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
 
     @Callback(doc = "Add text to all screens listening to the given 'tag'. Parameters are: 'tag', 'text' and 'color' (RGB value)")
     @Optional.Method(modid = "opencomputers")
-    public Object[] addText(Context context, Arguments args) throws Exception {
+    public Object[] addText(Context context, Arguments args) {
         String tag = args.checkString(0);
         String text = args.checkString(1);
         int color = args.checkInteger(2);
@@ -161,7 +161,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
 
     @Callback(doc = "Set text to all screens listening to the given 'tag'. Parameters are: 'tag', 'text' and 'color' (RGB value)")
     @Optional.Method(modid = "opencomputers")
-    public Object[] setText(Context context, Arguments args) throws Exception {
+    public Object[] setText(Context context, Arguments args) {
         String tag = args.checkString(0);
         String text = args.checkString(1);
         int color = args.checkInteger(2);
@@ -193,7 +193,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
 
     @Callback(doc = "Clear text to all screens listening to the given 'tag'. The 'tag' is the only parameter")
     @Optional.Method(modid = "opencomputers")
-    public Object[] clearText(Context context, Arguments args) throws Exception {
+    public Object[] clearText(Context context, Arguments args) {
         String tag = args.checkString(0);
 
         return clearText(tag);
@@ -217,8 +217,8 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
 
     @Callback(doc = "Get a table of all tags supported by all connected screens", getter = true)
     @Optional.Method(modid = "opencomputers")
-    public Object[] getTags(Context context, Arguments args) throws Exception {
-        List<String> tags = new ArrayList<String>();
+    public Object[] getTags(Context context, Arguments args) {
+        List<String> tags = new ArrayList<>();
         for (BlockPos screen : connectedScreens) {
             TileEntity te = getWorld().getTileEntity(screen);
             if (te instanceof ScreenTileEntity) {

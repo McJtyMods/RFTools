@@ -7,8 +7,6 @@ import mcjty.rftools.items.screenmodules.StorageControlModuleItem;
 import mcjty.rftools.items.storage.StorageModuleTabletItem;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;

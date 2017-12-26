@@ -34,7 +34,7 @@ public class ModularStorageConfiguration {
     public static int height2 = 320;
     public static int height3 = 490;
 
-    public static Map<String,String> categoryMapper = new HashMap<String, String>();
+    public static Map<String,String> categoryMapper = new HashMap<>();
 
     public static void init(Configuration cfg) {
         groupBackground = cfg.get(CATEGORY_STORAGE, "groupBackground", groupBackground,
@@ -76,7 +76,7 @@ public class ModularStorageConfiguration {
         ConfigCategory category = cfg.getCategory(CATEGORY_STORAGE_CONFIG);
 
         // Make a copy of the keys we already have.
-        Set<String> keys = new HashSet<String>(categoryMapper.keySet());
+        Set<String> keys = new HashSet<>(categoryMapper.keySet());
         // Scan the config to see if there were updates.
         for (String key : keys) {
             categoryMapper.put(key, cfg.get(CATEGORY_STORAGE_CONFIG, key, categoryMapper.get(key)).getString());

@@ -13,7 +13,7 @@ public enum SequencerMode {
     MODE_LOOP4("Loop4"),             // Cycle for as long as a redstone signal is given. Stop as soon as the signal ends and resets to the beginning.
     ;
 
-    private static final Map<String,SequencerMode> modeToMode = new HashMap<String, SequencerMode>();
+    private static final Map<String,SequencerMode> modeToMode = new HashMap<>();
 
     private final String description;
 

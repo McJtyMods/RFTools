@@ -56,7 +56,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
 
     // Cached server modules
     private List<EnvironmentModule> environmentModules = null;
-    private Set<String> players = new HashSet<String>();
+    private Set<String> players = new HashSet<>();
     private EnvironmentalMode mode = EnvironmentalMode.MODE_BLACKLIST;
     private int totalRfPerTick = 0;     // The total rf per tick for all modules.
     private int radius = 50;
@@ -377,7 +377,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         if (environmentModules == null) {
             int volume = getVolume();
             totalRfPerTick = 0;
-            environmentModules = new ArrayList<EnvironmentModule>();
+            environmentModules = new ArrayList<>();
             for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
                 ItemStack itemStack = inventoryHelper.getStackInSlot(i);
                 if (!itemStack.isEmpty() && itemStack.getItem() instanceof EnvModuleProvider) {

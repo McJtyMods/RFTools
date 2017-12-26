@@ -17,7 +17,7 @@ public class PacketSendBuffsToClient implements IMessage {
     @Override
     public void fromBytes(ByteBuf buf) {
         int size = buf.readByte();
-        buffs = new ArrayList<PlayerBuff>(size);
+        buffs = new ArrayList<>(size);
         for (int i = 0 ; i < size ; i++) {
             buffs.add(PlayerBuff.values()[buf.readByte()]);
         }
@@ -36,7 +36,7 @@ public class PacketSendBuffsToClient implements IMessage {
     }
 
     public PacketSendBuffsToClient(Map<PlayerBuff,Integer> buffs) {
-        this.buffs = new ArrayList<PlayerBuff>(buffs.keySet());
+        this.buffs = new ArrayList<>(buffs.keySet());
     }
 
     public List<PlayerBuff> getBuffs() {

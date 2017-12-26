@@ -99,7 +99,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     private String lastPearlsLostReason = "";
 
     // Current traveling pearls.
-    private List<EndergenicPearl> pearls = new ArrayList<EndergenicPearl>();
+    private List<EndergenicPearl> pearls = new ArrayList<>();
 
     private long lastHudTime = 0;
     private List<String> clientHudLog = new ArrayList<>();
@@ -507,7 +507,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         if (pearls.isEmpty()) {
             return;
         }
-        List<EndergenicPearl> newlist = new ArrayList<EndergenicPearl>();
+        List<EndergenicPearl> newlist = new ArrayList<>();
         for (EndergenicPearl pearl : pearls) {
             log("Pearls: age=" + pearl.getAge() + ", ticks left=" + pearl.getTicksLeft());
             if (!pearl.handleTick(getWorld())) {

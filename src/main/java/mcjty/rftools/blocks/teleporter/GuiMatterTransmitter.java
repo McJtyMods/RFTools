@@ -15,6 +15,7 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.network.PacketGetPlayers;
 import mcjty.rftools.network.RFToolsMessages;
 import org.lwjgl.input.Keyboard;
 
@@ -135,7 +136,7 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
     }
 
     private void populatePlayers() {
-        List<String> newPlayers = new ArrayList<String>(fromServer_allowedPlayers);
+        List<String> newPlayers = new ArrayList<>(fromServer_allowedPlayers);
         Collections.sort(newPlayers);
         if (newPlayers.equals(players)) {
             return;

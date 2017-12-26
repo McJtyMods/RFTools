@@ -1732,9 +1732,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         int rfNeededPlayer = (int) (BuilderConfiguration.builderRfPerPlayer * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
 
         // Check for entities.
-        List entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(x - .1, y - .1, z - .1, x + 1.1, y + 1.1, z + 1.1));
-        for (Object o : entities) {
-            Entity entity = (Entity) o;
+        List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(x - .1, y - .1, z - .1, x + 1.1, y + 1.1, z + 1.1));
+        for (Entity entity : entities) {
 
             if (consumeEntityEnergy(rfNeeded, rfNeededPlayer, entity)) {
                 return;
@@ -1753,10 +1752,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         int rfNeededPlayer = (int) (BuilderConfiguration.builderRfPerPlayer * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
 
         // Check for entities.
-        List entitiesSrc = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(x, y, z, x + 1, y + 1, z + 1));
-        List entitiesDst = destWorld.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(destX, destY, destZ, destX + 1, destY + 1, destZ + 1));
-        for (Object o : entitiesSrc) {
-            Entity entity = (Entity) o;
+        List<Entity> entitiesSrc = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(x, y, z, x + 1, y + 1, z + 1));
+        List<Entity> entitiesDst = destWorld.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(destX, destY, destZ, destX + 1, destY + 1, destZ + 1));
+        for (Entity entity : entitiesSrc) {
             if (isEntityInBlock(x, y, z, entity)) {
                 if (consumeEntityEnergy(rfNeeded, rfNeededPlayer, entity)) {
                     return;
@@ -1768,8 +1766,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 teleportEntity(world, destWorld, entity, newX, newY, newZ);
             }
         }
-        for (Object o : entitiesDst) {
-            Entity entity = (Entity) o;
+        for (Entity entity : entitiesDst) {
             if (isEntityInBlock(destX, destY, destZ, entity)) {
                 if (consumeEntityEnergy(rfNeeded, rfNeededPlayer, entity)) {
                     return;

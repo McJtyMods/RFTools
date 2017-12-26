@@ -28,7 +28,7 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
 
     private String name = null;
     private boolean privateAccess = false;
-    private Set<String> allowedPlayers = new HashSet<String>();
+    private Set<String> allowedPlayers = new HashSet<>();
     private int id = -1;
 
     private BlockPos cachedPos;

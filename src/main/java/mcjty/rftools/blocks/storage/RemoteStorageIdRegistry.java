@@ -17,8 +17,8 @@ public class RemoteStorageIdRegistry extends WorldSavedData {
     private static RemoteStorageIdRegistry instance = null;
 
     private int lastId = 0;
-    private Map<Integer,GlobalCoordinate> storages = new HashMap<Integer, GlobalCoordinate>();
-    private Map<Integer,Long> lastPublishTime = new HashMap<Integer, Long>();
+    private Map<Integer,GlobalCoordinate> storages = new HashMap<>();
+    private Map<Integer,Long> lastPublishTime = new HashMap<>();
 
     public RemoteStorageIdRegistry(String identifier) {
         super(identifier);

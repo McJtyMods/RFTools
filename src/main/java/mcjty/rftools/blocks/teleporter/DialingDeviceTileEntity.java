@@ -137,7 +137,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
         int hrange = TeleportConfiguration.horizontalDialerRange;
         int vrange = TeleportConfiguration.verticalDialerRange;
 
-        List<TransmitterInfo> transmitters = new ArrayList<TransmitterInfo>();
+        List<TransmitterInfo> transmitters = new ArrayList<>();
         for (int dy = -vrange ; dy <= vrange ; dy++) {
             int yy = y + dy;
             if (yy >= 0 && yy < getWorld().getHeight()) {

@@ -3,7 +3,6 @@ package mcjty.rftools.blocks.environmental;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
 import mcjty.rftools.blocks.environmental.modules.NoTeleportEModule;
-import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;

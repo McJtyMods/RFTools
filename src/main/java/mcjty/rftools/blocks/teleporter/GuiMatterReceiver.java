@@ -15,6 +15,7 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.network.PacketGetPlayers;
 import mcjty.rftools.network.RFToolsMessages;
 import org.lwjgl.input.Keyboard;
 
@@ -39,7 +40,7 @@ public class GuiMatterReceiver extends GenericGuiContainer<MatterReceiverTileEnt
     private List<String> players = null;
     private int listDirty = 0;
 
-    private static Set<String> fromServer_allowedPlayers = new HashSet<String>();
+    private static Set<String> fromServer_allowedPlayers = new HashSet<>();
     public static void storeAllowedPlayersForClient(List<String> players) {
         fromServer_allowedPlayers = new HashSet<>(players);
     }
