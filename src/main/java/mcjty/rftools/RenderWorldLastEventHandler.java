@@ -62,7 +62,7 @@ public class RenderWorldLastEventHandler {
                 GlobalCoordinate current = SmartWrenchItem.getCurrentBlock(heldItem);
                 if (current != null) {
                     if (current.getDimension() == mc.world.provider.getDimension()) {
-                        TileEntity te = mc.world.getTileEntity(current);
+                        TileEntity te = mc.world.getTileEntity(current.getCoordinate());
                         if (te instanceof BlockProtectorTileEntity) {
                             BlockProtectorTileEntity blockProtectorTileEntity = (BlockProtectorTileEntity) te;
                             Set<BlockPos> coordinates = blockProtectorTileEntity.getProtectedBlocks();
@@ -81,13 +81,13 @@ public class RenderWorldLastEventHandler {
                     Set<BlockPos> coordinates = new HashSet<>();
                     coordinates.add(new BlockPos(0, 0, 0));
                     if (mode == ShapeCardItem.MODE_CORNER2) {
-                        BlockPos cur = current;
+                        BlockPos cur = current.getCoordinate();
                         BlockPos c = ShapeCardItem.getCorner1(heldItem);
                         if (c != null) {
                             coordinates.add(new BlockPos(c.getX() - cur.getX(), c.getY() - cur.getY(), c.getZ() - cur.getZ()));
                         }
                     }
-                    renderHighlightedBlocks(evt, p, current, coordinates);
+                    renderHighlightedBlocks(evt, p, current.getCoordinate(), coordinates);
                 }
             }
         }
