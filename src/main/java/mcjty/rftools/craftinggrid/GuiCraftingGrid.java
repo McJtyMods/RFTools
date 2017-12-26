@@ -12,7 +12,6 @@ import mcjty.lib.network.Arguments;
 import mcjty.lib.varia.BlockTools;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.crafter.CraftingRecipe;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;

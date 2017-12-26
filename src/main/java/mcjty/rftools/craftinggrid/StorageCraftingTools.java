@@ -1,7 +1,6 @@
 package mcjty.rftools.craftinggrid;
 
 import gnu.trove.set.hash.TIntHashSet;
-import mcjty.rftools.blocks.crafter.CraftingRecipe;
 import mcjty.rftools.blocks.storage.ModularStorageItemContainer;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.storage.RemoteStorageItemContainer;

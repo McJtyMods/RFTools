@@ -1,4 +1,4 @@
-package mcjty.rftools.blocks.crafter;
+package mcjty.rftools.craftinggrid;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;

@@ -8,6 +8,7 @@ import mcjty.lib.varia.ItemStackList;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.NullSidedInvWrapper;
 import mcjty.lib.varia.RedstoneMode;
+import mcjty.rftools.craftinggrid.CraftingRecipe;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.jei.JEIRecipeAcceptor;
@@ -26,12 +27,12 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.oredict.OreDictionary;
 
+import static mcjty.rftools.craftinggrid.CraftingRecipe.CraftMode.EXTC;
+import static mcjty.rftools.craftinggrid.CraftingRecipe.CraftMode.INT;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static mcjty.rftools.blocks.crafter.CraftingRecipe.CraftMode.EXTC;
-import static mcjty.rftools.blocks.crafter.CraftingRecipe.CraftMode.INT;
 
 public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements ITickable, DefaultSidedInventory,
         JEIRecipeAcceptor {

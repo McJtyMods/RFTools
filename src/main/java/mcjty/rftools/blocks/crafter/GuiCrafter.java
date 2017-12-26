@@ -15,6 +15,7 @@ import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.ItemStackList;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.craftinggrid.CraftingRecipe;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;

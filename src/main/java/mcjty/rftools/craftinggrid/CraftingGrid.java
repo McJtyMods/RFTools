@@ -1,6 +1,5 @@
 package mcjty.rftools.craftinggrid;
 
-import mcjty.rftools.blocks.crafter.CraftingRecipe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;

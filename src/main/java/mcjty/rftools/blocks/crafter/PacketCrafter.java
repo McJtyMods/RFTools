@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.crafter;
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.craftinggrid.CraftingRecipe;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
