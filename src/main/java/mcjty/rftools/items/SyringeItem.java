@@ -7,8 +7,10 @@ import mcjty.rftools.RFTools;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.MultiPartEntityPart;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,10 +19,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -35,6 +39,19 @@ public class SyringeItem extends GenericRFToolsItem {
     public SyringeItem() {
         super("syringe");
         setMaxStackSize(1);
+    }
+
+    @Override
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+        if(isInCreativeTab(tab)) {
+            items.add(new ItemStack(this));
+            for(EntityEntry entry : ForgeRegistries.ENTITIES) {
+                Class<? extends Entity> clazz = entry.getEntityClass();
+                if(EntityLiving.class.isAssignableFrom(clazz)) {
+                    items.add(createMobSyringe(clazz));
+                }
+            }
+        }
     }
 
     @Override
