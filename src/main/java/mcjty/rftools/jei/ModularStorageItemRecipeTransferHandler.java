@@ -16,8 +16,8 @@ import java.util.Map;
 
 public class ModularStorageItemRecipeTransferHandler implements IRecipeTransferHandler<ModularStorageItemContainer> {
 
-    public static void register(IRecipeTransferRegistry transferRegistry, IRecipeTransferHandler handler) {
-        transferRegistry.addRecipeTransferHandler(handler, VanillaRecipeCategoryUid.CRAFTING);
+    public static void register(IRecipeTransferRegistry transferRegistry) {
+        transferRegistry.addRecipeTransferHandler(new ModularStorageItemRecipeTransferHandler(), VanillaRecipeCategoryUid.CRAFTING);
     }
 
     @Override

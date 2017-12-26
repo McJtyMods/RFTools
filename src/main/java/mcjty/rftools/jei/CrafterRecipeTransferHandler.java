@@ -19,8 +19,8 @@ import java.util.Map;
 
 public class CrafterRecipeTransferHandler implements IRecipeTransferHandler<CrafterContainer> {
 
-    public static void register(IRecipeTransferRegistry transferRegistry, IRecipeTransferHandler handler) {
-        transferRegistry.addRecipeTransferHandler(handler, VanillaRecipeCategoryUid.CRAFTING);
+    public static void register(IRecipeTransferRegistry transferRegistry) {
+        transferRegistry.addRecipeTransferHandler(new CrafterRecipeTransferHandler(), VanillaRecipeCategoryUid.CRAFTING);
     }
 
     @Override
