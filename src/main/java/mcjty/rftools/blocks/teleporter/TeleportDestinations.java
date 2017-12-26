@@ -41,7 +41,7 @@ public class TeleportDestinations extends WorldSavedData {
             } else {
                 name = destination.getName();
                 if (name == null || name.isEmpty()) {
-                    name = destination.getCoordinate() + " (" + destination.getDimension() + ")";
+                    name = BlockPosTools.toString(destination.getCoordinate()) + " (" + destination.getDimension() + ")";
                 }
             }
         }
