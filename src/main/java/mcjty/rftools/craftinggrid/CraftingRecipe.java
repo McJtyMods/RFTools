@@ -25,7 +25,7 @@ public class CraftingRecipe {
 
     private boolean keepOne = false;
 
-    enum CraftMode {
+    public enum CraftMode {
         EXT("Ext"),
         INT("Int"),
         EXTC("ExtC");
