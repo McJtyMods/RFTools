@@ -14,7 +14,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -84,12 +83,7 @@ public class StorageFilterItem extends GenericRFToolsItem {
                         stack.setTagCompound(new NBTTagCompound());
                     }
                     StorageFilterInventory.convertItemsToNBT(stack.getTagCompound(), stacks);
-                    ITextComponent component = new TextComponentString(TextFormatting.GREEN + "Stored inventory contents in filter");
-                    if (playerIn instanceof EntityPlayer) {
-                        ((EntityPlayer) playerIn).sendStatusMessage(component, false);
-                    } else {
-                        playerIn.sendMessage(component);
-                    }
+                    playerIn.sendStatusMessage(new TextComponentString(TextFormatting.GREEN + "Stored inventory contents in filter"), false);
                 } else {
                     IBlockState state = worldIn.getBlockState(pos);
                     ItemStack blockStack = state.getBlock().getItem(worldIn, pos, state);
@@ -107,12 +101,7 @@ public class StorageFilterItem extends GenericRFToolsItem {
                         for (int i = 0 ; i < FILTER_SLOTS ; i++) {
                             if (stacks.get(i).isEmpty()) {
                                 stacks.set(i, blockStack);
-                                ITextComponent component = new TextComponentString(TextFormatting.GREEN + "Added " + blockStack.getDisplayName() + " to the filter!");
-                                if (playerIn instanceof EntityPlayer) {
-                                    ((EntityPlayer) playerIn).sendStatusMessage(component, false);
-                                } else {
-                                    playerIn.sendMessage(component);
-                                }
+                                playerIn.sendStatusMessage(new TextComponentString(TextFormatting.GREEN + "Added " + blockStack.getDisplayName() + " to the filter!"), false);
                                 StorageFilterInventory.convertItemsToNBT(stack.getTagCompound(), stacks);
                                 break;
                             }

@@ -29,7 +29,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
@@ -139,22 +138,12 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
                     BlockPos pos = RFToolsTools.getPositionFromModule(module);
                     WorldServer world = DimensionManager.getWorld(dimension);
                     if (!RFToolsTools.chunkLoaded(world, pos)) {
-                        ITextComponent component = new TextComponentString(TextFormatting.YELLOW + "Storage scanner out of range!");
-                        if (entityPlayer instanceof EntityPlayer) {
-                            ((EntityPlayer) entityPlayer).sendStatusMessage(component, false);
-                        } else {
-                            entityPlayer.sendMessage(component);
-                        }
+                        entityPlayer.sendStatusMessage(new TextComponentString(TextFormatting.YELLOW + "Storage scanner out of range!"), false);
                         return null;
                     }
                     TileEntity scannerTE = world.getTileEntity(pos);
                     if (!(scannerTE instanceof StorageScannerTileEntity)) {
-                        ITextComponent component = new TextComponentString(TextFormatting.YELLOW + "Storage scanner is missing!");
-                        if (entityPlayer instanceof EntityPlayer) {
-                            ((EntityPlayer) entityPlayer).sendStatusMessage(component, false);
-                        } else {
-                            entityPlayer.sendMessage(component);
-                        }
+                        entityPlayer.sendStatusMessage(new TextComponentString(TextFormatting.YELLOW + "Storage scanner is missing!"), false);
                         return null;
                     }
 
