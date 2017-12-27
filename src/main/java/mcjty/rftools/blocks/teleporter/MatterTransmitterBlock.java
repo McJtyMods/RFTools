@@ -34,9 +34,7 @@ import java.util.List;
 
 public class MatterTransmitterBlock extends GenericRFToolsBlock<MatterTransmitterTileEntity, EmptyContainer> implements Infusable {
 
-    @SideOnly(Side.CLIENT)
     public static Integer clientSideId = null;
-    @SideOnly(Side.CLIENT)
     public static String clientSideName = "?";
 
     public MatterTransmitterBlock() {
