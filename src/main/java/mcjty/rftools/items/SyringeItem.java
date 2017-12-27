@@ -53,7 +53,6 @@ public class SyringeItem extends GenericRFToolsItem {
             }
         }
     }
-
     @Override
     @SideOnly(Side.CLIENT)
     public void initModel() {
@@ -108,8 +107,7 @@ public class SyringeItem extends GenericRFToolsItem {
 
     @Override
     public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
-        Class<? extends Entity> clazz = findSelectedMobClass(entity);
-        if (clazz != null && EntityLiving.class.isAssignableFrom(clazz)) {
+        if(entity instanceof EntityLiving || (entity instanceof MultiPartEntityPart && ((MultiPartEntityPart)entity).parent instanceof EntityLiving)) {
             String prevMobId = null;
             NBTTagCompound tagCompound = stack.getTagCompound();
             if (tagCompound != null) {
@@ -118,46 +116,32 @@ public class SyringeItem extends GenericRFToolsItem {
                 tagCompound = new NBTTagCompound();
                 stack.setTagCompound(tagCompound);
             }
-            String id = findSelectedMobId(clazz, entity);
+            String id = findSelectedMobId(entity);
             if (id != null && !id.isEmpty()) {
-                if (prevMobId == null || !prevMobId.equals(id)) {
-                    tagCompound.setString("mobName", findSelectedMobName(entity));
+                if (!id.equals(prevMobId)) {
+                    tagCompound.setString("mobName", entity.getName());
                     tagCompound.setString("mobId", id);
                     tagCompound.setInteger("level", 1);
                 } else {
-                    int level = tagCompound.getInteger("level");
-                    level++;
-                    if (level > GeneralConfiguration.maxMobInjections) {
-                        level = GeneralConfiguration.maxMobInjections;
-                    }
-                    tagCompound.setInteger("level", level);
+                    tagCompound.setInteger("level", Math.min(tagCompound.getInteger("level") + 1, GeneralConfiguration.maxMobInjections));
                 }
             }
         }
         return super.onLeftClickEntity(stack, player, entity);
     }
 
-    private String findSelectedMobId(Class<? extends Entity> clazz, Entity entity) {
-        ResourceLocation key = EntityList.getKey(clazz);
+    private String findSelectedMobId(Entity entity) {
+        ResourceLocation key = EntityList.getKey(entity.getClass());
         if (key != null) {
             return key.toString();
         }
-        if (clazz.isAssignableFrom(MultiPartEntityPart.class)) {
+        if (entity instanceof MultiPartEntityPart) {
             MultiPartEntityPart mp = (MultiPartEntityPart) entity;
             if (mp.parent instanceof EntityDragon) {
                 return "minecraft:ender_dragon";
             }
         }
         return null;
-    }
-
-    private Class<? extends Entity> findSelectedMobClass(Entity entity) {
-        // First try to find an exact matching class.
-        return entity.getClass();
-    }
-
-    private String findSelectedMobName(Entity entity) {
-        return entity.getName();
     }
 
     @SideOnly(Side.CLIENT)
