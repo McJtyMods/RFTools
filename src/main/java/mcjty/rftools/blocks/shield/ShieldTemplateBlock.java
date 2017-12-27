@@ -109,6 +109,7 @@ public class ShieldTemplateBlock extends CompatBlock {
     public static class ShieldTemplateItemBlock extends ItemBlock {
         public ShieldTemplateItemBlock(Block block) {
             super(block);
+            setHasSubtypes(true);
         }
 
         @Override
