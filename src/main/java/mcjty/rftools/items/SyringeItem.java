@@ -11,8 +11,8 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.IEntityMultiPart;
 import net.minecraft.entity.MultiPartEntityPart;
-import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,6 +31,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 //import net.minecraft.entity.monster.SkeletonType;
 
@@ -53,6 +55,7 @@ public class SyringeItem extends GenericRFToolsItem {
             }
         }
     }
+
     @Override
     @SideOnly(Side.CLIENT)
     public void initModel() {
@@ -107,7 +110,8 @@ public class SyringeItem extends GenericRFToolsItem {
 
     @Override
     public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
-        if(entity instanceof EntityLiving || (entity instanceof MultiPartEntityPart && ((MultiPartEntityPart)entity).parent instanceof EntityLiving)) {
+        EntityLiving entityLiving = getEntityLivingFromClickedEntity(entity);
+        if(entityLiving != null) {
             String prevMobId = null;
             NBTTagCompound tagCompound = stack.getTagCompound();
             if (tagCompound != null) {
@@ -116,10 +120,10 @@ public class SyringeItem extends GenericRFToolsItem {
                 tagCompound = new NBTTagCompound();
                 stack.setTagCompound(tagCompound);
             }
-            String id = findSelectedMobId(entity);
+            String id = findSelectedMobId(entityLiving);
             if (id != null && !id.isEmpty()) {
                 if (!id.equals(prevMobId)) {
-                    tagCompound.setString("mobName", entity.getName());
+                    tagCompound.setString("mobName", entityLiving.getName());
                     tagCompound.setString("mobId", id);
                     tagCompound.setInteger("level", 1);
                 } else {
@@ -130,18 +134,21 @@ public class SyringeItem extends GenericRFToolsItem {
         return super.onLeftClickEntity(stack, player, entity);
     }
 
-    private String findSelectedMobId(Entity entity) {
-        ResourceLocation key = EntityList.getKey(entity.getClass());
-        if (key != null) {
-            return key.toString();
-        }
-        if (entity instanceof MultiPartEntityPart) {
-            MultiPartEntityPart mp = (MultiPartEntityPart) entity;
-            if (mp.parent instanceof EntityDragon) {
-                return "minecraft:ender_dragon";
+    private static @Nullable EntityLiving getEntityLivingFromClickedEntity(Entity entity) {
+        if(entity instanceof EntityLiving) {
+            return (EntityLiving)entity;
+        } else if(entity instanceof MultiPartEntityPart) {
+            IEntityMultiPart parent = ((MultiPartEntityPart)entity).parent;
+            if(parent instanceof EntityLiving) {
+                return (EntityLiving)parent;
             }
         }
         return null;
+    }
+
+    private String findSelectedMobId(Entity entity) {
+        ResourceLocation key = EntityList.getKey(entity.getClass());
+        return key != null ? key.toString() : null;
     }
 
     @SideOnly(Side.CLIENT)
