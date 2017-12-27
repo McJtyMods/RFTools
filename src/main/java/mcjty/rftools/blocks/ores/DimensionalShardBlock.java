@@ -84,7 +84,6 @@ public class DimensionalShardBlock extends CompatBlock {
 
     @Override
     protected void clGetSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
-        super.clGetSubBlocks(itemIn, tab, subItems);
         subItems.add(new ItemStack(this, 1, 0));
         subItems.add(new ItemStack(this, 1, 1));
         subItems.add(new ItemStack(this, 1, 2));
