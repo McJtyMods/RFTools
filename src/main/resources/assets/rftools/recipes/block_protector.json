@@ -14,7 +14,8 @@
   "type": "minecraft:crafting_shaped",
   "key": {
     "t": {
-      "item": "rftools:shield_template_block"
+      "item": "rftools:shield_template_block",
+      "data": 0
     },
     "M": {
       "item": "rftools:machine_frame"
