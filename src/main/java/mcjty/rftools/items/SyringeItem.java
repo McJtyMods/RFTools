@@ -109,7 +109,7 @@ public class SyringeItem extends GenericRFToolsItem {
     @Override
     public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
         Class<? extends Entity> clazz = findSelectedMobClass(entity);
-        if (clazz != null) {
+        if (clazz != null && EntityLiving.class.isAssignableFrom(clazz)) {
             String prevMobId = null;
             NBTTagCompound tagCompound = stack.getTagCompound();
             if (tagCompound != null) {
