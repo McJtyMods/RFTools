@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.api.IModuleSupport;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.network.Arguments;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.CommandHandler;
@@ -57,7 +56,7 @@ public class ModularStorageBlock extends GenericRFToolsBlock<ModularStorageTileE
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiModularStorage> getGuiClass() {
         return GuiModularStorage.class;
     }
 

@@ -12,7 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class DumpClientScreenModule implements IClientScreenModule {
+public class DumpClientScreenModule implements IClientScreenModule<IModuleData> {
     private String line = "";
     private int color = 0xffffff;
     private ItemStack[] stacks = new ItemStack[DumpScreenModule.COLS * DumpScreenModule.ROWS];

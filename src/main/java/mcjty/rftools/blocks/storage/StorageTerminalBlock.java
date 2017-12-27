@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.api.IModuleSupport;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
@@ -51,7 +50,7 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiStorageTerminal> getGuiClass() {
         return GuiStorageTerminal.class;
     }
 

@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.network.Arguments;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.CommandHandler;
@@ -53,7 +52,7 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock<MatterTransmitte
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiMatterTransmitter> getGuiClass() {
         return GuiMatterTransmitter.class;
     }
 

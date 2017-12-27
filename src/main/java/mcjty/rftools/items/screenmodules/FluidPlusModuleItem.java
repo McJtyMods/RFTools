@@ -3,9 +3,7 @@ package mcjty.rftools.items.screenmodules;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.CapabilityTools;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
-import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.FluidPlusBarScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.FluidPlusBarClientScreenModule;
@@ -41,12 +39,12 @@ public class FluidPlusModuleItem extends GenericRFToolsItem implements IModulePr
     }
 
     @Override
-    public Class<? extends IScreenModule> getServerScreenModule() {
+    public Class<FluidPlusBarScreenModule> getServerScreenModule() {
         return FluidPlusBarScreenModule.class;
     }
 
     @Override
-    public Class<? extends IClientScreenModule> getClientScreenModule() {
+    public Class<FluidPlusBarClientScreenModule> getClientScreenModule() {
         return FluidPlusBarClientScreenModule.class;
     }
 

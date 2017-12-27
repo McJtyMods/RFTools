@@ -114,7 +114,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         statusLabel.setDesiredWidth(170).setDesiredHeight(14).setFilledRectThickness(1);
         Panel statusPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(statusButton).addChild(statusLabel).setDesiredHeight(16);
 
-        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setVerticalMargin(3).setSpacing(1)).
+        Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setVerticalMargin(3).setSpacing(1)).
                 addChild(energyBar).addChild(transmitterPanel).
                 addChild(receiverPanel).addChild(buttonPanel).addChild(statusPanel);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, DIALER_WIDTH, DIALER_HEIGHT));

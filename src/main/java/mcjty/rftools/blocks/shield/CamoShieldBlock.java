@@ -103,8 +103,8 @@ public class CamoShieldBlock extends AbstractShieldBlock {
 
     @Override
     protected BlockStateContainer createBlockState() {
-        IProperty[] listedProperties = new IProperty[] { };
-        IUnlistedProperty[] unlistedProperties = new IUnlistedProperty[] { CAMOID };
+        IProperty<?>[] listedProperties = new IProperty[] { };
+        IUnlistedProperty<?>[] unlistedProperties = new IUnlistedProperty[] { CAMOID };
         return new ExtendedBlockState(this, listedProperties, unlistedProperties);
     }
 

@@ -68,7 +68,7 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
         blacklistMode.addChoice("Black", "Blacklist players", guiElements, 14 * 16, 32);
 
 
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(allowedPlayersPanel).addChild(buttonPanel).addChild(channelNameField).
+        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(allowedPlayersPanel).addChild(buttonPanel).addChild(channelNameField).
                 addChild(blacklistMode);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
         window = new Window(this, toplevel);

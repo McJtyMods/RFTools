@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.storagemonitor;
 
 import mcjty.lib.api.Infusable;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.material.Material;
@@ -23,7 +22,7 @@ public class StorageScannerBlock extends GenericRFToolsBlock<StorageScannerTileE
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiStorageScanner> getGuiClass() {
         return GuiStorageScanner.class;
     }
 

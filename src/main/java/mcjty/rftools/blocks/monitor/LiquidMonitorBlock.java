@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.monitor;
 
 import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.material.Material;
@@ -52,7 +51,7 @@ public class LiquidMonitorBlock extends GenericRFToolsBlock<LiquidMonitorBlockTi
     }
 
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiLiquidMonitor> getGuiClass() {
         return GuiLiquidMonitor.class;
     }
 

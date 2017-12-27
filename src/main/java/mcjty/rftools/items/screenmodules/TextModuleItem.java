@@ -1,8 +1,6 @@
 package mcjty.rftools.items.screenmodules;
 
-import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
-import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.TextScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.TextClientScreenModule;
@@ -41,12 +39,12 @@ public class TextModuleItem extends GenericRFToolsItem implements IModuleProvide
     }
 
     @Override
-    public Class<? extends IScreenModule> getServerScreenModule() {
+    public Class<TextScreenModule> getServerScreenModule() {
         return TextScreenModule.class;
     }
 
     @Override
-    public Class<? extends IClientScreenModule> getClientScreenModule() {
+    public Class<TextClientScreenModule> getClientScreenModule() {
         return TextClientScreenModule.class;
     }
 

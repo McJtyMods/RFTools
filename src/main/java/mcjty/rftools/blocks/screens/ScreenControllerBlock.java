@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.api.Infusable;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.material.Material;
@@ -30,7 +29,7 @@ public class ScreenControllerBlock extends GenericRFToolsBlock<ScreenControllerT
     }
 
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiScreenController> getGuiClass() {
         return GuiScreenController.class;
     }
 

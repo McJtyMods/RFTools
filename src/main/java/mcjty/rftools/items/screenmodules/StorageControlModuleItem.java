@@ -5,9 +5,7 @@ import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
-import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.StorageControlScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.StorageControlClientScreenModule;
@@ -110,12 +108,12 @@ public class StorageControlModuleItem extends GenericRFToolsItem implements IMod
     }
 
     @Override
-    public Class<? extends IScreenModule> getServerScreenModule() {
+    public Class<StorageControlScreenModule> getServerScreenModule() {
         return StorageControlScreenModule.class;
     }
 
     @Override
-    public Class<? extends IClientScreenModule> getClientScreenModule() {
+    public Class<StorageControlClientScreenModule> getClientScreenModule() {
         return StorageControlClientScreenModule.class;
     }
 

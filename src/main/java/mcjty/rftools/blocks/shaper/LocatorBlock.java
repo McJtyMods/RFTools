@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.shaper;
 
 import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.blocks.builder.BuilderSetup;
@@ -59,7 +58,7 @@ public class LocatorBlock extends GenericRFToolsBlock<LocatorTileEntity, EmptyCo
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiLocator> getGuiClass() {
         return GuiLocator.class;
     }
 

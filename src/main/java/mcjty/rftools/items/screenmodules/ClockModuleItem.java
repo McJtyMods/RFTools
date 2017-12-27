@@ -1,8 +1,6 @@
 package mcjty.rftools.items.screenmodules;
 
-import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
-import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ClockScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ClockClientScreenModule;
@@ -36,12 +34,12 @@ public class ClockModuleItem extends GenericRFToolsItem implements IModuleProvid
     }
 
     @Override
-    public Class<? extends IScreenModule> getServerScreenModule() {
+    public Class<ClockScreenModule> getServerScreenModule() {
         return ClockScreenModule.class;
     }
 
     @Override
-    public Class<? extends IClientScreenModule> getClientScreenModule() {
+    public Class<ClockClientScreenModule> getClientScreenModule() {
         return ClockClientScreenModule.class;
     }
 

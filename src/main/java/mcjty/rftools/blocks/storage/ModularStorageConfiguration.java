@@ -90,21 +90,21 @@ public class ModularStorageConfiguration {
         }
     }
 
-    private static void formatClassification(String type, String name, Class clz, String group) {
+    private static void formatClassification(String type, String name, Class<?> clz, String group) {
         StringBuilder sb = new StringBuilder();
         Formatter formatter = new Formatter(sb, Locale.US);
         formatter.format("%1$-1.1s Name:%2$-30.30s Class:%3$-50.50s Group:%4$-20.20s", type, name, clz.getCanonicalName(), group);
         Logging.log(sb.toString());
     }
 
-    private static void formateAsCode(Class clz, String group) {
+    private static void formateAsCode(Class<?> clz, String group) {
         StringBuilder sb = new StringBuilder();
         Formatter formatter = new Formatter(sb, Locale.US);
         formatter.format("categoryMapper.put(\"%1$s\", \"%2$s\");", clz.getCanonicalName(), group);
         Logging.log(sb.toString());
     }
 
-    public static String getCategory(Class cls) {
+    public static String getCategory(Class<?> cls) {
         if (cls == null) {
             return null;
         }
@@ -133,7 +133,7 @@ public class ModularStorageConfiguration {
             return name;
         }
 
-        for (Class intface : cls.getInterfaces()) {
+        for (Class<?> intface : cls.getInterfaces()) {
             String cat = getCategory(intface);
             if (cat != null) {
                 return null;

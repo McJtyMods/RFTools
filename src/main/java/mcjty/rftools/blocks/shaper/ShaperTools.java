@@ -21,7 +21,7 @@ public class ShaperTools {
         World world = player.getEntityWorld();
         Block block = world.getBlockState(pos).getBlock();
         if (block instanceof GenericBlock) {
-            player.openGui(RFTools.instance, ((GenericBlock) block).getGuiID(), world,
+            player.openGui(RFTools.instance, ((GenericBlock<?, ?>) block).getGuiID(), world,
                     pos.getX(), pos.getY(), pos.getZ());
         }
     }

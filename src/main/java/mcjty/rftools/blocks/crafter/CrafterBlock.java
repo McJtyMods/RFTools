@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.crafter;
 
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.api.Infusable;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.crafting.INBTPreservingIngredient;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
@@ -36,7 +35,7 @@ public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterCont
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiCrafter> getGuiClass() {
         return GuiCrafter.class;
     }
 

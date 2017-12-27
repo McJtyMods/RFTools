@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.logic.sensor;
 
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -37,7 +36,7 @@ public class SensorBlock extends LogicSlabBlock<SensorTileEntity, SensorContaine
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiSensor> getGuiClass() {
         return GuiSensor.class;
     }
 

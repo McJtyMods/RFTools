@@ -3,9 +3,7 @@ package mcjty.rftools.items.screenmodules;
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
-import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.MachineInformationScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.MachineInformationClientScreenModule;
@@ -41,12 +39,12 @@ public class MachineInformationModuleItem extends GenericRFToolsItem implements 
     }
 
     @Override
-    public Class<? extends IScreenModule> getServerScreenModule() {
+    public Class<MachineInformationScreenModule> getServerScreenModule() {
         return MachineInformationScreenModule.class;
     }
 
     @Override
-    public Class<? extends IClientScreenModule> getClientScreenModule() {
+    public Class<MachineInformationClientScreenModule> getClientScreenModule() {
         return MachineInformationClientScreenModule.class;
     }
 

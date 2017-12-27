@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.container.BaseBlock;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
@@ -458,7 +457,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiScreen> getGuiClass() {
         return GuiScreen.class;
     }
 

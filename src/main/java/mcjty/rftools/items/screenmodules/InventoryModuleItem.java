@@ -4,9 +4,7 @@ import mcjty.lib.crafting.INBTPreservingIngredient;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.CapabilityTools;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
-import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ItemStackScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ItemStackClientScreenModule;
@@ -110,12 +108,12 @@ public class InventoryModuleItem extends GenericRFToolsItem implements IModulePr
     }
 
     @Override
-    public Class<? extends IScreenModule> getServerScreenModule() {
+    public Class<ItemStackScreenModule> getServerScreenModule() {
         return ItemStackScreenModule.class;
     }
 
     @Override
-    public Class<? extends IClientScreenModule> getClientScreenModule() {
+    public Class<ItemStackClientScreenModule> getClientScreenModule() {
         return ItemStackClientScreenModule.class;
     }
 

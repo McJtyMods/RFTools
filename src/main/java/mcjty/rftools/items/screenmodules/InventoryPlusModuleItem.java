@@ -3,9 +3,7 @@ package mcjty.rftools.items.screenmodules;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.CapabilityTools;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
-import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ItemStackPlusScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ItemStackPlusClientScreenModule;
@@ -117,12 +115,12 @@ public class InventoryPlusModuleItem extends GenericRFToolsItem implements IModu
     }
 
     @Override
-    public Class<? extends IScreenModule> getServerScreenModule() {
+    public Class<ItemStackPlusScreenModule> getServerScreenModule() {
         return ItemStackPlusScreenModule.class;
     }
 
     @Override
-    public Class<? extends IClientScreenModule> getClientScreenModule() {
+    public Class<ItemStackPlusClientScreenModule> getClientScreenModule() {
         return ItemStackPlusClientScreenModule.class;
     }
 

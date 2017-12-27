@@ -194,7 +194,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             radiusSlider.setVisible(false);
         }
 
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout())
+        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout())
                 .addChild(storagePanel)
                 .addChild(itemPanel)
                 .addChild(searchPanel)
@@ -615,7 +615,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
         int x = Mouse.getEventX() * width / mc.displayWidth;
         int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
-        Widget widget = window.getToplevel().getWidgetAtPosition(x, y);
+        Widget<?> widget = window.getToplevel().getWidgetAtPosition(x, y);
         if (widget instanceof BlockRender) {
             BlockRender blockRender = (BlockRender) widget;
             Object renderItem = blockRender.getRenderItem();

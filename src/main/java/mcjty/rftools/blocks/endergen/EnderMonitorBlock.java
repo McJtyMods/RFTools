@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.endergen;
 
 import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -40,7 +39,7 @@ public class EnderMonitorBlock extends LogicSlabBlock<EnderMonitorTileEntity, Em
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiEnderMonitor> getGuiClass() {
         return GuiEnderMonitor.class;
     }
 

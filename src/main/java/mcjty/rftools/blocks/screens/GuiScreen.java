@@ -31,7 +31,7 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
     private Panel toplevel;
     private ToggleButton buttons[] = new ToggleButton[ScreenContainer.SCREEN_MODULES];
     private Panel modulePanels[] = new Panel[ScreenContainer.SCREEN_MODULES];
-    private IClientScreenModule[] clientScreenModules = new IClientScreenModule[ScreenContainer.SCREEN_MODULES];
+    private IClientScreenModule<?>[] clientScreenModules = new IClientScreenModule<?>[ScreenContainer.SCREEN_MODULES];
 
     private ToggleButton bright;
     private ChoiceLabel trueType;
@@ -146,7 +146,7 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
         buttons[i].setEnabled(true);
         toplevel.removeChild(modulePanels[i]);
         try {
-            IClientScreenModule clientScreenModule = clientScreenModuleClass.newInstance();
+            IClientScreenModule<?> clientScreenModule = clientScreenModuleClass.newInstance();
             clientScreenModules[i] = clientScreenModule;
         } catch (InstantiationException e) {
             throw new RuntimeException(e);

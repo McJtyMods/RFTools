@@ -63,7 +63,7 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
         lastOpportunities = new TextField(mc, this).setText("0").setDesiredWidth(90).setDesiredHeight(14);
         Panel p4 = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Chances:").setDesiredWidth(70)).addChild(lastOpportunities);
 
-        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(energyBar).
+        Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(energyBar).
                 addChild(descriptionLabel).
                 addChild(p1).addChild(p2).addChild(p3).addChild(p4);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, ENDERGENIC_WIDTH, ENDERGENIC_HEIGHT));

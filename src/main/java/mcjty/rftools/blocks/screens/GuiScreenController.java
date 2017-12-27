@@ -46,7 +46,7 @@ public class GuiScreenController extends GenericGuiContainer<ScreenControllerTil
         infoLabel = new Label(mc, this);
         infoLabel.setLayoutHint(new PositionalLayout.PositionalHint(30, 25, 140, 14));
 
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).addChild(scanButton).addChild(detachButton).
+        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).addChild(scanButton).addChild(detachButton).
                 addChild(infoLabel);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 

@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.spawner;
 
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.api.Infusable;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
@@ -43,7 +42,7 @@ public class SpawnerBlock extends GenericRFToolsBlock<SpawnerTileEntity, Spawner
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiSpawner> getGuiClass() {
         return GuiSpawner.class;
     }
 

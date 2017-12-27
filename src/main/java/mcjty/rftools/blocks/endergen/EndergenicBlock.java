@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.endergen;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.theoneprobe.api.*;
@@ -57,7 +56,7 @@ public class EndergenicBlock extends GenericRFToolsBlock<EndergenicTileEntity, E
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiEndergenic> getGuiClass() {
         return GuiEndergenic.class;
     }
 

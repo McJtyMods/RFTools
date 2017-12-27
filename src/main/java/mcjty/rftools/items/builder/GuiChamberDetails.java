@@ -76,7 +76,7 @@ public class GuiChamberDetails extends GuiItemScreen {
         info2Label = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
         info2Label.setDesiredWidth(380).setDesiredHeight(14);
 
-        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setSpacing(1).setVerticalMargin(3)).addChild(listPanel).addChild(infoLabel).addChild(info2Label);
+        Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setSpacing(1).setVerticalMargin(3)).addChild(listPanel).addChild(infoLabel).addChild(info2Label);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);

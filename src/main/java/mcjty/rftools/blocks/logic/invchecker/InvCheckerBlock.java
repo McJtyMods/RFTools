@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.logic.invchecker;
 
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -35,7 +34,7 @@ public class InvCheckerBlock extends LogicSlabBlock<InvCheckerTileEntity, InvChe
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiInvChecker> getGuiClass() {
         return GuiInvChecker.class;
     }
 

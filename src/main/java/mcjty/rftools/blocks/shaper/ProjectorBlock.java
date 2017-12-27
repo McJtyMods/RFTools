@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.shaper;
 
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.varia.OrientationTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
@@ -122,7 +121,7 @@ public class ProjectorBlock extends GenericRFToolsBlock<ProjectorTileEntity, Pro
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiProjector> getGuiClass() {
         return GuiProjector.class;
     }
 

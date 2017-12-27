@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.material.Material;
@@ -24,7 +23,7 @@ public class DialingDeviceBlock extends GenericRFToolsBlock<DialingDeviceTileEnt
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiDialingDevice> getGuiClass() {
         return GuiDialingDevice.class;
     }
 

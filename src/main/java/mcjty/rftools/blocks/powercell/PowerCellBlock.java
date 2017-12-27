@@ -4,7 +4,6 @@ import com.google.common.collect.Maps;
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.api.smartwrench.SmartWrenchMode;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.crafting.INBTPreservingIngredient;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.lib.varia.ModuleSupport;
@@ -67,7 +66,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiPowerCell> getGuiClass() {
         return GuiPowerCell.class;
     }
 

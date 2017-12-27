@@ -9,7 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class TextClientScreenModule implements IClientScreenModule {
+public class TextClientScreenModule implements IClientScreenModule<IModuleData> {
     private String line = "";
     private int color = 0xffffff;
 

@@ -2,9 +2,7 @@ package mcjty.rftools.items.screenmodules;
 
 import java.util.List;
 
-import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
-import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ComputerClientScreenModule;
@@ -29,12 +27,12 @@ public class ComputerModuleItem extends GenericRFToolsItem implements IModulePro
     }
 
     @Override
-    public Class<? extends IScreenModule> getServerScreenModule() {
+    public Class<ComputerScreenModule> getServerScreenModule() {
         return ComputerScreenModule.class;
     }
 
     @Override
-    public Class<? extends IClientScreenModule> getClientScreenModule() {
+    public Class<ComputerClientScreenModule> getClientScreenModule() {
         return ComputerClientScreenModule.class;
     }
 

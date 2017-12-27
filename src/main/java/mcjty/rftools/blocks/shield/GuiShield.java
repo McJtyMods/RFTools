@@ -150,7 +150,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         lootingBonus.setTooltips("Insert dimensional shards", "for looting bonus")
                 .setLayoutHint(new PositionalLayout.PositionalHint(160, 118, 60, 18));
 
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
+        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
                 addChild(visibilityOptions).addChild(applyCamo).addChild(redstoneMode).addChild(filterPanel).addChild(actionOptions).
                 addChild(typeOptions).addChild(player).addChild(controlPanel).addChild(damageType).
                 addChild(colorSelector).addChild(lootingBonus);

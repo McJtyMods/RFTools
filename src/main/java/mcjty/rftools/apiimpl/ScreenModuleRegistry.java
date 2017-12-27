@@ -15,7 +15,7 @@ import java.util.*;
 
 public class ScreenModuleRegistry implements IScreenModuleRegistry {
 
-    private Map<String, IModuleDataFactory> dataFactoryMap = new HashMap<>();
+    private Map<String, IModuleDataFactory<?>> dataFactoryMap = new HashMap<>();
     private Map<String, Integer> idToIntMap = null;
     private Map<Integer, String> inttoIdMap = null;
 
@@ -32,12 +32,12 @@ public class ScreenModuleRegistry implements IScreenModuleRegistry {
     }
 
     @Override
-    public void registerModuleDataFactory(String id, IModuleDataFactory dataFactory) {
+    public void registerModuleDataFactory(String id, IModuleDataFactory<?> dataFactory) {
         dataFactoryMap.put(id, dataFactory);
     }
 
     @Override
-    public IModuleDataFactory getModuleDataFactory(String id) {
+    public IModuleDataFactory<?> getModuleDataFactory(String id) {
         return dataFactoryMap.get(id);
     }
 

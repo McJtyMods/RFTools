@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.builder;
 
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.api.Infusable;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
@@ -133,7 +132,7 @@ public class BuilderBlock extends GenericRFToolsBlock<BuilderTileEntity, Builder
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiBuilder> getGuiClass() {
         return GuiBuilder.class;
     }
 

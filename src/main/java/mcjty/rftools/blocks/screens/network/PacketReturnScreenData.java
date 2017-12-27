@@ -26,7 +26,7 @@ public class PacketReturnScreenData implements IMessage {
             int key = buf.readInt();
             int shortId = buf.readInt();
             String id = RFTools.screenModuleRegistry.getNormalId(shortId);
-            IModuleDataFactory dataFactory = RFTools.screenModuleRegistry.getModuleDataFactory(id);
+            IModuleDataFactory<?> dataFactory = RFTools.screenModuleRegistry.getModuleDataFactory(id);
             IModuleData data = dataFactory.createData(buf);
             screenData.put(key, data);
         }

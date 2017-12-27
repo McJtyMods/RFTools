@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.blockprotector;
 
 import mcjty.lib.api.Infusable;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
@@ -49,7 +48,7 @@ public class BlockProtectorBlock extends GenericRFToolsBlock<BlockProtectorTileE
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiBlockProtector> getGuiClass() {
         return GuiBlockProtector.class;
     }
 

@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.generator;
 
 
 import mcjty.lib.api.Infusable;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -46,7 +45,7 @@ public class CoalGeneratorBlock extends GenericRFToolsBlock<CoalGeneratorTileEnt
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiCoalGenerator> getGuiClass() {
         return GuiCoalGenerator.class;
     }
 

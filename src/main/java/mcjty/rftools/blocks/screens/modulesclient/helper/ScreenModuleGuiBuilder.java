@@ -26,7 +26,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
     private IModuleGuiChanged moduleGuiChanged;
 
     private Panel panel;
-    private List<Widget> row = new ArrayList<>();
+    private List<Widget<?>> row = new ArrayList<>();
 
     public ScreenModuleGuiBuilder(Minecraft mc, Gui gui, NBTTagCompound currentData, IModuleGuiChanged moduleGuiChanged) {
         this.gui = gui;
@@ -266,7 +266,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
             row.clear();
         } else if (!row.isEmpty()) {
             Panel rowPanel = new Panel(mc, gui).setLayout(new HorizontalLayout()).setDesiredHeight(16);
-            for (Widget widget : row) {
+            for (Widget<?> widget : row) {
                 rowPanel.addChild(widget);
             }
             panel.addChild(rowPanel);

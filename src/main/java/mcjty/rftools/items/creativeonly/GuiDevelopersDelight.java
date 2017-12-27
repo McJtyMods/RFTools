@@ -111,7 +111,7 @@ public class GuiDevelopersDelight extends GuiScreen {
         Panel buttonPanel = new Panel(mc, this).setLayout(new VerticalLayout()).setDesiredWidth(62).addChild(tab1Button).addChild(tab2Button).addChild(tab3Button).
                 addChild(new Label(mc, this).setDynamic(true)).addChild(clientServerMode).addChild(metaData).addChild(new Label(mc, this).setDynamic(true));
 
-        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new HorizontalLayout()).addChild(buttonPanel).addChild(tabbedPanel);
+        Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new HorizontalLayout()).addChild(buttonPanel).addChild(tabbedPanel);
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
 
         window = new Window(this, toplevel);

@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.logic.counter;
 
 import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.network.Arguments;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
@@ -40,7 +39,7 @@ public class CounterBlock extends LogicSlabBlock<CounterTileEntity, EmptyContain
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiCounter> getGuiClass() {
         return GuiCounter.class;
     }
 

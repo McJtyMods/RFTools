@@ -2,9 +2,7 @@ package mcjty.rftools.items.screenmodules;
 
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
-import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.elevator.ElevatorTileEntity;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ElevatorButtonScreenModule;
@@ -40,12 +38,12 @@ public class ElevatorButtonModuleItem extends GenericRFToolsItem implements IMod
     }
 
     @Override
-    public Class<? extends IScreenModule> getServerScreenModule() {
+    public Class<ElevatorButtonScreenModule> getServerScreenModule() {
         return ElevatorButtonScreenModule.class;
     }
 
     @Override
-    public Class<? extends IClientScreenModule> getClientScreenModule() {
+    public Class<ElevatorButtonClientScreenModule> getClientScreenModule() {
         return ElevatorButtonClientScreenModule.class;
     }
 

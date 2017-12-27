@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.shield;
 
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.api.Infusable;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.crafting.INBTPreservingIngredient;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
@@ -53,7 +52,7 @@ public class ShieldBlock extends GenericRFToolsBlock<ShieldTEBase, ShieldContain
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiShield> getGuiClass() {
         return GuiShield.class;
     }
 

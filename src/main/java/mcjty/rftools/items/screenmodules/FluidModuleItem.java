@@ -4,9 +4,7 @@ import mcjty.lib.crafting.INBTPreservingIngredient;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.CapabilityTools;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
-import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.FluidBarScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.FluidBarClientScreenModule;
@@ -42,12 +40,12 @@ public class FluidModuleItem extends GenericRFToolsItem implements IModuleProvid
     }
 
     @Override
-    public Class<? extends IScreenModule> getServerScreenModule() {
+    public Class<FluidBarScreenModule> getServerScreenModule() {
         return FluidBarScreenModule.class;
     }
 
     @Override
-    public Class<? extends IClientScreenModule> getClientScreenModule() {
+    public Class<FluidBarClientScreenModule> getClientScreenModule() {
         return FluidBarClientScreenModule.class;
     }
 

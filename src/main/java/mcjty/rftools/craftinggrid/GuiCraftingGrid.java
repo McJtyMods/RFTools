@@ -42,7 +42,7 @@ public class GuiCraftingGrid {
     private WidgetList recipeList;
 
     private Minecraft mc;
-    private GenericGuiContainer gui;
+    private GenericGuiContainer<?> gui;
     private CraftingGridProvider provider;
     private BlockPos pos;
 
@@ -50,7 +50,7 @@ public class GuiCraftingGrid {
     private int lastTestAmount = -2;
     private int lastTestTimer = 0;
 
-    public void initGui(final ModBase modBase, final SimpleNetworkWrapper network, final Minecraft mc, GenericGuiContainer gui,
+    public void initGui(final ModBase modBase, final SimpleNetworkWrapper network, final Minecraft mc, GenericGuiContainer<?> gui,
                         BlockPos pos, CraftingGridProvider provider,
                         int guiLeft, int guiTop, int xSize, int ySize) {
         this.mc = mc;
@@ -153,7 +153,7 @@ public class GuiCraftingGrid {
 
         int x = Mouse.getEventX() * gui.width / gui.mc.displayWidth;
         int y = gui.height - Mouse.getEventY() * gui.height / gui.mc.displayHeight - 1;
-        Widget widget = craftWindow.getToplevel().getWidgetAtPosition(x, y);
+        Widget<?> widget = craftWindow.getToplevel().getWidgetAtPosition(x, y);
         if (widget == craft1Button) {
             testCraft(1);
         } else if (widget == craft4Button) {

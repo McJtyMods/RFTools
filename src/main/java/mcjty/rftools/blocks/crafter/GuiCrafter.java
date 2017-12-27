@@ -104,7 +104,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         initRedstoneMode();
         initSpeedMode();
 
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).addChild(keepItem).addChild(internalRecipe).
+        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).addChild(keepItem).addChild(internalRecipe).
                 addChild(recipeList).addChild(listSlider).addChild(applyButton).addChild(redstoneMode).addChild(speedMode).addChild(rememberButton).addChild(forgetButton);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 

@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.shaper;
 
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -69,7 +68,7 @@ public class ScannerBlock extends GenericRFToolsBlock<ScannerTileEntity, Scanner
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiScanner> getGuiClass() {
         return GuiScanner.class;
     }
 

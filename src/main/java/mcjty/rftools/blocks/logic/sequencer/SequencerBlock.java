@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.logic.sequencer;
 
 import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
 import mcjty.rftools.theoneprobe.TheOneProbeSupport;
@@ -32,7 +31,7 @@ public class SequencerBlock extends LogicSlabBlock<SequencerTileEntity, EmptyCon
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiSequencer> getGuiClass() {
         return GuiSequencer.class;
     }
 

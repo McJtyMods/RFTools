@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.booster;
 
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.api.Infusable;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
@@ -38,7 +37,7 @@ public class BoosterBlock extends GenericRFToolsBlock<BoosterTileEntity, Booster
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiBooster> getGuiClass() {
         return GuiBooster.class;
     }
 

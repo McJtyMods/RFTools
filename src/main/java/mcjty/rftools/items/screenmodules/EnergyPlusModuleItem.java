@@ -3,9 +3,7 @@ package mcjty.rftools.items.screenmodules;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
-import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.EnergyPlusBarScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.EnergyPlusBarClientScreenModule;
@@ -41,12 +39,12 @@ public class EnergyPlusModuleItem extends GenericRFToolsItem implements IModuleP
     }
 
     @Override
-    public Class<? extends IScreenModule> getServerScreenModule() {
+    public Class<EnergyPlusBarScreenModule> getServerScreenModule() {
         return EnergyPlusBarScreenModule.class;
     }
 
     @Override
-    public Class<? extends IClientScreenModule> getClientScreenModule() {
+    public Class<EnergyPlusBarClientScreenModule> getClientScreenModule() {
         return EnergyPlusBarClientScreenModule.class;
     }
 

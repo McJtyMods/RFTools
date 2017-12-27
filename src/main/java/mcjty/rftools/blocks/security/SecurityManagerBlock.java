@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.security;
 
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.material.Material;
@@ -25,7 +24,7 @@ public class SecurityManagerBlock extends GenericRFToolsBlock<SecurityManagerTil
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiSecurityManager> getGuiClass() {
         return GuiSecurityManager.class;
     }
 

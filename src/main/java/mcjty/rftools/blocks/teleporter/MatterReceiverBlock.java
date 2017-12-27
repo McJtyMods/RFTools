@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
@@ -39,7 +38,7 @@ public class MatterReceiverBlock extends GenericRFToolsBlock<MatterReceiverTileE
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiMatterReceiver> getGuiClass() {
         return GuiMatterReceiver.class;
     }
 

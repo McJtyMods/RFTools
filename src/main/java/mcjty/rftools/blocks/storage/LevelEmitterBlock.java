@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.api.IModuleSupport;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
@@ -40,7 +39,7 @@ public class LevelEmitterBlock extends LogicSlabBlock<LevelEmitterTileEntity, Le
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiLevelEmitter> getGuiClass() {
         return GuiLevelEmitter.class;
     }
 

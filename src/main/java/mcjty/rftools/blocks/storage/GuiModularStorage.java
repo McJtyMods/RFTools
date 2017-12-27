@@ -299,7 +299,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     public boolean isMouseOverSlot(Slot slotIn, int x, int y) {
         if (slotIn.inventory instanceof ModularStorageTileEntity || slotIn.inventory instanceof ModularStorageItemInventory
                 || slotIn.inventory instanceof RemoteStorageItemInventory) {
-            Widget widget = window.getToplevel().getWidgetAtPosition(x, y);
+            Widget<?> widget = window.getToplevel().getWidgetAtPosition(x, y);
             if (widget instanceof BlockRender) {
                 Object userObject = widget.getUserObject();
                 if (userObject instanceof Integer) {
@@ -317,7 +317,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
     @Override
     public Slot getSlotAtPosition(int x, int y) {
-        Widget widget = window.getToplevel().getWidgetAtPosition(x, y);
+        Widget<?> widget = window.getToplevel().getWidgetAtPosition(x, y);
         if (widget != null) {
             Object userObject = widget.getUserObject();
             if (userObject instanceof Integer) {

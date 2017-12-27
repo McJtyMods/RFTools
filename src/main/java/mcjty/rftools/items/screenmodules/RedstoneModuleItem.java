@@ -2,9 +2,7 @@ package mcjty.rftools.items.screenmodules;
 
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
-import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.logic.wireless.RedstoneReceiverTileEntity;
 import mcjty.rftools.blocks.logic.wireless.RedstoneTransmitterTileEntity;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
@@ -49,12 +47,12 @@ public class RedstoneModuleItem extends GenericRFToolsItem implements IModulePro
     }
 
     @Override
-    public Class<? extends IScreenModule> getServerScreenModule() {
+    public Class<RedstoneScreenModule> getServerScreenModule() {
         return RedstoneScreenModule.class;
     }
 
     @Override
-    public Class<? extends IClientScreenModule> getClientScreenModule() {
+    public Class<RedstoneClientScreenModule> getClientScreenModule() {
         return RedstoneClientScreenModule.class;
     }
 

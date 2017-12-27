@@ -4,7 +4,6 @@ package mcjty.rftools.blocks.elevator;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.BaseBlock;
 import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -79,7 +78,7 @@ public class ElevatorBlock extends GenericRFToolsBlock<ElevatorTileEntity, Empty
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiElevator> getGuiClass() {
         return GuiElevator.class;
     }
 

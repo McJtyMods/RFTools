@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 
 import java.util.Locale;
 
-public class ClockClientScreenModule implements IClientScreenModule {
+public class ClockClientScreenModule implements IClientScreenModule<IModuleData> {
     private int color = 0xffffff;
     private String line = "";
     private boolean large = false;

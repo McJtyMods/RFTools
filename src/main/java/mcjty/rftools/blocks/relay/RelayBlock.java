@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.relay;
 
 import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -43,7 +42,7 @@ public class RelayBlock extends GenericRFToolsBlock<RelayTileEntity, EmptyContai
     }
 
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiRelay> getGuiClass() {
         return GuiRelay.class;
     }
 

@@ -4,9 +4,7 @@ import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
-import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.DumpScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.DumpClientScreenModule;
@@ -44,12 +42,12 @@ public class DumpModuleItem extends GenericRFToolsItem implements IModuleProvide
     }
 
     @Override
-    public Class<? extends IScreenModule> getServerScreenModule() {
+    public Class<DumpScreenModule> getServerScreenModule() {
         return DumpScreenModule.class;
     }
 
     @Override
-    public Class<? extends IClientScreenModule> getClientScreenModule() {
+    public Class<DumpClientScreenModule> getClientScreenModule() {
         return DumpClientScreenModule.class;
     }
 

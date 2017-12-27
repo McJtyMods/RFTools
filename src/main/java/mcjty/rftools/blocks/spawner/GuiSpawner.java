@@ -62,7 +62,7 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
         name = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT); name.setLayoutHint(new PositionalLayout.PositionalHint(22, 31, 78, 16));
         rfTick = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT); rfTick.setLayoutHint(new PositionalLayout.PositionalHint(22, 47, 78, 16));
 
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
+        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
                 addChild(blocks[0]).addChild(labels[0]).
                 addChild(blocks[1]).addChild(labels[1]).
                 addChild(blocks[2]).addChild(labels[2]).

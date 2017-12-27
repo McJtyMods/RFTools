@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.itemfilter;
 
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.material.Material;
@@ -30,7 +29,7 @@ public class ItemFilterBlock extends GenericRFToolsBlock<ItemFilterTileEntity, I
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiItemFilter> getGuiClass() {
         return GuiItemFilter.class;
     }
 

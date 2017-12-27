@@ -212,7 +212,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
 
         Panel modeSettingsPanel = new Panel(mc, this).setLayout(new VerticalLayout().setHorizontalMargin(0)).addChild(modePanel).addChild(settingsPanel);
         modeSettingsPanel.setLayoutHint(new PositionalLayout.PositionalHint(0, 0, 180, 160));
-        Widget toplevel;
+        Panel toplevel;
         if (isQuarryCard) {
             setupVoidPanel(heldItem);
             toplevel = new Panel(mc, this).setLayout(new PositionalLayout()).setFilledRectThickness(2).addChild(modeSettingsPanel).addChild(voidPanel);

@@ -2,9 +2,7 @@ package mcjty.rftools.items.screenmodules;
 
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
-import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.logic.counter.CounterTileEntity;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.CounterPlusScreenModule;
@@ -41,12 +39,12 @@ public class CounterPlusModuleItem extends GenericRFToolsItem implements IModule
     }
 
     @Override
-    public Class<? extends IScreenModule> getServerScreenModule() {
+    public Class<CounterPlusScreenModule> getServerScreenModule() {
         return CounterPlusScreenModule.class;
     }
 
     @Override
-    public Class<? extends IClientScreenModule> getClientScreenModule() {
+    public Class<CounterPlusClientScreenModule> getClientScreenModule() {
         return CounterPlusClientScreenModule.class;
     }
 
