@@ -145,6 +145,11 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     @Override
+    protected boolean needsRedstoneMode() {
+        return true;
+    }
+
+    @Override
     public void update() {
         if (!getWorld().isRemote) {
             checkStateServer();
@@ -343,7 +348,6 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
         } else {
             id = -1;
         }
-        int m = tagCompound.getByte("rsMode");
     }
 
     @Override
