@@ -182,7 +182,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public EnumFacing getBlockOrientation() {
-        return OrientationTools.getOrientationHoriz(world.getBlockState(pos));
+        IBlockState state = world.getBlockState(pos);
+        if (state.getBlock() instanceof BuilderBlock) {
+            return OrientationTools.getOrientationHoriz(state);
+        } else {
+            return null;
+        }
     }
 
     @Override
