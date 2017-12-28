@@ -48,7 +48,9 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         EnumFacing facing = EnumFacing.SOUTH;
         if (tileEntity != null) {
             IBlockState state = Minecraft.getMinecraft().world.getBlockState(tileEntity.getPos());
-            facing = state.getValue(BaseBlock.FACING);
+            if (state.getBlock() instanceof ScreenBlock || state.getBlock() instanceof ScreenHitBlock) {
+                facing = state.getValue(BaseBlock.FACING);
+            }
         }
 
         switch (facing) {
