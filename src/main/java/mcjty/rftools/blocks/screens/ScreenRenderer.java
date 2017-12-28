@@ -42,7 +42,6 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
 
     @Override
     public void render(ScreenTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-        GlStateManager.pushMatrix();
         float f3;
 
         EnumFacing facing = EnumFacing.SOUTH;
@@ -50,8 +49,12 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
             IBlockState state = Minecraft.getMinecraft().world.getBlockState(tileEntity.getPos());
             if (state.getBlock() instanceof ScreenBlock || state.getBlock() instanceof ScreenHitBlock) {
                 facing = state.getValue(BaseBlock.FACING);
+            } else {
+                return;
             }
         }
+
+        GlStateManager.pushMatrix();
 
         switch (facing) {
             case NORTH:
