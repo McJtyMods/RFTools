@@ -491,7 +491,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
                 PowerCellNetwork.getChannels(getWorld()).save(getWorld());
             }
         }
-        return maxInsert;
+        return isCreative() ? maxReceive : maxInsert;
     }
 
     private int receiveEnergyLocal(int maxReceive, boolean simulate) {
@@ -502,7 +502,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
                 markDirty();
             }
         }
-        return maxInsert;
+        return isCreative() ? maxReceive : maxInsert;
     }
 
     @Optional.Method(modid = "redstoneflux")
