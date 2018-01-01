@@ -12,6 +12,10 @@ import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
+import mcjty.lib.gui.widgets.Button;
+import mcjty.lib.gui.widgets.Label;
+import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.Arguments;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
@@ -21,11 +25,7 @@ import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.craftinggrid.GuiCraftingGrid;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.block.Block;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -35,9 +35,10 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 import java.util.function.Predicate;
 
 
@@ -607,67 +608,24 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        super.drawScreen(mouseX, mouseY, partialTicks);
-        if (!init) {
-            return;
-        }
-
-        int x = Mouse.getEventX() * width / mc.displayWidth;
-        int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
-        Widget<?> widget = window.getToplevel().getWidgetAtPosition(x, y);
-        if (widget instanceof BlockRender) {
-            BlockRender blockRender = (BlockRender) widget;
-            Object renderItem = blockRender.getRenderItem();
-            ItemStack itemStack;
-            if (renderItem instanceof ItemStack) {
-                itemStack = (ItemStack) renderItem;
-            } else if (renderItem instanceof Block) {
-                itemStack = new ItemStack((Block) renderItem);
-            } else if (renderItem instanceof Item) {
-                itemStack = new ItemStack((Item) renderItem);
-            } else {
-                itemStack = ItemStack.EMPTY;
-            }
-            if (!itemStack.isEmpty()) {
-                boolean custom = blockRender.getUserObject() instanceof Integer;
-                customRenderToolTip(itemStack, mouseX, mouseY, custom);
-            }
+    protected void drawStackTooltips(int mouseX, int mouseY) {
+        if (init) {
+            super.drawStackTooltips(mouseX, mouseY);
         }
     }
 
-    private void customRenderToolTip(ItemStack stack, int x, int y, boolean custom) {
-        List<String> list;
-        if (stack.getItem() == null) {
-            // Protection for bad itemstacks
-            list = new ArrayList<>();
-        } else {
-            ITooltipFlag flag = this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL;
-            list = stack.getTooltip(this.mc.player, flag);
-        }
-
-        for (int i = 0; i < list.size(); ++i) {
-            if (i == 0) {
-                list.set(i, stack.getRarity().rarityColor + list.get(i));
-            } else {
-                list.set(i, TextFormatting.GRAY + list.get(i));
-            }
-        }
-
-        if (custom) {
+    @Override
+    protected List<String> addCustomLines(List<String> oldList, BlockRender blockRender, ItemStack stack) {
+        if (blockRender.getUserObject() instanceof Integer) {
             List<String> newlist = new ArrayList<>();
             newlist.add(TextFormatting.GREEN + "Click: "+ TextFormatting.WHITE + "full stack");
             newlist.add(TextFormatting.GREEN + "Shift + click: "+ TextFormatting.WHITE + "single item");
             newlist.add("");
-            newlist.addAll(list);
-            list = newlist;
+            newlist.addAll(oldList);
+            return newlist;
+        } else {
+            return oldList;
         }
-
-        FontRenderer font = null;
-        if (stack.getItem() != null) {
-            font = stack.getItem().getFontRenderer(stack);
-        }
-        this.drawHoveringText(list, x, y, (font == null ? fontRenderer : font));
     }
 
     private static long lastTime = 0;
