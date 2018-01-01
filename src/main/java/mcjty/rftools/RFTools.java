@@ -25,6 +25,7 @@ import mcjty.rftools.items.manual.GuiRFToolsManual;
 import mcjty.rftools.proxy.CommonProxy;
 import mcjty.rftools.shapes.ScanDataManager;
 import mcjty.rftools.wheelsupport.WheelSupport;
+import mcjty.rftools.xnet.XNetSupport;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -178,7 +179,7 @@ public class RFTools implements ModBase {
         xnet = Loader.isModLoaded("xnet");
         if (xnet) {
             Logging.log("RFTools Detected XNet: enabling support");
-            FMLInterModComms.sendFunctionMessage("xnet", "getXNet", "mcjty.rftools.xnet.XNetSupport$GetXNet");
+            FMLInterModComms.sendFunctionMessage("xnet", "getXNet", XNetSupport.GetXNet.class.getName());
         }
 
         if (Loader.isModLoaded("opencomputers")) {
