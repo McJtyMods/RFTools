@@ -38,6 +38,8 @@ public class PacketUpdateModifier implements IMessage {
     public PacketUpdateModifier(ModifierCommand cmd, int index, ModifierFilterType type, ModifierFilterOperation op) {
         this.cmd = cmd;
         this.index = index;
+        this.type = type;
+        this.op = op;
     }
 
     public static class Handler implements IMessageHandler<PacketUpdateModifier, IMessage> {
