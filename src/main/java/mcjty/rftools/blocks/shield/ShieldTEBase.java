@@ -576,6 +576,12 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     }
 
     private void checkStateServer() {
+        if (!shieldComposed) {
+            // do nothing if the shield is not composed
+            return;
+        }
+
+
         boolean checkPower = false;
         if (powerTimeout > 0) {
             powerTimeout--;
