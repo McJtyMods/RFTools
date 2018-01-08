@@ -11,7 +11,6 @@ import net.minecraft.entity.passive.*;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.ConfigCategory;
@@ -33,7 +32,7 @@ public class SpawnerConfiguration {
     public static int defaultMobSpawnRf;
     public static final Map<String,List<MobSpawnAmount>> mobSpawnAmounts = new HashMap<>();
     public static final List<MobSpawnAmount> defaultSpawnAmounts = new ArrayList<>();
-    public static final Map<Object,Float> livingMatter = new HashMap<>();
+    public static final Map<ResourceLocation,Float> livingMatter = new HashMap<>();
 
     public static final int MATERIALTYPE_KEY = 0;
     public static final int MATERIALTYPE_BULK = 1;
@@ -86,16 +85,10 @@ public class SpawnerConfiguration {
             for (Map.Entry<String, Property> entry : category.entrySet()) {
                 String[] value = entry.getValue().getStringList();
                 try {
-                    String type = value[0];
+                    // value[0] is type and is no longer used
                     String name = value[1];
                     Float factor = Float.parseFloat(value[2]);
-                    if ("B".equals(type)) {
-                        Object block = Block.REGISTRY.getObject(new ResourceLocation(name));
-                        livingMatter.put(block, factor);
-                    } else {
-                        Object item = Item.REGISTRY.getObject(new ResourceLocation(name));
-                        livingMatter.put(item, factor);
-                    }
+                    livingMatter.put(new ResourceLocation(name), factor);
                 } catch (Exception e) {
                     Logging.logError("Badly formatted 'livingmatter' configuration option!");
                     return;
@@ -144,13 +137,13 @@ public class SpawnerConfiguration {
 
     private static int addLiving(Configuration cfg, Block block, int counter, float factor) {
         cfg.get(CATEGORY_LIVINGMATTER, "living." + counter, new String[] { "B", block.getRegistryName().toString(), Float.toString(factor) });
-        livingMatter.put(block, factor);
+        livingMatter.put(block.getRegistryName(), factor);
         return counter+1;
     }
 
     private static int addLiving(Configuration cfg, Item item, int counter, float factor) {
         cfg.get(CATEGORY_LIVINGMATTER, "living." + counter, new String[] { "I", item.getRegistryName().toString(), Float.toString(factor) });
-        livingMatter.put(item, factor);
+        livingMatter.put(item.getRegistryName(), factor);
         return counter+1;
     }
 
@@ -436,12 +429,7 @@ public class SpawnerConfiguration {
             if (object.isEmpty()) {
                 // Living?
                 Item item = stack.getItem();
-                if (item instanceof ItemBlock) {
-                    Block block = ((ItemBlock) item).getBlock();
-                    return livingMatter.get(block);
-                } else {
-                    return livingMatter.get(item);
-                }
+                return livingMatter.get(item.getRegistryName());
             }
             if (stack.isItemEqual(object)) {
                 return 1.0f;

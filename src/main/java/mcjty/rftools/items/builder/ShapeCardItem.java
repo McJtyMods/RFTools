@@ -757,7 +757,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
             }
             blocks.put(c, state);
         } else {
-            if (BuilderTileEntity.isEmptyOrReplacable(worldObj, c) && blocks.size() < maxSize - 1) {
+            if (BuilderTileEntity.isEmptyOrReplacable(worldObj, c) && blocks.size() < maxSize) {
                 blocks.put(c, state);
             }
         }
