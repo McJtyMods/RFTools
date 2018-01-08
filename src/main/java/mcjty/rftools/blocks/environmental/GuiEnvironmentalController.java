@@ -8,11 +8,7 @@ import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
-import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
@@ -21,9 +17,8 @@ import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.util.*;
-import java.util.List;
 
 public class GuiEnvironmentalController extends GenericGuiContainer<EnvironmentalControllerTileEntity> {
     public static final int ENV_WIDTH = 194;
@@ -221,10 +216,6 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
     private void populatePlayers() {
         List<String> newPlayers = new ArrayList<>(fromServer_players);
         Collections.sort(newPlayers);
-        if (newPlayers.equals(playersList)) {
-            return;
-        }
-
         players  = new ArrayList<>(newPlayers);
         playersList.removeChildren();
         for (String player : players) {
