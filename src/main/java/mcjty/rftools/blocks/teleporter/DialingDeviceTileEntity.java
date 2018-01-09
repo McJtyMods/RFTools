@@ -148,11 +148,9 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
                         if (dx != 0 || dy != 0 || dz != 0) {
                             BlockPos c = new BlockPos(xx, yy, zz);
                             TileEntity tileEntity = getWorld().getTileEntity(c);
-                            if (tileEntity != null) {
-                                if (tileEntity instanceof MatterTransmitterTileEntity) {
-                                    MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) tileEntity;
-                                    transmitters.add(new TransmitterInfo(c, matterTransmitterTileEntity.getName(), matterTransmitterTileEntity.getTeleportDestination()));
-                                }
+                            if (tileEntity instanceof MatterTransmitterTileEntity) {
+                                MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) tileEntity;
+                                transmitters.add(new TransmitterInfo(c, matterTransmitterTileEntity.getName(), matterTransmitterTileEntity.getTeleportDestination()));
                             }
                         }
                     }
