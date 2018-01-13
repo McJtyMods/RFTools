@@ -3,9 +3,7 @@
     "item": "rftools:wire_block"
   },
   "pattern": [
-    "   ",
-    "rMr",
-    "   "
+    "rMr"
   ],
   "type": "minecraft:crafting_shaped",
   "key": {
