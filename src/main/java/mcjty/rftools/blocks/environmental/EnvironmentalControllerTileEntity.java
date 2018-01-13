@@ -64,7 +64,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
 
     // Cached server modules
     private List<EnvironmentModule> environmentModules = null;
-    private Set<String> players = new HashSet<>();
+    Set<String> players = new HashSet<>();
     private EnvironmentalMode mode = EnvironmentalMode.MODE_BLACKLIST;
     private int totalRfPerTick = 0;     // The total rf per tick for all modules.
     private int radius = 50;
@@ -567,7 +567,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
             return true;
         }
         if (CLIENTCMD_GETPLAYERS.equals(command)) {
-            GuiEnvironmentalController.storePlayersForClient(Type.STRING.convert(list));
+            players = new HashSet<>(Type.STRING.convert(list));
             return true;
         }
         return false;

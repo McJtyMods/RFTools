@@ -38,11 +38,6 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
     private int listDirty = 0;
     private EnergyBar energyBar;
 
-    private static Set<String> fromServer_players = new HashSet<>();
-    public static void storePlayersForClient(List<String> players) {
-        fromServer_players = new HashSet<>(players);
-    }
-
     private TextField minyTextField;
     private TextField maxyTextField;
     private TextField nameField;
@@ -214,9 +209,8 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
     }
 
     private void populatePlayers() {
-        List<String> newPlayers = new ArrayList<>(fromServer_players);
-        Collections.sort(newPlayers);
-        players  = new ArrayList<>(newPlayers);
+        players = new ArrayList<>(tileEntity.players);
+        players.sort(null);
         playersList.removeChildren();
         for (String player : players) {
             playersList.addChild(new Label(mc, this).setText(player).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));

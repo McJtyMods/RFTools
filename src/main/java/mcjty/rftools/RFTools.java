@@ -164,20 +164,20 @@ public class RFTools implements ModBase {
 
         Achievements.init();
 
-        rftoolsDimensions = Loader.isModLoaded("rftoolsdim");
-        if (rftoolsDimensions) {
+        if (Loader.isModLoaded("rftoolsdim")) {
+            rftoolsDimensions = true;
             Logging.log("RFTools Detected Dimensions addon: enabling support");
             FMLInterModComms.sendFunctionMessage("rftoolsdim", "getDimensionManager", "mcjty.rftools.apideps.RFToolsDimensionChecker$GetDimensionManager");
         }
 
         FMLInterModComms.sendFunctionMessage("theoneprobe", "getTheOneProbe", "mcjty.rftools.theoneprobe.TheOneProbeSupport");
 
-        redstoneflux = Loader.isModLoaded("redstoneflux");
-        if (redstoneflux) {
+        if (Loader.isModLoaded("redstoneflux")) {
+            redstoneflux = true;
             Logging.log("RFTools Detected RedstoneFlux: enabling support");
         }
-        xnet = Loader.isModLoaded("xnet");
-        if (xnet) {
+        if (Loader.isModLoaded("xnet")) {
+            xnet = true;
             Logging.log("RFTools Detected XNet: enabling support");
             FMLInterModComms.sendFunctionMessage("xnet", "getXNet", XNetSupport.GetXNet.class.getName());
         }

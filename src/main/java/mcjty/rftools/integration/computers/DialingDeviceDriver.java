@@ -41,25 +41,16 @@ public class DialingDeviceDriver {
 
             @Callback(doc="function():table; Get a list of nearby matter transmitters")
             public Object[] getTransmitters(Context c, Arguments a) {
-                List<TransmitterInfo> transmitters = tile.searchTransmitters();
-                List<Map<String,Object>> ret = transmitters.stream().map(info -> {
-                    String name = info.getName();
-                    Map<String, Integer> pos = getCoordinateMap(info.getCoordinate());
-                    boolean dialed = false;
-
-                    TileEntity transmitterTE = tile.getWorld().getTileEntity(info.getCoordinate());
-                    if (transmitterTE instanceof MatterTransmitterTileEntity) {
-                        MatterTransmitterTileEntity transmitter = (MatterTransmitterTileEntity)transmitterTE;
-                        dialed = true;
-                    }
+                return new Object[]{tile.searchTransmitters().stream().map(info -> {
+                    BlockPos pos = info.getCoordinate();
+                    TileEntity transmitterTE = tile.getWorld().getTileEntity(pos);
 
                     Map<String, Object> transmitterInfo = new HashMap<>();
-                    transmitterInfo.put("name", name);
-                    transmitterInfo.put("position", pos);
-                    transmitterInfo.put("dialed", dialed);
+                    transmitterInfo.put("name", info.getName());
+                    transmitterInfo.put("position", getCoordinateMap(pos));
+                    transmitterInfo.put("dialed", transmitterTE instanceof MatterTransmitterTileEntity && ((MatterTransmitterTileEntity)transmitterTE).isDialed());
                     return transmitterInfo;
-                }).collect(Collectors.toList());
-                return new Object[]{ret};
+                }).collect(Collectors.toList())};
             }
 
             @Callback(doc="function():table; Get a list of valid matter receivers")
