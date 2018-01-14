@@ -120,7 +120,7 @@ public enum ShapeCardType {
 
     private ShapeCardType(int damage, String resourceSuffix, boolean quarry, boolean clearing, boolean fortune, ShapeCardType.SingleBlockHandler singleBlockHandler, String hudLogEntry, int rfNeeded, String... information) {
         this.damage = damage;
-        this.modelResourceLocation = new ModelResourceLocation(RFTools.MODID + ":shape_card_" + resourceSuffix, "inventory");
+        this.modelResourceLocation = resourceSuffix == null ? null : new ModelResourceLocation(RFTools.MODID + ":shape_card_" + resourceSuffix, "inventory");
         this.quarry = quarry;
         this.clearing = clearing;
         this.fortune = fortune;
