@@ -760,8 +760,11 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (this.isInCreativeTab(tab)) {
-            for (int i = 0; i <= 10; i++) {
-                items.add(new ItemStack(this, 1, i));
+            for(ShapeCardType type : ShapeCardType.values()) {
+                int damage = type.getDamage();
+                if(damage >= 0) {
+                    items.add(new ItemStack(this, 1, damage));
+                }
             }
         }
     }
