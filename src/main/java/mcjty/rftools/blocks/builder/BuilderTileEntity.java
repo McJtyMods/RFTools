@@ -15,6 +15,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.hud.IHudSupport;
 import mcjty.rftools.items.builder.ShapeCardItem;
+import mcjty.rftools.items.builder.ShapeCardType;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.network.PacketGetHudLog;
@@ -140,7 +141,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private long lastHudTime = 0;
     private List<String> clientHudLog = new ArrayList<>();
 
-    private int cardType = ShapeCardItem.CARD_UNKNOWN; // One of the card types out of ShapeCardItem.CARD_...
+    private ShapeCardType cardType = ShapeCardType.CARD_UNKNOWN;
 
     private StorageFilterCache filterCache = null;
 
@@ -204,52 +205,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         List<String> list = new ArrayList<>();
         list.add(TextFormatting.BLUE + "Mode:");
         if (isShapeCard()) {
-            switch (getCardType()) {
-                case ShapeCardItem.CARD_VOID:
-                    list.add("    Void mode");
-                    break;
-                case ShapeCardItem.CARD_PUMP:
-                    list.add("    Pump");
-                    break;
-                case ShapeCardItem.CARD_PUMP_LIQUID:
-                    list.add("    Place liquids");
-                    break;
-                case ShapeCardItem.CARD_PUMP_CLEAR:
-                    list.add("    Pump");
-                    list.add("    (clearing)");
-                    break;
-                case ShapeCardItem.CARD_QUARRY_FORTUNE:
-                    list.add("    Fortune quarry");
-                    break;
-                case ShapeCardItem.CARD_QUARRY_CLEAR_FORTUNE:
-                    list.add("    Fortune quarry");
-                    list.add("    (clearing)");
-                    break;
-                case ShapeCardItem.CARD_QUARRY_SILK:
-                    list.add("    Silktouch quarry");
-                    break;
-                case ShapeCardItem.CARD_QUARRY_CLEAR_SILK:
-                    list.add("    Silktouch quarry");
-                    list.add("    (clearing)");
-                    break;
-                case ShapeCardItem.CARD_QUARRY:
-                    list.add("    Normal quarry");
-                    break;
-                case ShapeCardItem.CARD_QUARRY_CLEAR:
-                    list.add("    Normal quarry");
-                    list.add("    (clearing)");
-                    break;
-                case ShapeCardItem.CARD_SHAPE:
-                    list.add("    Shape card");
-                    ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
-                    if (!shapeCard.isEmpty()) {
-                        Shape shape = ShapeCardItem.getShape(shapeCard);
-                        if (shape != null) {
-                            list.add("    " + shape.getDescription());
-                        }
-                    }
-                    break;
-            }
+            getCardType().addHudLog(list, inventoryHelper);
         } else {
             list.add("    Space card: " + new String[]{"copy", "move", "swap", "back", "collect"}[mode]);
         }
@@ -451,7 +407,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return false;
     }
 
-    private boolean suspend() {
+    public boolean suspend(int rfNeeded, BlockPos srcPos, Block block, IBlockState pickState) {
         lastError = null;
         return true;
     }
@@ -672,7 +628,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         boxValid = true;
-        cardType = ShapeCardItem.CARD_SPACE;
+        cardType = ShapeCardType.CARD_SPACE;
 
         createProjection(chamberChannel);
 
@@ -891,7 +847,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         boxValid = true;
-        cardType = shapeCard.getItemDamage();
+        cardType = ShapeCardType.fromDamage(shapeCard.getItemDamage());
 
         cachedBlocks = null;
         cachedChunk = null;
@@ -963,11 +919,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     }
 
-    private int getCardType() {
-        if (cardType == ShapeCardItem.CARD_UNKNOWN) {
+    private ShapeCardType getCardType() {
+        if (cardType == ShapeCardType.CARD_UNKNOWN) {
             ItemStack card = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
             if (!card.isEmpty()) {
-                cardType = card.getItemDamage();
+                cardType = ShapeCardType.fromDamage(card.getItemDamage());
             }
         }
         return cardType;
@@ -984,39 +940,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return suspend("Chunk not available!");
         }
 
-        int rfNeeded;
-
-        switch (getCardType()) {
-            case ShapeCardItem.CARD_PUMP_LIQUID:
-            case ShapeCardItem.CARD_PUMP:
-            case ShapeCardItem.CARD_PUMP_CLEAR:
-                rfNeeded = BuilderConfiguration.builderRfPerLiquid;
-                break;
-            case ShapeCardItem.CARD_VOID:
-                rfNeeded = (int) (BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.voidShapeCardFactor);
-                break;
-            case ShapeCardItem.CARD_QUARRY_FORTUNE:
-            case ShapeCardItem.CARD_QUARRY_CLEAR_FORTUNE:
-                rfNeeded = (int) (BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.fortunequarryShapeCardFactor);
-                break;
-            case ShapeCardItem.CARD_QUARRY_SILK:
-            case ShapeCardItem.CARD_QUARRY_CLEAR_SILK:
-                rfNeeded = (int) (BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.silkquarryShapeCardFactor);
-                break;
-            case ShapeCardItem.CARD_QUARRY:
-            case ShapeCardItem.CARD_QUARRY_CLEAR:
-                rfNeeded = BuilderConfiguration.builderRfPerQuarry;
-                break;
-            case ShapeCardItem.CARD_SHAPE:
-                rfNeeded = BuilderConfiguration.builderRfPerOperation;
-                break;
-            default:
-                rfNeeded = 0;
-                break;
-        }
+        int rfNeeded = getCardType().getRfNeeded();
 
         Block block = null;
-        if (getCardType() != ShapeCardItem.CARD_SHAPE && getCardType() != ShapeCardItem.CARD_PUMP_LIQUID) {
+        if (getCardType() != ShapeCardType.CARD_SHAPE && getCardType() != ShapeCardType.CARD_PUMP_LIQUID) {
             IBlockState state = getWorld().getBlockState(srcPos);
             block = state.getBlock();
             if (!isEmpty(state, block)) {
@@ -1040,30 +967,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return suspend("Not enough power!");
         }
 
-        switch (getCardType()) {
-            case ShapeCardItem.CARD_PUMP_LIQUID:
-                return placeLiquidBlock(rfNeeded, srcPos);
-            case ShapeCardItem.CARD_PUMP:
-            case ShapeCardItem.CARD_PUMP_CLEAR:
-                return pumpBlock(rfNeeded, srcPos, block);
-            case ShapeCardItem.CARD_VOID:
-                return voidBlock(rfNeeded, srcPos, block);
-            case ShapeCardItem.CARD_QUARRY:
-            case ShapeCardItem.CARD_QUARRY_CLEAR:
-                return quarryBlock(rfNeeded, srcPos, block);
-            case ShapeCardItem.CARD_QUARRY_FORTUNE:
-            case ShapeCardItem.CARD_QUARRY_CLEAR_FORTUNE:
-                return quarryBlock(rfNeeded, srcPos, block);
-            case ShapeCardItem.CARD_QUARRY_SILK:
-            case ShapeCardItem.CARD_QUARRY_CLEAR_SILK:
-                return silkQuarryBlock(rfNeeded, srcPos, block);
-            case ShapeCardItem.CARD_SHAPE:
-                return buildBlock(rfNeeded, srcPos, pickState);
-        }
-        return suspend();
+        return getCardType().handleSingleBlock(this, rfNeeded, srcPos, block, pickState);
     }
 
-    private boolean buildBlock(int rfNeeded, BlockPos srcPos, IBlockState pickState) {
+    public boolean buildBlock(int rfNeeded, BlockPos srcPos, Block block, IBlockState pickState) {
         if (isEmptyOrReplacable(getWorld(), srcPos)) {
             ItemStack stack = consumeBlock(getWorld(), srcPos, pickState);
             if (stack.isEmpty()) {
@@ -1111,7 +1018,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return BuilderConfiguration.getQuarryReplace();
     }
 
-    private boolean silkQuarryBlock(int rfNeeded, BlockPos srcPos, Block block) {
+    public boolean silkQuarryBlock(int rfNeeded, BlockPos srcPos, Block block, IBlockState pickState) {
         IBlockState srcState = getWorld().getBlockState(srcPos);
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
@@ -1127,7 +1034,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return skip();
         }
         if (block.getBlockHardness(srcState, getWorld(), srcPos) >= 0) {
-            boolean clear = ShapeCardItem.isClearingQuarry(getCardType());
+            boolean clear = getCardType().isClearing();
             if ((!clear) && block == getReplacementBlock()) {
                 // We can skip dirt if we are not clearing.
                 return skip();
@@ -1198,7 +1105,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return !event.isCanceled();
     }
 
-    private boolean quarryBlock(int rfNeeded, BlockPos srcPos, Block block) {
+    public boolean quarryBlock(int rfNeeded, BlockPos srcPos, Block block, IBlockState pickState) {
         IBlockState srcState = getWorld().getBlockState(srcPos);
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
@@ -1214,7 +1121,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return skip();
         }
         if (block.getBlockHardness(srcState, getWorld(), srcPos) >= 0) {
-            boolean clear = ShapeCardItem.isClearingQuarry(getCardType());
+            boolean clear = getCardType().isClearing();
             if ((!clear) && block == getReplacementBlock()) {
                 // We can skip dirt if we are not clearing.
                 return skip();
@@ -1240,7 +1147,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 if (getCachedVoidableBlocks().contains(block)) {
                     clearOrDirtBlock(rfNeeded, sx, sy, sz, block, clear);
                 } else {
-                    int fortune = (getCardType() == ShapeCardItem.CARD_QUARRY_FORTUNE || getCardType() == ShapeCardItem.CARD_QUARRY_CLEAR_FORTUNE) ? 3 : 0;
+                    int fortune = getCardType().isFortune() ? 3 : 0;
                     List<ItemStack> drops = block.getDrops(getWorld(), srcPos, srcState, fortune);
                     net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, getWorld(), pos, srcState, fortune, 1.0f, false, fakePlayer);
                     if (checkAndInsertItems(block, drops)) {
@@ -1268,7 +1175,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return -1;
     }
 
-    private boolean placeLiquidBlock(int rfNeeded, BlockPos srcPos) {
+    public boolean placeLiquidBlock(int rfNeeded, BlockPos srcPos, Block b, IBlockState pickState) {
 
         if (isEmptyOrReplacable(getWorld(), srcPos)) {
             FluidStack stack = consumeLiquid(getWorld(), srcPos);
@@ -1290,7 +1197,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return skip();
     }
 
-    private boolean pumpBlock(int rfNeeded, BlockPos srcPos, Block block) {
+    public boolean pumpBlock(int rfNeeded, BlockPos srcPos, Block block, IBlockState pickState) {
         Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
         if (fluid == null) {
             return skip();
@@ -1310,7 +1217,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             if (allowedToBreak(srcState, getWorld(), srcPos, fakePlayer)) {
                 if (checkAndInsertFluids(fluid)) {
                     consumeEnergy(rfNeeded);
-                    boolean clear = getCardType() == ShapeCardItem.CARD_PUMP_CLEAR;
+                    boolean clear = getCardType().isClearing();
                     if (clear) {
                         getWorld().setBlockToAir(srcPos);
                     } else {
@@ -1327,7 +1234,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return skip();
     }
 
-    private boolean voidBlock(int rfNeeded, BlockPos srcPos, Block block) {
+    public boolean voidBlock(int rfNeeded, BlockPos srcPos, Block block, IBlockState pickState) {
         IBlockState srcState = getWorld().getBlockState(srcPos);
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
@@ -1970,10 +1877,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         lastError = null;
         chunkUnload();
         if (loopMode || (isMachineEnabled() && scan == null)) {
-            if (getCardType() == ShapeCardItem.CARD_SPACE) {
+            if (getCardType() == ShapeCardType.CARD_SPACE) {
                 calculateBox();
                 scan = minBox;
-            } else if (getCardType() != ShapeCardItem.CARD_UNKNOWN) {
+            } else if (getCardType() != ShapeCardType.CARD_UNKNOWN) {
                 calculateBoxShaped();
                 // We start at the top for a quarry or shape building
                 scan = new BlockPos(minBox.getX(), maxBox.getY(), minBox.getZ());
@@ -2057,7 +1964,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             int y = scan.getY();
             int z = scan.getZ();
 
-            if (getCardType() == ShapeCardItem.CARD_SPACE) {
+            if (getCardType() == ShapeCardType.CARD_SPACE) {
                 nextLocationNormal(x, y, z);
             } else {
                 nextLocationQuarry(x, y, z);
@@ -2162,7 +2069,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         cachedVoidableBlocks = null;
         boxValid = false;
         scan = null;
-        cardType = ShapeCardItem.CARD_UNKNOWN;
+        cardType = ShapeCardType.CARD_UNKNOWN;
     }
 
     @Override

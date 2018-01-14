@@ -148,7 +148,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
             return;
         }
 
-        isQuarryCard = ShapeCardItem.isQuarry(heldItem.getItemDamage());
+        isQuarryCard = ShapeCardType.fromDamage(heldItem.getItemDamage()).isQuarry();
         if (isQuarryCard) {
             ySize = 160 + 28;
         }

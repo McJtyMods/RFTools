@@ -39,20 +39,6 @@ import java.util.*;
 
 public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingIngredient {
 
-    public static final int CARD_UNKNOWN = -2;          // Not known yet
-    public static final int CARD_SPACE = -1;            // Not a shape card but a space card instead
-    public static final int CARD_SHAPE = 0;
-    public static final int CARD_VOID = 1;
-    public static final int CARD_QUARRY = 2;
-    public static final int CARD_QUARRY_SILK = 3;
-    public static final int CARD_QUARRY_FORTUNE = 4;
-    public static final int CARD_QUARRY_CLEAR = 5;
-    public static final int CARD_QUARRY_CLEAR_SILK = 6;
-    public static final int CARD_QUARRY_CLEAR_FORTUNE = 7;
-    public static final int CARD_PUMP = 8;
-    public static final int CARD_PUMP_CLEAR = 9;
-    public static final int CARD_PUMP_LIQUID = 10;
-
     public static final int MAXIMUM_COUNT = 50000000;
 
     public static final int MODE_NONE = 0;
@@ -69,17 +55,12 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
     @SideOnly(Side.CLIENT)
     @Override
     public void initModel() {
-        ModelLoader.setCustomModelResourceLocation(this, CARD_SHAPE, new ModelResourceLocation(RFTools.MODID + ":shape_card_def", "inventory"));
-        ModelLoader.setCustomModelResourceLocation(this, CARD_VOID, new ModelResourceLocation(RFTools.MODID + ":shape_card_void", "inventory"));
-        ModelLoader.setCustomModelResourceLocation(this, CARD_QUARRY, new ModelResourceLocation(RFTools.MODID + ":shape_card_quarry", "inventory"));
-        ModelLoader.setCustomModelResourceLocation(this, CARD_QUARRY_SILK, new ModelResourceLocation(RFTools.MODID + ":shape_card_quarry_silk", "inventory"));
-        ModelLoader.setCustomModelResourceLocation(this, CARD_QUARRY_FORTUNE, new ModelResourceLocation(RFTools.MODID + ":shape_card_quarry_fortune", "inventory"));
-        ModelLoader.setCustomModelResourceLocation(this, CARD_QUARRY_CLEAR, new ModelResourceLocation(RFTools.MODID + ":shape_card_quarry_clear", "inventory"));
-        ModelLoader.setCustomModelResourceLocation(this, CARD_QUARRY_CLEAR_SILK, new ModelResourceLocation(RFTools.MODID + ":shape_card_quarry_clear_silk", "inventory"));
-        ModelLoader.setCustomModelResourceLocation(this, CARD_QUARRY_CLEAR_FORTUNE, new ModelResourceLocation(RFTools.MODID + ":shape_card_quarry_clear_fortune", "inventory"));
-        ModelLoader.setCustomModelResourceLocation(this, CARD_PUMP, new ModelResourceLocation(RFTools.MODID + ":shape_card_pump", "inventory"));
-        ModelLoader.setCustomModelResourceLocation(this, CARD_PUMP_CLEAR, new ModelResourceLocation(RFTools.MODID + ":shape_card_pump_clear", "inventory"));
-        ModelLoader.setCustomModelResourceLocation(this, CARD_PUMP_LIQUID, new ModelResourceLocation(RFTools.MODID + ":shape_card_liquid", "inventory"));
+        for(ShapeCardType type : ShapeCardType.values()) {
+            ModelResourceLocation modelResourceLocation = type.getModelResourceLocation();
+            if(modelResourceLocation != null) {
+                ModelLoader.setCustomModelResourceLocation(this, type.getDamage(), modelResourceLocation);
+            }
+        }
     }
 
     @Override
@@ -282,13 +263,13 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
     public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
 
-        int type = itemStack.getItemDamage();
+        ShapeCardType type = ShapeCardType.fromDamage(itemStack.getItemDamage());
         if (!BuilderConfiguration.shapeCardAllowed) {
             list.add(TextFormatting.RED + "Disabled in config!");
-        } else if (type != CARD_SHAPE) {
+        } else if (type != ShapeCardType.CARD_SHAPE) {
             if (!BuilderConfiguration.quarryAllowed) {
                 list.add(TextFormatting.RED + "Disabled in config!");
-            } else if (isClearingQuarry(type)) {
+            } else if (type.isQuarry() && type.isClearing()) {
                 if (!BuilderConfiguration.clearingQuarryAllowed) {
                     list.add(TextFormatting.RED + "Disabled in config!");
                 }
@@ -316,103 +297,10 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(TextFormatting.YELLOW + "Sneak right click on builder to start mark mode");
             list.add(TextFormatting.YELLOW + "Then right click to mark two corners of wanted area");
-            switch (type) {
-                case CARD_PUMP_LIQUID:
-                    list.add(TextFormatting.WHITE + "This item will cause the builder to place");
-                    list.add(TextFormatting.WHITE + "liquids from an tank on top/bottom into the world.");
-                    list.add(TextFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
-                    list.add(TextFormatting.GREEN + "Base cost: " + BuilderConfiguration.builderRfPerLiquid + " RF/t per block");
-                    list.add(TextFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
-                    break;
-                case CARD_PUMP:
-                    list.add(TextFormatting.WHITE + "This item will cause the builder to collect");
-                    list.add(TextFormatting.WHITE + "all liquids in the configured space.");
-                    list.add(TextFormatting.WHITE + "The liquid will be replaced with " + getDirtOrCobbleName() + ".");
-                    list.add(TextFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
-                    list.add(TextFormatting.GREEN + "Base cost: " + BuilderConfiguration.builderRfPerLiquid + " RF/t per block");
-                    list.add(TextFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
-                    break;
-                case CARD_PUMP_CLEAR:
-                    list.add(TextFormatting.WHITE + "This item will cause the builder to collect");
-                    list.add(TextFormatting.WHITE + "all liquids in the configured space.");
-                    list.add(TextFormatting.WHITE + "The liquid will be removed from the world");
-                    list.add(TextFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
-                    list.add(TextFormatting.GREEN + "Base cost: " + BuilderConfiguration.builderRfPerLiquid + " RF/t per block");
-                    list.add(TextFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
-                    break;
-                case CARD_VOID:
-                    list.add(TextFormatting.WHITE + "This item will cause the builder to void");
-                    list.add(TextFormatting.WHITE + "all blocks in the configured space.");
-                    list.add(TextFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
-                    list.add(TextFormatting.GREEN + "Base cost: " + (int)(BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.voidShapeCardFactor) + " RF/t per block");
-                    list.add(TextFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
-                    break;
-                case CARD_SHAPE:
-                    list.add(TextFormatting.WHITE + "This item can be configured as a shape. You");
-                    list.add(TextFormatting.WHITE + "can then use it in the shield projector to make");
-                    list.add(TextFormatting.WHITE + "a shield of that shape or in the builder to");
-                    list.add(TextFormatting.WHITE + "actually build the shape");
-                    list.add(TextFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
-                    list.add(TextFormatting.GREEN + "Base cost: " + BuilderConfiguration.builderRfPerOperation + " RF/t per block");
-                    list.add(TextFormatting.GREEN + "(final cost depends on infusion level)");
-                    break;
-                case CARD_QUARRY_SILK:
-                    list.add(TextFormatting.WHITE + "This item will cause the builder to quarry");
-                    list.add(TextFormatting.WHITE + "all blocks in the configured space and replace");
-                    list.add(TextFormatting.WHITE + "them with " + getDirtOrCobbleName() + ".");
-                    list.add(TextFormatting.WHITE + "Blocks are harvested with silk touch");
-                    list.add(TextFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
-                    list.add(TextFormatting.GREEN + "Base cost: " + (int)(BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.silkquarryShapeCardFactor) + " RF/t per block");
-                    list.add(TextFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
-                    break;
-                case CARD_QUARRY_CLEAR_SILK:
-                    list.add(TextFormatting.WHITE + "This item will cause the builder to quarry");
-                    list.add(TextFormatting.WHITE + "all blocks in the configured space.");
-                    list.add(TextFormatting.WHITE + "Blocks are harvested with silk touch");
-                    list.add(TextFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
-                    list.add(TextFormatting.GREEN + "Base cost: " + (int)(BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.silkquarryShapeCardFactor) + " RF/t per block");
-                    list.add(TextFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
-                    break;
-                case CARD_QUARRY_FORTUNE:
-                    list.add(TextFormatting.WHITE + "This item will cause the builder to quarry");
-                    list.add(TextFormatting.WHITE + "all blocks in the configured space and replace");
-                    list.add(TextFormatting.WHITE + "them with " + getDirtOrCobbleName() + ".");
-                    list.add(TextFormatting.WHITE + "Blocks are harvested with fortune");
-                    list.add(TextFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
-                    list.add(TextFormatting.GREEN + "Base cost: " + (int)(BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.fortunequarryShapeCardFactor) + " RF/t per block");
-                    list.add(TextFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
-                    break;
-                case CARD_QUARRY_CLEAR_FORTUNE:
-                    list.add(TextFormatting.WHITE + "This item will cause the builder to quarry");
-                    list.add(TextFormatting.WHITE + "all blocks in the configured space.");
-                    list.add(TextFormatting.WHITE + "Blocks are harvested with fortune");
-                    list.add(TextFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
-                    list.add(TextFormatting.GREEN + "Base cost: " + (int)(BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.fortunequarryShapeCardFactor) + " RF/t per block");
-                    list.add(TextFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
-                    break;
-                case CARD_QUARRY:
-                    list.add(TextFormatting.WHITE + "This item will cause the builder to quarry");
-                    list.add(TextFormatting.WHITE + "all blocks in the configured space and replace");
-                    list.add(TextFormatting.WHITE + "them with " + getDirtOrCobbleName() + ".");
-                    list.add(TextFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
-                    list.add(TextFormatting.GREEN + "Base cost: " + BuilderConfiguration.builderRfPerQuarry + " RF/t per block");
-                    list.add(TextFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
-                    break;
-                case CARD_QUARRY_CLEAR:
-                    list.add(TextFormatting.WHITE + "This item will cause the builder to quarry");
-                    list.add(TextFormatting.WHITE + "all blocks in the configured space");
-                    list.add(TextFormatting.GREEN + "Max area: " + BuilderConfiguration.maxBuilderDimension + "x" + Math.min(256, BuilderConfiguration.maxBuilderDimension) + "x" + BuilderConfiguration.maxBuilderDimension);
-                    list.add(TextFormatting.GREEN + "Base cost: " + BuilderConfiguration.builderRfPerQuarry + " RF/t per block");
-                    list.add(TextFormatting.GREEN + "(final cost depends on infusion level and block hardness)");
-                    break;
-            }
+            type.addInformation(list);
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
-    }
-
-    private String getDirtOrCobbleName() {
-        return BuilderConfiguration.getQuarryReplace().getLocalizedName();
     }
 
     /**
@@ -421,16 +309,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
      * @return
      */
     public static boolean isNormalShapeCard(ItemStack stack) {
-        return stack.getItemDamage() == CARD_SHAPE;
-    }
-
-    public static boolean isClearingQuarry(int type) {
-        return type == CARD_QUARRY_CLEAR || type == CARD_QUARRY_CLEAR_FORTUNE || type == CARD_QUARRY_CLEAR_SILK;
-    }
-
-    public static boolean isQuarry(int type) {
-        return type == CARD_QUARRY_CLEAR || type == CARD_QUARRY_CLEAR_FORTUNE || type == CARD_QUARRY_CLEAR_SILK ||
-                type == CARD_QUARRY || type == CARD_QUARRY_FORTUNE || type == CARD_QUARRY_SILK;
+        return stack.getItemDamage() == ShapeCardType.CARD_SHAPE.getDamage();
     }
 
     private static void addBlocks(Set<Block> blocks, Block block, boolean oredict) {
