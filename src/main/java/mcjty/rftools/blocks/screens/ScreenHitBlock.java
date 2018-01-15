@@ -40,13 +40,12 @@ import java.util.Random;
 public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyContainer> {
 
     public ScreenHitBlock() {
-        super(RFTools.instance, Material.GLASS, ScreenHitTileEntity.class, EmptyContainer.class, "screen_hitblock", false);
+        super(RFTools.instance, Material.GLASS, ScreenHitTileEntity.class, EmptyContainer.class, null, "screen_hitblock", false);
         setBlockUnbreakable();
         setResistance(6000000.0F);
 //        setUnlocalizedName("rftools.screen_hitblock");
 //        setRegistryName("screen_hitblock");
 //        GameRegistry.register(this);
-//        GameRegistry.register(new ItemBlock(this), getRegistryName());
 //        GameRegistry.registerTileEntity(ScreenHitTileEntity.class, "screen_hitblock");
     }
 
