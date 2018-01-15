@@ -78,4 +78,8 @@ public class ComputerScreenModule implements IScreenModule<ComputerScreenModule.
             return color;
         }
     }
+    @Override
+    public boolean needsController() {
+        return true;
+    }
 }

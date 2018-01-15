@@ -47,4 +47,13 @@ public interface IScreenModule<T extends IModuleData> {
      * @param player
      */
     void mouseClick(World world, int x, int y, boolean clicked, EntityPlayer player);
+
+    /**
+     * @return Whether this module needs a screen controller to work,
+     * even in creative screens. Intended for use by things such as
+     * computer screen modules, which use the controller to set their text.
+     */
+    default boolean needsController() {
+        return false;
+    }
 }

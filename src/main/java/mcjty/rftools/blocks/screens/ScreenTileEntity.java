@@ -90,6 +90,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     }
 
     private int totalRfPerTick = 0;     // The total rf per tick for all modules.
+    private boolean controllerNeededInCreative = false; // If any of this screen's modules use the screen controller, thus requiring one even for creative screens.
 
     public long lastTime = 0;
 
@@ -418,6 +419,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         powerOn = tagCompound.getBoolean("powerOn");
         connected = tagCompound.getBoolean("connected");
         totalRfPerTick = tagCompound.getInteger("rfPerTick");
+        controllerNeededInCreative = tagCompound.getBoolean("controllerNeededInCreative");
     }
 
     @Override
@@ -442,6 +444,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         tagCompound.setBoolean("powerOn", powerOn);
         tagCompound.setBoolean("connected", connected);
         tagCompound.setInteger("rfPerTick", totalRfPerTick);
+        tagCompound.setBoolean("controllerNeededInCreative", controllerNeededInCreative);
         return tagCompound;
     }
 
@@ -619,16 +622,26 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     }
 
     public int getTotalRfPerTick() {
+        if (isCreative()) return 0;
         if (screenModules == null) {
             getScreenModules();
         }
         return totalRfPerTick;
     }
 
+    public boolean isControllerNeeded() {
+        if (!isCreative()) return true;
+        if (screenModules == null) {
+            getScreenModules();
+        }
+        return controllerNeededInCreative;
+    }
+
     // This is called server side.
     public List<IScreenModule> getScreenModules() {
         if (screenModules == null) {
             totalRfPerTick = 0;
+            controllerNeededInCreative = false;
             screenModules = new ArrayList<>();
             for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
                 ItemStack itemStack = inventoryHelper.getStackInSlot(i);
@@ -647,6 +660,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
                     screenModule.setupFromNBT(itemStack.getTagCompound(), getWorld().provider.getDimension(), getPos());
                     screenModules.add(screenModule);
                     totalRfPerTick += screenModule.getRfPerTick();
+                    if(screenModule.needsController()) controllerNeededInCreative = true;
 
                     if (screenModule instanceof ComputerScreenModule) {
                         ComputerScreenModule computerScreenModule = (ComputerScreenModule) screenModule;

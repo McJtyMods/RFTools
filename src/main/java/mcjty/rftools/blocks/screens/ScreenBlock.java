@@ -113,11 +113,10 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof ScreenTileEntity) {
             ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
+            if (!screenTileEntity.isConnected() && screenTileEntity.isControllerNeeded()) {
+                probeInfo.text(TextFormatting.YELLOW + "[NOT CONNECTED]");
+            }
             if (!isCreative()) {
-                boolean connected = screenTileEntity.isConnected();
-                if (!connected) {
-                    probeInfo.text(TextFormatting.YELLOW + "[NOT CONNECTED]");
-                }
                 boolean power = screenTileEntity.isPowerOn();
                 if (!power) {
                     probeInfo.text(TextFormatting.YELLOW + "[NO POWER]");
@@ -153,11 +152,10 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
 
     @SideOnly(Side.CLIENT)
     public List<String> getWailaBodyScreen(List<String> currenttip, EntityPlayer player, ScreenTileEntity te) {
+        if (!te.isConnected() && te.isControllerNeeded()) {
+            currenttip.add(TextFormatting.YELLOW + "[NOT CONNECTED]");
+        }
         if (!isCreative()) {
-            boolean connected = te.isConnected();
-            if (!connected) {
-                currenttip.add(TextFormatting.YELLOW + "[NOT CONNECTED]");
-            }
             boolean power = te.isPowerOn();
             if (!power) {
                 currenttip.add(TextFormatting.YELLOW + "[NO POWER]");
