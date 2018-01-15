@@ -41,6 +41,13 @@ public class SyringeItem extends GenericRFToolsItem {
     public SyringeItem() {
         super("syringe");
         setMaxStackSize(1);
+        setContainerItem(this);
+    }
+
+    @Override
+    public boolean hasContainerItem(ItemStack stack) {
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        return tagCompound != null && tagCompound.getInteger("level") > 0;
     }
 
     @Override
