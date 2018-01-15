@@ -52,7 +52,7 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
     @Override
     public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
         BlockPos screenPos = getScreenBlockPos(worldIn, pos);
-        if(screenPos == null) return null;
+        if(screenPos == null) return ItemStack.EMPTY;
         IBlockState screenState = worldIn.getBlockState(screenPos);
         return screenState.getBlock().getItem(worldIn, screenPos, screenState);
     }
