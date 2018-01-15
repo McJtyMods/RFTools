@@ -38,6 +38,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.RegistryEvent.MissingMappings.Mapping;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -262,6 +263,19 @@ public class ForgeEventHandlers {
             }
             EndergenicTileEntity.todoEndergenics.clear();
             EndergenicTileEntity.endergenicsAdded.clear();
+        }
+    }
+
+    @SubscribeEvent
+    public void onMissingItemMappings(RegistryEvent.MissingMappings<Item> event) {
+        ResourceLocation screenHit = ScreenSetup.screenHitBlock.getRegistryName();
+        for(Mapping<Item> mapping : event.getAllMappings()) {
+            if(screenHit.equals(mapping.key)) {
+                // The screen hit block used to (incorrectly) have an ItemBlock.
+                // Don't bother warning the player that this is gone.
+                mapping.ignore();
+                break;
+            }
         }
     }
 }
