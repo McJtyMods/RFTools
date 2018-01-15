@@ -195,60 +195,20 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
         IBlockState state = world.getBlockState(pos);
         EnumFacing facing = state.getValue(BaseBlock.FACING);
 
-        if (facing == EnumFacing.NORTH) {
-            for (int i = 0 ; i <= size ; i++) {
-                for (int j = 0 ; j <= size ; j++) {
-                    if (i != 0 || j != 0) {
+        for (int i = 0 ; i <= size ; i++) {
+            for (int j = 0 ; j <= size ; j++) {
+                if (i != 0 || j != 0) {
+                    if (facing == EnumFacing.NORTH) {
                         setInvisibleBlockSafe(world, pos, -i, -j, 0, facing);
-                    }
-                }
-            }
-        }
-
-        if (facing == EnumFacing.SOUTH) {
-            for (int i = 0 ; i <= size ; i++) {
-                for (int j = 0 ; j <= size ; j++) {
-                    if (i != 0 || j != 0) {
+                    } else if (facing == EnumFacing.SOUTH) {
                         setInvisibleBlockSafe(world, pos, i, -j, 0, facing);
-                    }
-                }
-            }
-        }
-
-        if (facing == EnumFacing.WEST) {
-            for (int i = 0 ; i <= size ; i++) {
-                for (int j = 0 ; j <= size ; j++) {
-                    if (i != 0 || j != 0) {
+                    } else if (facing == EnumFacing.WEST) {
                         setInvisibleBlockSafe(world, pos, 0, -i, j, facing);
-                    }
-                }
-            }
-        }
-
-        if (facing == EnumFacing.EAST) {
-            for (int i = 0 ; i <= size ; i++) {
-                for (int j = 0 ; j <= size ; j++) {
-                    if (i != 0 || j != 0) {
+                    } else if (facing == EnumFacing.EAST) {
                         setInvisibleBlockSafe(world, pos, 0, -i, -j, facing);
-                    }
-                }
-            }
-        }
-
-        if (facing == EnumFacing.UP) {
-            for (int i = 0 ; i <= size ; i++) {
-                for (int j = 0 ; j <= size ; j++) {
-                    if (i != 0 || j != 0) {
+                    } else if (facing == EnumFacing.UP) {
                         setInvisibleBlockSafe(world, pos, -i, 0, -j, facing);
-                    }
-                }
-            }
-        }
-
-        if (facing == EnumFacing.DOWN) {
-            for (int i = 0 ; i <= size ; i++) {
-                for (int j = 0 ; j <= size ; j++) {
-                    if (i != 0 || j != 0) {
+                    } else if (facing == EnumFacing.DOWN) {
                         setInvisibleBlockSafe(world, pos, -i, 0, j, facing);
                     }
                 }
@@ -267,60 +227,20 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
 
     private void clearInvisibleBlocks(World world, BlockPos pos, IBlockState state, int size) {
         EnumFacing facing = state.getValue(BaseBlock.FACING);
-        if (facing == EnumFacing.NORTH) {
-            for (int i = 0 ; i <= size ; i++) {
-                for (int j = 0 ; j <= size ; j++) {
-                    if (i != 0 || j != 0) {
+        for (int i = 0 ; i <= size ; i++) {
+            for (int j = 0 ; j <= size ; j++) {
+                if (i != 0 || j != 0) {
+                    if (facing == EnumFacing.NORTH) {
                         clearInvisibleBlockSafe(world, pos.add(-i, -j, 0));
-                    }
-                }
-            }
-        }
-
-        if (facing == EnumFacing.SOUTH) {
-            for (int i = 0 ; i <= size ; i++) {
-                for (int j = 0 ; j <= size ; j++) {
-                    if (i != 0 || j != 0) {
+                    } else if (facing == EnumFacing.SOUTH) {
                         clearInvisibleBlockSafe(world, pos.add(i, -j, 0));
-                    }
-                }
-            }
-        }
-
-        if (facing == EnumFacing.WEST) {
-            for (int i = 0 ; i <= size ; i++) {
-                for (int j = 0 ; j <= size ; j++) {
-                    if (i != 0 || j != 0) {
+                    } else if (facing == EnumFacing.WEST) {
                         clearInvisibleBlockSafe(world, pos.add(0, -i, j));
-                    }
-                }
-            }
-        }
-
-        if (facing == EnumFacing.EAST) {
-            for (int i = 0 ; i <= size ; i++) {
-                for (int j = 0 ; j <= size ; j++) {
-                    if (i != 0 || j != 0) {
+                    } else if (facing == EnumFacing.EAST) {
                         clearInvisibleBlockSafe(world, pos.add(0, -i, -j));
-                    }
-                }
-            }
-        }
-
-        if (facing == EnumFacing.UP) {
-            for (int i = 0 ; i <= size ; i++) {
-                for (int j = 0 ; j <= size ; j++) {
-                    if (i != 0 || j != 0) {
+                    } else if (facing == EnumFacing.UP) {
                         clearInvisibleBlockSafe(world, pos.add(-i, 0, -j));
-                    }
-                }
-            }
-        }
-
-        if (facing == EnumFacing.DOWN) {
-            for (int i = 0 ; i <= size ; i++) {
-                for (int j = 0 ; j <= size ; j++) {
-                    if (i != 0 || j != 0) {
+                    } else if (facing == EnumFacing.DOWN) {
                         clearInvisibleBlockSafe(world, pos.add(-i, 0, j));
                     }
                 }
