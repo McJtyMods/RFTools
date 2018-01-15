@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.container.BaseBlock;
+import mcjty.lib.container.GenericItemBlock;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
@@ -54,7 +55,7 @@ import java.util.List;
 public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenContainer> {
 
     public ScreenBlock(String name, Class<? extends ScreenTileEntity> clazz) {
-        super(Material.IRON, clazz, ScreenContainer.class, ScreenItemBlock.class, name, true);
+        super(Material.IRON, clazz, ScreenContainer.class, GenericItemBlock.class, name, true);
     }
 
     @Override
