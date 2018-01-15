@@ -50,6 +50,14 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
     }
 
     @Override
+    public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
+        BlockPos screenPos = getScreenBlockPos(worldIn, pos);
+        if(screenPos == null) return null;
+        IBlockState screenState = worldIn.getBlockState(screenPos);
+        return screenState.getBlock().getItem(worldIn, screenPos, screenState);
+    }
+
+    @Override
     public int getGuiID() {
         return -1;
     }
