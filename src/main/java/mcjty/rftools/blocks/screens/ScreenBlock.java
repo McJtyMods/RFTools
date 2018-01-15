@@ -234,6 +234,26 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
                 }
             }
         }
+
+        if (facing == EnumFacing.UP) {
+            for (int i = 0 ; i <= size ; i++) {
+                for (int j = 0 ; j <= size ; j++) {
+                    if (i != 0 || j != 0) {
+                        setInvisibleBlockSafe(world, pos, -i, 0, -j, facing);
+                    }
+                }
+            }
+        }
+
+        if (facing == EnumFacing.DOWN) {
+            for (int i = 0 ; i <= size ; i++) {
+                for (int j = 0 ; j <= size ; j++) {
+                    if (i != 0 || j != 0) {
+                        setInvisibleBlockSafe(world, pos, -i, 0, j, facing);
+                    }
+                }
+            }
+        }
     }
 
     private void clearInvisibleBlockSafe(World world, BlockPos pos) {
@@ -282,6 +302,26 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
                 for (int j = 0 ; j <= size ; j++) {
                     if (i != 0 || j != 0) {
                         clearInvisibleBlockSafe(world, pos.add(0, -i, -j));
+                    }
+                }
+            }
+        }
+
+        if (facing == EnumFacing.UP) {
+            for (int i = 0 ; i <= size ; i++) {
+                for (int j = 0 ; j <= size ; j++) {
+                    if (i != 0 || j != 0) {
+                        clearInvisibleBlockSafe(world, pos.add(-i, 0, -j));
+                    }
+                }
+            }
+        }
+
+        if (facing == EnumFacing.DOWN) {
+            for (int i = 0 ; i <= size ; i++) {
+                for (int j = 0 ; j <= size ; j++) {
+                    if (i != 0 || j != 0) {
+                        clearInvisibleBlockSafe(world, pos.add(-i, 0, j));
                     }
                 }
             }
@@ -405,6 +445,8 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
     public static final AxisAlignedBB SOUTH_AABB = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 0.125F);
     public static final AxisAlignedBB WEST_AABB = new AxisAlignedBB(1.0F - 0.125F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
     public static final AxisAlignedBB EAST_AABB = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 0.125F, 1.0F, 1.0F);
+    public static final AxisAlignedBB UP_AABB = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 0.125F, 1.0F);
+    public static final AxisAlignedBB DOWN_AABB = new AxisAlignedBB(0.0F, 1.0F - 0.125F, 0.0F, 1.0F, 1.0F, 1.0F);
 
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
@@ -417,6 +459,10 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
             return WEST_AABB;
         } else if (facing == EnumFacing.EAST) {
             return EAST_AABB;
+        } else if (facing == EnumFacing.UP) {
+            return UP_AABB;
+        } else if (facing == EnumFacing.DOWN) {
+            return DOWN_AABB;
         } else {
             return BLOCK_AABB;
         }

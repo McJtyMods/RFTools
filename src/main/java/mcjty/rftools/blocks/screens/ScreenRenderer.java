@@ -42,7 +42,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
 
     @Override
     public void render(ScreenTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-        float f3;
+        float xRotation = 0.0F, yRotation = 0.0F;
 
         EnumFacing facing = EnumFacing.SOUTH;
         if (tileEntity != null) {
@@ -58,26 +58,28 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
 
         switch (facing) {
             case NORTH:
-                f3 = 180.0F;
+                yRotation = -180.0F;
                 break;
             case WEST:
-                f3 = 90.0F;
+                yRotation = -90.0F;
                 break;
             case EAST:
-                f3 = -90.0F;
+                yRotation = 90.0F;
                 break;
             case DOWN:
-            case UP:
-            case SOUTH:
-            default:
-                f3 = 0.0F;
+                xRotation = -90.0F;
+                yRotation = -180.0F;
                 break;
+            case UP:
+                xRotation = 90.0F;
+                yRotation = -180.0F;
         }
 
         // TileEntity can be null if this is used for an item renderer.
-        GlStateManager.translate((float) x + 0.5F, (float) y + 0.75F, (float) z + 0.5F);
-        GlStateManager.rotate(-f3, 0.0F, 1.0F, 0.0F);
-        GlStateManager.translate(0.0F, -0.2500F, -0.4375F);
+        GlStateManager.translate((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
+        GlStateManager.rotate(xRotation, 1.0F, 0.0F, 0.0F);
+        GlStateManager.rotate(yRotation, 0.0F, 1.0F, 0.0F);
+        GlStateManager.translate(0.0F, 0.0F, -0.4375F);
 
         if (tileEntity == null) {
             GlStateManager.disableLighting();

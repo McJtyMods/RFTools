@@ -107,7 +107,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
-        return new AxisAlignedBB(xCoord - 1, yCoord - size - 1, zCoord - 1, xCoord + size + 1, yCoord + 1, zCoord + size + 1);
+        return new AxisAlignedBB(xCoord - size - 1, yCoord - size - 1, zCoord - size - 1, xCoord + size + 1, yCoord + size + 1, zCoord + size + 1); // TODO see if we can shrink this
     }
 
     @Override
@@ -284,20 +284,31 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     public ModuleRaytraceResult getHitModule(double hitX, double hitY, double hitZ, EnumFacing side) {
         ModuleRaytraceResult result;
         float factor = size+1.0f;
-        float dx = 0;
-        float dy = (float) ((-hitY + 1.0) / factor);
+        float dx = 0, dy = 0;
         switch (side) {
             case NORTH:
                 dx = (float) ((1.0-hitX) / factor);
+                dy = (float) ((1.0-hitY) / factor);
                 break;
             case SOUTH:
                 dx = (float) (hitX / factor);
+                dy = (float) ((1.0-hitY) / factor);
                 break;
             case WEST:
                 dx = (float) (hitZ / factor);
+                dy = (float) ((1.0-hitY) / factor);
                 break;
             case EAST:
-                dx = (float) ((1.0 - hitZ) / factor);
+                dx = (float) ((1.0-hitZ) / factor);
+                dy = (float) ((1.0-hitY) / factor);
+                break;
+            case UP:
+                dx = (float) ((1.0-hitX) / factor);
+                dy = (float) ((1.0-hitZ) / factor);
+                break;
+            case DOWN:
+                dx = (float) ((1.0-hitX) / factor);
+                dy = (float) (hitZ / factor);
                 break;
             default:
                 return null;
