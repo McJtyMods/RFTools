@@ -115,14 +115,15 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
             int dx = screenHitTileEntity.getDx();
             int dy = screenHitTileEntity.getDy();
             int dz = screenHitTileEntity.getDz();
-            Block block = world.getBlockState(pos.add(dx, dy, dz)).getBlock();
+            IBlockState state = world.getBlockState(pos.add(dx, dy, dz));
+            Block block = state.getBlock();
             if (block != ScreenSetup.screenBlock && block != ScreenSetup.creativeScreenBlock) {
                 return;
             }
 
             RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
             ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos.add(dx, dy, dz));
-            screenTileEntity.hitScreenClient(mouseOver.hitVec.x - pos.getX() - dx, mouseOver.hitVec.y - pos.getY() - dy, mouseOver.hitVec.z - pos.getZ() - dz, mouseOver.sideHit);
+            screenTileEntity.hitScreenClient(mouseOver.hitVec.x - pos.getX() - dx, mouseOver.hitVec.y - pos.getY() - dy, mouseOver.hitVec.z - pos.getZ() - dz, mouseOver.sideHit, state.getValue(ScreenBlock.HORIZONTAL_FACING));
         }
     }
 

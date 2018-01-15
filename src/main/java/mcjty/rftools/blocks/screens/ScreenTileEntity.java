@@ -244,8 +244,8 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         return false;
     }
 
-    public void focusModuleClient(double hitX, double hitY, double hitZ, EnumFacing side) {
-        ModuleRaytraceResult result = getHitModule(hitX, hitY, hitZ, side);
+    public void focusModuleClient(double hitX, double hitY, double hitZ, EnumFacing side, EnumFacing horizontalFacing) {
+        ModuleRaytraceResult result = getHitModule(hitX, hitY, hitZ, side, horizontalFacing);
         if (result == null) {
             RFToolsMessages.INSTANCE.sendToServer(new PacketServerCommand(getPos(), CMD_HOVER,
                     new Argument("x", -1),
@@ -260,8 +260,8 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
                 new Argument("module", result.getModuleIndex())));
     }
 
-    public void hitScreenClient(double hitX, double hitY, double hitZ, EnumFacing side) {
-        ModuleRaytraceResult result = getHitModule(hitX, hitY, hitZ, side);
+    public void hitScreenClient(double hitX, double hitY, double hitZ, EnumFacing side, EnumFacing horizontalFacing) {
+        ModuleRaytraceResult result = getHitModule(hitX, hitY, hitZ, side, horizontalFacing);
         if (result == null) {
             return;
         }
@@ -281,7 +281,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
                 new Argument("module", module)));
     }
 
-    public ModuleRaytraceResult getHitModule(double hitX, double hitY, double hitZ, EnumFacing side) {
+    public ModuleRaytraceResult getHitModule(double hitX, double hitY, double hitZ, EnumFacing side, EnumFacing horizontalFacing) {
         ModuleRaytraceResult result;
         float factor = size+1.0f;
         float dx = 0, dy = 0;
@@ -303,12 +303,42 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
                 dy = (float) ((1.0-hitY) / factor);
                 break;
             case UP:
-                dx = (float) ((1.0-hitX) / factor);
-                dy = (float) ((1.0-hitZ) / factor);
+                switch(horizontalFacing) {
+                    case NORTH:
+                        dx = (float) ((1.0-hitX) / factor);
+                        dy = (float) ((1.0-hitZ) / factor);
+                        break;
+                    case SOUTH:
+                        dx = (float) (hitX / factor);
+                        dy = (float) (hitZ / factor);
+                        break;
+                    case WEST:
+                        dx = (float) (hitZ / factor);
+                        dy = (float) ((1.0-hitX) / factor);
+                        break;
+                    case EAST:
+                        dx = (float) ((1.0-hitZ) / factor);
+                        dy = (float) (hitX / factor);
+                }
                 break;
             case DOWN:
-                dx = (float) ((1.0-hitX) / factor);
-                dy = (float) (hitZ / factor);
+                switch(horizontalFacing) {
+                    case NORTH:
+                        dx = (float) ((1.0-hitX) / factor);
+                        dy = (float) (hitZ / factor);
+                        break;
+                    case SOUTH:
+                        dx = (float) (hitX / factor);
+                        dy = (float) ((1.0-hitZ) / factor);
+                        break;
+                    case WEST:
+                        dx = (float) (hitZ / factor);
+                        dy = (float) (hitX / factor);
+                        break;
+                    case EAST:
+                        dx = (float) ((1.0-hitZ) / factor);
+                        dy = (float) ((1.0-hitX) / factor);
+                }
                 break;
             default:
                 return null;

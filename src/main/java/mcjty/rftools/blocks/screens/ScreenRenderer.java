@@ -44,11 +44,12 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
     public void render(ScreenTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         float xRotation = 0.0F, yRotation = 0.0F;
 
-        EnumFacing facing = EnumFacing.SOUTH;
+        EnumFacing facing = EnumFacing.SOUTH, horizontalFacing = EnumFacing.SOUTH;
         if (tileEntity != null) {
             IBlockState state = Minecraft.getMinecraft().world.getBlockState(tileEntity.getPos());
-            if (state.getBlock() instanceof ScreenBlock || state.getBlock() instanceof ScreenHitBlock) {
+            if (state.getBlock() instanceof ScreenBlock) {
                 facing = state.getValue(BaseBlock.FACING);
+                horizontalFacing = state.getValue(ScreenBlock.HORIZONTAL_FACING);
             } else {
                 return;
             }
@@ -56,7 +57,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
 
         GlStateManager.pushMatrix();
 
-        switch (facing) {
+        switch (horizontalFacing) {
             case NORTH:
                 yRotation = -180.0F;
                 break;
@@ -65,20 +66,19 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
                 break;
             case EAST:
                 yRotation = 90.0F;
-                break;
+        }
+        switch (facing) {
             case DOWN:
-                xRotation = -90.0F;
-                yRotation = -180.0F;
+                xRotation = 90.0F;
                 break;
             case UP:
-                xRotation = 90.0F;
-                yRotation = -180.0F;
+                xRotation = -90.0F;
         }
 
         // TileEntity can be null if this is used for an item renderer.
         GlStateManager.translate((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
-        GlStateManager.rotate(xRotation, 1.0F, 0.0F, 0.0F);
         GlStateManager.rotate(yRotation, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotate(xRotation, 1.0F, 0.0F, 0.0F);
         GlStateManager.translate(0.0F, 0.0F, -0.4375F);
 
         if (tileEntity == null) {
@@ -151,11 +151,12 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
                 double xx = mouseOver.hitVec.x - pos.getX();
                 double yy = mouseOver.hitVec.y - pos.getY();
                 double zz = mouseOver.hitVec.z - pos.getZ();
-                hit = tileEntity.getHitModule(xx, yy, zz, mouseOver.sideHit);
+                EnumFacing horizontalFacing = blockState.getValue(ScreenBlock.HORIZONTAL_FACING);
+                hit = tileEntity.getHitModule(xx, yy, zz, mouseOver.sideHit, horizontalFacing);
                 if (hit != null) {
                     hitModule = modules.get(hit.getModuleIndex());
                 }
-                tileEntity.focusModuleClient(xx, yy, zz, mouseOver.sideHit);
+                tileEntity.focusModuleClient(xx, yy, zz, mouseOver.sideHit, horizontalFacing);
             }
         }
 

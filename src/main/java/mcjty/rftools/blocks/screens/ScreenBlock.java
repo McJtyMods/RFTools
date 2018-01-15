@@ -19,6 +19,8 @@ import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -53,9 +55,51 @@ import java.util.Collections;
 import java.util.List;
 
 public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenContainer> {
+    public static final PropertyDirection HORIZONTAL_FACING = PropertyDirection.create("horizontal_facing", EnumFacing.Plane.HORIZONTAL);
 
     public ScreenBlock(String name, Class<? extends ScreenTileEntity> clazz) {
         super(Material.IRON, clazz, ScreenContainer.class, GenericItemBlock.class, name, true);
+    }
+
+    @Override
+    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+        return super.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer).withProperty(HORIZONTAL_FACING, placer.getHorizontalFacing().getOpposite());
+    }
+
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        if(meta > 5) {
+            meta -= 4;
+        } else if(meta > 1) {
+            EnumFacing facing = EnumFacing.VALUES[meta];
+            return getDefaultState().withProperty(FACING, facing).withProperty(HORIZONTAL_FACING, facing);
+        }
+        EnumFacing horizontalFacing = EnumFacing.VALUES[(meta >> 1) + 2];
+        EnumFacing facing = (meta & 1) == 0 ? EnumFacing.DOWN : EnumFacing.UP;
+        return getDefaultState().withProperty(HORIZONTAL_FACING, horizontalFacing).withProperty(FACING, facing);
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        EnumFacing facing = state.getValue(FACING);
+        EnumFacing horizontalFacing = state.getValue(HORIZONTAL_FACING);
+        int meta = 0;
+        switch(facing) {
+        case UP:
+            meta = 1;
+            //$FALL-THROUGH$
+        case DOWN:
+            meta += (horizontalFacing.getIndex() << 1);
+            if(meta < 6) meta -= 4;
+            return meta;
+        default:
+            return facing.getIndex();
+        }
+    }
+
+    @Override
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, FACING, HORIZONTAL_FACING);
     }
 
     @Override
@@ -172,7 +216,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
         if (world.isRemote) {
             RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
             ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos);
-            screenTileEntity.hitScreenClient(mouseOver.hitVec.x - pos.getX(), mouseOver.hitVec.y - pos.getY(), mouseOver.hitVec.z - pos.getZ(), mouseOver.sideHit);
+            screenTileEntity.hitScreenClient(mouseOver.hitVec.x - pos.getX(), mouseOver.hitVec.y - pos.getY(), mouseOver.hitVec.z - pos.getZ(), mouseOver.sideHit, world.getBlockState(pos).getValue(ScreenBlock.HORIZONTAL_FACING));
         }
     }
 
@@ -194,6 +238,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
     private void setInvisibleBlocks(World world, BlockPos pos, int size) {
         IBlockState state = world.getBlockState(pos);
         EnumFacing facing = state.getValue(BaseBlock.FACING);
+        EnumFacing horizontalFacing = state.getValue(HORIZONTAL_FACING);
 
         for (int i = 0 ; i <= size ; i++) {
             for (int j = 0 ; j <= size ; j++) {
@@ -207,9 +252,25 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
                     } else if (facing == EnumFacing.EAST) {
                         setInvisibleBlockSafe(world, pos, 0, -i, -j, facing);
                     } else if (facing == EnumFacing.UP) {
-                        setInvisibleBlockSafe(world, pos, -i, 0, -j, facing);
+                        if (horizontalFacing == EnumFacing.NORTH) {
+                            setInvisibleBlockSafe(world, pos, -i, 0, -j, facing);
+                        } else if (horizontalFacing == EnumFacing.SOUTH) {
+                            setInvisibleBlockSafe(world, pos, i, 0, j, facing);
+                        } else if (horizontalFacing == EnumFacing.WEST) {
+                            setInvisibleBlockSafe(world, pos, -i, 0, j, facing);
+                        } else if (horizontalFacing == EnumFacing.EAST) {
+                            setInvisibleBlockSafe(world, pos, i, 0, -j, facing);
+                        }
                     } else if (facing == EnumFacing.DOWN) {
-                        setInvisibleBlockSafe(world, pos, -i, 0, j, facing);
+                        if (horizontalFacing == EnumFacing.NORTH) {
+                            setInvisibleBlockSafe(world, pos, -i, 0, j, facing);
+                        } else if (horizontalFacing == EnumFacing.SOUTH) {
+                            setInvisibleBlockSafe(world, pos, i, 0, -j, facing);
+                        } else if (horizontalFacing == EnumFacing.WEST) {
+                            setInvisibleBlockSafe(world, pos, i, 0, j, facing);
+                        } else if (horizontalFacing == EnumFacing.EAST) {
+                            setInvisibleBlockSafe(world, pos, -i, 0, -j, facing);
+                        }
                     }
                 }
             }
@@ -227,6 +288,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
 
     private void clearInvisibleBlocks(World world, BlockPos pos, IBlockState state, int size) {
         EnumFacing facing = state.getValue(BaseBlock.FACING);
+        EnumFacing horizontalFacing = state.getValue(HORIZONTAL_FACING);
         for (int i = 0 ; i <= size ; i++) {
             for (int j = 0 ; j <= size ; j++) {
                 if (i != 0 || j != 0) {
@@ -239,9 +301,25 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
                     } else if (facing == EnumFacing.EAST) {
                         clearInvisibleBlockSafe(world, pos.add(0, -i, -j));
                     } else if (facing == EnumFacing.UP) {
-                        clearInvisibleBlockSafe(world, pos.add(-i, 0, -j));
+                        if (horizontalFacing == EnumFacing.NORTH) {
+                            clearInvisibleBlockSafe(world, pos.add(-i, 0, -j));
+                        } else if (horizontalFacing == EnumFacing.SOUTH) {
+                            clearInvisibleBlockSafe(world, pos.add(i, 0, j));
+                        } else if (horizontalFacing == EnumFacing.WEST) {
+                            clearInvisibleBlockSafe(world, pos.add(-i, 0, j));
+                        } else if (horizontalFacing == EnumFacing.EAST) {
+                            clearInvisibleBlockSafe(world, pos.add(i, 0, -j));
+                        }
                     } else if (facing == EnumFacing.DOWN) {
-                        clearInvisibleBlockSafe(world, pos.add(-i, 0, j));
+                        if (horizontalFacing == EnumFacing.NORTH) {
+                            clearInvisibleBlockSafe(world, pos.add(-i, 0, j));
+                        } else if (horizontalFacing == EnumFacing.SOUTH) {
+                            clearInvisibleBlockSafe(world, pos.add(i, 0, -j));
+                        } else if (horizontalFacing == EnumFacing.WEST) {
+                            clearInvisibleBlockSafe(world, pos.add(i, 0, j));
+                        } else if (horizontalFacing == EnumFacing.EAST) {
+                            clearInvisibleBlockSafe(world, pos.add(-i, 0, -j));
+                        }
                     }
                 }
             }
@@ -357,7 +435,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
     private void activateOnClient(World world, BlockPos pos) {
         RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
         ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos);
-        screenTileEntity.hitScreenClient(mouseOver.hitVec.x - pos.getX(), mouseOver.hitVec.y - pos.getY(), mouseOver.hitVec.z - pos.getZ(), mouseOver.sideHit);
+        screenTileEntity.hitScreenClient(mouseOver.hitVec.x - pos.getX(), mouseOver.hitVec.y - pos.getY(), mouseOver.hitVec.z - pos.getZ(), mouseOver.sideHit, world.getBlockState(pos).getValue(ScreenBlock.HORIZONTAL_FACING));
     }
 
     public static final AxisAlignedBB BLOCK_AABB = new AxisAlignedBB(0.5F - 0.5F, 0.0F, 0.5F - 0.5F, 0.5F + 0.5F, 1.0F, 0.5F + 0.5F);

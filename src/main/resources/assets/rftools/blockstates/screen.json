@@ -8,11 +8,17 @@
     "inventory": [{ "model": "builtin/entity" }],
     "facing": {
       "north": {},
-      "south": {"y": 180},
-      "west": {"y": 270},
-      "east": {"y": 90},
+      "south": {},
+      "west": {},
+      "east": {},
       "up": {"x": -90},
       "down": {"x": 90}
+    },
+    "horizontal_facing": {
+      "north": {},
+      "south": {"y": 180},
+      "west": {"y": 270},
+      "east": {"y": 90}
     }
   }
 }
