@@ -523,8 +523,8 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         return isCreative();
     }
 
-    private boolean isCreative() {
-        return getWorld().getBlockState(getPos()).getBlock() == ScreenSetup.creativeScreenBlock;
+    protected boolean isCreative() {
+        return false;
     }
 
     public void setConnected(boolean c) {
