@@ -129,7 +129,6 @@ vt 0.825651 0.300000
 vt 0.932982 0.000000
 vt 0.932982 1.000000
 usemtl None
-s off
 f 1/1 2/2 3/3 4/4
 usemtl None_machineEnvironmentalController.png
 f 43/5 5/6 44/7 45/8
