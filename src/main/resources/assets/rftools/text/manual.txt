@@ -345,7 +345,7 @@ or 300 stacks. You can insert modules to make the chest work better
 with various types of items. When you remove a storage module from a
 Modular Storage Block the contents will be copied to the module.
 
-The various item modules allow you to sort and group your items based
+The various type modules allow you to sort and group your items based
 on various criteria. There is also a third slot where you can insert
 a filter module to restrict items going into the storage.
 {-------------------------------------------------------------}
@@ -382,8 +382,8 @@ You can white or blacklist, filter with NBT, damage, ore dictionary or mod.
 This filter module is also usable in the crafter to control what goes into
 the crafter buffer and in the builder to control what to quarry or void.
 
-The storage filter item has its own GUI which you can only access by having
-the filter in your hand or you can sneak right click on any inventory will
+The filter module item has its own GUI which you can only access by having
+the module in your hand or you can sneak right click on any inventory will
 configure the filter to the current contents of that inventory. Sneak right
 click on another block in the world will add that to the filter.
 {-------------------------------------------------------------}
@@ -418,7 +418,7 @@ recipes. If you select a recipe you can edit it in the right grid
 by dragging over the right items.
 
 The crafter also has an internal inventory and four output slots
-for crafting results. By inserting a storage filter item you can
+for crafting results. By inserting a filter module you can
 also prevent unwanted items from being inserted into this inventory.
 {-------------------------------------------------------------}
 The 'Keep/All' button is only active when a recipe is selected and

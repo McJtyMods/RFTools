@@ -104,7 +104,7 @@ and some forms of area building/swapping/moving. The other functionalities
 (like pumping and placing liquids, quarrying, voiding and building) require
 a shape card.
 {-------------------------------------------------------------}
-The builder also supports a standard RFTools filter. If that filter is
+The builder also supports an RFTools filter module. If that module is
 inserted then it will only quarry or void blocks that match the filter.
 Note that this works only on the block in the world, not the end result
 of the block. i.e. to filter on diamonds you need to insert the diamond
@@ -229,9 +229,9 @@ There is also a command to list all available scans in the game:
     /rftshape listscans
 {-------------------------------------------------------------}
 There are two other slots at the top of the Scanner. The filter slot
-can contain an item filter with which you can make sure that certain blocks
-are not included in the final scan. For example, you can remove all stone
-from the scan that way.
+can contain a filter module with which you can make sure that certain
+blocks are not included in the final scan. For example, you can remove all
+stone from the scan that way.
 
 The other slot is for the 'modifier'. This is a more advanced way to filter
 items. With this you can also void certain blocks from the scan but you can

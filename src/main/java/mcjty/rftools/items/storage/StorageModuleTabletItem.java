@@ -222,7 +222,7 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
             }
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add("This RF/charged module can hold a storage module");
+            list.add("This RF/charged tablet can hold a storage module");
             list.add("and allows the wielder to manipulate the contents of");
             list.add("this module (remote or normal).");
             list.add("You can also combine this with a storage control");
