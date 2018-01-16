@@ -737,6 +737,7 @@ The following screen modules are currently supported:
     - Machine Info: generic information on certain machines
     - Button: send out a wireless redstone signal (interactive)
     - Storage: access 9 items directly from storage scanner
+    - Computer: text dynamically set by a computer
 {-------------------------------------------------------------}
 Some modules (like energy, fluid, inventory, and counter modules)
 require that you first shift-right click on the machine/tank that
