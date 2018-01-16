@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.teleporter;
 
+import mcjty.lib.container.GenericItemBlock;
 import mcjty.lib.varia.*;
-import mcjty.rftools.blocks.logic.generic.LogicItemBlock;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -14,7 +14,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
-public class SimpleDialerItemBlock extends LogicItemBlock {
+public class SimpleDialerItemBlock extends GenericItemBlock {
     public SimpleDialerItemBlock(Block block) {
         super(block);
     }

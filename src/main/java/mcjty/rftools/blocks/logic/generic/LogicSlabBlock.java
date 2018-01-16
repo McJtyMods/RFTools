@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.logic.generic;
 
+import mcjty.lib.container.GenericItemBlock;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -9,6 +10,7 @@ import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.statemap.StateMap;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemBlock;
@@ -24,6 +26,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import static mcjty.rftools.blocks.logic.generic.LogicFacing.*;
 import static net.minecraft.util.EnumFacing.*;
 
 /**
@@ -38,16 +41,78 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
     public static PropertyEnum<LogicFacing> LOGIC_FACING = PropertyEnum.create("logic_facing", LogicFacing.class);
 
     public LogicSlabBlock(Material material, String name, Class<? extends T> tileEntityClass, Class<? extends C> containerClass) {
-        super(material, tileEntityClass, containerClass, LogicItemBlock.class, name, false);
+        super(material, tileEntityClass, containerClass, GenericItemBlock.class, name, false);
     }
 
     public LogicSlabBlock(Material material, String name, Class<? extends T> tileEntityClass, Class<? extends C> containerClass, boolean container) {
-        super(material, tileEntityClass, containerClass, LogicItemBlock.class, name, container);
+        super(material, tileEntityClass, containerClass, GenericItemBlock.class, name, container);
     }
 
     @Override
     public RotationType getRotationType() {
         return RotationType.NONE;
+    }
+
+    @Override
+    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+        float dx = Math.abs(0.5f - hitX);
+        float dy = Math.abs(0.5f - hitY);
+        float dz = Math.abs(0.5f - hitZ);
+
+        side = side.getOpposite();
+//        System.out.println("LogicSlabBlock.getStateForPlacement");
+//        System.out.println("  side = " + side);
+        LogicFacing facing;
+        switch (side) {
+            case DOWN:
+                if (dx < dz) {
+                    facing = hitZ < 0.5 ? DOWN_TOSOUTH : DOWN_TONORTH;
+                } else {
+                    facing = hitX < 0.5 ? DOWN_TOEAST : DOWN_TOWEST;
+                }
+                break;
+            case UP:
+                if (dx < dz) {
+                    facing = hitZ < 0.5 ? UP_TOSOUTH : UP_TONORTH;
+                } else {
+                    facing = hitX < 0.5 ? UP_TOEAST : UP_TOWEST;
+                }
+                break;
+            case NORTH:
+                if (dx < dy) {
+                    facing = hitY < 0.5 ? NORTH_TOUP : NORTH_TODOWN;
+                } else {
+                    facing = hitX < 0.5 ? NORTH_TOEAST : NORTH_TOWEST;
+                }
+                break;
+            case SOUTH:
+                if (dx < dy) {
+                    facing = hitY < 0.5 ? SOUTH_TOUP : SOUTH_TODOWN;
+                } else {
+                    facing = hitX < 0.5 ? SOUTH_TOEAST : SOUTH_TOWEST;
+                }
+                break;
+            case WEST:
+                if (dy < dz) {
+                    facing = hitZ < 0.5 ? WEST_TOSOUTH : WEST_TONORTH;
+                } else {
+                    facing = hitY < 0.5 ? WEST_TOUP : WEST_TODOWN;
+                }
+                break;
+            case EAST:
+                if (dy < dz) {
+                    facing = hitZ < 0.5 ? EAST_TOSOUTH : EAST_TONORTH;
+                } else {
+                    facing = hitY < 0.5 ? EAST_TOUP : EAST_TODOWN;
+                }
+                break;
+            default:
+                facing = DOWN_TOWEST;
+                break;
+        }
+//        System.out.println("  facing = " + facing);
+//        System.out.println("  facing.getInputSide() = " + facing.getInputSide());
+        return super.getStateForPlacement(worldIn, pos, side, hitX, hitY, hitZ, meta, placer).withProperty(LogicSlabBlock.META_INTERMEDIATE, facing.getMeta()).withProperty(LogicSlabBlock.OUTPUTPOWER, false);
     }
 
     @Override
