@@ -8,7 +8,7 @@ Table of contents:
 {l:logic}Logic Gates
 {l:monitor}Contents Monitors
 {l:coalgen}Coal Generator
-{l:powercell}Power storage
+{l:powercell}Power Storage
 {l:stomon}Storage Scanner
 {l:storage}Storage System
 {/}
@@ -115,7 +115,7 @@ blocks to protect.
 {ri:network_monitor}
 With the RF Network Monitor you can select a block and it will try
 to find all blocks that use or produce RF which are connected
-(directly or inderectly) to the selected block. It will also show
+(directly or indirectly) to the selected block. It will also show
 you how much RF is in each of the blocks and the coordinate. You
 can use this item to help debug RF related network problems.
 {-------------------------------------------------------------}
@@ -262,7 +262,7 @@ that it can examine the contents of a nearby liquid tank.
 {b}Coal Generator
 {n:coalgen}
 {rb:coalgenerator}
-The coal generator is a simply generator that can produce 60 RF/tick
+The coal generator is simply a generator that can produce 60 RF/tick
 from coal or charcoal. If fully infused it will produce 120 RF/tick.
 It can also charge items that need RF but does that slowly. The
 powercell is a much better solution to charge items.
@@ -290,7 +290,7 @@ Powercells that are linked (using cards) don't have to be adjacent to
 each other. However, if they are not adjacent there will be a small cost
 that is calculated when power is extracted. The cost depends on distance
 and also on how big the cluster of powercells is from where you extract
-power. i.e. power is considered to be evently distributed over all cells.
+power. i.e. power is considered to be evenly distributed over all cells.
 Note that infusing a powercell reduces this cost and also RFTools
 dimensions are more efficient at transfering power this way.
 {-------------------------------------------------------------}
@@ -369,7 +369,7 @@ together with the storage module and you must charge it with sufficient
 energy. Higher storage tiers will cost more RF to open. To get the
 storage module and empty tablet back you just put the tablet in your
 crafting grid.
-
+{-------------------------------------------------------------}
 The tablet can also be combined with a storage screen module
 to remotely access a storage scanner. This is a very powerful combination
 as it allows full access to your entire storage network.
@@ -451,7 +451,7 @@ harvested or affected by an explosion. If there is not enough power
 to protect a block then the block is removed from the protection
 list (and will probably get destroyed). If you want to make a room
 to protect against more powerful explosions (like from the Wither)
-it is recommended to use more then one block protector to protect
+it is recommended to use more than one block protector to protect
 smaller groups of blocks. Also make sure to protect the block
 protector itself.
 {-------------------------------------------------------------}
@@ -462,10 +462,10 @@ The Power Relay allows you to control how much RF to output based on a
 redstone signal. In its GUI you can set the number of RF/tick to give
 in case redstone signal is off and also in case redstone signal is on.
 This can be configured per side. You can also mark sides as being
-input-only. This is where you typically connect the power coming
-from a capacitor or power generator. You can use this in block in
-combination with the RF Monitor to turn off a portion of your RF network
-in case power is low. For example, to turn off ore processing machines.
+input-only. This is where you typically connect the power coming from
+a capacitor or power generator. You can use this block in combination
+with the RF Monitor to turn off a portion of your RF network in case
+power is low. For example, to turn off ore processing machines.
 {-------------------------------------------------------------} 
 {b}Teleporting System
 {n:telepo}
@@ -476,7 +476,7 @@ two-way teleportation. To connect a transmitter and a receiver you
 will also need a dialing device.
 
 Energy cost of teleportation depends on the distance traveled. Also
-travelling to another dimension is a lot more expensive.
+traveling to another dimension is a lot more expensive.
 
 If you're an admin and want to troubleshoot the portal network
 you can use the Teleport Probe item (has no recipe). You can use
@@ -499,7 +499,7 @@ Doubleclick on an item in the list will teleport you without using RF.
 {rb:matter_transmitter}
 The matter transmitter is placed on the ground and (when dialed to a
 valid destination) will teleport a player that is standing on it. There
-is a fixed energy cost which is consumed immediatelly when the player
+is a fixed energy cost which is consumed immediately when the player
 stands on it. Then during the duration of the teleport (witch varies
 depending on the traveled distance) power is also consumed. If there
 is not sufficient power during the first power usage then teleportation
@@ -635,7 +635,7 @@ RF that can be generated will be a lot less.
 When the charging cycle ends without a pearl being received then
 the machine will go into idle mode again.
 
-If a pearl is received then charging mode immediatelly ends and the machine
+If a pearl is received then charging mode immediately ends and the machine
 goes into holding mode. In this mode it will consume RF every tick. Be
 careful holding the pearl for too long as you will then end up consuming
 more RF then you gained. If the internal storage of the generator does not
@@ -662,7 +662,7 @@ only two generators.
 If you have plenty of ender pearls and don't care too much about less then
 optimal generation you can just throw in as many pearls as you want from
 one generator and capture them in another. Then it that other generator
-you just fire them away immediatelly without caring about a destination.
+you just fire them away immediately without caring about a destination.
 You will quickly consume lots of ender pearls this way so this might not
 be the best way to proceed.
 {-------------------------------------------------------------}
@@ -673,11 +673,11 @@ be the best way to proceed.
 This block has to be placed facing an Endergenic Generator or else
 directly below it. This machine provides the only way to inject an ender
 pearl into the power system. When it receives a redstone signal it will
-convert the ender pearl to an endergenic pearl and immediatelly insert it
+convert the ender pearl to an endergenic pearl and immediately insert it
 into the adjacent Endergenic Generator. If that generator was already
 holding a pearl then nothing happens and the new pearl is lost.
 {-------------------------------------------------------------}
-Otherwise the endergenic pearl is immediatelly fired from the
+Otherwise the endergenic pearl is immediately fired from the
 generator and the system starts.
 
 This injector has an internal buffer that can only store ender pearls.
