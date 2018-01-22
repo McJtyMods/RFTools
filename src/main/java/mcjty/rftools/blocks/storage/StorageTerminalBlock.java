@@ -71,8 +71,8 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(TextFormatting.WHITE + "This terminal can be retrofitted with");
-            list.add(TextFormatting.WHITE + "a Storage Control Module so that");
-            list.add(TextFormatting.WHITE + "you can access a Storage Scanner");
+            list.add(TextFormatting.WHITE + "a Storage Control Screen Module so");
+            list.add(TextFormatting.WHITE + "that you can access a Storage Scanner");
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
@@ -83,7 +83,7 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
         super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
         ItemStack module = getModule(world.getTileEntity(data.getPos()));
         if (module.isEmpty()) {
-            probeInfo.text(TextFormatting.GREEN + "Install storage control module first");
+            probeInfo.text(TextFormatting.GREEN + "Install storage control screen module first");
         } else {
             probeInfo.text(TextFormatting.GREEN + "Use wrench to remove module");
         }
@@ -95,7 +95,7 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
         super.getWailaBody(itemStack, currenttip, accessor, config);
         ItemStack module = getModule(accessor.getTileEntity());
         if (module.isEmpty()) {
-            currenttip.add(TextFormatting.GREEN + "Install storage control module first");
+            currenttip.add(TextFormatting.GREEN + "Install storage control screen module first");
         } else {
             currenttip.add(TextFormatting.GREEN + "Use wrench to remove module");
         }

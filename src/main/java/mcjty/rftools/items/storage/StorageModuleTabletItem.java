@@ -225,8 +225,8 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
             list.add("This RF/charged tablet can hold a storage module");
             list.add("and allows the wielder to manipulate the contents of");
             list.add("this module (remote or normal).");
-            list.add("You can also combine this with a storage control");
-            list.add("module for remote access to a storage scanner");
+            list.add("You can also craft this with a storage control");
+            list.add("screen module for remote access to a storage scanner");
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }

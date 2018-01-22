@@ -59,8 +59,8 @@ public class LevelEmitterBlock extends LogicSlabBlock<LevelEmitterTileEntity, Le
         super.addInformation(itemStack, player, list, whatIsThis);
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(TextFormatting.WHITE + "This block can be retrofitted with");
-            list.add(TextFormatting.WHITE + "a Storage Control Module so that");
+            list.add(TextFormatting.WHITE + "This block can be retrofitted with a");
+            list.add(TextFormatting.WHITE + "Storage Control Screen Module so that");
             list.add(TextFormatting.WHITE + "you can count items in your storage");
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
@@ -72,7 +72,7 @@ public class LevelEmitterBlock extends LogicSlabBlock<LevelEmitterTileEntity, Le
         super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
         ItemStack module = getModule(world.getTileEntity(data.getPos()));
         if (module.isEmpty()) {
-            probeInfo.text(TextFormatting.GREEN + "Install storage control module first");
+            probeInfo.text(TextFormatting.GREEN + "Install storage control screen module first");
         } else {
             TileEntity te = world.getTileEntity(data.getPos());
             if (te instanceof LevelEmitterTileEntity) {
@@ -94,7 +94,7 @@ public class LevelEmitterBlock extends LogicSlabBlock<LevelEmitterTileEntity, Le
         super.getWailaBody(itemStack, currenttip, accessor, config);
         ItemStack module = getModule(accessor.getTileEntity());
         if (module.isEmpty()) {
-            currenttip.add(TextFormatting.GREEN + "Install storage control module first");
+            currenttip.add(TextFormatting.GREEN + "Install storage control screen module first");
         }
         return currenttip;
     }
