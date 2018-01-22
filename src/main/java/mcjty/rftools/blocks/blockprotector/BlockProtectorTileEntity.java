@@ -14,22 +14,29 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
+
+import li.cil.oc.api.machine.Arguments;
+import li.cil.oc.api.machine.Callback;
+import li.cil.oc.api.machine.Context;
+import li.cil.oc.api.network.SimpleComponent;
+
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-//@Optional.InterfaceList({
-//        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"),
-//        @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")})
+@Optional.InterfaceList({
+        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers"),
+//        @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")
+})
 public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity implements SmartWrenchSelector, ITickable,
-        IMachineInformation /*, SimpleComponent, IPeripheral*/ {
+        IMachineInformation, SimpleComponent /*, IPeripheral*/ {
 
     public static final String CMD_RSMODE = "rsMode";
     public static final String COMPONENT_NAME = "block_protector";
@@ -79,25 +86,32 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
 //    public boolean equals(IPeripheral other) {
 //        return false;
 //    }
-//
-//    @Override
-//    @Optional.Method(modid = "OpenComputers")
-//    public String getComponentName() {
-//        return COMPONENT_NAME;
-//    }
-//
-//    @Callback(doc = "Get the current redstone mode. Values are 'Ignored', 'Off', or 'On'", getter = true)
-//    @Optional.Method(modid = "OpenComputers")
-//    public Object[] getRedstoneMode(Context context, Arguments args) throws Exception {
-//        return new Object[] { getRedstoneMode().getDescription() };
-//    }
-//
-//    @Callback(doc = "Set the current redstone mode. Values are 'Ignored', 'Off', or 'On'", setter = true)
-//    @Optional.Method(modid = "OpenComputers")
-//    public Object[] setRedstoneMode(Context context, Arguments args) throws Exception {
-//        String mode = args.checkString(0);
-//        return setRedstoneMode(mode);
-//    }
+
+    @Override
+    @Optional.Method(modid = "opencomputers")
+    public String getComponentName() {
+        return COMPONENT_NAME;
+    }
+
+    @Callback(doc = "Get or set the current redstone mode. Values are 'Ignored', 'Off', or 'On'", getter = true, setter = true)
+    @Optional.Method(modid = "opencomputers")
+    public Object[] redstoneMode(Context context, Arguments args) {
+        if(args.count() == 0) {
+            return new Object[] { getRSMode().getDescription() };
+        } else {
+            String mode = args.checkString(0);
+            return setRedstoneMode(mode);
+        }
+    }
+
+    private Object[] setRedstoneMode(String mode) {
+        RedstoneMode redstoneMode = RedstoneMode.getMode(mode);
+        if (redstoneMode == null) {
+            throw new IllegalArgumentException("Not a valid mode");
+        }
+        setRSMode(redstoneMode);
+        return null;
+    }
 
     public BlockProtectorTileEntity() {
         super(BlockProtectorConfiguration.MAXENERGY, BlockProtectorConfiguration.RECEIVEPERTICK);
@@ -131,8 +145,13 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     @Override
+    protected boolean needsRedstoneMode() {
+        return true;
+    }
+
+    @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
@@ -163,10 +182,10 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
 
         super.onDataPacket(net, packet);
 
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             // If needed send a render update.
             if (active != oldActive) {
-                worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
+                getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
             }
         }
     }
@@ -182,8 +201,10 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
 
 
     public boolean attemptHarvestProtection() {
-        if (!isMachineEnabled()) return false;
-        int rf = getEnergyStored(EnumFacing.DOWN);
+        if (!isMachineEnabled()) {
+            return false;
+        }
+        int rf = getEnergyStored();
         if (BlockProtectorConfiguration.rfForHarvestAttempt > rf) {
             return false;
         }
@@ -193,8 +214,10 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
 
     // Distance is relative with 0 being closes to the explosion and 1 being furthest away.
     public int attemptExplosionProtection(float distance, float radius) {
-        if (!isMachineEnabled()) return -1;
-        int rf = getEnergyStored(EnumFacing.DOWN);
+        if (!isMachineEnabled()) {
+            return -1;
+        }
+        int rf = getEnergyStored();
         int rfneeded = (int) (BlockProtectorConfiguration.rfForExplosionProtection * (1.0 - distance) * radius / 8.0f) + 1;
         rfneeded = (int) (rfneeded * (2.0f - getInfusedFactor()) / 2.0f);
 
@@ -233,7 +256,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
 
     // Toggle a coordinate to be protected or not. The coordinate given here is absolute.
     public void toggleCoordinate(GlobalCoordinate c) {
-        if (c.getDimension() != worldObj.provider.getDimension()) {
+        if (c.getDimension() != getWorld().provider.getDimension()) {
             // Wrong dimension. Don't do anything.
             return;
         }
@@ -258,17 +281,17 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
             Logging.message(player, TextFormatting.RED + "Block out of range of the block protector!");
             return;
         }
-        GlobalCoordinate gc = new GlobalCoordinate(pos, worldObj.provider.getDimension());
+        GlobalCoordinate gc = new GlobalCoordinate(pos, getWorld().provider.getDimension());
         toggleCoordinate(gc);
     }
 
     public int getOrCalculateID() {
         if (id == -1) {
-            BlockProtectors protectors = BlockProtectors.getProtectors(worldObj);
-            GlobalCoordinate gc = new GlobalCoordinate(getPos(), worldObj.provider.getDimension());
+            BlockProtectors protectors = BlockProtectors.getProtectors(getWorld());
+            GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().provider.getDimension());
             id = protectors.getNewId(gc);
 
-            protectors.save(worldObj);
+            protectors.save(getWorld());
             setId(id);
         }
         return id;
@@ -288,9 +311,9 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
      * the destination.
      */
     public void updateDestination() {
-        BlockProtectors protectors = BlockProtectors.getProtectors(worldObj);
+        BlockProtectors protectors = BlockProtectors.getProtectors(getWorld());
 
-        GlobalCoordinate gc = new GlobalCoordinate(getPos(), worldObj.provider.getDimension());
+        GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().provider.getDimension());
 
         if (id == -1) {
             id = protectors.getNewId(gc);
@@ -299,7 +322,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
             protectors.assignId(gc, id);
         }
 
-        protectors.save(worldObj);
+        protectors.save(getWorld());
         markDirtyClient();
     }
 
@@ -325,7 +348,6 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
         } else {
             id = -1;
         }
-        int m = tagCompound.getByte("rsMode");
     }
 
     @Override

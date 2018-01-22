@@ -1,10 +1,9 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.api.IModuleSupport;
-import mcjty.lib.container.GenericGuiContainer;
-import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
+import mcjty.lib.network.Arguments;
 import mcjty.lib.varia.ModuleSupport;
-import mcjty.rftools.Achievements;
+import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.network.RFToolsMessages;
@@ -18,6 +17,7 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -27,8 +27,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -44,13 +46,17 @@ public class ModularStorageBlock extends GenericRFToolsBlock<ModularStorageTileE
     public static final PropertyEnum<ModularTypeModule> TYPEMODULE = PropertyEnum.create("type", ModularTypeModule.class);
     public static final PropertyEnum<ModularAmountOverlay> AMOUNT = PropertyEnum.create("amount", ModularAmountOverlay.class);
 
+    // Clientside
+    public static int cntReceived = 1;
+    public static String nameModuleReceived = "";
+
     public ModularStorageBlock() {
         super(Material.IRON, ModularStorageTileEntity.class, ModularStorageContainer.class, "modular_storage", true);
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiModularStorage> getGuiClass() {
         return GuiModularStorage.class;
     }
 
@@ -68,7 +74,7 @@ public class ModularStorageBlock extends GenericRFToolsBlock<ModularStorageTileE
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
@@ -85,49 +91,90 @@ public class ModularStorageBlock extends GenericRFToolsBlock<ModularStorageTileE
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        ModularStorageTileEntity te = (ModularStorageTileEntity) world.getTileEntity(pos);
-        ItemStack stack = te.getInventoryHelper().getStackInSlot(ModularStorageContainer.SLOT_TYPE_MODULE);
+        TileEntity tileEntity = world instanceof ChunkCache ? ((ChunkCache)world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) : world.getTileEntity(pos);
+        if (tileEntity instanceof ModularStorageTileEntity) {
+            ModularStorageTileEntity te = (ModularStorageTileEntity) tileEntity;
+            ItemStack stack = te.getInventoryHelper().getStackInSlot(ModularStorageContainer.SLOT_TYPE_MODULE);
 
-        int level = te.getRenderLevel();
-        int remoteId = te.getRemoteId();
+            int level = te.getRenderLevel();
+            int remoteId = te.getRemoteId();
 
-        ModularAmountOverlay p = AMOUNT_NONE;
-        if (remoteId > 0) {
-            switch (level) {
-                case -1: p = AMOUNT_NONE; break;
-                case 0: p = AMOUNT_R0; break;
-                case 1: p = AMOUNT_R1; break;
-                case 2: p = AMOUNT_R2; break;
-                case 3: p = AMOUNT_R3; break;
-                case 4: p = AMOUNT_R4; break;
-                case 5: p = AMOUNT_R5; break;
-                case 6: p = AMOUNT_R6; break;
-                case 7: p = AMOUNT_R7; break;
+            ModularAmountOverlay p = AMOUNT_NONE;
+            if (remoteId > 0) {
+                switch (level) {
+                    case -1:
+                        p = AMOUNT_NONE;
+                        break;
+                    case 0:
+                        p = AMOUNT_R0;
+                        break;
+                    case 1:
+                        p = AMOUNT_R1;
+                        break;
+                    case 2:
+                        p = AMOUNT_R2;
+                        break;
+                    case 3:
+                        p = AMOUNT_R3;
+                        break;
+                    case 4:
+                        p = AMOUNT_R4;
+                        break;
+                    case 5:
+                        p = AMOUNT_R5;
+                        break;
+                    case 6:
+                        p = AMOUNT_R6;
+                        break;
+                    case 7:
+                        p = AMOUNT_R7;
+                        break;
+                }
+            } else {
+                switch (level) {
+                    case -1:
+                        p = AMOUNT_NONE;
+                        break;
+                    case 0:
+                        p = AMOUNT_G0;
+                        break;
+                    case 1:
+                        p = AMOUNT_G1;
+                        break;
+                    case 2:
+                        p = AMOUNT_G2;
+                        break;
+                    case 3:
+                        p = AMOUNT_G3;
+                        break;
+                    case 4:
+                        p = AMOUNT_G4;
+                        break;
+                    case 5:
+                        p = AMOUNT_G5;
+                        break;
+                    case 6:
+                        p = AMOUNT_G6;
+                        break;
+                    case 7:
+                        p = AMOUNT_G7;
+                        break;
+                }
             }
-        } else {
-            switch (level) {
-                case -1: p = AMOUNT_NONE; break;
-                case 0: p = AMOUNT_G0; break;
-                case 1: p = AMOUNT_G1; break;
-                case 2: p = AMOUNT_G2; break;
-                case 3: p = AMOUNT_G3; break;
-                case 4: p = AMOUNT_G4; break;
-                case 5: p = AMOUNT_G5; break;
-                case 6: p = AMOUNT_G6; break;
-                case 7: p = AMOUNT_G7; break;
+
+            IBlockState newstate = state.withProperty(AMOUNT, p);
+
+            if (stack.isEmpty()) {
+                return newstate.withProperty(TYPEMODULE, TYPE_NONE);
+            } else if (stack.getItem() == ModularStorageSetup.genericTypeItem) {
+                return newstate.withProperty(TYPEMODULE, TYPE_GENERIC);
+            } else if (stack.getItem() == ModularStorageSetup.oreDictTypeItem) {
+                return newstate.withProperty(TYPEMODULE, TYPE_ORE);
             }
-        }
-
-        IBlockState newstate = state.withProperty(AMOUNT, p);
-
-        if (stack == null) {
             return newstate.withProperty(TYPEMODULE, TYPE_NONE);
-        } else if (stack.getItem() == ModularStorageSetup.genericTypeItem) {
-            return newstate.withProperty(TYPEMODULE, TYPE_GENERIC);
-        } else if (stack.getItem() == ModularStorageSetup.oreDictTypeItem) {
-            return newstate.withProperty(TYPEMODULE, TYPE_ORE);
+        } else {
+            return super.getActualState(state, world, pos);
         }
-        return newstate.withProperty(TYPEMODULE, TYPE_NONE);
     }
 
     @Override
@@ -161,7 +208,7 @@ public class ModularStorageBlock extends GenericRFToolsBlock<ModularStorageTileE
                 probeInfo.text(TextFormatting.YELLOW + "No storage module!");
             } else {
                 ItemStack storageModule = modularStorageTileEntity.getStackInSlot(ModularStorageContainer.SLOT_STORAGE_MODULE);
-                if (storageModule != null && storageModule.getTagCompound().hasKey("display")) {
+                if (!storageModule.isEmpty() && storageModule.getTagCompound().hasKey("display")) {
                     probeInfo.text(TextFormatting.YELLOW + "Module: " + TextFormatting.WHITE + storageModule.getDisplayName());
                 }
                 int stacks = modularStorageTileEntity.getNumStacks();
@@ -187,13 +234,14 @@ public class ModularStorageBlock extends GenericRFToolsBlock<ModularStorageTileE
             } else {
                 if (System.currentTimeMillis() - lastTime > 500) {
                     lastTime = System.currentTimeMillis();
-                    RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new StorageInfoPacketServer(modularStorageTileEntity.getWorld().provider.getDimension(),
-                            modularStorageTileEntity.getPos())));
+                    RFToolsMessages.sendToServer(CommandHandler.CMD_REQUEST_STORAGE_INFO,
+                            Arguments.builder().value(modularStorageTileEntity.getWorld().provider.getDimension())
+                                .value(modularStorageTileEntity.getPos()));
                 }
-                if (!StorageInfoPacketClient.nameModuleReceived.isEmpty()) {
-                    currenttip.add(TextFormatting.YELLOW + "Module: " + TextFormatting.WHITE + StorageInfoPacketClient.nameModuleReceived);
+                if (!nameModuleReceived.isEmpty()) {
+                    currenttip.add(TextFormatting.YELLOW + "Module: " + TextFormatting.WHITE + nameModuleReceived);
                 }
-                int stacks = StorageInfoPacketClient.cntReceived;
+                int stacks = cntReceived;
                 if (stacks == -1) {
                     currenttip.add(TextFormatting.YELLOW + "Maximum size: " + maxSize);
                 } else {
@@ -215,7 +263,8 @@ public class ModularStorageBlock extends GenericRFToolsBlock<ModularStorageTileE
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         super.onBlockPlacedBy(world, pos, state, placer, stack);
         if (placer instanceof EntityPlayer) {
-            Achievements.trigger((EntityPlayer) placer, Achievements.allTheItems);
+            // @todo achievements
+//            Achievements.trigger((EntityPlayer) placer, Achievements.allTheItems);
         }
     }
 }

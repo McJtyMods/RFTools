@@ -1,9 +1,6 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.BlockInfo;
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -37,7 +34,7 @@ public class ModularStorageConfiguration {
     public static int height2 = 320;
     public static int height3 = 490;
 
-    public static Map<String,String> categoryMapper = new HashMap<String, String>();
+    public static Map<String,String> categoryMapper = new HashMap<>();
 
     public static void init(Configuration cfg) {
         groupBackground = cfg.get(CATEGORY_STORAGE, "groupBackground", groupBackground,
@@ -79,7 +76,7 @@ public class ModularStorageConfiguration {
         ConfigCategory category = cfg.getCategory(CATEGORY_STORAGE_CONFIG);
 
         // Make a copy of the keys we already have.
-        Set<String> keys = new HashSet<String>(categoryMapper.keySet());
+        Set<String> keys = new HashSet<>(categoryMapper.keySet());
         // Scan the config to see if there were updates.
         for (String key : keys) {
             categoryMapper.put(key, cfg.get(CATEGORY_STORAGE_CONFIG, key, categoryMapper.get(key)).getString());
@@ -93,44 +90,21 @@ public class ModularStorageConfiguration {
         }
     }
 
-
-
-    public static void dumpClasses(boolean docode) {
-        Logging.log("#### Dumping item and block classification");
-        for (Object o : Block.REGISTRY) {
-            Block block = (Block) o;
-            if (docode) {
-                formateAsCode(block.getClass(), getCategory(block.getClass()));
-            } else {
-                formatClassification("B", BlockInfo.getReadableName(block, 0), block.getClass(), getCategory(block.getClass()));
-            }
-        }
-
-        for (Object o : Item.REGISTRY) {
-            Item item = (Item) o;
-            if (docode) {
-                formateAsCode(item.getClass(), getCategory(item.getClass()));
-            } else {
-                formatClassification("I", BlockInfo.getReadableName(item, 0), item.getClass(), getCategory(item.getClass()));
-            }
-        }
-    }
-
-    private static void formatClassification(String type, String name, Class clz, String group) {
+    private static void formatClassification(String type, String name, Class<?> clz, String group) {
         StringBuilder sb = new StringBuilder();
         Formatter formatter = new Formatter(sb, Locale.US);
         formatter.format("%1$-1.1s Name:%2$-30.30s Class:%3$-50.50s Group:%4$-20.20s", type, name, clz.getCanonicalName(), group);
         Logging.log(sb.toString());
     }
 
-    private static void formateAsCode(Class clz, String group) {
+    private static void formateAsCode(Class<?> clz, String group) {
         StringBuilder sb = new StringBuilder();
         Formatter formatter = new Formatter(sb, Locale.US);
         formatter.format("categoryMapper.put(\"%1$s\", \"%2$s\");", clz.getCanonicalName(), group);
         Logging.log(sb.toString());
     }
 
-    public static String getCategory(Class cls) {
+    public static String getCategory(Class<?> cls) {
         if (cls == null) {
             return null;
         }
@@ -159,7 +133,7 @@ public class ModularStorageConfiguration {
             return name;
         }
 
-        for (Class intface : cls.getInterfaces()) {
+        for (Class<?> intface : cls.getInterfaces()) {
             String cat = getCategory(intface);
             if (cat != null) {
                 return null;

@@ -5,7 +5,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.GameData;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Comparator;
@@ -33,12 +32,7 @@ public class ModItemSorter implements ItemSorter {
 
     @Override
     public Comparator<Pair<ItemStack, Integer>> getComparator() {
-        return new Comparator<Pair<ItemStack, Integer>>() {
-            @Override
-            public int compare(Pair<ItemStack, Integer> o1, Pair<ItemStack, Integer> o2) {
-                return compareMod(o1, o2);
-            }
-        };
+        return ModItemSorter::compareMod;
     }
 
     @Override
@@ -59,7 +53,7 @@ public class ModItemSorter implements ItemSorter {
     }
 
     public static String getModidForBlock(Block block) {
-        ResourceLocation nameForObject = GameData.getBlockRegistry().getNameForObject(block);
+        ResourceLocation nameForObject = block.getRegistryName();
         if (nameForObject == null) {
             return "?";
         }
@@ -67,7 +61,7 @@ public class ModItemSorter implements ItemSorter {
     }
 
     public static String getModidForItem(Item item) {
-        ResourceLocation nameForObject = GameData.getItemRegistry().getNameForObject(item);
+        ResourceLocation nameForObject = item.getRegistryName();
         if (nameForObject == null) {
             return "?";
         }

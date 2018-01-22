@@ -14,8 +14,9 @@ import javax.annotation.Nullable;
 
 public class NoTickShieldBlockTileEntity extends TileEntity {
 
-    private Block block;
+    private IBlockState mimic = null;
     private int camoId = -1;
+    private int camoMeta = 0;
     private int hasTe = 0;
     private int shieldColor;
 
@@ -41,9 +42,9 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
 
     private void markDirtyClient() {
         markDirty();
-        if (worldObj != null) {
-            IBlockState state = worldObj.getBlockState(getPos());
-            worldObj.notifyBlockUpdate(getPos(), state, state, 3);
+        if (getWorld() != null) {
+            IBlockState state = getWorld().getBlockState(getPos());
+            getWorld().notifyBlockUpdate(getPos(), state, state, 3);
         }
     }
 
@@ -74,13 +75,18 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
         markDirtyClient();
     }
 
-    public void setCamoBlock(int camoId, int hasTe) {
+    public IBlockState getMimicBlock() {
+        return mimic;
+    }
+
+    public void setCamoBlock(int camoId, int meta, int hasTe) {
         this.camoId = camoId;
+        this.camoMeta = meta;
         this.hasTe = hasTe;
         if (camoId == -1) {
-            block = null;
+            mimic = null;
         } else {
-            block = Block.getBlockById(camoId);
+            mimic = Block.getBlockById(camoId).getStateFromMeta(meta);
         }
         markDirtyClient();
     }
@@ -94,10 +100,6 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
         return shieldBlock;
     }
 
-    public Block getBlock() {
-        return block;
-    }
-
     public boolean getHasTe() {
         return hasTe != 0;
     }
@@ -106,6 +108,7 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("camoId", camoId);
+        tagCompound.setInteger("camoMeta", camoMeta);
         tagCompound.setInteger("hasTe", hasTe);
         tagCompound.setInteger("damageBits", damageBits);
         tagCompound.setInteger("collisionData", collisionData);
@@ -130,11 +133,12 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         camoId = tagCompound.getInteger("camoId");
+        camoMeta = tagCompound.getInteger("camoMeta");
         hasTe = tagCompound.getInteger("hasTe");
         if (camoId == -1) {
-            block = null;
+            mimic = null;
         } else {
-            block = Block.getBlockById(camoId);
+            mimic = Block.getBlockById(camoId).getStateFromMeta(camoMeta);
         }
         damageBits = tagCompound.getInteger("damageBits");
         collisionData = tagCompound.getInteger("collisionData");
@@ -149,9 +153,9 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
         int sz = tagCompound.getInteger("shieldZ");
         shieldBlock = new BlockPos(sx, sy, sz);
 
-        if (worldObj != null && worldObj.isRemote) {
+        if (getWorld() != null && getWorld().isRemote) {
             // For some reason this is needed to force rendering on the client when apply is pressed.
-            worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
+            getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
         }
     }
 

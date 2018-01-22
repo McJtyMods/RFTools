@@ -1,0 +1,29 @@
+{
+  "result": {
+    "item": "rftools:item_filter"
+  },
+  "pattern": [
+    "pcp",
+    "rMr",
+    "pTp"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "T": {
+      "item": "minecraft:redstone_torch"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "p": {
+      "item": "minecraft:paper"
+    },
+    "c": {
+      "type": "forge:ore_dict",
+      "ore": "chest"
+    },
+    "M": {
+      "item": "rftools:machine_base"
+    }
+  }
+}

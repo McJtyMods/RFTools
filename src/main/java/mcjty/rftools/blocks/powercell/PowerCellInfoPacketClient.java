@@ -10,8 +10,8 @@ public class PowerCellInfoPacketClient implements InfoPacketClient {
     private int blocks;
     private int simpleBlocks;
     private int advancedBlocks;
-    private int totalInserted;
-    private int totalExtracted;
+    private long totalInserted;
+    private long totalExtracted;
     private int rfPerTick;
     private float costFactor;
 
@@ -19,15 +19,15 @@ public class PowerCellInfoPacketClient implements InfoPacketClient {
     public static int tooltipBlocks = 0;
     public static int tooltipSimpleBlocks = 0;
     public static int tooltipAdvancedBlocks = 0;
-    public static int tooltipInserted = 0;
-    public static int tooltipExtracted = 0;
+    public static long tooltipInserted = 0;
+    public static long tooltipExtracted = 0;
     public static int tooltipRfPerTick = 0;
     public static float tooltipCostFactor = 0;
 
     public PowerCellInfoPacketClient() {
     }
 
-    public PowerCellInfoPacketClient(int energy, int blocks, int simpleBlocks, int advancedBlocks, int totalInserted, int totalExtracted, int rfPerTick, float costFactor) {
+    public PowerCellInfoPacketClient(int energy, int blocks, int simpleBlocks, int advancedBlocks, long totalInserted, long totalExtracted, int rfPerTick, float costFactor) {
         this.energy = energy;
         this.blocks = blocks;
         this.simpleBlocks = simpleBlocks;
@@ -44,8 +44,8 @@ public class PowerCellInfoPacketClient implements InfoPacketClient {
         blocks = buf.readInt();
         simpleBlocks = buf.readInt();
         advancedBlocks = buf.readInt();
-        totalInserted = buf.readInt();
-        totalExtracted = buf.readInt();
+        totalInserted = buf.readLong();
+        totalExtracted = buf.readLong();
         rfPerTick = buf.readInt();
         costFactor = buf.readFloat();
     }
@@ -56,8 +56,8 @@ public class PowerCellInfoPacketClient implements InfoPacketClient {
         buf.writeInt(blocks);
         buf.writeInt(simpleBlocks);
         buf.writeInt(advancedBlocks);
-        buf.writeInt(totalInserted);
-        buf.writeInt(totalExtracted);
+        buf.writeLong(totalInserted);
+        buf.writeLong(totalExtracted);
         buf.writeInt(rfPerTick);
         buf.writeFloat(costFactor);
     }
@@ -68,7 +68,7 @@ public class PowerCellInfoPacketClient implements InfoPacketClient {
         tooltipBlocks = blocks;
         tooltipSimpleBlocks = simpleBlocks;
         tooltipAdvancedBlocks = advancedBlocks;
-        tooltipInserted= totalInserted;
+        tooltipInserted = totalInserted;
         tooltipExtracted = totalExtracted;
         tooltipRfPerTick = rfPerTick;
         tooltipCostFactor = costFactor;

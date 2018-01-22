@@ -63,14 +63,14 @@ public class ItemFilterInvWrapper implements IItemHandlerModifiable {
     @Override
     public ItemStack getStackInSlot(int slot) {
         int i = getSlot(inv, slot, side);
-        return i == -1 ? null : inv.getStackInSlot(i);
+        return i == -1 ? ItemStack.EMPTY : inv.getStackInSlot(i);
     }
 
     @Override
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
 
-        if (stack == null) {
-            return null;
+        if (stack.isEmpty()) {
+            return ItemStack.EMPTY;
         }
 
         int slot1 = getSlot(inv, slot, side);
@@ -86,51 +86,53 @@ public class ItemFilterInvWrapper implements IItemHandlerModifiable {
         ItemStack stackInSlot = inv.getStackInSlot(slot1);
 
         int m;
-        if (stackInSlot != null) {
+        if (!stackInSlot.isEmpty()) {
             if (!ItemHandlerHelper.canItemStacksStack(stack, stackInSlot)) {
                 return stack;
             }
 
-            m = Math.min(stack.getMaxStackSize(), inv.getInventoryStackLimit()) - stackInSlot.stackSize;
+            m = Math.min(stack.getMaxStackSize(), inv.getInventoryStackLimit()) - stackInSlot.getCount();
 
-            if (stack.stackSize <= m) {
+            if (stack.getCount() <= m) {
                 if (!simulate) {
                     ItemStack copy = stack.copy();
-                    copy.stackSize += stackInSlot.stackSize;
+                    copy.grow(stackInSlot.getCount());
                     inv.setInventorySlotContents(slot1, copy);
                 }
 
-                return null;
+                return ItemStack.EMPTY;
             } else {
                 // copy the stack to not modify the original one
                 stack = stack.copy();
                 if (!simulate) {
                     ItemStack copy = stack.splitStack(m);
-                    copy.stackSize += stackInSlot.stackSize;
+                    copy.grow(stackInSlot.getCount());
                     inv.setInventorySlotContents(slot1, copy);
                     return stack;
                 } else {
-                    stack.stackSize -= m;
+                    int amount = -m;
+                    stack.grow(amount);
                     return stack;
                 }
             }
         } else {
             m = Math.min(stack.getMaxStackSize(), inv.getInventoryStackLimit());
-            if (m < stack.stackSize) {
+            if (m < stack.getCount()) {
                 // copy the stack to not modify the original one
                 stack = stack.copy();
                 if (!simulate) {
                     inv.setInventorySlotContents(slot1, stack.splitStack(m));
                     return stack;
                 } else {
-                    stack.stackSize -= m;
+                    int amount = -m;
+                    stack.grow(amount);
                     return stack;
                 }
             } else {
                 if (!simulate) {
                     inv.setInventorySlotContents(slot1, stack);
                 }
-                return null;
+                return ItemStack.EMPTY;
             }
         }
 
@@ -144,36 +146,45 @@ public class ItemFilterInvWrapper implements IItemHandlerModifiable {
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (amount == 0) {
-            return null;
+            return ItemStack.EMPTY;
         }
 
         int slot1 = getSlot(inv, slot, side);
 
         if (slot1 == -1) {
-            return null;
+            return ItemStack.EMPTY;
         }
 
         ItemStack stackInSlot = inv.getStackInSlot(slot1);
 
-        if (stackInSlot == null) {
-            return null;
+        if (stackInSlot.isEmpty()) {
+            return ItemStack.EMPTY;
         }
 
         if (!inv.canExtractItem(slot1, stackInSlot, side)) {
-            return null;
+            return ItemStack.EMPTY;
         }
 
         if (simulate) {
-            if (stackInSlot.stackSize < amount) {
+            if (stackInSlot.getCount() < amount) {
                 return stackInSlot.copy();
             } else {
                 ItemStack copy = stackInSlot.copy();
-                copy.stackSize = amount;
+                if (amount <= 0) {
+                    copy.setCount(0);
+                } else {
+                    copy.setCount(amount);
+                }
                 return copy;
             }
         } else {
-            int m = Math.min(stackInSlot.stackSize, amount);
+            int m = Math.min(stackInSlot.getCount(), amount);
             return inv.decrStackSize(slot1, m);
         }
+    }
+
+    @Override
+    public int getSlotLimit(int slot) {
+        return 64;
     }
 }

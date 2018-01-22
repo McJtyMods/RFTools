@@ -2,21 +2,20 @@ package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.network.Arguments;
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
-import mcjty.rftools.network.PacketGetDestinationInfo;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.rftools.network.ReturnDestinationInfoHelper;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -34,14 +33,23 @@ import java.util.List;
 
 public class MatterTransmitterBlock extends GenericRFToolsBlock<MatterTransmitterTileEntity, EmptyContainer> implements Infusable {
 
+    public static Integer clientSideId = null;
+    public static String clientSideName = "?";
+
     public MatterTransmitterBlock() {
         super(Material.IRON, MatterTransmitterTileEntity.class, EmptyContainer.class, "matter_transmitter", false);
         setDefaultState(this.blockState.getBaseState());
     }
 
     @SideOnly(Side.CLIENT)
+    public static void setDestinationInfo(Integer id, String name) {
+        MatterTransmitterBlock.clientSideId = id;
+        MatterTransmitterBlock.clientSideName = name;
+    }
+
+    @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiMatterTransmitter> getGuiClass() {
         return GuiMatterTransmitter.class;
     }
 
@@ -54,7 +62,7 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock<MatterTransmitte
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
@@ -75,12 +83,12 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock<MatterTransmitte
                 int destId = tagCompound.getInteger("destId");
                 if (System.currentTimeMillis() - lastTime > 500) {
                     lastTime = System.currentTimeMillis();
-                    RFToolsMessages.INSTANCE.sendToServer(new PacketGetDestinationInfo(destId));
+                    RFToolsMessages.sendToServer(CommandHandler.CMD_GET_DESTINATION_INFO, Arguments.builder().value(destId));
                 }
 
                 String destname = "?";
-                if (ReturnDestinationInfoHelper.id != null && ReturnDestinationInfoHelper.id == destId) {
-                    destname = ReturnDestinationInfoHelper.name;
+                if (clientSideId != null && clientSideId == destId) {
+                    destname = clientSideName;
                 }
                 list.add(TextFormatting.YELLOW + "[DIALED to " + destname + "]");
             }
@@ -141,12 +149,13 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock<MatterTransmitte
             if (matterTransmitterTileEntity.isDialed()) {
                 if (System.currentTimeMillis() - lastTime > 500) {
                     lastTime = System.currentTimeMillis();
-                    RFToolsMessages.INSTANCE.sendToServer(new PacketGetDestinationInfo(matterTransmitterTileEntity.getTeleportId()));
+                    RFToolsMessages.sendToServer(CommandHandler.CMD_GET_DESTINATION_INFO,
+                            Arguments.builder().value(matterTransmitterTileEntity.getTeleportId()));
                 }
 
                 String name = "?";
-                if (ReturnDestinationInfoHelper.id != null && ReturnDestinationInfoHelper.id == matterTransmitterTileEntity.getTeleportId()) {
-                    name = ReturnDestinationInfoHelper.name;
+                if (clientSideId != null && clientSideId == matterTransmitterTileEntity.getTeleportId()) {
+                    name = clientSideName;
                 }
                 currenttip.add(TextFormatting.YELLOW + "[DIALED to " + name + "]");
             }
@@ -170,18 +179,8 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock<MatterTransmitte
     }
 
     @Override
-    public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState();
-    }
-
-    @Override
-    public int getMetaFromState(IBlockState state) {
-        return 0;
-    }
-
-    @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this);
+    public RotationType getRotationType() {
+        return RotationType.NONE;
     }
 
 }

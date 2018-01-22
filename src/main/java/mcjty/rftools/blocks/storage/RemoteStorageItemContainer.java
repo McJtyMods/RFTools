@@ -34,6 +34,14 @@ public class RemoteStorageItemContainer extends GenericContainer {
         }
     };
 
+    public void clearGrid() {
+        IInventory inventory = inventories.get(CONTAINER_GRID);
+        for (int i = 0 ; i < inventory.getSizeInventory() ; i++) {
+            inventory.setInventorySlotContents(i, ItemStack.EMPTY);
+        }
+    }
+
+
     public CraftingGridProvider getCraftingGridProvider() {
         return (CraftingGridProvider) getInventory(CONTAINER_INVENTORY);
     }
@@ -68,7 +76,7 @@ public class RemoteStorageItemContainer extends GenericContainer {
     }
 
     private RemoteStorageTileEntity getRemoteStorage() {
-        return RemoteStorageIdRegistry.getRemoteStorage(entityPlayer.worldObj, getStorageID());
+        return RemoteStorageIdRegistry.getRemoteStorage(entityPlayer.getEntityWorld(), getStorageID());
     }
 
     private int getStorageID() {
@@ -77,7 +85,7 @@ public class RemoteStorageItemContainer extends GenericContainer {
     }
 
     private boolean isServer() {
-        return !entityPlayer.worldObj.isRemote;
+        return !entityPlayer.getEntityWorld().isRemote;
     }
 
     @Override

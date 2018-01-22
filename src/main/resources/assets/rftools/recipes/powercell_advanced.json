@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "rftools:powercell_advanced"
+  },
+  "pattern": [
+    "rir",
+    "iMi",
+    "rir"
+  ],
+  "type": "rftools:copy_nbt",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone_block"
+    },
+    "i": {
+      "item": "rftools:infused_diamond"
+    },
+    "M": {
+      "item": "rftools:powercell"
+    }
+  }
+}

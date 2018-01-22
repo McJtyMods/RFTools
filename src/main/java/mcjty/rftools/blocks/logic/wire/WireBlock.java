@@ -3,11 +3,9 @@ package mcjty.rftools.blocks.logic.wire;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -29,8 +27,8 @@ public class WireBlock extends LogicSlabBlock<WireTileEntity, EmptyContainer> {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
-        super.addInformation(itemStack, player, list, whatIsThis);
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag advanced) {
+        super.addInformation(itemStack, player, list, advanced);
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(TextFormatting.WHITE + "This logic block is just a simple");
             list.add(TextFormatting.WHITE + "lag free redstone wire");
@@ -54,7 +52,7 @@ public class WireBlock extends LogicSlabBlock<WireTileEntity, EmptyContainer> {
             int oldPower = logicTileEntity.getPowerLevel();
             logicTileEntity.setPowerInput(power);
             if (oldPower != power) {
-                world.notifyNeighborsOfStateChange(pos, this);
+                world.notifyNeighborsOfStateChange(pos, this, false);
             }
         }
     }

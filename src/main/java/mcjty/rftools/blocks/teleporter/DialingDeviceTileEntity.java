@@ -5,16 +5,19 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
+import mcjty.typed.Type;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.management.PlayerList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -71,7 +74,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
     }
 
     public static boolean isMatterBoosterAvailable(World world, BlockPos pos) {
-        for (EnumFacing facing : EnumFacing.values()) {
+        for (EnumFacing facing : EnumFacing.VALUES) {
             if (TeleporterSetup.matterBoosterBlock.equals(world.getBlockState(pos.offset(facing)).getBlock())) {
                 return true;
             }
@@ -81,7 +84,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
 
 
     public static boolean isDestinationAnalyzerAvailable(World world, BlockPos pos) {
-        for (EnumFacing facing : EnumFacing.values()) {
+        for (EnumFacing facing : EnumFacing.VALUES) {
             if (TeleporterSetup.destinationAnalyzerBlock.equals(world.getBlockState(pos.offset(facing)).getBlock())) {
                 return true;
             }
@@ -122,8 +125,8 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
     }
 
     private List<TeleportDestinationClientInfo> searchReceivers(String playerName) {
-        TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
-        return new ArrayList<>(destinations.getValidDestinations(worldObj, playerName));
+        TeleportDestinations destinations = TeleportDestinations.getDestinations(getWorld());
+        return new ArrayList<>(destinations.getValidDestinations(getWorld(), playerName));
     }
 
     public List<TransmitterInfo> searchTransmitters() {
@@ -134,22 +137,20 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
         int hrange = TeleportConfiguration.horizontalDialerRange;
         int vrange = TeleportConfiguration.verticalDialerRange;
 
-        List<TransmitterInfo> transmitters = new ArrayList<TransmitterInfo>();
+        List<TransmitterInfo> transmitters = new ArrayList<>();
         for (int dy = -vrange ; dy <= vrange ; dy++) {
             int yy = y + dy;
-            if (yy >= 0 && yy < worldObj.getHeight()) {
+            if (yy >= 0 && yy < getWorld().getHeight()) {
                 for (int dz = -hrange ; dz <= hrange; dz++) {
                     int zz = z + dz;
                     for (int dx = -hrange ; dx <= hrange ; dx++) {
                         int xx = x + dx;
                         if (dx != 0 || dy != 0 || dz != 0) {
                             BlockPos c = new BlockPos(xx, yy, zz);
-                            TileEntity tileEntity = worldObj.getTileEntity(c);
-                            if (tileEntity != null) {
-                                if (tileEntity instanceof MatterTransmitterTileEntity) {
-                                    MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) tileEntity;
-                                    transmitters.add(new TransmitterInfo(c, matterTransmitterTileEntity.getName(), matterTransmitterTileEntity.getTeleportDestination()));
-                                }
+                            TileEntity tileEntity = getWorld().getTileEntity(c);
+                            if (tileEntity instanceof MatterTransmitterTileEntity) {
+                                MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) tileEntity;
+                                transmitters.add(new TransmitterInfo(c, matterTransmitterTileEntity.getName(), matterTransmitterTileEntity.getTeleportDestination()));
                             }
                         }
                     }
@@ -161,8 +162,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
 
     // Server side only.
     private void changeFavorite(String playerName, BlockPos receiver, int dimension, boolean favorite) {
-        PlayerList playerList = worldObj.getMinecraftServer().getPlayerList();
-        List<EntityPlayerMP> list = playerList.getPlayerList();
+        List<EntityPlayerMP> list = ((WorldServer) getWorld()).getMinecraftServer().getPlayerList().getPlayers();
         for (EntityPlayerMP entityplayermp : list) {
             if (playerName.equals(entityplayermp.getName())) {
                 FavoriteDestinationsProperties favoriteDestinations = PlayerExtendedProperties.getFavoriteDestinations(entityplayermp);
@@ -175,7 +175,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
 
     // Server side only
     private int dial(String player, BlockPos transmitter, int transDim, BlockPos coordinate, int dimension, boolean once) {
-        return TeleportationTools.dial(worldObj, this, player, transmitter, transDim, coordinate, dimension, once);
+        return TeleportationTools.dial(getWorld(), this, player, transmitter, transDim, coordinate, dimension, once);
     }
 
     // Server side only
@@ -183,22 +183,22 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
         int cost = TeleportConfiguration.rfPerCheck;
         cost = (int) (cost * (2.0f - getInfusedFactor()) / 2.0f);
 
-        if (getEnergyStored(EnumFacing.DOWN) < cost) {
+        if (getEnergyStored() < cost) {
             return DialingDeviceTileEntity.DIAL_DIALER_POWER_LOW_MASK;
         }
         consumeEnergy(cost);
 
-        World w = TeleportationTools.getWorldForDimension(worldObj, dim);
+        World w = mcjty.lib.varia.TeleportationTools.getWorldForDimension(dim);
         if (w == null) {
-            TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
-            destinations.cleanupInvalid(worldObj);
+            TeleportDestinations destinations = TeleportDestinations.getDestinations(getWorld());
+            destinations.cleanupInvalid(getWorld());
             return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
         }
 
         TileEntity tileEntity = w.getTileEntity(c);
         if (!(tileEntity instanceof MatterReceiverTileEntity)) {
-            TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
-            destinations.cleanupInvalid(worldObj);
+            TeleportDestinations destinations = TeleportDestinations.getDestinations(getWorld());
+            destinations.cleanupInvalid(getWorld());
             return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
         }
 
@@ -217,19 +217,20 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
         return matterReceiverTileEntity.checkStatus();
     }
 
+    @Nonnull
     @Override
-    public List executeWithResultList(String command, Map<String, Argument> args) {
-        List rc = super.executeWithResultList(command, args);
-        if (rc != null) {
+    public <T> List<T> executeWithResultList(String command, Map<String, Argument> args, Type<T> type) {
+        List<T> rc = super.executeWithResultList(command, args, type);
+        if (!rc.isEmpty()) {
             return rc;
         }
         if (CMD_GETRECEIVERS.equals(command)) {
             String playerName = args.get("player").getString();
-            return searchReceivers(playerName);
+            return type.convert(searchReceivers(playerName));
         } else if (CMD_GETTRANSMITTERS.equals(command)) {
-            return searchTransmitters();
+            return type.convert(searchTransmitters());
         }
-        return null;
+        return Collections.emptyList();
     }
 
 
@@ -286,16 +287,16 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
     }
 
     @Override
-    public boolean execute(String command, List list) {
-        boolean rc = super.execute(command, list);
+    public <T> boolean execute(String command, List<T> list, Type<T> type) {
+        boolean rc = super.execute(command, list, type);
         if (rc) {
             return true;
         }
         if (CLIENTCMD_GETRECEIVERS.equals(command)) {
-            GuiDialingDevice.fromServer_receivers = new ArrayList<>(list);
+            GuiDialingDevice.fromServer_receivers = Type.create(TeleportDestinationClientInfo.class).convert(list);
             return true;
         } else if (CLIENTCMD_GETTRANSMITTERS.equals(command)) {
-            GuiDialingDevice.fromServer_transmitters = new ArrayList<>(list);
+            GuiDialingDevice.fromServer_transmitters = Type.create(TransmitterInfo.class).convert(list);
             return true;
         }
         return false;

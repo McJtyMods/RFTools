@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.api.IModuleSupport;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
@@ -21,6 +20,7 @@ import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -50,7 +50,7 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiStorageTerminal> getGuiClass() {
         return GuiStorageTerminal.class;
     }
 
@@ -66,13 +66,13 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(TextFormatting.WHITE + "This terminal can be retrofitted with");
-            list.add(TextFormatting.WHITE + "a Storage Control Module so that");
-            list.add(TextFormatting.WHITE + "you can access a Storage Scanner");
+            list.add(TextFormatting.WHITE + "a Storage Control Screen Module so");
+            list.add(TextFormatting.WHITE + "that you can access a Storage Scanner");
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
@@ -82,8 +82,8 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
     public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
         super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
         ItemStack module = getModule(world.getTileEntity(data.getPos()));
-        if (module == null) {
-            probeInfo.text(TextFormatting.GREEN + "Install storage control module first");
+        if (module.isEmpty()) {
+            probeInfo.text(TextFormatting.GREEN + "Install storage control screen module first");
         } else {
             probeInfo.text(TextFormatting.GREEN + "Use wrench to remove module");
         }
@@ -94,8 +94,8 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         super.getWailaBody(itemStack, currenttip, accessor, config);
         ItemStack module = getModule(accessor.getTileEntity());
-        if (module == null) {
-            currenttip.add(TextFormatting.GREEN + "Install storage control module first");
+        if (module.isEmpty()) {
+            currenttip.add(TextFormatting.GREEN + "Install storage control screen module first");
         } else {
             currenttip.add(TextFormatting.GREEN + "Use wrench to remove module");
         }
@@ -123,7 +123,7 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
             StorageTerminalTileEntity terminalTileEntity = (StorageTerminalTileEntity) tileEntity;
             return terminalTileEntity.getStackInSlot(StorageTerminalContainer.SLOT_MODULE);
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -132,17 +132,17 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
             if (tileEntity instanceof StorageTerminalTileEntity) {
                 StorageTerminalTileEntity terminalTileEntity = (StorageTerminalTileEntity) tileEntity;
                 ItemStack module = terminalTileEntity.getStackInSlot(StorageTerminalContainer.SLOT_MODULE);
-                if (module != null) {
+                if (!module.isEmpty()) {
                     int dimension = RFToolsTools.getDimensionFromModule(module);
                     BlockPos pos = RFToolsTools.getPositionFromModule(module);
                     WorldServer world = DimensionManager.getWorld(dimension);
                     if (!RFToolsTools.chunkLoaded(world, pos)) {
-                        entityPlayer.addChatComponentMessage(new TextComponentString(TextFormatting.YELLOW + "Storage scanner out of range!"));
+                        entityPlayer.sendStatusMessage(new TextComponentString(TextFormatting.YELLOW + "Storage scanner out of range!"), false);
                         return null;
                     }
                     TileEntity scannerTE = world.getTileEntity(pos);
                     if (!(scannerTE instanceof StorageScannerTileEntity)) {
-                        entityPlayer.addChatComponentMessage(new TextComponentString(TextFormatting.YELLOW + "Storage scanner is missing!"));
+                        entityPlayer.sendStatusMessage(new TextComponentString(TextFormatting.YELLOW + "Storage scanner is missing!"), false);
                         return null;
                     }
 
@@ -158,7 +158,7 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
     public GuiContainer createClientGui(EntityPlayer entityPlayer, TileEntity tileEntity) {
         if (!entityPlayer.isSneaking()) {
             ItemStack module = getModule(tileEntity);
-            if (module != null) {
+            if (!module.isEmpty()) {
                 int monitordim = RFToolsTools.getDimensionFromModule(module);
                 BlockPos pos = RFToolsTools.getPositionFromModule(module);
                 StorageScannerTileEntity te = new StorageScannerTileEntity(entityPlayer, monitordim) {
@@ -172,6 +172,15 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
                     @Override
                     public CraftingGridProvider getCraftingGridProvider() {
                         return (CraftingGridProvider) tileEntity;
+                    }
+
+                    @Override
+                    public boolean isOpenWideView() {
+                        TileEntity realTe = RFTools.proxy.getClientWorld().getTileEntity(pos);
+                        if (realTe instanceof StorageScannerTileEntity) {
+                            return ((StorageScannerTileEntity) realTe).isOpenWideView();
+                        }
+                        return true;
                     }
 
                     @Override
@@ -194,13 +203,13 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
             if (te instanceof StorageTerminalTileEntity) {
                 StorageTerminalTileEntity storageTerminalTileEntity = (StorageTerminalTileEntity) te;
                 ItemStack module = storageTerminalTileEntity.getStackInSlot(StorageTerminalContainer.SLOT_MODULE);
-                if (module != null) {
-                    storageTerminalTileEntity.setInventorySlotContents(StorageTerminalContainer.SLOT_MODULE, null);
+                if (!module.isEmpty()) {
+                    storageTerminalTileEntity.setInventorySlotContents(StorageTerminalContainer.SLOT_MODULE, ItemStack.EMPTY);
                     storageTerminalTileEntity.markDirtyClient();
                     if (!player.inventory.addItemStackToInventory(module)) {
                         player.entityDropItem(module, 1.05f);
                     }
-                    player.addChatComponentMessage(new TextComponentString("Removed module"));
+                    player.sendStatusMessage(new TextComponentString("Removed module"), false);
                 }
             }
         }
@@ -213,7 +222,7 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
             return true;
         } else {
             TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
-            if(isBlockContainer && !tileEntityClass.isInstance(te)) {
+            if(!tileEntityClass.isInstance(te)) {
                 return false;
             } else if(checkAccess(world, player, te)) {
                 return true;
@@ -231,7 +240,7 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
         ItemStack module = getModule(world.getTileEntity(pos));
-        return super.getActualState(state, world, pos).withProperty(MODULE, module != null);
+        return super.getActualState(state, world, pos).withProperty(MODULE, !module.isEmpty());
     }
 
     @Override

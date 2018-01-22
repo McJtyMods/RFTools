@@ -1,15 +1,16 @@
 package mcjty.rftools.blocks.builder;
 
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 public class BuilderConfiguration {
     public static final String CATEGORY_BUILDER = "builder";
 
-    public static int SPACEPROJECTOR_MAXENERGY = 100000;
-    public static int SPACEPROJECTOR_RECEIVEPERTICK = 1000;
-
-    public static int BUILDER_MAXENERGY = 10000000;
-    public static int BUILDER_RECEIVEPERTICK = 50000;
+    public static int BUILDER_MAXENERGY = 1000000;
+    public static int BUILDER_RECEIVEPERTICK = 20000;
 
     public static int builderRfPerOperation = 500;
     public static int builderRfPerLiquid = 300;
@@ -29,7 +30,9 @@ public class BuilderConfiguration {
     public static double silkquarryShapeCardFactor = 3;
     public static double fortunequarryShapeCardFactor = 2;
 
-    public static boolean quarryCobble = false;
+    public static String quarryReplace = "minecraft:dirt";
+    private static Block quarryReplaceBlock = null;
+
     public static boolean quarryChunkloads = true;
     public static boolean shapeCardAllowed = true;
     public static boolean quarryAllowed = true;
@@ -51,16 +54,14 @@ public class BuilderConfiguration {
 
 
     public static void init(Configuration cfg) {
-        SPACEPROJECTOR_MAXENERGY = cfg.get(CATEGORY_BUILDER, "spaceProjectorMaxRF", SPACEPROJECTOR_MAXENERGY,
-                "Maximum RF storage that the space projector can hold").getInt();
-        SPACEPROJECTOR_RECEIVEPERTICK = cfg.get(CATEGORY_BUILDER, "spaceProjectorRFPerTick", SPACEPROJECTOR_RECEIVEPERTICK,
-                "RF per tick that the space projector can receive").getInt();
         BUILDER_MAXENERGY = cfg.get(CATEGORY_BUILDER, "builderMaxRF", BUILDER_MAXENERGY,
                 "Maximum RF storage that the builder can hold").getInt();
         BUILDER_RECEIVEPERTICK = cfg.get(CATEGORY_BUILDER, "builderRFPerTick", BUILDER_RECEIVEPERTICK,
                 "RF per tick that the builder can receive").getInt();
         builderRfPerOperation = cfg.get(CATEGORY_BUILDER, "builderRfPerOperation", builderRfPerOperation,
                 "RF per block operation for the builder when used to build").getInt();
+        builderRfPerLiquid = cfg.get(CATEGORY_BUILDER, "builderRfPerLiquid", builderRfPerLiquid,
+                "Base RF per block operation for the builder when used as a pump").getInt();
         builderRfPerQuarry = cfg.get(CATEGORY_BUILDER, "builderRfPerQuarry", builderRfPerQuarry,
                 "Base RF per block operation for the builder when used as a quarry or voider (actual cost depends on hardness of block)").getInt();
         builderRfPerSkipped = cfg.get(CATEGORY_BUILDER, "builderRfPerSkipped", builderRfPerSkipped,
@@ -92,8 +93,7 @@ public class BuilderConfiguration {
         fortunequarryShapeCardFactor = cfg.get(CATEGORY_BUILDER, "fortunequarryShapeCardFactor", fortunequarryShapeCardFactor,
                 "The RF per operation of the builder is multiplied with this factor when using the fortune quarry shape card").getDouble();
 
-        quarryCobble = cfg.get(CATEGORY_BUILDER, "quarryCobble", quarryCobble,
-                "If true the quarry replace with cobblestone instead of dirt").getBoolean();
+        quarryReplace = cfg.getString(CATEGORY_BUILDER, "quarryReplacE", quarryReplace, "Use this block for the builder to replace with");
         quarryTileEntities = cfg.get(CATEGORY_BUILDER, "quarryTileEntities", quarryTileEntities,
                 "If true the quarry will also quarry tile entities. Otherwise it just ignores them").getBoolean();
         quarryChunkloads = cfg.get(CATEGORY_BUILDER, "quarryChunkloads", quarryChunkloads,
@@ -119,5 +119,15 @@ public class BuilderConfiguration {
                 "If true we go back to the old (wrong) sphere/cylinder calculation for the builder/shield").getBoolean();
         showProgressHud = cfg.get(CATEGORY_BUILDER, "showProgressHud", showProgressHud,
                 "If true a holo hud with current progress is shown above the builder").getBoolean();
+    }
+
+    public static Block getQuarryReplace() {
+        if (quarryReplaceBlock == null) {
+            quarryReplaceBlock = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(quarryReplace));
+            if (quarryReplaceBlock == null) {
+                quarryReplaceBlock = Blocks.DIRT;
+            }
+        }
+        return quarryReplaceBlock;
     }
 }

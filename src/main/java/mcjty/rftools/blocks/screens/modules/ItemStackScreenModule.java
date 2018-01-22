@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.screens.modules;
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.lib.varia.CapabilityTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
@@ -51,7 +52,7 @@ public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModul
                 if (buf.readBoolean()) {
                     stacks[i] = NetworkTools.readItemStack(buf);
                 } else {
-                    stacks[i] = null;
+                    stacks[i] = ItemStack.EMPTY;
                 }
             }
         }
@@ -69,7 +70,7 @@ public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModul
         }
 
         private void writeStack(ByteBuf buf, ItemStack stack) {
-            if (stack != null) {
+            if (!stack.isEmpty()) {
                 buf.writeBoolean(true);
                 NetworkTools.writeItemStack(buf, stack);
             } else {
@@ -94,23 +95,19 @@ public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModul
             return null;
         }
 
-        ItemStack stack1;
-        ItemStack stack2;
-        ItemStack stack3;
-        ItemStack stack4;
-        if (RFToolsTools.hasItemCapabilitySafe(te)) {
-            IItemHandler itemHandler = RFToolsTools.getItemCapabilitySafe(te);
-            stack1 = getItemStack(itemHandler, slot1);
-            stack2 = getItemStack(itemHandler, slot2);
-            stack3 = getItemStack(itemHandler, slot3);
-            stack4 = getItemStack(itemHandler, slot4);
+        if (CapabilityTools.hasItemCapabilitySafe(te)) {
+            IItemHandler itemHandler = CapabilityTools.getItemCapabilitySafe(te);
+            ItemStack stack1 = getItemStack(itemHandler, slot1);
+            ItemStack stack2 = getItemStack(itemHandler, slot2);
+            ItemStack stack3 = getItemStack(itemHandler, slot3);
+            ItemStack stack4 = getItemStack(itemHandler, slot4);
             return new ModuleDataStacks(stack1, stack2, stack3, stack4);
         } else if (te instanceof IInventory) {
             IInventory inventory = (IInventory) te;
-            stack1 = getItemStack(inventory, slot1);
-            stack2 = getItemStack(inventory, slot2);
-            stack3 = getItemStack(inventory, slot3);
-            stack4 = getItemStack(inventory, slot4);
+            ItemStack stack1 = getItemStack(inventory, slot1);
+            ItemStack stack2 = getItemStack(inventory, slot2);
+            ItemStack stack3 = getItemStack(inventory, slot3);
+            ItemStack stack4 = getItemStack(inventory, slot4);
             return new ModuleDataStacks(stack1, stack2, stack3, stack4);
         } else {
             return null;
@@ -119,7 +116,7 @@ public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModul
 
     private ItemStack getItemStack(IInventory inventory, int slot) {
         if (slot == -1) {
-            return null;
+            return ItemStack.EMPTY;
         }
         if (slot < inventory.getSizeInventory()) {
 //            if (RFTools.instance.mfr && MFRCompatibility.isExtendedStorage(inventory)) {
@@ -129,13 +126,13 @@ public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModul
 //            }
             return inventory.getStackInSlot(slot);
         } else {
-            return null;
+            return ItemStack.EMPTY;
         }
     }
 
     private ItemStack getItemStack(IItemHandler itemHandler, int slot) {
         if (slot == -1) {
-            return null;
+            return ItemStack.EMPTY;
         }
         if (slot < itemHandler.getSlots()) {
 //            if (RFTools.instance.mfr && MFRCompatibility.isExtendedStorage(inventory)) {
@@ -145,7 +142,7 @@ public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModul
 //            }
             return itemHandler.getStackInSlot(slot);
         } else {
-            return null;
+            return ItemStack.EMPTY;
         }
     }
 

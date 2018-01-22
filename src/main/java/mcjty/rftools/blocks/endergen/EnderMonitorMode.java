@@ -9,7 +9,7 @@ public enum EnderMonitorMode {
     MODE_PEARLARRIVED("Pearl Arrived"),
     ;
 
-    private static final Map<String,EnderMonitorMode> modeToMode = new HashMap<String, EnderMonitorMode>();
+    private static final Map<String,EnderMonitorMode> modeToMode = new HashMap<>();
 
     private final String description;
 

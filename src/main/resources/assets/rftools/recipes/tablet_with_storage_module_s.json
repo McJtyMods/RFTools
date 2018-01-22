@@ -1,0 +1,19 @@
+{
+  "result": {
+    "item": "rftools:storage_module_tablet",
+    "data": 2
+  },
+  "pattern": [
+    "ts"
+  ],
+  "type": "rftools:container_and_item",
+  "key": {
+    "t": {
+      "item": "rftools:storage_module_tablet",
+      "data": 0
+    },
+    "s": {
+      "item": "rftools:storage_control_module"
+    }
+  }
+}

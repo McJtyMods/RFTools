@@ -1,14 +1,13 @@
 package mcjty.rftools.blocks.logic.threelogic;
 
 import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.logic.generic.LogicFacing;
 import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
 import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -29,14 +28,14 @@ public class ThreeLogicBlock extends LogicSlabBlock<ThreeLogicTileEntity, EmptyC
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiThreeLogic> getGuiClass() {
         return GuiThreeLogic.class;
     }
 
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {

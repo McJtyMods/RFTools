@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "rftools:charged_porter"
+  },
+  "pattern": [
+    " e ",
+    "eRe",
+    "iei"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "R": {
+      "item": "minecraft:redstone_block"
+    },
+    "e": {
+      "item": "minecraft:ender_pearl"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    }
+  }
+}

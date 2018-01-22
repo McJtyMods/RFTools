@@ -3,8 +3,6 @@ package mcjty.rftools.blocks.relay;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
-import mcjty.lib.gui.events.ButtonEvent;
-import mcjty.lib.gui.events.TextEvent;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
@@ -61,21 +59,19 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
         redstoneOff.setDesiredWidth(16).setDesiredHeight(16).setTooltips("Redstone signal off").setLayoutHint(new PositionalLayout.PositionalHint(70, 0, 16, 16));
         ImageLabel redstoneOn = new ImageLabel(mc, this).setImage(iconGuiElements, 32, 0);
         redstoneOn.setDesiredWidth(16).setDesiredHeight(16).setTooltips("Redstone signal on").setLayoutHint(new PositionalLayout.PositionalHint(190, 0, 16, 16));
-        Panel panel = new Panel(mc, this).setLayout(new PositionalLayout()).
+        return new Panel(mc, this).setLayout(new PositionalLayout()).
                 addChild(redstoneOff).
                 addChild(redstoneOn);
-        return panel;
     }
 
     private Panel createSidePanel(int side) {
         String labelText = String.valueOf(RelayTileEntity.DUNSWE.charAt(side));
         Label label = new Label(mc, this).setText(labelText);
         label.setDesiredWidth(14).setDesiredHeight(14);
-        Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(1)).
+        return new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(1)).
                 addChild(label).
                 addChild(createSubPanel(side, "Off").setDesiredWidth(115)).
                 addChild(createSubPanel(side, "On").setDesiredWidth(115));
-        return panel;
     }
 
     private Panel createSubPanel(int side, String redstoneState) {
@@ -105,12 +101,7 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
         inputOutputs.put(key, inputOutput);
         TextField energyField = new TextField(mc, this).setTooltips("Amount of RF to input/output", "when redstone is " + redstoneState).
                 setDesiredWidth(42).setDesiredHeight(14).
-                addTextEvent(new TextEvent() {
-                    @Override
-                    public void textChanged(Widget parent, String newText) {
-                        adjustEnergy((TextField) parent, 0);
-                    }
-                });
+                addTextEvent((parent, newText) -> adjustEnergy((TextField) parent, 0));
         energyField.setText(String.valueOf(rf));
         Button sub100 = createEnergyOffsetButton(energyField, "-", -500);
         Button add100 = createEnergyOffsetButton(energyField, "+", 500);
@@ -124,12 +115,7 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
     }
 
     private Button createEnergyOffsetButton(final TextField energyField, String label, final int amount) {
-        return new Button(mc, this).setText(label).setDesiredHeight(14).setDesiredWidth(16).addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget parent) {
-                adjustEnergy(energyField, amount);
-            }
-        });
+        return new Button(mc, this).setText(label).setDesiredHeight(14).setDesiredWidth(16).addButtonEvent(parent -> adjustEnergy(energyField, amount));
     }
 
     private void adjustEnergy(TextField energyField, int amount) {
@@ -150,7 +136,7 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
     }
 
     private void changeSettings() {
-        List<Argument> arguments = new ArrayList<Argument>();
+        List<Argument> arguments = new ArrayList<>();
         for (int i = 0 ; i < 6 ; i++) {
             addArgument(arguments, i, "On");
             addArgument(arguments, i, "Off");

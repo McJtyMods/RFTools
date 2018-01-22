@@ -1,39 +1,36 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
-import mcjty.rftools.api.screens.IClientScreenModule;
-import mcjty.rftools.api.screens.IModuleGuiBuilder;
-import mcjty.rftools.api.screens.IModuleRenderHelper;
-import mcjty.rftools.api.screens.ModuleRenderInfo;
+import mcjty.rftools.api.screens.*;
 import mcjty.rftools.api.screens.data.IModuleData;
+import mcjty.rftools.blocks.screens.modulesclient.helper.ScreenTextHelper;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class TextClientScreenModule implements IClientScreenModule {
+public class TextClientScreenModule implements IClientScreenModule<IModuleData> {
     private String line = "";
     private int color = 0xffffff;
-    private boolean large = false;
+
+    private ITextRenderHelper cache = new ScreenTextHelper();
 
     @Override
     public TransformMode getTransformMode() {
-        return large ? TransformMode.TEXTLARGE : TransformMode.TEXT;
+        return cache.isLarge() ? TransformMode.TEXTLARGE : TransformMode.TEXT;
     }
 
     @Override
     public int getHeight() {
-        return large ? 20 : 10;
+        return cache.isLarge() ? 20 : 10;
     }
 
     @Override
     public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleData screenData, ModuleRenderInfo renderInfo) {
         GlStateManager.disableLighting();
-        if (large) {
-            fontRenderer.drawString(fontRenderer.trimStringToWidth(line, 60), 4, currenty / 2 + 1, color);
-        } else {
-            fontRenderer.drawString(fontRenderer.trimStringToWidth(line, 115), 7, currenty, color);
-        }
+        cache.setup(line, 512, renderInfo);
+        int y = cache.isLarge() ? (currenty / 2 + 1) : currenty;
+        cache.renderText(0, y, color, renderInfo);
     }
 
     @Override
@@ -43,9 +40,26 @@ public class TextClientScreenModule implements IClientScreenModule {
 
     @Override
     public void createGui(IModuleGuiBuilder guiBuilder) {
-        guiBuilder.
-                label("Text:").text("text", "Text to show").color("color", "Color for the text").nl().
-                toggle("large", "Large", "Large or small font").nl();
+        guiBuilder
+                .label("Text:").text("text", "Text to show").color("color", "Color for the text").nl()
+                .toggle("large", "Large", "Large or small font")
+                .choices("align", "Text alignment", "Left", "Center", "Right").nl();
+
+    }
+
+    public void setLine(String line) {
+        this.line = line;
+        cache.setDirty();
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+        cache.setDirty();
+    }
+
+    public void setLarge(boolean large) {
+        cache.large(large);
+        cache.setDirty();
     }
 
     @Override
@@ -57,7 +71,13 @@ public class TextClientScreenModule implements IClientScreenModule {
             } else {
                 color = 0xffffff;
             }
-            large = tagCompound.getBoolean("large");
+            cache.large(tagCompound.getBoolean("large"));
+            if (tagCompound.hasKey("align")) {
+                String alignment = tagCompound.getString("align");
+                cache.align(TextAlign.get(alignment));
+            } else {
+                cache.align(TextAlign.ALIGN_LEFT);
+            }
         }
     }
 

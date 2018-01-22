@@ -1,0 +1,26 @@
+{
+  "result": {
+    "item": "rftools:invchecker_block"
+  },
+  "pattern": [
+    " c ",
+    "rMr",
+    " C "
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "c": {
+      "item": "minecraft:comparator"
+    },
+    "C": {
+      "type": "forge:ore_dict",
+      "ore": "chest"
+    },
+    "M": {
+      "item": "rftools:machine_base"
+    }
+  }
+}

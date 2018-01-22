@@ -15,8 +15,8 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.network.PacketGetPlayers;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.util.EnumFacing;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
@@ -41,19 +41,15 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
     private List<String> players = null;
     private int listDirty = 0;
 
-    private static Set<String> fromServer_allowedPlayers = new HashSet<String>();
-    public static void storeAllowedPlayersForClient(List<PlayerName> players) {
-        Set<String> p = new HashSet<String>();
-        for (PlayerName n : players) {
-            p.add(n.getName());
-        }
-        fromServer_allowedPlayers = p;
+    private static Set<String> fromServer_allowedPlayers = new HashSet<>();
+    public static void storeAllowedPlayersForClient(List<String> players) {
+        fromServer_allowedPlayers = new HashSet<>(players);
     }
 
 
     public GuiMatterTransmitter(MatterTransmitterTileEntity transmitterTileEntity, EmptyContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, transmitterTileEntity, container, RFTools.GUI_MANUAL_MAIN, "tptransmitter");
-        GenericEnergyStorageTileEntity.setCurrentRF(transmitterTileEntity.getEnergyStored(EnumFacing.DOWN));
+        GenericEnergyStorageTileEntity.setCurrentRF(transmitterTileEntity.getEnergyStored());
 
         xSize = MATTER_WIDTH;
         ySize = MATTER_HEIGHT;
@@ -68,7 +64,7 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored(EnumFacing.DOWN);
+        int maxEnergyStored = tileEntity.getMaxEnergyStored();
         energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredHeight(12).setDesiredWidth(80).setMaxValue(maxEnergyStored).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
@@ -101,7 +97,7 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
             addButtonEvent(parent -> delPlayer());
         Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(nameField).addChild(addButton).addChild(delButton).setDesiredHeight(16);
 
-        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setHorizontalMargin(3).setVerticalMargin(3).setSpacing(1)).
+        Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setHorizontalMargin(3).setVerticalMargin(3).setSpacing(1)).
                 addChild(energyBar).addChild(namePanel).addChild(privatePanel).addChild(allowedPlayersPanel).addChild(buttonPanel);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, MATTER_WIDTH, MATTER_HEIGHT));
         window = new Window(this, toplevel);
@@ -140,7 +136,7 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
     }
 
     private void populatePlayers() {
-        List<String> newPlayers = new ArrayList<String>(fromServer_allowedPlayers);
+        List<String> newPlayers = new ArrayList<>(fromServer_allowedPlayers);
         Collections.sort(newPlayers);
         if (newPlayers.equals(players)) {
             return;

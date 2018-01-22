@@ -1,19 +1,16 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
 import mcjty.lib.api.MachineInformation;
-import mcjty.lib.gui.events.ChoiceEvent;
-import mcjty.lib.gui.events.ColorChoiceEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.varia.BlockPosTools;
-import mcjty.rftools.api.screens.IClientScreenModule;
-import mcjty.rftools.api.screens.IModuleGuiBuilder;
-import mcjty.rftools.api.screens.IModuleRenderHelper;
-import mcjty.rftools.api.screens.ModuleRenderInfo;
+import mcjty.rftools.api.screens.*;
 import mcjty.rftools.api.screens.data.IModuleDataString;
 import mcjty.rftools.blocks.screens.IModuleGuiChanged;
+import mcjty.rftools.blocks.screens.modulesclient.helper.ScreenModuleGuiBuilder;
+import mcjty.rftools.blocks.screens.modulesclient.helper.ScreenTextHelper;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -27,13 +24,15 @@ import net.minecraft.world.World;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MachineInformationClientScreenModule implements IClientScreenModule<IModuleDataString> {
+public class    MachineInformationClientScreenModule implements IClientScreenModule<IModuleDataString> {
 
     private String line = "";
     private int labcolor = 0xffffff;
     private int txtcolor = 0xffffff;
     protected int dim = 0;
     protected BlockPos coordinate = BlockPosTools.INVALID;
+
+    private ITextRenderHelper labelCache = new ScreenTextHelper();
 
     @Override
     public TransformMode getTransformMode() {
@@ -50,16 +49,17 @@ public class MachineInformationClientScreenModule implements IClientScreenModule
         GlStateManager.disableLighting();
         int xoffset;
         if (!line.isEmpty()) {
-            fontRenderer.drawString(line, 7, currenty, labcolor);
+            labelCache.setup(line, 160, renderInfo);
+            labelCache.renderText(0, currenty, labcolor, renderInfo);
             xoffset = 7 + 40;
         } else {
             xoffset = 7;
         }
 
         if ((!BlockPosTools.INVALID.equals(coordinate)) && screenData != null) {
-            fontRenderer.drawString(screenData.get(), xoffset, currenty, txtcolor);
+            renderHelper.renderText(xoffset, currenty, txtcolor, renderInfo, screenData.get());
         } else {
-            fontRenderer.drawString("<invalid>", xoffset, currenty, 0xff0000);
+            renderHelper.renderText(xoffset, currenty, 0xff0000, renderInfo, "<invalid>");
         }
     }
 
@@ -105,7 +105,7 @@ public class MachineInformationClientScreenModule implements IClientScreenModule
         int x = currentData.getInteger("monitorx");
         int y = currentData.getInteger("monitory");
         int z = currentData.getInteger("monitorz");
-        TileEntity tileEntity = mc.theWorld.getTileEntity(new BlockPos(x, y, z));
+        TileEntity tileEntity = mc.world.getTileEntity(new BlockPos(x, y, z));
 
         if (tileEntity instanceof MachineInformation) {
             int current = currentData.getInteger("monitorTag");
@@ -149,7 +149,7 @@ public class MachineInformationClientScreenModule implements IClientScreenModule
                 // Compatibility reasons
                 this.dim = currentData.getInteger("dim");
             }
-            World world = mc.thePlayer.worldObj;
+            World world = mc.player.getEntityWorld();
             if (dim == world.provider.getDimension()) {
                 int x = currentData.getInteger("monitorx");
                 int y = currentData.getInteger("monitory");
@@ -180,12 +180,9 @@ public class MachineInformationClientScreenModule implements IClientScreenModule
 
 
     private ColorChoiceLabel addColorSelector(Minecraft mc, Gui gui, final NBTTagCompound currentData, final IModuleGuiChanged moduleGuiChanged, final String tagName) {
-        ColorChoiceLabel colorChoiceLabel = new ColorChoiceLabel(mc, gui).addColors(0xffffff, 0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(26).setDesiredHeight(14).addChoiceEvent(new ColorChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, Integer newColor) {
-                currentData.setInteger(tagName, newColor);
-                moduleGuiChanged.updateData();
-            }
+        ColorChoiceLabel colorChoiceLabel = new ColorChoiceLabel(mc, gui).addColors(0xffffff, 0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(26).setDesiredHeight(14).addChoiceEvent((parent, newColor) -> {
+            currentData.setInteger(tagName, newColor);
+            moduleGuiChanged.updateData();
         });
         if (currentData != null) {
             int currentColor = currentData.getInteger(tagName);

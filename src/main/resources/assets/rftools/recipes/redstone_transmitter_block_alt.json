@@ -1,0 +1,14 @@
+{
+  "result": {
+    "item": "rftools:redstone_transmitter_block"
+  },
+  "pattern": [
+    "r"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "r": {
+      "item": "rftools:redstone_transmitter_block"
+    }
+  }
+}

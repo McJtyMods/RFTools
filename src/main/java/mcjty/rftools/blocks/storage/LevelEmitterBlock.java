@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.api.IModuleSupport;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
@@ -16,6 +15,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -39,7 +39,7 @@ public class LevelEmitterBlock extends LogicSlabBlock<LevelEmitterTileEntity, Le
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiLevelEmitter> getGuiClass() {
         return GuiLevelEmitter.class;
     }
 
@@ -55,12 +55,12 @@ public class LevelEmitterBlock extends LogicSlabBlock<LevelEmitterTileEntity, Le
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(TextFormatting.WHITE + "This block can be retrofitted with");
-            list.add(TextFormatting.WHITE + "a Storage Control Module so that");
+            list.add(TextFormatting.WHITE + "This block can be retrofitted with a");
+            list.add(TextFormatting.WHITE + "Storage Control Screen Module so that");
             list.add(TextFormatting.WHITE + "you can count items in your storage");
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
@@ -71,15 +71,15 @@ public class LevelEmitterBlock extends LogicSlabBlock<LevelEmitterTileEntity, Le
     public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
         super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
         ItemStack module = getModule(world.getTileEntity(data.getPos()));
-        if (module == null) {
-            probeInfo.text(TextFormatting.GREEN + "Install storage control module first");
+        if (module.isEmpty()) {
+            probeInfo.text(TextFormatting.GREEN + "Install storage control screen module first");
         } else {
             TileEntity te = world.getTileEntity(data.getPos());
             if (te instanceof LevelEmitterTileEntity) {
                 LevelEmitterTileEntity emitterTileEntity = (LevelEmitterTileEntity) te;
                 int count = emitterTileEntity.getCurrentCount();
                 ItemStack toCount = emitterTileEntity.getInventoryHelper().getStackInSlot(LevelEmitterContainer.SLOT_ITEMMATCH);
-                if (toCount != null) {
+                if (!toCount.isEmpty()) {
                     probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER))
                             .item(toCount)
                             .text(TextFormatting.BLUE + "Count: " + TextFormatting.WHITE + count);
@@ -93,8 +93,8 @@ public class LevelEmitterBlock extends LogicSlabBlock<LevelEmitterTileEntity, Le
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         super.getWailaBody(itemStack, currenttip, accessor, config);
         ItemStack module = getModule(accessor.getTileEntity());
-        if (module == null) {
-            currenttip.add(TextFormatting.GREEN + "Install storage control module first");
+        if (module.isEmpty()) {
+            currenttip.add(TextFormatting.GREEN + "Install storage control screen module first");
         }
         return currenttip;
     }
@@ -115,13 +115,13 @@ public class LevelEmitterBlock extends LogicSlabBlock<LevelEmitterTileEntity, Le
             LevelEmitterTileEntity emitterTileEntity = (LevelEmitterTileEntity) tileEntity;
             return emitterTileEntity.getStackInSlot(LevelEmitterContainer.SLOT_MODULE);
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
         ItemStack module = getModule(world.getTileEntity(pos));
-        return super.getActualState(state, world, pos).withProperty(MODULE, module != null);
+        return super.getActualState(state, world, pos).withProperty(MODULE, !module.isEmpty());
     }
 
     @Override

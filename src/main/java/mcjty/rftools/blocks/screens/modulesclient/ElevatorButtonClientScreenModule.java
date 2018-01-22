@@ -62,58 +62,56 @@ public class ElevatorButtonClientScreenModule implements IClientScreenModule<Ele
         BlockPos pos = screenData.getPos();
         List<Integer> heights = screenData.getHeights();
         if (vertical) {
-            renderButtonsVertical(fontRenderer, currenty, currentLevel, buttons, pos, heights);
+            renderButtonsVertical(renderHelper, currenty, currentLevel, buttons, pos, heights, renderInfo);
         } else {
-            renderButtonsHorizontal(fontRenderer, currenty, currentLevel, buttons, pos, heights);
+            renderButtonsHorizontal(renderHelper, currenty, currentLevel, buttons, pos, heights, renderInfo);
         }
     }
 
-    private void renderButtonsHorizontal(FontRenderer fontRenderer, int currenty, int currentLevel, int buttons,
+    private void renderButtonsHorizontal(IModuleRenderHelper renderHelper, int currenty, int currentLevel, int buttons,
                                          BlockPos pos,
-                                         List<Integer> heights) {
+                                         List<Integer> heights, ModuleRenderInfo renderInfo) {
         int xoffset = 5;
         int max = large ? 6 : 9;
         if (buttons > max) {
             buttons = max;
         }
         for (int i = 0; i < buttons; i++) {
-            int level = i;
-            String text = getLevelText(level, pos, heights);
+            String text = getLevelText(i, pos, heights);
             boolean hasText = text != null;
             if (text == null) {
-                text = String.valueOf(level + (start1 ? 1 : 0));
+                text = String.valueOf(i + (start1 ? 1 : 0));
             }
-            int col = level == currentLevel ? this.currentLevelButtonColor : this.buttonColor;
+            int col = i == currentLevel ? this.currentLevelButtonColor : this.buttonColor;
             int textoffset = large ? 3 : 0;
+            int x = xoffset + 3 + textoffset;
+            int y = currenty + 2 + textoffset;
             if (lights) {
                 RenderHelper.drawBeveledBox(xoffset, currenty, xoffset + getDimension() - 4, currenty + getDimension() - 2, 0xffffffff, 0xffffffff, 0xff000000 + col);
                 if (hasText) {
-                    fontRenderer.drawString(fontRenderer.trimStringToWidth(text, 120), xoffset + 3 + textoffset, currenty + 2 + textoffset, 0xffffff);
+                    renderHelper.renderTextTrimmed(x, y, 0xffffff, renderInfo, text, 480);
                 }
             } else {
                 RenderHelper.drawBeveledBox(xoffset, currenty, xoffset + getDimension() - 4, currenty + getDimension() - 2, 0xffeeeeee, 0xff333333, 0xff666666);
-                fontRenderer.drawString(fontRenderer.trimStringToWidth(text, getDimension() - 4), xoffset + 3 + textoffset, currenty + 2 + textoffset, col);
+                renderHelper.renderTextTrimmed(x, y, col, renderInfo, text, (getDimension() - 4) * 4);
             }
             xoffset += getDimension() - 2;
         }
     }
 
-    private void renderButtonsVertical(FontRenderer fontRenderer, int currenty, int currentLevel, int buttons,
-                                       BlockPos pos, List<Integer> heights) {
+    private void renderButtonsVertical(IModuleRenderHelper renderHelper, int currenty, int currentLevel, int buttons,
+                                       BlockPos pos, List<Integer> heights, ModuleRenderInfo renderInfo) {
         int max = large ? 6 : 8;
 
-        int w = buttons > max ? 58 : 120;
         int y = currenty;
-        boolean twocols = buttons > max;
+        int numcols = (buttons + max - 1) / max;
+        int w = ElevatorButtonScreenModule.getColumnWidth(numcols);
 
         for (int i = 0; i < buttons; i++) {
             int xoffset;
             int level = buttons-i-1;
-            if (twocols) {
-                xoffset = level >= max ? 70 : 5;
-            } else {
-                xoffset = 5;
-            }
+            int column = level / max;
+            xoffset = 5 + (w+7) * column;
 
             String text = getLevelText(level, pos, heights);
             boolean hasText = text != null;
@@ -123,17 +121,19 @@ public class ElevatorButtonClientScreenModule implements IClientScreenModule<Ele
 
             int col = level == currentLevel ? this.currentLevelButtonColor : this.buttonColor;
             int textoffset = large ? 3 : 0;
+            int x = xoffset + 3 + textoffset;
+            int yy = y + 2 + textoffset;
             if (lights) {
                 RenderHelper.drawBeveledBox(xoffset, y, xoffset + w, y + getDimension() - 2, 0xffffffff, 0xffffffff, 0xff000000 + col);
                 if (hasText) {
-                    fontRenderer.drawString(fontRenderer.trimStringToWidth(text, w), xoffset + 3 + textoffset, y + 2 + textoffset, 0xffffff);
+                    renderHelper.renderTextTrimmed(x, yy, 0xffffff, renderInfo, text, w * 4);
                 }
             } else {
                 RenderHelper.drawBeveledBox(xoffset, y, xoffset + w, y + getDimension() - 2, 0xffeeeeee, 0xff333333, 0xff666666);
-                fontRenderer.drawString(fontRenderer.trimStringToWidth(text, w), xoffset + 3 + textoffset, y + 2 + textoffset, col);
+                renderHelper.renderTextTrimmed(x, yy, col, renderInfo, text, w * 4);
             }
             y += getDimension() - 2;
-            if (level == max) {
+            if ((level % max) == 0) {
                 y = currenty;
             }
         }
@@ -145,7 +145,7 @@ public class ElevatorButtonClientScreenModule implements IClientScreenModule<Ele
         } else {
             if (level < heights.size()) {
                 BlockPos posY = ElevatorTileEntity.getPosAtY(pos, heights.get(level));
-                TileEntity te = Minecraft.getMinecraft().theWorld.getTileEntity(posY);
+                TileEntity te = Minecraft.getMinecraft().world.getTileEntity(posY);
                 if (te instanceof ElevatorTileEntity) {
                     return ((ElevatorTileEntity) te).getName();
                 }

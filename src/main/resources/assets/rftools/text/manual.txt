@@ -8,25 +8,23 @@ Table of contents:
 {l:logic}Logic Gates
 {l:monitor}Contents Monitors
 {l:coalgen}Coal Generator
-{l:powercell}Power storage
+{l:powercell}Power Storage
 {l:stomon}Storage Scanner
 {l:storage}Storage System
-{l:filter}Item Filter
 {/}
 
 
+{l:filter}Item Filter
 {l:elevator}Elevator
 {l:crafter}Automatic Crafter
 {l:protect}Block Protector
 {l:prelay}RF Power Relay
 {l:telepo}Teleporting System
 {l:power}Advanced Power Generator
-{l:shield}Shield System
 {l:screens}Modular Screens
 {l:envctrl}Environmental Control
 {l:booster}Booster
 {l:spawner}Spawner System
-{l:builder}Builder
 {-------------------------------------------------------------}
 {b}General Tips
 {n:general}
@@ -117,7 +115,7 @@ blocks to protect.
 {ri:network_monitor}
 With the RF Network Monitor you can select a block and it will try
 to find all blocks that use or produce RF which are connected
-(directly or inderectly) to the selected block. It will also show
+(directly or indirectly) to the selected block. It will also show
 you how much RF is in each of the blocks and the coordinate. You
 can use this item to help debug RF related network problems.
 {-------------------------------------------------------------}
@@ -193,15 +191,13 @@ already got.
 {b}Ender Monitor
 {n:endermon}
 {rb:ender_monitor}
-The Ender Monitor only works in combination with the Endergenic
-Generator. It will send a pulse based on three different conditions:
+The Ender Monitor only works when an Endergenic Generator is
+adjacent to its input side. It will send a pulse based on three
+different conditions:
 
     Lost Pearl: send a redstone pulse when a pearl is lost
     Pearl Fired: send a pulse when a pearl is fired
     Pearl Arrived: send a pulse when a pearl arrives
-
-Note that the redstone signal outputs on the red dot side and this
-has to face away from the Endergenic Generator.
 {-------------------------------------------------------------}
 {b}Redstone Transmitter
 {n:redtrans}
@@ -233,15 +229,15 @@ before the input was switched to this state.
 {b}Inventory Checker
 {n:invchecker}
 {rb:invchecker_block}
-This block checks a slot in a nearby inventory and emits a redstone
-signal in case the number of items in that slot is above a certain
-value (configurable in GUI).
+This block checks a slot the inventory adjacent to its input side and
+emits a redstone signal in case the number of items in that slot is
+above a certain value (configurable in GUI).
 {-------------------------------------------------------------}
 {b}Sensor
 {n:sensor}
 {rb:sensor_block}
-The sensor can detect various things directly in front of it
-(either 1 block, 3 blocks or 5 blocks). It can detect blocks
+The sensor can detect various things directly in front of its
+input (either 1 block, 3 blocks or 5 blocks). It can detect blocks
 being placed, crop growth level, number of entities and so on.
 {-------------------------------------------------------------}
 {b}RF Monitor
@@ -264,7 +260,7 @@ that it can examine the contents of a nearby liquid tank.
 {b}Coal Generator
 {n:coalgen}
 {rb:coalgenerator}
-The coal generator is a simply generator that can produce 60 RF/tick
+The coal generator is simply a generator that can produce 60 RF/tick
 from coal or charcoal. If fully infused it will produce 120 RF/tick.
 It can also charge items that need RF but does that slowly. The
 powercell is a much better solution to charge items.
@@ -292,7 +288,7 @@ Powercells that are linked (using cards) don't have to be adjacent to
 each other. However, if they are not adjacent there will be a small cost
 that is calculated when power is extracted. The cost depends on distance
 and also on how big the cluster of powercells is from where you extract
-power. i.e. power is considered to be evently distributed over all cells.
+power. i.e. power is considered to be evenly distributed over all cells.
 Note that infusing a powercell reduces this cost and also RFTools
 dimensions are more efficient at transfering power this way.
 {-------------------------------------------------------------}
@@ -347,7 +343,7 @@ or 300 stacks. You can insert modules to make the chest work better
 with various types of items. When you remove a storage module from a
 Modular Storage Block the contents will be copied to the module.
 
-The various item modules allow you to sort and group your items based
+The various type modules allow you to sort and group your items based
 on various criteria. There is also a third slot where you can insert
 a filter module to restrict items going into the storage.
 {-------------------------------------------------------------}
@@ -371,7 +367,7 @@ together with the storage module and you must charge it with sufficient
 energy. Higher storage tiers will cost more RF to open. To get the
 storage module and empty tablet back you just put the tablet in your
 crafting grid.
-
+{-------------------------------------------------------------}
 The tablet can also be combined with a storage screen module
 to remotely access a storage scanner. This is a very powerful combination
 as it allows full access to your entire storage network.
@@ -384,8 +380,8 @@ You can white or blacklist, filter with NBT, damage, ore dictionary or mod.
 This filter module is also usable in the crafter to control what goes into
 the crafter buffer and in the builder to control what to quarry or void.
 
-The storage filter item has its own GUI which you can only access by having
-the filter in your hand or you can sneak right click on any inventory will
+The filter module item has its own GUI which you can only access by having
+the module in your hand or you can sneak right click on any inventory will
 configure the filter to the current contents of that inventory. Sneak right
 click on another block in the world will add that to the filter.
 {-------------------------------------------------------------}
@@ -420,7 +416,7 @@ recipes. If you select a recipe you can edit it in the right grid
 by dragging over the right items.
 
 The crafter also has an internal inventory and four output slots
-for crafting results. By inserting a storage filter item you can
+for crafting results. By inserting a filter module you can
 also prevent unwanted items from being inserted into this inventory.
 {-------------------------------------------------------------}
 The 'Keep/All' button is only active when a recipe is selected and
@@ -453,7 +449,7 @@ harvested or affected by an explosion. If there is not enough power
 to protect a block then the block is removed from the protection
 list (and will probably get destroyed). If you want to make a room
 to protect against more powerful explosions (like from the Wither)
-it is recommended to use more then one block protector to protect
+it is recommended to use more than one block protector to protect
 smaller groups of blocks. Also make sure to protect the block
 protector itself.
 {-------------------------------------------------------------}
@@ -464,10 +460,10 @@ The Power Relay allows you to control how much RF to output based on a
 redstone signal. In its GUI you can set the number of RF/tick to give
 in case redstone signal is off and also in case redstone signal is on.
 This can be configured per side. You can also mark sides as being
-input-only. This is where you typically connect the power coming
-from a capacitor or power generator. You can use this in block in
-combination with the RF Monitor to turn off a portion of your RF network
-in case power is low. For example, to turn off ore processing machines.
+input-only. This is where you typically connect the power coming from
+a capacitor or power generator. You can use this block in combination
+with the RF Monitor to turn off a portion of your RF network in case
+power is low. For example, to turn off ore processing machines.
 {-------------------------------------------------------------} 
 {b}Teleporting System
 {n:telepo}
@@ -478,7 +474,7 @@ two-way teleportation. To connect a transmitter and a receiver you
 will also need a dialing device.
 
 Energy cost of teleportation depends on the distance traveled. Also
-travelling to another dimension is a lot more expensive.
+traveling to another dimension is a lot more expensive.
 
 If you're an admin and want to troubleshoot the portal network
 you can use the Teleport Probe item (has no recipe). You can use
@@ -501,7 +497,7 @@ Doubleclick on an item in the list will teleport you without using RF.
 {rb:matter_transmitter}
 The matter transmitter is placed on the ground and (when dialed to a
 valid destination) will teleport a player that is standing on it. There
-is a fixed energy cost which is consumed immediatelly when the player
+is a fixed energy cost which is consumed immediately when the player
 stands on it. Then during the duration of the teleport (witch varies
 depending on the traveled distance) power is also consumed. If there
 is not sufficient power during the first power usage then teleportation
@@ -555,7 +551,7 @@ capability to teleport the user to an unpowered receiver. This does
 use more energy so if not enough energy is available in the transmitter
 this will not work. Note that this block does not avoid all
 negative effects. You will still get hurt slightly and you end
-up rather confused. But it is still way better then dieing.
+up rather confused. But it is still way better then dying.
 {-------------------------------------------------------------}
 {b}Access Control
 {n:tpaccess}
@@ -637,7 +633,7 @@ RF that can be generated will be a lot less.
 When the charging cycle ends without a pearl being received then
 the machine will go into idle mode again.
 
-If a pearl is received then charging mode immediatelly ends and the machine
+If a pearl is received then charging mode immediately ends and the machine
 goes into holding mode. In this mode it will consume RF every tick. Be
 careful holding the pearl for too long as you will then end up consuming
 more RF then you gained. If the internal storage of the generator does not
@@ -664,7 +660,7 @@ only two generators.
 If you have plenty of ender pearls and don't care too much about less then
 optimal generation you can just throw in as many pearls as you want from
 one generator and capture them in another. Then it that other generator
-you just fire them away immediatelly without caring about a destination.
+you just fire them away immediately without caring about a destination.
 You will quickly consume lots of ender pearls this way so this might not
 be the best way to proceed.
 {-------------------------------------------------------------}
@@ -675,76 +671,14 @@ be the best way to proceed.
 This block has to be placed facing an Endergenic Generator or else
 directly below it. This machine provides the only way to inject an ender
 pearl into the power system. When it receives a redstone signal it will
-convert the ender pearl to an endergenic pearl and immediatelly insert it
+convert the ender pearl to an endergenic pearl and immediately insert it
 into the adjacent Endergenic Generator. If that generator was already
 holding a pearl then nothing happens and the new pearl is lost.
 {-------------------------------------------------------------}
-Otherwise the endergenic pearl is immediatelly fired from the
+Otherwise the endergenic pearl is immediately fired from the
 generator and the system starts.
 
 This injector has an internal buffer that can only store ender pearls.
-{-------------------------------------------------------------}
-{b}Shield System
-{n:shield}
-RFTools implements a 'simple' shield system that can filter mobs, animals,
-players, and items. You start by building the shape of your shield with
-connected Shield Template Blocks of the same color. Then you put a Shield
-Block next to one of these templates and you give it power.
-
-A tier 1 shield can handle 256 blocks. Tier 2 ups this to 1024. The tier 3
-ups this to 4096 and deals 4 times as much damage at twice the power.
-
-To compose the shield right click the shield block with a wrench. The
-shield block will compose the shield in the specified shape. If you hit
-the shield with left click it will also connect on corners. Wrench the
-shield again to get the template blocks back. By doing that you
-can change the shape of your shield in case you're not happy with it.
-{-------------------------------------------------------------}
-To craft the Shield Template Blocks you use the following recipe:
-{rb:shield_template_block}
-
-Note that there are four different template blocks so you can use them
-to make adjacent distinct shields. Every projector will only take one color.
-
-To craft the Shield Block you use the following recipe:
-{rb:shield_block1}
-{-------------------------------------------------------------}
-The shield has four visualization options:
-
-    Invisible: the shield is totally invisible
-    Shield: a transparent generic shield texture is used
-    Solid: the shield is solid
-    Transparent: the shield is transparent
-
-In the gui you can also insert rules for different types of
-entities. For every rule you have the following actions:
-
-    Pass: entity can pass through
-    Solid: entity is blocked
-    Damage: entity gets damage
-    SolDmg: entity is blocked and gets damage
-{-------------------------------------------------------------}
-You can also set the type of damage. By default the damage
-will be 'generic' but you can also set it to 'player'. This
-will consume more energy but you will get XP orbs as well
-as loot that you normally only get when a mob is killed
-by the player.
-
-If you select 'player' damage then you can also enable looting
-by inserting dimensional shards. These are used up for every
-looting kill.
-{-------------------------------------------------------------}
-If you hit the shield projector with your left mouse instead of
-the right mouse it will also scan on the corners for template
-blocks. Additionally using the smart wrench it is possible
-to add or remove shield templates to an already formed shield.
-Note that doing this will not be remembered if you decompose
-the shield again.
-
-Note that the shield also supports space cards. In that case you
-don't have to use shield template blocks but instead you can
-insert the appropriate space card to define the shape of
-the shield.
 {-------------------------------------------------------------}
 {b}Item Filter
 {n:filter}
@@ -782,10 +716,10 @@ screens will receive power from this controller.
 You can craft a screen as follows:
 {rb:screen}
 
-A screen with no modules is just black. So to make things interesting you
-should add one or more module.
+A screen with no modules shows some basic help. So to make things
+interesting you should add one or more module.
 
-Note that even with modules a screen will be black if it is
+Note that with modules a screen will be black if it is
 not getting power. Make sure you have a screen controller
 nearby and press 'Scan' on that so that it finds all screens.
 {-------------------------------------------------------------}
@@ -801,6 +735,7 @@ The following screen modules are currently supported:
     - Machine Info: generic information on certain machines
     - Button: send out a wireless redstone signal (interactive)
     - Storage: access 9 items directly from storage scanner
+    - Computer: text dynamically set by a computer
 {-------------------------------------------------------------}
 Some modules (like energy, fluid, inventory, and counter modules)
 require that you first shift-right click on the machine/tank that
@@ -862,71 +797,4 @@ can beam matter (and thus the spawning rate).
 The leaf block in the spawner GUI indicates any type of living
 material (meat, wheat, seeds, ...). Some types of living material
 give a bigger bonus.
-{-------------------------------------------------------------}
-{b}Builder
-{n:builder}
-{rb:builder}
-The Builder is one of the most versatile machine in RFTools. It can do:
-    - Move a structure from one spot (even other dimension) to another
-    - Rebuild a structure from one spot to another
-    - Swap structures between two spots
-    - Build geometrical shapes (dome, torus, box, ...)
-    - Clear out areas in a certain shape (void blocks)
-    - Quarry an area in a certain shape (silk touch, fortune, ...)
-    - Collect items and XP an in area
-    - Pump liquids
-{-------------------------------------------------------------}
-A chest or tank on top or below is sometimes needed to supply or collect.
-Using the GUI you can control where the builder should place the blocks
-(always at the back of the builder). This only works for space cards.
-
-Other GUI options are:
-{i:textures/gui/guielements.png,160,48,Silent mode: mute sounds from moving blocks}
-{i:textures/gui/guielements.png,96,48,Support mode: create preview/support blocks}
-Help to identify what will happen and help with gravity affected blocks.
-{i:textures/gui/guielements.png,128,48,Entity mode: also move entities}
-{i:textures/gui/guielements.png,192,48,Loop mode:}
-In this mode the builder will keep running as long as it has a redstone
-signal and keep on moving or copying if there is room to do so. If
-this is off the builder will do one pass and stop.
-{-------------------------------------------------------------}
-The builder also supports a standard RFTools filter. If that filter is
-inserted then it will only quarry or void blocks that match the filter.
-Note that this works only on the block in the world, not the end result
-of the block. i.e. to filter on diamonds you need to insert the diamond
-ore block in the filter. All filter options like whitelist/blacklist
-and filter by mod are supported.
-{-------------------------------------------------------------}
-For moving, swapping and copying structures you need a space card
-linked to a space chamber.
-
-You can use Space Chamber blocks to mark the corners of the source
-area that you want to work. One of these corners should be a
-Space Chamber Controller block.
-{rb:space_chamber}
-{rb:space_chamber_controller}
-{-------------------------------------------------------------}
-{n:chambercard}
-{ri:space_chamber_card}
-Right selecting the controller block with a wrench will let it form the
-chamber. If all is correct you will get a message saying so. Then you need
-to use a Space Chamber Card (right click it on the controller) to link the
-controller to the card.
-
-Put that card in the builder, set the right mode and other
-parameters and give it a redstone signal.
-
-If you right click a linked space chamber card it will give you an overview
-of all blocks and entities together with the cost of moving them.
-{-------------------------------------------------------------}
-For building geometrical shapes, voiding and quarrying areas you
-need shape cards:
-{ri:shape_card}
-
-Right clicking such a card will open a GUI where you can set the shape as
-well as the dimensions. A shape card can be upgraded in the crafting table
-to make the void card and one of the quarry cards.
-
-Note that several options in the GUI of the builder are unused if you use
-shape cards.
 {-------------------------------------------------------------}

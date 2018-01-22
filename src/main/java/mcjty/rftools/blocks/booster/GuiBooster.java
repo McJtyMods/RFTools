@@ -11,7 +11,6 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 
@@ -26,7 +25,6 @@ public class GuiBooster extends GenericGuiContainer<BoosterTileEntity> {
 
     private EnergyBar energyBar;
 
-    private Panel toplevel;
     private ImageChoiceLabel redstoneMode;
 
     public GuiBooster(BoosterTileEntity boosterTileEntity, BoosterContainer container) {
@@ -40,11 +38,11 @@ public class GuiBooster extends GenericGuiContainer<BoosterTileEntity> {
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored(EnumFacing.DOWN);
+        int maxEnergyStored = tileEntity.getMaxEnergyStored();
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(8, 101, 10, 76)).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
-        toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
+        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
         initRedstoneMode();
 

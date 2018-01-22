@@ -2,12 +2,13 @@ package mcjty.rftools.blocks.crafter;
 
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.api.Infusable;
-import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.crafting.INBTPreservingIngredient;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
@@ -15,6 +16,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -24,7 +26,8 @@ import java.util.List;
 
 //@Optional.InterfaceList({
 //        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
-public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterContainer> implements Infusable /*, IRedstoneConnectable*/ {
+public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterContainer> implements Infusable, INBTPreservingIngredient
+        /*, IRedstoneConnectable*/ {
 
     public CrafterBlock(String blockName, Class<? extends CrafterBaseTE> tileEntityClass) {
         super(Material.IRON, tileEntityClass, CrafterContainer.class, blockName, true);
@@ -32,13 +35,13 @@ public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterCont
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiCrafter> getGuiClass() {
         return GuiCrafter.class;
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
@@ -49,8 +52,8 @@ public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterCont
             for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
                 NBTTagCompound itemTag = bufferTagList.getCompoundTagAt(i);
                 if (itemTag != null) {
-                    ItemStack stack = ItemStack.loadItemStackFromNBT(itemTag);
-                    if (stack != null) {
+                    ItemStack stack = new ItemStack(itemTag);
+                    if (!stack.isEmpty()) {
                         rc++;
                     }
                 }
@@ -63,8 +66,8 @@ public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterCont
                 NBTTagCompound tagRecipe = recipeTagList.getCompoundTagAt(i);
                 NBTTagCompound resultCompound = tagRecipe.getCompoundTag("Result");
                 if (resultCompound != null) {
-                    ItemStack stack = ItemStack.loadItemStackFromNBT(resultCompound);
-                    if (stack != null) {
+                    ItemStack stack = new ItemStack(resultCompound);
+                    if (!stack.isEmpty()) {
                         rc++;
                     }
                 }
@@ -104,9 +107,9 @@ public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterCont
     @Override
     public Container createServerContainer(EntityPlayer entityPlayer, TileEntity tileEntity) {
         CrafterBaseTE crafterBaseTE = (CrafterBaseTE) tileEntity;
-        crafterBaseTE.getInventoryHelper().setStackInSlot(CrafterContainer.SLOT_CRAFTOUTPUT, null);
+        crafterBaseTE.getInventoryHelper().setStackInSlot(CrafterContainer.SLOT_CRAFTOUTPUT, ItemStack.EMPTY);
         for (int i = CrafterContainer.SLOT_CRAFTINPUT ; i < CrafterContainer.SLOT_CRAFTINPUT + 9 ; i++) {
-            crafterBaseTE.getInventoryHelper().setStackInSlot(i, null);
+            crafterBaseTE.getInventoryHelper().setStackInSlot(i, ItemStack.EMPTY);
         }
         return super.createServerContainer(entityPlayer, tileEntity);
     }

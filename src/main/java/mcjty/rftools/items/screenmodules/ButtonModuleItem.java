@@ -1,9 +1,7 @@
 package mcjty.rftools.items.screenmodules;
 
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
-import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.logic.wireless.RedstoneChannels;
 import mcjty.rftools.blocks.logic.wireless.RedstoneReceiverTileEntity;
 import mcjty.rftools.blocks.logic.wireless.RedstoneTransmitterTileEntity;
@@ -11,6 +9,7 @@ import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ButtonScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ButtonClientScreenModule;
 import mcjty.rftools.items.GenericRFToolsItem;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,6 +23,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class ButtonModuleItem extends GenericRFToolsItem implements IModuleProvider {
@@ -38,12 +38,12 @@ public class ButtonModuleItem extends GenericRFToolsItem implements IModuleProvi
     }
 
     @Override
-    public Class<? extends IScreenModule> getServerScreenModule() {
+    public Class<ButtonScreenModule> getServerScreenModule() {
         return ButtonScreenModule.class;
     }
 
     @Override
-    public Class<? extends IClientScreenModule> getClientScreenModule() {
+    public Class<ButtonClientScreenModule> getClientScreenModule() {
         return ButtonClientScreenModule.class;
     }
 
@@ -54,8 +54,8 @@ public class ButtonModuleItem extends GenericRFToolsItem implements IModuleProvi
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
-        super.addInformation(itemStack, player, list, whatIsThis);
+    public void addInformation(ItemStack itemStack, @Nullable World player, List<String> list, ITooltipFlag advanced) {
+        super.addInformation(itemStack, player, list, advanced);
         list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.BUTTON_RFPERTICK + " RF/tick");
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
@@ -73,7 +73,8 @@ public class ButtonModuleItem extends GenericRFToolsItem implements IModuleProvi
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        ItemStack stack = player.getHeldItem(hand);
         if (world.isRemote) {
             return EnumActionResult.SUCCESS;
         }

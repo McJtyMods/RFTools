@@ -21,19 +21,19 @@ public class PacketDelightingInfoReady implements IMessage {
     @Override
     public void fromBytes(ByteBuf buf) {
         int size = buf.readInt();
-        blockClasses = new ArrayList<String>(size);
+        blockClasses = new ArrayList<>(size);
         for (int i = 0 ; i < size ; i++) {
             blockClasses.add(NetworkTools.readString(buf));
         }
 
         size = buf.readInt();
-        teClasses = new ArrayList<String>(size);
+        teClasses = new ArrayList<>(size);
         for (int i = 0 ; i < size ; i++) {
             teClasses.add(NetworkTools.readString(buf));
         }
 
         size = buf.readInt();
-        nbtData = new HashMap<String, DelightingInfoHelper.NBTDescription>(size);
+        nbtData = new HashMap<>(size);
         for (int i = 0 ; i < size ; i++) {
             String key = NetworkTools.readString(buf);
             String type = NetworkTools.readString(buf);

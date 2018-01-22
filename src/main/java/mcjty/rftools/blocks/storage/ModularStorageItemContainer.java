@@ -37,6 +37,13 @@ public class ModularStorageItemContainer extends GenericContainer {
         return (CraftingGridProvider) getInventory(CONTAINER_INVENTORY);
     }
 
+    public void clearGrid() {
+        IInventory inventory = inventories.get(CONTAINER_GRID);
+        for (int i = 0 ; i < inventory.getSizeInventory() ; i++) {
+            inventory.setInventorySlotContents(i, ItemStack.EMPTY);
+        }
+    }
+
     public JEIRecipeAcceptor getJEIRecipeAcceptor() {
         return (JEIRecipeAcceptor) getInventory(CONTAINER_INVENTORY);
     }

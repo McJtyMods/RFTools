@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.monitor;
 
 import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.material.Material;
@@ -10,13 +9,16 @@ import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.statemap.StateMap;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -49,7 +51,7 @@ public class RFMonitorBlock extends GenericRFToolsBlock<RFMonitorBlockTileEntity
     }
 
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiRFMonitor> getGuiClass() {
         return GuiRFMonitor.class;
     }
 
@@ -73,7 +75,7 @@ public class RFMonitorBlock extends GenericRFToolsBlock<RFMonitorBlockTileEntity
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntity te = world.getTileEntity(pos);
+        TileEntity te = world instanceof ChunkCache ? ((ChunkCache)world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) : world.getTileEntity(pos);
         int level = 0;
         if (te instanceof RFMonitorBlockTileEntity) {
             level = ((RFMonitorBlockTileEntity) te).getRflevel();
@@ -83,7 +85,7 @@ public class RFMonitorBlock extends GenericRFToolsBlock<RFMonitorBlockTileEntity
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(FACING, getFacing(meta & 7)).withProperty(OUTPUTPOWER, (meta & 8) != 0);
+        return getDefaultState().withProperty(FACING, EnumFacing.VALUES[meta & 7]).withProperty(OUTPUTPOWER, (meta & 8) != 0);
     }
 
     @Override
@@ -98,7 +100,7 @@ public class RFMonitorBlock extends GenericRFToolsBlock<RFMonitorBlockTileEntity
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {

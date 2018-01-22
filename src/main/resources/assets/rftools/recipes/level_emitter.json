@@ -1,0 +1,28 @@
+{
+  "result": {
+    "item": "rftools:level_emitter"
+  },
+  "pattern": [
+    "pce",
+    "gMg",
+    "egp"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "p": {
+      "item": "minecraft:paper"
+    },
+    "c": {
+      "item": "minecraft:comparator"
+    },
+    "e": {
+      "item": "minecraft:ender_pearl"
+    },
+    "g": {
+      "item": "minecraft:glass"
+    },
+    "M": {
+      "item": "rftools:machine_base"
+    }
+  }
+}

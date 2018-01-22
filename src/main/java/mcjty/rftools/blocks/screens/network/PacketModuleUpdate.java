@@ -27,9 +27,9 @@ public class PacketModuleUpdate implements IMessage {
         slotIndex = buf.readInt();
         PacketBuffer buffer = new PacketBuffer(buf);
         try {
-            tagCompound = buffer.readNBTTagCompoundFromBuffer();
+            tagCompound = buffer.readCompoundTag();
         } catch (IOException e) {
-            e.printStackTrace();
+            Logging.logError("Error updating module", e);
         }
     }
 
@@ -38,7 +38,7 @@ public class PacketModuleUpdate implements IMessage {
         NetworkTools.writePos(buf, pos);
         buf.writeInt(slotIndex);
         PacketBuffer buffer = new PacketBuffer(buf);
-        buffer.writeNBTTagCompoundToBuffer(tagCompound);
+        buffer.writeCompoundTag(tagCompound);
     }
 
     public PacketModuleUpdate() {
@@ -58,7 +58,7 @@ public class PacketModuleUpdate implements IMessage {
         }
 
         private void handle(PacketModuleUpdate message, MessageContext ctx) {
-            TileEntity te = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.pos);
+            TileEntity te = ctx.getServerHandler().player.getEntityWorld().getTileEntity(message.pos);
             if(!(te instanceof ScreenTileEntity)) {
                 Logging.logError("PacketModuleUpdate: TileEntity is not a SimpleScreenTileEntity!");
                 return;

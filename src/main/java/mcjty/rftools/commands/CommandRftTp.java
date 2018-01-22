@@ -5,11 +5,11 @@ public class CommandRftTp extends DefaultCommand {
         super();
         registerCommand(new CmdListReceivers());
         registerCommand(new CmdTeleport());
-//        registerCommand(new CmdCleanupReceivers());
+        registerCommand(new CmdCleanupReceivers());
     }
 
     @Override
-    public String getCommandName() {
+    public String getName() {
         return "rfttp";
     }
 }

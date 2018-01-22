@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "rftools:shape_card",
+    "data": 1
+  },
+  "pattern": [
+    "ioi",
+    "oMo",
+    "ioi"
+  ],
+  "type": "rftools:copy_nbt",
+  "key": {
+    "i": {
+      "type": "forge:ore_dict",
+      "ore": "dyeBlack"
+    },
+    "o": {
+      "item": "minecraft:obsidian"
+    },
+    "M": {
+      "item": "rftools:shape_card",
+      "data": 0
+    }
+  }
+}

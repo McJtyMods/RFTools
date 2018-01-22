@@ -96,7 +96,7 @@ public class ModularStorageContainer extends GenericContainer {
                     @Override
                     public ItemStack getStack() {
                         if (getSlotIndex() >= (modularStorageTileEntity.getMaxSize() + SLOT_STORAGE)) {
-                            return null;
+                            return ItemStack.EMPTY;
                         }
                         return super.getStack();
                     }
@@ -132,7 +132,7 @@ public class ModularStorageContainer extends GenericContainer {
 
     @Override
     public ItemStack slotClick(int index, int button, ClickType mode, EntityPlayer player) {
-        if (index == SLOT_STORAGE_MODULE && !player.worldObj.isRemote) {
+        if (index == SLOT_STORAGE_MODULE && !player.getEntityWorld().isRemote) {
             modularStorageTileEntity.copyToModule();
         }
         return super.slotClick(index, button, mode, player);
@@ -143,11 +143,11 @@ public class ModularStorageContainer extends GenericContainer {
         List<Pair<Integer, ItemStack>> differentSlots = new ArrayList<>();
         for (int i = 0; i < this.inventorySlots.size(); ++i) {
             ItemStack itemstack = this.inventorySlots.get(i).getStack();
-            ItemStack itemstack1 = this.inventoryItemStacks.get(i);
+            ItemStack itemstack1 = inventoryItemStacks.get(i);
 
             if (!ItemStack.areItemStacksEqual(itemstack1, itemstack)) {
-                itemstack1 = itemstack == null ? null : itemstack.copy();
-                this.inventoryItemStacks.set(i, itemstack1);
+                itemstack1 = itemstack.isEmpty() ? ItemStack.EMPTY : itemstack.copy();
+                inventoryItemStacks.set(i, itemstack1);
                 differentSlots.add(Pair.of(i, itemstack));
                 if (differentSlots.size() >= 30) {
                     syncSlotsToListeners(differentSlots);

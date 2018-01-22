@@ -4,7 +4,6 @@ import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.gui.widgets.Widget;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
@@ -28,7 +27,7 @@ public class GuiPearlInjector  extends GenericGuiContainer<PearlInjectorTileEnti
     public void initGui() {
         super.initGui();
 
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
+        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);

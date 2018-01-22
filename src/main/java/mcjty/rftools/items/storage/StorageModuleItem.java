@@ -1,18 +1,20 @@
 package mcjty.rftools.items.storage;
 
+import mcjty.lib.crafting.INBTPreservingIngredient;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.storage.ModularStorageSetup;
+import mcjty.rftools.blocks.storage.*;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -22,7 +24,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class StorageModuleItem extends GenericRFToolsItem {
+public class StorageModuleItem extends GenericRFToolsItem implements INBTPreservingIngredient {
     public static final int STORAGE_TIER1 = 0;
     public static final int STORAGE_TIER2 = 1;
     public static final int STORAGE_TIER3 = 2;
@@ -46,7 +48,8 @@ public class StorageModuleItem extends GenericRFToolsItem {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+        ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
             Logging.message(player, TextFormatting.YELLOW + "Place this module in a storage module tablet to access contents");
             return new ActionResult<>(EnumActionResult.SUCCESS, stack);
@@ -56,7 +59,7 @@ public class StorageModuleItem extends GenericRFToolsItem {
 
     // Called from the Remote or Modular store TE's to update the stack size for this item while it is inside that TE.
     public static void updateStackSize(ItemStack stack, int numStacks) {
-        if (stack == null || stack.stackSize == 0) {
+        if (stack.isEmpty()) {
             return;
         }
         NBTTagCompound tagCompound = stack.getTagCompound();
@@ -69,7 +72,7 @@ public class StorageModuleItem extends GenericRFToolsItem {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         int max = MAXSIZE[itemStack.getItemDamage()];
         NBTTagCompound tagCompound = itemStack.getTagCompound();
@@ -114,10 +117,12 @@ public class StorageModuleItem extends GenericRFToolsItem {
     }
 
     @Override
-    public void getSubItems(Item item, CreativeTabs creativeTabs, List list) {
-        for (int i = 0 ; i < 7 ; i++) {
-            if (MAXSIZE[i] != 0) {
-                list.add(new ItemStack(ModularStorageSetup.storageModuleItem, 1, i));
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+        if (isInCreativeTab(tab)) {
+            for (int i = 0; i < 7; i++) {
+                if (MAXSIZE[i] != 0) {
+                    items.add(new ItemStack(ModularStorageSetup.storageModuleItem, 1, i));
+                }
             }
         }
     }

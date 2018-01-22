@@ -6,6 +6,7 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.shield.filters.ShieldFilter;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.typed.Type;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -32,18 +33,14 @@ public class PacketGetFilters extends PacketRequestListFromServer<ShieldFilter, 
         }
 
         private void handle(PacketGetFilters message, MessageContext ctx) {
-            TileEntity te = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.pos);
+            TileEntity te = ctx.getServerHandler().player.getEntityWorld().getTileEntity(message.pos);
             if(!(te instanceof CommandHandler)) {
                 Logging.log("createStartScanPacket: TileEntity is not a CommandHandler!");
                 return;
             }
             CommandHandler commandHandler = (CommandHandler) te;
-            List<ShieldFilter> list = (List<ShieldFilter>) commandHandler.executeWithResultList(message.command, message.args);
-            if (list == null) {
-                Logging.log("Command " + message.command + " was not handled!");
-                return;
-            }
-            RFToolsMessages.INSTANCE.sendTo(new PacketFiltersReady(message.pos, ShieldTEBase.CLIENTCMD_GETFILTERS, list), ctx.getServerHandler().playerEntity);
+            List<ShieldFilter> list = commandHandler.executeWithResultList(message.command, message.args, Type.create(ShieldFilter.class));
+            RFToolsMessages.INSTANCE.sendTo(new PacketFiltersReady(message.pos, ShieldTEBase.CLIENTCMD_GETFILTERS, list), ctx.getServerHandler().player);
         }
     }
 }

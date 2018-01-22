@@ -1,6 +1,6 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "layer0": "rftools:items/syringeItem5"
+    "layer0": "rftools:items/syringeitem5"
   }
 }

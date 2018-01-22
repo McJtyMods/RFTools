@@ -1,0 +1,26 @@
+{
+  "result": {
+    "item": "rftools:remote_storage"
+  },
+  "pattern": [
+    "ece",
+    "qMq",
+    "eqe"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "q": {
+      "item": "minecraft:quartz"
+    },
+    "c": {
+      "type": "forge:ore_dict",
+      "ore": "chest"
+    },
+    "e": {
+      "item": "minecraft:ender_pearl"
+    },
+    "M": {
+      "item": "rftools:machine_frame"
+    }
+  }
+}

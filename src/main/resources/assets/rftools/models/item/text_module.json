@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "rftools:items/modules/textModuleItem"
+    "layer0": "rftools:items/modules/textmoduleitem"
   }
 }

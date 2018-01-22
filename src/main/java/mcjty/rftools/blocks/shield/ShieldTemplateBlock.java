@@ -1,29 +1,37 @@
 package mcjty.rftools.blocks.shield;
 
+import mcjty.lib.McJtyRegister;
+import mcjty.lib.container.DamageMetadataItemBlock;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.List;
+import java.util.Collection;
 
 public class ShieldTemplateBlock extends Block {
+
+    public static boolean activateBlock(Block block, World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        return block.onBlockActivated(world, pos, state, player, hand, facing, hitX, hitY, hitZ);
+    }
+
+    public static Collection<IProperty<?>> getPropertyKeys(IBlockState state) {
+        return state.getPropertyKeys();
+    }
 
     public static enum TemplateColor implements IStringSerializable {
         BLUE("blue"), RED("red"), GREEN("green"), YELLOW("yellow");
@@ -55,8 +63,7 @@ public class ShieldTemplateBlock extends Block {
         setUnlocalizedName("rftools.shield_template_block");
         setRegistryName("shield_template_block");
         setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.register(this);
-        GameRegistry.register(new ShieldTemplateItemBlock(this), getRegistryName());
+        McJtyRegister.registerLater(this, RFTools.instance, DamageMetadataItemBlock.class);
         setDefaultState(this.blockState.getBaseState().withProperty(COLOR, TemplateColor.BLUE));
     }
 
@@ -77,17 +84,10 @@ public class ShieldTemplateBlock extends Block {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list) {
+    public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
         for (TemplateColor enumdyecolor : TemplateColor.values()) {
-            list.add(new ItemStack(itemIn, 1, enumdyecolor.ordinal()));
+            items.add(new ItemStack(this, 1, enumdyecolor.ordinal()));
         }
-    }
-
-    @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-
     }
 
     @Override
@@ -103,16 +103,5 @@ public class ShieldTemplateBlock extends Block {
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, COLOR);
-    }
-
-    public static class ShieldTemplateItemBlock extends ItemBlock {
-        public ShieldTemplateItemBlock(Block block) {
-            super(block);
-        }
-
-        @Override
-        public int getMetadata(int damage) {
-            return damage;
-        }
     }
 }

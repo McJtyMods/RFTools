@@ -1,17 +1,16 @@
 package mcjty.rftools.items.screenmodules;
 
+import mcjty.lib.varia.BlockTools;
+import mcjty.lib.varia.CapabilityTools;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.BlockInfo;
-import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
-import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ItemStackPlusScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ItemStackPlusClientScreenModule;
 import mcjty.rftools.items.GenericRFToolsItem;
-import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -37,7 +36,7 @@ public class InventoryPlusModuleItem extends GenericRFToolsItem implements IModu
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.ITEMSTACK_RFPERTICK + " RF/tick");
         boolean hasTarget = false;
@@ -68,7 +67,8 @@ public class InventoryPlusModuleItem extends GenericRFToolsItem implements IModu
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        ItemStack stack = player.getHeldItem(hand);
         TileEntity te = world.getTileEntity(pos);
         if (te == null) {
             if (world.isRemote) {
@@ -80,7 +80,7 @@ public class InventoryPlusModuleItem extends GenericRFToolsItem implements IModu
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
         }
-        if (RFToolsTools.hasItemCapabilitySafe(te) || te instanceof IInventory) {
+        if (CapabilityTools.hasItemCapabilitySafe(te) || te instanceof IInventory) {
             tagCompound.setInteger("monitordim", world.provider.getDimension());
             tagCompound.setInteger("monitorx", pos.getX());
             tagCompound.setInteger("monitory", pos.getY());
@@ -89,7 +89,7 @@ public class InventoryPlusModuleItem extends GenericRFToolsItem implements IModu
             Block block = state.getBlock();
             String name = "<invalid>";
             if (block != null && !block.isAir(state, world, pos)) {
-                name = BlockInfo.getReadableName(world.getBlockState(pos));
+                name = BlockTools.getReadableName(world, pos);
             }
             tagCompound.setString("monitorname", name);
             if (world.isRemote) {
@@ -115,12 +115,12 @@ public class InventoryPlusModuleItem extends GenericRFToolsItem implements IModu
     }
 
     @Override
-    public Class<? extends IScreenModule> getServerScreenModule() {
+    public Class<ItemStackPlusScreenModule> getServerScreenModule() {
         return ItemStackPlusScreenModule.class;
     }
 
     @Override
-    public Class<? extends IClientScreenModule> getClientScreenModule() {
+    public Class<ItemStackPlusClientScreenModule> getClientScreenModule() {
         return ItemStackPlusClientScreenModule.class;
     }
 

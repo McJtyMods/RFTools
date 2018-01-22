@@ -95,7 +95,7 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }

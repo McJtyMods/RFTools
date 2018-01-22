@@ -7,6 +7,7 @@ import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.varia.RFToolsTools;
+import mcjty.typed.Type;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -14,7 +15,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -24,6 +24,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity implements MachineInformation, ITickable {
@@ -49,7 +50,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
     private String name = null;
     private boolean privateAccess = false;
     private boolean beamHidden = false;
-    private Set<String> allowedPlayers = new HashSet<String>();
+    private Set<String> allowedPlayers = new HashSet<>();
     private int status = TeleportationTools.STATUS_OK;
 
     // Server side: the player we're currently teleporting.
@@ -140,12 +141,8 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         return status;
     }
 
-    public List<PlayerName> getAllowedPlayers() {
-        List<PlayerName> p = new ArrayList<PlayerName>();
-        for (String player : allowedPlayers) {
-            p.add(new PlayerName(player));
-        }
-        return p;
+    public List<String> getAllowedPlayers() {
+        return new ArrayList<>(allowedPlayers);
     }
 
     public void addPlayer(String player) {
@@ -265,7 +262,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
 
     public TeleportDestination getTeleportDestination() {
         if (teleportId != null) {
-            TeleportDestinations teleportDestinations = TeleportDestinations.getDestinations(worldObj);
+            TeleportDestinations teleportDestinations = TeleportDestinations.getDestinations(getWorld());
             GlobalCoordinate gc = teleportDestinations.getCoordinateForId(teleportId);
             if (gc == null) {
                 return null;
@@ -281,7 +278,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         this.teleportId = null;
         this.once = once;
         if (teleportDestination != null) {
-            TeleportDestinations destinations = TeleportDestinations.getDestinations(worldObj);
+            TeleportDestinations destinations = TeleportDestinations.getDestinations(getWorld());
             Integer id = destinations.getIdForCoordinate(new GlobalCoordinate(teleportDestination.getCoordinate(), teleportDestination.getDimension()));
             if (id == null) {
                 this.teleportDestination = teleportDestination;
@@ -294,7 +291,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
 
     private void consumeIdlePower() {
         if (TeleportConfiguration.rfMatterIdleTick > 0 && teleportingPlayer == null) {
-            if (getEnergyStored(EnumFacing.DOWN) >= TeleportConfiguration.rfMatterIdleTick) {
+            if (getEnergyStored() >= TeleportConfiguration.rfMatterIdleTick) {
                 consumeEnergy(TeleportConfiguration.rfMatterIdleTick);
             } else {
                 setTeleportDestination(null, false);
@@ -304,7 +301,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
@@ -318,7 +315,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             if (checkReceiverStatusCounter <= 0) {
                 checkReceiverStatusCounter = 20;
                 int newstatus;
-                if (DialingDeviceTileEntity.isDestinationAnalyzerAvailable(worldObj, getPos())) {
+                if (DialingDeviceTileEntity.isDestinationAnalyzerAvailable(getWorld(), getPos())) {
                     newstatus = checkReceiverStatus();
                 } else {
                     newstatus = TeleportationTools.STATUS_OK;
@@ -340,7 +337,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             }
         } else if (teleportDestination == null && teleportId == null) {
             // We were teleporting a player but for some reason the destination went away. Interrupt.
-            EntityPlayer player = worldObj.getPlayerEntityByName(teleportingPlayer);
+            EntityPlayer player = getWorld().getPlayerEntityByName(teleportingPlayer);
             if (player != null) {
                 Logging.warn(player, "The destination vanished! Aborting.");
             }
@@ -351,7 +348,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         } else {
             int rf = rfPerTick;
 
-            if (getEnergyStored(EnumFacing.DOWN) < rf) {
+            if (getEnergyStored() < rf) {
                 // We don't have enough energy to handle this tick.
                 handleEnergyShortage();
             } else {
@@ -378,10 +375,10 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         int dimension = destination.getDimension();
 
         // @todo
-//        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(worldObj);
+//        RfToolsDimensionManager dimensionManager = RfToolsDimensionManager.getDimensionManager(getWorld());
 //        if (dimensionManager.getDimensionInformation(dimension) != null) {
 //            // This is an RFTools dimension. Check power.
-//            DimensionStorage dimensionStorage = DimensionStorage.getDimensionStorage(worldObj);
+//            DimensionStorage dimensionStorage = DimensionStorage.getDimensionStorage(getWorld());
 //            int energyLevel = dimensionStorage.getEnergyLevel(dimension);
 //            if (energyLevel < DimletConfiguration.DIMPOWER_WARN_TP) {
 //                return TeleportationTools.STATUS_WARN;
@@ -395,7 +392,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             if (TeleportConfiguration.matterTransmitterLoadWorld == -1) {
                 return TeleportationTools.STATUS_UNKNOWN;
             } else {
-                w = worldObj.getMinecraftServer().worldServerForDimension(dimension);
+                w = getWorld().getMinecraftServer().getWorld(dimension);
                 checkReceiverStatusCounter = TeleportConfiguration.matterTransmitterLoadWorld;
             }
         }
@@ -423,7 +420,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
 
     private void clearTeleport(int cooldown) {
         markDirty();
-        TeleportationTools.applyBadEffectIfNeeded(worldObj.getPlayerEntityByName(teleportingPlayer), 0, badTicks, totalTicks, false);
+        TeleportationTools.applyBadEffectIfNeeded(getWorld().getPlayerEntityByName(teleportingPlayer), 0, badTicks, totalTicks, false);
         cooldownTimer = cooldown;
         teleportingPlayer = null;
     }
@@ -451,7 +448,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             beamBox = new AxisAlignedBB(xCoord, yCoord + 1, zCoord, xCoord + 1, yCoord + 3, zCoord + 1);
         }
 
-        List<Entity> l = worldObj.getEntitiesWithinAABB(EntityPlayer.class, beamBox);
+        List<Entity> l = getWorld().getEntitiesWithinAABB(EntityPlayer.class, beamBox);
         Entity nearestPlayer = findNearestPlayer(l);
 
         if (nearestPlayer == null) {
@@ -464,7 +461,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             cooldownTimer = 5;
             return;
         }
-        if (playerBB.intersectsWith(beamBox)) {
+        if (playerBB.intersects(beamBox)) {
             startTeleportation(nearestPlayer);
         } else {
             cooldownTimer = 5;
@@ -477,6 +474,10 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         for (Entity entity : l) {
             if (entity instanceof EntityPlayer) {
                 EntityPlayer entityPlayer = (EntityPlayer) entity;
+                if (entityPlayer.isRiding() || entityPlayer.isBeingRidden()) {
+                    // Ignore players that are riding a horse
+                    continue;
+                }
 
                 if (entityPlayer.getName() != null) {
                     if ((!isPrivateAccess()) || allowedPlayers.contains(entityPlayer.getName())) {
@@ -496,7 +497,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
     private void performTeleport() {
         // First check if the destination is still valid.
         if (!isDestinationStillValid()) {
-            EntityPlayer player = worldObj.getPlayerEntityByName(teleportingPlayer);
+            EntityPlayer player = getWorld().getPlayerEntityByName(teleportingPlayer);
             if (player != null) {
                 TeleportationTools.applyBadEffectIfNeeded(player, 10, badTicks, totalTicks, false);
                 Logging.warn(player, "Missing destination!");
@@ -512,12 +513,12 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             setTeleportDestination(null, false);
         }
 
-        boolean boosted = DialingDeviceTileEntity.isMatterBoosterAvailable(worldObj, getPos());
-        if (boosted && getEnergyStored(EnumFacing.DOWN) < TeleportConfiguration.rfBoostedTeleport) {
+        boolean boosted = DialingDeviceTileEntity.isMatterBoosterAvailable(getWorld(), getPos());
+        if (boosted && getEnergyStored() < TeleportConfiguration.rfBoostedTeleport) {
             // Not enough energy. We cannot do a boosted teleport.
             boosted = false;
         }
-        EntityPlayer player = worldObj.getPlayerEntityByName(teleportingPlayer);
+        EntityPlayer player = getWorld().getPlayerEntityByName(teleportingPlayer);
         if (player != null) {
             boolean boostNeeded = TeleportationTools.performTeleport(player, dest, badTicks, totalTicks, boosted);
             if (boostNeeded) {
@@ -530,7 +531,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
 
     private boolean isDestinationStillValid() {
         TeleportDestination dest = getTeleportDestination();
-        return TeleportDestinations.getDestinations(worldObj).isDestinationValid(dest);
+        return TeleportDestinations.getDestinations(getWorld()).isDestinationValid(dest);
     }
 
     private void handleEnergyShortage() {
@@ -539,7 +540,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         badTicks++;
         if (TeleportationTools.mustInterrupt(badTicks, totalTicks)) {
             // Too many bad ticks. Total failure!
-            EntityPlayer player = worldObj.getPlayerEntityByName(teleportingPlayer);
+            EntityPlayer player = getWorld().getPlayerEntityByName(teleportingPlayer);
             if (player != null) {
                 Logging.warn(player, "Power failure during transit!");
             }
@@ -549,7 +550,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
     }
 
     private boolean isPlayerOutsideBeam() {
-        EntityPlayer player = worldObj.getPlayerEntityByName(teleportingPlayer);
+        EntityPlayer player = getWorld().getPlayerEntityByName(teleportingPlayer);
         if (player == null) {
             return true;
         }
@@ -558,7 +559,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         if (playerBB == null) {
             return true;
         }
-        if (!playerBB.intersectsWith(beamBox)) {
+        if (!playerBB.intersects(beamBox)) {
             Logging.message(player, "Teleportation was interrupted!");
             return true;
         }
@@ -578,6 +579,10 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             return;
         }
         EntityPlayer player = (EntityPlayer) entity;
+        if (player.isRiding() || player.isBeingRidden()) {
+            cooldownTimer = 80;
+            return;
+        }
 
         TeleportDestination dest = teleportDestination;
         if (teleportId != null) {
@@ -585,16 +590,16 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         }
 
         if (dest != null && dest.isValid()) {
-            int cost = TeleportationTools.calculateRFCost(worldObj, getPos(), dest);
+            int cost = TeleportationTools.calculateRFCost(getWorld(), getPos(), dest);
             cost = (int) (cost * (4.0f - getInfusedFactor()) / 4.0f);
 
-            if (getEnergyStored(EnumFacing.DOWN) < cost) {
+            if (getEnergyStored() < cost) {
                 Logging.warn(player, "Not enough power to start the teleport!");
                 cooldownTimer = 80;
                 return;
             }
 
-            int srcId = worldObj.provider.getDimension();
+            int srcId = getWorld().provider.getDimension();
             int dstId = dest.getDimension();
             if (!TeleportationTools.checkValidTeleport(player, srcId, dstId)) {
                 cooldownTimer = 80;
@@ -603,7 +608,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
 
             Logging.message(player, "Start teleportation...");
             teleportingPlayer = player.getName();
-            teleportTimer = TeleportationTools.calculateTime(worldObj, getPos(), dest);
+            teleportTimer = TeleportationTools.calculateTime(getWorld(), getPos(), dest);
             teleportTimer = (int) (teleportTimer * (1.2f - getInfusedFactor()) / 1.2f);
 
             int rf = TeleportConfiguration.rfTeleportPerTick;
@@ -644,26 +649,27 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         return false;
     }
 
+    @Nonnull
     @Override
-    public List executeWithResultList(String command, Map<String, Argument> args) {
-        List rc = super.executeWithResultList(command, args);
-        if (rc != null) {
+    public <T> List<T> executeWithResultList(String command, Map<String, Argument> args, Type<T> type) {
+        List<T> rc = super.executeWithResultList(command, args, type);
+        if (!rc.isEmpty()) {
             return rc;
         }
         if (CMD_GETPLAYERS.equals(command)) {
-            return getAllowedPlayers();
+            return type.convert(getAllowedPlayers());
         }
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
-    public boolean execute(String command, List list) {
-        boolean rc = super.execute(command, list);
+    public <T> boolean execute(String command, List<T> list, Type<T> type) {
+        boolean rc = super.execute(command, list, type);
         if (rc) {
             return true;
         }
         if (CLIENTCMD_GETPLAYERS.equals(command)) {
-            GuiMatterTransmitter.storeAllowedPlayersForClient(list);
+            GuiMatterTransmitter.storeAllowedPlayersForClient(Type.STRING.convert(list));
             return true;
         }
         return false;

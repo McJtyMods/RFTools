@@ -1,0 +1,26 @@
+{
+  "result": {
+    "item": "rftools:fluid_module"
+  },
+  "pattern": [
+    " c ",
+    "rir",
+    " b "
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "b": {
+      "type": "forge:ore_dict",
+      "ore": "dyeBlack"
+    },
+    "c": {
+      "item": "minecraft:bucket"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    }
+  }
+}

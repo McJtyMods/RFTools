@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "rftools:powercell_simple"
+  },
+  "pattern": [
+    "rdr",
+    "bMb",
+    "rdr"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone_block"
+    },
+    "b": {
+      "item": "minecraft:quartz"
+    },
+    "d": {
+      "item": "minecraft:diamond"
+    },
+    "M": {
+      "item": "rftools:machine_frame"
+    }
+  }
+}

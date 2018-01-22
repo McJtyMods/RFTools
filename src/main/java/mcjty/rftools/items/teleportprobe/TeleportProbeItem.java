@@ -1,5 +1,6 @@
 package mcjty.rftools.items.teleportprobe;
 
+import mcjty.lib.McJtyRegister;
 import mcjty.rftools.RFTools;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,7 +11,6 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -21,7 +21,7 @@ public class TeleportProbeItem extends Item {
         setRegistryName("teleport_probe");
         setCreativeTab(RFTools.tabRfTools);
         setMaxStackSize(1);
-        GameRegistry.register(this);
+        McJtyRegister.registerLater(this, RFTools.instance);
     }
 
     @SideOnly(Side.CLIENT)
@@ -35,20 +35,12 @@ public class TeleportProbeItem extends Item {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+        ItemStack stack = player.getHeldItem(hand);
         if (world.isRemote) {
-            player.openGui(RFTools.instance, RFTools.GUI_TELEPORTPROBE, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+            player.openGui(RFTools.instance, RFTools.GUI_TELEPORTPROBE, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
             return new ActionResult<>(EnumActionResult.SUCCESS, stack);
         }
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);
     }
-
-//    @Override
-//    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float sx, float sy, float sz) {
-//        if (world.isRemote) {
-//            player.openGui(RFTools.instance, RFTools.GUI_TELEPORTPROBE, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
-//            return true;
-//        }
-//        return true;
-//    }
 }

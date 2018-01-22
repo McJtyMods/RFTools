@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "rftools:relay"
+  },
+  "pattern": [
+    "gTg",
+    "gMg",
+    "gTg"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "T": {
+      "item": "minecraft:redstone_torch"
+    },
+    "g": {
+      "item": "minecraft:gold_ingot"
+    },
+    "M": {
+      "item": "rftools:machine_frame"
+    }
+  }
+}

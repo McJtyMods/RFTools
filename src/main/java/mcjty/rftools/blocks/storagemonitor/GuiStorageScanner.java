@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.storagemonitor;
 
 import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.container.GhostOutputSlot;
 import mcjty.lib.entity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.BlockRenderEvent;
@@ -16,18 +17,16 @@ import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
+import mcjty.lib.network.Arguments;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.craftinggrid.GuiCraftingGrid;
-import mcjty.rftools.craftinggrid.PacketRequestGridSync;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.block.Block;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.item.Item;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -40,6 +39,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
+import java.util.function.Predicate;
 
 
 public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEntity> {
@@ -51,9 +51,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
     private WidgetList storageList;
     private WidgetList itemList;
+    private ToggleButton openViewButton;
     private EnergyBar energyBar;
-    private ScrollableLabel radiusLabel;
-    private Button scanButton;
     private Button topButton;
     private Button upButton;
     private Button downButton;
@@ -61,12 +60,17 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     private Button removeButton;
     private TextField searchField;
     private ImageChoiceLabel exportToStarred;
+    private Panel storagePanel;
+    private Panel itemPanel;
+    private ScrollableLabel radiusLabel;
+    private Label visibleRadiusLabel;
 
     private GuiCraftingGrid craftingGrid;
 
     private long prevTime = -1;
 
     private int listDirty = 0;
+    private boolean init = false;
 
     // From server: all the positions with inventories
     public static List<InventoriesInfoPacketClient.InventoryInfo> fromServer_inventories = new ArrayList<>();
@@ -77,7 +81,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
     public GuiStorageScanner(StorageScannerTileEntity storageScannerTileEntity, StorageScannerContainer storageScannerContainer) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, storageScannerTileEntity, storageScannerContainer, RFTools.GUI_MANUAL_MAIN, "stomon");
-        GenericEnergyStorageTileEntity.setCurrentRF(storageScannerTileEntity.getEnergyStored(EnumFacing.DOWN));
+        GenericEnergyStorageTileEntity.setCurrentRF(storageScannerTileEntity.getEnergyStored());
 
         craftingGrid = new GuiCraftingGrid();
 
@@ -89,10 +93,14 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored(EnumFacing.DOWN);
-        energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setVertical().setDesiredWidth(10).setDesiredHeight(56).setMaxValue(maxEnergyStored).setShowText(false);
+        int maxEnergyStored = tileEntity.getMaxEnergyStored();
+        energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setVertical().setDesiredWidth(10).setDesiredHeight(50).setMaxValue(maxEnergyStored).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
+        openViewButton = new ToggleButton(mc, this).setCheckMarker(false).setText("V")
+                .setTooltips("Toggle wide storage list");
+        openViewButton.setPressed(tileEntity.isOpenWideView());
+        openViewButton.addButtonEvent(widget -> toggleView());
         upButton = new Button(mc, this).setText("U").setTooltips("Move inventory up")
                 .addButtonEvent(widget -> moveUp());
         topButton = new Button(mc, this).setText("T").setTooltips("Move inventory to the top")
@@ -107,6 +115,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         Panel energyPanel = new Panel(mc, this).setLayout(new VerticalLayout().setVerticalMargin(0).setSpacing(1))
                 .setDesiredWidth(10);
         energyPanel
+                .addChild(openViewButton)
                 .addChild(energyBar)
                 .addChild(topButton)
                 .addChild(upButton)
@@ -121,46 +130,34 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         exportToStarred.addChoice("No", "Export to current container", guielements, 131, 19);
         exportToStarred.addChoice("Yes", "Export to first routable container", guielements, 115, 19);
 
-        storageList = new WidgetList(mc, this).addSelectionEvent(new DefaultSelectionEvent() {
-            @Override
-            public void select(Widget parent, int index) {
-                getInventoryOnServer();
-            }
+        storagePanel = makeStoragePanel(energyPanel);
+        itemPanel = makeItemPanel();
 
-            @Override
-            public void doubleClick(Widget parent, int index) {
-                hilightSelectedContainer(index);
-            }
-        }).setPropagateEventsToChildren(true);
-
-        Slider storageListSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(storageList);
-
-        Panel storagePanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(1))
-                .setLayoutHint(new PositionalLayout.PositionalHint(3, 4, 130, 86+54))
-                .setDesiredHeight(86+54)
-                .addChild(energyPanel)
-                .addChild(storageList).addChild(storageListSlider);
-
-        itemList = new WidgetList(mc, this).setPropagateEventsToChildren(true)
-            .setInvisibleSelection(true);
-        Slider itemListSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(itemList);
-        Panel itemPanel = new Panel(mc, this)
-                .setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(1))
-                .setLayoutHint(new PositionalLayout.PositionalHint(136, 4, 256-138-4, 86+54))
-                .addChild(itemList).addChild(itemListSlider);
-
-        scanButton = new Button(mc, this)
+        Button scanButton = new Button(mc, this)
                 .setText("Scan")
                 .setDesiredWidth(50)
                 .setDesiredHeight(14)
                 .addButtonEvent(parent -> RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID,
-                        new InventoriesInfoPacketServer(tileEntity.getDimension(), tileEntity.getStorageScannerPos(), true))))
-                .setTooltips("Start/stop a scan of", "all storage units", "in radius");
+                        new InventoriesInfoPacketServer(tileEntity.getDimension(), tileEntity.getStorageScannerPos(), true))));
+        if (RFTools.instance.xnet) {
+            if (StorageScannerConfiguration.xnetRequired) {
+                scanButton
+                        .setTooltips("Do a scan of all", "storage units connected", "with an active XNet channel");
+            } else {
+                scanButton
+                        .setTooltips("Do a scan of all", "storage units in radius", "Use 'xnet' radius to", "restrict to XNet only");
+            }
+        } else {
+            scanButton
+                    .setTooltips("Do a scan of all", "storage units in radius");
+        }
         radiusLabel = new ScrollableLabel(mc, this)
                 .addValueEvent((parent, newValue) -> changeRadius(newValue))
-                .setRealMinimum(1)
+                .setRealMinimum(RFTools.instance.xnet ? 0 : 1)
                 .setRealMaximum(20);
         radiusLabel.setRealValue(tileEntity.getRadius());
+        visibleRadiusLabel = new Label(mc, this);
+        visibleRadiusLabel.setDesiredWidth(40);
 
         searchField = new TextField(mc, this).addTextEvent((parent, newText) -> {
             storageList.clearHilightedRows();
@@ -184,9 +181,13 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 .setFilledRectThickness(-2)
                 .setFilledBackground(StyleConfig.colorListBackground)
                 .setLayout(new VerticalLayout().setVerticalMargin(6).setSpacing(1))
-                .addChild(scanButton)
-                .addChild(radiusSlider)
-                .addChild(radiusLabel);
+                .addChild(scanButton);
+        if (!(RFTools.instance.xnet && StorageScannerConfiguration.xnetRequired)) {
+            scanPanel
+                    .addChild(radiusSlider);
+        }
+        scanPanel
+                .addChild(visibleRadiusLabel);
 
         if (tileEntity.isDummy()) {
             scanButton.setEnabled(false);
@@ -194,7 +195,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             radiusSlider.setVisible(false);
         }
 
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout())
+        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout())
                 .addChild(storagePanel)
                 .addChild(itemPanel)
                 .addChild(searchPanel)
@@ -217,17 +218,72 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
         BlockPos pos = tileEntity.getCraftingGridContainerPos();
         craftingGrid.initGui(modBase, network, mc, this, pos, tileEntity.getCraftingGridProvider(), guiLeft, guiTop, xSize, ySize);
-        network.sendToServer(new PacketRequestGridSync(pos));
+        sendServerCommand(RFTools.MODID, CommandHandler.CMD_REQUEST_GRID_SYNC, Arguments.builder().value(pos).build());
 
         if (StorageScannerConfiguration.hilightStarredOnGuiOpen) {
             storageList.setSelected(0);
         }
+
+        init = true;
+    }
+
+    private int getStoragePanelWidth() {
+        return openViewButton.isPressed() ? 130 : 50;
+    }
+
+    private Panel makeItemPanel() {
+        itemList = new WidgetList(mc, this).setPropagateEventsToChildren(true)
+            .setInvisibleSelection(true);
+        Slider itemListSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(itemList);
+        return new Panel(mc, this)
+                .setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(1))
+                .setLayoutHint(new PositionalLayout.PositionalHint(getStoragePanelWidth() + 6, 4, 256-getStoragePanelWidth()-12, 86+54))
+                .addChild(itemList).addChild(itemListSlider);
+    }
+
+    private Panel makeStoragePanel(Panel energyPanel) {
+        storageList = new WidgetList(mc, this).addSelectionEvent(new DefaultSelectionEvent() {
+            @Override
+            public void select(Widget parent, int index) {
+                getInventoryOnServer();
+            }
+
+            @Override
+            public void doubleClick(Widget parent, int index) {
+                hilightSelectedContainer(index);
+            }
+        }).setPropagateEventsToChildren(true);
+
+        Slider storageListSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(storageList);
+
+        return new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(1))
+                .setLayoutHint(new PositionalLayout.PositionalHint(3, 4, getStoragePanelWidth(), 86+54))
+                .setDesiredHeight(86+54)
+                .addChild(energyPanel)
+                .addChild(storageList).addChild(storageListSlider);
+    }
+
+    private void toggleView() {
+        storagePanel.setLayoutHint(new PositionalLayout.PositionalHint(3, 4, getStoragePanelWidth(), 86+54));
+        itemPanel.setLayoutHint(new PositionalLayout.PositionalHint(getStoragePanelWidth() + 6, 4, 256-getStoragePanelWidth()-12, 86+54));
+        // Force layout dirty:
+        window.getToplevel().setBounds(window.getToplevel().getBounds());
+        listDirty = 0;
+        requestListsIfNeeded();
+        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_SETVIEW,
+                new Argument("b", openViewButton.isPressed()));
     }
 
     @Override
     protected void mouseClicked(int x, int y, int button) throws IOException {
         super.mouseClicked(x, y, button);
         craftingGrid.getWindow().mouseClicked(x, y, button);
+        if (button == 1) {
+            Slot slot = getSlotAtPosition(x, y);
+            if (slot instanceof GhostOutputSlot) {
+                sendServerCommand(RFToolsMessages.INSTANCE, StorageScannerTileEntity.CMD_CLEARGRID);
+            }
+        }
     }
 
     @Override
@@ -293,8 +349,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         InventoriesInfoPacketClient.InventoryInfo c = fromServer_inventories.get(index-1);
         if (c != null) {
             RFTools.instance.clientInfo.hilightBlock(c.getPos(), System.currentTimeMillis() + 1000 * StorageScannerConfiguration.hilightTime);
-            Logging.message(mc.thePlayer, "The inventory is now highlighted");
-            mc.thePlayer.closeScreen();
+            Logging.message(mc.player, "The inventory is now highlighted");
+            mc.player.closeScreen();
         }
     }
 
@@ -350,17 +406,18 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         itemList.removeChildren();
 
         Pair<Panel,Integer> currentPos = MutablePair.of(null, 0);
-        int numcolumns = 5;
+        int numcolumns = openViewButton.isPressed() ? 5 : 9;
         int spacing = 3;
 
 //        Collections.sort(fromServer_inventory, (o1, o2) -> o1.stackSize == o2.stackSize ? 0 : o1.stackSize < o2.stackSize ? -1 : 1);
-        Collections.sort(fromServer_inventory, (o1, o2) -> o1.getDisplayName().compareTo(o2.getDisplayName()));
+        Collections.sort(fromServer_inventory, Comparator.comparing(ItemStack::getDisplayName));
 
         String filterText = searchField.getText().toLowerCase();
+        Predicate<ItemStack> matcher = StorageScannerTileEntity.getMatcher(filterText);
 
         for (ItemStack item : fromServer_inventory) {
-            String displayName = item.getDisplayName();
-            if (filterText.isEmpty() || displayName.toLowerCase().contains(filterText)) {
+//            String displayName = item.getDisplayName();
+            if (filterText.isEmpty() || matcher.test(item)) {
                 currentPos = addItemToList(item, itemList, currentPos, numcolumns, spacing);
             }
         }
@@ -441,39 +498,55 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             panel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(8).setHorizontalMargin(5));
             panel.addChild(new ImageLabel(mc, this).setImage(guielements, 115, 19).setDesiredWidth(13).setDesiredHeight(13));
         } else {
-            panel = new Panel(mc, this).setLayout(new HorizontalLayout());
+            HorizontalLayout layout = new HorizontalLayout();
+            if (!openViewButton.isPressed()) {
+                layout.setHorizontalMargin(2);
+            }
+            panel = new Panel(mc, this).setLayout(layout);
             panel.addChild(new BlockRender(mc, this).setRenderItem(c.getBlock()));
         }
-        AbstractWidget label = new Label(mc, this).setColor(StyleConfig.colorTextInListNormal)
-                .setText(displayName)
-                .setDynamic(true)
-                .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
-                .setDesiredWidth(58);
-        if (c == null) {
-            label.setTooltips(TextFormatting.GREEN + "All routable inventories")
-                .setDesiredWidth(74);
-        } else {
-            label.setTooltips(TextFormatting.GREEN + "Block at: " + TextFormatting.WHITE + BlockPosTools.toString(c.getPos()),
-                    TextFormatting.GREEN + "Name: " + TextFormatting.WHITE + displayName,
-                    "(doubleclick to highlight)");
-        }
-        panel.addChild(label);
-        if (c != null) {
-            ImageChoiceLabel choiceLabel = new ImageChoiceLabel(mc, this)
-                    .addChoiceEvent((parent, newChoice) -> changeRoutable(c.getPos())).setDesiredWidth(13);
-            choiceLabel.addChoice("No", "Not routable", guielements, 131, 19);
-            choiceLabel.addChoice("Yes", "Routable", guielements, 115, 19);
-            choiceLabel.setCurrentChoice(routable ? 1 : 0);
-            panel.addChild(choiceLabel);
+        if (openViewButton.isPressed()) {
+            AbstractWidget label;
+            label = new Label(mc, this).setColor(StyleConfig.colorTextInListNormal)
+                    .setText(displayName)
+                    .setDynamic(true)
+                    .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
+                    .setDesiredWidth(58);
+            if (c == null) {
+                label.setTooltips(TextFormatting.GREEN + "All routable inventories")
+                        .setDesiredWidth(74);
+            } else {
+                label.setTooltips(TextFormatting.GREEN + "Block at: " + TextFormatting.WHITE + BlockPosTools.toString(c.getPos()),
+                        TextFormatting.GREEN + "Name: " + TextFormatting.WHITE + displayName,
+                        "(doubleclick to highlight)");
+            }
+            panel.addChild(label);
+            if (c != null) {
+                ImageChoiceLabel choiceLabel = new ImageChoiceLabel(mc, this)
+                        .addChoiceEvent((parent, newChoice) -> changeRoutable(c.getPos())).setDesiredWidth(13);
+                choiceLabel.addChoice("No", "Not routable", guielements, 131, 19);
+                choiceLabel.addChoice("Yes", "Routable", guielements, 115, 19);
+                choiceLabel.setCurrentChoice(routable ? 1 : 0);
+                panel.addChild(choiceLabel);
+            }
         }
         storageList.addChild(panel);
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
+        if (!init) {
+            return;
+        }
         updateStorageList();
         updateContentsList();
         requestListsIfNeeded();
+
+        String text = radiusLabel.getText();
+        if ("0".equals(text)) {
+            text = "XNet";
+        }
+        visibleRadiusLabel.setText(text);
 
         int selected = storageList.getSelected();
         removeButton.setEnabled(selected != -1);
@@ -520,78 +593,48 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
     @Override
     protected void drawGuiContainerForegroundLayer(int i1, int i2) {
+        if (!init) {
+            return;
+        }
         int x = Mouse.getEventX() * width / mc.displayWidth;
         int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
 
         List<String> tooltips = craftingGrid.getWindow().getTooltips();
         if (tooltips != null) {
-            drawHoveringText(tooltips, window.getTooltipItems(), x - guiLeft, y - guiTop, mc.fontRendererObj);
+            drawHoveringText(tooltips, window.getTooltipItems(), x - guiLeft, y - guiTop, mc.fontRenderer);
         }
 
         super.drawGuiContainerForegroundLayer(i1, i2);
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        super.drawScreen(mouseX, mouseY, partialTicks);
-
-        int x = Mouse.getEventX() * width / mc.displayWidth;
-        int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
-        Widget widget = window.getToplevel().getWidgetAtPosition(x, y);
-        if (widget instanceof BlockRender) {
-            BlockRender blockRender = (BlockRender) widget;
-            Object renderItem = blockRender.getRenderItem();
-            ItemStack itemStack;
-            if (renderItem instanceof ItemStack) {
-                itemStack = (ItemStack) renderItem;
-            } else if (renderItem instanceof Block) {
-                itemStack = new ItemStack((Block) renderItem);
-            } else if (renderItem instanceof Item) {
-                itemStack = new ItemStack((Item) renderItem);
-            } else {
-                itemStack = null;
-            }
-            if (itemStack != null) {
-                boolean custom = blockRender.getUserObject() instanceof Integer;
-                customRenderToolTip(itemStack, mouseX, mouseY, custom);
-            }
+    protected void drawStackTooltips(int mouseX, int mouseY) {
+        if (init) {
+            super.drawStackTooltips(mouseX, mouseY);
         }
     }
 
-    private void customRenderToolTip(ItemStack stack, int x, int y, boolean custom) {
-        List<String> list;
-        if (stack.getItem() == null) {
-            // Protection for bad itemstacks
-            list = new ArrayList<>();
-        } else {
-            list = stack.getTooltip(this.mc.thePlayer, this.mc.gameSettings.advancedItemTooltips);
-        }
-
-        for (int i = 0; i < list.size(); ++i) {
-            if (i == 0) {
-                list.set(i, stack.getRarity().rarityColor + list.get(i));
-            } else {
-                list.set(i, TextFormatting.GRAY + list.get(i));
-            }
-        }
-
-        if (custom) {
+    @Override
+    protected List<String> addCustomLines(List<String> oldList, BlockRender blockRender, ItemStack stack) {
+        if (blockRender.getUserObject() instanceof Integer) {
             List<String> newlist = new ArrayList<>();
             newlist.add(TextFormatting.GREEN + "Click: "+ TextFormatting.WHITE + "full stack");
             newlist.add(TextFormatting.GREEN + "Shift + click: "+ TextFormatting.WHITE + "single item");
             newlist.add("");
-            newlist.addAll(list);
-            list = newlist;
+            newlist.addAll(oldList);
+            return newlist;
+        } else {
+            return oldList;
         }
-
-        FontRenderer font = stack.getItem().getFontRenderer(stack);
-        this.drawHoveringText(list, x, y, (font == null ? fontRendererObj : font));
     }
 
     private static long lastTime = 0;
 
     @Override
     protected void drawWindow() {
+        if (!init) {
+            return;
+        }
         super.drawWindow();
         craftingGrid.draw();
     }

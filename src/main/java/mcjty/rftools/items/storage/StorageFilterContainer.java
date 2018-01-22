@@ -50,12 +50,11 @@ public class StorageFilterContainer extends GenericContainer {
 		Slot slot = this.inventorySlots.get(index);
 
 		if (slot != null && slot.getHasStack() && index >= FILTER_SLOTS && index < FILTER_SLOTS + 36) {
-			ItemStack itemstack1 = slot.getStack();
-			ItemStack stack = itemstack1.copy();
-			stack.stackSize = 1;
+			ItemStack stack = slot.getStack().copy();
+			stack.setCount(1);
 			IInventory inv = inventories.get(CONTAINER_INVENTORY);
 			for (int i = 0; i < inv.getSizeInventory(); i++) {
-				if (inv.getStackInSlot(i) == null) {
+				if (inv.getStackInSlot(i).isEmpty()) {
 					inv.setInventorySlotContents(i, stack);
 					break;
 				}
@@ -64,6 +63,6 @@ public class StorageFilterContainer extends GenericContainer {
 
 		}
 
-		return null;
+		return ItemStack.EMPTY;
 	}
 }

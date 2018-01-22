@@ -1,11 +1,6 @@
 package mcjty.rftools.blocks.blockprotector;
 
-import mcjty.rftools.GeneralConfiguration;
-import mcjty.rftools.blocks.ModBlocks;
-import mcjty.rftools.blocks.shield.ShieldSetup;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -13,17 +8,14 @@ public class BlockProtectorSetup {
     public static BlockProtectorBlock blockProtectorBlock;
 
     public static void init() {
+        if(!BlockProtectorConfiguration.enabled) return;
         blockProtectorBlock = new BlockProtectorBlock();
+        MinecraftForge.EVENT_BUS.register(BlockProtectorEventHandlers.class);
     }
 
     @SideOnly(Side.CLIENT)
     public static void initClient() {
+        if(!BlockProtectorConfiguration.enabled) return;
         blockProtectorBlock.initModel();
-    }
-
-    public static void initCrafting() {
-        if (GeneralConfiguration.enableBlockProtectorRecipe) {
-            GameRegistry.addRecipe(new ItemStack(blockProtectorBlock), "oto", "tMt", "oto", 'M', ModBlocks.machineFrame, 'o', Blocks.OBSIDIAN, 't', ShieldSetup.shieldTemplateBlock);
-        }
     }
 }

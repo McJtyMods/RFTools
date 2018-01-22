@@ -1,18 +1,24 @@
 package mcjty.rftools.blocks.endergen;
 
-import cofh.api.energy.IEnergyConnection;
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.api.information.IMachineInformation;
+import mcjty.lib.compat.RedstoneFluxCompatibility;
 import mcjty.lib.entity.GenericEnergyProviderTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.network.Arguments;
+import mcjty.lib.network.PacketSendClientCommand;
 import mcjty.lib.network.PacketServerCommand;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.EnergyTools;
+import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.ClientCommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.hud.IHudSupport;
 import mcjty.rftools.network.PacketGetHudLog;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.typed.Type;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,27 +30,26 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.energy.CapabilityEnergy;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implements ITickable, MachineInformation,
         IHudSupport, IMachineInformation {
 
     private static Random random = new Random();
 
-    public static String CMD_SETDESTINATION = "setDest";
-    public static String CMD_GETSTAT_RF = "getStatRF";
-    public static String CLIENTCMD_GETSTAT_RF = "getStatRF";
-    public static String CMD_GETSTAT_LOST = "getStatLost";
-    public static String CLIENTCMD_GETSTAT_LOST = "getStatLost";
-    public static String CMD_GETSTAT_LAUNCHED = "getStatLaunched";
-    public static String CLIENTCMD_GETSTAT_LAUNCHED = "getStatLaunched";
-    public static String CMD_GETSTAT_OPPORTUNITIES = "getStatOpp";
-    public static String CLIENTCMD_GETSTAT_OPPORTUNITIES = "getStatOpp";
+    public static final String CMD_SETDESTINATION = "setDest";
+    public static final String CMD_GETSTAT_RF = "getStatRF";
+    public static final String CLIENTCMD_GETSTAT_RF = "getStatRF";
+    public static final String CMD_GETSTAT_LOST = "getStatLost";
+    public static final String CLIENTCMD_GETSTAT_LOST = "getStatLost";
+    public static final String CMD_GETSTAT_LAUNCHED = "getStatLaunched";
+    public static final String CLIENTCMD_GETSTAT_LAUNCHED = "getStatLaunched";
+    public static final String CMD_GETSTAT_OPPORTUNITIES = "getStatOpp";
+    public static final String CLIENTCMD_GETSTAT_OPPORTUNITIES = "getStatOpp";
 
     private static final String[] TAGS = new String[]{"rftick", "lost", "launched", "opportunities"};
     private static final String[] TAG_DESCRIPTIONS = new String[]{"Average RF/tick for the last 5 seconds", "Amount of pearls that were lost during the last 5 seconds",
@@ -94,7 +99,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     private String lastPearlsLostReason = "";
 
     // Current traveling pearls.
-    private List<EndergenicPearl> pearls = new ArrayList<EndergenicPearl>();
+    private List<EndergenicPearl> pearls = new ArrayList<>();
 
     private long lastHudTime = 0;
     private List<String> clientHudLog = new ArrayList<>();
@@ -108,6 +113,10 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     private static int rfPerHit[] = new int[]{ 0, 100, 150, 200, 400, 800, 1600, 3200, 6400, 8000, 12800, 8000, 6400, 2500, 1000, 100 };
 
     private int tickCounter = 0;            // Only used for logging, counts server ticks.
+
+    // We enqueue endergenics for processing later
+    public static List<EndergenicTileEntity> todoEndergenics = new ArrayList<>();
+    public static Set<GlobalCoordinate> endergenicsAdded = new HashSet<>();
 
     public EndergenicTileEntity() {
         super(5000000, 20000);
@@ -145,16 +154,87 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         // bad and good counter are handled both client and server side
         if (badCounter > 0) {
             badCounter--;
-            markDirty();
+            markDirtyQuick();
         }
         if (goodCounter > 0) {
             goodCounter--;
-            markDirty();
+            markDirtyQuick();
         }
 
-        if (!worldObj.isRemote) {
-            checkStateServer();
+        if (!getWorld().isRemote) {
+            queueWork();
         }
+    }
+
+    // Postpone the actual tick to after all other TE's have ticked (in a WorldTickEvent)
+    private void queueWork() {
+        GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().provider.getDimension());
+        if (endergenicsAdded.contains(gc)) {
+            // We're already there. Nothing to do
+            return;
+        }
+
+        // Find an endergenic with a pearl injector and start from there
+        EndergenicTileEntity endergenicWithInjector = findEndergenicWithInjector(new HashSet<>());
+        if (endergenicWithInjector != null) {
+            // We add all endergenics starting with the one with the injector.
+            Set<BlockPos> done = new HashSet<>();
+            EndergenicTileEntity loop = endergenicWithInjector;
+            while (loop != null) {
+                done.add(loop.getPos());
+                addToQueue(loop, new GlobalCoordinate(loop.getPos(), getWorld().provider.getDimension()));
+                loop = loop.getDestinationTE();
+                if (loop == null || done.contains(loop.getPos())) {
+                    loop = null;
+                }
+            }
+        }
+        // In all cases we add this endergenic. This will not do anything
+        // if it was already added before
+        addToQueue(this, gc);
+    }
+
+    private void addToQueue(EndergenicTileEntity endergenicWithInjector, GlobalCoordinate gc2) {
+        if (!endergenicsAdded.contains(gc2)) {
+            todoEndergenics.add(endergenicWithInjector);
+            endergenicsAdded.add(gc2);
+        }
+    }
+
+    private EndergenicTileEntity findEndergenicWithInjector(Set<BlockPos> done) {
+        if (hasInjector()) {
+            return this;
+        }
+        if (destination == null) {
+            return null;
+        }
+        // Avoid eternal loops
+        done.add(getPos());
+        if (done.contains(destination)) {
+            return null;
+        }
+        TileEntity te = getWorld().getTileEntity(destination);
+        if (te instanceof EndergenicTileEntity) {
+            return ((EndergenicTileEntity) te).findEndergenicWithInjector(done);
+        }
+        return null;
+    }
+
+    private boolean hasInjector() {
+        for (EnumFacing dir : EnumFacing.VALUES) {
+            IBlockState state = getWorld().getBlockState(getPos().offset(dir));
+            if (state.getBlock() == EndergenicSetup.pearlInjectorBlock) {
+                TileEntity te = getWorld().getTileEntity(getPos().offset(dir));
+                if (te instanceof PearlInjectorTileEntity) {
+                    PearlInjectorTileEntity injector = (PearlInjectorTileEntity) te;
+                    EndergenicTileEntity endergenic = injector.findEndergenicTileEntity();
+                    if (endergenic == this) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -164,7 +244,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
 
     @Override
     public boolean isBlockAboveAir() {
-        return worldObj.isAirBlock(pos.up());
+        return getWorld().isAirBlock(pos.up());
     }
 
     public List<String> getHudLog() {
@@ -246,7 +326,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         return goodCounter;
     }
 
-    private void checkStateServer() {
+    public void checkStateServer() {
         tickCounter++;
 
         ticks--;
@@ -307,7 +387,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
             int rf = EndergenicConfiguration.rfToHoldPearl;
             rf = (int) (rf * (3.0f - getInfusedFactor()) / 3.0f);
 
-            int rfStored = getEnergyStored(EnumFacing.DOWN);
+            int rfStored = getEnergyStored();
             if (rfStored < rf) {
                 // Not enough energy. Pearl is lost.
                 log("Server Tick: insufficient energy to hold pearl (" + rfStored + " vs " + rf + ")");
@@ -321,7 +401,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         }
 
         // Else we're charging up.
-        markDirty();
+        markDirtyQuick();
         chargingMode++;
         if (chargingMode >= 16) {
             log("Server Tick: charging mode ends -> idle");
@@ -361,7 +441,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     }
 
     private void log(String message) {
-        /* RFTools.log(worldObj, this, message);*/
+        /* RFTools.log(getWorld(), this, message);*/
     }
 
     public static final EnumFacing[] HORIZ_DIRECTIONS = {EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.EAST};
@@ -374,10 +454,10 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         BlockPos pos = getPos();
         for (EnumFacing dir : EnumFacing.VALUES) {
             BlockPos c = pos.offset(dir);
-            TileEntity te = worldObj.getTileEntity(c);
+            TileEntity te = getWorld().getTileEntity(c);
             if (te instanceof EnderMonitorTileEntity) {
                 EnderMonitorTileEntity enderMonitorTileEntity = (EnderMonitorTileEntity) te;
-                EnumFacing inputSide = enderMonitorTileEntity.getFacing(worldObj.getBlockState(c)).getInputSide();
+                EnumFacing inputSide = enderMonitorTileEntity.getFacing(getWorld().getBlockState(c)).getInputSide();
                 if (inputSide == dir.getOpposite()) {
                     enderMonitorTileEntity.fireFromEndergenic(mode);
                 }
@@ -386,17 +466,17 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     }
 
     private void handleSendingEnergy() {
-        int energyStored = getEnergyStored(EnumFacing.DOWN);
+        int energyStored = getEnergyStored();
         if (energyStored <= EndergenicConfiguration.keepRfInBuffer) {
             return;
         }
         energyStored -= EndergenicConfiguration.keepRfInBuffer;
 
-        for (EnumFacing dir : EnumFacing.values()) {
+        for (EnumFacing dir : EnumFacing.VALUES) {
             BlockPos o = getPos().offset(dir);
-            TileEntity te = worldObj.getTileEntity(o);
-            if (EnergyTools.isEnergyTE(te)) {
-                EnumFacing opposite = dir.getOpposite();
+            TileEntity te = getWorld().getTileEntity(o);
+            EnumFacing opposite = dir.getOpposite();
+            if (EnergyTools.isEnergyTE(te) || (te != null && te.hasCapability(CapabilityEnergy.ENERGY, opposite))) {
                 int rfToGive;
                 if (EndergenicConfiguration.rfOutput <= energyStored) {
                     rfToGive = EndergenicConfiguration.rfOutput;
@@ -404,9 +484,8 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
                     rfToGive = energyStored;
                 }
                 int received;
-                if (te instanceof IEnergyConnection) {
-                    IEnergyConnection connection = (IEnergyConnection) te;
-                    if (connection.canConnectEnergy(opposite)) {
+                if (RFTools.redstoneflux && RedstoneFluxCompatibility.isEnergyConnection(te)) {
+                    if (RedstoneFluxCompatibility.canConnectEnergy(te, opposite)) {
                         received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
                     } else {
                         received = 0;
@@ -428,10 +507,10 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         if (pearls.isEmpty()) {
             return;
         }
-        List<EndergenicPearl> newlist = new ArrayList<EndergenicPearl>();
+        List<EndergenicPearl> newlist = new ArrayList<>();
         for (EndergenicPearl pearl : pearls) {
             log("Pearls: age=" + pearl.getAge() + ", ticks left=" + pearl.getTicksLeft());
-            if (!pearl.handleTick(worldObj)) {
+            if (!pearl.handleTick(getWorld())) {
                 // Keep the pearl. It has not arrived yet.
                 newlist.add(pearl);
             }
@@ -443,11 +522,13 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
 
     private void markDirtyClientNoRender() {
         markDirty();
-        if (worldObj != null) {
-            worldObj.getPlayers(EntityPlayer.class, p -> getPos().distanceSq(p.posX, p.posY, p.posZ) < 32*32)
+        if (getWorld() != null) {
+            getWorld().getPlayers(EntityPlayer.class, p -> getPos().distanceSq(p.posX, p.posY, p.posZ) < 32*32)
                     .stream()
                     .forEach(p -> RFToolsMessages.INSTANCE.sendTo(
-                            new PacketEndergenicFlash(getPos(), goodCounter, badCounter), (EntityPlayerMP) p));
+                            new PacketSendClientCommand(RFTools.MODID, ClientCommandHandler.CMD_FLASH_ENDERGENIC,
+                                    Arguments.builder().value(getPos()).value(goodCounter).value(badCounter).build()),
+                            (EntityPlayerMP) p));
         }
     }
 
@@ -474,7 +555,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         if (destination == null) {
             return null;
         }
-        TileEntity te = worldObj.getTileEntity(destination);
+        TileEntity te = getWorld().getTileEntity(destination);
         if (te instanceof EndergenicTileEntity) {
             return (EndergenicTileEntity) te;
         } else {
@@ -485,7 +566,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     }
 
     public void firePearl() {
-        markDirty();
+        markDirtyQuick();
         // This method assumes we're in holding mode.
         getDestinationTE();
         if (destination == null) {
@@ -502,7 +583,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     }
 
     public void firePearlFromInjector() {
-        markDirty();
+        markDirtyQuick();
         // This method assumes we're not in holding mode.
         getDestinationTE();
         chargingMode = CHARGE_IDLE;
@@ -522,7 +603,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     // already generated power.
     public void receivePearl(int age) {
         fireMonitors(EnderMonitorMode.MODE_PEARLARRIVED);
-        markDirty();
+        markDirtyQuick();
         if (chargingMode == CHARGE_HOLDING) {
             log("Receive Pearl: pearl arrives but already holding -> both are lost");
             // If this block is already holding a pearl and it still has one then both pearls are
@@ -558,7 +639,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     }
 
     public void startCharging() {
-        markDirty();
+        markDirtyQuick();
         chargingMode = 1;
         chargeCounter++;
     }
@@ -569,7 +650,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         BlockPos coord = RFTools.instance.clientInfo.getSelectedTE();
         TileEntity tileEntity = null;
         if (coord != null) {
-            tileEntity = worldObj.getTileEntity(coord);
+            tileEntity = getWorld().getTileEntity(coord);
         }
 
         if (!(tileEntity instanceof EndergenicTileEntity)) {
@@ -623,11 +704,11 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     }
 
     public void setDestination(BlockPos destination) {
-        markDirty();
+        markDirtyQuick();
         this.destination = destination;
         distance = calculateDistance(destination);
 
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             // We're on the client. Send change to server.
             RFToolsMessages.INSTANCE.sendToServer(new PacketServerCommand(getPos(),
                     EndergenicTileEntity.CMD_SETDESTINATION,
@@ -732,26 +813,27 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         return false;
     }
 
+    @Nonnull
     @Override
-    public List executeWithResultList(String command, Map<String, Argument> args) {
-        List rc = super.executeWithResultList(command, args);
-        if (rc != null) {
-            return rc;
+    public <T> List<T> executeWithResultList(String command, Map<String, Argument> args, Type<T> type) {
+        List<T> list = super.executeWithResultList(command, args, type);
+        if (!list.isEmpty()) {
+            return list;
         }
         if (PacketGetHudLog.CMD_GETHUDLOG.equals(command)) {
-            return getHudLog();
+            return type.convert(getHudLog());
         }
-        return null;
+        return list;
     }
 
     @Override
-    public boolean execute(String command, List list) {
-        boolean rc = super.execute(command, list);
+    public <T> boolean execute(String command, List<T> list, Type<T> type) {
+        boolean rc = super.execute(command, list, type);
         if (rc) {
             return true;
         }
         if (PacketGetHudLog.CLIENTCMD_GETHUDLOG.equals(command)) {
-            clientHudLog = list;
+            clientHudLog = Type.STRING.convert(list);
             return true;
         }
         return false;

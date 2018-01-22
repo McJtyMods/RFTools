@@ -1,0 +1,31 @@
+{
+  "result": {
+    "item": "rftools:booster"
+  },
+  "pattern": [
+    "oDo",
+    "GMI",
+    "oEo"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "E": {
+      "item": "minecraft:redstone"
+    },
+    "G": {
+      "item": "minecraft:gold_ingot"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "M": {
+      "item": "rftools:machine_frame"
+    },
+    "o": {
+      "item": "minecraft:glass_bottle"
+    }
+  }
+}

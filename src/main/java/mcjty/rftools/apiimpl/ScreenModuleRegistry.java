@@ -5,19 +5,17 @@ import mcjty.rftools.api.screens.data.IModuleDataFactory;
 import mcjty.rftools.blocks.screens.data.ModuleDataBoolean;
 import mcjty.rftools.blocks.screens.data.ModuleDataInteger;
 import mcjty.rftools.blocks.screens.data.ModuleDataString;
+import mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
 import mcjty.rftools.blocks.screens.modules.ElevatorButtonScreenModule;
 import mcjty.rftools.blocks.screens.modules.ItemStackScreenModule;
 import mcjty.rftools.blocks.screens.modules.ScreenModuleHelper;
 import mcjty.rftools.blocks.screens.modules.StorageControlScreenModule;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ScreenModuleRegistry implements IScreenModuleRegistry {
 
-    private Map<String, IModuleDataFactory> dataFactoryMap = new HashMap<>();
+    private Map<String, IModuleDataFactory<?>> dataFactoryMap = new HashMap<>();
     private Map<String, Integer> idToIntMap = null;
     private Map<Integer, String> inttoIdMap = null;
 
@@ -30,15 +28,16 @@ public class ScreenModuleRegistry implements IScreenModuleRegistry {
         dataFactoryMap.put(ItemStackScreenModule.ModuleDataStacks.ID, ItemStackScreenModule.ModuleDataStacks::new);
         dataFactoryMap.put(StorageControlScreenModule.ModuleDataStacks.ID, StorageControlScreenModule.ModuleDataStacks::new);
         dataFactoryMap.put(ElevatorButtonScreenModule.ModuleElevatorInfo.ID, ElevatorButtonScreenModule.ModuleElevatorInfo::new);
+        dataFactoryMap.put(ComputerScreenModule.ModuleComputerInfo.ID, ComputerScreenModule.ModuleComputerInfo::new);
     }
 
     @Override
-    public void registerModuleDataFactory(String id, IModuleDataFactory dataFactory) {
+    public void registerModuleDataFactory(String id, IModuleDataFactory<?> dataFactory) {
         dataFactoryMap.put(id, dataFactory);
     }
 
     @Override
-    public IModuleDataFactory getModuleDataFactory(String id) {
+    public IModuleDataFactory<?> getModuleDataFactory(String id) {
         return dataFactoryMap.get(id);
     }
 
@@ -56,7 +55,7 @@ public class ScreenModuleRegistry implements IScreenModuleRegistry {
         if (idToIntMap == null) {
             idToIntMap = new HashMap<>();
             inttoIdMap = new HashMap<>();
-            ArrayList<String> strings = new ArrayList<>(dataFactoryMap.keySet());
+            List<String> strings = new ArrayList<>(dataFactoryMap.keySet());
             strings.sort(Comparator.<String>naturalOrder());
             int idx = 0;
             for (String s : strings) {

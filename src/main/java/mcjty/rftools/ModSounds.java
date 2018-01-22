@@ -1,25 +1,16 @@
 package mcjty.rftools;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import net.minecraftforge.registries.IForgeRegistry;
 
 public class ModSounds {
 
-    public static final String[] REGISTER_SOUND = { "registerSound", "func_187502_a", "a" };
-
-    public static void init() {
-        try {
-            Method m = ReflectionHelper.findMethod(SoundEvent.class, null, REGISTER_SOUND, String.class);
-            m.invoke(null, RFTools.MODID + ":teleport_whoosh");
-            m.invoke(null, RFTools.MODID + ":teleport_error");
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
+    public static void init(IForgeRegistry<SoundEvent> registry) {
+        SoundEvent whoosh = new SoundEvent(new ResourceLocation(RFTools.MODID, "teleport_whoosh")).setRegistryName(new ResourceLocation(RFTools.MODID, "teleport_whoosh"));
+        SoundEvent error = new SoundEvent(new ResourceLocation(RFTools.MODID, "teleport_error")).setRegistryName(new ResourceLocation(RFTools.MODID, "teleport_error"));
+        registry.register(whoosh);
+        registry.register(error);
     }
 
 }

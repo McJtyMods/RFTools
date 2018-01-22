@@ -4,13 +4,11 @@ import com.google.common.collect.Maps;
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.api.smartwrench.SmartWrenchMode;
-import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.crafting.INBTPreservingIngredient;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.lib.varia.ModuleSupport;
-import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
-import mcjty.rftools.blocks.relay.RelayTileEntity;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -23,6 +21,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -34,8 +33,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.ChunkCache;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -46,7 +48,8 @@ import java.util.List;
 import static mcjty.rftools.blocks.powercell.PowerCellConfiguration.advancedFactor;
 import static mcjty.rftools.blocks.powercell.PowerCellConfiguration.simpleFactor;
 
-public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, PowerCellContainer> implements Infusable {
+public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, PowerCellContainer> implements Infusable,
+        INBTPreservingIngredient {
 
     public static final PropertyEnum<PowerCellTileEntity.Mode> NORTH = PropertyEnum.create("north", PowerCellTileEntity.Mode.class);
     public static final PropertyEnum<PowerCellTileEntity.Mode> SOUTH = PropertyEnum.create("south", PowerCellTileEntity.Mode.class);
@@ -57,19 +60,19 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
 
     private static long lastTime = 0;
 
-    public PowerCellBlock(String name) {
-        super(Material.IRON, PowerCellTileEntity.class, PowerCellContainer.class, name, true);
+    public PowerCellBlock(String name, Class<? extends PowerCellTileEntity> clazz) {
+        super(Material.IRON, clazz, PowerCellContainer.class, name, true);
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiPowerCell> getGuiClass() {
         return GuiPowerCell.class;
     }
 
     @Override
-    public boolean hasNoRotation() {
-        return true;
+    public RotationType getRotationType() {
+        return RotationType.NONE;
     }
 
     @Override
@@ -79,7 +82,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
 
         NBTTagCompound tagCompound = itemStack.getTagCompound();
@@ -189,9 +192,13 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
                 lastTime = System.currentTimeMillis();
                 RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new PowerCellInfoPacketServer(powerCellTileEntity)));
             }
-            int total = (PowerCellInfoPacketClient.tooltipBlocks - PowerCellInfoPacketClient.tooltipAdvancedBlocks - PowerCellInfoPacketClient.tooltipSimpleBlocks) * PowerCellConfiguration.rfPerNormalCell;
-            total += PowerCellInfoPacketClient.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerNormalCell * advancedFactor;
-            total += PowerCellInfoPacketClient.tooltipSimpleBlocks * PowerCellConfiguration.rfPerNormalCell / PowerCellConfiguration.simpleFactor;
+            long total = (PowerCellInfoPacketClient.tooltipBlocks - PowerCellInfoPacketClient.tooltipAdvancedBlocks - (long) PowerCellInfoPacketClient.tooltipSimpleBlocks) * PowerCellConfiguration.rfPerNormalCell;
+            total += (long) PowerCellInfoPacketClient.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerNormalCell * advancedFactor;
+            total += (long) PowerCellInfoPacketClient.tooltipSimpleBlocks * PowerCellConfiguration.rfPerNormalCell / PowerCellConfiguration.simpleFactor;
+            if (total > 2000000000) {
+                total = 2000000000;
+            }
+
             currenttip.add(TextFormatting.GREEN + "Energy: " + PowerCellInfoPacketClient.tooltipEnergy + "/" + total + " RF (" +
                 PowerCellInfoPacketClient.tooltipRfPerTick + " RF/t)");
             PowerCellTileEntity.Mode mode = powerCellTileEntity.getMode(accessor.getSide());
@@ -259,7 +266,8 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
 		}
 
         if (placer instanceof EntityPlayer) {
-            Achievements.trigger((EntityPlayer) placer, Achievements.storeThePower);
+            // @todo achievements
+//            Achievements.trigger((EntityPlayer) placer, Achievements.storeThePower);
         }
     }
 
@@ -288,6 +296,25 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
     }
 
     @Override
+    public void onBlockExploded(World world, BlockPos pos, Explosion explosion) {
+        if (!world.isRemote) {
+            TileEntity te = world.getTileEntity(pos);
+            if (te instanceof PowerCellTileEntity) {
+                PowerCellTileEntity cellTileEntity = (PowerCellTileEntity) te;
+                PowerCellNetwork.Network network = cellTileEntity.getNetwork();
+                if (network != null) {
+                    int a = network.extractEnergySingleBlock(isAdvanced(), isSimple());
+                    Block block = world.getBlockState(pos).getBlock();
+                    network.remove(world, cellTileEntity.getGlobalPos(), PowerCellBlock.isAdvanced(block), PowerCellBlock.isSimple(block));
+                    PowerCellNetwork.getChannels(world).save(world);
+                    cellTileEntity.setNetworkId(-1);
+                }
+            }
+        }
+        super.onBlockExploded(world, pos, explosion);
+    }
+
+    @Override
     public void breakBlock(World world, BlockPos pos, IBlockState state) {
         if (!world.isRemote) {
             TileEntity te = world.getTileEntity(pos);
@@ -307,7 +334,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntity tileEntity = world.getTileEntity(pos);
+        TileEntity tileEntity = world instanceof ChunkCache ? ((ChunkCache)world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) : world.getTileEntity(pos);
         if (tileEntity instanceof PowerCellTileEntity) {
             PowerCellTileEntity te = (PowerCellTileEntity) tileEntity;
             PowerCellTileEntity.Mode north = te.getMode(EnumFacing.NORTH);

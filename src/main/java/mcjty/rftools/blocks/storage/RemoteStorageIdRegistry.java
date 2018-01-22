@@ -6,7 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldSavedData;
+import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.DimensionManager;
 
 import java.util.HashMap;
@@ -17,15 +17,15 @@ public class RemoteStorageIdRegistry extends WorldSavedData {
     private static RemoteStorageIdRegistry instance = null;
 
     private int lastId = 0;
-    private Map<Integer,GlobalCoordinate> storages = new HashMap<Integer, GlobalCoordinate>();
-    private Map<Integer,Long> lastPublishTime = new HashMap<Integer, Long>();
+    private Map<Integer,GlobalCoordinate> storages = new HashMap<>();
+    private Map<Integer,Long> lastPublishTime = new HashMap<>();
 
     public RemoteStorageIdRegistry(String identifier) {
         super(identifier);
     }
 
     public void save(World world) {
-        world.getMapStorage().setData(RFTOOLS_REMOTE_STORAGE, this);
+        world.setData(RFTOOLS_REMOTE_STORAGE, this);
         markDirty();
     }
 
@@ -40,7 +40,7 @@ public class RemoteStorageIdRegistry extends WorldSavedData {
         if (instance != null) {
             return instance;
         }
-        instance = (RemoteStorageIdRegistry) world.getMapStorage().getOrLoadData(RemoteStorageIdRegistry.class, RFTOOLS_REMOTE_STORAGE);
+        instance = (RemoteStorageIdRegistry) world.loadData(RemoteStorageIdRegistry.class, RFTOOLS_REMOTE_STORAGE);
         if (instance == null) {
             instance = new RemoteStorageIdRegistry(RFTOOLS_REMOTE_STORAGE);
         }

@@ -37,7 +37,7 @@ public class MachineInfuserTileEntity extends GenericEnergyReceiverTileEntity im
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
@@ -53,7 +53,7 @@ public class MachineInfuserTileEntity extends GenericEnergyReceiverTileEntity im
         } else {
             ItemStack inputStack = inventoryHelper.getStackInSlot(0);
             ItemStack outputStack = inventoryHelper.getStackInSlot(1);
-            if (inputStack != null && inputStack.getItem() == ModItems.dimensionalShardItem && isInfusable(outputStack)) {
+            if (!inputStack.isEmpty() && inputStack.getItem() == ModItems.dimensionalShardItem && isInfusable(outputStack)) {
                 startInfusing();
             }
         }
@@ -71,12 +71,12 @@ public class MachineInfuserTileEntity extends GenericEnergyReceiverTileEntity im
         return true;
     }
 
-    private NBTTagCompound getTagCompound(ItemStack stack) {
-        if (stack == null) {
+    public static NBTTagCompound getTagCompound(ItemStack stack) {
+        if (stack.isEmpty()) {
             return null;
         }
 
-        if (stack.stackSize != 1) {
+        if (stack.getCount() != 1) {
             return null;
         }
 
@@ -110,15 +110,15 @@ public class MachineInfuserTileEntity extends GenericEnergyReceiverTileEntity im
         int rf = MachineInfuserConfiguration.rfPerTick;
         rf = (int) (rf * (2.0f - getInfusedFactor()) / 2.0f);
 
-        if (getEnergyStored(EnumFacing.DOWN) < rf) {
+        if (getEnergyStored() < rf) {
             // Not enough energy.
             return;
         }
         consumeEnergy(rf);
 
         inventoryHelper.getStackInSlot(0).splitStack(1);
-        if (inventoryHelper.getStackInSlot(0).stackSize == 0) {
-            inventoryHelper.setStackInSlot(0, null);
+        if (inventoryHelper.getStackInSlot(0).isEmpty()) {
+            inventoryHelper.setStackInSlot(0, ItemStack.EMPTY);
         }
         infusing = 5;
         markDirty();
@@ -148,7 +148,12 @@ public class MachineInfuserTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 

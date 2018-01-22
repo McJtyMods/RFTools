@@ -28,25 +28,19 @@ public class CountItemSorter implements ItemSorter {
 
     @Override
     public Comparator<Pair<ItemStack, Integer>> getComparator() {
-        return new Comparator<Pair<ItemStack, Integer>>() {
-            @Override
-            public int compare(Pair<ItemStack, Integer> o1, Pair<ItemStack, Integer> o2) {
-                Integer c1 = o1.getLeft().stackSize;
-                Integer c2 = o2.getLeft().stackSize;
-                return c2.compareTo(c1);
-            }
-        };
+        return Comparator.comparing(o1 -> -o1.getLeft().getCount());
     }
 
     @Override
     public boolean isSameGroup(Pair<ItemStack, Integer> o1, Pair<ItemStack, Integer> o2) {
-        Integer c1 = o1.getLeft().stackSize;
-        Integer c2 = o2.getLeft().stackSize;
+        Integer c1 = o1.getLeft().getCount();
+        Integer c2 = o2.getLeft().getCount();
         return c2.compareTo(c1) == 0;
     }
 
     @Override
     public String getGroupName(Pair<ItemStack, Integer> object) {
-        return "Count " + object.getKey().stackSize;
+        return "Count " +
+                object.getKey().getCount();
     }
 }

@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "rftools:screen_controller"
+  },
+  "pattern": [
+    "ror",
+    "gMg",
+    "rgr"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "g": {
+      "item": "minecraft:glass"
+    },
+    "M": {
+      "item": "rftools:machine_frame"
+    },
+    "o": {
+      "item": "minecraft:ender_pearl"
+    }
+  }
+}

@@ -65,8 +65,8 @@ public class InventoriesItemSource implements IItemSource {
         ItemKey realKey = (ItemKey) key;
         ItemStack stack = realKey.getInventory().getStackInSlot(realKey.getSlot());
         ItemStack result = stack.splitStack(amount);
-        if (stack.stackSize == 0) {
-            realKey.getInventory().setInventorySlotContents(realKey.getSlot(), null);
+        if (stack.isEmpty()) {
+            realKey.getInventory().setInventorySlotContents(realKey.getSlot(), ItemStack.EMPTY);
         }
         return result;
     }
@@ -76,12 +76,12 @@ public class InventoriesItemSource implements IItemSource {
         ItemKey realKey = (ItemKey) key;
         IInventory inventory = realKey.getInventory();
         ItemStack origStack = inventory.removeStackFromSlot(realKey.getSlot());
-        if (origStack != null) {
+        if (!origStack.isEmpty()) {
             if (ItemHandlerHelper.canItemStacksStack(origStack, stack)) {
-                if ((stack.stackSize + origStack.stackSize) > stack.getMaxStackSize()) {
+                if ((stack.getCount() + origStack.getCount()) > stack.getMaxStackSize()) {
                     return false;
                 }
-                stack.stackSize += origStack.stackSize;
+                stack.grow(origStack.getCount());
             } else {
                 return false;
             }
@@ -116,12 +116,18 @@ public class InventoriesItemSource implements IItemSource {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
 
             ItemKey itemKey = (ItemKey) o;
 
-            if (slot != itemKey.slot) return false;
+            if (slot != itemKey.slot) {
+                return false;
+            }
             return inventory.equals(itemKey.inventory);
 
         }

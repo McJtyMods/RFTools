@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.screens.modulesclient;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.api.screens.*;
 import mcjty.rftools.api.screens.data.IModuleDataInteger;
+import mcjty.rftools.blocks.screens.modulesclient.helper.ScreenTextHelper;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,6 +19,8 @@ public class CounterClientScreenModule implements IClientScreenModule<IModuleDat
     private FormatStyle format = FormatStyle.MODE_FULL;
     protected BlockPos coordinate = BlockPosTools.INVALID;
 
+    private ITextRenderHelper labelCache = new ScreenTextHelper();
+
     @Override
     public TransformMode getTransformMode() {
         return TransformMode.TEXT;
@@ -31,9 +34,11 @@ public class CounterClientScreenModule implements IClientScreenModule<IModuleDat
     @Override
     public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleDataInteger screenData, ModuleRenderInfo renderInfo) {
         GlStateManager.disableLighting();
+
         int xoffset;
         if (!line.isEmpty()) {
-            fontRenderer.drawString(line, 7, currenty, color);
+            labelCache.setup(line, 160, renderInfo);
+            labelCache.renderText(0, currenty, color, renderInfo);
             xoffset = 7 + 40;
         } else {
             xoffset = 7;
@@ -46,9 +51,10 @@ public class CounterClientScreenModule implements IClientScreenModule<IModuleDat
             } else {
                 counter = 0;
             }
-            fontRenderer.drawString(renderHelper.format(String.valueOf(counter), format), xoffset, currenty, cntcolor);
+            String output = renderHelper.format(String.valueOf(counter), format);
+            renderHelper.renderText(xoffset, currenty, cntcolor, renderInfo, output);
         } else {
-            fontRenderer.drawString("<invalid>", xoffset, currenty, 0xff0000);
+            renderHelper.renderText(xoffset, currenty, 0xff0000, renderInfo, "<invalid>");
         }
     }
 
@@ -59,11 +65,12 @@ public class CounterClientScreenModule implements IClientScreenModule<IModuleDat
 
     @Override
     public void createGui(IModuleGuiBuilder guiBuilder) {
-        guiBuilder.
-                label("Label:").text("text", "Label text").nl().
-                label("L:").color("color", "Color for the label").label("C:").color("cntcolor", "Color for the counter").nl().
-                format("format").nl().
-                label("Block:").block("monitor").nl();
+        guiBuilder
+                .label("Label:").text("text", "Label text").nl()
+                .label("L:").color("color", "Color for the label").label("C:").color("cntcolor", "Color for the counter").nl()
+                .format("format")
+                .choices("align", "Label alignment", "Left", "Center", "Right").nl()
+                .label("Block:").block("monitor").nl();
     }
 
     @Override
@@ -79,6 +86,12 @@ public class CounterClientScreenModule implements IClientScreenModule<IModuleDat
                 cntcolor = tagCompound.getInteger("cntcolor");
             } else {
                 cntcolor = 0xffffff;
+            }
+            if (tagCompound.hasKey("align")) {
+                String alignment = tagCompound.getString("align");
+                labelCache.align(TextAlign.get(alignment));
+            } else {
+                labelCache.align(TextAlign.ALIGN_LEFT);
             }
 
             format = FormatStyle.values()[tagCompound.getInteger("format")];

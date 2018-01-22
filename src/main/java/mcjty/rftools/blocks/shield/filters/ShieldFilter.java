@@ -1,10 +1,10 @@
 package mcjty.rftools.blocks.shield.filters;
 
-import mcjty.lib.network.ByteBufConverter;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 
-public interface ShieldFilter extends ByteBufConverter {
+public interface ShieldFilter {
     public static final int ACTION_PASS = 0;            // Entities that match this filter can pass
     public static final int ACTION_SOLID = 1;           // Entities that match this filter are blocked
     public static final int ACTION_DAMAGE = 2;          // Entities that match this filter get damage (can be combined with solid)
@@ -21,4 +21,6 @@ public interface ShieldFilter extends ByteBufConverter {
     void readFromNBT(NBTTagCompound tagCompound);
 
     void writeToNBT(NBTTagCompound tagCompound);
+
+    void toBytes(ByteBuf buf);
 }

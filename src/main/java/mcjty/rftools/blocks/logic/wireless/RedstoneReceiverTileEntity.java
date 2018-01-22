@@ -22,7 +22,7 @@ public class RedstoneReceiverTileEntity extends LogicTileEntity implements ITick
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
@@ -34,7 +34,7 @@ public class RedstoneReceiverTileEntity extends LogicTileEntity implements ITick
     public boolean checkOutput() {
         boolean newout = false;
         if (channel != -1) {
-            RedstoneChannels channels = RedstoneChannels.getChannels(worldObj);
+            RedstoneChannels channels = RedstoneChannels.getChannels(getWorld());
             RedstoneChannels.RedstoneChannel ch = channels.getChannel(channel);
             if (ch != null) {
                 newout = ch.getValue() != 0;

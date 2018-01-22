@@ -1,15 +1,15 @@
 package mcjty.rftools.blocks.generator;
 
 
-import cofh.api.energy.IEnergyConnection;
-import cofh.api.energy.IEnergyContainerItem;
 import mcjty.lib.api.information.IMachineInformation;
+import mcjty.lib.compat.RedstoneFluxCompatibility;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyProviderTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.RedstoneMode;
+import mcjty.rftools.RFTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -90,7 +90,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             handleChargingItem();
             handleSendingEnergy();
 
@@ -144,11 +144,11 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
 
         super.onDataPacket(net, packet);
 
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             // If needed send a render update.
             boolean newWorking = isWorking();
             if (newWorking != working) {
-                worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
+                getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
             }
         }
     }
@@ -164,38 +164,36 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
 
     private void handleChargingItem() {
         ItemStack stack = inventoryHelper.getStackInSlot(CoalGeneratorContainer.SLOT_CHARGEITEM);
-        if (stack == null) {
+        if (stack.isEmpty()) {
             return;
         }
         if (stack.hasCapability(CapabilityEnergy.ENERGY, null)) {
             IEnergyStorage capability = stack.getCapability(CapabilityEnergy.ENERGY, null);
-            int energyStored = getEnergyStored(EnumFacing.DOWN);
+            int energyStored = getEnergyStored();
             int rfToGive = CoalGeneratorConfiguration.CHARGEITEMPERTICK <= energyStored ? CoalGeneratorConfiguration.CHARGEITEMPERTICK : energyStored;
             int received = capability.receiveEnergy(rfToGive, false);
             storage.extractEnergy(received, false);
-        } else if (stack.getItem() instanceof IEnergyContainerItem) {
-            IEnergyContainerItem energyContainerItem = (IEnergyContainerItem) stack.getItem();
-            int energyStored = getEnergyStored(EnumFacing.DOWN);
+        } else if (RFTools.redstoneflux && RedstoneFluxCompatibility.isEnergyItem(stack.getItem())) {
+            int energyStored = getEnergyStored();
             int rfToGive = CoalGeneratorConfiguration.CHARGEITEMPERTICK <= energyStored ? CoalGeneratorConfiguration.CHARGEITEMPERTICK : energyStored;
-            int received = energyContainerItem.receiveEnergy(stack, rfToGive, false);
+            int received = RedstoneFluxCompatibility.receiveEnergy(stack.getItem(), stack, rfToGive, false);
             storage.extractEnergy(received, false);
         }
     }
 
     private void handleSendingEnergy() {
-        int energyStored = getEnergyStored(EnumFacing.DOWN);
+        int energyStored = getEnergyStored();
 
-        for (EnumFacing facing : EnumFacing.values()) {
+        for (EnumFacing facing : EnumFacing.VALUES) {
             BlockPos pos = getPos().offset(facing);
-            TileEntity te = worldObj.getTileEntity(pos);
-            if (EnergyTools.isEnergyTE(te)) {
-                EnumFacing opposite = facing.getOpposite();
+            TileEntity te = getWorld().getTileEntity(pos);
+            EnumFacing opposite = facing.getOpposite();
+            if (EnergyTools.isEnergyTE(te) || (te != null && te.hasCapability(CapabilityEnergy.ENERGY, opposite))) {
                 int rfToGive = CoalGeneratorConfiguration.SENDPERTICK <= energyStored ? CoalGeneratorConfiguration.SENDPERTICK : energyStored;
                 int received;
 
-                if (te instanceof IEnergyConnection) {
-                    IEnergyConnection connection = (IEnergyConnection) te;
-                    if (connection.canConnectEnergy(opposite)) {
+                if (RFTools.redstoneflux && RedstoneFluxCompatibility.isEnergyConnection(te)) {
+                    if (RedstoneFluxCompatibility.canConnectEnergy(te, opposite)) {
                         received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
                     } else {
                         received = 0;
@@ -230,9 +228,10 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
         if (index == CoalGeneratorContainer.SLOT_CHARGEITEM) {
-            return stack.getItem() instanceof IEnergyContainerItem;
+            boolean rf = RFTools.redstoneflux && RedstoneFluxCompatibility.isEnergyItem(stack.getItem());
+            return rf;
         } else if (index == CoalGeneratorContainer.SLOT_COALINPUT) {
-            return stack.getItem() == Items.COAL;
+            return stack.getItem() == Items.COAL || stack.getItem() == Item.getItemFromBlock(Blocks.COAL_BLOCK);
         }
         return true;
     }
@@ -242,9 +241,13 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
         return false;
     }
 
-    @SuppressWarnings("NullableProblems")
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 

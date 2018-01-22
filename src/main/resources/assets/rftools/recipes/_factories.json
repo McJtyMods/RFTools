@@ -1,0 +1,11 @@
+{
+  "recipes": {
+    "copy_nbt": "mcjty.lib.crafting.CopyNBTRecipeFactory",
+    "container_to_item": "mcjty.rftools.crafting.ContainerToItemRecipeFactory",
+    "container_and_item": "mcjty.rftools.crafting.ContainerAndItemRecipeFactory"
+  },
+  "conditions": {
+    "dimshard_easy": "mcjty.rftools.crafting.DimshardEasyConditionFactory",
+    "dimshard_hard": "mcjty.rftools.crafting.DimshardHardConditionFactory"
+  }
+}

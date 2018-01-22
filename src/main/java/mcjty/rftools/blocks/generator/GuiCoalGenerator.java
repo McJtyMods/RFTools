@@ -7,12 +7,10 @@ import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.EnergyBar;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.gui.widgets.Widget;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
@@ -29,7 +27,7 @@ public class GuiCoalGenerator extends GenericGuiContainer<CoalGeneratorTileEntit
 
     public GuiCoalGenerator(CoalGeneratorTileEntity tileEntity, CoalGeneratorContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, tileEntity, container, RFTools.GUI_MANUAL_MAIN, "coalgen");
-        GenericEnergyStorageTileEntity.setCurrentRF(tileEntity.getEnergyStored(EnumFacing.DOWN));
+        GenericEnergyStorageTileEntity.setCurrentRF(tileEntity.getEnergyStored());
 
         xSize = INFUSER_WIDTH;
         ySize = INFUSER_HEIGHT;
@@ -54,13 +52,13 @@ public class GuiCoalGenerator extends GenericGuiContainer<CoalGeneratorTileEntit
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored(EnumFacing.DOWN);
+        int maxEnergyStored = tileEntity.getMaxEnergyStored();
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 8, 54)).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
         initRedstoneMode();
 
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout())
+        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout())
                 .addChild(energyBar)
                 .addChild(redstoneMode);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));

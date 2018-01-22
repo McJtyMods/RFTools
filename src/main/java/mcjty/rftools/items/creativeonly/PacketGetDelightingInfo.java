@@ -44,15 +44,15 @@ public class PacketGetDelightingInfo implements IMessage {
         }
 
         private void handle(PacketGetDelightingInfo message, MessageContext ctx) {
-            EntityPlayer player = ctx.getServerHandler().playerEntity;
-            World world = player.worldObj;
+            EntityPlayer player = ctx.getServerHandler().player;
+            World world = player.getEntityWorld();
 
             List<String> blockClasses = new ArrayList<>();
             List<String> teClasses = new ArrayList<>();
-            Map<String,DelightingInfoHelper.NBTDescription> nbtData = new HashMap<String, DelightingInfoHelper.NBTDescription>();
+            Map<String,DelightingInfoHelper.NBTDescription> nbtData = new HashMap<>();
 
             int metadata = DelightingInfoHelper.fillDelightingData(message.pos.getX(), message.pos.getY(), message.pos.getZ(), world, blockClasses, teClasses, nbtData);
-            RFToolsMessages.INSTANCE.sendTo(new PacketDelightingInfoReady(blockClasses, teClasses, nbtData, metadata), ctx.getServerHandler().playerEntity);
+            RFToolsMessages.INSTANCE.sendTo(new PacketDelightingInfoReady(blockClasses, teClasses, nbtData, metadata), ctx.getServerHandler().player);
         }
     }
 

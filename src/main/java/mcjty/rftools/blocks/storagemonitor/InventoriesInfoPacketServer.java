@@ -4,9 +4,7 @@ import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.network.clientinfo.InfoPacketClient;
 import mcjty.lib.network.clientinfo.InfoPacketServer;
-import mcjty.lib.varia.BlockPosTools;
-import mcjty.rftools.BlockInfo;
-import mcjty.rftools.blocks.storage.ModularStorageBlock;
+import mcjty.lib.varia.BlockTools;
 import mcjty.rftools.blocks.storage.ModularStorageContainer;
 import mcjty.rftools.blocks.storage.ModularStorageTileEntity;
 import mcjty.rftools.varia.RFToolsTools;
@@ -22,6 +20,7 @@ import net.minecraftforge.common.DimensionManager;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class InventoriesInfoPacketServer implements InfoPacketServer {
 
@@ -66,14 +65,14 @@ public class InventoriesInfoPacketServer implements InfoPacketServer {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof StorageScannerTileEntity) {
             StorageScannerTileEntity scannerTileEntity = (StorageScannerTileEntity) te;
-            List<BlockPos> inventories;
+            Stream<BlockPos> inventories;
             if (doscan) {
                 inventories = scannerTileEntity.findInventories();
             } else {
-                inventories = scannerTileEntity.getInventories();
+                inventories = scannerTileEntity.getAllInventories();
             }
 
-            List<InventoriesInfoPacketClient.InventoryInfo> invs = inventories.stream()
+            List<InventoriesInfoPacketClient.InventoryInfo> invs = inventories
                     .map(pos -> toInventoryInfo(world, pos, scannerTileEntity))
                     .collect(Collectors.toList());
 
@@ -94,12 +93,12 @@ public class InventoriesInfoPacketServer implements InfoPacketServer {
             displayName = "[REMOVED]";
             block = null;
         } else {
-            displayName = BlockInfo.getReadableName(state);
+            displayName = BlockTools.getReadableName(world, pos);
             TileEntity storageTe = world.getTileEntity(pos);
             if (storageTe instanceof ModularStorageTileEntity) {
                 ModularStorageTileEntity storageTileEntity = (ModularStorageTileEntity) storageTe;
                 ItemStack storageModule = storageTileEntity.getStackInSlot(ModularStorageContainer.SLOT_STORAGE_MODULE);
-                if (storageModule != null) {
+                if (!storageModule.isEmpty()) {
                     if (storageModule.getTagCompound().hasKey("display")) {
                         displayName = storageModule.getDisplayName();
                     }

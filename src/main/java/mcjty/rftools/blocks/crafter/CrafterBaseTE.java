@@ -4,9 +4,11 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.varia.ItemStackList;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.NullSidedInvWrapper;
 import mcjty.lib.varia.RedstoneMode;
+import mcjty.rftools.craftinggrid.CraftingRecipe;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.jei.JEIRecipeAcceptor;
@@ -25,12 +27,12 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.oredict.OreDictionary;
 
+import static mcjty.rftools.craftinggrid.CraftingRecipe.CraftMode.EXTC;
+import static mcjty.rftools.craftinggrid.CraftingRecipe.CraftMode.INT;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static mcjty.rftools.blocks.crafter.CraftingRecipe.CraftMode.EXTC;
-import static mcjty.rftools.blocks.crafter.CraftingRecipe.CraftMode.INT;
 
 public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements ITickable, DefaultSidedInventory,
         JEIRecipeAcceptor {
@@ -44,7 +46,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     private InventoryHelper inventoryHelper = new InventoryHelper(this, CrafterContainer.factory,
             10 + CrafterContainer.BUFFER_SIZE + CrafterContainer.BUFFEROUT_SIZE + 1);
 
-    private ItemStack[] ghostSlots = new ItemStack[CrafterContainer.BUFFER_SIZE + CrafterContainer.BUFFEROUT_SIZE];
+    private ItemStackList ghostSlots = ItemStackList.create(CrafterContainer.BUFFER_SIZE + CrafterContainer.BUFFEROUT_SIZE);
 
     private CraftingRecipe recipes[];
     private int supportedRecipes;
@@ -54,6 +56,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     private int speedMode = SPEED_SLOW;
 
     private InventoryCrafting workInventory = new InventoryCrafting(new Container() {
+        @SuppressWarnings("NullableProblems")
         @Override
         public boolean canInteractWith(EntityPlayer var1) {
             return false;
@@ -76,7 +79,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         return true;
     }
 
-    public ItemStack[] getGhostSlots() {
+    public ItemStackList getGhostSlots() {
         return ghostSlots;
     }
 
@@ -142,7 +145,12 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 
@@ -158,8 +166,8 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
             return false;
         }
         if (index >= CrafterContainer.SLOT_BUFFER && index < CrafterContainer.SLOT_BUFFEROUT) {
-            ItemStack ghostSlot = ghostSlots[index - CrafterContainer.SLOT_BUFFER];
-            if (ghostSlot != null) {
+            ItemStack ghostSlot = ghostSlots.get(index - CrafterContainer.SLOT_BUFFER);
+            if (!ghostSlot.isEmpty()) {
                 if (!ghostSlot.isItemEqual(stack)) {
                     return false;
                 }
@@ -171,8 +179,8 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
                 }
             }
         } else if (index >= CrafterContainer.SLOT_BUFFEROUT && index < CrafterContainer.SLOT_FILTER_MODULE) {
-            ItemStack ghostSlot = ghostSlots[index - CrafterContainer.SLOT_BUFFEROUT + CrafterContainer.BUFFER_SIZE];
-            if (ghostSlot != null) {
+            ItemStack ghostSlot = ghostSlots.get(index - CrafterContainer.SLOT_BUFFEROUT + CrafterContainer.BUFFER_SIZE);
+            if (!ghostSlot.isEmpty()) {
                 if (!ghostSlot.isItemEqual(stack)) {
                     return false;
                 }
@@ -220,7 +228,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         NBTTagList bufferTagList = tagCompound.getTagList("GItems", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            ghostSlots[i] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+            ghostSlots.set(i, new ItemStack(nbtTagCompound));
         }
     }
 
@@ -249,10 +257,9 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
     private void writeGhostBufferToNBT(NBTTagCompound tagCompound) {
         NBTTagList bufferTagList = new NBTTagList();
-        for (int i = 0 ; i < ghostSlots.length ; i++) {
-            ItemStack stack = ghostSlots[i];
+        for (ItemStack stack : ghostSlots) {
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
-            if (stack != null) {
+            if (!stack.isEmpty()) {
                 stack.writeToNBT(nbtTagCompound);
             }
             bufferTagList.appendTag(nbtTagCompound);
@@ -272,7 +279,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
@@ -297,7 +304,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         // 100%: rf -> rf / 2
         int rf = (int) (CrafterConfiguration.rfPerOperation * (2.0f - getInfusedFactor()) / 2.0f);
 
-        if (getEnergyStored(EnumFacing.DOWN) < rf) {
+        if (getEnergyStored() < rf) {
             return;
         }
 
@@ -319,12 +326,12 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     }
 
     private boolean craftOneItemNew(CraftingRecipe craftingRecipe) {
-        IRecipe recipe = craftingRecipe.getCachedRecipe(worldObj);
+        IRecipe recipe = craftingRecipe.getCachedRecipe(getWorld());
         if (recipe == null) {
             return false;
         }
 
-        Map<Integer,ItemStack> undo = new HashMap<Integer, ItemStack>();
+        Map<Integer,ItemStack> undo = new HashMap<>();
 
         if (!testAndConsumeCraftingItems(craftingRecipe, undo, true)) {
             undo(undo);
@@ -335,7 +342,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         }
 
 //        ItemStack result = recipe.getCraftingResult(craftingRecipe.getInventory());
-        ItemStack result = null;
+        ItemStack result = ItemStack.EMPTY;
         try {
             result = recipe.getCraftingResult(workInventory);
         } catch (Exception e) {
@@ -345,12 +352,12 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
         // Try to merge the output. If there is something that doesn't fit we undo everything.
         CraftingRecipe.CraftMode mode = craftingRecipe.getCraftMode();
-        if (result != null && placeResult(mode, result, undo)) {
-            ItemStack[] remaining = recipe.getRemainingItems(workInventory);
+        if (!result.isEmpty() && placeResult(mode, result, undo)) {
+            List<ItemStack> remaining = recipe.getRemainingItems(workInventory);
             if (remaining != null) {
                 CraftingRecipe.CraftMode remainingMode = mode == EXTC ? INT : mode;
                 for (ItemStack s : remaining) {
-                    if (s != null) {
+                    if (!s.isEmpty()) {
                         if (!placeResult(remainingMode, s, undo)) {
                             // Not enough room.
                             undo(undo);
@@ -372,11 +379,11 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         if (strictDamage) {
             return OreDictionary.itemMatches(target, input, false);
         } else {
-            if ((input == null && target != null) || (input != null && target == null)) {
+            if ((input.isEmpty() && !target.isEmpty())
+                    || (!input.isEmpty() && target.isEmpty())) {
                 return false;
             }
             return target.getItem() == input.getItem();
-
         }
     }
 
@@ -386,25 +393,25 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
         for (int i = 0 ; i < inventory.getSizeInventory() ; i++) {
             ItemStack stack = inventory.getStackInSlot(i);
-            if (stack != null) {
-                int count = stack.stackSize;
+            if (!stack.isEmpty()) {
+                int count = stack.getCount();
                 for (int j = 0 ; j < CrafterContainer.BUFFER_SIZE ; j++) {
                     int slotIdx = CrafterContainer.SLOT_BUFFER + j;
                     ItemStack input = inventoryHelper.getStackInSlot(slotIdx);
-                    if (input != null && input.stackSize > keep) {
+                    if (!input.isEmpty() && input.getCount() > keep) {
                         if (match(stack, input, strictDamage)) {
                             workInventory.setInventorySlotContents(i, input.copy());
                             int ss = count;
-                            if (input.stackSize - ss < keep) {
-                                ss = input.stackSize - keep;
+                            if (input.getCount() - ss < keep) {
+                                ss = input.getCount() - keep;
                             }
                             count -= ss;
                             if (!undo.containsKey(slotIdx)) {
                                 undo.put(slotIdx, input.copy());
                             }
                             input.splitStack(ss);        // This consumes the items
-                            if (input.stackSize == 0) {
-                                inventoryHelper.setStackInSlot(slotIdx, null);
+                            if (input.isEmpty()) {
+                                inventoryHelper.setStackInSlot(slotIdx, ItemStack.EMPTY);
                             }
                         }
                     }
@@ -416,12 +423,12 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
                     return false;   // Couldn't find all items.
                 }
             } else {
-                workInventory.setInventorySlotContents(i, null);
+                workInventory.setInventorySlotContents(i, ItemStack.EMPTY);
             }
         }
 
-        IRecipe recipe = craftingRecipe.getCachedRecipe(worldObj);
-        return recipe.matches(workInventory, worldObj);
+        IRecipe recipe = craftingRecipe.getCachedRecipe(getWorld());
+        return recipe.matches(workInventory, getWorld());
     }
 
 
@@ -447,7 +454,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     }
 
     private void rememberItems() {
-        for (int i = 0 ; i < ghostSlots.length ; i++) {
+        for (int i = 0 ; i < ghostSlots.size() ; i++) {
             int slotIdx;
             if (i < CrafterContainer.BUFFER_SIZE) {
                 slotIdx = i + CrafterContainer.SLOT_BUFFER;
@@ -455,17 +462,17 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
                 slotIdx = i + CrafterContainer.SLOT_BUFFEROUT - CrafterContainer.BUFFER_SIZE;
             }
             if (inventoryHelper.containsItem(slotIdx)) {
-                ItemStack stack = inventoryHelper.getStackInSlot(slotIdx);
-                ghostSlots[i] = stack.copy();
-                ghostSlots[i].stackSize = 1;
+                ItemStack stack = inventoryHelper.getStackInSlot(slotIdx).copy();
+                stack.setCount(1);
+                ghostSlots.set(i, stack);
             }
         }
         markDirtyClient();
     }
 
     private void forgetItems() {
-        for (int i = 0 ; i < ghostSlots.length ; i++) {
-            ghostSlots[i] = null;
+        for (int i = 0 ; i < ghostSlots.size() ; i++) {
+            ghostSlots.set(i, ItemStack.EMPTY);
         }
         markDirtyClient();
     }

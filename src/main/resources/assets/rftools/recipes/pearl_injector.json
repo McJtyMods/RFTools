@@ -1,0 +1,26 @@
+{
+  "result": {
+    "item": "rftools:pearl_injector"
+  },
+  "pattern": [
+    " C ",
+    "rMr",
+    " H "
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "C": {
+      "type": "forge:ore_dict",
+      "ore": "chest"
+    },
+    "H": {
+      "item": "minecraft:hopper"
+    },
+    "M": {
+      "item": "rftools:machine_frame"
+    }
+  }
+}

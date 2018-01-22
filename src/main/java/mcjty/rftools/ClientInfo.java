@@ -47,6 +47,6 @@ public class ClientInfo {
 
     @SideOnly(Side.CLIENT)
     public static World getWorld() {
-        return Minecraft.getMinecraft().theWorld;
+        return Minecraft.getMinecraft().world;
     }
 }

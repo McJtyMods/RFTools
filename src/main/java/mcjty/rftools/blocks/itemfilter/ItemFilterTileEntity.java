@@ -96,7 +96,12 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 
@@ -106,7 +111,7 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
             return false;
         }
         ItemStack ghostStack = inventoryHelper.getStackInSlot(index - ItemFilterContainer.SLOT_BUFFER);
-        return ghostStack == null || ghostStack.isItemEqual(stack);
+        return ghostStack.isEmpty() || ghostStack.isItemEqual(stack);
     }
 
     @Override
@@ -127,13 +132,13 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
         int ghostIndex = index - ItemFilterContainer.SLOT_BUFFER;
 
         ItemStack ghostStack = inventoryHelper.getStackInSlot(ghostIndex);
-        if (ghostStack == null) {
+        if (ghostStack.isEmpty()) {
             // First check if there are other ghosted items for this side that match.
             // In that case we don't allow input here.
             int im = inputMode[side.ordinal()];
             for (int i = ItemFilterContainer.SLOT_GHOST ; i < ItemFilterContainer.SLOT_GHOST + ItemFilterContainer.GHOST_SIZE ; i++) {
                 ItemStack g = inventoryHelper.getStackInSlot(i);
-                if (g != null && ((im & (1<<i)) != 0) && g.isItemEqual(stack)) {
+                if (!g.isEmpty() && ((im & (1<<i)) != 0) && g.isItemEqual(stack)) {
                     return false;
                 }
             }
@@ -158,12 +163,12 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
         return (outputMode[side.ordinal()] & (1<<slot)) != 0;
     }
 
-    IItemHandler invHandlerN = new ItemFilterInvWrapper(this, EnumFacing.NORTH);
-    IItemHandler invHandlerS = new ItemFilterInvWrapper(this, EnumFacing.SOUTH);
-    IItemHandler invHandlerW = new ItemFilterInvWrapper(this, EnumFacing.WEST);
-    IItemHandler invHandlerE = new ItemFilterInvWrapper(this, EnumFacing.EAST);
-    IItemHandler invHandlerD = new ItemFilterInvWrapper(this, EnumFacing.DOWN);
-    IItemHandler invHandlerU = new ItemFilterInvWrapper(this, EnumFacing.UP);
+    private IItemHandler invHandlerN = new ItemFilterInvWrapper(this, EnumFacing.NORTH);
+    private IItemHandler invHandlerS = new ItemFilterInvWrapper(this, EnumFacing.SOUTH);
+    private IItemHandler invHandlerW = new ItemFilterInvWrapper(this, EnumFacing.WEST);
+    private IItemHandler invHandlerE = new ItemFilterInvWrapper(this, EnumFacing.EAST);
+    private IItemHandler invHandlerD = new ItemFilterInvWrapper(this, EnumFacing.DOWN);
+    private IItemHandler invHandlerU = new ItemFilterInvWrapper(this, EnumFacing.UP);
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {

@@ -1,6 +1,7 @@
 {
-  "parent": "rftools:block/rftoolsblock",
+  "parent": "rftools:block/rftoolsblock_glow",
   "textures": {
-    "front": "rftools:blocks/machineBlockProtectorOn"
+    "front": "rftools:blocks/machineblockprotector",
+    "frontglow":  "rftools:blocks/machineblockprotector_glow"
   }
 }

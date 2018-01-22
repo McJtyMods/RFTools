@@ -2,9 +2,7 @@ package mcjty.rftools.blocks.builder;
 
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.api.Infusable;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.varia.ModuleSupport;
-import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -14,6 +12,7 @@ import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -38,8 +37,8 @@ public class BuilderBlock extends GenericRFToolsBlock<BuilderTileEntity, Builder
     }
 
     @Override
-    public boolean isHorizRotation() {
-        return true;
+    public RotationType getRotationType() {
+        return RotationType.HORIZROTATION;
     }
 
     @Override
@@ -62,7 +61,7 @@ public class BuilderBlock extends GenericRFToolsBlock<BuilderTileEntity, Builder
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(TextFormatting.WHITE + "This block can quarry areas, pump liquids,");
@@ -92,7 +91,7 @@ public class BuilderBlock extends GenericRFToolsBlock<BuilderTileEntity, Builder
         super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
         TileEntity te = world.getTileEntity(data.getPos());
         if (te instanceof BuilderTileEntity) {
-            int scan = BuilderTileEntity.getCurrentLevel();
+            int scan = ((BuilderTileEntity) te).getCurrentLevel();
             probeInfo.text(TextFormatting.GREEN + "Current level: " + (scan == -1 ? "not scanning" : scan));
         }
     }
@@ -108,7 +107,7 @@ public class BuilderBlock extends GenericRFToolsBlock<BuilderTileEntity, Builder
                 BuilderTileEntity builderTileEntity = (BuilderTileEntity) te;
                 builderTileEntity.requestCurrentLevel();
             }
-            int scan = BuilderTileEntity.getCurrentLevel();
+            int scan = BuilderTileEntity.getCurrentLevelClientSide();
             currenttip.add(TextFormatting.GREEN + "Current level: " + (scan == -1 ? "not scanning" : scan));
         }
         return currenttip;
@@ -133,7 +132,7 @@ public class BuilderBlock extends GenericRFToolsBlock<BuilderTileEntity, Builder
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiBuilder> getGuiClass() {
         return GuiBuilder.class;
     }
 
@@ -161,7 +160,8 @@ public class BuilderBlock extends GenericRFToolsBlock<BuilderTileEntity, Builder
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         super.onBlockPlacedBy(world, pos, state, placer, stack);
         if (placer instanceof EntityPlayer) {
-            Achievements.trigger((EntityPlayer) placer, Achievements.theBuilder);
+            // @todo achievements
+//            Achievements.trigger((EntityPlayer) placer, Achievements.theBuilder);
         }
     }
 }

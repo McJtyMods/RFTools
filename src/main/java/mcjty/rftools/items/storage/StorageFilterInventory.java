@@ -1,5 +1,6 @@
 package mcjty.rftools.items.storage;
 
+import mcjty.lib.varia.ItemStackList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -10,7 +11,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
 
 public class StorageFilterInventory implements IInventory {
-    private ItemStack stacks[] = new ItemStack[StorageFilterContainer.FILTER_SLOTS];
+    private ItemStackList stacks = ItemStackList.create(StorageFilterContainer.FILTER_SLOTS);
     private final EntityPlayer entityPlayer;
 
     public StorageFilterInventory(EntityPlayer player) {
@@ -23,7 +24,7 @@ public class StorageFilterInventory implements IInventory {
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            stacks[i] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+            stacks.set(i, new ItemStack(nbtTagCompound));
         }
     }
 
@@ -34,50 +35,56 @@ public class StorageFilterInventory implements IInventory {
 
     @Override
     public ItemStack getStackInSlot(int index) {
-        return stacks[index];
+        return stacks.get(index);
     }
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
-        if (index >= stacks.length) {
-            return null;
+        if (index >= stacks.size()) {
+            return ItemStack.EMPTY;
         }
-        if (stacks[index] != null) {
-            if (stacks[index].stackSize <= amount) {
-                ItemStack old = stacks[index];
-                stacks[index] = null;
+        if (!stacks.get(index).isEmpty()) {
+            if (stacks.get(index).getCount() <= amount) {
+                ItemStack old = stacks.get(index);
+                stacks.set(index, ItemStack.EMPTY);
                 markDirty();
                 return old;
             }
-            ItemStack its = stacks[index].splitStack(amount);
-            if (stacks[index].stackSize == 0) {
-                stacks[index] = null;
+            ItemStack its = stacks.get(index).splitStack(amount);
+            if (stacks.get(index).isEmpty()) {
+                stacks.set(index, ItemStack.EMPTY);
             }
             markDirty();
             return its;
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-        if (index >= stacks.length) {
+        if (index >= stacks.size()) {
             return;
         }
 
         if (StorageFilterContainer.factory.isGhostSlot(index)) {
-            if (stack != null) {
-                stacks[index] = stack.copy();
+            if (!stack.isEmpty()) {
+                ItemStack stack1 = stack.copy();
                 if (index < 9) {
-                    stacks[index].stackSize = 1;
+                    stack1.setCount(1);
                 }
+                stacks.set(index, stack1);
             } else {
-                stacks[index] = null;
+                stacks.set(index, ItemStack.EMPTY);
             }
         } else {
-            stacks[index] = stack;
-            if (stack != null && stack.stackSize > getInventoryStackLimit()) {
-                stack.stackSize = getInventoryStackLimit();
+            stacks.set(index, stack);
+            if (!stack.isEmpty() && stack.getCount() > getInventoryStackLimit()) {
+                int amount = getInventoryStackLimit();
+                if (amount <= 0) {
+                    stack.setCount(0);
+                } else {
+                    stack.setCount(amount);
+                }
             }
         }
         markDirty();
@@ -90,15 +97,18 @@ public class StorageFilterInventory implements IInventory {
 
     @Override
     public void markDirty() {
-        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
-        convertItemsToNBT(tagCompound, stacks);
+        ItemStack heldItem = entityPlayer.getHeldItem(EnumHand.MAIN_HAND);
+        if (!(heldItem).isEmpty()) {
+            NBTTagCompound tagCompound = heldItem.getTagCompound();
+            convertItemsToNBT(tagCompound, stacks);
+        }
     }
 
-    public static void convertItemsToNBT(NBTTagCompound tagCompound, ItemStack[] stacks) {
+    public static void convertItemsToNBT(NBTTagCompound tagCompound, ItemStackList stacks) {
         NBTTagList bufferTagList = new NBTTagList();
         for (ItemStack stack : stacks) {
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
-            if (stack != null) {
+            if (!stack.isEmpty()) {
                 stack.writeToNBT(nbtTagCompound);
             }
             bufferTagList.appendTag(nbtTagCompound);
@@ -106,8 +116,7 @@ public class StorageFilterInventory implements IInventory {
         tagCompound.setTag("Items", bufferTagList);
     }
 
-    @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isUsable(EntityPlayer player) {
         return true;
     }
 
@@ -119,7 +128,7 @@ public class StorageFilterInventory implements IInventory {
     @Override
     public ItemStack removeStackFromSlot(int index) {
         ItemStack stack = getStackInSlot(index);
-        setInventorySlotContents(index, null);
+        setInventorySlotContents(index, ItemStack.EMPTY);
         return stack;
     }
 
@@ -166,5 +175,15 @@ public class StorageFilterInventory implements IInventory {
     @Override
     public ITextComponent getDisplayName() {
         return null;
+    }
+
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer player) {
+        return isUsable(player);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
     }
 }

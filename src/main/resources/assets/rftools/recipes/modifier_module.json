@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "rftools:modifier_module"
+  },
+  "pattern": [
+    "bpr",
+    "rpr",
+    "rpb"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "p": {
+      "item": "minecraft:paper"
+    },
+    "b": {
+      "item": "minecraft:brick"
+    }
+  }
+}

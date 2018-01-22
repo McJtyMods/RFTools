@@ -1,13 +1,13 @@
 package mcjty.rftools.items.creativeonly;
 
+import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
+import mcjty.lib.varia.NBTTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.GenericRFToolsItem;
-import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
@@ -24,11 +24,11 @@ public class DevelopersDelightItem extends GenericRFToolsItem {
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (world.isRemote) {
             dumpInfo(world, pos);
             GuiDevelopersDelight.setSelected(pos);
-            player.openGui(RFTools.instance, RFTools.GUI_DEVELOPERS_DELIGHT, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+            player.openGui(RFTools.instance, RFTools.GUI_DEVELOPERS_DELIGHT, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
             return EnumActionResult.SUCCESS;
         }
         return EnumActionResult.SUCCESS;
@@ -41,7 +41,7 @@ public class DevelopersDelightItem extends GenericRFToolsItem {
         IBlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
         int meta = block.getMetaFromState(state);
-        String modid = RFToolsTools.getModidForBlock(block);
+        String modid = BlockTools.getModidForBlock(block);
         Logging.log("Block: " + block.getUnlocalizedName() + ", Meta: " + meta + ", Mod: " + modid);
         TileEntity tileEntity = world.getTileEntity(pos);
         if (tileEntity != null) {
@@ -49,7 +49,7 @@ public class DevelopersDelightItem extends GenericRFToolsItem {
             try {
                 tileEntity.writeToNBT(tag);
                 StringBuffer buffer = new StringBuffer();
-                RFToolsTools.convertNBTtoJson(buffer, tag, 0);
+                NBTTools.convertNBTtoJson(buffer, tag, 0);
                 Logging.log(buffer.toString());
             } catch (Exception e) {
                 Logging.log("Catched a crash during dumping of NBT");

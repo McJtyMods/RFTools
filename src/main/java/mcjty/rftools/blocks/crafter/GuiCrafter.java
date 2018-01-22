@@ -10,13 +10,12 @@ import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Button;
-import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.network.Argument;
+import mcjty.lib.varia.BlockTools;
+import mcjty.lib.varia.ItemStackList;
 import mcjty.lib.varia.RedstoneMode;
-import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.craftinggrid.CraftingRecipe;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -26,11 +25,10 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     public static final int CRAFTER_WIDTH = 256;
@@ -43,8 +41,6 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     private Button applyButton;
     private ImageChoiceLabel redstoneMode;
     private ImageChoiceLabel speedMode;
-    private Button rememberButton;
-    private Button forgetButton;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/crafter.png");
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
@@ -53,7 +49,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
 
     public GuiCrafter(CrafterBlockTileEntity1 te, CrafterContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, RFTools.GUI_MANUAL_MAIN, "crafter");
-        GenericEnergyStorageTileEntity.setCurrentRF(te.getEnergyStored(EnumFacing.DOWN));
+        GenericEnergyStorageTileEntity.setCurrentRF(te.getEnergyStored());
 
         xSize = CRAFTER_WIDTH;
         ySize = CRAFTER_HEIGHT;
@@ -61,7 +57,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
 
     public GuiCrafter(CrafterBlockTileEntity2 te, CrafterContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, RFTools.GUI_MANUAL_MAIN, "crafter");
-        GenericEnergyStorageTileEntity.setCurrentRF(te.getEnergyStored(EnumFacing.DOWN));
+        GenericEnergyStorageTileEntity.setCurrentRF(te.getEnergyStored());
 
         xSize = CRAFTER_WIDTH;
         ySize = CRAFTER_HEIGHT;
@@ -69,7 +65,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
 
     public GuiCrafter(CrafterBlockTileEntity3 te, CrafterContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, RFTools.GUI_MANUAL_MAIN, "crafter");
-        GenericEnergyStorageTileEntity.setCurrentRF(te.getEnergyStored(EnumFacing.DOWN));
+        GenericEnergyStorageTileEntity.setCurrentRF(te.getEnergyStored());
 
         xSize = CRAFTER_WIDTH;
         ySize = CRAFTER_HEIGHT;
@@ -79,7 +75,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored(EnumFacing.DOWN);
+        int maxEnergyStored = tileEntity.getMaxEnergyStored();
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(12, 141, 10, 76)).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
@@ -94,12 +90,12 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
                 setEnabled(false).
                 setLayoutHint(new PositionalLayout.PositionalHint(212, 65, 34, 16));
 
-        rememberButton = new Button(mc, this)
+        Button rememberButton = new Button(mc, this)
                 .setText("R")
                 .setTooltips("Remember the current items", "in the internal and", "external buffers")
                 .addButtonEvent(widget -> rememberItems())
                 .setLayoutHint(new PositionalLayout.PositionalHint(148, 74, 18, 16));
-        forgetButton = new Button(mc, this)
+        Button forgetButton = new Button(mc, this)
                 .setText("F")
                 .setTooltips("Forget the remembered layout")
                 .addButtonEvent(widget -> forgetItems())
@@ -108,7 +104,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         initRedstoneMode();
         initSpeedMode();
 
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).addChild(keepItem).addChild(internalRecipe).
+        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).addChild(keepItem).addChild(internalRecipe).
                 addChild(recipeList).addChild(listSlider).addChild(applyButton).addChild(redstoneMode).addChild(speedMode).addChild(rememberButton).addChild(forgetButton);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
@@ -213,15 +209,14 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         recipeList.removeChildren();
         for (int i = 0 ; i < tileEntity.getSupportedRecipes() ; i++) {
             CraftingRecipe recipe = tileEntity.getRecipe(i);
-            ItemStack stack = recipe.getResult();
-            addRecipeLine(stack);
+            addRecipeLine(recipe.getResult());
         }
     }
 
-    private void addRecipeLine(Object craftingResult) {
-        String readableName = BlockInfo.getReadableName(craftingResult, 0);
+    private void addRecipeLine(ItemStack craftingResult) {
+        String readableName = BlockTools.getReadableName(craftingResult);
         int color = StyleConfig.colorTextInListNormal;
-        if (craftingResult == null) {
+        if (craftingResult.isEmpty()) {
             readableName = "<no recipe>";
             color = 0xFF505050;
         }
@@ -243,7 +238,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         lastSelected = selected;
         if (selected == -1) {
             for (int i = 0 ; i < 10 ; i++) {
-                inventorySlots.getSlot(i).putStack(null);
+                inventorySlots.getSlot(i).putStack(ItemStack.EMPTY);
             }
             keepItem.setChoice("All");
             internalRecipe.setChoice("Ext");
@@ -277,10 +272,10 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         }
 
         // Compare current contents to avoid unneeded slot update.
-        IRecipe recipe = CraftingRecipe.findRecipe(mc.theWorld, inv);
+        IRecipe recipe = CraftingRecipe.findRecipe(mc.world, inv);
         ItemStack newResult;
         if (recipe == null) {
-            newResult = null;
+            newResult = ItemStack.EMPTY;
         } else {
             newResult = recipe.getCraftingResult(inv);
         }
@@ -290,6 +285,11 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     private void applyRecipe() {
         int selected = recipeList.getSelected();
         if (selected == -1) {
+            return;
+        }
+
+        if (selected >= tileEntity.getSupportedRecipes()) {
+            recipeList.setSelected(-1);
             return;
         }
 
@@ -305,10 +305,10 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         }
 
         // Compare current contents to avoid unneeded slot update.
-        IRecipe recipe = CraftingRecipe.findRecipe(mc.theWorld, inv);
+        IRecipe recipe = CraftingRecipe.findRecipe(mc.world, inv);
         ItemStack newResult;
         if (recipe == null) {
-            newResult = null;
+            newResult = ItemStack.EMPTY;
         } else {
             newResult = recipe.getCraftingResult(inv);
         }
@@ -343,10 +343,10 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     }
 
     private boolean itemStacksEqual(ItemStack matches, ItemStack oldStack) {
-        if (matches == null) {
-            return oldStack == null;
+        if (matches.isEmpty()) {
+            return oldStack.isEmpty();
         } else {
-            return oldStack != null && matches.isItemEqual(oldStack);
+            return !oldStack.isEmpty() && matches.isItemEqual(oldStack);
         }
     }
 
@@ -388,21 +388,21 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     private void drawGhostSlots() {
         net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
         GlStateManager.pushMatrix();
-        GlStateManager.translate((float) guiLeft, (float) guiTop, 0.0F);
+        GlStateManager.translate(guiLeft, guiTop, 0.0F);
         GlStateManager.color(1.0F, 0.0F, 0.0F, 1.0F);
         GlStateManager.enableRescaleNormal();
-        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) (short) 240 / 1.0F, (float) (short) 240 / 1.0F);
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (short) 240 / 1.0F, 240.0f);
 
-        ItemStack[] ghostSlots = tileEntity.getGhostSlots();
+        ItemStackList ghostSlots = tileEntity.getGhostSlots();
         zLevel = 100.0F;
         itemRender.zLevel = 100.0F;
         GlStateManager.enableDepth();
         GlStateManager.disableBlend();
         GlStateManager.enableLighting();
 
-        for (int i = 0 ; i < ghostSlots.length ; i++) {
-            ItemStack stack = ghostSlots[i];
-            if (stack != null) {
+        for (int i = 0 ; i < ghostSlots.size() ; i++) {
+            ItemStack stack = ghostSlots.get(i);
+            if (!stack.isEmpty()) {
                 int slotIdx;
                 if (i < CrafterContainer.BUFFER_SIZE) {
                     slotIdx = i + CrafterContainer.SLOT_BUFFER;
@@ -411,13 +411,13 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
                 }
                 Slot slot = inventorySlots.getSlot(slotIdx);
                 if (!slot.getHasStack()) {
-                    itemRender.renderItemAndEffectIntoGUI(stack, slot.xDisplayPosition, slot.yDisplayPosition);
+                    itemRender.renderItemAndEffectIntoGUI(stack, slot.xPos, slot.yPos);
 
                     GlStateManager.disableLighting();
                     GlStateManager.enableBlend();
                     GlStateManager.disableDepth();
                     this.mc.getTextureManager().bindTexture(iconGuiElements);
-                    RenderHelper.drawTexturedModalRect(slot.xDisplayPosition, slot.yDisplayPosition, 14 * 16, 3 * 16, 16, 16);
+                    RenderHelper.drawTexturedModalRect(slot.xPos, slot.yPos, 14 * 16, 3 * 16, 16, 16);
                     GlStateManager.enableDepth();
                     GlStateManager.disableBlend();
                     GlStateManager.enableLighting();

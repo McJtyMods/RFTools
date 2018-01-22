@@ -6,13 +6,14 @@ import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -30,29 +31,26 @@ public class SolidShieldBlock extends AbstractShieldBlock {
 
     @SideOnly(Side.CLIENT)
     public void initBlockColors() {
-        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(new IBlockColor() {
-            @Override
-            public int colorMultiplier(IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) {
-                if (pos != null && worldIn != null) {
-                    TileEntity te = worldIn.getTileEntity(pos);
-                    if (te instanceof NoTickShieldBlockTileEntity) {
-                        NoTickShieldBlockTileEntity tileEntity = (NoTickShieldBlockTileEntity) te;
-                        return tileEntity.getShieldColor();
-                    }
+        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler((state, worldIn, pos, tintIndex) -> {
+            if (pos != null && worldIn != null) {
+                TileEntity te = worldIn.getTileEntity(pos);
+                if (te instanceof NoTickShieldBlockTileEntity) {
+                    NoTickShieldBlockTileEntity tileEntity = (NoTickShieldBlockTileEntity) te;
+                    return tileEntity.getShieldColor();
                 }
-                return 0xffffff;
             }
+            return 0xffffff;
         }, this);
     }
 
     @Override
     protected void initTE() {
-        GameRegistry.registerTileEntity(TickShieldBlockTileEntity.class, RFTools.MODID + "_" + getRegistryName());
+        GameRegistry.registerTileEntity(TickShieldSolidBlockTileEntity.class, RFTools.MODID + "_" + getRegistryName());
     }
 
     @Override
     public TileEntity createNewTileEntity(World world, int metadata) {
-        return new TickShieldBlockTileEntity();
+        return new TickShieldSolidBlockTileEntity();
     }
 
     @Override
@@ -91,8 +89,8 @@ public class SolidShieldBlock extends AbstractShieldBlock {
     }
 
     @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
-        TileEntity te = worldIn.getTileEntity(pos);
+    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+        TileEntity te = world instanceof ChunkCache ? ((ChunkCache)world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) : world.getTileEntity(pos);
         if (te instanceof NoTickShieldBlockTileEntity) {
             NoTickShieldBlockTileEntity tileEntity = (NoTickShieldBlockTileEntity) te;
             ShieldRenderingMode mode = tileEntity.getShieldRenderingMode();

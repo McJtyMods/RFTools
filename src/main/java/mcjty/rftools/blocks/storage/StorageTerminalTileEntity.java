@@ -9,7 +9,6 @@ import mcjty.rftools.craftinggrid.*;
 import mcjty.rftools.jei.JEIRecipeAcceptor;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -19,6 +18,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class StorageTerminalTileEntity extends LogicTileEntity implements DefaultSidedInventory, CraftingGridProvider, JEIRecipeAcceptor {
@@ -49,9 +49,10 @@ public class StorageTerminalTileEntity extends LogicTileEntity implements Defaul
     }
 
     @Override
-    public int[] craft(EntityPlayerMP player, int n, boolean test) {
+    @Nonnull
+    public int[] craft(EntityPlayer player, int n, boolean test) {
         ItemStack module = inventoryHelper.getStackInSlot(StorageTerminalContainer.SLOT_MODULE);
-        if (module == null) {
+        if (module.isEmpty()) {
             // No module. Should not be possible
             return new int[0];
         }
@@ -75,7 +76,7 @@ public class StorageTerminalTileEntity extends LogicTileEntity implements Defaul
                 return StorageCraftingTools.testCraftItems(player, n, craftingGrid.getActiveRecipe(), itemSource);
             } else {
                 StorageCraftingTools.craftItems(player, n, craftingGrid.getActiveRecipe(), itemSource);
-                return null;
+                return new int[0];
             }
         } else {
             // Delegate crafting to scanner
@@ -93,15 +94,15 @@ public class StorageTerminalTileEntity extends LogicTileEntity implements Defaul
 
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
-        boolean module = inventoryHelper.getStackInSlot(StorageTerminalContainer.SLOT_MODULE) != null;
+        boolean module = !inventoryHelper.getStackInSlot(StorageTerminalContainer.SLOT_MODULE).isEmpty();
 
         super.onDataPacket(net, packet);
 
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             // If needed send a render update.
-            boolean newmodule = inventoryHelper.getStackInSlot(StorageTerminalContainer.SLOT_MODULE) != null;
+            boolean newmodule = !inventoryHelper.getStackInSlot(StorageTerminalContainer.SLOT_MODULE).isEmpty();
             if (newmodule != module) {
-                worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
+                getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
             }
         }
     }
@@ -109,11 +110,11 @@ public class StorageTerminalTileEntity extends LogicTileEntity implements Defaul
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
         inventoryHelper.setInventorySlotContents(this.getInventoryStackLimit(), index, stack);
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             // Make sure we update client-side
             markDirtyClient();
         } else {
-            worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
+            getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
         }
     }
 
@@ -150,7 +151,12 @@ public class StorageTerminalTileEntity extends LogicTileEntity implements Defaul
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 }

@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "rftools:elevator"
+  },
+  "pattern": [
+    "cec",
+    "cMc",
+    "cTc"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "c": {
+      "item": "minecraft:redstone"
+    },
+    "T": {
+      "item": "minecraft:redstone_torch"
+    },
+    "e": {
+      "item": "minecraft:ender_pearl"
+    },
+    "M": {
+      "item": "rftools:machine_frame"
+    }
+  }
+}

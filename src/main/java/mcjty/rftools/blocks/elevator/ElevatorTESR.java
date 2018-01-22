@@ -9,23 +9,30 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldType;
+import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.MinecraftForgeClient;
 import org.lwjgl.opengl.GL11;
 
 public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> {
 
+    private static final BlockRenderLayer[] LAYERS = BlockRenderLayer.values();
+
+    private final FakeElevatorWorld fakeWorld = new FakeElevatorWorld();
+
     @Override
-    public void renderTileEntityAt(ElevatorTileEntity te, double x, double y, double z, float partialTicks, int destroyStage) {
+    public void render(ElevatorTileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 
         if (te.isMoving()) {
             // Correction in the y translation to avoid jitter when both player and platform are moving
             AxisAlignedBB aabb = te.getAABBAboveElevator(0);
-            boolean on = Minecraft.getMinecraft().thePlayer.getEntityBoundingBox().intersectsWith(aabb);
+            boolean on = Minecraft.getMinecraft().player.getEntityBoundingBox().intersects(aabb);
 
             double diff = on ? (te.getPos().getY() - (y+te.getMovingY()) - 1) : 0;
 
@@ -44,16 +51,34 @@ public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> 
             GlStateManager.translate(0, te.getMovingY() - te.getPos().getY() + diff, 0);
             Tessellator tessellator = Tessellator.getInstance();
             BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
-            for (BlockPos pos : te.getPositions()) {
-                tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-                int dx = te.getPos().getX() - pos.getX();
-                int dy = te.getPos().getY() - pos.getY();
-                int dz = te.getPos().getZ() - pos.getZ();
-                tessellator.getBuffer().setTranslation(x - pos.getX() - dx, y - pos.getY() - dy, z - pos.getZ() - dz);
-                renderBlock(dispatcher, movingState, pos, te.getWorld(), tessellator.getBuffer());
-                tessellator.draw();
+            BlockRenderLayer origLayer = MinecraftForgeClient.getRenderLayer();
+
+            fakeWorld.setState(te, movingState);
+
+            for (BlockRenderLayer layer : LAYERS) {
+                if (movingState.getBlock().canRenderInLayer(movingState, layer)) {
+                    ForgeHooksClient.setRenderLayer(layer);
+                    if (layer == BlockRenderLayer.TRANSLUCENT) {
+                        GlStateManager.enableBlend();
+                    }
+
+                    for (BlockPos pos : te.getPositions()) {
+                        tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+                        int dx = te.getPos().getX() - pos.getX();
+                        int dy = te.getPos().getY() - pos.getY();
+                        int dz = te.getPos().getZ() - pos.getZ();
+                        tessellator.getBuffer().setTranslation(x - pos.getX() - dx, y - pos.getY() - dy, z - pos.getZ() - dz);
+                        renderBlock(dispatcher, movingState, pos, fakeWorld, tessellator.getBuffer());
+                        tessellator.draw();
+                    }
+
+                    if (layer == BlockRenderLayer.TRANSLUCENT) {
+                        GlStateManager.disableBlend();
+                    }
+                }
             }
 
+            ForgeHooksClient.setRenderLayer(origLayer);
             tessellator.getBuffer().setTranslation(0, 0, 0);
 
             RenderHelper.enableStandardItemLighting();
@@ -66,18 +91,17 @@ public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> 
         return te.isMoving();
     }
 
-    private static boolean renderBlock(BlockRendererDispatcher dispatcher, IBlockState state, BlockPos pos, IBlockAccess blockAccess, VertexBuffer worldRendererIn) {
+    private static boolean renderBlock(BlockRendererDispatcher dispatcher, IBlockState state, BlockPos pos, IBlockAccess blockAccess, BufferBuilder worldRendererIn) {
         try {
             EnumBlockRenderType enumblockrendertype = state.getRenderType();
 
             if (enumblockrendertype == EnumBlockRenderType.INVISIBLE) {
                 return false;
             } else {
-                if (blockAccess.getWorldType() != WorldType.DEBUG_WORLD) {
+                if (blockAccess.getWorldType() != WorldType.DEBUG_ALL_BLOCK_STATES) {
                     try {
                         state = state.getActualState(blockAccess, pos);
                     } catch (Exception var8) {
-                        ;
                     }
                 }
 

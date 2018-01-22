@@ -1,8 +1,7 @@
 package mcjty.rftools.blocks.teleporter;
 
-import mcjty.lib.varia.GlobalCoordinate;
-import mcjty.lib.varia.Logging;
-import mcjty.rftools.blocks.logic.generic.LogicItemBlock;
+import mcjty.lib.container.GenericItemBlock;
+import mcjty.lib.varia.*;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -15,13 +14,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
-public class SimpleDialerItemBlock extends LogicItemBlock {
+public class SimpleDialerItemBlock extends GenericItemBlock {
     public SimpleDialerItemBlock(Block block) {
         super(block);
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        ItemStack stack = player.getHeldItem(hand);
         TileEntity te = world.getTileEntity(pos);
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
@@ -71,7 +71,7 @@ public class SimpleDialerItemBlock extends LogicItemBlock {
                 Logging.message(player, TextFormatting.YELLOW + "Receiver set!");
             }
         } else {
-            return super.onItemUse(stack, player, world, pos, hand, facing, hitX, hitY, hitZ);
+            return super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
         }
 
         stack.setTagCompound(tagCompound);
@@ -85,7 +85,7 @@ public class SimpleDialerItemBlock extends LogicItemBlock {
         if (coordinate != null) {
             TeleportDestination destination = destinations.getDestination(coordinate);
             if (destination != null) {
-                World worldForDimension = TeleportationTools.getWorldForDimension(world, destination.getDimension());
+                World worldForDimension = mcjty.lib.varia.TeleportationTools.getWorldForDimension(destination.getDimension());
                 if (worldForDimension != null) {
                     TileEntity recTe = worldForDimension.getTileEntity(destination.getCoordinate());
                     if (recTe instanceof MatterReceiverTileEntity) {

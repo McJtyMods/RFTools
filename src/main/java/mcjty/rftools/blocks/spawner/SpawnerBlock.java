@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.spawner;
 
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.api.Infusable;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
@@ -16,6 +15,7 @@ import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -30,6 +30,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -41,20 +42,14 @@ public class SpawnerBlock extends GenericRFToolsBlock<SpawnerTileEntity, Spawner
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiSpawner> getGuiClass() {
         return GuiSpawner.class;
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-//        NBTTagCompound tagCompound = itemStack.getTagCompound();
-//        if (tagCompound != null) {
-//            String name = tagCompound.getString("tpName");
-//            int id = tagCompound.getInteger("destinationId");
-//            list.add(EnumChatFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
-//        }
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(TextFormatting.WHITE + "This block can spawn creatures. It needs a syringe");
             list.add(TextFormatting.WHITE + "of the appropriate type, RF power and also it");
@@ -83,6 +78,7 @@ public class SpawnerBlock extends GenericRFToolsBlock<SpawnerTileEntity, Spawner
             SpawnerTileEntity spawnerTileEntity = (SpawnerTileEntity) te;
             float[] matter = spawnerTileEntity.getMatter();
             DecimalFormat fmt = new DecimalFormat("#.##");
+            fmt.setRoundingMode(RoundingMode.DOWN);
             probeInfo.text(TextFormatting.GREEN + "Key Matter: " + fmt.format(matter[0]));
             probeInfo.text(TextFormatting.GREEN + "Bulk Matter: " + fmt.format(matter[1]));
             probeInfo.text(TextFormatting.GREEN + "Living Matter: " + fmt.format(matter[2]));
@@ -108,6 +104,7 @@ public class SpawnerBlock extends GenericRFToolsBlock<SpawnerTileEntity, Spawner
             float[] matter = SpawnerInfoPacketClient.matterReceived;
             if (matter != null && matter.length == 3) {
                 DecimalFormat fmt = new DecimalFormat("#.##");
+                fmt.setRoundingMode(RoundingMode.DOWN);
                 currenttip.add(TextFormatting.GREEN + "Key Matter: " + fmt.format(matter[0]));
                 currenttip.add(TextFormatting.GREEN + "Bulk Matter: " + fmt.format(matter[1]));
                 currenttip.add(TextFormatting.GREEN + "Living Matter: " + fmt.format(matter[2]));

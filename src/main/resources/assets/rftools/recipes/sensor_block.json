@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "rftools:sensor_block"
+  },
+  "pattern": [
+    "xcx",
+    "rMr",
+    "xcx"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "c": {
+      "item": "minecraft:comparator"
+    },
+    "x": {
+      "item": "minecraft:quartz"
+    },
+    "M": {
+      "item": "rftools:machine_base"
+    }
+  }
+}

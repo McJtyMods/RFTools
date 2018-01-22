@@ -12,7 +12,7 @@ import java.util.Map;
 public class BuffProperties {
     public static final int BUFF_MAXTICKS = 180;
     private int buffTimeout;
-    private final Map<PlayerBuff,Integer> buffs = new HashMap<PlayerBuff, Integer>();
+    private final Map<PlayerBuff,Integer> buffs = new HashMap<>();
 
     // Here we mirror the flags out of capabilities so that we can restore them.
     private boolean oldAllowFlying = false;
@@ -36,7 +36,7 @@ public class BuffProperties {
         if (buffTimeout <= 0) {
             buffTimeout = BuffProperties.BUFF_MAXTICKS;
 
-            Map<PlayerBuff,Integer> copyBuffs = new HashMap<PlayerBuff, Integer>(buffs);
+            Map<PlayerBuff,Integer> copyBuffs = new HashMap<>(buffs);
             buffs.clear();
 
             boolean syncNeeded = false;

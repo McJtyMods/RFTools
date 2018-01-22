@@ -35,7 +35,7 @@ public class DumpScreenModule implements IScreenModule {
             setupCoordinateFromNBT(tagCompound, dim, pos);
             for (int i = 0; i < stacks.length; i++) {
                 if (tagCompound.hasKey("stack" + i)) {
-                    stacks[i] = ItemStack.loadItemStackFromNBT(tagCompound.getCompoundTag("stack" + i));
+                    stacks[i] = new ItemStack(tagCompound.getCompoundTag("stack" + i));
                 }
             }
         }
@@ -64,7 +64,7 @@ public class DumpScreenModule implements IScreenModule {
     }
 
     private boolean isShown(ItemStack stack) {
-        if (stack == null) {
+        if (stack.isEmpty()) {
             return false;
         }
         for (ItemStack s : stacks) {
@@ -81,7 +81,7 @@ public class DumpScreenModule implements IScreenModule {
             return;
         }
         if (BlockPosTools.INVALID.equals(coordinate)) {
-            player.addChatComponentMessage(new TextComponentString(TextFormatting.RED + "Module is not linked to storage scanner!"));
+            player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Module is not linked to storage scanner!"), false);
             return;
         }
 
@@ -93,7 +93,7 @@ public class DumpScreenModule implements IScreenModule {
         if (x >= xoffset) {
             for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
                 if (isShown(player.inventory.getStackInSlot(i))) {
-                    ItemStack stack = scannerTileEntity.injectStack(player.inventory.getStackInSlot(i), player);
+                    ItemStack stack = scannerTileEntity.injectStackFromScreen(player.inventory.getStackInSlot(i), player);
                     player.inventory.setInventorySlotContents(i, stack);
                 }
             }

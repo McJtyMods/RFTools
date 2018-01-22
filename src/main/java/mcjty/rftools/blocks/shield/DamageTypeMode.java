@@ -8,7 +8,7 @@ public enum DamageTypeMode {
     DAMAGETYPE_PLAYER("Player"),
     ;
 
-    private static final Map<String,DamageTypeMode> modeToMode = new HashMap<String, DamageTypeMode>();
+    private static final Map<String,DamageTypeMode> modeToMode = new HashMap<>();
 
     private final String description;
 

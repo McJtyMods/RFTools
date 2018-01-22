@@ -5,6 +5,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.SpaceChamberControllerTileEntity;
 import mcjty.rftools.items.GenericRFToolsItem;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -36,7 +37,7 @@ public class SpaceChamberCardItem extends GenericRFToolsItem {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         int channel = -1;
@@ -63,15 +64,16 @@ public class SpaceChamberCardItem extends GenericRFToolsItem {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         if (!player.isSneaking()) {
-            showDetails(world, player, stack);
+            showDetails(world, player, player.getHeldItem(hand));
         }
-        return super.onItemRightClick(stack, world, player, hand);
+        return super.onItemRightClick(world, player, hand);
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        ItemStack stack = player.getHeldItem(hand);
         TileEntity te = world.getTileEntity(pos);
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
@@ -108,7 +110,7 @@ public class SpaceChamberCardItem extends GenericRFToolsItem {
 
     private void showDetailsGui(World world, EntityPlayer player) {
         if (world.isRemote) {
-            player.openGui(RFTools.instance, RFTools.GUI_CHAMBER_DETAILS, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+            player.openGui(RFTools.instance, RFTools.GUI_CHAMBER_DETAILS, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
         }
     }
 

@@ -8,10 +8,8 @@ import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
@@ -20,7 +18,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,7 +63,7 @@ public class GuiNetworkMonitor extends GuiItemScreen {
     }
 
     public static void setServerConnectedBlocks(Map<BlockPos, BlockInfo> serverConnectedBlocks) {
-        GuiNetworkMonitor.serverConnectedBlocks = new HashMap<BlockPos, BlockInfo>(serverConnectedBlocks);
+        GuiNetworkMonitor.serverConnectedBlocks = new HashMap<>(serverConnectedBlocks);
     }
 
     private void requestConnectedBlocksFromServer() {
@@ -96,7 +94,7 @@ public class GuiNetworkMonitor extends GuiItemScreen {
         });
         Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(showRfPerTick).addChild(new Label(mc, this).setText("Filter:")).addChild(filterTextField).setDesiredHeight(17);
 
-        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setVerticalMargin(3)).addChild(listPanel).addChild(buttonPanel);
+        Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setVerticalMargin(3)).addChild(listPanel).addChild(buttonPanel);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -110,8 +108,8 @@ public class GuiNetworkMonitor extends GuiItemScreen {
         }
         BlockPos c = indexToCoordinate.get(index);
         RFTools.instance.clientInfo.hilightBlock(c, System.currentTimeMillis()+1000* NetworkMonitorConfiguration.hilightTime);
-        Logging.message(mc.thePlayer, "The block is now highlighted");
-        Minecraft.getMinecraft().thePlayer.closeScreen();
+        Logging.message(mc.player, "The block is now highlighted");
+        Minecraft.getMinecraft().player.closeScreen();
     }
 
     private void refreshList(boolean recalcPerTick) {
@@ -159,17 +157,17 @@ public class GuiNetworkMonitor extends GuiItemScreen {
         if (serverConnectedBlocks.equals(connectedBlocks)) {
             refreshList(recalcPerTick);
         } else {
-            connectedBlocks = new HashMap<BlockPos, BlockInfo>(serverConnectedBlocks);
+            connectedBlocks = new HashMap<>(serverConnectedBlocks);
             Map<BlockPos, EnergyBar> oldLabelMap = labelMap;
-            labelMap = new HashMap<BlockPos, EnergyBar>();
-            indexToCoordinate = new HashMap<Integer, BlockPos>();
+            labelMap = new HashMap<>();
+            indexToCoordinate = new HashMap<>();
             list.removeChildren();
 
             int index = 0;
             for (Map.Entry<BlockPos, BlockInfo> me : connectedBlocks.entrySet()) {
                 BlockInfo blockInfo = me.getValue();
                 BlockPos coordinate = me.getKey();
-                if (mc.theWorld.isAirBlock(coordinate)) {
+                if (mc.world.isAirBlock(coordinate)) {
                     continue;
                 }
 
@@ -178,8 +176,8 @@ public class GuiNetworkMonitor extends GuiItemScreen {
 
                 int color = getTextColor(blockInfo);
 
-                IBlockState state = mc.theWorld.getBlockState(coordinate);
-                String displayName = BlockInfo.getReadableName(state);
+                IBlockState state = mc.world.getBlockState(coordinate);
+                String displayName = BlockTools.getReadableName(mc.world, coordinate);
 
                 if (filter != null) {
                     if (!displayName.toLowerCase().contains(filter)) {
@@ -209,7 +207,7 @@ public class GuiNetworkMonitor extends GuiItemScreen {
 
         if (rftick && recalcPerTick) {
             previousRfMillis = millis;
-            previousRf = new HashMap<BlockPos, Integer>(connectedBlocks.size());
+            previousRf = new HashMap<>(connectedBlocks.size());
             for (Map.Entry<BlockPos, BlockInfo> me : connectedBlocks.entrySet()) {
                 previousRf.put(me.getKey(), me.getValue().getEnergyStored());
             }

@@ -1,7 +1,7 @@
 {
   "parent": "rftools:block/rftoolsblock",
   "textures": {
-    "particle": "rftools:blocks/machineSide",
-    "front": "rftools:blocks/machineSpawner"
+    "particle": "rftools:blocks/machineside",
+    "front": "rftools:blocks/machinespawner"
   }
 }

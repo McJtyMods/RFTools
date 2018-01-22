@@ -1,0 +1,14 @@
+{
+  "parent": "rftools:block/util_cube_glow_2",
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "#front",
+    "down": "rftools:blocks/machinebottom",
+    "up": "rftools:blocks/machinetop",
+    "north": "#front",
+    "glow_north": "#frontglow",
+    "east": "rftools:blocks/machineside",
+    "south": "rftools:blocks/machineside",
+    "west": "rftools:blocks/machineside"
+  }
+}

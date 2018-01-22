@@ -1,0 +1,30 @@
+{
+  "display": {
+    "icon": {
+      "item": "rftools:powercell"
+    },
+    "title": {
+      "translate": "advancements.rftools.storepower.title"
+    },
+    "description": {
+      "translate": "advancements.rftools.storepower.description"
+    },
+    "background": "rftools:textures/gui/advancements/rftools_background.png",
+    "show_toast": false,
+    "announce_to_chat": true
+  },
+  "parent": "rftools:root",
+  "criteria": {
+    "placed_powercell": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "block": "rftools:powercell"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "placed_powercell"
+    ]
+  ]
+}

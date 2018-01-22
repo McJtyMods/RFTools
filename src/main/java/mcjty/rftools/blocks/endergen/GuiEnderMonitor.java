@@ -3,13 +3,11 @@ package mcjty.rftools.blocks.endergen;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
-import mcjty.lib.gui.events.ChoiceEvent;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.gui.widgets.Widget;
 import mcjty.lib.network.Argument;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
@@ -55,12 +53,7 @@ public class GuiEnderMonitor extends GenericGuiContainer<EnderMonitorTileEntity>
         mode.setChoiceTooltip(EnderMonitorMode.MODE_PEARLFIRED.getDescription(), "Send a redstone pulse when a", "pearl is fired");
         mode.setChoiceTooltip(EnderMonitorMode.MODE_PEARLARRIVED.getDescription(), "Send a redstone pulse when a", "pearl arrives");
         mode.setChoice(tileEntity.getMode().getDescription());
-        mode.addChoiceEvent(new ChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, String newChoice) {
-                changeMode();
-            }
-        });
+        mode.addChoiceEvent((parent, newChoice) -> changeMode());
     }
 
     private void changeMode() {
@@ -76,7 +69,7 @@ public class GuiEnderMonitor extends GenericGuiContainer<EnderMonitorTileEntity>
         if (tooltips != null) {
             int x = Mouse.getEventX() * width / mc.displayWidth;
             int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
-            drawHoveringText(tooltips, x, y, mc.fontRendererObj);
+            drawHoveringText(tooltips, x, y, mc.fontRenderer);
         }
     }
 }

@@ -23,7 +23,10 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fluids.*;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 
 import java.util.List;
@@ -99,7 +102,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
 
     @Override
     public void update() {
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             return;
         }
 
@@ -113,15 +116,16 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     }
 
     public boolean checkSensor() {
-        boolean newout;EnumFacing inputSide = getFacing(worldObj.getBlockState(getPos())).getInputSide();
+        boolean newout;
+        EnumFacing inputSide = getFacing(getWorld().getBlockState(getPos())).getInputSide();
         BlockPos newpos = getPos().offset(inputSide);
 
         switch (sensorType) {
             case SENSOR_BLOCK:
-                newout = checkBlockOrFluid(newpos, inputSide, (pos) -> checkBlock(pos));
+                newout = checkBlockOrFluid(newpos, inputSide, this::checkBlock);
                 break;
             case SENSOR_FLUID:
-                newout = checkBlockOrFluid(newpos, inputSide, (pos) -> checkFluid(pos));
+                newout = checkBlockOrFluid(newpos, inputSide, this::checkFluid);
                 break;
             case SENSOR_GROWTHLEVEL:
                 newout = checkGrowthLevel(newpos, inputSide);
@@ -160,13 +164,13 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     }
 
     private boolean checkBlock(BlockPos newpos) {
-        IBlockState state = worldObj.getBlockState(newpos);
+        IBlockState state = getWorld().getBlockState(newpos);
         ItemStack matcher = inventoryHelper.getStackInSlot(0);
-        if (matcher == null) {
+        if (matcher.isEmpty()) {
             return state.getBlock().isFullBlock(state);
         }
-        ItemStack stack = state.getBlock().getItem(worldObj, newpos, state);
-        if (stack != null) {
+        ItemStack stack = state.getBlock().getItem(getWorld(), newpos, state);
+        if (!stack.isEmpty()) {
             return matcher.getItem() == stack.getItem();
         } else {
             return matcher.getItem() == Item.getItemFromBlock(state.getBlock());
@@ -174,24 +178,25 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     }
 
     private boolean checkFluid(BlockPos newpos) {
-        IBlockState state = worldObj.getBlockState(newpos);
+        IBlockState state = getWorld().getBlockState(newpos);
         ItemStack matcher = inventoryHelper.getStackInSlot(0);
         Block block = state.getBlock();
-        if (matcher == null) {
+        if (matcher.isEmpty()) {
             if (block instanceof BlockLiquid || block instanceof IFluidBlock) {
-                return !block.isAir(state, worldObj, newpos);
+                return !block.isAir(state, getWorld(), newpos);
             }
 
             return false;
         }
-        ItemStack stack = block.getItem(worldObj, newpos, state);
+        ItemStack stack = block.getItem(getWorld(), newpos, state);
         Item matcherItem = matcher.getItem();
 
         FluidStack matcherFluidStack = null;
-        if (matcherItem instanceof IFluidContainerItem) {
-            matcherFluidStack = ((IFluidContainerItem)matcherItem).getFluid(matcher);
-            return checkFluid(block, matcherFluidStack, state, newpos);
-        } else if (matcherItem instanceof ItemBucket || matcherItem instanceof UniversalBucket) {
+//        if (matcherItem instanceof IFluidContainerItem) {
+//            matcherFluidStack = ((IFluidContainerItem)matcherItem).getFluid(matcher);
+//            return checkFluid(block, matcherFluidStack, state, newpos);
+//        }
+        if (matcherItem instanceof ItemBucket || matcherItem instanceof UniversalBucket) {
             matcherFluidStack = new FluidBucketWrapper(matcher).getFluid();
             return checkFluid(block, matcherFluidStack, state, newpos);
         }
@@ -201,7 +206,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
 
     private boolean checkFluid(Block block, FluidStack matcherFluidStack, IBlockState state, BlockPos newpos) {
         if (matcherFluidStack == null) {
-            return block.isAir(state,  worldObj, newpos);
+            return block.isAir(state,  getWorld(), newpos);
         }
 
         Fluid matcherFluid = matcherFluidStack.getFluid();
@@ -235,7 +240,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     }
 
     private boolean checkGrowthLevel(BlockPos newpos) {
-        IBlockState state = worldObj.getBlockState(newpos);
+        IBlockState state = getWorld().getBlockState(newpos);
         Block block = state.getBlock();
         int pct;
         if (block instanceof BlockCrops) {
@@ -254,6 +259,10 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         return pct >= number;
     }
 
+    public void invalidateCache() {
+        cachedBox = null;
+    }
+
     private AxisAlignedBB getCachedBox(BlockPos pos1, EnumFacing dir) {
         if (cachedBox == null) {
             int n = areaType.getBlockCount();
@@ -268,12 +277,12 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     }
 
     private boolean checkEntities(BlockPos pos1, EnumFacing dir, Class<? extends Entity> clazz) {
-        List<Entity> entities = worldObj.getEntitiesWithinAABB(clazz, getCachedBox(pos1, dir));
+        List<Entity> entities = getWorld().getEntitiesWithinAABB(clazz, getCachedBox(pos1, dir));
         return entities.size() >= number;
     }
 
     private boolean checkEntitiesHostile(BlockPos pos1, EnumFacing dir) {
-        List<Entity> entities = worldObj.getEntitiesWithinAABB(EntityCreature.class, getCachedBox(pos1, dir));
+        List<Entity> entities = getWorld().getEntitiesWithinAABB(EntityCreature.class, getCachedBox(pos1, dir));
         int cnt = 0;
         for (Entity entity : entities) {
             if (entity instanceof IMob) {
@@ -287,7 +296,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     }
 
     private boolean checkEntitiesPassive(BlockPos pos1, EnumFacing dir) {
-        List<Entity> entities = worldObj.getEntitiesWithinAABB(EntityCreature.class, getCachedBox(pos1, dir));
+        List<Entity> entities = getWorld().getEntitiesWithinAABB(EntityCreature.class, getCachedBox(pos1, dir));
         int cnt = 0;
         for (Entity entity : entities) {
             if (entity instanceof IAnimals && !(entity instanceof IMob)) {
@@ -311,7 +320,12 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 

@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.teleporter;
 
+import mcjty.lib.McJtyRegister;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -11,13 +12,11 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -33,8 +32,7 @@ public class MatterBoosterBlock extends Block {
         setHardness(2.0f);
         setSoundType(SoundType.METAL);
         setHarvestLevel("pickaxe", 0);
-        GameRegistry.register(this);
-        GameRegistry.register(new ItemBlock(this), getRegistryName());
+        McJtyRegister.registerLater(this, RFTools.instance, ItemBlock.class);
         setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
     }
 
@@ -44,8 +42,8 @@ public class MatterBoosterBlock extends Block {
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        world.setBlockState(pos, state.withProperty(FACING, getFacingFromEntity(pos, placer)), 2);
+    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+        return super.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer).withProperty(FACING, getFacingFromEntity(pos, placer));
     }
 
     public static EnumFacing getFacingFromEntity(BlockPos clickedBlock, EntityLivingBase entityIn) {

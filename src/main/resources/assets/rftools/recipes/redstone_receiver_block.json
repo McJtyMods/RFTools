@@ -1,0 +1,28 @@
+{
+  "result": {
+    "item": "rftools:redstone_receiver_block"
+  },
+  "pattern": [
+    "ror",
+    "TMT",
+    "rRr"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "R": {
+      "item": "minecraft:redstone_block"
+    },
+    "T": {
+      "item": "minecraft:comparator"
+    },
+    "M": {
+      "item": "rftools:machine_base"
+    },
+    "o": {
+      "item": "minecraft:ender_pearl"
+    }
+  }
+}

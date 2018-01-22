@@ -1,11 +1,12 @@
 package mcjty.rftools.blocks.relay;
 
-import cofh.api.energy.IEnergyConnection;
 import mcjty.lib.api.MachineInformation;
+import mcjty.lib.compat.RedstoneFluxCompatibility;
 import mcjty.lib.entity.GenericEnergyHandlerTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.EnergyTools;
+import mcjty.lib.varia.OrientationTools;
+import mcjty.rftools.RFTools;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -47,7 +48,7 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
@@ -104,20 +105,19 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
         int[] rf = redstoneSignal ? rfOn : rfOff;
         boolean[] inputMode = redstoneSignal ? inputModeOn : inputModeOff;
 
-        int energyStored = getEnergyStored(EnumFacing.DOWN);
+        int energyStored = getEnergyStored();
         if (energyStored <= 0) {
             return;
         }
 
-        IBlockState state = worldObj.getBlockState(getPos());
-        int meta = state.getBlock().getMetaFromState(state);
+        IBlockState state = getWorld().getBlockState(getPos());
         for (EnumFacing facing : EnumFacing.VALUES) {
-            int side = BlockTools.reorient(facing, meta).ordinal();
+            int side = OrientationTools.reorient(facing, state).ordinal();
 //            int side = facing.ordinal();
             if (rf[side] > 0 && !inputMode[side]) {
-                TileEntity te = worldObj.getTileEntity(getPos().offset(facing));
-                if (EnergyTools.isEnergyTE(te)) {
-                    EnumFacing opposite = facing.getOpposite();
+                TileEntity te = getWorld().getTileEntity(getPos().offset(facing));
+                EnumFacing opposite = facing.getOpposite();
+                if (EnergyTools.isEnergyTE(te) || (te != null && te.hasCapability(CapabilityEnergy.ENERGY, opposite))) {
                     int rfToGive;
                     if (rf[side] <= energyStored) {
                         rfToGive = rf[side];
@@ -126,9 +126,8 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
                     }
                     int received;
 
-                    if (te instanceof IEnergyConnection) {
-                        IEnergyConnection connection = (IEnergyConnection) te;
-                        if (connection.canConnectEnergy(opposite)) {
+                    if (RFTools.redstoneflux && RedstoneFluxCompatibility.isEnergyConnection(te)) {
+                        if (RedstoneFluxCompatibility.canConnectEnergy(te, opposite)) {
                             received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
                         } else {
                             received = 0;
@@ -158,12 +157,11 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
         boolean redstoneSignal = powerLevel > 0;
 
         boolean[] inputMode = redstoneSignal ? inputModeOn : inputModeOff;
-        IBlockState state = worldObj.getBlockState(getPos());
-        int meta = state.getBlock().getMetaFromState(state);
-        int side = BlockTools.reorient(from, meta).ordinal();
+        IBlockState state = getWorld().getBlockState(getPos());
+        int side = OrientationTools.reorient(from, state).ordinal();
         if (inputMode[side]) {
             int[] rf = redstoneSignal ? rfOn : rfOff;
-            int actual = super.receiveEnergy(from, Math.min(maxReceive, rf[side]), simulate);
+            int actual = super.receiveEnergy(Math.min(maxReceive, rf[side]), simulate);
             if (!simulate) {
                 powerIn += actual;
             }

@@ -1,31 +1,51 @@
 package mcjty.rftools.blocks.storage;
 
+import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.craftinggrid.CraftingGrid;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import mcjty.rftools.craftinggrid.InventoriesItemSource;
 import mcjty.rftools.craftinggrid.StorageCraftingTools;
 import mcjty.rftools.jei.JEIRecipeAcceptor;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.ITextComponent;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
-public class RemoteStorageItemInventory implements IInventory, CraftingGridProvider, JEIRecipeAcceptor {
-    private ItemStack stacks[] = new ItemStack[RemoteStorageItemContainer.MAXSIZE_STORAGE];
+public class RemoteStorageItemInventory implements CraftingGridProvider, JEIRecipeAcceptor, IInventory {
+    private ItemStackList stacks = ItemStackList.create(RemoteStorageItemContainer.MAXSIZE_STORAGE);
     private final EntityPlayer entityPlayer;
     private CraftingGrid craftingGrid = new CraftingGrid();
+    private ItemStack storageItem = null;       // If null use held item from player
+
+    public RemoteStorageItemInventory(EntityPlayer player, ItemStack storageItem) {
+        this.entityPlayer = player;
+        this.storageItem = storageItem;
+        setup();
+    }
 
     public RemoteStorageItemInventory(EntityPlayer player) {
         this.entityPlayer = player;
-        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
+        setup();
+    }
+
+    private ItemStack getStorageItem() {
+        if (storageItem != null) {
+            return storageItem;
+        } else {
+            return entityPlayer.getHeldItem(EnumHand.MAIN_HAND);
+        }
+    }
+
+    private void setup() {
+        NBTTagCompound tagCompound = getStorageItem().getTagCompound();
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
-            entityPlayer.getHeldItem(EnumHand.MAIN_HAND).setTagCompound(tagCompound);
+            getStorageItem().setTagCompound(tagCompound);
         }
         craftingGrid.readFromNBT(tagCompound.getCompoundTag("grid"));
     }
@@ -35,14 +55,15 @@ public class RemoteStorageItemInventory implements IInventory, CraftingGridProvi
         if (id == -1) {
             return null;
         }
-        return RemoteStorageIdRegistry.getRemoteStorage(entityPlayer.worldObj, id);
+        return RemoteStorageIdRegistry.getRemoteStorage(entityPlayer.getEntityWorld(), id);
     }
 
     private int getStorageID() {
-        if (entityPlayer.getHeldItem(EnumHand.MAIN_HAND) == null || entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound() == null) {
+        ItemStack heldItem = getStorageItem();
+        if (heldItem.isEmpty() || heldItem.getTagCompound() == null) {
             return -1;
         }
-        return entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound().getInteger("id");
+        return heldItem.getTagCompound().getInteger("id");
     }
 
 
@@ -68,14 +89,15 @@ public class RemoteStorageItemInventory implements IInventory, CraftingGridProvi
     }
 
     @Override
-    public int[] craft(EntityPlayerMP player, int n, boolean test) {
+    @Nonnull
+    public int[] craft(EntityPlayer player, int n, boolean test) {
         InventoriesItemSource itemSource = new InventoriesItemSource()
                 .add(player.inventory, 0).add(this, 0);
         if (test) {
             return StorageCraftingTools.testCraftItems(player, n, craftingGrid.getActiveRecipe(), itemSource);
         } else {
             StorageCraftingTools.craftItems(player, n, craftingGrid.getActiveRecipe(), itemSource);
-            return null;
+            return new int[0];
         }
     }
 
@@ -88,24 +110,24 @@ public class RemoteStorageItemInventory implements IInventory, CraftingGridProvi
     }
 
     private boolean isServer() {
-        return !entityPlayer.worldObj.isRemote;
+        return !entityPlayer.getEntityWorld().isRemote;
     }
 
-    private ItemStack[] getStacks() {
+    private ItemStackList getStacks() {
         if (isServer()) {
             RemoteStorageTileEntity storage = getRemoteStorage();
             if (storage == null) {
-                return new ItemStack[0];
+                return ItemStackList.create(0);
             }
             int si = storage.findRemoteIndex(getStorageID());
             if (si == -1) {
-                return new ItemStack[0];
+                return ItemStackList.create(0);
             }
             return storage.getRemoteStacks(si);
         } else {
-            int maxSize = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound().getInteger("maxSize");
-            if (maxSize != stacks.length) {
-                stacks = new ItemStack[maxSize];
+            int maxSize = getStorageItem().getTagCompound().getInteger("maxSize");
+            if (maxSize != stacks.size()) {
+                stacks = ItemStackList.create(maxSize);
             }
             return stacks;
         }
@@ -123,10 +145,10 @@ public class RemoteStorageItemInventory implements IInventory, CraftingGridProvi
                 return 0;
             }
             int maxStacks = storage.getMaxStacks(si);
-            entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound().setInteger("maxSize", maxStacks);
+            getStorageItem().getTagCompound().setInteger("maxSize", maxStacks);
             return maxStacks;
         } else {
-            return entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound().getInteger("maxSize");
+            return getStorageItem().getTagCompound().getInteger("maxSize");
         }
     }
 
@@ -135,15 +157,15 @@ public class RemoteStorageItemInventory implements IInventory, CraftingGridProvi
         if (isServer()) {
             RemoteStorageTileEntity storage = getRemoteStorage();
             if (storage == null) {
-                return null;
+                return ItemStack.EMPTY;
             }
             int si = storage.findRemoteIndex(getStorageID());
             if (si == -1) {
-                return null;
+                return ItemStack.EMPTY;
             }
             return storage.getRemoteSlot(si, index);
         } else {
-            return stacks[index];
+            return stacks.get(index);
         }
     }
 
@@ -152,32 +174,32 @@ public class RemoteStorageItemInventory implements IInventory, CraftingGridProvi
         if (isServer()) {
             RemoteStorageTileEntity storage = getRemoteStorage();
             if (storage == null) {
-                return null;
+                return ItemStack.EMPTY;
             }
             int si = storage.findRemoteIndex(getStorageID());
             if (si == -1) {
-                return null;
+                return ItemStack.EMPTY;
             }
             return storage.decrStackSizeRemote(si, index, amount);
         } else {
-            if (index >= stacks.length) {
-                return null;
+            if (index >= stacks.size()) {
+                return ItemStack.EMPTY;
             }
-            if (stacks[index] != null) {
+            if (!stacks.get(index).isEmpty()) {
                 markDirty();
-                if (stacks[index].stackSize <= amount) {
-                    ItemStack old = stacks[index];
-                    stacks[index] = null;
+                if (stacks.get(index).getCount() <= amount) {
+                    ItemStack old = stacks.get(index);
+                    stacks.set(index, ItemStack.EMPTY);
                     return old;
                 }
-                ItemStack its = stacks[index].splitStack(amount);
-                if (stacks[index].stackSize == 0) {
-                    stacks[index] = null;
+                ItemStack its = stacks.get(index).splitStack(amount);
+                if (stacks.get(index).isEmpty()) {
+                    stacks.set(index, ItemStack.EMPTY);
                 }
                 return its;
             }
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -193,12 +215,17 @@ public class RemoteStorageItemInventory implements IInventory, CraftingGridProvi
             }
             storage.updateRemoteSlot(si, getInventoryStackLimit(), index, stack);
         } else {
-            if (index >= stacks.length) {
+            if (index >= stacks.size()) {
                 return;
             }
-            stacks[index] = stack;
-            if (stack != null && stack.stackSize > getInventoryStackLimit()) {
-                stack.stackSize = getInventoryStackLimit();
+            stacks.set(index, stack);
+            if (!stack.isEmpty() && stack.getCount() > getInventoryStackLimit()) {
+                int amount = getInventoryStackLimit();
+                if (amount <= 0) {
+                    stack.setCount(0);
+                } else {
+                    stack.setCount(amount);
+                }
             }
             markDirty();
         }
@@ -215,19 +242,18 @@ public class RemoteStorageItemInventory implements IInventory, CraftingGridProvi
         if (storage != null) {
             storage.markDirty();
         }
-        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
+        NBTTagCompound tagCompound = getStorageItem().getTagCompound();
         tagCompound.setTag("grid", craftingGrid.writeToNBT());
     }
 
-    @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isUsable(EntityPlayer player) {
         return true;
     }
 
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
-        ItemStack[] s = getStacks();
-        if (index >= s.length) {
+        ItemStackList s = getStacks();
+        if (index >= s.size()) {
             return false;
         }
         if (isServer()) {
@@ -249,7 +275,7 @@ public class RemoteStorageItemInventory implements IInventory, CraftingGridProvi
     @Override
     public ItemStack removeStackFromSlot(int index) {
         ItemStack stack = getStackInSlot(index);
-        setInventorySlotContents(index, null);
+        setInventorySlotContents(index, ItemStack.EMPTY);
         return stack;
     }
 
@@ -296,5 +322,15 @@ public class RemoteStorageItemInventory implements IInventory, CraftingGridProvi
     @Override
     public ITextComponent getDisplayName() {
         return null;
+    }
+
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer player) {
+        return isUsable(player);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
     }
 }

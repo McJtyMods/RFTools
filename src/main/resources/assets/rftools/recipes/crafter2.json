@@ -1,0 +1,26 @@
+{
+  "conditions": [{
+    "type": "minecraft:item_exists",
+    "item": "rftools:crafter2"
+  }],
+  "result": {
+    "item": "rftools:crafter2"
+  },
+  "pattern": [
+    " T ",
+    "cMc",
+    " T "
+  ],
+  "type": "rftools:copy_nbt",
+  "key": {
+    "c": {
+      "item": "minecraft:crafting_table"
+    },
+    "T": {
+      "item": "minecraft:redstone_torch"
+    },
+    "M": {
+      "item": "rftools:crafter1"
+    }
+  }
+}

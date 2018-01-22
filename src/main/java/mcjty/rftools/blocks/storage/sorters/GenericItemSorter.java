@@ -32,12 +32,7 @@ public class GenericItemSorter implements ItemSorter {
 
     @Override
     public Comparator<Pair<ItemStack, Integer>> getComparator() {
-        return new Comparator<Pair<ItemStack, Integer>>() {
-            @Override
-            public int compare(Pair<ItemStack, Integer> o1, Pair<ItemStack, Integer> o2) {
-                return compareCategory(o1, o2);
-            }
-        };
+        return GenericItemSorter::compareCategory;
     }
 
     @Override
@@ -63,13 +58,17 @@ public class GenericItemSorter implements ItemSorter {
             Block block = ((ItemBlock) item).getBlock();
             if (block != null && block.getClass() != null) {
                 String category = ModularStorageConfiguration.getCategory(block.getClass());
-                if (category != null) return category;
+                if (category != null) {
+                    return category;
+                }
             }
             return "Blocks";
         } else {
             if (item != null && item.getClass() != null) {
                 String category = ModularStorageConfiguration.getCategory(item.getClass());
-                if (category != null) return category;
+                if (category != null) {
+                    return category;
+                }
             }
             String displayName = object.getKey().getDisplayName();
             if (displayName.contains("Ingot")) {

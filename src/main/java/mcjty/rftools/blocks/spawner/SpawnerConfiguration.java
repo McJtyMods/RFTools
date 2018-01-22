@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.spawner;
 
+import mcjty.lib.varia.EntityTools;
 import mcjty.lib.varia.Logging;
 import net.minecraft.block.Block;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
@@ -11,7 +11,6 @@ import net.minecraft.entity.passive.*;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.ConfigCategory;
@@ -33,7 +32,7 @@ public class SpawnerConfiguration {
     public static int defaultMobSpawnRf;
     public static final Map<String,List<MobSpawnAmount>> mobSpawnAmounts = new HashMap<>();
     public static final List<MobSpawnAmount> defaultSpawnAmounts = new ArrayList<>();
-    public static final Map<Object,Float> livingMatter = new HashMap<>();
+    public static final Map<ResourceLocation,Float> livingMatter = new HashMap<>();
 
     public static final int MATERIALTYPE_KEY = 0;
     public static final int MATERIALTYPE_BULK = 1;
@@ -86,16 +85,10 @@ public class SpawnerConfiguration {
             for (Map.Entry<String, Property> entry : category.entrySet()) {
                 String[] value = entry.getValue().getStringList();
                 try {
-                    String type = value[0];
+                    // value[0] is type and is no longer used
                     String name = value[1];
                     Float factor = Float.parseFloat(value[2]);
-                    if ("B".equals(type)) {
-                        Object block = Block.REGISTRY.getObject(new ResourceLocation(name));
-                        livingMatter.put(block, factor);
-                    } else {
-                        Object item = Item.REGISTRY.getObject(new ResourceLocation(name));
-                        livingMatter.put(item, factor);
-                    }
+                    livingMatter.put(new ResourceLocation(name), factor);
                 } catch (Exception e) {
                     Logging.logError("Badly formatted 'livingmatter' configuration option!");
                     return;
@@ -130,7 +123,11 @@ public class SpawnerConfiguration {
         counter = addLiving(cfg, Items.MELON_SEEDS, counter, 0.4f);
         counter = addLiving(cfg, Items.BEEF, counter, 1.5f);
         counter = addLiving(cfg, Items.PORKCHOP, counter, 1.5f);
+        counter = addLiving(cfg, Items.MUTTON, counter, 1.5f);
         counter = addLiving(cfg, Items.CHICKEN, counter, 1.5f);
+        counter = addLiving(cfg, Items.RABBIT, counter, 1.2f);
+        counter = addLiving(cfg, Items.RABBIT_FOOT, counter, 1.0f);
+        counter = addLiving(cfg, Items.RABBIT_HIDE, counter, 0.5f);
         counter = addLiving(cfg, Items.BEETROOT, counter, 0.8f);
         counter = addLiving(cfg, Items.BEETROOT_SEEDS, counter, 0.4f);
         counter = addLiving(cfg, Items.CHORUS_FRUIT, counter, 1.5f);
@@ -140,13 +137,13 @@ public class SpawnerConfiguration {
 
     private static int addLiving(Configuration cfg, Block block, int counter, float factor) {
         cfg.get(CATEGORY_LIVINGMATTER, "living." + counter, new String[] { "B", block.getRegistryName().toString(), Float.toString(factor) });
-        livingMatter.put(block, factor);
+        livingMatter.put(block.getRegistryName(), factor);
         return counter+1;
     }
 
     private static int addLiving(Configuration cfg, Item item, int counter, float factor) {
         cfg.get(CATEGORY_LIVINGMATTER, "living." + counter, new String[] { "I", item.getRegistryName().toString(), Float.toString(factor) });
-        livingMatter.put(item, factor);
+        livingMatter.put(item.getRegistryName(), factor);
         return counter+1;
     }
 
@@ -154,8 +151,39 @@ public class SpawnerConfiguration {
         defaultMobSpawnRf = 10000;
         defaultSpawnAmounts.add(new MobSpawnAmount(new ItemStack(Items.DIAMOND), 1.0f));
         defaultSpawnAmounts.add(new MobSpawnAmount(new ItemStack(Blocks.DIRT), 20));
-        defaultSpawnAmounts.add(new MobSpawnAmount(null, 120.0f));
+        defaultSpawnAmounts.add(new MobSpawnAmount(ItemStack.EMPTY, 120.0f));
 
+        ConfigCategory category = cfg.getCategory(CATEGORY_MOBSPAWNAMOUNTS);
+        if (category.isEmpty()) {
+            setupInitialMobSpawnConfig(cfg);
+        } else {
+            for (Map.Entry<String, Property> entry : category.entrySet()) {
+                String key = entry.getKey();
+
+                String[] splitted = entry.getValue().getStringList();
+
+                int materialType;
+                if (key.endsWith(".spawnamount.0")) {
+                    materialType = MATERIALTYPE_KEY;
+                } else if (key.endsWith(".spawnamount.1")) {
+                    materialType = MATERIALTYPE_BULK;
+                } else {
+                    materialType = MATERIALTYPE_LIVING;
+                }
+                String id = key.substring(0, key.indexOf(".spawnamount"));
+                setSpawnAmounts(id, materialType, splitted);
+            }
+
+            category = cfg.getCategory(CATEGORY_MOBSPAWNRF);
+            for (Map.Entry<String, Property> entry : category.entrySet()) {
+                String key = entry.getKey();
+                int rf = entry.getValue().getInt();
+                mobSpawnRf.put(key, rf);
+            }
+        }
+    }
+
+    private static void setupInitialMobSpawnConfig(Configuration cfg) {
         addMobSpawnRF(cfg, EntityBat.class, 100);
         addMobSpawnAmount(cfg, EntityBat.class, MATERIALTYPE_KEY, Items.FEATHER, 0, .1f);
         addMobSpawnAmount(cfg, EntityBat.class, MATERIALTYPE_BULK, Blocks.DIRT, 0, .2f);
@@ -237,7 +265,7 @@ public class SpawnerConfiguration {
         addMobSpawnAmount(cfg, EntitySpider.class, MATERIALTYPE_BULK, Blocks.DIRT, 0, .2f);
         addMobSpawnAmount(cfg, EntitySpider.class, MATERIALTYPE_LIVING, null, 0, 15);
         addMobSpawnRF(cfg, EntitySquid.class, 500);
-        addMobSpawnAmount(cfg, EntitySquid.class, MATERIALTYPE_KEY, 351, 0, 0.1f);     // Ink sac
+        addMobSpawnAmount(cfg, EntitySquid.class, MATERIALTYPE_KEY, Items.DYE, 0, 0.1f);     // Ink sac
         addMobSpawnAmount(cfg, EntitySquid.class, MATERIALTYPE_BULK, Blocks.DIRT, 0, .5f);
         addMobSpawnAmount(cfg, EntitySquid.class, MATERIALTYPE_LIVING, null, 0, 10);
         addMobSpawnRF(cfg, EntityVillager.class, 2000);
@@ -288,6 +316,14 @@ public class SpawnerConfiguration {
         addMobSpawnAmount(cfg, EntityPolarBear.class, MATERIALTYPE_KEY, Items.FISH, 0, 0.1f);
         addMobSpawnAmount(cfg, EntityPolarBear.class, MATERIALTYPE_BULK, Blocks.DIRT, 0, .2f);
         addMobSpawnAmount(cfg, EntityPolarBear.class, MATERIALTYPE_LIVING, null, 0, 20);
+        addMobSpawnRF(cfg, "minecraft:wither_skeleton", 1500);
+        addMobSpawnAmount(cfg, "minecraft:wither_skeleton", MATERIALTYPE_KEY, Items.BONE, 0, 0.1f);
+        addMobSpawnAmount(cfg, "minecraft:wither_skeleton", MATERIALTYPE_BULK, Blocks.NETHERRACK, 0, .5f);
+        addMobSpawnAmount(cfg, "minecraft:wither_skeleton", MATERIALTYPE_LIVING, null, 0, 30);
+        addMobSpawnRF(cfg, "minecraft:stray", 800);
+        addMobSpawnAmount(cfg, "minecraft:stray", MATERIALTYPE_KEY, Items.BONE, 0, 0.1f);
+        addMobSpawnAmount(cfg, "minecraft:stray", MATERIALTYPE_BULK, Blocks.NETHERRACK, 0, .5f);
+        addMobSpawnAmount(cfg, "minecraft:stray", MATERIALTYPE_LIVING, null, 0, 20);
         addMobSpawnRF(cfg, "WitherSkeleton", 1500);
         addMobSpawnAmount(cfg, "WitherSkeleton", MATERIALTYPE_KEY, Items.BONE, 0, 0.1f);
         addMobSpawnAmount(cfg, "WitherSkeleton", MATERIALTYPE_BULK, Blocks.NETHERRACK, 0, .5f);
@@ -299,8 +335,8 @@ public class SpawnerConfiguration {
     }
 
     public static void addMobSpawnRF(Configuration cfg, Class<? extends EntityLiving> clazz, int rf) {
-        String name = EntityList.CLASS_TO_NAME.get(clazz);
-        addMobSpawnRF(cfg, name, rf);
+        String id = EntityTools.findEntityIdByClass(clazz);
+        addMobSpawnRF(cfg, id, rf);
     }
 
     private static void addMobSpawnRF(Configuration cfg, String name, int rf) {
@@ -309,20 +345,11 @@ public class SpawnerConfiguration {
     }
 
     public static void addMobSpawnAmount(Configuration cfg, Class<? extends EntityLiving> clazz, int materialType, Object object, int meta, float amount) {
-        String name = EntityList.CLASS_TO_NAME.get(clazz);
-        addMobSpawnAmount(cfg, name, materialType, object, meta, amount);
+        String id = EntityTools.findEntityIdByClass(clazz);
+        addMobSpawnAmount(cfg, id, materialType, object, meta, amount);
     }
 
-    private static void addMobSpawnAmount(Configuration cfg, String name, int materialType, Object object, int meta, float amount) {
-        List<MobSpawnAmount> list = mobSpawnAmounts.get(name);
-        if (list == null) {
-            list = new ArrayList<>(3);
-            list.add(null);
-            list.add(null);
-            list.add(null);
-            mobSpawnAmounts.put(name, list);
-        }
-
+    private static void addMobSpawnAmount(Configuration cfg, String id, int materialType, Object object, int meta, float amount) {
         String type;
         ResourceLocation itemname;
         if (object instanceof Item) {
@@ -335,8 +362,16 @@ public class SpawnerConfiguration {
             type = "L";
             itemname = null;
         }
-        String[] splitted = cfg.get(CATEGORY_MOBSPAWNAMOUNTS, name + ".spawnamount." + materialType,
+        String[] splitted = cfg.get(CATEGORY_MOBSPAWNAMOUNTS, id + ".spawnamount." + materialType,
                 new String[] { type, itemname == null ? "" : itemname.toString(), Integer.toString(meta), Float.toString(amount) }).getStringList();
+        setSpawnAmounts(id, materialType, splitted);
+    }
+
+    private static void setSpawnAmounts(String id, int materialType, String[] splitted) {
+        String type;
+        ResourceLocation itemname;
+        int meta;
+        float amount;
         try {
             type = splitted[0];
             String n = splitted[1];
@@ -348,11 +383,11 @@ public class SpawnerConfiguration {
             meta = Integer.parseInt(splitted[2]);
             amount = Float.parseFloat(splitted[3]);
         } catch (NumberFormatException e) {
-            Logging.logError("Something went wrong parsing the spawnamount setting for '" + name + "'!");
+            Logging.logError("Something went wrong parsing the spawnamount setting for '" + id + "'!");
             return;
         }
 
-        ItemStack stack = null;
+        ItemStack stack = ItemStack.EMPTY;
         if ("I".equals(type)) {
             Item item = Item.REGISTRY.getObject(itemname);
             stack = new ItemStack(item, 1, meta);
@@ -361,6 +396,15 @@ public class SpawnerConfiguration {
             stack = new ItemStack(block, 1, meta);
         } else if ("S".equals(type)) {
         }
+        List<MobSpawnAmount> list = mobSpawnAmounts.get(id);
+        if (list == null) {
+            list = new ArrayList<>(3);
+            list.add(null);
+            list.add(null);
+            list.add(null);
+            mobSpawnAmounts.put(id, list);
+        }
+
         list.set(materialType, new MobSpawnAmount(stack, amount));
     }
 
@@ -382,15 +426,10 @@ public class SpawnerConfiguration {
         }
 
         public Float match(ItemStack stack) {
-            if (object == null) {
+            if (object.isEmpty()) {
                 // Living?
                 Item item = stack.getItem();
-                if (item instanceof ItemBlock) {
-                    Block block = ((ItemBlock) item).getBlock();
-                    return livingMatter.get(block);
-                } else {
-                    return livingMatter.get(item);
-                }
+                return livingMatter.get(item.getRegistryName());
             }
             if (stack.isItemEqual(object)) {
                 return 1.0f;

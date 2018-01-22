@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
+import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
@@ -16,7 +17,7 @@ import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 public class StorageControlClientScreenModule implements IClientScreenModule<StorageControlScreenModule.ModuleDataStacks> {
-    private ItemStack[] stacks = new ItemStack[9];
+    private ItemStackList stacks = ItemStackList.create(9);
 
     @Override
     public TransformMode getTransformMode() {
@@ -48,7 +49,7 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
 
             for (int yy = 0 ; yy < 3 ; yy++) {
                 for (int xx = 0 ; xx < 3 ; xx++) {
-                    if (stacks[i] != null) {
+                    if (!stacks.get(i).isEmpty()) {
                         int x = xx * 40;
                         boolean hilighted = renderInfo.hitx >= x+8 && renderInfo.hitx <= x + 38 && renderInfo.hity >= y-7 && renderInfo.hity <= y + 22;
                         if (hilighted) {
@@ -82,9 +83,9 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
 
         for (int yy = 0 ; yy < 3 ; yy++) {
             for (int xx = 0 ; xx < 3 ; xx++) {
-                if (stacks[i] != null) {
+                if (!stacks.get(i).isEmpty()) {
                     int x = 7 + xx * 30;
-                    renderSlot(y, stacks[i], x);
+                    renderSlot(y, stacks.get(i), x);
                 }
                 i++;
             }
@@ -103,8 +104,8 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
 
         for (int yy = 0 ; yy < 3 ; yy++) {
             for (int xx = 0 ; xx < 3 ; xx++) {
-                if (stacks[i] != null) {
-                    renderSlotOverlay(fontRenderer, y, stacks[i], screenData.getAmount(i), 42 + xx * 64);
+                if (!stacks.get(i).isEmpty()) {
+                    renderSlotOverlay(fontRenderer, y, stacks.get(i), screenData.getAmount(i), 42 + xx * 64);
                 }
                 i++;
             }
@@ -139,7 +140,7 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
     }
 
     private static void renderItemOverlayIntoGUI(FontRenderer fontRenderer, ItemStack itemStack, int size, int x, int y) {
-        if (itemStack != null) {
+        if (!itemStack.isEmpty()) {
             String s1;
             if (size < 10000) {
                 s1 = String.valueOf(size);
@@ -178,7 +179,7 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
     }
 
     private static void renderQuad(Tessellator tessellator, int x, int y, int width, int height, int color, double offset) {
-        VertexBuffer buffer = tessellator.getBuffer();
+        BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
 //        tessellator.setColorOpaque_I(color);
         buffer.pos(x, y, offset);
@@ -203,9 +204,9 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
     @Override
     public void setupFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
-            for (int i = 0 ; i < stacks.length ; i++) {
+            for (int i = 0 ; i < stacks.size() ; i++) {
                 if (tagCompound.hasKey("stack"+i)) {
-                    stacks[i] = ItemStack.loadItemStackFromNBT(tagCompound.getCompoundTag("stack"+i));
+                    stacks.set(i, new ItemStack(tagCompound.getCompoundTag("stack" + i)));
                 }
             }
         }

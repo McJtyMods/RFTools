@@ -4,21 +4,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.ModBlocks;
-import mcjty.rftools.crafting.PreservingShapedRecipe;
-import mcjty.rftools.items.ModItems;
+import mcjty.rftools.blocks.shaper.*;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.builder.SpaceChamberCardItem;
 import mcjty.rftools.proxy.CommonProxy;
-import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockTallGrass;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -31,6 +22,11 @@ public class BuilderSetup {
     public static SpaceChamberControllerBlock spaceChamberControllerBlock;
     public static BuilderBlock builderBlock;
     public static SupportBlock supportBlock;
+    public static ComposerBlock composerBlock;
+    public static ScannerBlock scannerBlock;
+    public static RemoteScannerBlock remoteScannerBlock;
+    public static ProjectorBlock projectorBlock;
+    public static LocatorBlock locatorBlock;
 
     public static SpaceChamberCardItem spaceChamberCardItem;
     public static ShapeCardItem shapeCardItem;
@@ -42,6 +38,11 @@ public class BuilderSetup {
         spaceChamberControllerBlock = new SpaceChamberControllerBlock();
         builderBlock = new BuilderBlock();
         supportBlock = new SupportBlock();
+        composerBlock = new ComposerBlock();
+        scannerBlock = new ScannerBlock();
+        remoteScannerBlock = new RemoteScannerBlock();
+        projectorBlock = new ProjectorBlock();
+        locatorBlock = new LocatorBlock();
 
         initItems();
 
@@ -55,6 +56,11 @@ public class BuilderSetup {
         spaceChamberControllerBlock.initModel();
         builderBlock.initModel();
         supportBlock.initModel();
+        composerBlock.initModel();
+        scannerBlock.initModel();
+        remoteScannerBlock.initModel();
+        projectorBlock.initModel();
+        locatorBlock.initModel();
 
         spaceChamberCardItem.initModel();
         shapeCardItem.initModel();
@@ -65,112 +71,18 @@ public class BuilderSetup {
         shapeCardItem = new ShapeCardItem();
     }
 
-    public static void initCrafting() {
-        Block redstoneTorch = Blocks.REDSTONE_TORCH;
-        ItemStack lapisStack = new ItemStack(Items.DYE, 1, 4);
-        ItemStack inkSac = new ItemStack(Items.DYE, 1, 0);
-
-        GameRegistry.addRecipe(new ItemStack(spaceChamberBlock), "lgl", "gMg", "lgl", 'M', ModBlocks.machineFrame, 'g', Blocks.GLASS, 'l', lapisStack);
-        GameRegistry.addRecipe(new ItemStack(spaceChamberControllerBlock), " e ", "tMt", " e ", 'M', spaceChamberBlock, 't', redstoneTorch, 'e', Items.ENDER_PEARL);
-        if (GeneralConfiguration.enableBuilderRecipe) {
-            GameRegistry.addRecipe(new ItemStack(builderBlock), "beb", "rMr", "brb", 'M', ModBlocks.machineFrame, 'e', Items.ENDER_PEARL, 'r', Items.REDSTONE, 'b', Blocks.BRICK_BLOCK);
-        }
-
-        GameRegistry.addRecipe(new ItemStack(spaceChamberCardItem), " b ", "rir", " b ", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
-                'b', Items.BRICK);
-
-        if (BuilderConfiguration.shapeCardAllowed) {
-            GameRegistry.addRecipe(new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_SHAPE), "pbp", "rir", "pbp", 'r', Items.REDSTONE, 'i', Items.IRON_INGOT,
-                    'b', Items.BRICK, 'p', Items.PAPER);
-
-            if (BuilderConfiguration.quarryAllowed) {
-                GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-                        inkSac, new ItemStack(Blocks.OBSIDIAN), inkSac,
-                        new ItemStack(Blocks.OBSIDIAN), new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_SHAPE), new ItemStack(Blocks.OBSIDIAN),
-                        inkSac, new ItemStack(Blocks.OBSIDIAN), inkSac
-                }, new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_VOID), 4));
-                GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-                        new ItemStack(Items.REDSTONE), new ItemStack(Items.WATER_BUCKET), new ItemStack(Items.REDSTONE),
-                        new ItemStack(Items.BUCKET), new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_SHAPE), new ItemStack(Items.BUCKET),
-                        new ItemStack(Items.REDSTONE), new ItemStack(Items.LAVA_BUCKET), new ItemStack(Items.REDSTONE)
-                }, new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_PUMP), 4));
-                GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-                        new ItemStack(Items.REDSTONE), new ItemStack(Items.DIAMOND_PICKAXE), new ItemStack(Items.REDSTONE),
-                        new ItemStack(Items.IRON_INGOT), new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_SHAPE), new ItemStack(Items.IRON_INGOT),
-                        new ItemStack(Items.REDSTONE), new ItemStack(Items.DIAMOND_SHOVEL), new ItemStack(Items.REDSTONE)
-                }, new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_QUARRY), 4));
-                GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-                        new ItemStack(ModItems.dimensionalShardItem), new ItemStack(Items.NETHER_STAR), new ItemStack(ModItems.dimensionalShardItem),
-                        new ItemStack(Items.DIAMOND), new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_QUARRY), new ItemStack(Items.DIAMOND),
-                        new ItemStack(ModItems.dimensionalShardItem), new ItemStack(Items.DIAMOND), new ItemStack(ModItems.dimensionalShardItem)
-                }, new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_SILK), 4));
-                GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-                        new ItemStack(ModItems.dimensionalShardItem), new ItemStack(Items.GHAST_TEAR), new ItemStack(ModItems.dimensionalShardItem),
-                        new ItemStack(Items.EMERALD), new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_QUARRY), new ItemStack(Items.DIAMOND),
-                        new ItemStack(ModItems.dimensionalShardItem), new ItemStack(Items.REDSTONE), new ItemStack(ModItems.dimensionalShardItem)
-                }, new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_FORTUNE), 4));
-
-                if (BuilderConfiguration.clearingQuarryAllowed) {
-                    GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-                            new ItemStack(Blocks.GLASS), new ItemStack(Blocks.GLASS), new ItemStack(Blocks.GLASS),
-                            new ItemStack(Blocks.GLASS), new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_QUARRY), new ItemStack(Blocks.GLASS),
-                            new ItemStack(Blocks.GLASS), new ItemStack(Blocks.GLASS), new ItemStack(Blocks.GLASS)
-                    }, new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_CLEAR), 4));
-                    GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-                            new ItemStack(Blocks.GLASS), new ItemStack(Blocks.GLASS), new ItemStack(Blocks.GLASS),
-                            new ItemStack(Blocks.GLASS), new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_SILK), new ItemStack(Blocks.GLASS),
-                            new ItemStack(Blocks.GLASS), new ItemStack(Blocks.GLASS), new ItemStack(Blocks.GLASS)
-                    }, new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_CLEAR_SILK), 4));
-                    GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-                            new ItemStack(Blocks.GLASS), new ItemStack(Blocks.GLASS), new ItemStack(Blocks.GLASS),
-                            new ItemStack(Blocks.GLASS), new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_FORTUNE), new ItemStack(Blocks.GLASS),
-                            new ItemStack(Blocks.GLASS), new ItemStack(Blocks.GLASS), new ItemStack(Blocks.GLASS)
-                    }, new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_CLEAR_FORTUNE), 4));
-                    GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-                            new ItemStack(Blocks.GLASS), new ItemStack(Blocks.GLASS), new ItemStack(Blocks.GLASS),
-                            new ItemStack(Blocks.GLASS), new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_PUMP), new ItemStack(Blocks.GLASS),
-                            new ItemStack(Blocks.GLASS), new ItemStack(Blocks.GLASS), new ItemStack(Blocks.GLASS)
-                    }, new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_PUMP_CLEAR), 4));
-                    GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-                            new ItemStack(Blocks.DIRT), new ItemStack(Blocks.DIRT), new ItemStack(Blocks.DIRT),
-                            new ItemStack(Blocks.DIRT), new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_CLEAR), new ItemStack(Blocks.DIRT),
-                            new ItemStack(Blocks.DIRT), new ItemStack(Blocks.DIRT), new ItemStack(Blocks.DIRT)
-                    }, new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_QUARRY), 4));
-                    GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-                            new ItemStack(Blocks.DIRT), new ItemStack(Blocks.DIRT), new ItemStack(Blocks.DIRT),
-                            new ItemStack(Blocks.DIRT), new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_CLEAR_SILK), new ItemStack(Blocks.DIRT),
-                            new ItemStack(Blocks.DIRT), new ItemStack(Blocks.DIRT), new ItemStack(Blocks.DIRT)
-                    }, new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_SILK), 4));
-                    GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-                            new ItemStack(Blocks.DIRT), new ItemStack(Blocks.DIRT), new ItemStack(Blocks.DIRT),
-                            new ItemStack(Blocks.DIRT), new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_CLEAR_FORTUNE), new ItemStack(Blocks.DIRT),
-                            new ItemStack(Blocks.DIRT), new ItemStack(Blocks.DIRT), new ItemStack(Blocks.DIRT)
-                    }, new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_QUARRY_FORTUNE), 4));
-                    GameRegistry.addRecipe(new PreservingShapedRecipe(3, 3, new ItemStack[]{
-                            new ItemStack(Blocks.DIRT), new ItemStack(Blocks.DIRT), new ItemStack(Blocks.DIRT),
-                            new ItemStack(Blocks.DIRT), new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_PUMP_CLEAR), new ItemStack(Blocks.DIRT),
-                            new ItemStack(Blocks.DIRT), new ItemStack(Blocks.DIRT), new ItemStack(Blocks.DIRT)
-                    }, new ItemStack(shapeCardItem, 1, ShapeCardItem.CARD_PUMP), 4));
-                }
-            }
-        }
-
-    }
-
     private static void readBuilderBlocksInternal() {
-        try {
-            InputStream inputstream = RFTools.class.getResourceAsStream("/assets/rftools/text/builder.json");
+        try(InputStream inputstream = RFTools.class.getResourceAsStream("/assets/rftools/text/builder.json")) {
             parseBuilderJson(inputstream);
         } catch (IOException e) {
-            e.printStackTrace();
+            Logging.logError("Error reading builder.json", e);
         }
     }
 
     private static void readBuilderBlocksConfig() {
         File modConfigDir = CommonProxy.modConfigDir;
-        try {
-            File file = new File(modConfigDir.getPath() + File.separator + "rftools", "userbuilder.json");
-            FileInputStream inputstream = new FileInputStream(file);
+        File file = new File(modConfigDir.getPath() + File.separator + "rftools", "userbuilder.json");
+        try(FileInputStream inputstream = new FileInputStream(file)) {
             parseBuilderJson(inputstream);
         } catch (IOException e) {
             Logging.log("Could not read 'userbuilder.json', this is not an error!");
@@ -227,7 +139,7 @@ public class BuilderSetup {
     public static BlockInformation getBlockInformation(Block block) {
         BlockInformation information = blockInformationMap.get(block.getRegistryName().toString());
         if (information == null) {
-            String modid = RFToolsTools.getModidForBlock(block);
+            String modid = BlockTools.getModidForBlock(block);
             information = blockInformationMap.get("modid:" + modid);
         }
         return information;

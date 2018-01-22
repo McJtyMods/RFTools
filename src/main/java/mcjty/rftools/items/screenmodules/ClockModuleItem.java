@@ -1,15 +1,14 @@
 package mcjty.rftools.items.screenmodules;
 
-import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
-import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ClockScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ClockClientScreenModule;
 import mcjty.rftools.items.GenericRFToolsItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -24,7 +23,7 @@ public class ClockModuleItem extends GenericRFToolsItem implements IModuleProvid
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.CLOCK_RFPERTICK + " RF/tick");
     }
@@ -35,12 +34,12 @@ public class ClockModuleItem extends GenericRFToolsItem implements IModuleProvid
     }
 
     @Override
-    public Class<? extends IScreenModule> getServerScreenModule() {
+    public Class<ClockScreenModule> getServerScreenModule() {
         return ClockScreenModule.class;
     }
 
     @Override
-    public Class<? extends IClientScreenModule> getClientScreenModule() {
+    public Class<ClockClientScreenModule> getClientScreenModule() {
         return ClockClientScreenModule.class;
     }
 

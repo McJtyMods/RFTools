@@ -1,10 +1,13 @@
 package mcjty.rftools.blocks.security;
 
 import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.network.Arguments;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.network.RFToolsMessages;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -38,7 +41,7 @@ public class SecurityCardItem extends GenericRFToolsItem {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         int channel = -1;
@@ -48,7 +51,7 @@ public class SecurityCardItem extends GenericRFToolsItem {
         if (channel != -1) {
             if (System.currentTimeMillis() - lastTime > 250) {
                 lastTime = System.currentTimeMillis();
-                RFToolsMessages.INSTANCE.sendToServer(new PacketGetSecurityName(channel));
+                RFToolsMessages.sendToServer(CommandHandler.CMD_GET_SECURITY_NAME, Arguments.builder().value(channel));
             }
             list.add(TextFormatting.YELLOW + "Channel: " + channel + " (" + channelNameFromServer + ")");
         } else {
@@ -66,7 +69,8 @@ public class SecurityCardItem extends GenericRFToolsItem {
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
             TileEntity te = world.getTileEntity(pos);
             if (te instanceof GenericTileEntity) {

@@ -1,0 +1,31 @@
+{
+  "result": {
+    "item": "rftools:storage_module",
+    "data": 1
+  },
+  "pattern": [
+    " c ",
+    "gmg",
+    "qrq"
+  ],
+  "type": "rftools:copy_nbt",
+  "key": {
+    "q": {
+      "item": "minecraft:quartz"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "c": {
+      "type": "forge:ore_dict",
+      "ore": "chest"
+    },
+    "g": {
+      "item": "minecraft:gold_ingot"
+    },
+    "m": {
+      "item": "rftools:storage_module",
+      "data": 0
+    }
+  }
+}

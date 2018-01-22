@@ -3,9 +3,6 @@ package mcjty.rftools.blocks.logic.sequencer;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
-import mcjty.lib.gui.events.ButtonEvent;
-import mcjty.lib.gui.events.ChoiceEvent;
-import mcjty.lib.gui.events.TextEvent;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.Button;
@@ -26,7 +23,7 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
     public static final int SEQUENCER_WIDTH = 160;
     public static final int SEQUENCER_HEIGHT = 184;
 
-    private List<ImageChoiceLabel> bits = new ArrayList<ImageChoiceLabel>();
+    private List<ImageChoiceLabel> bits = new ArrayList<>();
     private ChoiceLabel mode;
     private TextField speedField;
 
@@ -46,30 +43,15 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
 
         initGuiGrid(toplevel);
 
-        Button clearButton = new Button(mc, this).setText("Clear").setTooltips("Clear the grid").setDesiredHeight(13).setDesiredWidth(45).addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget parent) {
-                fillGrid(false);
-            }
-        });
-        Button fillButton = new Button(mc, this).setText("Fill").setTooltips("Fill the grid").setDesiredHeight(13).setDesiredWidth(45).addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget parent) {
-                fillGrid(true);
-            }
-        });
+        Button clearButton = new Button(mc, this).setText("Clear").setTooltips("Clear the grid").setDesiredHeight(13).setDesiredWidth(45).addButtonEvent(parent -> fillGrid(false));
+        Button fillButton = new Button(mc, this).setText("Fill").setTooltips("Fill the grid").setDesiredHeight(13).setDesiredWidth(45).addButtonEvent(parent -> fillGrid(true));
         Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(clearButton).addChild(fillButton);
         toplevel.addChild(buttonPanel);
 
         initGuiMode();
         Label label = new Label(mc, this).setText("Delay:");
 
-        speedField = new TextField(mc, this).addTextEvent(new TextEvent() {
-            @Override
-            public void textChanged(Widget parent, String newText) {
-                setDelay();
-            }
-        });
+        speedField = new TextField(mc, this).addTextEvent((parent, newText) -> setDelay());
         int delay = tileEntity.getDelay();
         if (delay <= 0) {
             delay = 1;
@@ -90,12 +72,7 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
             for (int col = 0 ; col < 8 ; col++) {
                 final int bit = row * 8 + col;
                 ImageChoiceLabel choiceLabel = new ImageChoiceLabel(mc, this).
-                        addChoiceEvent(new ChoiceEvent() {
-                            @Override
-                            public void choiceChanged(Widget parent, String newChoice) {
-                                changeBit(bit, newChoice);
-                            }
-                        }).
+                        addChoiceEvent((parent, newChoice) -> changeBit(bit, newChoice)).
                         setDesiredHeight(12).
                         addChoice("0", "Disabled", iconGuiElements, 160, 0).
                         addChoice("1", "Enabled", iconGuiElements, 176, 0);
@@ -123,12 +100,7 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
         mode.setChoiceTooltip(SequencerMode.MODE_LOOP4.getDescription(), "Loop the cycle when redstone.", "signal is present. Restart on no signal");
         mode.setChoiceTooltip(SequencerMode.MODE_STEP.getDescription(), "Do one step in the cycle", "for every redstone pulse");
         mode.setChoice(tileEntity.getMode().getDescription());
-        mode.addChoiceEvent(new ChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, String newChoice) {
-                changeMode();
-            }
-        });
+        mode.addChoiceEvent((parent, newChoice) -> changeMode());
     }
 
     private void setDelay() {

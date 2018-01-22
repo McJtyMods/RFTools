@@ -2,20 +2,20 @@ package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class DialingDeviceBlock extends GenericRFToolsBlock implements Infusable {
+public class DialingDeviceBlock extends GenericRFToolsBlock<DialingDeviceTileEntity, EmptyContainer> implements Infusable {
 
     public DialingDeviceBlock() {
         super(Material.IRON, DialingDeviceTileEntity.class, EmptyContainer.class, "dialing_device", false);
@@ -23,13 +23,13 @@ public class DialingDeviceBlock extends GenericRFToolsBlock implements Infusable
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiDialingDevice> getGuiClass() {
         return GuiDialingDevice.class;
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {

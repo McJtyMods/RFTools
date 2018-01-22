@@ -1,16 +1,17 @@
 package mcjty.rftools.items.storage;
 
+import mcjty.lib.McJtyRegister;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.sorters.CountItemSorter;
 import mcjty.rftools.blocks.storage.sorters.ItemSorter;
 import mcjty.rftools.blocks.storage.sorters.NameItemSorter;
 import mcjty.rftools.blocks.storage.sorters.OreTypeItemSorter;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -26,7 +27,7 @@ public class OreDictTypeItem extends StorageTypeItem {
         setUnlocalizedName("oredict_module");
         setRegistryName("oredict_module");
         setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.register(this);
+        McJtyRegister.registerLater(this, RFTools.instance);
     }
 
     @Override
@@ -57,7 +58,7 @@ public class OreDictTypeItem extends StorageTypeItem {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(TextFormatting.WHITE + "This module extends the Modular Storage block");

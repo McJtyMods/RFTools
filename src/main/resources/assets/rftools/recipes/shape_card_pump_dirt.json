@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "rftools:shape_card",
+    "data": 8
+  },
+  "pattern": [
+    "ggg",
+    "gMg",
+    "ggg"
+  ],
+  "type": "rftools:copy_nbt",
+  "key": {
+    "g": {
+      "item": "minecraft:dirt",
+      "data": 0
+    },
+    "M": {
+      "item": "rftools:shape_card",
+      "data": 9
+    }
+  }
+}

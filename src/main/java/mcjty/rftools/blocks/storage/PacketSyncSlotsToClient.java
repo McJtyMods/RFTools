@@ -41,7 +41,7 @@ public class PacketSyncSlotsToClient implements IMessage {
         for (int i = 0 ; i < s ; i++) {
             int slotIdx = buf.readInt();
             if (slotIdx < 0) {
-                items.add(Pair.of(-slotIdx-1, null));
+                items.add(Pair.of(-slotIdx-1, ItemStack.EMPTY));
             } else {
                 ItemStack stack = NetworkTools.readItemStack(buf);
                 items.add(Pair.of(slotIdx, stack));
@@ -60,8 +60,8 @@ public class PacketSyncSlotsToClient implements IMessage {
         buf.writeInt(numStacks);
         buf.writeInt(items.size());
         for (Pair<Integer, ItemStack> pair : items) {
-            if (pair.getRight() == null) {
-                buf.writeInt(-pair.getLeft()-1);  // Negative index to indicate a null stack
+            if (pair.getRight().isEmpty()) {
+                buf.writeInt(-pair.getLeft()-1);  // Negative index to indicate an empty stack
             } else {
                 buf.writeInt(pair.getLeft());
                 NetworkTools.writeItemStack(buf, pair.getRight());

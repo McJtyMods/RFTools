@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.logic.wireless;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldSavedData;
+import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.HashMap;
@@ -16,14 +16,14 @@ public class RedstoneChannels extends WorldSavedData {
 
     private int lastId = 0;
 
-    private final Map<Integer,RedstoneChannel> channels = new HashMap<Integer,RedstoneChannel>();
+    private final Map<Integer,RedstoneChannel> channels = new HashMap<>();
 
     public RedstoneChannels(String identifier) {
         super(identifier);
     }
 
     public void save(World world) {
-        world.getMapStorage().setData(REDSTONE_CHANNELS_NAME, this);
+        world.setData(REDSTONE_CHANNELS_NAME, this);
         markDirty();
     }
 
@@ -45,7 +45,7 @@ public class RedstoneChannels extends WorldSavedData {
         if (instance != null) {
             return instance;
         }
-        instance = (RedstoneChannels) world.getMapStorage().getOrLoadData(RedstoneChannels.class, REDSTONE_CHANNELS_NAME);
+        instance = (RedstoneChannels) world.loadData(RedstoneChannels.class, REDSTONE_CHANNELS_NAME);
         if (instance == null) {
             instance = new RedstoneChannels(REDSTONE_CHANNELS_NAME);
         }

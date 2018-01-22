@@ -3,19 +3,18 @@ package mcjty.rftools.blocks.logic.counter;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
-import mcjty.lib.gui.events.TextEvent;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
-import mcjty.lib.gui.widgets.Widget;
 import mcjty.lib.network.Argument;
-import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
+import mcjty.lib.network.Arguments;
+import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 public class GuiCounter extends GenericGuiContainer<CounterTileEntity> {
     public static final int COUNTER_WIDTH = 200;
@@ -36,24 +35,14 @@ public class GuiCounter extends GenericGuiContainer<CounterTileEntity> {
 
         Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout());
 
-        counterField = new TextField(mc, this).setTooltips("Set the counter in pulses").addTextEvent(new TextEvent() {
-            @Override
-            public void textChanged(Widget parent, String newText) {
-                setCounter();
-            }
-        });
+        counterField = new TextField(mc, this).setTooltips("Set the counter in pulses").addTextEvent((parent, newText) -> setCounter());
         int delay = tileEntity.getCounter();
         if (delay <= 0) {
             delay = 1;
         }
         counterField.setText(String.valueOf(delay));
 
-        currentField = new TextField(mc, this).setTooltips("Set the current value", "(fires when it reaches counter)").addTextEvent(new TextEvent() {
-            @Override
-            public void textChanged(Widget parent, String newText) {
-                setCurrent();
-            }
-        });
+        currentField = new TextField(mc, this).setTooltips("Set the current value", "(fires when it reaches counter)").addTextEvent((parent, newText) -> setCurrent());
         int current = tileEntity.getCurrent();
         if (current < 0) {
             current = 0;
@@ -103,15 +92,14 @@ public class GuiCounter extends GenericGuiContainer<CounterTileEntity> {
             requestCurrentCounter();
         }
 
-        currentField.setText(String.valueOf(CounterInfoPacketClient.cntReceived));
+        currentField.setText(String.valueOf(CounterBlock.cntReceived));
 
         drawWindow();
     }
 
     private void requestCurrentCounter() {
         lastTime = System.currentTimeMillis();
-        RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new CounterInfoPacketServer(
-                tileEntity.getWorld().provider.getDimension(),
-                tileEntity.getPos())));
+        RFToolsMessages.sendToServer(CommandHandler.CMD_GET_COUNTER_INFO,
+                Arguments.builder().value(tileEntity.getWorld().provider.getDimension()).value(tileEntity.getPos()));
     }
 }

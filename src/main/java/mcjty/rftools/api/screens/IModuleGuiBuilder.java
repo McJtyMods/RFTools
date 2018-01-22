@@ -35,12 +35,20 @@ public interface IModuleGuiBuilder {
     /**
      * A color selector.
      *
-     * @param tagname the tag that will be used to save the format in your NBT. The format
-     *                is saved as an integer color value.
+     * @param tagname the tag that will be used to save the color in your NBT
      * @param tooltip
      * @return
      */
     IModuleGuiBuilder color(String tagname, String... tooltip);
+
+    /**
+     * A choice selector.
+
+     * @param tagname the tag that will be used to save the choice in your NBT
+     * @param choices
+     * @return
+     */
+    IModuleGuiBuilder choices(String tagname, String tooltip, String... choices);
 
     /**
      * A combobox component that can be used to specify a format. This allows

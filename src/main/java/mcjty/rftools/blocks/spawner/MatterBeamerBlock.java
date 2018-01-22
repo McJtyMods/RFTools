@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.spawner;
 
 import mcjty.lib.api.Infusable;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -13,6 +12,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -22,8 +22,10 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -47,8 +49,8 @@ public class MatterBeamerBlock extends GenericRFToolsBlock<MatterBeamerTileEntit
     }
 
     @Override
-    public boolean hasNoRotation() {
-        return true;
+    public RotationType getRotationType() {
+        return RotationType.NONE;
     }
 
     @SideOnly(Side.CLIENT)
@@ -60,7 +62,7 @@ public class MatterBeamerBlock extends GenericRFToolsBlock<MatterBeamerTileEntit
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
 //        NBTTagCompound tagCompound = itemStack.getTagCompound();
 //        if (tagCompound != null) {
@@ -113,7 +115,7 @@ public class MatterBeamerBlock extends GenericRFToolsBlock<MatterBeamerTileEntit
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiMatterBeamer> getGuiClass() {
         return GuiMatterBeamer.class;
     }
 
@@ -134,7 +136,7 @@ public class MatterBeamerBlock extends GenericRFToolsBlock<MatterBeamerTileEntit
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntity te = world.getTileEntity(pos);
+        TileEntity te = world instanceof ChunkCache ? ((ChunkCache)world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) : world.getTileEntity(pos);
         boolean working = false;
         if (te instanceof MatterBeamerTileEntity) {
             working = ((MatterBeamerTileEntity)te).isGlowing();

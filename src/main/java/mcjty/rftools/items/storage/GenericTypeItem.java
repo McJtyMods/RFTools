@@ -1,13 +1,14 @@
 package mcjty.rftools.items.storage;
 
+import mcjty.lib.McJtyRegister;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.sorters.*;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -23,13 +24,13 @@ public class GenericTypeItem extends StorageTypeItem {
         setUnlocalizedName("generic_module");
         setRegistryName("generic_module");
         setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.register(this);
+        McJtyRegister.registerLater(this, RFTools.instance);
     }
 
     @Override
     public List<ItemSorter> getSorters() {
         if (sorters == null) {
-            sorters = new ArrayList<ItemSorter>();
+            sorters = new ArrayList<>();
             sorters.add(new NameItemSorter());
             sorters.add(new CountItemSorter());
             sorters.add(new GenericItemSorter());
@@ -56,7 +57,7 @@ public class GenericTypeItem extends StorageTypeItem {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(TextFormatting.WHITE + "This module extends the Modular Storage block");

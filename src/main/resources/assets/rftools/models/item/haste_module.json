@@ -1,5 +1,5 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "rftools:items/envmodules/hasteEModuleItem"
+    "layer0": "rftools:items/envmodules/hasteemoduleitem"
   }}

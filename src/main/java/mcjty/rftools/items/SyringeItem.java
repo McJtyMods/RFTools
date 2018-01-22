@@ -1,40 +1,66 @@
 package mcjty.rftools.items;
 
+import mcjty.lib.varia.EntityTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
-import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.boss.EntityDragon;
-import net.minecraft.entity.boss.EntityDragonPart;
-import net.minecraft.entity.monster.EntityPigZombie;
-import net.minecraft.entity.monster.EntitySkeleton;
-import net.minecraft.entity.monster.SkeletonType;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.IEntityMultiPart;
+import net.minecraft.entity.MultiPartEntityPart;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.common.registry.EntityEntry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
+//import net.minecraft.entity.monster.SkeletonType;
+
 public class SyringeItem extends GenericRFToolsItem {
 
     public SyringeItem() {
         super("syringe");
         setMaxStackSize(1);
+        setContainerItem(this);
+    }
+
+    @Override
+    public boolean hasContainerItem(ItemStack stack) {
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        return tagCompound != null && tagCompound.getInteger("level") > 0;
+    }
+
+    @Override
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+        if(isInCreativeTab(tab)) {
+            items.add(new ItemStack(this));
+            for(EntityEntry entry : ForgeRegistries.ENTITIES) {
+                Class<? extends Entity> clazz = entry.getEntityClass();
+                if(EntityLiving.class.isAssignableFrom(clazz)) {
+                    items.add(createMobSyringe(clazz));
+                }
+            }
+        }
     }
 
     @Override
@@ -46,25 +72,22 @@ public class SyringeItem extends GenericRFToolsItem {
             ModelBakery.registerItemVariants(this, new ModelResourceLocation(new ResourceLocation(domain, path + i), "inventory"));
         }
 
-        ModelLoader.setCustomMeshDefinition(this, new ItemMeshDefinition() {
-            @Override
-            public ModelResourceLocation getModelLocation(ItemStack stack) {
-                NBTTagCompound tagCompound = stack.getTagCompound();
-                int level = 0;
-                if (tagCompound != null) {
-                    level = tagCompound.getInteger("level");
-                }
-                if (level <= 0) {
-                    level = 0;
-                } else if (level >= GeneralConfiguration.maxMobInjections) {
-                    level = 5;
-                } else {
-                    level = ((level-1) * 4 / (GeneralConfiguration.maxMobInjections-1)) + 1;
-                }
-                String domain = getRegistryName().getResourceDomain();
-                String path = getRegistryName().getResourcePath();
-                return new ModelResourceLocation(new ResourceLocation(domain, path + level), "inventory");
+        ModelLoader.setCustomMeshDefinition(this, stack -> {
+            NBTTagCompound tagCompound = stack.getTagCompound();
+            int level = 0;
+            if (tagCompound != null) {
+                level = tagCompound.getInteger("level");
             }
+            if (level <= 0) {
+                level = 0;
+            } else if (level >= GeneralConfiguration.maxMobInjections) {
+                level = 5;
+            } else {
+                level = ((level-1) * 4 / (GeneralConfiguration.maxMobInjections-1)) + 1;
+            }
+            String domain = getRegistryName().getResourceDomain();
+            String path = getRegistryName().getResourcePath();
+            return new ModelResourceLocation(new ResourceLocation(domain, path + level), "inventory");
         });
     }
 
@@ -74,7 +97,8 @@ public class SyringeItem extends GenericRFToolsItem {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+        ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
             NBTTagCompound tagCompound = stack.getTagCompound();
             if (tagCompound != null) {
@@ -93,74 +117,50 @@ public class SyringeItem extends GenericRFToolsItem {
 
     @Override
     public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
-        Class<? extends Entity> clazz = findSelectedMobClass(entity);
-        if (clazz != null) {
+        EntityLiving entityLiving = getEntityLivingFromClickedEntity(entity);
+        if(entityLiving != null) {
             String prevMobId = null;
             NBTTagCompound tagCompound = stack.getTagCompound();
             if (tagCompound != null) {
-                prevMobId = tagCompound.getString("mobId");
+                prevMobId = EntityTools.fixEntityId(tagCompound.getString("mobId"));
             } else {
                 tagCompound = new NBTTagCompound();
                 stack.setTagCompound(tagCompound);
             }
-            String id = findSelectedMobId(clazz, entity);
+            String id = findSelectedMobId(entityLiving);
             if (id != null && !id.isEmpty()) {
-                if (prevMobId == null || !prevMobId.equals(id)) {
-                    tagCompound.setString("mobName", findSelectedMobName(entity));
+                if (!id.equals(prevMobId)) {
+                    tagCompound.setString("mobName", entityLiving.getName());
                     tagCompound.setString("mobId", id);
                     tagCompound.setInteger("level", 1);
                 } else {
-                    int level = tagCompound.getInteger("level");
-                    level++;
-                    if (level > GeneralConfiguration.maxMobInjections) {
-                        level = GeneralConfiguration.maxMobInjections;
-                    }
-                    tagCompound.setInteger("level", level);
+                    tagCompound.setInteger("level", Math.min(tagCompound.getInteger("level") + 1, GeneralConfiguration.maxMobInjections));
                 }
             }
         }
         return super.onLeftClickEntity(stack, player, entity);
     }
 
-    private String findSelectedMobId(Class<? extends Entity> clazz, Entity entity) {
-        if (entity instanceof EntitySkeleton) {
-            EntitySkeleton skeleton = (EntitySkeleton) entity;
-            if (skeleton.getSkeletonType() == SkeletonType.WITHER) {
-                return "WitherSkeleton";
-            } else if (skeleton.getSkeletonType() == SkeletonType.STRAY) {
-                return "StraySkeleton";
+    private static @Nullable EntityLiving getEntityLivingFromClickedEntity(Entity entity) {
+        if(entity instanceof EntityLiving) {
+            return (EntityLiving)entity;
+        } else if(entity instanceof MultiPartEntityPart) {
+            IEntityMultiPart parent = ((MultiPartEntityPart)entity).parent;
+            if(parent instanceof EntityLiving) {
+                return (EntityLiving)parent;
             }
         }
-        return EntityList.CLASS_TO_NAME.get(clazz);
+        return null;
     }
 
-    private Class<? extends Entity> findSelectedMobClass(Entity entity) {
-        // First try to find an exact matching class.
-        Class<? extends Entity> entityClass = entity.getClass();
-
-        // Special case for the ender dragon
-        if (entity instanceof EntityDragonPart) {
-            entityClass = EntityDragon.class;
-        }
-        return entityClass;
-    }
-
-    private String findSelectedMobName(Entity entity) {
-        if (entity instanceof EntitySkeleton && ((EntitySkeleton) entity).getSkeletonType() == SkeletonType.WITHER) {
-            return "Wither Skeleton";
-        }
-        if (entity instanceof EntitySkeleton && ((EntitySkeleton) entity).getSkeletonType() == SkeletonType.STRAY) {
-            return "Stray Skeleton";
-        }
-        if (entity instanceof EntityPigZombie) {
-            return "Zombie Pigman";
-        }
-        return entity.getName();
+    private String findSelectedMobId(Entity entity) {
+        ResourceLocation key = EntityList.getKey(entity.getClass());
+        return key != null ? key.toString() : null;
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
@@ -175,15 +175,15 @@ public class SyringeItem extends GenericRFToolsItem {
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(TextFormatting.WHITE + "Use this to extract essence from mobs");
-            list.add(TextFormatting.WHITE + "Workbench. Be careful!");
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
     }
 
     public static ItemStack createMobSyringe(Class<? extends Entity> mobClass) {
-        String id = EntityList.getEntityStringFromClass(mobClass);
-        String name = I18n.translateToLocal("entity." + id + ".name");
+        String id = EntityTools.findEntityIdByClass(mobClass);
+//        String name = EntityTools.findEntityLocNameByClass(mobClass);
+        String name = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(id)).getName();
         return createMobSyringe(id, name);
     }
 
@@ -207,6 +207,8 @@ public class SyringeItem extends GenericRFToolsItem {
             if (mob == null) {
                 // For compatibility only!
                 return tagCompound.getString("mobName");
+            } else {
+                mob = EntityTools.fixEntityId(mob);
             }
             return mob;
         }
@@ -217,9 +219,11 @@ public class SyringeItem extends GenericRFToolsItem {
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound != null) {
             String mob = tagCompound.getString("mobName");
-            if (mob == null) {
+            if (mob == null || "unknown".equals(mob)) {
                 if (tagCompound.hasKey("mobId")) {
-                    return tagCompound.getString("mobId");
+                    String mobId = tagCompound.getString("mobId");
+                    mobId = EntityTools.fixEntityId(mobId);
+                    return mobId;
                 } else {
                     return "?";
                 }

@@ -7,7 +7,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldSavedData;
+import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.*;
@@ -55,7 +55,7 @@ public class BlockProtectors extends WorldSavedData {
     }
 
     public void save(World world) {
-        world.getMapStorage().setData(PROTECTORS_NAME, this);
+        world.setData(PROTECTORS_NAME, this);
         markDirty();
     }
 
@@ -74,7 +74,7 @@ public class BlockProtectors extends WorldSavedData {
         if (instance != null) {
             return instance;
         }
-        instance = (BlockProtectors) world.getMapStorage().getOrLoadData(BlockProtectors.class, PROTECTORS_NAME);
+        instance = (BlockProtectors) world.loadData(BlockProtectors.class, PROTECTORS_NAME);
         if (instance == null) {
             instance = new BlockProtectors(PROTECTORS_NAME);
         }
@@ -116,7 +116,7 @@ public class BlockProtectors extends WorldSavedData {
     }
 
     public Collection<GlobalCoordinate> findProtectors(int x, int y, int z, int dimension, int radius) {
-        List<GlobalCoordinate> protectors = new ArrayList<GlobalCoordinate>();
+        List<GlobalCoordinate> protectors = new ArrayList<>();
         for (GlobalCoordinate coordinate : protectorIdByCoordinate.keySet()) {
             if (coordinate.getDimension() == dimension) {
                 BlockPos c = coordinate.getCoordinate();

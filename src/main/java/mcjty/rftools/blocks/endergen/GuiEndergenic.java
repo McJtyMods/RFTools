@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.endergen;
 
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.entity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
@@ -12,7 +13,6 @@ import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.PacketRequestIntegerFromServer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.util.EnumFacing;
 
 import java.awt.*;
 
@@ -36,7 +36,7 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
 
     public GuiEndergenic(EndergenicTileEntity endergenicTileEntity, EmptyContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, endergenicTileEntity, container, RFTools.GUI_MANUAL_MAIN, "power");
-        endergenicTileEntity.setCurrentRF(endergenicTileEntity.getEnergyStored(EnumFacing.DOWN));
+        GenericEnergyStorageTileEntity.setCurrentRF(endergenicTileEntity.getEnergyStored());
         xSize = ENDERGENIC_WIDTH;
         ySize = ENDERGENIC_HEIGHT;
     }
@@ -45,9 +45,9 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored(EnumFacing.DOWN);
+        int maxEnergyStored = tileEntity.getMaxEnergyStored();
         energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredHeight(12).setMaxValue(maxEnergyStored).setShowText(true);
-        energyBar.setValue(tileEntity.getCurrentRF());
+        energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
         Label descriptionLabel = new Label(mc, this).setText("Averages over last 5 seconds:").setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
 
@@ -63,7 +63,7 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
         lastOpportunities = new TextField(mc, this).setText("0").setDesiredWidth(90).setDesiredHeight(14);
         Panel p4 = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Chances:").setDesiredWidth(70)).addChild(lastOpportunities);
 
-        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(energyBar).
+        Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(energyBar).
                 addChild(descriptionLabel).
                 addChild(p1).addChild(p2).addChild(p3).addChild(p4);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, ENDERGENIC_WIDTH, ENDERGENIC_HEIGHT));
@@ -74,7 +74,7 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
         drawWindow();
-        int currentRF = tileEntity.getCurrentRF();
+        int currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
         tileEntity.requestRfFromServer(RFTools.MODID);
 

@@ -49,7 +49,7 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
@@ -76,7 +76,7 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
 
         TileEntity te = null;
         if (destination != null) {
-            te = worldObj.getTileEntity(destination);
+            te = getWorld().getTileEntity(destination);
             if (!(te instanceof SpawnerTileEntity)) {
                 setDestination(null);
                 return;
@@ -86,7 +86,7 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
         }
 
         ItemStack itemStack = inventoryHelper.getStackInSlot(0);
-        if (itemStack == null || itemStack.stackSize == 0) {
+        if (itemStack.isEmpty()) {
             disableBlockGlow();
             return;
         }
@@ -94,10 +94,10 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
         SpawnerTileEntity spawnerTileEntity = (SpawnerTileEntity) te;
 
         int maxblocks = (int) (SpawnerConfiguration.beamBlocksPerSend * (1.01 + getInfusedFactor() * 2.0));
-        int numblocks = Math.min(maxblocks, itemStack.stackSize);
+        int numblocks = Math.min(maxblocks, itemStack.getCount());
 
         int rf = (int) (SpawnerConfiguration.beamRfPerObject * numblocks * (4.0f - getInfusedFactor()) / 4.0f);
-        if (getEnergyStored(EnumFacing.DOWN) < rf) {
+        if (getEnergyStored() < rf) {
             return;
         }
         consumeEnergy(rf);
@@ -128,10 +128,10 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
 
         super.onDataPacket(net, packet);
 
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             // If needed send a render update.
             if (oldglowing != glowing) {
-                worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
+                getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
             }
         }
     }
@@ -157,7 +157,7 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
         BlockPos coord = RFTools.instance.clientInfo.getSelectedTE();
         TileEntity tileEntity = null;
         if (coord != null) {
-            tileEntity = worldObj.getTileEntity(coord);
+            tileEntity = getWorld().getTileEntity(coord);
         }
 
         if (!(tileEntity instanceof MatterBeamerTileEntity)) {
@@ -184,7 +184,7 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
         disableBlockGlow();
         markDirty();
 
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             // We're on the client. Send change to server.
             RFToolsMessages.INSTANCE.sendToServer(new PacketServerCommand(getPos(),
                     MatterBeamerTileEntity.CMD_SETDESTINATION,
@@ -207,7 +207,7 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
         if (destination == null) {
             return null;
         }
-        TileEntity te = worldObj.getTileEntity(destination);
+        TileEntity te = getWorld().getTileEntity(destination);
         if (te instanceof SpawnerTileEntity) {
             return (SpawnerTileEntity) te;
         } else {
@@ -267,7 +267,12 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 

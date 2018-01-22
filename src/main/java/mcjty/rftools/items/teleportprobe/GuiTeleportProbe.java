@@ -5,17 +5,17 @@ import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.DefaultSelectionEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
-import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.*;
+import mcjty.lib.network.Arguments;
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.rftools.CommandHandler;
 import mcjty.rftools.blocks.teleporter.TeleportDestinationClientInfo;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.math.BlockPos;
 import org.lwjgl.input.Mouse;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +58,7 @@ public class GuiTeleportProbe extends GuiScreen {
             }
         });
         Slider listSlider = new Slider(mc, this).setDesiredWidth(11).setVertical().setScrollable(list);
-        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(list).addChild(listSlider);
+        Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(list).addChild(listSlider);
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -71,7 +71,8 @@ public class GuiTeleportProbe extends GuiScreen {
     private void teleport(int index) {
         TeleportDestinationClientInfo destination = destinationList.get(index);
         BlockPos c = destination.getCoordinate();
-        RFToolsMessages.INSTANCE.sendToServer(new PacketForceTeleport(c, destination.getDimension()));
+        RFToolsMessages.sendToServer(CommandHandler.CMD_FORCE_TELEPORT,
+                Arguments.builder().value(destination.getDimension()).value(c));
     }
 
     public static void setReceivers(List<TeleportDestinationClientInfo> destinationList) {
@@ -90,7 +91,7 @@ public class GuiTeleportProbe extends GuiScreen {
             return;
         }
 
-        destinationList = new ArrayList<TeleportDestinationClientInfo>(serverDestinationList);
+        destinationList = new ArrayList<>(serverDestinationList);
 
         list.removeChildren();
 
@@ -148,7 +149,7 @@ public class GuiTeleportProbe extends GuiScreen {
             int guiTop = (this.height - this.ySize) / 2;
             int x = Mouse.getEventX() * width / mc.displayWidth;
             int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
-            drawHoveringText(tooltips, x-guiLeft, y-guiTop, mc.fontRendererObj);
+            drawHoveringText(tooltips, x-guiLeft, y-guiTop, mc.fontRenderer);
         }
     }
 

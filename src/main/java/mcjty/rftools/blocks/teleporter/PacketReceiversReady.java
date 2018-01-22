@@ -5,6 +5,7 @@ import mcjty.lib.network.ClientCommandHandler;
 import mcjty.lib.network.PacketListFromServer;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
+import mcjty.typed.Type;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -36,7 +37,7 @@ public class PacketReceiversReady extends PacketListFromServer<PacketReceiversRe
                 return;
             }
             ClientCommandHandler clientCommandHandler = (ClientCommandHandler) te;
-            if (!clientCommandHandler.execute(message.command, message.list)) {
+            if (!clientCommandHandler.execute(message.command, message.list, Type.create(TeleportDestinationClientInfo.class))) {
                 Logging.log("Command " + message.command + " was not handled!");
             }
         }
@@ -45,5 +46,10 @@ public class PacketReceiversReady extends PacketListFromServer<PacketReceiversRe
     @Override
     protected TeleportDestinationClientInfo createItem(ByteBuf buf) {
         return new TeleportDestinationClientInfo(buf);
+    }
+
+    @Override
+    protected void writeItemToBuf(ByteBuf buf, TeleportDestinationClientInfo item) {
+        item.toBytes(buf);
     }
 }

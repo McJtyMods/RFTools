@@ -17,10 +17,10 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -39,7 +39,7 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
 
     public GuiSpawner(SpawnerTileEntity spawnerTileEntity, SpawnerContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, spawnerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "spawner");
-        GenericEnergyStorageTileEntity.setCurrentRF(spawnerTileEntity.getEnergyStored(EnumFacing.DOWN));
+        GenericEnergyStorageTileEntity.setCurrentRF(spawnerTileEntity.getEnergyStored());
 
         xSize = SPAWNER_WIDTH;
         ySize = SPAWNER_HEIGHT;
@@ -49,7 +49,7 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored(EnumFacing.DOWN);
+        int maxEnergyStored = tileEntity.getMaxEnergyStored();
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 8, 54)).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
@@ -62,7 +62,7 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
         name = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT); name.setLayoutHint(new PositionalLayout.PositionalHint(22, 31, 78, 16));
         rfTick = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT); rfTick.setLayoutHint(new PositionalLayout.PositionalHint(22, 47, 78, 16));
 
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
+        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
                 addChild(blocks[0]).addChild(labels[0]).
                 addChild(blocks[1]).addChild(labels[1]).
                 addChild(blocks[2]).addChild(labels[2]).
@@ -85,7 +85,7 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
         rfTick.setText("");
 
         ItemStack stack = tileEntity.getStackInSlot(SpawnerContainer.SLOT_SYRINGE);
-        if (stack == null || stack.stackSize == 0) {
+        if (stack.isEmpty()) {
             return;
         }
 
@@ -112,7 +112,7 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
                 for (SpawnerConfiguration.MobSpawnAmount spawnAmount : list) {
                     ItemStack b = spawnAmount.getObject();
                     float amount = spawnAmount.getAmount();
-                    if (b == null) {
+                    if (b.isEmpty()) {
                         Object[] blocks = {Blocks.LEAVES, Blocks.PUMPKIN, Items.WHEAT, Items.POTATO, Items.BEEF};
                         int index = (int) ((System.currentTimeMillis() / 500) % blocks.length);
                         if (blocks[index] instanceof Block) {
@@ -123,7 +123,9 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
                     } else {
                         blocks[i].setRenderItem(b);
                     }
-                    String mf = new DecimalFormat("#.##").format(matter[i]);
+                    DecimalFormat format = new DecimalFormat("#.##");
+                    format.setRoundingMode(RoundingMode.DOWN);
+                    String mf = format.format(matter[i]);
                     labels[i].setText(mf + "/" + Float.toString(amount));
                     i++;
                 }

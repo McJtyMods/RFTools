@@ -23,10 +23,10 @@ public class NetworkMonitorItem extends GenericRFToolsItem {
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (world.isRemote) {
             GuiNetworkMonitor.setSelected(pos);
-            player.openGui(RFTools.instance, RFTools.GUI_LIST_BLOCKS, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+            player.openGui(RFTools.instance, RFTools.GUI_LIST_BLOCKS, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
             return EnumActionResult.SUCCESS;
         }
         return EnumActionResult.SUCCESS;

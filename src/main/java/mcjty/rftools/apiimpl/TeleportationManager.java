@@ -44,7 +44,7 @@ public class TeleportationManager implements ITeleportationManager {
 
     @Override
     public void teleportPlayer(EntityPlayer player, int dimension, BlockPos location) {
-        TeleportationTools.teleportToDimension(player, dimension, location.getX(), location.getY(), location.getZ());
+        mcjty.lib.varia.TeleportationTools.teleportToDimension(player, dimension, location.getX(), location.getY(), location.getZ());
     }
 
     @Override

@@ -1,11 +1,10 @@
 package mcjty.rftools.blocks.teleporter;
 
 import io.netty.buffer.ByteBuf;
-import mcjty.lib.network.ByteBufConverter;
 import mcjty.lib.network.NetworkTools;
 import net.minecraft.util.math.BlockPos;
 
-public class TransmitterInfo implements ByteBufConverter {
+public class TransmitterInfo {
     private final BlockPos coordinate;
     private final String name;
     private final TeleportDestination teleportDestination;
@@ -26,7 +25,6 @@ public class TransmitterInfo implements ByteBufConverter {
         }
     }
 
-    @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(coordinate.getX());
         buf.writeInt(coordinate.getY());

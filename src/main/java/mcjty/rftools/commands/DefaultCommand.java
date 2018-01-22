@@ -1,18 +1,20 @@
 package mcjty.rftools.commands;
 
-import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 public abstract class DefaultCommand implements ICommand {
-    protected final Map<String,RfToolsCommand> commands = new HashMap<String, RfToolsCommand>();
+    protected final Map<String,RfToolsCommand> commands = new HashMap<>();
 
     public DefaultCommand() {
         registerCommand(new CmdHelp());
@@ -23,9 +25,19 @@ public abstract class DefaultCommand implements ICommand {
     }
 
     public void showHelp(ICommandSender sender) {
-        sender.addChatMessage(new TextComponentString(TextFormatting.BLUE + getCommandName() + " <subcommand> <args>"));
+        ITextComponent component1 = new TextComponentString(TextFormatting.BLUE + getName() + " <subcommand> <args>");
+        if (sender instanceof EntityPlayer) {
+            ((EntityPlayer) sender).sendStatusMessage(component1, false);
+        } else {
+            sender.sendMessage(component1);
+        }
         for (Map.Entry<String,RfToolsCommand> me : commands.entrySet()) {
-            sender.addChatMessage(new TextComponentString("    " + me.getKey() + " " + me.getValue().getHelp()));
+            ITextComponent component = new TextComponentString("    " + me.getKey() + " " + me.getValue().getHelp());
+            if (sender instanceof EntityPlayer) {
+                ((EntityPlayer) sender).sendStatusMessage(component, false);
+            } else {
+                sender.sendMessage(component);
+            }
         }
     }
 
@@ -57,18 +69,19 @@ public abstract class DefaultCommand implements ICommand {
     }
 
     @Override
-    public String getCommandUsage(ICommandSender sender) {
-        return getCommandName() + " <subcommand> <args> (try '" + getCommandName() + " help' for more info)";
+    public String getUsage(ICommandSender sender) {
+        return getName() + " <subcommand> <args> (try '" + getName() + " help' for more info)";
     }
 
+
     @Override
-    public List getCommandAliases() {
+    public List<String> getAliases() {
         return Collections.emptyList();
     }
 
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
         World world = sender.getEntityWorld();
         if (args.length <= 0) {
             if (!world.isRemote) {
@@ -78,7 +91,12 @@ public abstract class DefaultCommand implements ICommand {
             RfToolsCommand command = commands.get(args[0]);
             if (command == null) {
                 if (!world.isRemote) {
-                    sender.addChatMessage(new TextComponentString(TextFormatting.RED + "Unknown RfTools command: " + args[0]));
+                    ITextComponent component = new TextComponentString(TextFormatting.RED + "Unknown RfTools command: " + args[0]);
+                    if (sender instanceof EntityPlayer) {
+                        ((EntityPlayer) sender).sendStatusMessage(component, false);
+                    } else {
+                        sender.sendMessage(component);
+                    }
                 }
             } else {
                 if (world.isRemote) {
@@ -88,18 +106,28 @@ public abstract class DefaultCommand implements ICommand {
                     }
                 } else {
                     // Server-side.
-                    if (!sender.canCommandSenderUseCommand(command.getPermissionLevel(), getCommandName())) {
-                        sender.addChatMessage(new TextComponentString(TextFormatting.RED + "Command is not allowed!"));
+                    if (!sender.canUseCommand(command.getPermissionLevel(), getName())) {
+                        ITextComponent component = new TextComponentString(TextFormatting.RED + "Command is not allowed!");
+                        if (sender instanceof EntityPlayer) {
+                            ((EntityPlayer) sender).sendStatusMessage(component, false);
+                        } else {
+                            sender.sendMessage(component);
+                        }
                     } else {
                         command.execute(sender, args);
                     }
+//                    if (!sender.canCommandSenderUseCommand(command.getPermissionLevel(), getCommandName())) {
+//                        sender.addChatMessage(new TextComponentString(TextFormatting.RED + "Command is not allowed!"));
+//                    } else {
+//                        command.execute(sender, args);
+//                    }
                 }
             }
         }
     }
 
     @Override
-    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos pos) {
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos) {
         return new ArrayList<>();
     }
 
@@ -114,12 +142,7 @@ public abstract class DefaultCommand implements ICommand {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
-
-    @Override
     public int compareTo(ICommand o) {
-        return getCommandName().compareTo(((ICommand)o).getCommandName());
+        return getName().compareTo(o.getName());
     }
 }

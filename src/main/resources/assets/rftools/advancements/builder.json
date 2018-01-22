@@ -1,0 +1,30 @@
+{
+  "display": {
+    "icon": {
+      "item": "rftools:builder"
+    },
+    "title": {
+      "translate": "advancements.rftools.builder.title"
+    },
+    "description": {
+      "translate": "advancements.rftools.builder.description"
+    },
+    "background": "rftools:textures/gui/advancements/rftools_background.png",
+    "show_toast": false,
+    "announce_to_chat": true
+  },
+  "parent": "rftools:root",
+  "criteria": {
+    "placed_builder": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "block": "rftools:builder"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "placed_builder"
+    ]
+  ]
+}

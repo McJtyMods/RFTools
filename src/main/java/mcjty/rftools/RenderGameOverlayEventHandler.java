@@ -33,7 +33,7 @@ public class RenderGameOverlayEventHandler {
             return;
         }
 
-        EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
         PreferencesProperties preferences = McJtyLib.getPreferencesProperties(player);
 
         int x = preferences.getBuffX();

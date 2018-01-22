@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.teleporter;
 
-import mcjty.lib.varia.GlobalCoordinate;
-import mcjty.lib.varia.Logging;
+import mcjty.lib.varia.*;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -10,7 +9,8 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldSavedData;
+import net.minecraft.world.WorldServer;
+import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 
@@ -20,9 +20,9 @@ public class TeleportDestinations extends WorldSavedData {
     public static final String TPDESTINATIONS_NAME = "TPDestinations";
     private static TeleportDestinations instance = null;
 
-    private final Map<GlobalCoordinate,TeleportDestination> destinations = new HashMap<GlobalCoordinate,TeleportDestination>();
-    private final Map<Integer,GlobalCoordinate> destinationById = new HashMap<Integer, GlobalCoordinate>();
-    private final Map<GlobalCoordinate,Integer> destinationIdByCoordinate = new HashMap<GlobalCoordinate, Integer>();
+    private final Map<GlobalCoordinate,TeleportDestination> destinations = new HashMap<>();
+    private final Map<Integer,GlobalCoordinate> destinationById = new HashMap<>();
+    private final Map<GlobalCoordinate,Integer> destinationIdByCoordinate = new HashMap<>();
     private int lastId = 0;
 
     public TeleportDestinations(String identifier) {
@@ -41,7 +41,7 @@ public class TeleportDestinations extends WorldSavedData {
             } else {
                 name = destination.getName();
                 if (name == null || name.isEmpty()) {
-                    name = destination.getCoordinate() + " (" + destination.getDimension() + ")";
+                    name = BlockPosTools.toString(destination.getCoordinate()) + " (" + destination.getDimension() + ")";
                 }
             }
         }
@@ -49,7 +49,7 @@ public class TeleportDestinations extends WorldSavedData {
     }
 
     public void save(World world) {
-        world.getMapStorage().setData(TPDESTINATIONS_NAME, this);
+        world.setData(TPDESTINATIONS_NAME, this);
         markDirty();
     }
 
@@ -63,9 +63,9 @@ public class TeleportDestinations extends WorldSavedData {
     }
 
     public void cleanupInvalid(World world) {
-        Set<GlobalCoordinate> keys = new HashSet<GlobalCoordinate>(destinations.keySet());
+        Set<GlobalCoordinate> keys = new HashSet<>(destinations.keySet());
         for (GlobalCoordinate key : keys) {
-            World transWorld = TeleportationTools.getWorldForDimension(world, key.getDimension());
+            World transWorld = mcjty.lib.varia.TeleportationTools.getWorldForDimension(key.getDimension());
             boolean removed = false;
             if (transWorld == null) {
                 Logging.log("Receiver on dimension " + key.getDimension() + " removed because world can't be loaded!");
@@ -96,7 +96,7 @@ public class TeleportDestinations extends WorldSavedData {
         if (instance != null) {
             return instance;
         }
-        instance = (TeleportDestinations) world.getMapStorage().getOrLoadData(TeleportDestinations.class, TPDESTINATIONS_NAME);
+        instance = (TeleportDestinations) world.loadData(TeleportDestinations.class, TPDESTINATIONS_NAME);
         if (instance == null) {
             instance = new TeleportDestinations(TPDESTINATIONS_NAME);
         }
@@ -108,7 +108,7 @@ public class TeleportDestinations extends WorldSavedData {
     public Collection<TeleportDestinationClientInfo> getValidDestinations(World worldObj, String playerName) {
         FavoriteDestinationsProperties properties = null;
         if (playerName != null) {
-            List<EntityPlayerMP> list = worldObj.getMinecraftServer().getPlayerList().getPlayerList();
+            List<EntityPlayerMP> list = ((WorldServer) worldObj).getMinecraftServer().getPlayerList().getPlayers();
             for (EntityPlayerMP entityplayermp : list) {
                 if (playerName.equals(entityplayermp.getName())) {
                     properties = PlayerExtendedProperties.getFavoriteDestinations(entityplayermp);
@@ -117,7 +117,7 @@ public class TeleportDestinations extends WorldSavedData {
             }
         }
 
-        List<TeleportDestinationClientInfo> result = new ArrayList<TeleportDestinationClientInfo>();
+        List<TeleportDestinationClientInfo> result = new ArrayList<>();
         for (TeleportDestination destination : destinations.values()) {
             TeleportDestinationClientInfo destinationClientInfo = new TeleportDestinationClientInfo(destination);
             BlockPos c = destination.getCoordinate();
@@ -128,7 +128,7 @@ public class TeleportDestinations extends WorldSavedData {
             }
 
             // @todo
-//            DimensionInformation information = RfToolsDimensionManager.getDimensionManager(worldObj).getDimensionInformation(destination.getDimension());
+//            DimensionInformation information = RfToolsDimensionManager.getDimensionManager(getWorld()).getDimensionInformation(destination.getDimension());
 //            if (information != null) {
 //                dimName = information.getName();
 //            }
@@ -204,7 +204,7 @@ public class TeleportDestinations extends WorldSavedData {
     }
 
     public void removeDestinationsInDimension(int dimension) {
-        Set<GlobalCoordinate> keysToRemove = new HashSet<GlobalCoordinate>();
+        Set<GlobalCoordinate> keysToRemove = new HashSet<>();
         for (Map.Entry<GlobalCoordinate, TeleportDestination> entry : destinations.entrySet()) {
             if (entry.getKey().getDimension() == dimension) {
                 keysToRemove.add(entry.getKey());

@@ -1,9 +1,9 @@
 package mcjty.rftools.blocks.shield;
 
 public class RelCoordinate {
-    final private int dx;
-    final private int dy;
-    final private int dz;
+    private final int dx;
+    private final int dy;
+    private final int dz;
 
     public RelCoordinate(int dx, int dy, int dz) {
         this.dx = dx;
@@ -26,14 +26,15 @@ public class RelCoordinate {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof RelCoordinate)) return false;
 
         RelCoordinate that = (RelCoordinate) o;
 
         if (dx != that.dx) return false;
         if (dy != that.dy) return false;
-        return dz == that.dz;
+        if (dz != that.dz) return false;
 
+        return true;
     }
 
     @Override

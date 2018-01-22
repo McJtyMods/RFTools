@@ -6,9 +6,9 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.lib.varia.CapabilityTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
-import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -96,7 +96,7 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
 
     @Override
     public void update() {
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             return;
         }
 
@@ -112,15 +112,15 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
     public boolean checkOutput() {
         boolean newout = false;
 
-        EnumFacing inputSide = getFacing(worldObj.getBlockState(getPos())).getInputSide();
+        EnumFacing inputSide = getFacing(getWorld().getBlockState(getPos())).getInputSide();
         BlockPos inputPos = getPos().offset(inputSide);
-        TileEntity te = worldObj.getTileEntity(inputPos);
+        TileEntity te = getWorld().getTileEntity(inputPos);
         if (InventoryHelper.isInventory(te)) {
-            ItemStack stack = null;
-            if (RFToolsTools.hasItemCapabilitySafe(te)) {
-                IItemHandler capability = RFToolsTools.getItemCapabilitySafe(te);
+            ItemStack stack = ItemStack.EMPTY;
+            if (CapabilityTools.hasItemCapabilitySafe(te)) {
+                IItemHandler capability = CapabilityTools.getItemCapabilitySafe(te);
                 if (capability == null) {
-                    Block errorBlock = worldObj.getBlockState(inputPos).getBlock();
+                    Block errorBlock = getWorld().getBlockState(inputPos).getBlock();
                     Logging.logError("Block: " + errorBlock.getLocalizedName() + " at " + BlockPosTools.toString(inputPos) + " returns null for getCapability(). Report to mod author");
                 } else if (slot >= 0 && slot < capability.getSlots()) {
                     stack = capability.getStackInSlot(slot);
@@ -131,7 +131,7 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
                     stack = inventory.getStackInSlot(slot);
                 }
             }
-            if (stack != null) {
+            if (!stack.isEmpty()) {
                 int nr = isItemMatching(stack);
                 newout = nr >= amount;
             }
@@ -142,26 +142,26 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
     private int isItemMatching(ItemStack stack) {
         int nr = 0;
         ItemStack matcher = inventoryHelper.getStackInSlot(0);
-        if (matcher != null) {
+        if (!matcher.isEmpty()) {
             if (oreDict) {
                 if (isEqualForOredict(matcher, stack)) {
-                    if ((!useMeta) || matcher.getItemDamage() == stack.getItemDamage()) {
-                        nr = stack.stackSize;
+                    if ((!useMeta) || matcher.getMetadata() == stack.getMetadata()) {
+                        nr = stack.getCount();
                     }
                 }
             } else {
                 if (useMeta) {
                     if (matcher.isItemEqual(stack)) {
-                        nr = stack.stackSize;
+                        nr = stack.getCount();
                     }
                 } else {
                     if (matcher.getItem() == stack.getItem()) {
-                        nr = stack.stackSize;
+                        nr = stack.getCount();
                     }
                 }
             }
         } else {
-            nr = stack.stackSize;
+            nr = stack.getCount();
         }
         return nr;
     }
@@ -197,7 +197,12 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 

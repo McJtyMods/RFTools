@@ -2,22 +2,22 @@ package mcjty.rftools.items.teleportprobe;
 
 import mcjty.lib.gui.GuiItemScreen;
 import mcjty.lib.gui.Window;
-import mcjty.lib.gui.events.ButtonEvent;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
-import mcjty.lib.gui.widgets.Widget;
+import mcjty.lib.network.Arguments;
+import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 public class GuiAdvancedPorter extends GuiItemScreen {
 
-    private final static int xSize = 340;
-    private final static int ySize = 136;
+    private static final int xSize = 340;
+    private static final int ySize = 136;
 
     private Panel[] panels = new Panel[AdvancedChargedPorterItem.MAXTARGETS];
     private TextField[] destinations = new TextField[AdvancedChargedPorterItem.MAXTARGETS];
@@ -40,8 +40,8 @@ public class GuiAdvancedPorter extends GuiItemScreen {
     public void initGui() {
         super.initGui();
 
-        int k = (this.width - this.xSize) / 2;
-        int l = (this.height - this.ySize) / 2;
+        int k = (this.width - xSize) / 2;
+        int l = (this.height - ySize) / 2;
 
         Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setSpacing(0));
 
@@ -61,29 +61,23 @@ public class GuiAdvancedPorter extends GuiItemScreen {
     private Panel createPanel(final TextField destination, final int i) {
         return new Panel(mc, this).setLayout(new HorizontalLayout())
                     .addChild(destination)
-                    .addChild(new Button(mc, this).setText("Set").setDesiredWidth(30).setDesiredHeight(16).addButtonEvent(new ButtonEvent() {
-                        @Override
-                        public void buttonClicked(Widget parent) {
-                            if (targets[i] != -1) {
-                                RFToolsMessages.INSTANCE.sendToServer(new PacketSetTarget(targets[i]));
-                                target = targets[i];
-                            }
+                    .addChild(new Button(mc, this).setText("Set").setDesiredWidth(30).setDesiredHeight(16).addButtonEvent(parent -> {
+                        if (targets[i] != -1) {
+                            RFToolsMessages.sendToServer(CommandHandler.CMD_SET_TARGET, Arguments.builder().value(targets[i]));
+                            target = targets[i];
                         }
                     }))
-                    .addChild(new Button(mc, this).setText("Clear").setDesiredWidth(40).setDesiredHeight(16).addButtonEvent(new ButtonEvent() {
-                        @Override
-                        public void buttonClicked(Widget parent) {
-                            if (targets[i] != -1 && targets[i] == target) {
-                                target = -1;
-                            }
-                            RFToolsMessages.INSTANCE.sendToServer(new PacketClearTarget(i));
-                            targets[i] = -1;
+                    .addChild(new Button(mc, this).setText("Clear").setDesiredWidth(40).setDesiredHeight(16).addButtonEvent(parent -> {
+                        if (targets[i] != -1 && targets[i] == target) {
+                            target = -1;
                         }
+                        RFToolsMessages.sendToServer(CommandHandler.CMD_CLEAR_TARGET, Arguments.builder().value(i));
+                        targets[i] = -1;
                     })).setDesiredHeight(16);
     }
 
     private void updateInfoFromServer() {
-        RFToolsMessages.INSTANCE.sendToServer(new PacketGetTargets());
+        RFToolsMessages.sendToServer(CommandHandler.CMD_GET_TARGETS);
     }
 
     private void setTarget(int i) {

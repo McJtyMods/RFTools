@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.crafter;
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.craftinggrid.CraftingRecipe;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -53,7 +54,7 @@ public class PacketSelectRecipe implements IMessage {
         if (items != null) {
             buf.writeByte(items.length);
             for (ItemStack item : items) {
-                if (item == null) {
+                if (item.isEmpty()) {
                     buf.writeBoolean(false);
                 } else {
                     buf.writeBoolean(true);
@@ -75,14 +76,14 @@ public class PacketSelectRecipe implements IMessage {
         if (inv != null) {
             for (int i = 0 ; i < 9 ; i++) {
                 ItemStack slot = inv.getStackInSlot(i);
-                if (slot != null) {
+                if (!slot.isEmpty()) {
                     items[i] = slot.copy();
                 } else {
-                    items[i] = null;
+                    items[i] = ItemStack.EMPTY;
                 }
             }
         }
-        items[9] = result == null ? null : result.copy();
+        items[9] = result.isEmpty() ? ItemStack.EMPTY : result.copy();
         this.keepOne = keepOne;
         this.craftInternal = craftInternal;
     }
@@ -95,7 +96,7 @@ public class PacketSelectRecipe implements IMessage {
         }
 
         private void handle(PacketSelectRecipe message, MessageContext ctx) {
-            TileEntity te = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.pos);
+            TileEntity te = ctx.getServerHandler().player.getEntityWorld().getTileEntity(message.pos);
             if(!(te instanceof CrafterBaseTE)) {
                 Logging.logError("Wrong type of tile entity (expected CrafterBaseTE)!");
                 return;

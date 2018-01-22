@@ -1,7 +1,7 @@
 package mcjty.rftools.craftinggrid;
 
 import mcjty.lib.container.InventoryHelper;
-import mcjty.rftools.varia.RFToolsTools;
+import mcjty.lib.varia.CapabilityTools;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -18,8 +18,8 @@ public class TileEntityItemSource implements IItemSource {
     private List<Pair<Object, Integer>> inventories = new ArrayList<>();
 
     public TileEntityItemSource add(TileEntity te, int offset) {
-        if (RFToolsTools.hasItemCapabilitySafe(te)) {
-            IItemHandler capability = RFToolsTools.getItemCapabilitySafe(te);
+        if (CapabilityTools.hasItemCapabilitySafe(te)) {
+            IItemHandler capability = CapabilityTools.getItemCapabilitySafe(te);
             inventories.add(Pair.of(capability, offset));
         } else if (te instanceof IInventory) {
             inventories.add(Pair.of(te, offset));
@@ -38,24 +38,24 @@ public class TileEntityItemSource implements IItemSource {
         } else if (inv instanceof IInventory) {
             return ((IInventory) inv).getStackInSlot(slot);
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
     private static boolean insertStackInSlot(Object inv, int slot, ItemStack stack) {
         if (inv instanceof IItemHandler) {
             IItemHandler handler = (IItemHandler) inv;
-            if (handler.insertItem(slot, stack, true) != null) {
+            if (!handler.insertItem(slot, stack, true).isEmpty()) {
                 return false;
             }
-            return handler.insertItem(slot, stack, false) == null;
+            return handler.insertItem(slot, stack, false).isEmpty();
         } else if (inv instanceof IInventory) {
             IInventory inventory = (IInventory) inv;
             ItemStack oldStack = inventory.getStackInSlot(slot);
-            if (oldStack != null) {
-                if ((stack.stackSize + oldStack.stackSize) > stack.getMaxStackSize()) {
+            if (!oldStack.isEmpty()) {
+                if ((stack.getCount() + oldStack.getCount()) > stack.getMaxStackSize()) {
                     return false;
                 }
-                stack.stackSize += oldStack.stackSize;
+                stack.grow(oldStack.getCount());
             }
             inventory.setInventorySlotContents(slot, stack);
             return true;
@@ -67,12 +67,12 @@ public class TileEntityItemSource implements IItemSource {
         if (inv instanceof IItemHandler) {
             IItemHandler handler = (IItemHandler) inv;
             ItemStack leftOver = ItemHandlerHelper.insertItem(handler, stack, false);
-            return leftOver == null ? 0 : leftOver.stackSize;
+            return leftOver.getCount();
         } else if (inv instanceof IInventory) {
             IInventory inventory = (IInventory) inv;
             return InventoryHelper.mergeItemStack(inventory, true, stack, 0, inventory.getSizeInventory(), null);
         }
-        return stack.stackSize;
+        return stack.getCount();
     }
 
     private static int getSizeInventory(Object inv) {
@@ -133,12 +133,12 @@ public class TileEntityItemSource implements IItemSource {
             IInventory inventory = (IInventory) te;
             ItemStack stack = inventory.getStackInSlot(realKey.getSlot());
             ItemStack result = stack.splitStack(amount);
-            if (stack.stackSize == 0) {
-                inventory.setInventorySlotContents(realKey.getSlot(), null);
+            if (stack.isEmpty()) {
+                inventory.setInventorySlotContents(realKey.getSlot(), ItemStack.EMPTY);
             }
             return result;
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -172,12 +172,18 @@ public class TileEntityItemSource implements IItemSource {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
 
             ItemKey itemKey = (ItemKey) o;
 
-            if (slot != itemKey.slot) return false;
+            if (slot != itemKey.slot) {
+                return false;
+            }
             return inventory.equals(itemKey.inventory);
 
         }

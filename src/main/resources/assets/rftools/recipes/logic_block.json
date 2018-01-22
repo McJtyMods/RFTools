@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "rftools:logic_block"
+  },
+  "pattern": [
+    "rcr",
+    "cMc",
+    "rcr"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "c": {
+      "item": "minecraft:comparator"
+    },
+    "M": {
+      "item": "rftools:machine_base"
+    }
+  }
+}

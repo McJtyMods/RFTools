@@ -1,0 +1,33 @@
+{
+  "result": {
+    "item": "rftools:storage_module",
+    "data": 6
+  },
+  "pattern": [
+    "ece",
+    "gig",
+    "qrq"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "q": {
+      "item": "minecraft:quartz"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "c": {
+      "type": "forge:ore_dict",
+      "ore": "chest"
+    },
+    "e": {
+      "item": "minecraft:ender_pearl"
+    },
+    "g": {
+      "item": "minecraft:gold_nugget"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    }
+  }
+}

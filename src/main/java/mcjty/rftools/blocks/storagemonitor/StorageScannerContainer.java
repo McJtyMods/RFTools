@@ -8,6 +8,7 @@ import mcjty.rftools.craftinggrid.CraftingGridInventory;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 
 public class StorageScannerContainer extends GenericContainer {
 
@@ -36,6 +37,13 @@ public class StorageScannerContainer extends GenericContainer {
             this.addSlotRange(new SlotDefinition(SlotType.SLOT_GHOSTOUT), CONTAINER_GRID, CraftingGridInventory.SLOT_GHOSTOUTPUT, leftCol, topRow, 1, 18);
         }
     };
+
+    public void clearGrid() {
+        IInventory inventory = inventories.get(CONTAINER_GRID);
+        for (int i = 0 ; i < inventory.getSizeInventory() ; i++) {
+            inventory.setInventorySlotContents(i, ItemStack.EMPTY);
+        }
+    }
 
     public StorageScannerTileEntity getStorageScannerTileEntity() {
         return storageScannerTileEntity;

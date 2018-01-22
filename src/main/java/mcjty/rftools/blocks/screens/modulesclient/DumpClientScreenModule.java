@@ -1,12 +1,10 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
 import mcjty.lib.gui.RenderHelper;
-import mcjty.rftools.api.screens.IClientScreenModule;
-import mcjty.rftools.api.screens.IModuleGuiBuilder;
-import mcjty.rftools.api.screens.IModuleRenderHelper;
-import mcjty.rftools.api.screens.ModuleRenderInfo;
+import mcjty.rftools.api.screens.*;
 import mcjty.rftools.api.screens.data.IModuleData;
 import mcjty.rftools.blocks.screens.modules.DumpScreenModule;
+import mcjty.rftools.blocks.screens.modulesclient.helper.ScreenTextHelper;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
@@ -14,10 +12,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class DumpClientScreenModule implements IClientScreenModule {
+public class DumpClientScreenModule implements IClientScreenModule<IModuleData> {
     private String line = "";
     private int color = 0xffffff;
     private ItemStack[] stacks = new ItemStack[DumpScreenModule.COLS * DumpScreenModule.ROWS];
+    private ITextRenderHelper buttonCache = new ScreenTextHelper();
 
     @Override
     public TransformMode getTransformMode() {
@@ -37,7 +36,8 @@ public class DumpClientScreenModule implements IClientScreenModule {
         int xoffset = 7 + 5;
 
         RenderHelper.drawBeveledBox(xoffset - 5, currenty, 130 - 7, currenty + 12, 0xffeeeeee, 0xff333333, 0xff448866);
-        fontRenderer.drawString(fontRenderer.trimStringToWidth(line, 130 - 7 - xoffset), xoffset + 0, currenty + 2 + 0, color);
+        buttonCache.setup(line, 490, renderInfo);
+        buttonCache.renderText(xoffset -10, currenty + 2, color, renderInfo);
     }
 
     @Override
@@ -71,7 +71,7 @@ public class DumpClientScreenModule implements IClientScreenModule {
             }
             for (int i = 0 ; i < stacks.length ; i++) {
                 if (tagCompound.hasKey("stack"+i)) {
-                    stacks[i] = ItemStack.loadItemStackFromNBT(tagCompound.getCompoundTag("stack"+i));
+                    stacks[i] = new ItemStack(tagCompound.getCompoundTag("stack" + i));
                 }
             }
         }

@@ -13,6 +13,8 @@ public class StorageScannerConfiguration {
     public static boolean hilightStarredOnGuiOpen = true;
     public static boolean requestStraightToInventory = true;
 
+    public static boolean xnetRequired = false;
+
     public static void init(Configuration cfg) {
         rfPerRequest = cfg.get(CATEGORY_STORAGE_MONITOR, "rfPerRequest", rfPerRequest, "Amount of RF used to request an item").getInt();
         rfPerInsert = cfg.get(CATEGORY_STORAGE_MONITOR, "rfPerInsert", rfPerInsert, "Amount of RF used to insert an item").getInt();
@@ -23,5 +25,6 @@ public class StorageScannerConfiguration {
                 "RF per tick that the storage scanner can receive").getInt();
         hilightStarredOnGuiOpen = cfg.get(CATEGORY_STORAGE_MONITOR, "hilightStarredOnGuiOpen", hilightStarredOnGuiOpen, "If this is true then opening the storage scanner GUI will automatically select the starred inventory view").getBoolean();
         requestStraightToInventory = cfg.get(CATEGORY_STORAGE_MONITOR, "requestStraightToInventory", requestStraightToInventory, "If this is true then requesting items from the storage scanner will go straight into the player inventory and not the output slot").getBoolean();
+        xnetRequired = cfg.get(CATEGORY_STORAGE_MONITOR, "xnetRequired", xnetRequired, "If this is true then XNet is required (if present) to be able to connect storages to a storage scanner").getBoolean();
     }
 }

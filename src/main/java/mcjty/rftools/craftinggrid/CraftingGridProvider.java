@@ -1,7 +1,9 @@
 package mcjty.rftools.craftinggrid;
 
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+
+import javax.annotation.Nonnull;
 
 public interface CraftingGridProvider {
 
@@ -13,5 +15,6 @@ public interface CraftingGridProvider {
 
     void markInventoryDirty();
 
-    int[] craft(EntityPlayerMP player, int n, boolean test);
+    @Nonnull
+    int[] craft(EntityPlayer player, int n, boolean test);
 }

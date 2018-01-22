@@ -8,24 +8,17 @@ import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
-import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.teleporter.PacketGetPlayers;
-import mcjty.rftools.blocks.teleporter.PlayerName;
+import mcjty.rftools.network.PacketGetPlayers;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.util.*;
-import java.util.List;
 
 public class GuiEnvironmentalController extends GenericGuiContainer<EnvironmentalControllerTileEntity> {
     public static final int ENV_WIDTH = 194;
@@ -45,16 +38,6 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
     private int listDirty = 0;
     private EnergyBar energyBar;
 
-    private static Set<String> fromServer_players = new HashSet<>();
-    public static void storePlayersForClient(List<PlayerName> players) {
-        Set<String> p = new HashSet<>();
-        for (PlayerName n : players) {
-            p.add(n.getName());
-        }
-        fromServer_players = p;
-    }
-
-    private Panel toplevel;
     private TextField minyTextField;
     private TextField maxyTextField;
     private TextField nameField;
@@ -74,11 +57,11 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored(EnumFacing.DOWN);
+        int maxEnergyStored = tileEntity.getMaxEnergyStored();
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(8, 141, 10, 76)).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
-        toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
+        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
         Panel areaPanel = initAreaPanel();
         Panel playersPanel = initPlayerPanel();
@@ -226,13 +209,8 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
     }
 
     private void populatePlayers() {
-        List<String> newPlayers = new ArrayList<String>(fromServer_players);
-        Collections.sort(newPlayers);
-        if (newPlayers.equals(playersList)) {
-            return;
-        }
-
-        players  = new ArrayList<String>(newPlayers);
+        players = new ArrayList<>(tileEntity.players);
+        players.sort(null);
         playersList.removeChildren();
         for (String player : players) {
             playersList.addChild(new Label(mc, this).setText(player).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));

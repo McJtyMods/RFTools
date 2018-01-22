@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
@@ -12,8 +11,8 @@ import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -38,13 +37,13 @@ public class MatterReceiverBlock extends GenericRFToolsBlock<MatterReceiverTileE
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiMatterReceiver> getGuiClass() {
         return GuiMatterReceiver.class;
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
@@ -70,7 +69,7 @@ public class MatterReceiverBlock extends GenericRFToolsBlock<MatterReceiverTileE
             MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
             String name = matterReceiverTileEntity.getName();
             int id = matterReceiverTileEntity.getId();
-            if (name == null || "".equals(name)) {
+            if (name == null || name.isEmpty()) {
                 probeInfo.text(TextFormatting.GREEN + (id == -1 ? "" : ("Id: " + id)));
             } else {
                 probeInfo.text(TextFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
@@ -87,7 +86,7 @@ public class MatterReceiverBlock extends GenericRFToolsBlock<MatterReceiverTileE
             MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
             String name = matterReceiverTileEntity.getName();
             int id = matterReceiverTileEntity.getId();
-            if (name == null || "".equals(name)) {
+            if (name == null || name.isEmpty()) {
                 currenttip.add(TextFormatting.GREEN + (id == -1 ? "" : ("Id: " + id)));
             } else {
                 currenttip.add(TextFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
@@ -102,8 +101,8 @@ public class MatterReceiverBlock extends GenericRFToolsBlock<MatterReceiverTileE
     }
 
     @Override
-    public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing facing, float sx, float sy, float sz, int meta, EntityLivingBase placer) {
-        IBlockState state = super.onBlockPlaced(world, pos, facing, sx, sy, sz, meta, placer);
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+        IBlockState state = super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer);
         if (world.isRemote) {
             return state;
         }
@@ -143,17 +142,7 @@ public class MatterReceiverBlock extends GenericRFToolsBlock<MatterReceiverTileE
     }
 
     @Override
-    public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState();
-    }
-
-    @Override
-    public int getMetaFromState(IBlockState state) {
-        return 0;
-    }
-
-    @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this);
+    public RotationType getRotationType() {
+        return RotationType.NONE;
     }
 }

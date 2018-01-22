@@ -2,17 +2,16 @@ package mcjty.rftools.items.screenmodules;
 
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
-import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.logic.wireless.RedstoneReceiverTileEntity;
 import mcjty.rftools.blocks.logic.wireless.RedstoneTransmitterTileEntity;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.RedstoneScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.RedstoneClientScreenModule;
+import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -23,22 +22,19 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class RedstoneModuleItem extends Item implements IModuleProvider {
+public class RedstoneModuleItem extends GenericRFToolsItem implements IModuleProvider {
 
     public RedstoneModuleItem() {
+        super("redstone_module");
         setMaxStackSize(1);
-        setUnlocalizedName("redstone_module");
-        setRegistryName("redstone_module");
-        setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.register(this);
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public void initModel() {
         ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(RFTools.MODID + ":" + getUnlocalizedName().substring(5), "inventory"));
@@ -51,12 +47,12 @@ public class RedstoneModuleItem extends Item implements IModuleProvider {
     }
 
     @Override
-    public Class<? extends IScreenModule> getServerScreenModule() {
+    public Class<RedstoneScreenModule> getServerScreenModule() {
         return RedstoneScreenModule.class;
     }
 
     @Override
-    public Class<? extends IClientScreenModule> getClientScreenModule() {
+    public Class<RedstoneClientScreenModule> getClientScreenModule() {
         return RedstoneClientScreenModule.class;
     }
 
@@ -67,7 +63,7 @@ public class RedstoneModuleItem extends Item implements IModuleProvider {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.REDSTONE_RFPERTICK + " RF/tick");
         NBTTagCompound tagCompound = itemStack.getTagCompound();
@@ -90,7 +86,8 @@ public class RedstoneModuleItem extends Item implements IModuleProvider {
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        ItemStack stack = player.getHeldItem(hand);
         TileEntity te = world.getTileEntity(pos);
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
@@ -109,7 +106,7 @@ public class RedstoneModuleItem extends Item implements IModuleProvider {
             tagCompound.setInteger("monitorx", pos.getX());
             tagCompound.setInteger("monitory", pos.getY());
             tagCompound.setInteger("monitorz", pos.getZ());
-            tagCompound.setInteger("monitorside", side.ordinal());
+            tagCompound.setInteger("monitorside", facing.ordinal());
             if (world.isRemote) {
                 Logging.message(player, "Redstone module is set to " + pos);
             }

@@ -6,7 +6,6 @@ import mcjty.lib.network.clientinfo.InfoPacketClient;
 import mcjty.lib.network.clientinfo.InfoPacketServer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
@@ -47,7 +46,7 @@ public class ScannerInfoPacketServer implements InfoPacketServer {
             TileEntity te = world.getTileEntity(pos);
             if (te instanceof StorageScannerTileEntity) {
                 StorageScannerTileEntity tileEntity = (StorageScannerTileEntity) te;
-                rf = tileEntity.getEnergyStored(EnumFacing.DOWN);
+                rf = tileEntity.getEnergyStored();
                 export = tileEntity.isExportToCurrent();
             }
         }

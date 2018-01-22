@@ -11,7 +11,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
 
@@ -21,7 +21,8 @@ apply plugin: 'maven'
 repositories {
     maven { // The repo from which to get waila
         name "Mobius Repo"
-        url "http://mobiusstrip.eu/maven"
+        url "http://tehnut.info/maven"
+        //url "http://mobiusstrip.eu/maven"
     }
     maven { // JEI
         url "http://dvs1.progwml6.com/files/maven"
@@ -37,27 +38,34 @@ repositories {
     maven { // McJtyLib
         url "http://maven.k-4u.nl"
     }
+    maven { // OC Repo
+        url "http://maven.cil.li/"
+    }
     maven {
         name = "sonatype"
         url = "https://oss.sonatype.org/content/repositories/snapshots/"
     }
+    maven {
+        name = "CoFH Maven"
+        url = "http://maven.covers1624.net"
+    }
 }
 
-version = "1.10-5.62"
+version = "1.12-7.23"
 def ENV = System.getenv()
 if (ENV.DRONE_BUILD_NUMBER) {
     version += ".n" + ENV.DRONE_BUILD_NUMBER
 }
-group= "mcjty.rftools" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group= "com.github.mcjty" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "rftools"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 minecraft {
-    version = "1.10.2-12.18.2.2105"
+    version = "1.12.2-14.23.1.2589"
     runDir = "run"
-    mappings = "snapshot_20160916"
+    mappings = "snapshot_20171011"
     useDepAts = true
 }
 
@@ -73,12 +81,17 @@ artifacts {
 
 
 dependencies {
-    deobfCompile "mcp.mobius.waila:Waila:1.7.0-B3_1.9.4"
-    deobfCompile "mezz.jei:jei_1.10.2:3.12.7.318"
-    deobfCompile "mcjty.theoneprobe:TheOneProbe:1.10-1.1.5-37"
-    deobfCompile "com.github.mcjty:mcjtylib:1.10-2.1.4-SNAPSHOT"
+    deobfCompile "mezz.jei:jei_1.12.2:4.8.5.144"
+    deobfCompile "mcp.mobius.waila:Hwyla:1.8.23-B38_1.12:api"
+    deobfCompile "mcjty.theoneprobe:TheOneProbe-1.12:1.12-1.4.19-11"
+    deobfCompile "cofh:RedstoneFlux:1.12-2.0.0.1:universal"
+    compile "team.chisel.ctm:CTM:MC1.12-0.2.3.12"
 
-    //compile "li.cil.oc:OpenComputers:MC1.7.10-1.5.+:api"
+    deobfCompile "com.github.mcjty:intwheel:1.12-1.2.7"
+    deobfCompile "com.github.mcjty:xnet:1.12-1.6.7"
+    deobfCompile "com.github.mcjty:mcjtylib:1.12-2.6.2-SNAPSHOT"
+
+    provided "li.cil.oc:OpenComputers:MC1.12.1-1.7.+:api"
 }
 
 jar {
@@ -104,5 +117,51 @@ processResources
     // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
+    }
+}
+
+task("uploadJars", dependsOn: "reobf") {
+    description = "uploads JARs"
+    if (System.getenv("local_maven") != null) {
+        apply plugin: 'maven'
+        uploadArchives {
+            repositories {
+                mavenDeployer {
+                    repository(url: "file://" + System.getenv("local_maven"))
+                    pom {
+                        groupId = project.group
+                        version = project.version
+                        artifactId = project.archivesBaseName
+                        project {
+                            name project.archivesBaseName
+                            packaging 'jar'
+                            description 'RFTools'
+                            scm {
+                                url 'https://github.com/McJty/RFTools'
+                                connection 'scm:git:git@github.com:McJty/RFTools.git'
+                                developerConnection 'scm:git:git@github.com:McJty/RFTools.git'
+                            }
+                            issueManagement {
+                                system 'github'
+                                url 'https://github.com/McJty/RFTools/issues'
+                            }
+                            licenses {
+                                license {
+                                    name 'MIT'
+                                    distribution 'repo'
+                                }
+                            }
+                            developers {
+                                developer {
+                                    id 'McJty'
+                                    name 'McJty'
+                                    roles { role 'developer' }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

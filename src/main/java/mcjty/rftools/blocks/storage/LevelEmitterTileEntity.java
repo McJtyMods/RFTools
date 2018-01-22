@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.storage;
 
-import gnu.trove.set.TIntSet;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.network.Argument;
@@ -33,13 +32,12 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
     private int amount = 1;
     private boolean oreDict = false;
     private boolean starred = false;
-    private TIntSet set1 = null;
 
     private int checkCounter = 0;
 
     @Override
     public void update() {
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             return;
         }
 
@@ -56,9 +54,9 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
     public int getCurrentCount() {
         ItemStack module = inventoryHelper.getStackInSlot(LevelEmitterContainer.SLOT_MODULE);
         int count = -1;
-        if (module != null) {
+        if (!module.isEmpty()) {
             ItemStack matcher = inventoryHelper.getStackInSlot(LevelEmitterContainer.SLOT_ITEMMATCH);
-            if (matcher == null) {
+            if (matcher.isEmpty()) {
                 return count;
             }
             int dimension = RFToolsTools.getDimensionFromModule(module);
@@ -79,15 +77,15 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
 
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
-        boolean module = inventoryHelper.getStackInSlot(LevelEmitterContainer.SLOT_MODULE) != null;
+        boolean module = !inventoryHelper.getStackInSlot(LevelEmitterContainer.SLOT_MODULE).isEmpty();
 
         super.onDataPacket(net, packet);
 
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             // If needed send a render update.
-            boolean newmodule = inventoryHelper.getStackInSlot(LevelEmitterContainer.SLOT_MODULE) != null;
+            boolean newmodule = !inventoryHelper.getStackInSlot(LevelEmitterContainer.SLOT_MODULE).isEmpty();
             if (newmodule != module) {
-                worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
+                getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
             }
         }
     }
@@ -95,13 +93,12 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
         // Clear the oredict cache
-        set1 = null;
         inventoryHelper.setInventorySlotContents(this.getInventoryStackLimit(), index, stack);
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             // Make sure we update client-side
             markDirtyClient();
         } else {
-            worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
+            getWorld().markBlockRangeForRenderUpdate(getPos(), getPos());
         }
     }
 
@@ -158,9 +155,13 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
         return inventoryHelper;
     }
 
-    @SuppressWarnings("NullableProblems")
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 

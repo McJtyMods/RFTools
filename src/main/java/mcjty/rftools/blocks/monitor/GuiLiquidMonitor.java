@@ -4,24 +4,20 @@ import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
-import mcjty.lib.gui.events.ChoiceEvent;
 import mcjty.lib.gui.events.DefaultSelectionEvent;
-import mcjty.lib.gui.events.ValueEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.varia.BlockPosTools;
-import mcjty.rftools.BlockInfo;
+import mcjty.lib.varia.BlockTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,22 +60,12 @@ public class GuiLiquidMonitor extends GenericGuiContainer<LiquidMonitorBlockTile
                 RFMonitorMode.MODE_OFF.getDescription(), RFMonitorMode.MODE_LESS.getDescription(), RFMonitorMode.MODE_MORE.getDescription()).
                 setDesiredWidth(60).setDesiredHeight(15).
                 setTooltips("Control when a redstone", "signal should be sent").
-                addChoiceEvent(new ChoiceEvent() {
-                    @Override
-                    public void choiceChanged(Widget parent, String newChoice) {
-                        changeAlarmMode(RFMonitorMode.getModeFromDescription(newChoice));
-                    }
-                });
+                addChoiceEvent((parent, newChoice) -> changeAlarmMode(RFMonitorMode.getModeFromDescription(newChoice)));
         alarmModeChoiceLabel.setChoice(tileEntity.getAlarmMode().getDescription());
 
         alarmLabel = new ScrollableLabel(mc, this).setSuffix("%").setDesiredWidth(30).setRealMinimum(0).setRealMaximum(100).
                 setRealValue(tileEntity.getAlarmLevel()).
-                addValueEvent(new ValueEvent() {
-                    @Override
-                    public void valueChanged(Widget parent, int newValue) {
-                        changeAlarmValue(newValue);
-                    }
-                });
+                addValueEvent((parent, newValue) -> changeAlarmValue(newValue));
         Slider alarmSlider = new Slider(mc, this).
                 setDesiredHeight(15).
                 setMinimumKnobSize(15).
@@ -88,7 +74,7 @@ public class GuiLiquidMonitor extends GenericGuiContainer<LiquidMonitorBlockTile
                 setScrollable(alarmLabel);
         Panel alarmPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(alarmModeChoiceLabel).addChild(alarmSlider).addChild(alarmLabel).setDesiredHeight(20);
 
-        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(listPanel).addChild(alarmPanel);
+        Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(listPanel).addChild(alarmPanel);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
         window = new Window(this, toplevel);
 
@@ -135,14 +121,15 @@ public class GuiLiquidMonitor extends GenericGuiContainer<LiquidMonitorBlockTile
         adjacentBlocks = new ArrayList<>(newAdjacentBlocks);
         list.removeChildren();
 
-        int index = 0, sel = -1;
+        int index = 0;
+        int sel = -1;
         for (BlockPos coordinate : adjacentBlocks) {
-            IBlockState state = mc.theWorld.getBlockState(coordinate);
+            IBlockState state = mc.world.getBlockState(coordinate);
             Block block = state.getBlock();
 
             int color = StyleConfig.colorTextInListNormal;
 
-            String displayName = BlockInfo.getReadableName(state);
+            String displayName = BlockTools.getReadableName(mc.world, coordinate);
 
             if (coordinate.equals(tileEntity.getMonitor())) {
                 sel = index;

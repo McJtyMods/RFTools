@@ -58,7 +58,7 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             if (timeout > 0) {
                 timeout--;
                 markDirty();
@@ -66,7 +66,7 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
             }
             if (cachedModule == null) {
                 ItemStack stack = inventoryHelper.getStackInSlot(BoosterContainer.SLOT_MODULE);
-                if (stack != null) {
+                if (!stack.isEmpty()) {
                     if (stack.getItem() instanceof EnvModuleProvider) {
                         EnvModuleProvider provider = (EnvModuleProvider) stack.getItem();
                         Class<? extends EnvironmentModule> clazz = provider.getServerEnvironmentModule();
@@ -81,12 +81,12 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
                 }
             }
             if (cachedModule != null) {
-                int rf = getEnergyStored(EnumFacing.DOWN);
+                int rf = getEnergyStored();
                 int rfNeeded = (int) (cachedModule.getRfPerTick() * BoosterConfiguration.energyMultiplier);
                 rfNeeded = (int) (rfNeeded * (3.0f - getInfusedFactor()) / 3.0f);
                 for (EntityLivingBase entity : searchEntities()) {
                     if (rfNeeded <= rf) {
-                        if (cachedModule.apply(worldObj, getPos(), entity, 40)) {
+                        if (cachedModule.apply(getWorld(), getPos(), entity, 40)) {
                             // Consume energy
                             consumeEnergy(rfNeeded);
                             rf -= rfNeeded;
@@ -119,7 +119,7 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
             beamBox = new AxisAlignedBB(xCoord, yCoord + 1, zCoord, xCoord + 1, yCoord + 3, zCoord + 1);
         }
 
-        return worldObj.getEntitiesWithinAABB(EntityLivingBase.class, beamBox);
+        return getWorld().getEntitiesWithinAABB(EntityLivingBase.class, beamBox);
     }
 
     @Override
@@ -142,7 +142,12 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 

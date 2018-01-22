@@ -13,8 +13,7 @@ public class AdvancedChargedPorterItem extends ChargedPorterItem {
     public static final int MAXTARGETS = 8;
 
     public AdvancedChargedPorterItem() {
-        super("advanced_charged_porter");
-        capacity = TeleportConfiguration.ADVANCED_CHARGEDPORTER_MAXENERGY;
+        super("advanced_charged_porter", TeleportConfiguration.ADVANCED_CHARGEDPORTER_MAXENERGY);
     }
 
     @Override
@@ -53,7 +52,7 @@ public class AdvancedChargedPorterItem extends ChargedPorterItem {
     @Override
     protected void selectReceiver(ItemStack stack, World world, EntityPlayer player) {
         if (world.isRemote) {
-            player.openGui(RFTools.instance, RFTools.GUI_ADVANCEDPORTER, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+            player.openGui(RFTools.instance, RFTools.GUI_ADVANCEDPORTER, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
         }
     }
 

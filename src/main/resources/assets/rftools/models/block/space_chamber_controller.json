@@ -1,6 +1,6 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "all": "rftools:blocks/machineSpaceChamberController"
+    "all": "rftools:blocks/machinespacechambercontroller"
   }
 }

@@ -1,0 +1,19 @@
+{
+  "result": {
+    "item": "rftools:infused_enderpearl"
+  },
+  "pattern": [
+    "sss",
+    "sds",
+    "sss"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "s": {
+      "item": "rftools:dimensional_shard"
+    },
+    "d": {
+      "item": "minecraft:ender_pearl"
+    }
+  }
+}

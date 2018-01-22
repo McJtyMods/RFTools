@@ -1,6 +1,6 @@
 {
   "parent": "rftools:block/rftoolsblock",
   "textures": {
-    "front": "rftools:blocks/machineCrafter2"
+    "front": "rftools:blocks/machinecrafter2"
   }
 }

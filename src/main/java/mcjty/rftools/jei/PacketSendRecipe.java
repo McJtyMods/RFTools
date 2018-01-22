@@ -2,6 +2,7 @@ package mcjty.rftools.jei;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.blocks.storage.ModularStorageItemContainer;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.storage.RemoteStorageItemContainer;
@@ -16,22 +17,19 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class PacketSendRecipe implements IMessage {
-    private List<ItemStack> stacks;
+    private ItemStackList stacks;
     private BlockPos pos;
 
     @Override
     public void fromBytes(ByteBuf buf) {
         int l = buf.readInt();
-        stacks = new ArrayList<>(l);
+        stacks = ItemStackList.create(l);
         for (int i = 0 ; i < l ; i++) {
             if (buf.readBoolean()) {
-                stacks.add(NetworkTools.readItemStack(buf));
+                stacks.set(i, NetworkTools.readItemStack(buf));
             } else {
-                stacks.add(null);
+                stacks.set(i, ItemStack.EMPTY);
             }
         }
         if (buf.readBoolean()) {
@@ -45,7 +43,7 @@ public class PacketSendRecipe implements IMessage {
     public void toBytes(ByteBuf buf) {
         buf.writeInt(stacks.size());
         for (ItemStack stack : stacks) {
-            if (stack != null) {
+            if (!stack.isEmpty()) {
                 buf.writeBoolean(true);
                 NetworkTools.writeItemStack(buf, stack);
             } else {
@@ -63,7 +61,7 @@ public class PacketSendRecipe implements IMessage {
     public PacketSendRecipe() {
     }
 
-    public PacketSendRecipe(List<ItemStack> stacks, BlockPos pos) {
+    public PacketSendRecipe(ItemStackList stacks, BlockPos pos) {
         this.stacks = stacks;
         this.pos = pos;
     }
@@ -76,12 +74,12 @@ public class PacketSendRecipe implements IMessage {
         }
 
         private void handle(PacketSendRecipe message, MessageContext ctx) {
-            EntityPlayerMP player = ctx.getServerHandler().playerEntity;
-            World world = player.worldObj;
+            EntityPlayerMP player = ctx.getServerHandler().player;
+            World world = player.getEntityWorld();
             if (message.pos == null) {
                 // Handle tablet version
                 ItemStack mainhand = player.getHeldItemMainhand();
-                if (mainhand != null && mainhand.getItem() == ModularStorageSetup.storageModuleTabletItem) {
+                if (!mainhand.isEmpty() && mainhand.getItem() == ModularStorageSetup.storageModuleTabletItem) {
                     if (player.openContainer instanceof ModularStorageItemContainer) {
                         ModularStorageItemContainer storageItemContainer = (ModularStorageItemContainer) player.openContainer;
                         storageItemContainer.getJEIRecipeAcceptor().setGridContents(message.stacks);

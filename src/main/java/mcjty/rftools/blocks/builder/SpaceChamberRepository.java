@@ -5,7 +5,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldSavedData;
+import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.HashMap;
@@ -18,14 +18,14 @@ public class SpaceChamberRepository extends WorldSavedData {
 
     private int lastId = 0;
 
-    private final Map<Integer,SpaceChamberChannel> channels = new HashMap<Integer,SpaceChamberChannel>();
+    private final Map<Integer,SpaceChamberChannel> channels = new HashMap<>();
 
     public SpaceChamberRepository(String identifier) {
         super(identifier);
     }
 
     public void save(World world) {
-        world.getMapStorage().setData(SPACECHAMBER_CHANNELS_NAME, this);
+        world.setData(SPACECHAMBER_CHANNELS_NAME, this);
         markDirty();
     }
 
@@ -47,7 +47,7 @@ public class SpaceChamberRepository extends WorldSavedData {
         if (instance != null) {
             return instance;
         }
-        instance = (SpaceChamberRepository) world.getMapStorage().getOrLoadData(SpaceChamberRepository.class, SPACECHAMBER_CHANNELS_NAME);
+        instance = (SpaceChamberRepository) world.loadData(SpaceChamberRepository.class, SPACECHAMBER_CHANNELS_NAME);
         if (instance == null) {
             instance = new SpaceChamberRepository(SPACECHAMBER_CHANNELS_NAME);
         }

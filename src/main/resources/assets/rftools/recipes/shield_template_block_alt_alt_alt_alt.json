@@ -1,0 +1,16 @@
+{
+  "result": {
+    "item": "rftools:shield_template_block",
+    "data": 0
+  },
+  "pattern": [
+    "s"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "s": {
+      "item": "rftools:shield_template_block",
+      "data": 3
+    }
+  }
+}

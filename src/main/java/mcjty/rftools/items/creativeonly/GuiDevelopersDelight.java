@@ -2,8 +2,6 @@ package mcjty.rftools.items.creativeonly;
 
 import mcjty.lib.base.StyleConfig;
 import mcjty.lib.gui.Window;
-import mcjty.lib.gui.events.ButtonEvent;
-import mcjty.lib.gui.events.ChoiceEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
@@ -47,7 +45,7 @@ public class GuiDevelopersDelight extends GuiScreen {
     private ChoiceLabel clientServerMode;
     private TextField metaData;
 
-    private List<ToggleButton> pageButtons = new ArrayList<ToggleButton>();
+    private List<ToggleButton> pageButtons = new ArrayList<>();
 
     private boolean listsDirty = true;
 
@@ -64,15 +62,15 @@ public class GuiDevelopersDelight extends GuiScreen {
     }
 
     public static void setServerBlockClasses(List<String> blockClasses) {
-        GuiDevelopersDelight.blockClasses = new ArrayList<String>(blockClasses);
+        GuiDevelopersDelight.blockClasses = new ArrayList<>(blockClasses);
     }
 
     public static void setServerTEClasses(List<String> teClasses) {
-        GuiDevelopersDelight.teClasses = new ArrayList<String>(teClasses);
+        GuiDevelopersDelight.teClasses = new ArrayList<>(teClasses);
     }
 
     public static void setServerNBTData(Map<String,DelightingInfoHelper.NBTDescription> nbtData) {
-        GuiDevelopersDelight.nbtData = new HashMap<String,DelightingInfoHelper.NBTDescription>(nbtData);
+        GuiDevelopersDelight.nbtData = new HashMap<>(nbtData);
     }
 
     public static void setMetadata(int metadata) {
@@ -84,11 +82,11 @@ public class GuiDevelopersDelight extends GuiScreen {
     }
 
     private void requestDelightingInfoFromClient() {
-        blockClasses = new ArrayList<String>();
-        teClasses = new ArrayList<String>();
-        nbtData = new HashMap<String, DelightingInfoHelper.NBTDescription>();
+        blockClasses = new ArrayList<>();
+        teClasses = new ArrayList<>();
+        nbtData = new HashMap<>();
 
-        server_metadata = DelightingInfoHelper.fillDelightingData(selected.getX(), selected.getY(), selected.getZ(), mc.theWorld, blockClasses, teClasses, nbtData);
+        server_metadata = DelightingInfoHelper.fillDelightingData(selected.getX(), selected.getY(), selected.getZ(), mc.world, blockClasses, teClasses, nbtData);
     }
 
     @Override
@@ -107,18 +105,13 @@ public class GuiDevelopersDelight extends GuiScreen {
         ToggleButton tab1Button = createToggleButton("Block");
         ToggleButton tab2Button = createToggleButton("TE");
         ToggleButton tab3Button = createToggleButton("NBT");
-        clientServerMode = new ChoiceLabel(mc, this).setDesiredWidth(60).addChoices("Server", "Client").setChoice("Server").addChoiceEvent(new ChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, String newChoice) {
-                requestNewLists();
-            }
-        }).setDesiredHeight(16).setTooltips("Switch between client", "and server information");
+        clientServerMode = new ChoiceLabel(mc, this).setDesiredWidth(60).addChoices("Server", "Client").setChoice("Server").addChoiceEvent((parent, newChoice) -> requestNewLists()).setDesiredHeight(16).setTooltips("Switch between client", "and server information");
         metaData = new TextField(mc, this).setDesiredHeight(14).setTooltips("Metadata for this block");
 
         Panel buttonPanel = new Panel(mc, this).setLayout(new VerticalLayout()).setDesiredWidth(62).addChild(tab1Button).addChild(tab2Button).addChild(tab3Button).
                 addChild(new Label(mc, this).setDynamic(true)).addChild(clientServerMode).addChild(metaData).addChild(new Label(mc, this).setDynamic(true));
 
-        Widget toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new HorizontalLayout()).addChild(buttonPanel).addChild(tabbedPanel);
+        Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new HorizontalLayout()).addChild(buttonPanel).addChild(tabbedPanel);
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -139,13 +132,10 @@ public class GuiDevelopersDelight extends GuiScreen {
     }
 
     private ToggleButton createToggleButton(final String pagename) {
-        ToggleButton toggleButton = new ToggleButton(mc, this).setText(pagename).addButtonEvent(new ButtonEvent() {
-            @Override
-            public void buttonClicked(Widget parent) {
-                ToggleButton tb = (ToggleButton) parent;
-                if (tb.isPressed()) {
-                    activatePage(tb, pagename);
-                }
+        ToggleButton toggleButton = new ToggleButton(mc, this).setText(pagename).addButtonEvent(parent -> {
+            ToggleButton tb = (ToggleButton) parent;
+            if (tb.isPressed()) {
+                activatePage(tb, pagename);
             }
         }).setDynamic(true).setDesiredHeight(18);
         pageButtons.add(toggleButton);
@@ -191,7 +181,7 @@ public class GuiDevelopersDelight extends GuiScreen {
 
         blockClassList.removeChildren();
 
-        IBlockState state = Minecraft.getMinecraft().theWorld.getBlockState(selected);
+        IBlockState state = Minecraft.getMinecraft().world.getBlockState(selected);
         Block block = state.getBlock();
 
         blockClassList.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText("Loc Name: " + block.getLocalizedName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
@@ -257,7 +247,7 @@ public class GuiDevelopersDelight extends GuiScreen {
             int guiTop = (this.height - this.ySize) / 2;
             int x = Mouse.getEventX() * width / mc.displayWidth;
             int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
-            drawHoveringText(tooltips, x-guiLeft, y-guiTop, mc.fontRendererObj);
+            drawHoveringText(tooltips, x-guiLeft, y-guiTop, mc.fontRenderer);
         }
     }
 }

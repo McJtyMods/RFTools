@@ -1,12 +1,11 @@
 package mcjty.rftools.items.screenmodules;
 
+import mcjty.lib.crafting.INBTPreservingIngredient;
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
-import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.StorageControlScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.StorageControlClientScreenModule;
@@ -15,6 +14,7 @@ import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,7 +31,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class StorageControlModuleItem extends GenericRFToolsItem implements IModuleProvider {
+public class StorageControlModuleItem extends GenericRFToolsItem implements IModuleProvider, INBTPreservingIngredient {
 
     public StorageControlModuleItem() {
         super("storage_control_module");
@@ -40,8 +40,8 @@ public class StorageControlModuleItem extends GenericRFToolsItem implements IMod
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
-        super.addInformation(itemStack, player, list, whatIsThis);
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag advanced) {
+        super.addInformation(itemStack, player, list, advanced);
         list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.STORAGE_CONTROL_RFPERTICK + " RF/tick");
         boolean hasTarget = false;
         NBTTagCompound tagCompound = itemStack.getTagCompound();
@@ -79,14 +79,15 @@ public class StorageControlModuleItem extends GenericRFToolsItem implements IMod
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        ItemStack stack = player.getHeldItem(hand);
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof StorageScannerTileEntity) {
             IBlockState state = world.getBlockState(pos);
             Block block = state.getBlock();
             String name = "<invalid>";
             if (block != null && !block.isAir(state, world, pos)) {
-                name = BlockInfo.getReadableName(world.getBlockState(pos));
+                name = BlockTools.getReadableName(world, pos);
             }
             RFToolsTools.setPositionInModule(stack, world.provider.getDimension(), pos, name);
             if (world.isRemote) {
@@ -107,12 +108,12 @@ public class StorageControlModuleItem extends GenericRFToolsItem implements IMod
     }
 
     @Override
-    public Class<? extends IScreenModule> getServerScreenModule() {
+    public Class<StorageControlScreenModule> getServerScreenModule() {
         return StorageControlScreenModule.class;
     }
 
     @Override
-    public Class<? extends IClientScreenModule> getClientScreenModule() {
+    public Class<StorageControlClientScreenModule> getClientScreenModule() {
         return StorageControlClientScreenModule.class;
     }
 

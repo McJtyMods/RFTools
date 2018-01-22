@@ -3,15 +3,17 @@ package mcjty.rftools.blocks.monitor;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.EnergyTools;
+import mcjty.typed.Type;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITickable {
     // Data that is saved
@@ -84,13 +86,13 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
         List<BlockPos> adjacentBlocks = new ArrayList<>();
         for (int dy = -1 ; dy <= 1 ; dy++) {
             int yy = y + dy;
-            if (yy >= 0 && yy < worldObj.getHeight()) {
+            if (yy >= 0 && yy < getWorld().getHeight()) {
                 for (int dz = -1 ; dz <= 1 ; dz++) {
                     int zz = z + dz;
                     for (int dx = -1 ; dx <= 1 ; dx++) {
                         int xx = x + dx;
                         if (dx != 0 || dy != 0 || dz != 0) {
-                            TileEntity tileEntity = worldObj.getTileEntity(new BlockPos(xx, yy, zz));
+                            TileEntity tileEntity = getWorld().getTileEntity(new BlockPos(xx, yy, zz));
                             if (tileEntity != null) {
                                 if (EnergyTools.isEnergyTE(tileEntity)) {
                                     adjacentBlocks.add(new BlockPos(xx, yy, zz));
@@ -106,7 +108,7 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
@@ -123,7 +125,7 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
         }
         counter = 20;
 
-        TileEntity tileEntity = worldObj.getTileEntity(monitor);
+        TileEntity tileEntity = getWorld().getTileEntity(monitor);
         if (!EnergyTools.isEnergyTE(tileEntity)) {
             setInvalid();
             return;
@@ -168,7 +170,7 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
     }
 
     private void setRedstoneOut(boolean a) {
-        worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
+        getWorld().notifyNeighborsOfStateChange(this.pos, this.getBlockType(), false);
     }
 
 
@@ -211,26 +213,27 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
         tagCompound.setByte("alarmLevel", (byte) alarmLevel);
     }
 
+    @Nonnull
     @Override
-    public List executeWithResultList(String command, Map<String, Argument> args) {
-        List rc = super.executeWithResultList(command, args);
-        if (rc != null) {
+    public <T> List<T> executeWithResultList(String command, Map<String, Argument> args, Type<T> type) {
+        List<T> rc = super.executeWithResultList(command, args, type);
+        if (!rc.isEmpty()) {
             return rc;
         }
         if (CMD_GETADJACENTBLOCKS.equals(command)) {
-            return findAdjacentBlocks();
+            return type.convert(findAdjacentBlocks());
         }
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
-    public boolean execute(String command, List list) {
-        boolean rc = super.execute(command, list);
+    public <T> boolean execute(String command, List<T> list, Type<T> type) {
+        boolean rc = super.execute(command, list, type);
         if (rc) {
             return true;
         }
         if (CLIENTCMD_ADJACENTBLOCKSREADY.equals(command)) {
-            GuiRFMonitor.fromServer_clientAdjacentBlocks = (List<BlockPos>) list.stream().map(o -> ((BlockPosNet)o).getPos()).collect(Collectors.toList());
+            GuiRFMonitor.fromServer_clientAdjacentBlocks = new ArrayList<>(Type.create(BlockPos.class).convert(list));
             return true;
         }
         return false;

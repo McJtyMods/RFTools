@@ -1,0 +1,23 @@
+{
+  "result": {
+    "item": "rftools:space_chamber"
+  },
+  "pattern": [
+    "lgl",
+    "gMg",
+    "lgl"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "g": {
+      "item": "minecraft:glass"
+    },
+    "l": {
+      "type": "forge:ore_dict",
+      "ore": "dyeBlue"
+    },
+    "M": {
+      "item": "rftools:machine_frame"
+    }
+  }
+}

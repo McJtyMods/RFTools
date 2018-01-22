@@ -35,32 +35,32 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
     }
 
     private void updateCard(ItemStack cardStack) {
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             return;
         }
-        if (cardStack == null) {
+        if (cardStack.isEmpty()) {
             return;
         }
         NBTTagCompound tagCompound = getOrCreateNBT(cardStack);
         if (!tagCompound.hasKey("channel")) {
-            SecurityChannels securityChannels = SecurityChannels.getChannels(worldObj);
+            SecurityChannels securityChannels = SecurityChannels.getChannels(getWorld());
             int id = securityChannels.newChannel();
             tagCompound.setInteger("channel", id);
-            securityChannels.save(worldObj);
+            securityChannels.save(getWorld());
             markDirtyClient();
         }
     }
 
     private void updateLinkedCard() {
-        if (worldObj.isRemote) {
+        if (getWorld().isRemote) {
             return;
         }
         ItemStack masterCard = inventoryHelper.getStackInSlot(SecurityManagerContainer.SLOT_CARD);
-        if (masterCard == null) {
+        if (masterCard.isEmpty()) {
             return;
         }
         ItemStack linkerCard = inventoryHelper.getStackInSlot(SecurityManagerContainer.SLOT_LINKER);
-        if (linkerCard == null) {
+        if (linkerCard.isEmpty()) {
             return;
         }
 
@@ -75,59 +75,67 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
 
     private void addPlayer(String player) {
         NBTTagCompound tagCompound = getCardInfo();
-        if (tagCompound == null) return;
+        if (tagCompound == null) {
+            return;
+        }
         if (tagCompound.hasKey("channel")) {
-            SecurityChannels securityChannels = SecurityChannels.getChannels(worldObj);
+            SecurityChannels securityChannels = SecurityChannels.getChannels(getWorld());
             int id = tagCompound.getInteger("channel");
             SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
             channel.addPlayer(player);
-            securityChannels.save(worldObj);
+            securityChannels.save(getWorld());
             markDirtyClient();
         }
     }
 
     private void delPlayer(String player) {
         NBTTagCompound tagCompound = getCardInfo();
-        if (tagCompound == null) return;
+        if (tagCompound == null) {
+            return;
+        }
         if (tagCompound.hasKey("channel")) {
-            SecurityChannels securityChannels = SecurityChannels.getChannels(worldObj);
+            SecurityChannels securityChannels = SecurityChannels.getChannels(getWorld());
             int id = tagCompound.getInteger("channel");
             SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
             channel.delPlayer(player);
-            securityChannels.save(worldObj);
+            securityChannels.save(getWorld());
             markDirtyClient();
         }
     }
 
     private void setWhiteListMode(boolean whitelist) {
         NBTTagCompound tagCompound = getCardInfo();
-        if (tagCompound == null) return;
+        if (tagCompound == null) {
+            return;
+        }
         if (tagCompound.hasKey("channel")) {
-            SecurityChannels securityChannels = SecurityChannels.getChannels(worldObj);
+            SecurityChannels securityChannels = SecurityChannels.getChannels(getWorld());
             int id = tagCompound.getInteger("channel");
             SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
             channel.setWhitelist(whitelist);
-            securityChannels.save(worldObj);
+            securityChannels.save(getWorld());
             markDirtyClient();
         }
     }
 
     private void setChannelName(String name) {
         NBTTagCompound tagCompound = getCardInfo();
-        if (tagCompound == null) return;
+        if (tagCompound == null) {
+            return;
+        }
         if (tagCompound.hasKey("channel")) {
-            SecurityChannels securityChannels = SecurityChannels.getChannels(worldObj);
+            SecurityChannels securityChannels = SecurityChannels.getChannels(getWorld());
             int id = tagCompound.getInteger("channel");
             SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
             channel.setName(name);
-            securityChannels.save(worldObj);
+            securityChannels.save(getWorld());
             markDirtyClient();
         }
     }
 
     private NBTTagCompound getCardInfo() {
         ItemStack cardStack = inventoryHelper.getStackInSlot(SecurityManagerContainer.SLOT_CARD);
-        if (cardStack == null) {
+        if (cardStack.isEmpty()) {
             return null;
         }
         return getOrCreateNBT(cardStack);
@@ -155,7 +163,12 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 

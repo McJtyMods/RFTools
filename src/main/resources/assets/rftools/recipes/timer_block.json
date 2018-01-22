@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "rftools:timer_block"
+  },
+  "pattern": [
+    "rcr",
+    "TMT",
+    "rTr"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "c": {
+      "item": "minecraft:clock"
+    },
+    "T": {
+      "item": "minecraft:redstone_torch"
+    },
+    "M": {
+      "item": "rftools:machine_base"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "conditions": [{
+    "type": "minecraft:item_exists",
+    "item": "rftools:crafter1"
+  }],
+  "result": {
+    "item": "rftools:crafter1"
+  },
+  "pattern": [
+    " T ",
+    "cMc",
+    " T "
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "c": {
+      "item": "minecraft:crafting_table"
+    },
+    "T": {
+      "item": "minecraft:redstone_torch"
+    },
+    "M": {
+      "item": "rftools:machine_frame"
+    }
+  }
+}

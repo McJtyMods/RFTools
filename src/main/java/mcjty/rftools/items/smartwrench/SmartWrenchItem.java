@@ -1,6 +1,7 @@
 package mcjty.rftools.items.smartwrench;
 
 import cofh.api.item.IToolHammer;
+import mcjty.lib.McJtyRegister;
 import mcjty.lib.api.smartwrench.SmartWrench;
 import mcjty.lib.api.smartwrench.SmartWrenchMode;
 import mcjty.lib.api.smartwrench.SmartWrenchSelector;
@@ -9,11 +10,12 @@ import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.ores.DimensionalShardBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,7 +31,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -42,7 +43,7 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
         setRegistryName("smartwrench");
         setCreativeTab(RFTools.tabRfTools);
         setMaxStackSize(1);
-        GameRegistry.register(this);
+        McJtyRegister.registerLater(this, RFTools.instance);
     }
 
     @SideOnly(Side.CLIENT)
@@ -52,15 +53,12 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
 
         ModelBakery.registerItemVariants(this, selectedModel, normalModel);
 
-        ModelLoader.setCustomMeshDefinition(this, new ItemMeshDefinition() {
-            @Override
-            public ModelResourceLocation getModelLocation(ItemStack stack) {
-                SmartWrenchMode mode = getCurrentMode(stack);
-                if (mode == SmartWrenchMode.MODE_SELECT) {
-                    return selectedModel;
-                } else {
-                    return normalModel;
-                }
+        ModelLoader.setCustomMeshDefinition(this, stack -> {
+            SmartWrenchMode mode = getCurrentMode(stack);
+            if (mode == SmartWrenchMode.MODE_SELECT) {
+                return selectedModel;
+            } else {
+                return normalModel;
             }
         });
     }
@@ -88,7 +86,8 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+        ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
             SmartWrenchMode mode = getCurrentMode(stack);
             if (mode == SmartWrenchMode.MODE_WRENCH) {
@@ -104,18 +103,19 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
             tagCompound.setString("mode", mode.getCode());
             Logging.message(player, TextFormatting.YELLOW + "Smart wrench is now in " + mode.getName() + " mode.");
         }
-        return super.onItemRightClick(stack, world, player, hand);
+        return super.onItemRightClick(world, player, hand);
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
             if (player.isSneaking()) {
                 // Make sure the block get activated if it is a GenericBlock
                 IBlockState state = world.getBlockState(pos);
                 Block block = state.getBlock();
                 if (block instanceof GenericBlock) {
-                    if (block.onBlockActivated(world, pos, state, player, hand, player.getHeldItem(hand), facing, hitX, hitY, hitZ)) {
+                    if (DimensionalShardBlock.activateBlock(block, world, pos, state, player, hand, facing, hitX, hitY, hitZ)) {
                         return EnumActionResult.SUCCESS;
                     }
                 }
@@ -146,7 +146,7 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
 //
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         GlobalCoordinate b = getCurrentBlock(itemStack);
         if (b != null) {
@@ -227,4 +227,5 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
     public int getMaxItemUseDuration(ItemStack stack) {
         return 1;
     }
+
 }

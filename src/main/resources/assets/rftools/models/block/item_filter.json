@@ -1,12 +1,12 @@
 {
   "parent": "block/cube",
   "textures": {
-    "particle": "rftools:blocks/machineItemFilterU",
-    "down": "rftools:blocks/machineItemFilterD",
-    "up": "rftools:blocks/machineItemFilterU",
-    "north": "rftools:blocks/machineItemFilterN",
-    "east": "rftools:blocks/machineItemFilterE",
-    "south": "rftools:blocks/machineItemFilterS",
-    "west": "rftools:blocks/machineItemFilterW"
+    "particle": "rftools:blocks/machineitemfilteru",
+    "down": "rftools:blocks/machineitemfilterd",
+    "up": "rftools:blocks/machineitemfilteru",
+    "north": "rftools:blocks/machineitemfiltern",
+    "east": "rftools:blocks/machineitemfiltere",
+    "south": "rftools:blocks/machineitemfilters",
+    "west": "rftools:blocks/machineitemfilterw"
   }
 }

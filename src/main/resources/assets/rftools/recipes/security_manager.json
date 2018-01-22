@@ -1,0 +1,30 @@
+{
+  "conditions": [{
+    "type": "minecraft:item_exists",
+    "item": "rftools:security_manager"
+  }],
+  "result": {
+    "item": "rftools:security_manager"
+  },
+  "pattern": [
+    "rfr",
+    "fMf",
+    "rcr"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "c": {
+      "type": "forge:ore_dict",
+      "ore": "chest"
+    },
+    "f": {
+      "item": "minecraft:flint"
+    },
+    "M": {
+      "item": "rftools:machine_frame"
+    }
+  }
+}

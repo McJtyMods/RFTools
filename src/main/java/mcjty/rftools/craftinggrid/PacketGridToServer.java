@@ -24,7 +24,7 @@ public class PacketGridToServer extends PacketGridSync implements IMessage {
             if (buf.readBoolean()) {
                 stacks[i] = NetworkTools.readItemStack(buf);
             } else {
-                stacks[i] = null;
+                stacks[i] = ItemStack.EMPTY;
             }
         }
     }
@@ -34,7 +34,7 @@ public class PacketGridToServer extends PacketGridSync implements IMessage {
         convertToBytes(buf);
         buf.writeInt(stacks.length);
         for (ItemStack stack : stacks) {
-            if (stack != null) {
+            if (!stack.isEmpty()) {
                 buf.writeBoolean(true);
                 NetworkTools.writeItemStack(buf, stack);
             } else {
@@ -63,8 +63,8 @@ public class PacketGridToServer extends PacketGridSync implements IMessage {
         }
 
         private void handle(PacketGridToServer message, MessageContext ctx) {
-            EntityPlayerMP player = ctx.getServerHandler().playerEntity;
-            World world = player.worldObj;
+            EntityPlayerMP player = ctx.getServerHandler().player;
+            World world = player.getEntityWorld();
             CraftingGridProvider provider = message.handleMessage(world, player);
             if (provider != null) {
                 CraftingGridInventory inventory = provider.getCraftingGrid().getCraftingGridInventory();

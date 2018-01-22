@@ -17,7 +17,7 @@ public interface IScreenModuleRegistry {
      * @param id a unique id in the form modid:name
      * @param dataFactory
      */
-    void registerModuleDataFactory(String id, IModuleDataFactory dataFactory);
+    void registerModuleDataFactory(String id, IModuleDataFactory<?> dataFactory);
 
-    IModuleDataFactory getModuleDataFactory(String id);
+    IModuleDataFactory<?> getModuleDataFactory(String id);
 }

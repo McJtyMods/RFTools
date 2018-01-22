@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "rftools:storage_terminal"
+  },
+  "pattern": [
+    "pge",
+    "gMg",
+    "egp"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "p": {
+      "item": "minecraft:paper"
+    },
+    "e": {
+      "item": "minecraft:ender_pearl"
+    },
+    "g": {
+      "item": "minecraft:glass"
+    },
+    "M": {
+      "item": "rftools:machine_base"
+    }
+  }
+}

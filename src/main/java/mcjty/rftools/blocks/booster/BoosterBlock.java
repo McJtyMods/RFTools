@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.booster;
 
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.api.Infusable;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
@@ -10,9 +9,10 @@ import mcjty.rftools.blocks.environmental.EnvModuleProvider;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -26,8 +26,8 @@ public class BoosterBlock extends GenericRFToolsBlock<BoosterTileEntity, Booster
     }
 
     @Override
-    public boolean hasNoRotation() {
-        return true;
+    public RotationType getRotationType() {
+        return RotationType.NONE;
     }
 
     @Override
@@ -37,13 +37,13 @@ public class BoosterBlock extends GenericRFToolsBlock<BoosterTileEntity, Booster
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiBooster> getGuiClass() {
         return GuiBooster.class;
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(TextFormatting.WHITE + "This blocks gives entities directly on top of this");

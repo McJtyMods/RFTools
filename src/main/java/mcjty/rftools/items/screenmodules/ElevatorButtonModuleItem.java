@@ -1,10 +1,8 @@
 package mcjty.rftools.items.screenmodules;
 
+import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.BlockInfo;
-import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
-import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.blocks.elevator.ElevatorTileEntity;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ElevatorButtonScreenModule;
@@ -12,6 +10,7 @@ import mcjty.rftools.blocks.screens.modulesclient.ElevatorButtonClientScreenModu
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -39,12 +38,12 @@ public class ElevatorButtonModuleItem extends GenericRFToolsItem implements IMod
     }
 
     @Override
-    public Class<? extends IScreenModule> getServerScreenModule() {
+    public Class<ElevatorButtonScreenModule> getServerScreenModule() {
         return ElevatorButtonScreenModule.class;
     }
 
     @Override
-    public Class<? extends IClientScreenModule> getClientScreenModule() {
+    public Class<ElevatorButtonClientScreenModule> getClientScreenModule() {
         return ElevatorButtonClientScreenModule.class;
     }
 
@@ -55,7 +54,7 @@ public class ElevatorButtonModuleItem extends GenericRFToolsItem implements IMod
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.ELEVATOR_BUTTON_RFPERTICK + " RF/tick");
         boolean hasTarget = false;
@@ -71,13 +70,14 @@ public class ElevatorButtonModuleItem extends GenericRFToolsItem implements IMod
             }
         }
         if (!hasTarget) {
-            list.add(TextFormatting.YELLOW + "Sneak right-click on an elector block to set the");
+            list.add(TextFormatting.YELLOW + "Sneak right-click on an elevator block to set the");
             list.add(TextFormatting.YELLOW + "target for this module");
         }
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        ItemStack stack = player.getHeldItem(hand);
         TileEntity te = world.getTileEntity(pos);
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
@@ -88,11 +88,11 @@ public class ElevatorButtonModuleItem extends GenericRFToolsItem implements IMod
             tagCompound.setInteger("elevatorx", pos.getX());
             tagCompound.setInteger("elevatory", pos.getY());
             tagCompound.setInteger("elevatorz", pos.getZ());
-            IBlockState state = player.worldObj.getBlockState(pos);
+            IBlockState state = player.getEntityWorld().getBlockState(pos);
             Block block = state.getBlock();
             String name = "<invalid>";
             if (block != null && !block.isAir(state, world, pos)) {
-                name = BlockInfo.getReadableName(world.getBlockState(pos));
+                name = BlockTools.getReadableName(world, pos);
             }
             tagCompound.setString("elevatorname", name);
             if (world.isRemote) {

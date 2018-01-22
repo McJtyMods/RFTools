@@ -4,6 +4,7 @@ import net.minecraftforge.common.config.Configuration;
 
 public class BlockProtectorConfiguration {
     public static final String CATEGORY_BLOCKPROTECTOR = "blockprotector";
+    public static boolean enabled = true;
     public static int MAXENERGY = 500000;
     public static int RECEIVEPERTICK = 20000;
     public static int rfPerProtectedBlock = 5;
@@ -12,6 +13,7 @@ public class BlockProtectorConfiguration {
     public static int maxProtectDistance = 10;
 
     public static void init(Configuration cfg) {
+        enabled = cfg.get(CATEGORY_BLOCKPROTECTOR, "enabled", enabled, "Whether the block protector should exist").getBoolean();
         rfPerProtectedBlock = cfg.get(CATEGORY_BLOCKPROTECTOR, "rfPerProtectedBlock", rfPerProtectedBlock, "Amount of passive RF/tick used for every protected block").getInt();
         rfForHarvestAttempt = cfg.get(CATEGORY_BLOCKPROTECTOR, "rfForHarvestAttempt", rfForHarvestAttempt, "The RF that is consumed to protect against a single harvest attempt").getInt();
         rfForExplosionProtection = cfg.get(CATEGORY_BLOCKPROTECTOR, "rfForExplosionProtection", rfForExplosionProtection, "The RF that is consumed to protect a block right next to the explosion with a radius of 8 (standard TNT). Further distances will reduce power usage, bigger radius will increase power usage.").getInt();

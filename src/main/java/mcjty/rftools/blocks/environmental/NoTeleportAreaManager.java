@@ -1,10 +1,8 @@
 package mcjty.rftools.blocks.environmental;
 
-import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
 import mcjty.rftools.blocks.environmental.modules.NoTeleportEModule;
-import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
@@ -43,7 +41,7 @@ public class NoTeleportAreaManager {
             NoTeleportArea area = entry.getValue();
             GlobalCoordinate entryCoordinate = entry.getKey();
             if (area.in(coordinate, entryCoordinate)) {
-                World world = TeleportationTools.getWorldForDimension(entity.getEntityWorld(), entryCoordinate.getDimension());
+                World world = mcjty.lib.varia.TeleportationTools.getWorldForDimension(entryCoordinate.getDimension());
                 TileEntity te = world.getTileEntity(entryCoordinate.getCoordinate());
                 if (te instanceof EnvironmentalControllerTileEntity) {
                     EnvironmentalControllerTileEntity controllerTileEntity = (EnvironmentalControllerTileEntity) te;

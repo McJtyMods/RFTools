@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "rftools:shield_block3"
+  },
+  "pattern": [
+    "ROR",
+    "OMO",
+    "ROR"
+  ],
+  "type": "rftools:copy_nbt",
+  "key": {
+    "R": {
+      "item": "rftools:dimensional_shard"
+    },
+    "O": {
+      "item": "minecraft:obsidian"
+    },
+    "M": {
+      "item": "rftools:shield_block2"
+    }
+  }
+}

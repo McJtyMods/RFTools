@@ -16,7 +16,7 @@ import org.lwjgl.opengl.GL11;
 
 public class EndergenicRenderer extends TileEntitySpecialRenderer<EndergenicTileEntity> {
 
-    private ResourceLocation halo = new ResourceLocation(RFTools.MODID, "textures/entities/floatingPearl.png");
+    private ResourceLocation halo = new ResourceLocation(RFTools.MODID, "textures/entities/floatingpearl.png");
     private ResourceLocation whiteflash = new ResourceLocation(RFTools.MODID, "textures/entities/whiteflash.png");
     private ResourceLocation blackflash = new ResourceLocation(RFTools.MODID, "textures/entities/redflash.png");
 
@@ -24,7 +24,7 @@ public class EndergenicRenderer extends TileEntitySpecialRenderer<EndergenicTile
     private static final ResourceLocation blueglow = new ResourceLocation(RFTools.MODID, "textures/blocks/blueglow.png");
 
     @Override
-    public void renderTileEntityAt(EndergenicTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
+    public void render(EndergenicTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         Tessellator tessellator = Tessellator.getInstance();
         BlockPos coord = tileEntity.getPos();
         if (coord.equals(RFTools.instance.clientInfo.getSelectedTE())) {
@@ -63,10 +63,10 @@ public class EndergenicRenderer extends TileEntitySpecialRenderer<EndergenicTile
 
         GlStateManager.popMatrix();
 
-        ItemStack mainHand = Minecraft.getMinecraft().thePlayer.getHeldItemMainhand();
-        ItemStack offHand = Minecraft.getMinecraft().thePlayer.getHeldItemOffhand();
-        boolean showOverlay = (mainHand != null && mainHand.getItem() instanceof SmartWrenchItem) ||
-                (offHand != null && offHand.getItem() instanceof SmartWrenchItem);
+        ItemStack mainHand = Minecraft.getMinecraft().player.getHeldItemMainhand();
+        ItemStack offHand = Minecraft.getMinecraft().player.getHeldItemOffhand();
+        boolean showOverlay = (!mainHand.isEmpty() && mainHand.getItem() instanceof SmartWrenchItem) ||
+                (!offHand.isEmpty() && offHand.getItem() instanceof SmartWrenchItem);
         if (showOverlay) {
             HudRenderer.renderHud(tileEntity, x, y, z);
         }

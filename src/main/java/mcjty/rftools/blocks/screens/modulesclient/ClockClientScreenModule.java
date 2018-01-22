@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 
 import java.util.Locale;
 
-public class ClockClientScreenModule implements IClientScreenModule {
+public class ClockClientScreenModule implements IClientScreenModule<IModuleData> {
     private int color = 0xffffff;
     private String line = "";
     private boolean large = false;
@@ -34,16 +34,22 @@ public class ClockClientScreenModule implements IClientScreenModule {
         GlStateManager.disableLighting();
         Minecraft minecraft = Minecraft.getMinecraft();
 
-        final long time = minecraft.theWorld.getWorldTime();
+        final long time = minecraft.world.getWorldTime();
         long hour = (time / 1000 + 6) % 24;
         final long minute = (time % 1000) * 60 / 1000;
         String timeString = String.format(Locale.ENGLISH, "%02d:%02d", hour, minute);
 
+        int xoffset;
+        int y;
         if (large) {
-            fontRenderer.drawString(line + " " + timeString, 4, currenty / 2 + 1, color);
+            xoffset = 4;
+            y = currenty / 2 + 1;
         } else {
-            fontRenderer.drawString(line + " " + timeString, 7, currenty, color);
+            xoffset = 7;
+            y = currenty;
         }
+
+        renderHelper.renderText(xoffset, y, color, renderInfo, line + " " + timeString);
     }
 
     @Override

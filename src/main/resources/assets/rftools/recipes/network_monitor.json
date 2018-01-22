@@ -1,0 +1,27 @@
+{
+  "conditions": [{
+    "type": "minecraft:item_exists",
+    "item": "rftools:network_monitor"
+  }],
+  "result": {
+    "item": "rftools:network_monitor"
+  },
+  "pattern": [
+    "rlr",
+    "iri",
+    "rlr"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "l": {
+      "type": "forge:ore_dict",
+      "ore": "dyeBlack"
+    }
+  }
+}

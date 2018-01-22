@@ -4,11 +4,11 @@ import mcjty.rftools.blocks.environmental.EnvModuleProvider;
 import mcjty.rftools.blocks.environmental.EnvironmentalConfiguration;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
 import mcjty.rftools.blocks.environmental.modules.NoTeleportEModule;
-import mcjty.rftools.blocks.environmental.modules.PeacefulEModule;
 import mcjty.rftools.items.GenericRFToolsItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -23,7 +23,7 @@ public class NoTeleportEModuleItem extends GenericRFToolsItem implements EnvModu
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add("This module prevents enderman from teleporting");
         list.add("when used in the environmental controller.");

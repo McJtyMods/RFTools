@@ -5,6 +5,7 @@ import mcjty.lib.network.PacketHandler;
 import mcjty.lib.network.PacketRequestListFromServer;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
+import mcjty.typed.Type;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -32,20 +33,16 @@ public class PacketGetTransmitters extends PacketRequestListFromServer<Transmitt
         }
 
         private void handle(PacketGetTransmitters message, MessageContext ctx) {
-            TileEntity te = ctx.getServerHandler().playerEntity.worldObj.getTileEntity(message.pos);
+            TileEntity te = ctx.getServerHandler().player.getEntityWorld().getTileEntity(message.pos);
             if(!(te instanceof CommandHandler)) {
                 Logging.log("createStartScanPacket: TileEntity is not a CommandHandler!");
                 return;
             }
             CommandHandler commandHandler = (CommandHandler) te;
-            List<TransmitterInfo> list = (List<TransmitterInfo>) commandHandler.executeWithResultList(message.command, message.args);
-            if (list == null) {
-                Logging.log("Command " + message.command + " was not handled!");
-                return;
-            }
+            List<TransmitterInfo> list = commandHandler.executeWithResultList(message.command, message.args, Type.create(TransmitterInfo.class));
             SimpleNetworkWrapper wrapper = PacketHandler.modNetworking.get(message.modid);
             PacketTransmittersReady msg = new PacketTransmittersReady(message.pos, DialingDeviceTileEntity.CLIENTCMD_GETTRANSMITTERS, list);
-            wrapper.sendTo(msg, ctx.getServerHandler().playerEntity);
+            wrapper.sendTo(msg, ctx.getServerHandler().player);
         }
 
     }

@@ -1,23 +1,26 @@
 package mcjty.rftools.blocks.screens;
 
-import mcjty.lib.container.GenericBlock;
+import mcjty.lib.container.BaseBlock;
+import mcjty.lib.font.TrueTypeFont;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.ModuleRenderInfo;
 import mcjty.rftools.api.screens.data.IModuleData;
-import mcjty.rftools.blocks.screens.modulesclient.ClientScreenModuleHelper;
+import mcjty.rftools.blocks.screens.modulesclient.helper.ClientScreenModuleHelper;
 import mcjty.rftools.blocks.screens.network.PacketGetScreenData;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.proxy.ClientProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -32,33 +35,51 @@ import java.util.Map;
 @SideOnly(Side.CLIENT)
 public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> {
 
-    private static final ResourceLocation texture = new ResourceLocation(RFTools.MODID, "textures/blocks/screenFrame.png");
+    private static final ResourceLocation texture = new ResourceLocation(RFTools.MODID, "textures/blocks/screenframe.png");
     private final ModelScreen screenModel = new ModelScreen(ScreenTileEntity.SIZE_NORMAL);
     private final ModelScreen screenModelLarge = new ModelScreen(ScreenTileEntity.SIZE_LARGE);
     private final ModelScreen screenModelHuge = new ModelScreen(ScreenTileEntity.SIZE_HUGE);
 
     @Override
-    public void renderTileEntityAt(ScreenTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
-//        GlStateManager.pushAttrib();
+    public void render(ScreenTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+        float xRotation = 0.0F, yRotation = 0.0F;
+
+        EnumFacing facing = EnumFacing.SOUTH, horizontalFacing = EnumFacing.SOUTH;
+        if (tileEntity != null) {
+            IBlockState state = Minecraft.getMinecraft().world.getBlockState(tileEntity.getPos());
+            if (state.getBlock() instanceof ScreenBlock) {
+                facing = state.getValue(BaseBlock.FACING);
+                horizontalFacing = state.getValue(ScreenBlock.HORIZONTAL_FACING);
+            } else {
+                return;
+            }
+        }
+
         GlStateManager.pushMatrix();
-        float f3;
 
-        int meta = tileEntity == null ? 0 : tileEntity.getBlockMetadata();
-
-        if (meta == 2) {
-            f3 = 180.0F;
-        } else if (meta == 4) {
-            f3 = 90.0F;
-        } else if (meta == 5) {
-            f3 = -90.0F;
-        } else {
-            f3 = 0.0F;
+        switch (horizontalFacing) {
+            case NORTH:
+                yRotation = -180.0F;
+                break;
+            case WEST:
+                yRotation = -90.0F;
+                break;
+            case EAST:
+                yRotation = 90.0F;
+        }
+        switch (facing) {
+            case DOWN:
+                xRotation = 90.0F;
+                break;
+            case UP:
+                xRotation = -90.0F;
         }
 
         // TileEntity can be null if this is used for an item renderer.
-        GlStateManager.translate((float) x + 0.5F, (float) y + 0.75F, (float) z + 0.5F);
-        GlStateManager.rotate(-f3, 0.0F, 1.0F, 0.0F);
-        GlStateManager.translate(0.0F, -0.2500F, -0.4375F);
+        GlStateManager.translate((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
+        GlStateManager.rotate(yRotation, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotate(xRotation, 1.0F, 0.0F, 0.0F);
+        GlStateManager.translate(0.0F, 0.0F, -0.4375F);
 
         if (tileEntity == null) {
             GlStateManager.disableLighting();
@@ -78,6 +99,9 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
             Map<Integer, IModuleData> screenData = updateScreenData(tileEntity);
 
             List<IClientScreenModule> modules = tileEntity.getClientScreenModules();
+            if (tileEntity.isShowHelp()) {
+                modules = ScreenTileEntity.getHelpingScreenModules();
+            }
             renderModules(fontrenderer, tileEntity, mode, modules, screenData, tileEntity.getSize());
         }
 
@@ -85,7 +109,6 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         GlStateManager.depthMask(true);
 
         GlStateManager.popMatrix();
-//        GlStateManager.popAttrib();
     }
 
     private Map<Integer, IModuleData> updateScreenData(ScreenTileEntity screenTileEntity) {
@@ -99,7 +122,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         GlobalCoordinate key = new GlobalCoordinate(screenTileEntity.getPos(), screenTileEntity.getWorld().provider.getDimension());
         Map<Integer,IModuleData> screenData = ScreenTileEntity.screenData.get(key);
         if (screenData == null) {
-            screenData = Collections.EMPTY_MAP;
+            screenData = Collections.emptyMap();
         }
         return screenData;
     }
@@ -124,15 +147,16 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
             return;
         }
         if (mouseOver != null) {
-            if (mouseOver.sideHit == blockState.getValue(GenericBlock.FACING)) {
-                double xx = mouseOver.hitVec.xCoord - pos.getX();
-                double yy = mouseOver.hitVec.yCoord - pos.getY();
-                double zz = mouseOver.hitVec.zCoord - pos.getZ();
-                hit = tileEntity.getHitModule(xx, yy, zz, mouseOver.sideHit);
+            if (mouseOver.sideHit == blockState.getValue(BaseBlock.FACING)) {
+                double xx = mouseOver.hitVec.x - pos.getX();
+                double yy = mouseOver.hitVec.y - pos.getY();
+                double zz = mouseOver.hitVec.z - pos.getZ();
+                EnumFacing horizontalFacing = blockState.getValue(ScreenBlock.HORIZONTAL_FACING);
+                hit = tileEntity.getHitModule(xx, yy, zz, mouseOver.sideHit, horizontalFacing);
                 if (hit != null) {
                     hitModule = modules.get(hit.getModuleIndex());
                 }
-                tileEntity.focusModuleClient(xx, yy, zz, mouseOver.sideHit);
+                tileEntity.focusModuleClient(xx, yy, zz, mouseOver.sideHit, horizontalFacing);
             }
         }
 
@@ -183,7 +207,13 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
                             hitx = hit.getX();
                             hity = hit.getY() - hit.getCurrenty();
                         }
-                        ModuleRenderInfo renderInfo = new ModuleRenderInfo(factor, pos, hitx, hity);
+                        TrueTypeFont font = null;
+                        switch (tileEntity.getTrueTypeMode()) {
+                            case -1: break;
+                            case 1: font = ClientProxy.font; break;
+                            case 0: font = ScreenConfiguration.useTruetype ? ClientProxy.font : null; break;
+                        }
+                        ModuleRenderInfo renderInfo = new ModuleRenderInfo(factor, pos, hitx, hity, font);
                         module.render(clientScreenModuleHelper, fontrenderer, currenty, data, renderInfo);
                     } catch (ClassCastException e) {
                     }
@@ -216,7 +246,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
 
         GlStateManager.depthMask(false);
         Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer renderer = tessellator.getBuffer();
+        BufferBuilder renderer = tessellator.getBuffer();
         renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
         float dim;
         if (size == ScreenTileEntity.SIZE_HUGE) {
@@ -226,9 +256,9 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         } else {
             dim = .46f;
         }
-        float r = (float)((color & 16711680) >> 16) / 255.0F;
-        float g = (float)((color & 65280) >> 8) / 255.0F;
-        float b = (float)((color & 255) >> 0) / 255.0F;
+        float r = ((color & 16711680) >> 16) / 255.0F;
+        float g = ((color & 65280) >> 8) / 255.0F;
+        float b = ((color & 255)) / 255.0F;
         renderer.pos(-.46f, dim, -0.08f).color(r, g, b, 1f).endVertex();
         renderer.pos(dim, dim, -0.08f).color(r, g, b, 1f).endVertex();
         renderer.pos(dim, -.46f, -0.08f).color(r, g, b, 1f).endVertex();

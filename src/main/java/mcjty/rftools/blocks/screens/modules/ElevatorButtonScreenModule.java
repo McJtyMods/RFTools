@@ -60,7 +60,7 @@ public class ElevatorButtonScreenModule implements IScreenModule<ElevatorButtonS
             int s = buf.readByte();
             heights = new ArrayList<>(s);
             for (int i = 0; i < s; i++) {
-                heights.add((int) buf.readByte());
+                heights.add((int) buf.readShort());
             }
         }
 
@@ -87,7 +87,7 @@ public class ElevatorButtonScreenModule implements IScreenModule<ElevatorButtonS
             NetworkTools.writePos(buf, pos);
             buf.writeByte(heights.size());
             for (Integer height : heights) {
-                buf.writeByte(height);
+                buf.writeShort(height);
             }
         }
     }
@@ -147,7 +147,7 @@ public class ElevatorButtonScreenModule implements IScreenModule<ElevatorButtonS
     public void mouseClick(World world, int x, int y, boolean clicked, EntityPlayer player) {
         if (BlockPosTools.INVALID.equals(coordinate)) {
             if (player != null) {
-                player.addChatComponentMessage(new TextComponentString(TextFormatting.RED + "Module is not linked to elevator!"));
+                player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Module is not linked to elevator!"), false);
             }
             return;
         }
@@ -173,39 +173,49 @@ public class ElevatorButtonScreenModule implements IScreenModule<ElevatorButtonS
 
         if (vertical) {
             int max = large ? 6 : 8;
-            boolean twocols = levelCount > max;
+            int numcols = (levelCount + max - 1) / max;
+            int colw = getColumnWidth(numcols);
 
             int yoffset = 0;
             if (y >= yoffset) {
-                level = (y - yoffset) / (large ? (LARGESIZE - 2) : (SMALLSIZE - 2));
+                level = (y - yoffset) / (((large ? LARGESIZE : SMALLSIZE) - 2));
                 if (level < 0) {
                     return;
                 }
-                if (twocols) {
-                    if (x > 73) {
-                        if (level < levelCount - max) {
-                            level = levelCount - level - 1;
-                        } else {
-                            level = -1;
-                        }
-                    } else {
-                        level = max - level - 1;
+                if (numcols > 1) {
+                    int col = (x - 5) / (colw + 7);
+                    level = max - level - 1 + col * max;
+                    if (col == numcols - 1) {
+                        level -= max - (levelCount % max);
                     }
                 } else {
                     level = levelCount - level - 1;
                 }
-                System.out.println("level = " + level);
             }
         } else {
             int xoffset = 5;
             if (x >= xoffset) {
-                level = (x - xoffset) / (large ? (LARGESIZE - 2) : (SMALLSIZE - 2));
+                level = (x - xoffset) / (((large ? LARGESIZE : SMALLSIZE) - 2));
             }
         }
         if (level >= 0 && level < levelCount) {
             elevatorTileEntity.toLevel(level);
         }
     }
+
+    public static int getColumnWidth(int numcols) {
+        int colw;
+        switch (numcols) {
+            case 1: colw = 120; break;
+            case 2: colw = 58; break;
+            case 3: colw = 36; break;
+            case 4: colw = 25; break;
+            case 5: colw = 19; break;
+            default: colw = 15; break;
+        }
+        return colw;
+    }
+
 
     @Override
     public int getRfPerTick() {

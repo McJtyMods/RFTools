@@ -1,0 +1,29 @@
+{
+  "conditions": [{
+    "type": "minecraft:item_exists",
+    "item": "rftools:orphaning_card"
+  }],
+  "result": {
+    "item": "rftools:orphaning_card"
+  },
+  "pattern": [
+    " b ",
+    "rir",
+    " p "
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "p": {
+      "item": "minecraft:paper"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "b": {
+      "item": "minecraft:book"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    }
+  }
+}

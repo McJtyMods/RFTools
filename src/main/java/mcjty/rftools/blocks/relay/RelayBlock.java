@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.relay;
 
 import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -11,13 +10,16 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -40,7 +42,7 @@ public class RelayBlock extends GenericRFToolsBlock<RelayTileEntity, EmptyContai
     }
 
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiRelay> getGuiClass() {
         return GuiRelay.class;
     }
 
@@ -56,7 +58,7 @@ public class RelayBlock extends GenericRFToolsBlock<RelayTileEntity, EmptyContai
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
@@ -86,7 +88,7 @@ public class RelayBlock extends GenericRFToolsBlock<RelayTileEntity, EmptyContai
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
         boolean enabled = false;
-        TileEntity te = world.getTileEntity(pos);
+        TileEntity te = world instanceof ChunkCache ? ((ChunkCache)world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) : world.getTileEntity(pos);
         if (te instanceof RelayTileEntity) {
             enabled = ((RelayTileEntity)te).isPowered();
         }

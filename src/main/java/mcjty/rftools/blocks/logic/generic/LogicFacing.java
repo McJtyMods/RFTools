@@ -36,6 +36,7 @@ public enum LogicFacing implements IStringSerializable {
     EAST_TOUP("east_toup", 2, UP),
     EAST_TODOWN("east_todown", 3, DOWN);
 
+    public static final LogicFacing[] VALUES = LogicFacing.values();
 
     private final String name;
     private final int meta;
@@ -61,10 +62,10 @@ public enum LogicFacing implements IStringSerializable {
     }
 
     public EnumFacing getSide() {
-        return EnumFacing.values()[ordinal() / 4];
+        return EnumFacing.VALUES[ordinal() / 4];
     }
 
     public static LogicFacing getFacingWithMeta(LogicFacing facing, int meta) {
-        return LogicFacing.values()[(facing.ordinal() & ~3) + meta];
+        return LogicFacing.VALUES[(facing.ordinal() & ~3) + meta];
     }
 }

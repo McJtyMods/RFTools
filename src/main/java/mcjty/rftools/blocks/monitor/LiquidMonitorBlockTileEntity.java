@@ -2,21 +2,20 @@ package mcjty.rftools.blocks.monitor;
 
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.rftools.varia.RFToolsTools;
+import mcjty.lib.varia.CapabilityTools;
+import mcjty.typed.Type;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements ITickable {
     // Data that is saved
@@ -89,17 +88,17 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
         List<BlockPos> adjacentBlocks = new ArrayList<>();
         for (int dy = -1 ; dy <= 1 ; dy++) {
             int yy = y + dy;
-            if (yy >= 0 && yy < worldObj.getHeight()) {
+            if (yy >= 0 && yy < getWorld().getHeight()) {
                 for (int dz = -1 ; dz <= 1 ; dz++) {
                     int zz = z + dz;
                     for (int dx = -1 ; dx <= 1 ; dx++) {
                         int xx = x + dx;
                         if (dx != 0 || dy != 0 || dz != 0) {
-                            TileEntity tileEntity = worldObj.getTileEntity(new BlockPos(xx, yy, zz));
+                            TileEntity tileEntity = getWorld().getTileEntity(new BlockPos(xx, yy, zz));
                             if (tileEntity != null && tileEntity.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null)) {
                                 adjacentBlocks.add(new BlockPos(xx, yy, zz));
-                            } else if (tileEntity instanceof IFluidHandler) {
-                                adjacentBlocks.add(new BlockPos(xx, yy, zz));
+//                            } else if (tileEntity instanceof IFluidHandler) {
+//                                adjacentBlocks.add(new BlockPos(xx, yy, zz));
                             }
                         }
                     }
@@ -111,7 +110,7 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
@@ -131,8 +130,8 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
         long stored = 0;
         long maxContents = 0;
 
-        TileEntity tileEntity = worldObj.getTileEntity(monitor);
-        net.minecraftforge.fluids.capability.IFluidHandler fluidHandler = RFToolsTools.hasFluidCapabilitySafe(tileEntity);
+        TileEntity tileEntity = getWorld().getTileEntity(monitor);
+        net.minecraftforge.fluids.capability.IFluidHandler fluidHandler = CapabilityTools.hasFluidCapabilitySafe(tileEntity);
         if (fluidHandler != null) {
             IFluidTankProperties[] properties = fluidHandler.getTankProperties();
             if (properties != null && properties.length > 0) {
@@ -141,15 +140,15 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
                 }
                 maxContents = properties[0].getCapacity();
             }
-        } else if (tileEntity instanceof IFluidHandler) {
-            IFluidHandler handler = (IFluidHandler) tileEntity;
-            FluidTankInfo[] tankInfo = handler.getTankInfo(EnumFacing.DOWN);
-            if (tankInfo != null && tankInfo.length > 0) {
-                if (tankInfo[0].fluid != null) {
-                    stored = tankInfo[0].fluid.amount;
-                }
-                maxContents = tankInfo[0].capacity;
-            }
+//        } else if (tileEntity instanceof IFluidHandler) {
+//            IFluidHandler handler = (IFluidHandler) tileEntity;
+//            FluidTankInfo[] tankInfo = handler.getTankInfo(EnumFacing.DOWN);
+//            if (tankInfo != null && tankInfo.length > 0) {
+//                if (tankInfo[0].fluid != null) {
+//                    stored = tankInfo[0].fluid.amount;
+//                }
+//                maxContents = tankInfo[0].capacity;
+//            }
         } else {
             setInvalid();
             return;
@@ -191,7 +190,7 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
     }
 
     private void setRedstoneOut(boolean a) {
-        worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
+        getWorld().notifyNeighborsOfStateChange(this.pos, this.getBlockType(), false);
     }
 
     @Override
@@ -233,26 +232,27 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
         tagCompound.setByte("alarmLevel", (byte) alarmLevel);
     }
 
+    @Nonnull
     @Override
-    public List executeWithResultList(String command, Map<String, Argument> args) {
-        List rc = super.executeWithResultList(command, args);
-        if (rc != null) {
+    public <T> List<T> executeWithResultList(String command, Map<String, Argument> args, Type<T> type) {
+        List<T> rc = super.executeWithResultList(command, args, type);
+        if (!rc.isEmpty()) {
             return rc;
         }
         if (CMD_GETADJACENTBLOCKS.equals(command)) {
-            return findAdjacentBlocks();
+            return type.convert(findAdjacentBlocks());
         }
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
-    public boolean execute(String command, List list) {
-        boolean rc = super.execute(command, list);
+    public <T> boolean execute(String command, List<T> list, Type<T> type) {
+        boolean rc = super.execute(command, list, type);
         if (rc) {
             return true;
         }
         if (CLIENTCMD_ADJACENTBLOCKSREADY.equals(command)) {
-            GuiLiquidMonitor.fromServer_clientAdjacentBlocks = (List<BlockPos>) list.stream().map(o -> ((BlockPosNet)o).getPos()).collect(Collectors.toList());
+            GuiLiquidMonitor.fromServer_clientAdjacentBlocks = new ArrayList<>(Type.create(BlockPos.class).convert(list));
             return true;
         }
         return false;

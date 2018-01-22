@@ -1,0 +1,26 @@
+{
+  "result": {
+    "item": "rftools:storage_control_module"
+  },
+  "pattern": [
+    " c ",
+    "rir",
+    " b "
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "b": {
+      "type": "forge:ore_dict",
+      "ore": "dyeBlack"
+    },
+    "c": {
+      "item": "minecraft:crafting_table"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    }
+  }
+}

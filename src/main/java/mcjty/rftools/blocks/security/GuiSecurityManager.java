@@ -3,18 +3,13 @@ package mcjty.rftools.blocks.security;
 import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
-import mcjty.lib.gui.events.ButtonEvent;
-import mcjty.lib.gui.events.ChoiceEvent;
-import mcjty.lib.gui.events.TextEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
-import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
+import mcjty.lib.network.Arguments;
+import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.inventory.Slot;
@@ -22,7 +17,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileEntity> {
     public static final int SECURITYMANAGER_WIDTH = 244;
@@ -60,40 +55,20 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
 
         nameField = new TextField(mc, this).setDesiredHeight(15);
         addButton = new Button(mc, this).setText("Add").setDesiredHeight(14).setDesiredWidth(34).setTooltips("Add a player to the access list").
-                addButtonEvent(new ButtonEvent() {
-                    @Override
-                    public void buttonClicked(Widget parent) {
-                        addPlayer();
-                    }
-                });
+                addButtonEvent(parent -> addPlayer());
         delButton = new Button(mc, this).setText("Del").setDesiredHeight(14).setDesiredWidth(34).setTooltips("Remove the selected player", "from the access list").
-                addButtonEvent(new ButtonEvent() {
-                    @Override
-                    public void buttonClicked(Widget parent) {
-                        delPlayer();
-                    }
-                });
+                addButtonEvent(parent -> delPlayer());
         Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChild(nameField).addChild(addButton).addChild(delButton).setDesiredHeight(16).
                 setLayoutHint(new PositionalLayout.PositionalHint(72, 100, SECURITYMANAGER_WIDTH - 76, 14));
 
-        channelNameField = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(8, 27, 60, 14)).addTextEvent(new TextEvent() {
-            @Override
-            public void textChanged(Widget parent, String newText) {
-                updateChannelName();
-            }
-        });
+        channelNameField = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(8, 27, 60, 14)).addTextEvent((parent, newText) -> updateChannelName());
 
-        blacklistMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(10, 44, 16, 16)).setTooltips("Black or whitelist mode").addChoiceEvent(new ChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, String newChoice) {
-                updateSettings();
-            }
-        });
+        blacklistMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(10, 44, 16, 16)).setTooltips("Black or whitelist mode").addChoiceEvent((parent, newChoice) -> updateSettings());
         blacklistMode.addChoice("White", "Whitelist players", guiElements, 15 * 16, 32);
         blacklistMode.addChoice("Black", "Blacklist players", guiElements, 14 * 16, 32);
 
 
-        Widget toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(allowedPlayersPanel).addChild(buttonPanel).addChild(channelNameField).
+        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(allowedPlayersPanel).addChild(buttonPanel).addChild(channelNameField).
                 addChild(blacklistMode);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
         window = new Window(this, toplevel);
@@ -109,7 +84,7 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
         }
         listDirty--;
         if (listDirty <= 0) {
-            RFToolsMessages.INSTANCE.sendToServer(new PacketGetSecurityInfo(id));
+            sendServerCommand(RFTools.MODID, CommandHandler.CMD_GET_SECURITY_INFO, Arguments.builder().value(id).build());
             listDirty = 20;
         }
     }
@@ -155,7 +130,7 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
     }
 
     private int getCardID() {
-        Slot slot = (Slot) inventorySlots.inventorySlots.get(SecurityManagerContainer.SLOT_CARD);
+        Slot slot = inventorySlots.inventorySlots.get(SecurityManagerContainer.SLOT_CARD);
         if (slot.getHasStack()) {
             NBTTagCompound tagCompound = slot.getStack().getTagCompound();
             if (tagCompound == null) {

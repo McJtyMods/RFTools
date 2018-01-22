@@ -8,7 +8,7 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
-import mcjty.rftools.blocks.teleporter.PlayerName;
+import mcjty.typed.Type;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
@@ -21,15 +21,24 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.Optional;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import li.cil.oc.api.machine.Arguments;
+import li.cil.oc.api.machine.Callback;
+import li.cil.oc.api.machine.Context;
+import li.cil.oc.api.network.SimpleComponent;
+
 import java.util.*;
 
-//@Optional.InterfaceList({
-//        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers"),
-//        @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")})
+@Optional.InterfaceList({
+        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers"),
+//        @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")
+})
 public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable,
-        IMachineInformation /*, SimpleComponent, IPeripheral*/ {
+        IMachineInformation, SimpleComponent /*, IPeripheral*/ {
 
     public static final String CMD_SETRADIUS = "setRadius";
     public static final String CMD_SETBOUNDS = "setBounds";
@@ -55,7 +64,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
 
     // Cached server modules
     private List<EnvironmentModule> environmentModules = null;
-    private Set<String> players = new HashSet<String>();
+    Set<String> players = new HashSet<>();
     private EnvironmentalMode mode = EnvironmentalMode.MODE_BLACKLIST;
     private int totalRfPerTick = 0;     // The total rf per tick for all modules.
     private int radius = 50;
@@ -107,6 +116,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         return true;
     }
 
+
     //    @Override
 //    @Optional.Method(modid = "ComputerCraft")
 //    public String getType() {
@@ -146,26 +156,23 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
 //    public boolean equals(IPeripheral other) {
 //        return false;
 //    }
-//
-//    @Override
-//    @Optional.Method(modid = "OpenComputers")
-//    public String getComponentName() {
-//        return COMPONENT_NAME;
-//    }
-//
-//    @Callback(doc = "Get the current redstone mode. Values are 'Ignored', 'Off', or 'On'", getter = true)
-//    @Optional.Method(modid = "OpenComputers")
-//    public Object[] getRedstoneMode(Context context, Arguments args) throws Exception {
-//        return new Object[] { getRedstoneMode().getDescription() };
-//    }
-//
-//    @Callback(doc = "Set the current redstone mode. Values are 'Ignored', 'Off', or 'On'", setter = true)
-//    @Optional.Method(modid = "OpenComputers")
-//    public Object[] setRedstoneMode(Context context, Arguments args) throws Exception {
-//        String mode = args.checkString(0);
-//        return setRedstoneMode(mode);
-//    }
 
+    @Override
+    @Optional.Method(modid = "opencomputers")
+    public String getComponentName() {
+        return COMPONENT_NAME;
+    }
+
+    @Callback(doc = "Get or set the current redstone mode. Values are 'Ignored', 'Off', or 'On'", getter = true, setter = true)
+    @Optional.Method(modid = "opencomputers")
+    public Object[] redstoneMode(Context context, Arguments args) {
+        if(args.count() == 0) {
+            return new Object[] { getRSMode().getDescription() };
+        } else {
+            String mode = args.checkString(0);
+            return setRedstoneMode(mode);
+        }
+    }
 
     public EnvironmentalMode getMode() {
         return mode;
@@ -230,12 +237,8 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         }
     }
 
-    private List<PlayerName> getPlayersAsList() {
-        List<PlayerName> p = new ArrayList<PlayerName>();
-        for (String player : players) {
-            p.add(new PlayerName(player));
-        }
-        return p;
+    private List<String> getPlayersAsList() {
+        return new ArrayList<>(players);
     }
 
     private void addPlayer(String player) {
@@ -312,7 +315,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
@@ -323,7 +326,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
             return;
         }
 
-        int rf = getEnergyStored(EnumFacing.DOWN);
+        int rf = getEnergyStored();
         if (!isMachineEnabled()) {
             rf = 0;
         }
@@ -332,24 +335,28 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
 
         int rfNeeded = getTotalRfPerTick();
         if (rfNeeded > rf || environmentModules.isEmpty()) {
-            for (EnvironmentModule module : environmentModules) {
-                module.activate(false);
-            }
+            deactivate();
             powerTimeout = 20;
-            if (active) {
-                active = false;
-                markDirtyClient();
-            }
         } else {
             consumeEnergy(rfNeeded);
             for (EnvironmentModule module : environmentModules) {
                 module.activate(true);
-                module.tick(worldObj, getPos(), radius, miny, maxy, this);
+                module.tick(getWorld(), getPos(), radius, miny, maxy, this);
             }
             if (!active) {
                 active = true;
                 markDirtyClient();
             }
+        }
+    }
+
+    public void deactivate() {
+        for (EnvironmentModule module : environmentModules) {
+            module.activate(false);
+        }
+        if (active) {
+            active = false;
+            markDirtyClient();
         }
     }
 
@@ -375,10 +382,10 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         if (environmentModules == null) {
             int volume = getVolume();
             totalRfPerTick = 0;
-            environmentModules = new ArrayList<EnvironmentModule>();
+            environmentModules = new ArrayList<>();
             for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
                 ItemStack itemStack = inventoryHelper.getStackInSlot(i);
-                if (itemStack != null && itemStack.getItem() instanceof EnvModuleProvider) {
+                if (!itemStack.isEmpty() && itemStack.getItem() instanceof EnvModuleProvider) {
                     EnvModuleProvider moduleProvider = (EnvModuleProvider) itemStack.getItem();
                     Class<? extends EnvironmentModule> moduleClass = moduleProvider.getServerEnvironmentModule();
                     EnvironmentModule environmentModule;
@@ -433,7 +440,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isUsableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 
@@ -540,26 +547,27 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         return false;
     }
 
+    @Nonnull
     @Override
-    public List executeWithResultList(String command, Map<String, Argument> args) {
-        List rc = super.executeWithResultList(command, args);
-        if (rc != null) {
+    public <T> List<T> executeWithResultList(String command, Map<String, Argument> args, Type<T> type) {
+        List<T> rc = super.executeWithResultList(command, args, type);
+        if (!rc.isEmpty()) {
             return rc;
         }
         if (CMD_GETPLAYERS.equals(command)) {
-            return getPlayersAsList();
+            return type.convert(getPlayersAsList());
         }
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
-    public boolean execute(String command, List list) {
-        boolean rc = super.execute(command, list);
+    public <T> boolean execute(String command, List<T> list, Type<T> type) {
+        boolean rc = super.execute(command, list, type);
         if (rc) {
             return true;
         }
         if (CLIENTCMD_GETPLAYERS.equals(command)) {
-            GuiEnvironmentalController.storePlayersForClient(list);
+            players = new HashSet<>(Type.STRING.convert(list));
             return true;
         }
         return false;
@@ -568,5 +576,10 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     @Override
     public boolean shouldRenderInPass(int pass) {
         return pass == 1;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
     }
 }

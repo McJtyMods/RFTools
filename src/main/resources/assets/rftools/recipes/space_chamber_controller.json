@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "rftools:space_chamber_controller"
+  },
+  "pattern": [
+    " e ",
+    "tMt",
+    " e "
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "t": {
+      "item": "minecraft:redstone_torch"
+    },
+    "e": {
+      "item": "minecraft:ender_pearl"
+    },
+    "M": {
+      "item": "rftools:space_chamber"
+    }
+  }
+}

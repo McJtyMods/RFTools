@@ -8,7 +8,7 @@ public class CommandRftDb extends DefaultCommand {
     }
 
     @Override
-    public String getCommandName() {
+    public String getName() {
         return "rftdb";
     }
 }

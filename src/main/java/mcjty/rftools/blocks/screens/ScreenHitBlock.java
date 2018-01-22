@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.screens;
 
+import mcjty.lib.container.BaseBlock;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericBlock;
 import mcjty.rftools.RFTools;
@@ -33,21 +34,27 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyContainer> {
 
     public ScreenHitBlock() {
-        super(RFTools.instance, Material.GLASS, ScreenHitTileEntity.class, EmptyContainer.class, "screen_hitblock", false);
+        super(RFTools.instance, Material.GLASS, ScreenHitTileEntity.class, EmptyContainer.class, null, "screen_hitblock", false);
         setBlockUnbreakable();
         setResistance(6000000.0F);
 //        setUnlocalizedName("rftools.screen_hitblock");
 //        setRegistryName("screen_hitblock");
 //        GameRegistry.register(this);
-//        GameRegistry.register(new ItemBlock(this), getRegistryName());
 //        GameRegistry.registerTileEntity(ScreenHitTileEntity.class, "screen_hitblock");
+    }
+
+    @Override
+    public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
+        BlockPos screenPos = getScreenBlockPos(worldIn, pos);
+        if(screenPos == null) return ItemStack.EMPTY;
+        IBlockState screenState = worldIn.getBlockState(screenPos);
+        return screenState.getBlock().getItem(worldIn, screenPos, screenState);
     }
 
     @Override
@@ -71,7 +78,7 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
 
     @SideOnly(Side.CLIENT)
     @Override
-    public List<String> getWailaBody(ItemStack itemStack, List currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         super.getWailaBody(itemStack, currenttip, accessor, config);
         BlockPos pos = accessor.getPosition();
         World world = accessor.getWorld();
@@ -100,6 +107,7 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
         return new ScreenHitTileEntity();
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public void initModel() {
         ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(this), 0, ScreenTileEntity.class);
@@ -114,28 +122,43 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
             int dx = screenHitTileEntity.getDx();
             int dy = screenHitTileEntity.getDy();
             int dz = screenHitTileEntity.getDz();
-            Block block = world.getBlockState(pos.add(dx, dy, dz)).getBlock();
+            IBlockState state = world.getBlockState(pos.add(dx, dy, dz));
+            Block block = state.getBlock();
             if (block != ScreenSetup.screenBlock && block != ScreenSetup.creativeScreenBlock) {
                 return;
             }
 
             RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
             ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos.add(dx, dy, dz));
-            screenTileEntity.hitScreenClient(mouseOver.hitVec.xCoord - pos.getX() - dx, mouseOver.hitVec.yCoord - pos.getY() - dy, mouseOver.hitVec.zCoord - pos.getZ() - dz, mouseOver.sideHit);
+            screenTileEntity.hitScreenClient(mouseOver.hitVec.x - pos.getX() - dx, mouseOver.hitVec.y - pos.getY() - dy, mouseOver.hitVec.z - pos.getZ() - dz, mouseOver.sideHit, state.getValue(ScreenBlock.HORIZONTAL_FACING));
         }
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float sidex, float sidey, float sidez) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+        return activate(world, pos, state, player, hand, side, hitX, hitY, hitZ);
+    }
+
+    public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+        pos = getScreenBlockPos(world, pos);
+        if (pos == null) {
+            return false;
+        }
+        Block block = world.getBlockState(pos).getBlock();
+        return ((ScreenBlock) block).activate(world, pos, state, player, hand, side, hitX, hitY, hitZ);
+    }
+
+    public BlockPos getScreenBlockPos(World world, BlockPos pos) {
         ScreenHitTileEntity screenHitTileEntity = (ScreenHitTileEntity) world.getTileEntity(pos);
         int dx = screenHitTileEntity.getDx();
         int dy = screenHitTileEntity.getDy();
         int dz = screenHitTileEntity.getDz();
-        Block block = world.getBlockState(pos.add(dx, dy, dz)).getBlock();
+        pos = pos.add(dx, dy, dz);
+        Block block = world.getBlockState(pos).getBlock();
         if (block != ScreenSetup.screenBlock && block != ScreenSetup.creativeScreenBlock) {
-            return false;
+            return null;
         }
-        return block.onBlockActivated(world, pos.add(dx, dy, dz), state, player, hand, heldItem, side, sidex, sidey, sidez);
+        return pos;
     }
 
     public static final AxisAlignedBB BLOCK_AABB = new AxisAlignedBB(0.5F - 0.5F, 0.0F, 0.5F - 0.5F, 0.5F + 0.5F, 1.0F, 0.5F + 0.5F);
@@ -143,18 +166,24 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
     public static final AxisAlignedBB SOUTH_AABB = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 0.125F);
     public static final AxisAlignedBB WEST_AABB = new AxisAlignedBB(1.0F - 0.125F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
     public static final AxisAlignedBB EAST_AABB = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 0.125F, 1.0F, 1.0F);
+    public static final AxisAlignedBB UP_AABB = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 0.125F, 1.0F);
+    public static final AxisAlignedBB DOWN_AABB = new AxisAlignedBB(0.0F, 1.0F - 0.125F, 0.0F, 1.0F, 1.0F, 1.0F);
 
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        int meta = state.getBlock().getMetaFromState(state);
-        if (meta == EnumFacing.NORTH.ordinal()) {
+        EnumFacing facing = state.getValue(BaseBlock.FACING);
+        if (facing == EnumFacing.NORTH) {
             return NORTH_AABB;
-        } else if (meta == EnumFacing.SOUTH.ordinal()) {
+        } else if (facing == EnumFacing.SOUTH) {
             return SOUTH_AABB;
-        } else if (meta == EnumFacing.WEST.ordinal()) {
+        } else if (facing == EnumFacing.WEST) {
             return WEST_AABB;
-        } else if (meta == EnumFacing.EAST.ordinal()) {
+        } else if (facing == EnumFacing.EAST) {
             return EAST_AABB;
+        } else if (facing == EnumFacing.UP) {
+            return UP_AABB;
+        } else if (facing == EnumFacing.DOWN) {
+            return DOWN_AABB;
         } else {
             return BLOCK_AABB;
         }
@@ -169,12 +198,6 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
     public boolean isBlockNormalCube(IBlockState state) {
         return false;
     }
-
-    @Override
-    public boolean isBlockSolid(IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
-        return true;
-    }
-
 
     @Override
     public boolean isFullBlock(IBlockState state) {

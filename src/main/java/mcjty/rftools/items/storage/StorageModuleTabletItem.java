@@ -1,16 +1,18 @@
 package mcjty.rftools.items.storage;
 
-import cofh.api.energy.IEnergyContainerItem;
+import cofh.redstoneflux.api.IEnergyContainerItem;
+import mcjty.lib.varia.IEnergyItem;
+import mcjty.lib.varia.ItemCapabilityProvider;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.items.GenericRFToolsItem;
-import mcjty.rftools.items.ItemCapabilityProvider;
 import mcjty.rftools.items.screenmodules.StorageControlModuleItem;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -26,12 +28,15 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class StorageModuleTabletItem extends GenericRFToolsItem implements IEnergyContainerItem {
+@Optional.Interface(modid = "redstoneflux", iface = "cofh.redstoneflux.api.IEnergyContainerItem")
+public class StorageModuleTabletItem extends GenericRFToolsItem implements IEnergyItem, IEnergyContainerItem {
 
     private int capacity;
     private int maxReceive;
@@ -50,6 +55,14 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
         capacity = ModularStorageConfiguration.TABLET_MAXENERGY;
         maxReceive = ModularStorageConfiguration.TABLET_RECEIVEPERTICK;
         maxExtract = ModularStorageConfiguration.TABLET_CONSUMEPERUSE;
+    }
+
+    @Override
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+        if (oldStack.isEmpty() != newStack.isEmpty()) {
+            return true;
+        }
+        return oldStack.getItem() != newStack.getItem();
     }
 
     @Override
@@ -75,7 +88,8 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+        ItemStack stack = player.getHeldItem(hand);
         // Make sure the tablet only works in main hand to avoid problems later
         if (hand != EnumHand.MAIN_HAND) {
             return new ActionResult<>(EnumActionResult.PASS, stack);
@@ -116,21 +130,21 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
                     BlockPos pos = new BlockPos(monitorx, monitory, monitorz);
                     WorldServer w = DimensionManager.getWorld(monitordim);
                     if (w == null || !RFToolsTools.chunkLoaded(w, pos)) {
-                        player.addChatComponentMessage(new TextComponentString(TextFormatting.RED + "Storage scanner is out of range!"));
+                        player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Storage scanner is out of range!"), false);
                     } else {
-                        player.openGui(RFTools.instance, RFTools.GUI_REMOTE_STORAGESCANNER_ITEM, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+                        player.openGui(RFTools.instance, RFTools.GUI_REMOTE_STORAGESCANNER_ITEM, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
                     }
                 } else {
-                    player.addChatComponentMessage(new TextComponentString(TextFormatting.RED + "Storage module is not linked to a storage scanner!"));
+                    player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Storage module is not linked to a storage scanner!"), false);
                 }
             } else if (moduleDamage == StorageModuleItem.STORAGE_REMOTE) {
                 if (!tagCompound.hasKey("id")) {
                     Logging.message(player, TextFormatting.YELLOW + "This remote storage module is not linked!");
                     return new ActionResult<>(EnumActionResult.FAIL, stack);
                 }
-                player.openGui(RFTools.instance, RFTools.GUI_REMOTE_STORAGE_ITEM, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+                player.openGui(RFTools.instance, RFTools.GUI_REMOTE_STORAGE_ITEM, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
             } else {
-                player.openGui(RFTools.instance, RFTools.GUI_MODULAR_STORAGE_ITEM, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+                player.openGui(RFTools.instance, RFTools.GUI_MODULAR_STORAGE_ITEM, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
             }
             return new ActionResult<>(EnumActionResult.SUCCESS, stack);
         }
@@ -151,6 +165,32 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
     }
 
     @Override
+    public boolean isDamageable() {
+        return super.isDamageable();
+    }
+
+//    @Override
+//    public boolean getShareTag() {
+//        return true;
+//    }
+//
+//    @Nullable
+//    @Override
+//    public NBTTagCompound getNBTShareTag(ItemStack stack) {
+//        if (!stack.hasTagCompound()) {
+//            return stack.getTagCompound();
+//        }
+//        NBTTagCompound tagCompound = new NBTTagCompound();
+//        NBTTagCompound tc = stack.getTagCompound();
+//        tagCompound.setInteger("Energy", tc.getInteger("Energy"));
+//        tagCompound.setInteger("childDamage", tc.getInteger("childDamage"));
+//        if (tc.hasKey("grid")) {
+//            tagCompound.setTag("grid", tc.getTag("grid"));
+//        }
+//        return tagCompound;
+//    }
+
+    @Override
     public ItemStack getContainerItem(ItemStack stack) {
         if (hasContainerItem(stack) && stack.hasTagCompound()) {
             NBTTagCompound tagCompound = new NBTTagCompound();
@@ -162,11 +202,11 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
             container.setTagCompound(tagCompound);
             return container;
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
@@ -181,12 +221,12 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
                 list.add(TextFormatting.YELLOW + "No storage module installed!");
             }
         }
-        if (player.isSneaking()) {
-            list.add("This RF/charged module can hold a storage module");
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            list.add("This RF/charged tablet can hold a storage module");
             list.add("and allows the wielder to manipulate the contents of");
             list.add("this module (remote or normal).");
-            list.add("You can also combine this with a storage control");
-            list.add("module for remote access to a storage scanner");
+            list.add("You can also craft this with a storage control");
+            list.add("screen module for remote access to a storage scanner");
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }

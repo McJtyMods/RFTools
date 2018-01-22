@@ -10,8 +10,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraftforge.event.world.ChunkDataEvent;
 import net.minecraftforge.fml.common.IWorldGenerator;
@@ -62,7 +62,7 @@ public class RFToolsWorldGenerator implements IWorldGenerator {
         }
 
         if (!newGen) {
-            world.getChunkFromChunkCoords(chunkX, chunkZ).setChunkModified();
+            world.getChunkFromChunkCoords(chunkX, chunkZ).markDirty();
         }
     }
 
@@ -70,7 +70,7 @@ public class RFToolsWorldGenerator implements IWorldGenerator {
 
     public void addOreSpawn(IBlockState block, IBlockState targetBlock,
                             World world, Random random, int blockXPos, int blockZPos, int minVeinSize, int maxVeinSize, int chancesToSpawn, int minY, int maxY) {
-        WorldGenMinable minable = new WorldGenMinable(block, (minVeinSize - random.nextInt(maxVeinSize - minVeinSize)), state -> state.getBlock() == targetBlock.getBlock());
+        WorldGenMinable minable = new WorldGenMinable(block, (minVeinSize + random.nextInt(maxVeinSize - minVeinSize)), state -> state.getBlock() == targetBlock.getBlock());
         for (int i = 0 ; i < chancesToSpawn ; i++) {
             int posX = blockXPos + random.nextInt(16);
             int posY = minY + random.nextInt(maxY - minY);
@@ -97,7 +97,7 @@ public class RFToolsWorldGenerator implements IWorldGenerator {
         boolean regen = false;
         NBTTagCompound tag = (NBTTagCompound) event.getData().getTag(RETRO_NAME);
         NBTTagList list = null;
-        Pair<Integer,Integer> cCoord = Pair.of(event.getChunk().xPosition, event.getChunk().zPosition);
+        Pair<Integer,Integer> cCoord = Pair.of(event.getChunk().x, event.getChunk().z);
 
         if (tag != null) {
             boolean generated = GeneralConfiguration.retrogen && !tag.hasKey("generated");

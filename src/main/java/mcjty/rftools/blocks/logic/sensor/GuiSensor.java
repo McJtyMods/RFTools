@@ -2,11 +2,9 @@ package mcjty.rftools.blocks.logic.sensor;
 
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
-import mcjty.lib.gui.events.ChoiceEvent;
-import mcjty.lib.gui.events.TextEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
-import mcjty.lib.gui.widgets.*;
+import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
@@ -48,12 +46,7 @@ public class GuiSensor extends GenericGuiContainer<SensorTileEntity> {
 
         numberField = new TextField(mc, this).setTooltips("Set a number specific to the type of sensor")
                 .setLayoutHint(new PositionalLayout.PositionalHint(60, 51, 80, 14))
-                .addTextEvent(new TextEvent() {
-                    @Override
-                    public void textChanged(Widget parent, String newText) {
-                        setNumber();
-                    }
-                });
+                .addTextEvent((parent, newText) -> setNumber());
         int number = tileEntity.getNumber();
         numberField.setText(String.valueOf(number));
 
@@ -64,12 +57,7 @@ public class GuiSensor extends GenericGuiContainer<SensorTileEntity> {
         }
         typeLabel.setLayoutHint(new PositionalLayout.PositionalHint(60, 3, 80, 14));
         typeLabel.setChoice(tileEntity.getSensorType().getName());
-        typeLabel.addChoiceEvent(new ChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, String newChoice) {
-                setType();
-            }
-        });
+        typeLabel.addChoiceEvent((parent, newChoice) -> setType());
 
         areaLabel = new ChoiceLabel(mc, this);
         for (AreaType areaType : AreaType.values()) {
@@ -78,12 +66,7 @@ public class GuiSensor extends GenericGuiContainer<SensorTileEntity> {
         }
         areaLabel.setLayoutHint(new PositionalLayout.PositionalHint(60, 19, 80, 14));
         areaLabel.setChoice(tileEntity.getAreaType().getName());
-        areaLabel.addChoiceEvent(new ChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, String newChoice) {
-                setArea();
-            }
-        });
+        areaLabel.addChoiceEvent((parent, newChoice) -> setArea());
 
         groupLabel = new ChoiceLabel(mc, this);
         for (GroupType groupType : GroupType.values()) {
@@ -92,12 +75,7 @@ public class GuiSensor extends GenericGuiContainer<SensorTileEntity> {
         }
         groupLabel.setLayoutHint(new PositionalLayout.PositionalHint(60, 35, 80, 14));
         groupLabel.setChoice(tileEntity.getGroupType().getName());
-        groupLabel.addChoiceEvent(new ChoiceEvent() {
-            @Override
-            public void choiceChanged(Widget parent, String newChoice) {
-                setGroup();
-            }
-        });
+        groupLabel.addChoiceEvent((parent, newChoice) -> setGroup());
 
         toplevel
                 .addChild(new Label(mc, this).setText("Type:")

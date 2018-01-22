@@ -5,9 +5,9 @@ import mcjty.lib.gui.RenderHelper;
 import mcjty.rftools.RFTools;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
@@ -20,10 +20,10 @@ public class MatterBeamerRenderer extends TileEntitySpecialRenderer<MatterBeamer
     private static final ResourceLocation blueglow = new ResourceLocation(RFTools.MODID, "textures/blocks/blueglow.png");
 
     @Override
-    public void renderTileEntityAt(MatterBeamerTileEntity tileEntity, double x, double y, double z, float time, int destroyStage) {
+    public void render(MatterBeamerTileEntity tileEntity, double x, double y, double z, float time, int destroyStage, float alpha) {
         ResourceLocation txt;
         Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer buffer = tessellator.getBuffer();
+        BufferBuilder buffer = tessellator.getBuffer();
 
         BlockPos destination = tileEntity.getDestination();
         if (destination != null) {
@@ -36,7 +36,7 @@ public class MatterBeamerRenderer extends TileEntitySpecialRenderer<MatterBeamer
                 GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE);
 
                 Minecraft mc = Minecraft.getMinecraft();
-                EntityPlayerSP p = mc.thePlayer;
+                EntityPlayerSP p = mc.player;
                 double doubleX = p.lastTickPosX + (p.posX - p.lastTickPosX) * time;
                 double doubleY = p.lastTickPosY + (p.posY - p.lastTickPosY) * time;
                 double doubleZ = p.lastTickPosZ + (p.posZ - p.lastTickPosZ) * time;

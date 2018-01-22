@@ -1,0 +1,27 @@
+{
+  "conditions": [{
+    "type": "minecraft:item_exists",
+    "item": "rftools:coalgenerator"
+  }],
+  "result": {
+    "item": "rftools:coalgenerator"
+  },
+  "pattern": [
+    "cTc",
+    "cMc",
+    "cTc"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "c": {
+      "item": "minecraft:coal",
+      "data": 0
+    },
+    "T": {
+      "item": "minecraft:redstone_torch"
+    },
+    "M": {
+      "item": "rftools:machine_frame"
+    }
+  }
+}

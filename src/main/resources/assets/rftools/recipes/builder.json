@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "rftools:builder"
+  },
+  "pattern": [
+    "beb",
+    "rMr",
+    "brb"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "b": {
+      "item": "minecraft:brick_block"
+    },
+    "e": {
+      "item": "minecraft:ender_pearl"
+    },
+    "M": {
+      "item": "rftools:machine_frame"
+    }
+  }
+}

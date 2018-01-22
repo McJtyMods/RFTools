@@ -14,14 +14,14 @@ import java.util.Random;
 @SideOnly(Side.CLIENT)
 public class EnvironmentalTESR extends TileEntitySpecialRenderer<EnvironmentalControllerTileEntity> {
 
-    private ResourceLocation halo = new ResourceLocation(RFTools.MODID, "textures/entities/floatingSphere.png");
+    private ResourceLocation halo = new ResourceLocation(RFTools.MODID, "textures/entities/floatingsphere.png");
     private Random random = new Random();
 
     public EnvironmentalTESR() {
     }
 
     @Override
-    public void renderTileEntityAt(EnvironmentalControllerTileEntity te, double x, double y, double z, float time, int breakTime) {
+    public void render(EnvironmentalControllerTileEntity te, double x, double y, double z, float time, int breakTime, float alpha) {
         if (te.isActive()) {
             GlStateManager.depthMask(false);
             GlStateManager.enableBlend();

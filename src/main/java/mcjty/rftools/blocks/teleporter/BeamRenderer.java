@@ -1,9 +1,9 @@
 package mcjty.rftools.blocks.teleporter;
 
 import mcjty.rftools.RFTools;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
@@ -13,16 +13,16 @@ import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
 public class BeamRenderer extends TileEntitySpecialRenderer<MatterTransmitterTileEntity> {
-    private static final ResourceLocation textureOk = new ResourceLocation(RFTools.MODID, "textures/blocks/machineTeleporter.png");
-    private static final ResourceLocation textureWarn = new ResourceLocation(RFTools.MODID, "textures/blocks/machineTeleporterWarn.png");
-    private static final ResourceLocation textureUnknown = new ResourceLocation(RFTools.MODID, "textures/blocks/machineTeleporterUnknown.png");
+    private static final ResourceLocation textureOk = new ResourceLocation(RFTools.MODID, "textures/blocks/machineteleporter.png");
+    private static final ResourceLocation textureWarn = new ResourceLocation(RFTools.MODID, "textures/blocks/machineteleporterwarn.png");
+    private static final ResourceLocation textureUnknown = new ResourceLocation(RFTools.MODID, "textures/blocks/machineteleporterunknown.png");
 
-    private void p(VertexBuffer renderer, double x, double y, double z, double u, double v) {
+    private void p(BufferBuilder renderer, double x, double y, double z, double u, double v) {
         renderer.pos(x, y, z).tex(u, v).color(1.0f, 1.0f, 1.0f, 1.0f).lightmap(0, 240).endVertex();
     }
 
     @Override
-    public void renderTileEntityAt(MatterTransmitterTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
+    public void render(MatterTransmitterTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         if (tileEntity.isDialed() && !tileEntity.isBeamHidden()) {
             Tessellator tessellator = Tessellator.getInstance();
 //            GlStateManager.pushAttrib();
@@ -51,7 +51,7 @@ public class BeamRenderer extends TileEntitySpecialRenderer<MatterTransmitterTil
 
             GlStateManager.color(1, 1, 1, 1);
 
-            VertexBuffer renderer = tessellator.getBuffer();
+            BufferBuilder renderer = tessellator.getBuffer();
             renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
 
             double o = .15;

@@ -1,12 +1,16 @@
 package mcjty.rftools.blocks.builder;
 
+import mcjty.lib.McJtyRegister;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -14,18 +18,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nullable;
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.Deque;
-import java.util.List;
 import java.util.Random;
 
 public class SupportBlock extends Block {
@@ -37,12 +40,19 @@ public class SupportBlock extends Block {
     public static PropertyInteger STATUS = PropertyInteger.create("status", 0, 2);
 
     public SupportBlock() {
-        super(Material.GLASS);
+        super(Material.GLASS, MapColor.CYAN);
         setUnlocalizedName("rftools.support_block");
         setRegistryName("support_block");
         setCreativeTab(RFTools.tabRfTools);
-        GameRegistry.register(this);
-        GameRegistry.register(new ItemBlock(this), getRegistryName());
+        McJtyRegister.registerLater(this, RFTools.instance, ItemBlock.class);
+    }
+
+    public static boolean activateBlock(Block block, World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        return block.onBlockActivated(world, pos, state, player, hand, facing, hitX, hitY, hitZ);
+    }
+
+    public static Collection<IProperty<?>> getPropertyKeys(IBlockState state) {
+        return state.getPropertyKeys();
     }
 
     @SideOnly(Side.CLIENT)
@@ -66,7 +76,6 @@ public class SupportBlock extends Block {
         return false;
     }
 
-    @Nullable
     @Override
     public Item getItemDropped(IBlockState state, Random rand, int fortune) {
         return null;
@@ -82,15 +91,16 @@ public class SupportBlock extends Block {
         return false;
     }
 
+
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float sidex, float sidey, float sidez) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
             // Find all connected blocks and remove them.
             Deque<BlockPos> todo = new ArrayDeque<>();
             todo.add(pos);
             removeBlock(world, todo);
         }
-        return super.onBlockActivated(world, pos, state, player, hand, heldItem, side, sidex, sidey, sidez);
+        return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
     }
 
     private void removeBlock(World world, Deque<BlockPos> todo) {
@@ -150,4 +160,11 @@ public class SupportBlock extends Block {
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, STATUS);
     }
+
+
+    @Override
+    public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> tab) {
+        super.getSubBlocks(itemIn, tab);
+    }
+
 }

@@ -1,5 +1,6 @@
 package mcjty.rftools.items.storage;
 
+import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.blocks.storage.sorters.ModItemSorter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,7 +17,7 @@ public class StorageFilterCache {
     private boolean blacklistMode = true;
     private boolean nbtMode = false;
     private boolean modMode = false;
-    private ItemStack stacks[];
+    private ItemStackList stacks;
     private Set<Integer> oredictMatches = new HashSet<>();
 
     // Parameter is the filter item.
@@ -32,18 +33,18 @@ public class StorageFilterCache {
             int cnt = 0;
             for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
                 NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-                ItemStack s = ItemStack.loadItemStackFromNBT(nbtTagCompound);
-                if (s != null && s.stackSize > 0) {
+                ItemStack s = new ItemStack(nbtTagCompound);
+                if (!s.isEmpty()) {
                     cnt++;
                 }
             }
-            stacks = new ItemStack[cnt];
+            stacks = ItemStackList.create(cnt);
             cnt = 0;
             for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
                 NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-                ItemStack s = ItemStack.loadItemStackFromNBT(nbtTagCompound);
-                if (s != null && s.stackSize > 0) {
-                    stacks[cnt++] = s;
+                ItemStack s = new ItemStack(nbtTagCompound);
+                if (!s.isEmpty()) {
+                    stacks.set(cnt++, s);
                     if (oredictMode) {
                         for (int id : OreDictionary.getOreIDs(s)) {
                             oredictMatches.add(id);
@@ -52,12 +53,12 @@ public class StorageFilterCache {
                 }
             }
         } else {
-            stacks = new ItemStack[0];
+            stacks = ItemStackList.EMPTY;
         }
     }
 
     public boolean match(ItemStack stack) {
-        if (stack != null) {
+        if (!stack.isEmpty()) {
             boolean match = false;
             String modName = "";
             if (modMode) {
@@ -87,7 +88,7 @@ public class StorageFilterCache {
     private boolean itemMatches(ItemStack stack, String modName) {
         if (stacks != null) {
             for (ItemStack itemStack : stacks) {
-                if (matchDamage && itemStack.getItemDamage() != stack.getItemDamage()) {
+                if (matchDamage && itemStack.getMetadata() != stack.getMetadata()) {
                     continue;
                 }
                 if (nbtMode && !ItemStack.areItemStackTagsEqual(itemStack, stack)) {

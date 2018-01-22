@@ -8,13 +8,13 @@ import mcjty.lib.gui.events.DefaultSelectionEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Button;
-import mcjty.lib.gui.widgets.Panel;
-import mcjty.rftools.BlockInfo;
+import mcjty.lib.network.Arguments;
+import mcjty.lib.varia.BlockTools;
+import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.crafter.CraftingRecipe;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryCrafting;
@@ -26,7 +26,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import org.lwjgl.input.Mouse;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 
 public class GuiCraftingGrid {
@@ -42,10 +42,7 @@ public class GuiCraftingGrid {
     private WidgetList recipeList;
 
     private Minecraft mc;
-    private GenericGuiContainer gui;
-    private SimpleNetworkWrapper network;
-    private int sideLeft;
-    private int sideTop;
+    private GenericGuiContainer<?> gui;
     private CraftingGridProvider provider;
     private BlockPos pos;
 
@@ -53,12 +50,12 @@ public class GuiCraftingGrid {
     private int lastTestAmount = -2;
     private int lastTestTimer = 0;
 
-    public void initGui(final ModBase modBase, final SimpleNetworkWrapper network, final Minecraft mc, GenericGuiContainer gui,
+    public void initGui(final ModBase modBase, final SimpleNetworkWrapper network, final Minecraft mc, GenericGuiContainer<?> gui,
                         BlockPos pos, CraftingGridProvider provider,
                         int guiLeft, int guiTop, int xSize, int ySize) {
         this.mc = mc;
         this.gui = gui;
-        this.network = network;
+        SimpleNetworkWrapper network1 = network;
         this.provider = provider;
         this.pos = pos;
 
@@ -95,8 +92,8 @@ public class GuiCraftingGrid {
                 .addChild(craftSButton)
                 .addChild(storeButton)
                 .addChild(recipeList);
-        sideLeft = guiLeft - CraftingGridInventory.GRID_WIDTH - 2;
-        sideTop = guiTop;
+        int sideLeft = guiLeft - CraftingGridInventory.GRID_WIDTH - 2;
+        int sideTop = guiTop;
         sidePanel.setBounds(new Rectangle(sideLeft, sideTop, CraftingGridInventory.GRID_WIDTH, CraftingGridInventory.GRID_HEIGHT));
         sidePanel.setBackground(iconLocation);
         craftWindow = new Window(gui, sidePanel);
@@ -107,12 +104,14 @@ public class GuiCraftingGrid {
     }
 
     private void craft(int n) {
-        RFToolsMessages.INSTANCE.sendToServer(new PacketCraftFromGrid(pos, n, false));
+        RFToolsMessages.sendToServer(CommandHandler.CMD_CRAFT_FROM_GRID,
+                Arguments.builder().value(n).value(false).value(pos));
     }
 
     private void testCraft(int n) {
         if (lastTestAmount != n || lastTestTimer <= 0) {
-            RFToolsMessages.INSTANCE.sendToServer(new PacketCraftFromGrid(pos, n, true));
+            RFToolsMessages.sendToServer(CommandHandler.CMD_CRAFT_FROM_GRID,
+                    Arguments.builder().value(n).value(true).value(pos));
             lastTestAmount = n;
             lastTestTimer = 20;
         }
@@ -154,7 +153,7 @@ public class GuiCraftingGrid {
 
         int x = Mouse.getEventX() * gui.width / gui.mc.displayWidth;
         int y = gui.height - Mouse.getEventY() * gui.height / gui.mc.displayHeight - 1;
-        Widget widget = craftWindow.getToplevel().getWidgetAtPosition(x, y);
+        Widget<?> widget = craftWindow.getToplevel().getWidgetAtPosition(x, y);
         if (widget == craft1Button) {
             testCraft(1);
         } else if (widget == craft4Button) {
@@ -173,14 +172,16 @@ public class GuiCraftingGrid {
 
         if (testResultFromServer != null) {
             GlStateManager.pushMatrix();
-            GlStateManager.translate((float)gui.guiLeft, (float) gui.guiTop, 0.0F);
+            GlStateManager.translate(gui.getGuiLeft(), gui.getGuiTop(), 0.0F);
 
             if (testResultFromServer[9] > 0) {
                 Slot slot = gui.inventorySlots.getSlotFromInventory(provider.getCraftingGrid().getCraftingGridInventory(), CraftingGridInventory.SLOT_GHOSTOUTPUT);
 
                 if (slot != null) {
                     GlStateManager.colorMask(true, true, true, false);
-                    gui.drawRect(slot.xDisplayPosition, slot.yDisplayPosition, slot.xDisplayPosition + 16, slot.yDisplayPosition + 16, 0xffff0000);
+                    int xPos = slot.xPos;
+                    int yPos = slot.yPos;
+                    Gui.drawRect(xPos, yPos, xPos + 16, yPos + 16, 0xffff0000);
                 }
             }
             for (int i = 0 ; i < 9 ; i++) {
@@ -189,7 +190,9 @@ public class GuiCraftingGrid {
 
                     if (slot != null) {
                         GlStateManager.colorMask(true, true, true, false);
-                        gui.drawRect(slot.xDisplayPosition, slot.yDisplayPosition, slot.xDisplayPosition + 16, slot.yDisplayPosition + 16, 0xffff0000);
+                        int xPos = slot.xPos;
+                        int yPos = slot.yPos;
+                        Gui.drawRect(xPos, yPos, xPos + 16, yPos + 16, 0xffff0000);
                     }
                 }
             }
@@ -210,10 +213,10 @@ public class GuiCraftingGrid {
         }
 
         // Compare current contents to avoid unneeded slot update.
-        IRecipe recipe = CraftingRecipe.findRecipe(mc.theWorld, inv);
+        IRecipe recipe = CraftingRecipe.findRecipe(mc.world, inv);
         ItemStack newResult;
         if (recipe == null) {
-            newResult = null;
+            newResult = ItemStack.EMPTY;
         } else {
             newResult = recipe.getCraftingResult(inv);
         }
@@ -221,9 +224,9 @@ public class GuiCraftingGrid {
     }
 
     private void addRecipeLine(ItemStack craftingResult) {
-        String readableName = BlockInfo.getReadableName(craftingResult, 0);
+        String readableName = BlockTools.getReadableName(craftingResult);
         int color = StyleConfig.colorTextInListNormal;
-        if (craftingResult == null) {
+        if (craftingResult.isEmpty()) {
             readableName = "<recipe>";
             color = 0xFF505050;
         }

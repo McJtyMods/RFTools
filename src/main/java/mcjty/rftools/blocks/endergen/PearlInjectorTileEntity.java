@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.endergen;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
-import mcjty.lib.varia.BlockTools;
+import mcjty.lib.varia.OrientationTools;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -26,10 +26,9 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
         return true;
     }
 
-    private EndergenicTileEntity findEndergenicTileEntity() {
-        IBlockState state = worldObj.getBlockState(getPos());
-        int meta = state.getBlock().getMetaFromState(state);
-        EnumFacing k = BlockTools.getOrientation(meta);
+    public EndergenicTileEntity findEndergenicTileEntity() {
+        IBlockState state = getWorld().getBlockState(getPos());
+        EnumFacing k = OrientationTools.getOrientation(state);
         EndergenicTileEntity te = getEndergenicGeneratorAt(k.getOpposite());
         if (te != null) {
             return te;
@@ -39,7 +38,7 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
 
     private EndergenicTileEntity getEndergenicGeneratorAt(EnumFacing k) {
         BlockPos o = getPos().offset(k);
-        TileEntity te = worldObj.getTileEntity(o);
+        TileEntity te = getWorld().getTileEntity(o);
         if (te instanceof EndergenicTileEntity) {
             return (EndergenicTileEntity) te;
         }
@@ -48,7 +47,7 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
+        if (!getWorld().isRemote) {
             checkStateServer();
         }
     }
@@ -69,7 +68,7 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
     private boolean takePearl() {
         for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
             ItemStack stack = inventoryHelper.getStackInSlot(i);
-            if (stack != null && Items.ENDER_PEARL.equals(stack.getItem()) && stack.stackSize > 0) {
+            if (!stack.isEmpty() && Items.ENDER_PEARL.equals(stack.getItem()) && stack.getCount() > 0) {
                 decrStackSize(i, 1);
                 return true;
             }
@@ -77,7 +76,7 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
         return false;
     }
 
-    private void injectPearl() {
+    public void injectPearl() {
         EndergenicTileEntity endergen = findEndergenicTileEntity();
         if (endergen != null) {
             if (!takePearl()) {
@@ -124,7 +123,12 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer player) {
         return canPlayerAccess(player);
     }
 

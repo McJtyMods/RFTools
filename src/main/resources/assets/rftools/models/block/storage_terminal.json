@@ -1,8 +1,8 @@
 {
   "parent": "rftools:block/rftools_logicblock",
   "textures": {
-    "up": "rftools:blocks/machineStorageTerminal",
-    "side": "rftools:blocks/machineSide",
-    "bottom": "rftools:blocks/machineBottom"
+    "up": "rftools:blocks/machinestorageterminal",
+    "side": "rftools:blocks/machineside",
+    "bottom": "rftools:blocks/machinebottom"
   }
 }

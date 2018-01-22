@@ -1,7 +1,5 @@
 package mcjty.rftools;
 
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import mcjty.lib.base.ModBase;
 import mcjty.lib.compat.MainCompatHandler;
 import mcjty.lib.varia.Logging;
@@ -9,40 +7,51 @@ import mcjty.rftools.api.screens.IScreenModuleRegistry;
 import mcjty.rftools.api.teleportation.ITeleportationManager;
 import mcjty.rftools.apiimpl.ScreenModuleRegistry;
 import mcjty.rftools.apiimpl.TeleportationManager;
+import mcjty.rftools.blocks.blockprotector.BlockProtectorConfiguration;
 import mcjty.rftools.blocks.blockprotector.BlockProtectors;
 import mcjty.rftools.blocks.logic.wireless.RedstoneChannels;
 import mcjty.rftools.blocks.powercell.PowerCellNetwork;
 import mcjty.rftools.blocks.security.SecurityChannels;
+import mcjty.rftools.blocks.security.SecurityConfiguration;
 import mcjty.rftools.blocks.storage.RemoteStorageIdRegistry;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import mcjty.rftools.commands.CommandRftCfg;
 import mcjty.rftools.commands.CommandRftDb;
+import mcjty.rftools.commands.CommandRftShape;
 import mcjty.rftools.commands.CommandRftTp;
+import mcjty.rftools.integration.computers.OpenComputersIntegration;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.manual.GuiRFToolsManual;
 import mcjty.rftools.proxy.CommonProxy;
+import mcjty.rftools.shapes.ScanDataManager;
+import mcjty.rftools.wheelsupport.WheelSupport;
+import mcjty.rftools.xnet.XNetSupport;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
-@Mod(modid = RFTools.MODID, name="RFTools", dependencies =
-        "required-after:Forge@["+RFTools.MIN_FORGE_VER+
-        ",);required-after:McJtyLib@["+RFTools.MIN_MCJTYLIB_VER+",)",
-        version = RFTools.VERSION,
-        acceptedMinecraftVersions = "[1.10,1.11)")
+import java.util.Optional;
+import java.util.function.Function;
+
+@Mod(modid = RFTools.MODID, name = "RFTools",
+        dependencies =
+                        "required-after:mcjtylib_ng@[" + RFTools.MIN_MCJTYLIB_VER + ",);" +
+                        "before:xnet@[" + RFTools.MIN_XNET_VER + ",);" +
+                        "after:forge@[" + RFTools.MIN_FORGE_VER + ",)",
+        acceptedMinecraftVersions = "[1.12,1.13)",
+        version = RFTools.VERSION)
 public class RFTools implements ModBase {
     public static final String MODID = "rftools";
-    public static final String VERSION = "5.62";
-    public static final String MIN_FORGE_VER = "12.18.1.2082";
-    public static final String MIN_MCJTYLIB_VER = "1.10-2.1.4";
+    public static final String VERSION = "7.23";
+    public static final String MIN_FORGE_VER = "14.22.0.2464";
+    public static final String MIN_MCJTYLIB_VER = "2.6.2";
+    public static final String MIN_XNET_VER = "1.6.0";
 
-    @SidedProxy(clientSide="mcjty.rftools.proxy.ClientProxy", serverSide="mcjty.rftools.proxy.ServerProxy")
+    @SidedProxy(clientSide = "mcjty.rftools.proxy.ClientProxy", serverSide = "mcjty.rftools.proxy.ServerProxy")
     public static CommonProxy proxy;
 
     @Mod.Instance("rftools")
@@ -50,10 +59,14 @@ public class RFTools implements ModBase {
 
     // Are some mods loaded?.
     public boolean rftoolsDimensions = false;
+    public boolean xnet = false;
+    public static boolean redstoneflux = false;
 
     public static ScreenModuleRegistry screenModuleRegistry = new ScreenModuleRegistry();
 
-    /** This is used to keep track of GUIs that we make*/
+    /**
+     * This is used to keep track of GUIs that we make
+     */
     private static int modGuiIndex = 0;
 
     public ClientInfo clientInfo = new ClientInfo();
@@ -65,21 +78,24 @@ public class RFTools implements ModBase {
 
     public static CreativeTabs tabRfTools = new CreativeTabs("RfTools") {
         @Override
-        @SideOnly(Side.CLIENT)
-        public Item getTabIconItem() {
-            return ModItems.rfToolsManualItem;
+        public ItemStack getTabIconItem() {
+            return new ItemStack(ModItems.rfToolsManualItem);
         }
     };
 
     public static final String SHIFT_MESSAGE = "<Press Shift>";
 
-    /** Set our custom inventory Gui index to the next available Gui index */
+    /**
+     * Set our custom inventory Gui index to the next available Gui index
+     */
     public static final int GUI_MANUAL_MAIN = modGuiIndex++;
+    public static final int GUI_MANUAL_SHAPE = modGuiIndex++;
     public static final int GUI_COALGENERATOR = modGuiIndex++;
     public static final int GUI_CRAFTER = modGuiIndex++;
     public static final int GUI_MODULAR_STORAGE = modGuiIndex++;
     public static final int GUI_REMOTE_STORAGE = modGuiIndex++;
     public static final int GUI_STORAGE_FILTER = modGuiIndex++;
+    public static final int GUI_MODIFIER_MODULE = modGuiIndex++;
     public static final int GUI_REMOTE_STORAGE_ITEM = modGuiIndex++;
     public static final int GUI_MODULAR_STORAGE_ITEM = modGuiIndex++;
     public static final int GUI_REMOTE_STORAGESCANNER_ITEM = modGuiIndex++;
@@ -97,6 +113,7 @@ public class RFTools implements ModBase {
     public static final int GUI_MACHINE_INFUSER = modGuiIndex++;
     public static final int GUI_BUILDER = modGuiIndex++;
     public static final int GUI_SHAPECARD = modGuiIndex++;
+    public static final int GUI_SHAPECARD_COMPOSER = modGuiIndex++;
     public static final int GUI_CHAMBER_DETAILS = modGuiIndex++;
     public static final int GUI_POWERCELL = modGuiIndex++;
     public static final int GUI_RELAY = modGuiIndex++;
@@ -121,6 +138,10 @@ public class RFTools implements ModBase {
     public static final int GUI_STORAGE_TERMINAL = modGuiIndex++;
     public static final int GUI_STORAGE_TERMINAL_SCANNER = modGuiIndex++;
     public static final int GUI_ELEVATOR = modGuiIndex++;
+    public static final int GUI_COMPOSER = modGuiIndex++;
+    public static final int GUI_SCANNER = modGuiIndex++;
+    public static final int GUI_PROJECTOR = modGuiIndex++;
+    public static final int GUI_LOCATOR = modGuiIndex++;
 
     /**
      * Run before anything else. Read your config, create blocks, items, etc, and
@@ -128,30 +149,48 @@ public class RFTools implements ModBase {
      */
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent e) {
-        this.proxy.preInit(e);
+        proxy.preInit(e);
         MainCompatHandler.registerWaila();
         MainCompatHandler.registerTOP();
+        WheelSupport.registerWheel();
     }
+
     /**
      * Do your mod setup. Build whatever data structures you care about. Register recipes.
      */
     @Mod.EventHandler
     public void init(FMLInitializationEvent e) {
-        this.proxy.init(e);
+        proxy.init(e);
 
         Achievements.init();
 
-        rftoolsDimensions = Loader.isModLoaded("rftoolsdim");
-        if (rftoolsDimensions) {
+        if (Loader.isModLoaded("rftoolsdim")) {
+            rftoolsDimensions = true;
             Logging.log("RFTools Detected Dimensions addon: enabling support");
             FMLInterModComms.sendFunctionMessage("rftoolsdim", "getDimensionManager", "mcjty.rftools.apideps.RFToolsDimensionChecker$GetDimensionManager");
         }
+
         FMLInterModComms.sendFunctionMessage("theoneprobe", "getTheOneProbe", "mcjty.rftools.theoneprobe.TheOneProbeSupport");
+
+        if (Loader.isModLoaded("redstoneflux")) {
+            redstoneflux = true;
+            Logging.log("RFTools Detected RedstoneFlux: enabling support");
+        }
+        if (Loader.isModLoaded("xnet")) {
+            xnet = true;
+            Logging.log("RFTools Detected XNet: enabling support");
+            FMLInterModComms.sendFunctionMessage("xnet", "getXNet", XNetSupport.GetXNet.class.getName());
+        }
+
+        if (Loader.isModLoaded("opencomputers")) {
+            OpenComputersIntegration.init();
+        }
     }
 
     @Mod.EventHandler
     public void serverLoad(FMLServerStartingEvent event) {
         event.registerServerCommand(new CommandRftTp());
+        event.registerServerCommand(new CommandRftShape());
         event.registerServerCommand(new CommandRftDb());
         event.registerServerCommand(new CommandRftCfg());
     }
@@ -163,8 +202,11 @@ public class RFTools implements ModBase {
         RemoteStorageIdRegistry.clearInstance();
         RedstoneChannels.clearInstance();
         PowerCellNetwork.clearInstance();
-        SecurityChannels.clearInstance();
-        BlockProtectors.clearInstance();
+        ScanDataManager.clearInstance();
+        if(SecurityConfiguration.enabled)
+            SecurityChannels.clearInstance();
+        if(BlockProtectorConfiguration.enabled)
+            BlockProtectors.clearInstance();
     }
 
     /**
@@ -172,7 +214,7 @@ public class RFTools implements ModBase {
      */
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e) {
-        this.proxy.postInit(e);
+        proxy.postInit(e);
     }
 
     @Mod.EventHandler
@@ -192,6 +234,6 @@ public class RFTools implements ModBase {
     @Override
     public void openManual(EntityPlayer player, int bookIndex, String page) {
         GuiRFToolsManual.locatePage = page;
-        player.openGui(RFTools.instance, bookIndex, player.worldObj, (int) player.posX, (int) player.posY, (int) player.posZ);
+        player.openGui(RFTools.instance, bookIndex, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
     }
 }

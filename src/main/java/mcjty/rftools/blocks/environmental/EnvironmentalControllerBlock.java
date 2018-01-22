@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.environmental;
 
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.api.Infusable;
-import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
@@ -13,6 +12,7 @@ import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -38,8 +38,8 @@ public class EnvironmentalControllerBlock extends GenericRFToolsBlock<Environmen
     }
 
     @Override
-    public boolean hasNoRotation() {
-        return true;
+    public RotationType getRotationType() {
+        return RotationType.NONE;
     }
 
     @SideOnly(Side.CLIENT)
@@ -51,7 +51,7 @@ public class EnvironmentalControllerBlock extends GenericRFToolsBlock<Environmen
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiEnvironmentalController> getGuiClass() {
         return GuiEnvironmentalController.class;
     }
 
@@ -99,7 +99,7 @@ public class EnvironmentalControllerBlock extends GenericRFToolsBlock<Environmen
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
@@ -150,6 +150,15 @@ public class EnvironmentalControllerBlock extends GenericRFToolsBlock<Environmen
 //        } else {
 //            return getLightValue();
 //        }
+    }
+
+    @Override
+    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof EnvironmentalControllerTileEntity) {
+            ((EnvironmentalControllerTileEntity) te).deactivate();
+        }
+        super.breakBlock(world, pos, state);
     }
 
     @Override

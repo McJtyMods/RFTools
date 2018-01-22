@@ -1,5 +1,7 @@
 package mcjty.rftools.jei;
 
+import mcjty.lib.varia.ItemStackList;
+import mcjty.rftools.blocks.crafter.CrafterConfiguration;
 import mcjty.rftools.network.RFToolsMessages;
 import mezz.jei.api.BlankModPlugin;
 import mezz.jei.api.IModRegistry;
@@ -10,7 +12,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,10 +19,7 @@ import java.util.Map;
 public class RFToolsJeiPlugin extends BlankModPlugin {
 
     public static void transferRecipe(Map<Integer, ? extends IGuiIngredient<ItemStack>> guiIngredients, BlockPos pos) {
-        List<ItemStack> items = new ArrayList<>(10);
-        for (int i = 0 ; i < 10 ; i++) {
-            items.add(null);
-        }
+        ItemStackList items = ItemStackList.create(10);
         for (Map.Entry<Integer, ? extends IGuiIngredient<ItemStack>> entry : guiIngredients.entrySet()) {
             int recipeSlot = entry.getKey();
             List<ItemStack> allIngredients = entry.getValue().getAllIngredients();
@@ -36,10 +34,11 @@ public class RFToolsJeiPlugin extends BlankModPlugin {
     @Override
     public void register(@Nonnull IModRegistry registry) {
         IRecipeTransferRegistry transferRegistry = registry.getRecipeTransferRegistry();
-        transferRegistry.addRecipeTransferHandler(new CrafterRecipeTransferHandler());
-        transferRegistry.addRecipeTransferHandler(new ModularStorageRecipeTransferHandler());
-        transferRegistry.addRecipeTransferHandler(new ModularStorageItemRecipeTransferHandler());
-        transferRegistry.addRecipeTransferHandler(new RemoteStorageItemRecipeTransferHandler());
-        transferRegistry.addRecipeTransferHandler(new StorageScannerRecipeTransferHandler());
+        if(CrafterConfiguration.enabled)
+            CrafterRecipeTransferHandler.register(transferRegistry);
+        ModularStorageRecipeTransferHandler.register(transferRegistry);
+        ModularStorageItemRecipeTransferHandler.register(transferRegistry);
+        RemoteStorageItemRecipeTransferHandler.register(transferRegistry);
+        StorageScannerRecipeTransferHandler.register(transferRegistry);
     }
 }

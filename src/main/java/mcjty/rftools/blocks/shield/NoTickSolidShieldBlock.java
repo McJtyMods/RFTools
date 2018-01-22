@@ -15,11 +15,11 @@ public class NoTickSolidShieldBlock extends SolidShieldBlock {
 
     @Override
     protected void initTE() {
-        GameRegistry.registerTileEntity(NoTickShieldBlockTileEntity.class, RFTools.MODID + "_" + getRegistryName());
+        GameRegistry.registerTileEntity(NoTickShieldSolidBlockTileEntity.class, RFTools.MODID + "_" + getRegistryName());
     }
 
     @Override
     public TileEntity createNewTileEntity(World world, int metadata) {
-        return new NoTickShieldBlockTileEntity();
+        return new NoTickShieldSolidBlockTileEntity();
     }
 }

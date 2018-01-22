@@ -4,11 +4,13 @@ import com.google.common.util.concurrent.ListenableFuture;
 import mcjty.lib.McJtyLib;
 import mcjty.lib.base.GeneralConfig;
 import mcjty.lib.network.PacketHandler;
+import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.WrenchChecker;
+import mcjty.rftools.CommandHandler;
 import mcjty.rftools.ForgeEventHandlers;
 import mcjty.rftools.GeneralConfiguration;
-import mcjty.rftools.ModSounds;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorConfiguration;
 import mcjty.rftools.blocks.booster.BoosterConfiguration;
@@ -21,10 +23,13 @@ import mcjty.rftools.blocks.generator.CoalGeneratorConfiguration;
 import mcjty.rftools.blocks.infuser.MachineInfuserConfiguration;
 import mcjty.rftools.blocks.powercell.PowerCellConfiguration;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
+import mcjty.rftools.blocks.security.SecurityConfiguration;
+import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import mcjty.rftools.blocks.shield.ShieldConfiguration;
 import mcjty.rftools.blocks.spawner.SpawnerConfiguration;
 import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerConfiguration;
+import mcjty.rftools.blocks.teleporter.TeleportConfiguration;
 import mcjty.rftools.crafting.ModCrafting;
 import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.ModItems;
@@ -34,23 +39,27 @@ import mcjty.rftools.playerprops.BuffProperties;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.world.ModWorldgen;
 import mcjty.rftools.world.WorldTickHandler;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.concurrent.Callable;
 
 public abstract class CommonProxy {
@@ -59,7 +68,10 @@ public abstract class CommonProxy {
     private Configuration mainConfig;
 
     public void preInit(FMLPreInitializationEvent e) {
+        MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
         McJtyLib.preInit(e);
+        CommandHandler.registerCommands();
+        reflect();
 
         GeneralConfig.preInit(e);
 
@@ -96,6 +108,20 @@ public abstract class CommonProxy {
             throw new UnsupportedOperationException();
         });
 
+        CapabilityManager.INSTANCE.register(IModuleProvider.class, new Capability.IStorage<IModuleProvider>() {
+            @Override
+            public NBTBase writeNBT(Capability<IModuleProvider> capability, IModuleProvider instance, EnumFacing side) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void readNBT(Capability<IModuleProvider> capability, IModuleProvider instance, EnumFacing side, NBTBase nbt) {
+                throw new UnsupportedOperationException();
+            }
+
+        }, () -> {
+            throw new UnsupportedOperationException();
+        });
 
         readMainConfig();
 
@@ -105,9 +131,17 @@ public abstract class CommonProxy {
         ModItems.init();
         ModBlocks.init();
         ModWorldgen.init();
-        ModSounds.init();
 
         RFTools.screenModuleRegistry.registerBuiltins();
+
+        ForgeChunkManager.setForcedChunkLoadingCallback(RFTools.instance, (tickets, world) -> {
+        });
+    }
+
+    public static Method Block_getSilkTouch;
+
+    private void reflect() {
+        Block_getSilkTouch = ReflectionHelper.findMethod(Block.class, "getSilkTouchDrop", "func_180643_i", IBlockState.class);
     }
 
     private void readMainConfig() {
@@ -115,6 +149,7 @@ public abstract class CommonProxy {
         try {
             cfg.load();
             cfg.addCustomCategoryComment(GeneralConfiguration.CATEGORY_GENERAL, "General settings");
+            cfg.addCustomCategoryComment(SecurityConfiguration.CATEGORY_SECURITY, "Settings for the block security system");
             cfg.addCustomCategoryComment(CoalGeneratorConfiguration.CATEGORY_COALGEN, "Settings for the coal generator");
             cfg.addCustomCategoryComment(CrafterConfiguration.CATEGORY_CRAFTER, "Settings for the crafter");
             cfg.addCustomCategoryComment(ModularStorageConfiguration.CATEGORY_STORAGE, "Settings for the modular storage system");
@@ -122,6 +157,7 @@ public abstract class CommonProxy {
             cfg.addCustomCategoryComment(ScreenConfiguration.CATEGORY_SCREEN, "Settings for the screen system");
             cfg.addCustomCategoryComment(MachineInfuserConfiguration.CATEGORY_INFUSER, "Settings for the infuser");
             cfg.addCustomCategoryComment(BuilderConfiguration.CATEGORY_BUILDER, "Settings for the builder");
+            cfg.addCustomCategoryComment(ScannerConfiguration.CATEGORY_SCANNER, "Settings for the scanner, composer, and projector");
             cfg.addCustomCategoryComment(PowerCellConfiguration.CATEGORY_POWERCELL, "Settings for the powercell");
             cfg.addCustomCategoryComment(ShieldConfiguration.CATEGORY_SHIELD, "Settings for the shield system");
             cfg.addCustomCategoryComment(EnvironmentalConfiguration.CATEGORY_ENVIRONMENTAL, "Settings for the environmental controller");
@@ -137,12 +173,14 @@ public abstract class CommonProxy {
             cfg.addCustomCategoryComment(BoosterConfiguration.CATEGORY_BOOSTER, "Settings for the booster");
 
             GeneralConfiguration.init(cfg);
+            SecurityConfiguration.init(cfg);
             CoalGeneratorConfiguration.init(cfg);
             CrafterConfiguration.init(cfg);
             ModularStorageConfiguration.init(cfg);
             ScreenConfiguration.init(cfg);
             MachineInfuserConfiguration.init(cfg);
             BuilderConfiguration.init(cfg);
+            ScannerConfiguration.init(cfg);
             PowerCellConfiguration.init(cfg);
             ShieldConfiguration.init(cfg);
             EnvironmentalConfiguration.init(cfg);
@@ -153,9 +191,10 @@ public abstract class CommonProxy {
             StorageScannerConfiguration.init(cfg);
             ElevatorConfiguration.init(cfg);
             BoosterConfiguration.init(cfg);
+            TeleportConfiguration.init(cfg);
 
         } catch (Exception e1) {
-            FMLLog.log(Level.ERROR, e1, "Problem loading config file!");
+            Logging.getLogger().log(Level.ERROR, "Problem loading config file!", e1);
         } finally {
             if (mainConfig.hasChanged()) {
                 mainConfig.save();
@@ -166,7 +205,6 @@ public abstract class CommonProxy {
     public void init(FMLInitializationEvent e) {
         NetworkRegistry.INSTANCE.registerGuiHandler(RFTools.instance, new GuiProxy());
         MinecraftForge.EVENT_BUS.register(WorldTickHandler.instance);
-        MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
         ModCrafting.init();
     }
 

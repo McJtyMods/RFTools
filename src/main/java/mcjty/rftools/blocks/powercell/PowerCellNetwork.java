@@ -4,14 +4,13 @@ import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.apideps.RFToolsDimensionChecker;
-import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldSavedData;
+import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.*;
@@ -33,7 +32,7 @@ public class PowerCellNetwork extends WorldSavedData {
     }
 
     public void save(World world) {
-        world.setItemData(POWERCELL_NETWORK_NAME, this);
+        world.setData(POWERCELL_NETWORK_NAME, this);
         markDirty();
     }
 
@@ -55,7 +54,7 @@ public class PowerCellNetwork extends WorldSavedData {
         if (instance != null) {
             return instance;
         }
-        instance = (PowerCellNetwork) world.loadItemData(PowerCellNetwork.class, POWERCELL_NETWORK_NAME);
+        instance = (PowerCellNetwork) world.loadData(PowerCellNetwork.class, POWERCELL_NETWORK_NAME);
         if (instance == null) {
             instance = new PowerCellNetwork(POWERCELL_NETWORK_NAME);
         }
@@ -139,13 +138,24 @@ public class PowerCellNetwork extends WorldSavedData {
             return simpleBlocks;
         }
 
+
+        public int calculateMaximumEnergy() {
+            long totEnergyLong = (long) PowerCellConfiguration.rfPerNormalCell * (getBlockCount() - getAdvancedBlockCount() - getSimpleBlockCount())
+                    + (long) PowerCellConfiguration.rfPerNormalCell * advancedFactor * getAdvancedBlockCount()
+                    + ((long) PowerCellConfiguration.rfPerNormalCell * getSimpleBlockCount() / simpleFactor);
+            if (totEnergyLong > 2000000000) {
+                totEnergyLong = 2000000000;
+            }
+            return (int) totEnergyLong;
+        }
+
         public void updateNetwork(World w) {
             advancedBlocks = 0;
             simpleBlocks = 0;
-            Iterable<GlobalCoordinate> copy = new HashSet<GlobalCoordinate>(blocks);
+            Iterable<GlobalCoordinate> copy = new HashSet<>(blocks);
             blocks.clear();
             for (GlobalCoordinate c : copy) {
-                World world = TeleportationTools.getWorldForDimension(w, c.getDimension());
+                World world = mcjty.lib.varia.TeleportationTools.getWorldForDimension(c.getDimension());
                 IBlockState state = world.getBlockState(c.getCoordinate());
                 if (state.getBlock() == PowerCellSetup.powerCellBlock) {
                     blocks.add(c);
@@ -259,7 +269,7 @@ public class PowerCellNetwork extends WorldSavedData {
         }
         private void getBlob(Set<GlobalCoordinate> todo, Set<GlobalCoordinate> blob, GlobalCoordinate coordinate) {
             blob.add(coordinate);
-            for (EnumFacing facing : EnumFacing.values()) {
+            for (EnumFacing facing : EnumFacing.VALUES) {
                 GlobalCoordinate offset = new GlobalCoordinate(coordinate.getCoordinate().offset(facing), coordinate.getDimension());
                 if (todo.contains(offset)) {
                     todo.remove(offset);
@@ -359,6 +369,10 @@ public class PowerCellNetwork extends WorldSavedData {
             for (int i = 0 ; i < list.tagCount() ; i++) {
                 NBTTagCompound tag = list.getCompoundTagAt(i);
                 blocks.add(new GlobalCoordinate(new BlockPos(tag.getInteger("x"), tag.getInteger("y"), tag.getInteger("z")), tag.getInteger("dim")));
+            }
+            // Correct the energy if it is negative for some reason
+            if (energy < 0) {
+                energy = calculateMaximumEnergy();
             }
         }
     }

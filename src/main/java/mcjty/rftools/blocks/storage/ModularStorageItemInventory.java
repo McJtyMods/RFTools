@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.storage;
 
+import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.craftinggrid.CraftingGrid;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import mcjty.rftools.craftinggrid.InventoriesItemSource;
@@ -7,7 +8,6 @@ import mcjty.rftools.craftinggrid.StorageCraftingTools;
 import mcjty.rftools.items.storage.StorageModuleItem;
 import mcjty.rftools.jei.JEIRecipeAcceptor;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,31 +16,54 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
-public class ModularStorageItemInventory implements IInventory, CraftingGridProvider, JEIRecipeAcceptor {
-    private ItemStack stacks[];
+public class ModularStorageItemInventory implements CraftingGridProvider, JEIRecipeAcceptor, IInventory {
+    private ItemStackList stacks;
     private final EntityPlayer entityPlayer;
     private CraftingGrid craftingGrid = new CraftingGrid();
+    private ItemStack storageItem = null;       // If null use held item from player
+
+    public ModularStorageItemInventory(EntityPlayer player, ItemStack storageItem) {
+        this.entityPlayer = player;
+        this.storageItem = storageItem;
+        int maxSize = getMaxSize();
+        stacks = ItemStackList.create(maxSize);
+        NBTTagList bufferTagList = getStorageItem().getTagCompound().getTagList("Items", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < Math.min(bufferTagList.tagCount(), maxSize) ; i++) {
+            NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
+            stacks.set(i, new ItemStack(nbtTagCompound));
+        }
+    }
 
     public ModularStorageItemInventory(EntityPlayer player) {
         this.entityPlayer = player;
         int maxSize = getMaxSize();
-        stacks = new ItemStack[maxSize];
-        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
+        stacks = ItemStackList.create(maxSize);
+        NBTTagCompound tagCompound = getStorageItem().getTagCompound();
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
-            entityPlayer.getHeldItem(EnumHand.MAIN_HAND).setTagCompound(tagCompound);
+            getStorageItem().setTagCompound(tagCompound);
         }
         tagCompound.setInteger("maxSize", maxSize);
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < Math.min(bufferTagList.tagCount(), maxSize) ; i++) {
             NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            stacks[i] = ItemStack.loadItemStackFromNBT(nbtTagCompound);
+            stacks.set(i, new ItemStack(nbtTagCompound));
         }
         craftingGrid.readFromNBT(tagCompound.getCompoundTag("grid"));
 
     }
+
+    private ItemStack getStorageItem() {
+        if (storageItem != null) {
+            return storageItem;
+        } else {
+            return entityPlayer.getHeldItem(EnumHand.MAIN_HAND);
+        }
+    }
+
 
     @Override
     public void setGridContents(List<ItemStack> stacks) {
@@ -72,21 +95,22 @@ public class ModularStorageItemInventory implements IInventory, CraftingGridProv
     }
 
     @Override
-    public int[] craft(EntityPlayerMP player, int n, boolean test) {
+    @Nonnull
+    public int[] craft(EntityPlayer player, int n, boolean test) {
         InventoriesItemSource itemSource = new InventoriesItemSource()
                 .add(player.inventory, 0).add(this, 0);
         if (test) {
             return StorageCraftingTools.testCraftItems(player, n, craftingGrid.getActiveRecipe(), itemSource);
         } else {
             StorageCraftingTools.craftItems(player, n, craftingGrid.getActiveRecipe(), itemSource);
-            return null;
+            return new int[0];
         }
     }
 
 
     private int getMaxSize() {
-        ItemStack heldItem = entityPlayer.getHeldItem(EnumHand.MAIN_HAND);
-        if (heldItem == null) {
+        ItemStack heldItem = getStorageItem();
+        if (heldItem.isEmpty()) {
             return 0;
         }
         if (heldItem.getItem() != ModularStorageSetup.storageModuleTabletItem) {
@@ -98,7 +122,7 @@ public class ModularStorageItemInventory implements IInventory, CraftingGridProv
         return StorageModuleItem.MAXSIZE[heldItem.getTagCompound().getInteger("childDamage")];
     }
 
-    public ItemStack[] getStacks() {
+    public ItemStackList getStacks() {
         return stacks;
     }
 
@@ -110,42 +134,47 @@ public class ModularStorageItemInventory implements IInventory, CraftingGridProv
     @Override
     public ItemStack getStackInSlot(int index) {
         if (index >= getMaxSize()) {
-            return null;
+            return ItemStack.EMPTY;
         } else {
-            return stacks[index];
+            return stacks.get(index);
         }
     }
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
-        if (index >= stacks.length) {
-            return null;
+        if (index >= stacks.size()) {
+            return ItemStack.EMPTY;
         }
-        if (stacks[index] != null) {
-            if (stacks[index].stackSize <= amount) {
-                ItemStack old = stacks[index];
-                stacks[index] = null;
+        if (!stacks.get(index).isEmpty()) {
+            if (stacks.get(index).getCount() <= amount) {
+                ItemStack old = stacks.get(index);
+                stacks.set(index, ItemStack.EMPTY);
                 markDirty();
                 return old;
             }
-            ItemStack its = stacks[index].splitStack(amount);
-            if (stacks[index].stackSize == 0) {
-                stacks[index] = null;
+            ItemStack its = stacks.get(index).splitStack(amount);
+            if (stacks.get(index).isEmpty()) {
+                stacks.set(index, ItemStack.EMPTY);
             }
             markDirty();
             return its;
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-        if (index >= stacks.length) {
+        if (index >= stacks.size()) {
             return;
         }
-        stacks[index] = stack;
-        if (stack != null && stack.stackSize > getInventoryStackLimit()) {
-            stack.stackSize = getInventoryStackLimit();
+        stacks.set(index, stack);
+        if (!stack.isEmpty() && stack.getCount() > getInventoryStackLimit()) {
+            int amount = getInventoryStackLimit();
+            if (amount <= 0) {
+                stack.setCount(0);
+            } else {
+                stack.setCount(amount);
+            }
         }
         markDirty();
     }
@@ -160,24 +189,23 @@ public class ModularStorageItemInventory implements IInventory, CraftingGridProv
         NBTTagList bufferTagList = new NBTTagList();
         int numStacks = 0;
         for (int i = 0 ; i < getMaxSize() ; i++) {
-            ItemStack stack = stacks[i];
+            ItemStack stack = stacks.get(i);
             NBTTagCompound nbtTagCompound = new NBTTagCompound();
-            if (stack != null) {
+            if (!stack.isEmpty()) {
                 stack.writeToNBT(nbtTagCompound);
-                if (stack.stackSize > 0) {
+                if (stack.getCount() > 0) {
                     numStacks++;
                 }
             }
             bufferTagList.appendTag(nbtTagCompound);
         }
-        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
+        NBTTagCompound tagCompound = getStorageItem().getTagCompound();
         tagCompound.setTag("Items", bufferTagList);
         tagCompound.setInteger("count", numStacks);
         tagCompound.setTag("grid", craftingGrid.writeToNBT());
     }
 
-    @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
+    public boolean isUsable(EntityPlayer player) {
         return true;
     }
 
@@ -189,7 +217,7 @@ public class ModularStorageItemInventory implements IInventory, CraftingGridProv
     @Override
     public ItemStack removeStackFromSlot(int index) {
         ItemStack stack = getStackInSlot(index);
-        setInventorySlotContents(index, null);
+        setInventorySlotContents(index, ItemStack.EMPTY);
         return stack;
     }
 
@@ -236,5 +264,15 @@ public class ModularStorageItemInventory implements IInventory, CraftingGridProv
     @Override
     public ITextComponent getDisplayName() {
         return null;
+    }
+
+    @Override
+    public boolean isUsableByPlayer(EntityPlayer player) {
+        return isUsable(player);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
     }
 }

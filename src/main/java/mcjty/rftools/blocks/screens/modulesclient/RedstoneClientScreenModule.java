@@ -1,10 +1,8 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
-import mcjty.rftools.api.screens.IClientScreenModule;
-import mcjty.rftools.api.screens.IModuleGuiBuilder;
-import mcjty.rftools.api.screens.IModuleRenderHelper;
-import mcjty.rftools.api.screens.ModuleRenderInfo;
+import mcjty.rftools.api.screens.*;
 import mcjty.rftools.api.screens.data.IModuleDataBoolean;
+import mcjty.rftools.blocks.screens.modulesclient.helper.ScreenTextHelper;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
@@ -21,6 +19,8 @@ public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDa
     private int nocolor = 0xffffff;
     private int dim = 0;
 
+    private ITextRenderHelper labelCache = new ScreenTextHelper();
+
     @Override
     public TransformMode getTransformMode() {
         return TransformMode.TEXT;
@@ -34,20 +34,27 @@ public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDa
     @Override
     public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleDataBoolean screenData, ModuleRenderInfo renderInfo) {
         GlStateManager.disableLighting();
+
         int xoffset;
         if (!line.isEmpty()) {
-            fontRenderer.drawString(line, 7, currenty, color);
+            labelCache.setup(line, 160, renderInfo);
+            labelCache.renderText(0, currenty, color, renderInfo);
             xoffset = 7 + 40;
         } else {
             xoffset = 7;
         }
 
+        String text;
+        int col;
         if (screenData != null) {
             boolean rs = screenData.get();
-            fontRenderer.drawString(rs ? yestext : notext, xoffset, currenty, rs ? yescolor : nocolor);
+            text = rs ? yestext : notext;
+            col = rs ? yescolor : nocolor;
         } else {
-            fontRenderer.drawString("<invalid>", xoffset, currenty, 0xff0000);
+            text = "<invalid>";
+            col = 0xff0000;
         }
+        renderHelper.renderText(xoffset, currenty, col, renderInfo, text);
     }
 
     @Override
@@ -57,11 +64,12 @@ public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDa
 
     @Override
     public void createGui(IModuleGuiBuilder guiBuilder) {
-        guiBuilder.
-                label("Label:").text("text", "Label text").color("color", "Color for the label").nl().
-                label("Yes:").text("yestext", "Positive text").color("yescolor", "Color for the positive text").nl().
-                label("No:").text("notext", "Negative text").color("nocolor", "Color for the negative text").nl().
-                label("Block:").block("monitor").nl();
+        guiBuilder
+                .label("Label:").text("text", "Label text").color("color", "Color for the label").nl()
+                .label("Yes:").text("yestext", "Positive text").color("yescolor", "Color for the positive text").nl()
+                .label("No:").text("notext", "Negative text").color("nocolor", "Color for the negative text").nl()
+                .choices("align", "Label alignment", "Left", "Center", "Right").nl()
+                .label("Block:").block("monitor").nl();
     }
 
     @Override
@@ -88,6 +96,12 @@ public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDa
                 nocolor = tagCompound.getInteger("nocolor");
             } else {
                 nocolor = 0xffffff;
+            }
+            if (tagCompound.hasKey("align")) {
+                String alignment = tagCompound.getString("align");
+                labelCache.align(TextAlign.get(alignment));
+            } else {
+                labelCache.align(TextAlign.ALIGN_LEFT);
             }
         }
     }

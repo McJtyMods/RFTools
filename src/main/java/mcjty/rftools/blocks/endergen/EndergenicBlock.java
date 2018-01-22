@@ -2,13 +2,12 @@ package mcjty.rftools.blocks.endergen;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.container.GenericGuiContainer;
-import mcjty.rftools.Achievements;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.theoneprobe.api.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -17,7 +16,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -40,8 +38,8 @@ public class EndergenicBlock extends GenericRFToolsBlock<EndergenicTileEntity, E
     }
 
     @Override
-    public boolean hasNoRotation() {
-        return true;
+    public RotationType getRotationType() {
+        return RotationType.NONE;
     }
 
     @SideOnly(Side.CLIENT)
@@ -58,13 +56,13 @@ public class EndergenicBlock extends GenericRFToolsBlock<EndergenicTileEntity, E
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<? extends GenericGuiContainer> getGuiClass() {
+    public Class<GuiEndergenic> getGuiClass() {
         return GuiEndergenic.class;
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
@@ -116,7 +114,8 @@ public class EndergenicBlock extends GenericRFToolsBlock<EndergenicTileEntity, E
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         super.onBlockPlacedBy(world, pos, state, placer, stack);
         if (placer instanceof EntityPlayer) {
-            Achievements.trigger((EntityPlayer) placer, Achievements.hardPower);
+            // @todo achievements
+//            Achievements.trigger((EntityPlayer) placer, Achievements.hardPower);
         }
     }
 
@@ -131,10 +130,6 @@ public class EndergenicBlock extends GenericRFToolsBlock<EndergenicTileEntity, E
         return true;
     }
 
-    @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
-        return super.getActualState(state, worldIn, pos);
-    }
 //    @Override
 //    public boolean shouldRedstoneConduitConnect(World world, int x, int y, int z, ForgeDirection from) {
 //        return true;

@@ -1,16 +1,18 @@
 package mcjty.rftools.items.teleportprobe;
 
-import cofh.api.energy.IEnergyContainerItem;
+import cofh.redstoneflux.api.IEnergyContainerItem;
+import mcjty.lib.crafting.INBTPreservingIngredient;
 import mcjty.lib.varia.GlobalCoordinate;
+import mcjty.lib.varia.IEnergyItem;
+import mcjty.lib.varia.ItemCapabilityProvider;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.ForgeEventHandlers;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.*;
 import mcjty.rftools.items.GenericRFToolsItem;
-import mcjty.rftools.items.ItemCapabilityProvider;
-import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -22,15 +24,17 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyContainerItem {
+@Optional.Interface(modid = "redstoneflux", iface = "cofh.redstoneflux.api.IEnergyContainerItem")
+public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem, IEnergyContainerItem, INBTPreservingIngredient {
 
-    protected int capacity;
+    private int capacity;
     private int maxReceive;
     private int maxExtract;
 
@@ -39,12 +43,24 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyCont
     }
 
     protected ChargedPorterItem(String name) {
+        this(name, TeleportConfiguration.CHARGEDPORTER_MAXENERGY);
+    }
+
+    protected ChargedPorterItem(String name, int capacity) {
         super(name);
+        this.capacity = capacity;
         setMaxStackSize(1);
 
-        capacity = TeleportConfiguration.CHARGEDPORTER_MAXENERGY;
         maxReceive = TeleportConfiguration.CHARGEDPORTER_RECEIVEPERTICK;
         maxExtract = 0;
+    }
+
+    @Override
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+        if (oldStack.isEmpty() != newStack.isEmpty()) {
+            return true;
+        }
+        return oldStack.getItem() != newStack.getItem();
     }
 
     @Override
@@ -96,24 +112,21 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyCont
             ModelBakery.registerItemVariants(this, new ModelResourceLocation(new ResourceLocation(domain, path + i), "inventory"));
         }
 
-        ModelLoader.setCustomMeshDefinition(this, new ItemMeshDefinition() {
-            @Override
-            public ModelResourceLocation getModelLocation(ItemStack stack) {
-                NBTTagCompound tagCompound = stack.getTagCompound();
-                int energy = 0;
-                if (tagCompound != null) {
-                    energy = tagCompound.getInteger("Energy");
-                }
-                int level = (9 * energy) / capacity;
-                if (level < 0) {
-                    level = 0;
-                } else if (level > 8) {
-                    level = 8;
-                }
-                String domain = getRegistryName().getResourceDomain();
-                String path = getRegistryName().getResourcePath();
-                return new ModelResourceLocation(new ResourceLocation(domain, path + (8 - level)), "inventory");
+        ModelLoader.setCustomMeshDefinition(this, stack -> {
+            NBTTagCompound tagCompound = stack.getTagCompound();
+            int energy = 0;
+            if (tagCompound != null) {
+                energy = tagCompound.getInteger("Energy");
             }
+            int level = (9 * energy) / capacity;
+            if (level < 0) {
+                level = 0;
+            } else if (level > 8) {
+                level = 8;
+            }
+            String domain = getRegistryName().getResourceDomain();
+            String path = getRegistryName().getResourcePath();
+            return new ModelResourceLocation(new ResourceLocation(domain, path + (8 - level)), "inventory");
         });
     }
 
@@ -128,20 +141,22 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyCont
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+        ItemStack stack = player.getHeldItem(hand);
         if (!player.isSneaking()) {
             startTeleport(stack, player, world);
         } else {
             selectReceiver(stack, world, player);
         }
-        return super.onItemRightClick(stack, world, player, hand);
+        return super.onItemRightClick(world, player, hand);
     }
 
     protected void selectReceiver(ItemStack stack, World world, EntityPlayer player) {
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        ItemStack stack = player.getHeldItem(hand);
         if (player.isSneaking()) {
             TileEntity te = world.getTileEntity(pos);
             setTarget(stack, player, world, te);
@@ -249,7 +264,7 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyCont
     }
 
     @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {

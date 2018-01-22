@@ -4,7 +4,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldSavedData;
+import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class SecurityChannels extends WorldSavedData {
     }
 
     public void save(World world) {
-        world.getMapStorage().setData(SECURITY_CHANNELS_NAME, this);
+        world.setData(SECURITY_CHANNELS_NAME, this);
         markDirty();
     }
 
@@ -48,7 +48,7 @@ public class SecurityChannels extends WorldSavedData {
         if (instance != null) {
             return instance;
         }
-        instance = (SecurityChannels) world.getMapStorage().getOrLoadData(SecurityChannels.class, SECURITY_CHANNELS_NAME);
+        instance = (SecurityChannels) world.loadData(SecurityChannels.class, SECURITY_CHANNELS_NAME);
         if (instance == null) {
             instance = new SecurityChannels(SECURITY_CHANNELS_NAME);
         }
@@ -129,7 +129,7 @@ public class SecurityChannels extends WorldSavedData {
     public static class SecurityChannel {
         private String name = "";
         private boolean whitelist = true;
-        private final List<String> players = new ArrayList<String>();
+        private final List<String> players = new ArrayList<>();
 
         public String getName() {
             return name;
