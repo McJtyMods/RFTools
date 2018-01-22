@@ -981,7 +981,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             IBlockState newState = BlockTools.placeStackAt(fakePlayer, stack, getWorld(), srcPos, pickState);
 
             if (!silent) {
-                SoundTools.playSound(getWorld(), newState.getBlock().getSoundType().getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
+                SoundTools.playSound(getWorld(), newState.getBlock().getSoundType().getPlaceSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
             }
 
             consumeEnergy(rfNeeded);
@@ -1189,7 +1189,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             getWorld().setBlockState(srcPos, block.getDefaultState(), 11);
 
             if (!silent) {
-                SoundTools.playSound(getWorld(), block.getSoundType().getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
+                SoundTools.playSound(getWorld(), block.getSoundType().getPlaceSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
             }
 
             consumeEnergy(rfNeeded);
@@ -1613,7 +1613,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             destWorld.setBlockState(destPos, newState, 3);  // placeBlockAt can reset the orientation. Restore it here
 
             if (!silent) {
-                SoundTools.playSound(destWorld, srcBlock.getSoundType().getBreakSound(), destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
+                SoundTools.playSound(destWorld, srcBlock.getSoundType().getPlaceSound(), destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
             }
 
             consumeEnergy(rfNeeded);
@@ -1747,7 +1747,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
             if (!silent) {
                 SoundTools.playSound(srcWorld, srcBlock.getSoundType().getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
-                SoundTools.playSound(destWorld, srcBlock.getSoundType().getBreakSound(), destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
+                SoundTools.playSound(destWorld, srcBlock.getSoundType().getPlaceSound(), destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
             }
         }
     }
@@ -1825,9 +1825,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (!silent) {
             if (!isEmpty(oldSrcState, srcBlock)) {
                 SoundTools.playSound(srcWorld, srcBlock.getSoundType().getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
+                SoundTools.playSound(destWorld, srcBlock.getSoundType().getPlaceSound(), dstPos.getX(), dstPos.getY(), dstPos.getZ(), 1.0f, 1.0f);
             }
             if (!isEmpty(oldDstState, dstBlock)) {
                 SoundTools.playSound(destWorld, dstBlock.getSoundType().getBreakSound(), dstPos.getX(), dstPos.getY(), dstPos.getZ(), 1.0f, 1.0f);
+                SoundTools.playSound(srcWorld, dstBlock.getSoundType().getPlaceSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
             }
         }
     }
