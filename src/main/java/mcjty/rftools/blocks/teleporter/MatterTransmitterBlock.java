@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.BaseBlock.RotationType;
 import mcjty.lib.network.Arguments;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.CommandHandler;
@@ -180,18 +181,8 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock<MatterTransmitte
     }
 
     @Override
-    public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState();
-    }
-
-    @Override
-    public int getMetaFromState(IBlockState state) {
-        return 0;
-    }
-
-    @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this);
+    public RotationType getRotationType() {
+        return RotationType.NONE;
     }
 
 }
