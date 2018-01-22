@@ -1709,23 +1709,23 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return false;
     }
 
-    private void moveBlock(World world, BlockPos srcPos, World destWorld, BlockPos destPos, int rotMode) {
-        IBlockState destState = destWorld.getBlockState(destPos);
-        Block destBlock = destState.getBlock();
-        if (isEmpty(destState, destBlock)) {
-            IBlockState state = world.getBlockState(srcPos);
-            Block origBlock = state.getBlock();
-            if (isEmpty(state, origBlock)) {
+    private void moveBlock(World srcWorld, BlockPos srcPos, World destWorld, BlockPos destPos, int rotMode) {
+        IBlockState oldDestState = destWorld.getBlockState(destPos);
+        Block oldDestBlock = oldDestState.getBlock();
+        if (isEmpty(oldDestState, oldDestBlock)) {
+            IBlockState srcState = srcWorld.getBlockState(srcPos);
+            Block srcBlock = srcState.getBlock();
+            if (isEmpty(srcState, srcBlock)) {
                 return;
             }
-            TileEntity origTileEntity = world.getTileEntity(srcPos);
-            BuilderSetup.BlockInformation information = getBlockInformation(world, srcPos, origBlock, origTileEntity);
-            if (information.getBlockLevel() == SupportBlock.STATUS_ERROR) {
+            TileEntity srcTileEntity = srcWorld.getTileEntity(srcPos);
+            BuilderSetup.BlockInformation srcInformation = getBlockInformation(srcWorld, srcPos, srcBlock, srcTileEntity);
+            if (srcInformation.getBlockLevel() == SupportBlock.STATUS_ERROR) {
                 return;
             }
 
             int rf = getEnergyStored();
-            int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation * getDimensionCostFactor(world, destWorld) * information.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
+            int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation * getDimensionCostFactor(srcWorld, destWorld) * srcInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
             if (rfNeeded > rf) {
                 // Not enough energy.
                 return;
@@ -1734,20 +1734,20 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
 
             NBTTagCompound tc = null;
-            if (origTileEntity != null) {
+            if (srcTileEntity != null) {
                 tc = new NBTTagCompound();
-                origTileEntity.writeToNBT(tc);
-                world.removeTileEntity(srcPos);
+                srcTileEntity.writeToNBT(tc);
+                srcWorld.removeTileEntity(srcPos);
             }
-            clearBlock(world, srcPos);
+            clearBlock(srcWorld, srcPos);
 
-            destWorld.setBlockState(destPos, state, 3);
-            if (origTileEntity != null && tc != null) {
-                setTileEntityNBT(destWorld, tc, destPos, state);
+            destWorld.setBlockState(destPos, srcState, 3);
+            if (srcTileEntity != null && tc != null) {
+                setTileEntityNBT(destWorld, tc, destPos, srcState);
             }
             if (!silent) {
-                SoundTools.playSound(world, origBlock.getSoundType().getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
-                SoundTools.playSound(destWorld, origBlock.getSoundType().getBreakSound(), destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
+                SoundTools.playSound(srcWorld, srcBlock.getSoundType().getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
+                SoundTools.playSound(destWorld, srcBlock.getSoundType().getBreakSound(), destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
             }
         }
     }
@@ -1764,20 +1764,20 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     }
 
-    private void swapBlock(World world, BlockPos srcPos, World destWorld, BlockPos dstPos) {
-        IBlockState srcState = world.getBlockState(srcPos);
-        Block srcBlock = srcState.getBlock();
-        TileEntity srcTileEntity = world.getTileEntity(srcPos);
+    private void swapBlock(World srcWorld, BlockPos srcPos, World destWorld, BlockPos dstPos) {
+        IBlockState oldSrcState = srcWorld.getBlockState(srcPos);
+        Block srcBlock = oldSrcState.getBlock();
+        TileEntity srcTileEntity = srcWorld.getTileEntity(srcPos);
 
-        IBlockState dstState = destWorld.getBlockState(dstPos);
-        Block dstBlock = dstState.getBlock();
+        IBlockState oldDstState = destWorld.getBlockState(dstPos);
+        Block dstBlock = oldDstState.getBlock();
         TileEntity dstTileEntity = destWorld.getTileEntity(dstPos);
 
-        if (isEmpty(srcState, srcBlock) && isEmpty(dstState, dstBlock)) {
+        if (isEmpty(oldSrcState, srcBlock) && isEmpty(oldDstState, dstBlock)) {
             return;
         }
 
-        BuilderSetup.BlockInformation srcInformation = getBlockInformation(world, srcPos, srcBlock, srcTileEntity);
+        BuilderSetup.BlockInformation srcInformation = getBlockInformation(srcWorld, srcPos, srcBlock, srcTileEntity);
         if (srcInformation.getBlockLevel() == SupportBlock.STATUS_ERROR) {
             return;
         }
@@ -1788,8 +1788,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         int rf = getEnergyStored();
-        int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation * getDimensionCostFactor(world, destWorld) * srcInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
-        rfNeeded += (int) (BuilderConfiguration.builderRfPerOperation * getDimensionCostFactor(world, destWorld) * dstInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
+        int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation * getDimensionCostFactor(srcWorld, destWorld) * srcInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
+        rfNeeded += (int) (BuilderConfiguration.builderRfPerOperation * getDimensionCostFactor(srcWorld, destWorld) * dstInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
         if (rfNeeded > rf) {
             // Not enough energy.
             return;
@@ -1797,12 +1797,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             consumeEnergy(rfNeeded);
         }
 
-        world.removeTileEntity(srcPos);
-        world.setBlockToAir(srcPos);
+        srcWorld.removeTileEntity(srcPos);
+        srcWorld.setBlockToAir(srcPos);
         destWorld.removeTileEntity(dstPos);
         destWorld.setBlockToAir(dstPos);
 
-        IBlockState newDstState = srcState;
+        IBlockState newDstState = oldSrcState;
         destWorld.setBlockState(dstPos, newDstState, 3);
 //        destWorld.setBlockMetadataWithNotify(destX, destY, destZ, srcMeta, 3);
         if (srcTileEntity != null) {
@@ -1812,21 +1812,21 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             destWorld.notifyBlockUpdate(dstPos, newDstState, newDstState, 3);
         }
 
-        IBlockState newSrcState = dstState;
-        world.setBlockState(srcPos, newSrcState, 3);
+        IBlockState newSrcState = oldDstState;
+        srcWorld.setBlockState(srcPos, newSrcState, 3);
 //        world.setBlockMetadataWithNotify(x, y, z, dstMeta, 3);
         if (dstTileEntity != null) {
             dstTileEntity.validate();
-            world.setTileEntity(srcPos, dstTileEntity);
+            srcWorld.setTileEntity(srcPos, dstTileEntity);
             dstTileEntity.markDirty();
-            world.notifyBlockUpdate(srcPos, newSrcState, newSrcState, 3);
+            srcWorld.notifyBlockUpdate(srcPos, newSrcState, newSrcState, 3);
         }
 
         if (!silent) {
-            if (!isEmpty(srcState, srcBlock)) {
-                SoundTools.playSound(world, srcBlock.getSoundType().getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
+            if (!isEmpty(oldSrcState, srcBlock)) {
+                SoundTools.playSound(srcWorld, srcBlock.getSoundType().getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
             }
-            if (!isEmpty(dstState, dstBlock)) {
+            if (!isEmpty(oldDstState, dstBlock)) {
                 SoundTools.playSound(destWorld, dstBlock.getSoundType().getBreakSound(), dstPos.getX(), dstPos.getY(), dstPos.getZ(), 1.0f, 1.0f);
             }
         }
