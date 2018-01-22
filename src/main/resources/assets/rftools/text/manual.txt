@@ -191,15 +191,13 @@ already got.
 {b}Ender Monitor
 {n:endermon}
 {rb:ender_monitor}
-The Ender Monitor only works in combination with the Endergenic
-Generator. It will send a pulse based on three different conditions:
+The Ender Monitor only works when an Endergenic Generator is
+adjacent to its input side. It will send a pulse based on three
+different conditions:
 
     Lost Pearl: send a redstone pulse when a pearl is lost
     Pearl Fired: send a pulse when a pearl is fired
     Pearl Arrived: send a pulse when a pearl arrives
-
-Note that the redstone signal outputs on the red dot side and this
-has to face away from the Endergenic Generator.
 {-------------------------------------------------------------}
 {b}Redstone Transmitter
 {n:redtrans}
@@ -231,15 +229,15 @@ before the input was switched to this state.
 {b}Inventory Checker
 {n:invchecker}
 {rb:invchecker_block}
-This block checks a slot in a nearby inventory and emits a redstone
-signal in case the number of items in that slot is above a certain
-value (configurable in GUI).
+This block checks a slot the inventory adjacent to its input side and
+emits a redstone signal in case the number of items in that slot is
+above a certain value (configurable in GUI).
 {-------------------------------------------------------------}
 {b}Sensor
 {n:sensor}
 {rb:sensor_block}
-The sensor can detect various things directly in front of it
-(either 1 block, 3 blocks or 5 blocks). It can detect blocks
+The sensor can detect various things directly in front of its
+input (either 1 block, 3 blocks or 5 blocks). It can detect blocks
 being placed, crop growth level, number of entities and so on.
 {-------------------------------------------------------------}
 {b}RF Monitor
