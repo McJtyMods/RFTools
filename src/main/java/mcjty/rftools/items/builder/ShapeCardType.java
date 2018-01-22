@@ -12,7 +12,6 @@ import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderContainer;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
 import mcjty.rftools.shapes.Shape;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
