@@ -170,12 +170,12 @@ public enum ShapeCardType {
         list.add(TextFormatting.GREEN + (this == CARD_SHAPE ? "(final cost depends on infusion level)" : "(final cost depends on infusion level and block hardness)"));
     }
 
-    public boolean handleSingleBlock(BuilderTileEntity te, int rfNeeded, BlockPos srcPos, Block block, IBlockState pickState) {
-        return singleBlockHandler.handleSingleBlock(te, rfNeeded, srcPos, block, pickState);
+    public boolean handleSingleBlock(BuilderTileEntity te, int rfNeeded, BlockPos srcPos, IBlockState srcState, IBlockState pickState) {
+        return singleBlockHandler.handleSingleBlock(te, rfNeeded, srcPos, srcState, pickState);
     }
 
     @FunctionalInterface
     public interface SingleBlockHandler {
-        public boolean handleSingleBlock(BuilderTileEntity te, int rfNeeded, BlockPos srcPos, Block block, IBlockState pickState);
+        public boolean handleSingleBlock(BuilderTileEntity te, int rfNeeded, BlockPos srcPos, IBlockState srcState, IBlockState pickState);
     }
 }

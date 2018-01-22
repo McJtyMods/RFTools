@@ -407,7 +407,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return false;
     }
 
-    public boolean suspend(int rfNeeded, BlockPos srcPos, Block block, IBlockState pickState) {
+    public boolean suspend(int rfNeeded, BlockPos srcPos, IBlockState srcState, IBlockState pickState) {
         lastError = null;
         return true;
     }
@@ -942,10 +942,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         int rfNeeded = getCardType().getRfNeeded();
 
-        Block block = null;
+        IBlockState state = null;
         if (getCardType() != ShapeCardType.CARD_SHAPE && getCardType() != ShapeCardType.CARD_PUMP_LIQUID) {
-            IBlockState state = getWorld().getBlockState(srcPos);
-            block = state.getBlock();
+            state = getWorld().getBlockState(srcPos);
+            Block block = state.getBlock();
             if (!isEmpty(state, block)) {
                 float hardness;
                 if (isFluidBlock(block)) {
@@ -967,10 +967,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return suspend("Not enough power!");
         }
 
-        return getCardType().handleSingleBlock(this, rfNeeded, srcPos, block, pickState);
+        return getCardType().handleSingleBlock(this, rfNeeded, srcPos, state, pickState);
     }
 
-    public boolean buildBlock(int rfNeeded, BlockPos srcPos, Block block, IBlockState pickState) {
+    public boolean buildBlock(int rfNeeded, BlockPos srcPos, IBlockState srcState, IBlockState pickState) {
         if (isEmptyOrReplacable(getWorld(), srcPos)) {
             ItemStack stack = consumeBlock(getWorld(), srcPos, pickState);
             if (stack.isEmpty()) {
@@ -1018,8 +1018,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return BuilderConfiguration.getQuarryReplace();
     }
 
-    public boolean silkQuarryBlock(int rfNeeded, BlockPos srcPos, Block block, IBlockState pickState) {
-        IBlockState srcState = getWorld().getBlockState(srcPos);
+    public boolean silkQuarryBlock(int rfNeeded, BlockPos srcPos, IBlockState srcState, IBlockState pickState) {
+        Block block = srcState.getBlock();
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
@@ -1105,8 +1105,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return !event.isCanceled();
     }
 
-    public boolean quarryBlock(int rfNeeded, BlockPos srcPos, Block block, IBlockState pickState) {
-        IBlockState srcState = getWorld().getBlockState(srcPos);
+    public boolean quarryBlock(int rfNeeded, BlockPos srcPos, IBlockState srcState, IBlockState pickState) {
+        Block block = srcState.getBlock();
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
@@ -1175,7 +1175,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return -1;
     }
 
-    public boolean placeLiquidBlock(int rfNeeded, BlockPos srcPos, Block b, IBlockState pickState) {
+    public boolean placeLiquidBlock(int rfNeeded, BlockPos srcPos, IBlockState srcState, IBlockState pickState) {
 
         if (isEmptyOrReplacable(getWorld(), srcPos)) {
             FluidStack stack = consumeLiquid(getWorld(), srcPos);
@@ -1197,7 +1197,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return skip();
     }
 
-    public boolean pumpBlock(int rfNeeded, BlockPos srcPos, Block block, IBlockState pickState) {
+    public boolean pumpBlock(int rfNeeded, BlockPos srcPos, IBlockState srcState, IBlockState pickState) {
+        Block block = srcState.getBlock();
         Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
         if (fluid == null) {
             return skip();
@@ -1206,7 +1207,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return skip();
         }
 
-        IBlockState srcState = getWorld().getBlockState(srcPos);
         if (getFluidLevel(srcState) != 0) {
             return skip();
         }
@@ -1234,8 +1234,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return skip();
     }
 
-    public boolean voidBlock(int rfNeeded, BlockPos srcPos, Block block, IBlockState pickState) {
-        IBlockState srcState = getWorld().getBlockState(srcPos);
+    public boolean voidBlock(int rfNeeded, BlockPos srcPos, IBlockState srcState, IBlockState pickState) {
+        Block block = srcState.getBlock();
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
