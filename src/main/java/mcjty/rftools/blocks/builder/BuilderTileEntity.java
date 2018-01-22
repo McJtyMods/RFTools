@@ -1588,32 +1588,32 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return rotate;
     }
 
-    private void copyBlock(World world, BlockPos srcPos, World destWorld, BlockPos destPos) {
+    private void copyBlock(World srcWorld, BlockPos srcPos, World destWorld, BlockPos destPos) {
         int rf = getEnergyStored();
-        int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
+        int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation * getDimensionCostFactor(srcWorld, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
         if (rfNeeded > rf) {
             // Not enough energy.
             return;
         }
 
         if (isEmptyOrReplacable(destWorld, destPos)) {
-            if (world.isAirBlock(srcPos)) {
+            if (srcWorld.isAirBlock(srcPos)) {
                 return;
             }
-            IBlockState state = world.getBlockState(srcPos);
-            ItemStack consumedStack = consumeBlock(world, srcPos, state);
+            IBlockState srcState = srcWorld.getBlockState(srcPos);
+            ItemStack consumedStack = consumeBlock(srcWorld, srcPos, srcState);
             if (consumedStack.isEmpty()) {
                 return;
             }
 
-            Block origBlock = state.getBlock();
+            Block srcBlock = srcState.getBlock();
 
             FakePlayer fakePlayer = getHarvester();
-            IBlockState newState = BlockTools.placeStackAt(fakePlayer, consumedStack, destWorld, destPos, state);
+            IBlockState newState = BlockTools.placeStackAt(fakePlayer, consumedStack, destWorld, destPos, srcState);
             destWorld.setBlockState(destPos, newState, 3);  // placeBlockAt can reset the orientation. Restore it here
 
             if (!silent) {
-                SoundTools.playSound(destWorld, origBlock.getSoundType().getBreakSound(), destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
+                SoundTools.playSound(destWorld, srcBlock.getSoundType().getBreakSound(), destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
             }
 
             consumeEnergy(rfNeeded);
