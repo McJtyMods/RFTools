@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.teleporter;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.SoundTools;
-import mcjty.rftools.RFTools;
+import mcjty.rftools.ModSounds;
 import mcjty.rftools.blocks.environmental.NoTeleportAreaManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -14,7 +14,6 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -163,12 +162,7 @@ public class TeleportationTools {
         severity = applyBadEffectIfNeeded(player, severity, bad, good, boostNeeded);
         if (severity <= 0) {
             if (TeleportConfiguration.teleportVolume >= 0.01) {
-                SoundEvent sound = SoundEvent.REGISTRY.getObject(new ResourceLocation(RFTools.MODID, "teleport_whoosh"));
-                if (sound == null) {
-                    throw new RuntimeException("Could not find sound 'teleport_whoosh'!");
-                } else {
-                    SoundTools.playSound(player.getEntityWorld(), sound, player.posX, player.posY, player.posZ, TeleportConfiguration.teleportVolume, 1.0f);
-                }
+                SoundTools.playSound(player.getEntityWorld(), ModSounds.whoosh, player.posX, player.posY, player.posZ, TeleportConfiguration.teleportVolume, 1.0f);
             }
         }
         if (TeleportConfiguration.logTeleportUsages) {
@@ -316,12 +310,7 @@ public class TeleportationTools {
         }
 
         if (TeleportConfiguration.teleportErrorVolume >= 0.01) {
-            SoundEvent sound = SoundEvent.REGISTRY.getObject(new ResourceLocation(RFTools.MODID, "teleport_error"));
-            if (sound == null) {
-                throw new RuntimeException("Could not find sound 'teleport_error'!");
-            } else {
-                SoundTools.playSound(player.getEntityWorld(), sound, player.posX, player.posY, player.posZ, TeleportConfiguration.teleportVolume, 1.0f);
-            }
+            SoundTools.playSound(player.getEntityWorld(), ModSounds.error, player.posX, player.posY, player.posZ, TeleportConfiguration.teleportVolume, 1.0f);
         }
 
         applyEffectForSeverity(player, severity, boostNeeded);
