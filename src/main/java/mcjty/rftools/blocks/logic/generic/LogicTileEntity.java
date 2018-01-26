@@ -11,6 +11,15 @@ public class LogicTileEntity extends GenericTileEntity {
 
     protected boolean powered = false;
 
+    @Override
+    public void onLoad() {
+        IBlockState state = getWorld().getBlockState(getPos());
+        if(state.getBlock() instanceof LogicSlabBlock) {
+            setFacing(state.getValue(LogicSlabBlock.LOGIC_FACING));
+        }
+        super.onLoad();
+    }
+
     public LogicFacing getFacing(IBlockState state) {
         // Should not be needed but apparently it sometimes is
         if (!(state.getBlock() instanceof LogicSlabBlock)) {
@@ -21,8 +30,10 @@ public class LogicTileEntity extends GenericTileEntity {
     }
 
     public void setFacing(LogicFacing facing) {
-        this.facing = facing;
-        markDirty();
+        if(facing != this.facing) {
+            this.facing = facing;
+            markDirty();
+        }
     }
 
     public boolean isPowered() {

@@ -112,7 +112,8 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
         }
 //        System.out.println("  facing = " + facing);
 //        System.out.println("  facing.getInputSide() = " + facing.getInputSide());
-        return super.getStateForPlacement(worldIn, pos, side, hitX, hitY, hitZ, meta, placer).withProperty(LogicSlabBlock.META_INTERMEDIATE, facing.getMeta()).withProperty(LogicSlabBlock.OUTPUTPOWER, false);
+        // LOGIC_FACING doesn't get saved to metadata, but it doesn't need to. It only needs to be available until LogicTileEntity#onLoad() runs.
+        return super.getStateForPlacement(worldIn, pos, side, hitX, hitY, hitZ, meta, placer).withProperty(META_INTERMEDIATE, facing.getMeta()).withProperty(OUTPUTPOWER, false).withProperty(LOGIC_FACING, facing);
     }
 
     @Override
