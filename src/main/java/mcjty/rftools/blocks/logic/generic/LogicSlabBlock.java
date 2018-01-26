@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.logic.generic;
 
 import mcjty.lib.container.GenericItemBlock;
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -294,6 +295,7 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
             facing = LogicFacing.getFacingWithMeta(facing, meta);
             return state.withProperty(LOGIC_FACING, facing);
         } else {
+            Logging.warn(null, "LogicSlabBlock missing its tile entity!");
             return state.withProperty(LOGIC_FACING, LogicFacing.DOWN_TONORTH);
         }
     }

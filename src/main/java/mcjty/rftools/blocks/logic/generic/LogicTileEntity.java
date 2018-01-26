@@ -1,28 +1,32 @@
 package mcjty.rftools.blocks.logic.generic;
 
 import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.varia.Logging;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 
 public class LogicTileEntity extends GenericTileEntity {
 
-    private LogicFacing facing = LogicFacing.DOWN_TONORTH;
+    private LogicFacing facing;
 
     protected boolean powered = false;
 
     @Override
     public void onLoad() {
-        IBlockState state = getWorld().getBlockState(getPos());
-        if(state.getBlock() instanceof LogicSlabBlock) {
-            setFacing(state.getValue(LogicSlabBlock.LOGIC_FACING));
+        if(facing == null) {
+            IBlockState state = getWorld().getBlockState(getPos());
+            if(state.getBlock() instanceof LogicSlabBlock) {
+                setFacing(state.getValue(LogicSlabBlock.LOGIC_FACING));
+            }
         }
         super.onLoad();
     }
 
     public LogicFacing getFacing(IBlockState state) {
         // Should not be needed but apparently it sometimes is
-        if (!(state.getBlock() instanceof LogicSlabBlock)) {
+        if (facing == null || !(state.getBlock() instanceof LogicSlabBlock)) {
+            Logging.warn(null, "LogicTileEntity has unknown/invalid facing!");
             return LogicFacing.DOWN_TOEAST;
         }
         Integer meta = state.getValue(LogicSlabBlock.META_INTERMEDIATE);
