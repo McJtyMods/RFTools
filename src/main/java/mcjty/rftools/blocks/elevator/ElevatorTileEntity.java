@@ -6,6 +6,7 @@ import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.Broadcaster;
 import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.blocks.builder.BuilderTileEntity;
 import mcjty.rftools.blocks.shield.RelCoordinate;
 import mcjty.rftools.playerprops.BuffProperties;
 import net.minecraft.block.Block;
@@ -26,9 +27,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -451,20 +454,26 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         markDirtyClient();
     }
 
+    private boolean canMoveBlock(BlockPos pos) {
+        World world = getWorld();
+        IBlockState state = world.getBlockState(pos);
+        return state == movingState && BuilderTileEntity.allowedToBreak(state, world, pos, BuilderTileEntity.getHarvester());
+    }
+
     // Always called on controller TE (bottom one)
     private void getBounds(BlockPos start) {
         EnumFacing side = getWorld().getBlockState(getPos()).getValue(BaseBlock.FACING_HORIZ);
         bounds = new Bounds();
         for (int a = 1; a < ElevatorConfiguration.maxPlatformSize; a++) {
             BlockPos offset = start.offset(side, a);
-            if (getWorld().getBlockState(offset) == movingState) {
+            if (canMoveBlock(offset)) {
                 getWorld().setBlockToAir(offset);
                 bounds.addPos(offset);
                 positions.add(getPosAtY(offset, getPos().getY()));
 
                 for (int b = 1; b <= (ElevatorConfiguration.maxPlatformSize / 2); b++) {
                     BlockPos offsetLeft = offset.offset(side.rotateY(), b);
-                    if (getWorld().getBlockState(offsetLeft) == movingState) {
+                    if (canMoveBlock(offsetLeft)) {
                         getWorld().setBlockToAir(offsetLeft);
                         bounds.addPos(offsetLeft);
                         positions.add(getPosAtY(offsetLeft, getPos().getY()));
@@ -475,7 +484,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
 
                 for (int b = 1; b <= (ElevatorConfiguration.maxPlatformSize / 2); b++) {
                     BlockPos offsetRight = offset.offset(side.rotateYCCW(), b);
-                    if (getWorld().getBlockState(offsetRight) == movingState) {
+                    if (canMoveBlock(offsetRight)) {
                         getWorld().setBlockToAir(offsetRight);
                         bounds.addPos(offsetRight);
                         positions.add(getPosAtY(offsetRight, getPos().getY()));
