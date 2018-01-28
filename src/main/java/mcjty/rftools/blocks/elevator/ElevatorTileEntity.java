@@ -352,6 +352,11 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         if (getWorld().getTileEntity(frontPos) != null) {
             return false;
         }
+        IBlockState state = getWorld().getBlockState(frontPos);
+        Block block = state.getBlock();
+        if (block.getBlockHardness(state, getWorld(), frontPos) < 0) {
+            return false;
+        }
         return true;
     }
 
