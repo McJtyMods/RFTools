@@ -5,7 +5,7 @@ import mcjty.lib.container.BaseBlock;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.Broadcaster;
-import mcjty.rftools.blocks.builder.BuilderTileEntity;
+import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.shield.RelCoordinate;
 import mcjty.rftools.playerprops.BuffProperties;
 import net.minecraft.block.Block;
@@ -29,7 +29,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -353,14 +352,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         if (getWorld().getTileEntity(frontPos) != null) {
             return false;
         }
-        IBlockState state = getWorld().getBlockState(frontPos);
-        Block block = state.getBlock();
-        if (block.getBlockHardness(state, getWorld(), frontPos) < 0) {
-            return false;
-        }
-
-        FakePlayer harvester = BuilderTileEntity.getHarvester();
-        return BuilderTileEntity.allowedToBreak(state, getWorld(), frontPos, harvester);
+        return true;
     }
 
     public Set<BlockPos> getPositions() {
