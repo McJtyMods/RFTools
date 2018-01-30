@@ -349,18 +349,10 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     }
 
     private boolean isValidPlatformBlock(BlockPos frontPos) {
-        if (getWorld().isAirBlock(frontPos)) {
-            return false;
-        }
-        if (getWorld().getTileEntity(frontPos) != null) {
-            return false;
-        }
-        IBlockState state = getWorld().getBlockState(frontPos);
+        World world = getWorld();
+        IBlockState state = world.getBlockState(frontPos);
         Block block = state.getBlock();
-        if (block.getBlockHardness(state, getWorld(), frontPos) < 0) {
-            return false;
-        }
-        return true;
+        return !block.isAir(state, world, frontPos) && !block.hasTileEntity(state);
     }
 
     public Set<BlockPos> getPositions() {
@@ -457,7 +449,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     private boolean canMoveBlock(BlockPos pos) {
         World world = getWorld();
         IBlockState state = world.getBlockState(pos);
-        return state == movingState && BuilderTileEntity.allowedToBreak(state, world, pos, BuilderTileEntity.getHarvester());
+        return state == movingState && state.getBlockHardness(world, pos) >= 0 && BuilderTileEntity.allowedToBreak(state, world, pos, BuilderTileEntity.getHarvester());
     }
 
     // Always called on controller TE (bottom one)
