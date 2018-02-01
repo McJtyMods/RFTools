@@ -124,14 +124,11 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
     }
 
     private void fillGrid() {
-        for (int bit = 0 ; bit < 64 ; bit++) {
-            bits.get(bit).setCurrentChoice(0);
+        for(ImageChoiceLabel bit : bits) {
+            bit.setCurrentChoice(0);
         }
-        tileEntity.setCycleBits(0, 63, false);
-        sendServerCommand(RFToolsMessages.INSTANCE, SequencerTileEntity.CMD_SETBITS,
-                new Argument("start", 0),
-                new Argument("stop", 63),
-                new Argument("choice", false));
+        tileEntity.clearCycleBits();
+        sendServerCommand(RFToolsMessages.INSTANCE, SequencerTileEntity.CMD_CLEARBITS);
     }
 
     private void changeBit(int bit, String choice) {
