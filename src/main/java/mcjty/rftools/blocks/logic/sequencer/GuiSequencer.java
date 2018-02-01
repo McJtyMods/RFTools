@@ -43,9 +43,9 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
 
         initGuiGrid(toplevel);
 
-        Button clearButton = new Button(mc, this).setText("Clear").setTooltips("Clear the grid").setDesiredHeight(13).setDesiredWidth(45).addButtonEvent(parent -> fillGrid(false));
-        Button fillButton = new Button(mc, this).setText("Fill").setTooltips("Fill the grid").setDesiredHeight(13).setDesiredWidth(45).addButtonEvent(parent -> fillGrid(true));
-        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(clearButton).addChild(fillButton);
+        Button clearButton = new Button(mc, this).setText("Clear").setTooltips("Clear the grid").setDesiredHeight(13).setDesiredWidth(45).addButtonEvent(parent -> fillGrid());
+        Button flipButton = new Button(mc, this).setText("Flip").setTooltips("Invert all values in the grid").setDesiredHeight(13).setDesiredWidth(45).addButtonEvent(parent -> flipGrid());
+        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(clearButton).addChild(flipButton);
         toplevel.addChild(buttonPanel);
 
         initGuiMode();
@@ -115,15 +115,23 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
         sendServerCommand(RFToolsMessages.INSTANCE, SequencerTileEntity.CMD_SETDELAY, new Argument("delay", delay));
     }
 
-    private void fillGrid(boolean value) {
-        for (int bit = 0 ; bit < 64 ; bit++) {
-            bits.get(bit).setCurrentChoice(value ? 1 : 0);
+    private void flipGrid() {
+        for(ImageChoiceLabel bit : bits) {
+            bit.setCurrentChoice(1 - bit.getCurrentChoiceIndex());
         }
-        tileEntity.setCycleBits(0, 63, value);
+        tileEntity.flipCycleBits();
+        sendServerCommand(RFToolsMessages.INSTANCE, SequencerTileEntity.CMD_FLIPBITS);
+    }
+
+    private void fillGrid() {
+        for (int bit = 0 ; bit < 64 ; bit++) {
+            bits.get(bit).setCurrentChoice(0);
+        }
+        tileEntity.setCycleBits(0, 63, false);
         sendServerCommand(RFToolsMessages.INSTANCE, SequencerTileEntity.CMD_SETBITS,
                 new Argument("start", 0),
                 new Argument("stop", 63),
-                new Argument("choice", value));
+                new Argument("choice", false));
     }
 
     private void changeBit(int bit, String choice) {
