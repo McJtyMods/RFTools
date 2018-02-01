@@ -13,7 +13,7 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
     public static final String CMD_MODE = "mode";
     public static final String CMD_SETBIT = "setBit";
     public static final String CMD_FLIPBITS = "flipBits";
-    public static final String CMD_CLEARBITS = "clearBits";
+    public static final String CMD_SETBITS = "setBits";
     public static final String CMD_SETDELAY = "setDelay";
 
     private SequencerMode mode = SequencerMode.MODE_ONCE1;
@@ -87,8 +87,8 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
         markDirtyClient();
     }
 
-    public void clearCycleBits() {
-        cycleBits = 0L;
+    public void setCycleBits(boolean alternate) {
+        cycleBits = alternate ? 0xAAAAAAAAAAAAAAAAL : 0L;
         markDirtyClient();
     }
 
@@ -262,8 +262,8 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
         } else if (CMD_FLIPBITS.equals(command)) {
             flipCycleBits();
             return true;
-        } else if (CMD_CLEARBITS.equals(command)) {
-            clearCycleBits();
+        } else if (CMD_SETBITS.equals(command)) {
+            setCycleBits(args.get("alternate").getBoolean());
             return true;
         } else if (CMD_SETDELAY.equals(command)) {
             setDelay(args.get("delay").getInteger());

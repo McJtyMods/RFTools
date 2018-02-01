@@ -43,9 +43,10 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
 
         initGuiGrid(toplevel);
 
-        Button clearButton = new Button(mc, this).setText("Clear").setTooltips("Clear the grid").setDesiredHeight(13).setDesiredWidth(45).addButtonEvent(parent -> fillGrid());
-        Button flipButton = new Button(mc, this).setText("Flip").setTooltips("Invert all values in the grid").setDesiredHeight(13).setDesiredWidth(45).addButtonEvent(parent -> flipGrid());
-        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(clearButton).addChild(flipButton);
+        Button clearButton = new Button(mc, this).setText("Clear").setTooltips("Clear the grid").setDesiredHeight(13).setDesiredWidth(43).addButtonEvent(parent -> fillGrid(false));
+        Button flipButton = new Button(mc, this).setText("Flip").setTooltips("Invert all values in the grid").setDesiredHeight(13).setDesiredWidth(43).addButtonEvent(parent -> flipGrid());
+        Button altButton = new Button(mc, this).setText("Alt").setTooltips("Alternate all values in the grid between off and on").setDesiredHeight(13).setDesiredWidth(43).addButtonEvent(parent -> fillGrid(true));
+        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(clearButton).addChild(flipButton).addChild(altButton);
         toplevel.addChild(buttonPanel);
 
         initGuiMode();
@@ -123,12 +124,13 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
         sendServerCommand(RFToolsMessages.INSTANCE, SequencerTileEntity.CMD_FLIPBITS);
     }
 
-    private void fillGrid() {
+    private void fillGrid(boolean alternate) {
+        int altVal = 1;
         for(ImageChoiceLabel bit : bits) {
-            bit.setCurrentChoice(0);
+            bit.setCurrentChoice(alternate ? (altVal = 1 - altVal) : 0);
         }
-        tileEntity.clearCycleBits();
-        sendServerCommand(RFToolsMessages.INSTANCE, SequencerTileEntity.CMD_CLEARBITS);
+        tileEntity.setCycleBits(alternate);
+        sendServerCommand(RFToolsMessages.INSTANCE, SequencerTileEntity.CMD_SETBITS, new Argument("alternate", alternate));
     }
 
     private void changeBit(int bit, String choice) {
