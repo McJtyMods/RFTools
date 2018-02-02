@@ -149,8 +149,9 @@ The machine base is the base ingredient for a few other machines.
 {n:sequencer}
 {rb:sequencer_block}
 The sequencer is an advanced redstone based sequencer. It is
-capable of giving out a series of 64 different signals. You can
-edit the pattern of these signals in the gui of this block.
+capable of giving out a series of up to 64 different signals.
+You can edit the pattern of these signals in the gui of this
+block.
 
 The modes of this block are explained in the next page. You can
 also set the speed at which the cycles are played. Default is 1

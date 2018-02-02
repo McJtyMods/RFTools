@@ -15,10 +15,12 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
     public static final String CMD_FLIPBITS = "flipBits";
     public static final String CMD_SETBITS = "setBits";
     public static final String CMD_SETDELAY = "setDelay";
+    public static final String CMD_SETCOUNT = "setCount";
 
     private SequencerMode mode = SequencerMode.MODE_ONCE1;
     private long cycleBits = 0;
     private int currentStep = -1;
+    private int stepCount = 64;
 
     // For pulse detection.
     private boolean prevIn = false;
@@ -36,6 +38,18 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
     public void setDelay(int delay) {
         this.delay = delay;
         timer = delay;
+        markDirtyClient();
+    }
+
+    public int getStepCount() {
+        return stepCount;
+    }
+
+    public void setStepCount(int stepCount) {
+        this.stepCount = stepCount >= 1 && stepCount <= 64 ? stepCount : 64;
+        if(this.currentStep >= stepCount) {
+            this.currentStep = stepCount - 1;
+        }
         markDirtyClient();
     }
 
@@ -195,14 +209,14 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
 
     private void nextStep() {
         currentStep++;
-        if (currentStep >= 64) {
+        if (currentStep >= stepCount) {
             currentStep = 0;
         }
     }
 
     private void nextStepAndStop() {
         currentStep++;
-        if (currentStep >= 64) {
+        if (currentStep >= stepCount) {
             currentStep = -1;
         }
     }
@@ -226,6 +240,10 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
         if (delay == 0) {
             delay = 1;
         }
+        stepCount = tagCompound.getInteger("stepCount");
+        if (stepCount == 0) {
+            stepCount = 64;
+        }
     }
 
     @Override
@@ -244,6 +262,7 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
         tagCompound.setLong("bits", cycleBits);
         tagCompound.setInteger("mode", mode.ordinal());
         tagCompound.setInteger("delay", delay);
+        tagCompound.setInteger("stepCount", stepCount);
     }
 
     @Override
@@ -267,6 +286,9 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
             return true;
         } else if (CMD_SETDELAY.equals(command)) {
             setDelay(args.get("delay").getInteger());
+            return true;
+        } else if (CMD_SETCOUNT.equals(command)) {
+            setStepCount(args.get("count").getInteger());
             return true;
         }
         return false;

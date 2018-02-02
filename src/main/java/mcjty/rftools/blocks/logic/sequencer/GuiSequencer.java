@@ -21,11 +21,11 @@ import java.util.List;
 
 public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
     public static final int SEQUENCER_WIDTH = 160;
-    public static final int SEQUENCER_HEIGHT = 184;
+    public static final int SEQUENCER_HEIGHT = 208;
 
     private List<ImageChoiceLabel> bits = new ArrayList<>();
     private ChoiceLabel mode;
-    private TextField speedField;
+    private TextField speedField, countField;
 
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
@@ -50,7 +50,7 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
         toplevel.addChild(buttonPanel);
 
         initGuiMode();
-        Label label = new Label(mc, this).setText("Delay:");
+        Label speedLabel = new Label(mc, this).setText("Delay:");
 
         speedField = new TextField(mc, this).addTextEvent((parent, newText) -> setDelay());
         int delay = tileEntity.getDelay();
@@ -59,8 +59,20 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
         }
         speedField.setText(String.valueOf(delay));
 
-        Panel bottomPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(mode).addChild(label).addChild(speedField);
+        Panel bottomPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(mode).addChild(speedLabel).addChild(speedField);
         toplevel.addChild(bottomPanel);
+
+        Label countLabel = new Label(mc, this).setText("Sequence length:");
+
+        countField = new TextField(mc, this).addTextEvent((parent, newText) -> setCount());
+        int count = tileEntity.getStepCount();
+        if (count < 1 || count > 64) {
+            count = 64;
+        }
+        countField.setText(String.valueOf(count));
+
+        Panel countPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(countLabel).addChild(countField);
+        toplevel.addChild(countPanel);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, SEQUENCER_WIDTH, SEQUENCER_HEIGHT));
         window = new Window(this, toplevel);
@@ -114,6 +126,18 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
         }
         tileEntity.setDelay(delay);
         sendServerCommand(RFToolsMessages.INSTANCE, SequencerTileEntity.CMD_SETDELAY, new Argument("delay", delay));
+    }
+
+    private void setCount() {
+        String c = countField.getText();
+        int count;
+        try {
+            count = Integer.parseInt(c);
+        } catch (NumberFormatException e) {
+            count = 64;
+        }
+        tileEntity.setStepCount(count);
+        sendServerCommand(RFToolsMessages.INSTANCE, SequencerTileEntity.CMD_SETCOUNT, new Argument("count", count));
     }
 
     private void flipGrid() {
