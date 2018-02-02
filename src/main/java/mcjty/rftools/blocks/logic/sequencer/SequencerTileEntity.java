@@ -16,11 +16,13 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
     public static final String CMD_CLEARBITS = "clearBits";
     public static final String CMD_SETDELAY = "setDelay";
     public static final String CMD_SETCOUNT = "setCount";
+    public static final String CMD_SETENDSTATE = "setEndState";
 
     private SequencerMode mode = SequencerMode.MODE_ONCE1;
     private long cycleBits = 0;
     private int currentStep = -1;
     private int stepCount = 64;
+    private boolean endState = false;
 
     // For pulse detection.
     private boolean prevIn = false;
@@ -50,6 +52,15 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
         if(this.currentStep >= stepCount) {
             this.currentStep = stepCount - 1;
         }
+        markDirtyClient();
+    }
+
+    public boolean getEndState() {
+        return endState;
+    }
+
+    public void setEndState(boolean endState) {
+        this.endState = endState;
         markDirtyClient();
     }
 
@@ -136,7 +147,7 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
     }
 
     public boolean checkOutput() {
-        return currentStep != -1 && getCycleBit(currentStep);
+        return currentStep == -1 ? endState : getCycleBit(currentStep);
     }
 
     /**
@@ -244,6 +255,7 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
         if (stepCount == 0) {
             stepCount = 64;
         }
+        endState = tagCompound.getBoolean("endState");
     }
 
     @Override
@@ -263,6 +275,7 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
         tagCompound.setInteger("mode", mode.ordinal());
         tagCompound.setInteger("delay", delay);
         tagCompound.setInteger("stepCount", stepCount);
+        tagCompound.setBoolean("endState", endState);
     }
 
     @Override
@@ -289,6 +302,9 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
             return true;
         } else if (CMD_SETCOUNT.equals(command)) {
             setStepCount(args.get("count").getInteger());
+            return true;
+        } else if (CMD_SETENDSTATE.equals(command)) {
+            setEndState(args.get("endState").getBoolean());
             return true;
         }
         return false;

@@ -43,9 +43,16 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
 
         initGuiGrid(toplevel);
 
-        Button clearButton = new Button(mc, this).setText("Clear").setTooltips("Clear the grid").setDesiredHeight(13).setDesiredWidth(45).addButtonEvent(parent -> fillGrid());
-        Button flipButton = new Button(mc, this).setText("Flip").setTooltips("Invert all values in the grid").setDesiredHeight(13).setDesiredWidth(45).addButtonEvent(parent -> flipGrid());
-        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(clearButton).addChild(flipButton);
+        Button clearButton = new Button(mc, this).setText("Clear").setTooltips("Clear the grid").setDesiredHeight(13).setDesiredWidth(38).addButtonEvent(parent -> fillGrid());
+        Button flipButton = new Button(mc, this).setText("Flip").setTooltips("Invert all values in the grid").setDesiredHeight(13).setDesiredWidth(34).addButtonEvent(parent -> flipGrid());
+        Label endLabel = new Label(mc, this).setText("End on:");
+        ImageChoiceLabel choiceLabel = new ImageChoiceLabel(mc, this).
+                addChoiceEvent((parent, newChoice) -> setEndState(newChoice)).
+                setDesiredHeight(11).
+                addChoice("0", "Disabled", iconGuiElements, 160, 0).
+                addChoice("1", "Enabled", iconGuiElements, 176, 0);
+        choiceLabel.setCurrentChoice(tileEntity.getEndState() ? 1 : 0);
+        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(clearButton).addChild(flipButton).addChild(endLabel).addChild(choiceLabel);
         toplevel.addChild(buttonPanel);
 
         initGuiMode();
@@ -137,6 +144,13 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
         }
         tileEntity.setStepCount(count);
         sendServerCommand(RFToolsMessages.INSTANCE, SequencerTileEntity.CMD_SETCOUNT, new Argument("count", count));
+    }
+
+    private void setEndState(String choice) {
+        boolean newChoice = "1".equals(choice);
+        tileEntity.setEndState(newChoice);
+        sendServerCommand(RFToolsMessages.INSTANCE, SequencerTileEntity.CMD_SETENDSTATE,
+                new Argument("endState", newChoice));
     }
 
     private void flipGrid() {
