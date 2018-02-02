@@ -12,12 +12,14 @@ public class TimerTileEntity extends LogicTileEntity implements ITickable {
 
     public static final String CMD_SETDELAY = "setDelay";
     public static final String CMD_SETCURRENT = "setDelay";
+    public static final String CMD_SETPAUSES = "setPauses";
 
     // For pulse detection.
     private boolean prevIn = false;
 
     private int delay = 20;
     private int timer = 0;
+    private boolean redstonePauses = false;
 
     public TimerTileEntity() {
     }
@@ -30,9 +32,21 @@ public class TimerTileEntity extends LogicTileEntity implements ITickable {
         return timer;
     }
 
+    public boolean getRedstonePauses() {
+        return redstonePauses;
+    }
+
     public void setDelay(int delay) {
         this.delay = delay;
         timer = delay;
+        markDirtyClient();
+    }
+
+    public void setRedstonePauses(boolean redstonePauses) {
+        this.redstonePauses = redstonePauses;
+        if(redstonePauses && powerLevel > 0) {
+            timer = delay;
+        }
         markDirtyClient();
     }
 
@@ -55,7 +69,9 @@ public class TimerTileEntity extends LogicTileEntity implements ITickable {
 
         boolean newout;
 
-        timer--;
+        if(!redstonePauses || !prevIn) {
+            timer--;
+        }
         if (timer <= 0) {
             timer = delay;
             newout = true;
@@ -78,6 +94,7 @@ public class TimerTileEntity extends LogicTileEntity implements ITickable {
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         delay = tagCompound.getInteger("delay");
+        redstonePauses = tagCompound.getBoolean("redstonePauses");
     }
 
     @Override
@@ -93,6 +110,7 @@ public class TimerTileEntity extends LogicTileEntity implements ITickable {
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         tagCompound.setInteger("delay", delay);
+        tagCompound.setBoolean("redstonePauses", redstonePauses);
     }
 
     @Override
@@ -103,6 +121,9 @@ public class TimerTileEntity extends LogicTileEntity implements ITickable {
         }
         if (CMD_SETDELAY.equals(command)) {
             setDelay(args.get("delay").getInteger());
+            return true;
+        } else if (CMD_SETPAUSES.equals(command)) {
+            setRedstonePauses(args.get("pauses").getBoolean());
             return true;
         }
         return false;

@@ -8,6 +8,7 @@ import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
+import mcjty.lib.gui.widgets.ToggleButton;
 import mcjty.lib.network.Argument;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
@@ -15,10 +16,11 @@ import mcjty.rftools.network.RFToolsMessages;
 import java.awt.*;
 
 public class GuiTimer extends GenericGuiContainer<TimerTileEntity> {
-    public static final int TIMER_WIDTH = 160;
-    public static final int TIMER_HEIGHT = 30;
+    public static final int TIMER_WIDTH = 168;
+    public static final int TIMER_HEIGHT = 48;
 
     private TextField speedField;
+    private ToggleButton redstonePauses;
 
     public GuiTimer(TimerTileEntity timerTileEntity, EmptyContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, timerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "timer");
@@ -39,9 +41,11 @@ public class GuiTimer extends GenericGuiContainer<TimerTileEntity> {
             delay = 1;
         }
         speedField.setText(String.valueOf(delay));
-
         Panel bottomPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(label).addChild(speedField);
         toplevel.addChild(bottomPanel);
+        redstonePauses = new ToggleButton(mc, this).setText("Pause while redstone active").setDesiredHeight(16).setCheckMarker(true).setPressed(tileEntity.getRedstonePauses())
+                .addButtonEvent(parent -> setRedstonePauses());
+        toplevel.addChild(redstonePauses);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, TIMER_WIDTH, TIMER_HEIGHT));
         window = new Window(this, toplevel);
@@ -57,6 +61,12 @@ public class GuiTimer extends GenericGuiContainer<TimerTileEntity> {
         }
         tileEntity.setDelay(delay);
         sendServerCommand(RFToolsMessages.INSTANCE, TimerTileEntity.CMD_SETDELAY, new Argument("delay", delay));
+    }
+
+    private void setRedstonePauses() {
+        boolean pauses = redstonePauses.isPressed();
+        tileEntity.setRedstonePauses(pauses);
+        sendServerCommand(RFToolsMessages.INSTANCE, TimerTileEntity.CMD_SETPAUSES, new Argument("pauses", pauses));
     }
 
     @Override

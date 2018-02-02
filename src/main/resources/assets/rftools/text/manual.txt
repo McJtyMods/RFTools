@@ -181,6 +181,9 @@ receives a redstone pulse at its input. So given timely input pulses
 this block will never output a pulse itself. By using this feature this
 block can be used as a way to detect that a certain activity is overdue.
 {-------------------------------------------------------------}
+You can choose whether the timer should run or be paused while its
+redstone input is active.
+{-------------------------------------------------------------}
 {b}Counter
 {n:counter}
 {rb:counter_block}
