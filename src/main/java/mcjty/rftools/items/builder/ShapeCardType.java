@@ -90,7 +90,7 @@ public enum ShapeCardType {
             "liquids from an tank on top/bottom into the world.");
 
     private static String getDirtOrCobbleName() {
-        return BuilderConfiguration.getQuarryReplace().getLocalizedName();
+        return BuilderConfiguration.getQuarryReplace().getBlock().getLocalizedName();
     }
 
     private final int damage, rfNeeded;

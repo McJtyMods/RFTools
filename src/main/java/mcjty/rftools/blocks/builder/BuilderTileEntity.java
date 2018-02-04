@@ -1005,7 +1005,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (clear) {
             getWorld().setBlockToAir(spos);
         } else {
-            getWorld().setBlockState(spos, getReplacementBlock().getDefaultState(), 2);       // No block update!
+            getWorld().setBlockState(spos, getReplacementBlock(), 2);       // No block update!
         }
         consumeEnergy(rfNeeded);
         if (!silent) {
@@ -1013,7 +1013,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     }
 
-    private Block getReplacementBlock() {
+    private IBlockState getReplacementBlock() {
         return BuilderConfiguration.getQuarryReplace();
     }
 
@@ -1034,7 +1034,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         if (block.getBlockHardness(srcState, getWorld(), srcPos) >= 0) {
             boolean clear = getCardType().isClearing();
-            if ((!clear) && block == getReplacementBlock()) {
+            if ((!clear) && srcState == getReplacementBlock()) {
                 // We can skip dirt if we are not clearing.
                 return skip();
             }
@@ -1121,7 +1121,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         if (block.getBlockHardness(srcState, getWorld(), srcPos) >= 0) {
             boolean clear = getCardType().isClearing();
-            if ((!clear) && block == getReplacementBlock()) {
+            if ((!clear) && srcState == getReplacementBlock()) {
                 // We can skip dirt if we are not clearing.
                 return skip();
             }
@@ -1220,7 +1220,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     if (clear) {
                         getWorld().setBlockToAir(srcPos);
                     } else {
-                        getWorld().setBlockState(srcPos, getReplacementBlock().getDefaultState(), 2);       // No block update!
+                        getWorld().setBlockState(srcPos, getReplacementBlock(), 2);       // No block update!
                     }
                     if (!silent) {
                         SoundTools.playSound(getWorld(), block.getSoundType(srcState, getWorld(), srcPos, fakePlayer).getBreakSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);

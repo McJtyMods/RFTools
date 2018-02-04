@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.builder;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
@@ -31,7 +32,7 @@ public class BuilderConfiguration {
     public static double fortunequarryShapeCardFactor = 2;
 
     public static String quarryReplace = "minecraft:dirt";
-    private static Block quarryReplaceBlock = null;
+    private static IBlockState quarryReplaceBlock = null;
 
     public static boolean quarryChunkloads = true;
     public static boolean shapeCardAllowed = true;
@@ -121,11 +122,11 @@ public class BuilderConfiguration {
                 "If true a holo hud with current progress is shown above the builder").getBoolean();
     }
 
-    public static Block getQuarryReplace() {
+    public static IBlockState getQuarryReplace() {
         if (quarryReplaceBlock == null) {
-            quarryReplaceBlock = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(quarryReplace));
+            quarryReplaceBlock = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(quarryReplace)).getDefaultState();
             if (quarryReplaceBlock == null) {
-                quarryReplaceBlock = Blocks.DIRT;
+                quarryReplaceBlock = Blocks.DIRT.getDefaultState();
             }
         }
         return quarryReplaceBlock;
