@@ -5,7 +5,6 @@ import mcjty.lib.container.BaseBlock;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.Broadcaster;
-import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
 import mcjty.rftools.blocks.shield.RelCoordinate;
 import mcjty.rftools.playerprops.BuffProperties;
@@ -31,7 +30,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -432,18 +430,27 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     }
 
     // Only call this on the controller (bottom elevator)
-    private void startMoving(BlockPos start, BlockPos stop, IBlockState state) {
-        movingY = start.getY();
-        startY = start.getY();
-        stopY = stop.getY();
+    private boolean startMoving(BlockPos start, BlockPos stop, IBlockState state) {
         movingState = state;
         positions.clear();
 
         getBounds(start);
+        if(bounds.getMaxX() < bounds.getMinX() || bounds.getMaxZ() < bounds.getMinZ()) {
+            // No blocks were added to bounds. This happens when canMoveBlock
+            // returns false for the platform block right in front of the elevator.
+            // If this is the case, we can't move at all.
+            bounds = null;
+            return false;
+        }
+
+        movingY = start.getY();
+        startY = start.getY();
+        stopY = stop.getY();
 
         // @todo
         // Make sure positions is only sent to client at the beginning
         markDirtyClient();
+        return true;
     }
 
     private boolean canMoveBlock(BlockPos pos) {
@@ -638,9 +645,13 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
             Broadcaster.broadcast(getWorld(), getPos().getX(), getPos().getY(), getPos().getZ(), TextFormatting.RED + "Not enough power to move the elevator platform!", 10);
             return;
         }
-        controller.consumeEnergy(rfNeeded);
 
-        controller.startMoving(platformPos, getPos(), getWorld().getBlockState(platformPos.offset(side)));
+        if(controller.startMoving(platformPos, getPos(), getWorld().getBlockState(platformPos.offset(side)))) {
+            controller.consumeEnergy(rfNeeded);
+        } else {
+            Broadcaster.broadcast(getWorld(), getPos().getX(), getPos().getY(), getPos().getZ(), TextFormatting.RED + "The block in front of the elevator platform could not be moved!", 10);
+        }
+
     }
 
     public static BlockPos getPosAtY(BlockPos p, int y) {
@@ -729,7 +740,13 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
             positions.add(new BlockPos(getPos().getX() + c.getDx(), getPos().getY() + c.getDy(), getPos().getZ() + c.getDz()));
         }
         if (tagCompound.hasKey("bminX")) {
-            bounds = new Bounds(tagCompound.getInteger("bminX"), tagCompound.getInteger("bminZ"), tagCompound.getInteger("bmaxX"), tagCompound.getInteger("bmaxZ"));
+            int bminX = tagCompound.getInteger("bminX");
+            int bminZ = tagCompound.getInteger("bminZ");
+            int bmaxX = tagCompound.getInteger("bmaxX");
+            int bmaxZ = tagCompound.getInteger("bmaxZ");
+            if(bminX <= bminZ && bmaxX <= bmaxZ) { // Fix saves that were affected by issue #1601 by validating bounds here
+                bounds = new Bounds(bminX, bminZ, bmaxX, bmaxZ);
+            }
         }
         if (tagCompound.hasKey("movingId")) {
             Integer id = tagCompound.getInteger("movingId");
