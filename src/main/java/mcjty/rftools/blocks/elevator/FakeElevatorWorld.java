@@ -1,12 +1,12 @@
 package mcjty.rftools.blocks.elevator;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.relauncher.Side;
@@ -19,18 +19,20 @@ public class FakeElevatorWorld implements IBlockAccess {
 
     private Set<BlockPos> positions;
     private IBlockState state;
+    private World realWorld;
     private final IBlockState AIR = Blocks.AIR.getDefaultState();
 
 
-    public void setState(ElevatorTileEntity elevatorTileEntity, IBlockState state) {
-        this.state = state;
+    public void setWorldAndState(ElevatorTileEntity elevatorTileEntity) {
+        this.state = elevatorTileEntity.getMovingState();
+        this.realWorld = elevatorTileEntity.getWorld();
         positions = elevatorTileEntity.getPositions();
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public int getCombinedLight(BlockPos pos, int lightValue) {
-        return 0xf000f0;
+        return realWorld.getCombinedLight(pos, lightValue);
     }
 
     @Nullable
@@ -52,7 +54,7 @@ public class FakeElevatorWorld implements IBlockAccess {
 
     @Override
     public Biome getBiome(BlockPos pos) {
-        return Biomes.PLAINS;
+        return realWorld.getBiome(pos);
     }
 
     @Override
@@ -62,7 +64,7 @@ public class FakeElevatorWorld implements IBlockAccess {
 
     @Override
     public WorldType getWorldType() {
-        return WorldType.DEFAULT;
+        return realWorld.getWorldType();
     }
 
     @Override

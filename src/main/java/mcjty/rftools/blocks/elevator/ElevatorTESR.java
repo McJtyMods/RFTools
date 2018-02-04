@@ -53,7 +53,7 @@ public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> 
             BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
             BlockRenderLayer origLayer = MinecraftForgeClient.getRenderLayer();
 
-            fakeWorld.setState(te, movingState);
+            fakeWorld.setWorldAndState(te);
 
             for (BlockRenderLayer layer : LAYERS) {
                 if (movingState.getBlock().canRenderInLayer(movingState, layer)) {
