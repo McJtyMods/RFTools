@@ -47,6 +47,7 @@ import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -103,12 +104,14 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
     }
 
     @Override
+    @Optional.Method(modid = "theoneprobe")
     public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
         super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
         BlockPos pos = data.getPos();
         addProbeInfoScreen(mode, probeInfo, player, world, pos);
     }
 
+    @Optional.Method(modid = "theoneprobe")
     public void addProbeInfoScreen(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof ScreenTileEntity) {
@@ -140,6 +143,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
 
     @SideOnly(Side.CLIENT)
     @Override
+    @Optional.Method(modid = "waila")
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         super.getWailaBody(itemStack, currenttip, accessor, config);
         TileEntity te = accessor.getTileEntity();
@@ -151,6 +155,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
     }
 
     @SideOnly(Side.CLIENT)
+    @Optional.Method(modid = "waila")
     public List<String> getWailaBodyScreen(List<String> currenttip, EntityPlayer player, ScreenTileEntity te) {
         if (!te.isConnected() && te.isControllerNeeded()) {
             currenttip.add(TextFormatting.YELLOW + "[NOT CONNECTED]");

@@ -34,6 +34,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -79,6 +80,7 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
     }
 
     @Override
+    @Optional.Method(modid = "theoneprobe")
     public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
         super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
         ItemStack module = getModule(world.getTileEntity(data.getPos()));
@@ -91,6 +93,7 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
 
     @SideOnly(Side.CLIENT)
     @Override
+    @Optional.Method(modid = "waila")
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         super.getWailaBody(itemStack, currenttip, accessor, config);
         ItemStack module = getModule(accessor.getTileEntity());
