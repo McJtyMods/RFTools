@@ -4,6 +4,7 @@ import mcjty.lib.container.GenericItemBlock;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyEnum;
@@ -178,16 +179,15 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
      * Returns the signal strength at one input of the block
      */
     protected int getInputStrength(World world, BlockPos pos, EnumFacing side) {
-        // @todo
         int power = world.getRedstonePower(pos.offset(side), side);
-        if (power == 0) {
+        if (power < 15) {
             // Check if there is no redstone wire there. If there is a 'bend' in the redstone wire it is
             // not detected with world.getRedstonePower().
-            // @todo this is a bit of a hack. Don't know how to do it better right now
+            // Not exactly pretty, but it's how vanilla redstone repeaters do it.
             IBlockState blockState = world.getBlockState(pos.offset(side));
             Block b = blockState.getBlock();
             if (b == Blocks.REDSTONE_WIRE) {
-                power = world.isBlockPowered(pos.offset(side)) ? 15 : 0;
+                power = Math.max(power, blockState.getValue(BlockRedstoneWire.POWER));
             }
         }
 
