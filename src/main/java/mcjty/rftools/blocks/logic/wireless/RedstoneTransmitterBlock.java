@@ -17,6 +17,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -31,6 +33,12 @@ public class RedstoneTransmitterBlock extends LogicSlabBlock<RedstoneTransmitter
 
     public RedstoneTransmitterBlock() {
         super(Material.IRON, "redstone_transmitter_block", RedstoneTransmitterTileEntity.class, EmptyContainer.class, RedstoneReceiverItemBlock.class);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public Class<GuiRedstoneTransmitter> getGuiClass() {
+        return GuiRedstoneTransmitter.class;
     }
 
     @Override
@@ -66,6 +74,7 @@ public class RedstoneTransmitterBlock extends LogicSlabBlock<RedstoneTransmitter
         if (te instanceof RedstoneTransmitterTileEntity) {
             RedstoneTransmitterTileEntity redstoneTransmitterTileEntity = (RedstoneTransmitterTileEntity) te;
             probeInfo.text(TextFormatting.GREEN + "Channel: " + redstoneTransmitterTileEntity.getChannel());
+            probeInfo.text(TextFormatting.GREEN + "Analog mode: " + redstoneTransmitterTileEntity.getAnalog());
         }
     }
 
@@ -76,8 +85,9 @@ public class RedstoneTransmitterBlock extends LogicSlabBlock<RedstoneTransmitter
         super.getWailaBody(itemStack, currenttip, accessor, config);
         TileEntity te = accessor.getTileEntity();
         if (te instanceof RedstoneTransmitterTileEntity) {
-            int channel = ((RedstoneTransmitterTileEntity) te).getChannel();
-            currenttip.add(TextFormatting.GREEN + "Channel: " + channel);
+            RedstoneTransmitterTileEntity redstoneTransmitterTileEntity = (RedstoneTransmitterTileEntity)te;
+            currenttip.add(TextFormatting.GREEN + "Channel: " + redstoneTransmitterTileEntity.getChannel());
+            currenttip.add(TextFormatting.GREEN + "Analog mode: " + redstoneTransmitterTileEntity.getAnalog());
         }
         return currenttip;
     }
@@ -106,7 +116,16 @@ public class RedstoneTransmitterBlock extends LogicSlabBlock<RedstoneTransmitter
     }
 
     @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+        if(player.getHeldItem(hand).getItem() instanceof RedstoneReceiverItemBlock) {
+            // Let setting a channel override opening the GUI
+            return false;
+        }
+        return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
+    }
+
+    @Override
     public int getGuiID() {
-        return -1;
+        return RFTools.GUI_REDSTONE_TRANSMITTER;
     }
 }

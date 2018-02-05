@@ -62,8 +62,7 @@ public class RedstoneReceiverBlock extends LogicSlabBlock<RedstoneReceiverTileEn
         if (te instanceof RedstoneReceiverTileEntity) {
             RedstoneReceiverTileEntity redstoneReceiverTileEntity = (RedstoneReceiverTileEntity) te;
             probeInfo.text(TextFormatting.GREEN + "Channel: " + redstoneReceiverTileEntity.getChannel());
-            boolean rc = redstoneReceiverTileEntity.checkOutput();
-            probeInfo.text(TextFormatting.GREEN + "Output: " + TextFormatting.WHITE + (rc ? "on" : "off"));
+            probeInfo.text(TextFormatting.GREEN + "Output: " + TextFormatting.WHITE + redstoneReceiverTileEntity.checkOutput());
         }
     }
 
@@ -74,9 +73,9 @@ public class RedstoneReceiverBlock extends LogicSlabBlock<RedstoneReceiverTileEn
         super.getWailaBody(itemStack, currenttip, accessor, config);
         TileEntity te = accessor.getTileEntity();
         if (te instanceof RedstoneReceiverTileEntity) {
-            int channel = ((RedstoneReceiverTileEntity) te).getChannel();
-            currenttip.add(TextFormatting.GREEN + "Channel: " + channel);
-
+            RedstoneReceiverTileEntity redstoneReceiverTileEntity = (RedstoneReceiverTileEntity) te;
+            currenttip.add(TextFormatting.GREEN + "Channel: " + redstoneReceiverTileEntity.getChannel());
+            currenttip.add(TextFormatting.GREEN + "Output: " + TextFormatting.WHITE + redstoneReceiverTileEntity.checkOutput());
         }
         return currenttip;
     }

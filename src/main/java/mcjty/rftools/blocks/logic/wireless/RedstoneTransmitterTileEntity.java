@@ -1,12 +1,19 @@
 package mcjty.rftools.blocks.logic.wireless;
 
+import java.util.Map;
+
+import mcjty.lib.network.Argument;
 import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class RedstoneTransmitterTileEntity extends LogicTileEntity {
 
+    public static final String CMD_SETANALOG = "setAnalog";
+
     private int channel = -1;
-    private boolean prevIn = false;
+    private boolean analog = false;
+    private int prevIn = 0;
 
     public RedstoneTransmitterTileEntity() {
     }
@@ -20,6 +27,16 @@ public class RedstoneTransmitterTileEntity extends LogicTileEntity {
         markDirtyClient();
     }
 
+    public boolean getAnalog() {
+        return analog;
+    }
+
+    public void setAnalog(boolean analog) {
+        this.analog = analog;
+        markDirtyClient();
+        update();
+    }
+
     public void update() {
         if (getWorld().isRemote) {
             return;
@@ -29,13 +46,16 @@ public class RedstoneTransmitterTileEntity extends LogicTileEntity {
             return;
         }
 
-        boolean powered = powerLevel > 0;
-        if (powered != prevIn) {
-            prevIn = powered;
+        int powerLevel = this.powerLevel;
+        if(!analog && powerLevel > 0) {
+            powerLevel = 15;
+        }
+        if (powerLevel != prevIn) {
+            prevIn = powerLevel;
             markDirty();
             RedstoneChannels channels = RedstoneChannels.getChannels(getWorld());
             RedstoneChannels.RedstoneChannel ch = channels.getOrCreateChannel(channel);
-            ch.setValue(powered ? 15 : 0);
+            ch.setValue(powerLevel);
             channels.save(getWorld());
         }
     }
@@ -43,13 +63,17 @@ public class RedstoneTransmitterTileEntity extends LogicTileEntity {
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        prevIn = tagCompound.getBoolean("prevIn");
+        if(tagCompound.hasKey("prevIn", 3 /* int */)) {
+            prevIn = tagCompound.getInteger("prevIn");
+        } else {
+            prevIn = tagCompound.getBoolean("prevIn") ? 15 : 0; // backwards compatibility
+        }
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("prevIn", prevIn);
+        tagCompound.setInteger("prevIn", prevIn);
         return tagCompound;
     }
 
@@ -57,11 +81,26 @@ public class RedstoneTransmitterTileEntity extends LogicTileEntity {
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         channel = tagCompound.getInteger("channel");
+        analog = tagCompound.getBoolean("analog");
     }
 
     @Override
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         tagCompound.setInteger("channel", channel);
+        tagCompound.setBoolean("analog", analog);
+    }
+
+    @Override
+    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
+        boolean rc = super.execute(playerMP, command, args);
+        if (rc) {
+            return true;
+        }
+        if (CMD_SETANALOG.equals(command)) {
+            setAnalog(args.get("analog").getBoolean());
+            return true;
+        }
+        return false;
     }
 }

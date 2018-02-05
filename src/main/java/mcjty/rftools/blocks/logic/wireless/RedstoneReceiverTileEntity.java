@@ -28,16 +28,16 @@ public class RedstoneReceiverTileEntity extends LogicTileEntity implements ITick
     }
 
     protected void checkStateServer() {
-        setRedstoneState(checkOutput() ? 15 : 0);
+        setRedstoneState(checkOutput());
     }
 
-    public boolean checkOutput() {
-        boolean newout = false;
+    public int checkOutput() {
+        int newout = 0;
         if (channel != -1) {
             RedstoneChannels channels = RedstoneChannels.getChannels(getWorld());
             RedstoneChannels.RedstoneChannel ch = channels.getChannel(channel);
             if (ch != null) {
-                newout = ch.getValue() != 0;
+                newout = ch.getValue();
             }
         }
         return newout;
@@ -46,7 +46,11 @@ public class RedstoneReceiverTileEntity extends LogicTileEntity implements ITick
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        powerOutput = tagCompound.getBoolean("rs") ? 15 : 0;
+        if(tagCompound.hasKey("rs", 3 /* int */)) {
+            powerOutput = tagCompound.getInteger("rs");
+        } else {
+            powerOutput = tagCompound.getBoolean("rs") ? 15 : 0; // backwards compatibility
+        }
     }
 
     @Override
@@ -58,7 +62,7 @@ public class RedstoneReceiverTileEntity extends LogicTileEntity implements ITick
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("rs", powerOutput > 0);
+        tagCompound.setInteger("rs", powerOutput);
         return tagCompound;
     }
 
