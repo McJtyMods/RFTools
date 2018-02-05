@@ -112,7 +112,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         }
         checkCounter = 10;
 
-        setRedstoneState(checkSensor());
+        setRedstoneState(checkSensor() ? 15 : 0);
     }
 
     public boolean checkSensor() {
@@ -332,7 +332,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        powered = tagCompound.getBoolean("rs");
+        powerOutput = tagCompound.getBoolean("rs") ? 15 : 0;
     }
 
     @Override
@@ -348,7 +348,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("rs", powered);
+        tagCompound.setBoolean("rs", powerOutput > 0);
         return tagCompound;
     }
 

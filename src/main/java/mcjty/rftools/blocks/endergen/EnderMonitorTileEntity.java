@@ -49,11 +49,11 @@ public class EnderMonitorTileEntity extends LogicTileEntity implements ITickable
     }
 
     private void checkStateServer() {
-        boolean newout = false;
+        int newout = 0;
 
         if (needpulse) {
             markDirtyQuick();
-            newout = true;
+            newout = 15;
             needpulse = false;
         }
 
@@ -63,7 +63,7 @@ public class EnderMonitorTileEntity extends LogicTileEntity implements ITickable
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        powered = tagCompound.getBoolean("rs");
+        powerOutput = tagCompound.getBoolean("rs") ? 15 : 0;
 
         needpulse = tagCompound.getBoolean("needPulse");
     }
@@ -78,7 +78,7 @@ public class EnderMonitorTileEntity extends LogicTileEntity implements ITickable
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("rs", powered);
+        tagCompound.setBoolean("rs", powerOutput > 0);
         tagCompound.setBoolean("needPulse", needpulse);
         return tagCompound;
     }

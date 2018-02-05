@@ -253,7 +253,7 @@ public abstract class LogicSlabBlock<T extends LogicTileEntity, C extends Contai
         if (state.getBlock() instanceof LogicSlabBlock && te instanceof LogicTileEntity) {
             LogicTileEntity logicTileEntity = (LogicTileEntity) te;
             if (side == logicTileEntity.getFacing(state).getInputSide()) {
-                return logicTileEntity.isPowered() ? 15 : 0;
+                return logicTileEntity.getPowerOutput();
             } else {
                 return 0;
             }

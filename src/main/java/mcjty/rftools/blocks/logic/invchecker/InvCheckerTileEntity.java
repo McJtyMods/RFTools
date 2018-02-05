@@ -106,7 +106,7 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
         }
         checkCounter = 10;
 
-        setRedstoneState(checkOutput());
+        setRedstoneState(checkOutput() ? 15 : 0);
     }
 
     public boolean checkOutput() {
@@ -209,7 +209,7 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        powered = tagCompound.getBoolean("rs");
+        powerOutput = tagCompound.getBoolean("rs") ? 15 : 0;
     }
 
     @Override
@@ -225,7 +225,7 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("rs", powered);
+        tagCompound.setBoolean("rs", powerOutput > 0);
         return tagCompound;
     }
 

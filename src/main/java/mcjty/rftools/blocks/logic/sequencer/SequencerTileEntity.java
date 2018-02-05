@@ -141,7 +141,7 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
             return;
         }
 
-        setRedstoneState(checkOutput());
+        setRedstoneState(checkOutput() ? 15 : 0);
 
         handleCycle(powerLevel > 0);
     }
@@ -235,7 +235,7 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        powered = tagCompound.getBoolean("rs");
+        powerOutput = tagCompound.getBoolean("rs") ? 15 : 0;
         currentStep = tagCompound.getInteger("step");
         prevIn = tagCompound.getBoolean("prevIn");
         timer = tagCompound.getInteger("timer");
@@ -261,7 +261,7 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("rs", powered);
+        tagCompound.setBoolean("rs", powerOutput > 0);
         tagCompound.setInteger("step", currentStep);
         tagCompound.setBoolean("prevIn", prevIn);
         tagCompound.setInteger("timer", timer);

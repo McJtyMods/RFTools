@@ -33,13 +33,13 @@ public class ThreeLogicTileEntity extends LogicTileEntity implements ITickable {
         if (s == -1) {
             return; // Nothing happens (keep mode)
         }
-        setRedstoneState(s == 1);
+        setRedstoneState(s == 1 ? 15 : 0);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        powered = tagCompound.getBoolean("rs");
+        powerOutput = tagCompound.getBoolean("rs") ? 15 : 0;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class ThreeLogicTileEntity extends LogicTileEntity implements ITickable {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("rs", powered);
+        tagCompound.setBoolean("rs", powerOutput > 0);
         return tagCompound;
     }
 

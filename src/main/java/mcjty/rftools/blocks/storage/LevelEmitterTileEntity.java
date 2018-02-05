@@ -48,7 +48,7 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
         checkCounter = 10;
 
         int count = getCurrentCount();
-        setRedstoneState(count >= amount);
+        setRedstoneState(count >= amount ? 15 : 0);
     }
 
     public int getCurrentCount() {
@@ -105,7 +105,7 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        powered = tagCompound.getBoolean("rs");
+        powerOutput = tagCompound.getBoolean("rs") ? 15 : 0;
     }
 
     @Override
@@ -120,7 +120,7 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("rs", powered);
+        tagCompound.setBoolean("rs", powerOutput > 0);
         return tagCompound;
     }
 

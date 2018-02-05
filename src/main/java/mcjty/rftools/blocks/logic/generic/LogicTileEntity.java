@@ -10,7 +10,7 @@ public class LogicTileEntity extends GenericTileEntity {
 
     private LogicFacing facing;
 
-    protected boolean powered = false;
+    protected int powerOutput = 0;
 
     @Override
     public void onLoad() {
@@ -40,15 +40,15 @@ public class LogicTileEntity extends GenericTileEntity {
         }
     }
 
-    public boolean isPowered() {
-        return powered;
+    public int getPowerOutput() {
+        return powerOutput;
     }
 
-    protected void setRedstoneState(boolean newout) {
-        if (powered == newout) {
+    protected void setRedstoneState(int newout) {
+        if (powerOutput == newout) {
             return;
         }
-        powered = newout;
+        powerOutput = newout;
         markDirty();
         EnumFacing outputSide = getFacing(getWorld().getBlockState(this.pos)).getInputSide().getOpposite();
         getWorld().neighborChanged(this.pos.offset(outputSide), this.getBlockType(), this.pos);

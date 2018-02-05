@@ -28,7 +28,7 @@ public class RedstoneReceiverTileEntity extends LogicTileEntity implements ITick
     }
 
     protected void checkStateServer() {
-        setRedstoneState(checkOutput());
+        setRedstoneState(checkOutput() ? 15 : 0);
     }
 
     public boolean checkOutput() {
@@ -46,7 +46,7 @@ public class RedstoneReceiverTileEntity extends LogicTileEntity implements ITick
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        powered = tagCompound.getBoolean("rs");
+        powerOutput = tagCompound.getBoolean("rs") ? 15 : 0;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class RedstoneReceiverTileEntity extends LogicTileEntity implements ITick
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("rs", powered);
+        tagCompound.setBoolean("rs", powerOutput > 0);
         return tagCompound;
     }
 
