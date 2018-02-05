@@ -12,8 +12,11 @@ import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderContainer;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
 import mcjty.rftools.shapes.Shape;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -90,7 +93,14 @@ public enum ShapeCardType {
             "liquids from an tank on top/bottom into the world.");
 
     private static String getDirtOrCobbleName() {
-        return BuilderConfiguration.getQuarryReplace().getBlock().getLocalizedName();
+        IBlockState state = BuilderConfiguration.getQuarryReplace();
+        Block block = state.getBlock();
+        Item item = Item.getItemFromBlock(block);
+        if(item == Items.AIR || !item.getHasSubtypes()) {
+            return block.getLocalizedName();
+        } else {
+            return new ItemStack(item, 1, block.getMetaFromState(state)).getDisplayName(); // TODO see if this can be made less fragile
+        }
     }
 
     private final int damage, rfNeeded;

@@ -1,7 +1,11 @@
 package mcjty.rftools.blocks.builder;
 
+import mcjty.lib.varia.Logging;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.InvalidBlockStateException;
+import net.minecraft.command.NumberInvalidException;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
@@ -124,7 +128,16 @@ public class BuilderConfiguration {
 
     public static IBlockState getQuarryReplace() {
         if (quarryReplaceBlock == null) {
-            quarryReplaceBlock = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(quarryReplace)).getDefaultState();
+            int index = quarryReplace.indexOf(' ');
+            if(index == -1) {
+                quarryReplaceBlock = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(quarryReplace)).getDefaultState();
+            } else {
+                try {
+                    quarryReplaceBlock = CommandBase.convertArgToBlockState(ForgeRegistries.BLOCKS.getValue(new ResourceLocation(quarryReplace.substring(0, index))), quarryReplace.substring(index + 1));
+                } catch (NumberInvalidException | InvalidBlockStateException e) {
+                    Logging.logError("Invalid builder quarry replace block: " + quarryReplace, e);
+                }
+            }
             if (quarryReplaceBlock == null) {
                 quarryReplaceBlock = Blocks.DIRT.getDefaultState();
             }
