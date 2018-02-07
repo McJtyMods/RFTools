@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.logic.wireless;
 
 import java.util.List;
 
+import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
@@ -13,10 +14,14 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
@@ -59,5 +64,33 @@ public abstract class RedstoneChannelBlock<T extends RedstoneChannelTileEntity, 
             currenttip.add(TextFormatting.GREEN + "Channel: " + ((RedstoneChannelTileEntity)te).getChannel());
         }
         return currenttip;
+    }
+
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+        ItemStack stack = player.getHeldItem(hand);
+        Item item = stack.getItem();
+        if(item instanceof ItemBlock && ((ItemBlock)item).getBlock() instanceof RedstoneChannelBlock) {
+            TileEntity te = world.getTileEntity(pos);
+            if (te instanceof RedstoneChannelTileEntity) {
+                RedstoneChannelTileEntity redstoneChannelTileEntity = (RedstoneChannelTileEntity)te;
+                int channel = redstoneChannelTileEntity.getChannel();
+                if (channel == -1) {
+                    Logging.message(player, TextFormatting.YELLOW + "This block has no channel!");
+                } else {
+                    NBTTagCompound tagCompound = stack.getTagCompound();
+                    if (tagCompound == null) {
+                        tagCompound = new NBTTagCompound();
+                    }
+                    tagCompound.setInteger("channel", channel);
+                    stack.setTagCompound(tagCompound);
+                    if (world.isRemote) {
+                        Logging.message(player, TextFormatting.YELLOW + "Channel set to " + channel + "!");
+                    }
+                }
+                return true;
+            }
+        }
+        return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
     }
 }

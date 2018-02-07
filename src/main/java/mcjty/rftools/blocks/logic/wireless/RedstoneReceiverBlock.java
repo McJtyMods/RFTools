@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.logic.wireless;
 
 import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.GenericItemBlock;
 import mcjty.rftools.RFTools;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
@@ -25,7 +26,7 @@ import java.util.List;
 public class RedstoneReceiverBlock extends RedstoneChannelBlock<RedstoneReceiverTileEntity, EmptyContainer> {
 
     public RedstoneReceiverBlock() {
-        super(Material.IRON, "redstone_receiver_block", RedstoneReceiverTileEntity.class, EmptyContainer.class, RedstoneReceiverItemBlock.class);
+        super(Material.IRON, "redstone_receiver_block", RedstoneReceiverTileEntity.class, EmptyContainer.class, GenericItemBlock.class);
     }
 
     @Override

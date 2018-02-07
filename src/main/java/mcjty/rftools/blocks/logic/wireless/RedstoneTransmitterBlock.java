@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.logic.wireless;
 
 import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.GenericItemBlock;
 import mcjty.rftools.RFTools;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
@@ -15,8 +16,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -30,7 +29,7 @@ import java.util.List;
 public class RedstoneTransmitterBlock extends RedstoneChannelBlock<RedstoneTransmitterTileEntity, EmptyContainer> {
 
     public RedstoneTransmitterBlock() {
-        super(Material.IRON, "redstone_transmitter_block", RedstoneTransmitterTileEntity.class, EmptyContainer.class, RedstoneReceiverItemBlock.class);
+        super(Material.IRON, "redstone_transmitter_block", RedstoneTransmitterTileEntity.class, EmptyContainer.class, GenericItemBlock.class);
     }
 
     @SideOnly(Side.CLIENT)
@@ -101,15 +100,6 @@ public class RedstoneTransmitterBlock extends RedstoneChannelBlock<RedstoneTrans
             // @todo double check
             te.update();
         }
-    }
-
-    @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if(player.getHeldItem(hand).getItem() instanceof RedstoneReceiverItemBlock) {
-            // Let setting a channel override opening the GUI
-            return false;
-        }
-        return super.onBlockActivated(world, pos, state, player, hand, side, hitX, hitY, hitZ);
     }
 
     @Override
