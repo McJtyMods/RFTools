@@ -3,28 +3,17 @@ package mcjty.rftools.blocks.logic.wireless;
 import java.util.Map;
 
 import mcjty.lib.network.Argument;
-import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class RedstoneTransmitterTileEntity extends LogicTileEntity {
+public class RedstoneTransmitterTileEntity extends RedstoneChannelTileEntity {
 
     public static final String CMD_SETANALOG = "setAnalog";
 
-    private int channel = -1;
     private boolean analog = false;
     private int prevIn = 0;
 
     public RedstoneTransmitterTileEntity() {
-    }
-
-    public int getChannel() {
-        return channel;
-    }
-
-    public void setChannel(int channel) {
-        this.channel = channel;
-        markDirtyClient();
     }
 
     public boolean getAnalog() {
@@ -80,14 +69,12 @@ public class RedstoneTransmitterTileEntity extends LogicTileEntity {
     @Override
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
-        channel = tagCompound.getInteger("channel");
         analog = tagCompound.getBoolean("analog");
     }
 
     @Override
     public void writeRestorableToNBT(NBTTagCompound tagCompound) {
         super.writeRestorableToNBT(tagCompound);
-        tagCompound.setInteger("channel", channel);
         tagCompound.setBoolean("analog", analog);
     }
 
