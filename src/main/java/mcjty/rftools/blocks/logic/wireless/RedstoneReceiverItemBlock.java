@@ -23,11 +23,11 @@ public class RedstoneReceiverItemBlock extends GenericItemBlock {
     public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof RedstoneTransmitterTileEntity) {
-            RedstoneTransmitterTileEntity redstoneTransmitterTileEntity = (RedstoneTransmitterTileEntity) te;
-            int channel = redstoneTransmitterTileEntity.getChannel();
+        if (te instanceof RedstoneChannelTileEntity) {
+            RedstoneChannelTileEntity RedstoneChannelTileEntity = (RedstoneChannelTileEntity) te;
+            int channel = RedstoneChannelTileEntity.getChannel();
             if (channel == -1) {
-                Logging.message(player, TextFormatting.YELLOW + "This transmitter has no channel!");
+                Logging.message(player, TextFormatting.YELLOW + "This block has no channel!");
             } else {
                 NBTTagCompound tagCompound = stack.getTagCompound();
                 if (tagCompound == null) {
@@ -35,25 +35,6 @@ public class RedstoneReceiverItemBlock extends GenericItemBlock {
                 }
                 tagCompound.setInteger("channel", channel);
                 stack.setTagCompound(tagCompound);
-                if (world.isRemote) {
-                    Logging.message(player, TextFormatting.YELLOW + "Channel set to " + channel + "!");
-                }
-            }
-        } else if (te instanceof RedstoneReceiverTileEntity) {
-            RedstoneReceiverTileEntity redstoneReceiverTileEntity = (RedstoneReceiverTileEntity) te;
-            int channel = redstoneReceiverTileEntity.getChannel();
-            if (channel == -1) {
-                Logging.message(player, TextFormatting.YELLOW + "This receiver has no channel!");
-            } else {
-                NBTTagCompound tagCompound = stack.getTagCompound();
-                if (tagCompound == null) {
-                    tagCompound = new NBTTagCompound();
-                }
-                tagCompound.setInteger("channel", channel);
-                stack.setTagCompound(tagCompound);
-                if (world.isRemote) {
-                    Logging.message(player, TextFormatting.YELLOW + "Channel set to " + channel + "!");
-                }
                 if (world.isRemote) {
                     Logging.message(player, TextFormatting.YELLOW + "Channel set to " + channel + "!");
                 }
