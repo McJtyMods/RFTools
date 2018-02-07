@@ -73,20 +73,19 @@ public abstract class RedstoneChannelBlock<T extends RedstoneChannelTileEntity, 
         if(item instanceof ItemBlock && ((ItemBlock)item).getBlock() instanceof RedstoneChannelBlock) {
             TileEntity te = world.getTileEntity(pos);
             if (te instanceof RedstoneChannelTileEntity) {
-                RedstoneChannelTileEntity redstoneChannelTileEntity = (RedstoneChannelTileEntity)te;
-                int channel = redstoneChannelTileEntity.getChannel();
-                if (channel == -1) {
-                    Logging.message(player, TextFormatting.YELLOW + "This block has no channel!");
-                } else {
+                int channel = ((RedstoneChannelTileEntity)te).getChannel();
+                if (channel != -1) {
                     NBTTagCompound tagCompound = stack.getTagCompound();
                     if (tagCompound == null) {
                         tagCompound = new NBTTagCompound();
+                        stack.setTagCompound(tagCompound);
                     }
                     tagCompound.setInteger("channel", channel);
-                    stack.setTagCompound(tagCompound);
                     if (world.isRemote) {
                         Logging.message(player, TextFormatting.YELLOW + "Channel set to " + channel + "!");
                     }
+                } else if(world.isRemote) {
+                    Logging.message(player, TextFormatting.YELLOW + "This block has no channel!");
                 }
                 return true;
             }
