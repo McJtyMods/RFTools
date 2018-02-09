@@ -34,7 +34,9 @@ import net.minecraftforge.energy.CapabilityEnergy;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import java.util.*;
+import java.util.function.Predicate;
 
 public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implements ITickable, MachineInformation,
         IHudSupport, IMachineInformation {
@@ -174,12 +176,15 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
             return;
         }
 
-        // Find an endergenic with a pearl injector and start from there
-        EndergenicTileEntity endergenicWithInjector = findEndergenicWithInjector(new HashSet<>());
-        if (endergenicWithInjector != null) {
-            // We add all endergenics starting with the one with the injector.
+        // Find an endergenic with an injector.
+        EndergenicTileEntity withInjector = findEndergenicWithPredicate(new HashSet<>(), p -> p.hasInjector());
+        if (withInjector != null) {
+            // From this injector locate if possible an injector that has a pearl and use
+            // that one instead as the head of the endergenic list for post-tick processing.
+            EndergenicTileEntity withPearl = withInjector.findEndergenicWithPredicate(new HashSet<>(), p -> !p.pearls.isEmpty());
+            EndergenicTileEntity loop = (withPearl == null ? withInjector : withPearl);
             Set<BlockPos> done = new HashSet<>();
-            EndergenicTileEntity loop = endergenicWithInjector;
+
             while (loop != null) {
                 done.add(loop.getPos());
                 addToQueue(loop, new GlobalCoordinate(loop.getPos(), getWorld().provider.getDimension()));
@@ -201,8 +206,8 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         }
     }
 
-    private EndergenicTileEntity findEndergenicWithInjector(Set<BlockPos> done) {
-        if (hasInjector()) {
+    private EndergenicTileEntity findEndergenicWithPredicate(Set<BlockPos> done, Predicate<EndergenicTileEntity> pred) {
+        if (pred.test(this)) {
             return this;
         }
         if (destination == null) {
@@ -215,7 +220,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         }
         TileEntity te = getWorld().getTileEntity(destination);
         if (te instanceof EndergenicTileEntity) {
-            return ((EndergenicTileEntity) te).findEndergenicWithInjector(done);
+            return ((EndergenicTileEntity) te).findEndergenicWithPredicate(done, pred);
         }
         return null;
     }
