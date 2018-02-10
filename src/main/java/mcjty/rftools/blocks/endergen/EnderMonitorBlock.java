@@ -6,6 +6,8 @@ import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
@@ -66,5 +68,19 @@ public class EnderMonitorBlock extends LogicSlabBlock<EnderMonitorTileEntity, Em
             EnderMonitorMode m = tileEntity.getMode();
             probeInfo.text(TextFormatting.GREEN + "Mode: " + m.getDescription());
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    @Optional.Method(modid = "waila")
+    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.getWailaBody(itemStack, currenttip, accessor, config);
+        TileEntity te = accessor.getTileEntity();
+        if (te instanceof EnderMonitorTileEntity) {
+            EnderMonitorTileEntity tileEntity = (EnderMonitorTileEntity) te;
+            EnderMonitorMode m = tileEntity.getMode();
+            currenttip.add(TextFormatting.GREEN + "Mode: " + m.getDescription());
+        }
+        return currenttip;
     }
 }
