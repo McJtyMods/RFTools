@@ -55,14 +55,6 @@ public class BoosterBlock extends GenericRFToolsBlock<BoosterTileEntity, Booster
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    @Optional.Method(modid = "waila")
-    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        super.getWailaBody(itemStack, currenttip, accessor, config);
-        return currenttip;
-    }
-
     @Override
     protected IModuleSupport getModuleSupport() {
         return new ModuleSupport(BoosterContainer.SLOT_MODULE) {
