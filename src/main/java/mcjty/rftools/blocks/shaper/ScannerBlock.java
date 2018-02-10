@@ -6,6 +6,8 @@ import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
 import mcjty.theoneprobe.api.TextStyleClass;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.block.state.IBlockState;
@@ -66,6 +68,18 @@ public class ScannerBlock extends GenericRFToolsBlock<ScannerTileEntity, Scanner
         if (te instanceof ScannerTileEntity) {
             probeInfo.text(TextStyleClass.LABEL + "Scan id: " + TextStyleClass.INFO + ((ScannerTileEntity) te).getScanId());
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    @Optional.Method(modid = "waila")
+    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.getWailaBody(itemStack, currenttip, accessor, config);
+        TileEntity te = accessor.getTileEntity();
+        if (te instanceof ScannerTileEntity) {
+            currenttip.add("Scan id: " + TextFormatting.WHITE + ((ScannerTileEntity) te).getScanId());
+        }
+        return currenttip;
     }
 
     @SideOnly(Side.CLIENT)

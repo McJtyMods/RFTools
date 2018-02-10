@@ -8,6 +8,8 @@ import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
 import mcjty.theoneprobe.api.TextStyleClass;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
@@ -56,6 +58,19 @@ public class LocatorBlock extends GenericRFToolsBlock<LocatorTileEntity, EmptyCo
         } else {
             probeInfo.text(TextStyleClass.INFO + "Scanner detected");
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    @Optional.Method(modid = "waila")
+    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.getWailaBody(itemStack, currenttip, accessor, config);
+        if (accessor.getWorld().getBlockState(accessor.getPosition().down()).getBlock() != BuilderSetup.scannerBlock) {
+            currenttip.add(TextFormatting.RED.toString() + TextFormatting.BOLD + "Error! Needs a scanner below!");
+        } else {
+            currenttip.add(TextFormatting.WHITE + "Scanner detected");
+        }
+        return currenttip;
     }
 
     @SideOnly(Side.CLIENT)
