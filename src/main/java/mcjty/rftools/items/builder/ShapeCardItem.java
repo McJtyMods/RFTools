@@ -309,7 +309,8 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
      * @return
      */
     public static boolean isNormalShapeCard(ItemStack stack) {
-        return stack.getItemDamage() == ShapeCardType.CARD_SHAPE.getDamage();
+        int damage = stack.getItemDamage();
+        return damage == ShapeCardType.CARD_SHAPE.getDamage() || damage == ShapeCardType.CARD_PUMP_LIQUID.getDamage();
     }
 
     private static void addBlocks(Set<Block> blocks, Block block, boolean oredict) {
