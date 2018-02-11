@@ -1207,6 +1207,14 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         return false;
     }
 
+    @Override
+    public ItemStack removeStackFromSlot(int index) {
+        if (index == ShieldContainer.SLOT_SHAPE && !inventoryHelper.getStackInSlot(index).isEmpty()) {
+            // Restart if we go from having a stack to not having stack or the other way around.
+            decomposeShield();
+        }
+        return getInventoryHelper().removeStackFromSlot(index);
+    }
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
