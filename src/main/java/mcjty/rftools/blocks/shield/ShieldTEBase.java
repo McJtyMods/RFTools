@@ -22,6 +22,7 @@ import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.shapes.Shape;
 import mcjty.typed.Type;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -74,7 +75,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     // If true the shield is currently made.
     private boolean shieldComposed = false;
     // The state for the template blocks that were used.
-    private IBlockState templateState = null;
+    private IBlockState templateState = Blocks.AIR.getDefaultState();
     // If true the shield is currently active.
     private boolean shieldActive = false;
     // Timeout in case power is low. Here we wait a bit before trying again.
@@ -643,6 +644,8 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
 
         if (isShapedShield()) {
             // Special shaped mode.
+            templateState = Blocks.AIR.getDefaultState();
+
             ItemStack shapeItem = inventoryHelper.getStackInSlot(ShieldContainer.SLOT_SHAPE);
             Shape shape = ShapeCardItem.getShape(shapeItem);
             boolean solid = ShapeCardItem.isSolid(shapeItem);
@@ -745,11 +748,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         } else if (origBlock instanceof AbstractShieldBlock) {
             //@todo
             shieldBlocks.remove(new RelCoordinate(pos.getX() - xCoord, pos.getY() - yCoord, pos.getZ() - zCoord));
-            if (isShapedShield()) {
-                getWorld().setBlockToAir(pos);
-            } else {
-                getWorld().setBlockState(pos, templateState, 2);
-            }
+            getWorld().setBlockState(pos, templateState, 2);
         } else {
             Logging.message(player, TextFormatting.YELLOW + "The selected shield can't do anything with this block!");
             return;
@@ -824,12 +823,8 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             pp.setPos(cx, cy, cz);
             Block block = getWorld().getBlockState(pp).getBlock();
             if (getWorld().isAirBlock(pp) || block instanceof AbstractShieldBlock) {
-                if (isShapedShield()) {
-                    getWorld().setBlockToAir(pp);
-                } else {
-                    getWorld().setBlockState(new BlockPos(pp), templateState, 2);
-                }
-            } else {
+                getWorld().setBlockState(new BlockPos(pp), templateState, 2);
+            } else if (templateState.getMaterial() != Material.AIR){
                 if (!isShapedShield()) {
                     // No room, just spawn the block
                     BlockTools.spawnItemStack(getWorld(), cx, cy, cz, templateState.getBlock().getItem(getWorld(), new BlockPos(cx, cy, cz), templateState));
@@ -954,6 +949,8 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             // Deprecated @todo remove with 1.13
             int meta = tagCompound.getInteger("templateMeta");
             templateState = ShieldSetup.shieldTemplateBlock.getStateFromMeta(meta);
+        } else {
+            templateState = Blocks.AIR.getDefaultState();
         }
 
         shieldRenderingMode = ShieldRenderingMode.values()[tagCompound.getInteger("visMode")];
@@ -975,7 +972,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         tagCompound.setBoolean("composed", shieldComposed);
         tagCompound.setBoolean("active", shieldActive);
         tagCompound.setInteger("powerTimeout", powerTimeout);
-        if (templateState != null) {
+        if (templateState.getMaterial() != Material.AIR) {
             tagCompound.setInteger("templateColor", templateState.getValue(ShieldTemplateBlock.COLOR).ordinal());
         }
 
@@ -995,13 +992,19 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         shieldComposed = tagCompound.getBoolean("composed");
         shieldActive = tagCompound.getBoolean("active");
         powerTimeout = tagCompound.getInteger("powerTimeout");
-        if (tagCompound.hasKey("templateColor")) {
-            int templateColor = tagCompound.getInteger("templateColor");
-            templateState = ShieldSetup.shieldTemplateBlock.getDefaultState().withProperty(ShieldTemplateBlock.COLOR, ShieldTemplateBlock.TemplateColor.values()[templateColor]);
-        } else if (tagCompound.hasKey("templateMeta")) {
-            // Deprecated @todo remove with 1.13
-            int meta = tagCompound.getInteger("templateMeta");
-            templateState = ShieldSetup.shieldTemplateBlock.getStateFromMeta(meta);
+        if (!isShapedShield()) {
+            if (tagCompound.hasKey("templateColor")) {
+                int templateColor = tagCompound.getInteger("templateColor");
+                templateState = ShieldSetup.shieldTemplateBlock.getDefaultState().withProperty(ShieldTemplateBlock.COLOR, ShieldTemplateBlock.TemplateColor.values()[templateColor]);
+            } else if (tagCompound.hasKey("templateMeta")) {
+                // Deprecated @todo remove with 1.13
+                int meta = tagCompound.getInteger("templateMeta");
+                templateState = ShieldSetup.shieldTemplateBlock.getStateFromMeta(meta);
+            } else {
+                templateState = Blocks.AIR.getDefaultState();
+            }
+        } else {
+            templateState = Blocks.AIR.getDefaultState();
         }
 
         shieldBlocks.clear();
@@ -1078,7 +1081,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         tagCompound.setBoolean("composed", shieldComposed);
         tagCompound.setBoolean("active", shieldActive);
         tagCompound.setInteger("powerTimeout", powerTimeout);
-        if (templateState != null) {
+        if (templateState.getMaterial() != Material.AIR) {
             tagCompound.setInteger("templateColor", templateState.getValue(ShieldTemplateBlock.COLOR).ordinal());
         }
         byte[] blocks = new byte[shieldBlocks.size() * 8];
