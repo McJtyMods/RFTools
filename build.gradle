@@ -51,12 +51,12 @@ repositories {
     }
 }
 
-version = "1.12-7.28"
+version = "1.12-7.29"
 def ENV = System.getenv()
 if (ENV.DRONE_BUILD_NUMBER) {
     version += ".n" + ENV.DRONE_BUILD_NUMBER
 }
-group= "com.github.mcjty" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group= "com.github.mcjty" // http://maven.apache.org/guideRs/mini/guide-naming-conventions.html
 archivesBaseName = "rftools"
 
 sourceCompatibility = 1.8
