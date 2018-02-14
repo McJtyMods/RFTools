@@ -744,7 +744,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
             int bminZ = tagCompound.getInteger("bminZ");
             int bmaxX = tagCompound.getInteger("bmaxX");
             int bmaxZ = tagCompound.getInteger("bmaxZ");
-            if(bminX <= bminZ && bmaxX <= bmaxZ) { // Fix saves that were affected by issue #1601 by validating bounds here
+            if(bminX <= bmaxX && bminZ <= bmaxZ) { // Fix saves that were affected by issue #1601 by validating bounds here
                 bounds = new Bounds(bminX, bminZ, bmaxX, bmaxZ);
             }
         }
