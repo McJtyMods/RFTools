@@ -11,7 +11,7 @@ public class RedstoneTransmitterTileEntity extends RedstoneChannelTileEntity {
     public static final String CMD_SETANALOG = "setAnalog";
 
     private boolean analog = false;
-    private int prevIn = 0;
+    private int prevIn = -1;
 
     public RedstoneTransmitterTileEntity() {
     }
