@@ -177,12 +177,12 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         }
 
         // Find an endergenic with an injector.
-        EndergenicTileEntity withInjector = findEndergenicWithPredicate(new HashSet<>(), p -> p.hasInjector());
+        EndergenicTileEntity withInjector = findEndergenicWithPredicate(new HashSet<>(), EndergenicTileEntity::hasInjector);
         if (withInjector != null) {
             // From this injector locate if possible an injector that has a pearl and use
             // that one instead as the head of the endergenic list for post-tick processing.
-            EndergenicTileEntity withPearl = withInjector.findEndergenicWithPredicate(new HashSet<>(), p -> !p.pearls.isEmpty());
-            EndergenicTileEntity loop = (withPearl == null ? withInjector : withPearl);
+            EndergenicTileEntity loop = withInjector.findEndergenicWithPredicate(new HashSet<>(), p -> !p.pearls.isEmpty());
+            if(loop == null) loop = withInjector;
             Set<BlockPos> done = new HashSet<>();
 
             while (loop != null) {
