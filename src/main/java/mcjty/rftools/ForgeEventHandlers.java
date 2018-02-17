@@ -5,6 +5,7 @@ import mcjty.lib.api.smartwrench.SmartWrench;
 import mcjty.lib.api.smartwrench.SmartWrenchMode;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.WrenchChecker;
+import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorConfiguration;
 import mcjty.rftools.blocks.blockprotector.BlockProtectors;
 import mcjty.rftools.blocks.endergen.EndergenicTileEntity;
@@ -46,6 +47,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -80,6 +82,7 @@ public class ForgeEventHandlers {
     @SubscribeEvent
     public void registerItems(RegistryEvent.Register<Item> event) {
         McJtyRegister.registerItems(RFTools.instance, event.getRegistry());
+        OreDictionary.registerOre("oreDimensionalShard", new ItemStack(ModBlocks.dimensionalShardBlock, 1, OreDictionary.WILDCARD_VALUE));
     }
 
     @SubscribeEvent
