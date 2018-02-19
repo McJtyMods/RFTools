@@ -9,6 +9,7 @@ Steps to reproduce:
 Versions:
 * Minecraft: 
 * Forge: 
+* CompatLayer (only if on Minecraft 1.10 or 1.11):
 * McJtyLib:
 * RFTools:
 
