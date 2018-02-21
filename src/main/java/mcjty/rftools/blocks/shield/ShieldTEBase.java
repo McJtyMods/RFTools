@@ -655,7 +655,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             ShapeCardItem.composeFormula(shapeItem, shape.getFormulaFactory().createFormula(), getWorld(), getPos(), dimension, offset, col, supportedBlocks, solid, false, null);
             coordinates = col;
         } else {
-            templateState = findTemplateState();
+            if(!findTemplateState()) return;
 
             Map<BlockPos, IBlockState> col = new HashMap<>();
             findTemplateBlocks(col, templateState, ctrl, getPos());
@@ -693,17 +693,18 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         return !inventoryHelper.getStackInSlot(ShieldContainer.SLOT_SHAPE).isEmpty();
     }
 
-    private IBlockState findTemplateState() {
+    private boolean findTemplateState() {
         for (EnumFacing dir : EnumFacing.VALUES) {
             BlockPos p = getPos().offset(dir);
             if (p.getY() >= 0 && p.getY() < getWorld().getHeight()) {
                 IBlockState state = getWorld().getBlockState(p);
                 if (ShieldSetup.shieldTemplateBlock.equals(state.getBlock())) {
-                    return state;
+                    templateState = state;
+                    return true;
                 }
             }
         }
-        return null;
+        return false;
     }
 
     @Override
