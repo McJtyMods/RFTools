@@ -211,8 +211,7 @@ specific channel when it gets a redstone signal. Use this in
 combination with the redstone receiver block. If you place this
 block down it will create a channel. You can also link this
 transmitter to existing channels by right clicking on another
-transmitter or receiver. Enabling "analog mode" causes the power
-level of transmitted signals to be preserved at the receiving end.
+transmitter or receiver.
 {-------------------------------------------------------------}
 {b}Redstone Receiver
 {n:redrec}
@@ -220,7 +219,8 @@ level of transmitted signals to be preserved at the receiving end.
 This block will receive a redstone signal from a linked
 redstone transmitter. To link this receiver with a transmitter
 right-select the transmitter (or another linked receiver) with
-this block.
+this block. Enabling "analog mode" causes the power level of
+transmitted signals to be preserved at the receiving end.
 {-------------------------------------------------------------}
 {b}Logic Gate
 {n:threelogic}

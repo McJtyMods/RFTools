@@ -29,6 +29,12 @@ public class RedstoneReceiverBlock extends RedstoneChannelBlock<RedstoneReceiver
         super(Material.IRON, "redstone_receiver_block", RedstoneReceiverTileEntity.class, EmptyContainer.class, GenericItemBlock.class);
     }
 
+    @SideOnly(Side.CLIENT)
+    @Override
+    public Class<GuiRedstoneReceiver> getGuiClass() {
+        return GuiRedstoneReceiver.class;
+    }
+
     @Override
     public boolean needsRedstoneCheck() {
         return false;
@@ -53,7 +59,9 @@ public class RedstoneReceiverBlock extends RedstoneChannelBlock<RedstoneReceiver
         super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
         TileEntity te = world.getTileEntity(data.getPos());
         if (te instanceof RedstoneReceiverTileEntity) {
-            probeInfo.text(TextFormatting.GREEN + "Output: " + TextFormatting.WHITE + ((RedstoneReceiverTileEntity)te).checkOutput());
+            RedstoneReceiverTileEntity rrte = (RedstoneReceiverTileEntity)te;
+            probeInfo.text(TextFormatting.GREEN + "Analog mode: " + rrte.getAnalog());
+            probeInfo.text(TextFormatting.GREEN + "Output: " + TextFormatting.WHITE + rrte.checkOutput());
         }
     }
 
@@ -64,13 +72,15 @@ public class RedstoneReceiverBlock extends RedstoneChannelBlock<RedstoneReceiver
         super.getWailaBody(itemStack, currenttip, accessor, config);
         TileEntity te = accessor.getTileEntity();
         if (te instanceof RedstoneReceiverTileEntity) {
-            currenttip.add(TextFormatting.GREEN + "Output: " + TextFormatting.WHITE + ((RedstoneReceiverTileEntity)te).checkOutput());
+            RedstoneReceiverTileEntity rrte = (RedstoneReceiverTileEntity)te;
+            currenttip.add(TextFormatting.GREEN + "Analog mode: " + rrte.getAnalog());
+            currenttip.add(TextFormatting.GREEN + "Output: " + TextFormatting.WHITE + rrte.checkOutput());
         }
         return currenttip;
     }
 
     @Override
     public int getGuiID() {
-        return -1;
+        return RFTools.GUI_REDSTONE_RECEIVER;
     }
 }

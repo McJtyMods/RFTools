@@ -74,7 +74,7 @@ public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDa
                 .label("Label:").text("text", "Label text").color("color", "Color for the label").nl()
                 .label("Yes:").text("yestext", "Positive text").color("yescolor", "Color for the positive text").nl()
                 .label("No:").text("notext", "Negative text").color("nocolor", "Color for the negative text").nl()
-                .choices("align", "Label alignment", "Left", "Center", "Right").toggle("analog", "Analog mode", "Whether to show the exact level.", "If using a channel, requires analog mode to be", "enabled on the transmitter as well.").nl()
+                .choices("align", "Label alignment", "Left", "Center", "Right").toggle("analog", "Analog mode", "Whether to show the exact level").nl()
                 .label("Block:").block("monitor").nl();
     }
 
