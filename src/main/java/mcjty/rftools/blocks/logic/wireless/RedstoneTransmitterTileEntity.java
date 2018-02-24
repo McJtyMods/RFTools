@@ -26,6 +26,12 @@ public class RedstoneTransmitterTileEntity extends RedstoneChannelTileEntity {
         update();
     }
 
+    @Override
+    public void setChannel(int channel) {
+        super.setChannel(channel);
+        update();
+    }
+
     public void update() {
         if (getWorld().isRemote) {
             return;

@@ -4,6 +4,7 @@ import java.util.List;
 
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
+import mcjty.rftools.items.screenmodules.ButtonModuleItem;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
@@ -50,7 +51,7 @@ public abstract class RedstoneChannelBlock<T extends RedstoneChannelTileEntity, 
         super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
         TileEntity te = world.getTileEntity(data.getPos());
         if (te instanceof RedstoneChannelTileEntity) {
-            probeInfo.text(TextFormatting.GREEN + "Channel: " + ((RedstoneChannelTileEntity)te).getChannel());
+            probeInfo.text(TextFormatting.GREEN + "Channel: " + ((RedstoneChannelTileEntity)te).getChannel(false));
         }
     }
 
@@ -61,31 +62,47 @@ public abstract class RedstoneChannelBlock<T extends RedstoneChannelTileEntity, 
         super.getWailaBody(itemStack, currenttip, accessor, config);
         TileEntity te = accessor.getTileEntity();
         if (te instanceof RedstoneChannelTileEntity) {
-            currenttip.add(TextFormatting.GREEN + "Channel: " + ((RedstoneChannelTileEntity)te).getChannel());
+            currenttip.add(TextFormatting.GREEN + "Channel: " + ((RedstoneChannelTileEntity)te).getChannel(false));
         }
         return currenttip;
+    }
+
+    private boolean isRedstoneChannelItem(Item item) {
+        return (item instanceof ItemBlock && ((ItemBlock)item).getBlock() instanceof RedstoneChannelBlock) || item instanceof ButtonModuleItem;
     }
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
-        Item item = stack.getItem();
-        if(item instanceof ItemBlock && ((ItemBlock)item).getBlock() instanceof RedstoneChannelBlock) {
+        if(isRedstoneChannelItem(stack.getItem())) {
             TileEntity te = world.getTileEntity(pos);
             if (te instanceof RedstoneChannelTileEntity) {
-                int channel = ((RedstoneChannelTileEntity)te).getChannel();
-                if (channel != -1) {
+                if(!world.isRemote) {
+                    RedstoneChannelTileEntity rcte = (RedstoneChannelTileEntity)te;
                     NBTTagCompound tagCompound = stack.getTagCompound();
                     if (tagCompound == null) {
                         tagCompound = new NBTTagCompound();
                         stack.setTagCompound(tagCompound);
                     }
-                    tagCompound.setInteger("channel", channel);
-                    if (world.isRemote) {
-                        Logging.message(player, TextFormatting.YELLOW + "Channel set to " + channel + "!");
+                    int channel;
+                    if(!player.isSneaking()) {
+                        channel = rcte.getChannel(true);
+                        tagCompound.setInteger("channel", channel);
+                    } else {
+                        if (tagCompound.hasKey("channel")) {
+                            channel = tagCompound.getInteger("channel");
+                        } else {
+                            channel = -1;
+                        }
+                        if(channel == -1) {
+                            RedstoneChannels redstoneChannels = RedstoneChannels.getChannels(world);
+                            channel = redstoneChannels.newChannel();
+                            redstoneChannels.save(world);
+                            tagCompound.setInteger("channel", channel);
+                        }
+                        rcte.setChannel(channel);
                     }
-                } else if(world.isRemote) {
-                    Logging.message(player, TextFormatting.YELLOW + "This block has no channel!");
+                    Logging.message(player, TextFormatting.YELLOW + "Channel set to " + channel + "!");
                 }
                 return true;
             }

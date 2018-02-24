@@ -3,6 +3,7 @@ package mcjty.rftools.items.screenmodules;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IModuleProvider;
+import mcjty.rftools.blocks.logic.wireless.RedstoneChannelTileEntity;
 import mcjty.rftools.blocks.logic.wireless.RedstoneReceiverTileEntity;
 import mcjty.rftools.blocks.logic.wireless.RedstoneTransmitterTileEntity;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
@@ -87,6 +88,10 @@ public class RedstoneModuleItem extends GenericRFToolsItem implements IModulePro
 
     @Override
     public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        if(world.isRemote) {
+            return EnumActionResult.SUCCESS;
+        }
+
         ItemStack stack = player.getHeldItem(hand);
         TileEntity te = world.getTileEntity(pos);
         NBTTagCompound tagCompound = stack.getTagCompound();
@@ -95,10 +100,8 @@ public class RedstoneModuleItem extends GenericRFToolsItem implements IModulePro
             stack.setTagCompound(tagCompound);
         }
         int channel = -1;
-        if (te instanceof RedstoneReceiverTileEntity) {
-            channel = ((RedstoneReceiverTileEntity) te).getChannel();
-        } else if (te instanceof RedstoneTransmitterTileEntity) {
-            channel = ((RedstoneTransmitterTileEntity) te).getChannel();
+        if (te instanceof RedstoneChannelTileEntity) {
+            channel = ((RedstoneChannelTileEntity) te).getChannel(true);
         } else {
             // We selected a random block.
             tagCompound.setInteger("channel", -1);
@@ -107,9 +110,7 @@ public class RedstoneModuleItem extends GenericRFToolsItem implements IModulePro
             tagCompound.setInteger("monitory", pos.getY());
             tagCompound.setInteger("monitorz", pos.getZ());
             tagCompound.setInteger("monitorside", facing.ordinal());
-            if (world.isRemote) {
-                Logging.message(player, "Redstone module is set to " + pos);
-            }
+            Logging.message(player, "Redstone module is set to " + pos);
 
             return EnumActionResult.SUCCESS;
         }
@@ -122,14 +123,10 @@ public class RedstoneModuleItem extends GenericRFToolsItem implements IModulePro
 
         if (channel != -1) {
             tagCompound.setInteger("channel", channel);
-            if (world.isRemote) {
-                Logging.message(player, "Redstone module is set to channel '" + channel + "'");
-            }
+            Logging.message(player, "Redstone module is set to channel '" + channel + "'");
         } else {
             tagCompound.removeTag("channel");
-            if (world.isRemote) {
-                Logging.message(player, "Redstone module is cleared");
-            }
+            Logging.message(player, "Redstone module is cleared");
         }
         return EnumActionResult.SUCCESS;
     }

@@ -90,15 +90,8 @@ public class RedstoneTransmitterBlock extends RedstoneChannelBlock<RedstoneTrans
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         super.onBlockPlacedBy(world, pos, state, placer, stack);
         if (!world.isRemote) {
-            RedstoneTransmitterTileEntity te = (RedstoneTransmitterTileEntity) world.getTileEntity(pos);
-            if (te.getChannel() == -1) {
-                RedstoneChannels redstoneChannels = RedstoneChannels.getChannels(world);
-                int id = redstoneChannels.newChannel();
-                te.setChannel(id);
-                redstoneChannels.save(world);
-            }
             // @todo double check
-            te.update();
+            ((RedstoneTransmitterTileEntity)world.getTileEntity(pos)).update();
         }
     }
 
