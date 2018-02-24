@@ -4,8 +4,6 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.logic.wireless.RedstoneChannelTileEntity;
-import mcjty.rftools.blocks.logic.wireless.RedstoneReceiverTileEntity;
-import mcjty.rftools.blocks.logic.wireless.RedstoneTransmitterTileEntity;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.RedstoneScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.RedstoneClientScreenModule;

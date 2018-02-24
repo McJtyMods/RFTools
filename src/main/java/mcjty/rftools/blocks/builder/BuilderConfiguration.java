@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.builder;
 
 import mcjty.lib.varia.Logging;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.InvalidBlockStateException;
