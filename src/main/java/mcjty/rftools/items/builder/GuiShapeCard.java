@@ -70,6 +70,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
     private ToggleButton gravel;
     private ToggleButton sand;
     private ToggleButton netherrack;
+    private ToggleButton endstone;
     private ToggleButton oredict;
 
     private boolean fromshaper;
@@ -239,6 +240,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         gravel = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void gravel").addButtonEvent(widget -> updateVoidSettings());
         sand = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void sand").addButtonEvent(widget -> updateVoidSettings());
         netherrack = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void netherrack").addButtonEvent(widget -> updateVoidSettings());
+        endstone = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void end stone").addButtonEvent(widget -> updateVoidSettings());
         oredict = new ToggleButton(mc, this).setDesiredWidth(60).setDesiredHeight(15).setTooltips("Enable ore dictionary matching")
                 .setText("Oredict")
                 .setCheckMarker(true)
@@ -250,9 +252,10 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         gravel.setPressed(ShapeCardItem.isVoiding(heldItem, "gravel"));
         sand.setPressed(ShapeCardItem.isVoiding(heldItem, "sand"));
         netherrack.setPressed(ShapeCardItem.isVoiding(heldItem, "netherrack"));
+        endstone.setPressed(ShapeCardItem.isVoiding(heldItem, "endstone"));
         oredict.setPressed(ShapeCardItem.isOreDictionary(heldItem));
 
-        voidPanel.addChild(label).addChild(stone).addChild(cobble).addChild(dirt).addChild(gravel).addChild(sand).addChild(netherrack).addChild(oredict);
+        voidPanel.addChild(label).addChild(stone).addChild(cobble).addChild(dirt).addChild(gravel).addChild(sand).addChild(netherrack).addChild(endstone).addChild(oredict);
     }
 
     private boolean isTorus() {
@@ -344,6 +347,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
                 tag.setBoolean("voidgravel", gravel.isPressed());
                 tag.setBoolean("voidsand", sand.isPressed());
                 tag.setBoolean("voidnetherrack", netherrack.isPressed());
+                tag.setBoolean("voidendstone", endstone.isPressed());
                 tag.setBoolean("oredict", oredict.isPressed());
                 RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItemInventoryShape(
                         GuiComposer.shaperBlock, GuiComposer.shaperStackSlot, tag));
@@ -356,6 +360,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
                     new Argument("voidgravel", gravel.isPressed()),
                     new Argument("voidsand", sand.isPressed()),
                     new Argument("voidnetherrack", netherrack.isPressed()),
+                    new Argument("voidendstone", endstone.isPressed()),
                     new Argument("oredict", oredict.isPressed())
             ));
         }
@@ -427,6 +432,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
             renderVoidBlock(x, y, gravel, Blocks.GRAVEL);
             renderVoidBlock(x, y, sand, Blocks.SAND);
             renderVoidBlock(x, y, netherrack, Blocks.NETHERRACK);
+            renderVoidBlock(x, y, endstone, Blocks.END_STONE);
         }
 
         ItemStack stack = getStackToEdit();

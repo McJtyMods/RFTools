@@ -351,6 +351,9 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         if (isVoiding(stack, "netherrack")) {
             addBlocks(blocks, Blocks.NETHERRACK, oredict);
         }
+        if (isVoiding(stack, "endstone")) {
+            addBlocks(blocks, Blocks.END_STONE, oredict);
+        }
         return blocks;
     }
 
