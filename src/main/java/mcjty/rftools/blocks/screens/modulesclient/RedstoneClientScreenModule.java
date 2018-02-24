@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
 import mcjty.rftools.api.screens.*;
-import mcjty.rftools.api.screens.data.IModuleDataBoolean;
+import mcjty.rftools.api.screens.data.IModuleDataInteger;
 import mcjty.rftools.blocks.screens.modulesclient.helper.ScreenTextHelper;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -9,7 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDataBoolean> {
+public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDataInteger> {
 
     private String line = "";
     private String yestext = "on";
@@ -18,6 +18,7 @@ public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDa
     private int yescolor = 0xffffff;
     private int nocolor = 0xffffff;
     private int dim = 0;
+    private boolean analog = false;
 
     private ITextRenderHelper labelCache = new ScreenTextHelper();
 
@@ -32,7 +33,7 @@ public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDa
     }
 
     @Override
-    public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleDataBoolean screenData, ModuleRenderInfo renderInfo) {
+    public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleDataInteger screenData, ModuleRenderInfo renderInfo) {
         GlStateManager.disableLighting();
 
         int xoffset;
@@ -47,8 +48,13 @@ public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDa
         String text;
         int col;
         if (screenData != null) {
-            boolean rs = screenData.get();
-            text = rs ? yestext : notext;
+            int power = screenData.get();
+            boolean rs = power > 0;
+            if(analog) {
+                text = Integer.toString(power);
+            } else {
+                text = rs ? yestext : notext;
+            }
             col = rs ? yescolor : nocolor;
         } else {
             text = "<invalid>";
@@ -68,7 +74,7 @@ public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDa
                 .label("Label:").text("text", "Label text").color("color", "Color for the label").nl()
                 .label("Yes:").text("yestext", "Positive text").color("yescolor", "Color for the positive text").nl()
                 .label("No:").text("notext", "Negative text").color("nocolor", "Color for the negative text").nl()
-                .choices("align", "Label alignment", "Left", "Center", "Right").nl()
+                .choices("align", "Label alignment", "Left", "Center", "Right").toggle("analog", "Analog mode", "Whether to show the exact level.", "If using a channel, requires analog mode to be", "enabled on the transmitter as well.").nl()
                 .label("Block:").block("monitor").nl();
     }
 
@@ -103,6 +109,7 @@ public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDa
             } else {
                 labelCache.align(TextAlign.ALIGN_LEFT);
             }
+            analog = tagCompound.getBoolean("analog");
         }
     }
 

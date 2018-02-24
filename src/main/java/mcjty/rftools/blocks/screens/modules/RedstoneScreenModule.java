@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.screens.modules;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
-import mcjty.rftools.api.screens.data.IModuleDataBoolean;
+import mcjty.rftools.api.screens.data.IModuleDataInteger;
 import mcjty.rftools.blocks.logic.wireless.RedstoneChannels;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,14 +13,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
-public class RedstoneScreenModule implements IScreenModule<IModuleDataBoolean> {
+public class RedstoneScreenModule implements IScreenModule<IModuleDataInteger> {
     private int channel = -1;
     private BlockPos coordinate = BlockPosTools.INVALID;
     private int dim = 0;
     private EnumFacing side = null;
 
     @Override
-    public IModuleDataBoolean getData(IScreenDataHelper helper, World worldObj, long millis) {
+    public IModuleDataInteger getData(IScreenDataHelper helper, World worldObj, long millis) {
         if (channel == -1) {
             // If we are monitoring some block then we can use that.
             if (!BlockPosTools.INVALID.equals(coordinate)) {
@@ -30,7 +30,7 @@ public class RedstoneScreenModule implements IScreenModule<IModuleDataBoolean> {
                     int powerTo = world.getRedstonePower(coordinate.offset(side), side.getOpposite());
 //                    int powerTo = world.getIndirectPowerLevelTo(coordinate.getX(), coordinate.getY(), coordinate.getZ(), side);
 
-                    return helper.createBoolean(powerTo > 0);
+                    return helper.createInteger(powerTo);
                 }
             }
             return null;
@@ -43,7 +43,7 @@ public class RedstoneScreenModule implements IScreenModule<IModuleDataBoolean> {
         if (ch == null) {
             return null;
         }
-        return helper.createBoolean(ch.getValue() != 0);
+        return helper.createInteger(ch.getValue());
     }
 
     @Override
