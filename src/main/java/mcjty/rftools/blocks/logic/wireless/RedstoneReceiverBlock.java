@@ -74,7 +74,9 @@ public class RedstoneReceiverBlock extends RedstoneChannelBlock<RedstoneReceiver
         if (te instanceof RedstoneReceiverTileEntity) {
             RedstoneReceiverTileEntity rrte = (RedstoneReceiverTileEntity)te;
             currenttip.add(TextFormatting.GREEN + "Analog mode: " + rrte.getAnalog());
-            currenttip.add(TextFormatting.GREEN + "Output: " + TextFormatting.WHITE + rrte.checkOutput());
+
+            // Redstone channels aren't currently available on the client. @todo issue #1616
+            //currenttip.add(TextFormatting.GREEN + "Output: " + TextFormatting.WHITE + rrte.checkOutput());
         }
         return currenttip;
     }
