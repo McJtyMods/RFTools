@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "rftools:digit_block"
+  },
+  "pattern": [
+    "ppp",
+    "rMr",
+    "ppp"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "p": {
+      "item": "minecraft:glass_pane"
+    },
+    "M": {
+      "item": "rftools:machine_base"
+    }
+  }
+}

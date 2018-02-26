@@ -1,0 +1,9 @@
+{
+  "parent": "rftools:block/util_slab_glow_2",
+  "textures": {
+    "up": "#up",
+    "glow_up":  "rftools:blocks/machineoutput_glow",
+    "side": "rftools:blocks/machineside",
+    "bottom": "rftools:blocks/machinebottom"
+  }
+}
