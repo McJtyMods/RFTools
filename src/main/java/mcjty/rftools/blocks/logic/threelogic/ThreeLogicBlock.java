@@ -51,14 +51,9 @@ public class ThreeLogicBlock extends LogicSlabBlock<ThreeLogicTileEntity, EmptyC
 
     @Override
     protected void checkRedstone(World world, BlockPos pos) {
-        if (loopDetector.contains(pos)) {
-            // We are in a loop. Do nothing
-            return;
-        }
         IBlockState state = world.getBlockState(pos);
         TileEntity te = world.getTileEntity(pos);
-        if (state.getBlock() instanceof LogicSlabBlock && te instanceof ThreeLogicTileEntity) {
-            loopDetector.add(pos);
+        if (state.getBlock() instanceof LogicSlabBlock && te instanceof ThreeLogicTileEntity && loopDetector.add(pos)) {
             ThreeLogicTileEntity tileEntity = (ThreeLogicTileEntity)te;
             LogicFacing facing = tileEntity.getFacing(state);
             EnumFacing downSide = facing.getSide();

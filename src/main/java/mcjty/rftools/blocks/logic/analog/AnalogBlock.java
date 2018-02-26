@@ -56,15 +56,9 @@ public class AnalogBlock extends LogicSlabBlock<AnalogTileEntity, EmptyContainer
 
     @Override
     protected void checkRedstone(World world, BlockPos pos) {
-        if (loopDetector.contains(pos)) {
-            // We are in a loop. Do nothing
-            return;
-        }
-
         IBlockState state = world.getBlockState(pos);
         TileEntity te = world.getTileEntity(pos);
-        if (state.getBlock() instanceof LogicSlabBlock && te instanceof AnalogTileEntity) {
-            loopDetector.add(pos);
+        if (state.getBlock() instanceof LogicSlabBlock && te instanceof AnalogTileEntity && loopDetector.add(pos)) {
             AnalogTileEntity tileEntity = (AnalogTileEntity)te;
             LogicFacing facing = tileEntity.getFacing(state);
             EnumFacing downSide = facing.getSide();
