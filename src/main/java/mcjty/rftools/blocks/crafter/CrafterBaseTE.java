@@ -345,9 +345,9 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         ItemStack result = ItemStack.EMPTY;
         try {
             result = recipe.getCraftingResult(workInventory);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // Ignore this error for now to make sure we don't crash on bad recipes.
-            Logging.log("Problem with recipe!");
+            Logging.logError("Problem with recipe!", e);
         }
 
         // Try to merge the output. If there is something that doesn't fit we undo everything.
