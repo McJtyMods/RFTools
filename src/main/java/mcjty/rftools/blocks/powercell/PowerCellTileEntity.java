@@ -298,12 +298,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
                         int rfPerTick = getRfPerTickPerSide();
                         int received;
 
-                        int rfToGive;
-                        if (rfPerTick <= ((int) (energyStored / factor))) {
-                            rfToGive = rfPerTick;
-                        } else {
-                            rfToGive = (int) (energyStored / factor);
-                        }
+                        int rfToGive = Math.min(rfPerTick, (int) (energyStored / factor));
 
                         if (RFTools.redstoneflux && RedstoneFluxCompatibility.isEnergyConnection(te)) {
                             if (RedstoneFluxCompatibility.canConnectEnergy(te, opposite)) {
