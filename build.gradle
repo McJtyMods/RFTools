@@ -38,9 +38,6 @@ repositories {
     maven { // McJtyLib
         url "http://maven.k-4u.nl"
     }
-    maven { // OC Repo
-        url "http://maven.cil.li/"
-    }
     maven {
         name = "sonatype"
         url = "https://oss.sonatype.org/content/repositories/snapshots/"
