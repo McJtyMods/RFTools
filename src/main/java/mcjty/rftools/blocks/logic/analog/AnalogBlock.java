@@ -19,7 +19,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class AnalogBlock extends LogicSlabBlock<AnalogTileEntity, EmptyContainer> {
 
@@ -50,12 +52,19 @@ public class AnalogBlock extends LogicSlabBlock<AnalogTileEntity, EmptyContainer
         return GuiAnalog.class;
     }
 
+    private Set<BlockPos> loopDetector = new HashSet<>();
 
     @Override
     protected void checkRedstone(World world, BlockPos pos) {
+        if (loopDetector.contains(pos)) {
+            // We are in a loop. Do nothing
+            return;
+        }
+
         IBlockState state = world.getBlockState(pos);
         TileEntity te = world.getTileEntity(pos);
         if (state.getBlock() instanceof LogicSlabBlock && te instanceof AnalogTileEntity) {
+            loopDetector.add(pos);
             AnalogTileEntity tileEntity = (AnalogTileEntity)te;
             LogicFacing facing = tileEntity.getFacing(state);
             EnumFacing downSide = facing.getSide();
@@ -80,6 +89,7 @@ public class AnalogBlock extends LogicSlabBlock<AnalogTileEntity, EmptyContainer
             if (oldPower != outputStrength) {
                 world.notifyNeighborsOfStateChange(pos, this, false);
             }
+            loopDetector.remove(pos);
         }
     }
 

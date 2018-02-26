@@ -17,7 +17,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ThreeLogicBlock extends LogicSlabBlock<ThreeLogicTileEntity, EmptyContainer> {
 
@@ -43,14 +45,20 @@ public class ThreeLogicBlock extends LogicSlabBlock<ThreeLogicTileEntity, EmptyC
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
-
     }
+
+    private Set<BlockPos> loopDetector = new HashSet<>();
 
     @Override
     protected void checkRedstone(World world, BlockPos pos) {
+        if (loopDetector.contains(pos)) {
+            // We are in a loop. Do nothing
+            return;
+        }
         IBlockState state = world.getBlockState(pos);
         TileEntity te = world.getTileEntity(pos);
         if (state.getBlock() instanceof LogicSlabBlock && te instanceof ThreeLogicTileEntity) {
+            loopDetector.add(pos);
             ThreeLogicTileEntity tileEntity = (ThreeLogicTileEntity)te;
             LogicFacing facing = tileEntity.getFacing(state);
             EnumFacing downSide = facing.getSide();
@@ -63,6 +71,7 @@ public class ThreeLogicBlock extends LogicSlabBlock<ThreeLogicTileEntity, EmptyC
             int powered3 = getInputStrength(world, pos, rightSide) > 0 ? 4 : 0;
             tileEntity.setPowerInput(powered1 + powered2 + powered3);
             tileEntity.checkRedstone();
+            loopDetector.remove(pos);
         }
     }
 
