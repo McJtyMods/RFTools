@@ -6,6 +6,7 @@ import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
+import mcjty.lib.gui.widgets.Widget;
 import mcjty.lib.network.Argument;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
@@ -33,7 +34,7 @@ public class GuiAnalog extends GenericGuiContainer<AnalogTileEntity> {
         ySize = ANALOG_HEIGHT;
     }
 
-    private static DecimalFormat fmt = new DecimalFormat("#.#");
+    private static final DecimalFormat fmt = new DecimalFormat("#.#");
 
 
     @Override
@@ -61,18 +62,18 @@ public class GuiAnalog extends GenericGuiContainer<AnalogTileEntity> {
         addLess.setText(String.valueOf(tileEntity.getAddLess()));
         addGreater.setText(String.valueOf(tileEntity.getAddGreater()));
 
-        mulEqual.addTextEnterEvent((parent, newText) -> update());
-        mulEqual.addTextEvent((parent, newText) -> update());
-        mulLess.addTextEnterEvent((parent, newText) -> update());
-        mulLess.addTextEvent((parent, newText) -> update());
-        mulGreater.addTextEnterEvent((parent, newText) -> update());
-        mulGreater.addTextEvent((parent, newText) -> update());
-        addEqual.addTextEnterEvent((parent, newText) -> update());
-        addEqual.addTextEvent((parent, newText) -> update());
-        addLess.addTextEnterEvent((parent, newText) -> update());
-        addLess.addTextEvent((parent, newText) -> update());
-        addGreater.addTextEnterEvent((parent, newText) -> update());
-        addGreater.addTextEvent((parent, newText) -> update());
+        mulEqual.addTextEnterEvent(this::update);
+        mulEqual.addTextEvent(this::update);
+        mulLess.addTextEnterEvent(this::update);
+        mulLess.addTextEvent(this::update);
+        mulGreater.addTextEnterEvent(this::update);
+        mulGreater.addTextEvent(this::update);
+        addEqual.addTextEnterEvent(this::update);
+        addEqual.addTextEvent(this::update);
+        addLess.addTextEnterEvent(this::update);
+        addLess.addTextEvent(this::update);
+        addGreater.addTextEnterEvent(this::update);
+        addGreater.addTextEvent(this::update);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, ANALOG_WIDTH, ANALOG_HEIGHT));
         window = new Window(this, toplevel);
@@ -94,7 +95,7 @@ public class GuiAnalog extends GenericGuiContainer<AnalogTileEntity> {
         }
     }
 
-    private void update() {
+    private void update(Widget<?> parent, String newText) {
         sendServerCommand(RFToolsMessages.INSTANCE, AnalogTileEntity.CMD_UPDATE,
                 new Argument("mulE", safeDouble(mulEqual.getText())),
                 new Argument("mulL", safeDouble(mulLess.getText())),
