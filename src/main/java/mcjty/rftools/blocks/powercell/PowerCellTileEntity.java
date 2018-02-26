@@ -476,10 +476,8 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         if (getWorld().isRemote) {
             throw new RuntimeException("Some mod is trying to receive energy from an RFTools powercell at the client side. That is illegal!");
         }
-        long totEnergyL = (long)PowerCellConfiguration.rfPerNormalCell * (network.getBlockCount() - network.getAdvancedBlockCount() - network.getSimpleBlockCount())
-                + (long)PowerCellConfiguration.rfPerNormalCell * advancedFactor * network.getAdvancedBlockCount() +
-                + (long)PowerCellConfiguration.rfPerNormalCell * network.getSimpleBlockCount() / simpleFactor;
-        int totEnergy = totEnergyL > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int)totEnergyL;
+        int totEnergy = network.calculateMaximumEnergy();
+
         int maxInsert = Math.min(totEnergy - network.getEnergy(), maxReceive);
         if (maxInsert > 0) {
             if (!simulate) {
@@ -583,10 +581,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
             return PowerCellConfiguration.rfPerNormalCell * getPowerFactor() / simpleFactor;
         }
         PowerCellNetwork.Network network = getNetwork();
-        long maxEnergyStoredL = ((long)network.getBlockCount() - network.getAdvancedBlockCount() - network.getSimpleBlockCount()) * PowerCellConfiguration.rfPerNormalCell +
-                (long)network.getAdvancedBlockCount() * PowerCellConfiguration.rfPerNormalCell * advancedFactor +
-                (long)network.getSimpleBlockCount() * PowerCellConfiguration.rfPerNormalCell / simpleFactor;
-        return maxEnergyStoredL > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int)maxEnergyStoredL;
+        return network.calculateMaximumEnergy();
     }
 
 

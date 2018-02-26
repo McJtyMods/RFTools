@@ -138,6 +138,16 @@ public class PowerCellNetwork extends WorldSavedData {
             return simpleBlocks;
         }
 
+        public int calculateMaximumEnergy() {
+            long totEnergyLong = (long) PowerCellConfiguration.rfPerNormalCell * (getBlockCount() - getAdvancedBlockCount() - getSimpleBlockCount())
+                    + (long) PowerCellConfiguration.rfPerNormalCell * advancedFactor * getAdvancedBlockCount()
+                    + ((long) PowerCellConfiguration.rfPerNormalCell * getSimpleBlockCount() / simpleFactor);
+            if (totEnergyLong > Integer.MAX_VALUE) {
+                return Integer.MAX_VALUE;
+            }
+            return (int) totEnergyLong;
+        }
+
         public void updateNetwork(World w) {
             advancedBlocks = 0;
             simpleBlocks = 0;
