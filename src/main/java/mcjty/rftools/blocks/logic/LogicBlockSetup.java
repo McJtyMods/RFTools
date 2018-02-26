@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.logic;
 
+import mcjty.rftools.blocks.logic.analog.AnalogBlock;
 import mcjty.rftools.blocks.logic.counter.CounterBlock;
 import mcjty.rftools.blocks.logic.invchecker.InvCheckerBlock;
 import mcjty.rftools.blocks.logic.sensor.SensorBlock;
@@ -22,6 +23,7 @@ public class LogicBlockSetup {
     public static InvCheckerBlock invCheckerBlock;
     public static SensorBlock sensorBlock;
     public static WireBlock wireBlock;
+    public static AnalogBlock analogBlock;
 
     public static void init() {
         sequencerBlock = new SequencerBlock();
@@ -33,6 +35,7 @@ public class LogicBlockSetup {
         invCheckerBlock = new InvCheckerBlock();
         sensorBlock = new SensorBlock();
         wireBlock = new WireBlock();
+        analogBlock = new AnalogBlock();
     }
 
     @SideOnly(Side.CLIENT)
@@ -46,5 +49,6 @@ public class LogicBlockSetup {
         invCheckerBlock.initModel();
         sensorBlock.initModel();
         wireBlock.initModel();
+        analogBlock.initModel();
     }
 }
