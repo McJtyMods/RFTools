@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.logic.analog;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
+import mcjty.lib.gui.events.TextEvent;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
@@ -15,7 +16,7 @@ import net.minecraft.util.ResourceLocation;
 import java.awt.Rectangle;
 import java.text.DecimalFormat;
 
-public class GuiAnalog extends GenericGuiContainer<AnalogTileEntity> {
+public class GuiAnalog extends GenericGuiContainer<AnalogTileEntity> implements TextEvent {
     public static final int ANALOG_WIDTH = 194;
     public static final int ANALOG_HEIGHT = 154;
 
@@ -62,12 +63,12 @@ public class GuiAnalog extends GenericGuiContainer<AnalogTileEntity> {
         addLess.setText(String.valueOf(tileEntity.getAddLess()));
         addGreater.setText(String.valueOf(tileEntity.getAddGreater()));
 
-        mulEqual.addTextEvent(this::update);
-        mulLess.addTextEvent(this::update);
-        mulGreater.addTextEvent(this::update);
-        addEqual.addTextEvent(this::update);
-        addLess.addTextEvent(this::update);
-        addGreater.addTextEvent(this::update);
+        mulEqual.addTextEvent(this);
+        mulLess.addTextEvent(this);
+        mulGreater.addTextEvent(this);
+        addEqual.addTextEvent(this);
+        addLess.addTextEvent(this);
+        addGreater.addTextEvent(this);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, ANALOG_WIDTH, ANALOG_HEIGHT));
         window = new Window(this, toplevel);
@@ -89,7 +90,8 @@ public class GuiAnalog extends GenericGuiContainer<AnalogTileEntity> {
         }
     }
 
-    private void update(Widget<?> parent, String newText) {
+    @Override
+    public void textChanged(Widget parent, String newText) {
         sendServerCommand(RFToolsMessages.INSTANCE, AnalogTileEntity.CMD_UPDATE,
                 new Argument("mulE", safeDouble(mulEqual.getText())),
                 new Argument("mulL", safeDouble(mulLess.getText())),
