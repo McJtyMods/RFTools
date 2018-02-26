@@ -4,7 +4,6 @@ import mcjty.lib.container.EmptyContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.logic.generic.LogicFacing;
 import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
-import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
@@ -51,9 +50,9 @@ public class ThreeLogicBlock extends LogicSlabBlock<ThreeLogicTileEntity, EmptyC
     protected void checkRedstone(World world, BlockPos pos) {
         IBlockState state = world.getBlockState(pos);
         TileEntity te = world.getTileEntity(pos);
-        if (state.getBlock() instanceof LogicSlabBlock && te instanceof LogicTileEntity) {
-            LogicTileEntity logicTileEntity = (LogicTileEntity)te;
-            LogicFacing facing = logicTileEntity.getFacing(state);
+        if (state.getBlock() instanceof LogicSlabBlock && te instanceof ThreeLogicTileEntity) {
+            ThreeLogicTileEntity tileEntity = (ThreeLogicTileEntity)te;
+            LogicFacing facing = tileEntity.getFacing(state);
             EnumFacing downSide = facing.getSide();
             EnumFacing inputSide = facing.getInputSide();
             EnumFacing leftSide = rotateLeft(downSide, inputSide);
@@ -62,7 +61,8 @@ public class ThreeLogicBlock extends LogicSlabBlock<ThreeLogicTileEntity, EmptyC
             int powered1 = getInputStrength(world, pos, leftSide) > 0 ? 1 : 0;
             int powered2 = getInputStrength(world, pos, inputSide) > 0 ? 2 : 0;
             int powered3 = getInputStrength(world, pos, rightSide) > 0 ? 4 : 0;
-            logicTileEntity.setPowerInput(powered1 + powered2 + powered3);
+            tileEntity.setPowerInput(powered1 + powered2 + powered3);
+            tileEntity.checkRedstone();
         }
     }
 

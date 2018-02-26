@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.logic.threelogic;
 
 import mcjty.lib.network.Argument;
+import mcjty.rftools.blocks.logic.LogicBlockSetup;
 import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -8,7 +9,7 @@ import net.minecraft.util.ITickable;
 
 import java.util.Map;
 
-public class ThreeLogicTileEntity extends LogicTileEntity implements ITickable {
+public class ThreeLogicTileEntity extends LogicTileEntity {
 
     public static final String CMD_SETSTATE = "setState";
 
@@ -17,18 +18,18 @@ public class ThreeLogicTileEntity extends LogicTileEntity implements ITickable {
     public ThreeLogicTileEntity() {
     }
 
-    @Override
-    public void update() {
-        if (!getWorld().isRemote) {
-            checkStateServer();
-        }
-    }
-
+//    @Override
+//    public void update() {
+//        if (!getWorld().isRemote) {
+//            checkStateServer();
+//        }
+//    }
+//
     public int getState(int index) {
         return logicTable[index];
     }
 
-    private void checkStateServer() {
+    public void checkRedstone() {
         int s = logicTable[powerLevel];
         if (s == -1) {
             return; // Nothing happens (keep mode)
@@ -73,8 +74,8 @@ public class ThreeLogicTileEntity extends LogicTileEntity implements ITickable {
         }
         if (CMD_SETSTATE.equals(command)) {
             logicTable[args.get("index").getInteger()] = args.get("state").getInteger();
-            markDirty();
             markDirtyClient();
+            LogicBlockSetup.threeLogicBlock.checkRedstone(world, pos);
             return true;
         }
         return false;
