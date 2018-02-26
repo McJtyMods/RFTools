@@ -138,17 +138,6 @@ public class PowerCellNetwork extends WorldSavedData {
             return simpleBlocks;
         }
 
-
-        public int calculateMaximumEnergy() {
-            long totEnergyLong = (long) PowerCellConfiguration.rfPerNormalCell * (getBlockCount() - getAdvancedBlockCount() - getSimpleBlockCount())
-                    + (long) PowerCellConfiguration.rfPerNormalCell * advancedFactor * getAdvancedBlockCount()
-                    + ((long) PowerCellConfiguration.rfPerNormalCell * getSimpleBlockCount() / simpleFactor);
-            if (totEnergyLong > 2000000000) {
-                totEnergyLong = 2000000000;
-            }
-            return (int) totEnergyLong;
-        }
-
         public void updateNetwork(World w) {
             advancedBlocks = 0;
             simpleBlocks = 0;
@@ -369,10 +358,6 @@ public class PowerCellNetwork extends WorldSavedData {
             for (int i = 0 ; i < list.tagCount() ; i++) {
                 NBTTagCompound tag = list.getCompoundTagAt(i);
                 blocks.add(new GlobalCoordinate(new BlockPos(tag.getInteger("x"), tag.getInteger("y"), tag.getInteger("z")), tag.getInteger("dim")));
-            }
-            // Correct the energy if it is negative for some reason
-            if (energy < 0) {
-                energy = calculateMaximumEnergy();
             }
         }
     }

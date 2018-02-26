@@ -195,13 +195,9 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
                 lastTime = System.currentTimeMillis();
                 RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new PowerCellInfoPacketServer(powerCellTileEntity)));
             }
-            long total = (PowerCellInfoPacketClient.tooltipBlocks - PowerCellInfoPacketClient.tooltipAdvancedBlocks - (long) PowerCellInfoPacketClient.tooltipSimpleBlocks) * PowerCellConfiguration.rfPerNormalCell;
-            total += (long) PowerCellInfoPacketClient.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerNormalCell * advancedFactor;
-            total += (long) PowerCellInfoPacketClient.tooltipSimpleBlocks * PowerCellConfiguration.rfPerNormalCell / PowerCellConfiguration.simpleFactor;
-            if (total > 2000000000) {
-                total = 2000000000;
-            }
-
+            int total = (PowerCellInfoPacketClient.tooltipBlocks - PowerCellInfoPacketClient.tooltipAdvancedBlocks - PowerCellInfoPacketClient.tooltipSimpleBlocks) * PowerCellConfiguration.rfPerNormalCell;
+            total += PowerCellInfoPacketClient.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerNormalCell * advancedFactor;
+            total += PowerCellInfoPacketClient.tooltipSimpleBlocks * PowerCellConfiguration.rfPerNormalCell / PowerCellConfiguration.simpleFactor;
             currenttip.add(TextFormatting.GREEN + "Energy: " + PowerCellInfoPacketClient.tooltipEnergy + "/" + total + " RF (" +
                 PowerCellInfoPacketClient.tooltipRfPerTick + " RF/t)");
             PowerCellTileEntity.Mode mode = powerCellTileEntity.getMode(accessor.getSide());
