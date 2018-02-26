@@ -317,7 +317,7 @@ public class Formulas {
                     }
 
                     if (modifier.isFlipY()) {
-                        ty = o.getY() - (ty-o.getY());
+                        ty = bounds.getP1().getY() + bounds.getP2().getY() - 1 - ty;
                     }
 
                     inside = formula.isInside(tx+thisCoord.getX(), ty+thisCoord.getY(), tz+thisCoord.getZ());

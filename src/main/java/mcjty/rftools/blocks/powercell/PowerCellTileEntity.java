@@ -270,18 +270,17 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
             return;
         }
 
+        int rfToGive = Math.min(PowerCellConfiguration.CHARGEITEMPERTICK, getEnergyStored());
+        int received;
         if (stack.hasCapability(CapabilityEnergy.ENERGY, null)) {
             IEnergyStorage capability = stack.getCapability(CapabilityEnergy.ENERGY, null);
-            int energyStored = getEnergyStored();
-            int rfToGive = PowerCellConfiguration.CHARGEITEMPERTICK <= energyStored ? PowerCellConfiguration.CHARGEITEMPERTICK : energyStored;
-            int received = capability.receiveEnergy(rfToGive, false);
-            extractEnergyInternal(received, false, PowerCellConfiguration.CHARGEITEMPERTICK);
+            received = capability.receiveEnergy(rfToGive, false);
         } else if (RFTools.redstoneflux && RedstoneFluxCompatibility.isEnergyItem(stack.getItem())) {
-            int energyStored = getEnergyStored();
-            int rfToGive = PowerCellConfiguration.CHARGEITEMPERTICK <= energyStored ? PowerCellConfiguration.CHARGEITEMPERTICK : energyStored;
-            int received = RedstoneFluxCompatibility.receiveEnergy(stack.getItem(), stack, rfToGive, false);
-            extractEnergyInternal(received, false, PowerCellConfiguration.CHARGEITEMPERTICK);
+            received = RedstoneFluxCompatibility.receiveEnergy(stack.getItem(), stack, rfToGive, false);
+        } else {
+            return;
         }
+        extractEnergyInternal(received, false, PowerCellConfiguration.CHARGEITEMPERTICK);
     }
 
     private void sendOutEnergy() {
@@ -299,12 +298,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
                         int rfPerTick = getRfPerTickPerSide();
                         int received;
 
-                        int rfToGive;
-                        if (rfPerTick <= ((int) (energyStored / factor))) {
-                            rfToGive = rfPerTick;
-                        } else {
-                            rfToGive = (int) (energyStored / factor);
-                        }
+                        int rfToGive = Math.min(rfPerTick, (int) (energyStored / factor));
 
                         if (RFTools.redstoneflux && RedstoneFluxCompatibility.isEnergyConnection(te)) {
                             if (RedstoneFluxCompatibility.canConnectEnergy(te, opposite)) {
