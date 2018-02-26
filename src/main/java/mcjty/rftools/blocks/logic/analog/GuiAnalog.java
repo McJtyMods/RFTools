@@ -15,7 +15,7 @@ import java.awt.Rectangle;
 import java.text.DecimalFormat;
 
 public class GuiAnalog extends GenericGuiContainer<AnalogTileEntity> {
-    public static final int ANALOG_WIDTH = 188;
+    public static final int ANALOG_WIDTH = 194;
     public static final int ANALOG_HEIGHT = 154;
 
     private TextField mulEqual;
@@ -41,17 +41,17 @@ public class GuiAnalog extends GenericGuiContainer<AnalogTileEntity> {
         super.initGui();
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
-        mulEqual = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(106, 78, 27, 16));
+        mulEqual = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(106, 78, 30, 16));
         toplevel.addChild(mulEqual);
-        mulLess = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(106, 104, 27, 16));
+        mulLess = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(106, 104, 30, 16));
         toplevel.addChild(mulLess);
-        mulGreater = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(106, 130, 27, 16));
+        mulGreater = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(106, 130, 30, 16));
         toplevel.addChild(mulGreater);
-        addEqual = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(150, 78, 27, 16));
+        addEqual = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(153, 78, 30, 16));
         toplevel.addChild(addEqual);
-        addLess = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(150, 104, 27, 16));
+        addLess = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(153, 104, 30, 16));
         toplevel.addChild(addLess);
-        addGreater = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(150, 130, 27, 16));
+        addGreater = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(153, 130, 30, 16));
         toplevel.addChild(addGreater);
 
         mulEqual.setText(fmt.format(tileEntity.getMulEqual()));
