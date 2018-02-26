@@ -49,7 +49,7 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
 
 
     public GuiComposer(ComposerTileEntity composerTileEntity, ComposerContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, composerTileEntity, container, RFTools.GUI_MANUAL_SHAPE, "shaper");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, composerTileEntity, container, RFTools.GUI_MANUAL_SHAPE, "composer");
 
         xSize = SHAPER_WIDTH;
         ySize = SHAPER_HEIGHT;
