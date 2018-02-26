@@ -21,7 +21,7 @@ apply plugin: 'maven'
 repositories {
     maven { // The repo from which to get waila
         name "Mobius Repo"
-        url "http://tehnut.info/maven"
+        url "https://tehnut.info/maven"
         //url "http://mobiusstrip.eu/maven"
     }
     maven { // JEI
@@ -33,7 +33,7 @@ repositories {
     }
     maven { // TOP
         name 'tterrag maven'
-        url "http://maven.tterrag.com/"
+        url "https://maven.tterrag.com/"
     }
     maven { // McJtyLib
         url "http://maven.k-4u.nl"
