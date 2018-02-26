@@ -291,41 +291,38 @@ public class PowerCellNetwork extends WorldSavedData {
                     (blocks.size() - advancedBlocks - simpleBlocks) * simpleFactor
                     + advancedBlocks * advancedFactor * simpleFactor
                     + simpleBlocks);
-            int rc = energy / simpleBlockCount;
+            long rc = energy / simpleBlockCount;
             if (advanced) {
                 rc *= advancedFactor * simpleFactor;
             } else if (!simple) {
                 rc *= simpleFactor;
             }
-            return rc;
+            return rc > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int)rc;
         }
 
         public int extractEnergySingleBlock(boolean advanced, boolean simple) {
             // Calculate the average energy with advanced, normal, and simple blocks seen as the equivalent number of simple blocks
-            int simpleBlockCount = Math.max(1,
-                    (blocks.size() - advancedBlocks - simpleBlocks) * simpleFactor
-                            + advancedBlocks * advancedFactor * simpleFactor
-                            + simpleBlocks);
-            int rc = energy / simpleBlockCount;
-            if (advanced) {
-                rc *= advancedFactor * simpleFactor;
-            } else if (!simple) {
-                rc *= simpleFactor;
-            }
-            energy -= rc;
-            return rc;
+            return extractEnergy(getEnergySingleBlock(advanced, simple));
         }
 
         public int getEnergy() {
             return energy;
         }
 
-        public void extractEnergy(int amount) {
+        public int extractEnergy(int amount) {
+            if(amount > energy) {
+                amount = energy;
+            }
             energy -= amount;
+            return amount;
         }
 
-        public void receiveEnergy(int amount) {
+        public int receiveEnergy(int amount) {
+            if(amount > Integer.MAX_VALUE - energy) {
+                amount = Integer.MAX_VALUE - energy;
+            }
             energy += amount;
+            return amount;
         }
 
         public void setEnergy(int energy) {

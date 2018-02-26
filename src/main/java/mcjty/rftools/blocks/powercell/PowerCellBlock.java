@@ -251,7 +251,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
                     int energy = stack.getTagCompound().getInteger("energy");
                     PowerCellNetwork powerCellNetwork = PowerCellNetwork.getChannels(world);
                     PowerCellNetwork.Network network = powerCellNetwork.getChannel(networkId);
-                    network.setEnergy(energy + network.getEnergy());
+                    network.receiveEnergy(energy);
                     Block block = world.getBlockState(pos).getBlock();
                     network.add(world, powerCellTileEntity.getGlobalPos(), isAdvanced(block), isSimple(block));
                     powerCellNetwork.save(world);
