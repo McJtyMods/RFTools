@@ -428,7 +428,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
     public static IFormula createCorrectFormula(NBTTagCompound tagCompound) {
         Shape shape = getShape(tagCompound);
         boolean solid = isSolid(tagCompound);
-        IFormula formula = shape.getFormulaFactory().createFormula();
+        IFormula formula = shape.getFormulaFactory().get();
         return formula.correctFormula(solid);
     }
 
@@ -479,7 +479,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
 
     public static void getFormulaCheckClient(ItemStack stack, Check32 crc) {
         Shape shape = getShape(stack);
-        IFormula formula = shape.getFormulaFactory().createFormula();
+        IFormula formula = shape.getFormulaFactory().get();
         formula.getCheckSumClient(stack.getTagCompound(), crc);
     }
 
@@ -686,7 +686,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         BlockPos dimension = ShapeCardItem.getDimension(stack);
         BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
 
-        IFormula formula = shape.getFormulaFactory().createFormula();
+        IFormula formula = shape.getFormulaFactory().get();
         int dx = clamped.getX();
         int dy = clamped.getY();
         int dz = clamped.getZ();

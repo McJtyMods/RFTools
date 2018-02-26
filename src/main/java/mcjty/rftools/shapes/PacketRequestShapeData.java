@@ -56,7 +56,7 @@ public class PacketRequestShapeData implements IMessage {
             int dy = clamped.getY();
             ItemStack card = message.card.copy();
 
-            IFormula formula = shape.getFormulaFactory().createFormula();
+            IFormula formula = shape.getFormulaFactory().get();
             formula = formula.correctFormula(solid);
             formula.setup(new BlockPos(0, 0, 0), clamped, new BlockPos(0, 0, 0), message.card.getTagCompound());
 

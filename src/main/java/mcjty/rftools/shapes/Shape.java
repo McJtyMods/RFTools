@@ -3,23 +3,24 @@ package mcjty.rftools.shapes;
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public enum Shape {
-    SHAPE_BOX("Box", Formulas.FORMULA_BOX),
-    SHAPE_TOPDOME("Top Dome", Formulas.FORMULA_TOPDOME),
-    SHAPE_BOTTOMDOME("Bottom Dome", Formulas.FORMULA_BOTTOMDOME),
-    SHAPE_SPHERE("Sphere", Formulas.FORMULA_SPHERE),
-    SHAPE_CYLINDER("Cylinder", Formulas.FORMULA_CYLINDER),
-    SHAPE_CAPPEDCYLINDER("Capped Cylinder", Formulas.FORMULA_CAPPED_CYLINDER),
-    SHAPE_PRISM("Prism", Formulas.FORMULA_PRISM),
-    SHAPE_TORUS("Torus", Formulas.FORMULA_TORUS),
-    SHAPE_HEART("Heart", Formulas.FORMULA_HEART),
-    SHAPE_CONE("Cone", Formulas.FORMULA_CONE),
-    SHAPE_COMPOSITION("Composition", Formulas.FORMULA_COMPOSITION),
-    SHAPE_SCAN("Scan", Formulas.FORMULA_SCAN);
+    SHAPE_BOX("Box", Formulas.FormulaBox::new),
+    SHAPE_TOPDOME("Top Dome", Formulas.FormulaTopDome::new),
+    SHAPE_BOTTOMDOME("Bottom Dome", Formulas.FormulaBottomDome::new),
+    SHAPE_SPHERE("Sphere", Formulas.FormulaSphere::new),
+    SHAPE_CYLINDER("Cylinder", Formulas.FormulaCylinder::new),
+    SHAPE_CAPPEDCYLINDER("Capped Cylinder", Formulas.FormulaCappedCylinder::new),
+    SHAPE_PRISM("Prism", Formulas.FormulaPrism::new),
+    SHAPE_TORUS("Torus", Formulas.FormulaTorus::new),
+    SHAPE_HEART("Heart", Formulas.FormulaHeart::new),
+    SHAPE_CONE("Cone", Formulas.FormulaCone::new),
+    SHAPE_COMPOSITION("Composition", Formulas.FormulaComposition::new),
+    SHAPE_SCAN("Scan", Formulas.FormulaScan::new);
 
     private final String description;
-    private final IFormulaFactory formulaFactory;
+    private final Supplier<IFormula> formulaFactory;
 
     private static final Map<String, Shape> SHAPES_BY_DESCRIPTION;
 
@@ -30,7 +31,7 @@ public enum Shape {
         }
     }
 
-    Shape(String description, @Nonnull IFormulaFactory formulaFactory) {
+    Shape(String description, @Nonnull Supplier<IFormula> formulaFactory) {
         this.description = description;
         this.formulaFactory = formulaFactory;
     }
@@ -48,7 +49,7 @@ public enum Shape {
     }
 
     @Nonnull
-    public IFormulaFactory getFormulaFactory() {
+    public Supplier<IFormula> getFormulaFactory() {
         return formulaFactory;
     }
 

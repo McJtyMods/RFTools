@@ -652,7 +652,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             BlockPos dimension = ShapeCardItem.getClampedDimension(shapeItem, ShieldConfiguration.maxShieldDimension);
             BlockPos offset = ShapeCardItem.getClampedOffset(shapeItem, ShieldConfiguration.maxShieldOffset);
             Map<BlockPos, IBlockState> col = new HashMap<>();
-            ShapeCardItem.composeFormula(shapeItem, shape.getFormulaFactory().createFormula(), getWorld(), getPos(), dimension, offset, col, supportedBlocks, solid, false, null);
+            ShapeCardItem.composeFormula(shapeItem, shape.getFormulaFactory().get(), getWorld(), getPos(), dimension, offset, col, supportedBlocks, solid, false, null);
             coordinates = col;
         } else {
             if(!findTemplateState()) return;
