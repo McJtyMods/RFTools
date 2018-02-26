@@ -62,17 +62,11 @@ public class GuiAnalog extends GenericGuiContainer<AnalogTileEntity> {
         addLess.setText(String.valueOf(tileEntity.getAddLess()));
         addGreater.setText(String.valueOf(tileEntity.getAddGreater()));
 
-        mulEqual.addTextEnterEvent(this::update);
         mulEqual.addTextEvent(this::update);
-        mulLess.addTextEnterEvent(this::update);
         mulLess.addTextEvent(this::update);
-        mulGreater.addTextEnterEvent(this::update);
         mulGreater.addTextEvent(this::update);
-        addEqual.addTextEnterEvent(this::update);
         addEqual.addTextEvent(this::update);
-        addLess.addTextEnterEvent(this::update);
         addLess.addTextEvent(this::update);
-        addGreater.addTextEnterEvent(this::update);
         addGreater.addTextEvent(this::update);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, ANALOG_WIDTH, ANALOG_HEIGHT));
