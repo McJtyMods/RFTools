@@ -59,31 +59,34 @@ public class AnalogBlock extends LogicSlabBlock<AnalogTileEntity, EmptyContainer
         IBlockState state = world.getBlockState(pos);
         TileEntity te = world.getTileEntity(pos);
         if (state.getBlock() instanceof LogicSlabBlock && te instanceof AnalogTileEntity && loopDetector.add(pos)) {
-            AnalogTileEntity tileEntity = (AnalogTileEntity)te;
-            LogicFacing facing = tileEntity.getFacing(state);
-            EnumFacing downSide = facing.getSide();
-            EnumFacing inputSide = facing.getInputSide();
-            EnumFacing rightSide = ThreeLogicBlock.rotateLeft(downSide, inputSide);
-            EnumFacing leftSide = ThreeLogicBlock.rotateRight(downSide, inputSide);
-
-            int outputStrength;
-            int inputStrength = getInputStrength(world, pos, inputSide);
-            int inputLeft = getInputStrength(world, pos, leftSide);
-            int inputRight = getInputStrength(world, pos, rightSide);
-            if (inputLeft == inputRight) {
-                outputStrength = (int) (inputStrength * tileEntity.getMulEqual() + tileEntity.getAddEqual());
-            } else if (inputLeft < inputRight) {
-                outputStrength = (int) (inputStrength * tileEntity.getMulLess() + tileEntity.getAddLess());
-            } else {
-                outputStrength = (int) (inputStrength * tileEntity.getMulGreater() + tileEntity.getAddGreater());
+            try {
+                AnalogTileEntity tileEntity = (AnalogTileEntity)te;
+                LogicFacing facing = tileEntity.getFacing(state);
+                EnumFacing downSide = facing.getSide();
+                EnumFacing inputSide = facing.getInputSide();
+                EnumFacing rightSide = ThreeLogicBlock.rotateLeft(downSide, inputSide);
+                EnumFacing leftSide = ThreeLogicBlock.rotateRight(downSide, inputSide);
+    
+                int outputStrength;
+                int inputStrength = getInputStrength(world, pos, inputSide);
+                int inputLeft = getInputStrength(world, pos, leftSide);
+                int inputRight = getInputStrength(world, pos, rightSide);
+                if (inputLeft == inputRight) {
+                    outputStrength = (int) (inputStrength * tileEntity.getMulEqual() + tileEntity.getAddEqual());
+                } else if (inputLeft < inputRight) {
+                    outputStrength = (int) (inputStrength * tileEntity.getMulLess() + tileEntity.getAddLess());
+                } else {
+                    outputStrength = (int) (inputStrength * tileEntity.getMulGreater() + tileEntity.getAddGreater());
+                }
+    
+                int oldPower = tileEntity.getPowerLevel();
+                tileEntity.setPowerInput(outputStrength);
+                if (oldPower != outputStrength) {
+                    world.notifyNeighborsOfStateChange(pos, this, false);
+                }
+            } finally {
+                loopDetector.remove(pos);
             }
-
-            int oldPower = tileEntity.getPowerLevel();
-            tileEntity.setPowerInput(outputStrength);
-            if (oldPower != outputStrength) {
-                world.notifyNeighborsOfStateChange(pos, this, false);
-            }
-            loopDetector.remove(pos);
         }
     }
 
