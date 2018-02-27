@@ -3,29 +3,29 @@
   "defaults": {
     "model": "rftools:digit_block",
     "textures": {
-      "up": "rftools:blocks/machineoutput_3"
+      "glow_up": "rftools:blocks/machineoutput_3"
     }
   },
   "variants": {
     "normal": [{}],
     "inventory": [{}],
     "value": {
-      "0": { "model": "rftools:digit_block", "textures": { "up": "rftools:blocks/machineoutput_0" } },
-      "1": { "model": "rftools:digit_block", "textures": { "up": "rftools:blocks/machineoutput_1" } },
-      "2": { "model": "rftools:digit_block", "textures": { "up": "rftools:blocks/machineoutput_2" } },
-      "3": { "model": "rftools:digit_block", "textures": { "up": "rftools:blocks/machineoutput_3" } },
-      "4": { "model": "rftools:digit_block", "textures": { "up": "rftools:blocks/machineoutput_4" } },
-      "5": { "model": "rftools:digit_block", "textures": { "up": "rftools:blocks/machineoutput_5" } },
-      "6": { "model": "rftools:digit_block", "textures": { "up": "rftools:blocks/machineoutput_6" } },
-      "7": { "model": "rftools:digit_block", "textures": { "up": "rftools:blocks/machineoutput_7" } },
-      "8": { "model": "rftools:digit_block", "textures": { "up": "rftools:blocks/machineoutput_8" } },
-      "9": { "model": "rftools:digit_block", "textures": { "up": "rftools:blocks/machineoutput_9" } },
-      "10": { "model": "rftools:digit_block", "textures": { "up": "rftools:blocks/machineoutput_a" } },
-      "11": { "model": "rftools:digit_block", "textures": { "up": "rftools:blocks/machineoutput_b" } },
-      "12": { "model": "rftools:digit_block", "textures": { "up": "rftools:blocks/machineoutput_c" } },
-      "13": { "model": "rftools:digit_block", "textures": { "up": "rftools:blocks/machineoutput_d" } },
-      "14": { "model": "rftools:digit_block", "textures": { "up": "rftools:blocks/machineoutput_e" } },
-      "15": { "model": "rftools:digit_block", "textures": { "up": "rftools:blocks/machineoutput_f" } }
+      "0": { "model": "rftools:digit_block", "textures": { "glow_up": "rftools:blocks/machineoutput_0" } },
+      "1": { "model": "rftools:digit_block", "textures": { "glow_up": "rftools:blocks/machineoutput_1" } },
+      "2": { "model": "rftools:digit_block", "textures": { "glow_up": "rftools:blocks/machineoutput_2" } },
+      "3": { "model": "rftools:digit_block", "textures": { "glow_up": "rftools:blocks/machineoutput_3" } },
+      "4": { "model": "rftools:digit_block", "textures": { "glow_up": "rftools:blocks/machineoutput_4" } },
+      "5": { "model": "rftools:digit_block", "textures": { "glow_up": "rftools:blocks/machineoutput_5" } },
+      "6": { "model": "rftools:digit_block", "textures": { "glow_up": "rftools:blocks/machineoutput_6" } },
+      "7": { "model": "rftools:digit_block", "textures": { "glow_up": "rftools:blocks/machineoutput_7" } },
+      "8": { "model": "rftools:digit_block", "textures": { "glow_up": "rftools:blocks/machineoutput_8" } },
+      "9": { "model": "rftools:digit_block", "textures": { "glow_up": "rftools:blocks/machineoutput_9" } },
+      "10": { "model": "rftools:digit_block", "textures": { "glow_up": "rftools:blocks/machineoutput_a" } },
+      "11": { "model": "rftools:digit_block", "textures": { "glow_up": "rftools:blocks/machineoutput_b" } },
+      "12": { "model": "rftools:digit_block", "textures": { "glow_up": "rftools:blocks/machineoutput_c" } },
+      "13": { "model": "rftools:digit_block", "textures": { "glow_up": "rftools:blocks/machineoutput_d" } },
+      "14": { "model": "rftools:digit_block", "textures": { "glow_up": "rftools:blocks/machineoutput_e" } },
+      "15": { "model": "rftools:digit_block", "textures": { "glow_up": "rftools:blocks/machineoutput_f" } }
     },
     "logic_facing": {
       "down_tonorth": {},
