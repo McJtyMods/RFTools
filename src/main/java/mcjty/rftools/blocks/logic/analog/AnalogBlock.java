@@ -78,6 +78,11 @@ public class AnalogBlock extends LogicSlabBlock<AnalogTileEntity, EmptyContainer
                 } else {
                     outputStrength = (int) (inputStrength * tileEntity.getMulGreater() + tileEntity.getAddGreater());
                 }
+                if (outputStrength > 15) {
+                    outputStrength = 15;
+                } else if (outputStrength < 0) {
+                    outputStrength = 0;
+                }
     
                 int oldPower = tileEntity.getPowerLevel();
                 tileEntity.setPowerInput(outputStrength);
