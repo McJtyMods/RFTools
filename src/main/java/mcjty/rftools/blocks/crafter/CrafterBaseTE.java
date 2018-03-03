@@ -289,44 +289,35 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
             return;
         }
 
-        int steps = 1;
-        if (speedMode == SPEED_FAST) {
-            steps = CrafterConfiguration.speedOperations;
-        }
-
-        boolean someRecipesMayWork = false;
-        for (int i = 0 ; i < steps ; i++) {
-            someRecipesMayWork |= craftOneCycle();
-        }
-
-        if(!someRecipesMayWork) {
-            noRecipesWork = true;
-        }
-    }
-
-    private boolean craftOneCycle() {
         // 0%: rf -> rf
         // 100%: rf -> rf / 2
         int rf = (int) (CrafterConfiguration.rfPerOperation * (2.0f - getInfusedFactor()) / 2.0f);
 
-        if (getEnergyStored() < rf) {
-            return true; // A recipe may have worked if we had the RF to try, so don't shut down
-        }
+        int steps = Math.min(rf == 0 ? Integer.MAX_VALUE : getEnergyStored() / rf, speedMode == SPEED_FAST ? CrafterConfiguration.speedOperations : 1);
 
-        boolean energyConsumed = false;
+        int i;
+        for (i = 0; i < steps; ++i) {
+            if(!craftOneCycle()) {
+                noRecipesWork = true;
+                break;
+            }
+        }
+        rf *= i;
+        if(rf > 0) {
+            consumeEnergy(rf);
+        }
+    }
+
+    private boolean craftOneCycle() {
+        boolean craftedAtLeastOneThing = false;
 
         for (CraftingRecipe craftingRecipe : recipes) {
             if (craftOneItemNew(craftingRecipe)) {
-                energyConsumed = true;
+                craftedAtLeastOneThing = true;
             }
         }
 
-        if (energyConsumed) {
-            consumeEnergy(rf);
-            return true;
-        } else {
-            return false;
-        }
+        return craftedAtLeastOneThing;
     }
 
     private boolean craftOneItemNew(CraftingRecipe craftingRecipe) {
