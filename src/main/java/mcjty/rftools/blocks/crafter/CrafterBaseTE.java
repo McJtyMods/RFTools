@@ -48,8 +48,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
     private ItemStackList ghostSlots = ItemStackList.create(CrafterContainer.BUFFER_SIZE + CrafterContainer.BUFFEROUT_SIZE);
 
-    private CraftingRecipe recipes[];
-    private int supportedRecipes;
+    private final CraftingRecipe[] recipes;
 
     private StorageFilterCache filterCache = null;
 
@@ -63,10 +62,12 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         }
     }, 3, 3);
 
-
-    public CrafterBaseTE() {
+    public CrafterBaseTE(int supportedRecipes) {
         super(CrafterConfiguration.MAXENERGY, CrafterConfiguration.RECEIVEPERTICK);
-        setSupportedRecipes(8);
+        recipes = new CraftingRecipe[supportedRecipes];
+        for (int i = 0; i < recipes.length; ++i) {
+            recipes[i] = new CraftingRecipe();
+        }
     }
 
     @Override
@@ -92,22 +93,17 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     }
 
     public void selectRecipe(int index) {
-        setInventorySlotContents(CrafterContainer.SLOT_CRAFTOUTPUT, recipes[index].getResult());
-        for (int i = 0 ; i < recipes[index].getInventory().getSizeInventory() ; i++) {
-            setInventorySlotContents(CrafterContainer.SLOT_CRAFTINPUT + i, recipes[index].getInventory().getStackInSlot(i));
-        }
-    }
-
-    public void setSupportedRecipes(int supportedRecipes) {
-        this.supportedRecipes = supportedRecipes;
-        recipes =  new CraftingRecipe[supportedRecipes];
-        for (int i = 0 ; i < recipes.length ; i++) {
-            recipes[i] = new CraftingRecipe();
+        CraftingRecipe recipe = recipes[index];
+        setInventorySlotContents(CrafterContainer.SLOT_CRAFTOUTPUT, recipe.getResult());
+        InventoryCrafting inv = recipe.getInventory();
+        int size = inv.getSizeInventory();
+        for (int i = 0 ; i < size ; ++i) {
+            setInventorySlotContents(CrafterContainer.SLOT_CRAFTINPUT + i, inv.getStackInSlot(i));
         }
     }
 
     public int getSupportedRecipes() {
-        return supportedRecipes;
+        return recipes.length;
     }
 
     public int getSpeedMode() {
@@ -208,12 +204,6 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         return CrafterContainer.factory.isOutputSlot(index);
     }
 
-
-    @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
-        super.readFromNBT(tagCompound);
-    }
-
     @Override
     public void readRestorableFromNBT(NBTTagCompound tagCompound) {
         super.readRestorableFromNBT(tagCompound);
@@ -238,12 +228,6 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
             NBTTagCompound nbtTagCompound = recipeTagList.getCompoundTagAt(i);
             recipes[i].readFromNBT(nbtTagCompound);
         }
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
-        super.writeToNBT(tagCompound);
-        return tagCompound;
     }
 
     @Override
@@ -310,13 +294,9 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
         boolean energyConsumed = false;
 
-        for (int index = 0 ; index < supportedRecipes ; index++) {
-            CraftingRecipe craftingRecipe = recipes[index];
-
-            if (craftingRecipe != null) {
-                if (craftOneItemNew(craftingRecipe)) {
-                    energyConsumed = true;
-                }
+        for (CraftingRecipe craftingRecipe : recipes) {
+            if (craftOneItemNew(craftingRecipe)) {
+                energyConsumed = true;
             }
         }
 
