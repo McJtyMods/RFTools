@@ -150,6 +150,9 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     @Override
     public ItemStack removeStackFromSlot(int index) {
         noRecipesWork = false;
+        if (index == CrafterContainer.SLOT_FILTER_MODULE) {
+            filterCache = null;
+        }
         return inventoryHelper.removeStackFromSlot(index);
     }
 
