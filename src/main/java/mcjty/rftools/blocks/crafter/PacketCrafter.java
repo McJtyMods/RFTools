@@ -106,6 +106,7 @@ public class PacketCrafter implements IMessage {
                 return;
             }
             CrafterBaseTE crafterBlockTileEntity = (CrafterBaseTE) te;
+            crafterBlockTileEntity.noRecipesWork = false;
             if (message.recipeIndex != -1) {
                 CraftingRecipe recipe = crafterBlockTileEntity.getRecipe(message.recipeIndex);
                 recipe.setRecipe(message.items, message.items[9]);

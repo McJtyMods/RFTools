@@ -54,6 +54,11 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
     private int speedMode = SPEED_SLOW;
 
+    // If the crafter tries to craft something, but there's nothing it can make,
+    // this gets set to true, preventing further ticking. It gets cleared whenever
+    // any of its inventories or recipes change.
+    /*package*/ boolean noRecipesWork = false;
+
     private InventoryCrafting workInventory = new InventoryCrafting(new Container() {
         @SuppressWarnings("NullableProblems")
         @Override
@@ -126,6 +131,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
+        noRecipesWork = false;
         if (index == CrafterContainer.SLOT_FILTER_MODULE) {
             filterCache = null;
         }
@@ -134,10 +140,17 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
     @Override
     public ItemStack decrStackSize(int index, int count) {
+        noRecipesWork = false;
         if (index == CrafterContainer.SLOT_FILTER_MODULE) {
             filterCache = null;
         }
         return getInventoryHelper().decrStackSize(index, count);
+    }
+
+    @Override
+    public ItemStack removeStackFromSlot(int index) {
+        noRecipesWork = false;
+        return inventoryHelper.removeStackFromSlot(index);
     }
 
     @Override
@@ -269,7 +282,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     }
 
     protected void checkStateServer() {
-        if (!isMachineEnabled()) {
+        if (!isMachineEnabled() || noRecipesWork) {
             return;
         }
 
@@ -278,18 +291,23 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
             steps = CrafterConfiguration.speedOperations;
         }
 
+        boolean someRecipesMayWork = false;
         for (int i = 0 ; i < steps ; i++) {
-            craftOneCycle();
+            someRecipesMayWork |= craftOneCycle();
+        }
+
+        if(!someRecipesMayWork) {
+            noRecipesWork = true;
         }
     }
 
-    private void craftOneCycle() {
+    private boolean craftOneCycle() {
         // 0%: rf -> rf
         // 100%: rf -> rf / 2
         int rf = (int) (CrafterConfiguration.rfPerOperation * (2.0f - getInfusedFactor()) / 2.0f);
 
         if (getEnergyStored() < rf) {
-            return;
+            return true; // A recipe may have worked if we had the RF to try, so don't shut down
         }
 
         boolean energyConsumed = false;
@@ -302,6 +320,9 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
         if (energyConsumed) {
             consumeEnergy(rf);
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -447,6 +468,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
                 ghostSlots.set(i, stack);
             }
         }
+        noRecipesWork = false;
         markDirtyClient();
     }
 
@@ -454,6 +476,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         for (int i = 0 ; i < ghostSlots.size() ; i++) {
             ghostSlots.set(i, ItemStack.EMPTY);
         }
+        noRecipesWork = false;
         markDirtyClient();
     }
 
