@@ -232,12 +232,12 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     @Override
     public void update() {
         if (!getWorld().isRemote) {
-            long time = System.currentTimeMillis();
+            long time = world.getTotalWorldTime();
             if (lastTime == 0) {
                 lastTime = time;
-            } else if (time > lastTime + 2000) {
-                lastRfPerTickIn = (int) (50 * powerIn / (time - lastTime));
-                lastRfPerTickOut = (int) (50 * powerOut / (time - lastTime));
+            } else if (time > lastTime + 40) {
+                lastRfPerTickIn = (int) (powerIn / (time - lastTime));
+                lastRfPerTickOut = (int) (powerOut / (time - lastTime));
                 lastTime = time;
                 powerIn = 0;
                 powerOut = 0;
