@@ -182,8 +182,7 @@ public class SyringeItem extends GenericRFToolsItem {
 
     public static ItemStack createMobSyringe(Class<? extends Entity> mobClass) {
         String id = EntityTools.findEntityIdByClass(mobClass);
-//        String name = EntityTools.findEntityLocNameByClass(mobClass);
-        String name = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(id)).getName();
+        String name = EntityTools.findEntityLocNameByClass(mobClass);
         return createMobSyringe(id, name);
     }
 
