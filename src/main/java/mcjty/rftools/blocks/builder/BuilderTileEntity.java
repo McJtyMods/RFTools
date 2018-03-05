@@ -1346,7 +1346,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         Item item = stack.getItem();
         return item instanceof ItemBlock || item instanceof ItemSkull || item instanceof ItemBlockSpecial
-                || item instanceof IPlantable;
+                || item instanceof IPlantable || item instanceof ItemRedstone;
     }
 
     // Also works if block is null and just picks the first available block.
