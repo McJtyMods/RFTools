@@ -64,6 +64,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -972,7 +973,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     public boolean buildBlock(int rfNeeded, BlockPos srcPos, IBlockState srcState, IBlockState pickState) {
         if (isEmptyOrReplacable(getWorld(), srcPos)) {
-            ItemStack stack = consumeBlock(getWorld(), srcPos, pickState);
+            ItemStack stack = createTakeableItem(getWorld(), srcPos, pickState).take(false);
             if (stack.isEmpty()) {
                 return waitOrSkip("Cannot find block!\nor missing inventory\non top or below");    // We could not find a block. Wait
             }
@@ -1309,8 +1310,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private static Random random = new Random();
 
-    // -1 means there's no block for us
-    private int findBlockInventorySlot(IItemHandler inventory, World srcWorld, BlockPos srcPos, IBlockState state) {
+    // Also works if block is null and just picks the first available block.
+    private TakeableItem findBlockTakeableItem(IItemHandler inventory, World srcWorld, BlockPos srcPos, IBlockState state) {
         if (state == null) {
             // We are not looking for a specific block. Pick a random one out of the chest.
             List<Integer> slots = new ArrayList<>();
@@ -1320,7 +1321,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 }
             }
             if (!slots.isEmpty()) {
-                return slots.get(random.nextInt(slots.size()));
+                return new TakeableItem(inventory, slots.get(random.nextInt(slots.size())));
             }
         } else {
             Block block = state.getBlock();
@@ -1329,18 +1330,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 for (int i = 0; i < inventory.getSlots(); i++) {
                     ItemStack stack = inventory.getStackInSlot(i);
                     if (!stack.isEmpty() && stack.isItemEqual(srcItem)) {
-                        return i;
+                        return new TakeableItem(inventory, i);
                     }
                 }
             }
         }
-        return -1;
-    }
-
-    // Also works if block is null and just picks the first available block.
-    private ItemStack findAndConsumeBlock(IItemHandler inventory, World srcWorld, BlockPos srcPos, IBlockState state) {
-        int index = findBlockInventorySlot(inventory, srcWorld, srcPos, state);
-        return index == -1 ? ItemStack.EMPTY : inventory.extractItem(index, 1, false);
+        return TakeableItem.EMPTY;
     }
 
     private boolean isPlacable(ItemStack stack) {
@@ -1352,8 +1347,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 || item instanceof IPlantable || item instanceof ItemRedstone;
     }
 
-     // -1 means there's no block for us
-    private int findBlockInventorySlot(IInventory inventory, World srcWorld, BlockPos srcPos, IBlockState state) {
+    // Also works if block is null and just picks the first available block.
+    private TakeableItem findBlockTakeableItem(IInventory inventory, World srcWorld, BlockPos srcPos, IBlockState state) {
         if (state == null) {
             // We are not looking for a specific block. Pick a random one out of the chest.
             List<Integer> slots = new ArrayList<>();
@@ -1363,7 +1358,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 }
             }
             if (!slots.isEmpty()) {
-                return slots.get(random.nextInt(slots.size()));
+                return new TakeableItem(inventory, slots.get(random.nextInt(slots.size())));
             }
         } else {
             Block block = state.getBlock();
@@ -1371,17 +1366,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             for (int i = 0; i < inventory.getSizeInventory(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
                 if (!stack.isEmpty() && stack.isItemEqual(srcItem)) {
-                    return i;
+                    return new TakeableItem(inventory, i);
                 }
             }
         }
-        return -1;
-    }
-
-    // Also works if block is null and just picks the first available block.
-    private ItemStack findAndConsumeBlock(IInventory inventory, World srcWorld, BlockPos srcPos, IBlockState state) {
-        int index = findBlockInventorySlot(inventory, srcWorld, srcPos, state);
-        return index == -1 ? ItemStack.EMPTY : inventory.decrStackSize(index, 1);
+        return TakeableItem.EMPTY;
     }
 
     // To protect against mods doing bad things we have to check
@@ -1445,23 +1434,64 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return s;
     }
 
+    private static class TakeableItem {
+        private final IItemHandler itemHandler;
+        private final IInventory inventory;
+        private final int slot;
+
+        public static final TakeableItem EMPTY = new TakeableItem();
+        private TakeableItem() {
+            this.itemHandler = null;
+            this.inventory = null;
+            this.slot = -1;
+        }
+
+        public TakeableItem(IItemHandler itemHandler, int slot) {
+            Validate.inclusiveBetween(0, itemHandler.getSlots() - 1, slot);
+            this.itemHandler = itemHandler;
+            this.inventory = null;
+            this.slot = slot;
+        }
+
+        public TakeableItem(IInventory inventory, int slot) {
+            Validate.inclusiveBetween(0, inventory.getSizeInventory() - 1, slot);
+            this.itemHandler = null;
+            this.inventory = inventory;
+            this.slot = slot;
+        }
+
+        public ItemStack take(boolean simulate) {
+            if(slot == -1) {
+                return ItemStack.EMPTY;
+            } else if(itemHandler != null) {
+                return itemHandler.extractItem(slot, 1, simulate);
+            } else if(simulate) {
+                ItemStack stack = inventory.getStackInSlot(slot).copy();
+                stack.setCount(1);
+                return stack;
+            } else {
+                return inventory.decrStackSize(slot, 1);
+            }
+        }
+    }
+
     /**
-     * Consume a block out of an inventory. Returns a blockstate
+     * Create a way to let you consume a block out of an inventory. Returns a blockstate
      * from that inventory or else null if nothing could be found.
      * If the given blockstate parameter is null then a random block will be
      * returned. Otherwise the returned block has to match.
      */
-    private ItemStack consumeBlock(EnumFacing direction, World srcWorld, BlockPos srcPos, IBlockState state) {
+    private TakeableItem createTakeableItem(EnumFacing direction, World srcWorld, BlockPos srcPos, IBlockState state) {
         TileEntity te = getWorld().getTileEntity(getPos().offset(direction));
         if (te != null) {
             if (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite())) {
                 IItemHandler capability = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite());
-                return findAndConsumeBlock(capability, srcWorld, srcPos, state);
+                return findBlockTakeableItem(capability, srcWorld, srcPos, state);
             } else if (te instanceof IInventory) {
-                return findAndConsumeBlock((IInventory) te, srcWorld, srcPos, state);
+                return findBlockTakeableItem((IInventory) te, srcWorld, srcPos, state);
             }
         }
-        return ItemStack.EMPTY;
+        return TakeableItem.EMPTY;
     }
 
     private FluidStack consumeLiquid(World srcWorld, BlockPos srcPos) {
@@ -1503,11 +1533,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return null;
     }
 
-
-    private ItemStack consumeBlock(World srcWorld, BlockPos srcPos, IBlockState state) {
-        ItemStack b = consumeBlock(EnumFacing.UP, srcWorld, srcPos, state);
-        if (b.isEmpty()) {
-            b = consumeBlock(EnumFacing.DOWN, srcWorld, srcPos, state);
+    private TakeableItem createTakeableItem(World srcWorld, BlockPos srcPos, IBlockState state) {
+        TakeableItem b = createTakeableItem(EnumFacing.UP, srcWorld, srcPos, state);
+        if (b.take(true).isEmpty()) {
+            b = createTakeableItem(EnumFacing.DOWN, srcWorld, srcPos, state);
         }
         return b;
     }
@@ -1606,7 +1635,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 return;
             }
             IBlockState srcState = srcWorld.getBlockState(srcPos);
-            ItemStack consumedStack = consumeBlock(srcWorld, srcPos, srcState);
+            ItemStack consumedStack = createTakeableItem(srcWorld, srcPos, srcState).take(false);
             if (consumedStack.isEmpty()) {
                 return;
             }
