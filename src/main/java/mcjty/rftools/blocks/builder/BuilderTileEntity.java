@@ -1377,10 +1377,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         } else {
             Block block = state.getBlock();
             ItemStack srcItem = block.getItem(srcWorld, srcPos, state);
-            for (int i = 0; i < inventory.getSizeInventory(); i++) {
-                ItemStack stack = inventory.getStackInSlot(i);
-                if (!stack.isEmpty() && stack.isItemEqual(srcItem)) {
-                    return new TakeableItem(inventory, i);
+            if(isPlacable(srcItem)) {
+                for (int i = 0; i < inventory.getSizeInventory(); i++) {
+                    ItemStack stack = inventory.getStackInSlot(i);
+                    if (!stack.isEmpty() && stack.isItemEqual(srcItem)) {
+                        return new TakeableItem(inventory, i);
+                    }
                 }
             }
         }
