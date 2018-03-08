@@ -1309,22 +1309,19 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private static Random random = new Random();
 
-    // Also works if block is null and just picks the first available block.
-    private ItemStack findAndConsumeBlock(IItemHandler inventory, World srcWorld, BlockPos srcPos, IBlockState state) {
+    // -1 means there's no block for us
+    private int findBlockInventorySlot(IItemHandler inventory, World srcWorld, BlockPos srcPos, IBlockState state) {
         if (state == null) {
             // We are not looking for a specific block. Pick a random one out of the chest.
             List<Integer> slots = new ArrayList<>();
             for (int i = 0; i < inventory.getSlots(); i++) {
-                ItemStack stack = inventory.getStackInSlot(i);
-                if (isPlacable(stack)) {
+                if (isPlacable(inventory.getStackInSlot(i))) {
                     slots.add(i);
                 }
             }
-            if (slots.isEmpty()) {
-                return ItemStack.EMPTY;
+            if (!slots.isEmpty()) {
+                return slots.get(random.nextInt(slots.size()));
             }
-            int randomSlot = slots.get(random.nextInt(slots.size()));
-            return inventory.extractItem(randomSlot, 1, false);
         } else {
             Block block = state.getBlock();
             ItemStack srcItem = block.getItem(srcWorld, srcPos, state);
@@ -1332,12 +1329,18 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 for (int i = 0; i < inventory.getSlots(); i++) {
                     ItemStack stack = inventory.getStackInSlot(i);
                     if (!stack.isEmpty() && stack.isItemEqual(srcItem)) {
-                        return inventory.extractItem(i, 1, false);
+                        return i;
                     }
                 }
             }
         }
-        return ItemStack.EMPTY;
+        return -1;
+    }
+
+    // Also works if block is null and just picks the first available block.
+    private ItemStack findAndConsumeBlock(IItemHandler inventory, World srcWorld, BlockPos srcPos, IBlockState state) {
+        int index = findBlockInventorySlot(inventory, srcWorld, srcPos, state);
+        return index == -1 ? ItemStack.EMPTY : inventory.extractItem(index, 1, false);
     }
 
     private boolean isPlacable(ItemStack stack) {
