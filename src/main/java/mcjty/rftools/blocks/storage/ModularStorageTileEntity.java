@@ -57,7 +57,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     private boolean groupMode = false;
     private String filter = "";
 
-    private int numStacks = -1;       // -1 means no storage cell.
+    private int numStacks = -1;       // -1 means no storage cell
     private int remoteId = 0;
 
     private int prevLevel = -3;     // -3 means to check, -2 means invalid
@@ -162,13 +162,13 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     @Override
     @Nonnull
     public int[] craft(EntityPlayer player, int n, boolean test) {
-        InventoriesItemSource itemSource = new InventoriesItemSource()
-                .add(player.inventory, 0).add(this, ModularStorageContainer.SLOT_STORAGE);
+        InventoriesItemSource itemSource = new InventoriesItemSource().add(player.inventory, 0).add(this, ModularStorageContainer.SLOT_STORAGE);
 
         if (test) {
             return StorageCraftingTools.testCraftItems(player, n, craftingGrid.getActiveRecipe(), itemSource);
         } else {
             StorageCraftingTools.craftItems(player, n, craftingGrid.getActiveRecipe(), itemSource);
+            updateStackCount();
             return new int[0];
         }
     }
@@ -289,18 +289,18 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         return inventoryHelper.getStackInSlot(index);
     }
 
-    private void handleNewAmount(boolean s1, int index) {
+    private void handleNewAmount(boolean containsBefore, int index) {
         if (index < ModularStorageContainer.SLOT_STORAGE) {
             return;
         }
-        boolean s2 = containsItem(index);
-        if (s1 == s2) {
+        boolean containsAfter = containsItem(index);
+        if (containsBefore == containsAfter) {
             return;
         }
 
         int rlold = getRenderLevel();
 
-        if (s1) {
+        if (containsBefore) {
             numStacks--;
         } else {
             numStacks++;
@@ -342,7 +342,10 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             return storageTileEntity.removeStackFromSlotRemote(si, index);
 
         } else {
-            return inventoryHelper.removeStackFromSlot(index);
+            boolean containsBefore = containsItem(index);
+            ItemStack stack = inventoryHelper.removeStackFromSlot(index);
+            handleNewAmount(containsBefore, index);
+            return stack;
         }
     }
 
@@ -374,9 +377,9 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             }
         }
 
-        boolean s1 = containsItem(index);
+        boolean containsBefore = containsItem(index);
         ItemStack itemStack = decrStackSizeHelper(index, amount);
-        handleNewAmount(s1, index);
+        handleNewAmount(containsBefore, index);
 
         if (index == ModularStorageContainer.SLOT_STORAGE_MODULE) {
             ItemStack stackInSlot = inventoryHelper.getStackInSlot(ModularStorageContainer.SLOT_STORAGE_MODULE);
@@ -419,7 +422,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         } else if (index == ModularStorageContainer.SLOT_FILTER_MODULE) {
             filterCache = null;
         }
-        boolean s1 = containsItem(index);
+        boolean containsBefore = containsItem(index);
 
         setInventorySlotContentsHelper(getInventoryStackLimit(), index, stack);
 
@@ -430,7 +433,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
             }
         }
 
-        handleNewAmount(s1, index);
+        handleNewAmount(containsBefore, index);
     }
 
     @Override
