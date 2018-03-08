@@ -1352,33 +1352,36 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 || item instanceof IPlantable || item instanceof ItemRedstone;
     }
 
-    // Also works if block is null and just picks the first available block.
-    private ItemStack findAndConsumeBlock(IInventory inventory, World srcWorld, BlockPos srcPos, IBlockState state) {
+     // -1 means there's no block for us
+    private int findBlockInventorySlot(IInventory inventory, World srcWorld, BlockPos srcPos, IBlockState state) {
         if (state == null) {
             // We are not looking for a specific block. Pick a random one out of the chest.
             List<Integer> slots = new ArrayList<>();
             for (int i = 0; i < inventory.getSizeInventory(); i++) {
-                ItemStack stack = inventory.getStackInSlot(i);
-                if (isPlacable(stack)) {
+                if (isPlacable(inventory.getStackInSlot(i))) {
                     slots.add(i);
                 }
             }
-            if (slots.isEmpty()) {
-                return ItemStack.EMPTY;
+            if (!slots.isEmpty()) {
+                return slots.get(random.nextInt(slots.size()));
             }
-            int randomSlot = slots.get(random.nextInt(slots.size()));
-            return inventory.decrStackSize(randomSlot, 1);
         } else {
             Block block = state.getBlock();
             ItemStack srcItem = block.getItem(srcWorld, srcPos, state);
             for (int i = 0; i < inventory.getSizeInventory(); i++) {
                 ItemStack stack = inventory.getStackInSlot(i);
                 if (!stack.isEmpty() && stack.isItemEqual(srcItem)) {
-                    return inventory.decrStackSize(i, 1);
+                    return i;
                 }
             }
         }
-        return ItemStack.EMPTY;
+        return -1;
+    }
+
+    // Also works if block is null and just picks the first available block.
+    private ItemStack findAndConsumeBlock(IInventory inventory, World srcWorld, BlockPos srcPos, IBlockState state) {
+        int index = findBlockInventorySlot(inventory, srcWorld, srcPos, state);
+        return index == -1 ? ItemStack.EMPTY : inventory.decrStackSize(index, 1);
     }
 
     // To protect against mods doing bad things we have to check
