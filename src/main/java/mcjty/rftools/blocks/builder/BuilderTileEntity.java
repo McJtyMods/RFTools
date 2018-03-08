@@ -973,13 +973,27 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     public boolean buildBlock(int rfNeeded, BlockPos srcPos, IBlockState srcState, IBlockState pickState) {
         if (isEmptyOrReplacable(getWorld(), srcPos)) {
-            ItemStack stack = createTakeableItem(getWorld(), srcPos, pickState).take(false);
+            TakeableItem item = createTakeableItem(getWorld(), srcPos, pickState);
+            ItemStack stack = item.peek();
             if (stack.isEmpty()) {
                 return waitOrSkip("Cannot find block!\nor missing inventory\non top or below");    // We could not find a block. Wait
             }
 
             FakePlayer fakePlayer = getHarvester();
             IBlockState newState = BlockTools.placeStackAt(fakePlayer, stack, getWorld(), srcPos, pickState);
+            if (!ItemStack.areItemStacksEqual(stack, item.peek())) { // Did we actually use up whatever we were holding?
+                if(!stack.isEmpty()) { // Are we holding something else that we should put back?
+                    stack = item.takeAndReplace(stack); // First try to put our new item where we got what we placed
+                    if(!stack.isEmpty()) { // If that didn't work, then try to put it anywhere it will fit
+                        stack = insertItem(stack);
+                        if(!stack.isEmpty()) { // If that still didn't work, then just drop whatever we're holding
+                            getWorld().spawnEntity(new EntityItem(getWorld(), getPos().getX(), getPos().getY(), getPos().getZ(), stack));
+                        }
+                    }
+                } else {
+                    item.take(); // If we aren't holding anything, then just consume what we placed
+                }
+            }
 
             if (!silent) {
                 SoundTools.playSound(getWorld(), newState.getBlock().getSoundType(newState, getWorld(), srcPos, fakePlayer).getPlaceSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
@@ -1438,12 +1452,14 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         private final IItemHandler itemHandler;
         private final IInventory inventory;
         private final int slot;
+        private final ItemStack peekStack;
 
         public static final TakeableItem EMPTY = new TakeableItem();
         private TakeableItem() {
             this.itemHandler = null;
             this.inventory = null;
             this.slot = -1;
+            this.peekStack = ItemStack.EMPTY;
         }
 
         public TakeableItem(IItemHandler itemHandler, int slot) {
@@ -1451,6 +1467,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             this.itemHandler = itemHandler;
             this.inventory = null;
             this.slot = slot;
+            this.peekStack = itemHandler.extractItem(slot, 1, true);
         }
 
         public TakeableItem(IInventory inventory, int slot) {
@@ -1458,20 +1475,34 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             this.itemHandler = null;
             this.inventory = inventory;
             this.slot = slot;
+            this.peekStack = inventory.getStackInSlot(slot).copy();
+            this.peekStack.setCount(1);
         }
 
-        public ItemStack take(boolean simulate) {
-            if(slot == -1) {
-                return ItemStack.EMPTY;
-            } else if(itemHandler != null) {
-                return itemHandler.extractItem(slot, 1, simulate);
-            } else if(simulate) {
-                ItemStack stack = inventory.getStackInSlot(slot).copy();
-                stack.setCount(1);
-                return stack;
-            } else {
-                return inventory.decrStackSize(slot, 1);
+        public ItemStack peek() {
+            return peekStack.copy();
+        }
+
+        public void take() {
+            if(itemHandler != null) {
+                itemHandler.extractItem(slot, 1, false);
+            } else if(slot != -1) {
+                inventory.decrStackSize(slot, 1);
             }
+        }
+
+        public ItemStack takeAndReplace(ItemStack replacement) {
+            if(itemHandler != null) {
+                itemHandler.extractItem(slot, 1, false);
+                return itemHandler.insertItem(slot, replacement, false);
+            } else if(slot != -1) {
+                inventory.decrStackSize(slot, 1);
+                if(inventory.isItemValidForSlot(slot, replacement) && inventory.getStackInSlot(slot).isEmpty()) {
+                    inventory.setInventorySlotContents(slot, replacement);
+                    return ItemStack.EMPTY;
+                }
+            }
+            return replacement;
         }
     }
 
@@ -1535,7 +1566,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private TakeableItem createTakeableItem(World srcWorld, BlockPos srcPos, IBlockState state) {
         TakeableItem b = createTakeableItem(EnumFacing.UP, srcWorld, srcPos, state);
-        if (b.take(true).isEmpty()) {
+        if (b.peek().isEmpty()) {
             b = createTakeableItem(EnumFacing.DOWN, srcWorld, srcPos, state);
         }
         return b;
@@ -1635,7 +1666,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 return;
             }
             IBlockState srcState = srcWorld.getBlockState(srcPos);
-            ItemStack consumedStack = createTakeableItem(srcWorld, srcPos, srcState).take(false);
+            TakeableItem takeableItem = createTakeableItem(srcWorld, srcPos, srcState);
+            ItemStack consumedStack = takeableItem.peek();
             if (consumedStack.isEmpty()) {
                 return;
             }
@@ -1643,6 +1675,20 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             FakePlayer fakePlayer = getHarvester();
             IBlockState newState = BlockTools.placeStackAt(fakePlayer, consumedStack, destWorld, destPos, srcState);
             destWorld.setBlockState(destPos, newState, 3);  // placeBlockAt can reset the orientation. Restore it here
+
+            if (!ItemStack.areItemStacksEqual(consumedStack, takeableItem.peek())) { // Did we actually use up whatever we were holding?
+                if(!consumedStack.isEmpty()) { // Are we holding something else that we should put back?
+                    consumedStack = takeableItem.takeAndReplace(consumedStack); // First try to put our new item where we got what we placed
+                    if(!consumedStack.isEmpty()) { // If that didn't work, then try to put it anywhere it will fit
+                        consumedStack = insertItem(consumedStack);
+                        if(!consumedStack.isEmpty()) { // If that still didn't work, then just drop whatever we're holding
+                            getWorld().spawnEntity(new EntityItem(getWorld(), getPos().getX(), getPos().getY(), getPos().getZ(), consumedStack));
+                        }
+                    }
+                } else {
+                    takeableItem.take(); // If we aren't holding anything, then just consume what we placed
+                }
+            }
 
             if (!silent) {
                 SoundTools.playSound(destWorld, newState.getBlock().getSoundType(newState, destWorld, destPos, fakePlayer).getPlaceSound(), destPos.getX(), destPos.getY(), destPos.getZ(), 1.0f, 1.0f);
