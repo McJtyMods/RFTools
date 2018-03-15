@@ -6,6 +6,7 @@ import mcjty.lib.gui.WindowManager;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.items.builder.GuiShapeCard;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.*;
@@ -14,7 +15,6 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import org.lwjgl.input.Mouse;
 
 import java.awt.Rectangle;
@@ -38,10 +38,6 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
     private ToggleButton showAxis;
     private ToggleButton showOuter;
     private ToggleButton showScan;
-
-    // For GuiShapeCard: the current card to edit
-    public static BlockPos shaperBlock = null;
-    public static int shaperStackSlot = 0;
 
     private ShapeRenderer shapeRenderer = null;
 
@@ -175,8 +171,8 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
         ItemStack cardStack = inventorySlots.getSlot(slot).getStack();
         if (!cardStack.isEmpty()) {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
-            shaperBlock = tileEntity.getPos();
-            shaperStackSlot = slot;
+            GuiShapeCard.shaperBlock = tileEntity.getPos();
+            GuiShapeCard.shaperStackSlot = slot;
             player.openGui(RFTools.instance, RFTools.GUI_SHAPECARD_COMPOSER, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
         }
     }

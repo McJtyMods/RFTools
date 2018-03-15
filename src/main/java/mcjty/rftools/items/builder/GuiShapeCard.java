@@ -13,7 +13,6 @@ import mcjty.lib.network.Arguments;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.shaper.ComposerTileEntity;
-import mcjty.rftools.blocks.shaper.GuiComposer;
 import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.IShapeParentGui;
@@ -75,6 +74,10 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
 
     private boolean fromshaper;
 
+    // For GuiComposer: the current card to edit
+    public static BlockPos shaperBlock = null;
+    public static int shaperStackSlot = 0;
+
     private ShapeID shapeID = null;
     private ShapeRenderer shapeRenderer = null;
 
@@ -108,9 +111,9 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
 
     private ItemStack getStackToEdit() {
         if (fromshaper) {
-            TileEntity te = mc.world.getTileEntity(GuiComposer.shaperBlock);
+            TileEntity te = mc.world.getTileEntity(shaperBlock);
             if (te instanceof ComposerTileEntity) {
-                return ((ComposerTileEntity) te).getStackInSlot(GuiComposer.shaperStackSlot);
+                return ((ComposerTileEntity) te).getStackInSlot(shaperStackSlot);
             } else {
                 return ItemStack.EMPTY;
             }
@@ -122,7 +125,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
     @Override
     public void onGuiClosed() {
         if (fromshaper) {
-            RFToolsMessages.sendToServer(CommandHandler.CMD_OPENGUI, Arguments.builder().value(GuiComposer.shaperBlock));
+            RFToolsMessages.sendToServer(CommandHandler.CMD_OPENGUI, Arguments.builder().value(shaperBlock));
         }
     }
 
@@ -317,7 +320,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
                 ShapeCardItem.setDimension(stack, dx, dy, dz);
                 ShapeCardItem.setOffset(stack, parseInt(offsetX.getText()), parseInt(offsetY.getText()), parseInt(offsetZ.getText()));
                 RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItemInventoryShape(
-                        GuiComposer.shaperBlock, GuiComposer.shaperStackSlot, tag));
+                        shaperBlock, shaperStackSlot, tag));
             }
         } else {
             RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTShapeCard(
@@ -350,7 +353,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
                 tag.setBoolean("voidendstone", endstone.isPressed());
                 tag.setBoolean("oredict", oredict.isPressed());
                 RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItemInventoryShape(
-                        GuiComposer.shaperBlock, GuiComposer.shaperStackSlot, tag));
+                        shaperBlock, shaperStackSlot, tag));
             }
         } else {
             RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTShapeCard(
