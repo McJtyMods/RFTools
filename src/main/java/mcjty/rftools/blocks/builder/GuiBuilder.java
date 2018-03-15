@@ -10,7 +10,10 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.items.builder.GuiShapeCard;
 import mcjty.rftools.network.RFToolsMessages;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
@@ -33,6 +36,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     private ImageChoiceLabel loopMode;
     private ImageChoiceLabel waitMode;
     private ImageChoiceLabel hilightMode;
+    private Button configButton;
     private Button currentLevel;
 
     private ImageChoiceLabel anchor[] = new ImageChoiceLabel[4];
@@ -59,6 +63,11 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
 
         initRedstoneMode();
 
+        configButton = new Button(mc, this).setText("?");
+        configButton.setLayoutHint(new PositionalLayout.PositionalHint(83, 12, 13, 12));
+        configButton.addButtonEvent(parent -> openCardGui());
+        configButton.setTooltips("Click to open the card gui");
+
         currentLevel = new Button(mc, this);
         currentLevel.setText("Y:").setTooltips("Current level the builder is at", TextFormatting.YELLOW + "Press to restart!").setLayoutHint(new PositionalLayout.PositionalHint(81, 31, 45, 13))
             .addButtonEvent(parent -> restart());
@@ -67,7 +76,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         Panel modePanel = setupModePanel();
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
-                addChild(modePanel).addChild(positionPanel).addChild(currentLevel).addChild(redstoneMode);
+                addChild(modePanel).addChild(positionPanel).addChild(configButton).addChild(currentLevel).addChild(redstoneMode);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -89,6 +98,16 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         tileEntity.setRSMode(RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()]);
         sendServerCommand(RFToolsMessages.INSTANCE, BuilderTileEntity.CMD_SETRSMODE,
                 new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()));
+    }
+
+    private void openCardGui() {
+        ItemStack cardStack = inventorySlots.getSlot(BuilderContainer.SLOT_TAB).getStack();
+        if (!cardStack.isEmpty()) {
+            EntityPlayerSP player = Minecraft.getMinecraft().player;
+            GuiShapeCard.fromTEPos = tileEntity.getPos();
+            GuiShapeCard.fromTEStackSlot = BuilderContainer.SLOT_TAB;
+            player.openGui(RFTools.instance, RFTools.GUI_SHAPECARD_COMPOSER, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
+        }
     }
 
     private void restart() {

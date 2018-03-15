@@ -2,6 +2,7 @@ package mcjty.rftools.items.builder;
 
 import mcjty.lib.network.PacketUpdateNBTItemInventory;
 import mcjty.lib.network.PacketUpdateNBTItemInventoryHandler;
+import mcjty.rftools.blocks.builder.BuilderTileEntity;
 import mcjty.rftools.blocks.shaper.ComposerTileEntity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -19,7 +20,7 @@ public class PacketUpdateNBTItemInventoryShape extends PacketUpdateNBTItemInvent
 
     @Override
     protected boolean isValidBlock(World world, BlockPos blockPos, TileEntity tileEntity) {
-        return tileEntity instanceof ComposerTileEntity;
+        return tileEntity instanceof ComposerTileEntity || tileEntity instanceof BuilderTileEntity;
     }
 
     public static class Handler extends PacketUpdateNBTItemInventoryHandler<PacketUpdateNBTItemInventoryShape> {

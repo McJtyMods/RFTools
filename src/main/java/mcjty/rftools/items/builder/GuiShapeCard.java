@@ -74,7 +74,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
 
     private boolean fromTE;
 
-    // For GuiComposer: the current card to edit
+    // For GuiComposer, GuiBuilder, etc.: the current card to edit
     public static BlockPos fromTEPos = null;
     public static int fromTEStackSlot = 0;
 
