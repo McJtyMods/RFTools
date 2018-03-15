@@ -21,7 +21,7 @@ public class BuilderContainer extends GenericContainer {
             addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
                     new ItemStack(BuilderSetup.spaceChamberCardItem),
                     new ItemStack(BuilderSetup.shapeCardItem)),
-                    CONTAINER_INVENTORY, SLOT_TAB, 93, 10, 1, 18, 1, 18);
+                    CONTAINER_INVENTORY, SLOT_TAB, 100, 10, 1, 18, 1, 18);
             addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, StorageFilterItem.class), CONTAINER_INVENTORY, SLOT_FILTER, 84, 46);
             layoutPlayerInventorySlots(10, 70);
         }
