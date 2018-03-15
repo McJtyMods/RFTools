@@ -29,7 +29,6 @@ public class CommandHandler {
     public static final String CMD_CYCLE_DESTINATION = "cycleDestination";
     public static final String CMD_GET_DESTINATION_INFO = "getDestinationInfo";
     public static final String CMD_GET_RF_IN_RANGE = "getRfInRange";
-    public static final String CMD_OPENGUI = "openGui";
     public static final String CMD_REQUEST_SHAPE_DATA = "requestShapeData";
     public static final String CMD_REQUEST_SCAN_DIRTY = "requestScanDirty";
     public static final String CMD_REQUEST_LOCATOR_ENERGY = "requestLocatorEnergy";
@@ -83,10 +82,6 @@ public class CommandHandler {
         });
         McJtyLib.registerCommand(RFTools.MODID, CMD_GET_RF_IN_RANGE, (player, arguments) -> {
             RFToolsTools.returnRfInRange(player);
-            return true;
-        });
-        McJtyLib.registerCommand(RFTools.MODID, CMD_OPENGUI, (player, arguments) -> {
-            ShaperTools.openGui(player, arguments.getBlockPos());
             return true;
         });
         McJtyLib.registerCommand(RFTools.MODID, CMD_REQUEST_SHAPE_DATA, (player, arguments) -> {

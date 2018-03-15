@@ -12,6 +12,7 @@ import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.shaper.ProjectorSounds;
 import mcjty.rftools.blocks.shield.BakedModelLoader;
 import mcjty.rftools.items.ModItems;
+import mcjty.rftools.items.builder.GuiShapeCard;
 import mcjty.rftools.keys.KeyBindings;
 import mcjty.rftools.keys.KeyInputHandler;
 import net.minecraft.block.Block;
@@ -23,6 +24,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
+import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -103,6 +105,18 @@ public class ClientProxy extends CommonProxy {
             Block block = evt.getPlayer().getEntityWorld().getBlockState(pos).getBlock();
             if (block == ScreenSetup.screenBlock || block == ScreenSetup.creativeScreenBlock || block == ScreenSetup.screenHitBlock) {
                 evt.setCanceled(true);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onGuiOpen(GuiOpenEvent event) {
+        // If a shape card GUI was opened by a tile entity GUI, restore the tile entity GUI when it's closed
+        if(event.getGui() == null) {
+            net.minecraft.client.gui.GuiScreen old = Minecraft.getMinecraft().currentScreen;
+            if(old instanceof GuiShapeCard &&((GuiShapeCard)old).fromTE) {
+                event.setGui(GuiShapeCard.returnGui);
+                GuiShapeCard.returnGui = null;
             }
         }
     }

@@ -106,6 +106,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
             GuiShapeCard.fromTEPos = tileEntity.getPos();
             GuiShapeCard.fromTEStackSlot = BuilderContainer.SLOT_TAB;
+            GuiShapeCard.returnGui = this;
             player.openGui(RFTools.instance, RFTools.GUI_SHAPECARD_COMPOSER, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
         }
     }

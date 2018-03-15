@@ -9,8 +9,6 @@ import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.network.Argument;
-import mcjty.lib.network.Arguments;
-import mcjty.rftools.CommandHandler;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import mcjty.rftools.network.RFToolsMessages;
@@ -72,11 +70,12 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
     private ToggleButton endstone;
     private ToggleButton oredict;
 
-    private boolean fromTE;
+    public final boolean fromTE;
 
     // For GuiComposer, GuiBuilder, etc.: the current card to edit
     public static BlockPos fromTEPos = null;
     public static int fromTEStackSlot = 0;
+    public static GuiScreen returnGui = null;
 
     private ShapeID shapeID = null;
     private ShapeRenderer shapeRenderer = null;
@@ -119,13 +118,6 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
             }
         } else {
             return mc.player.getHeldItem(EnumHand.MAIN_HAND);
-        }
-    }
-
-    @Override
-    public void onGuiClosed() {
-        if (fromTE) {
-            RFToolsMessages.sendToServer(CommandHandler.CMD_OPENGUI, Arguments.builder().value(fromTEPos));
         }
     }
 
