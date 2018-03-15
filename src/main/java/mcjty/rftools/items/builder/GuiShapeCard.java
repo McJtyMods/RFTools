@@ -12,7 +12,6 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.network.Arguments;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
-import mcjty.rftools.blocks.shaper.ComposerTileEntity;
 import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.IShapeParentGui;
@@ -27,6 +26,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -72,17 +72,17 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
     private ToggleButton endstone;
     private ToggleButton oredict;
 
-    private boolean fromshaper;
+    private boolean fromTE;
 
     // For GuiComposer: the current card to edit
-    public static BlockPos shaperBlock = null;
-    public static int shaperStackSlot = 0;
+    public static BlockPos fromTEPos = null;
+    public static int fromTEStackSlot = 0;
 
     private ShapeID shapeID = null;
     private ShapeRenderer shapeRenderer = null;
 
-    public GuiShapeCard(boolean fromshaper) {
-        this.fromshaper = fromshaper;
+    public GuiShapeCard(boolean fromTE) {
+        this.fromTE = fromTE;
     }
 
     private ShapeRenderer getShapeRenderer() {
@@ -110,10 +110,10 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
     }
 
     private ItemStack getStackToEdit() {
-        if (fromshaper) {
-            TileEntity te = mc.world.getTileEntity(shaperBlock);
-            if (te instanceof ComposerTileEntity) {
-                return ((ComposerTileEntity) te).getStackInSlot(shaperStackSlot);
+        if (fromTE) {
+            TileEntity te = mc.world.getTileEntity(fromTEPos);
+            if (te instanceof IInventory) {
+                return ((IInventory) te).getStackInSlot(fromTEStackSlot);
             } else {
                 return ItemStack.EMPTY;
             }
@@ -124,8 +124,8 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
 
     @Override
     public void onGuiClosed() {
-        if (fromshaper) {
-            RFToolsMessages.sendToServer(CommandHandler.CMD_OPENGUI, Arguments.builder().value(shaperBlock));
+        if (fromTE) {
+            RFToolsMessages.sendToServer(CommandHandler.CMD_OPENGUI, Arguments.builder().value(fromTEPos));
         }
     }
 
@@ -309,7 +309,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         if (isTorus()) {
             dimZ.setText(dimX.getText());
         }
-        if (fromshaper) {
+        if (fromTE) {
             ItemStack stack = getStackToEdit();
             if (!stack.isEmpty()) {
                 NBTTagCompound tag = stack.getTagCompound();
@@ -320,7 +320,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
                 ShapeCardItem.setDimension(stack, dx, dy, dz);
                 ShapeCardItem.setOffset(stack, parseInt(offsetX.getText()), parseInt(offsetY.getText()), parseInt(offsetZ.getText()));
                 RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItemInventoryShape(
-                        shaperBlock, shaperStackSlot, tag));
+                        fromTEPos, fromTEStackSlot, tag));
             }
         } else {
             RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTShapeCard(
@@ -337,7 +337,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
     }
 
     private void updateVoidSettings() {
-        if (fromshaper) {
+        if (fromTE) {
             ItemStack stack = getStackToEdit();
             if (!stack.isEmpty()) {
                 NBTTagCompound tag = stack.getTagCompound();
@@ -353,7 +353,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
                 tag.setBoolean("voidendstone", endstone.isPressed());
                 tag.setBoolean("oredict", oredict.isPressed());
                 RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItemInventoryShape(
-                        shaperBlock, shaperStackSlot, tag));
+                        fromTEPos, fromTEStackSlot, tag));
             }
         } else {
             RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTShapeCard(

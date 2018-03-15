@@ -171,8 +171,8 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
         ItemStack cardStack = inventorySlots.getSlot(slot).getStack();
         if (!cardStack.isEmpty()) {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
-            GuiShapeCard.shaperBlock = tileEntity.getPos();
-            GuiShapeCard.shaperStackSlot = slot;
+            GuiShapeCard.fromTEPos = tileEntity.getPos();
+            GuiShapeCard.fromTEStackSlot = slot;
             player.openGui(RFTools.instance, RFTools.GUI_SHAPECARD_COMPOSER, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
         }
     }
