@@ -31,11 +31,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
+@Optional.Interface(iface = "cofh.api.item.IToolHammer", modid = "cofhapi|item")
 public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
 
     public SmartWrenchItem() {
@@ -63,23 +65,27 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
         });
     }
 
+    @Optional.Method(modid = "cofhapi|item")
     @Override
     public boolean isUsable(ItemStack item, EntityLivingBase user, BlockPos pos) {
         SmartWrenchMode mode = getCurrentMode(item);
         return mode == SmartWrenchMode.MODE_WRENCH;
     }
 
+    @Optional.Method(modid = "cofhapi|item")
     @Override
     public boolean isUsable(ItemStack item, EntityLivingBase user, Entity entity) {
         SmartWrenchMode mode = getCurrentMode(item);
         return mode == SmartWrenchMode.MODE_WRENCH;
     }
 
+    @Optional.Method(modid = "cofhapi|item")
     @Override
     public void toolUsed(ItemStack item, EntityLivingBase user, BlockPos pos) {
 
     }
 
+    @Optional.Method(modid = "cofhapi|item")
     @Override
     public void toolUsed(ItemStack item, EntityLivingBase user, Entity entity) {
 
