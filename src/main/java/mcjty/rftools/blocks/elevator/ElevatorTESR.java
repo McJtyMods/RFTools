@@ -12,7 +12,6 @@ import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.ReportedException;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldType;
@@ -31,8 +30,7 @@ public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> 
 
         if (te.isMoving()) {
             // Correction in the y translation to avoid jitter when both player and platform are moving
-            AxisAlignedBB aabb = te.getAABBAboveElevator(0);
-            boolean on = Minecraft.getMinecraft().player.getEntityBoundingBox().intersects(aabb);
+            boolean on = te.intersects(Minecraft.getMinecraft().player.getEntityBoundingBox());
 
             double diff = on ? (te.getPos().getY() - (y+te.getMovingY()) - 1) : 0;
 
