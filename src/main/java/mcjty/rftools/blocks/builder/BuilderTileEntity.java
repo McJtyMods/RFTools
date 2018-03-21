@@ -1071,9 +1071,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                         }
                     }
                 }
-                if (getCachedVoidableBlocks().contains(block)) {
-                    clearOrDirtBlock(rfNeeded, srcPos, srcState, clear);
-                } else {
+                if (!getCachedVoidableBlocks().contains(block)) {
                     List<ItemStack> drops;
                     if (block.canSilkHarvest(getWorld(), srcPos, srcState, fakePlayer)) {
                         ItemStack drop;
@@ -1093,12 +1091,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                         drops = block.getDrops(getWorld(), srcPos, srcState, 0);
                         net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, getWorld(), pos, srcState, 0, 1.0f, false, fakePlayer);
                     }
-                    if (checkAndInsertItems(block, drops)) {
-                        clearOrDirtBlock(rfNeeded, srcPos, srcState, clear);
-                    } else {
+                    if (!checkAndInsertItems(block, drops)) {
                         return waitOrSkip("Not enough room!\nor no usable storage\non top or below!");    // Not enough room. Wait
                     }
                 }
+                clearOrDirtBlock(rfNeeded, srcPos, srcState, clear);
             }
         }
         return skip();
@@ -1158,18 +1155,15 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                         }
                     }
                 }
-                if (getCachedVoidableBlocks().contains(block)) {
-                    clearOrDirtBlock(rfNeeded, srcPos, srcState, clear);
-                } else {
+                if (!getCachedVoidableBlocks().contains(block)) {
                     int fortune = getCardType().isFortune() ? 3 : 0;
                     List<ItemStack> drops = block.getDrops(getWorld(), srcPos, srcState, fortune);
                     net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, getWorld(), pos, srcState, fortune, 1.0f, false, fakePlayer);
-                    if (checkAndInsertItems(block, drops)) {
-                        clearOrDirtBlock(rfNeeded, srcPos, srcState, clear);
-                    } else {
+                    if (!checkAndInsertItems(block, drops)) {
                         return waitOrSkip("Not enough room!\nor no usable storage\non top or below!");    // Not enough room. Wait
                     }
                 }
+                clearOrDirtBlock(rfNeeded, srcPos, srcState, clear);
             }
         }
         return false;
