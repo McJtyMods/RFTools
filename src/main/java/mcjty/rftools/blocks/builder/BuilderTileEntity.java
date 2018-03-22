@@ -26,6 +26,7 @@ import mcjty.rftools.varia.RFToolsTools;
 import mcjty.typed.Type;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.BlockShulkerBox;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -38,6 +39,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityShulkerBox;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -1017,6 +1019,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private void clearOrDirtBlock(int rfNeeded, BlockPos spos, IBlockState srcState, boolean clear) {
+        if (srcState.getBlock() instanceof BlockShulkerBox) {
+            TileEntity te = world.getTileEntity(spos);
+            if(te instanceof TileEntityShulkerBox) {
+                ((TileEntityShulkerBox)te).clear(); // We already collected a drop before we called this. Clear to make sure setBlockState doesn't spawn another.
+            }
+        }
+
         if (clear) {
             getWorld().setBlockToAir(spos);
         } else {
@@ -1110,7 +1119,22 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                         net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, getWorld(), pos, srcState, 0, 1.0f, true, fakePlayer);
                     } else {
                         int fortune = getCardType().isFortune() ? 3 : 0;
-                        drops = block.getDrops(getWorld(), srcPos, srcState, fortune);
+                        if (block instanceof BlockShulkerBox) {
+                            // Shulker boxes drop in setBlockState, rather than anywhere sensible. Work around this.
+                            drops = new ArrayList<>();
+                            TileEntity te = getWorld().getTileEntity(srcPos);
+                            if (te instanceof TileEntityShulkerBox) {
+                                TileEntityShulkerBox teShulkerBox = (TileEntityShulkerBox)te;
+                                ItemStack stack = new ItemStack(Item.getItemFromBlock(block));
+                                teShulkerBox.saveToNbt(stack.getOrCreateSubCompound("BlockEntityTag"));
+                                if (teShulkerBox.hasCustomName()) {
+                                    stack.setStackDisplayName(teShulkerBox.getName());
+                                }
+                                drops.add(stack);
+                            }
+                        } else {
+                            drops = block.getDrops(getWorld(), srcPos, srcState, fortune);
+                        }
                         net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, getWorld(), pos, srcState, fortune, 1.0f, false, fakePlayer);
                     }
                     if (!checkAndInsertItems(block, drops)) {
