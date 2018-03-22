@@ -1100,9 +1100,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                         ItemStack drop;
                         try {
                             drop = (ItemStack) CommonProxy.Block_getSilkTouch.invoke(block, srcState);
-                        } catch (IllegalAccessException e) {
-                            throw new RuntimeException(e);
-                        } catch (InvocationTargetException e) {
+                        } catch (IllegalAccessException|InvocationTargetException e) {
                             throw new RuntimeException(e);
                         }
                         drops = new ArrayList<>();
