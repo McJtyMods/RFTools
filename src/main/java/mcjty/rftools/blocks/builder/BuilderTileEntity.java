@@ -1096,25 +1096,20 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 }
                 if (!getCachedVoidableBlocks().contains(block)) {
                     List<ItemStack> drops;
-                    if(silk) {
-                        if (block.canSilkHarvest(getWorld(), srcPos, srcState, fakePlayer)) {
-                            ItemStack drop;
-                            try {
-                                drop = (ItemStack) CommonProxy.Block_getSilkTouch.invoke(block, srcState);
-                            } catch (IllegalAccessException e) {
-                                throw new RuntimeException(e);
-                            } catch (InvocationTargetException e) {
-                                throw new RuntimeException(e);
-                            }
-                            drops = new ArrayList<>();
-                            if (!drop.isEmpty()) {
-                                drops.add(drop);
-                            }
-                            net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, getWorld(), pos, srcState, 0, 1.0f, true, fakePlayer);
-                        } else {
-                            drops = block.getDrops(getWorld(), srcPos, srcState, 0);
-                            net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, getWorld(), pos, srcState, 0, 1.0f, false, fakePlayer);
+                    if(silk && block.canSilkHarvest(getWorld(), srcPos, srcState, fakePlayer)) {
+                        ItemStack drop;
+                        try {
+                            drop = (ItemStack) CommonProxy.Block_getSilkTouch.invoke(block, srcState);
+                        } catch (IllegalAccessException e) {
+                            throw new RuntimeException(e);
+                        } catch (InvocationTargetException e) {
+                            throw new RuntimeException(e);
                         }
+                        drops = new ArrayList<>();
+                        if (!drop.isEmpty()) {
+                            drops.add(drop);
+                        }
+                        net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, getWorld(), pos, srcState, 0, 1.0f, true, fakePlayer);
                     } else {
                         int fortune = getCardType().isFortune() ? 3 : 0;
                         drops = block.getDrops(getWorld(), srcPos, srcState, fortune);
