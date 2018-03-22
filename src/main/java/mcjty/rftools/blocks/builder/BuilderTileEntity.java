@@ -1033,6 +1033,29 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     public boolean silkQuarryBlock(int rfNeeded, BlockPos srcPos, IBlockState srcState, IBlockState pickState) {
+        return commonQuarryBlock(true, rfNeeded, srcPos, srcState);
+    }
+
+    private void getFilterCache() {
+        if (filterCache == null) {
+            filterCache = StorageFilterItem.getCache(inventoryHelper.getStackInSlot(BuilderContainer.SLOT_FILTER));
+        }
+    }
+
+    public static boolean allowedToBreak(IBlockState state, World world, BlockPos pos, EntityPlayer entityPlayer) {
+        if (!state.getBlock().canEntityDestroy(state, world, pos, entityPlayer)) {
+            return false;
+        }
+        BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, state, entityPlayer);
+        MinecraftForge.EVENT_BUS.post(event);
+        return !event.isCanceled();
+    }
+
+    public boolean quarryBlock(int rfNeeded, BlockPos srcPos, IBlockState srcState, IBlockState pickState) {
+        return commonQuarryBlock(false, rfNeeded, srcPos, srcState);
+    }
+
+    private boolean commonQuarryBlock(boolean silk, int rfNeeded, BlockPos srcPos, IBlockState srcState) {
         Block block = srcState.getBlock();
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
@@ -1073,23 +1096,29 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 }
                 if (!getCachedVoidableBlocks().contains(block)) {
                     List<ItemStack> drops;
-                    if (block.canSilkHarvest(getWorld(), srcPos, srcState, fakePlayer)) {
-                        ItemStack drop;
-                        try {
-                            drop = (ItemStack) CommonProxy.Block_getSilkTouch.invoke(block, srcState);
-                        } catch (IllegalAccessException e) {
-                            throw new RuntimeException(e);
-                        } catch (InvocationTargetException e) {
-                            throw new RuntimeException(e);
+                    if(silk) {
+                        if (block.canSilkHarvest(getWorld(), srcPos, srcState, fakePlayer)) {
+                            ItemStack drop;
+                            try {
+                                drop = (ItemStack) CommonProxy.Block_getSilkTouch.invoke(block, srcState);
+                            } catch (IllegalAccessException e) {
+                                throw new RuntimeException(e);
+                            } catch (InvocationTargetException e) {
+                                throw new RuntimeException(e);
+                            }
+                            drops = new ArrayList<>();
+                            if (!drop.isEmpty()) {
+                                drops.add(drop);
+                            }
+                            net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, getWorld(), pos, srcState, 0, 1.0f, true, fakePlayer);
+                        } else {
+                            drops = block.getDrops(getWorld(), srcPos, srcState, 0);
+                            net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, getWorld(), pos, srcState, 0, 1.0f, false, fakePlayer);
                         }
-                        drops = new ArrayList<>();
-                        if (!drop.isEmpty()) {
-                            drops.add(drop);
-                        }
-                        net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, getWorld(), pos, srcState, 0, 1.0f, true, fakePlayer);
                     } else {
-                        drops = block.getDrops(getWorld(), srcPos, srcState, 0);
-                        net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, getWorld(), pos, srcState, 0, 1.0f, false, fakePlayer);
+                        int fortune = getCardType().isFortune() ? 3 : 0;
+                        drops = block.getDrops(getWorld(), srcPos, srcState, fortune);
+                        net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, getWorld(), pos, srcState, fortune, 1.0f, false, fakePlayer);
                     }
                     if (!checkAndInsertItems(block, drops)) {
                         return waitOrSkip("Not enough room!\nor no usable storage\non top or below!");    // Not enough room. Wait
@@ -1098,75 +1127,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 clearOrDirtBlock(rfNeeded, srcPos, srcState, clear);
             }
         }
-        return skip();
-    }
-
-    private void getFilterCache() {
-        if (filterCache == null) {
-            filterCache = StorageFilterItem.getCache(inventoryHelper.getStackInSlot(BuilderContainer.SLOT_FILTER));
-        }
-    }
-
-    public static boolean allowedToBreak(IBlockState state, World world, BlockPos pos, EntityPlayer entityPlayer) {
-        if (!state.getBlock().canEntityDestroy(state, world, pos, entityPlayer)) {
-            return false;
-        }
-        BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, state, entityPlayer);
-        MinecraftForge.EVENT_BUS.post(event);
-        return !event.isCanceled();
-    }
-
-    public boolean quarryBlock(int rfNeeded, BlockPos srcPos, IBlockState srcState, IBlockState pickState) {
-        Block block = srcState.getBlock();
-        int xCoord = getPos().getX();
-        int yCoord = getPos().getY();
-        int zCoord = getPos().getZ();
-        int sx = srcPos.getX();
-        int sy = srcPos.getY();
-        int sz = srcPos.getZ();
-        if (sx >= xCoord - 1 && sx <= xCoord + 1 && sy >= yCoord - 1 && sy <= yCoord + 1 && sz >= zCoord - 1 && sz <= zCoord + 1) {
-            // Skip a 3x3x3 block around the builder.
-            return skip();
-        }
-        if (isEmpty(srcState, block)) {
-            return skip();
-        }
-        if (block.getBlockHardness(srcState, getWorld(), srcPos) >= 0) {
-            boolean clear = getCardType().isClearing();
-            if ((!clear) && srcState == getReplacementBlock()) {
-                // We can skip dirt if we are not clearing.
-                return skip();
-            }
-            if ((!BuilderConfiguration.quarryTileEntities) && getWorld().getTileEntity(srcPos) != null) {
-                // Skip tile entities
-                return skip();
-            }
-
-            FakePlayer fakePlayer = getHarvester();
-            if (allowedToBreak(srcState, getWorld(), srcPos, fakePlayer)) {
-                ItemStack filter = getStackInSlot(BuilderContainer.SLOT_FILTER);
-                if (!filter.isEmpty()) {
-                    getFilterCache();
-                    if (filterCache != null) {
-                        boolean match = filterCache.match(block.getItem(getWorld(), srcPos, srcState));
-                        if (!match) {
-                            consumeEnergy(Math.min(rfNeeded, BuilderConfiguration.builderRfPerSkipped));
-                            return skip();   // Skip this
-                        }
-                    }
-                }
-                if (!getCachedVoidableBlocks().contains(block)) {
-                    int fortune = getCardType().isFortune() ? 3 : 0;
-                    List<ItemStack> drops = block.getDrops(getWorld(), srcPos, srcState, fortune);
-                    net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, getWorld(), pos, srcState, fortune, 1.0f, false, fakePlayer);
-                    if (!checkAndInsertItems(block, drops)) {
-                        return waitOrSkip("Not enough room!\nor no usable storage\non top or below!");    // Not enough room. Wait
-                    }
-                }
-                clearOrDirtBlock(rfNeeded, srcPos, srcState, clear);
-            }
-        }
-        return false;
+        return silk ? skip() : false;
     }
 
     private static boolean isFluidBlock(Block block) {
