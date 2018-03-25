@@ -78,8 +78,8 @@ public class CamoShieldBlock extends AbstractShieldBlock {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public BlockRenderLayer getBlockLayer() {
-        return BlockRenderLayer.TRANSLUCENT;
+    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
+        return true; // delegated to CamoBakedModel#getQuads
     }
 
     @Override
@@ -113,7 +113,7 @@ public class CamoShieldBlock extends AbstractShieldBlock {
         IExtendedBlockState extendedBlockState = (IExtendedBlockState) state;
         IBlockState mimicBlock = getMimicBlock(world, pos);
         if (mimicBlock != null) {
-            return extendedBlockState.withProperty(CAMOID, new CamoBlockId(mimicBlock.getBlock().getRegistryName().toString(), mimicBlock.getBlock().getMetaFromState(mimicBlock)));
+            return extendedBlockState.withProperty(CAMOID, new CamoBlockId(mimicBlock));
         } else {
             return extendedBlockState;
         }

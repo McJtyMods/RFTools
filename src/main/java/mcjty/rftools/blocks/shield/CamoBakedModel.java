@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.shield;
 
 import mcjty.rftools.RFTools;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.*;
@@ -9,9 +8,9 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -45,7 +44,11 @@ public class CamoBakedModel implements IBakedModel {
             return Collections.emptyList();
         }
 
-        IBakedModel model = getModel(facadeId);
+        IBlockState facadeState = facadeId.getBlockState();
+        if (!facadeState.getBlock().canRenderInLayer(facadeState, MinecraftForgeClient.getRenderLayer())) {
+            return Collections.emptyList();
+        }
+        IBakedModel model = getModel(facadeState);
         try {
             return model.getQuads(state, side, rand);
         } catch (Exception e) {
@@ -53,10 +56,9 @@ public class CamoBakedModel implements IBakedModel {
         }
     }
 
-    private IBakedModel getModel(@Nonnull CamoBlockId facadeId) {
+    private IBakedModel getModel(@Nonnull IBlockState facadeState) {
         initTextures();
-        Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(facadeId.getRegistryName()));
-        IBakedModel model = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelForState(block.getStateFromMeta(facadeId.getMeta()));
+        IBakedModel model = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelForState(facadeState);
         return model;
     }
 
