@@ -1116,7 +1116,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                         if (!drop.isEmpty()) {
                             drops.add(drop);
                         }
-                        net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, getWorld(), pos, srcState, 0, 1.0f, true, fakePlayer);
+                        net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, getWorld(), srcPos, srcState, 0, 1.0f, true, fakePlayer);
                     } else {
                         int fortune = getCardType().isFortune() ? 3 : 0;
                         if (block instanceof BlockShulkerBox) {
@@ -1135,7 +1135,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                         } else {
                             drops = block.getDrops(getWorld(), srcPos, srcState, fortune);
                         }
-                        net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, getWorld(), pos, srcState, fortune, 1.0f, false, fakePlayer);
+                        net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, getWorld(), srcPos, srcState, fortune, 1.0f, false, fakePlayer);
                     }
                     if (!checkAndInsertItems(block, drops)) {
                         return waitOrSkip("Not enough room!\nor no usable storage\non top or below!");    // Not enough room. Wait
