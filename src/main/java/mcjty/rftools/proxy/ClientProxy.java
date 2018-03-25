@@ -23,6 +23,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -71,6 +72,11 @@ public class ClientProxy extends CommonProxy {
     public void registerModels(ModelRegistryEvent event) {
         ModItems.initClient();
         ModBlocks.initClient();
+    }
+
+    @SubscribeEvent
+    public void colorHandlerEventBlock(ColorHandlerEvent.Block event) {
+        ModBlocks.initColorHandlers(event.getBlockColors());
     }
 
     @SubscribeEvent

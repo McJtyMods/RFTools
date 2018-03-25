@@ -6,6 +6,7 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
+import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -99,6 +100,14 @@ public class CamoShieldBlock extends AbstractShieldBlock {
         } else {
             return null;
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void initColorHandler(BlockColors blockColors) {
+        blockColors.registerBlockColorHandler((state, world, pos, tintIndex) -> {
+            IBlockState mimicBlock = getMimicBlock(world, pos);
+            return mimicBlock != null ? blockColors.colorMultiplier(mimicBlock, world, pos, tintIndex) : -1;
+        }, this);
     }
 
     @Override

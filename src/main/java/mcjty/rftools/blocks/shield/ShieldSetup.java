@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.shield;
 
+import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -57,5 +58,11 @@ public class ShieldSetup {
             solidShieldBlock.initBlockColors();
             noTickSolidShieldBlock.initBlockColors();
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void initColorHandlers(BlockColors blockColors) {
+        camoShieldBlock.initColorHandler(blockColors);
+        noTickCamoShieldBlock.initColorHandler(blockColors);
     }
 }

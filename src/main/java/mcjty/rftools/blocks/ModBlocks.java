@@ -22,6 +22,7 @@ import mcjty.rftools.blocks.spawner.SpawnerSetup;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerSetup;
 import mcjty.rftools.blocks.teleporter.TeleporterSetup;
+import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -96,6 +97,11 @@ public final class ModBlocks {
         machineBase = new MachineBase();
 
         dimensionalShardBlock = new DimensionalShardBlock();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void initColorHandlers(BlockColors blockColors) {
+        ShieldSetup.initColorHandlers(blockColors);
     }
 
 }
