@@ -215,6 +215,13 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
     }
 
     @Override
+    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis) {
+        // Doesn't make sense to rotate a potentially 3x3 screen,
+        // and is incompatible with our special wrench actions.
+        return false;
+    }
+
+    @Override
     public void onBlockClicked(World world, BlockPos pos, EntityPlayer playerIn) {
         if (world.isRemote) {
             RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;

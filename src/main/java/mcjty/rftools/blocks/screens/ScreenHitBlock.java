@@ -151,6 +151,13 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
         return ((ScreenBlock) block).activate(world, pos, state, player, hand, side, hitX, hitY, hitZ);
     }
 
+    @Override
+    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis) {
+        // Doesn't make sense to rotate a potentially 3x3 screen,
+        // and is incompatible with our special wrench actions.
+        return false;
+    }
+
     public BlockPos getScreenBlockPos(World world, BlockPos pos) {
         ScreenHitTileEntity screenHitTileEntity = (ScreenHitTileEntity) world.getTileEntity(pos);
         int dx = screenHitTileEntity.getDx();
