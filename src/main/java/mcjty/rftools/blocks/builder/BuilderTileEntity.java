@@ -1169,13 +1169,18 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 return waitOrSkip("Cannot find liquid!\nor no usable tank\nabove or below");    // We could not find a block. Wait
             }
 
-            // We assume here the liquid is placable.
-            Block block = stack.getFluid().getBlock();
-            FakePlayer fakePlayer = getHarvester();
-            getWorld().setBlockState(srcPos, block.getDefaultState(), 11);
+            Fluid fluid = stack.getFluid();
+            if (fluid.doesVaporize(stack) && getWorld().provider.doesWaterVaporize()) {
+                fluid.vaporize(null, getWorld(), srcPos, stack);
+            } else {
+                // We assume here the liquid is placable.
+                Block block = fluid.getBlock();
+                FakePlayer fakePlayer = getHarvester();
+                getWorld().setBlockState(srcPos, block.getDefaultState(), 11);
 
-            if (!silent) {
-                SoundTools.playSound(getWorld(), block.getSoundType(block.getDefaultState(), getWorld(), srcPos, fakePlayer).getPlaceSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
+                if (!silent) {
+                    SoundTools.playSound(getWorld(), block.getSoundType(block.getDefaultState(), getWorld(), srcPos, fakePlayer).getPlaceSound(), srcPos.getX(), srcPos.getY(), srcPos.getZ(), 1.0f, 1.0f);
+                }
             }
 
             consumeEnergy(rfNeeded);
