@@ -37,7 +37,9 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.*;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityShulkerBox;
 import net.minecraft.util.EnumFacing;
@@ -51,6 +53,7 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.world.BlockEvent;
@@ -159,6 +162,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     // Cached set of blocks that we want to void with the quarry.
     private Set<Block> cachedVoidableBlocks = null;
+
+    // Drops from a block that we broke but couldn't fit in an inventory
+    private List<ItemStack> overflowItems = null;
 
     private static FakePlayer harvester = null;
 
@@ -663,6 +669,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private void checkStateServer() {
+        if (overflowItems != null && insertItems(overflowItems)) {
+            overflowItems = null;
+        }
+
         if (!isMachineEnabled() && loopMode) {
             return;
         }
@@ -708,6 +718,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 }
             }
         }
+    }
+
+    public List<ItemStack> getOverflowItems() {
+        return overflowItems;
     }
 
     private void updateHilight() {
@@ -1104,6 +1118,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     }
                 }
                 if (!getCachedVoidableBlocks().contains(block)) {
+                    if (overflowItems != null) {
+                        // Don't harvest any new blocks if we're still overflowing with the drops from a previous block
+                        return waitOrSkip("Not enough room!\nor no usable storage\non top or below!");
+                    }
+
                     List<ItemStack> drops;
                     if(silk && block.canSilkHarvest(getWorld(), srcPos, srcState, fakePlayer)) {
                         ItemStack drop;
@@ -1138,6 +1157,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                         net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, getWorld(), srcPos, srcState, fortune, 1.0f, false, fakePlayer);
                     }
                     if (checkValidItems(block, drops) && !insertItems(drops)) {
+                        overflowItems = drops;
+                        clearOrDirtBlock(rfNeeded, srcPos, srcState, clear);
                         return waitOrSkip("Not enough room!\nor no usable storage\non top or below!");    // Not enough room. Wait
                     }
                 }
@@ -2146,6 +2167,31 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
         return stack.getItem() == BuilderSetup.spaceChamberCardItem || stack.getItem() == BuilderSetup.shapeCardItem;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound tagCompound) {
+        super.readFromNBT(tagCompound);
+        if(tagCompound.hasKey("overflowItems")) {
+            NBTTagList overflowItemsNbt = tagCompound.getTagList("overflowItems", Constants.NBT.TAG_COMPOUND);
+            overflowItems = new ArrayList<>(overflowItemsNbt.tagCount());
+            for(NBTBase overflowNbt : overflowItemsNbt) {
+                overflowItems.add(new ItemStack((NBTTagCompound)overflowNbt));
+            }
+        }
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+        super.writeToNBT(tagCompound);
+        if(overflowItems != null) {
+            NBTTagList overflowItemsNbt = new NBTTagList();
+            for(ItemStack overflow : overflowItems) {
+                overflowItemsNbt.appendTag(overflow.writeToNBT(new NBTTagCompound()));
+            }
+            tagCompound.setTag("overflowItems", overflowItemsNbt);
+        }
+        return tagCompound;
     }
 
     @Override

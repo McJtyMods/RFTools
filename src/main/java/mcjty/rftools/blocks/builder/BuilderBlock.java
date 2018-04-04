@@ -20,6 +20,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Optional;
@@ -142,6 +143,19 @@ public class BuilderBlock extends GenericRFToolsBlock<BuilderTileEntity, Builder
     @Override
     public int getGuiID() {
         return RFTools.GUI_BUILDER;
+    }
+
+    @Override
+    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState metadata, int fortune) {
+        List<ItemStack> drops = super.getDrops(world, pos, metadata, fortune);
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof BuilderTileEntity) {
+            List<ItemStack> overflowItems = ((BuilderTileEntity)te).getOverflowItems();
+            if(overflowItems != null) {
+                drops.addAll(overflowItems);
+            }
+        }
+        return drops;
     }
 
     @Override
