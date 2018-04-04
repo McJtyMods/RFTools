@@ -1137,7 +1137,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                         }
                         net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, getWorld(), srcPos, srcState, fortune, 1.0f, false, fakePlayer);
                     }
-                    if (!checkAndInsertItems(block, drops)) {
+                    if (checkValidItems(block, drops) && !insertItems(drops)) {
                         return waitOrSkip("Not enough room!\nor no usable storage\non top or below!");    // Not enough room. Wait
                     }
                 }
@@ -1375,7 +1375,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 Broadcaster.broadcast(getWorld(), pos.getX(), pos.getY(), pos.getZ(), "Builder tried to quarry "
                                 + block.getRegistryName().toString() + " and it returned null item!\nPlease report to mod author!",
                         10);
-                return false;
+                return false; // We don't wait for this. Just skip the item
             }
         }
         return true;
@@ -1405,11 +1405,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return false;
     }
 
-    private boolean checkAndInsertItems(Block block, List<ItemStack> items) {
+    private boolean insertItems(List<ItemStack> items) {
         TileEntity te = getWorld().getTileEntity(getPos().up());
-        if (!checkValidItems(block, items)) {
-            return true;    // We don't wait for this. Just skip the item
-        }
         boolean ok = InventoryHelper.insertItemsAtomic(items, te, EnumFacing.DOWN);
         if (!ok) {
             te = getWorld().getTileEntity(getPos().down());
