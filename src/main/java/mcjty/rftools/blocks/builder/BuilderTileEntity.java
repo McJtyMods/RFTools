@@ -1414,8 +1414,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private boolean checkFluidTank(Fluid fluid, BlockPos up, EnumFacing side) {
         TileEntity te = getWorld().getTileEntity(up);
-        if (te != null && te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null)) {
-            IFluidHandler handler = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
+        if (te != null && te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side)) {
+            IFluidHandler handler = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);
             FluidStack fluidStack = new FluidStack(fluid, 1000);
             int amount = handler.fill(fluidStack, false);
             if (amount == 1000) {
