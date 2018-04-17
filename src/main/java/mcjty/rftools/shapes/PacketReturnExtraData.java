@@ -1,6 +1,7 @@
 package mcjty.rftools.shapes;
 
 import io.netty.buffer.ByteBuf;
+import mcjty.lib.network.NetworkTools;
 import mcjty.rftools.RFTools;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -23,10 +24,10 @@ public class PacketReturnExtraData implements IMessage {
         } else {
             data = new ScanExtraData();
             for (int i = 0; i < size; i++) {
-                long p = buf.readLong();
+                BlockPos pos = NetworkTools.readPos(buf);
                 BeaconType type = BeaconType.VALUES[buf.readByte()];
                 boolean doBeacon = buf.readBoolean();
-                data.addBeacon(BlockPos.fromLong(p), type, doBeacon);
+                data.addBeacon(pos, type, doBeacon);
             }
         }
     }
@@ -40,7 +41,7 @@ public class PacketReturnExtraData implements IMessage {
             List<ScanExtraData.Beacon> beacons = data.getBeacons();
             buf.writeInt(beacons.size());
             for (ScanExtraData.Beacon beacon : beacons) {
-                buf.writeLong(beacon.getPos().toLong());
+                NetworkTools.writePos(buf, beacon.getPos());
                 buf.writeByte(beacon.getType().ordinal());
                 buf.writeBoolean(beacon.isDoBeacon());
             }

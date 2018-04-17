@@ -48,7 +48,7 @@ repositories {
     }
     maven { // Charset
         name = "Elytra Maven"
-        url = "http://repo.elytradev.com"
+        url = "https://repo.elytradev.com"
     }
 }
 
@@ -86,12 +86,12 @@ dependencies {
     deobfCompile "mcp.mobius.waila:Hwyla:1.8.23-B38_1.12"
     deobfCompile "mcjty.theoneprobe:TheOneProbe-1.12:1.12-1.4.19-11"
     deobfCompile "cofh:RedstoneFlux:1.12-2.0.0.1:universal"
-    deobfCompile "pl.asie.charset:charset:0.5.0.164"
+    //deobfCompile "pl.asie.charset:charset:0.5.0.164"
     compile "team.chisel.ctm:CTM:MC1.12-0.2.3.12"
 
     deobfCompile "com.github.mcjty:intwheel:1.12-1.2.7"
     deobfCompile "com.github.mcjty:xnet:1.12-1.6.7"
-    deobfCompile "com.github.mcjty:mcjtylib:1.12-2.6.6-SNAPSHOT"
+    deobfCompile "com.github.mcjty:mcjtylib:1.12-2.6.8-SNAPSHOT"
 
     provided "li.cil.oc:OpenComputers:MC1.12.1-1.7.+:api"
 }
