@@ -18,6 +18,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
@@ -146,8 +147,8 @@ public class BuilderBlock extends GenericRFToolsBlock<BuilderTileEntity, Builder
     }
 
     @Override
-    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState metadata, int fortune) {
-        List<ItemStack> drops = super.getDrops(world, pos, metadata, fortune);
+    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState metadata, int fortune) {
+        super.getDrops(drops, world, pos, metadata, fortune);
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof BuilderTileEntity) {
             List<ItemStack> overflowItems = ((BuilderTileEntity)te).getOverflowItems();
@@ -155,7 +156,6 @@ public class BuilderBlock extends GenericRFToolsBlock<BuilderTileEntity, Builder
                 drops.addAll(overflowItems);
             }
         }
-        return drops;
     }
 
     @Override
