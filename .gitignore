@@ -7,3 +7,4 @@ bin/
 .idea/
 build/
 run/
+/.nb-gradle/

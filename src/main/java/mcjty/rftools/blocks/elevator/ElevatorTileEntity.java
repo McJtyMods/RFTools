@@ -49,7 +49,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
 
     // The positions of the blocks we are currently moving (with 'y' set to the height of the controller)
     private Set<BlockPos> positions = new HashSet<>();
-    private Bounds bounds;
+    private List<Bounds> bounds = new ArrayList<>();
     // The state that is moving
     private IBlockState movingState;
 
@@ -189,12 +189,15 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     private void handleClientMovement() {
         double d = calculateSpeed();
         handlePlatformMovement(d);
-        if (bounds != null) {
+        if (!bounds.isEmpty()) {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
-            AxisAlignedBB aabb = getAABBAboveElevator(d);
-            boolean on = player.getEntityBoundingBox().intersects(aabb);
-            if (on) {
-                player.setPosition(player.posX, movingY + 1, player.posZ);
+            for(Bounds strip : bounds){
+                AxisAlignedBB aabb = getAABBAtStrip(d, strip);
+                boolean on = player.getEntityBoundingBox().intersects(aabb);
+                if (on) {
+                    player.setPosition(player.posX, movingY + 1, player.posZ);
+                    break;
+                }
             }
         }
     }
@@ -243,13 +246,16 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         double offset = speed > 0 ? speed * 2 : speed;
         Set<Entity> oldEntities = this.entitiesOnPlatform;
         entitiesOnPlatform = new HashSet<>();
-        List<Entity> entities = getWorld().getEntitiesWithinAABB(Entity.class, getAABBAboveElevator(speed));
-        for (Entity entity : entities) {
-            entity.fallDistance = 0;
-            entitiesOnPlatform.add(entity);
-            moveEntityOnPlatform(stop, offset, entity);
-            entity.onGround = true;
-            entity.fallDistance = 0;
+
+        for(Bounds strip : bounds){
+            List<Entity> entities = getWorld().getEntitiesWithinAABB(Entity.class, getAABBAtStrip(speed, strip));
+            for (Entity entity : entities) {
+                if(entitiesOnPlatform.contains(entity)){
+                    continue;
+                }
+                entitiesOnPlatform.add(entity);
+                moveEntityOnPlatform(stop, offset, entity);
+            }
         }
 
         for (Entity entity : oldEntities) {
@@ -258,14 +264,13 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
                 // to ensure it is still in the patform shaft and in that case put it back on the platform.
                 // We also put back the entity if we know the list is complete.
                 if (entity instanceof EntityPlayer || entitiesOnPlatformComplete) {
-                    if (entity.getEntityBoundingBox().intersects(getAABBBigMargin())) {
-                        // Entity is no longer on the platform but was on the platform before and
-                        // is still in the elevator shaft. In that case we put it back.
-                        entity.fallDistance = 0;
-                        entitiesOnPlatform.add(entity);
-                        moveEntityOnPlatform(stop, offset, entity);
-                        entity.onGround = true;
-                        entity.fallDistance = 0;
+                    for(Bounds strip : bounds){
+                        if (entity.getEntityBoundingBox().intersects(getAABBBigMarginAtStrip(strip))) {
+                            // Entity is no longer on the platform but was on the platform before and
+                            // is still in the elevator shaft. In that case we put it back.
+                            entitiesOnPlatform.add(entity);
+                            moveEntityOnPlatform(stop, offset, entity);
+                        }
                     }
                 }
 
@@ -280,6 +285,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     }
 
     private void moveEntityOnPlatform(boolean stop, double offset, Entity entity) {
+        entity.fallDistance = 0;
         if (entity instanceof EntityPlayer) {
             double dy = 1;
             EntityPlayer player = (EntityPlayer) entity;
@@ -296,6 +302,8 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
             entity.posY = movingY + dy;
             entity.setPositionAndUpdate(entity.posX, movingY + dy, entity.posZ);
         }
+        entity.onGround = true;
+        entity.fallDistance = 0;
     }
 
     // Find the position of the bottom elevator.
@@ -377,7 +385,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         positions.clear();
         entitiesOnPlatform.clear();
         movingState = null;
-        bounds = null;
+        bounds.clear();
         movingY = -1;
     }
 
@@ -435,11 +443,10 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         positions.clear();
 
         getBounds(start);
-        if(bounds.getMaxX() < bounds.getMinX() || bounds.getMaxZ() < bounds.getMinZ()) {
+        if(bounds.isEmpty()) {
             // No blocks were added to bounds. This happens when canMoveBlock
             // returns false for the platform block right in front of the elevator.
             // If this is the case, we can't move at all.
-            bounds = null;
             return false;
         }
 
@@ -462,19 +469,20 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     // Always called on controller TE (bottom one)
     private void getBounds(BlockPos start) {
         EnumFacing side = getWorld().getBlockState(getPos()).getValue(BaseBlock.FACING_HORIZ);
-        bounds = new Bounds();
+        bounds.clear();
         for (int a = 1; a < ElevatorConfiguration.maxPlatformSize; a++) {
             BlockPos offset = start.offset(side, a);
             if (canMoveBlock(offset)) {
                 getWorld().setBlockToAir(offset);
-                bounds.addPos(offset);
+                Bounds strip = new Bounds();
+                strip.addPos(getPosAtY(offset, getPos().getY()));
                 positions.add(getPosAtY(offset, getPos().getY()));
 
                 for (int b = 1; b <= (ElevatorConfiguration.maxPlatformSize / 2); b++) {
                     BlockPos offsetLeft = offset.offset(side.rotateY(), b);
                     if (canMoveBlock(offsetLeft)) {
                         getWorld().setBlockToAir(offsetLeft);
-                        bounds.addPos(offsetLeft);
+                        strip.addPos(getPosAtY(offsetLeft, getPos().getY()));
                         positions.add(getPosAtY(offsetLeft, getPos().getY()));
                     } else {
                         break;
@@ -485,36 +493,44 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
                     BlockPos offsetRight = offset.offset(side.rotateYCCW(), b);
                     if (canMoveBlock(offsetRight)) {
                         getWorld().setBlockToAir(offsetRight);
-                        bounds.addPos(offsetRight);
+                        strip.addPos(getPosAtY(offsetRight, getPos().getY()));
                         positions.add(getPosAtY(offsetRight, getPos().getY()));
                     } else {
                         break;
                     }
                 }
+                
+                bounds.add(strip);
             } else {
                 break;
             }
         }
     }
 
-    public AxisAlignedBB getAABBBigMargin() {
-        return new AxisAlignedBB(bounds.getMinX(), movingY-150, bounds.getMinZ(), bounds.getMaxX() + 1, movingY + 150, bounds.getMaxZ() + 1);
+    public boolean intersects(AxisAlignedBB aabb) {
+        for(Bounds strip : bounds){
+            if(getAABBAtStrip(0, strip).intersects(aabb)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private AxisAlignedBB getAABBBigMarginAtStrip(Bounds strip) {
+        return new AxisAlignedBB(strip.getMinX(), movingY-150, strip.getMinZ(), strip.getMaxX() + 1, movingY + 150, strip.getMaxZ() + 1);
     }
 
-
-    public AxisAlignedBB getAABBAboveElevator(double speed) {
-        double o1;
-        double o2;
+    private AxisAlignedBB getAABBAtStrip(double speed, Bounds strip) {
+        double o1 = 0;
+        double o2 = 0;
         if (speed > 0) {
             o1 = -speed * 2;
-            o2 = 0;
         } else {
-            o1 = 0;
             o2 = -speed * 2;
         }
-        return new AxisAlignedBB(bounds.getMinX(), movingY-1+o1, bounds.getMinZ(), bounds.getMaxX() + 1, movingY + 3+o2, bounds.getMaxZ() + 1);
+        return new AxisAlignedBB(strip.getMinX(), movingY-1+o1, strip.getMinZ(), strip.getMaxX() + 1, movingY + 3+o2, strip.getMaxZ() + 1);
     }
-
+    
     public boolean isMoving() {
         return movingY >= 0;
     }
@@ -730,24 +746,22 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         stopY = tagCompound.getInteger("stopY");
         byte[] byteArray = tagCompound.getByteArray("relcoords");
         positions.clear();
-        int j = 0;
-        for (int i = 0; i < byteArray.length / 6; i++) {
-            short dx = bytesToShort(byteArray[j + 0], byteArray[j + 1]);
-            short dy = bytesToShort(byteArray[j + 2], byteArray[j + 3]);
-            short dz = bytesToShort(byteArray[j + 4], byteArray[j + 5]);
-            j += 6;
+        for (int i = 0; i < byteArray.length; i += 6) {
+            short dx = bytesToShort(byteArray[i + 0], byteArray[i + 1]);
+            short dy = bytesToShort(byteArray[i + 2], byteArray[i + 3]);
+            short dz = bytesToShort(byteArray[i + 4], byteArray[i + 5]);
             RelCoordinate c = new RelCoordinate(dx, dy, dz);
             positions.add(new BlockPos(getPos().getX() + c.getDx(), getPos().getY() + c.getDy(), getPos().getZ() + c.getDz()));
         }
-        if (tagCompound.hasKey("bminX")) {
-            int bminX = tagCompound.getInteger("bminX");
-            int bminZ = tagCompound.getInteger("bminZ");
-            int bmaxX = tagCompound.getInteger("bmaxX");
-            int bmaxZ = tagCompound.getInteger("bmaxZ");
-            if(bminX <= bmaxX && bminZ <= bmaxZ) { // Fix saves that were affected by issue #1601 by validating bounds here
-                bounds = new Bounds(bminX, bminZ, bmaxX, bmaxZ);
+        
+        if(tagCompound.hasKey("bounds")){
+            bounds.clear();
+            int[] strips = tagCompound.getIntArray("bounds");
+            for (int i = 0; i < strips.length; i += 4) {
+                bounds.add(new Bounds(strips[i + 0], strips[i + 1], strips[i + 2], strips[i + 3]));
             }
         }
+        
         if (tagCompound.hasKey("movingId")) {
             Integer id = tagCompound.getInteger("movingId");
             movingState = Block.getStateById(id);
@@ -779,13 +793,21 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
             blocks[j + 5] = shortToByte2((short) c.getDz());
             j += 6;
         }
-        if (bounds != null) {
-            tagCompound.setInteger("bminX", bounds.getMinX());
-            tagCompound.setInteger("bminZ", bounds.getMinZ());
-            tagCompound.setInteger("bmaxX", bounds.getMaxX());
-            tagCompound.setInteger("bmaxZ", bounds.getMaxZ());
-        }
         tagCompound.setByteArray("relcoords", blocks);
+        
+        if (!bounds.isEmpty()) {
+            int i = 0;
+            int[] strips = new int[bounds.size() * 4];
+            for(Bounds strip : bounds){
+                strips[i + 0] = strip.getMinX();
+                strips[i + 1] = strip.getMinZ();
+                strips[i + 2] = strip.getMaxX();
+                strips[i + 3] = strip.getMaxZ();
+                i += 4;
+            }
+            tagCompound.setIntArray("bounds", strips);
+        }
+
         if (movingState != null) {
             tagCompound.setInteger("movingId", Block.getStateId(movingState));
         }
