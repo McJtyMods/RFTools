@@ -31,6 +31,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.ChunkCache;
@@ -275,9 +276,9 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
     }
 
     @Override
-    public List<ItemStack> getDrops(IBlockAccess blockAccess, BlockPos pos, IBlockState state, int fortune) {
+    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess blockAccess, BlockPos pos, IBlockState state, int fortune) {
         World world = (World) blockAccess;
-        List<ItemStack> drops = super.getDrops(world, pos, state, fortune);
+        super.getDrops(drops, world, pos, state, fortune);
         if (!world.isRemote) {
             TileEntity te = world.getTileEntity(pos);
             if (te instanceof PowerCellTileEntity) {
@@ -295,7 +296,6 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
                 }
             }
         }
-        return drops;
     }
 
     @Override
