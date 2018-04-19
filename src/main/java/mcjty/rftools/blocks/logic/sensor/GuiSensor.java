@@ -45,7 +45,7 @@ public class GuiSensor extends GenericGuiContainer<SensorTileEntity> {
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
         numberField = new TextField(mc, this).setTooltips("Set a number specific to the type of sensor")
-                .setLayoutHint(new PositionalLayout.PositionalHint(60, 51, 80, 14))
+                .setLayoutHint(60, 51, 80, 14)
                 .addTextEvent((parent, newText) -> setNumber());
         int number = tileEntity.getNumber();
         numberField.setText(String.valueOf(number));
@@ -55,7 +55,7 @@ public class GuiSensor extends GenericGuiContainer<SensorTileEntity> {
             typeLabel.addChoices(sensorType.getName());
             typeLabel.setChoiceTooltip(sensorType.getName(), sensorType.getDescription());
         }
-        typeLabel.setLayoutHint(new PositionalLayout.PositionalHint(60, 3, 80, 14));
+        typeLabel.setLayoutHint(60, 3, 80, 14);
         typeLabel.setChoice(tileEntity.getSensorType().getName());
         typeLabel.addChoiceEvent((parent, newChoice) -> setType());
 
@@ -64,7 +64,7 @@ public class GuiSensor extends GenericGuiContainer<SensorTileEntity> {
             areaLabel.addChoices(areaType.getName());
             areaLabel.setChoiceTooltip(areaType.getName(), areaType.getDescription());
         }
-        areaLabel.setLayoutHint(new PositionalLayout.PositionalHint(60, 19, 80, 14));
+        areaLabel.setLayoutHint(60, 19, 80, 14);
         areaLabel.setChoice(tileEntity.getAreaType().getName());
         areaLabel.addChoiceEvent((parent, newChoice) -> setArea());
 
@@ -73,26 +73,26 @@ public class GuiSensor extends GenericGuiContainer<SensorTileEntity> {
             groupLabel.addChoices(groupType.getName());
             groupLabel.setChoiceTooltip(groupType.getName(), groupType.getDescription());
         }
-        groupLabel.setLayoutHint(new PositionalLayout.PositionalHint(60, 35, 80, 14));
+        groupLabel.setLayoutHint(60, 35, 80, 14);
         groupLabel.setChoice(tileEntity.getGroupType().getName());
         groupLabel.addChoiceEvent((parent, newChoice) -> setGroup());
 
         toplevel
                 .addChild(new Label(mc, this).setText("Type:")
                         .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
-                        .setLayoutHint(new PositionalLayout.PositionalHint(10, 3, 50, 14)))
+                        .setLayoutHint(10, 3, 50, 14))
                 .addChild(areaLabel)
                 .addChild(new Label(mc, this).setText("Area:")
                         .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
-                        .setLayoutHint(new PositionalLayout.PositionalHint(10, 19, 50, 14)))
+                        .setLayoutHint(10, 19, 50, 14))
                 .addChild(typeLabel)
                 .addChild(new Label(mc, this).setText("Group:")
                         .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
-                        .setLayoutHint(new PositionalLayout.PositionalHint(10, 35, 50, 14)))
+                        .setLayoutHint(10, 35, 50, 14))
                 .addChild(groupLabel)
                 .addChild(new Label(mc, this).setText("Number:")
                         .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
-                        .setLayoutHint(new PositionalLayout.PositionalHint(10, 51, 50, 14)))
+                        .setLayoutHint(10, 51, 50, 14))
                 .addChild(numberField);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));

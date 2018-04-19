@@ -76,7 +76,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         super.initGui();
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored();
-        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(12, 141, 10, 76)).setShowText(false);
+        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(12, 141, 10, 76).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
         initKeepMode();
@@ -88,24 +88,25 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
                 setTooltips("Press to apply the", "recipe to the crafter").
                 addButtonEvent(parent -> applyRecipe()).
                 setEnabled(false).
-                setLayoutHint(new PositionalLayout.PositionalHint(212, 65, 34, 16));
+                setLayoutHint(212, 65, 34, 16);
 
         Button rememberButton = new Button(mc, this)
                 .setText("R")
                 .setTooltips("Remember the current items", "in the internal and", "external buffers")
                 .addButtonEvent(widget -> rememberItems())
-                .setLayoutHint(new PositionalLayout.PositionalHint(148, 74, 18, 16));
+                .setLayoutHint(148, 74, 18, 16);
         Button forgetButton = new Button(mc, this)
                 .setText("F")
                 .setTooltips("Forget the remembered layout")
                 .addButtonEvent(widget -> forgetItems())
-                .setLayoutHint(new PositionalLayout.PositionalHint(168, 74, 18, 16));
+                .setLayoutHint(168, 74, 18, 16);
 
         initRedstoneMode();
         initSpeedMode();
 
-        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).addChild(keepItem).addChild(internalRecipe).
-                addChild(recipeList).addChild(listSlider).addChild(applyButton).addChild(redstoneMode).addChild(speedMode).addChild(rememberButton).addChild(forgetButton);
+        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout())
+                .addChildren(energyBar, keepItem, internalRecipe,
+                    recipeList, listSlider, applyButton, redstoneMode, speedMode, rememberButton, forgetButton);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         if (lastSelected != -1 && lastSelected < tileEntity.getSizeInventory()) {
@@ -130,10 +131,10 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
                         selectRecipe();
                     }
                 })
-                .setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 126, 84));
+                .setLayoutHint(10, 7, 126, 84);
         populateList();
 
-        return new Slider(mc, this).setVertical().setScrollable(recipeList).setLayoutHint(new PositionalLayout.PositionalHint(137, 7, 10, 84));
+        return new Slider(mc, this).setVertical().setScrollable(recipeList).setLayoutHint(137, 7, 10, 84);
     }
 
     private void initInternalRecipe() {
@@ -141,7 +142,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
                 addChoices("Ext", "Int", "ExtC").
                 setTooltips("'Int' will put result of", "crafting operation in", "inventory instead of", "output buffer").
                 setEnabled(false).
-                setLayoutHint(new PositionalLayout.PositionalHint(148, 24, 41, 14));
+                setLayoutHint(148, 24, 41, 14);
         internalRecipe.setChoiceTooltip("Ext", "Result of crafting operation", "will go to output buffer",
                 TextFormatting.GREEN + "(press Apply after changing)");
         internalRecipe.setChoiceTooltip("Int", "Result of crafting operation", "will stay in input buffer",
@@ -155,7 +156,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         keepItem = new ChoiceLabel(mc, this).
                 addChoices("All", "Keep").
                 setEnabled(false).
-                setLayoutHint(new PositionalLayout.PositionalHint(148, 7, 41, 14));
+                setLayoutHint(148, 7, 41, 14);
         keepItem.setChoiceTooltip("All", "All items in input slots are consumed",
                 TextFormatting.GREEN + "(press Apply after changing)");
         keepItem.setChoiceTooltip("Keep", "Keep one item in every inventory slot",
@@ -167,7 +168,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
                 addChoiceEvent((parent, newChoice) -> changeSpeedMode()).
                 addChoice("Slow", "Speed mode:\nSlow", iconGuiElements, 48, 0).
                 addChoice("Fast", "Speed mode:\nFast", iconGuiElements, 64, 0);
-        speedMode.setLayoutHint(new PositionalLayout.PositionalHint(49, 186, 16, 16));
+        speedMode.setLayoutHint(49, 186, 16, 16);
         speedMode.setCurrentChoice(tileEntity.getSpeedMode());
     }
 
@@ -177,7 +178,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
                 addChoice(RedstoneMode.REDSTONE_IGNORED.getDescription(), "Redstone mode:\nIgnored", iconGuiElements, 0, 0).
                 addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
                 addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
-        redstoneMode.setLayoutHint(new PositionalLayout.PositionalHint(31, 186, 16, 16));
+        redstoneMode.setLayoutHint(31, 186, 16, 16);
         redstoneMode.setCurrentChoice(tileEntity.getRSMode().ordinal());
     }
 

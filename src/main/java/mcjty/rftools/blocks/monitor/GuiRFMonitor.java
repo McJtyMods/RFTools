@@ -55,7 +55,7 @@ public class GuiRFMonitor extends GenericGuiContainer<RFMonitorBlockTileEntity> 
         });
         listDirty = 0;
         Slider listSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(list);
-        Panel listPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChild(list).addChild(listSlider);
+        Panel listPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChildren(list, listSlider);
 
         alarmModeChoiceLabel = new ChoiceLabel(mc, this).addChoices(
                 RFMonitorMode.MODE_OFF.getDescription(), RFMonitorMode.MODE_LESS.getDescription(), RFMonitorMode.MODE_MORE.getDescription()).
@@ -73,9 +73,9 @@ public class GuiRFMonitor extends GenericGuiContainer<RFMonitorBlockTileEntity> 
                 setMinimumKnobSize(15).
                 setTooltips("Alarm level").
                 setScrollable(alarmLabel);
-        Panel alarmPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(alarmModeChoiceLabel).addChild(alarmSlider).addChild(alarmLabel).setDesiredHeight(20);
+        Panel alarmPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChildren(alarmModeChoiceLabel, alarmSlider, alarmLabel).setDesiredHeight(20);
 
-        Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(listPanel).addChild(alarmPanel);
+        Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChildren(listPanel, alarmPanel);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
         window = new Window(this, toplevel);
 

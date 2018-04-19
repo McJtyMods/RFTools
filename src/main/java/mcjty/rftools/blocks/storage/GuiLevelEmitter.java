@@ -45,7 +45,7 @@ public class GuiLevelEmitter extends GenericGuiContainer<LevelEmitterTileEntity>
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
         amountField = new mcjty.lib.gui.widgets.TextField(mc, this).setTooltips("Set the amount of items in slot")
-                .setLayoutHint(new PositionalLayout.PositionalHint(60, 3, 80, 14))
+                .setLayoutHint(60, 3, 80, 14)
                 .addTextEvent((parent, newText) -> setAmount());
         int amount = tileEntity.getAmount();
         amountField.setText(String.valueOf(amount));
@@ -55,7 +55,7 @@ public class GuiLevelEmitter extends GenericGuiContainer<LevelEmitterTileEntity>
                 .addChoiceEvent((parent, newChoice) -> setMetaUsage())
                 .setChoiceTooltip(NOTSTARRED, "All inventories are considered")
                 .setChoiceTooltip(STARRED, "Only routable inventories are considered");
-        starredLabel.setLayoutHint(new PositionalLayout.PositionalHint(60, 19, 80, 14));
+        starredLabel.setLayoutHint(60, 19, 80, 14);
         starredLabel.setChoice(tileEntity.isStarred() ? STARRED : NOTSTARRED);
 
         oreDictLabel = new ChoiceLabel(mc, this)
@@ -63,21 +63,21 @@ public class GuiLevelEmitter extends GenericGuiContainer<LevelEmitterTileEntity>
                 .addChoiceEvent((parent, newChoice) -> setOredictUsage())
                 .setChoiceTooltip(OREDICT_IGNORE, "Ingore ore dictionary")
                 .setChoiceTooltip(OREDICT_USE, "Use ore dictionary matching");
-        oreDictLabel.setLayoutHint(new PositionalLayout.PositionalHint(60, 35, 80, 14));
+        oreDictLabel.setLayoutHint(60, 35, 80, 14);
         oreDictLabel.setChoice(tileEntity.isOreDict() ? OREDICT_USE : OREDICT_IGNORE);
 
         toplevel
                 .addChild(new Label(mc, this).setText("Amount:")
                         .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
-                        .setLayoutHint(new PositionalLayout.PositionalHint(10, 3, 50, 14)))
+                        .setLayoutHint(10, 3, 50, 14))
                 .addChild(amountField)
                 .addChild(new Label(mc, this).setText("Routable:")
                         .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
-                        .setLayoutHint(new PositionalLayout.PositionalHint(10, 19, 50, 14)))
+                        .setLayoutHint(10, 19, 50, 14))
                 .addChild(starredLabel)
                 .addChild(new Label(mc, this).setText("Oredict:")
                         .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
-                        .setLayoutHint(new PositionalLayout.PositionalHint(10, 35, 50, 14)))
+                        .setLayoutHint(10, 35, 50, 14))
                 .addChild(oreDictLabel);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));

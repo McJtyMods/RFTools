@@ -52,7 +52,7 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
                 addChoice("0", "Disabled", iconGuiElements, 160, 0).
                 addChoice("1", "Enabled", iconGuiElements, 176, 0);
         choiceLabel.setCurrentChoice(tileEntity.getEndState() ? 1 : 0);
-        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(clearButton).addChild(flipButton).addChild(endLabel).addChild(choiceLabel);
+        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChildren(clearButton, flipButton, endLabel, choiceLabel);
         toplevel.addChild(buttonPanel);
 
         initGuiMode();
@@ -65,7 +65,7 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
         }
         speedField.setText(String.valueOf(delay));
 
-        Panel bottomPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(mode).addChild(speedLabel).addChild(speedField);
+        Panel bottomPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChildren(mode, speedLabel, speedField);
         toplevel.addChild(bottomPanel);
 
         Label countLabel = new Label(mc, this).setText("Sequence length:");
@@ -77,7 +77,7 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
         }
         countField.setText(String.valueOf(count));
 
-        Panel countPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(countLabel).addChild(countField);
+        Panel countPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChildren(countLabel, countField);
         toplevel.addChild(countPanel);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, SEQUENCER_WIDTH, SEQUENCER_HEIGHT));

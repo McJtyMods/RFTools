@@ -87,10 +87,10 @@ public class GuiMatterReceiver extends GenericGuiContainer<MatterReceiverTileEnt
                 addButtonEvent(parent -> addPlayer());
         delButton = new Button(mc, this).setText("Del").setDesiredHeight(13).setDesiredWidth(34).setTooltips("Remove the selected player", "from the access list").
                 addButtonEvent(parent -> delPlayer());
-        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(nameField).addChild(addButton).addChild(delButton).setDesiredHeight(16);
+        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChildren(nameField, addButton, delButton).setDesiredHeight(16);
 
         Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setHorizontalMargin(3).setVerticalMargin(3).setSpacing(1)).
-                addChild(energyBar).addChild(namePanel).addChild(privatePanel).addChild(allowedPlayersPanel).addChild(buttonPanel);
+                addChildren(energyBar, namePanel, privatePanel, allowedPlayersPanel, buttonPanel);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, MATTER_WIDTH, MATTER_HEIGHT));
         window = new Window(this, toplevel);
         Keyboard.enableRepeatEvents(true);

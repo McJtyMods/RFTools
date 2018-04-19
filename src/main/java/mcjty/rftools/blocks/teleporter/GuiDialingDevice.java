@@ -112,11 +112,10 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
 
         statusLabel = new Label(mc, this);
         statusLabel.setDesiredWidth(170).setDesiredHeight(14).setFilledRectThickness(1);
-        Panel statusPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(statusButton).addChild(statusLabel).setDesiredHeight(16);
+        Panel statusPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChildren(statusButton, statusLabel).setDesiredHeight(16);
 
         Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setVerticalMargin(3).setSpacing(1)).
-                addChild(energyBar).addChild(transmitterPanel).
-                addChild(receiverPanel).addChild(buttonPanel).addChild(statusPanel);
+                addChildren(energyBar, transmitterPanel, receiverPanel, buttonPanel, statusPanel);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, DIALER_WIDTH, DIALER_HEIGHT));
         window = new mcjty.lib.gui.Window(this, toplevel);
         Keyboard.enableRepeatEvents(true);
@@ -145,7 +144,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             }
         });
         Slider receiverSlider = new Slider(mc, this).setDesiredWidth(11).setDesiredHeight(100).setVertical().setScrollable(receiverList);
-        return new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(receiverList).addChild(receiverSlider).setDesiredHeight(106)
+        return new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChildren(receiverList, receiverSlider).setDesiredHeight(106)
                 .setFilledBackground(0xff9e9e9e);
     }
 
@@ -163,7 +162,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             }
         });
         Slider transmitterSlider = new Slider(mc, this).setDesiredWidth(11).setDesiredHeight(58).setVertical().setScrollable(transmitterList);
-        return new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(transmitterList).addChild(transmitterSlider).setDesiredHeight(64)
+        return new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChildren(transmitterList, transmitterSlider).setDesiredHeight(64)
                 .setFilledBackground(0xff9e9e9e);
     }
 

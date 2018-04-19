@@ -8,22 +8,17 @@ import mcjty.lib.gui.events.DefaultSelectionEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
-import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.shield.filters.*;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +46,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
     private Button delFilter;
     private Button upFilter;
     private Button downFilter;
-    private ColorChoiceLabel colorSelector;
+    private ColorSelector colorSelector;
 
     // A copy of the filterList we're currently showing.
     private List<ShieldFilter> filters = null;
@@ -94,7 +89,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         super.initGui();
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored();
-        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(12, 141, 10, 76)).setShowText(false);
+        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(12, 141, 10, 76).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
         initVisibilityMode();
@@ -112,48 +107,44 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
                 });
         Slider filterSlider = new Slider(mc, this).setVertical().setScrollable(filterList).setDesiredWidth(11).setDesiredHeight(120);
         Panel filterPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3))
-                .setLayoutHint(new PositionalLayout.PositionalHint(12, 10, 154, 124)).addChild(filterList).addChild(filterSlider)
+                .setLayoutHint(12, 10, 154, 124).addChildren(filterList, filterSlider)
                 .setFilledBackground(0xff9e9e9e);
 
         Button applyCamo = new Button(mc, this).setText("Set").setTooltips("Set the camouflage block").
-                setLayoutHint(new PositionalLayout.PositionalHint(51, 142, 28, 16)).addButtonEvent(parent -> applyCamoToShield());
+                setLayoutHint(51, 142, 28, 16).addButtonEvent(parent -> applyCamoToShield());
 //        applyCamo.setEnabled(false);
 //        applyCamo.setTooltips("Not implemented yet");   // @todo
-        colorSelector = new ColorChoiceLabel(mc, this)
+        colorSelector = new ColorSelector(mc, this)
                 .setTooltips("Color for the shield")
-                .setLayoutHint(new PositionalLayout.PositionalHint(31, 177, 48, 16));
-        colorSelector.addColors(0x96ffc8);
-        for (EnumDyeColor color : EnumDyeColor.values()) {
-            colorSelector.addColors(color.getColorValue());
-        }
+                .setLayoutHint(31, 177, 48, 16);
         colorSelector.setCurrentColor(tileEntity.getShieldColor());
         colorSelector.addChoiceEvent((parent, newColor) -> sendServerCommand(RFToolsMessages.INSTANCE, ShieldTEBase.CMD_SETCOLOR, new Argument("color", newColor)));
 
-        player = new TextField(mc, this).setTooltips("Optional player name").setLayoutHint(new PositionalLayout.PositionalHint(170, 44, 80, 14));
+        player = new TextField(mc, this).setTooltips("Optional player name").setLayoutHint(170, 44, 80, 14);
 
-        addFilter = new Button(mc, this).setText("Add").setTooltips("Add selected filter").setLayoutHint(new PositionalLayout.PositionalHint(4, 6, 36, 14)).
+        addFilter = new Button(mc, this).setText("Add").setTooltips("Add selected filter").setLayoutHint(4, 6, 36, 14).
                 addButtonEvent(parent -> addNewFilter());
-        delFilter = new Button(mc, this).setText("Del").setTooltips("Delete selected filter").setLayoutHint(new PositionalLayout.PositionalHint(39, 6, 36, 14)).
+        delFilter = new Button(mc, this).setText("Del").setTooltips("Delete selected filter").setLayoutHint(39, 6, 36, 14).
                 addButtonEvent(parent -> removeSelectedFilter());
-        upFilter = new Button(mc, this).setText("Up").setTooltips("Move filter up").setLayoutHint(new PositionalLayout.PositionalHint(4, 22, 36, 14)).
+        upFilter = new Button(mc, this).setText("Up").setTooltips("Move filter up").setLayoutHint(4, 22, 36, 14).
                 addButtonEvent(parent -> moveFilterUp());
-        downFilter = new Button(mc, this).setText("Down").setTooltips("Move filter down").setLayoutHint(new PositionalLayout.PositionalHint(39, 22, 36, 14)).
+        downFilter = new Button(mc, this).setText("Down").setTooltips("Move filter down").setLayoutHint(39, 22, 36, 14).
                 addButtonEvent(parent -> moveFilterDown());
 
-        Panel controlPanel = new Panel(mc, this).setLayout(new PositionalLayout()).setLayoutHint(new PositionalLayout.PositionalHint(170, 58, 80, 43))
-                .addChild(addFilter).addChild(delFilter).addChild(upFilter).addChild(downFilter)
+        Panel controlPanel = new Panel(mc, this).setLayout(new PositionalLayout()).setLayoutHint(170, 58, 80, 43)
+                .addChildren(addFilter, delFilter, upFilter, downFilter)
                 .setFilledRectThickness(-2)
                 .setFilledBackground(StyleConfig.colorListBackground);
 
         Label lootingBonus = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT)
                 .setText("Looting:");
         lootingBonus.setTooltips("Insert dimensional shards", "for looting bonus")
-                .setLayoutHint(new PositionalLayout.PositionalHint(160, 118, 60, 18));
+                .setLayoutHint(160, 118, 60, 18);
 
-        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
-                addChild(visibilityOptions).addChild(applyCamo).addChild(redstoneMode).addChild(filterPanel).addChild(actionOptions).
-                addChild(typeOptions).addChild(player).addChild(controlPanel).addChild(damageType).
-                addChild(colorSelector).addChild(lootingBonus);
+        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChildren(energyBar,
+                visibilityOptions, applyCamo, redstoneMode, filterPanel, actionOptions,
+                typeOptions, player, controlPanel, damageType,
+                colorSelector, lootingBonus);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -307,7 +298,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
                 addChoice(RedstoneMode.REDSTONE_IGNORED.getDescription(), "Redstone mode:\nIgnored", iconGuiElements, 0, 0).
                 addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
                 addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
-        redstoneMode.setLayoutHint(new PositionalLayout.PositionalHint(62, 200, 16, 16));
+        redstoneMode.setLayoutHint(62, 200, 16, 16);
         redstoneMode.setCurrentChoice(tileEntity.getRSMode().ordinal());
     }
 
@@ -317,7 +308,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
     }
 
     private void initVisibilityMode() {
-        visibilityOptions = new ChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(31, 161, 48, 14));
+        visibilityOptions = new ChoiceLabel(mc, this).setLayoutHint(31, 161, 48, 14);
         for (ShieldRenderingMode m : ShieldRenderingMode.values()) {
             if ((!ShieldConfiguration.allowInvisibleShield) && m == ShieldRenderingMode.MODE_INVISIBLE) {
                 continue;
@@ -336,7 +327,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
     }
 
     private void initActionOptions() {
-        actionOptions = new ChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(170, 12, 80, 14));
+        actionOptions = new ChoiceLabel(mc, this).setLayoutHint(170, 12, 80, 14);
         actionOptions.addChoices(ACTION_PASS, ACTION_SOLID, ACTION_DAMAGE, ACTION_SOLIDDAMAGE);
         actionOptions.setChoiceTooltip(ACTION_PASS, "Entity that matches this filter", "can pass through");
         actionOptions.setChoiceTooltip(ACTION_SOLID, "Entity that matches this filter", "cannot pass");
@@ -345,7 +336,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
     }
 
     private void initTypeOptions() {
-        typeOptions = new ChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(170, 28, 80, 14));
+        typeOptions = new ChoiceLabel(mc, this).setLayoutHint(170, 28, 80, 14);
         typeOptions.addChoices("All", "Passive", "Hostile", "Item", "Player");
         typeOptions.setChoiceTooltip("All", "Matches everything");
         typeOptions.setChoiceTooltip("Passive", "Matches passive mobs");
@@ -355,7 +346,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
     }
 
     private void initDamageType() {
-        damageType = new ChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(170, 102, 80, 14));
+        damageType = new ChoiceLabel(mc, this).setLayoutHint(170, 102, 80, 14);
         damageType.addChoices(DAMAGETYPE_GENERIC, DAMAGETYPE_PLAYER);
         damageType.setChoiceTooltip(DAMAGETYPE_GENERIC, "Generic damage type");
         damageType.setChoiceTooltip(DAMAGETYPE_PLAYER, "Damage as done by a player");

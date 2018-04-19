@@ -65,7 +65,7 @@ public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored();
-        energyBar = new EnergyBar(mc, this).setHorizontal().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(28, 10, 70, 10)).setShowText(false);
+        energyBar = new EnergyBar(mc, this).setHorizontal().setMaxValue(maxEnergyStored).setLayoutHint(28, 10, 70, 10).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
         toplevel.addChild(energyBar);
 
@@ -92,9 +92,9 @@ public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
 
         toplevel.addChild(new Label<>(mc, this)
                 .setText("Filter")
-                .setLayoutHint(new PositionalLayout.PositionalHint(8, 82, 40, 14)));
+                .setLayoutHint(8, 82, 40, 14));
         filter = new TextField(mc, this);
-        filter.setLayoutHint(new PositionalLayout.PositionalHint(50, 82, 90, 14));
+        filter.setLayoutHint(50, 82, 90, 14);
         filter.setText(tileEntity.getFilter());
         filter.addTextEvent((parent, newText) -> update());
         toplevel.addChild(filter);
@@ -105,27 +105,27 @@ public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
         energy.setCurrentColor(tileEntity.getEnergyType().getColor());
         energyBeacon.setPressed(tileEntity.isEnergyBeacon());
 
-        toplevel.addChild(new Label<>(mc, this).setText("<").setLayoutHint(new PositionalLayout.PositionalHint(153, 98, 10, 14)));
-        minEnergy = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(162, 98, 25, 14));
+        toplevel.addChild(new Label<>(mc, this).setText("<").setLayoutHint(153, 98, 10, 14));
+        minEnergy = new TextField(mc, this).setLayoutHint(162, 98, 25, 14);
         minEnergy.setText(tileEntity.getMinEnergy() == null ? "" : Integer.toString(tileEntity.getMinEnergy()));
         minEnergy.addTextEvent((parent, newText) -> update());
-        toplevel.addChild(new Label<>(mc, this).setText("%").setLayoutHint(new PositionalLayout.PositionalHint(187, 98, 10, 14)));
+        toplevel.addChild(new Label<>(mc, this).setText("%").setLayoutHint(187, 98, 10, 14));
         toplevel.addChild(minEnergy);
-        toplevel.addChild(new Label<>(mc, this).setText(">").setLayoutHint(new PositionalLayout.PositionalHint(205, 98, 10, 14)));
-        maxEnergy = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(214, 98, 25, 14));
+        toplevel.addChild(new Label<>(mc, this).setText(">").setLayoutHint(205, 98, 10, 14));
+        maxEnergy = new TextField(mc, this).setLayoutHint(214, 98, 25, 14);
         maxEnergy.setText(tileEntity.getMaxEnergy() == null ? "" : Integer.toString(tileEntity.getMaxEnergy()));
         maxEnergy.addTextEvent((parent, newText) -> update());
         toplevel.addChild(maxEnergy);
-        toplevel.addChild(new Label<>(mc, this).setText("%").setLayoutHint(new PositionalLayout.PositionalHint(238, 98, 10, 14)));
+        toplevel.addChild(new Label<>(mc, this).setText("%").setLayoutHint(238, 98, 10, 14));
 
         toplevel.addChild(new Label<>(mc, this)
                 .setColor(0x993300)
                 .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
                 .setText("RF per scan (every " + ScannerConfiguration.ticksPerLocatorScan + " ticks):")
-                .setLayoutHint(new PositionalLayout.PositionalHint(8, 186, 156, 14)));
+                .setLayoutHint(8, 186, 156, 14));
         energyLabel = new Label(mc, this).setText("");
         energyLabel.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
-        energyLabel.setLayoutHint(new PositionalLayout.PositionalHint(8, 200, 156, 14));
+        energyLabel.setLayoutHint(8, 200, 156, 14);
         toplevel.addChild(energyLabel);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
@@ -191,7 +191,7 @@ public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
                 addChoice(RedstoneMode.REDSTONE_IGNORED.getDescription(), "Redstone mode:\nIgnored", iconGuiElements, 0, 0).
                 addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
                 addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
-        redstoneMode.setLayoutHint(new PositionalLayout.PositionalHint(8, 10, 16, 16));
+        redstoneMode.setLayoutHint(8, 10, 16, 16);
         redstoneMode.setCurrentChoice(tileEntity.getRSMode().ordinal());
     }
 

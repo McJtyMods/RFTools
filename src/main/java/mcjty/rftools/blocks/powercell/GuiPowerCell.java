@@ -52,28 +52,28 @@ public class GuiPowerCell extends GenericGuiContainer<PowerCellTileEntity> {
     public void initGui() {
         super.initGui();
 
-        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(1000).setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 8, 54)).setShowText(false);
+        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(1000).setLayoutHint(10, 7, 8, 54).setShowText(false);
         energyBar.setValue(0);
 
         Button allNone = new Button(mc, this).setText("None").setTooltips("Set all sides to 'none'")
-                .setLayoutHint(new PositionalLayout.PositionalHint(140, 10, 32, 15))
+                .setLayoutHint(140, 10, 32, 15)
                 .addButtonEvent(e -> sendServerCommand(RFToolsMessages.INSTANCE, PowerCellTileEntity.CMD_SETNONE));
         Button allInput = new Button(mc, this).setText("In").setTooltips("Set all sides to", "accept energy")
-                .setLayoutHint(new PositionalLayout.PositionalHint(140, 27, 32, 15))
+                .setLayoutHint(140, 27, 32, 15)
                 .addButtonEvent(e -> sendServerCommand(RFToolsMessages.INSTANCE, PowerCellTileEntity.CMD_SETINPUT));
         Button allOutput = new Button(mc, this).setText("Out").setTooltips("Set all sides to", "send energy")
-                .setLayoutHint(new PositionalLayout.PositionalHint(140, 44, 32, 15))
+                .setLayoutHint(140, 44, 32, 15)
                 .addButtonEvent(e -> sendServerCommand(RFToolsMessages.INSTANCE, PowerCellTileEntity.CMD_SETOUTPUT));
 
         stats = new Button(mc, this).setText("Stats").setTooltips("Power statistics. Press to clear:")
-                .setLayoutHint(new PositionalLayout.PositionalHint(100, 10, 32, 15))
+                .setLayoutHint(100, 10, 32, 15)
                 .addButtonEvent(e -> sendServerCommand(RFToolsMessages.INSTANCE, PowerCellTileEntity.CMD_CLEARSTATS));
 
         Label label = new Label(mc, this);
-        label.setText("Link:").setTooltips("Link a powercard to card", "on the left").setLayoutHint(new PositionalLayout.PositionalHint(26, 30, 40, 18));
+        label.setText("Link:").setTooltips("Link a powercard to card", "on the left").setLayoutHint(26, 30, 40, 18);
 
-        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar)
-                .addChild(allNone).addChild(allInput).addChild(allOutput).addChild(label).addChild(stats);
+        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout())
+                .addChildren(energyBar, allNone, allInput, allOutput, label, stats);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);

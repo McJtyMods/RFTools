@@ -141,8 +141,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
 
     @Override
     public ScreenModuleGuiBuilder color(final String tagname, String... tooltip) {
-        ColorChoiceLabel colorSelector = new ColorChoiceLabel(mc, gui).setTooltips(tooltip)
-                .addColors(0xffffff, 0x888888, 0x010101, 0xff0000, 0x880000, 0x00ff00, 0x008800, 0x0000ff, 0x000088, 0xffff00, 0x888800, 0xff00ff, 0x880088, 0x00ffff, 0x008888)
+        ColorSelector colorSelector = new ColorSelector(mc, gui).setTooltips(tooltip)
                 .setDesiredWidth(20).setDesiredHeight(14).addChoiceEvent((parent, newColor) -> {
                     currentData.setInteger(tagname, newColor);
                     moduleGuiChanged.updateData();

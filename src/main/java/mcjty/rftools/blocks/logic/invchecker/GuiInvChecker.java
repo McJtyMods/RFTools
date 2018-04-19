@@ -44,13 +44,13 @@ public class GuiInvChecker extends GenericGuiContainer<InvCheckerTileEntity> {
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
         amountField = new TextField(mc, this).setTooltips("Set the amount of items in slot")
-                .setLayoutHint(new PositionalLayout.PositionalHint(60, 19, 80, 14))
+                .setLayoutHint(60, 19, 80, 14)
                 .addTextEvent((parent, newText) -> setAmount());
         int amount = tileEntity.getAmount();
         amountField.setText(String.valueOf(amount));
 
         slotField = new TextField(mc, this).setTooltips("Set the slot index")
-                .setLayoutHint(new PositionalLayout.PositionalHint(60, 3, 80, 14))
+                .setLayoutHint(60, 3, 80, 14)
                 .addTextEvent((parent, newText) -> setSlot());
         int current = tileEntity.getSlot();
         slotField.setText(String.valueOf(current));
@@ -60,7 +60,7 @@ public class GuiInvChecker extends GenericGuiContainer<InvCheckerTileEntity> {
                 .addChoiceEvent((parent, newChoice) -> setMetaUsage())
                 .setChoiceTooltip(META_IGNORE, "Ignore meta/damage on item")
                 .setChoiceTooltip(META_MATCH, "Meta/damage on item must match");
-        metaLabel.setLayoutHint(new PositionalLayout.PositionalHint(60, 35, 80, 14));
+        metaLabel.setLayoutHint(60, 35, 80, 14);
         metaLabel.setChoice(tileEntity.isUseMeta() ? META_MATCH : META_IGNORE);
 
         oreDictLabel = new ChoiceLabel(mc, this)
@@ -68,25 +68,25 @@ public class GuiInvChecker extends GenericGuiContainer<InvCheckerTileEntity> {
                 .addChoiceEvent((parent, newChoice) -> setOredictUsage())
                 .setChoiceTooltip(OREDICT_IGNORE, "Ingore ore dictionary")
                 .setChoiceTooltip(OREDICT_USE, "Use ore dictionary matching");
-        oreDictLabel.setLayoutHint(new PositionalLayout.PositionalHint(60, 51, 80, 14));
+        oreDictLabel.setLayoutHint(60, 51, 80, 14);
         oreDictLabel.setChoice(tileEntity.isOreDict() ? OREDICT_USE : OREDICT_IGNORE);
 
         toplevel
                 .addChild(new Label(mc, this).setText("Slot:")
                         .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
-                        .setLayoutHint(new PositionalLayout.PositionalHint(10, 3, 50, 14)))
+                        .setLayoutHint(10, 3, 50, 14))
                 .addChild(slotField)
                 .addChild(new Label(mc, this).setText("Amount:")
                         .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
-                        .setLayoutHint(new PositionalLayout.PositionalHint(10, 19, 50, 14)))
+                        .setLayoutHint(10, 19, 50, 14))
                 .addChild(amountField)
                 .addChild(new Label(mc, this).setText("Meta:")
                         .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
-                        .setLayoutHint(new PositionalLayout.PositionalHint(10, 35, 50, 14)))
+                        .setLayoutHint(10, 35, 50, 14))
                 .addChild(metaLabel)
                 .addChild(new Label(mc, this).setText("Oredict:")
                 .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
-                .setLayoutHint(new PositionalLayout.PositionalHint(10, 51, 50, 14)))
+                .setLayoutHint(10, 51, 50, 14))
                 .addChild(oreDictLabel);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));

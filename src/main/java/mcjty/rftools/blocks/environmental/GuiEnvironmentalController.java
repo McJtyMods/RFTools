@@ -58,7 +58,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
         super.initGui();
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored();
-        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(8, 141, 10, 76)).setShowText(false);
+        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(8, 141, 10, 76).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
@@ -67,7 +67,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
         Panel playersPanel = initPlayerPanel();
         Panel controlPanel = initControlPanel();
 
-        toplevel.addChild(areaPanel).addChild(playersPanel).addChild(controlPanel).addChild(energyBar);
+        toplevel.addChildren(areaPanel, playersPanel, controlPanel, energyBar);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
@@ -83,7 +83,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
         Slider playerSlider = new Slider(mc, this).setDesiredWidth(11).setVertical().setScrollable(playersList);
         return new Panel(mc, this)
                 .setLayoutHint(new PositionalLayout.PositionalHint(25, 42, ENV_WIDTH - 27, 78))
-                .setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(playersList).addChild(playerSlider);
+                .setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChildren(playersList, playerSlider);
     }
 
     private Panel initAreaPanel() {
@@ -105,14 +105,14 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
         Panel radiusPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(16);
         ScrollableLabel radius = new ScrollableLabel(mc, this).setRealMinimum(5).setRealMaximum(100).setRealValue(r).setDesiredWidth(24).addValueEvent((parent, newValue) -> sendServerCommand(RFToolsMessages.INSTANCE, EnvironmentalControllerTileEntity.CMD_SETRADIUS, new Argument("radius", newValue)));
         Slider slider = new Slider(mc, this).setHorizontal().setScrollable(radius).setMinimumKnobSize(12);
-        radiusPanel.addChild(new Label(mc, this).setText("Radius:")).addChild(slider).addChild(radius);
+        radiusPanel.addChildren(new Label(mc, this).setText("Radius:"), slider, radius);
 
         Panel minPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).setDesiredHeight(17);
         minyTextField = new TextField(mc, this).setText(Integer.toString(miny)).addTextEvent((parent, newText) -> sendBounds(true));
         maxyTextField = new TextField(mc, this).setText(Integer.toString(maxy)).addTextEvent((parent, newText) -> sendBounds(false));
-        minPanel.addChild(new Label(mc, this).setText("Height:")).addChild(minyTextField).addChild(maxyTextField);
+        minPanel.addChildren(new Label(mc, this).setText("Height:"), minyTextField, maxyTextField);
 
-        areaPanel.addChild(radiusPanel).addChild(minPanel);
+        areaPanel.addChildren(radiusPanel, minPanel);
         return areaPanel;
     }
 
@@ -156,7 +156,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
         nameField = new TextField(mc, this);
 
         initRedstoneMode();
-        controlPanel.addChild(blacklist).addChild(addButton).addChild(delButton).addChild(nameField).addChild(redstoneMode);
+        controlPanel.addChildren(blacklist, addButton, delButton, nameField, redstoneMode);
         return controlPanel;
     }
 

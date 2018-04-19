@@ -108,10 +108,11 @@ public class GuiDevelopersDelight extends GuiScreen {
         clientServerMode = new ChoiceLabel(mc, this).setDesiredWidth(60).addChoices("Server", "Client").setChoice("Server").addChoiceEvent((parent, newChoice) -> requestNewLists()).setDesiredHeight(16).setTooltips("Switch between client", "and server information");
         metaData = new TextField(mc, this).setDesiredHeight(14).setTooltips("Metadata for this block");
 
-        Panel buttonPanel = new Panel(mc, this).setLayout(new VerticalLayout()).setDesiredWidth(62).addChild(tab1Button).addChild(tab2Button).addChild(tab3Button).
-                addChild(new Label(mc, this).setDynamic(true)).addChild(clientServerMode).addChild(metaData).addChild(new Label(mc, this).setDynamic(true));
+        Panel buttonPanel = new Panel(mc, this).setLayout(new VerticalLayout()).setDesiredWidth(62)
+                .addChildren(tab1Button, tab2Button, tab3Button, new Label(mc, this).setDynamic(true), clientServerMode, metaData, new Label(mc, this).setDynamic(true));
 
-        Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new HorizontalLayout()).addChild(buttonPanel).addChild(tabbedPanel);
+        Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new HorizontalLayout())
+                .addChildren(buttonPanel, tabbedPanel);
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
 
         window = new Window(this, toplevel);

@@ -36,7 +36,7 @@ public class GuiEnderMonitor extends GenericGuiContainer<EnderMonitorTileEntity>
         Label label = new Label(mc, this).setText("Mode:");
         initGuiMode();
 
-        Panel bottomPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(label).addChild(mode);
+        Panel bottomPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChildren(label, mode);
         toplevel.addChild(bottomPanel);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, MONITOR_WIDTH, MONITOR_HEIGHT));

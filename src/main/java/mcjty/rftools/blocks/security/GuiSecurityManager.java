@@ -50,7 +50,7 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
 
         players = new WidgetList(mc, this);
         Slider allowedPlayerSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(players);
-        Panel allowedPlayersPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChild(players).addChild(allowedPlayerSlider).
+        Panel allowedPlayersPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChildren(players, allowedPlayerSlider).
                 setLayoutHint(new PositionalLayout.PositionalHint(72, 5, SECURITYMANAGER_WIDTH - 76, 96));
 
         nameField = new TextField(mc, this).setDesiredHeight(15);
@@ -58,18 +58,17 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
                 addButtonEvent(parent -> addPlayer());
         delButton = new Button(mc, this).setText("Del").setDesiredHeight(14).setDesiredWidth(34).setTooltips("Remove the selected player", "from the access list").
                 addButtonEvent(parent -> delPlayer());
-        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChild(nameField).addChild(addButton).addChild(delButton).setDesiredHeight(16).
+        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChildren(nameField, addButton, delButton).setDesiredHeight(16).
                 setLayoutHint(new PositionalLayout.PositionalHint(72, 100, SECURITYMANAGER_WIDTH - 76, 14));
 
-        channelNameField = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(8, 27, 60, 14)).addTextEvent((parent, newText) -> updateChannelName());
+        channelNameField = new TextField(mc, this).setLayoutHint(8, 27, 60, 14).addTextEvent((parent, newText) -> updateChannelName());
 
-        blacklistMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(10, 44, 16, 16)).setTooltips("Black or whitelist mode").addChoiceEvent((parent, newChoice) -> updateSettings());
+        blacklistMode = new ImageChoiceLabel(mc, this).setLayoutHint(10, 44, 16, 16).setTooltips("Black or whitelist mode").addChoiceEvent((parent, newChoice) -> updateSettings());
         blacklistMode.addChoice("White", "Whitelist players", guiElements, 15 * 16, 32);
         blacklistMode.addChoice("Black", "Blacklist players", guiElements, 14 * 16, 32);
 
 
-        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(allowedPlayersPanel).addChild(buttonPanel).addChild(channelNameField).
-                addChild(blacklistMode);
+        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChildren(allowedPlayersPanel, buttonPanel, channelNameField, blacklistMode);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
         window = new Window(this, toplevel);
         Keyboard.enableRepeatEvents(true);

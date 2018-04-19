@@ -36,18 +36,18 @@ public class GuiScreenController extends GenericGuiContainer<ScreenControllerTil
         super.initGui();
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored();
-        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 8, 54)).setShowText(false);
+        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(10, 7, 8, 54).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
-        Button scanButton = new Button(mc, this).setText("Scan").setTooltips("Find all nearby screens", "and connect to them").setLayoutHint(new PositionalLayout.PositionalHint(30, 7, 50, 14));
+        Button scanButton = new Button(mc, this).setText("Scan").setTooltips("Find all nearby screens", "and connect to them").setLayoutHint(30, 7, 50, 14);
         scanButton.addButtonEvent(parent -> sendServerCommand(RFToolsMessages.INSTANCE, ScreenControllerTileEntity.CMD_SCAN));
-        Button detachButton = new Button(mc, this).setText("Detach").setTooltips("Detach from all screens").setLayoutHint(new PositionalLayout.PositionalHint(90, 7, 50, 14));
+        Button detachButton = new Button(mc, this).setText("Detach").setTooltips("Detach from all screens").setLayoutHint(90, 7, 50, 14);
         detachButton.addButtonEvent(parent -> sendServerCommand(RFToolsMessages.INSTANCE, ScreenControllerTileEntity.CMD_DETACH));
         infoLabel = new Label(mc, this);
-        infoLabel.setLayoutHint(new PositionalLayout.PositionalHint(30, 25, 140, 14));
+        infoLabel.setLayoutHint(30, 25, 140, 14);
 
-        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).addChild(scanButton).addChild(detachButton).
-                addChild(infoLabel);
+        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout())
+                .addChildren(energyBar, scanButton, detachButton, infoLabel);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);

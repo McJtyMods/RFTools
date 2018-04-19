@@ -69,14 +69,14 @@ public class GuiChamberDetails extends GuiItemScreen {
 
         blockList = new WidgetList(mc, this);
         Slider listSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(blockList);
-        Panel listPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(blockList).addChild(listSlider);
+        Panel listPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChildren(blockList, listSlider);
 
         infoLabel = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
         infoLabel.setDesiredWidth(380).setDesiredHeight(14);
         info2Label = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
         info2Label.setDesiredWidth(380).setDesiredHeight(14);
 
-        Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setSpacing(1).setVerticalMargin(3)).addChild(listPanel).addChild(infoLabel).addChild(info2Label);
+        Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setSpacing(1).setVerticalMargin(3)).addChildren(listPanel, infoLabel, info2Label);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -122,7 +122,7 @@ public class GuiChamberDetails extends GuiItemScreen {
                 costLabel.setText("Move Cost " + cost + " RF");
                 totalCost += cost;
             }
-            panel.addChild(blockRender).addChild(nameLabel).addChild(countLabel).addChild(costLabel);
+            panel.addChildren(blockRender, nameLabel, countLabel, costLabel);
             blockList.addChild(panel);
         }
 
@@ -180,7 +180,7 @@ public class GuiChamberDetails extends GuiItemScreen {
                 costLabel.setText("Move Cost " + cost + " RF");
                 totalCostEntities += cost;
             }
-            panel.addChild(blockRender).addChild(nameLabel).addChild(countLabel).addChild(costLabel);
+            panel.addChildren(blockRender, nameLabel, countLabel, costLabel);
             blockList.addChild(panel);
         }
 

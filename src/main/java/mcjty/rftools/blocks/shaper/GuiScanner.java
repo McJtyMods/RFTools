@@ -86,7 +86,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored();
-        energyBar = new EnergyBar(mc, this).setHorizontal().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(8, 120, 70, 10)).setShowText(false);
+        energyBar = new EnergyBar(mc, this).setHorizontal().setMaxValue(maxEnergyStored).setLayoutHint(8, 120, 70, 10).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
         toplevel.addChild(energyBar);
 
@@ -99,32 +99,32 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
 
         scanButton = new Button(mc, this).setText("Scan")
                 .addButtonEvent(parent -> scan())
-                .setLayoutHint(new PositionalLayout.PositionalHint(5, 156, 40, 16));
+                .setLayoutHint(5, 156, 40, 16);
         toplevel.addChild(scanButton);
 
-        toplevel.addChild(new Button(mc, this).setText("W").addButtonEvent(parent -> move(-16, 0, 0)).setLayoutHint(new PositionalLayout.PositionalHint(4, 30, 16, 15)));
-        toplevel.addChild(new Button(mc, this).setText("w").addButtonEvent(parent -> move(-1, 0, 0)).setLayoutHint(new PositionalLayout.PositionalHint(20, 30, 16, 15)));
-        toplevel.addChild(new Button(mc, this).setText("e").addButtonEvent(parent -> move(1, 0, 0)).setLayoutHint(new PositionalLayout.PositionalHint(45, 30, 16, 15)));
-        toplevel.addChild(new Button(mc, this).setText("E").addButtonEvent(parent -> move(16, 0, 0)).setLayoutHint(new PositionalLayout.PositionalHint(61, 30, 16, 15)));
+        toplevel.addChild(new Button(mc, this).setText("W").addButtonEvent(parent -> move(-16, 0, 0)).setLayoutHint(4, 30, 16, 15));
+        toplevel.addChild(new Button(mc, this).setText("w").addButtonEvent(parent -> move(-1, 0, 0)).setLayoutHint(20, 30, 16, 15));
+        toplevel.addChild(new Button(mc, this).setText("e").addButtonEvent(parent -> move(1, 0, 0)).setLayoutHint(45, 30, 16, 15));
+        toplevel.addChild(new Button(mc, this).setText("E").addButtonEvent(parent -> move(16, 0, 0)).setLayoutHint(61, 30, 16, 15));
 
-        toplevel.addChild(new Button(mc, this).setText("S").addButtonEvent(parent -> move(0, 0, -16)).setLayoutHint(new PositionalLayout.PositionalHint(4, 50, 16, 15)));
-        toplevel.addChild(new Button(mc, this).setText("s").addButtonEvent(parent -> move(0, 0, -1)).setLayoutHint(new PositionalLayout.PositionalHint(20, 50, 16, 15)));
-        toplevel.addChild(new Button(mc, this).setText("n").addButtonEvent(parent -> move(0, 0, 1)).setLayoutHint(new PositionalLayout.PositionalHint(45, 50, 16, 15)));
-        toplevel.addChild(new Button(mc, this).setText("N").addButtonEvent(parent -> move(0, 0, 16)).setLayoutHint(new PositionalLayout.PositionalHint(61, 50, 16, 15)));
+        toplevel.addChild(new Button(mc, this).setText("S").addButtonEvent(parent -> move(0, 0, -16)).setLayoutHint(4, 50, 16, 15));
+        toplevel.addChild(new Button(mc, this).setText("s").addButtonEvent(parent -> move(0, 0, -1)).setLayoutHint(20, 50, 16, 15));
+        toplevel.addChild(new Button(mc, this).setText("n").addButtonEvent(parent -> move(0, 0, 1)).setLayoutHint(45, 50, 16, 15));
+        toplevel.addChild(new Button(mc, this).setText("N").addButtonEvent(parent -> move(0, 0, 16)).setLayoutHint(61, 50, 16, 15));
 
-        toplevel.addChild(new Button(mc, this).setText("D").addButtonEvent(parent -> move(0, -16, 0)).setLayoutHint(new PositionalLayout.PositionalHint(4, 70, 16, 15)));
-        toplevel.addChild(new Button(mc, this).setText("d").addButtonEvent(parent -> move(0, -1, 0)).setLayoutHint(new PositionalLayout.PositionalHint(20, 70, 16, 15)));
-        toplevel.addChild(new Button(mc, this).setText("u").addButtonEvent(parent -> move(0, 1, 0)).setLayoutHint(new PositionalLayout.PositionalHint(45, 70, 16, 15)));
-        toplevel.addChild(new Button(mc, this).setText("U").addButtonEvent(parent -> move(0, 16, 0)).setLayoutHint(new PositionalLayout.PositionalHint(61, 70, 16, 15)));
+        toplevel.addChild(new Button(mc, this).setText("D").addButtonEvent(parent -> move(0, -16, 0)).setLayoutHint(4, 70, 16, 15));
+        toplevel.addChild(new Button(mc, this).setText("d").addButtonEvent(parent -> move(0, -1, 0)).setLayoutHint(20, 70, 16, 15));
+        toplevel.addChild(new Button(mc, this).setText("u").addButtonEvent(parent -> move(0, 1, 0)).setLayoutHint(45, 70, 16, 15));
+        toplevel.addChild(new Button(mc, this).setText("U").addButtonEvent(parent -> move(0, 16, 0)).setLayoutHint(61, 70, 16, 15));
 
         offsetLabel = new Label(mc, this).setText("Off: " + BlockPosTools.toString(tileEntity.getDataOffset())).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
-        offsetLabel.setLayoutHint(new PositionalLayout.PositionalHint(4, 90, 80, 14));
+        offsetLabel.setLayoutHint(4, 90, 80, 14);
         toplevel.addChild(offsetLabel);
         dimensionLabel = new Label(mc, this).setText("Dim: " + BlockPosTools.toString(tileEntity.getDataDim())).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
-        dimensionLabel.setLayoutHint(new PositionalLayout.PositionalHint(4, 105, 80, 14));
+        dimensionLabel.setLayoutHint(4, 105, 80, 14);
         toplevel.addChild(dimensionLabel);
         progressLabel = new Label(mc, this).setText("");
-        progressLabel.setLayoutHint(new PositionalLayout.PositionalHint(4, 135, 80, 14));
+        progressLabel.setLayoutHint(4, 135, 80, 14);
         toplevel.addChild(progressLabel);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
@@ -143,7 +143,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
                 addChoice(RedstoneMode.REDSTONE_IGNORED.getDescription(), "Redstone mode:\nIgnored", iconGuiElements, 0, 0).
                 addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
                 addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
-        redstoneMode.setLayoutHint(new PositionalLayout.PositionalHint(50, 156, 16, 16));
+        redstoneMode.setLayoutHint(50, 156, 16, 16);
         redstoneMode.setCurrentChoice(tileEntity.getRSMode().ordinal());
     }
 

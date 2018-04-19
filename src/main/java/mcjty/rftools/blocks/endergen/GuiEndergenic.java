@@ -65,7 +65,7 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
 
         Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChild(energyBar).
                 addChild(descriptionLabel).
-                addChild(p1).addChild(p2).addChild(p3).addChild(p4);
+                addChildren(p1, p2, p3, p4);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, ENDERGENIC_WIDTH, ENDERGENIC_HEIGHT));
         window = new mcjty.lib.gui.Window(this, toplevel);
         tileEntity.requestRfFromServer(RFTools.MODID);

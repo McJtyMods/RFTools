@@ -68,8 +68,8 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
                 .setText("Bright")
                 .setCheckMarker(true)
                 .setTooltips("Toggle full brightness")
-                .setLayoutHint(new PositionalLayout.PositionalHint(85, 123, 55, 14));
-//        .setLayoutHint(new PositionalLayout.PositionalHint(7, 208, 63, 14));
+                .setLayoutHint(85, 123, 55, 14);
+//        .setLayoutHint(7, 208, 63, 14);
         bright.setPressed(tileEntity.isBright());
         bright.addButtonEvent(parent -> sendServerCommand(RFToolsMessages.INSTANCE, ScreenTileEntity.CMD_SETBRIGHT, new Argument("b", bright.isPressed())));
         toplevel.addChild(bright);
@@ -168,7 +168,7 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
         });
         clientScreenModules[i].createGui(guiBuilder);
         modulePanels[i] = guiBuilder.build();
-        modulePanels[i].setLayoutHint(new PositionalLayout.PositionalHint(80, 8, 170, 114));
+        modulePanels[i].setLayoutHint(80, 8, 170, 114);
         modulePanels[i].setFilledRectThickness(-2).setFilledBackground(0xff8b8b8b);
 
         toplevel.addChild(modulePanels[i]);

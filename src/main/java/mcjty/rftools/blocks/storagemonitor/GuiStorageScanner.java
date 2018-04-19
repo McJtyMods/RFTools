@@ -125,7 +125,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 .addChild(removeButton);
 
         exportToStarred = new ImageChoiceLabel(mc, this)
-                .setLayoutHint(new PositionalLayout.PositionalHint(12, 223, 13, 13))
+                .setLayoutHint(12, 223, 13, 13)
                 .addChoiceEvent((parent, newChoice) -> changeExportMode());
         exportToStarred.addChoice("No", "Export to current container", guielements, 131, 19);
         exportToStarred.addChoice("Yes", "Export to first routable container", guielements, 115, 19);
@@ -177,7 +177,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 .setDesiredHeight(14)
                 .setScrollable(radiusLabel);
         Panel scanPanel = new Panel(mc, this)
-                .setLayoutHint(new PositionalLayout.PositionalHint(8, 162, 74, 54))
+                .setLayoutHint(8, 162, 74, 54)
                 .setFilledRectThickness(-2)
                 .setFilledBackground(StyleConfig.colorListBackground)
                 .setLayout(new VerticalLayout().setVerticalMargin(6).setSpacing(1))

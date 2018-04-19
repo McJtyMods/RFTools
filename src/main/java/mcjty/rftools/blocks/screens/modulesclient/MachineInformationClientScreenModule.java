@@ -24,7 +24,7 @@ import net.minecraft.world.World;
 import java.util.HashMap;
 import java.util.Map;
 
-public class    MachineInformationClientScreenModule implements IClientScreenModule<IModuleDataString> {
+public class MachineInformationClientScreenModule implements IClientScreenModule<IModuleDataString> {
 
     private String line = "";
     private int labcolor = 0xffffff;
@@ -169,8 +169,8 @@ public class    MachineInformationClientScreenModule implements IClientScreenMod
     }
 
     private void addColorPanel(Minecraft mc, Gui gui, final NBTTagCompound currentData, final IModuleGuiChanged moduleGuiChanged, Panel panel) {
-        ColorChoiceLabel labelColorSelector = addColorSelector(mc, gui, currentData, moduleGuiChanged, "color").setTooltips("Color for the label");
-        ColorChoiceLabel txtColorSelector = addColorSelector(mc, gui, currentData, moduleGuiChanged, "txtcolor").setTooltips("Color for the text");
+        ColorSelector labelColorSelector = addColorSelector(mc, gui, currentData, moduleGuiChanged, "color").setTooltips("Color for the label");
+        ColorSelector txtColorSelector = addColorSelector(mc, gui, currentData, moduleGuiChanged, "txtcolor").setTooltips("Color for the text");
         Panel colorPanel = new Panel(mc, gui).setLayout(new HorizontalLayout()).
                 addChild(new Label(mc, gui).setText("L:")).addChild(labelColorSelector).
                 addChild(new Label(mc, gui).setText("Txt:")).addChild(txtColorSelector).
@@ -179,8 +179,8 @@ public class    MachineInformationClientScreenModule implements IClientScreenMod
     }
 
 
-    private ColorChoiceLabel addColorSelector(Minecraft mc, Gui gui, final NBTTagCompound currentData, final IModuleGuiChanged moduleGuiChanged, final String tagName) {
-        ColorChoiceLabel colorChoiceLabel = new ColorChoiceLabel(mc, gui).addColors(0xffffff, 0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff).setDesiredWidth(26).setDesiredHeight(14).addChoiceEvent((parent, newColor) -> {
+    private ColorSelector addColorSelector(Minecraft mc, Gui gui, final NBTTagCompound currentData, final IModuleGuiChanged moduleGuiChanged, final String tagName) {
+        ColorSelector colorChoiceLabel = new ColorSelector(mc, gui).setDesiredWidth(26).setDesiredHeight(14).addChoiceEvent((parent, newColor) -> {
             currentData.setInteger(tagName, newColor);
             moduleGuiChanged.updateData();
         });

@@ -50,8 +50,8 @@ public class GuiCounter extends GenericGuiContainer<CounterTileEntity> {
         currentField.setText(String.valueOf(current));
 
         Panel bottomPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).
-                addChild(new Label(mc, this).setText("Counter:")).addChild(counterField).
-                addChild(new Label(mc, this).setText("Current:")).addChild(currentField);
+                addChildren(new Label(mc, this).setText("Counter:"), counterField,
+                new Label(mc, this).setText("Current:"), currentField);
         toplevel.addChild(bottomPanel);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, COUNTER_WIDTH, COUNTER_HEIGHT));

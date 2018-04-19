@@ -39,14 +39,14 @@ public class GuiBooster extends GenericGuiContainer<BoosterTileEntity> {
         super.initGui();
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored();
-        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(8, 101, 10, 76)).setShowText(false);
+        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(8, 101, 10, 76).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
         initRedstoneMode();
 
-        toplevel.addChild(energyBar).addChild(redstoneMode);
+        toplevel.addChildren(energyBar, redstoneMode);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 

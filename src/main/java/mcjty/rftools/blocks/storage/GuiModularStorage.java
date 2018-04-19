@@ -173,10 +173,10 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     }
 
     private Panel setupModePanel() {
-        filter = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(3, 3, 57, 13)).setTooltips("Name based filter for items")
+        filter = new TextField(mc, this).setLayoutHint(3, 3, 57, 13).setTooltips("Name based filter for items")
                 .addTextEvent((parent, newText) -> updateSettings());
 
-        viewMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(4, 19, 16, 16)).setTooltips("Control how items are shown", "in the view")
+        viewMode = new ImageChoiceLabel(mc, this).setLayoutHint(4, 19, 16, 16).setTooltips("Control how items are shown", "in the view")
                 .addChoiceEvent((parent, newChoice) -> updateSettings());
         viewMode.addChoice(VIEW_LIST, "Items are shown in a list view", guiElements, 9 * 16, 16);
         viewMode.addChoice(VIEW_COLUMNS, "Items are shown in columns", guiElements, 10 * 16, 16);
@@ -184,24 +184,24 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
         updateTypeModule();
 
-        sortMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(23, 19, 16, 16)).setTooltips("Control how items are sorted", "in the view")
+        sortMode = new ImageChoiceLabel(mc, this).setLayoutHint(23, 19, 16, 16).setTooltips("Control how items are sorted", "in the view")
                 .addChoiceEvent((parent, newChoice) -> updateSettings());
         for (ItemSorter sorter : typeModule.getSorters()) {
             sortMode.addChoice(sorter.getName(), sorter.getTooltip(), guiElements, sorter.getU(), sorter.getV());
         }
 
-        groupMode = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(42, 19, 16, 16)).setTooltips("If enabled it will show groups", "based on sorting criterium")
+        groupMode = new ImageChoiceLabel(mc, this).setLayoutHint(42, 19, 16, 16).setTooltips("If enabled it will show groups", "based on sorting criterium")
                 .addChoiceEvent((parent, newChoice) -> updateSettings());
         groupMode.addChoice("Off", "Don't show groups", guiElements, 13 * 16, 0);
         groupMode.addChoice("On", "Show groups", guiElements, 14 * 16, 0);
 
         amountLabel = new Label(mc, this);
         amountLabel.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
-        amountLabel.setLayoutHint(new PositionalLayout.PositionalHint(16, 40, 66, 12));
+        amountLabel.setLayoutHint(16, 40, 66, 12);
         amountLabel.setTooltips("Amount of stacks / maximum amount");
         amountLabel.setText("?/?");
 
-        compactButton = new Button(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(4, 39, 12, 12)).setText("z").setTooltips("Compact equal stacks")
+        compactButton = new Button(mc, this).setLayoutHint(4, 39, 12, 12).setText("z").setTooltips("Compact equal stacks")
                 .addButtonEvent(parent -> compact());
 
         if (tileEntity != null) {
@@ -223,7 +223,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         return new Panel(mc, this).setLayout(new PositionalLayout()).setLayoutHint(new PositionalLayout.PositionalHint(24, ySize-80, 64, 77))
                 .setFilledRectThickness(-2)
                 .setFilledBackground(StyleConfig.colorListBackground)
-                .addChild(filter).addChild(viewMode).addChild(sortMode).addChild(groupMode).addChild(amountLabel).addChild(compactButton);
+                .addChildren(filter, viewMode, sortMode, groupMode, amountLabel, compactButton);
     }
 
     private void setSortMode(String sortMode) {

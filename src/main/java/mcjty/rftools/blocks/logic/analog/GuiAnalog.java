@@ -43,18 +43,13 @@ public class GuiAnalog extends GenericGuiContainer<AnalogTileEntity> implements 
         super.initGui();
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
-        mulEqual = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(106, 78, 30, 16));
-        toplevel.addChild(mulEqual);
-        mulLess = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(106, 104, 30, 16));
-        toplevel.addChild(mulLess);
-        mulGreater = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(106, 130, 30, 16));
-        toplevel.addChild(mulGreater);
-        addEqual = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(153, 78, 30, 16));
-        toplevel.addChild(addEqual);
-        addLess = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(153, 104, 30, 16));
-        toplevel.addChild(addLess);
-        addGreater = new TextField(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(153, 130, 30, 16));
-        toplevel.addChild(addGreater);
+        mulEqual = new TextField(mc, this).setLayoutHint(106, 78, 30, 16);
+        mulLess = new TextField(mc, this).setLayoutHint(106, 104, 30, 16);
+        mulGreater = new TextField(mc, this).setLayoutHint(106, 130, 30, 16);
+        addEqual = new TextField(mc, this).setLayoutHint(153, 78, 30, 16);
+        addLess = new TextField(mc, this).setLayoutHint(153, 104, 30, 16);
+        addGreater = new TextField(mc, this).setLayoutHint(153, 130, 30, 16);
+        toplevel.addChildren(mulEqual, mulLess, mulGreater, addEqual, addLess, addGreater);
 
         mulEqual.setText(fmt.format(tileEntity.getMulEqual()));
         mulLess.setText(fmt.format(tileEntity.getMulLess()));

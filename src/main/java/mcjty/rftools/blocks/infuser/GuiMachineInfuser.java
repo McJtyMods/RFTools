@@ -34,11 +34,11 @@ public class GuiMachineInfuser extends GenericGuiContainer<MachineInfuserTileEnt
         super.initGui();
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored();
-        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(10, 7, 8, 54)).setShowText(false);
+        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(10, 7, 8, 54).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
 //        arrow = new ImageLabel(mc, this).setImage(iconGuiElements, 192, 0);
-//        arrow.setLayoutHint(new PositionalLayout.PositionalHint(90, 26, 16, 16));
+//        arrow.setLayoutHint(90, 26, 16, 16);
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar); //.addChild(arrow);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));

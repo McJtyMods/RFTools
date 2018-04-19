@@ -56,12 +56,11 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
 
     private Panel createRedstonePanel() {
         ImageLabel redstoneOff = new ImageLabel(mc, this).setImage(iconGuiElements, 16, 0);
-        redstoneOff.setDesiredWidth(16).setDesiredHeight(16).setTooltips("Redstone signal off").setLayoutHint(new PositionalLayout.PositionalHint(70, 0, 16, 16));
+        redstoneOff.setDesiredWidth(16).setDesiredHeight(16).setTooltips("Redstone signal off").setLayoutHint(70, 0, 16, 16);
         ImageLabel redstoneOn = new ImageLabel(mc, this).setImage(iconGuiElements, 32, 0);
-        redstoneOn.setDesiredWidth(16).setDesiredHeight(16).setTooltips("Redstone signal on").setLayoutHint(new PositionalLayout.PositionalHint(190, 0, 16, 16));
+        redstoneOn.setDesiredWidth(16).setDesiredHeight(16).setTooltips("Redstone signal on").setLayoutHint(190, 0, 16, 16);
         return new Panel(mc, this).setLayout(new PositionalLayout()).
-                addChild(redstoneOff).
-                addChild(redstoneOn);
+                addChildren(redstoneOff, redstoneOn);
     }
 
     private Panel createSidePanel(int side) {
@@ -106,10 +105,7 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
         Button sub100 = createEnergyOffsetButton(energyField, "-", -500);
         Button add100 = createEnergyOffsetButton(energyField, "+", 500);
         Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(1)).
-                addChild(inputOutput).
-                addChild(sub100).
-                addChild(energyField).
-                addChild(add100);
+                addChildren(inputOutput, sub100, energyField, add100);
         energyValues.put(key, energyField);
         return panel;
     }

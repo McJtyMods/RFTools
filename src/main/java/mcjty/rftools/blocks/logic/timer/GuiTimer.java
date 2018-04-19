@@ -41,7 +41,7 @@ public class GuiTimer extends GenericGuiContainer<TimerTileEntity> {
             delay = 1;
         }
         speedField.setText(String.valueOf(delay));
-        Panel bottomPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(label).addChild(speedField);
+        Panel bottomPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChildren(label, speedField);
         toplevel.addChild(bottomPanel);
         redstonePauses = new ToggleButton(mc, this).setText("Pause while redstone active").setDesiredHeight(16).setCheckMarker(true).setPressed(tileEntity.getRedstonePauses())
                 .addButtonEvent(parent -> setRedstonePauses());

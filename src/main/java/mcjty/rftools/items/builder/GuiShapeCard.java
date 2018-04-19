@@ -207,7 +207,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         int l = (this.height - this.ySize) / 2;
 
         Panel modeSettingsPanel = new Panel(mc, this).setLayout(new VerticalLayout().setHorizontalMargin(0)).addChild(modePanel).addChild(settingsPanel);
-        modeSettingsPanel.setLayoutHint(new PositionalLayout.PositionalHint(0, 0, 180, 160));
+        modeSettingsPanel.setLayoutHint(0, 0, 180, 160);
         Panel toplevel;
         if (isQuarryCard) {
             setupVoidPanel(heldItem);
@@ -227,7 +227,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
                 .setDesiredHeight(26)
                 .setFilledRectThickness(-2)
                 .setFilledBackground(StyleConfig.colorListBackground);
-        voidPanel.setLayoutHint(new PositionalLayout.PositionalHint(5, 155, 350, 26));
+        voidPanel.setLayoutHint(5, 155, 350, 26);
         Label label = new Label(mc, this).setText("Void:");
         stone = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void stone").addButtonEvent(widget -> updateVoidSettings());
         cobble = new ToggleButton(mc, this).setDesiredWidth(20).setDesiredHeight(20).setTooltips("Void cobble").addButtonEvent(widget -> updateVoidSettings());
@@ -250,7 +250,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         endstone.setPressed(ShapeCardItem.isVoiding(heldItem, "endstone"));
         oredict.setPressed(ShapeCardItem.isOreDictionary(heldItem));
 
-        voidPanel.addChild(label).addChild(stone).addChild(cobble).addChild(dirt).addChild(gravel).addChild(sand).addChild(netherrack).addChild(endstone).addChild(oredict);
+        voidPanel.addChildren(label, stone, cobble, dirt, gravel, sand, netherrack, endstone, oredict);
     }
 
     private boolean isTorus() {

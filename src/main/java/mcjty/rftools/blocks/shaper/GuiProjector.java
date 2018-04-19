@@ -80,77 +80,77 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored();
-        energyBar = new EnergyBar(mc, this).setHorizontal().setMaxValue(maxEnergyStored).setLayoutHint(new PositionalLayout.PositionalHint(6, 184, 75, 10)).setShowText(false);
+        energyBar = new EnergyBar(mc, this).setHorizontal().setMaxValue(maxEnergyStored).setLayoutHint(6, 184, 75, 10).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
         toplevel.addChild(energyBar);
 
         Label angleI = new Label(mc, this).setText("Angle");
         angleI.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
-        angleI.setLayoutHint(new PositionalLayout.PositionalHint(16, 30, 32, 15));
+        angleI.setLayoutHint(16, 30, 32, 15);
         angleLabel = new ScrollableLabel(mc, this).setRealMinimum(0).setRealMaximum(360)
                 .setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT)
-                .setLayoutHint(new PositionalLayout.PositionalHint(44, 30, 24, 15));
+                .setLayoutHint(44, 30, 24, 15);
         angleLabel.setRealValue(tileEntity.getAngleInt());
-        Button angleM = new Button(mc, this).setText("-").setLayoutHint(new PositionalLayout.PositionalHint(5, 30, 10, 15))
+        Button angleM = new Button(mc, this).setText("-").setLayoutHint(5, 30, 10, 15)
                 .addButtonEvent(parent -> min(angleLabel));
-        Button angleP = new Button(mc, this).setText("+").setLayoutHint(new PositionalLayout.PositionalHint(70, 30, 10, 15))
+        Button angleP = new Button(mc, this).setText("+").setLayoutHint(70, 30, 10, 15)
                 .addButtonEvent(parent -> plus(angleLabel));
         angleSlider = new Slider(mc, this).setHorizontal().setScrollable(angleLabel)
-                .setLayoutHint(new PositionalLayout.PositionalHint(5, 46, 76, 15));
-        toplevel.addChild(angleI).addChild(angleLabel).addChild(angleSlider).addChild(angleM).addChild(angleP);
+                .setLayoutHint(5, 46, 76, 15);
+        toplevel.addChildren(angleI, angleLabel, angleSlider, angleM, angleP);
 
         Label scaleI = new Label(mc, this).setText("Scale");
         scaleI.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
-        scaleI.setLayoutHint(new PositionalLayout.PositionalHint(16, 62, 32, 15));
+        scaleI.setLayoutHint(16, 62, 32, 15);
         scaleLabel = new ScrollableLabel(mc, this).setRealMinimum(0).setRealMaximum(100)
                 .setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT)
-                .setLayoutHint(new PositionalLayout.PositionalHint(44, 62, 24, 15));
+                .setLayoutHint(44, 62, 24, 15);
         scaleLabel.setRealValue(tileEntity.getScaleInt());
-        Button scaleM = new Button(mc, this).setText("-").setLayoutHint(new PositionalLayout.PositionalHint(5, 62, 10, 15))
+        Button scaleM = new Button(mc, this).setText("-").setLayoutHint(5, 62, 10, 15)
                 .addButtonEvent(parent -> min(scaleLabel));
-        Button scaleP = new Button(mc, this).setText("+").setLayoutHint(new PositionalLayout.PositionalHint(70, 62, 10, 15))
+        Button scaleP = new Button(mc, this).setText("+").setLayoutHint(70, 62, 10, 15)
                 .addButtonEvent(parent -> plus(scaleLabel));
         scaleSlider = new Slider(mc, this).setHorizontal().setScrollable(scaleLabel)
-                .setLayoutHint(new PositionalLayout.PositionalHint(5, 78, 76, 15));
-        toplevel.addChild(scaleI).addChild(scaleLabel).addChild(scaleSlider).addChild(scaleM).addChild(scaleP);
+                .setLayoutHint(5, 78, 76, 15);
+        toplevel.addChildren(scaleI, scaleLabel, scaleSlider, scaleM, scaleP);
 
         Label offsetI = new Label(mc, this).setText("Offset");
         offsetI.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
-        offsetI.setLayoutHint(new PositionalLayout.PositionalHint(16, 94, 32, 15));
+        offsetI.setLayoutHint(16, 94, 32, 15);
         offsetLabel = new ScrollableLabel(mc, this).setRealMinimum(0).setRealMaximum(100)
                 .setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT)
-                .setLayoutHint(new PositionalLayout.PositionalHint(44, 94, 24, 15));
+                .setLayoutHint(44, 94, 24, 15);
         offsetLabel.setRealValue(tileEntity.getOffsetInt());
-        Button offsetM = new Button(mc, this).setText("-").setLayoutHint(new PositionalLayout.PositionalHint(5, 94, 10, 15))
+        Button offsetM = new Button(mc, this).setText("-").setLayoutHint(5, 94, 10, 15)
                 .addButtonEvent(parent -> min(offsetLabel));
-        Button offsetP = new Button(mc, this).setText("+").setLayoutHint(new PositionalLayout.PositionalHint(70, 94, 10, 15))
+        Button offsetP = new Button(mc, this).setText("+").setLayoutHint(70, 94, 10, 15)
                 .addButtonEvent(parent -> plus(offsetLabel));
         offsetSlider = new Slider(mc, this).setHorizontal().setScrollable(offsetLabel)
-                .setLayoutHint(new PositionalLayout.PositionalHint(5, 110, 76, 15));
-        toplevel.addChild(offsetI).addChild(offsetLabel).addChild(offsetSlider).addChild(offsetM).addChild(offsetP);
+                .setLayoutHint(5, 110, 76, 15);
+        toplevel.addChildren(offsetI, offsetLabel, offsetSlider, offsetM, offsetP);
 
         autoRotate = new ToggleButton(mc, this).setCheckMarker(true)
                 .setText("Auto")
                 .setTooltips("Automatic client-side rotation")
-                .setLayoutHint(new PositionalLayout.PositionalHint(2, 128, 39, 16));
+                .setLayoutHint(2, 128, 39, 16);
         autoRotate.setPressed(tileEntity.isAutoRotate());
         toplevel.addChild(autoRotate);
         scanline = new ToggleButton(mc, this).setCheckMarker(true)
                 .setText("SL")
                 .setTooltips("Enable/disable visual scanlines when", "the scan is refreshed")
-                .setLayoutHint(new PositionalLayout.PositionalHint(42, 128, 39, 16));
+                .setLayoutHint(42, 128, 39, 16);
         scanline.setPressed(tileEntity.isScanline());
         toplevel.addChild(scanline);
         sound = new ToggleButton(mc, this).setCheckMarker(true)
                 .setText("Snd")
                 .setTooltips("Enable/disable sound during", "visual scan")
-                .setLayoutHint(new PositionalLayout.PositionalHint(2, 146, 39, 16));
+                .setLayoutHint(2, 146, 39, 16);
         sound.setPressed(tileEntity.isSound());
         toplevel.addChild(sound);
         grayScale = new ToggleButton(mc, this).setCheckMarker(true)
                 .setText("Gray")
                 .setTooltips("Enable/disable grayscale", "mode")
-                .setLayoutHint(new PositionalLayout.PositionalHint(42, 146, 39, 16));
+                .setLayoutHint(42, 146, 39, 16);
         grayScale.setPressed(tileEntity.isGrayscale());
         toplevel.addChild(grayScale);
 

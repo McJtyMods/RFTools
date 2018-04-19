@@ -59,7 +59,7 @@ public class GuiCraftingGrid {
         this.provider = provider;
         this.pos = pos;
 
-        recipeList = new WidgetList(mc, gui).setLayoutHint(new PositionalLayout.PositionalHint(5, 5, 56, 102));
+        recipeList = new WidgetList(mc, gui).setLayoutHint(5, 5, 56, 102);
         recipeList.addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget parent, int index) {
@@ -70,28 +70,23 @@ public class GuiCraftingGrid {
                 selectRecipe();
             }
         });
-        craft1Button = new Button(mc, gui).setText("1").setLayoutHint(new PositionalLayout.PositionalHint(29, 183, 14, 10))
+        craft1Button = new Button(mc, gui).setText("1").setLayoutHint(29, 183, 14, 10)
                 .setTooltips("Craft one")
                 .addButtonEvent(parent -> craft(1));
-        craft4Button = new Button(mc, gui).setText("4").setLayoutHint(new PositionalLayout.PositionalHint(45, 183, 14, 10))
+        craft4Button = new Button(mc, gui).setText("4").setLayoutHint(45, 183, 14, 10)
                 .setTooltips("Craft four")
                 .addButtonEvent(parent -> craft(4));
-        craft8Button = new Button(mc, gui).setText("8").setLayoutHint(new PositionalLayout.PositionalHint(29, 195, 14, 10))
+        craft8Button = new Button(mc, gui).setText("8").setLayoutHint(29, 195, 14, 10)
                 .setTooltips("Craft eight")
                 .addButtonEvent(parent -> craft(8));
-        craftSButton = new Button(mc, gui).setText("*").setLayoutHint(new PositionalLayout.PositionalHint(45, 195, 14, 10))
+        craftSButton = new Button(mc, gui).setText("*").setLayoutHint(45, 195, 14, 10)
                 .setTooltips("Craft a stack")
                 .addButtonEvent(parent -> craft(-1));
-        storeButton = new Button(mc, gui).setText("Store").setLayoutHint(new PositionalLayout.PositionalHint(5, 109, 56, 14))
+        storeButton = new Button(mc, gui).setText("Store").setLayoutHint(5, 109, 56, 14)
                 .setTooltips("Store the current recipe")
                 .addButtonEvent(parent -> store());
         Panel sidePanel = new Panel(mc, gui).setLayout(new PositionalLayout())
-                .addChild(craft1Button)
-                .addChild(craft4Button)
-                .addChild(craft8Button)
-                .addChild(craftSButton)
-                .addChild(storeButton)
-                .addChild(recipeList);
+                .addChildren(craft1Button, craft4Button, craft8Button, craftSButton, storeButton, recipeList);
         int sideLeft = guiLeft - CraftingGridInventory.GRID_WIDTH - 2;
         int sideTop = guiTop;
         sidePanel.setBounds(new Rectangle(sideLeft, sideTop, CraftingGridInventory.GRID_WIDTH, CraftingGridInventory.GRID_HEIGHT));
@@ -233,12 +228,12 @@ public class GuiCraftingGrid {
         Panel panel = new Panel(mc, gui).setLayout(new PositionalLayout()).
                 addChild(new BlockRender(mc, gui)
                         .setRenderItem(craftingResult)
-                        .setLayoutHint(new PositionalLayout.PositionalHint(0, 0, 18, 18))).
+                        .setLayoutHint(0, 0, 18, 18)).
                 addChild(new mcjty.lib.gui.widgets.Label(mc, gui)
                         .setColor(color)
                         .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
                         .setText(readableName)
-                        .setLayoutHint(new PositionalLayout.PositionalHint(20, 0, 30, 18)));
+                        .setLayoutHint(20, 0, 30, 18));
 
         recipeList.addChild(panel);
     }
