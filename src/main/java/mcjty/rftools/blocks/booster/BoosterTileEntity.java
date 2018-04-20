@@ -1,9 +1,9 @@
 package mcjty.rftools.blocks.booster;
 
-import mcjty.lib.container.DefaultSidedInventory;
-import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.*;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.varia.ModuleSupport;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.blocks.environmental.EnvModuleProvider;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
@@ -23,7 +23,25 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
 
     public static final String CMD_RSMODE = "rsMode";
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, BoosterContainer.factory, 1);
+    public static final String CONTAINER_INVENTORY = "container";
+    public static final int SLOT_MODULE = 0;
+
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+        @Override
+        protected void setup() {
+            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), CONTAINER_INVENTORY, SLOT_MODULE, 7, 8, 1, 18, 1, 18);
+            layoutPlayerInventorySlots(27, 102);
+        }
+    };
+
+    static final ModuleSupport MODULE_SUPPORT = new ModuleSupport(SLOT_MODULE) {
+        @Override
+        public boolean isModule(ItemStack itemStack) {
+            return itemStack.getItem() instanceof EnvModuleProvider;
+        }
+    };
+
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, 1);
 
     private AxisAlignedBB beamBox = null;
     private int timeout = 0;
@@ -65,7 +83,7 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
                 return;
             }
             if (cachedModule == null) {
-                ItemStack stack = inventoryHelper.getStackInSlot(BoosterContainer.SLOT_MODULE);
+                ItemStack stack = inventoryHelper.getStackInSlot(SLOT_MODULE);
                 if (!stack.isEmpty()) {
                     if (stack.getItem() instanceof EnvModuleProvider) {
                         EnvModuleProvider provider = (EnvModuleProvider) stack.getItem();
@@ -153,16 +171,16 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public int[] getSlotsForFace(EnumFacing side) {
-        return BoosterContainer.factory.getAccessibleSlots();
+        return CONTAINER_FACTORY.getAccessibleSlots();
     }
 
     @Override
     public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
-        return BoosterContainer.factory.isOutputSlot(index);
+        return CONTAINER_FACTORY.isOutputSlot(index);
     }
 
     @Override
     public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
-        return BoosterContainer.factory.isInputSlot(index);
+        return CONTAINER_FACTORY.isInputSlot(index);
     }
 }

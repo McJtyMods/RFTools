@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.itemfilter;
 
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.PositionalLayout;
@@ -11,7 +12,7 @@ import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 public class GuiItemFilter extends GenericGuiContainer<ItemFilterTileEntity> {
     public static final int ITEMFILTER_WIDTH = 195;
@@ -20,9 +21,9 @@ public class GuiItemFilter extends GenericGuiContainer<ItemFilterTileEntity> {
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/itemfilter.png");
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
-    private ImageChoiceLabel[] bits = new ImageChoiceLabel[ItemFilterContainer.BUFFER_SIZE * 6];
+    private ImageChoiceLabel[] bits = new ImageChoiceLabel[ItemFilterTileEntity.BUFFER_SIZE * 6];
 
-    public GuiItemFilter(ItemFilterTileEntity itemFilterTileEntity, ItemFilterContainer container) {
+    public GuiItemFilter(ItemFilterTileEntity itemFilterTileEntity, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, itemFilterTileEntity, container, RFTools.GUI_MANUAL_MAIN, "filter");
 
         xSize = ITEMFILTER_WIDTH;
@@ -40,12 +41,12 @@ public class GuiItemFilter extends GenericGuiContainer<ItemFilterTileEntity> {
 
         for (EnumFacing direction : EnumFacing.VALUES) {
             final int side = direction.ordinal();
-            for (int slot = 0 ; slot < ItemFilterContainer.BUFFER_SIZE ; slot++) {
+            for (int slot = 0; slot < ItemFilterTileEntity.BUFFER_SIZE ; slot++) {
                 ImageChoiceLabel choiceLabel = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(25 + slot * 18, 4 + side * 13, 12, 12)).
                         addChoice("0", "Disabled", iconGuiElements, 160, 0).
                         addChoice("1", "Input", iconGuiElements, 96, 16).
                         addChoice("2", "Output", iconGuiElements, 80, 16);
-                bits[side * ItemFilterContainer.BUFFER_SIZE + slot] = choiceLabel;
+                bits[side * ItemFilterTileEntity.BUFFER_SIZE + slot] = choiceLabel;
                 if ((inputMode[side] & (1<<slot)) != 0) {
                     choiceLabel.setCurrentChoice(1);
                 } else if ((outputMode[side] & (1<<slot)) != 0) {
@@ -67,7 +68,7 @@ public class GuiItemFilter extends GenericGuiContainer<ItemFilterTileEntity> {
 
 
     private void changeMode(int side, int slot) {
-        ImageChoiceLabel choiceLabel = bits[side * ItemFilterContainer.BUFFER_SIZE + slot];
+        ImageChoiceLabel choiceLabel = bits[side * ItemFilterTileEntity.BUFFER_SIZE + slot];
         int c = choiceLabel.getCurrentChoiceIndex();
         boolean input = false;
         boolean output = false;

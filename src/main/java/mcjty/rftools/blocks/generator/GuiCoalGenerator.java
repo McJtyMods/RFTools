@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.generator;
 
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.entity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.Window;
@@ -13,7 +14,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 public class GuiCoalGenerator extends GenericGuiContainer<CoalGeneratorTileEntity> {
     public static final int INFUSER_WIDTH = 180;
@@ -25,7 +26,7 @@ public class GuiCoalGenerator extends GenericGuiContainer<CoalGeneratorTileEntit
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/coalgenerator.png");
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
-    public GuiCoalGenerator(CoalGeneratorTileEntity tileEntity, CoalGeneratorContainer container) {
+    public GuiCoalGenerator(CoalGeneratorTileEntity tileEntity, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, tileEntity, container, RFTools.GUI_MANUAL_MAIN, "coalgen");
         GenericEnergyStorageTileEntity.setCurrentRF(tileEntity.getEnergyStored());
 

@@ -1,3 +1,5 @@
+#PARSE_ESCAPES
+
 # Achievements
 advancements.rftools.builder.title=Builder
 advancements.rftools.builder.description=Bob The Builder!
@@ -185,3 +187,25 @@ key.porterNextDestination=Next Destination for Porter
 key.porterPrevDestination=Previous Destination for Porter
 key.debugDumpNBTItem=Dump NBT for Held Item
 key.debugDumpNBTBlock=Dump NBT for Selected Block
+
+# Messages
+message.rftools.shiftmessage=<Press Shift>
+message.rftools.coalgenerator=\
+    @fThis machine produces RF (%s RF/t)\n\
+    @ffrom coal or charcoal\n\
+    @eInfusing bonus: more power generation\n\
+    @eand lasts longer on a single fuel
+message.rftools.booster=\
+    @fThis blocks gives entities directly on top of this\n\
+    @fblock a temporary effect\n\
+    @eInfusing bonus: reduced power consumption
+message.rftools.infuser=\
+    @fWith this machine you can improve most other machines\n\
+    @fin RFTools in various ways. This needs dimensional\n\
+    @fshards.\n\
+    @eInfusing bonus: reduced power consumption.
+message.rftools.itemfilter=\
+    @aContents: %s stacks\n\
+    @fWith this block you can direct items from any side\n\
+    @fto any other side. This allows you to make item\n\
+    @ffilters for quarries, tree farms, mob farms, ...

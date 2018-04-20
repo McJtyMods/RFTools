@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.booster;
 
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.entity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.Window;
@@ -14,7 +15,7 @@ import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 public class GuiBooster extends GenericGuiContainer<BoosterTileEntity> {
     public static final int ENV_WIDTH = 194;
@@ -27,7 +28,7 @@ public class GuiBooster extends GenericGuiContainer<BoosterTileEntity> {
 
     private ImageChoiceLabel redstoneMode;
 
-    public GuiBooster(BoosterTileEntity boosterTileEntity, BoosterContainer container) {
+    public GuiBooster(BoosterTileEntity boosterTileEntity, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, boosterTileEntity, container, RFTools.GUI_MANUAL_MAIN, "booster");
 
         xSize = ENV_WIDTH;

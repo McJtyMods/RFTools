@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.itemfilter;
 
-import mcjty.lib.container.DefaultSidedInventory;
-import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.*;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,7 +17,23 @@ import java.util.Map;
 public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSidedInventory {
     public static final String CMD_SETMODE = "setMode";
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, ItemFilterContainer.factory, ItemFilterContainer.GHOST_SIZE + ItemFilterContainer.BUFFER_SIZE);
+    public static final String CONTAINER_INVENTORY = "container";
+    public static final int SLOT_GHOST = 0;
+
+    public static final int BUFFER_SIZE = 9;
+    public static final int GHOST_SIZE = 9;
+    public static final int SLOT_PLAYERINV = GHOST_SIZE + BUFFER_SIZE;
+    public static final int SLOT_BUFFER = 9;
+
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+        @Override
+        protected void setup() {
+            addSlotBox(new SlotDefinition(SlotType.SLOT_GHOST), CONTAINER_INVENTORY, SLOT_GHOST, 24, 105, 9, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), CONTAINER_INVENTORY, SLOT_BUFFER, 24, 87, 9, 18, 1, 18);
+            layoutPlayerInventorySlots(24, 130);
+        }
+    };
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, GHOST_SIZE + BUFFER_SIZE);
 
     private int inputMode[] = new int[6];
     private int outputMode[] = new int[6];
@@ -107,36 +122,36 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
 
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
-        if (index < ItemFilterContainer.SLOT_BUFFER) {
+        if (index < SLOT_BUFFER) {
             return false;
         }
-        ItemStack ghostStack = inventoryHelper.getStackInSlot(index - ItemFilterContainer.SLOT_BUFFER);
+        ItemStack ghostStack = inventoryHelper.getStackInSlot(index - SLOT_BUFFER);
         return ghostStack.isEmpty() || ghostStack.isItemEqual(stack);
     }
 
     @Override
     public int[] getSlotsForFace(EnumFacing side) {
-        int v = ItemFilterContainer.SLOT_BUFFER;
+        int v = SLOT_BUFFER;
         return new int[] { v, v+1, v+2, v+3, v+4, v+5, v+6, v+7, v+8 };
     }
 
     @Override
     public boolean canInsertItem(int index, ItemStack stack, EnumFacing side) {
-        if (index < ItemFilterContainer.SLOT_BUFFER) {
+        if (index < SLOT_BUFFER) {
             return false;
         }
-        if (!isInputMode(side, index - ItemFilterContainer.SLOT_BUFFER)) {
+        if (!isInputMode(side, index - SLOT_BUFFER)) {
             return false;
         }
 
-        int ghostIndex = index - ItemFilterContainer.SLOT_BUFFER;
+        int ghostIndex = index - SLOT_BUFFER;
 
         ItemStack ghostStack = inventoryHelper.getStackInSlot(ghostIndex);
         if (ghostStack.isEmpty()) {
             // First check if there are other ghosted items for this side that match.
             // In that case we don't allow input here.
             int im = inputMode[side.ordinal()];
-            for (int i = ItemFilterContainer.SLOT_GHOST ; i < ItemFilterContainer.SLOT_GHOST + ItemFilterContainer.GHOST_SIZE ; i++) {
+            for (int i = SLOT_GHOST ; i < SLOT_GHOST + GHOST_SIZE ; i++) {
                 ItemStack g = inventoryHelper.getStackInSlot(i);
                 if (!g.isEmpty() && ((im & (1<<i)) != 0) && g.isItemEqual(stack)) {
                     return false;
@@ -149,10 +164,10 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
 
     @Override
     public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
-        if (index < ItemFilterContainer.SLOT_BUFFER) {
+        if (index < SLOT_BUFFER) {
             return false;
         }
-        return isOutputMode(direction, index - ItemFilterContainer.SLOT_BUFFER);
+        return isOutputMode(direction, index - SLOT_BUFFER);
     }
 
     private boolean isInputMode(EnumFacing side, int slot) {

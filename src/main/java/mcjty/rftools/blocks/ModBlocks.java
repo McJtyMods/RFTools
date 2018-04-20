@@ -1,5 +1,7 @@
 package mcjty.rftools.blocks;
 
+import mcjty.lib.builder.GenericBlockBuilderFactory;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorSetup;
 import mcjty.rftools.blocks.booster.BoosterSetup;
 import mcjty.rftools.blocks.builder.BuilderSetup;
@@ -32,7 +34,12 @@ public final class ModBlocks {
 
     public static DimensionalShardBlock dimensionalShardBlock;
 
+    public static GenericBlockBuilderFactory builderFactory;
+
+
     public static void init() {
+        builderFactory = new GenericBlockBuilderFactory(RFTools.instance);
+
         initBaseBlocks();
 
         CoalGeneratorSetup.init();

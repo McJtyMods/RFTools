@@ -2,8 +2,7 @@ package mcjty.rftools.blocks.infuser;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.base.GeneralConfig;
-import mcjty.lib.container.DefaultSidedInventory;
-import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.*;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.items.ModItems;
 import net.minecraft.block.Block;
@@ -17,7 +16,19 @@ import net.minecraft.util.ITickable;
 
 public class MachineInfuserTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable {
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, MachineInfuserContainer.factory, 2);
+    public static final String CONTAINER_INVENTORY = "container";
+    public static final int SLOT_SHARDINPUT = 0;
+    public static final int SLOT_MACHINEOUTPUT = 1;
+
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+        @Override
+        protected void setup() {
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(ModItems.dimensionalShardItem)), CONTAINER_INVENTORY, SLOT_SHARDINPUT, 64, 24, 1, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_OUTPUT), CONTAINER_INVENTORY, SLOT_MACHINEOUTPUT, 118, 24, 1, 18, 1, 18);
+            layoutPlayerInventorySlots(10, 70);
+        }
+    };
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, 2);
 
     private int infusing = 0;
 
@@ -126,22 +137,22 @@ public class MachineInfuserTileEntity extends GenericEnergyReceiverTileEntity im
 
     @Override
     public int[] getSlotsForFace(EnumFacing side) {
-        return new int[] { MachineInfuserContainer.SLOT_SHARDINPUT, MachineInfuserContainer.SLOT_MACHINEOUTPUT};
+        return new int[] { SLOT_SHARDINPUT, SLOT_MACHINEOUTPUT};
     }
 
     @Override
     public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
-        return MachineInfuserContainer.factory.isInputSlot(index) || MachineInfuserContainer.factory.isSpecificItemSlot(index);
+        return CONTAINER_FACTORY.isInputSlot(index) || CONTAINER_FACTORY.isSpecificItemSlot(index);
     }
 
     @Override
     public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
-        return MachineInfuserContainer.factory.isOutputSlot(index);
+        return CONTAINER_FACTORY.isOutputSlot(index);
     }
 
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
-        if (index == MachineInfuserContainer.SLOT_SHARDINPUT && stack.getItem() != ModItems.dimensionalShardItem) {
+        if (index == SLOT_SHARDINPUT && stack.getItem() != ModItems.dimensionalShardItem) {
             return false;
         }
         return true;

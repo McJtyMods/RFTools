@@ -19,6 +19,10 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'maven'
 
 repositories {
+    //mavenLocal()
+    maven {
+        url uri('c:/Personal/local_maven')
+        }
     maven { // The repo from which to get waila
         name "Mobius Repo"
         url "https://tehnut.info/maven"

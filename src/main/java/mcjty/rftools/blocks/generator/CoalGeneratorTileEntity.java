@@ -3,13 +3,19 @@ package mcjty.rftools.blocks.generator;
 
 import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.compat.RedstoneFluxCompatibility;
-import mcjty.lib.container.DefaultSidedInventory;
-import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.*;
 import mcjty.lib.entity.GenericEnergyProviderTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
+import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -23,10 +29,16 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Map;
 
 public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity implements ITickable, DefaultSidedInventory,
@@ -34,7 +46,25 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
 
     public static final String CMD_RSMODE = "rsMode";
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, CoalGeneratorContainer.factory, 2);
+    public static final PropertyBool WORKING = PropertyBool.create("working");
+
+    public static final String CONTAINER_INVENTORY = "container";
+    public static final int SLOT_COALINPUT = 0;
+    public static final int SLOT_CHARGEITEM = 1;
+
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+        @Override
+        protected void setup() {
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
+                    new ItemStack(Items.COAL),
+                    new ItemStack(Blocks.COAL_BLOCK)),
+                    CONTAINER_INVENTORY, SLOT_COALINPUT, 82, 24, 1, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_CONTAINER), CONTAINER_INVENTORY, SLOT_CHARGEITEM, 118, 24, 1, 18, 1, 18);
+            layoutPlayerInventorySlots(10, 70);
+        }
+    };
+
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, 2);
 
     private int burning;
 
@@ -112,8 +142,8 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
                 return;
             }
 
-            if (inventoryHelper.containsItem(CoalGeneratorContainer.SLOT_COALINPUT)) {
-                ItemStack extracted = inventoryHelper.decrStackSize(CoalGeneratorContainer.SLOT_COALINPUT, 1);
+            if (inventoryHelper.containsItem(SLOT_COALINPUT)) {
+                ItemStack extracted = inventoryHelper.decrStackSize(SLOT_COALINPUT, 1);
                 burning = CoalGeneratorConfiguration.ticksPerCoal;
                 if (extracted.getItem() == Item.getItemFromBlock(Blocks.COAL_BLOCK)) {
                     burning *= 9;
@@ -163,7 +193,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
     }
 
     private void handleChargingItem() {
-        ItemStack stack = inventoryHelper.getStackInSlot(CoalGeneratorContainer.SLOT_CHARGEITEM);
+        ItemStack stack = inventoryHelper.getStackInSlot(SLOT_CHARGEITEM);
         if (stack.isEmpty()) {
             return;
         }
@@ -217,7 +247,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
 
     @Override
     public int[] getSlotsForFace(EnumFacing side) {
-        return new int[] { CoalGeneratorContainer.SLOT_COALINPUT };
+        return new int[] { SLOT_COALINPUT };
     }
 
     @Override
@@ -227,10 +257,10 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
 
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
-        if (index == CoalGeneratorContainer.SLOT_CHARGEITEM) {
+        if (index == SLOT_CHARGEITEM) {
             boolean rf = RFTools.redstoneflux && RedstoneFluxCompatibility.isEnergyItem(stack.getItem());
             return rf;
-        } else if (index == CoalGeneratorContainer.SLOT_COALINPUT) {
+        } else if (index == SLOT_COALINPUT) {
             return stack.getItem() == Items.COAL || stack.getItem() == Item.getItemFromBlock(Blocks.COAL_BLOCK);
         }
         return true;
@@ -280,4 +310,28 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
         return false;
     }
 
+    @Override
+    public IBlockState getActualState(IBlockState state) {
+        return state.withProperty(WORKING, isWorking());
+    }
+
+    @Override
+    @Optional.Method(modid = "theoneprobe")
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        Boolean working = isWorking();
+        if (working) {
+            probeInfo.text(TextFormatting.GREEN + "Producing " + getRfPerTick() + " RF/t");
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    @Optional.Method(modid = "waila")
+    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.addWailaBody(itemStack, currenttip, accessor, config);
+        if (isWorking()) {
+            currenttip.add(TextFormatting.GREEN + "Producing " + getRfPerTick() + " RF/t");
+        }
+    }
 }
