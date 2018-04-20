@@ -209,3 +209,6 @@ message.rftools.itemfilter=\
     @fWith this block you can direct items from any side\n\
     @fto any other side. This allows you to make item\n\
     @ffilters for quarries, tree farms, mob farms, ...
+message.rftools.security_manager=\
+    @aContents: %s stacks\n\
+    @fThis block manages your security cards

@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.security;
 
-import mcjty.lib.container.DefaultSidedInventory;
-import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.*;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,7 +17,23 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
     public static final String CMD_ADDPLAYER = "addPlayer";
     public static final String CMD_DELPLAYER = "delPlayer";
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, SecurityManagerContainer.factory, SecurityManagerContainer.BUFFER_SIZE + 2);
+    public static final String CONTAINER_INVENTORY = "container";
+    public static final int SLOT_CARD = 0;
+    public static final int SLOT_LINKER = 1;
+    public static final int SLOT_BUFFER = 2;
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+        @Override
+        protected void setup() {
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(SecuritySetup.securityCardItem)), CONTAINER_INVENTORY, SLOT_CARD, 10, 7, 1, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(SecuritySetup.securityCardItem)), CONTAINER_INVENTORY, SLOT_LINKER, 42, 7, 1, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(SecuritySetup.securityCardItem)), CONTAINER_INVENTORY, SLOT_BUFFER, 10, 124, 3, 18, 4, 18);
+            layoutPlayerInventorySlots(74, 124);
+        }
+    };
+
+    public static final int BUFFER_SIZE = (3*4);
+    public static final int SLOT_PLAYERINV = SLOT_CARD + BUFFER_SIZE + 2;
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, BUFFER_SIZE + 2);
 
     @Override
     protected boolean needsCustomInvWrapper() {
@@ -55,11 +70,11 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
         if (getWorld().isRemote) {
             return;
         }
-        ItemStack masterCard = inventoryHelper.getStackInSlot(SecurityManagerContainer.SLOT_CARD);
+        ItemStack masterCard = inventoryHelper.getStackInSlot(SLOT_CARD);
         if (masterCard.isEmpty()) {
             return;
         }
-        ItemStack linkerCard = inventoryHelper.getStackInSlot(SecurityManagerContainer.SLOT_LINKER);
+        ItemStack linkerCard = inventoryHelper.getStackInSlot(SLOT_LINKER);
         if (linkerCard.isEmpty()) {
             return;
         }
@@ -134,7 +149,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
     }
 
     private NBTTagCompound getCardInfo() {
-        ItemStack cardStack = inventoryHelper.getStackInSlot(SecurityManagerContainer.SLOT_CARD);
+        ItemStack cardStack = inventoryHelper.getStackInSlot(SLOT_CARD);
         if (cardStack.isEmpty()) {
             return null;
         }
@@ -149,10 +164,10 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
         inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
-        if (index == SecurityManagerContainer.SLOT_CARD) {
+        if (index == SLOT_CARD) {
             updateCard(stack);
             updateLinkedCard();
-        } else if (index == SecurityManagerContainer.SLOT_LINKER) {
+        } else if (index == SLOT_LINKER) {
             updateLinkedCard();
         }
     }

@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.security;
 
 import mcjty.lib.base.StyleConfig;
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
@@ -37,7 +38,7 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
 
     public static SecurityChannels.SecurityChannel channelFromServer = null;
 
-    public GuiSecurityManager(SecurityManagerTileEntity securityManagerTileEntity, SecurityManagerContainer container) {
+    public GuiSecurityManager(SecurityManagerTileEntity securityManagerTileEntity, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, securityManagerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "security");
 
         xSize = SECURITYMANAGER_WIDTH;
@@ -129,7 +130,7 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
     }
 
     private int getCardID() {
-        Slot slot = inventorySlots.inventorySlots.get(SecurityManagerContainer.SLOT_CARD);
+        Slot slot = inventorySlots.inventorySlots.get(SecurityManagerTileEntity.SLOT_CARD);
         if (slot.getHasStack()) {
             NBTTagCompound tagCompound = slot.getStack().getTagCompound();
             if (tagCompound == null) {
