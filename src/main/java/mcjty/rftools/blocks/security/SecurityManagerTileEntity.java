@@ -17,16 +17,15 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
     public static final String CMD_ADDPLAYER = "addPlayer";
     public static final String CMD_DELPLAYER = "delPlayer";
 
-    public static final String CONTAINER_INVENTORY = "container";
     public static final int SLOT_CARD = 0;
     public static final int SLOT_LINKER = 1;
     public static final int SLOT_BUFFER = 2;
     public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
         @Override
         protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(SecuritySetup.securityCardItem)), CONTAINER_INVENTORY, SLOT_CARD, 10, 7, 1, 18, 1, 18);
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(SecuritySetup.securityCardItem)), CONTAINER_INVENTORY, SLOT_LINKER, 42, 7, 1, 18, 1, 18);
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(SecuritySetup.securityCardItem)), CONTAINER_INVENTORY, SLOT_BUFFER, 10, 124, 3, 18, 4, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(SecuritySetup.securityCardItem)), ContainerFactory.CONTAINER_CONTAINER, SLOT_CARD, 10, 7, 1, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(SecuritySetup.securityCardItem)), ContainerFactory.CONTAINER_CONTAINER, SLOT_LINKER, 42, 7, 1, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(SecuritySetup.securityCardItem)), ContainerFactory.CONTAINER_CONTAINER, SLOT_BUFFER, 10, 124, 3, 18, 4, 18);
             layoutPlayerInventorySlots(74, 124);
         }
     };
