@@ -212,3 +212,9 @@ message.rftools.itemfilter=\
 message.rftools.security_manager=\
     @aContents: %s stacks\n\
     @fThis block manages your security cards
+message.rftools.builder=\
+    @fThis block can quarry areas, pump liquids,\n\
+    @fmove/copy/swap structures, collect items\n\
+    @fand XP, move entities, build structures, ...\n\
+    @eInfusing bonus: reduced power consumption\n\
+    @eand increased speed.

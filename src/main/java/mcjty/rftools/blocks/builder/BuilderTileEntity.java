@@ -1,10 +1,7 @@
 package mcjty.rftools.blocks.builder;
 
 import com.mojang.authlib.GameProfile;
-
-import mcjty.lib.container.BaseBlock;
-import mcjty.lib.container.DefaultSidedInventory;
-import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.*;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.Arguments;
@@ -23,7 +20,12 @@ import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.proxy.CommonProxy;
 import mcjty.rftools.shapes.Shape;
 import mcjty.rftools.varia.RFToolsTools;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
 import mcjty.typed.Type;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockShulkerBox;
@@ -44,10 +46,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityShulkerBox;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
@@ -64,6 +68,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -95,7 +100,22 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public static final String CMD_RESTART = "restart";
     public static final String CLIENTCMD_GETLEVEL = "getLevel";
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, BuilderContainer.factory, 2);
+
+    public static final int SLOT_TAB = 0;
+    public static final int SLOT_FILTER = 1;
+    public static final ContainerFactory factory = new ContainerFactory() {
+        @Override
+        protected void setup() {
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
+                    new ItemStack(BuilderSetup.spaceChamberCardItem),
+                    new ItemStack(BuilderSetup.shapeCardItem)),
+                    ContainerFactory.CONTAINER_CONTAINER, SLOT_TAB, 100, 10, 1, 18, 1, 18);
+            addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, StorageFilterItem.class), ContainerFactory.CONTAINER_CONTAINER, SLOT_FILTER, 84, 46);
+            layoutPlayerInventorySlots(10, 70);
+        }
+    };
+
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, factory, 2);
 
     public static final int MODE_COPY = 0;
     public static final int MODE_MOVE = 1;
@@ -193,7 +213,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     @Override
     public EnumFacing getBlockOrientation() {
         IBlockState state = world.getBlockState(pos);
-        if (state.getBlock() instanceof BuilderBlock) {
+        if (state.getBlock() == BuilderSetup.builderBlock) {
             return OrientationTools.getOrientationHoriz(state);
         } else {
             return null;
@@ -256,7 +276,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private boolean isShapeCard() {
-        ItemStack itemStack = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
+        ItemStack itemStack = inventoryHelper.getStackInSlot(SLOT_TAB);
         if (itemStack.isEmpty()) {
             return false;
         }
@@ -264,7 +284,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private NBTTagCompound hasCard() {
-        ItemStack itemStack = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
+        ItemStack itemStack = inventoryHelper.getStackInSlot(SLOT_TAB);
         if (itemStack.isEmpty()) {
             return null;
         }
@@ -273,7 +293,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private void makeSupportBlocksShaped() {
-        ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
+        ItemStack shapeCard = inventoryHelper.getStackInSlot(SLOT_TAB);
         BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
         BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
         Shape shape = ShapeCardItem.getShape(shapeCard);
@@ -334,7 +354,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private void clearSupportBlocksShaped() {
-        ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
+        ItemStack shapeCard = inventoryHelper.getStackInSlot(SLOT_TAB);
         BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
         BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
         Shape shape = ShapeCardItem.getShape(shapeCard);
@@ -497,7 +517,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         if (isShapeCard()) {
             // If there is a shape card we modify it for the new settings.
-            ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
+            ItemStack shapeCard = inventoryHelper.getStackInSlot(SLOT_TAB);
             BlockPos dimension = ShapeCardItem.getDimension(shapeCard);
             BlockPos minBox = positionBox(dimension);
             int dx = dimension.getX();
@@ -836,7 +856,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private void calculateBoxShaped() {
-        ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
+        ItemStack shapeCard = inventoryHelper.getStackInSlot(SLOT_TAB);
         if (shapeCard.isEmpty()) {
             return;
         }
@@ -906,7 +926,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         if (cachedBlocks == null) {
             cachedBlocks = new HashMap<>();
-            ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
+            ItemStack shapeCard = inventoryHelper.getStackInSlot(SLOT_TAB);
             Shape shape = ShapeCardItem.getShape(shapeCard);
             boolean solid = ShapeCardItem.isSolid(shapeCard);
             BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
@@ -938,7 +958,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private ShapeCardType getCardType() {
         if (cardType == ShapeCardType.CARD_UNKNOWN) {
-            ItemStack card = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
+            ItemStack card = inventoryHelper.getStackInSlot(SLOT_TAB);
             if (!card.isEmpty()) {
                 cardType = ShapeCardType.fromDamage(card.getItemDamage());
             }
@@ -1022,7 +1042,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private Set<Block> getCachedVoidableBlocks() {
         if (cachedVoidableBlocks == null) {
-            ItemStack card = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
+            ItemStack card = inventoryHelper.getStackInSlot(SLOT_TAB);
             if (!card.isEmpty() && card.getItem() == BuilderSetup.shapeCardItem) {
                 cachedVoidableBlocks = ShapeCardItem.getVoidedBlocks(card);
             } else {
@@ -1061,7 +1081,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void getFilterCache() {
         if (filterCache == null) {
-            filterCache = StorageFilterItem.getCache(inventoryHelper.getStackInSlot(BuilderContainer.SLOT_FILTER));
+            filterCache = StorageFilterItem.getCache(inventoryHelper.getStackInSlot(SLOT_FILTER));
         }
     }
 
@@ -1106,7 +1126,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
             FakePlayer fakePlayer = getHarvester();
             if (allowedToBreak(srcState, getWorld(), srcPos, fakePlayer)) {
-                ItemStack filter = getStackInSlot(BuilderContainer.SLOT_FILTER);
+                ItemStack filter = getStackInSlot(SLOT_FILTER);
                 if (!filter.isEmpty()) {
                     getFilterCache();
                     if (filterCache != null) {
@@ -1261,7 +1281,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         FakePlayer fakePlayer = getHarvester();
         if (allowedToBreak(srcState, getWorld(), srcPos, fakePlayer)) {
             if (block.getBlockHardness(srcState, getWorld(), srcPos) >= 0) {
-                ItemStack filter = getStackInSlot(BuilderContainer.SLOT_FILTER);
+                ItemStack filter = getStackInSlot(SLOT_FILTER);
                 if (!filter.isEmpty()) {
                     getFilterCache();
                     if (filterCache != null) {
@@ -2100,26 +2120,26 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public int[] getSlotsForFace(EnumFacing side) {
-        return BuilderContainer.factory.getAccessibleSlots();
+        return factory.getAccessibleSlots();
     }
 
     @Override
     public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
-        return BuilderContainer.factory.isInputSlot(index);
+        return factory.isInputSlot(index);
     }
 
     @Override
     public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
-        return BuilderContainer.factory.isOutputSlot(index);
+        return factory.isOutputSlot(index);
     }
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
-        if (index == BuilderContainer.SLOT_TAB && !inventoryHelper.getStackInSlot(index).isEmpty() && amount > 0) {
+        if (index == SLOT_TAB && !inventoryHelper.getStackInSlot(index).isEmpty() && amount > 0) {
             // Restart if we go from having a stack to not having stack or the other way around.
             refreshSettings();
         }
-        if (index == BuilderContainer.SLOT_FILTER) {
+        if (index == SLOT_FILTER) {
             filterCache = null;
         }
         return inventoryHelper.decrStackSize(index, amount);
@@ -2127,13 +2147,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-        if (index == BuilderContainer.SLOT_TAB && ((stack.isEmpty()
+        if (index == SLOT_TAB && ((stack.isEmpty()
                 && !inventoryHelper.getStackInSlot(index).isEmpty())
                 || (!stack.isEmpty() && inventoryHelper.getStackInSlot(index).isEmpty()))) {
             // Restart if we go from having a stack to not having stack or the other way around.
             refreshSettings();
         }
-        if (index == BuilderContainer.SLOT_FILTER) {
+        if (index == SLOT_FILTER) {
             filterCache = null;
         }
         inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
@@ -2361,10 +2381,60 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return false;
     }
 
+    @Override
+    public void onBlockBreak(World workd, BlockPos pos, IBlockState state) {
+        if (hasSupportMode()) {
+            clearSupportBlocks();
+        }
+    }
+
     @SuppressWarnings("NullableProblems")
     @SideOnly(Side.CLIENT)
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
         return new AxisAlignedBB(pos, pos.add(1, 2, 1));
+    }
+
+    @Optional.Method(modid = "theoneprobe")
+    @Override
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        int scan = getCurrentLevel();
+        probeInfo.text(TextFormatting.GREEN + "Current level: " + (scan == -1 ? "not scanning" : scan));
+    }
+
+    private static long lastTime = 0;
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    @Optional.Method(modid = "waila")
+    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.addWailaBody(itemStack, currenttip, accessor, config);
+        if (System.currentTimeMillis() - lastTime > 250) {
+            lastTime = System.currentTimeMillis();
+            requestCurrentLevel();
+        }
+        int scan = BuilderTileEntity.getCurrentLevelClientSide();
+        currenttip.add(TextFormatting.GREEN + "Current level: " + (scan == -1 ? "not scanning" : scan));
+    }
+
+    @Override
+    public void rotateBlock(EnumFacing axis) {
+        super.rotateBlock(axis);
+        if (!world.isRemote) {
+            if (hasSupportMode()) {
+                clearSupportBlocks();
+                resetBox();
+            }
+        }
+    }
+
+    @Override
+    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState metadata, int fortune) {
+        super.getDrops(drops, world, pos, metadata, fortune);
+        List<ItemStack> overflowItems = getOverflowItems();
+        if(overflowItems != null) {
+            drops.addAll(overflowItems);
+        }
     }
 }

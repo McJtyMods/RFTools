@@ -27,21 +27,6 @@ public class SecuritySetup {
                 .information("message.rftools.shiftmessage")
                 .informationShift("message.rftools.security_manager", stack -> {
                     int cnt = mapTag(stack, compound -> (int) ItemStackTools.getListStream(compound, "Items").filter(nbt -> !new ItemStack((NBTTagCompound)nbt).isEmpty()).count(), 0);
-//
-//                    NBTTagCompound tagCompound = stack.getTagCompound();
-//                    if (tagCompound != null) {
-//                        NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
-//
-//                        for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
-//                            NBTTagCompound itemTag = bufferTagList.getCompoundTagAt(i);
-//                            if (itemTag != null) {
-//                                ItemStack s = new ItemStack(itemTag);
-//                                if (!s.isEmpty()) {
-//                                    cnt++;
-//                                }
-//                            }
-//                        }
-//                    }
                     return Integer.toString(cnt);
                 })
                 .build();

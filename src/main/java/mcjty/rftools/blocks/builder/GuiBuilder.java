@@ -1,10 +1,13 @@
 package mcjty.rftools.blocks.builder;
 
 import mcjty.lib.base.StyleConfig;
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.PositionalLayout;
+import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.*;
+import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
@@ -16,7 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 
-import java.awt.Rectangle;
+import java.awt.*;
 
 import static mcjty.rftools.blocks.builder.BuilderTileEntity.*;
 
@@ -43,7 +46,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/builder.png");
     private static final ResourceLocation guiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
-    public GuiBuilder(BuilderTileEntity builderTileEntity, BuilderContainer container) {
+    public GuiBuilder(BuilderTileEntity builderTileEntity, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, builderTileEntity, container, RFTools.GUI_MANUAL_SHAPE, "builder");
         setCurrentRF(builderTileEntity.getEnergyStored());
 
@@ -99,11 +102,11 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     }
 
     private void openCardGui() {
-        ItemStack cardStack = inventorySlots.getSlot(BuilderContainer.SLOT_TAB).getStack();
+        ItemStack cardStack = inventorySlots.getSlot(SLOT_TAB).getStack();
         if (!cardStack.isEmpty()) {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
             GuiShapeCard.fromTEPos = tileEntity.getPos();
-            GuiShapeCard.fromTEStackSlot = BuilderContainer.SLOT_TAB;
+            GuiShapeCard.fromTEStackSlot = SLOT_TAB;
             GuiShapeCard.returnGui = this;
             player.openGui(RFTools.instance, RFTools.GUI_SHAPECARD_COMPOSER, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
         }
@@ -293,7 +296,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     }
 
     private boolean isShapeCard() {
-        ItemStack card = tileEntity.getStackInSlot(BuilderContainer.SLOT_TAB);
+        ItemStack card = tileEntity.getStackInSlot(SLOT_TAB);
         return !card.isEmpty() && card.getItem() == BuilderSetup.shapeCardItem;
     }
 
@@ -302,7 +305,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         int cury = getCurrentLevelClientSide();
         currentLevel.setText("Y: " + (cury == -1 ? "stop" : cury));
 
-        ItemStack card = tileEntity.getStackInSlot(BuilderContainer.SLOT_TAB);
+        ItemStack card = tileEntity.getStackInSlot(SLOT_TAB);
         boolean enabled;
         if (card.isEmpty()) {
             enabled = false;

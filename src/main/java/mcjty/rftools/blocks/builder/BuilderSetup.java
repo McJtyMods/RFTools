@@ -2,14 +2,22 @@ package mcjty.rftools.blocks.builder;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import mcjty.lib.builder.BlockFlags;
+import mcjty.lib.container.BaseBlock;
+import mcjty.lib.container.GenericBlock;
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
+import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.shaper.*;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.builder.SpaceChamberCardItem;
 import mcjty.rftools.proxy.CommonProxy;
 import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -20,13 +28,14 @@ import java.util.Map;
 public class BuilderSetup {
     public static SpaceChamberBlock spaceChamberBlock;
     public static SpaceChamberControllerBlock spaceChamberControllerBlock;
-    public static BuilderBlock builderBlock;
     public static SupportBlock supportBlock;
     public static ComposerBlock composerBlock;
     public static ScannerBlock scannerBlock;
     public static RemoteScannerBlock remoteScannerBlock;
     public static ProjectorBlock projectorBlock;
     public static LocatorBlock locatorBlock;
+
+    public static GenericBlock<BuilderTileEntity, GenericContainer> builderBlock;
 
     public static SpaceChamberCardItem spaceChamberCardItem;
     public static ShapeCardItem shapeCardItem;
@@ -36,13 +45,28 @@ public class BuilderSetup {
     public static void init() {
         spaceChamberBlock = new SpaceChamberBlock();
         spaceChamberControllerBlock = new SpaceChamberControllerBlock();
-        builderBlock = new BuilderBlock();
         supportBlock = new SupportBlock();
         composerBlock = new ComposerBlock();
         scannerBlock = new ScannerBlock();
         remoteScannerBlock = new RemoteScannerBlock();
         projectorBlock = new ProjectorBlock();
         locatorBlock = new LocatorBlock();
+
+        builderBlock = ModBlocks.builderFactory.<BuilderTileEntity, GenericContainer> builder("builder")
+                .tileEntityClass(BuilderTileEntity.class)
+                .container(GenericContainer.class, BuilderTileEntity.factory)
+                .flags(BlockFlags.REDSTONE_CHECK)
+                .rotationType(BaseBlock.RotationType.HORIZROTATION)
+                .moduleSupport(new ModuleSupport(BuilderTileEntity.SLOT_TAB) {
+                    @Override
+                    public boolean isModule(ItemStack itemStack) {
+                        return (itemStack.getItem() == BuilderSetup.shapeCardItem || itemStack.getItem() == BuilderSetup.spaceChamberCardItem);
+                    }
+                })
+                .guiId(RFTools.GUI_BUILDER)
+                .information("message.rftools.shiftmessage")
+                .informationShift("message.rftools.builder")
+                .build();
 
         initItems();
 
@@ -54,7 +78,10 @@ public class BuilderSetup {
     public static void initClient() {
         spaceChamberBlock.initModel();
         spaceChamberControllerBlock.initModel();
+
         builderBlock.initModel();
+        ClientRegistry.bindTileEntitySpecialRenderer(BuilderTileEntity.class, new BuilderRenderer());
+
         supportBlock.initModel();
         composerBlock.initModel();
         scannerBlock.initModel();
@@ -64,6 +91,8 @@ public class BuilderSetup {
 
         spaceChamberCardItem.initModel();
         shapeCardItem.initModel();
+
+        builderBlock.setGuiClass(GuiBuilder.class);
     }
 
     private static void initItems() {

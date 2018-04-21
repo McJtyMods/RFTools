@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
-import mcjty.rftools.blocks.builder.BuilderContainer;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
 import mcjty.rftools.shapes.Shape;
 import net.minecraft.block.Block;
@@ -33,7 +32,7 @@ public enum ShapeCardType {
         @Override
         public void addHudLog(List<String> list, InventoryHelper inventoryHelper) {
             list.add("    Shape card");
-            ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderContainer.SLOT_TAB);
+            ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderTileEntity.SLOT_TAB);
             if (!shapeCard.isEmpty()) {
                 Shape shape = ShapeCardItem.getShape(shapeCard);
                 if (shape != null) {
