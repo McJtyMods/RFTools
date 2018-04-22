@@ -12,9 +12,9 @@ public class SpawnerSetup {
     public static MatterBeamerBlock matterBeamerBlock;
 
     public static void init() {
-        spawnerBlock = ModBlocks.builderFactory.<SpawnerTileEntity, GenericContainer> builder("spawner")
+        spawnerBlock = ModBlocks.builderFactory.<SpawnerTileEntity> builder("spawner")
                 .tileEntityClass(SpawnerTileEntity.class)
-                .container(GenericContainer.class, SpawnerTileEntity.CONTAINER_FACTORY)
+                .container(SpawnerTileEntity.CONTAINER_FACTORY)
                 .guiId(RFTools.GUI_SPAWNER)
                 .moduleSupport(SpawnerTileEntity.MODULE_SUPPORT)
                 .information("message.rftools.shiftmessage")

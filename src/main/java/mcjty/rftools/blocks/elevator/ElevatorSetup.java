@@ -15,11 +15,11 @@ public class ElevatorSetup {
     public static GenericBlock<ElevatorTileEntity, GenericContainer> elevatorBlock;
 
     public static void init() {
-        elevatorBlock = ModBlocks.builderFactory.<ElevatorTileEntity, GenericContainer> builder("elevator")
+        elevatorBlock = ModBlocks.builderFactory.<ElevatorTileEntity> builder("elevator")
                 .tileEntityClass(ElevatorTileEntity.class)
                 .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT)
                 .rotationType(BaseBlock.RotationType.HORIZROTATION)
-                .emptyContainer(GenericContainer.class)
+                .emptyContainer()
                 .guiId(RFTools.GUI_ELEVATOR)
                 .information("message.rftools.shiftmessage")
                 .informationShift("message.rftools.elevator")

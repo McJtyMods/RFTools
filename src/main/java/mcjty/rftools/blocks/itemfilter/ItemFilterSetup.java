@@ -17,9 +17,9 @@ public class ItemFilterSetup {
     public static GenericBlock<ItemFilterTileEntity, GenericContainer> itemFilterBlock;
 
     public static void init() {
-        itemFilterBlock = ModBlocks.builderFactory.<ItemFilterTileEntity, GenericContainer> builder("item_filter")
+        itemFilterBlock = ModBlocks.builderFactory.<ItemFilterTileEntity> builder("item_filter")
                 .tileEntityClass(ItemFilterTileEntity.class)
-                .container(GenericContainer.class, ItemFilterTileEntity.CONTAINER_FACTORY)
+                .container(ItemFilterTileEntity.CONTAINER_FACTORY)
                 .rotationType(BaseBlock.RotationType.NONE)
                 .guiId(RFTools.GUI_ITEMFILTER)
                 .information("message.rftools.shiftmessage")

@@ -13,9 +13,9 @@ public class CoalGeneratorSetup {
 
     public static void init() {
         if(CoalGeneratorConfiguration.enabled) {
-            coalGeneratorBlock = ModBlocks.builderFactory.<CoalGeneratorTileEntity, GenericContainer> builder("coalgenerator")
+            coalGeneratorBlock = ModBlocks.builderFactory.<CoalGeneratorTileEntity> builder("coalgenerator")
                     .tileEntityClass(CoalGeneratorTileEntity.class)
-                    .container(GenericContainer.class, CoalGeneratorTileEntity.CONTAINER_FACTORY)
+                    .container(CoalGeneratorTileEntity.CONTAINER_FACTORY)
                     .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.RENDER_SOLID, BlockFlags.RENDER_CUTOUT)
                     .property(CoalGeneratorTileEntity.WORKING)
                     .guiId(RFTools.GUI_COALGENERATOR)

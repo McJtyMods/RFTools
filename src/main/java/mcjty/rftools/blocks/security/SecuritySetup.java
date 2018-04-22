@@ -20,9 +20,9 @@ public class SecuritySetup {
 
     public static void init() {
         if(!SecurityConfiguration.enabled) return;
-        securityManagerBlock = ModBlocks.builderFactory.<SecurityManagerTileEntity, GenericContainer> builder("security_manager")
+        securityManagerBlock = ModBlocks.builderFactory.<SecurityManagerTileEntity> builder("security_manager")
                 .tileEntityClass(SecurityManagerTileEntity.class)
-                .container(GenericContainer.class, SecurityManagerTileEntity.CONTAINER_FACTORY)
+                .container(SecurityManagerTileEntity.CONTAINER_FACTORY)
                 .guiId(RFTools.GUI_SECURITY_MANAGER)
                 .information("message.rftools.shiftmessage")
                 .informationShift("message.rftools.security_manager", stack -> {

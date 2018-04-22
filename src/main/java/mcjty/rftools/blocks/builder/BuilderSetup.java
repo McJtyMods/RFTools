@@ -45,9 +45,9 @@ public class BuilderSetup {
         spaceChamberControllerBlock = new SpaceChamberControllerBlock();
         supportBlock = new SupportBlock();
 
-        builderBlock = ModBlocks.builderFactory.<BuilderTileEntity, GenericContainer> builder("builder")
+        builderBlock = ModBlocks.builderFactory.<BuilderTileEntity> builder("builder")
                 .tileEntityClass(BuilderTileEntity.class)
-                .container(GenericContainer.class, BuilderTileEntity.CONTAINER_FACTORY)
+                .container(BuilderTileEntity.CONTAINER_FACTORY)
                 .flags(BlockFlags.REDSTONE_CHECK)
                 .rotationType(BaseBlock.RotationType.HORIZROTATION)
                 .moduleSupport(BuilderTileEntity.MODULE_SUPPORT)
@@ -56,45 +56,45 @@ public class BuilderSetup {
                 .informationShift("message.rftools.builder")
                 .build();
 
-        composerBlock = ModBlocks.builderFactory.<ComposerTileEntity, GenericContainer> builder("composer")
+        composerBlock = ModBlocks.builderFactory.<ComposerTileEntity> builder("composer")
                 .tileEntityClass(ComposerTileEntity.class)
-                .container(GenericContainer.class, ComposerTileEntity.CONTAINER_FACTORY)
+                .container(ComposerTileEntity.CONTAINER_FACTORY)
                 .guiId(RFTools.GUI_COMPOSER)
                 .information("message.rftools.shiftmessage")
                 .informationShift("message.rftools.composer")
                 .build();
 
-        locatorBlock = ModBlocks.builderFactory.<LocatorTileEntity, GenericContainer> builder("locator")
+        locatorBlock = ModBlocks.builderFactory.<LocatorTileEntity> builder("locator")
                 .tileEntityClass(LocatorTileEntity.class)
                 .flags(BlockFlags.REDSTONE_CHECK)
-                .emptyContainer(GenericContainer.class)
+                .emptyContainer()
                 .guiId(RFTools.GUI_LOCATOR)
                 .information("message.rftools.shiftmessage")
                 .informationShift("message.rftools.locator")
                 .build();
 
-        projectorBlock = ModBlocks.builderFactory.<ProjectorTileEntity, GenericContainer> builder("projector")
+        projectorBlock = ModBlocks.builderFactory.<ProjectorTileEntity> builder("projector")
                 .tileEntityClass(ProjectorTileEntity.class)
                 .flags(BlockFlags.REDSTONE_CHECK)
                 .rotationType(BaseBlock.RotationType.HORIZROTATION)
-                .container(GenericContainer.class, ProjectorTileEntity.CONTAINER_FACTORY)
+                .container(ProjectorTileEntity.CONTAINER_FACTORY)
                 .guiId(RFTools.GUI_PROJECTOR)
                 .information("message.rftools.shiftmessage")
                 .informationShift("message.rftools.projector")
                 .build();
 
-        scannerBlock = ModBlocks.builderFactory.<ScannerTileEntity, GenericContainer> builder("scanner")
+        scannerBlock = ModBlocks.builderFactory.<ScannerTileEntity> builder("scanner")
                 .tileEntityClass(ScannerTileEntity.class)
                 .flags(BlockFlags.REDSTONE_CHECK)
-                .container(GenericContainer.class, ScannerTileEntity.CONTAINER_FACTORY)
+                .container(ScannerTileEntity.CONTAINER_FACTORY)
                 .guiId(RFTools.GUI_SCANNER)
                 .information("message.rftools.shiftmessage")
                 .informationShift("message.rftools.scanner", stack -> Integer.toString(ItemStackTools.mapTag(stack, compound -> compound.getInteger("scanid"), -1)))
                 .build();
-        remoteScannerBlock = ModBlocks.builderFactory.<RemoteScannerTileEntity, GenericContainer> builder("remote_scanner")
+        remoteScannerBlock = ModBlocks.builderFactory.<RemoteScannerTileEntity> builder("remote_scanner")
                 .tileEntityClass(RemoteScannerTileEntity.class)
                 .flags(BlockFlags.REDSTONE_CHECK)
-                .container(GenericContainer.class, ScannerTileEntity.CONTAINER_FACTORY)
+                .container(ScannerTileEntity.CONTAINER_FACTORY)
                 .guiId(RFTools.GUI_SCANNER)
                 .information("message.rftools.shiftmessage")
                 .informationShift("message.rftools.remote_scanner", stack -> Integer.toString(ItemStackTools.mapTag(stack, compound -> compound.getInteger("scanid"), -1)))

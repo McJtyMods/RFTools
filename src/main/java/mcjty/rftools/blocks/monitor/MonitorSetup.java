@@ -13,9 +13,9 @@ public class MonitorSetup {
     public static GenericBlock<LiquidMonitorBlockTileEntity, GenericContainer> liquidMonitorBlock;
 
     public static void init() {
-        monitorBlock = ModBlocks.builderFactory.<RFMonitorBlockTileEntity, GenericContainer> builder("rf_monitor")
+        monitorBlock = ModBlocks.builderFactory.<RFMonitorBlockTileEntity> builder("rf_monitor")
                 .tileEntityClass(RFMonitorBlockTileEntity.class)
-                .emptyContainer(GenericContainer.class)
+                .emptyContainer()
                 .flags(BlockFlags.REDSTONE_OUTPUT)
                 .guiId(RFTools.GUI_RF_MONITOR)
                 .property(RFMonitorBlockTileEntity.LEVEL)
@@ -23,9 +23,9 @@ public class MonitorSetup {
                 .informationShift("message.rftools.rf_monitor")
                 .build();
 
-        liquidMonitorBlock = ModBlocks.builderFactory.<LiquidMonitorBlockTileEntity, GenericContainer> builder("liquid_monitor")
+        liquidMonitorBlock = ModBlocks.builderFactory.<LiquidMonitorBlockTileEntity> builder("liquid_monitor")
                 .tileEntityClass(LiquidMonitorBlockTileEntity.class)
-                .emptyContainer(GenericContainer.class)
+                .emptyContainer()
                 .flags(BlockFlags.REDSTONE_OUTPUT)
                 .guiId(RFTools.GUI_LIQUID_MONITOR)
                 .property(LiquidMonitorBlockTileEntity.LEVEL)

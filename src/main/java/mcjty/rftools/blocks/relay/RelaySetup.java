@@ -12,10 +12,10 @@ public class RelaySetup {
     public static GenericBlock<RelayTileEntity, GenericContainer> relayBlock;
 
     public static void init() {
-        relayBlock = ModBlocks.builderFactory.<RelayTileEntity, GenericContainer> builder("relay")
+        relayBlock = ModBlocks.builderFactory.<RelayTileEntity> builder("relay")
                 .tileEntityClass(RelayTileEntity.class)
                 .flags(BlockFlags.REDSTONE_CHECK)
-                .emptyContainer(GenericContainer.class)
+                .emptyContainer()
                 .guiId(RFTools.GUI_RELAY)
                 .property(RelayTileEntity.ENABLED)
                 .information("message.rftools.shiftmessage")

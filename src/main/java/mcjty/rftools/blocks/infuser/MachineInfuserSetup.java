@@ -11,9 +11,9 @@ public class MachineInfuserSetup {
     public static GenericBlock<MachineInfuserTileEntity, GenericContainer> machineInfuserBlock;
 
     public static void init() {
-        machineInfuserBlock = ModBlocks.builderFactory.<MachineInfuserTileEntity, GenericContainer> builder("machine_infuser")
+        machineInfuserBlock = ModBlocks.builderFactory.<MachineInfuserTileEntity> builder("machine_infuser")
                 .tileEntityClass(MachineInfuserTileEntity.class)
-                .container(GenericContainer.class, MachineInfuserTileEntity.CONTAINER_FACTORY)
+                .container(MachineInfuserTileEntity.CONTAINER_FACTORY)
                 .guiId(RFTools.GUI_MACHINE_INFUSER)
                 .information("message.rftools.shiftmessage")
                 .informationShift("message.rftools.infuser")

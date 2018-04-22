@@ -13,9 +13,9 @@ public class BoosterSetup {
     public static GenericBlock<BoosterTileEntity, GenericContainer> boosterBlock;
 
     public static void init() {
-        boosterBlock = ModBlocks.builderFactory.<BoosterTileEntity, GenericContainer> builder("booster")
+        boosterBlock = ModBlocks.builderFactory.<BoosterTileEntity> builder("booster")
                 .tileEntityClass(BoosterTileEntity.class)
-                .container(GenericContainer.class, BoosterTileEntity.CONTAINER_FACTORY)
+                .container(BoosterTileEntity.CONTAINER_FACTORY)
                 .rotationType(BaseBlock.RotationType.NONE)
                 .flags(BlockFlags.REDSTONE_CHECK)
                 .guiId(RFTools.GUI_BOOSTER)
