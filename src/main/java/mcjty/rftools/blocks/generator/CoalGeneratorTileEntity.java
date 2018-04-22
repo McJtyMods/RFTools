@@ -48,7 +48,6 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
 
     public static final PropertyBool WORKING = PropertyBool.create("working");
 
-    public static final String CONTAINER_INVENTORY = "container";
     public static final int SLOT_COALINPUT = 0;
     public static final int SLOT_CHARGEITEM = 1;
 
@@ -58,8 +57,8 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
             addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
                     new ItemStack(Items.COAL),
                     new ItemStack(Blocks.COAL_BLOCK)),
-                    CONTAINER_INVENTORY, SLOT_COALINPUT, 82, 24, 1, 18, 1, 18);
-            addSlotBox(new SlotDefinition(SlotType.SLOT_CONTAINER), CONTAINER_INVENTORY, SLOT_CHARGEITEM, 118, 24, 1, 18, 1, 18);
+                    ContainerFactory.CONTAINER_CONTAINER, SLOT_COALINPUT, 82, 24, 1, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_CONTAINER), ContainerFactory.CONTAINER_CONTAINER, SLOT_CHARGEITEM, 118, 24, 1, 18, 1, 18);
             layoutPlayerInventorySlots(10, 70);
         }
     };

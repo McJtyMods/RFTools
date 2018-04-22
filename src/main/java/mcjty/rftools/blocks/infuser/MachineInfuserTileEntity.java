@@ -16,15 +16,14 @@ import net.minecraft.util.ITickable;
 
 public class MachineInfuserTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable {
 
-    public static final String CONTAINER_INVENTORY = "container";
     public static final int SLOT_SHARDINPUT = 0;
     public static final int SLOT_MACHINEOUTPUT = 1;
 
     public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
         @Override
         protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(ModItems.dimensionalShardItem)), CONTAINER_INVENTORY, SLOT_SHARDINPUT, 64, 24, 1, 18, 1, 18);
-            addSlotBox(new SlotDefinition(SlotType.SLOT_OUTPUT), CONTAINER_INVENTORY, SLOT_MACHINEOUTPUT, 118, 24, 1, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(ModItems.dimensionalShardItem)), ContainerFactory.CONTAINER_CONTAINER, SLOT_SHARDINPUT, 64, 24, 1, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_OUTPUT), ContainerFactory.CONTAINER_CONTAINER, SLOT_MACHINEOUTPUT, 118, 24, 1, 18, 1, 18);
             layoutPlayerInventorySlots(10, 70);
         }
     };

@@ -17,7 +17,6 @@ import java.util.Map;
 public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSidedInventory {
     public static final String CMD_SETMODE = "setMode";
 
-    public static final String CONTAINER_INVENTORY = "container";
     public static final int SLOT_GHOST = 0;
 
     public static final int BUFFER_SIZE = 9;
@@ -28,8 +27,8 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
     public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
         @Override
         protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_GHOST), CONTAINER_INVENTORY, SLOT_GHOST, 24, 105, 9, 18, 1, 18);
-            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), CONTAINER_INVENTORY, SLOT_BUFFER, 24, 87, 9, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_GHOST), ContainerFactory.CONTAINER_CONTAINER, SLOT_GHOST, 24, 105, 9, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), ContainerFactory.CONTAINER_CONTAINER, SLOT_BUFFER, 24, 87, 9, 18, 1, 18);
             layoutPlayerInventorySlots(24, 130);
         }
     };

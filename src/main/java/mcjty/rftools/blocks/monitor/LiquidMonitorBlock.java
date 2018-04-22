@@ -28,8 +28,8 @@ import java.util.List;
 
 public class LiquidMonitorBlock extends GenericRFToolsBlock<LiquidMonitorBlockTileEntity, EmptyContainer> {
 
-    @Deprecated
-    public static PropertyBool OUTPUTPOWER = PropertyBool.create("output");
+//    @Deprecated
+//    public static PropertyBool OUTPUTPOWER = PropertyBool.create("output");
 
     public static PropertyInteger LEVEL = PropertyInteger.create("level", 0, 5);
 
@@ -46,8 +46,8 @@ public class LiquidMonitorBlock extends GenericRFToolsBlock<LiquidMonitorBlockTi
     @Override
     public void initModel() {
         super.initModel();
-        StateMap.Builder ignorePower = new StateMap.Builder().ignore(OUTPUTPOWER);
-        ModelLoader.setCustomStateMapper(this, ignorePower.build());
+//        StateMap.Builder ignorePower = new StateMap.Builder().ignore(OUTPUTPOWER);
+//        ModelLoader.setCustomStateMapper(this, ignorePower.build());
     }
 
     @Override
@@ -83,19 +83,19 @@ public class LiquidMonitorBlock extends GenericRFToolsBlock<LiquidMonitorBlockTi
         return state.withProperty(LEVEL, level);
     }
 
-    @Override
-    public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(FACING, EnumFacing.VALUES[meta & 7]).withProperty(OUTPUTPOWER, (meta & 8) != 0);
-    }
+//    @Override
+//    public IBlockState getStateFromMeta(int meta) {
+//        return getDefaultState().withProperty(FACING, EnumFacing.VALUES[meta & 7]).withProperty(OUTPUTPOWER, (meta & 8) != 0);
+//    }
 
-    @Override
-    public int getMetaFromState(IBlockState state) {
-        return state.getValue(FACING).getIndex() + (state.getValue(OUTPUTPOWER) ? 8 : 0);
-    }
+//    @Override
+//    public int getMetaFromState(IBlockState state) {
+//        return state.getValue(FACING).getIndex() + (state.getValue(OUTPUTPOWER) ? 8 : 0);
+//    }
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, FACING, OUTPUTPOWER, LEVEL);
+        return new BlockStateContainer(this, FACING, LEVEL);
     }
 
     @SideOnly(Side.CLIENT)
