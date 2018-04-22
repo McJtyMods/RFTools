@@ -1,11 +1,13 @@
 package mcjty.rftools.blocks.spawner;
 
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.entity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
-import mcjty.lib.gui.widgets.*;
+import mcjty.lib.gui.widgets.BlockRender;
+import mcjty.lib.gui.widgets.EnergyBar;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
@@ -37,7 +39,7 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/spawner.png");
 
-    public GuiSpawner(SpawnerTileEntity spawnerTileEntity, SpawnerContainer container) {
+    public GuiSpawner(SpawnerTileEntity spawnerTileEntity, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, spawnerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "spawner");
         GenericEnergyStorageTileEntity.setCurrentRF(spawnerTileEntity.getEnergyStored());
 
@@ -81,7 +83,7 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
         name.setText("");
         rfTick.setText("");
 
-        ItemStack stack = tileEntity.getStackInSlot(SpawnerContainer.SLOT_SYRINGE);
+        ItemStack stack = tileEntity.getStackInSlot(SpawnerTileEntity.SLOT_SYRINGE);
         if (stack.isEmpty()) {
             return;
         }

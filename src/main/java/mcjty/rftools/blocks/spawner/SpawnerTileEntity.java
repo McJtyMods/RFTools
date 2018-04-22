@@ -1,15 +1,22 @@
 package mcjty.rftools.blocks.spawner;
 
 import mcjty.lib.api.MachineInformation;
-import mcjty.lib.container.DefaultSidedInventory;
-import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.*;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.lib.varia.EntityTools;
 import mcjty.lib.varia.Logging;
+import mcjty.lib.varia.ModuleSupport;
 import mcjty.lib.varia.OrientationTools;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.ModItems;
+import mcjty.rftools.network.RFToolsMessages;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.boss.EntityDragon;
@@ -17,20 +24,42 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.List;
 
 //import net.minecraft.entity.monster.SkeletonType;
 
 public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, MachineInformation, ITickable {
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, SpawnerContainer.factory, 1);
+    public static final int SLOT_SYRINGE = 0;
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+        @Override
+        protected void setup() {
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(ModItems.syringeItem)), ContainerFactory.CONTAINER_CONTAINER, SLOT_SYRINGE, 22, 8, 1, 18, 1, 18);
+            layoutPlayerInventorySlots(10, 70);
+        }
+    };
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, 1);
+
+    static final ModuleSupport MODULE_SUPPORT = new ModuleSupport(SLOT_SYRINGE) {
+        @Override
+        public boolean isModule(ItemStack itemStack) {
+            return itemStack.getItem() == ModItems.syringeItem;
+        }
+    };
+
 
     private static final String[] TAGS = new String[]{"matter1", "matter2", "matter3", "mob"};
     private static final String[] TAG_DESCRIPTIONS = new String[]{"The amount of matter in the first slot", "The amount of matter in the second slot",
@@ -345,7 +374,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public int[] getSlotsForFace(EnumFacing side) {
-        return new int[]{SpawnerContainer.SLOT_SYRINGE};
+        return new int[]{SLOT_SYRINGE};
     }
 
     @Override
@@ -391,5 +420,55 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
         return stack.getItem() == ModItems.syringeItem;
+    }
+
+    @Override
+    public boolean wrenchUse(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
+        if (world.isRemote) {
+            world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvent.REGISTRY.getObject(new ResourceLocation("block.note.pling")), SoundCategory.BLOCKS, 1.0f, 1.0f, false);
+            useWrench(player);
+        }
+        return true;
+    }
+
+    @Override
+    @Optional.Method(modid = "theoneprobe")
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        TileEntity te = world.getTileEntity(data.getPos());
+        if (te instanceof SpawnerTileEntity) {
+            float[] matter = getMatter();
+            DecimalFormat fmt = new DecimalFormat("#.##");
+            fmt.setRoundingMode(RoundingMode.DOWN);
+            probeInfo.text(TextFormatting.GREEN + "Key Matter: " + fmt.format(matter[0]));
+            probeInfo.text(TextFormatting.GREEN + "Bulk Matter: " + fmt.format(matter[1]));
+            probeInfo.text(TextFormatting.GREEN + "Living Matter: " + fmt.format(matter[2]));
+        }
+    }
+
+    private static long lastTime = 0;
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    @Optional.Method(modid = "waila")
+    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.addWailaBody(itemStack, currenttip, accessor, config);
+        TileEntity te = accessor.getTileEntity();
+        if (te instanceof SpawnerTileEntity) {
+            if (System.currentTimeMillis() - lastTime > 500) {
+                lastTime = System.currentTimeMillis();
+                RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new SpawnerInfoPacketServer(te.getWorld().provider.getDimension(),
+                        te.getPos())));
+            }
+
+            float[] matter = SpawnerInfoPacketClient.matterReceived;
+            if (matter != null && matter.length == 3) {
+                DecimalFormat fmt = new DecimalFormat("#.##");
+                fmt.setRoundingMode(RoundingMode.DOWN);
+                currenttip.add(TextFormatting.GREEN + "Key Matter: " + fmt.format(matter[0]));
+                currenttip.add(TextFormatting.GREEN + "Bulk Matter: " + fmt.format(matter[1]));
+                currenttip.add(TextFormatting.GREEN + "Living Matter: " + fmt.format(matter[2]));
+            }
+        }
     }
 }

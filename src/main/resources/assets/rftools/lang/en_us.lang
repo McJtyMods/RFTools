@@ -265,5 +265,9 @@ message.rftools.remote_scanner=\
     @6This version can scan scan through a\n\
     @6dialed matter transmitter which should be\n\
     @6located above it
-
+message.rftools.spawner=\
+    @fThis block can spawn creatures. It needs a syringe\n\
+    @fof the appropriate type, RF power and also it\n\
+    @fneeds beams of energized matter.\n\
+    @eInfusing bonus: reduced power usage.
 

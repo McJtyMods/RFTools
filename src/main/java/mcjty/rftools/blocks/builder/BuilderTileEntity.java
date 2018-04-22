@@ -115,6 +115,13 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     };
 
+    public static final ModuleSupport MODULE_SUPPORT = new ModuleSupport(SLOT_TAB) {
+        @Override
+        public boolean isModule(ItemStack itemStack) {
+            return (itemStack.getItem() == BuilderSetup.shapeCardItem || itemStack.getItem() == BuilderSetup.spaceChamberCardItem);
+        }
+    };
+
     private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, 2);
 
     public static final int MODE_COPY = 0;

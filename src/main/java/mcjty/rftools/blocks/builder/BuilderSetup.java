@@ -9,7 +9,6 @@ import mcjty.lib.container.GenericContainer;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.ItemStackTools;
 import mcjty.lib.varia.Logging;
-import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.shaper.*;
@@ -17,7 +16,6 @@ import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.builder.SpaceChamberCardItem;
 import mcjty.rftools.proxy.CommonProxy;
 import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -52,12 +50,7 @@ public class BuilderSetup {
                 .container(GenericContainer.class, BuilderTileEntity.CONTAINER_FACTORY)
                 .flags(BlockFlags.REDSTONE_CHECK)
                 .rotationType(BaseBlock.RotationType.HORIZROTATION)
-                .moduleSupport(new ModuleSupport(BuilderTileEntity.SLOT_TAB) {
-                    @Override
-                    public boolean isModule(ItemStack itemStack) {
-                        return (itemStack.getItem() == BuilderSetup.shapeCardItem || itemStack.getItem() == BuilderSetup.spaceChamberCardItem);
-                    }
-                })
+                .moduleSupport(BuilderTileEntity.MODULE_SUPPORT)
                 .guiId(RFTools.GUI_BUILDER)
                 .information("message.rftools.shiftmessage")
                 .informationShift("message.rftools.builder")
