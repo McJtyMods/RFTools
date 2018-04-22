@@ -93,7 +93,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            int totpower = PowerCellConfiguration.rfPerNormalCell * getPowerFactory() / simpleFactor;
+            int totpower = PowerCellConfiguration.rfPerNormalCell * getPowerFactor() / simpleFactor;
             list.add(TextFormatting.WHITE + "This block can store power (" + totpower + " RF)");
             list.add(TextFormatting.WHITE + "Optionally in a big multi dimensional structure");
             list.add(TextFormatting.YELLOW + "Infusing bonus: reduced long distance power");
@@ -133,7 +133,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
         return block == PowerCellSetup.creativePowerCellBlock;
     }
 
-    private int getPowerFactory() {
+    private int getPowerFactor() {
         if (isSimple()) {
             return 1;
         }

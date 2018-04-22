@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.relay;
 
-import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalLayout;
@@ -32,7 +32,7 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
     private Map<String,ImageChoiceLabel> inputOutputs = new HashMap<>();
     private Map<String,TextField> energyValues = new HashMap<>();
 
-    public GuiRelay(RelayTileEntity relayTileEntity, EmptyContainer container) {
+    public GuiRelay(RelayTileEntity relayTileEntity, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, relayTileEntity, container, RFTools.GUI_MANUAL_MAIN, "prelay");
 
         xSize = RELAY_WIDTH;

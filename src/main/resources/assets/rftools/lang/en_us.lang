@@ -233,3 +233,8 @@ message.rftools.liquid_monitor=\
     @fmachine (select it with the GUI). It can also send\n\
     @fout a redstone signal if the liquid goes above or below\n\
     @fsome value.
+message.rftools.relay=\
+    @fThis device can (based on a redstone signal) limit\n\
+    @fthe amount of RF that can go through this. Using this\n\
+    @fyou can throttle down (or even disable) a number of\n\
+    @fmachines in case power is low.

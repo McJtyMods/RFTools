@@ -7,14 +7,22 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.OrientationTools;
 import mcjty.rftools.RFTools;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.fml.common.Optional;
 
 import java.util.Map;
 
@@ -24,6 +32,8 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
     public static final int RECEIVEPERTICK = 50000;
 
     public static final String CMD_SETTINGS = "settings";
+
+    public static final PropertyBool ENABLED = PropertyBool.create("enabled");
 
     private static final String[] TAGS = new String[]{"rfpertick_out", "rfpertick_in"};
     private static final String[] TAG_DESCRIPTIONS = new String[] {
@@ -272,4 +282,21 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
         return super.getCapability(capability, facing);
     }
 
+    @Override
+    @Optional.Method(modid = "theoneprobe")
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        if (mode == ProbeMode.EXTENDED) {
+            int rfPerTickIn = getLastRfPerTickIn();
+            int rfPerTickOut = getLastRfPerTickOut();
+            probeInfo.text(TextFormatting.GREEN + "In:  " + rfPerTickIn + "RF/t");
+            probeInfo.text(TextFormatting.GREEN + "Out: " + rfPerTickOut + "RF/t");
+        }
+    }
+
+    @Override
+    public IBlockState getActualState(IBlockState state) {
+        boolean enabled = isPowered();
+        return state.withProperty(ENABLED, enabled);
+    }
 }
