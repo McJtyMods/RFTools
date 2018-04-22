@@ -1,13 +1,18 @@
 package mcjty.rftools.blocks.monitor;
 
+import mcjty.lib.container.BaseBlock;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.CapabilityTools;
 import mcjty.typed.Type;
+import net.minecraft.block.properties.PropertyInteger;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
@@ -22,6 +27,8 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
     private BlockPos monitor;
     private RFMonitorMode alarmMode = RFMonitorMode.MODE_OFF;
     private int alarmLevel = 0;             // The level (in percentage) at which we give an alarm
+
+    public static PropertyInteger LEVEL = PropertyInteger.create("level", 0, 5);
 
     public static final String CMD_GETADJACENTBLOCKS = "getAdj";
     public static final String CLIENTCMD_ADJACENTBLOCKSREADY = "adjReady";
@@ -256,5 +263,20 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
             return true;
         }
         return false;
+    }
+
+    @Override
+    public IBlockState getActualState(IBlockState state) {
+        int level = getFluidLevel();
+        return state.withProperty(LEVEL, level);
+    }
+
+    @Override
+    public int getRedstoneOutput(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+        EnumFacing direction = state.getValue(BaseBlock.FACING);
+        if (side == direction) {
+            return isPowered() ? 15 : 0;
+        }
+        return 0;
     }
 }

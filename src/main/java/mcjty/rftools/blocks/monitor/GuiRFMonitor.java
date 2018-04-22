@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.monitor;
 
 import mcjty.lib.base.StyleConfig;
-import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.DefaultSelectionEvent;
@@ -9,6 +9,8 @@ import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
+import mcjty.lib.gui.widgets.Label;
+import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.BlockTools;
 import mcjty.rftools.RFTools;
@@ -17,7 +19,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +38,7 @@ public class GuiRFMonitor extends GenericGuiContainer<RFMonitorBlockTileEntity> 
     public static List<BlockPos> fromServer_clientAdjacentBlocks = null;
 
 
-    public GuiRFMonitor(RFMonitorBlockTileEntity monitorBlockTileEntity, EmptyContainer container) {
+    public GuiRFMonitor(RFMonitorBlockTileEntity monitorBlockTileEntity, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, monitorBlockTileEntity, container, RFTools.GUI_MANUAL_MAIN, "monitor");
 
         xSize = 256;

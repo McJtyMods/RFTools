@@ -223,3 +223,13 @@ message.rftools.elevator=\
     @flevel pointing towards where a moving platform\n\
     @fwill be. Only the lowest elevator needs power\n\
     @eInfusing bonus: reduced power consumption
+message.rftools.rf_monitor=\
+    @fThis device monitors the amount of RF in an adjacent\n\
+    @fmachine (select it with the GUI). It can also send\n\
+    @fout a redstone signal if the power goes above or below\n\
+    @fsome value.
+message.rftools.liquid_monitor=\
+    @fThis device monitors the amount of liquid in an adjacent\n\
+    @fmachine (select it with the GUI). It can also send\n\
+    @fout a redstone signal if the liquid goes above or below\n\
+    @fsome value.
