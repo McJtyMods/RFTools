@@ -1,12 +1,15 @@
 package mcjty.rftools.blocks.shaper;
 
-import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.entity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
+import mcjty.lib.gui.widgets.Label;
+import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.Arguments;
 import mcjty.lib.varia.RedstoneMode;
@@ -16,7 +19,7 @@ import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.BeaconType;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,7 +54,7 @@ public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
 
     public static int energyConsumption = 0;
 
-    public GuiLocator(LocatorTileEntity tileEntity, EmptyContainer container) {
+    public GuiLocator(LocatorTileEntity tileEntity, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, tileEntity, container, RFTools.GUI_MANUAL_SHAPE, "locator");
 
         xSize = LOCATOR_WIDTH;

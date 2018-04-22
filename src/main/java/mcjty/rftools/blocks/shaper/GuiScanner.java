@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.shaper;
 
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.entity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.Window;
@@ -50,14 +51,14 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
     private ShapeRenderer shapeRenderer = null;
     private int filterCnt = 0;
 
-    public GuiScanner(ScannerTileEntity shaperTileEntity, ScannerContainer container) {
+    public GuiScanner(ScannerTileEntity shaperTileEntity, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, shaperTileEntity, container, RFTools.GUI_MANUAL_SHAPE, "scanner");
 
         xSize = SCANNER_WIDTH;
         ySize = SCANNER_HEIGHT;
     }
 
-    public GuiScanner(RemoteScannerTileEntity shaperTileEntity, ScannerContainer container) {
+    public GuiScanner(RemoteScannerTileEntity shaperTileEntity, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, shaperTileEntity, container, RFTools.GUI_MANUAL_SHAPE, "remote_scanner");
 
         xSize = SCANNER_WIDTH;
@@ -159,13 +160,13 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
 
     private int countFilters() {
         int cnt = 0;
-        if (inventorySlots.getSlot(ScannerContainer.SLOT_IN).getHasStack()) {
+        if (inventorySlots.getSlot(ScannerTileEntity.SLOT_IN).getHasStack()) {
             cnt++;
         }
-        if (inventorySlots.getSlot(ScannerContainer.SLOT_FILTER).getHasStack()) {
+        if (inventorySlots.getSlot(ScannerTileEntity.SLOT_FILTER).getHasStack()) {
             cnt++;
         }
-        if (inventorySlots.getSlot(ScannerContainer.SLOT_MODIFIER).getHasStack()) {
+        if (inventorySlots.getSlot(ScannerTileEntity.SLOT_MODIFIER).getHasStack()) {
             cnt++;
         }
         return cnt;
@@ -214,7 +215,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
         energyBar.setValue(currentRF);
         tileEntity.requestRfFromServer(RFTools.MODID);
 
-        boolean instack = inventorySlots.getSlot(ScannerContainer.SLOT_IN).getHasStack();
+        boolean instack = inventorySlots.getSlot(ScannerTileEntity.SLOT_IN).getHasStack();
         if (currentRF < ScannerConfiguration.SCANNER_PERTICK) {
             instack = false;
         }

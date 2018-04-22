@@ -1,12 +1,12 @@
 package mcjty.rftools.blocks.shaper;
 
-import mcjty.lib.container.DefaultSidedInventory;
-import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.*;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
+import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.modifier.ModifierEntry;
 import mcjty.rftools.items.modifier.ModifierFilterOperation;
@@ -17,6 +17,12 @@ import mcjty.rftools.shapes.ScanDataManager;
 import mcjty.rftools.shapes.Shape;
 import mcjty.rftools.shapes.StatePalette;
 import mcjty.rftools.varia.RLE;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
+import mcjty.theoneprobe.api.TextStyleClass;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
@@ -27,9 +33,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.HashMap;
@@ -42,7 +52,27 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     public static final String CMD_SETOFFSET = "setOffset";
     public static final String CMD_MODE = "setMode";
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, ScannerContainer.factory, 4);
+
+    public static final int SLOT_IN = 0;
+    public static final int SLOT_OUT = 1;
+    public static final int SLOT_FILTER = 2;
+    public static final int SLOT_MODIFIER = 3;
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+        @Override
+        protected void setup() {
+            addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
+                    new ItemStack(BuilderSetup.shapeCardItem)), ContainerFactory.CONTAINER_CONTAINER, SLOT_IN, 15, 7);
+            addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
+                    new ItemStack(BuilderSetup.shapeCardItem)), ContainerFactory.CONTAINER_CONTAINER, SLOT_OUT, 15, 200);
+            addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
+                    new ItemStack(ModularStorageSetup.storageFilterItem)), ContainerFactory.CONTAINER_CONTAINER, SLOT_FILTER, 35, 7);
+            addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
+                    new ItemStack(ModItems.modifierItem)), ContainerFactory.CONTAINER_CONTAINER, SLOT_MODIFIER, 55, 7);
+            layoutPlayerInventorySlots(85, 142);
+        }
+    };
+
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, 4);
     private StorageFilterCache filterCache = null;
 
     private int scanId = 0;
@@ -99,17 +129,17 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-        if (index == ScannerContainer.SLOT_FILTER) {
+        if (index == SLOT_FILTER) {
             filterCache = null;
         }
         inventoryHelper.setInventorySlotContents(getInventoryStackLimit(), index, stack);
-        if (index == ScannerContainer.SLOT_OUT) {
+        if (index == SLOT_OUT) {
             if (!stack.isEmpty()) {
                 updateScanCard(stack);
                 markDirty();
             }
         }
-        if (index == ScannerContainer.SLOT_IN) {
+        if (index == SLOT_IN) {
             if (!stack.isEmpty()) {
                 dataDim = ShapeCardItem.getDimension(stack);
                 if (renderStack.isEmpty()) {
@@ -123,7 +153,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public ItemStack decrStackSize(int index, int count) {
-        if (index == ScannerContainer.SLOT_FILTER) {
+        if (index == SLOT_FILTER) {
             filterCache = null;
         }
         return getInventoryHelper().decrStackSize(index, count);
@@ -157,7 +187,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void getFilterCache() {
         if (filterCache == null) {
-            filterCache = StorageFilterItem.getCache(inventoryHelper.getStackInSlot(ScannerContainer.SLOT_FILTER));
+            filterCache = StorageFilterItem.getCache(inventoryHelper.getStackInSlot(SLOT_FILTER));
         }
     }
 
@@ -212,7 +242,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
 
 
     public ItemStack getRenderStack() {
-        ItemStack stack = inventoryHelper.getStackInSlot(ScannerContainer.SLOT_OUT);
+        ItemStack stack = inventoryHelper.getStackInSlot(SLOT_OUT);
         if (!stack.isEmpty()) {
             return stack;
         }
@@ -246,7 +276,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         if (progress != null) {
             return;
         }
-        if (getStackInSlot(ScannerContainer.SLOT_IN).isEmpty()) {
+        if (getStackInSlot(SLOT_IN).isEmpty()) {
             // Cannot scan. No input card
             return;
         }
@@ -399,7 +429,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void startScanArea(BlockPos center, int dimension, int dimX, int dimY, int dimZ) {
         progress = new ScanProgress();
-        progress.modifiers = ModifierItem.getModifiers(getStackInSlot(ScannerContainer.SLOT_MODIFIER));
+        progress.modifiers = ModifierItem.getModifiers(getStackInSlot(SLOT_MODIFIER));
         progress.modifierMapping = new HashMap<>();
         progress.rle = new RLE();
         progress.tl = new BlockPos(center.getX() - dimX/2, center.getY() - dimY/2, center.getZ() - dimZ/2);
@@ -489,6 +519,21 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
             return true;
         }
         return false;
+    }
+
+    @Override
+    @Optional.Method(modid = "theoneprobe")
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        probeInfo.text(TextStyleClass.LABEL + "Scan id: " + TextStyleClass.INFO + getScanId());
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    @Optional.Method(modid = "waila")
+    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.addWailaBody(itemStack, currenttip, accessor, config);
+        currenttip.add("Scan id: " + TextFormatting.WHITE + getScanId());
     }
 
 }

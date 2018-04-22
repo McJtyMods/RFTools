@@ -1,10 +1,14 @@
 package mcjty.rftools.blocks.shaper;
 
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.WindowManager;
 import mcjty.lib.gui.layout.PositionalLayout;
+import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.*;
+import mcjty.lib.gui.widgets.Label;
+import mcjty.lib.gui.widgets.Panel;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.builder.GuiShapeCard;
 import mcjty.rftools.items.builder.ShapeCardItem;
@@ -17,7 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.io.IOException;
 
 public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> implements IShapeParentGui {
@@ -29,10 +33,10 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/composer.png");
     private static final ResourceLocation guiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
-    private ChoiceLabel operationLabels[] = new ChoiceLabel[ComposerContainer.SLOT_COUNT];
-    private ChoiceLabel rotationLabels[] = new ChoiceLabel[ComposerContainer.SLOT_COUNT];
-    private ToggleButton flipButtons[] = new ToggleButton[ComposerContainer.SLOT_COUNT];
-    private Button configButton[] = new Button[ComposerContainer.SLOT_COUNT];
+    private ChoiceLabel operationLabels[] = new ChoiceLabel[ComposerTileEntity.SLOT_COUNT];
+    private ChoiceLabel rotationLabels[] = new ChoiceLabel[ComposerTileEntity.SLOT_COUNT];
+    private ToggleButton flipButtons[] = new ToggleButton[ComposerTileEntity.SLOT_COUNT];
+    private Button configButton[] = new Button[ComposerTileEntity.SLOT_COUNT];
     private Button outConfigButton;
 
     private ToggleButton showAxis;
@@ -44,7 +48,7 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
     private Window sideWindow;
 
 
-    public GuiComposer(ComposerTileEntity composerTileEntity, ComposerContainer container) {
+    public GuiComposer(ComposerTileEntity composerTileEntity, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, composerTileEntity, container, RFTools.GUI_MANUAL_SHAPE, "composer");
 
         xSize = SHAPER_WIDTH;
@@ -59,7 +63,7 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
     }
 
     private ShapeID getShapeID() {
-        Slot slot = inventorySlots.getSlot(ComposerContainer.SLOT_OUT);
+        Slot slot = inventorySlots.getSlot(ComposerTileEntity.SLOT_OUT);
         ItemStack stack = slot.getHasStack() ? slot.getStack() : ItemStack.EMPTY;
 
         return new ShapeID(tileEntity.getWorld().provider.getDimension(), tileEntity.getPos(), ShapeCardItem.getScanId(stack), false, ShapeCardItem.isSolid(stack));
@@ -77,7 +81,7 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
         ShapeModifier[] modifiers = tileEntity.getModifiers();
 
         operationLabels[0] = null;
-        for (int i = 0; i < ComposerContainer.SLOT_COUNT ; i++) {
+        for (int i = 0; i < ComposerTileEntity.SLOT_COUNT ; i++) {
             operationLabels[i] = new ChoiceLabel(mc, this).addChoices(
                     ShapeOperation.UNION.getCode(),
                     ShapeOperation.SUBTRACT.getCode(),
@@ -92,7 +96,7 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
         }
         operationLabels[0].setEnabled(false);
 
-        for (int i = 0; i < ComposerContainer.SLOT_COUNT ; i++) {
+        for (int i = 0; i < ComposerTileEntity.SLOT_COUNT ; i++) {
             configButton[i] = new Button(mc, this).setText("?");
             configButton[i].setLayoutHint(new PositionalLayout.PositionalHint(3, 7 + i*18+2, 13, 12));
             int finalI = i;
@@ -125,7 +129,7 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
         sidePanel.addChild(new Label<>(mc, this).setText("N").setColor(0xff0000ff).setTooltips(tt).setLayoutHint(5, 205, 15, 15));
         sidePanel.addChild(new Label<>(mc, this).setText("S").setColor(0xff0000ff).setTooltips(tt).setLayoutHint(40, 205, 15, 15));
 
-        for (int i = 0; i < ComposerContainer.SLOT_COUNT ; i++) {
+        for (int i = 0; i < ComposerTileEntity.SLOT_COUNT ; i++) {
             ToggleButton flip = new ToggleButton(mc, this).setText("Flip").setCheckMarker(true).setLayoutHint(new PositionalLayout.PositionalHint(6, 7 + i*18, 35, 16));
             flip.setPressed(modifiers[i].isFlipY());
             flip.addButtonEvent(parent -> update());
@@ -164,9 +168,9 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
     private void openCardGui(int i) {
         int slot;
         if (i == -1) {
-            slot = ComposerContainer.SLOT_OUT;
+            slot = ComposerTileEntity.SLOT_OUT;
         } else {
-            slot = ComposerContainer.SLOT_TABS+i;
+            slot = ComposerTileEntity.SLOT_TABS+i;
         }
         ItemStack cardStack = inventorySlots.getSlot(slot).getStack();
         if (!cardStack.isEmpty()) {
@@ -179,8 +183,8 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
     }
 
     private void update() {
-        ShapeModifier[] modifiers = new ShapeModifier[ComposerContainer.SLOT_COUNT];
-        for (int i = 0; i < ComposerContainer.SLOT_COUNT ; i++) {
+        ShapeModifier[] modifiers = new ShapeModifier[ComposerTileEntity.SLOT_COUNT];
+        for (int i = 0; i < ComposerTileEntity.SLOT_COUNT ; i++) {
             ShapeOperation op = ShapeOperation.getByName(operationLabels[i].getCurrentChoice());
             ShapeRotation rot = ShapeRotation.getByName(rotationLabels[i].getCurrentChoice());
             modifiers[i] = new ShapeModifier(op, flipButtons[i].isPressed(), rot);
@@ -206,7 +210,7 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
 
         drawWindow();
 
-        Slot slot = inventorySlots.getSlot(ComposerContainer.SLOT_OUT);
+        Slot slot = inventorySlots.getSlot(ComposerTileEntity.SLOT_OUT);
         if (slot.getHasStack()) {
             ItemStack stack = slot.getStack();
             if (!stack.isEmpty()) {

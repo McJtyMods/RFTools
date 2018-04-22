@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.shaper;
 
-import mcjty.lib.container.DefaultSidedInventory;
-import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.*;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.items.builder.ShapeCardItem;
@@ -18,8 +17,25 @@ import net.minecraftforge.common.util.Constants;
 
 public class ComposerTileEntity extends GenericTileEntity implements DefaultSidedInventory, ITickable {
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, ComposerContainer.factory, ComposerContainer.SLOT_COUNT*2 + 1);
-    private ShapeModifier modifiers[] = new ShapeModifier[ComposerContainer.SLOT_COUNT];
+    public static final int SLOT_COUNT = 9;
+    public static final int SLOT_OUT = 0;
+    public static final int SLOT_TABS = 1;
+    public static final int SLOT_GHOSTS = SLOT_TABS + SLOT_COUNT;
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+        @Override
+        protected void setup() {
+            addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
+                    new ItemStack(BuilderSetup.shapeCardItem)), ContainerFactory.CONTAINER_CONTAINER, SLOT_OUT, 18, 200);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
+                            new ItemStack(BuilderSetup.shapeCardItem)),
+                    ContainerFactory.CONTAINER_CONTAINER, SLOT_TABS, 18, 7, 1, 18, SLOT_COUNT, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_GHOST),
+                    ContainerFactory.CONTAINER_CONTAINER, SLOT_GHOSTS, 36, 7, 1, 18, SLOT_COUNT, 18);
+            layoutPlayerInventorySlots(85, 142);
+        }
+    };
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, SLOT_COUNT*2 + 1);
+    private ShapeModifier modifiers[] = new ShapeModifier[SLOT_COUNT];
 
     public ComposerTileEntity() {
         for (int i = 0; i < modifiers.length ; i++) {
@@ -30,17 +46,17 @@ public class ComposerTileEntity extends GenericTileEntity implements DefaultSide
     @Override
     public void update() {
         if (!getWorld().isRemote) {
-            ItemStack output = getStackInSlot(ComposerContainer.SLOT_OUT);
+            ItemStack output = getStackInSlot(SLOT_OUT);
             if (!output.isEmpty()) {
                 NBTTagList list = new NBTTagList();
-                for (int i = ComposerContainer.SLOT_TABS; i < ComposerContainer.SLOT_TABS + ComposerContainer.SLOT_COUNT; i++) {
+                for (int i = SLOT_TABS; i < SLOT_TABS + SLOT_COUNT; i++) {
                     ItemStack item = getStackInSlot(i);
                     if (!item.isEmpty()) {
                         if (item.hasTagCompound()) {
                             NBTTagCompound copy = item.getTagCompound().copy();
                             ShapeModifier modifier = modifiers[i - 1];
                             ShapeCardItem.setModifier(copy, modifier);
-                            ItemStack materialGhost = getStackInSlot(i + ComposerContainer.SLOT_COUNT);
+                            ItemStack materialGhost = getStackInSlot(i + SLOT_COUNT);
                             ShapeCardItem.setGhostMaterial(copy, materialGhost);
                             list.appendTag(copy);
                         }
@@ -110,7 +126,7 @@ public class ComposerTileEntity extends GenericTileEntity implements DefaultSide
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
         NBTTagList list = new NBTTagList();
-        for (int i = 0; i < ComposerContainer.SLOT_COUNT ; i++) {
+        for (int i = 0; i < SLOT_COUNT ; i++) {
             NBTTagCompound tc = new NBTTagCompound();
             ShapeModifier mod = modifiers[i];
             tc.setString("mod_op", mod.getOperation().getCode());

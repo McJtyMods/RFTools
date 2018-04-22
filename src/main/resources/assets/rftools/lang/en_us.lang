@@ -238,3 +238,32 @@ message.rftools.relay=\
     @fthe amount of RF that can go through this. Using this\n\
     @fyou can throttle down (or even disable) a number of\n\
     @fmachines in case power is low.
+message.rftools.composer=\
+    @fThis block can construct more complex\n\
+    @fshape cards for the Builder or Shield\n\
+    @fby creating combinations of other shape\n\
+    @fcards
+message.rftools.locator=\
+    @fPlace this block on top of a Scanner\n\
+    @fto extend its functionality with the ability\n\
+    @fto locate entities and machines using power
+message.rftools.projector=\
+    @fThis block can project the contents\n\
+    @fof a shape card like a hologram
+message.rftools.scanner=\
+    @2Scan id: %s\n\
+    @fThis block can scan an area and link\n\
+    @fto shape cards for the Builder or Shield.\n\
+    @fThe resulting shape card can also be used\n\
+    @fin the Composer
+message.rftools.remote_scanner=\
+    @2Scan id: %s\n\
+    @fThis block can scan an area and link\n\
+    @fto shape cards for the Builder or Shield.\n\
+    @fThe resulting shape card can also be used\n\
+    @fin the Composer\n\
+    @6This version can scan scan through a\n\
+    @6dialed matter transmitter which should be\n\
+    @6located above it
+
+

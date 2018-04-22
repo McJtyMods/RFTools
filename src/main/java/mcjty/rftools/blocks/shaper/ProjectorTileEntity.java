@@ -1,34 +1,51 @@
 package mcjty.rftools.blocks.shaper;
 
-import mcjty.lib.container.DefaultSidedInventory;
-import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.*;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.varia.OrientationTools;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.RenderData;
 import mcjty.rftools.shapes.ShapeID;
 import mcjty.rftools.shapes.ShapeRenderer;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.Map;
 
+import static net.minecraft.util.EnumFacing.*;
+
 public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable {
 
     public static final String CMD_SETTINGS = "settings";
     public static final String CMD_RSSETTINGS = "rsSettings";
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, ProjectorContainer.factory, 1);
+    public static final int SLOT_CARD = 0;
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
+        @Override
+        protected void setup() {
+            addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
+                    new ItemStack(BuilderSetup.shapeCardItem)), ContainerFactory.CONTAINER_CONTAINER, SLOT_CARD, 15, 7);
+            layoutPlayerInventorySlots(85, 142);
+        }
+    };
+
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, 1);
     private ShapeRenderer shapeRenderer = null;
     private ProjectorOperation operations[] = new ProjectorOperation[4];
 
@@ -394,7 +411,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
     }
 
     public ItemStack getRenderStack() {
-        return inventoryHelper.getStackInSlot(ProjectorContainer.SLOT_CARD);
+        return inventoryHelper.getStackInSlot(SLOT_CARD);
     }
 
     public ShapeRenderer getShapeRenderer() {
@@ -496,4 +513,81 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
         }
         return false;
     }
+
+    @Override
+    public void checkRedstone(World world, BlockPos pos) {
+        IBlockState state = world.getBlockState(pos);
+        if (state.getBlock() == BuilderSetup.projectorBlock) {
+            EnumFacing horiz = OrientationTools.getOrientationHoriz(state);
+            EnumFacing north = reorient(EnumFacing.NORTH, horiz);
+            EnumFacing south = reorient(EnumFacing.SOUTH, horiz);
+            EnumFacing west = reorient(EnumFacing.WEST, horiz);
+            EnumFacing east = reorient(EnumFacing.EAST, horiz);
+
+            int powered1 = getInputStrength(world, pos, north) > 0 ? 1 : 0;
+            int powered2 = getInputStrength(world, pos, south) > 0 ? 2 : 0;
+            int powered3 = getInputStrength(world, pos, west) > 0 ? 4 : 0;
+            int powered4 = getInputStrength(world, pos, east) > 0 ? 8 : 0;
+            setPowerInput(powered1 + powered2 + powered3 + powered4);
+        }
+    }
+
+    private static EnumFacing reorient(EnumFacing side, EnumFacing blockDirection) {
+        switch (blockDirection) {
+            case NORTH:
+                if (side == DOWN || side == UP) {
+                    return side;
+                }
+                return side.getOpposite();
+            case SOUTH:
+                return side;
+            case WEST:
+                if (side == DOWN || side == UP) {
+                    return side;
+                } else if (side == WEST) {
+                    return NORTH;
+                } else if (side == NORTH) {
+                    return EAST;
+                } else if (side == EAST) {
+                    return SOUTH;
+                } else {
+                    return WEST;
+                }
+            case EAST:
+                if (side == DOWN || side == UP) {
+                    return side;
+                } else if (side == WEST) {
+                    return SOUTH;
+                } else if (side == NORTH) {
+                    return WEST;
+                } else if (side == EAST) {
+                    return NORTH;
+                } else {
+                    return EAST;
+                }
+            default:
+                return side;
+        }
+    }
+
+
+    /**
+     * Returns the signal strength at one side of the block
+     */
+    private int getInputStrength(World world, BlockPos pos, EnumFacing side) {
+        int power = world.getRedstonePower(pos.offset(side), side);
+        if (power == 0) {
+            // Check if there is no redstone wire there. If there is a 'bend' in the redstone wire it is
+            // not detected with world.getRedstonePower().
+            // @todo this is a bit of a hack. Don't know how to do it better right now
+            IBlockState blockState = world.getBlockState(pos.offset(side));
+            Block b = blockState.getBlock();
+            if (b == Blocks.REDSTONE_WIRE) {
+                power = world.isBlockPowered(pos.offset(side)) ? 15 : 0;
+            }
+        }
+
+        return power;
+    }
+
 }

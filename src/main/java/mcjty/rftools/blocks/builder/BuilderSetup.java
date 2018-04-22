@@ -7,6 +7,7 @@ import mcjty.lib.container.BaseBlock;
 import mcjty.lib.container.GenericBlock;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.varia.BlockTools;
+import mcjty.lib.varia.ItemStackTools;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
@@ -29,12 +30,11 @@ public class BuilderSetup {
     public static SpaceChamberBlock spaceChamberBlock;
     public static SpaceChamberControllerBlock spaceChamberControllerBlock;
     public static SupportBlock supportBlock;
-    public static ComposerBlock composerBlock;
-    public static ScannerBlock scannerBlock;
-    public static RemoteScannerBlock remoteScannerBlock;
-    public static ProjectorBlock projectorBlock;
-    public static LocatorBlock locatorBlock;
-
+    public static GenericBlock<ComposerTileEntity, GenericContainer> composerBlock;
+    public static GenericBlock<ScannerTileEntity, GenericContainer> scannerBlock;
+    public static GenericBlock<RemoteScannerTileEntity, GenericContainer> remoteScannerBlock;
+    public static GenericBlock<ProjectorTileEntity, GenericContainer> projectorBlock;
+    public static GenericBlock<LocatorTileEntity, GenericContainer> locatorBlock;
     public static GenericBlock<BuilderTileEntity, GenericContainer> builderBlock;
 
     public static SpaceChamberCardItem spaceChamberCardItem;
@@ -46,11 +46,6 @@ public class BuilderSetup {
         spaceChamberBlock = new SpaceChamberBlock();
         spaceChamberControllerBlock = new SpaceChamberControllerBlock();
         supportBlock = new SupportBlock();
-        composerBlock = new ComposerBlock();
-        scannerBlock = new ScannerBlock();
-        remoteScannerBlock = new RemoteScannerBlock();
-        projectorBlock = new ProjectorBlock();
-        locatorBlock = new LocatorBlock();
 
         builderBlock = ModBlocks.builderFactory.<BuilderTileEntity, GenericContainer> builder("builder")
                 .tileEntityClass(BuilderTileEntity.class)
@@ -68,6 +63,50 @@ public class BuilderSetup {
                 .informationShift("message.rftools.builder")
                 .build();
 
+        composerBlock = ModBlocks.builderFactory.<ComposerTileEntity, GenericContainer> builder("composer")
+                .tileEntityClass(ComposerTileEntity.class)
+                .container(GenericContainer.class, ComposerTileEntity.CONTAINER_FACTORY)
+                .guiId(RFTools.GUI_COMPOSER)
+                .information("message.rftools.shiftmessage")
+                .informationShift("message.rftools.composer")
+                .build();
+
+        locatorBlock = ModBlocks.builderFactory.<LocatorTileEntity, GenericContainer> builder("locator")
+                .tileEntityClass(LocatorTileEntity.class)
+                .flags(BlockFlags.REDSTONE_CHECK)
+                .emptyContainer(GenericContainer.class)
+                .guiId(RFTools.GUI_LOCATOR)
+                .information("message.rftools.shiftmessage")
+                .informationShift("message.rftools.locator")
+                .build();
+
+        projectorBlock = ModBlocks.builderFactory.<ProjectorTileEntity, GenericContainer> builder("projector")
+                .tileEntityClass(ProjectorTileEntity.class)
+                .flags(BlockFlags.REDSTONE_CHECK)
+                .rotationType(BaseBlock.RotationType.HORIZROTATION)
+                .container(GenericContainer.class, ProjectorTileEntity.CONTAINER_FACTORY)
+                .guiId(RFTools.GUI_PROJECTOR)
+                .information("message.rftools.shiftmessage")
+                .informationShift("message.rftools.projector")
+                .build();
+
+        scannerBlock = ModBlocks.builderFactory.<ScannerTileEntity, GenericContainer> builder("scanner")
+                .tileEntityClass(ScannerTileEntity.class)
+                .flags(BlockFlags.REDSTONE_CHECK)
+                .container(GenericContainer.class, ScannerTileEntity.CONTAINER_FACTORY)
+                .guiId(RFTools.GUI_SCANNER)
+                .information("message.rftools.shiftmessage")
+                .informationShift("message.rftools.scanner", stack -> Integer.toString(ItemStackTools.mapTag(stack, compound -> compound.getInteger("scanid"), -1)))
+                .build();
+        remoteScannerBlock = ModBlocks.builderFactory.<RemoteScannerTileEntity, GenericContainer> builder("remote_scanner")
+                .tileEntityClass(RemoteScannerTileEntity.class)
+                .flags(BlockFlags.REDSTONE_CHECK)
+                .container(GenericContainer.class, ScannerTileEntity.CONTAINER_FACTORY)
+                .guiId(RFTools.GUI_SCANNER)
+                .information("message.rftools.shiftmessage")
+                .informationShift("message.rftools.remote_scanner", stack -> Integer.toString(ItemStackTools.mapTag(stack, compound -> compound.getInteger("scanid"), -1)))
+                .build();
+
         initItems();
 
         readBuilderBlocksInternal();
@@ -80,19 +119,29 @@ public class BuilderSetup {
         spaceChamberControllerBlock.initModel();
 
         builderBlock.initModel();
+        builderBlock.setGuiClass(GuiBuilder.class);
         ClientRegistry.bindTileEntitySpecialRenderer(BuilderTileEntity.class, new BuilderRenderer());
 
         supportBlock.initModel();
+
         composerBlock.initModel();
+        composerBlock.setGuiClass(GuiComposer.class);
+
         scannerBlock.initModel();
+        scannerBlock.setGuiClass(GuiScanner.class);
+
         remoteScannerBlock.initModel();
+        remoteScannerBlock.setGuiClass(GuiScanner.class);
+
         projectorBlock.initModel();
+        projectorBlock.setGuiClass(GuiProjector.class);
+        ClientRegistry.bindTileEntitySpecialRenderer(ProjectorTileEntity.class, new ProjectorRenderer());
+
         locatorBlock.initModel();
+        locatorBlock.setGuiClass(GuiLocator.class);
 
         spaceChamberCardItem.initModel();
         shapeCardItem.initModel();
-
-        builderBlock.setGuiClass(GuiBuilder.class);
     }
 
     private static void initItems() {

@@ -5,20 +5,33 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.varia.Counter;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.RedstoneMode;
+import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.shapes.BeaconType;
 import mcjty.rftools.shapes.ScanDataManager;
 import mcjty.rftools.shapes.ScanExtraData;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
+import mcjty.theoneprobe.api.TextStyleClass;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 import java.util.Map;
@@ -370,4 +383,27 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
         return false;
     }
 
+
+    @Override
+    @Optional.Method(modid = "theoneprobe")
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        if (world.getBlockState(data.getPos().down()).getBlock() != BuilderSetup.scannerBlock) {
+            probeInfo.text(TextStyleClass.ERROR + "Error! Needs a scanner below!");
+        } else {
+            probeInfo.text(TextStyleClass.INFO + "Scanner detected");
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    @Optional.Method(modid = "waila")
+    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.addWailaBody(itemStack, currenttip, accessor, config);
+        if (accessor.getWorld().getBlockState(accessor.getPosition().down()).getBlock() != BuilderSetup.scannerBlock) {
+            currenttip.add(TextFormatting.RED.toString() + TextFormatting.BOLD + "Error! Needs a scanner below!");
+        } else {
+            currenttip.add(TextFormatting.WHITE + "Scanner detected");
+        }
+    }
 }
