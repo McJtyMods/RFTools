@@ -54,7 +54,7 @@ public class BuilderSetup {
 
         builderBlock = ModBlocks.builderFactory.<BuilderTileEntity, GenericContainer> builder("builder")
                 .tileEntityClass(BuilderTileEntity.class)
-                .container(GenericContainer.class, BuilderTileEntity.factory)
+                .container(GenericContainer.class, BuilderTileEntity.CONTAINER_FACTORY)
                 .flags(BlockFlags.REDSTONE_CHECK)
                 .rotationType(BaseBlock.RotationType.HORIZROTATION)
                 .moduleSupport(new ModuleSupport(BuilderTileEntity.SLOT_TAB) {

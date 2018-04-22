@@ -218,3 +218,8 @@ message.rftools.builder=\
     @fand XP, move entities, build structures, ...\n\
     @eInfusing bonus: reduced power consumption\n\
     @eand increased speed.
+message.rftools.elevator=\
+    @fThis machine needs to be placed at a certain\n\
+    @flevel pointing towards where a moving platform\n\
+    @fwill be. Only the lowest elevator needs power\n\
+    @eInfusing bonus: reduced power consumption

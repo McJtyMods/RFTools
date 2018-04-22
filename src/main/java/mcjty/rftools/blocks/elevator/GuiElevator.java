@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.elevator;
 
-import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalLayout;
@@ -21,7 +21,7 @@ public class GuiElevator extends GenericGuiContainer<ElevatorTileEntity> {
 
     private TextField nameField;
 
-    public GuiElevator(ElevatorTileEntity tileEntity, EmptyContainer container) {
+    public GuiElevator(ElevatorTileEntity tileEntity, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, tileEntity, container, RFTools.GUI_MANUAL_MAIN, "elevator");
 
         xSize = WIDTH;

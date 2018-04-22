@@ -9,7 +9,7 @@ import mcjty.rftools.api.screens.data.IModuleDataFactory;
 public interface IScreenModuleRegistry {
 
     /**
-     * Register a module data factory. This is needed so that RFTools know how to deserialize your module data
+     * Register a module data CONTAINER_FACTORY. This is needed so that RFTools know how to deserialize your module data
      * for your screen module. You don't have to do this for any of the builtin module data implementations
      * (like IModuleDataBoolean, IModuleDataInteger and so on). Note that you only need the screen module registry
      * if you have custom data.

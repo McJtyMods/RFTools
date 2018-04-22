@@ -2,20 +2,12 @@ package mcjty.rftools.blocks.elevator;
 
 
 import mcjty.lib.api.Infusable;
-import mcjty.lib.container.BaseBlock;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.ProbeMode;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -24,7 +16,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -96,55 +87,5 @@ public class ElevatorBlock extends GenericRFToolsBlock<ElevatorTileEntity, Empty
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
-    }
-
-    @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        super.onBlockPlacedBy(world, pos, state, placer, stack);
-        TileEntity te = world.getTileEntity(pos);
-        if (te instanceof ElevatorTileEntity) {
-            ElevatorTileEntity elevatorTileEntity = (ElevatorTileEntity) te;
-            elevatorTileEntity.clearCaches(world.getBlockState(pos).getValue(BaseBlock.FACING_HORIZ));
-        }
-        if (placer instanceof EntityPlayer) {
-            // @todo achievements
-//            Achievements.trigger((EntityPlayer) placer, Achievements.goingUp);
-        }
-    }
-
-    @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state) {
-        TileEntity te = world.getTileEntity(pos);
-        if (te instanceof ElevatorTileEntity) {
-            ElevatorTileEntity elevatorTileEntity = (ElevatorTileEntity) te;
-            elevatorTileEntity.clearCaches(state.getValue(BaseBlock.FACING_HORIZ));
-        }
-        super.breakBlock(world, pos, state);
-    }
-
-    @Override
-    @Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
-        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
-        TileEntity te = world.getTileEntity(data.getPos());
-        if (te instanceof ElevatorTileEntity) {
-            ElevatorTileEntity elevatorTileEntity = (ElevatorTileEntity) te;
-            probeInfo.text(TextFormatting.BLUE + "Name: " + elevatorTileEntity.getName());
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    @Optional.Method(modid = "waila")
-    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        super.getWailaBody(itemStack, currenttip, accessor, config);
-        ElevatorTileEntity te = (ElevatorTileEntity) accessor.getTileEntity();
-        int energy = te.getEnergyStored();
-        currenttip.add(TextFormatting.GREEN + "RF: " + energy);
-        if (te.getName() != null && !te.getName().isEmpty()) {
-            currenttip.add(TextFormatting.BLUE + "Name: " + te.getName());
-        }
-
-        return currenttip;
     }
 }

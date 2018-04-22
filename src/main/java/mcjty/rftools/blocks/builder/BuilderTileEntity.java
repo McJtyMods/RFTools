@@ -103,7 +103,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     public static final int SLOT_TAB = 0;
     public static final int SLOT_FILTER = 1;
-    public static final ContainerFactory factory = new ContainerFactory() {
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
         @Override
         protected void setup() {
             addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
@@ -115,7 +115,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     };
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, factory, 2);
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, 2);
 
     public static final int MODE_COPY = 0;
     public static final int MODE_MOVE = 1;
@@ -2120,17 +2120,17 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     public int[] getSlotsForFace(EnumFacing side) {
-        return factory.getAccessibleSlots();
+        return CONTAINER_FACTORY.getAccessibleSlots();
     }
 
     @Override
     public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
-        return factory.isInputSlot(index);
+        return CONTAINER_FACTORY.isInputSlot(index);
     }
 
     @Override
     public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
-        return factory.isOutputSlot(index);
+        return CONTAINER_FACTORY.isOutputSlot(index);
     }
 
     @Override
