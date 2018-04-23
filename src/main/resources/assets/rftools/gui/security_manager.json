@@ -1,0 +1,108 @@
+{
+  "bg": {
+    "bg1": "rftools:textures/gui/securitymanager.png"
+  },
+  "children": [
+    {
+      "poshint": "72,5,168,96",
+      "bg": {},
+      "children": [
+        {
+          "name": "players",
+          "bg": {
+            "thickness": -1,
+            "filled1": -7631989
+          },
+          "children": [],
+          "type": "widgetlist"
+        },
+        {
+          "desiredwidth": 10,
+          "bg": {},
+          "type": "slider"
+        }
+      ],
+      "type": "panel",
+      "layout": "horizontal",
+      "spacing": 1,
+      "horizmargin": 3
+    },
+    {
+      "desiredheight": 16,
+      "poshint": "72,100,168,14",
+      "bg": {},
+      "children": [
+        {
+          "name": "name",
+          "desiredheight": 15,
+          "bg": {},
+          "type": "textfield"
+        },
+        {
+          "name": "addbutton",
+          "desiredwidth": 34,
+          "desiredheight": 14,
+          "tooltips": "Add a player to the access list",
+          "bg": {},
+          "type": "button",
+          "text": "Add"
+        },
+        {
+          "name": "delbutton",
+          "desiredwidth": 34,
+          "desiredheight": 14,
+          "tooltips": [
+            "Remove the selected player",
+            "from the access list"
+          ],
+          "bg": {},
+          "type": "button",
+          "text": "Del"
+        }
+      ],
+      "type": "panel",
+      "layout": "horizontal",
+      "spacing": 1,
+      "horizmargin": 3
+    },
+    {
+      "name": "channelname",
+      "poshint": "8,27,60,14",
+      "bg": {},
+      "type": "textfield"
+    },
+    {
+      "name": "blacklistmode",
+      "tooltips": "Black or whitelist mode",
+      "poshint": "10,44,16,16",
+      "bg": {},
+      "type": "imagechoicelabel",
+      "image": "rftools:textures/gui/guielements.png",
+      "u": 240,
+      "v": 32,
+      "choices": [
+        {
+          "choice": "White",
+          "tooltips": [
+            "Whitelist players"
+          ],
+          "image": "rftools:textures/gui/guielements.png",
+          "u": 240,
+          "v": 32
+        },
+        {
+          "choice": "Black",
+          "tooltips": [
+            "Blacklist players"
+          ],
+          "image": "rftools:textures/gui/guielements.png",
+          "u": 224,
+          "v": 32
+        }
+      ],
+      "withborder": false
+    }
+  ],
+  "type": "panel",
+  "layout": "positional"
+}

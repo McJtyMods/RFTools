@@ -1,0 +1,264 @@
+{
+  "bg": {
+    "bg1": "rftools:textures/gui/shieldprojector.png"
+  },
+  "children": [
+    {
+      "poshint": "12,141,10,76",
+      "bg": {},
+      "type": "energybar",
+      "showtext": false
+    },
+    {
+      "poshint": "31,161,48,14",
+      "bg": {},
+      "type": "choicelabel",
+      "text": "Shield",
+      "choices": [
+        {
+          "choice": "Invisible",
+          "tooltips": "Shield is completely invisible"
+        },
+        {
+          "choice": "Shield",
+          "tooltips": "Default shield texture"
+        },
+        {
+          "choice": "Mimic",
+          "tooltips": "Use the texture from the supplied block"
+        },
+        {
+          "choice": "Transp",
+          "tooltips": "Transparent shield texture"
+        },
+        {
+          "choice": "Solid",
+          "tooltips": "Solid shield texture"
+        }
+      ]
+    },
+    {
+      "tooltips": "Set the camouflage block",
+      "poshint": "51,142,28,16",
+      "bg": {},
+      "type": "button",
+      "text": "Set"
+    },
+    {
+      "poshint": "62,200,16,16",
+      "bg": {},
+      "type": "imagechoicelabel",
+      "image": "rftools:textures/gui/guielements.png",
+      "u": 0,
+      "v": 0,
+      "choices": [
+        {
+          "choice": "Ignored",
+          "tooltips": [
+            "Redstone mode:",
+            "Ignored"
+          ],
+          "image": "rftools:textures/gui/guielements.png",
+          "u": 0,
+          "v": 0
+        },
+        {
+          "choice": "Off",
+          "tooltips": [
+            "Redstone mode:",
+            "Off to activate"
+          ],
+          "image": "rftools:textures/gui/guielements.png",
+          "u": 16,
+          "v": 0
+        },
+        {
+          "choice": "On",
+          "tooltips": [
+            "Redstone mode:",
+            "On to activate"
+          ],
+          "image": "rftools:textures/gui/guielements.png",
+          "u": 32,
+          "v": 0
+        }
+      ],
+      "withborder": false
+    },
+    {
+      "poshint": "12,10,154,124",
+      "bg": {
+        "filled1": -6381922
+      },
+      "children": [
+        {
+          "desiredheight": 120,
+          "bg": {
+            "thickness": -1,
+            "filled1": -7631989
+          },
+          "children": [],
+          "type": "widgetlist"
+        },
+        {
+          "desiredwidth": 11,
+          "desiredheight": 120,
+          "bg": {},
+          "type": "slider"
+        }
+      ],
+      "type": "panel",
+      "layout": "horizontal",
+      "spacing": 1,
+      "horizmargin": 3
+    },
+    {
+      "poshint": "170,12,80,14",
+      "bg": {},
+      "type": "choicelabel",
+      "text": "Pass",
+      "choices": [
+        {
+          "choice": "Pass",
+          "tooltips": [
+            "Entity that matches this filter",
+            "can pass through"
+          ]
+        },
+        {
+          "choice": "Solid",
+          "tooltips": [
+            "Entity that matches this filter",
+            "cannot pass"
+          ]
+        },
+        {
+          "choice": "Damage",
+          "tooltips": [
+            "Entity that matches this filter",
+            "can pass but gets damage"
+          ]
+        },
+        {
+          "choice": "SolDmg",
+          "tooltips": [
+            "Entity that matches this filter",
+            "cannot pass and gets damage"
+          ]
+        }
+      ]
+    },
+    {
+      "poshint": "170,28,80,14",
+      "bg": {},
+      "type": "choicelabel",
+      "text": "All",
+      "choices": [
+        {
+          "choice": "All",
+          "tooltips": "Matches everything"
+        },
+        {
+          "choice": "Passive",
+          "tooltips": "Matches passive mobs"
+        },
+        {
+          "choice": "Hostile",
+          "tooltips": "Matches hostile mobs"
+        },
+        {
+          "choice": "Item",
+          "tooltips": "Matches items"
+        },
+        {
+          "choice": "Player",
+          "tooltips": [
+            "Matches players",
+            "(optionally named)"
+          ]
+        }
+      ]
+    },
+    {
+      "tooltips": "Optional player name",
+      "poshint": "170,44,80,14",
+      "bg": {},
+      "type": "textfield"
+    },
+    {
+      "poshint": "170,58,80,43",
+      "bg": {
+        "thickness": -2,
+        "filled1": -7631989
+      },
+      "children": [
+        {
+          "tooltips": "Add selected filter",
+          "poshint": "4,6,36,14",
+          "bg": {},
+          "type": "button",
+          "text": "Add"
+        },
+        {
+          "tooltips": "Delete selected filter",
+          "poshint": "39,6,36,14",
+          "bg": {},
+          "type": "button",
+          "text": "Del"
+        },
+        {
+          "tooltips": "Move filter up",
+          "poshint": "4,22,36,14",
+          "bg": {},
+          "type": "button",
+          "text": "Up"
+        },
+        {
+          "tooltips": "Move filter down",
+          "poshint": "39,22,36,14",
+          "bg": {},
+          "type": "button",
+          "text": "Down"
+        }
+      ],
+      "type": "panel",
+      "layout": "positional"
+    },
+    {
+      "poshint": "170,102,80,14",
+      "bg": {},
+      "type": "choicelabel",
+      "text": "Generic",
+      "choices": [
+        {
+          "choice": "Generic",
+          "tooltips": "Generic damage type"
+        },
+        {
+          "choice": "Player",
+          "tooltips": "Damage as done by a player"
+        }
+      ]
+    },
+    {
+      "tooltips": "Color for the shield",
+      "poshint": "31,177,48,16",
+      "bg": {},
+      "type": "colorselector",
+      "text": ""
+    },
+    {
+      "tooltips": [
+        "Insert dimensional shards",
+        "for looting bonus"
+      ],
+      "poshint": "160,118,60,18",
+      "bg": {},
+      "type": "label",
+      "text": "Looting:",
+      "horizalign": "ALIGN_RIGHT"
+    }
+  ],
+  "type": "panel",
+  "layout": "positional"
+}

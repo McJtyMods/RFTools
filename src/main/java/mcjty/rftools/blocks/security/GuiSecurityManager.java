@@ -5,8 +5,6 @@ import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
-import mcjty.lib.gui.layout.HorizontalLayout;
-import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.Arguments;
@@ -16,7 +14,6 @@ import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.inventory.Slot;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.input.Keyboard;
 
 import java.awt.Rectangle;
 
@@ -28,8 +25,8 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
     private static final ResourceLocation guiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     private WidgetList players;
-    private Button addButton;
-    private Button delButton;
+    private Widget addButton;
+    private Widget delButton;
     private TextField nameField;
     private ImageChoiceLabel blacklistMode;
     private TextField channelNameField;
@@ -49,30 +46,44 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
     public void initGui() {
         super.initGui();
 
-        players = new WidgetList(mc, this);
-        Slider allowedPlayerSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(players);
-        Panel allowedPlayersPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChildren(players, allowedPlayerSlider).
-                setLayoutHint(new PositionalLayout.PositionalHint(72, 5, SECURITYMANAGER_WIDTH - 76, 96));
+//        players = new WidgetList(mc, this);
+//        players.setName("players");
+//        Slider allowedPlayerSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(players);
+//        Panel allowedPlayersPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChildren(players, allowedPlayerSlider).
+//                setLayoutHint(new PositionalLayout.PositionalHint(72, 5, SECURITYMANAGER_WIDTH - 76, 96));
+//
+//        nameField = new TextField(mc, this).setDesiredHeight(15).setName("name");
+//        addButton = new Button(mc, this).setText("Add").setDesiredHeight(14).setDesiredWidth(34).setTooltips("Add a player to the access list").
+//                addButtonEvent(parent -> addPlayer()).setName("addbutton");
+//        delButton = new Button(mc, this).setText("Del").setDesiredHeight(14).setDesiredWidth(34).setTooltips("Remove the selected player", "from the access list").
+//                addButtonEvent(parent -> delPlayer()).setName("delbutton");
+//        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChildren(nameField, addButton, delButton).setDesiredHeight(16).
+//                setLayoutHint(new PositionalLayout.PositionalHint(72, 100, SECURITYMANAGER_WIDTH - 76, 14));
+//
+//        channelNameField = new TextField(mc, this).setLayoutHint(8, 27, 60, 14).addTextEvent((parent, newText) -> updateChannelName())
+//            .setName("channelname");
+//
+//        blacklistMode = new ImageChoiceLabel(mc, this).setLayoutHint(10, 44, 16, 16).setTooltips("Black or whitelist mode").addChoiceEvent((parent, newChoice) -> updateSettings())
+//            .setName("blacklistmode");
+//        blacklistMode.addChoice("White", "Whitelist players", guiElements, 15 * 16, 32);
+//        blacklistMode.addChoice("Black", "Blacklist players", guiElements, 14 * 16, 32);
+//
+//
+//        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChildren(allowedPlayersPanel, buttonPanel, channelNameField, blacklistMode);
+//        toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
+//        window = new Window(this, toplevel);
+//        Keyboard.enableRepeatEvents(true);
 
-        nameField = new TextField(mc, this).setDesiredHeight(15);
-        addButton = new Button(mc, this).setText("Add").setDesiredHeight(14).setDesiredWidth(34).setTooltips("Add a player to the access list").
-                addButtonEvent(parent -> addPlayer());
-        delButton = new Button(mc, this).setText("Del").setDesiredHeight(14).setDesiredWidth(34).setTooltips("Remove the selected player", "from the access list").
-                addButtonEvent(parent -> delPlayer());
-        Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChildren(nameField, addButton, delButton).setDesiredHeight(16).
-                setLayoutHint(new PositionalLayout.PositionalHint(72, 100, SECURITYMANAGER_WIDTH - 76, 14));
 
-        channelNameField = new TextField(mc, this).setLayoutHint(8, 27, 60, 14).addTextEvent((parent, newText) -> updateChannelName());
+        window = new Window(this, new ResourceLocation(RFTools.MODID, "gui/security_manager.json"));
+        window.getToplevel().setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
-        blacklistMode = new ImageChoiceLabel(mc, this).setLayoutHint(10, 44, 16, 16).setTooltips("Black or whitelist mode").addChoiceEvent((parent, newChoice) -> updateSettings());
-        blacklistMode.addChoice("White", "Whitelist players", guiElements, 15 * 16, 32);
-        blacklistMode.addChoice("Black", "Blacklist players", guiElements, 14 * 16, 32);
-
-
-        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChildren(allowedPlayersPanel, buttonPanel, channelNameField, blacklistMode);
-        toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
-        window = new Window(this, toplevel);
-        Keyboard.enableRepeatEvents(true);
+        addButton = window.findChild("addbutton");
+        delButton = window.findChild("delbutton");
+        nameField = (TextField) window.findChild("name");
+        channelNameField = (TextField) window.findChild("channelname");
+        blacklistMode = (ImageChoiceLabel) window.findChild("blacklistmode");
+        players = (WidgetList) window.findChild("players");
 
         channelFromServer = null;
     }
