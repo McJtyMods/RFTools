@@ -5,9 +5,7 @@ import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.PositionalLayout;
-import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
@@ -19,7 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 import static mcjty.rftools.blocks.builder.BuilderTileEntity.*;
 
@@ -28,20 +26,9 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     public static final int BUILDER_HEIGHT = 152;
 
     private EnergyBar energyBar;
-    private ImageChoiceLabel redstoneMode;
-
-    private ChoiceLabel modeChoice;
-    private ImageChoiceLabel silentMode;
-    private ImageChoiceLabel supportMode;
-    private ImageChoiceLabel entityMode;
-    private ImageChoiceLabel loopMode;
-    private ImageChoiceLabel waitMode;
-    private ImageChoiceLabel hilightMode;
-    private Button configButton;
     private Button currentLevel;
 
     private ImageChoiceLabel anchor[] = new ImageChoiceLabel[4];
-    private ChoiceLabel rotateButton;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/builder.png");
     private static final ResourceLocation guiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
@@ -59,17 +46,17 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         super.initGui();
 
         int maxEnergyStored = tileEntity.getMaxEnergyStored();
-        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(10, 6, 8, 59).setShowText(false);
+        energyBar = new EnergyBar(mc, this).setName("energybar").setVertical().setMaxValue(maxEnergyStored).setLayoutHint(10, 6, 8, 59).setShowText(false);
         energyBar.setValue(getCurrentRF());
 
-        initRedstoneMode();
+        ImageChoiceLabel redstoneMode = initRedstoneMode();
 
-        configButton = new Button(mc, this).setText("?");
+        Button configButton = new Button(mc, this).setText("?");
         configButton.setLayoutHint(83, 12, 13, 12);
         configButton.addButtonEvent(parent -> openCardGui());
         configButton.setTooltips("Click to open the card gui");
 
-        currentLevel = new Button(mc, this);
+        currentLevel = new Button(mc, this).setName("level");
         currentLevel.setText("Y:").setTooltips("Current level the builder is at", TextFormatting.YELLOW + "Press to restart!").setLayoutHint(81, 31, 45, 13)
             .addButtonEvent(parent -> restart());
 
@@ -85,17 +72,18 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         tileEntity.requestCurrentLevel();
     }
 
-    private void initRedstoneMode() {
-        redstoneMode = new ImageChoiceLabel(mc, this).
-                addChoiceEvent((parent, newChoice) -> changeRedstoneMode()).
+    private ImageChoiceLabel initRedstoneMode() {
+        ImageChoiceLabel redstoneMode = new ImageChoiceLabel(mc, this).
+                addChoiceEvent((parent, newChoice) -> changeRedstoneMode((ImageChoiceLabel) parent)).
                 addChoice(RedstoneMode.REDSTONE_IGNORED.getDescription(), "Redstone mode:\nIgnored", guiElements, 0, 0).
                 addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", guiElements, 16, 0).
                 addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", guiElements, 32, 0);
         redstoneMode.setLayoutHint(106, 46, 16, 16);
         redstoneMode.setCurrentChoice(tileEntity.getRSMode().ordinal());
+        return redstoneMode;
     }
 
-    private void changeRedstoneMode() {
+    private void changeRedstoneMode(ImageChoiceLabel redstoneMode) {
         tileEntity.setRSMode(RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()]);
         sendServerCommand(RFToolsMessages.INSTANCE, BuilderTileEntity.CMD_SETRSMODE,
                 new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()));
@@ -117,10 +105,11 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     }
 
     private Panel setupPositionPanel() {
-        rotateButton = new ChoiceLabel(mc, this).addChoices(ROTATE_0, ROTATE_90, ROTATE_180, ROTATE_270).setLayoutHint(4, 4, 36, 14).
-                setTooltips("Set the horizontal rotation angle").
-                addChoiceEvent(
-                        (parent, newChoice) -> updateRotate()
+        ChoiceLabel rotateButton = new ChoiceLabel(mc, this).addChoices(ROTATE_0, ROTATE_90, ROTATE_180, ROTATE_270).setLayoutHint(4, 4, 36, 14)
+                .setEnabledFlags("validcard")
+                .setTooltips("Set the horizontal rotation angle")
+                .addChoiceEvent(
+                        (parent, newChoice) -> updateRotate((ChoiceLabel) parent)
                 );
         switch (tileEntity.getRotate()) {
             case 0: rotateButton.setChoice(ROTATE_0); break;
@@ -139,6 +128,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
             for (int x = 0 ; x <= 1 ; x++) {
                 final int index = x + y * 2;
                 anchor[index] = new ImageChoiceLabel(mc, this)
+                        .setName("anchor" + index)
                         .setWithBorder(true)
                         .setHighlightedChoice(1)
                         .setLayoutHint(new PositionalLayout.PositionalHint(4 + x * 19, 18 + (1 - y) * 19, 17, 17))
@@ -156,99 +146,100 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     }
 
     private Panel setupModePanel() {
-        modeChoice = new ChoiceLabel(mc, this).addChoices(MODES[MODE_COPY], MODES[MODE_MOVE], MODES[MODE_SWAP], MODES[MODE_BACK], MODES[MODE_COLLECT])
+        ChoiceLabel modeChoice = new ChoiceLabel(mc, this).addChoices(MODES[MODE_COPY], MODES[MODE_MOVE], MODES[MODE_SWAP], MODES[MODE_BACK], MODES[MODE_COLLECT])
+                .setEnabledFlags("validcard")
                 .setTooltips("Set the building mode").setLayoutHint(9, 4, 42, 14)
                 .setChoiceTooltip(MODES[MODE_COPY], "Copy from space chamber to here", "Chest on top or below with materials")
                 .setChoiceTooltip(MODES[MODE_MOVE], "Move from space chamber to here")
                 .setChoiceTooltip(MODES[MODE_SWAP], "Swap space chamber contents with here")
                 .setChoiceTooltip(MODES[MODE_BACK], "Move back from here to space chamber")
                 .setChoiceTooltip(MODES[MODE_COLLECT], "Collect items in space chamber", "Items will go to chest on top or below")
-                .addChoiceEvent((parent, newChoice) -> updateMode());
+                .addChoiceEvent((parent, newChoice) -> updateMode(newChoice));
         modeChoice.setChoice(MODES[tileEntity.getMode()]);
 
-        silentMode = new ImageChoiceLabel(mc, this).setLayoutHint(4, 18, 17, 17)
+        ImageChoiceLabel silentMode = new ImageChoiceLabel(mc, this).setLayoutHint(4, 18, 17, 17)
                 .setWithBorder(true)
                 .setHighlightedChoice(1)
                 .setTooltips("Suppress the placement/breaking sound", "when moving blocks")
-                .addChoiceEvent((parent, newChoice) -> setSilentMode());
+                .addChoiceEvent((parent, newChoice) -> setSilentMode((ImageChoiceLabel) parent));
         silentMode.addChoice("off", "Moving blocks make sound", guiElements, 11*16, 3*16);
         silentMode.addChoice("on", "Block sounds are muted", guiElements, 10 * 16, 3 * 16);
         silentMode.setCurrentChoice(tileEntity.isSilent() ? 1 : 0);
 
-        supportMode = new ImageChoiceLabel(mc, this).setLayoutHint(22, 18, 17, 17)
+        ImageChoiceLabel supportMode = new ImageChoiceLabel(mc, this).setLayoutHint(22, 18, 17, 17)
                 .setWithBorder(true)
                 .setHighlightedChoice(1)
                 .setTooltips("Use supporting blocks when moving.", "Useful for liquids, gravel, ...")
-                .addChoiceEvent((parent, newChoice) -> setSupportMode());
+                .addChoiceEvent((parent, newChoice) -> setSupportMode((ImageChoiceLabel) parent));
         supportMode.addChoice("off", "Support/preview mode disabled", guiElements, 7*16, 3*16);
         supportMode.addChoice("on", "Support/preview mode enabled", guiElements, 6*16, 3*16);
         supportMode.setCurrentChoice(tileEntity.hasSupportMode() ? 1 : 0);
 
-        entityMode = new ImageChoiceLabel(mc, this).setLayoutHint(4, 37, 17, 17)
+        ImageChoiceLabel entityMode = new ImageChoiceLabel(mc, this).setLayoutHint(4, 37, 17, 17)
                 .setWithBorder(true)
                 .setHighlightedChoice(1)
                 .setTooltips("Move entities")
-                .addChoiceEvent((parent, newChoice) -> setEntityMode());
+                .addChoiceEvent((parent, newChoice) -> setEntityMode((ImageChoiceLabel) parent));
         entityMode.addChoice("off", "Entities are not moved", guiElements, 9*16, 3*16);
         entityMode.addChoice("on", "Entities are moved", guiElements, 8*16, 3*16);
         entityMode.setCurrentChoice(tileEntity.hasEntityMode() ? 1 : 0);
 
-        loopMode = new ImageChoiceLabel(mc, this).setLayoutHint(22, 37, 17, 17)
+        ImageChoiceLabel loopMode = new ImageChoiceLabel(mc, this).setLayoutHint(22, 37, 17, 17)
                 .setWithBorder(true)
                 .setHighlightedChoice(1)
                 .setTooltips("Loop mode")
-                .addChoiceEvent((parent, newChoice) -> setLoopMode());
+                .addChoiceEvent((parent, newChoice) -> setLoopMode((ImageChoiceLabel) parent));
         loopMode.addChoice("off", "Do a single run and stop", guiElements, 13*16, 3*16);
         loopMode.addChoice("on", "Keep running with redstone signal", guiElements, 12*16, 3*16);
         loopMode.setCurrentChoice(tileEntity.hasLoopMode() ? 1 : 0);
 
-        waitMode = new ImageChoiceLabel(mc, this).setLayoutHint(40, 18, 17, 17)
+        ImageChoiceLabel waitMode = new ImageChoiceLabel(mc, this).setLayoutHint(40, 18, 17, 17)
                 .setWithBorder(true)
                 .setHighlightedChoice(1)
                 .setTooltips("Wait mode")
-                .addChoiceEvent((parent, newChoice) -> setWaitMode());
+                .addChoiceEvent((parent, newChoice) -> setWaitMode((ImageChoiceLabel) parent));
         waitMode.addChoice("off", "Don't wait on a position if\nthe operation is not possible", guiElements, 7*16, 5*16);
         waitMode.addChoice("on", "If the operation is not possible\nwait on the current position", guiElements, 6*16, 5*16);
         waitMode.setCurrentChoice(tileEntity.isWaitMode() ? 1 : 0);
 
-        hilightMode = new ImageChoiceLabel(mc, this).setLayoutHint(40, 37, 17, 17)
+        ImageChoiceLabel hilightMode = new ImageChoiceLabel(mc, this).setLayoutHint(40, 37, 17, 17)
                 .setWithBorder(true)
                 .setHighlightedChoice(1)
                 .setTooltips("Hilight mode")
-                .addChoiceEvent((parent, newChoice) -> setHilightMode());
+                .addChoiceEvent((parent, newChoice) -> setHilightMode((ImageChoiceLabel) parent));
         hilightMode.addChoice("off", "No hilighting", guiElements, 9*16, 5*16);
         hilightMode.addChoice("on", "Visually hilight the position\nthe Builder is working on", guiElements, 8*16, 5*16);
         hilightMode.setCurrentChoice(tileEntity.isHilightMode() ? 1 : 0);
 
         return new Panel(mc, this).setLayout(new PositionalLayout()).setLayoutHint(19, 6, 61, 59)
                 .addChildren(modeChoice, silentMode, supportMode, entityMode, loopMode,
-                waitMode, hilightMode)
+                        waitMode, hilightMode)
                 .setFilledRectThickness(-2)
                 .setFilledBackground(StyleConfig.colorListBackground);
     }
 
-    private void setLoopMode() {
-        sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETLOOP, new Argument("loop", loopMode.getCurrentChoiceIndex() == 1));
+    private void setLoopMode(ImageChoiceLabel label) {
+        sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETLOOP, new Argument("loop", label.getCurrentChoiceIndex() == 1));
     }
 
-    private void setSilentMode() {
-        sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETSILENT, new Argument("silent", silentMode.getCurrentChoiceIndex() == 1));
+    private void setSilentMode(ImageChoiceLabel label) {
+        sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETSILENT, new Argument("silent", label.getCurrentChoiceIndex() == 1));
     }
 
-    private void setSupportMode() {
-        sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETSUPPORT, new Argument("support", supportMode.getCurrentChoiceIndex() == 1));
+    private void setSupportMode(ImageChoiceLabel label) {
+        sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETSUPPORT, new Argument("support", label.getCurrentChoiceIndex() == 1));
     }
 
-    private void setEntityMode() {
-        sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETENTITIES, new Argument("entities", entityMode.getCurrentChoiceIndex() == 1));
+    private void setEntityMode(ImageChoiceLabel label) {
+        sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETENTITIES, new Argument("entities", label.getCurrentChoiceIndex() == 1));
     }
 
-    private void setWaitMode() {
-        sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETWAIT, new Argument("wait", waitMode.getCurrentChoiceIndex() == 1));
+    private void setWaitMode(ImageChoiceLabel label) {
+        sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETWAIT, new Argument("wait", label.getCurrentChoiceIndex() == 1));
     }
 
-    private void setHilightMode() {
-        sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETHILIGHT, new Argument("hilight", hilightMode.getCurrentChoiceIndex() == 1));
+    private void setHilightMode(ImageChoiceLabel label) {
+        sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETHILIGHT, new Argument("hilight", label.getCurrentChoiceIndex() == 1));
     }
 
     private void selectAnchor(int index) {
@@ -268,8 +259,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         }
     }
 
-    private void updateMode() {
-        String currentChoice = modeChoice.getCurrentChoice();
+    private void updateMode(String currentChoice) {
         int mode = 0;
         for (int i = 0 ; i < MODES.length ; i++) {
             if (currentChoice.equals(MODES[i])) {
@@ -280,7 +270,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETMODE, new Argument("mode", mode));
     }
 
-    private void updateRotate() {
+    private void updateRotate(ChoiceLabel rotateButton) {
         String choice = rotateButton.getCurrentChoice();
         int index = 0;
         if (ROTATE_0.equals(choice)) {
@@ -308,14 +298,12 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         ItemStack card = tileEntity.getStackInSlot(SLOT_TAB);
         boolean enabled;
         if (card.isEmpty()) {
-            enabled = false;
+            window.setFlag("!validcard");
         } else if (card.getItem() == BuilderSetup.shapeCardItem) {
-            enabled = false;
+            window.setFlag("!validcard");
         } else {
-            enabled = true;
+            window.setFlag("validcard");
         }
-        modeChoice.setEnabled(enabled);
-        rotateButton.setEnabled(enabled);
         updateAnchorSettings(tileEntity.getAnchor());
 
         drawWindow();

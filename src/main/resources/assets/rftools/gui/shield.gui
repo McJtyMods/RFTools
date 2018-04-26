@@ -1,0 +1,149 @@
+panel('','positional') {
+    bg1('rftools:textures/gui/shieldprojector.png')
+    energybar('') {
+        hint(12,141,10,76)
+        showtext(false)
+    }
+    choicelabel('') {
+        hint(31,161,48,14)
+        choices {
+            choice('Invisible') {
+                tooltips('Shield is completely invisible')
+            }
+            choice('Shield') {
+                tooltips('Default shield texture')
+            }
+            choice('Mimic') {
+                tooltips('Use the texture from the supplied block')
+            }
+            choice('Transp') {
+                tooltips('Transparent shield texture')
+            }
+            choice('Solid') {
+                tooltips('Solid shield texture')
+            }
+        }
+    }
+    button('','Set') {
+        hint(51,142,28,16)
+        tooltips('Set the camouflage block')
+    }
+    imagechoicelabel('') {
+        hint(62,200,16,16)
+        image('rftools:textures/gui/guielements.png')
+        dim(0,0,256,256)
+        choices {
+            choice('Ignored') {
+                uv(0,0)
+                tooltips('Redstone mode:','Ignored')
+                image('rftools:textures/gui/guielements.png')
+            }
+            choice('Off') {
+                uv(16,0)
+                tooltips('Redstone mode:','Off to activate')
+                image('rftools:textures/gui/guielements.png')
+            }
+            choice('On') {
+                uv(32,0)
+                tooltips('Redstone mode:','On to activate')
+                image('rftools:textures/gui/guielements.png')
+            }
+        }
+    }
+    panel('','horizontal') {
+        hint(12,10,154,124)
+        bgfilled1(-6381922)
+        widgetlist('') {
+            desired(-1,120)
+            bgthickness(-1)
+            bgfilled1(-7631989)
+        }
+        slider('') {
+            desired(11,120)
+        }
+        spacing(1)
+        horizmargin(3)
+    }
+    choicelabel('') {
+        hint(170,12,80,14)
+        choices {
+            choice('Pass') {
+                tooltips('Entity that matches this filter','can pass through')
+            }
+            choice('Solid') {
+                tooltips('Entity that matches this filter','cannot pass')
+            }
+            choice('Damage') {
+                tooltips('Entity that matches this filter','can pass but gets damage')
+            }
+            choice('SolDmg') {
+                tooltips('Entity that matches this filter','cannot pass and gets damage')
+            }
+        }
+    }
+    choicelabel('') {
+        hint(170,28,80,14)
+        choices {
+            choice('All') {
+                tooltips('Matches everything')
+            }
+            choice('Passive') {
+                tooltips('Matches passive mobs')
+            }
+            choice('Hostile') {
+                tooltips('Matches hostile mobs')
+            }
+            choice('Item') {
+                tooltips('Matches items')
+            }
+            choice('Player') {
+                tooltips('Matches players','(optionally named)')
+            }
+        }
+    }
+    textfield('') {
+        hint(170,44,80,14)
+        tooltips('Optional player name')
+    }
+    panel('','positional') {
+        hint(170,58,80,43)
+        bgthickness(-2)
+        bgfilled1(-7631989)
+        button('','Add') {
+            hint(4,6,36,14)
+            tooltips('Add selected filter')
+        }
+        button('','Del') {
+            hint(39,6,36,14)
+            tooltips('Delete selected filter')
+        }
+        button('','Up') {
+            hint(4,22,36,14)
+            tooltips('Move filter up')
+        }
+        button('','Down') {
+            hint(39,22,36,14)
+            tooltips('Move filter down')
+        }
+    }
+    choicelabel('') {
+        hint(170,102,80,14)
+        choices {
+            choice('Generic') {
+                tooltips('Generic damage type')
+            }
+            choice('Player') {
+                tooltips('Damage as done by a player')
+            }
+        }
+    }
+    colorselector('') {
+        hint(31,177,48,16)
+        tooltips('Color for the shield')
+    }
+    label('','Looting:') {
+        hint(160,118,60,18)
+        tooltips('Insert dimensional shards','for looting bonus')
+        horizalign('ALIGN_RIGHT')
+    }
+}
