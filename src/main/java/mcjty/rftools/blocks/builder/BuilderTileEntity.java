@@ -100,7 +100,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public static final String CMD_RESTART = "restart";
     public static final String CLIENTCMD_GETLEVEL = "getLevel";
 
-
     public static final int SLOT_TAB = 0;
     public static final int SLOT_FILTER = 1;
     public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {

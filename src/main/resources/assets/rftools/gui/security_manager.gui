@@ -1,55 +1,63 @@
-panel('','positional') {
-    bg1('rftools:textures/gui/securitymanager.png')
-    panel('','horizontal') {
-        hint(72,5,168,96)
-        widgetlist('players') {
-            bgthickness(-1)
-            bgfilled1(-7631989)
-        }
-        slider('') {
-            desired(10,-1)
-            scrollable('players')
-        }
-        spacing(1)
-        horizmargin(3)
-    }
-    panel('','horizontal') {
-        desired(-1,16)
-        hint(72,100,168,14)
-        textfield('name') {
-            desired(-1,15)
-        }
-        button('addbutton','Add') {
-            desired(34,14)
-            tooltips('Add a player to the access list')
-        }
-        button('delbutton','Del') {
-            desired(34,14)
-            tooltips('Remove the selected player','from the access list')
-        }
-        spacing(1)
-        horizmargin(3)
-    }
-    textfield('channelname') {
-        hint(8,27,60,14)
-    }
-    imagechoicelabel('blacklistmode') {
-        hint(10,44,16,16)
-        tooltips('Black or whitelist mode')
-        image('rftools:textures/gui/guielements.png')
-        dim(240,32,256,256)
-        choices {
-            choice('White') {
-                uv(240,32)
-                tooltips('Whitelist players')
-                image('rftools:textures/gui/guielements.png')
+window {
+    size(244,206)
+    panel('','positional') {
+        bg1('rftools:textures/gui/securitymanager.png')
+        panel('','horizontal') {
+            hint(72,5,168,96)
+            widgetlist('players') {
+                enableon('card')
+                bgthickness(-1)
+                bgfilled1(-7631989)
             }
-            choice('Black') {
-                uv(224,32)
-                tooltips('Blacklist players')
-                image('rftools:textures/gui/guielements.png')
+            slider {
+                desired(10,-1)
+                scrollable('players')
+            }
+            spacing(1)
+            horizmargin(3)
+        }
+        panel('','horizontal') {
+            desired(-1,16)
+            hint(72,100,168,14)
+            textfield('name') {
+                desired(-1,15)
+                enableon('card')
+            }
+            button('addbutton','Add') {
+                desired(34,14)
+                enableon('card')
+                tooltips('Add a player to the access list')
+            }
+            button('delbutton','Del') {
+                desired(34,14)
+                enableon('card')
+                tooltips('Remove the selected player','from the access list')
+            }
+            spacing(1)
+            horizmargin(3)
+        }
+        textfield('channelname') {
+            hint(8,27,60,14)
+            enableon('card')
+        }
+        imagechoicelabel('blacklistmode') {
+            hint(10,44,16,16)
+            enableon('card')
+            tooltips('Black or whitelist mode')
+            image('rftools:textures/gui/guielements.png')
+            dim(240,32,256,256)
+            choices {
+                choice('White') {
+                    uv(240,32)
+                    tooltips('Whitelist players')
+                    image('rftools:textures/gui/guielements.png')
+                }
+                choice('Black') {
+                    uv(224,32)
+                    tooltips('Blacklist players')
+                    image('rftools:textures/gui/guielements.png')
+                }
             }
         }
-        tooltips('Black or whitelist mode')
     }
 }
