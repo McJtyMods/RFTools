@@ -47,6 +47,7 @@ import net.minecraft.tileentity.TileEntityShulkerBox;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -102,17 +103,19 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     public static final int SLOT_TAB = 0;
     public static final int SLOT_FILTER = 1;
-    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
-        @Override
-        protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
-                    new ItemStack(BuilderSetup.spaceChamberCardItem),
-                    new ItemStack(BuilderSetup.shapeCardItem)),
-                    ContainerFactory.CONTAINER_CONTAINER, SLOT_TAB, 100, 10, 1, 18, 1, 18);
-            addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, StorageFilterItem.class), ContainerFactory.CONTAINER_CONTAINER, SLOT_FILTER, 84, 46);
-            layoutPlayerInventorySlots(10, 70);
-        }
-    };
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(new ResourceLocation(RFTools.MODID, "gui/builder.gui"));
+
+//    {
+//        @Override
+//        protected void setup() {
+//            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
+//                    new ItemStack(BuilderSetup.spaceChamberCardItem),
+//                    new ItemStack(BuilderSetup.shapeCardItem)),
+//                    ContainerFactory.CONTAINER_CONTAINER, SLOT_TAB, 100, 10, 1, 18, 1, 18);
+//            addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, StorageFilterItem.class), ContainerFactory.CONTAINER_CONTAINER, SLOT_FILTER, 84, 46);
+//            layoutPlayerInventorySlots(10, 70);
+//        }
+//    };
 
     public static final ModuleSupport MODULE_SUPPORT = new ModuleSupport(SLOT_TAB) {
         @Override
