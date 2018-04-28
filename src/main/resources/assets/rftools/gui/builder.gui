@@ -1,9 +1,9 @@
 container {
-    slot('specific') {
+    slot('specificitem') {
         items('rftools:space_chamber_card','rftools:shape_card')
         pos(100,10)
     }
-    slot('specific') {
+    slot('specificitem') {
         items('rftools:filter_module')
         pos(100,10)
     }
@@ -270,7 +270,7 @@ window {
         button('level','Y: stop') {
             channel('restart')
             hint(81,31,45,13)
-            tooltips('Current level the builder is at','§ePress to restart!')
+            tooltips('Current level the builder is at','ï¿½ePress to restart!')
         }
         imagechoicelabel('redstone') {
             channel('redstone')
