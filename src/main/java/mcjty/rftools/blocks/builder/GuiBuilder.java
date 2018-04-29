@@ -32,7 +32,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
 
     @Override
     public void initGui() {
-        window = new Window(this, new ResourceLocation(RFTools.MODID, "gui/builder.gui"));
+        window = new Window(this, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/builder.gui"));
         super.initGui();
 
         energyBar = window.findChild("energybar");
@@ -50,18 +50,18 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     }
 
     private void setupEvents() {
-        window.addChannelEvent("restart", (source, id) -> sendServerCommand(RFToolsMessages.INSTANCE, BuilderTileEntity.CMD_RESTART));
-        window.addChannelEvent("cardgui", (source, id) -> openCardGui());
-        window.addChannelEvent("redstone", (source, id) -> changeRedstoneMode((ImageChoiceLabel) source));
-        window.addChannelEvent("rotate", (source, id) -> updateRotate((ChoiceLabel) source));
-        window.addChannelEvent("mode", (source, id) -> updateMode(id));
-        window.addChannelEvent("silent", (source, id) -> sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETSILENT, new Argument("silent", ((ImageChoiceLabel) source).getCurrentChoiceIndex() == 1)));
-        window.addChannelEvent("entities", (source, id) -> sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETENTITIES, new Argument("entities", ((ImageChoiceLabel) source).getCurrentChoiceIndex() == 1)));
-        window.addChannelEvent("hilight", (source, id) -> sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETHILIGHT, new Argument("hilight", ((ImageChoiceLabel) source).getCurrentChoiceIndex() == 1)));
-        window.addChannelEvent("loop", (source, id) -> sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETLOOP, new Argument("loop", ((ImageChoiceLabel) source).getCurrentChoiceIndex() == 1)));
-        window.addChannelEvent("support", (source, id) -> sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETSUPPORT, new Argument("support", ((ImageChoiceLabel) source).getCurrentChoiceIndex() == 1)));
-        window.addChannelEvent("wait", (source, id) -> sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETWAIT, new Argument("wait", ((ImageChoiceLabel) source).getCurrentChoiceIndex() == 1)));
-        window.addChannelEvent("anchor", (source, id) -> selectAnchor(source.getName()));
+        window.addChannelEvent("restart", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, BuilderTileEntity.CMD_RESTART));
+        window.addChannelEvent("cardgui", (source, params) -> openCardGui());
+        window.addChannelEvent("redstone", (source, params) -> changeRedstoneMode((ImageChoiceLabel) source));
+//        window.addChannelEvent("rotate", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETROTATE, new Argument("rotate", Integer.parseInt(params.get(ChoiceLabel.PARAM_CHOICE))/90)));
+        window.addChannelEvent("mode", (source, params) -> updateMode(params.get(ChoiceLabel.PARAM_CHOICE)));
+        window.addChannelEvent("silent", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETSILENT, new Argument("silent", ((ImageChoiceLabel) source).getCurrentChoiceIndex() == 1)));
+        window.addChannelEvent("entities", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETENTITIES, new Argument("entities", ((ImageChoiceLabel) source).getCurrentChoiceIndex() == 1)));
+        window.addChannelEvent("hilight", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETHILIGHT, new Argument("hilight", ((ImageChoiceLabel) source).getCurrentChoiceIndex() == 1)));
+        window.addChannelEvent("loop", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETLOOP, new Argument("loop", ((ImageChoiceLabel) source).getCurrentChoiceIndex() == 1)));
+        window.addChannelEvent("support", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETSUPPORT, new Argument("support", ((ImageChoiceLabel) source).getCurrentChoiceIndex() == 1)));
+        window.addChannelEvent("wait", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETWAIT, new Argument("wait", ((ImageChoiceLabel) source).getCurrentChoiceIndex() == 1)));
+        window.addChannelEvent("anchor", (source, params) -> selectAnchor(source.getName()));
     }
 
     private void initializeFields() {
@@ -126,11 +126,6 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
             }
         }
         sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETMODE, new Argument("mode", mode));
-    }
-
-    private void updateRotate(ChoiceLabel rotateButton) {
-        String choice = rotateButton.getCurrentChoice();
-        sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETROTATE, new Argument("rotate", Integer.parseInt(choice)/90));
     }
 
     private boolean isShapeCard() {

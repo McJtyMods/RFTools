@@ -11,6 +11,7 @@ container {
 }
 window {
     size(180,152)
+    event('rotate','setRotate')
     panel('','positional') {
         bg1('rftools:textures/gui/builder.png')
         energybar('energybar') {

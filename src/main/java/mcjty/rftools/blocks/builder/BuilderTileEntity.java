@@ -1,8 +1,12 @@
 package mcjty.rftools.blocks.builder;
 
 import com.mojang.authlib.GameProfile;
-import mcjty.lib.container.*;
+import mcjty.lib.container.BaseBlock;
+import mcjty.lib.container.ContainerFactory;
+import mcjty.lib.container.DefaultSidedInventory;
+import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.Arguments;
 import mcjty.lib.network.PacketRequestIntegerFromServer;
@@ -24,6 +28,7 @@ import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
 import mcjty.typed.Type;
+import mcjty.typed.TypedMap;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
@@ -104,18 +109,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public static final int SLOT_TAB = 0;
     public static final int SLOT_FILTER = 1;
     public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(new ResourceLocation(RFTools.MODID, "gui/builder.gui"));
-
-//    {
-//        @Override
-//        protected void setup() {
-//            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
-//                    new ItemStack(BuilderSetup.spaceChamberCardItem),
-//                    new ItemStack(BuilderSetup.shapeCardItem)),
-//                    ContainerFactory.CONTAINER_CONTAINER, SLOT_TAB, 100, 10, 1, 18, 1, 18);
-//            addSlot(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, StorageFilterItem.class), ContainerFactory.CONTAINER_CONTAINER, SLOT_FILTER, 84, 46);
-//            layoutPlayerInventorySlots(10, 70);
-//        }
-//    };
 
     public static final ModuleSupport MODULE_SUPPORT = new ModuleSupport(SLOT_TAB) {
         @Override
@@ -2293,6 +2286,18 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return scan == null ? -1 : scan.getY();
     }
 
+    @Override
+    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+        boolean rc = super.execute(playerMP, command, params);
+        if (rc) {
+            return true;
+        }
+        if (CMD_SETROTATE.equals(command)) {
+            setRotate(Integer.parseInt(params.get(ChoiceLabel.PARAM_CHOICE))/90);
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
@@ -2313,9 +2318,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         } else if (CMD_SETANCHOR.equals(command)) {
             setAnchor(args.get("anchor").getInteger());
             return true;
-        } else if (CMD_SETROTATE.equals(command)) {
-            setRotate(args.get("rotate").getInteger());
-            return true;
+//        } else if (CMD_SETROTATE.equals(command)) {
+//            setRotate(args.get("rotate").getInteger());
+//            return true;
         } else if (CMD_SETSILENT.equals(command)) {
             setSilent(args.get("silent").getBoolean());
             return true;
