@@ -1,7 +1,9 @@
 package mcjty.rftools.blocks.endergen;
 
+import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.network.Argument;
 import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
+import mcjty.typed.TypedMap;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
@@ -10,7 +12,7 @@ import java.util.Map;
 
 public class EnderMonitorTileEntity extends LogicTileEntity implements ITickable {
 
-    public static final String CMD_MODE = "mode";
+    public static final String CMD_MODE = "endermonitor.setMode";
 
     private EnderMonitorMode mode = EnderMonitorMode.MODE_LOSTPEARL;
 
@@ -90,13 +92,13 @@ public class EnderMonitorTileEntity extends LogicTileEntity implements ITickable
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+        boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
         }
         if (CMD_MODE.equals(command)) {
-            String m = args.get("mode").getString();
+            String m = params.get(ChoiceLabel.PARAM_CHOICE);
             setMode(EnderMonitorMode.getMode(m));
             return true;
         }

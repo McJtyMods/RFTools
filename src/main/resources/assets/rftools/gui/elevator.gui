@@ -1,0 +1,16 @@
+window {
+    size(220,30)
+
+    event('name','elevator.setName')
+
+    panel('','vertical') {
+        bgthickness(2)
+        panel('','horizontal') {
+            label('','Name:')
+            textfield('name') {
+                channel('name')
+                tooltips('Set the name of this floor')
+            }
+        }
+    }
+}

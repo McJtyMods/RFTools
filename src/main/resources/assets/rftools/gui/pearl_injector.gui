@@ -1,0 +1,6 @@
+window {
+    size(180,152)
+    panel('','positional') {
+        bg1('rftools:textures/gui/pearlinjector.png')
+    }
+}

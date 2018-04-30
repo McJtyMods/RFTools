@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.elevator;
 
 
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
-import mcjty.lib.network.Argument;
+import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.varia.Broadcaster;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
 import mcjty.rftools.blocks.shield.RelCoordinate;
@@ -10,6 +10,7 @@ import mcjty.rftools.playerprops.BuffProperties;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
+import mcjty.typed.TypedMap;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
@@ -41,13 +42,16 @@ import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 import static mcjty.lib.container.BaseBlock.FACING_HORIZ;
 
 public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implements ITickable {
 
-    public static String CMD_SETNAME = "setName";
+    public static String CMD_SETNAME = "elevator.setName";
 
     private boolean prevIn = false;
 
@@ -832,13 +836,13 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+        boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
         }
         if (CMD_SETNAME.equals(command)) {
-            setName(args.get("name").getString());
+            setName(params.get(TextField.PARAM_TEXT));
             return true;
         }
         return false;
