@@ -7,11 +7,10 @@ import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.gui.widgets.EnergyBar;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
-import mcjty.lib.network.Argument;
-import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.builder.GuiShapeCard;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.typed.TypedMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.ItemStack;
@@ -50,17 +49,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     }
 
     private void setupEvents() {
-        window.addChannelEvent("restart", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, BuilderTileEntity.CMD_RESTART));
         window.addChannelEvent("cardgui", (source, params) -> openCardGui());
-        window.addChannelEvent("redstone", (source, params) -> changeRedstoneMode((ImageChoiceLabel) source));
-//        window.addChannelEvent("rotate", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETROTATE, new Argument("rotate", Integer.parseInt(params.get(ChoiceLabel.PARAM_CHOICE))/90)));
-        window.addChannelEvent("mode", (source, params) -> updateMode(params.get(ChoiceLabel.PARAM_CHOICE)));
-        window.addChannelEvent("silent", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETSILENT, new Argument("silent", ((ImageChoiceLabel) source).getCurrentChoiceIndex() == 1)));
-        window.addChannelEvent("entities", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETENTITIES, new Argument("entities", ((ImageChoiceLabel) source).getCurrentChoiceIndex() == 1)));
-        window.addChannelEvent("hilight", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETHILIGHT, new Argument("hilight", ((ImageChoiceLabel) source).getCurrentChoiceIndex() == 1)));
-        window.addChannelEvent("loop", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETLOOP, new Argument("loop", ((ImageChoiceLabel) source).getCurrentChoiceIndex() == 1)));
-        window.addChannelEvent("support", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETSUPPORT, new Argument("support", ((ImageChoiceLabel) source).getCurrentChoiceIndex() == 1)));
-        window.addChannelEvent("wait", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETWAIT, new Argument("wait", ((ImageChoiceLabel) source).getCurrentChoiceIndex() == 1)));
         window.addChannelEvent("anchor", (source, params) -> selectAnchor(source.getName()));
     }
 
@@ -82,12 +71,6 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         ((ImageChoiceLabel)window.findChild("hilight")).setCurrentChoice(tileEntity.isHilightMode() ? 1 : 0);
     }
 
-    private void changeRedstoneMode(ImageChoiceLabel redstoneMode) {
-        tileEntity.setRSMode(RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()]);
-        sendServerCommand(RFToolsMessages.INSTANCE, BuilderTileEntity.CMD_SETRSMODE,
-                new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()));
-    }
-
     private void openCardGui() {
         ItemStack cardStack = inventorySlots.getSlot(SLOT_TAB).getStack();
         if (!cardStack.isEmpty()) {
@@ -102,7 +85,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     private void selectAnchor(String name) {
         int index = name.charAt(name.length()-1)-48;
         updateAnchorSettings(index);
-        sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETANCHOR, new Argument("anchor", index));
+        sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETANCHOR, TypedMap.builder().put(PARAM_ANCHOR_INDEX, index).build());
     }
 
     private void updateAnchorSettings(int index) {
@@ -110,22 +93,9 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
             if (isShapeCard()) {
                 anchor[i].setCurrentChoice(0);
             } else {
-                if ((anchor[i].getCurrentChoiceIndex() == 1) != (i == index)) {
-                    anchor[i].setCurrentChoice(i == index ? 1 : 0);
-                }
+                anchor[i].setCurrentChoice(i == index ? 1 : 0);
             }
         }
-    }
-
-    private void updateMode(String currentChoice) {
-        int mode = 0;
-        for (int i = 0 ; i < MODES.length ; i++) {
-            if (currentChoice.equals(MODES[i])) {
-                mode = i;
-                break;
-            }
-        }
-        sendServerCommand(RFToolsMessages.INSTANCE, CMD_SETMODE, new Argument("mode", mode));
     }
 
     private boolean isShapeCard() {

@@ -11,7 +11,18 @@ container {
 }
 window {
     size(180,152)
-    event('rotate','setRotate')
+
+    event('rotate','builder.setRotate')
+    event('redstone','builder.setRsMode')
+    event('silent','builder.setSilent')
+    event('entities','builder.setEntities')
+    event('wait','builder.setWait')
+    event('loop','builder.setLoop')
+    event('hilight','builder.setHilight')
+    event('support','builder.setSupport')
+    event('restart','builder.restart')
+    event('mode','builder.setMode')
+
     panel('','positional') {
         bg1('rftools:textures/gui/builder.png')
         energybar('energybar') {

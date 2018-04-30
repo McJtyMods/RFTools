@@ -7,6 +7,7 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.gui.widgets.ChoiceLabel;
+import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.Arguments;
 import mcjty.lib.network.PacketRequestIntegerFromServer;
@@ -27,6 +28,7 @@ import mcjty.rftools.varia.RFToolsTools;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
+import mcjty.typed.Key;
 import mcjty.typed.Type;
 import mcjty.typed.TypedMap;
 import mcp.mobius.waila.api.IWailaConfigHandler;
@@ -90,20 +92,21 @@ import java.util.*;
 public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable,
         IHudSupport {
 
-    public static final String COMPONENT_NAME = "builder";
+    public static final String CMD_SETMODE = "builder.setMode";
+    public static final String CMD_SETROTATE = "builder.setRotate";
+    public static final String CMD_SETSILENT = "builder.setSilent";
+    public static final String CMD_SETSUPPORT = "builder.setSupport";
+    public static final String CMD_SETENTITIES = "builder.setEntities";
+    public static final String CMD_SETWAIT = "builder.setWait";
+    public static final String CMD_SETHILIGHT = "builder.setHilight";
+    public static final String CMD_SETLOOP = "builder.setLoop";
+    public static final String CMD_SETRSMODE = "builder.setRsMode";
+    public static final String CMD_RESTART = "builder.restart";
 
-    public static final String CMD_SETMODE = "setMode";
-    public static final String CMD_SETANCHOR = "setAnchor";
-    public static final String CMD_SETROTATE = "setRotate";
-    public static final String CMD_SETSILENT = "setSilent";
-    public static final String CMD_SETSUPPORT = "setSupport";
-    public static final String CMD_SETENTITIES = "setEntities";
-    public static final String CMD_SETWAIT = "setWait";
-    public static final String CMD_SETHILIGHT = "setHilight";
-    public static final String CMD_SETLOOP = "setLoop";
+    public static final String CMD_SETANCHOR = "builder.setAnchor";
+    public static final Key<Integer> PARAM_ANCHOR_INDEX = new Key<>("anchorIndex", Type.INTEGER);
+
     public static final String CMD_GETLEVEL = "getLevel";
-    public static final String CMD_SETRSMODE = "setRsMode";
-    public static final String CMD_RESTART = "restart";
     public static final String CLIENTCMD_GETLEVEL = "getLevel";
 
     public static final int SLOT_TAB = 0;
@@ -2295,49 +2298,42 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (CMD_SETROTATE.equals(command)) {
             setRotate(Integer.parseInt(params.get(ChoiceLabel.PARAM_CHOICE))/90);
             return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
-        if (rc) {
+        } else if (CMD_SETRSMODE.equals(command)) {
+            setRSMode(RedstoneMode.values()[params.get(ImageChoiceLabel.PARAM_CHOICE_IDX)]);
             return true;
-        }
-        if (CMD_SETRSMODE.equals(command)) {
-            String m = args.get("rs").getString();
-            setRSMode(RedstoneMode.getMode(m));
+        } else if (CMD_SETSILENT.equals(command)) {
+            setSilent(params.get(ImageChoiceLabel.PARAM_CHOICE_IDX) == 1);
+            return true;
+        } else if (CMD_SETSUPPORT.equals(command)) {
+            setSupportMode(params.get(ImageChoiceLabel.PARAM_CHOICE_IDX) == 1);
+            return true;
+        } else if (CMD_SETENTITIES.equals(command)) {
+            setEntityMode(params.get(ImageChoiceLabel.PARAM_CHOICE_IDX) == 1);
+            return true;
+        } else if (CMD_SETLOOP.equals(command)) {
+            setLoopMode(params.get(ImageChoiceLabel.PARAM_CHOICE_IDX) == 1);
+            return true;
+        } else if (CMD_SETWAIT.equals(command)) {
+            setWaitMode(params.get(ImageChoiceLabel.PARAM_CHOICE_IDX) == 1);
+            return true;
+        } else if (CMD_SETHILIGHT.equals(command)) {
+            setHilightMode(params.get(ImageChoiceLabel.PARAM_CHOICE_IDX) == 1);
             return true;
         } else if (CMD_RESTART.equals(command)) {
             restartScan();
             return true;
-        } else  if (CMD_SETMODE.equals(command)) {
-            setMode(args.get("mode").getInteger());
-            return true;
         } else if (CMD_SETANCHOR.equals(command)) {
-            setAnchor(args.get("anchor").getInteger());
+            setAnchor(params.get(PARAM_ANCHOR_INDEX));
             return true;
-//        } else if (CMD_SETROTATE.equals(command)) {
-//            setRotate(args.get("rotate").getInteger());
-//            return true;
-        } else if (CMD_SETSILENT.equals(command)) {
-            setSilent(args.get("silent").getBoolean());
-            return true;
-        } else if (CMD_SETSUPPORT.equals(command)) {
-            setSupportMode(args.get("support").getBoolean());
-            return true;
-        } else if (CMD_SETENTITIES.equals(command)) {
-            setEntityMode(args.get("entities").getBoolean());
-            return true;
-        } else if (CMD_SETLOOP.equals(command)) {
-            setLoopMode(args.get("loop").getBoolean());
-            return true;
-        } else if (CMD_SETWAIT.equals(command)) {
-            setWaitMode(args.get("wait").getBoolean());
-            return true;
-        } else if (CMD_SETHILIGHT.equals(command)) {
-            setHilightMode(args.get("hilight").getBoolean());
+        } else  if (CMD_SETMODE.equals(command)) {
+            int mode = 0;
+            for (int i = 0 ; i < MODES.length ; i++) {
+                if (params.get(ChoiceLabel.PARAM_CHOICE).equals(MODES[i])) {
+                    mode = i;
+                    break;
+                }
+            }
+            setMode(mode);
             return true;
         }
         return false;
