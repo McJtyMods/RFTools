@@ -5,15 +5,11 @@ import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.entity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.RenderHelper;
 import mcjty.lib.gui.Window;
-import mcjty.lib.gui.events.DefaultSelectionEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
-import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.network.Argument;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.ItemStackList;
-import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.craftinggrid.CraftingRecipe;
 import mcjty.rftools.network.RFToolsMessages;
@@ -26,23 +22,14 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
-
-import java.awt.Rectangle;
 
 public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
-    public static final int CRAFTER_WIDTH = 256;
-    public static final int CRAFTER_HEIGHT = 238;
-
     private EnergyBar energyBar;
     private WidgetList recipeList;
     private ChoiceLabel keepItem;
     private ChoiceLabel internalRecipe;
     private Button applyButton;
-    private ImageChoiceLabel redstoneMode;
-    private ImageChoiceLabel speedMode;
 
-    private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/crafter.png");
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     private static int lastSelected = -1;
@@ -50,161 +37,51 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     public GuiCrafter(CrafterBlockTileEntity1 te, CrafterContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, RFTools.GUI_MANUAL_MAIN, "crafter");
         GenericEnergyStorageTileEntity.setCurrentRF(te.getEnergyStored());
-
-        xSize = CRAFTER_WIDTH;
-        ySize = CRAFTER_HEIGHT;
     }
 
     public GuiCrafter(CrafterBlockTileEntity2 te, CrafterContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, RFTools.GUI_MANUAL_MAIN, "crafter");
         GenericEnergyStorageTileEntity.setCurrentRF(te.getEnergyStored());
-
-        xSize = CRAFTER_WIDTH;
-        ySize = CRAFTER_HEIGHT;
     }
 
     public GuiCrafter(CrafterBlockTileEntity3 te, CrafterContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, RFTools.GUI_MANUAL_MAIN, "crafter");
         GenericEnergyStorageTileEntity.setCurrentRF(te.getEnergyStored());
-
-        xSize = CRAFTER_WIDTH;
-        ySize = CRAFTER_HEIGHT;
     }
 
     @Override
     public void initGui() {
+        window = new Window(this, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/crafter.gui"));
         super.initGui();
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored();
-        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(12, 141, 10, 76).setShowText(false);
-        energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
-
-        initKeepMode();
-        initInternalRecipe();
-        Slider listSlider = initRecipeList();
-
-        applyButton = new Button(mc, this).
-                setText("Apply").
-                setTooltips("Press to apply the", "recipe to the crafter").
-                addButtonEvent(parent -> applyRecipe()).
-                setEnabled(false).
-                setLayoutHint(212, 65, 34, 16);
-
-        Button rememberButton = new Button(mc, this)
-                .setText("R")
-                .setTooltips("Remember the current items", "in the internal and", "external buffers")
-                .addButtonEvent(widget -> rememberItems())
-                .setLayoutHint(148, 74, 18, 16);
-        Button forgetButton = new Button(mc, this)
-                .setText("F")
-                .setTooltips("Forget the remembered layout")
-                .addButtonEvent(widget -> forgetItems())
-                .setLayoutHint(168, 74, 18, 16);
-
-        initRedstoneMode();
-        initSpeedMode();
-
-        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout())
-                .addChildren(energyBar, keepItem, internalRecipe,
-                    recipeList, listSlider, applyButton, redstoneMode, speedMode, rememberButton, forgetButton);
-        toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
+        initializeFields();
 
         if (lastSelected != -1 && lastSelected < tileEntity.getSizeInventory()) {
             recipeList.setSelected(lastSelected);
         }
 //        sendChangeToServer(-1, null, null, false, CraftingRecipe.CraftMode.EXT);
 
-        window = new Window(this, toplevel);
+        window.addChannelEvent("apply", (source, params) -> applyRecipe());
+        window.addChannelEvent("select", (source, params) -> selectRecipe());
+
         tileEntity.requestRfFromServer(RFTools.MODID);
     }
 
-    private Slider initRecipeList() {
-        recipeList = new WidgetList(mc, this)
-                .addSelectionEvent(new DefaultSelectionEvent() {
-                    @Override
-                    public void select(Widget parent, int index) {
-                        lastSelected = recipeList.getSelected();
-                    }
+    private void initializeFields() {
+        recipeList = window.findChild("recipes");
+        energyBar = window.findChild("energybar");
+        applyButton = window.findChild("apply");
+        keepItem = window.findChild("keep");
+        internalRecipe = window.findChild("internal");
 
-                    @Override
-                    public void doubleClick(Widget parent, int index) {
-                        selectRecipe();
-                    }
-                })
-                .setLayoutHint(10, 7, 126, 84);
+        energyBar.setMaxValue(tileEntity.getMaxEnergyStored());
+        energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
+        ((ImageChoiceLabel) window.findChild("redstone")).setCurrentChoice(tileEntity.getRSMode().ordinal());
+        ((ImageChoiceLabel) window.findChild("speed")).setCurrentChoice(tileEntity.getSpeedMode());
+
         populateList();
-
-        return new Slider(mc, this).setVertical().setScrollable(recipeList).setLayoutHint(137, 7, 10, 84);
     }
 
-    private void initInternalRecipe() {
-        internalRecipe = new ChoiceLabel(mc, this).
-                addChoices("Ext", "Int", "ExtC").
-                setTooltips("'Int' will put result of", "crafting operation in", "inventory instead of", "output buffer").
-                setEnabled(false).
-                setLayoutHint(148, 24, 41, 14);
-        internalRecipe.setChoiceTooltip("Ext", "Result of crafting operation", "will go to output buffer",
-                TextFormatting.GREEN + "(press Apply after changing)");
-        internalRecipe.setChoiceTooltip("Int", "Result of crafting operation", "will stay in input buffer",
-                TextFormatting.GREEN + "(press Apply after changing)");
-        internalRecipe.setChoiceTooltip("ExtC", "Result of crafting operation", "will go to output buffer",
-                "but remaining items (like", "buckets) will stay in input",
-                TextFormatting.GREEN + "(press Apply after changing)");
-    }
-
-    private void initKeepMode() {
-        keepItem = new ChoiceLabel(mc, this).
-                addChoices("All", "Keep").
-                setEnabled(false).
-                setLayoutHint(148, 7, 41, 14);
-        keepItem.setChoiceTooltip("All", "All items in input slots are consumed",
-                TextFormatting.GREEN + "(press Apply after changing)");
-        keepItem.setChoiceTooltip("Keep", "Keep one item in every inventory slot",
-                TextFormatting.GREEN + "(press Apply after changing)");
-    }
-
-    private void initSpeedMode() {
-        speedMode = new ImageChoiceLabel(mc, this).
-                addChoiceEvent((parent, newChoice) -> changeSpeedMode()).
-                addChoice("Slow", "Speed mode:\nSlow", iconGuiElements, 48, 0).
-                addChoice("Fast", "Speed mode:\nFast", iconGuiElements, 64, 0);
-        speedMode.setLayoutHint(49, 186, 16, 16);
-        speedMode.setCurrentChoice(tileEntity.getSpeedMode());
-    }
-
-    private void initRedstoneMode() {
-        redstoneMode = new ImageChoiceLabel(mc, this).
-                addChoiceEvent((parent, newChoice) -> changeRedstoneMode()).
-                addChoice(RedstoneMode.REDSTONE_IGNORED.getDescription(), "Redstone mode:\nIgnored", iconGuiElements, 0, 0).
-                addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
-                addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
-        redstoneMode.setLayoutHint(31, 186, 16, 16);
-        redstoneMode.setCurrentChoice(tileEntity.getRSMode().ordinal());
-    }
-
-    private void changeRedstoneMode() {
-        tileEntity.setRSMode(RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()]);
-        sendChangeToServer();
-    }
-
-    private void changeSpeedMode() {
-        tileEntity.setSpeedMode(speedMode.getCurrentChoiceIndex());
-        sendChangeToServer();
-    }
-
-    private void rememberItems() {
-        sendServerCommand(RFToolsMessages.INSTANCE, CrafterBaseTE.CMD_REMEMBER);
-    }
-
-    private void forgetItems() {
-        sendServerCommand(RFToolsMessages.INSTANCE, CrafterBaseTE.CMD_FORGET);
-    }
-
-    private void sendChangeToServer() {
-        sendServerCommand(RFToolsMessages.INSTANCE, CrafterBaseTE.CMD_MODE,
-                new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()),
-                new Argument("speed", speedMode.getCurrentChoiceIndex()));
-    }
 
     private void populateList() {
         recipeList.removeChildren();
@@ -227,7 +104,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
                         .setTooltips("Double click to edit this recipe"))
                 .addChild(new Label(mc, this)
                         .setColor(color)
-                        .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
+                        .setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT)
                         .setDynamic(true)
                         .setText(readableName)
                         .setTooltips("Double click to edit this recipe"));

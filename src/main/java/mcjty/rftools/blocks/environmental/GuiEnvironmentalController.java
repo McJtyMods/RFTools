@@ -213,7 +213,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
         players.sort(null);
         playersList.removeChildren();
         for (String player : players) {
-            playersList.addChild(new Label(mc, this).setText(player).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+            playersList.addChild(new Label(mc, this).setText(player).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT));
         }
     }
 

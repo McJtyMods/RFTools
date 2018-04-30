@@ -196,7 +196,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         groupMode.addChoice("On", "Show groups", guiElements, 14 * 16, 0);
 
         amountLabel = new Label(mc, this);
-        amountLabel.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
+        amountLabel.setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
         amountLabel.setLayoutHint(16, 40, 66, 12);
         amountLabel.setTooltips("Amount of stacks / maximum amount");
         amountLabel.setText("?/?");
@@ -542,7 +542,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             if (newgroup && groupName != null) {
                 AbstractWidget groupLabel = new Label(mc, this).setText(groupName).setColor(ModularStorageConfiguration.groupForeground)
                         .setColor(StyleConfig.colorTextInListNormal)
-                        .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setFilledBackground(ModularStorageConfiguration.groupBackground).setDesiredHeight(10)
+                        .setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setFilledBackground(ModularStorageConfiguration.groupBackground).setDesiredHeight(10)
                         .setDesiredWidth(231);
                 itemList.addChild(new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(2).setVerticalMargin(0)).setDesiredHeight(10).addChild(groupLabel));
             }
@@ -560,7 +560,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             } else {
                 displayName = typeModule.getShortLabel(stack);
             }
-            AbstractWidget label = new Label(mc, this).setText(displayName).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(labelWidth).setUserObject(new Integer(-1));
+            AbstractWidget label = new Label(mc, this).setText(displayName).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setDesiredWidth(labelWidth).setUserObject(new Integer(-1));
             panel.addChild(label);
         }
         currentPos.setValue(currentPos.getValue() + 1);

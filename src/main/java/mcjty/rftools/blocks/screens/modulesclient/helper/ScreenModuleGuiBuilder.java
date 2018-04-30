@@ -67,7 +67,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
 
     @Override
     public ScreenModuleGuiBuilder leftLabel(String text) {
-        Label label = new Label(mc, gui).setText(text).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
+        Label label = new Label(mc, gui).setText(text).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
         row.add(label);
         return this;
     }
@@ -210,7 +210,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
                 monitoring = currentData.getString(tagnamePos+"name");
                 Block block = world.getBlockState(new BlockPos(x, y, z)).getBlock();
                 row.add(new BlockRender(mc, gui).setRenderItem(block).setDesiredWidth(20));
-                row.add(new Label(mc, gui).setText(x + "," + y + "," + z).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(150));
+                row.add(new Label(mc, gui).setText(x + "," + y + "," + z).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setDesiredWidth(150));
             } else {
                 monitoring = "<unreachable>";
             }

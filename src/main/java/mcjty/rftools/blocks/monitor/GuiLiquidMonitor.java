@@ -140,7 +140,7 @@ public class GuiLiquidMonitor extends GenericGuiContainer<LiquidMonitorBlockTile
 
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
             panel.addChild(new BlockRender(mc, this).setRenderItem(block));
-            panel.addChild(new Label(mc, this).setText(displayName).setColor(color).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(90));
+            panel.addChild(new Label(mc, this).setText(displayName).setColor(color).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setDesiredWidth(90));
             panel.addChild(new Label(mc, this).setDynamic(true).setText(BlockPosTools.toString(coordinate)).setColor(color));
             list.addChild(panel);
 

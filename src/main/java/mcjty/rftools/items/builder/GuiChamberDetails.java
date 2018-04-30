@@ -71,9 +71,9 @@ public class GuiChamberDetails extends GuiItemScreen {
         Slider listSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(blockList);
         Panel listPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChildren(blockList, listSlider);
 
-        infoLabel = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
+        infoLabel = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
         infoLabel.setDesiredWidth(380).setDesiredHeight(14);
-        info2Label = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
+        info2Label = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
         info2Label.setDesiredWidth(380).setDesiredHeight(14);
 
         Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setSpacing(1).setVerticalMargin(3)).addChildren(listPanel, infoLabel, info2Label);
@@ -103,7 +103,7 @@ public class GuiChamberDetails extends GuiItemScreen {
             }
             BlockRender blockRender = new BlockRender(mc, this).setRenderItem(stack).setOffsetX(-1).setOffsetY(-1);
 
-            Label nameLabel = new Label(mc,this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setColor(StyleConfig.colorTextInListNormal);
+            Label nameLabel = new Label(mc,this).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setColor(StyleConfig.colorTextInListNormal);
             if (stack.getItem() == null) {
                 nameLabel.setText("?").setDesiredWidth(160);
             } else {
@@ -111,10 +111,10 @@ public class GuiChamberDetails extends GuiItemScreen {
             }
 
             Label countLabel = new Label(mc, this).setText(String.valueOf(count)).setColor(StyleConfig.colorTextInListNormal);
-            countLabel.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(50);
+            countLabel.setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setDesiredWidth(50);
 
             Label costLabel = new Label(mc, this).setColor(StyleConfig.colorTextInListNormal);
-            costLabel.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
+            costLabel.setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
 
             if (cost == -1) {
                 costLabel.setText("NOT MOVABLE!");
@@ -165,14 +165,14 @@ public class GuiChamberDetails extends GuiItemScreen {
 
             BlockRender blockRender = new BlockRender(mc, this).setRenderItem(entity).setOffsetX(-1).setOffsetY(-1);
 
-            Label nameLabel = new Label(mc,this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
+            Label nameLabel = new Label(mc,this).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
             nameLabel.setText(entityName).setDesiredWidth(160);
 
             Label countLabel = new Label(mc, this).setText(String.valueOf(count));
-            countLabel.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(50);
+            countLabel.setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setDesiredWidth(50);
 
             Label costLabel = new Label(mc, this);
-            costLabel.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
+            costLabel.setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
 
             if (cost == -1) {
                 costLabel.setText("NOT MOVABLE!");

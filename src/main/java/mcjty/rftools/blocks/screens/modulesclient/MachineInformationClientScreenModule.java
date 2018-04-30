@@ -157,7 +157,7 @@ public class MachineInformationClientScreenModule implements IClientScreenModule
                 monitoring = currentData.getString("monitorname");
                 Block block = world.getBlockState(new BlockPos(x, y, z)).getBlock();
                 monitorPanel.addChild(new BlockRender(mc, gui).setRenderItem(block)).setDesiredWidth(20);
-                monitorPanel.addChild(new Label(mc, gui).setText(x + "," + y + "," + z).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(150));
+                monitorPanel.addChild(new Label(mc, gui).setText(x + "," + y + "," + z).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setDesiredWidth(150));
             } else {
                 monitoring = "<unreachable>";
             }

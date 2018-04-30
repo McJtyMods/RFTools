@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.crafter;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.ItemStackList;
 import mcjty.lib.varia.Logging;
@@ -12,6 +13,7 @@ import mcjty.rftools.craftinggrid.CraftingRecipe;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.jei.JEIRecipeAcceptor;
+import mcjty.typed.TypedMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
@@ -27,21 +29,22 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.oredict.OreDictionary;
 
-import static mcjty.rftools.craftinggrid.CraftingRecipe.CraftMode.EXTC;
-import static mcjty.rftools.craftinggrid.CraftingRecipe.CraftMode.INT;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static mcjty.rftools.craftinggrid.CraftingRecipe.CraftMode.EXTC;
+import static mcjty.rftools.craftinggrid.CraftingRecipe.CraftMode.INT;
 
 public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements ITickable, DefaultSidedInventory,
         JEIRecipeAcceptor {
     public static final int SPEED_SLOW = 0;
     public static final int SPEED_FAST = 1;
 
-    public static final String CMD_MODE = "mode";
-    public static final String CMD_REMEMBER = "remember";
-    public static final String CMD_FORGET = "forget";
+    public static final String CMD_MODE = "crafter.setMode";
+    public static final String CMD_RSMODE = "crafter.setRsMode";
+    public static final String CMD_REMEMBER = "crafter.remember";
+    public static final String CMD_FORGET = "crafter.forget";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, CrafterContainer.factory,
             10 + CrafterContainer.BUFFER_SIZE + CrafterContainer.BUFFEROUT_SIZE + 1);
@@ -475,15 +478,16 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+        boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
         }
-        if (CMD_MODE.equals(command)) {
-            String m = args.get("rs").getString();
-            setRSMode(RedstoneMode.getMode(m));
-            setSpeedMode(args.get("speed").getInteger());
+        if (CMD_RSMODE.equals(command)) {
+            setRSMode(RedstoneMode.values()[params.get(ImageChoiceLabel.PARAM_CHOICE_IDX)]);
+            return true;
+        } else if (CMD_MODE.equals(command)) {
+            setSpeedMode(params.get(ImageChoiceLabel.PARAM_CHOICE_IDX));
             return true;
         } else if (CMD_REMEMBER.equals(command)) {
             rememberItems();

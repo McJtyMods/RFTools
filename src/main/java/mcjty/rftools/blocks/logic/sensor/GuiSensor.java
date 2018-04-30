@@ -79,19 +79,19 @@ public class GuiSensor extends GenericGuiContainer<SensorTileEntity> {
 
         toplevel
                 .addChild(new Label(mc, this).setText("Type:")
-                        .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
+                        .setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT)
                         .setLayoutHint(10, 3, 50, 14))
                 .addChild(areaLabel)
                 .addChild(new Label(mc, this).setText("Area:")
-                        .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
+                        .setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT)
                         .setLayoutHint(10, 19, 50, 14))
                 .addChild(typeLabel)
                 .addChild(new Label(mc, this).setText("Group:")
-                        .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
+                        .setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT)
                         .setLayoutHint(10, 35, 50, 14))
                 .addChild(groupLabel)
                 .addChild(new Label(mc, this).setText("Number:")
-                        .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
+                        .setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT)
                         .setLayoutHint(10, 51, 50, 14))
                 .addChild(numberField);
 

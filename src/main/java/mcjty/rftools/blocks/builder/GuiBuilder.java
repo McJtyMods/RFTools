@@ -34,13 +34,6 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         window = new Window(this, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/builder.gui"));
         super.initGui();
 
-        energyBar = window.findChild("energybar");
-        currentLevel = window.findChild("level");
-        anchor[0] = window.findChild("anchor0");
-        anchor[1] = window.findChild("anchor1");
-        anchor[2] = window.findChild("anchor2");
-        anchor[3] = window.findChild("anchor3");
-
         initializeFields();
         setupEvents();
 
@@ -54,6 +47,13 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     }
 
     private void initializeFields() {
+        energyBar = window.findChild("energybar");
+        currentLevel = window.findChild("level");
+        anchor[0] = window.findChild("anchor0");
+        anchor[1] = window.findChild("anchor1");
+        anchor[2] = window.findChild("anchor2");
+        anchor[3] = window.findChild("anchor3");
+
         energyBar.setMaxValue(tileEntity.getMaxEnergyStored());
         energyBar.setValue(getCurrentRF());
         ((ImageChoiceLabel) window.findChild("redstone")).setCurrentChoice(tileEntity.getRSMode().ordinal());
@@ -104,7 +104,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         int cury = getCurrentLevelClientSide();
         currentLevel.setText("Y: " + (cury == -1 ? "stop" : cury));
 

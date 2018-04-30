@@ -510,7 +510,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             label = new Label(mc, this).setColor(StyleConfig.colorTextInListNormal)
                     .setText(displayName)
                     .setDynamic(true)
-                    .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
+                    .setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT)
                     .setDesiredWidth(58);
             if (c == null) {
                 label.setTooltips(TextFormatting.GREEN + "All routable inventories")

@@ -135,7 +135,7 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
 //        players = new ArrayList<String>(newPlayers);
 //        allowedPlayers.removeChildren();
 //        for (String player : players) {
-//            allowedPlayers.addChild(new Label(mc, this).setText(player).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+//            allowedPlayers.addChild(new Label(mc, this).setText(player).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT));
 //        }
     }
 
@@ -172,7 +172,7 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
             channelNameField.setText(channelFromServer.getName());
             blacklistMode.setCurrentChoice(channelFromServer.isWhitelist() ? 0 : 1);
             for (String player : channelFromServer.getPlayers()) {
-                players.addChild(new Label(mc, this).setText(player).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+                players.addChild(new Label(mc, this).setText(player).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT));
             }
         } else {
             channelNameField.setText("");

@@ -58,11 +58,11 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
         blocks[0] = new BlockRender(mc, this).setLayoutHint(80, 5, 18, 18);
         blocks[1] = new BlockRender(mc, this).setLayoutHint(80, 25, 18, 18);
         blocks[2] = new BlockRender(mc, this).setLayoutHint(80, 45, 18, 18);
-        labels[0] = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT); labels[0].setLayoutHint(100, 5, 74, 18);
-        labels[1] = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT); labels[1].setLayoutHint(100, 25, 74, 18);
-        labels[2] = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT); labels[2].setLayoutHint(100, 45, 74, 18);
-        name = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT); name.setLayoutHint(22, 31, 78, 16);
-        rfTick = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT); rfTick.setLayoutHint(22, 47, 78, 16);
+        labels[0] = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT); labels[0].setLayoutHint(100, 5, 74, 18);
+        labels[1] = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT); labels[1].setLayoutHint(100, 25, 74, 18);
+        labels[2] = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT); labels[2].setLayoutHint(100, 45, 74, 18);
+        name = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT); name.setLayoutHint(22, 31, 78, 16);
+        rfTick = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT); rfTick.setLayoutHint(22, 47, 78, 16);
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar).
                 addChildren(blocks[0], labels[0], blocks[1], labels[1], blocks[2], labels[2], rfTick, name);

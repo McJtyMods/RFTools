@@ -231,7 +231,7 @@ public class GuiCraftingGrid {
                         .setLayoutHint(0, 0, 18, 18)).
                 addChild(new mcjty.lib.gui.widgets.Label(mc, gui)
                         .setColor(color)
-                        .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
+                        .setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT)
                         .setText(readableName)
                         .setLayoutHint(20, 0, 30, 18));
 

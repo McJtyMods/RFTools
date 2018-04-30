@@ -118,10 +118,10 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
         toplevel.addChild(new Button(mc, this).setText("u").addButtonEvent(parent -> move(0, 1, 0)).setLayoutHint(45, 70, 16, 15));
         toplevel.addChild(new Button(mc, this).setText("U").addButtonEvent(parent -> move(0, 16, 0)).setLayoutHint(61, 70, 16, 15));
 
-        offsetLabel = new Label(mc, this).setText("Off: " + BlockPosTools.toString(tileEntity.getDataOffset())).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
+        offsetLabel = new Label(mc, this).setText("Off: " + BlockPosTools.toString(tileEntity.getDataOffset())).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
         offsetLabel.setLayoutHint(4, 90, 80, 14);
         toplevel.addChild(offsetLabel);
-        dimensionLabel = new Label(mc, this).setText("Dim: " + BlockPosTools.toString(tileEntity.getDataDim())).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
+        dimensionLabel = new Label(mc, this).setText("Dim: " + BlockPosTools.toString(tileEntity.getDataDim())).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
         dimensionLabel.setLayoutHint(4, 105, 80, 14);
         toplevel.addChild(dimensionLabel);
         progressLabel = new Label(mc, this).setText("");

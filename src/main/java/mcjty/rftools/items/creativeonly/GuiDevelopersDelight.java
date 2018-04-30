@@ -185,26 +185,26 @@ public class GuiDevelopersDelight extends GuiScreen {
         IBlockState state = Minecraft.getMinecraft().world.getBlockState(selected);
         Block block = state.getBlock();
 
-        blockClassList.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText("Loc Name: " + block.getLocalizedName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
-        blockClassList.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText("Unloc Name: " + block.getUnlocalizedName()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
-        blockClassList.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText("Block Name: " + Block.REGISTRY.getNameForObject(block)).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+        blockClassList.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText("Loc Name: " + block.getLocalizedName()).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT));
+        blockClassList.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText("Unloc Name: " + block.getUnlocalizedName()).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT));
+        blockClassList.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText("Block Name: " + Block.REGISTRY.getNameForObject(block)).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT));
 
         for (String c : blockClasses) {
-            blockClassList.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText("Class: " + c).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+            blockClassList.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText("Class: " + c).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT));
         }
 
         teClassList.removeChildren();
         for (String c : teClasses) {
-            teClassList.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(c).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+            teClassList.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(c).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT));
         }
 
         nbtDataList.removeChildren();
         for (Map.Entry<String,DelightingInfoHelper.NBTDescription> me : nbtData.entrySet()) {
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
-            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(me.getKey()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(70));
+            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(me.getKey()).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setDesiredWidth(70));
             DelightingInfoHelper.NBTDescription value = me.getValue();
-            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(value.getType()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(50));
-            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(value.getValue()).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(value.getType()).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setDesiredWidth(50));
+            panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(value.getValue()).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT));
             nbtDataList.addChild(panel);
         }
 

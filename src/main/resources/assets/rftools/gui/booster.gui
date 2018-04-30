@@ -1,0 +1,43 @@
+container {
+    slot('input') {
+        pos(7,8)
+    }
+    playerslots(27,102)
+}
+window {
+    size(194,184)
+
+    event('redstone','booster.setRsMode')
+
+    panel('','positional') {
+        bg1('rftools:textures/gui/booster.png')
+        energybar('energybar') {
+            hint(8,101,10,76)
+            showtext(false)
+        }
+        imagechoicelabel('redstone') {
+            channel('redstone')
+            desired(16,16)
+            hint(171,76,-1,-1)
+            image('rftools:textures/gui/guielements.png')
+            dim(0,0,256,256)
+            choices {
+                choice('Ignored') {
+                    uv(0,0)
+                    tooltips('Redstone mode:','Ignored')
+                    image('rftools:textures/gui/guielements.png')
+                }
+                choice('Off') {
+                    uv(16,0)
+                    tooltips('Redstone mode:','Off to activate')
+                    image('rftools:textures/gui/guielements.png')
+                }
+                choice('On') {
+                    uv(32,0)
+                    tooltips('Redstone mode:','On to activate')
+                    image('rftools:textures/gui/guielements.png')
+                }
+            }
+        }
+    }
+}

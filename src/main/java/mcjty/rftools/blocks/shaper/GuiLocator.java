@@ -123,11 +123,11 @@ public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
 
         toplevel.addChild(new Label<>(mc, this)
                 .setColor(0x993300)
-                .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
+                .setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT)
                 .setText("RF per scan (every " + ScannerConfiguration.ticksPerLocatorScan + " ticks):")
                 .setLayoutHint(8, 186, 156, 14));
         energyLabel = new Label(mc, this).setText("");
-        energyLabel.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
+        energyLabel.setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
         energyLabel.setLayoutHint(8, 200, 156, 14);
         toplevel.addChild(energyLabel);
 

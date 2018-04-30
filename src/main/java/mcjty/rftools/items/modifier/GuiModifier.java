@@ -115,7 +115,7 @@ public class GuiModifier extends GenericGuiContainer<GenericTileEntity> {
             Panel panel = new Panel(mc, this).setLayout(new PositionalLayout()).setDesiredHeight(18).setDesiredWidth(150);
             panel.addChild(new BlockRender(mc, this).setLayoutHint(1, 0, 18, 18).setRenderItem(stackIn));
             panel.addChild(new Label<>(mc, this).setText(type.getCode() + " -> " + op.getCode())
-                    .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
+                    .setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT)
                     .setLayoutHint(22, 0, 100, 18));
             panel.addChild(new BlockRender(mc, this).setLayoutHint(130, 0, 18, 18).setRenderItem(stackOut));
 

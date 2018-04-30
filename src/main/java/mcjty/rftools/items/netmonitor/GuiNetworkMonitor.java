@@ -188,8 +188,8 @@ public class GuiNetworkMonitor extends GuiItemScreen {
                 Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
 
                 panel.addChild(new BlockRender(mc, this).setRenderItem(state.getBlock()));
-                panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText(displayName).setColor(color).setDesiredWidth(100));
-                panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setText(BlockPosTools.toString(coordinate)).setColor(color).setDesiredWidth(75));
+                panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setText(displayName).setColor(color).setDesiredWidth(100));
+                panel.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setText(BlockPosTools.toString(coordinate)).setColor(color).setDesiredWidth(75));
                 EnergyBar energyLabel = oldLabelMap == null ? null : oldLabelMap.get(coordinate);
                 if (energyLabel == null) {
                     energyLabel = new EnergyBar(mc, this).setHorizontal();

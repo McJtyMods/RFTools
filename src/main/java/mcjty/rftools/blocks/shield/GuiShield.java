@@ -222,7 +222,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
                 n = filter.getFilterName();
             }
             Panel panel = new Panel(mc, this).setLayout(new HorizontalLayout());
-            panel.addChild(new Label(mc, this).setText(n).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT).setDesiredWidth(85));
+            panel.addChild(new Label(mc, this).setText(n).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setDesiredWidth(85));
             String actionName;
             boolean solid = (filter.getAction() & ShieldFilter.ACTION_SOLID) != 0;
             boolean damage = (filter.getAction() & ShieldFilter.ACTION_DAMAGE) != 0;
@@ -235,7 +235,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
             } else {
                 actionName = ACTION_PASS;
             }
-            panel.addChild(new Label(mc, this).setText(actionName).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+            panel.addChild(new Label(mc, this).setText(actionName).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT));
             filterList.addChild(panel);
         }
     }

@@ -90,7 +90,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
         toplevel.addChild(energyBar);
 
         Label angleI = new Label(mc, this).setText("Angle");
-        angleI.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
+        angleI.setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
         angleI.setLayoutHint(16, 30, 32, 15);
         angleLabel = new ScrollableLabel(mc, this).setRealMinimum(0).setRealMaximum(360)
                 .setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT)
@@ -105,7 +105,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
         toplevel.addChildren(angleI, angleLabel, angleSlider, angleM, angleP);
 
         Label scaleI = new Label(mc, this).setText("Scale");
-        scaleI.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
+        scaleI.setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
         scaleI.setLayoutHint(16, 62, 32, 15);
         scaleLabel = new ScrollableLabel(mc, this).setRealMinimum(0).setRealMaximum(100)
                 .setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT)
@@ -120,7 +120,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
         toplevel.addChildren(scaleI, scaleLabel, scaleSlider, scaleM, scaleP);
 
         Label offsetI = new Label(mc, this).setText("Offset");
-        offsetI.setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
+        offsetI.setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
         offsetI.setLayoutHint(16, 94, 32, 15);
         offsetLabel = new ScrollableLabel(mc, this).setRealMinimum(0).setRealMaximum(100)
                 .setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT)
@@ -194,7 +194,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
         int dy = o * 53;
         sidePanel.addChild(new Label<>(mc, this)
                 .setText(label)
-                .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
+                .setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT)
                 .setLayoutHint(new PositionalLayout.PositionalHint(8, dy+8, 12, 13)));
 
         ImageLabel redstoneOn = new ImageLabel(mc, this).setImage(iconGuiElements, 16, 96);

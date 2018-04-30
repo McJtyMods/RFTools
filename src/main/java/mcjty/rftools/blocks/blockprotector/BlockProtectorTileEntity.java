@@ -1,13 +1,18 @@
 package mcjty.rftools.blocks.blockprotector;
 
+import li.cil.oc.api.machine.Arguments;
+import li.cil.oc.api.machine.Callback;
+import li.cil.oc.api.machine.Context;
+import li.cil.oc.api.network.SimpleComponent;
 import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.api.smartwrench.SmartWrenchSelector;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
-import mcjty.lib.network.Argument;
+import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.RedstoneMode;
+import mcjty.typed.TypedMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,28 +22,20 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.Optional;
 
 import javax.annotation.Nullable;
-
-import li.cil.oc.api.machine.Arguments;
-import li.cil.oc.api.machine.Callback;
-import li.cil.oc.api.machine.Context;
-import li.cil.oc.api.network.SimpleComponent;
-
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 @Optional.InterfaceList({
-        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers"),
-//        @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")
+        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers")
 })
 public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity implements SmartWrenchSelector, ITickable,
         IMachineInformation, SimpleComponent /*, IPeripheral*/ {
 
-    public static final String CMD_RSMODE = "rsMode";
+    public static final String CMD_RSMODE = "protector.setRsMode";
     public static final String COMPONENT_NAME = "block_protector";
 
     private int id = -1;
@@ -46,46 +43,6 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
 
     // Relative coordinates (relative to this tile entity)
     private Set<BlockPos> protectedBlocks = new HashSet<>();
-
-//    @Override
-//    @Optional.Method(modid = "ComputerCraft")
-//    public String getType() {
-//        return COMPONENT_NAME;
-//    }
-//
-//    @Override
-//    @Optional.Method(modid = "ComputerCraft")
-//    public String[] getMethodNames() {
-//        return new String[] { "getRedstoneMode", "setRedstoneMode" };
-//    }
-//
-//    @Override
-//    @Optional.Method(modid = "ComputerCraft")
-//    public Object[] callMethod(IComputerAccess computer, ILuaContext context, int method, Object[] arguments) throws LuaException, InterruptedException {
-//        switch (method) {
-//            case 0: return new Object[] { getRedstoneMode().getDescription() };
-//            case 1: return setRedstoneMode((String) arguments[0]);
-//        }
-//        return new Object[0];
-//    }
-//
-//    @Override
-//    @Optional.Method(modid = "ComputerCraft")
-//    public void attach(IComputerAccess computer) {
-//
-//    }
-//
-//    @Override
-//    @Optional.Method(modid = "ComputerCraft")
-//    public void detach(IComputerAccess computer) {
-//
-//    }
-//
-//    @Override
-//    @Optional.Method(modid = "ComputerCraft")
-//    public boolean equals(IPeripheral other) {
-//        return false;
-//    }
 
     @Override
     @Optional.Method(modid = "opencomputers")
@@ -370,14 +327,13 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+        boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
         }
         if (CMD_RSMODE.equals(command)) {
-            String m = args.get("rs").getString();
-            setRSMode(RedstoneMode.getMode(m));
+            setRSMode(RedstoneMode.values()[params.get(ImageChoiceLabel.PARAM_CHOICE_IDX)]);
             return true;
         }
         return false;

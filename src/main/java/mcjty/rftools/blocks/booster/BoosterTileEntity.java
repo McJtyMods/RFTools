@@ -1,12 +1,16 @@
 package mcjty.rftools.blocks.booster;
 
-import mcjty.lib.container.*;
+import mcjty.lib.container.ContainerFactory;
+import mcjty.lib.container.DefaultSidedInventory;
+import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
-import mcjty.lib.network.Argument;
+import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.lib.varia.RedstoneMode;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.environmental.EnvModuleProvider;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
+import mcjty.typed.TypedMap;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -14,25 +18,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 
 import java.util.List;
-import java.util.Map;
 
 public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable {
 
-    public static final String CMD_RSMODE = "rsMode";
+    public static final String CMD_RSMODE = "booster.setRsMode";
 
     public static final String CONTAINER_INVENTORY = "container";
     public static final int SLOT_MODULE = 0;
 
-    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
-        @Override
-        protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), CONTAINER_INVENTORY, SLOT_MODULE, 7, 8, 1, 18, 1, 18);
-            layoutPlayerInventorySlots(27, 102);
-        }
-    };
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(new ResourceLocation(RFTools.MODID, "gui/booster.gui"));
 
     static final ModuleSupport MODULE_SUPPORT = new ModuleSupport(SLOT_MODULE) {
         @Override
@@ -141,14 +139,13 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+        boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
         }
         if (CMD_RSMODE.equals(command)) {
-            String m = args.get("rs").getString();
-            setRSMode(RedstoneMode.getMode(m));
+            setRSMode(RedstoneMode.values()[params.get(ImageChoiceLabel.PARAM_CHOICE_IDX)]);
             return true;
         }
         return false;

@@ -73,19 +73,19 @@ public class GuiInvChecker extends GenericGuiContainer<InvCheckerTileEntity> {
 
         toplevel
                 .addChild(new Label(mc, this).setText("Slot:")
-                        .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
+                        .setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT)
                         .setLayoutHint(10, 3, 50, 14))
                 .addChild(slotField)
                 .addChild(new Label(mc, this).setText("Amount:")
-                        .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
+                        .setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT)
                         .setLayoutHint(10, 19, 50, 14))
                 .addChild(amountField)
                 .addChild(new Label(mc, this).setText("Meta:")
-                        .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
+                        .setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT)
                         .setLayoutHint(10, 35, 50, 14))
                 .addChild(metaLabel)
                 .addChild(new Label(mc, this).setText("Oredict:")
-                .setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT)
+                .setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT)
                 .setLayoutHint(10, 51, 50, 14))
                 .addChild(oreDictLabel);
 

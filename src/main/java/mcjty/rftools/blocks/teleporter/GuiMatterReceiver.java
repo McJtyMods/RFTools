@@ -133,7 +133,7 @@ public class GuiMatterReceiver extends GenericGuiContainer<MatterReceiverTileEnt
         players = new ArrayList<>(newPlayers);
         allowedPlayers.removeChildren();
         for (String player : players) {
-            allowedPlayers.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(player).setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT));
+            allowedPlayers.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText(player).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT));
         }
     }
 

@@ -178,7 +178,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         boolean solid = ShapeCardItem.isSolid(heldItem);
         solidLabel.setChoice(solid ? "Solid" : "Hollow");
 
-        blocksLabel = new Label(mc, this).setText("# ").setHorizontalAlignment(HorizontalAlignment.ALIGH_LEFT);
+        blocksLabel = new Label(mc, this).setText("# ").setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
         blocksLabel.setDesiredWidth(100).setDesiredHeight(16);
 
         Panel modePanel = new Panel(mc, this).setLayout(new VerticalLayout()).setDesiredWidth(170).addChild(shapePanel).addChild(blocksLabel);
