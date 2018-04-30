@@ -109,7 +109,6 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         currentLevel.setText("Y: " + (cury == -1 ? "stop" : cury));
 
         ItemStack card = tileEntity.getStackInSlot(SLOT_TAB);
-        boolean enabled;
         if (card.isEmpty()) {
             window.setFlag("!validcard");
         } else if (card.getItem() == BuilderSetup.shapeCardItem) {
