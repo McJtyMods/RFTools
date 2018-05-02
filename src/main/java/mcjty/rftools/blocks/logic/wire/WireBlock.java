@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.logic.wire;
 
 import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.LogicSlabBlock;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
@@ -22,7 +22,7 @@ import java.util.List;
 public class WireBlock extends LogicSlabBlock<WireTileEntity, EmptyContainer> {
 
     public WireBlock() {
-        super(Material.IRON, "wire_block", WireTileEntity.class, EmptyContainer.class);
+        super(RFTools.instance, Material.IRON, WireTileEntity.class, EmptyContainer.class, "wire_block", false);
     }
 
     @SideOnly(Side.CLIENT)

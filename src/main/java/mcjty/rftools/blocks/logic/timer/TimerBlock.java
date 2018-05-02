@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.logic.timer;
 
 import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.LogicSlabBlock;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
@@ -25,7 +25,7 @@ import java.util.List;
 public class TimerBlock extends LogicSlabBlock<TimerTileEntity, EmptyContainer> {
 
     public TimerBlock() {
-        super(Material.IRON, "timer_block", TimerTileEntity.class, EmptyContainer.class);
+        super(RFTools.instance, Material.IRON, TimerTileEntity.class, EmptyContainer.class, "timer_block", false);
     }
 
     @SideOnly(Side.CLIENT)

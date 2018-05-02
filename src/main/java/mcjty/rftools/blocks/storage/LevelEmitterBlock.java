@@ -1,9 +1,9 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.api.IModuleSupport;
+import mcjty.lib.container.LogicSlabBlock;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.theoneprobe.api.ElementAlignment;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -35,7 +35,7 @@ public class LevelEmitterBlock extends LogicSlabBlock<LevelEmitterTileEntity, Le
     public static final PropertyBool MODULE = PropertyBool.create("module");
 
     public LevelEmitterBlock() {
-        super(Material.IRON, "level_emitter", LevelEmitterTileEntity.class, LevelEmitterContainer.class, true);
+        super(RFTools.instance, Material.IRON, LevelEmitterTileEntity.class, LevelEmitterContainer.class, "level_emitter", true);
     }
 
     @SideOnly(Side.CLIENT)
@@ -129,6 +129,6 @@ public class LevelEmitterBlock extends LogicSlabBlock<LevelEmitterTileEntity, Le
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, LOGIC_FACING, META_INTERMEDIATE, OUTPUTPOWER, MODULE);
+        return new BlockStateContainer(this, LOGIC_FACING, META_INTERMEDIATE, MODULE);
     }
 }

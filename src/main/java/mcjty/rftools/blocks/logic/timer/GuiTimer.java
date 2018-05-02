@@ -13,7 +13,7 @@ import mcjty.lib.network.Argument;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 public class GuiTimer extends GenericGuiContainer<TimerTileEntity> {
     public static final int TIMER_WIDTH = 168;

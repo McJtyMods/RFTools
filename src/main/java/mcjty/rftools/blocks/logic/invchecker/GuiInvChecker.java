@@ -13,7 +13,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 public class GuiInvChecker extends GenericGuiContainer<InvCheckerTileEntity> {
     public static final int INVCHECKER_WIDTH = 180;

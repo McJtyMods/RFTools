@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.logic.sequencer;
 
 import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.LogicSlabBlock;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
 import mcjty.rftools.theoneprobe.TheOneProbeSupport;
 import mcjty.theoneprobe.api.ElementAlignment;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -27,7 +27,7 @@ import java.util.List;
 public class SequencerBlock extends LogicSlabBlock<SequencerTileEntity, EmptyContainer> {
 
     public SequencerBlock() {
-        super(Material.IRON, "sequencer_block", SequencerTileEntity.class, EmptyContainer.class);
+        super(RFTools.instance, Material.IRON, SequencerTileEntity.class, EmptyContainer.class, "sequencer_block", false);
     }
 
     @SideOnly(Side.CLIENT)

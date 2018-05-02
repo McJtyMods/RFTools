@@ -1,10 +1,10 @@
 package mcjty.rftools.blocks.logic.counter;
 
 import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.LogicSlabBlock;
 import mcjty.lib.network.Arguments;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
@@ -35,7 +35,7 @@ public class CounterBlock extends LogicSlabBlock<CounterTileEntity, EmptyContain
     public static int cntReceived = 0;
 
     public CounterBlock() {
-        super(Material.IRON, "counter_block", CounterTileEntity.class, EmptyContainer.class);
+        super(RFTools.instance, Material.IRON, CounterTileEntity.class, EmptyContainer.class, "counter_block", false);
     }
 
     @SideOnly(Side.CLIENT)

@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.logic.wire;
 
-import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
+
+import mcjty.lib.container.LogicTileEntity;
 
 public class WireTileEntity extends LogicTileEntity {
 

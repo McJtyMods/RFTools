@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.logic.timer;
 
+import mcjty.lib.container.LogicTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;

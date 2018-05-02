@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.logic.sensor;
 
+import mcjty.lib.container.LogicSlabBlock;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
@@ -27,7 +27,7 @@ import java.util.List;
 public class SensorBlock extends LogicSlabBlock<SensorTileEntity, SensorContainer> {
 
     public SensorBlock() {
-        super(Material.IRON, "sensor_block", SensorTileEntity.class, SensorContainer.class);
+        super(RFTools.instance, Material.IRON, SensorTileEntity.class, SensorContainer.class, "sensor_block", false);
     }
 
     @Override

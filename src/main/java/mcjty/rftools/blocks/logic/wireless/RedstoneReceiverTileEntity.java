@@ -1,11 +1,11 @@
 package mcjty.rftools.blocks.logic.wireless;
 
-import java.util.Map;
-
 import mcjty.lib.network.Argument;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
+
+import java.util.Map;
 
 public class RedstoneReceiverTileEntity extends RedstoneChannelTileEntity implements ITickable {
 

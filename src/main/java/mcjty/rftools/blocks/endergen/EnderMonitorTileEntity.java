@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.endergen;
 
+import mcjty.lib.container.LogicTileEntity;
 import mcjty.lib.gui.widgets.ChoiceLabel;
-import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;

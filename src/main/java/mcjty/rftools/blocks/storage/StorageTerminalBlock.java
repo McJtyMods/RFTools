@@ -1,9 +1,9 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.api.IModuleSupport;
+import mcjty.lib.container.LogicSlabBlock;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.storagemonitor.GuiStorageScanner;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerContainer;
@@ -46,7 +46,7 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
     public static final PropertyBool MODULE = PropertyBool.create("module");
 
     public StorageTerminalBlock() {
-        super(Material.IRON, "storage_terminal", StorageTerminalTileEntity.class, StorageTerminalContainer.class, true);
+        super(RFTools.instance, Material.IRON, StorageTerminalTileEntity.class, StorageTerminalContainer.class, "storage_terminal", true);
     }
 
     @SideOnly(Side.CLIENT)
@@ -248,6 +248,6 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, LOGIC_FACING, META_INTERMEDIATE, OUTPUTPOWER, MODULE);
+        return new BlockStateContainer(this, LOGIC_FACING, META_INTERMEDIATE, MODULE);
     }
 }

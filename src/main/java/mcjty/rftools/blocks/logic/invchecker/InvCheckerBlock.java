@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.logic.invchecker;
 
+import mcjty.lib.container.LogicSlabBlock;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
@@ -25,7 +25,7 @@ import java.util.List;
 public class InvCheckerBlock extends LogicSlabBlock<InvCheckerTileEntity, InvCheckerContainer> {
 
     public InvCheckerBlock() {
-        super(Material.IRON, "invchecker_block", InvCheckerTileEntity.class, InvCheckerContainer.class);
+        super(RFTools.instance, Material.IRON, InvCheckerTileEntity.class, InvCheckerContainer.class, "invchecker_block", false);
     }
 
     @Override

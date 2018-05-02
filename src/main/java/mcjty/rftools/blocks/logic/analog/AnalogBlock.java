@@ -1,9 +1,9 @@
 package mcjty.rftools.blocks.logic.analog;
 
 import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.LogicFacing;
+import mcjty.lib.container.LogicSlabBlock;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.logic.generic.LogicFacing;
-import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
 import mcjty.rftools.blocks.logic.threelogic.ThreeLogicBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -26,7 +26,7 @@ import java.util.Set;
 public class AnalogBlock extends LogicSlabBlock<AnalogTileEntity, EmptyContainer> {
 
     public AnalogBlock() {
-        super(Material.IRON, "analog_block", AnalogTileEntity.class, EmptyContainer.class);
+        super(RFTools.instance, Material.IRON, AnalogTileEntity.class, EmptyContainer.class, "analog_block", false);
     }
 
     @SideOnly(Side.CLIENT)

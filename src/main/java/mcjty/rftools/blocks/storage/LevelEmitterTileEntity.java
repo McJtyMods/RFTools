@@ -2,8 +2,8 @@ package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.LogicTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import mcjty.rftools.varia.RFToolsTools;

@@ -1,11 +1,11 @@
 package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.LogicSlabBlock;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
@@ -33,7 +33,7 @@ import java.util.List;
 public class SimpleDialerBlock extends LogicSlabBlock<SimpleDialerTileEntity, EmptyContainer> {
 
     public SimpleDialerBlock() {
-        super(Material.IRON, "simple_dialer", SimpleDialerTileEntity.class, EmptyContainer.class, SimpleDialerItemBlock.class);
+        super(RFTools.instance, Material.IRON, SimpleDialerTileEntity.class, EmptyContainer.class, SimpleDialerItemBlock.class, "simple_dialer", false);
     }
 
     @Override

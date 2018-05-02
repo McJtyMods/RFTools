@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.teleporter;
 
+import mcjty.lib.container.LogicTileEntity;
 import mcjty.lib.varia.GlobalCoordinate;
-import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 

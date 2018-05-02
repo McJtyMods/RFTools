@@ -10,7 +10,7 @@ import mcjty.lib.network.Argument;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 public class GuiRedstoneReceiver extends GenericGuiContainer<RedstoneReceiverTileEntity> {
     public static final int REDSTONE_RECEIVER_WIDTH = 168;

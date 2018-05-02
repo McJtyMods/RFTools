@@ -14,7 +14,7 @@ import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.varia.NamedEnum;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 public class GuiSensor extends GenericGuiContainer<SensorTileEntity> {
     public static final int SENSOR_WIDTH = 180;

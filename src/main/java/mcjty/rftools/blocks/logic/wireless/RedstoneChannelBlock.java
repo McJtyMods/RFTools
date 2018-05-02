@@ -1,9 +1,8 @@
 package mcjty.rftools.blocks.logic.wireless;
 
-import java.util.List;
-
+import mcjty.lib.container.LogicSlabBlock;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.items.screenmodules.ButtonModuleItem;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
@@ -29,9 +28,11 @@ import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public abstract class RedstoneChannelBlock<T extends RedstoneChannelTileEntity, C extends Container> extends LogicSlabBlock<T, C>{
+import java.util.List;
+
+public abstract class RedstoneChannelBlock<T extends RedstoneChannelTileEntity, C extends Container> extends LogicSlabBlock<T, C> {
     public RedstoneChannelBlock(Material material, String name, Class<? extends T> tileEntityClass, Class<? extends C> containerClass, Class<? extends ItemBlock> itemBlockClass) {
-        super(material, name, tileEntityClass, containerClass, itemBlockClass);
+        super(RFTools.instance, material, tileEntityClass, containerClass, itemBlockClass, name, false);
     }
 
     @SideOnly(Side.CLIENT)

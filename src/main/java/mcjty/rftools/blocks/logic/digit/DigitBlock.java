@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.logic.digit;
 
 import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.LogicSlabBlock;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.blocks.logic.generic.LogicSlabBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
@@ -27,7 +27,7 @@ public class DigitBlock extends LogicSlabBlock<DigitTileEntity, EmptyContainer> 
     public static PropertyInteger VALUE = PropertyInteger.create("value", 0, 15);
 
     public DigitBlock() {
-        super(Material.IRON, "digit_block", DigitTileEntity.class, EmptyContainer.class);
+        super(RFTools.instance, Material.IRON, DigitTileEntity.class, EmptyContainer.class, "digit_block", false);
     }
 
     @SideOnly(Side.CLIENT)
@@ -81,6 +81,6 @@ public class DigitBlock extends LogicSlabBlock<DigitTileEntity, EmptyContainer> 
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, LOGIC_FACING, META_INTERMEDIATE, OUTPUTPOWER, VALUE);
+        return new BlockStateContainer(this, LOGIC_FACING, META_INTERMEDIATE, VALUE);
     }
 }

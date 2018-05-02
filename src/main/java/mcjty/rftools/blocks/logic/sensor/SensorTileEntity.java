@@ -2,8 +2,8 @@ package mcjty.rftools.blocks.logic.sensor;
 
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.LogicTileEntity;
 import mcjty.lib.network.Argument;
-import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.BlockLiquid;
