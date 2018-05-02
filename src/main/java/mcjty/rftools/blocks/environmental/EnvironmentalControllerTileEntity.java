@@ -1,14 +1,22 @@
 package mcjty.rftools.blocks.environmental;
 
+import li.cil.oc.api.machine.Arguments;
+import li.cil.oc.api.machine.Callback;
+import li.cil.oc.api.machine.Context;
+import li.cil.oc.api.network.SimpleComponent;
 import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.gui.widgets.ImageChoiceLabel;
+import mcjty.lib.gui.widgets.ScrollableLabel;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
+import mcjty.typed.Key;
 import mcjty.typed.Type;
+import mcjty.typed.TypedMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
@@ -25,12 +33,6 @@ import net.minecraftforge.fml.common.Optional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import li.cil.oc.api.machine.Arguments;
-import li.cil.oc.api.machine.Callback;
-import li.cil.oc.api.machine.Context;
-import li.cil.oc.api.network.SimpleComponent;
-
 import java.util.*;
 
 @Optional.InterfaceList({
@@ -40,12 +42,20 @@ import java.util.*;
 public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable,
         IMachineInformation, SimpleComponent /*, IPeripheral*/ {
 
-    public static final String CMD_SETRADIUS = "setRadius";
-    public static final String CMD_SETBOUNDS = "setBounds";
-    public static final String CMD_RSMODE = "rsMode";
-    public static final String CMD_SETMODE = "setBlacklist";
-    public static final String CMD_ADDPLAYER = "addPlayer";
-    public static final String CMD_DELPLAYER = "delPlayer";
+    public static final String CMD_SETRADIUS = "env.setRadius";
+    public static final String CMD_RSMODE = "env.setRsMode";
+
+    public static final String CMD_SETBOUNDS = "env.setBounds";
+    public static final Key<Integer> PARAM_MIN = new Key<>("min", Type.INTEGER);
+    public static final Key<Integer> PARAM_MAX = new Key<>("max", Type.INTEGER);
+
+    public static final String CMD_SETMODE = "env.setBlacklist";
+    public static final Key<Integer> PARAM_MODE = new Key<>("mode", Type.INTEGER);
+
+    public static final String CMD_ADDPLAYER = "env.addPlayer";
+    public static final String CMD_DELPLAYER = "env.delPlayer";
+    public static final Key<String> PARAM_NAME = new Key<>("name", Type.STRING);
+
     public static final String CMD_GETPLAYERS = "getPlayers";
     public static final String CLIENTCMD_GETPLAYERS = "getPlayers";
 
@@ -515,33 +525,29 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+        boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
         }
-        if (CMD_SETRADIUS.equals(command)) {
-            setRadius(args.get("radius").getInteger());
-            return true;
-        } else if (CMD_SETBOUNDS.equals(command)) {
-            int miny = args.get("miny").getInteger();
-            int maxy = args.get("maxy").getInteger();
-            setMiny(miny);
-            setMaxy(maxy);
-            return true;
-        } else if (CMD_RSMODE.equals(command)) {
-            String m = args.get("rs").getString();
-            setRSMode(RedstoneMode.getMode(m));
-            return true;
-        } else if (CMD_ADDPLAYER.equals(command)) {
-            addPlayer(args.get("player").getString());
+        if (CMD_ADDPLAYER.equals(command)) {
+            addPlayer(params.get(PARAM_NAME));
             return true;
         } else if (CMD_DELPLAYER.equals(command)) {
-            delPlayer(args.get("player").getString());
+            delPlayer(params.get(PARAM_NAME));
+            return true;
+        } else if (CMD_RSMODE.equals(command)) {
+            setRSMode(RedstoneMode.values()[params.get(ImageChoiceLabel.PARAM_CHOICE_IDX)]);
+            return true;
+        } else if (CMD_SETRADIUS.equals(command)) {
+            setRadius(params.get(ScrollableLabel.PARAM_VALUE));
             return true;
         } else if (CMD_SETMODE.equals(command)) {
-            Integer m = args.get("mode").getInteger();
-            setMode(EnvironmentalMode.values()[m]);
+            setMode(EnvironmentalMode.values()[params.get(PARAM_MODE)]);
+            return true;
+        } else if (CMD_SETBOUNDS.equals(command)) {
+            setMiny(params.get(PARAM_MIN));
+            setMaxy(params.get(PARAM_MAX));
             return true;
         }
         return false;
