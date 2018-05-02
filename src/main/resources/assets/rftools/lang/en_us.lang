@@ -287,3 +287,6 @@ message.rftools.pearl_injector=\
     @fThis will inject an ender pearl in an adjacent\n\
     @fendergenic generator when a redstone signal is\n\
     @freceived.
+message.rftools.wire=\
+    @fThis logic block is just a simple\n\
+    @flag free redstone wire
