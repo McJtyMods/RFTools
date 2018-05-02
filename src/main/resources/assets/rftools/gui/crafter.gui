@@ -1,3 +1,25 @@
+container {
+    slot('ghost') {
+        pos(193,7)
+        dim(3,3)
+    }
+    slot('ghostout') {
+        pos(193,65)
+    }
+    slot('input') {
+        pos(13,97)
+        dim(13,2)
+    }
+    slot('output') {
+        pos(31,142)
+        dim(2,2)
+    }
+    slot('specificitem') {
+        items('rftools:filter_module')
+        pos(157,43)
+    }
+    playerslots(85,142)
+}
 window {
     size(256,238)
 

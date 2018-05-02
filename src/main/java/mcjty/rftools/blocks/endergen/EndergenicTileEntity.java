@@ -17,24 +17,26 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.hud.IHudSupport;
 import mcjty.rftools.network.PacketGetHudLog;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.theoneprobe.api.*;
 import mcjty.typed.Type;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.energy.CapabilityEnergy;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -112,7 +114,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
 
     // This table indicates how much RF is produced when an endergenic pearl hits this block
     // at that specific chargingMode.
-    private static int rfPerHit[] = new int[]{ 0, 100, 150, 200, 400, 800, 1600, 3200, 6400, 8000, 12800, 8000, 6400, 2500, 1000, 100 };
+    private static int rfPerHit[] = new int[]{0, 100, 150, 200, 400, 800, 1600, 3200, 6400, 8000, 12800, 8000, 6400, 2500, 1000, 100};
 
     private int tickCounter = 0;            // Only used for logging, counts server ticks.
 
@@ -182,7 +184,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
             // From this injector locate if possible an injector that has a pearl and use
             // that one instead as the head of the endergenic list for post-tick processing.
             EndergenicTileEntity loop = withInjector.findEndergenicWithPredicate(new HashSet<>(), p -> !p.pearls.isEmpty());
-            if(loop == null) loop = withInjector;
+            if (loop == null) loop = withInjector;
             Set<BlockPos> done = new HashSet<>();
 
             while (loop != null) {
@@ -437,10 +439,14 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     @Override
     public String getData(int index, long millis) {
         switch (index) {
-            case 0: return Integer.toString(lastRfPerTick);
-            case 1: return Integer.toString(lastPearlsLost);
-            case 2: return Integer.toString(lastPearlsLaunched);
-            case 3: return Integer.toString(lastChargeCounter);
+            case 0:
+                return Integer.toString(lastRfPerTick);
+            case 1:
+                return Integer.toString(lastPearlsLost);
+            case 2:
+                return Integer.toString(lastPearlsLaunched);
+            case 3:
+                return Integer.toString(lastChargeCounter);
         }
         return null;
     }
@@ -453,6 +459,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
 
     /**
      * Something happens, we need to notify all ender monitors.
+     *
      * @param mode is the new mode
      */
     private void fireMonitors(EnderMonitorMode mode) {
@@ -528,7 +535,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     private void markDirtyClientNoRender() {
         markDirty();
         if (getWorld() != null) {
-            getWorld().getPlayers(EntityPlayer.class, p -> getPos().distanceSq(p.posX, p.posY, p.posZ) < 32*32)
+            getWorld().getPlayers(EntityPlayer.class, p -> getPos().distanceSq(p.posX, p.posY, p.posZ) < 32 * 32)
                     .stream()
                     .forEach(p -> RFToolsMessages.INSTANCE.sendTo(
                             new PacketSendClientCommand(RFTools.MODID, ClientCommandHandler.CMD_FLASH_ENDERGENIC,
@@ -554,6 +561,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     /**
      * Get the current destination. This function checks first if that destination is
      * still valid and if not it is reset to null (i.e. the destination was removed).
+     *
      * @return the destination TE or null if there is no valid one
      */
     private EndergenicTileEntity getDestinationTE() {
@@ -579,10 +587,10 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
             log("Fire Pearl: pearl lost due to lack of destination");
             discardPearl("Missing destination");
         } else {
-            log("Fire Pearl: pearl is launched to "+destination.getX()+","+destination.getY()+","+destination.getZ());
+            log("Fire Pearl: pearl is launched to " + destination.getX() + "," + destination.getY() + "," + destination.getZ());
             chargingMode = CHARGE_IDLE;
             pearlsLaunched++;
-            pearls.add(new EndergenicPearl(distance, destination, currentAge+1));
+            pearls.add(new EndergenicPearl(distance, destination, currentAge + 1));
             fireMonitors(EnderMonitorMode.MODE_PEARLFIRED);
         }
     }
@@ -597,7 +605,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
             log("Fire Pearl from injector: pearl lost due to lack of destination");
             discardPearl("Missing destination");
         } else {
-            log("Fire Pearl from injector: pearl is launched to "+destination.getX()+","+destination.getY()+","+destination.getZ());
+            log("Fire Pearl from injector: pearl is launched to " + destination.getX() + "," + destination.getY() + "," + destination.getZ());
             pearlsLaunched++;
             pearls.add(new EndergenicPearl(distance, destination, 0));
             fireMonitors(EnderMonitorMode.MODE_PEARLFIRED);
@@ -626,7 +634,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
             rf = (int) (rf * (getInfusedFactor() + 2.0f) / 2.0f);
 
             // Give a bonus for pearls that have been around a bit longer.
-            int a = age*5;
+            int a = age * 5;
             if (a > 100) {
                 a = 100;
             }
@@ -700,6 +708,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
 
     /**
      * Calculate the distance in ticks between this endergenic generator and the given coordinate.
+     *
      * @param destination is the coordinate of the new destination
      * @return is the distance in ticks
      */
@@ -738,7 +747,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         goodCounter = tagCompound.getByte("good");
         pearls.clear();
         NBTTagList list = tagCompound.getTagList("pearls", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < list.tagCount() ; i++) {
+        for (int i = 0; i < list.tagCount(); i++) {
             NBTTagCompound tc = list.getCompoundTagAt(i);
             EndergenicPearl pearl = new EndergenicPearl(tc);
             pearls.add(pearl);
@@ -842,6 +851,48 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean wrenchUse(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
+        if (world.isRemote) {
+            SoundEvent pling = SoundEvent.REGISTRY.getObject(new ResourceLocation("block.note.pling"));
+            world.playSound(player, pos, pling, SoundCategory.BLOCKS, 1.0f, 1.0f);
+            useWrench(player);
+        }
+        return true;
+    }
+
+
+    @Override
+    @net.minecraftforge.fml.common.Optional.Method(modid = "theoneprobe")
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        if (mode == ProbeMode.EXTENDED) {
+            IItemStyle style = probeInfo.defaultItemStyle().width(16).height(13);
+            ILayoutStyle layoutStyle = probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER);
+            probeInfo.text(TextFormatting.BLUE + "Stats over the last 5 seconds:");
+            probeInfo.horizontal(layoutStyle)
+                    .item(new ItemStack(Items.REDSTONE), style)
+                    .text("Charged " + getLastChargeCounter() + " time(s)");
+            probeInfo.horizontal(layoutStyle)
+                    .item(new ItemStack(Items.ENDER_PEARL), style)
+                    .text("Fired " + getLastPearlsLaunched())
+                    .text(" / Lost " + getLastPearlsLost());
+            if (getLastPearlsLost() > 0) {
+                probeInfo.text(TextFormatting.RED + getLastPearlsLostReason());
+            }
+            if (getLastPearlArrivedAt() > -2) {
+                probeInfo.text("Last pearl arrived at " + getLastPearlArrivedAt());
+            }
+            probeInfo.horizontal()
+                    .text(TextFormatting.GREEN + "RF Gain " + getLastRfGained())
+                    .text(" / ")
+                    .text(TextFormatting.RED + "Lost " + getLastRfLost())
+                    .text(" (RF/t " + getLastRfPerTick() + ")");
+        } else {
+            probeInfo.text("(sneak to get statistics)");
+        }
     }
 
 }

@@ -1,5 +1,16 @@
+container {
+    slot('input') {
+        pos(7,8)
+        dim(1,7)
+    }
+    playerslots(27,142)
+}
 window {
     size(194,224)
+
+    event('redstone','env.setRsMode')
+    event('radius','env.setRadius')
+
     panel('','positional') {
         bg1('rftools:textures/gui/environmentalcontroller.png')
         panel('','vertical') {

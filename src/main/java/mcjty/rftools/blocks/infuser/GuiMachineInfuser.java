@@ -13,12 +13,13 @@ import net.minecraft.util.ResourceLocation;
 
 import java.awt.Rectangle;
 
+import static mcjty.lib.entity.GenericEnergyStorageTileEntity.getCurrentRF;
+
 public class GuiMachineInfuser extends GenericGuiContainer<MachineInfuserTileEntity> {
     public static final int INFUSER_WIDTH = 180;
     public static final int INFUSER_HEIGHT = 152;
 
     private EnergyBar energyBar;
-//    private ImageLabel arrow;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/machineinfuser.png");
 
@@ -34,36 +35,31 @@ public class GuiMachineInfuser extends GenericGuiContainer<MachineInfuserTileEnt
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored();
-        energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(10, 7, 8, 54).setShowText(false);
-        energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
-
-//        arrow = new ImageLabel(mc, this).setImage(iconGuiElements, 192, 0);
-//        arrow.setLayoutHint(90, 26, 16, 16);
+        energyBar = new EnergyBar(mc, this).setName("energybar").setVertical().setLayoutHint(10, 7, 8, 54).setShowText(false);
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChild(energyBar); //.addChild(arrow);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
+
+        initializeFields();
+
         tileEntity.requestRfFromServer(RFTools.MODID);
-//        tileEntity.requestResearchingFromServer();
+    }
+
+    private void initializeFields() {
+        energyBar = window.findChild("energybar");
+        energyBar.setMaxValue(tileEntity.getMaxEnergyStored());
+        energyBar.setValue(getCurrentRF());
     }
 
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
-//        int researching = tileEntity.getResearching();
-//        if (researching > 0) {
-//            arrow.setImage(iconGuiElements, 144, 0);
-//        } else {
-//            arrow.setImage(iconGuiElements, 192, 0);
-//        }
-
         drawWindow();
 
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
         tileEntity.requestRfFromServer(RFTools.MODID);
-//        tileEntity.requestResearchingFromServer();
     }
 }

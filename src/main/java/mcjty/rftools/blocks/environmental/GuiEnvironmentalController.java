@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.environmental;
 
 import mcjty.lib.base.StyleConfig;
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.entity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.Window;
@@ -37,8 +38,8 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
     private TextField nameField;
     private WidgetList playersList;
 
-    public GuiEnvironmentalController(EnvironmentalControllerTileEntity environmentalControllerTileEntity, EnvironmentalControllerContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, environmentalControllerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "envctrl");
+    public GuiEnvironmentalController(EnvironmentalControllerTileEntity tileEntity, GenericContainer container) {
+        super(RFTools.instance, RFToolsMessages.INSTANCE, tileEntity, container, RFTools.GUI_MANUAL_MAIN, "envctrl");
     }
 
     @Override
@@ -60,6 +61,14 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
 
         ((ImageChoiceLabel)window.findChild("redstone")).setCurrentChoice(tileEntity.getRSMode().ordinal());
 
+        int r = tileEntity.getRadius();
+        if (r < 5) {
+            r = 5;
+        } else if (r > 100) {
+            r = 100;
+        }
+        ((ScrollableLabel)window.findChild("radius")).setRealValue(r);
+
         playersList = window.findChild("players");
 
         minyTextField = window.findChild("miny");
@@ -68,11 +77,9 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
     }
 
     private void setupEvents() {
-        window.addChannelEvent("redstone", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, EnvironmentalControllerTileEntity.CMD_RSMODE, params));
         window.addChannelEvent("add", (source, params) -> addPlayer());
         window.addChannelEvent("del", (source, params) -> delPlayer());
         window.addChannelEvent("mode", (source, params) -> changeMode(params.get(ChoiceLabel.PARAM_CHOICE)));
-        window.addChannelEvent("radius", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, EnvironmentalControllerTileEntity.CMD_SETRADIUS, params));
         window.addChannelEvent("miny", (source, params) -> sendBounds(true));
         window.addChannelEvent("maxy", (source, params) -> sendBounds(false));
     }
@@ -165,7 +172,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         requestListsIfNeeded();
         populatePlayers();
         enableButtons();

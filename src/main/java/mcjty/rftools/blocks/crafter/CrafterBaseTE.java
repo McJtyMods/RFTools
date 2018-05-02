@@ -4,7 +4,6 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
-import mcjty.lib.network.Argument;
 import mcjty.lib.varia.ItemStackList;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.NullSidedInvWrapper;
@@ -46,7 +45,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     public static final String CMD_REMEMBER = "crafter.remember";
     public static final String CMD_FORGET = "crafter.forget";
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, CrafterContainer.factory,
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, CrafterContainer.CONTAINER_FACTORY,
             10 + CrafterContainer.BUFFER_SIZE + CrafterContainer.BUFFEROUT_SIZE + 1);
 
     private ItemStackList ghostSlots = ItemStackList.create(CrafterContainer.BUFFER_SIZE + CrafterContainer.BUFFEROUT_SIZE);
@@ -207,7 +206,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
     @Override
     public int[] getSlotsForFace(EnumFacing side) {
-        return CrafterContainer.factory.getAccessibleSlots();
+        return CrafterContainer.CONTAINER_FACTORY.getAccessibleSlots();
     }
 
     @Override
@@ -215,12 +214,12 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         if (!isItemValidForSlot(index, stack)) {
             return false;
         }
-        return CrafterContainer.factory.isInputSlot(index);
+        return CrafterContainer.CONTAINER_FACTORY.isInputSlot(index);
     }
 
     @Override
     public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
-        return CrafterContainer.factory.isOutputSlot(index);
+        return CrafterContainer.CONTAINER_FACTORY.isOutputSlot(index);
     }
 
     @Override

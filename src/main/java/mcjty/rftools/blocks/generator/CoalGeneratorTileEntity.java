@@ -3,15 +3,18 @@ package mcjty.rftools.blocks.generator;
 
 import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.compat.RedstoneFluxCompatibility;
-import mcjty.lib.container.*;
+import mcjty.lib.container.ContainerFactory;
+import mcjty.lib.container.DefaultSidedInventory;
+import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyProviderTileEntity;
-import mcjty.lib.network.Argument;
+import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
+import mcjty.typed.TypedMap;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.properties.PropertyBool;
@@ -28,6 +31,7 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -39,29 +43,18 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Map;
 
 public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity implements ITickable, DefaultSidedInventory,
         IMachineInformation {
 
-    public static final String CMD_RSMODE = "rsMode";
+    public static final String CMD_RSMODE = "coalgen.setRsMode";
 
     public static final PropertyBool WORKING = PropertyBool.create("working");
 
     public static final int SLOT_COALINPUT = 0;
     public static final int SLOT_CHARGEITEM = 1;
 
-    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
-        @Override
-        protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM,
-                    new ItemStack(Items.COAL),
-                    new ItemStack(Blocks.COAL_BLOCK)),
-                    ContainerFactory.CONTAINER_CONTAINER, SLOT_COALINPUT, 82, 24, 1, 18, 1, 18);
-            addSlotBox(new SlotDefinition(SlotType.SLOT_CONTAINER), ContainerFactory.CONTAINER_CONTAINER, SLOT_CHARGEITEM, 118, 24, 1, 18, 1, 18);
-            layoutPlayerInventorySlots(10, 70);
-        }
-    };
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(new ResourceLocation(RFTools.MODID, "gui/coalgenerator.gui"));
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, 2);
 
@@ -295,14 +288,13 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+        boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
         }
         if (CMD_RSMODE.equals(command)) {
-            String m = args.get("rs").getString();
-            setRSMode(RedstoneMode.getMode(m));
+            setRSMode(RedstoneMode.values()[params.get(ImageChoiceLabel.PARAM_CHOICE_IDX)]);
             return true;
         }
 

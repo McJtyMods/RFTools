@@ -1,6 +1,12 @@
 package mcjty.rftools.blocks.environmental;
 
+import mcjty.lib.builder.BlockFlags;
+import mcjty.lib.container.BaseBlock;
+import mcjty.lib.container.GenericBlock;
+import mcjty.lib.container.GenericContainer;
+import mcjty.lib.varia.ItemStackTools;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.crafting.NBTMatchingRecipe;
 import mcjty.rftools.items.SyringeItem;
 import mcjty.rftools.items.envmodules.*;
@@ -16,6 +22,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -24,7 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EnvironmentalSetup {
-    public static EnvironmentalControllerBlock environmentalControllerBlock;
+    public static GenericBlock<EnvironmentalControllerTileEntity, GenericContainer> environmentalControllerBlock;
 
     public static RegenerationEModuleItem regenerationEModuleItem;
     public static RegenerationPlusEModuleItem regenerationPlusEModuleItem;
@@ -50,7 +57,22 @@ public class EnvironmentalSetup {
     public static SlownessEModuleItem slownessEModuleItem;
 
     public static void init() {
-        environmentalControllerBlock = new EnvironmentalControllerBlock();
+
+        environmentalControllerBlock = ModBlocks.builderFactory.<EnvironmentalControllerTileEntity> builder("environmental_controller")
+                .tileEntityClass(EnvironmentalControllerTileEntity.class)
+                .container(EnvironmentalControllerTileEntity.CONTAINER_FACTORY)
+                .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.NON_OPAQUE, BlockFlags.RENDER_SOLID, BlockFlags.RENDER_TRANSLUCENT)
+                .lightValue(13)
+                .rotationType(BaseBlock.RotationType.NONE)
+                .moduleSupport(EnvironmentalControllerTileEntity.MODULE_SUPPORT)
+                .guiId(RFTools.GUI_ENVIRONMENTAL_CONTROLLER)
+                .information("message.rftools.shiftmessage")
+                .informationShift("message.rftools.environmental_controller",
+                        stack -> Integer.toString(ItemStackTools.mapTag(stack, tag -> tag.getInteger("radius"), 0)),
+                        stack -> Integer.toString(ItemStackTools.mapTag(stack, tag -> tag.getInteger("miny"), 0)),
+                        stack -> Integer.toString(ItemStackTools.mapTag(stack, tag -> tag.getInteger("maxy"), 0)))
+                .build();
+
         regenerationEModuleItem = new RegenerationEModuleItem();
         regenerationPlusEModuleItem = new RegenerationPlusEModuleItem();
         speedEModuleItem = new SpeedEModuleItem();
@@ -76,7 +98,11 @@ public class EnvironmentalSetup {
 
     @SideOnly(Side.CLIENT)
     public static void initClient() {
+
         environmentalControllerBlock.initModel();
+        environmentalControllerBlock.setGuiClass(GuiEnvironmentalController.class);
+        ClientRegistry.bindTileEntitySpecialRenderer(EnvironmentalControllerTileEntity.class, new EnvironmentalTESR());
+
         regenerationEModuleItem.initModel();
         regenerationPlusEModuleItem.initModel();
         speedEModuleItem.initModel();

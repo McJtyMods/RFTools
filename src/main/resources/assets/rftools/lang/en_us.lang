@@ -270,4 +270,20 @@ message.rftools.spawner=\
     @fof the appropriate type, RF power and also it\n\
     @fneeds beams of energized matter.\n\
     @eInfusing bonus: reduced power usage.
-
+message.rftools.environmental_controller=\
+    @aArea: radius %s (between %s and %s)\n\
+    @fControl the environment around you with various\n\
+    @fmodules. There are modules for things like regeneration,\n\
+    @fspeed...\n\
+    @eInfusing bonus: reduced power consumption.
+message.rftools.endergenic=\
+    @fGenerate power out of ender pearls. You need at\n\
+    @fleast two generators for this to work and the setup\n\
+    @fis relatively complicated. Timing is crucial.\n\
+    @eInfusing bonus: increased power generation and\n\
+    @ereduced powerloss for holding pearls.
+message.rftools.pearl_injector=\
+    @aContents: %s stacks\n\
+    @fThis will inject an ender pearl in an adjacent\n\
+    @fendergenic generator when a redstone signal is\n\
+    @freceived.

@@ -1,9 +1,11 @@
 package mcjty.rftools.blocks.endergen;
 
+import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.varia.OrientationTools;
+import mcjty.rftools.RFTools;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -12,11 +14,17 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
 public class PearlInjectorTileEntity extends GenericTileEntity implements DefaultSidedInventory, ITickable {
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, PearlInjectorContainer.factory, PearlInjectorContainer.BUFFER_SIZE);
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(new ResourceLocation(RFTools.MODID, "gui/pearl_injector.gui"));
+
+    public static final int BUFFER_SIZE = (9*2);
+    public static final int SLOT_BUFFER = 0;
+    public static final int SLOT_PLAYERINV = SLOT_BUFFER + BUFFER_SIZE;
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, BUFFER_SIZE);
 
     // For pulse detection.
     private boolean prevIn = false;
@@ -142,8 +150,8 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
     @Override
     public int[] getSlotsForFace(EnumFacing side) {
         if (accessibleSlots == null) {
-            accessibleSlots = new int[PearlInjectorContainer.BUFFER_SIZE];
-            for (int i = 0 ; i < PearlInjectorContainer.BUFFER_SIZE ; i++) {
+            accessibleSlots = new int[BUFFER_SIZE];
+            for (int i = 0 ; i < BUFFER_SIZE ; i++) {
                 accessibleSlots[i] = i;
             }
         }

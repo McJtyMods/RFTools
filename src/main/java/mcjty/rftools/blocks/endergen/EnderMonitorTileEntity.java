@@ -1,14 +1,26 @@
 package mcjty.rftools.blocks.endergen;
 
 import mcjty.lib.gui.widgets.ChoiceLabel;
-import mcjty.lib.network.Argument;
 import mcjty.rftools.blocks.logic.generic.LogicTileEntity;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
 import mcjty.typed.TypedMap;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.Map;
+import java.util.List;
 
 public class EnderMonitorTileEntity extends LogicTileEntity implements ITickable {
 
@@ -105,4 +117,20 @@ public class EnderMonitorTileEntity extends LogicTileEntity implements ITickable
         return false;
     }
 
+    @Override
+    @Optional.Method(modid = "theoneprobe")
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        EnderMonitorMode m = getMode();
+        probeInfo.text(TextFormatting.GREEN + "Mode: " + m.getDescription());
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    @Optional.Method(modid = "waila")
+    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.addWailaBody(itemStack, currenttip, accessor, config);
+        EnderMonitorMode m = getMode();
+        currenttip.add(TextFormatting.GREEN + "Mode: " + m.getDescription());
+    }
 }

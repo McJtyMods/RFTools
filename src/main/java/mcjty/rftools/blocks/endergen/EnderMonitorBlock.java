@@ -58,29 +58,4 @@ public class EnderMonitorBlock extends LogicSlabBlock<EnderMonitorTileEntity, Em
         }
     }
 
-    @Override
-    @Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
-        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
-        TileEntity te = world.getTileEntity(data.getPos());
-        if (te instanceof EnderMonitorTileEntity) {
-            EnderMonitorTileEntity tileEntity = (EnderMonitorTileEntity) te;
-            EnderMonitorMode m = tileEntity.getMode();
-            probeInfo.text(TextFormatting.GREEN + "Mode: " + m.getDescription());
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    @Optional.Method(modid = "waila")
-    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        super.getWailaBody(itemStack, currenttip, accessor, config);
-        TileEntity te = accessor.getTileEntity();
-        if (te instanceof EnderMonitorTileEntity) {
-            EnderMonitorTileEntity tileEntity = (EnderMonitorTileEntity) te;
-            EnderMonitorMode m = tileEntity.getMode();
-            currenttip.add(TextFormatting.GREEN + "Mode: " + m.getDescription());
-        }
-        return currenttip;
-    }
 }

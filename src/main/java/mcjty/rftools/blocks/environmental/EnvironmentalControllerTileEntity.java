@@ -5,6 +5,7 @@ import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.SimpleComponent;
 import mcjty.lib.api.information.IMachineInformation;
+import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
@@ -12,11 +13,19 @@ import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.gui.widgets.ScrollableLabel;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.Logging;
+import mcjty.lib.varia.ModuleSupport;
 import mcjty.lib.varia.RedstoneMode;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
 import mcjty.typed.Key;
 import mcjty.typed.Type;
 import mcjty.typed.TypedMap;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
@@ -28,8 +37,14 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -61,7 +76,19 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
 
     public static final String COMPONENT_NAME = "environmental_controller";
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, EnvironmentalControllerContainer.factory, EnvironmentalControllerContainer.ENV_MODULES);
+    public static final int ENV_MODULES = 7;
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(new ResourceLocation(RFTools.MODID, "gui/environmental.gui"));
+    public static final int SLOT_MODULES = 0;
+
+    public static final ModuleSupport MODULE_SUPPORT = new ModuleSupport(SLOT_MODULES, SLOT_MODULES + ENV_MODULES - 1) {
+        @Override
+        public boolean isModule(ItemStack itemStack) {
+            return itemStack.getItem() instanceof EnvModuleProvider;
+        }
+    };
+    public static final String CONTAINER_INVENTORY = "container";
+
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, ENV_MODULES);
 
     public enum EnvironmentalMode {
         MODE_BLACKLIST,
@@ -176,8 +203,8 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     @Callback(doc = "Get or set the current redstone mode. Values are 'Ignored', 'Off', or 'On'", getter = true, setter = true)
     @Optional.Method(modid = "opencomputers")
     public Object[] redstoneMode(Context context, Arguments args) {
-        if(args.count() == 0) {
-            return new Object[] { getRSMode().getDescription() };
+        if (args.count() == 0) {
+            return new Object[]{getRSMode().getDescription()};
         } else {
             String mode = args.checkString(0);
             return setRedstoneMode(mode);
@@ -240,7 +267,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     public boolean isPlayerAffected(EntityPlayer player) {
         if (mode == EnvironmentalMode.MODE_WHITELIST) {
             return players.contains(player.getName());
-        } else if (mode == EnvironmentalMode.MODE_BLACKLIST){
+        } else if (mode == EnvironmentalMode.MODE_BLACKLIST) {
             return !players.contains(player.getName());
         } else {
             return mode == EnvironmentalMode.MODE_ALL;
@@ -285,7 +312,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
 
     public int getVolume() {
         if (volume == -1) {
-            volume = (int) ((radius * radius * Math.PI) * (maxy-miny + 1));
+            volume = (int) ((radius * radius * Math.PI) * (maxy - miny + 1));
         }
         return volume;
     }
@@ -393,7 +420,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
             int volume = getVolume();
             totalRfPerTick = 0;
             environmentModules = new ArrayList<>();
-            for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
+            for (int i = 0; i < inventoryHelper.getCount(); i++) {
                 ItemStack itemStack = inventoryHelper.getStackInSlot(i);
                 if (!itemStack.isEmpty() && itemStack.getItem() instanceof EnvModuleProvider) {
                     EnvModuleProvider moduleProvider = (EnvModuleProvider) itemStack.getItem();
@@ -419,17 +446,17 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
 
     @Override
     public int[] getSlotsForFace(EnumFacing side) {
-        return EnvironmentalControllerContainer.factory.getAccessibleSlots();
+        return CONTAINER_FACTORY.getAccessibleSlots();
     }
 
     @Override
     public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
-        return EnvironmentalControllerContainer.factory.isOutputSlot(index);
+        return CONTAINER_FACTORY.isOutputSlot(index);
     }
 
     @Override
     public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
-        return EnvironmentalControllerContainer.factory.isInputSlot(index);
+        return CONTAINER_FACTORY.isInputSlot(index);
     }
 
     @Override
@@ -492,7 +519,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         players.clear();
         NBTTagList playerList = tagCompound.getTagList("players", Constants.NBT.TAG_STRING);
         if (playerList != null) {
-            for (int i = 0 ; i < playerList.tagCount() ; i++) {
+            for (int i = 0; i < playerList.tagCount(); i++) {
                 String player = playerList.getStringTagAt(i);
                 players.add(player);
             }
@@ -588,4 +615,49 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     public boolean isEmpty() {
         return false;
     }
+
+    @Override
+    public void onBlockBreak(World workd, BlockPos pos, IBlockState state) {
+        deactivate();
+    }
+
+    @Override
+    @Optional.Method(modid = "theoneprobe")
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        int rfPerTick = getTotalRfPerTick();
+        int volume = getVolume();
+        if (isActive()) {
+            probeInfo.text(TextFormatting.GREEN + "Active " + rfPerTick + " RF/tick (" + volume + " blocks)");
+        } else {
+            probeInfo.text(TextFormatting.GREEN + "Inactive (" + volume + " blocks)");
+        }
+        int radius = getRadius();
+        int miny = getMiny();
+        int maxy = getMaxy();
+        probeInfo.text(TextFormatting.GREEN + "Area: radius " + radius + " (between " + miny + " and " + maxy + ")");
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    @Optional.Method(modid = "waila")
+    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.addWailaBody(itemStack, currenttip, accessor, config);
+        NBTTagCompound tagCompound = accessor.getNBTData();
+        if (tagCompound != null) {
+            int rfPerTick = getTotalRfPerTick();
+            int volume = getVolume();
+            if (isActive()) {
+                currenttip.add(TextFormatting.GREEN + "Active " + rfPerTick + " RF/tick (" + volume + " blocks)");
+            } else {
+                currenttip.add(TextFormatting.GREEN + "Inactive (" + volume + " blocks)");
+            }
+            int radius = getRadius();
+            int miny = getMiny();
+            int maxy = getMaxy();
+            currenttip.add(TextFormatting.GREEN + "Area: radius " + radius + " (between " + miny + " and " + maxy + ")");
+        }
+    }
+
+
 }

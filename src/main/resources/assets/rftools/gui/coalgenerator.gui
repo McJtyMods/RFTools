@@ -1,0 +1,46 @@
+container {
+    slot('specificitem') {
+        items('minecraft:coal','minecraft:coal_block')
+        pos(82,24)
+    }
+    slot('container') {
+        pos(118,24)
+    }
+    playerslots(10,70)
+}
+window {
+    size(180,152)
+
+    event('redstone','coalgen.setRsMode')
+
+    panel('','positional') {
+        bg1('rftools:textures/gui/coalgenerator.png')
+        energybar('energybar') {
+            hint(10,7,8,54)
+            showtext(false)
+        }
+        imagechoicelabel('redstone') {
+            channel('redstone')
+            hint(154,46,16,16)
+            image('rftools:textures/gui/guielements.png')
+            dim(32,0,256,256)
+            choices {
+                choice('Ignored') {
+                    uv(0,0)
+                    tooltips('Redstone mode:','Ignored')
+                    image('rftools:textures/gui/guielements.png')
+                }
+                choice('Off') {
+                    uv(16,0)
+                    tooltips('Redstone mode:','Off to activate')
+                    image('rftools:textures/gui/guielements.png')
+                }
+                choice('On') {
+                    uv(32,0)
+                    tooltips('Redstone mode:','On to activate')
+                    image('rftools:textures/gui/guielements.png')
+                }
+            }
+        }
+    }
+}
