@@ -5,7 +5,7 @@
         }
         slot('specificitem') {
             items('rftools:filter_module')
-            pos(100,10)
+            pos(84,46)
         }
         playerslots(10,70)
     }

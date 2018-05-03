@@ -1,0 +1,15 @@
+window {
+    size(168,20)
+
+    event('analog','receiver.setAnalog')
+
+    panel('','vertical') {
+        bgthickness(2)
+        togglebutton('analog','Analog mode') {
+            channel('analog')
+            desired(160,16)
+            tooltips('Output the same power','level as the input, instead','of always 15 or 0')
+            check(true)
+        }
+    }
+}

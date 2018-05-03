@@ -69,7 +69,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     public void setNumber(int number) {
         this.number = number;
         cachedBox = null;
-        markDirty();
+        markDirtyClient();
     }
 
     public SensorType getSensorType() {
@@ -79,7 +79,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     public void setSensorType(SensorType sensorType) {
         this.sensorType = sensorType;
         cachedBox = null;
-        markDirty();
+        markDirtyClient();
     }
 
     public AreaType getAreaType() {
@@ -89,7 +89,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     public void setAreaType(AreaType areaType) {
         this.areaType = areaType;
         cachedBox = null;
-        markDirty();
+        markDirtyClient();
     }
 
     public GroupType getGroupType() {
@@ -99,7 +99,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     public void setGroupType(GroupType groupType) {
         this.groupType = groupType;
         cachedBox = null;
-        markDirty();
+        markDirtyClient();
     }
 
     @Override

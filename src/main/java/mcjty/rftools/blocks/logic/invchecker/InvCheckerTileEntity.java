@@ -60,7 +60,7 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
 
     public void setAmount(int amount) {
         this.amount = amount;
-        markDirty();
+        markDirtyClient();
     }
 
     public int getSlot() {
@@ -69,7 +69,7 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
 
     public void setSlot(int slot) {
         this.slot = slot;
-        markDirty();
+        markDirtyClient();
     }
 
     public boolean isOreDict() {
@@ -78,7 +78,7 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
 
     public void setOreDict(boolean oreDict) {
         this.oreDict = oreDict;
-        markDirty();
+        markDirtyClient();
     }
 
     public boolean isUseMeta() {
@@ -87,7 +87,7 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
 
     public void setUseMeta(boolean useMeta) {
         this.useMeta = useMeta;
-        markDirty();
+        markDirtyClient();
     }
 
     @Override

@@ -3,20 +3,15 @@ package mcjty.rftools.blocks.logic.analog;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
-import mcjty.lib.gui.layout.PositionalLayout;
-import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.Rectangle;
 import java.text.DecimalFormat;
 
 public class GuiAnalog extends GenericGuiContainer<AnalogTileEntity> {
-    public static final int ANALOG_WIDTH = 194;
-    public static final int ANALOG_HEIGHT = 154;
 
     private TextField mulEqual;
     private TextField mulLess;
@@ -25,12 +20,8 @@ public class GuiAnalog extends GenericGuiContainer<AnalogTileEntity> {
     private TextField addLess;
     private TextField addGreater;
 
-    private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/analog.png");
-
     public GuiAnalog(AnalogTileEntity te, EmptyContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, RFTools.GUI_MANUAL_MAIN, "analog");
-        xSize = ANALOG_WIDTH;
-        ySize = ANALOG_HEIGHT;
     }
 
     private static final DecimalFormat fmt = new DecimalFormat("#.#");
@@ -38,22 +29,10 @@ public class GuiAnalog extends GenericGuiContainer<AnalogTileEntity> {
 
     @Override
     public void initGui() {
+        window = new Window(this, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/analog.gui"));
         super.initGui();
 
-        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
-        mulEqual = new TextField(mc, this).setName("mul_eq").setLayoutHint(106, 78, 30, 16);
-        mulLess = new TextField(mc, this).setName("mul_less").setLayoutHint(106, 104, 30, 16);
-        mulGreater = new TextField(mc, this).setName("mul_greater").setLayoutHint(106, 130, 30, 16);
-        addEqual = new TextField(mc, this).setName("add_eq").setLayoutHint(153, 78, 30, 16);
-        addLess = new TextField(mc, this).setName("add_less").setLayoutHint(153, 104, 30, 16);
-        addGreater = new TextField(mc, this).setName("add_greater").setLayoutHint(153, 130, 30, 16);
-        toplevel.addChildren(mulEqual, mulLess, mulGreater, addEqual, addLess, addGreater);
-
         initializeFields();
-
-        toplevel.setBounds(new Rectangle(guiLeft, guiTop, ANALOG_WIDTH, ANALOG_HEIGHT));
-        window = new Window(this, toplevel);
-
         setupEvents();
     }
 

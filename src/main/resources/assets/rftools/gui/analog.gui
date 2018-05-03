@@ -1,0 +1,30 @@
+window {
+    size(194,154)
+    panel('','positional') {
+        bg1('rftools:textures/gui/analog.png')
+        textfield('mul_eq') {
+            channel('update')
+            hint(106,78,30,16)
+        }
+        textfield('mul_less') {
+            channel('update')
+            hint(106,104,30,16)
+        }
+        textfield('mul_greater') {
+            channel('update')
+            hint(106,130,30,16)
+        }
+        textfield('add_eq') {
+            channel('update')
+            hint(153,78,30,16)
+        }
+        textfield('add_less') {
+            channel('update')
+            hint(153,104,30,16)
+        }
+        textfield('add_greater') {
+            channel('update')
+            hint(153,130,30,16)
+        }
+    }
+}

@@ -1,0 +1,62 @@
+window {
+    size(180,152)
+
+    event('amount','inv.setCounter')
+    event('slot','inv.setSlot')
+    event('meta','inv.setUseMeta')
+    event('ore','inv.setOreDict')
+
+    panel('','positional') {
+        bg1('rftools:textures/gui/invchecker.png')
+        label('','Slot:') {
+            hint(10,3,50,14)
+            horizalign('ALIGN_LEFT')
+        }
+        textfield('slot') {
+            channel('slot')
+            hint(60,3,80,14)
+            tooltips('Set the slot index')
+        }
+        label('','Amount:') {
+            hint(10,19,50,14)
+            horizalign('ALIGN_LEFT')
+        }
+        textfield('amount') {
+            channel('amount')
+            hint(60,19,80,14)
+            tooltips('Set the amount of items in slot')
+        }
+        label('','Meta:') {
+            hint(10,35,50,14)
+            horizalign('ALIGN_LEFT')
+        }
+        choicelabel('meta') {
+            channel('meta')
+            hint(60,35,80,14)
+            choices {
+                choice('Ignore') {
+                    tooltips('Ignore meta/damage on item')
+                }
+                choice('Match') {
+                    tooltips('Meta/damage on item must match')
+                }
+            }
+        }
+        label('','Oredict:') {
+            hint(10,51,50,14)
+            horizalign('ALIGN_LEFT')
+        }
+        choicelabel('ore') {
+            channel('ore')
+            hint(60,51,80,14)
+            choices {
+                choice('Ignore') {
+                    tooltips('Ingore ore dictionary')
+                }
+                choice('Use') {
+                    tooltips('Use ore dictionary matching')
+                }
+            }
+        }
+    }
+}
