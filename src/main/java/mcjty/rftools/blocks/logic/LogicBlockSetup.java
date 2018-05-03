@@ -4,6 +4,7 @@ import mcjty.lib.builder.BlockFlags;
 import mcjty.lib.container.BaseBlock;
 import mcjty.lib.container.GenericBlock;
 import mcjty.lib.container.GenericContainer;
+import mcjty.lib.varia.ItemStackTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.logic.analog.AnalogBlock;
 import mcjty.rftools.blocks.logic.counter.CounterBlock;
@@ -12,7 +13,8 @@ import mcjty.rftools.blocks.logic.invchecker.InvCheckerBlock;
 import mcjty.rftools.blocks.logic.sensor.SensorBlock;
 import mcjty.rftools.blocks.logic.sequencer.SequencerBlock;
 import mcjty.rftools.blocks.logic.threelogic.ThreeLogicBlock;
-import mcjty.rftools.blocks.logic.timer.TimerBlock;
+import mcjty.rftools.blocks.logic.timer.GuiTimer;
+import mcjty.rftools.blocks.logic.timer.TimerTileEntity;
 import mcjty.rftools.blocks.logic.wire.WireTileEntity;
 import mcjty.rftools.blocks.logic.wireless.RedstoneReceiverBlock;
 import mcjty.rftools.blocks.logic.wireless.RedstoneTransmitterBlock;
@@ -21,7 +23,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LogicBlockSetup {
     public static SequencerBlock sequencerBlock;
-    public static TimerBlock timerBlock;
     public static CounterBlock counterBlock;
     public static RedstoneTransmitterBlock redstoneTransmitterBlock;
     public static RedstoneReceiverBlock redstoneReceiverBlock;
@@ -32,10 +33,10 @@ public class LogicBlockSetup {
     public static DigitBlock digitBlock;
 
     public static GenericBlock<WireTileEntity, GenericContainer> wireBlock;
+    public static GenericBlock<TimerTileEntity, GenericContainer> timerBlock;
 
     public static void init() {
         sequencerBlock = new SequencerBlock();
-        timerBlock = new TimerBlock();
         counterBlock = new CounterBlock();
         redstoneTransmitterBlock = new RedstoneTransmitterBlock();
         redstoneReceiverBlock = new RedstoneReceiverBlock();
@@ -53,12 +54,24 @@ public class LogicBlockSetup {
                 .information("message.rftools.shiftmessage")
                 .informationShift("message.rftools.wire")
                 .build();
+        timerBlock = ModBlocks.logicFactory.<TimerTileEntity> builder("timer_block")
+                .tileEntityClass(TimerTileEntity.class)
+                .rotationType(BaseBlock.RotationType.NONE)      // @todo will be default
+                .emptyContainer()
+                .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
+                .information("message.rftools.shiftmessage")
+                .informationShift("message.rftools.timer",
+                        stack -> Integer.toString(ItemStackTools.mapTag(stack, compound -> compound.getInteger("delay"), 0)))
+                .build();
     }
 
     @SideOnly(Side.CLIENT)
     public static void initClient() {
         sequencerBlock.initModel();
+
         timerBlock.initModel();
+        timerBlock.setGuiClass(GuiTimer.class);
+
         counterBlock.initModel();
         redstoneTransmitterBlock.initModel();
         redstoneReceiverBlock.initModel();

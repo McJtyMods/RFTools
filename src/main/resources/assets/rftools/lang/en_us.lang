@@ -290,3 +290,8 @@ message.rftools.pearl_injector=\
 message.rftools.wire=\
     @fThis logic block is just a simple\n\
     @flag free redstone wire
+message.rftools.timer=\
+    @aDelay: %s\n\
+    @fThis logic block emits a redstone pulse\n\
+    @fafter a certain amount of time unless it\n\
+    @freceives a redstone pulse itself before that.

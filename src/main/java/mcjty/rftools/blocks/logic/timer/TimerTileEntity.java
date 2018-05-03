@@ -1,18 +1,25 @@
 package mcjty.rftools.blocks.logic.timer;
 
 import mcjty.lib.container.LogicTileEntity;
-import mcjty.lib.network.Argument;
+import mcjty.lib.gui.widgets.TextField;
+import mcjty.lib.gui.widgets.ToggleButton;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
+import mcjty.typed.TypedMap;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
-
-import java.util.Map;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Optional;
 
 public class TimerTileEntity extends LogicTileEntity implements ITickable {
 
-    public static final String CMD_SETDELAY = "setDelay";
-    public static final String CMD_SETCURRENT = "setDelay";
-    public static final String CMD_SETPAUSES = "setPauses";
+    public static final String CMD_SETDELAY = "timer.setDelay";
+    public static final String CMD_SETPAUSES = "timer.setPauses";
 
     // For pulse detection.
     private boolean prevIn = false;
@@ -114,18 +121,34 @@ public class TimerTileEntity extends LogicTileEntity implements ITickable {
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+        boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
         }
         if (CMD_SETDELAY.equals(command)) {
-            setDelay(args.get("delay").getInteger());
+            String text = params.get(TextField.PARAM_TEXT);
+            int delay;
+            try {
+                delay = Integer.parseInt(text);
+            } catch (NumberFormatException e) {
+                delay = 1;
+            }
+            setDelay(delay);
             return true;
         } else if (CMD_SETPAUSES.equals(command)) {
-            setRedstonePauses(args.get("pauses").getBoolean());
+            Boolean on = params.get(ToggleButton.PARAM_ON);
+            setRedstonePauses(on);
             return true;
         }
         return false;
+    }
+
+
+    @Override
+    @Optional.Method(modid = "theoneprobe")
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        probeInfo.text(TextFormatting.GREEN + "Time: " + TextFormatting.WHITE + getTimer());
     }
 }
