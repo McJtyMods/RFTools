@@ -52,16 +52,16 @@ public class BuilderSetup {
                 .rotationType(BaseBlock.RotationType.HORIZROTATION)
                 .moduleSupport(BuilderTileEntity.MODULE_SUPPORT)
                 .guiId(RFTools.GUI_BUILDER)
-                .information("message.rftools.shiftmessage")
-                .informationShift("message.rftools.builder")
+                .info("message.rftools.shiftmessage")
+                .infoExtended("message.rftools.builder")
                 .build();
 
         composerBlock = ModBlocks.builderFactory.<ComposerTileEntity> builder("composer")
                 .tileEntityClass(ComposerTileEntity.class)
                 .container(ComposerTileEntity.CONTAINER_FACTORY)
                 .guiId(RFTools.GUI_COMPOSER)
-                .information("message.rftools.shiftmessage")
-                .informationShift("message.rftools.composer")
+                .info("message.rftools.shiftmessage")
+                .infoExtended("message.rftools.composer")
                 .build();
 
         locatorBlock = ModBlocks.builderFactory.<LocatorTileEntity> builder("locator")
@@ -69,8 +69,8 @@ public class BuilderSetup {
                 .flags(BlockFlags.REDSTONE_CHECK)
                 .emptyContainer()
                 .guiId(RFTools.GUI_LOCATOR)
-                .information("message.rftools.shiftmessage")
-                .informationShift("message.rftools.locator")
+                .info("message.rftools.shiftmessage")
+                .infoExtended("message.rftools.locator")
                 .build();
 
         projectorBlock = ModBlocks.builderFactory.<ProjectorTileEntity> builder("projector")
@@ -79,8 +79,8 @@ public class BuilderSetup {
                 .rotationType(BaseBlock.RotationType.HORIZROTATION)
                 .container(ProjectorTileEntity.CONTAINER_FACTORY)
                 .guiId(RFTools.GUI_PROJECTOR)
-                .information("message.rftools.shiftmessage")
-                .informationShift("message.rftools.projector")
+                .info("message.rftools.shiftmessage")
+                .infoExtended("message.rftools.projector")
                 .build();
 
         scannerBlock = ModBlocks.builderFactory.<ScannerTileEntity> builder("scanner")
@@ -88,16 +88,18 @@ public class BuilderSetup {
                 .flags(BlockFlags.REDSTONE_CHECK)
                 .container(ScannerTileEntity.CONTAINER_FACTORY)
                 .guiId(RFTools.GUI_SCANNER)
-                .information("message.rftools.shiftmessage")
-                .informationShift("message.rftools.scanner", stack -> Integer.toString(ItemStackTools.mapTag(stack, compound -> compound.getInteger("scanid"), -1)))
+                .info("message.rftools.shiftmessage")
+                .infoExtended("message.rftools.scanner")
+                .infoExtendedParameter(ItemStackTools.intGetter("scanid", -1))
                 .build();
         remoteScannerBlock = ModBlocks.builderFactory.<RemoteScannerTileEntity> builder("remote_scanner")
                 .tileEntityClass(RemoteScannerTileEntity.class)
                 .flags(BlockFlags.REDSTONE_CHECK)
                 .container(ScannerTileEntity.CONTAINER_FACTORY)
                 .guiId(RFTools.GUI_SCANNER)
-                .information("message.rftools.shiftmessage")
-                .informationShift("message.rftools.remote_scanner", stack -> Integer.toString(ItemStackTools.mapTag(stack, compound -> compound.getInteger("scanid"), -1)))
+                .info("message.rftools.shiftmessage")
+                .infoExtended("message.rftools.remote_scanner")
+                .infoExtendedParameter(ItemStackTools.intGetter("scanid", -1))
                 .build();
 
         initItems();

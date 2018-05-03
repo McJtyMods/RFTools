@@ -17,8 +17,8 @@ public class SpawnerSetup {
                 .container(SpawnerTileEntity.CONTAINER_FACTORY)
                 .guiId(RFTools.GUI_SPAWNER)
                 .moduleSupport(SpawnerTileEntity.MODULE_SUPPORT)
-                .information("message.rftools.shiftmessage")
-                .informationShift("message.rftools.spawner")
+                .info("message.rftools.shiftmessage")
+                .infoExtended("message.rftools.spawner")
                 .build();
         matterBeamerBlock = new MatterBeamerBlock();
     }

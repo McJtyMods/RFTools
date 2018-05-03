@@ -24,8 +24,9 @@ public class SecuritySetup {
                 .tileEntityClass(SecurityManagerTileEntity.class)
                 .container(SecurityManagerTileEntity.CONTAINER_FACTORY)
                 .guiId(RFTools.GUI_SECURITY_MANAGER)
-                .information("message.rftools.shiftmessage")
-                .informationShift("message.rftools.security_manager", stack -> {
+                .info("message.rftools.shiftmessage")
+                .infoExtended("message.rftools.security_manager")
+                .infoExtendedParameter(stack -> {
                     int cnt = mapTag(stack, compound -> (int) ItemStackTools.getListStream(compound, "Items").filter(nbt -> !new ItemStack((NBTTagCompound)nbt).isEmpty()).count(), 0);
                     return Integer.toString(cnt);
                 })

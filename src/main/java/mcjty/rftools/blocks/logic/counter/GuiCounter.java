@@ -8,7 +8,6 @@ import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
-import mcjty.lib.network.Argument;
 import mcjty.lib.network.Arguments;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
@@ -20,7 +19,6 @@ public class GuiCounter extends GenericGuiContainer<CounterTileEntity> {
     public static final int COUNTER_WIDTH = 200;
     public static final int COUNTER_HEIGHT = 30;
 
-    private TextField counterField;
     private TextField currentField;
 
     public GuiCounter(CounterTileEntity counterTileEntity, EmptyContainer container) {
@@ -35,19 +33,13 @@ public class GuiCounter extends GenericGuiContainer<CounterTileEntity> {
 
         Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout());
 
-        counterField = new TextField(mc, this).setTooltips("Set the counter in pulses").addTextEvent((parent, newText) -> setCounter());
-        int delay = tileEntity.getCounter();
-        if (delay <= 0) {
-            delay = 1;
-        }
-        counterField.setText(String.valueOf(delay));
+        TextField counterField = new TextField(mc, this)
+                .setName("counter").setChannel("counter")
+                .setTooltips("Set the counter in pulses");
 
-        currentField = new TextField(mc, this).setTooltips("Set the current value", "(fires when it reaches counter)").addTextEvent((parent, newText) -> setCurrent());
-        int current = tileEntity.getCurrent();
-        if (current < 0) {
-            current = 0;
-        }
-        currentField.setText(String.valueOf(current));
+        currentField = new TextField(mc, this)
+                .setName("current").setChannel("current")
+                .setTooltips("Set the current value", "(fires when it reaches counter)");
 
         Panel bottomPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).
                 addChildren(new Label(mc, this).setText("Counter:"), counterField,
@@ -60,34 +52,31 @@ public class GuiCounter extends GenericGuiContainer<CounterTileEntity> {
         requestCurrentCounter();
     }
 
-    private void setCounter() {
-        String d = counterField.getText();
-        int counter;
-        try {
-            counter = Integer.parseInt(d);
-        } catch (NumberFormatException e) {
-            counter = 1;
+    private void initializeFields() {
+        TextField counterField = window.findChild("counter");
+        int delay = tileEntity.getCounter();
+        if (delay <= 0) {
+            delay = 1;
         }
-        tileEntity.setCounter(counter);
-        sendServerCommand(RFToolsMessages.INSTANCE, CounterTileEntity.CMD_SETCOUNTER, new Argument("counter", counter));
-    }
+        counterField.setText(String.valueOf(delay));
 
-    private void setCurrent() {
-        String d = currentField.getText();
-        int current;
-        try {
-            current = Integer.parseInt(d);
-        } catch (NumberFormatException e) {
+        currentField = window.findChild("current");
+        int current = tileEntity.getCurrent();
+        if (current < 0) {
             current = 0;
         }
-        tileEntity.setCounter(current);
-        sendServerCommand(RFToolsMessages.INSTANCE, CounterTileEntity.CMD_SETCURRENT, new Argument("current", current));
+        currentField.setText(String.valueOf(current));
+    }
+
+    private void setupEvents() {
+        window.addChannelEvent("counter", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, CounterTileEntity.CMD_SETCOUNTER, params));
+        window.addChannelEvent("current", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, CounterTileEntity.CMD_SETCURRENT, params));
     }
 
     private static long lastTime = 0;
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         if (System.currentTimeMillis() - lastTime > 500) {
             requestCurrentCounter();
         }

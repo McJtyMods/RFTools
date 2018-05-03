@@ -295,3 +295,6 @@ message.rftools.timer=\
     @fThis logic block emits a redstone pulse\n\
     @fafter a certain amount of time unless it\n\
     @freceives a redstone pulse itself before that.
+message.rftools.digit=\
+    @fThis logic block is just a simple\n\
+    @fdigit that shows the redstone input value

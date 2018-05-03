@@ -8,7 +8,6 @@ import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
-import mcjty.lib.network.Argument;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
@@ -24,11 +23,6 @@ public class GuiInvChecker extends GenericGuiContainer<InvCheckerTileEntity> {
     public static final String META_MATCH = "Match";
     public static final String META_IGNORE = "Ignore";
 
-    private TextField amountField;
-    private TextField slotField;
-    private ChoiceLabel oreDictLabel;
-    private ChoiceLabel metaLabel;
-
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/invchecker.png");
 
     public GuiInvChecker(InvCheckerTileEntity invCheckerTileEntity, InvCheckerContainer container) {
@@ -43,33 +37,28 @@ public class GuiInvChecker extends GenericGuiContainer<InvCheckerTileEntity> {
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
-        amountField = new TextField(mc, this).setTooltips("Set the amount of items in slot")
-                .setLayoutHint(60, 19, 80, 14)
-                .addTextEvent((parent, newText) -> setAmount());
-        int amount = tileEntity.getAmount();
-        amountField.setText(String.valueOf(amount));
+        TextField amountField = new TextField(mc, this)
+                .setName("amount").setChannel("amount")
+                .setTooltips("Set the amount of items in slot")
+                .setLayoutHint(60, 19, 80, 14);
 
-        slotField = new TextField(mc, this).setTooltips("Set the slot index")
-                .setLayoutHint(60, 3, 80, 14)
-                .addTextEvent((parent, newText) -> setSlot());
-        int current = tileEntity.getSlot();
-        slotField.setText(String.valueOf(current));
+        TextField slotField = new TextField(mc, this).setTooltips("Set the slot index")
+                .setName("slot").setChannel("slot")
+                .setLayoutHint(60, 3, 80, 14);
 
-        metaLabel = new ChoiceLabel(mc, this)
+        ChoiceLabel metaLabel = new ChoiceLabel(mc, this)
+                .setName("meta").setChannel("meta")
                 .addChoices(META_IGNORE, META_MATCH)
-                .addChoiceEvent((parent, newChoice) -> setMetaUsage())
                 .setChoiceTooltip(META_IGNORE, "Ignore meta/damage on item")
                 .setChoiceTooltip(META_MATCH, "Meta/damage on item must match");
         metaLabel.setLayoutHint(60, 35, 80, 14);
-        metaLabel.setChoice(tileEntity.isUseMeta() ? META_MATCH : META_IGNORE);
 
-        oreDictLabel = new ChoiceLabel(mc, this)
+        ChoiceLabel oreDictLabel = new ChoiceLabel(mc, this)
+                .setName("ore").setChannel("ore")
                 .addChoices(OREDICT_IGNORE, OREDICT_USE)
-                .addChoiceEvent((parent, newChoice) -> setOredictUsage())
                 .setChoiceTooltip(OREDICT_IGNORE, "Ingore ore dictionary")
                 .setChoiceTooltip(OREDICT_USE, "Use ore dictionary matching");
         oreDictLabel.setLayoutHint(60, 51, 80, 14);
-        oreDictLabel.setChoice(tileEntity.isOreDict() ? OREDICT_USE : OREDICT_IGNORE);
 
         toplevel
                 .addChild(new Label(mc, this).setText("Slot:")
@@ -93,44 +82,29 @@ public class GuiInvChecker extends GenericGuiContainer<InvCheckerTileEntity> {
         window = new Window(this, toplevel);
     }
 
-    private void setMetaUsage() {
-        boolean b = META_MATCH.equals(metaLabel.getCurrentChoice());
-        tileEntity.setUseMeta(b);
-        sendServerCommand(RFToolsMessages.INSTANCE, InvCheckerTileEntity.CMD_SETMETA, new Argument("b", b));
+    private void initializeFields() {
+        TextField amountField = window.findChild("amount");
+        amountField.setText(String.valueOf(tileEntity.getAmount()));
+
+        TextField slotField = window.findChild("slot");
+        slotField.setText(String.valueOf(tileEntity.getSlot()));
+
+        ChoiceLabel metaLabel = window.findChild("meta");
+        metaLabel.setChoice(tileEntity.isUseMeta() ? META_MATCH : META_IGNORE);
+
+        ChoiceLabel oreDictLabel = window.findChild("ore");
+        oreDictLabel.setChoice(tileEntity.isOreDict() ? OREDICT_USE : OREDICT_IGNORE);
     }
 
-    private void setOredictUsage() {
-        boolean b = OREDICT_USE.equals(oreDictLabel.getCurrentChoice());
-        tileEntity.setOreDict(b);
-        sendServerCommand(RFToolsMessages.INSTANCE, InvCheckerTileEntity.CMD_SETOREDICT, new Argument("b", b));
-    }
-
-    private void setAmount() {
-        String d = amountField.getText();
-        int amount;
-        try {
-            amount = Integer.parseInt(d);
-        } catch (NumberFormatException e) {
-            amount = 1;
-        }
-        tileEntity.setAmount(amount);
-        sendServerCommand(RFToolsMessages.INSTANCE, InvCheckerTileEntity.CMD_SETAMOUNT, new Argument("amount", amount));
-    }
-
-    private void setSlot() {
-        String d = slotField.getText();
-        int slot;
-        try {
-            slot = Integer.parseInt(d);
-        } catch (NumberFormatException e) {
-            slot = 0;
-        }
-        tileEntity.setSlot(slot);
-        sendServerCommand(RFToolsMessages.INSTANCE, InvCheckerTileEntity.CMD_SETSLOT, new Argument("slot", slot));
+    private void setupEvents() {
+        window.addChannelEvent("amount", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, InvCheckerTileEntity.CMD_SETAMOUNT, params));
+        window.addChannelEvent("slot", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, InvCheckerTileEntity.CMD_SETSLOT, params));
+        window.addChannelEvent("meta", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, InvCheckerTileEntity.CMD_SETMETA, params));
+        window.addChannelEvent("ore", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, InvCheckerTileEntity.CMD_SETOREDICT, params));
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         drawWindow();
     }
 }

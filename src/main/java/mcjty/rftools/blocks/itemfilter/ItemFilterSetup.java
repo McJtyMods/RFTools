@@ -22,8 +22,9 @@ public class ItemFilterSetup {
                 .container(ItemFilterTileEntity.CONTAINER_FACTORY)
                 .rotationType(BaseBlock.RotationType.NONE)
                 .guiId(RFTools.GUI_ITEMFILTER)
-                .information("message.rftools.shiftmessage")
-                .informationShift("message.rftools.itemfilter", stack -> {
+                .info("message.rftools.shiftmessage")
+                .infoExtended("message.rftools.itemfilter")
+                .infoExtendedParameter(stack -> {
                     int count = mapTag(stack, compound -> (int) ItemStackTools.getListStream(compound, "Items").filter(nbt -> !new ItemStack((NBTTagCompound)nbt).isEmpty()).count(), 0);
                     return Integer.toString(count);
                 })

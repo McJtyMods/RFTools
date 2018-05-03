@@ -19,8 +19,9 @@ public class CoalGeneratorSetup {
                     .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.RENDER_SOLID, BlockFlags.RENDER_CUTOUT)
                     .property(CoalGeneratorTileEntity.WORKING)
                     .guiId(RFTools.GUI_COALGENERATOR)
-                    .information("message.rftools.shiftmessage")
-                    .informationShift("message.rftools.coalgenerator", stack -> Integer.toString(CoalGeneratorConfiguration.rfPerTick))
+                    .info("message.rftools.shiftmessage")
+                    .infoExtended("message.rftools.coalgenerator")
+                    .infoExtendedParameter(stack -> Integer.toString(CoalGeneratorConfiguration.rfPerTick))
                     .build();
         }
     }

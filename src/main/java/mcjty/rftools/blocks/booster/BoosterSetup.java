@@ -20,8 +20,8 @@ public class BoosterSetup {
                 .flags(BlockFlags.REDSTONE_CHECK)
                 .guiId(RFTools.GUI_BOOSTER)
                 .moduleSupport(BoosterTileEntity.MODULE_SUPPORT)
-                .information("message.rftools.shiftmessage")
-                .informationShift("message.rftools.booster")
+                .info("message.rftools.shiftmessage")
+                .infoExtended("message.rftools.booster")
                 .build();
     }
 

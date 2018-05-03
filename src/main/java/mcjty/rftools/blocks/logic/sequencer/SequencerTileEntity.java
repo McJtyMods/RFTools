@@ -1,22 +1,28 @@
 package mcjty.rftools.blocks.logic.sequencer;
 
 import mcjty.lib.container.LogicTileEntity;
-import mcjty.lib.network.Argument;
+import mcjty.lib.gui.widgets.ChoiceLabel;
+import mcjty.lib.gui.widgets.ImageChoiceLabel;
+import mcjty.lib.gui.widgets.TextField;
+import mcjty.typed.Key;
+import mcjty.typed.Type;
+import mcjty.typed.TypedMap;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
 
-import java.util.Map;
-
 public class SequencerTileEntity extends LogicTileEntity implements ITickable {
 
-    public static final String CMD_MODE = "mode";
-    public static final String CMD_SETBIT = "setBit";
-    public static final String CMD_FLIPBITS = "flipBits";
-    public static final String CMD_CLEARBITS = "clearBits";
-    public static final String CMD_SETDELAY = "setDelay";
-    public static final String CMD_SETCOUNT = "setCount";
-    public static final String CMD_SETENDSTATE = "setEndState";
+    public static final String CMD_MODE = "sequencer.mode";
+    public static final String CMD_FLIPBITS = "sequencer.flipBits";
+    public static final String CMD_CLEARBITS = "sequencer.clearBits";
+    public static final String CMD_SETDELAY = "sequencer.setDelay";
+    public static final String CMD_SETCOUNT = "sequencer.setCount";
+    public static final String CMD_SETENDSTATE = "sequencer.setEndState";
+
+    public static final String CMD_SETBIT = "sequencer.setBit";
+    public static final Key<Integer> PARAM_BIT = new Key<>("bit", Type.INTEGER);
+    public static final Key<Boolean> PARAM_CHOICE = new Key<>("choice", Type.BOOLEAN);
 
     private SequencerMode mode = SequencerMode.MODE_ONCE1;
     private long cycleBits = 0;
@@ -279,17 +285,14 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+        boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
         }
-        if (CMD_MODE.equals(command)) {
-            String m = args.get("mode").getString();
-            setMode(SequencerMode.getMode(m));
-            return true;
-        } else if (CMD_SETBIT.equals(command)) {
-            setCycleBit(args.get("bit").getInteger(), args.get("choice").getBoolean());
+        if (CMD_SETENDSTATE.equals(command)) {
+            boolean newChoice = "1".equals(params.get(ImageChoiceLabel.PARAM_CHOICE));
+            setEndState(newChoice);
             return true;
         } else if (CMD_FLIPBITS.equals(command)) {
             flipCycleBits();
@@ -297,14 +300,32 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
         } else if (CMD_CLEARBITS.equals(command)) {
             clearCycleBits();
             return true;
-        } else if (CMD_SETDELAY.equals(command)) {
-            setDelay(args.get("delay").getInteger());
-            return true;
         } else if (CMD_SETCOUNT.equals(command)) {
-            setStepCount(args.get("count").getInteger());
+            int count;
+            try {
+                count = Integer.parseInt(params.get(TextField.PARAM_TEXT));
+            } catch (NumberFormatException e) {
+                count = 64;
+            }
+            setStepCount(count);
             return true;
-        } else if (CMD_SETENDSTATE.equals(command)) {
-            setEndState(args.get("endState").getBoolean());
+        } else if (CMD_SETDELAY.equals(command)) {
+            int delay;
+            try {
+                delay = Integer.parseInt(params.get(TextField.PARAM_TEXT));
+            } catch (NumberFormatException e) {
+                delay = 1;
+            }
+            setDelay(delay);
+            return true;
+        } else if (CMD_MODE.equals(command)) {
+            SequencerMode newMode = SequencerMode.getMode(params.get(ChoiceLabel.PARAM_CHOICE));
+            setMode(newMode);
+            return true;
+        } else if (CMD_SETBIT.equals(command)) {
+            int bit = params.get(PARAM_BIT);
+            boolean choice = params.get(PARAM_CHOICE);
+            setCycleBit(bit, choice);
             return true;
         }
         return false;

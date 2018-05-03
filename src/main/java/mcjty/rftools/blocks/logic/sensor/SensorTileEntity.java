@@ -3,7 +3,10 @@ package mcjty.rftools.blocks.logic.sensor;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.container.LogicTileEntity;
-import mcjty.lib.network.Argument;
+import mcjty.lib.gui.widgets.ChoiceLabel;
+import mcjty.lib.gui.widgets.TextField;
+import mcjty.rftools.varia.NamedEnum;
+import mcjty.typed.TypedMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.BlockLiquid;
@@ -30,15 +33,14 @@ import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 public class SensorTileEntity extends LogicTileEntity implements ITickable, DefaultSidedInventory {
 
-    public static final String CMD_SETNUMBER = "setNumber";
-    public static final String CMD_SETTYPE = "setType";
-    public static final String CMD_SETAREA = "setArea";
-    public static final String CMD_SETGROUP = "setGroup";
+    public static final String CMD_SETNUMBER = "sensor.setNumber";
+    public static final String CMD_SETTYPE = "sensor.setType";
+    public static final String CMD_SETAREA = "sensor.setArea";
+    public static final String CMD_SETGROUP = "sensor.setGroup";
 
 
     private int number = 0;
@@ -363,22 +365,31 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+        boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
         }
-        if (CMD_SETNUMBER.equals(command)) {
-            setNumber(args.get("number").getInteger());
-            return true;
-        } else if (CMD_SETAREA.equals(command)) {
-            setAreaType(AreaType.values()[args.get("type").getInteger()]);
+        if (CMD_SETAREA.equals(command)) {
+            AreaType type = NamedEnum.getEnumByName(params.get(ChoiceLabel.PARAM_CHOICE), AreaType.values());
+            setAreaType(type);
             return true;
         } else if (CMD_SETTYPE.equals(command)) {
-            setSensorType(SensorType.values()[args.get("type").getInteger()]);
+            SensorType type = NamedEnum.getEnumByName(params.get(ChoiceLabel.PARAM_CHOICE), SensorType.values());
+            setSensorType(type);
             return true;
         } else if (CMD_SETGROUP.equals(command)) {
-            setGroupType(GroupType.values()[args.get("type").getInteger()]);
+            GroupType type = NamedEnum.getEnumByName(params.get(ChoiceLabel.PARAM_CHOICE), GroupType.values());
+            setGroupType(type);
+            return true;
+        } else if (CMD_SETNUMBER.equals(command)) {
+            int number;
+            try {
+                number = Integer.parseInt(params.get(TextField.PARAM_TEXT));
+            } catch (NumberFormatException e) {
+                number = 1;
+            }
+            setNumber(number);
             return true;
         }
         return false;

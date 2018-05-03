@@ -8,7 +8,6 @@ import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
-import mcjty.lib.network.Argument;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.varia.NamedEnum;
@@ -25,10 +24,7 @@ public class GuiSensor extends GenericGuiContainer<SensorTileEntity> {
     public static final String META_MATCH = "Match";
     public static final String META_IGNORE = "Ignore";
 
-    private TextField numberField;
     private ChoiceLabel typeLabel;
-    private ChoiceLabel areaLabel;
-    private ChoiceLabel groupLabel;
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/sensor.png");
 
@@ -44,38 +40,33 @@ public class GuiSensor extends GenericGuiContainer<SensorTileEntity> {
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
-        numberField = new TextField(mc, this).setTooltips("Set a number specific to the type of sensor")
-                .setLayoutHint(60, 51, 80, 14)
-                .addTextEvent((parent, newText) -> setNumber());
-        int number = tileEntity.getNumber();
-        numberField.setText(String.valueOf(number));
+        TextField numberField = new TextField(mc, this)
+                .setName("number")
+                .setChannel("number")
+                .setEnabledFlags("number")
+                .setTooltips("Set a number specific to the type of sensor")
+                .setLayoutHint(60, 51, 80, 14);
 
-        typeLabel = new ChoiceLabel(mc, this);
+        typeLabel = new ChoiceLabel(mc, this).setName("type").setChannel("type");
         for (SensorType sensorType : SensorType.values()) {
             typeLabel.addChoices(sensorType.getName());
             typeLabel.setChoiceTooltip(sensorType.getName(), sensorType.getDescription());
         }
         typeLabel.setLayoutHint(60, 3, 80, 14);
-        typeLabel.setChoice(tileEntity.getSensorType().getName());
-        typeLabel.addChoiceEvent((parent, newChoice) -> setType());
 
-        areaLabel = new ChoiceLabel(mc, this);
+        ChoiceLabel areaLabel = new ChoiceLabel(mc, this).setName("area").setChannel("area");
         for (AreaType areaType : AreaType.values()) {
             areaLabel.addChoices(areaType.getName());
             areaLabel.setChoiceTooltip(areaType.getName(), areaType.getDescription());
         }
         areaLabel.setLayoutHint(60, 19, 80, 14);
-        areaLabel.setChoice(tileEntity.getAreaType().getName());
-        areaLabel.addChoiceEvent((parent, newChoice) -> setArea());
 
-        groupLabel = new ChoiceLabel(mc, this);
+        ChoiceLabel groupLabel = new ChoiceLabel(mc, this).setName("group").setChannel("group").setEnabledFlags("group");
         for (GroupType groupType : GroupType.values()) {
             groupLabel.addChoices(groupType.getName());
             groupLabel.setChoiceTooltip(groupType.getName(), groupType.getDescription());
         }
         groupLabel.setLayoutHint(60, 35, 80, 14);
-        groupLabel.setChoice(tileEntity.getGroupType().getName());
-        groupLabel.addChoiceEvent((parent, newChoice) -> setGroup());
 
         toplevel
                 .addChild(new Label(mc, this).setText("Type:")
@@ -99,45 +90,34 @@ public class GuiSensor extends GenericGuiContainer<SensorTileEntity> {
         window = new Window(this, toplevel);
     }
 
-    private void setArea() {
-        AreaType areaType = NamedEnum.getEnumByName(areaLabel.getCurrentChoice(), AreaType.values());
-        tileEntity.setAreaType(areaType);
-        sendServerCommand(RFToolsMessages.INSTANCE, SensorTileEntity.CMD_SETAREA, new Argument("type", areaType.ordinal()));
+    private void initializeFields() {
+        TextField numberField = window.findChild("number");
+        int number = tileEntity.getNumber();
+        numberField.setText(String.valueOf(number));
+
+        typeLabel = window.findChild("type");
+        typeLabel.setChoice(tileEntity.getSensorType().getName());
+
+        ChoiceLabel areaLabel = window.findChild("area");
+        areaLabel.setChoice(tileEntity.getAreaType().getName());
+
+        ChoiceLabel groupLabel = window.findChild("group");
+        groupLabel.setChoice(tileEntity.getGroupType().getName());
     }
 
-    private void setType() {
-        SensorType sensorType = getSensorType();
-        tileEntity.setSensorType(sensorType);
-        sendServerCommand(RFToolsMessages.INSTANCE, SensorTileEntity.CMD_SETTYPE, new Argument("type", sensorType.ordinal()));
+    private void setupEvents() {
+        window.addChannelEvent("number", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, SensorTileEntity.CMD_SETNUMBER, params));
+        window.addChannelEvent("type", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, SensorTileEntity.CMD_SETTYPE, params));
+        window.addChannelEvent("area", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, SensorTileEntity.CMD_SETAREA, params));
+        window.addChannelEvent("group", (source, params) -> sendServerCommand(RFToolsMessages.INSTANCE, SensorTileEntity.CMD_SETGROUP, params));
     }
 
-    private SensorType getSensorType() {
-        return NamedEnum.getEnumByName(typeLabel.getCurrentChoice(), SensorType.values());
-    }
-
-    private void setGroup() {
-        GroupType groupType = NamedEnum.getEnumByName(groupLabel.getCurrentChoice(), GroupType.values());
-        tileEntity.setGroupType(groupType);
-        sendServerCommand(RFToolsMessages.INSTANCE, SensorTileEntity.CMD_SETGROUP, new Argument("type", groupType.ordinal()));
-    }
-
-    private void setNumber() {
-        String d = numberField.getText();
-        int number;
-        try {
-            number = Integer.parseInt(d);
-        } catch (NumberFormatException e) {
-            number = 1;
-        }
-        tileEntity.setNumber(number);
-        sendServerCommand(RFToolsMessages.INSTANCE, SensorTileEntity.CMD_SETNUMBER, new Argument("number", number));
-    }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
-        SensorType sensorType = getSensorType();
-        numberField.setEnabled(sensorType.isSupportsNumber());
-        groupLabel.setEnabled(sensorType.isSupportsGroup());
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        SensorType sensorType = NamedEnum.getEnumByName(typeLabel.getCurrentChoice(), SensorType.values());
+        window.setFlag("number", sensorType.isSupportsNumber());
+        window.setFlag("group", sensorType.isSupportsGroup());
         drawWindow();
     }
 }

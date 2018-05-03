@@ -18,8 +18,8 @@ public class RelaySetup {
                 .emptyContainer()
                 .guiId(RFTools.GUI_RELAY)
                 .property(RelayTileEntity.ENABLED)
-                .information("message.rftools.shiftmessage")
-                .informationShift("message.rftools.relay")
+                .info("message.rftools.shiftmessage")
+                .infoExtended("message.rftools.relay")
                 .build();
     }
 

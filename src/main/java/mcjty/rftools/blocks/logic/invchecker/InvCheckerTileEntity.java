@@ -5,10 +5,12 @@ import gnu.trove.set.hash.TIntHashSet;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.container.LogicTileEntity;
-import mcjty.lib.network.Argument;
+import mcjty.lib.gui.widgets.ChoiceLabel;
+import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.CapabilityTools;
 import mcjty.lib.varia.Logging;
+import mcjty.typed.TypedMap;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -22,14 +24,15 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.oredict.OreDictionary;
 
-import java.util.Map;
+import static mcjty.rftools.blocks.logic.invchecker.GuiInvChecker.META_MATCH;
+import static mcjty.rftools.blocks.logic.invchecker.GuiInvChecker.OREDICT_USE;
 
 public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, DefaultSidedInventory {
 
-    public static final String CMD_SETAMOUNT = "setCounter";
-    public static final String CMD_SETSLOT = "setSlot";
-    public static final String CMD_SETOREDICT = "setOreDict";
-    public static final String CMD_SETMETA = "setUseMeta";
+    public static final String CMD_SETAMOUNT = "inv.setCounter";
+    public static final String CMD_SETSLOT = "inv.setSlot";
+    public static final String CMD_SETOREDICT = "inv.setOreDict";
+    public static final String CMD_SETMETA = "inv.setUseMeta";
 
 
     private int amount = 1;
@@ -240,24 +243,37 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+        boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
         }
-        if (CMD_SETAMOUNT.equals(command)) {
-            setAmount(args.get("amount").getInteger());
-            return true;
-        } else if (CMD_SETSLOT.equals(command)) {
-            setSlot(args.get("slot").getInteger());
-            return true;
-        } else if (CMD_SETMETA.equals(command)) {
-            setUseMeta(args.get("b").getBoolean());
+        if (CMD_SETMETA.equals(command)) {
+            setUseMeta(META_MATCH.equals(params.get(ChoiceLabel.PARAM_CHOICE)));
             return true;
         } else if (CMD_SETOREDICT.equals(command)) {
-            setOreDict(args.get("b").getBoolean());
+            setOreDict(OREDICT_USE.equals(params.get(ChoiceLabel.PARAM_CHOICE)));
+            return true;
+        } else if (CMD_SETSLOT.equals(command)) {
+            int slot;
+            try {
+                slot = Integer.parseInt(params.get(TextField.PARAM_TEXT));
+            } catch (NumberFormatException e) {
+                slot = 0;
+            }
+            setSlot(slot);
+            return true;
+        } else if (CMD_SETAMOUNT.equals(command)) {
+            int amount;
+            try {
+                amount = Integer.parseInt(params.get(TextField.PARAM_TEXT));
+            } catch (NumberFormatException e) {
+                amount = 1;
+            }
+            setAmount(amount);
             return true;
         }
         return false;
     }
+
 }

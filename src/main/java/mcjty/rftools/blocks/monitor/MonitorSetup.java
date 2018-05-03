@@ -19,8 +19,8 @@ public class MonitorSetup {
                 .flags(BlockFlags.REDSTONE_OUTPUT)
                 .guiId(RFTools.GUI_RF_MONITOR)
                 .property(RFMonitorBlockTileEntity.LEVEL)
-                .information("message.rftools.shiftmessage")
-                .informationShift("message.rftools.rf_monitor")
+                .info("message.rftools.shiftmessage")
+                .infoExtended("message.rftools.rf_monitor")
                 .build();
 
         liquidMonitorBlock = ModBlocks.builderFactory.<LiquidMonitorBlockTileEntity> builder("liquid_monitor")
@@ -29,8 +29,8 @@ public class MonitorSetup {
                 .flags(BlockFlags.REDSTONE_OUTPUT)
                 .guiId(RFTools.GUI_LIQUID_MONITOR)
                 .property(LiquidMonitorBlockTileEntity.LEVEL)
-                .information("message.rftools.shiftmessage")
-                .informationShift("message.rftools.liquid_monitor")
+                .info("message.rftools.shiftmessage")
+                .infoExtended("message.rftools.liquid_monitor")
                 .build();
     }
 

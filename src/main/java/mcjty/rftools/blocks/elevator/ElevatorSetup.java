@@ -21,8 +21,8 @@ public class ElevatorSetup {
                 .rotationType(BaseBlock.RotationType.HORIZROTATION)
                 .emptyContainer()
                 .guiId(RFTools.GUI_ELEVATOR)
-                .information("message.rftools.shiftmessage")
-                .informationShift("message.rftools.elevator")
+                .info("message.rftools.shiftmessage")
+                .infoExtended("message.rftools.elevator")
                 .build();
     }
 

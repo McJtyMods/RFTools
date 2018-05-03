@@ -1,16 +1,18 @@
 package mcjty.rftools.blocks.logic.threelogic;
 
 import mcjty.lib.container.LogicTileEntity;
-import mcjty.lib.network.Argument;
 import mcjty.rftools.blocks.logic.LogicBlockSetup;
+import mcjty.typed.Key;
+import mcjty.typed.Type;
+import mcjty.typed.TypedMap;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 
-import java.util.Map;
-
 public class ThreeLogicTileEntity extends LogicTileEntity {
 
-    public static final String CMD_SETSTATE = "setState";
+    public static final String CMD_SETSTATE = "logic.setState";
+    public static final Key<Integer> PARAM_INDEX = new Key<>("index", Type.INTEGER);
+    public static final Key<Integer> PARAM_STATE = new Key<>("state", Type.INTEGER);
 
     private int[] logicTable = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };    // 0 == off, 1 == on, -1 == keep
 
@@ -66,13 +68,13 @@ public class ThreeLogicTileEntity extends LogicTileEntity {
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+        boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
         }
         if (CMD_SETSTATE.equals(command)) {
-            logicTable[args.get("index").getInteger()] = args.get("state").getInteger();
+            logicTable[params.get(PARAM_INDEX)] = params.get(PARAM_STATE);
             markDirtyClient();
             LogicBlockSetup.threeLogicBlock.checkRedstone(world, pos);
             return true;

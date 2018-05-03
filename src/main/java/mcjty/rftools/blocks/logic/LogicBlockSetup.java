@@ -1,14 +1,14 @@
 package mcjty.rftools.blocks.logic;
 
 import mcjty.lib.builder.BlockFlags;
-import mcjty.lib.container.BaseBlock;
 import mcjty.lib.container.GenericBlock;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.varia.ItemStackTools;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.logic.analog.AnalogBlock;
 import mcjty.rftools.blocks.logic.counter.CounterBlock;
-import mcjty.rftools.blocks.logic.digit.DigitBlock;
+import mcjty.rftools.blocks.logic.digit.DigitTileEntity;
 import mcjty.rftools.blocks.logic.invchecker.InvCheckerBlock;
 import mcjty.rftools.blocks.logic.sensor.SensorBlock;
 import mcjty.rftools.blocks.logic.sequencer.SequencerBlock;
@@ -30,8 +30,8 @@ public class LogicBlockSetup {
     public static InvCheckerBlock invCheckerBlock;
     public static SensorBlock sensorBlock;
     public static AnalogBlock analogBlock;
-    public static DigitBlock digitBlock;
 
+    public static GenericBlock<DigitTileEntity, GenericContainer> digitBlock;
     public static GenericBlock<WireTileEntity, GenericContainer> wireBlock;
     public static GenericBlock<TimerTileEntity, GenericContainer> timerBlock;
 
@@ -44,24 +44,31 @@ public class LogicBlockSetup {
         invCheckerBlock = new InvCheckerBlock();
         sensorBlock = new SensorBlock();
         analogBlock = new AnalogBlock();
-        digitBlock = new DigitBlock();
 
+        digitBlock = ModBlocks.logicFactory.<DigitTileEntity> builder("digit_block")
+                .tileEntityClass(DigitTileEntity.class)
+                .emptyContainer()
+                .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE,
+                        BlockFlags.RENDER_CUTOUT, BlockFlags.RENDER_SOLID)
+                .property(DigitTileEntity.VALUE)
+                .info("message.rftools.shiftmessage")
+                .infoExtended("message.rftools.digit")
+                .build();
         wireBlock = ModBlocks.logicFactory.<WireTileEntity> builder("wire_block")
                 .tileEntityClass(WireTileEntity.class)
-                .rotationType(BaseBlock.RotationType.NONE)      // @todo will be default
                 .emptyContainer()
                 .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
-                .information("message.rftools.shiftmessage")
-                .informationShift("message.rftools.wire")
+                .info("message.rftools.shiftmessage")
+                .infoExtended("message.rftools.wire")
                 .build();
         timerBlock = ModBlocks.logicFactory.<TimerTileEntity> builder("timer_block")
                 .tileEntityClass(TimerTileEntity.class)
-                .rotationType(BaseBlock.RotationType.NONE)      // @todo will be default
+                .guiId(RFTools.GUI_TIMER)
                 .emptyContainer()
                 .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
-                .information("message.rftools.shiftmessage")
-                .informationShift("message.rftools.timer",
-                        stack -> Integer.toString(ItemStackTools.mapTag(stack, compound -> compound.getInteger("delay"), 0)))
+                .info("message.rftools.shiftmessage")
+                .infoExtended("message.rftools.timer")
+                .infoExtendedParameter(ItemStackTools.intGetter("delay", 0))
                 .build();
     }
 

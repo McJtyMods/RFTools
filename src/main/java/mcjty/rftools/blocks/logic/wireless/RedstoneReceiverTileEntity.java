@@ -1,15 +1,14 @@
 package mcjty.rftools.blocks.logic.wireless;
 
-import mcjty.lib.network.Argument;
+import mcjty.lib.gui.widgets.ToggleButton;
+import mcjty.typed.TypedMap;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
 
-import java.util.Map;
-
 public class RedstoneReceiverTileEntity extends RedstoneChannelTileEntity implements ITickable {
 
-    public static final String CMD_SETANALOG = "setAnalog";
+    public static final String CMD_SETANALOG = "receiver.setAnalog";
 
     private boolean analog = false;
 
@@ -81,13 +80,13 @@ public class RedstoneReceiverTileEntity extends RedstoneChannelTileEntity implem
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+        boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
         }
         if (CMD_SETANALOG.equals(command)) {
-            setAnalog(args.get("analog").getBoolean());
+            setAnalog(params.get(ToggleButton.PARAM_ON));
             return true;
         }
         return false;

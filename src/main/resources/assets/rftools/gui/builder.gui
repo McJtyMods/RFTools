@@ -1,61 +1,61 @@
-container {
-    slot('specificitem') {
-        items('rftools:space_chamber_card','rftools:shape_card')
-        pos(100,10)
-    }
-    slot('specificitem') {
-        items('rftools:filter_module')
-        pos(100,10)
-    }
-    playerslots(10,70)
-}
-window {
-    size(180,152)
-
-    event('rotate','builder.setRotate')
-    event('redstone','builder.setRsMode')
-    event('silent','builder.setSilent')
-    event('entities','builder.setEntities')
-    event('wait','builder.setWait')
-    event('loop','builder.setLoop')
-    event('hilight','builder.setHilight')
-    event('support','builder.setSupport')
-    event('restart','builder.restart')
-    event('mode','builder.setMode')
-
-    panel('','positional') {
-        bg1('rftools:textures/gui/builder.png')
-        energybar('energybar') {
-            hint(10,6,8,59)
-            showtext(false)
+    container {
+        slot('specificitem') {
+            items('rftools:space_chamber_card','rftools:shape_card')
+            pos(100,10)
         }
+        slot('specificitem') {
+            items('rftools:filter_module')
+            pos(100,10)
+        }
+        playerslots(10,70)
+    }
+    window {
+        size(180,152)
+
+        event('rotate','builder.setRotate')
+        event('redstone','builder.setRsMode')
+        event('silent','builder.setSilent')
+        event('entities','builder.setEntities')
+        event('wait','builder.setWait')
+        event('loop','builder.setLoop')
+        event('hilight','builder.setHilight')
+        event('support','builder.setSupport')
+        event('restart','builder.restart')
+        event('mode','builder.setMode')
+
         panel('','positional') {
-            hint(19,6,61,59)
-            bgthickness(-2)
-            bgfilled1(-7631989)
-            choicelabel('mode') {
-                channel('mode')
-                hint(9,4,42,14)
-                enableon('validcard')
-                tooltips('Set the building mode')
-                choices {
-                    choice('Copy') {
-                        tooltips('Copy from space chamber to here','Chest on top or below with materials')
-                    }
-                    choice('Move') {
-                        tooltips('Move from space chamber to here')
-                    }
-                    choice('Swap') {
-                        tooltips('Swap space chamber contents with here')
-                    }
-                    choice('Back') {
-                        tooltips('Move back from here to space chamber')
-                    }
-                    choice('Collect') {
-                        tooltips('Collect items in space chamber','Items will go to chest on top or below')
+            bg1('rftools:textures/gui/builder.png')
+            energybar('energybar') {
+                hint(10,6,8,59)
+                showtext(false)
+            }
+            panel('','positional') {
+                hint(19,6,61,59)
+                bgthickness(-2)
+                bgfilled1(-7631989)
+                choicelabel('mode') {
+                    channel('mode')
+                    hint(9,4,42,14)
+                    enableon('validcard')
+                    tooltips('Set the building mode')
+                    choices {
+                        choice('Copy') {
+                            tooltips('Copy from space chamber to here','Chest on top or below with materials')
+                        }
+                        choice('Move') {
+                            tooltips('Move from space chamber to here')
+                        }
+                        choice('Swap') {
+                            tooltips('Swap space chamber contents with here')
+                        }
+                        choice('Back') {
+                            tooltips('Move back from here to space chamber')
+                        }
+                        choice('Collect') {
+                            tooltips('Collect items in space chamber','Items will go to chest on top or below')
+                        }
                     }
                 }
-            }
             imagechoicelabel('silent') {
                 channel('silent')
                 hint(4,18,17,17)

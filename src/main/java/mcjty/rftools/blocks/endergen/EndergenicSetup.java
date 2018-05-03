@@ -27,8 +27,8 @@ public class EndergenicSetup {
                 .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.NON_OPAQUE, BlockFlags.RENDER_TRANSLUCENT)
                 .rotationType(BaseBlock.RotationType.NONE)
                 .guiId(RFTools.GUI_ENDERGENIC)
-                .information("message.rftools.shiftmessage")
-                .informationShift("message.rftools.endergenic")
+                .info("message.rftools.shiftmessage")
+                .infoExtended("message.rftools.endergenic")
                 .build();
 
         pearlInjectorBlock = ModBlocks.builderFactory.<PearlInjectorTileEntity> builder("pearl_injector")
@@ -36,8 +36,9 @@ public class EndergenicSetup {
                 .container(PearlInjectorTileEntity.CONTAINER_FACTORY)
                 .flags(BlockFlags.REDSTONE_CHECK)
                 .guiId(RFTools.GUI_PEARL_INJECTOR)
-                .information("message.rftools.shiftmessage")
-                .informationShift("message.rftools.pearl_injector", stack -> {
+                .info("message.rftools.shiftmessage")
+                .infoExtended("message.rftools.pearl_injector")
+                .infoExtendedParameter(stack -> {
                     int count = mapTag(stack, compound -> (int) ItemStackTools.getListStream(compound, "Items").filter(nbt -> !new ItemStack((NBTTagCompound)nbt).isEmpty()).count(), 0);
                     return Integer.toString(count);
                 })

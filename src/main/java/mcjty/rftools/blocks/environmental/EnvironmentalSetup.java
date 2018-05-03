@@ -66,11 +66,11 @@ public class EnvironmentalSetup {
                 .rotationType(BaseBlock.RotationType.NONE)
                 .moduleSupport(EnvironmentalControllerTileEntity.MODULE_SUPPORT)
                 .guiId(RFTools.GUI_ENVIRONMENTAL_CONTROLLER)
-                .information("message.rftools.shiftmessage")
-                .informationShift("message.rftools.environmental_controller",
-                        stack -> Integer.toString(ItemStackTools.mapTag(stack, tag -> tag.getInteger("radius"), 0)),
-                        stack -> Integer.toString(ItemStackTools.mapTag(stack, tag -> tag.getInteger("miny"), 0)),
-                        stack -> Integer.toString(ItemStackTools.mapTag(stack, tag -> tag.getInteger("maxy"), 0)))
+                .info("message.rftools.shiftmessage")
+                .infoExtended("message.rftools.environmental_controller")
+                .infoExtendedParameter(ItemStackTools.intGetter("radius", 0))
+                .infoExtendedParameter(ItemStackTools.intGetter("miny", 0))
+                .infoExtendedParameter(ItemStackTools.intGetter("maxy", 0))
                 .build();
 
         regenerationEModuleItem = new RegenerationEModuleItem();

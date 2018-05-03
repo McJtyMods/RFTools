@@ -4,17 +4,14 @@ import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.LogicSlabBlock;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -23,8 +20,6 @@ import org.lwjgl.input.Keyboard;
 import java.util.List;
 
 public class DigitBlock extends LogicSlabBlock<DigitTileEntity, EmptyContainer> {
-
-    public static PropertyInteger VALUE = PropertyInteger.create("value", 0, 15);
 
     public DigitBlock() {
         super(RFTools.instance, Material.IRON, DigitTileEntity.class, EmptyContainer.class, "digit_block", false);
@@ -51,15 +46,8 @@ public class DigitBlock extends LogicSlabBlock<DigitTileEntity, EmptyContainer> 
     protected void checkRedstone(World world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof DigitTileEntity) {
+            ((DigitTileEntity) te).checkRedstone(world, pos);
             DigitTileEntity logicTileEntity = (DigitTileEntity)te;
-            EnumFacing inputSide = logicTileEntity.getFacing(world.getBlockState(pos)).getInputSide();
-            int power = getInputStrength(world, pos, inputSide);
-            int oldPower = logicTileEntity.getPowerLevel();
-            logicTileEntity.setPowerInput(power);
-            if (oldPower != power) {
-                logicTileEntity.markDirtyClient();
-//                world.markBlockRangeForRenderUpdate(pos, pos);
-            }
         }
     }
 
@@ -68,19 +56,8 @@ public class DigitBlock extends LogicSlabBlock<DigitTileEntity, EmptyContainer> 
         return super.canRenderInLayer(state, layer) || layer == BlockRenderLayer.CUTOUT;
     }
 
-
-    @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntity te = world.getTileEntity(pos);
-        if (te instanceof DigitTileEntity) {
-            DigitTileEntity logicTileEntity = (DigitTileEntity)te;
-            return super.getActualState(state, world, pos).withProperty(VALUE, logicTileEntity.getPowerLevel());
-        }
-        return super.getActualState(state, world, pos).withProperty(VALUE, 0);
-    }
-
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, LOGIC_FACING, META_INTERMEDIATE, VALUE);
+        return new BlockStateContainer(this, LOGIC_FACING, META_INTERMEDIATE, DigitTileEntity.VALUE);
     }
 }

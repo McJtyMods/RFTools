@@ -15,8 +15,8 @@ public class MachineInfuserSetup {
                 .tileEntityClass(MachineInfuserTileEntity.class)
                 .container(MachineInfuserTileEntity.CONTAINER_FACTORY)
                 .guiId(RFTools.GUI_MACHINE_INFUSER)
-                .information("message.rftools.shiftmessage")
-                .informationShift("message.rftools.infuser")
+                .info("message.rftools.shiftmessage")
+                .infoExtended("message.rftools.infuser")
                 .build();
     }
 

@@ -3,11 +3,9 @@ package mcjty.rftools.blocks.logic.analog;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
-import mcjty.lib.gui.events.TextEvent;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
-import mcjty.lib.gui.widgets.Widget;
 import mcjty.lib.network.Argument;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
@@ -16,7 +14,7 @@ import net.minecraft.util.ResourceLocation;
 import java.awt.Rectangle;
 import java.text.DecimalFormat;
 
-public class GuiAnalog extends GenericGuiContainer<AnalogTileEntity> implements TextEvent {
+public class GuiAnalog extends GenericGuiContainer<AnalogTileEntity> {
     public static final int ANALOG_WIDTH = 194;
     public static final int ANALOG_HEIGHT = 154;
 
@@ -43,13 +41,29 @@ public class GuiAnalog extends GenericGuiContainer<AnalogTileEntity> implements 
         super.initGui();
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
-        mulEqual = new TextField(mc, this).setLayoutHint(106, 78, 30, 16);
-        mulLess = new TextField(mc, this).setLayoutHint(106, 104, 30, 16);
-        mulGreater = new TextField(mc, this).setLayoutHint(106, 130, 30, 16);
-        addEqual = new TextField(mc, this).setLayoutHint(153, 78, 30, 16);
-        addLess = new TextField(mc, this).setLayoutHint(153, 104, 30, 16);
-        addGreater = new TextField(mc, this).setLayoutHint(153, 130, 30, 16);
+        mulEqual = new TextField(mc, this).setName("mul_eq").setLayoutHint(106, 78, 30, 16);
+        mulLess = new TextField(mc, this).setName("mul_less").setLayoutHint(106, 104, 30, 16);
+        mulGreater = new TextField(mc, this).setName("mul_greater").setLayoutHint(106, 130, 30, 16);
+        addEqual = new TextField(mc, this).setName("add_eq").setLayoutHint(153, 78, 30, 16);
+        addLess = new TextField(mc, this).setName("add_less").setLayoutHint(153, 104, 30, 16);
+        addGreater = new TextField(mc, this).setName("add_greater").setLayoutHint(153, 130, 30, 16);
         toplevel.addChildren(mulEqual, mulLess, mulGreater, addEqual, addLess, addGreater);
+
+        initializeFields();
+
+        toplevel.setBounds(new Rectangle(guiLeft, guiTop, ANALOG_WIDTH, ANALOG_HEIGHT));
+        window = new Window(this, toplevel);
+
+        setupEvents();
+    }
+
+    private void initializeFields() {
+        mulEqual = window.findChild("mul_eq");
+        mulLess = window.findChild("mul_less");
+        mulGreater = window.findChild("mul_greater");
+        addEqual = window.findChild("add_eq");
+        addLess = window.findChild("add_less");
+        addGreater = window.findChild("add_greater");
 
         mulEqual.setText(fmt.format(tileEntity.getMulEqual()));
         mulLess.setText(fmt.format(tileEntity.getMulLess()));
@@ -57,16 +71,10 @@ public class GuiAnalog extends GenericGuiContainer<AnalogTileEntity> implements 
         addEqual.setText(String.valueOf(tileEntity.getAddEqual()));
         addLess.setText(String.valueOf(tileEntity.getAddLess()));
         addGreater.setText(String.valueOf(tileEntity.getAddGreater()));
+    }
 
-        mulEqual.addTextEvent(this);
-        mulLess.addTextEvent(this);
-        mulGreater.addTextEvent(this);
-        addEqual.addTextEvent(this);
-        addLess.addTextEvent(this);
-        addGreater.addTextEvent(this);
-
-        toplevel.setBounds(new Rectangle(guiLeft, guiTop, ANALOG_WIDTH, ANALOG_HEIGHT));
-        window = new Window(this, toplevel);
+    private void setupEvents() {
+        window.addChannelEvent("update", (source, params) -> updateAnalog());
     }
 
     private static double safeDouble(String f) {
@@ -85,8 +93,7 @@ public class GuiAnalog extends GenericGuiContainer<AnalogTileEntity> implements 
         }
     }
 
-    @Override
-    public void textChanged(Widget parent, String newText) {
+    private void updateAnalog() {
         sendServerCommand(RFToolsMessages.INSTANCE, AnalogTileEntity.CMD_UPDATE,
                 new Argument("mulE", safeDouble(mulEqual.getText())),
                 new Argument("mulL", safeDouble(mulLess.getText())),
