@@ -64,9 +64,9 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 minecraft {
-    version = "1.12.2-14.23.1.2589"
+    version = "1.12.2-14.23.3.2678"
     runDir = "run"
-    mappings = "snapshot_20171011"
+    mappings = "snapshot_20180504"
     useDepAts = true
 }
 
@@ -82,16 +82,19 @@ artifacts {
 
 
 dependencies {
-    deobfCompile "mezz.jei:jei_1.12.2:4.8.5.144"
+    deobfCompile "mezz.jei:jei_1.12.2:4.8.5.159"
     deobfCompile "mcp.mobius.waila:Hwyla:1.8.23-B38_1.12"
-    deobfCompile "mcjty.theoneprobe:TheOneProbe-1.12:1.12-1.4.19-11"
+    deobfCompile "mcjty.theoneprobe:TheOneProbe-1.12:1.12-1.4.20-12"
     deobfCompile "cofh:RedstoneFlux:1.12-2.0.0.1:universal"
     //deobfCompile "pl.asie.charset:charset:0.5.0.164"
     compile "team.chisel.ctm:CTM:MC1.12-0.2.3.12"
 
     deobfCompile "com.github.mcjty:intwheel:1.12-1.2.7"
-    deobfCompile "com.github.mcjty:xnet:1.12-1.6.7"
-    deobfCompile "com.github.mcjty:mcjtylib:1.12-2.6.8-SNAPSHOT"
+
+    if (!project.hasProperty("singleproject")) {
+        deobfCompile "com.github.mcjty:xnet:1.12-1.6.7"
+        deobfCompile "com.github.mcjty:mcjtylib:1.12-2.6.8-SNAPSHOT"
+    }
 
     provided "li.cil.oc:OpenComputers:MC1.12.1-1.7.+:api"
 }
