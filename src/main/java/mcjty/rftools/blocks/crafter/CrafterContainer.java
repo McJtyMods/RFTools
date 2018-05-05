@@ -46,6 +46,12 @@ public class CrafterContainer extends GenericContainer {
                     }
                     return super.isItemValid(stack);
                 }
+
+                @Override
+                public void onSlotChanged() {
+                    crafterBaseTE.noRecipesWork = false;
+                    super.onSlotChanged();
+                }
             };
         } else if (index >= SLOT_BUFFEROUT && index < SLOT_FILTER_MODULE) {
             return new BaseSlot(inventory, index, x, y) {
@@ -55,6 +61,12 @@ public class CrafterContainer extends GenericContainer {
                         return false;
                     }
                     return super.isItemValid(stack);
+                }
+
+                @Override
+                public void onSlotChanged() {
+                    crafterBaseTE.noRecipesWork = false;
+                    super.onSlotChanged();
                 }
             };
         }
