@@ -19,9 +19,9 @@ public class CrafterContainer extends GenericContainer {
     public static final int BUFFEROUT_SIZE = 4;
     public static final int SLOT_FILTER_MODULE = SLOT_BUFFEROUT + BUFFEROUT_SIZE;
 
-    private final IInventory crafterBaseTE;
+    private final CrafterBaseTE crafterBaseTE;
 
-    public IInventory getCrafterTE() {
+    public CrafterBaseTE getCrafterTE() {
         return crafterBaseTE;
     }
 
@@ -29,7 +29,7 @@ public class CrafterContainer extends GenericContainer {
 
     public CrafterContainer(EntityPlayer player, IInventory containerInventory) {
         super(CONTAINER_FACTORY);
-        this.crafterBaseTE = containerInventory;
+        this.crafterBaseTE = (CrafterBaseTE)containerInventory; // TODO once this method is no longer reflectively called, refactor to remove this cast
         addInventory(CONTAINER_INVENTORY, containerInventory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
         generateSlots();

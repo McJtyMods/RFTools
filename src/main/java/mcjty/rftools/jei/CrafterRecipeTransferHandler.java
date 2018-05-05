@@ -9,7 +9,6 @@ import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.recipe.transfer.IRecipeTransferRegistry;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 
@@ -33,8 +32,8 @@ public class CrafterRecipeTransferHandler implements IRecipeTransferHandler<Craf
     public IRecipeTransferError transferRecipe(@Nonnull CrafterContainer container, @Nonnull IRecipeLayout recipeLayout, @Nonnull EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
         Map<Integer, ? extends IGuiIngredient<ItemStack>> guiIngredients = recipeLayout.getItemStacks().getGuiIngredients();
 
-        IInventory inventory = container.getCrafterTE();
-        BlockPos pos = ((CrafterBaseTE) inventory).getPos();
+        CrafterBaseTE inventory = container.getCrafterTE();
+        BlockPos pos = inventory.getPos();
 
         if (doTransfer) {
             RFToolsJeiPlugin.transferRecipe(guiIngredients, pos);
