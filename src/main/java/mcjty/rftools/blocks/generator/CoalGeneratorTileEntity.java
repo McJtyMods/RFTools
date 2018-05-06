@@ -14,7 +14,7 @@ import mcjty.rftools.RFTools;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
-import mcjty.typed.TypedMap;
+import mcjty.lib.typed.TypedMap;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.properties.PropertyBool;

@@ -10,7 +10,7 @@ import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.environmental.EnvModuleProvider;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
-import mcjty.typed.TypedMap;
+import mcjty.lib.typed.TypedMap;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;

@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.logic.counter;
 
 import mcjty.lib.container.LogicTileEntity;
 import mcjty.lib.gui.widgets.TextField;
-import mcjty.typed.TypedMap;
+import mcjty.lib.typed.TypedMap;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 

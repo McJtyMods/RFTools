@@ -12,7 +12,7 @@ import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.RedstoneMode;
-import mcjty.typed.TypedMap;
+import mcjty.lib.typed.TypedMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;

@@ -6,7 +6,7 @@ import mcjty.lib.gui.widgets.ToggleButton;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
-import mcjty.typed.TypedMap;
+import mcjty.lib.typed.TypedMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;

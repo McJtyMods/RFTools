@@ -10,7 +10,7 @@ import mcjty.lib.gui.widgets.*;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.PacketGetPlayers;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.typed.TypedMap;
+import mcjty.lib.typed.TypedMap;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;

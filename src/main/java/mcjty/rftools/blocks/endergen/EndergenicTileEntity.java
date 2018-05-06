@@ -18,7 +18,7 @@ import mcjty.rftools.hud.IHudSupport;
 import mcjty.rftools.network.PacketGetHudLog;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.theoneprobe.api.*;
-import mcjty.typed.Type;
+import mcjty.lib.typed.Type;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;

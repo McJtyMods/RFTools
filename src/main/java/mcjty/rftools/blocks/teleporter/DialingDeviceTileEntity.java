@@ -5,7 +5,7 @@ import mcjty.lib.network.Argument;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
-import mcjty.typed.Type;
+import mcjty.lib.typed.Type;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;

@@ -4,7 +4,7 @@ import mcjty.lib.container.BaseBlock;
 import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.EnergyTools;
-import mcjty.typed.Type;
+import mcjty.lib.typed.Type;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;

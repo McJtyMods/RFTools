@@ -8,7 +8,7 @@ import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.typed.TypedMap;
+import mcjty.lib.typed.TypedMap;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;

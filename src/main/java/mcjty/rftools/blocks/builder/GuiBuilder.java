@@ -10,7 +10,7 @@ import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.builder.GuiShapeCard;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.typed.TypedMap;
+import mcjty.lib.typed.TypedMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.ItemStack;

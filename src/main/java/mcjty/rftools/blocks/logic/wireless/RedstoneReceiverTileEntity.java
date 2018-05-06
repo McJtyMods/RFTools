@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.logic.wireless;
 
 import mcjty.lib.gui.widgets.ToggleButton;
-import mcjty.typed.TypedMap;
+import mcjty.lib.typed.TypedMap;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;

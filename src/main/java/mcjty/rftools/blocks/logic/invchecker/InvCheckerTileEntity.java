@@ -10,7 +10,7 @@ import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.CapabilityTools;
 import mcjty.lib.varia.Logging;
-import mcjty.typed.TypedMap;
+import mcjty.lib.typed.TypedMap;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;

@@ -5,7 +5,7 @@ import mcjty.lib.network.PacketHandler;
 import mcjty.lib.network.PacketRequestListFromServer;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
-import mcjty.typed.Type;
+import mcjty.lib.typed.Type;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.FMLCommonHandler;

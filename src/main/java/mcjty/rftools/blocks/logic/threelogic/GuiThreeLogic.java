@@ -6,7 +6,7 @@ import mcjty.lib.gui.Window;
 import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.typed.TypedMap;
+import mcjty.lib.typed.TypedMap;
 import net.minecraft.util.ResourceLocation;
 
 import static mcjty.rftools.blocks.logic.threelogic.ThreeLogicTileEntity.PARAM_INDEX;

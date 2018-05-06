@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.teleporter;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
 import mcjty.lib.varia.GlobalCoordinate;
-import mcjty.typed.Type;
+import mcjty.lib.typed.Type;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;

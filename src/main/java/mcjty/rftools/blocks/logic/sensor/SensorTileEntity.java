@@ -6,7 +6,7 @@ import mcjty.lib.container.LogicTileEntity;
 import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.rftools.varia.NamedEnum;
-import mcjty.typed.TypedMap;
+import mcjty.lib.typed.TypedMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.BlockLiquid;

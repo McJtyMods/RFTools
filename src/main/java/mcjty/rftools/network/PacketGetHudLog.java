@@ -3,7 +3,7 @@ package mcjty.rftools.network;
 import mcjty.lib.network.PacketRequestServerList;
 import mcjty.lib.network.PacketRequestServerListHandler;
 import mcjty.rftools.RFTools;
-import mcjty.typed.Type;
+import mcjty.lib.typed.Type;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 

@@ -6,7 +6,7 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.shield.filters.ShieldFilter;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.typed.Type;
+import mcjty.lib.typed.Type;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.FMLCommonHandler;

@@ -20,7 +20,7 @@ import mcjty.rftools.blocks.shield.filters.*;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.shapes.Shape;
-import mcjty.typed.Type;
+import mcjty.lib.typed.Type;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;

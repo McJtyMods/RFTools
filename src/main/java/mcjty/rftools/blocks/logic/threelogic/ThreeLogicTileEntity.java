@@ -2,9 +2,9 @@ package mcjty.rftools.blocks.logic.threelogic;
 
 import mcjty.lib.container.LogicTileEntity;
 import mcjty.rftools.blocks.logic.LogicBlockSetup;
-import mcjty.typed.Key;
-import mcjty.typed.Type;
-import mcjty.typed.TypedMap;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
+import mcjty.lib.typed.TypedMap;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 
