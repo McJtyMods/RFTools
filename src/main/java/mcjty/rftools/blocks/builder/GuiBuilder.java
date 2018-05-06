@@ -44,6 +44,8 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     private void setupEvents() {
         window.addChannelEvent("cardgui", (source, params) -> openCardGui());
         window.addChannelEvent("anchor", (source, params) -> selectAnchor(source.getName()));
+
+        window.bind(RFToolsMessages.INSTANCE, "wait", tileEntity, BuilderTileEntity.VALUE_WAIT.getName());
     }
 
     private void initializeFields() {

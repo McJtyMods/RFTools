@@ -5,7 +5,9 @@ import mcjty.lib.container.BaseBlock;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.entity.DefaultValue;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.entity.IValue;
 import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.network.Argument;
@@ -196,6 +198,16 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public BuilderTileEntity() {
         super(BuilderConfiguration.BUILDER_MAXENERGY, BuilderConfiguration.BUILDER_RECEIVEPERTICK);
         setRSMode(RedstoneMode.REDSTONE_ONREQUIRED);
+    }
+
+
+    public static final Key<Boolean> VALUE_WAIT = new Key<>("wait", Type.BOOLEAN);
+
+    @Override
+    public IValue[] getValues() {
+        return new IValue[] {
+                new DefaultValue<>(VALUE_WAIT, BuilderTileEntity::isWaitMode, BuilderTileEntity::setWaitMode)
+        };
     }
 
     @Override

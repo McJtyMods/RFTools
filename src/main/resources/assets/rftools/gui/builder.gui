@@ -16,7 +16,7 @@
         event('redstone','builder.setRsMode')
         event('silent','builder.setSilent')
         event('entities','builder.setEntities')
-        event('wait','builder.setWait')
+        //event('wait','builder.setWait')
         event('loop','builder.setLoop')
         event('hilight','builder.setHilight')
         event('support','builder.setSupport')

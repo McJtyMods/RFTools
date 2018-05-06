@@ -35,11 +35,11 @@ public class NBTMatchingRecipe extends ShapedRecipes {
     public boolean matches(InventoryCrafting inventoryCrafting, World world) {
         for (int i = 0; i <= 3 - this.recipeWidth; ++i) {
             for (int j = 0; j <= 3 - this.recipeHeight; ++j) {
-                if (checkMatch(inventoryCrafting, i, j, true)) {
+                if (checkMatchNBT(inventoryCrafting, i, j, true)) {
                     return true;
                 }
 
-                if (checkMatch(inventoryCrafting, i, j, false)) {
+                if (checkMatchNBT(inventoryCrafting, i, j, false)) {
                     return true;
                 }
             }
@@ -51,7 +51,7 @@ public class NBTMatchingRecipe extends ShapedRecipes {
     /**
      * Checks if the region of a crafting inventory is match for the recipe.
      */
-    private boolean checkMatch(InventoryCrafting inventoryCrafting, int x, int y, boolean reversed) {
+    private boolean checkMatchNBT(InventoryCrafting inventoryCrafting, int x, int y, boolean reversed) {
         for (int col = 0; col < 3; ++col) {
             for (int row = 0; row < 3; ++row) {
                 int i1 = col - x;
