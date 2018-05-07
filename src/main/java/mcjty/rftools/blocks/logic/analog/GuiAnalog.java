@@ -4,7 +4,7 @@ import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.widgets.TextField;
-import mcjty.lib.network.Argument;
+import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
@@ -74,12 +74,14 @@ public class GuiAnalog extends GenericGuiContainer<AnalogTileEntity> {
 
     private void updateAnalog() {
         sendServerCommand(RFToolsMessages.INSTANCE, AnalogTileEntity.CMD_UPDATE,
-                new Argument("mulE", safeDouble(mulEqual.getText())),
-                new Argument("mulL", safeDouble(mulLess.getText())),
-                new Argument("mulG", safeDouble(mulGreater.getText())),
-                new Argument("addE", safeInt(addEqual.getText())),
-                new Argument("addL", safeInt(addLess.getText())),
-                new Argument("addG", safeInt(addGreater.getText())));
+                TypedMap.builder()
+                        .put(AnalogTileEntity.PARAM_MUL_EQ, safeDouble(mulEqual.getText()))
+                        .put(AnalogTileEntity.PARAM_MUL_LESS, safeDouble(mulLess.getText()))
+                        .put(AnalogTileEntity.PARAM_MUL_GT, safeDouble(mulGreater.getText()))
+                        .put(AnalogTileEntity.PARAM_ADD_EQ, safeInt(addEqual.getText()))
+                        .put(AnalogTileEntity.PARAM_ADD_LESS, safeInt(addLess.getText()))
+                        .put(AnalogTileEntity.PARAM_ADD_GT, safeInt(addGreater.getText()))
+                        .build());
     }
 
 

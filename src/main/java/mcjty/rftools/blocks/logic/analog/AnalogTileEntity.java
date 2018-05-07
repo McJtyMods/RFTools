@@ -1,16 +1,22 @@
 package mcjty.rftools.blocks.logic.analog;
 
 import mcjty.lib.container.LogicTileEntity;
-import mcjty.lib.network.Argument;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
+import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.blocks.logic.LogicBlockSetup;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 
-import java.util.Map;
-
 public class AnalogTileEntity extends LogicTileEntity {
 
-    public static final String CMD_UPDATE = "update";
+    public static final String CMD_UPDATE = "analog.update";
+    public static final Key<Double> PARAM_MUL_EQ = new Key<>("mul_eq", Type.DOUBLE);
+    public static final Key<Double> PARAM_MUL_LESS = new Key<>("mul_less", Type.DOUBLE);
+    public static final Key<Double> PARAM_MUL_GT = new Key<>("mul_gt", Type.DOUBLE);
+    public static final Key<Integer> PARAM_ADD_EQ = new Key<>("add_eq", Type.INTEGER);
+    public static final Key<Integer> PARAM_ADD_LESS = new Key<>("add_less", Type.INTEGER);
+    public static final Key<Integer> PARAM_ADD_GT = new Key<>("add_gt", Type.INTEGER);
 
     private float mulEqual = 1.0f;
     private float mulLess = 1.0f;
@@ -98,18 +104,18 @@ public class AnalogTileEntity extends LogicTileEntity {
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+        boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
         }
         if (CMD_UPDATE.equals(command)) {
-            mulEqual = args.get("mulE").getDouble().floatValue();
-            mulLess = args.get("mulL").getDouble().floatValue();
-            mulGreater = args.get("mulG").getDouble().floatValue();
-            addEqual = args.get("addE").getInteger();
-            addLess = args.get("addL").getInteger();
-            addGreater = args.get("addG").getInteger();
+            mulEqual = params.get(PARAM_MUL_EQ).floatValue();
+            mulLess = params.get(PARAM_MUL_LESS).floatValue();
+            mulGreater = params.get(PARAM_MUL_GT).floatValue();
+            addEqual = params.get(PARAM_ADD_EQ);
+            addLess = params.get(PARAM_ADD_LESS);
+            addGreater = params.get(PARAM_ADD_GT);
             markDirtyClient();
             LogicBlockSetup.analogBlock.checkRedstone(world, pos);
             return true;
