@@ -26,6 +26,18 @@ if (ext.user != null) {
     }
 }
 
+// parse and import external config
+def parseConfig(File config) {
+    if (!config.exists())
+        return null
+
+    config.withReader {
+        def prop = new Properties()
+        prop.load(it)
+        return (new ConfigSlurper().parse(prop))
+    }
+}
+
 repositories {
     maven { // The repo from which to get waila
         name "Mobius Repo"
@@ -92,7 +104,7 @@ artifacts {
 dependencies {
     deobfCompile "mezz.jei:jei_${jei_version}"
     deobfCompile "mcp.mobius.waila:Hwyla:${waila_version}"
-    deobfCompile "mcjty.theoneprobe:TheOneProbe-:${top_version}"
+    deobfCompile "mcjty.theoneprobe:TheOneProbe-${top_version}"
     deobfCompile "cofh:RedstoneFlux:${redstoneflux_version}"
     //deobfCompile "pl.asie.charset:charset:0.5.0.164"
     compile "team.chisel.ctm:CTM:MC1.12-0.2.3.12"
