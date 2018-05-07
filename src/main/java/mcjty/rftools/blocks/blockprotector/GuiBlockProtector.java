@@ -19,7 +19,7 @@ public class GuiBlockProtector extends GenericGuiContainer<BlockProtectorTileEnt
 
     @Override
     public void initGui() {
-        window = new Window(this, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/block_protector.gui"));
+        window = new Window(this, tileEntity, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/block_protector.gui"));
         super.initGui();
 
         initializeFields();

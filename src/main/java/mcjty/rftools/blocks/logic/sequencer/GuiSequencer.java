@@ -24,7 +24,7 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
 
     @Override
     public void initGui() {
-        window = new Window(this, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/sequencer.gui"));
+        window = new Window(this, tileEntity, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/sequencer.gui"));
         super.initGui();
 
         initializeFields();

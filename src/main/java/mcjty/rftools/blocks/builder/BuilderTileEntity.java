@@ -5,14 +5,14 @@ import mcjty.lib.container.BaseBlock;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
-import mcjty.lib.entity.DefaultValue;
-import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
-import mcjty.lib.entity.IValue;
+import mcjty.lib.entity.*;
 import mcjty.lib.gui.widgets.ChoiceLabel;
-import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.Arguments;
 import mcjty.lib.network.PacketRequestIntegerFromServer;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.*;
 import mcjty.rftools.ClientCommandHandler;
 import mcjty.rftools.RFTools;
@@ -30,9 +30,6 @@ import mcjty.rftools.varia.RFToolsTools;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
-import mcjty.lib.typed.Key;
-import mcjty.lib.typed.Type;
-import mcjty.lib.typed.TypedMap;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
@@ -96,14 +93,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     public static final String CMD_SETMODE = "builder.setMode";
     public static final String CMD_SETROTATE = "builder.setRotate";
-    public static final String CMD_SETSILENT = "builder.setSilent";
-    public static final String CMD_SETSUPPORT = "builder.setSupport";
-    public static final String CMD_SETENTITIES = "builder.setEntities";
-    public static final String CMD_SETWAIT = "builder.setWait";
-    public static final String CMD_SETHILIGHT = "builder.setHilight";
-    public static final String CMD_SETLOOP = "builder.setLoop";
-    public static final String CMD_SETRSMODE = "builder.setRsMode";
-    public static final String CMD_RESTART = "builder.restart";
 
     public static final String CMD_SETANCHOR = "builder.setAnchor";
     public static final Key<Integer> PARAM_ANCHOR_INDEX = new Key<>("anchorIndex", Type.INTEGER);
@@ -202,11 +191,29 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
 
     public static final Key<Boolean> VALUE_WAIT = new Key<>("wait", Type.BOOLEAN);
+    public static final Key<Boolean> VALUE_LOOP = new Key<>("loop", Type.BOOLEAN);
+    public static final Key<Boolean> VALUE_HILIGHT = new Key<>("hilight", Type.BOOLEAN);
+    public static final Key<Boolean> VALUE_SUPPORT = new Key<>("support", Type.BOOLEAN);
+    public static final Key<Boolean> VALUE_SILENT = new Key<>("silent", Type.BOOLEAN);
+    public static final Key<Boolean> VALUE_ENTITIES = new Key<>("entities", Type.BOOLEAN);
 
     @Override
     public IValue[] getValues() {
         return new IValue[] {
-                new DefaultValue<>(VALUE_WAIT, BuilderTileEntity::isWaitMode, BuilderTileEntity::setWaitMode)
+                new DefaultValue<>(VALUE_RSMODE, BuilderTileEntity::getRSModeInt, BuilderTileEntity::setRSModeInt),
+                new DefaultValue<>(VALUE_WAIT, BuilderTileEntity::isWaitMode, BuilderTileEntity::setWaitMode),
+                new DefaultValue<>(VALUE_LOOP, BuilderTileEntity::hasLoopMode, BuilderTileEntity::setLoopMode),
+                new DefaultValue<>(VALUE_HILIGHT, BuilderTileEntity::isHilightMode, BuilderTileEntity::setHilightMode),
+                new DefaultValue<>(VALUE_SUPPORT, BuilderTileEntity::hasSupportMode, BuilderTileEntity::setSupportMode),
+                new DefaultValue<>(VALUE_SILENT, BuilderTileEntity::isSilent, BuilderTileEntity::setSilent),
+                new DefaultValue<>(VALUE_ENTITIES, BuilderTileEntity::hasEntityMode, BuilderTileEntity::setEntityMode),
+        };
+    }
+
+    @Override
+    public IAction[] getActions() {
+        return new IAction[] {
+                new DefaultAction<>("restart", BuilderTileEntity::restartScan)
         };
     }
 
@@ -2310,42 +2317,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (CMD_SETROTATE.equals(command)) {
             setRotate(Integer.parseInt(params.get(ChoiceLabel.PARAM_CHOICE))/90);
             return true;
-        } else if (CMD_SETRSMODE.equals(command)) {
-            setRSMode(RedstoneMode.values()[params.get(ImageChoiceLabel.PARAM_CHOICE_IDX)]);
-            return true;
-        } else if (CMD_SETSILENT.equals(command)) {
-            setSilent(params.get(ImageChoiceLabel.PARAM_CHOICE_IDX) == 1);
-            return true;
-        } else if (CMD_SETSUPPORT.equals(command)) {
-            setSupportMode(params.get(ImageChoiceLabel.PARAM_CHOICE_IDX) == 1);
-            return true;
-        } else if (CMD_SETENTITIES.equals(command)) {
-            setEntityMode(params.get(ImageChoiceLabel.PARAM_CHOICE_IDX) == 1);
-            return true;
-        } else if (CMD_SETLOOP.equals(command)) {
-            setLoopMode(params.get(ImageChoiceLabel.PARAM_CHOICE_IDX) == 1);
-            return true;
-        } else if (CMD_SETWAIT.equals(command)) {
-            setWaitMode(params.get(ImageChoiceLabel.PARAM_CHOICE_IDX) == 1);
-            return true;
-        } else if (CMD_SETHILIGHT.equals(command)) {
-            setHilightMode(params.get(ImageChoiceLabel.PARAM_CHOICE_IDX) == 1);
-            return true;
-        } else if (CMD_RESTART.equals(command)) {
-            restartScan();
-            return true;
         } else if (CMD_SETANCHOR.equals(command)) {
             setAnchor(params.get(PARAM_ANCHOR_INDEX));
             return true;
         } else  if (CMD_SETMODE.equals(command)) {
-            int mode = 0;
-            for (int i = 0 ; i < MODES.length ; i++) {
-                if (params.get(ChoiceLabel.PARAM_CHOICE).equals(MODES[i])) {
-                    mode = i;
-                    break;
-                }
-            }
-            setMode(mode);
+            setMode(params.get(ChoiceLabel.PARAM_CHOICE_IDX));
             return true;
         }
         return false;

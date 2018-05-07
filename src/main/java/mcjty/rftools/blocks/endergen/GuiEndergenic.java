@@ -36,7 +36,7 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
 
     @Override
     public void initGui() {
-        window = new Window(this, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/endergenic.gui"));
+        window = new Window(this, tileEntity, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/endergenic.gui"));
         super.initGui();
 
         initializeFields();

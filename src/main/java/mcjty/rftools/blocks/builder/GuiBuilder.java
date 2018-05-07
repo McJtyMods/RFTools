@@ -7,10 +7,10 @@ import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.gui.widgets.EnergyBar;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
+import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.builder.GuiShapeCard;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.lib.typed.TypedMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.ItemStack;
@@ -31,7 +31,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
 
     @Override
     public void initGui() {
-        window = new Window(this, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/builder.gui"));
+        window = new Window(this, tileEntity, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/builder.gui"));
         super.initGui();
 
         initializeFields();
@@ -44,8 +44,6 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     private void setupEvents() {
         window.addChannelEvent("cardgui", (source, params) -> openCardGui());
         window.addChannelEvent("anchor", (source, params) -> selectAnchor(source.getName()));
-
-        window.bind(RFToolsMessages.INSTANCE, "wait", tileEntity, BuilderTileEntity.VALUE_WAIT.getName());
     }
 
     private void initializeFields() {
@@ -58,19 +56,12 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
 
         energyBar.setMaxValue(tileEntity.getMaxEnergyStored());
         energyBar.setValue(getCurrentRF());
-        ((ImageChoiceLabel) window.findChild("redstone")).setCurrentChoice(tileEntity.getRSMode().ordinal());
         ((ChoiceLabel) window.findChild("mode")).setChoice(MODES[tileEntity.getMode()]);
         ChoiceLabel rotateButton = window.findChild("rotate");
         rotateButton.setChoice(String.valueOf(tileEntity.getRotate() * 90));
         if (!isShapeCard()) {
             anchor[tileEntity.getAnchor()].setCurrentChoice(1);
         }
-        ((ImageChoiceLabel)window.findChild("silent")).setCurrentChoice(tileEntity.isSilent() ? 1 : 0);
-        ((ImageChoiceLabel)window.findChild("support")).setCurrentChoice(tileEntity.hasSupportMode() ? 1 : 0);
-        ((ImageChoiceLabel)window.findChild("entities")).setCurrentChoice(tileEntity.hasEntityMode() ? 1 : 0);
-        ((ImageChoiceLabel)window.findChild("loop")).setCurrentChoice(tileEntity.hasLoopMode() ? 1 : 0);
-        ((ImageChoiceLabel)window.findChild("wait")).setCurrentChoice(tileEntity.isWaitMode() ? 1 : 0);
-        ((ImageChoiceLabel)window.findChild("hilight")).setCurrentChoice(tileEntity.isHilightMode() ? 1 : 0);
     }
 
     private void openCardGui() {

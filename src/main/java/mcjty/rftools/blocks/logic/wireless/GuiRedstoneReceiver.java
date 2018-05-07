@@ -16,7 +16,7 @@ public class GuiRedstoneReceiver extends GenericGuiContainer<RedstoneReceiverTil
 
     @Override
     public void initGui() {
-        window = new Window(this, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/redstone_receiver.gui"));
+        window = new Window(this, tileEntity, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/redstone_receiver.gui"));
         super.initGui();
 
         initializeFields();

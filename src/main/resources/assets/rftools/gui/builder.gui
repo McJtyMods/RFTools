@@ -13,15 +13,17 @@
         size(180,152)
 
         event('rotate','builder.setRotate')
-        event('redstone','builder.setRsMode')
-        event('silent','builder.setSilent')
-        event('entities','builder.setEntities')
-        //event('wait','builder.setWait')
-        event('loop','builder.setLoop')
-        event('hilight','builder.setHilight')
-        event('support','builder.setSupport')
-        event('restart','builder.restart')
         event('mode','builder.setMode')
+
+        action('restart','restart')
+
+        bind('redstone','rsmode')
+        bind('silent','silent')
+        bind('entities','entities')
+        bind('wait','wait')
+        bind('loop','loop')
+        bind('hilight','hilight')
+        bind('support','support')
 
         panel('','positional') {
             bg1('rftools:textures/gui/builder.png')
@@ -137,7 +139,6 @@
                 }
             }
             imagechoicelabel('wait') {
-                channel('wait')
                 hint(40,18,17,17)
                 tooltips('Wait mode')
                 border(true)
@@ -285,7 +286,6 @@
             tooltips('Current level the builder is at','�ePress to restart!')
         }
         imagechoicelabel('redstone') {
-            channel('redstone')
             hint(106,46,16,16)
             image('rftools:textures/gui/guielements.png')
             dim(32,0,256,256)

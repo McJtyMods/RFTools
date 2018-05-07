@@ -21,7 +21,7 @@ public class GuiBooster extends GenericGuiContainer<BoosterTileEntity> {
 
     @Override
     public void initGui() {
-        window = new Window(this, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/booster.gui"));
+        window = new Window(this, tileEntity, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/booster.gui"));
         super.initGui();
 
         initializeFields();

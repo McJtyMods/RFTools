@@ -21,7 +21,7 @@ public class GuiInvChecker extends GenericGuiContainer<InvCheckerTileEntity> {
 
     @Override
     public void initGui() {
-        window = new Window(this, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/invchecker.gui"));
+        window = new Window(this, tileEntity, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/invchecker.gui"));
         super.initGui();
 
         initializeFields();

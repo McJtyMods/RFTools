@@ -20,7 +20,7 @@ public class GuiCounter extends GenericGuiContainer<CounterTileEntity> {
 
     @Override
     public void initGui() {
-        window = new Window(this, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/counter.gui"));
+        window = new Window(this, tileEntity, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/counter.gui"));
         super.initGui();
 
         requestCurrentCounter();

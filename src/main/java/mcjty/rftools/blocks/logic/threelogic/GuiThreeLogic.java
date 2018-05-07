@@ -20,7 +20,7 @@ public class GuiThreeLogic extends GenericGuiContainer<ThreeLogicTileEntity> {
 
     @Override
     public void initGui() {
-        window = new Window(this, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/threelogic.gui"));
+        window = new Window(this, tileEntity, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/threelogic.gui"));
         super.initGui();
 
         initializeFields();
