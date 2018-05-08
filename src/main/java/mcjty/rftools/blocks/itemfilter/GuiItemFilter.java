@@ -6,13 +6,15 @@ import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.network.Argument;
+import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.Rectangle;
+import java.awt.*;
+
+import static mcjty.rftools.blocks.itemfilter.ItemFilterTileEntity.*;
 
 public class GuiItemFilter extends GenericGuiContainer<ItemFilterTileEntity> {
     public static final int ITEMFILTER_WIDTH = 195;
@@ -80,10 +82,12 @@ public class GuiItemFilter extends GenericGuiContainer<ItemFilterTileEntity> {
             output = true;
         }
         sendServerCommand(RFToolsMessages.INSTANCE, ItemFilterTileEntity.CMD_SETMODE,
-                new Argument("side", side),
-                new Argument("slot", slot),
-                new Argument("input", input),
-                new Argument("output", output));
+                TypedMap.builder()
+                        .put(PARAM_SIDE, side)
+                        .put(PARAM_SLOT, slot)
+                        .put(PARAM_INPUT, input)
+                        .put(PARAM_OUTPUT, output)
+                        .build());
     }
 
     @Override

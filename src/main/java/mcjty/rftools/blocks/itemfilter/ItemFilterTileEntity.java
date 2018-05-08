@@ -2,7 +2,9 @@ package mcjty.rftools.blocks.itemfilter;
 
 import mcjty.lib.container.*;
 import mcjty.lib.entity.GenericTileEntity;
-import mcjty.lib.network.Argument;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
+import mcjty.lib.typed.TypedMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -12,10 +14,13 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-import java.util.Map;
-
 public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSidedInventory {
-    public static final String CMD_SETMODE = "setMode";
+
+    public static final String CMD_SETMODE = "itemfilter.setMode";
+    public static final Key<Integer> PARAM_SIDE = new Key<>("side", Type.INTEGER);
+    public static final Key<Integer> PARAM_SLOT = new Key<>("slot", Type.INTEGER);
+    public static final Key<Boolean> PARAM_INPUT = new Key<>("input", Type.BOOLEAN);
+    public static final Key<Boolean> PARAM_OUTPUT = new Key<>("output", Type.BOOLEAN);
 
     public static final int SLOT_GHOST = 0;
 
@@ -78,16 +83,16 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+        boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
         }
         if (CMD_SETMODE.equals(command)) {
-            Integer side = args.get("side").getInteger();
-            Integer slot = args.get("slot").getInteger();
-            Boolean input = args.get("input").getBoolean();
-            Boolean output = args.get("output").getBoolean();
+            Integer side = params.get(PARAM_SIDE);
+            Integer slot = params.get(PARAM_SIDE);
+            Boolean input = params.get(PARAM_INPUT);
+            Boolean output = params.get(PARAM_OUTPUT);
 
             inputMode[side] &= ~(1 << slot);
             if (input) {

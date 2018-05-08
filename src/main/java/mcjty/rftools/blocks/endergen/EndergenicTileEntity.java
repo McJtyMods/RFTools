@@ -3,11 +3,14 @@ package mcjty.rftools.blocks.endergen;
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.compat.RedstoneFluxCompatibility;
+import mcjty.lib.entity.DefaultValue;
 import mcjty.lib.entity.GenericEnergyProviderTileEntity;
+import mcjty.lib.entity.IValue;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.Arguments;
 import mcjty.lib.network.PacketSendClientCommand;
-import mcjty.lib.network.PacketServerCommand;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.GlobalCoordinate;
@@ -18,7 +21,6 @@ import mcjty.rftools.hud.IHudSupport;
 import mcjty.rftools.network.PacketGetHudLog;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.theoneprobe.api.*;
-import mcjty.lib.typed.Type;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -45,7 +47,6 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
 
     private static Random random = new Random();
 
-    public static final String CMD_SETDESTINATION = "setDest";
     public static final String CMD_GETSTAT_RF = "getStatRF";
     public static final String CLIENTCMD_GETSTAT_RF = "getStatRF";
     public static final String CMD_GETSTAT_LOST = "getStatLost";
@@ -61,6 +62,15 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
 
     public static final int CHARGE_IDLE = 0;
     public static final int CHARGE_HOLDING = -1;
+
+    public static final Key<BlockPos> VALUE_DESTINATION = new Key<>("destination", Type.BLOCKPOS);
+
+    @Override
+    public IValue[] getValues() {
+        return new IValue[] {
+                new DefaultValue<>(VALUE_DESTINATION, EndergenicTileEntity::getDestination, EndergenicTileEntity::setDestination)
+        };
+    }
 
     // The current chargingMode status.
     // CHARGE_IDLE means this entity is doing nothing.
@@ -717,6 +727,11 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         return (int) (d / 3.0f) + 1;
     }
 
+
+    public BlockPos getDestination() {
+        return destination;
+    }
+
     public void setDestination(BlockPos destination) {
         markDirtyQuick();
         this.destination = destination;
@@ -724,9 +739,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
 
         if (getWorld().isRemote) {
             // We're on the client. Send change to server.
-            RFToolsMessages.INSTANCE.sendToServer(new PacketServerCommand(getPos(),
-                    EndergenicTileEntity.CMD_SETDESTINATION,
-                    new Argument("dest", destination)));
+            valueToServer(RFToolsMessages.INSTANCE, VALUE_DESTINATION, destination);
         }
     }
 
@@ -772,19 +785,6 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         }
         tagCompound.setTag("pearls", pearlList);
         return tagCompound;
-    }
-
-    @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
-        if (rc) {
-            return true;
-        }
-        if (CMD_SETDESTINATION.equals(command)) {
-            setDestination(args.get("dest").getCoordinate());
-            return true;
-        }
-        return false;
     }
 
     @Override
