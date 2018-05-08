@@ -2,10 +2,12 @@ package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.Argument;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
-import mcjty.lib.typed.Type;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -28,8 +30,14 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
     public static final String CLIENTCMD_GETRECEIVERS = "getReceivers";
     public static final String CMD_DIAL = "dial";
     public static final String CMD_DIALONCE = "dialOnce";
-    public static final String CMD_FAVORITE = "favorite";
-    public static final String CMD_SHOWFAVORITE = "showFavorite";
+
+    public static final String CMD_FAVORITE = "dialer.favorite";
+    public static final String CMD_SHOWFAVORITE = "dialer.showFavorite";
+    public static final Key<String> PARAM_PLAYER = new Key<>("player", Type.STRING);
+    public static final Key<BlockPos> PARAM_RECEIVER = new Key<>("receiver", Type.BLOCKPOS);
+    public static final Key<Integer> PARAM_DIMENSION = new Key<>("dimension", Type.INTEGER);
+    public static final Key<Boolean> PARAM_FAVORITE = new Key<>("favorite", Type.BOOLEAN);
+
     public static final String CLIENTCMD_DIAL = "dialResult";
     public static final String CMD_GETTRANSMITTERS = "getTransmitters";
     public static final String CLIENTCMD_GETTRANSMITTERS = "getTransmitters";
@@ -235,20 +243,20 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
 
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+        boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return rc;
         }
         if (CMD_FAVORITE.equals(command)) {
-            String player = args.get("player").getString();
-            BlockPos receiver = args.get("receiver").getCoordinate();
-            int dimension = args.get("dimension").getInteger();
-            boolean favorite = args.get("favorite").getBoolean();
+            String player = params.get(PARAM_PLAYER);
+            BlockPos receiver = params.get(PARAM_RECEIVER);
+            int dimension = params.get(PARAM_DIMENSION);
+            boolean favorite = params.get(PARAM_FAVORITE);
             changeFavorite(player, receiver, dimension, favorite);
             return true;
         } else if (CMD_SHOWFAVORITE.equals(command)) {
-            boolean favorite = args.get("favorite").getBoolean();
+            boolean favorite = params.get(PARAM_FAVORITE);
             setShowOnlyFavorites(favorite);
             return true;
         }

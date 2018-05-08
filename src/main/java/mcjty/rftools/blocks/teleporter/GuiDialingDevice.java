@@ -14,6 +14,7 @@ import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketRequestIntegerFromServer;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
@@ -26,6 +27,8 @@ import org.lwjgl.input.Keyboard;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static mcjty.rftools.blocks.teleporter.DialingDeviceTileEntity.*;
 
 public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntity> {
 
@@ -352,7 +355,9 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
     private void changeShowFavorite() {
         boolean fav = favoriteButton.getCurrentChoiceIndex() == 1;
         sendServerCommand(RFToolsMessages.INSTANCE, DialingDeviceTileEntity.CMD_SHOWFAVORITE,
-                new Argument("favorite", fav));
+                TypedMap.builder()
+                        .put(PARAM_FAVORITE, fav)
+                        .build());
         listDirty = 0;
         transmitterList.setSelected(-1);
         receiverList.setSelected(-1);
@@ -367,10 +372,12 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         boolean favorite = destination.isFavorite();
         destination.setFavorite(!favorite);
         sendServerCommand(RFToolsMessages.INSTANCE, DialingDeviceTileEntity.CMD_FAVORITE,
-                new Argument("player", mc.player.getName()),
-                new Argument("receiver", destination.getCoordinate()),
-                new Argument("dimension", destination.getDimension()),
-                new Argument("favorite", !favorite));
+                TypedMap.builder()
+                    .put(PARAM_PLAYER, mc.player.getName())
+                    .put(PARAM_RECEIVER, destination.getCoordinate())
+                    .put(PARAM_DIMENSION, destination.getDimension())
+                    .put(PARAM_FAVORITE, !favorite)
+                    .build());
         listDirty = 0;
     }
 
