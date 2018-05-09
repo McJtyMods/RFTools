@@ -149,7 +149,9 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                     .setTooltips("Do a scan of all", "storage units in radius");
         }
         radiusLabel = new ScrollableLabel(mc, this)
+                .setLayoutHint(1, 1, 1, 1)
                 .setName("radius")
+                .setVisible(false)
                 .setRealMinimum(RFTools.instance.xnet ? 0 : 1)
                 .setRealMaximum(20);
         visibleRadiusLabel = new Label(mc, this);
@@ -171,7 +173,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 .setTooltips("Radius of scan")
                 .setMinimumKnobSize(12)
                 .setDesiredHeight(14)
-                .setScrollable(radiusLabel);
+                .setScrollableName("radius");
         Panel scanPanel = new Panel(mc, this)
                 .setLayoutHint(8, 162, 74, 54)
                 .setFilledRectThickness(-2)
@@ -181,11 +183,10 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         if (!(RFTools.instance.xnet && StorageScannerConfiguration.xnetRequired)) {
             scanPanel.addChild(radiusSlider);
         }
-        scanPanel.addChild(visibleRadiusLabel);
+        scanPanel.addChildren(visibleRadiusLabel, radiusLabel);
 
         if (tileEntity.isDummy()) {
             scanButton.setEnabled(false);
-            radiusLabel.setVisible(false);
             radiusSlider.setVisible(false);
         }
 
