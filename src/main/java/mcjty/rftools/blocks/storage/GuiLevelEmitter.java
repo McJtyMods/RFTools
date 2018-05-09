@@ -7,7 +7,6 @@ import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.network.Argument;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
@@ -23,10 +22,6 @@ public class GuiLevelEmitter extends GenericGuiContainer<LevelEmitterTileEntity>
     public static final String OREDICT_IGNORE = "Ignore";
     public static final String STARRED = "Routable";
     public static final String NOTSTARRED = "All";
-
-    private mcjty.lib.gui.widgets.TextField amountField;
-    private ChoiceLabel oreDictLabel;
-    private ChoiceLabel starredLabel;
 
 
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/levelemitter.png");
@@ -44,23 +39,21 @@ public class GuiLevelEmitter extends GenericGuiContainer<LevelEmitterTileEntity>
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
-        amountField = new mcjty.lib.gui.widgets.TextField(mc, this).setTooltips("Set the amount of items in slot")
-                .setLayoutHint(60, 3, 80, 14)
-                .addTextEvent((parent, newText) -> setAmount());
-        int amount = tileEntity.getAmount();
-        amountField.setText(String.valueOf(amount));
+        mcjty.lib.gui.widgets.TextField amountField = new mcjty.lib.gui.widgets.TextField(mc, this).setTooltips("Set the amount of items in slot")
+                .setName("amount")
+                .setLayoutHint(60, 3, 80, 14);
 
-        starredLabel = new ChoiceLabel(mc, this)
+        ChoiceLabel starredLabel = new ChoiceLabel(mc, this)
+                .setName("starred")
                 .addChoices(NOTSTARRED, STARRED)
-                .addChoiceEvent((parent, newChoice) -> setMetaUsage())
                 .setChoiceTooltip(NOTSTARRED, "All inventories are considered")
                 .setChoiceTooltip(STARRED, "Only routable inventories are considered");
         starredLabel.setLayoutHint(60, 19, 80, 14);
         starredLabel.setChoice(tileEntity.isStarred() ? STARRED : NOTSTARRED);
 
-        oreDictLabel = new ChoiceLabel(mc, this)
+        ChoiceLabel oreDictLabel = new ChoiceLabel(mc, this)
+                .setName("oredict")
                 .addChoices(OREDICT_IGNORE, OREDICT_USE)
-                .addChoiceEvent((parent, newChoice) -> setOredictUsage())
                 .setChoiceTooltip(OREDICT_IGNORE, "Ingore ore dictionary")
                 .setChoiceTooltip(OREDICT_USE, "Use ore dictionary matching");
         oreDictLabel.setLayoutHint(60, 35, 80, 14);
@@ -82,32 +75,11 @@ public class GuiLevelEmitter extends GenericGuiContainer<LevelEmitterTileEntity>
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
         window = new Window(this, toplevel);
-    }
 
-    private void setMetaUsage() {
-        boolean b = STARRED.equals(starredLabel.getCurrentChoice());
-        tileEntity.setStarred(b);
-        sendServerCommand(RFToolsMessages.INSTANCE, LevelEmitterTileEntity.CMD_SETSTARRED, new Argument("b", b));
+        window.bind(RFToolsMessages.INSTANCE, "amount", tileEntity, LevelEmitterTileEntity.VALUE_AMOUNT.getName());
+        window.bind(RFToolsMessages.INSTANCE, "starred", tileEntity, LevelEmitterTileEntity.VALUE_STARRED.getName());
+        window.bind(RFToolsMessages.INSTANCE, "oredict", tileEntity, LevelEmitterTileEntity.VALUE_OREDICT.getName());
     }
-
-    private void setOredictUsage() {
-        boolean b = OREDICT_USE.equals(oreDictLabel.getCurrentChoice());
-        tileEntity.setOreDict(b);
-        sendServerCommand(RFToolsMessages.INSTANCE, LevelEmitterTileEntity.CMD_SETOREDICT, new Argument("b", b));
-    }
-
-    private void setAmount() {
-        String d = amountField.getText();
-        int amount;
-        try {
-            amount = Integer.parseInt(d);
-        } catch (NumberFormatException e) {
-            amount = 1;
-        }
-        tileEntity.setAmount(amount);
-        sendServerCommand(RFToolsMessages.INSTANCE, LevelEmitterTileEntity.CMD_SETAMOUNT, new Argument("amount", amount));
-    }
-
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {

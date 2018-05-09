@@ -3,12 +3,14 @@ package mcjty.rftools.blocks.storage;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.container.LogicTileEntity;
-import mcjty.lib.network.Argument;
+import mcjty.lib.entity.DefaultValue;
+import mcjty.lib.entity.IValue;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -19,13 +21,20 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 
-import java.util.Map;
-
 public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSidedInventory, ITickable {
 
-    public static final String CMD_SETAMOUNT = "setCounter";
-    public static final String CMD_SETOREDICT = "setOreDict";
-    public static final String CMD_SETSTARRED = "setStarred";
+    public static final Key<Integer> VALUE_AMOUNT = new Key<>("amount", Type.INTEGER);
+    public static final Key<Boolean> VALUE_OREDICT = new Key<>("oredict", Type.BOOLEAN);
+    public static final Key<Boolean> VALUE_STARRED = new Key<>("starred", Type.BOOLEAN);
+
+    @Override
+    public IValue[] getValues() {
+        return new IValue[] {
+                new DefaultValue<>(VALUE_AMOUNT, LevelEmitterTileEntity::getAmount, LevelEmitterTileEntity::setAmount),
+                new DefaultValue<>(VALUE_OREDICT, LevelEmitterTileEntity::isOreDict, LevelEmitterTileEntity::setOreDict),
+                new DefaultValue<>(VALUE_STARRED, LevelEmitterTileEntity::isStarred, LevelEmitterTileEntity::setStarred),
+        };
+    }
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, LevelEmitterContainer.factory, 2);
 
@@ -190,24 +199,5 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
     public void setStarred(boolean starred) {
         this.starred = starred;
         markDirty();
-    }
-
-    @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
-        if (rc) {
-            return true;
-        }
-        if (CMD_SETAMOUNT.equals(command)) {
-            setAmount(args.get("amount").getInteger());
-            return true;
-        } else if (CMD_SETSTARRED.equals(command)) {
-            setStarred(args.get("b").getBoolean());
-            return true;
-        } else if (CMD_SETOREDICT.equals(command)) {
-            setOreDict(args.get("b").getBoolean());
-            return true;
-        }
-        return false;
     }
 }
