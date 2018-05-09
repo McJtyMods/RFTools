@@ -2,20 +2,25 @@ package mcjty.rftools.blocks.security;
 
 import mcjty.lib.container.*;
 import mcjty.lib.entity.GenericTileEntity;
-import mcjty.lib.network.Argument;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
+import mcjty.lib.typed.TypedMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import java.util.Map;
-
 public class SecurityManagerTileEntity extends GenericTileEntity implements DefaultSidedInventory {
 
-    public static final String CMD_SETCHANNELNAME = "setChannelName";
-    public static final String CMD_SETMODE = "setMode";
-    public static final String CMD_ADDPLAYER = "addPlayer";
-    public static final String CMD_DELPLAYER = "delPlayer";
+    public static final String CMD_SETCHANNELNAME = "security.setChannelName";
+    public static final Key<String> PARAM_NAME = new Key<>("name", Type.STRING);
+
+    public static final String CMD_SETMODE = "security.setMode";
+    public static final Key<Boolean> PARAM_WHITELIST = new Key<>("whitelist", Type.BOOLEAN);
+
+    public static final String CMD_ADDPLAYER = "security.addPlayer";
+    public static final String CMD_DELPLAYER = "security.delPlayer";
+    public static final Key<String> PARAM_PLAYER = new Key<>("player", Type.STRING);
 
     public static final int SLOT_CARD = 0;
     public static final int SLOT_LINKER = 1;
@@ -204,22 +209,22 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+        boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
         }
         if (CMD_SETCHANNELNAME.equals(command)) {
-            setChannelName(args.get("name").getString());
+            setChannelName(params.get(PARAM_NAME));
             return true;
         } else if (CMD_SETMODE.equals(command)) {
-            setWhiteListMode(args.get("whitelist").getBoolean());
+            setWhiteListMode(params.get(PARAM_WHITELIST));
             return true;
         } else if (CMD_ADDPLAYER.equals(command)) {
-            addPlayer(args.get("player").getString());
+            addPlayer(params.get(PARAM_PLAYER));
             return true;
         } else if (CMD_DELPLAYER.equals(command)) {
-            delPlayer(args.get("player").getString());
+            delPlayer(params.get(PARAM_PLAYER));
             return true;
         }
         return false;

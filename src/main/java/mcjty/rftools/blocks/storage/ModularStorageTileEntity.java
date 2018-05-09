@@ -2,8 +2,12 @@ package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.entity.DefaultAction;
 import mcjty.lib.entity.GenericTileEntity;
-import mcjty.lib.network.Argument;
+import mcjty.lib.entity.IAction;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.ItemStackList;
 import mcjty.lib.varia.NullSidedInvWrapper;
 import mcjty.rftools.ClientInfo;
@@ -32,15 +36,28 @@ import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.Map;
 
 public class ModularStorageTileEntity extends GenericTileEntity implements ITickable, DefaultSidedInventory, IInventoryTracker,
         CraftingGridProvider, JEIRecipeAcceptor {
 
-    public static final String CMD_SETTINGS = "settings";
-    public static final String CMD_COMPACT = "compact";
-    public static final String CMD_CYCLE = "cycle";
-    public static final String CMD_CLEARGRID = "clearGrid";
+    public static final String CMD_SETTINGS = "storage.settings";
+    public static final Key<String> PARAM_FILTER = new Key<>("filter", Type.STRING);
+    public static final Key<String> PARAM_VIEWMODE = new Key<>("viewmode", Type.STRING);
+    public static final Key<String> PARAM_SORTMODE = new Key<>("sortmode", Type.STRING);
+    public static final Key<Boolean> PARAM_GROUPMODE = new Key<>("groupmode", Type.BOOLEAN);
+
+    public static final String ACTION_COMPACT = "compact";
+    public static final String ACTION_CYCLE = "cycle";
+    public static final String ACTION_CLEARGRID = "clearGrid";
+
+    @Override
+    public IAction[] getActions() {
+        return new IAction[] {
+                new DefaultAction<>(ACTION_COMPACT, te -> ((ModularStorageTileEntity)te).compact()),
+                new DefaultAction<>(ACTION_CYCLE, te -> ((ModularStorageTileEntity)te).cycle()),
+                new DefaultAction<>(ACTION_CLEARGRID, te -> ((ModularStorageTileEntity)te).clearGrid()),
+        };
+    }
 
     private int[] accessible = null;
     private int maxSize = 0;
@@ -808,26 +825,17 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+        boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
         }
         if (CMD_SETTINGS.equals(command)) {
-            setFilter(args.get("filter").getString());
-            setViewMode(args.get("viewMode").getString());
-            setSortMode(args.get("sortMode").getString());
-            setGroupMode(args.get("groupMode").getBoolean());
+            setFilter(params.get(PARAM_FILTER));
+            setViewMode(params.get(PARAM_VIEWMODE));
+            setSortMode(params.get(PARAM_SORTMODE));
+            setGroupMode(params.get(PARAM_GROUPMODE));
             markDirtyClient();
-            return true;
-        } else if (CMD_COMPACT.equals(command)) {
-            compact();
-            return true;
-        } else if (CMD_CYCLE.equals(command)) {
-            cycle();
-            return true;
-        } else if (CMD_CLEARGRID.equals(command)) {
-            clearGrid();
             return true;
         }
         return false;

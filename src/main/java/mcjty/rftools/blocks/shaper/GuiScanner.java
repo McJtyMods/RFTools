@@ -3,14 +3,11 @@ package mcjty.rftools.blocks.shaper;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.entity.GenericEnergyStorageTileEntity;
+import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
-import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.network.Argument;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
@@ -24,7 +21,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import org.lwjgl.input.Mouse;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.io.IOException;
 
 public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implements IShapeParentGui {
@@ -36,7 +33,6 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     private EnergyBar energyBar;
-    private ImageChoiceLabel redstoneMode;
 
     private ToggleButton showAxis;
     private ToggleButton showOuter;
@@ -91,15 +87,16 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
         toplevel.addChild(energyBar);
 
-        initRedstoneMode();
+        ImageChoiceLabel redstoneMode = initRedstoneMode();
         toplevel.addChild(redstoneMode);
 
         showAxis = ShapeGuiTools.createAxisButton(this, toplevel, 5, 176);
         showOuter = ShapeGuiTools.createBoxButton(this, toplevel, 31, 176);
         showScan = ShapeGuiTools.createScanButton(this, toplevel, 57, 176);
 
-        scanButton = new Button(mc, this).setText("Scan")
-                .addButtonEvent(parent -> scan())
+        scanButton = new Button(mc, this)
+                .setName("scan")
+                .setText("Scan")
                 .setLayoutHint(5, 156, 40, 16);
         toplevel.addChild(scanButton);
 
@@ -136,26 +133,20 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
 
         filterCnt = countFilters();
         tileEntity.requestRfFromServer(RFTools.MODID);
+
+        window.action(RFToolsMessages.INSTANCE, "scan", tileEntity, ScannerTileEntity.ACTION_SCAN);
+        window.bind(RFToolsMessages.INSTANCE, "redstone", tileEntity, GenericTileEntity.VALUE_RSMODE.getName());
+        window.bind(RFToolsMessages.INSTANCE, "offset", tileEntity, ScannerTileEntity.VALUE_OFFSET.getName());
     }
 
-    private void initRedstoneMode() {
-        redstoneMode = new ImageChoiceLabel(mc, this).
-                addChoiceEvent((parent, newChoice) -> changeRedstoneMode()).
+    private ImageChoiceLabel initRedstoneMode() {
+        ImageChoiceLabel redstoneMode = new ImageChoiceLabel(mc, this).
+                setName("redstone").
                 addChoice(RedstoneMode.REDSTONE_IGNORED.getDescription(), "Redstone mode:\nIgnored", iconGuiElements, 0, 0).
                 addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
                 addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
         redstoneMode.setLayoutHint(50, 156, 16, 16);
-        redstoneMode.setCurrentChoice(tileEntity.getRSMode().ordinal());
-    }
-
-    private void changeRedstoneMode() {
-        tileEntity.setRSMode(RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()]);
-        sendServerCommand(RFToolsMessages.INSTANCE, ScannerTileEntity.CMD_MODE,
-                new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()));
-    }
-
-    private void scan() {
-        sendServerCommand(network, ScannerTileEntity.CMD_SCAN);
+        return redstoneMode;
     }
 
     private int countFilters() {
@@ -177,7 +168,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
         int offsetX = offset.getX() + x;
         int offsetY = offset.getY() + y;
         int offsetZ = offset.getZ() + z;
-        sendServerCommand(network, ScannerTileEntity.CMD_SETOFFSET, new Argument("offsetX", offsetX), new Argument("offsetY", offsetY), new Argument("offsetZ", offsetZ));
+        tileEntity.valueToServer(network, ScannerTileEntity.VALUE_OFFSET, new BlockPos(offsetX, offsetY, offsetZ));
     }
 
     @Override

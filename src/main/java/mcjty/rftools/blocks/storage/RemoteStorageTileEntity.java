@@ -3,7 +3,9 @@ package mcjty.rftools.blocks.storage;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
-import mcjty.lib.network.Argument;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.items.storage.StorageModuleItem;
@@ -18,11 +20,12 @@ import net.minecraft.util.ITickable;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
-import java.util.Map;
 
 public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity implements ITickable, DefaultSidedInventory {
 
-    public static final String CMD_SETGLOBAL = "setGlobal";
+    public static final String CMD_SETGLOBAL = "relay.setGlobal";
+    public static final Key<Integer> PARAM_INDEX = new Key<>("index", Type.INTEGER);
+    public static final Key<Boolean> PARAM_GLOBAL = new Key<>("global", Type.BOOLEAN);
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, RemoteStorageContainer.factory, 8);
 
@@ -539,14 +542,14 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+        boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return rc;
         }
         if (CMD_SETGLOBAL.equals(command)) {
-            int index = args.get("index").getInteger();
-            boolean global = args.get("global").getBoolean();
+            int index = params.get(PARAM_INDEX);
+            boolean global = params.get(PARAM_GLOBAL);
             setGlobal(index, global);
             return true;
         }

@@ -4,7 +4,7 @@ import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.Button;
-import mcjty.lib.gui.widgets.*;
+import mcjty.lib.gui.widgets.EnergyBar;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
@@ -12,7 +12,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 public class GuiPowerCell extends GenericGuiContainer<PowerCellTileEntity> {
     public static final int POWERCELL_WIDTH = 180;
@@ -55,19 +55,23 @@ public class GuiPowerCell extends GenericGuiContainer<PowerCellTileEntity> {
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(1000).setLayoutHint(10, 7, 8, 54).setShowText(false);
         energyBar.setValue(0);
 
-        Button allNone = new Button(mc, this).setText("None").setTooltips("Set all sides to 'none'")
-                .setLayoutHint(140, 10, 32, 15)
-                .addButtonEvent(e -> sendServerCommand(RFToolsMessages.INSTANCE, PowerCellTileEntity.CMD_SETNONE));
-        Button allInput = new Button(mc, this).setText("In").setTooltips("Set all sides to", "accept energy")
-                .setLayoutHint(140, 27, 32, 15)
-                .addButtonEvent(e -> sendServerCommand(RFToolsMessages.INSTANCE, PowerCellTileEntity.CMD_SETINPUT));
-        Button allOutput = new Button(mc, this).setText("Out").setTooltips("Set all sides to", "send energy")
-                .setLayoutHint(140, 44, 32, 15)
-                .addButtonEvent(e -> sendServerCommand(RFToolsMessages.INSTANCE, PowerCellTileEntity.CMD_SETOUTPUT));
+        Button allNone = new Button(mc, this)
+                .setName("allnone")
+                .setText("None").setTooltips("Set all sides to 'none'")
+                .setLayoutHint(140, 10, 32, 15);
+        Button allInput = new Button(mc, this)
+                .setName("allinput")
+                .setText("In").setTooltips("Set all sides to", "accept energy")
+                .setLayoutHint(140, 27, 32, 15);
+        Button allOutput = new Button(mc, this)
+                .setName("alloutput")
+                .setText("Out").setTooltips("Set all sides to", "send energy")
+                .setLayoutHint(140, 44, 32, 15);
 
-        stats = new Button(mc, this).setText("Stats").setTooltips("Power statistics. Press to clear:")
-                .setLayoutHint(100, 10, 32, 15)
-                .addButtonEvent(e -> sendServerCommand(RFToolsMessages.INSTANCE, PowerCellTileEntity.CMD_CLEARSTATS));
+        stats = new Button(mc, this)
+                .setName("clearstats")
+                .setText("Stats").setTooltips("Power statistics. Press to clear:")
+                .setLayoutHint(100, 10, 32, 15);
 
         Label label = new Label(mc, this);
         label.setText("Link:").setTooltips("Link a powercard to card", "on the left").setLayoutHint(26, 30, 40, 18);
@@ -77,6 +81,12 @@ public class GuiPowerCell extends GenericGuiContainer<PowerCellTileEntity> {
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
+
+        window.action(RFToolsMessages.INSTANCE, "allnone", tileEntity, PowerCellTileEntity.ACTION_SETNONE);
+        window.action(RFToolsMessages.INSTANCE, "allinput", tileEntity, PowerCellTileEntity.ACTION_SETINPUT);
+        window.action(RFToolsMessages.INSTANCE, "alloutput", tileEntity, PowerCellTileEntity.ACTION_SETOUTPUT);
+        window.action(RFToolsMessages.INSTANCE, "clearstats", tileEntity, PowerCellTileEntity.ACTION_CLEARSTATS);
+
         requestRF();
     }
 

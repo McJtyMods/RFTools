@@ -8,7 +8,7 @@ import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.ToggleButton;
-import mcjty.lib.network.Argument;
+import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
@@ -20,7 +20,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 
-import java.awt.*;
+import java.awt.Rectangle;
+
+import static mcjty.rftools.blocks.screens.ScreenTileEntity.PARAM_TRUETYPE;
 
 public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
     public static final int SCREEN_WIDTH = 256;
@@ -65,13 +67,12 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
         }
 
         bright = new ToggleButton(mc, this)
+                .setName("bright")
                 .setText("Bright")
                 .setCheckMarker(true)
                 .setTooltips("Toggle full brightness")
                 .setLayoutHint(85, 123, 55, 14);
 //        .setLayoutHint(7, 208, 63, 14);
-        bright.setPressed(tileEntity.isBright());
-        bright.addButtonEvent(parent -> sendServerCommand(RFToolsMessages.INSTANCE, ScreenTileEntity.CMD_SETBRIGHT, new Argument("b", bright.isPressed())));
         toplevel.addChild(bright);
 
         toplevel.addChild(new Label(mc, this).setText("Font:").setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT).setLayoutHint(new PositionalLayout.PositionalHint(85+50+9, 123, 30, 14)));
@@ -81,12 +82,16 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
                 .setLayoutHint(new PositionalLayout.PositionalHint(85+50+14+30, 123, 68, 14));
         int trueTypeMode = tileEntity.getTrueTypeMode();
         trueType.setChoice(trueTypeMode == 0 ? "Default" : (trueTypeMode == -1 ? "Vanilla" : "Truetype"));
-        trueType.addChoiceEvent((a, b) -> sendServerCommand(RFToolsMessages.INSTANCE, ScreenTileEntity.CMD_SETTRUETYPE, new Argument("b", getCurrentTruetypeChoice())));
+        trueType.addChoiceEvent((a, b) -> sendServerCommand(RFToolsMessages.INSTANCE, ScreenTileEntity.CMD_SETTRUETYPE,
+                TypedMap.builder().put(PARAM_TRUETYPE, getCurrentTruetypeChoice()).build()));
         toplevel.addChild(trueType);
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
+
+        window.bind(RFToolsMessages.INSTANCE, "bright", tileEntity, ScreenTileEntity.VALUE_BRIGHT.getName());
+
         Keyboard.enableRepeatEvents(true);
 
         selected = -1;

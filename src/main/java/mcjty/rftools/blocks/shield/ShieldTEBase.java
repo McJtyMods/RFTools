@@ -9,8 +9,13 @@ import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.api.smartwrench.SmartWrenchSelector;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.entity.DefaultValue;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.entity.IValue;
 import mcjty.lib.network.Argument;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.RedstoneMode;
@@ -20,7 +25,6 @@ import mcjty.rftools.blocks.shield.filters.*;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.shapes.Shape;
-import mcjty.lib.typed.Type;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -49,26 +53,42 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-@Optional.InterfaceList({
-        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers"),
 //        @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")
-})
+@Optional.InterfaceList(@Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers"))
 public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, SmartWrenchSelector, ITickable,
         IMachineInformation, SimpleComponent { // @todo }, IPeripheral {
 
-    public static final String CMD_SHIELDVISMODE = "shieldVisMode";
-    public static final String CMD_APPLYCAMO = "applyCamo";
-    public static final String CMD_DAMAGEMODE = "damageMode";
-    public static final String CMD_RSMODE = "rsMode";
-    public static final String CMD_ADDFILTER = "addFilter";
-    public static final String CMD_DELFILTER = "delFilter";
-    public static final String CMD_UPFILTER = "upFilter";
-    public static final String CMD_DOWNFILTER = "downFilter";
+    public static final String CMD_APPLYCAMO = "shield.applyCamo";
+    public static final Key<Integer> PARAM_PASS = new Key<>("pass", Type.INTEGER);
+
+    public static final String CMD_ADDFILTER = "shield.addFilter";
+    public static final Key<Integer> PARAM_ACTION = new Key<>("action", Type.INTEGER);
+    public static final Key<String> PARAM_TYPE = new Key<>("type", Type.STRING);
+    public static final Key<String> PARAM_PLAYER = new Key<>("player", Type.STRING);
+    public static final Key<Integer> PARAM_SELECTED = new Key<>("selected", Type.INTEGER);
+
+    public static final String CMD_DELFILTER = "shield.delFilter";
+    public static final String CMD_UPFILTER = "shield.upFilter";
+    public static final String CMD_DOWNFILTER = "shield.downFilter";
+
     public static final String CMD_GETFILTERS = "getFilters";
-    public static final String CMD_SETCOLOR = "setColor";
     public static final String CLIENTCMD_GETFILTERS = "getFilters";
 
     public static final String COMPONENT_NAME = "shield_projector";
+
+    public static final Key<Integer> VALUE_SHIELDVISMODE = new Key<>("shieldVisMode", Type.INTEGER);
+    public static final Key<Integer> VALUE_DAMAGEMODE = new Key<>("damageMode", Type.INTEGER);
+    public static final Key<Integer> VALUE_COLOR = new Key<>("color", Type.INTEGER);
+
+    @Override
+    public IValue[] getValues() {
+        return new IValue[]{
+                new DefaultValue<>(VALUE_RSMODE, ShieldTEBase::getRSModeInt, ShieldTEBase::setRSModeInt),
+                new DefaultValue<>(VALUE_SHIELDVISMODE, te -> ((ShieldTEBase) te).getShieldRenderingMode().ordinal(), (te, value) -> ((ShieldTEBase) te).setShieldRenderingMode(ShieldRenderingMode.values()[value])),
+                new DefaultValue<>(VALUE_DAMAGEMODE, te -> ((ShieldTEBase) te).getDamageMode().ordinal(), (te, value) -> ((ShieldTEBase) te).setDamageMode(DamageTypeMode.values()[value])),
+                new DefaultValue<>(VALUE_COLOR, ShieldTEBase::getShieldColor, ShieldTEBase::setShieldColor),
+        };
+    }
 
     private DamageTypeMode damageMode = DamageTypeMode.DAMAGETYPE_GENERIC;
 
@@ -125,55 +145,6 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         this.costFactor = factor;
     }
 
-//    @Override
-//    @Optional.Method(modid = "ComputerCraft")
-//    public String getType() {
-//        return COMPONENT_NAME;
-//    }
-//
-//    @Override
-//    @Optional.Method(modid = "ComputerCraft")
-//    public String[] getMethodNames() {
-//        return new String[] { "getDamageMode", "setDamageMode", "getRedstoneMode", "setRedstoneMode", "getShieldRenderingMode", "setShieldRenderingMode", "isShieldActive", "isShieldComposed",
-//            "composeShield", "composeShieldDsc", "decomposeShield" };
-//    }
-//
-//    @Override
-//    @Optional.Method(modid = "ComputerCraft")
-//    public Object[] callMethod(IComputerAccess computer, ILuaContext context, int method, Object[] arguments) throws LuaException, InterruptedException {
-//        switch (method) {
-//            case 0: return new Object[] { getDamageMode().getDescription() };
-//            case 1: return setDamageMode((String) arguments[0]);
-//            case 2: return new Object[] { getRedstoneMode().getDescription() };
-//            case 3: return setRedstoneMode((String) arguments[0]);
-//            case 4: return new Object[] { getShieldRenderingMode().getDescription() };
-//            case 5: return setShieldRenderingMode((String) arguments[0]);
-//            case 6: return new Object[] { isShieldActive() };
-//            case 7: return new Object[] { isShieldComposed() };
-//            case 8: return composeShieldComp(false);
-//            case 9: return composeShieldComp(true);
-//            case 10: return decomposeShieldComp();
-//        }
-//        return new Object[0];
-//    }
-//
-//    @Override
-//    @Optional.Method(modid = "ComputerCraft")
-//    public void attach(IComputerAccess computer) {
-//
-//    }
-//
-//    @Override
-//    @Optional.Method(modid = "ComputerCraft")
-//    public void detach(IComputerAccess computer) {
-//
-//    }
-//
-//    @Override
-//    @Optional.Method(modid = "ComputerCraft")
-//    public boolean equals(IPeripheral other) {
-//        return false;
-//    }
 
     @Override
     @Optional.Method(modid = "opencomputers")
@@ -1136,49 +1107,33 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+        boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
         }
-        if (CMD_SHIELDVISMODE.equals(command)) {
-            String m = args.get("mode").getString();
-            setShieldRenderingMode(ShieldRenderingMode.getMode(m));
-            return true;
-        } else if (CMD_APPLYCAMO.equals(command)) {
-            camoRenderPass = args.get("pass").getInteger();
+        if (CMD_APPLYCAMO.equals(command)) {
+            camoRenderPass = params.get(PARAM_PASS);
             updateShield();
             return true;
         } else if (CMD_ADDFILTER.equals(command)) {
-            int action = args.get("action").getInteger();
-            String type = args.get("type").getString();
-            String player = args.get("player").getString();
-            int selected = args.get("selected").getInteger();
+            int action = params.get(PARAM_ACTION);
+            String type = params.get(PARAM_TYPE);
+            String player = params.get(PARAM_PLAYER);
+            int selected = params.get(PARAM_SELECTED);
             addFilter(action, type, player, selected);
             return true;
         } else if (CMD_DELFILTER.equals(command)) {
-            int selected = args.get("selected").getInteger();
+            int selected = params.get(PARAM_SELECTED);
             delFilter(selected);
             return true;
         } else if (CMD_UPFILTER.equals(command)) {
-            int selected = args.get("selected").getInteger();
+            int selected = params.get(PARAM_SELECTED);
             upFilter(selected);
             return true;
         } else if (CMD_DOWNFILTER.equals(command)) {
-            int selected = args.get("selected").getInteger();
+            int selected = params.get(PARAM_SELECTED);
             downFilter(selected);
-            return true;
-        } else if (CMD_RSMODE.equals(command)) {
-            String m = args.get("rs").getString();
-            setRSMode(RedstoneMode.getMode(m));
-            return true;
-        } else if (CMD_DAMAGEMODE.equals(command)) {
-            String m = args.get("mode").getString();
-            setDamageMode(DamageTypeMode.getMode(m));
-            return true;
-        } else if (CMD_SETCOLOR.equals(command)) {
-            int color = args.get("color").getInteger();
-            setShieldColor(color);
             return true;
         }
 

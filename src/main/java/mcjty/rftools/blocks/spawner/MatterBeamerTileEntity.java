@@ -2,15 +2,16 @@ package mcjty.rftools.blocks.spawner;
 
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.entity.DefaultValue;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
-import mcjty.lib.network.Argument;
-import mcjty.lib.network.PacketServerCommand;
+import mcjty.lib.entity.IValue;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -23,14 +24,21 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.Map;
-
 public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable {
 
     public static final int TICKTIME = 20;
-    public static String CMD_SETDESTINATION = "setDest";
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, MatterBeamerContainer.factory, 1);
+
+    public static final Key<BlockPos> VALUE_DESTINATION = new Key<>("destination", Type.BLOCKPOS);
+
+    @Override
+    public IValue[] getValues() {
+        return new IValue[] {
+                new DefaultValue<>(VALUE_DESTINATION, MatterBeamerTileEntity::getDestination, MatterBeamerTileEntity::setDestination)
+        };
+    }
+
 
     // The location of the destination spawner..
     private BlockPos destination = null;
@@ -186,9 +194,7 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
 
         if (getWorld().isRemote) {
             // We're on the client. Send change to server.
-            RFToolsMessages.INSTANCE.sendToServer(new PacketServerCommand(getPos(),
-                    MatterBeamerTileEntity.CMD_SETDESTINATION,
-                    new Argument("dest", destination)));
+            valueToServer(RFToolsMessages.INSTANCE, VALUE_DESTINATION, destination);
         } else {
             markDirtyClient();
         }
@@ -280,18 +286,4 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
     public boolean isItemValidForSlot(int index, ItemStack stack) {
         return true;
     }
-
-    @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
-        if (rc) {
-            return true;
-        }
-        if (CMD_SETDESTINATION.equals(command)) {
-            setDestination(args.get("dest").getCoordinate());
-            return true;
-        }
-        return false;
-    }
-
 }

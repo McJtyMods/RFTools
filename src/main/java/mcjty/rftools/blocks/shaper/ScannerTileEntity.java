@@ -1,8 +1,9 @@
 package mcjty.rftools.blocks.shaper;
 
 import mcjty.lib.container.*;
-import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
-import mcjty.lib.network.Argument;
+import mcjty.lib.entity.*;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
@@ -27,7 +28,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -48,10 +48,24 @@ import java.util.Map;
 
 public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable {
 
-    public static final String CMD_SCAN = "scan";
-    public static final String CMD_SETOFFSET = "setOffset";
-    public static final String CMD_MODE = "setMode";
+    public static final String ACTION_SCAN = "scan";
 
+    public static Key<BlockPos> VALUE_OFFSET = new Key<>("offset", Type.BLOCKPOS);
+
+    @Override
+    public IValue[] getValues() {
+        return new IValue[] {
+                new DefaultValue<>(VALUE_RSMODE, ScannerTileEntity::getRSModeInt, ScannerTileEntity::setRSModeInt),
+                new DefaultValue<>(VALUE_OFFSET, ScannerTileEntity::getDataOffset, ScannerTileEntity::setDataOffset),
+        };
+    }
+
+    @Override
+    public IAction[] getActions() {
+        return new IAction[] {
+                new DefaultAction<>(ACTION_SCAN, ScannerTileEntity::scan)
+        };
+    }
 
     public static final int SLOT_IN = 0;
     public static final int SLOT_OUT = 1;
@@ -256,6 +270,10 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     private void setOffset(int offsetX, int offsetY, int offsetZ) {
         dataOffset = new BlockPos(offsetX, offsetY, offsetZ);
         markDirtyClient();
+    }
+
+    public void setDataOffset(BlockPos dataOffset) {
+        this.dataOffset = dataOffset;
     }
 
     private void updateScanCard(ItemStack cardOut) {
@@ -499,26 +517,6 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         updateScanCard(renderStack);
         markDirtyClient();
         progress = null;
-    }
-
-    @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
-        if (rc) {
-            return true;
-        }
-        if (CMD_MODE.equals(command)) {
-            String m = args.get("rs").getString();
-            setRSMode(RedstoneMode.getMode(m));
-            return true;
-        } else if (CMD_SCAN.equals(command)) {
-            scan();
-            return true;
-        } else if (CMD_SETOFFSET.equals(command)) {
-            setOffset(args.get("offsetX").getInteger(), args.get("offsetY").getInteger(), args.get("offsetZ").getInteger());
-            return true;
-        }
-        return false;
     }
 
     @Override

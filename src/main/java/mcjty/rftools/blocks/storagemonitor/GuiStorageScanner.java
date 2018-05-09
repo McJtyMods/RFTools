@@ -12,13 +12,9 @@ import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Button;
-import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.gui.widgets.TextField;
-import mcjty.lib.network.Argument;
 import mcjty.lib.network.Arguments;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.CommandHandler;
@@ -35,11 +31,12 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.*;
-import java.util.List;
 import java.util.function.Predicate;
+
+import static mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity.*;
 
 
 public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEntity> {
@@ -125,8 +122,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 .addChild(removeButton);
 
         exportToStarred = new ImageChoiceLabel(mc, this)
-                .setLayoutHint(12, 223, 13, 13)
-                .addChoiceEvent((parent, newChoice) -> changeExportMode());
+                .setName("export")
+                .setLayoutHint(12, 223, 13, 13);
         exportToStarred.addChoice("No", "Export to current container", guielements, 131, 19);
         exportToStarred.addChoice("Yes", "Export to first routable container", guielements, 115, 19);
 
@@ -152,10 +149,9 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                     .setTooltips("Do a scan of all", "storage units in radius");
         }
         radiusLabel = new ScrollableLabel(mc, this)
-                .addValueEvent((parent, newValue) -> changeRadius(newValue))
+                .setName("radius")
                 .setRealMinimum(RFTools.instance.xnet ? 0 : 1)
                 .setRealMaximum(20);
-        radiusLabel.setRealValue(tileEntity.getRadius());
         visibleRadiusLabel = new Label(mc, this);
         visibleRadiusLabel.setDesiredWidth(40);
 
@@ -183,11 +179,9 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 .setLayout(new VerticalLayout().setVerticalMargin(6).setSpacing(1))
                 .addChild(scanButton);
         if (!(RFTools.instance.xnet && StorageScannerConfiguration.xnetRequired)) {
-            scanPanel
-                    .addChild(radiusSlider);
+            scanPanel.addChild(radiusSlider);
         }
-        scanPanel
-                .addChild(visibleRadiusLabel);
+        scanPanel.addChild(visibleRadiusLabel);
 
         if (tileEntity.isDummy()) {
             scanButton.setEnabled(false);
@@ -204,6 +198,9 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
+
+        window.bind(RFToolsMessages.INSTANCE, "export", tileEntity, StorageScannerTileEntity.VALUE_EXPORT.getName());
+        window.bind(RFToolsMessages.INSTANCE, "radius", tileEntity, StorageScannerTileEntity.VALUE_RADIUS.getName());
 
         Keyboard.enableRepeatEvents(true);
 
@@ -271,7 +268,9 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         listDirty = 0;
         requestListsIfNeeded();
         sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_SETVIEW,
-                new Argument("b", openViewButton.isPressed()));
+                TypedMap.builder()
+                        .put(PARAM_VIEW, openViewButton.isPressed())
+                        .build());
     }
 
     @Override
@@ -281,7 +280,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         if (button == 1) {
             Slot slot = getSlotAtPosition(x, y);
             if (slot instanceof GhostOutputSlot) {
-                sendServerCommand(RFToolsMessages.INSTANCE, StorageScannerTileEntity.CMD_CLEARGRID);
+                window.sendAction(RFToolsMessages.INSTANCE, tileEntity, StorageScannerTileEntity.ACTION_CLEARGRID);
             }
         }
     }
@@ -306,36 +305,37 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
 
     private void moveUp() {
-        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_UP, new Argument("index", storageList.getSelected()-1));
+        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_UP,
+                TypedMap.builder().put(PARAM_INDEX, storageList.getSelected()-1).build());
         storageList.setSelected(storageList.getSelected()-1);
         listDirty = 0;
     }
 
     private void moveTop() {
-        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_TOP, new Argument("index", storageList.getSelected()-1));
+        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_TOP,
+                TypedMap.builder().put(PARAM_INDEX, storageList.getSelected()-1).build());
         storageList.setSelected(1);
         listDirty = 0;
     }
 
     private void moveDown() {
-        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_DOWN, new Argument("index", storageList.getSelected()-1));
+        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_DOWN,
+                TypedMap.builder().put(PARAM_INDEX, storageList.getSelected()-1).build());
         storageList.setSelected(storageList.getSelected()+1);
         listDirty = 0;
     }
 
     private void moveBottom() {
-        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_BOTTOM, new Argument("index", storageList.getSelected()-1));
+        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_BOTTOM,
+                TypedMap.builder().put(PARAM_INDEX, storageList.getSelected()-1).build());
         storageList.setSelected(storageList.getChildCount()-1);
         listDirty = 0;
     }
 
     private void removeFromList() {
-        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_REMOVE, new Argument("index", storageList.getSelected()-1));
+        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_REMOVE,
+                TypedMap.builder().put(PARAM_INDEX, storageList.getSelected()-1).build());
         listDirty = 0;
-    }
-
-    private void changeExportMode() {
-        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_TOGGLEEXPORT);
     }
 
     private void hilightSelectedContainer(int index) {
@@ -352,10 +352,6 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             Logging.message(mc.player, "The inventory is now highlighted");
             mc.player.closeScreen();
         }
-    }
-
-    private void changeRadius(int r) {
-        sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_SETRADIUS, new Argument("r", r));
     }
 
     private void startSearch(String text) {
@@ -468,7 +464,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
     private void changeRoutable(BlockPos c) {
         sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_TOGGLEROUTABLE,
-                new Argument("pos", c));
+                TypedMap.builder().put(PARAM_POS, c).build());
         listDirty = 0;
     }
 

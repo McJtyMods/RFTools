@@ -7,12 +7,8 @@ import mcjty.lib.gui.Window;
 import mcjty.lib.gui.WindowManager;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
-import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.gui.widgets.TextField;
-import mcjty.lib.network.Argument;
+import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.IShapeParentGui;
@@ -21,10 +17,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+
+import static mcjty.rftools.blocks.shaper.ProjectorTileEntity.*;
 
 public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> implements IShapeParentGui {
 
@@ -238,14 +234,14 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
     }
 
     private void updateRs() {
-        List<Argument> argumentList = new ArrayList<>();
+        TypedMap.Builder builder = TypedMap.builder();
         for (int i = 0 ; i < 4 ; i++) {
-            argumentList.add(new Argument("opOn" + i, rsLabelOn[i].getCurrentChoice()));
-            argumentList.add(new Argument("opOff" + i, rsLabelOff[i].getCurrentChoice()));
+            builder.put(ProjectorTileEntity.PARAM_OPON[i], rsLabelOn[i].getCurrentChoice());
+            builder.put(ProjectorTileEntity.PARAM_OPOFF[i], rsLabelOff[i].getCurrentChoice());
             String text = valOn[i].getText();
             if (!text.trim().isEmpty()) {
                 try {
-                    argumentList.add(new Argument("valOn" + i, Double.parseDouble(text)));
+                    builder.put(ProjectorTileEntity.PARAM_VALON[i], Double.parseDouble(text));
                 } catch (NumberFormatException e) {
                     // Ignore
                 }
@@ -253,13 +249,13 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
             text = valOff[i].getText();
             if (!text.trim().isEmpty()) {
                 try {
-                    argumentList.add(new Argument("valOff" + i, Double.parseDouble(text)));
+                    builder.put(ProjectorTileEntity.PARAM_VALOFF[i], Double.parseDouble(text));
                 } catch (NumberFormatException e) {
                     // Ignore
                 }
             }
         }
-        sendServerCommand(RFToolsMessages.INSTANCE, ProjectorTileEntity.CMD_RSSETTINGS, argumentList.toArray(new Argument[argumentList.size()]));
+        sendServerCommand(RFToolsMessages.INSTANCE, ProjectorTileEntity.CMD_RSSETTINGS, builder.build());
     }
 
     @Override
@@ -280,14 +276,15 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
 
     private void update() {
         sendServerCommand(RFToolsMessages.INSTANCE, ProjectorTileEntity.CMD_SETTINGS,
-                new Argument("scale", scaleLabel.getRealValue()),
-                new Argument("offset", offsetLabel.getRealValue()),
-                new Argument("angle", angleLabel.getRealValue()),
-                new Argument("auto", autoRotate.isPressed()),
-                new Argument("scan", scanline.isPressed()),
-                new Argument("sound", sound.isPressed()),
-                new Argument("grayscale", grayScale.isPressed())
-                );
+                TypedMap.builder()
+                        .put(PARAM_SCALE, scaleLabel.getRealValue())
+                        .put(PARAM_OFFSET, offsetLabel.getRealValue())
+                        .put(PARAM_ANGLE, angleLabel.getRealValue())
+                        .put(PARAM_AUTO, autoRotate.isPressed())
+                        .put(PARAM_SCAN, scanline.isPressed())
+                        .put(PARAM_SOUND, sound.isPressed())
+                        .put(PARAM_GRAY, grayScale.isPressed())
+                        .build());
     }
 
     @Override

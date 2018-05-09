@@ -1,13 +1,17 @@
 package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.api.MachineInformation;
+import mcjty.lib.entity.DefaultValue;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.entity.IValue;
 import mcjty.lib.network.Argument;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.varia.RFToolsTools;
-import mcjty.lib.typed.Type;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -29,11 +33,10 @@ import java.util.*;
 
 public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity implements MachineInformation, ITickable {
 
-    public static final String CMD_SETNAME = "setName";
-    public static final String CMD_ADDPLAYER = "addPlayer";
-    public static final String CMD_DELPLAYER = "delPlayer";
-    public static final String CMD_SETPRIVATE = "setAccess";
-    public static final String CMD_SETBEAM = "setBeam";
+    public static final String CMD_ADDPLAYER = "transmitter.addPlayer";
+    public static final String CMD_DELPLAYER = "transmitter.delPlayer";
+    public static final Key<String> PARAM_PLAYER = new Key<>("player", Type.STRING);
+
     public static final String CMD_GETPLAYERS = "getPlayers";
     public static final String CLIENTCMD_GETPLAYERS = "getPlayers";
 
@@ -65,6 +68,19 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
     private int checkReceiverStatusCounter = 20;
 
     private AxisAlignedBB beamBox = null;
+
+    public static final Key<String> VALUE_NAME = new Key<>("name", Type.STRING);
+    public static final Key<Boolean> VALUE_PRIVATE = new Key<>("private", Type.BOOLEAN);
+    public static final Key<Boolean> VALUE_BEAM = new Key<>("beam", Type.BOOLEAN);
+
+    @Override
+    public IValue[] getValues() {
+        return new IValue[] {
+                new DefaultValue<>(VALUE_NAME, MatterTransmitterTileEntity::getName, MatterTransmitterTileEntity::setName),
+                new DefaultValue<>(VALUE_PRIVATE, MatterTransmitterTileEntity::isPrivateAccess, MatterTransmitterTileEntity::setPrivateAccess),
+                new DefaultValue<>(VALUE_BEAM, MatterTransmitterTileEntity::isBeamHidden, MatterTransmitterTileEntity::setBeamHidden),
+        };
+    }
 
     public MatterTransmitterTileEntity() {
         super(TeleportConfiguration.TRANSMITTER_MAXENERGY, TeleportConfiguration.TRANSMITTER_RECEIVEPERTICK);
@@ -625,29 +641,21 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+        boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
         }
-        if (CMD_SETNAME.equals(command)) {
-            setName(args.get("name").getString());
-            return true;
-        } else if (CMD_SETPRIVATE.equals(command)) {
-            setPrivateAccess(args.get("private").getBoolean());
-            return true;
-        } else if (CMD_SETBEAM.equals(command)) {
-            setBeamHidden(args.get("hide").getBoolean());
-            return true;
-        } else if (CMD_ADDPLAYER.equals(command)) {
-            addPlayer(args.get("player").getString());
+        if (CMD_ADDPLAYER.equals(command)) {
+            addPlayer(params.get(PARAM_PLAYER));
             return true;
         } else if (CMD_DELPLAYER.equals(command)) {
-            delPlayer(args.get("player").getString());
+            delPlayer(params.get(PARAM_PLAYER));
             return true;
         }
         return false;
     }
+
 
     @Nonnull
     @Override

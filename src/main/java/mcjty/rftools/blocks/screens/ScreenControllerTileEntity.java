@@ -1,9 +1,13 @@
 package mcjty.rftools.blocks.screens;
 
+import li.cil.oc.api.machine.Arguments;
+import li.cil.oc.api.machine.Callback;
+import li.cil.oc.api.machine.Context;
+import li.cil.oc.api.network.SimpleComponent;
+import mcjty.lib.entity.DefaultAction;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
-import mcjty.lib.network.Argument;
+import mcjty.lib.entity.IAction;
 import mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
@@ -15,19 +19,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import li.cil.oc.api.machine.Arguments;
-import li.cil.oc.api.machine.Callback;
-import li.cil.oc.api.machine.Context;
-import li.cil.oc.api.network.SimpleComponent;
-
 @Optional.InterfaceList({
         @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers"),
 //        @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft"),
 })
 public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity implements ITickable, SimpleComponent { // implements IPeripheral {
 
-    public static final String CMD_SCAN = "scan";
-    public static final String CMD_DETACH = "detach";
+    public static final String ACTION_SCAN = "scan";
+    public static final String ACTION_DETACH = "detach";
+
+    @Override
+    public IAction[] getActions() {
+        return new IAction[] {
+                new DefaultAction<>(ACTION_SCAN, ScreenControllerTileEntity::scan),
+                new DefaultAction<>(ACTION_DETACH, ScreenControllerTileEntity::detach),
+        };
+    }
 
     public static final String COMPONENT_NAME = "screen_controller";
 
@@ -364,21 +371,5 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
 
     public List<BlockPos> getConnectedScreens() {
         return connectedScreens;
-    }
-
-    @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
-        if (rc) {
-            return true;
-        }
-        if (CMD_SCAN.equals(command)) {
-            scan();
-            return true;
-        } else if (CMD_DETACH.equals(command)) {
-            detach();
-            return true;
-        }
-        return false;
     }
 }

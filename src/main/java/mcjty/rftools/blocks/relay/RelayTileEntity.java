@@ -3,7 +3,9 @@ package mcjty.rftools.blocks.relay;
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.compat.RedstoneFluxCompatibility;
 import mcjty.lib.entity.GenericEnergyHandlerTileEntity;
-import mcjty.lib.network.Argument;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.OrientationTools;
 import mcjty.rftools.RFTools;
@@ -24,14 +26,44 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fml.common.Optional;
 
-import java.util.Map;
-
 public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements ITickable, MachineInformation {
 
     public static final int MAXENERGY = 50000;
     public static final int RECEIVEPERTICK = 50000;
 
-    public static final String CMD_SETTINGS = "settings";
+    public static final String CMD_SETTINGS = "relay.settings";
+
+    public static final Key<Boolean> PARAM_INPUTON_D = new Key<>("inputOnD", Type.BOOLEAN);
+    public static final Key<Boolean> PARAM_INPUTON_U = new Key<>("inputOnU", Type.BOOLEAN);
+    public static final Key<Boolean> PARAM_INPUTON_N = new Key<>("inputOnN", Type.BOOLEAN);
+    public static final Key<Boolean> PARAM_INPUTON_S = new Key<>("inputOnS", Type.BOOLEAN);
+    public static final Key<Boolean> PARAM_INPUTON_W = new Key<>("inputOnW", Type.BOOLEAN);
+    public static final Key<Boolean> PARAM_INPUTON_E = new Key<>("inputOnE", Type.BOOLEAN);
+    public static final Key<Boolean>[] PARAM_INPUTON = new Key[] { PARAM_INPUTON_D, PARAM_INPUTON_U, PARAM_INPUTON_N, PARAM_INPUTON_S, PARAM_INPUTON_W, PARAM_INPUTON_E };
+
+    public static final Key<Boolean> PARAM_INPUTOFF_D = new Key<>("inputOffD", Type.BOOLEAN);
+    public static final Key<Boolean> PARAM_INPUTOFF_U = new Key<>("inputOffU", Type.BOOLEAN);
+    public static final Key<Boolean> PARAM_INPUTOFF_N = new Key<>("inputOffN", Type.BOOLEAN);
+    public static final Key<Boolean> PARAM_INPUTOFF_S = new Key<>("inputOffS", Type.BOOLEAN);
+    public static final Key<Boolean> PARAM_INPUTOFF_W = new Key<>("inputOffW", Type.BOOLEAN);
+    public static final Key<Boolean> PARAM_INPUTOFF_E = new Key<>("inputOffE", Type.BOOLEAN);
+    public static final Key<Boolean>[] PARAM_INPUTOFF = new Key[] { PARAM_INPUTOFF_D, PARAM_INPUTOFF_U, PARAM_INPUTOFF_N, PARAM_INPUTOFF_S, PARAM_INPUTOFF_W, PARAM_INPUTOFF_E };
+
+    public static final Key<Integer> PARAM_RFON_D = new Key<>("rfOnD", Type.INTEGER);
+    public static final Key<Integer> PARAM_RFON_U = new Key<>("rfOnU", Type.INTEGER);
+    public static final Key<Integer> PARAM_RFON_N = new Key<>("rfOnN", Type.INTEGER);
+    public static final Key<Integer> PARAM_RFON_S = new Key<>("rfOnS", Type.INTEGER);
+    public static final Key<Integer> PARAM_RFON_W = new Key<>("rfOnW", Type.INTEGER);
+    public static final Key<Integer> PARAM_RFON_E = new Key<>("rfOnE", Type.INTEGER);
+    public static final Key<Integer>[] PARAM_RFON = new Key[] { PARAM_RFON_D, PARAM_RFON_U, PARAM_RFON_N, PARAM_RFON_S, PARAM_RFON_W, PARAM_RFON_E };
+
+    public static final Key<Integer> PARAM_RFOFF_D = new Key<>("rfOffD", Type.INTEGER);
+    public static final Key<Integer> PARAM_RFOFF_U = new Key<>("rfOffU", Type.INTEGER);
+    public static final Key<Integer> PARAM_RFOFF_N = new Key<>("rfOffN", Type.INTEGER);
+    public static final Key<Integer> PARAM_RFOFF_S = new Key<>("rfOffS", Type.INTEGER);
+    public static final Key<Integer> PARAM_RFOFF_W = new Key<>("rfOffW", Type.INTEGER);
+    public static final Key<Integer> PARAM_RFOFF_E = new Key<>("rfOffE", Type.INTEGER);
+    public static final Key<Integer>[] PARAM_RFOFF = new Key[] { PARAM_RFOFF_D, PARAM_RFOFF_U, PARAM_RFOFF_N, PARAM_RFOFF_S, PARAM_RFOFF_W, PARAM_RFOFF_E };
 
     public static final PropertyBool ENABLED = PropertyBool.create("enabled");
 
@@ -242,18 +274,18 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+        boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
         }
         if (CMD_SETTINGS.equals(command)) {
             for (int i = 0 ; i < 6 ; i++) {
                 char prefix = DUNSWE.charAt(i);
-                inputModeOn[i] = args.get(prefix + "InOn").getBoolean();
-                inputModeOff[i] = args.get(prefix + "InOff").getBoolean();
-                rfOn[i] = args.get(prefix + "On").getInteger();
-                rfOff[i] = args.get(prefix + "Off").getInteger();
+                inputModeOn[i] = params.get(PARAM_INPUTON[i]);
+                inputModeOff[i] = params.get(PARAM_INPUTOFF[i]);
+                rfOn[i] = params.get(PARAM_RFON[i]);
+                rfOff[i] = params.get(PARAM_RFOFF[i]);
             }
             markDirtyClient();
             return true;

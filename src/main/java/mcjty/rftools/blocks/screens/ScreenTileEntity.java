@@ -2,9 +2,13 @@ package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.entity.DefaultValue;
 import mcjty.lib.entity.GenericTileEntity;
-import mcjty.lib.network.Argument;
-import mcjty.lib.network.PacketServerCommand;
+import mcjty.lib.entity.IValue;
+import mcjty.lib.network.PacketServerCommandTyped;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.api.screens.*;
@@ -26,18 +30,27 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ScreenTileEntity extends GenericTileEntity implements ITickable, DefaultSidedInventory {
 
-    public static final String CMD_CLICK = "click";
-    public static final String CMD_HOVER = "hover";
-    public static final String CMD_SETBRIGHT = "setBright";
-    public static final String CMD_SETTRUETYPE = "setTruetype";
+    public static final String CMD_CLICK = "screen.click";
+    public static final String CMD_HOVER = "screen.hover";
+    public static final String CMD_SETTRUETYPE = "screen.setTruetype";
+
+    public static final Key<Integer> PARAM_X = new Key<>("x", Type.INTEGER);
+    public static final Key<Integer> PARAM_Y = new Key<>("y", Type.INTEGER);
+    public static final Key<Integer> PARAM_MODULE = new Key<>("module", Type.INTEGER);
+    public static final Key<Integer> PARAM_TRUETYPE = new Key<>("truetype", Type.INTEGER);
+
+    public static Key<Boolean> VALUE_BRIGHT = new Key<>("bright", Type.BOOLEAN);
+
+    @Override
+    public IValue[] getValues() {
+        return new IValue[] {
+                new DefaultValue<>(VALUE_BRIGHT, ScreenTileEntity::isBright, ScreenTileEntity::setBright),
+        };
+    }
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ScreenContainer.factory, ScreenContainer.SCREEN_MODULES);
 
@@ -248,17 +261,21 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     public void focusModuleClient(double hitX, double hitY, double hitZ, EnumFacing side, EnumFacing horizontalFacing) {
         ModuleRaytraceResult result = getHitModule(hitX, hitY, hitZ, side, horizontalFacing);
         if (result == null) {
-            RFToolsMessages.INSTANCE.sendToServer(new PacketServerCommand(getPos(), CMD_HOVER,
-                    new Argument("x", -1),
-                    new Argument("y", -1),
-                    new Argument("module", -1)));
+            RFToolsMessages.INSTANCE.sendToServer(new PacketServerCommandTyped(getPos(), CMD_HOVER,
+                    TypedMap.builder()
+                            .put(PARAM_X, -1)
+                            .put(PARAM_Y, -1)
+                            .put(PARAM_MODULE, -1)
+                            .build()));
             return;
         }
 
-        RFToolsMessages.INSTANCE.sendToServer(new PacketServerCommand(getPos(), CMD_HOVER,
-                new Argument("x", result.getX()),
-                new Argument("y", result.getY() - result.getCurrenty()),
-                new Argument("module", result.getModuleIndex())));
+        RFToolsMessages.INSTANCE.sendToServer(new PacketServerCommandTyped(getPos(), CMD_HOVER,
+                TypedMap.builder()
+                        .put(PARAM_X, result.getX())
+                        .put(PARAM_Y, result.getY() - result.getCurrenty())
+                        .put(PARAM_MODULE, result.getModuleIndex())
+                        .build()));
     }
 
     public void hitScreenClient(double hitX, double hitY, double hitZ, EnumFacing side, EnumFacing horizontalFacing) {
@@ -276,10 +293,12 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         modules.get(module).mouseClick(getWorld(), result.getX(), result.getY() - result.getCurrenty(), true);
         clickedModules.add(new ActivatedModule(module, 3, result.getX(), result.getY()));
 
-        RFToolsMessages.INSTANCE.sendToServer(new PacketServerCommand(getPos(), CMD_CLICK,
-                new Argument("x", result.getX()),
-                new Argument("y", result.getY() - result.getCurrenty()),
-                new Argument("module", module)));
+        RFToolsMessages.INSTANCE.sendToServer(new PacketServerCommandTyped(getPos(), CMD_CLICK,
+                TypedMap.builder()
+                        .put(PARAM_X, result.getX())
+                        .put(PARAM_Y, result.getY() - result.getCurrenty())
+                        .put(PARAM_MODULE, module)
+                        .build()));
     }
 
     public ModuleRaytraceResult getHitModule(double hitX, double hitY, double hitZ, EnumFacing side, EnumFacing horizontalFacing) {
@@ -746,28 +765,24 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+        boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
         }
         if (CMD_CLICK.equals(command)) {
-            int x = args.get("x").getInteger();
-            int y = args.get("y").getInteger();
-            int module = args.get("module").getInteger();
+            int x = params.get(PARAM_X);
+            int y = params.get(PARAM_Y);
+            int module = params.get(PARAM_MODULE);
             hitScreenServer(playerMP, x, y, module);
             return true;
         } else if (CMD_HOVER.equals(command)) {
-            hoveringX = args.get("x").getInteger();
-            hoveringY = args.get("y").getInteger();
-            hoveringModule = args.get("module").getInteger();
-            return true;
-        } else if (CMD_SETBRIGHT.equals(command)) {
-            boolean b = args.get("b").getBoolean();
-            setBright(b);
+            hoveringX = params.get(PARAM_X);
+            hoveringY = params.get(PARAM_Y);
+            hoveringModule = params.get(PARAM_MODULE);
             return true;
         } else if (CMD_SETTRUETYPE.equals(command)) {
-            int b = args.get("b").getInteger();
+            int b = params.get(PARAM_TRUETYPE);
             setTrueTypeMode(b);
             return true;
         }

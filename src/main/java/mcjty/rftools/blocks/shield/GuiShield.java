@@ -3,13 +3,14 @@ package mcjty.rftools.blocks.shield;
 import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.entity.GenericEnergyStorageTileEntity;
+import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.DefaultSelectionEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.network.Argument;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.shield.filters.*;
@@ -21,6 +22,8 @@ import net.minecraft.util.ResourceLocation;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
+
+import static mcjty.rftools.blocks.shield.ShieldTEBase.*;
 
 public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
     public static final int SHIELD_WIDTH = 256;
@@ -39,7 +42,6 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
     private ChoiceLabel actionOptions;
     private ChoiceLabel typeOptions;
     private ChoiceLabel damageType;
-    private ImageChoiceLabel redstoneMode;
     private WidgetList filterList;
     private TextField player;
     private Button addFilter;
@@ -95,7 +97,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         initVisibilityMode();
         initActionOptions();
         initTypeOptions();
-        initRedstoneMode();
+        ImageChoiceLabel redstoneMode = initRedstoneMode();
         initDamageType();
 
         filterList = new WidgetList(mc, this).setDesiredHeight(120).
@@ -115,10 +117,9 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
 //        applyCamo.setEnabled(false);
 //        applyCamo.setTooltips("Not implemented yet");   // @todo
         colorSelector = new ColorSelector(mc, this)
+                .setName("color")
                 .setTooltips("Color for the shield")
                 .setLayoutHint(31, 177, 48, 16);
-        colorSelector.setCurrentColor(tileEntity.getShieldColor());
-        colorSelector.addChoiceEvent((parent, newColor) -> sendServerCommand(RFToolsMessages.INSTANCE, ShieldTEBase.CMD_SETCOLOR, new Argument("color", newColor)));
 
         player = new TextField(mc, this).setTooltips("Optional player name").setLayoutHint(170, 44, 80, 14);
 
@@ -148,6 +149,11 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
+
+        window.bind(RFToolsMessages.INSTANCE, "redstone", tileEntity, GenericTileEntity.VALUE_RSMODE.getName());
+        window.bind(RFToolsMessages.INSTANCE, "visibility", tileEntity, ShieldTEBase.VALUE_SHIELDVISMODE.getName());
+        window.bind(RFToolsMessages.INSTANCE, "damage", tileEntity, ShieldTEBase.VALUE_DAMAGEMODE.getName());
+        window.bind(RFToolsMessages.INSTANCE, "color", tileEntity, ShieldTEBase.VALUE_COLOR.getName());
 
         listDirty = 0;
         requestFilters();
@@ -241,12 +247,18 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
     }
 
     private void moveFilterUp() {
-        sendServerCommand(RFToolsMessages.INSTANCE, ShieldTEBase.CMD_UPFILTER, new Argument("selected", filterList.getSelected()));
+        sendServerCommand(RFToolsMessages.INSTANCE, ShieldTEBase.CMD_UPFILTER,
+                TypedMap.builder()
+                        .put(PARAM_SELECTED, filterList.getSelected())
+                        .build());
         listDirty = 0;
     }
 
     private void moveFilterDown() {
-        sendServerCommand(RFToolsMessages.INSTANCE, ShieldTEBase.CMD_DOWNFILTER, new Argument("selected", filterList.getSelected()));
+        sendServerCommand(RFToolsMessages.INSTANCE, ShieldTEBase.CMD_DOWNFILTER,
+                TypedMap.builder()
+                        .put(PARAM_SELECTED, filterList.getSelected())
+                        .build());
         listDirty = 0;
     }
 
@@ -281,34 +293,38 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         int selected = filterList.getSelected();
 
         sendServerCommand(RFToolsMessages.INSTANCE, ShieldTEBase.CMD_ADDFILTER,
-                new Argument("action", action), new Argument("type", type), new Argument("player", playerName),
-                new Argument("selected", selected));
+                TypedMap.builder()
+                        .put(PARAM_ACTION, action)
+                        .put(PARAM_TYPE, type)
+                        .put(PARAM_PLAYER, playerName)
+                        .put(PARAM_SELECTED, filterList.getSelected())
+                        .build());
         listDirty = 0;
     }
 
     private void removeSelectedFilter() {
         sendServerCommand(RFToolsMessages.INSTANCE, ShieldTEBase.CMD_DELFILTER,
-                new Argument("selected", filterList.getSelected()));
+                TypedMap.builder()
+                        .put(PARAM_SELECTED, filterList.getSelected())
+                        .build());
         listDirty = 0;
     }
 
-    private void initRedstoneMode() {
-        redstoneMode = new ImageChoiceLabel(mc, this).
-                addChoiceEvent((parent, newChoice) -> changeRedstoneMode()).
+    private ImageChoiceLabel initRedstoneMode() {
+        ImageChoiceLabel redstoneMode = new ImageChoiceLabel(mc, this).
+                setName("redstone").
                 addChoice(RedstoneMode.REDSTONE_IGNORED.getDescription(), "Redstone mode:\nIgnored", iconGuiElements, 0, 0).
                 addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
                 addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
         redstoneMode.setLayoutHint(62, 200, 16, 16);
         redstoneMode.setCurrentChoice(tileEntity.getRSMode().ordinal());
-    }
-
-    private void changeRedstoneMode() {
-        tileEntity.setRSMode(RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()]);
-        sendServerCommand(RFToolsMessages.INSTANCE, ShieldTEBase.CMD_RSMODE, new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()));
+        return redstoneMode;
     }
 
     private void initVisibilityMode() {
-        visibilityOptions = new ChoiceLabel(mc, this).setLayoutHint(31, 161, 48, 14);
+        visibilityOptions = new ChoiceLabel(mc, this)
+                .setName("visibility")
+                .setLayoutHint(31, 161, 48, 14);
         for (ShieldRenderingMode m : ShieldRenderingMode.values()) {
             if ((!ShieldConfiguration.allowInvisibleShield) && m == ShieldRenderingMode.MODE_INVISIBLE) {
                 continue;
@@ -322,8 +338,6 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_TRANSP.getDescription(), "Transparent shield texture");
         visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_SOLID.getDescription(), "Solid shield texture");
         visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_MIMIC.getDescription(), "Use the texture from the supplied block");
-        visibilityOptions.setChoice(tileEntity.getShieldRenderingMode().getDescription());
-        visibilityOptions.addChoiceEvent((parent, newChoice) -> changeVisibilityMode());
     }
 
     private void initActionOptions() {
@@ -346,25 +360,12 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
     }
 
     private void initDamageType() {
-        damageType = new ChoiceLabel(mc, this).setLayoutHint(170, 102, 80, 14);
+        damageType = new ChoiceLabel(mc, this)
+                .setName("damage")
+                .setLayoutHint(170, 102, 80, 14);
         damageType.addChoices(DAMAGETYPE_GENERIC, DAMAGETYPE_PLAYER);
         damageType.setChoiceTooltip(DAMAGETYPE_GENERIC, "Generic damage type");
         damageType.setChoiceTooltip(DAMAGETYPE_PLAYER, "Damage as done by a player");
-        damageType.addChoiceEvent((parent, newChoice) -> changeDamageType());
-        damageType.setChoice(tileEntity.getDamageMode().getDescription());
-    }
-
-    private void changeDamageType() {
-        tileEntity.setDamageMode(DamageTypeMode.getMode(damageType.getCurrentChoice()));
-        sendServerCommand(RFToolsMessages.INSTANCE, ShieldTEBase.CMD_DAMAGEMODE, new Argument("mode", DamageTypeMode.getMode(damageType.getCurrentChoice()).getDescription()));
-
-    }
-
-    private void changeVisibilityMode() {
-        ShieldRenderingMode newMode = ShieldRenderingMode.getMode(visibilityOptions.getCurrentChoice());
-        tileEntity.setShieldRenderingMode(newMode);
-        sendServerCommand(RFToolsMessages.INSTANCE, ShieldTEBase.CMD_SHIELDVISMODE,
-                new Argument("mode", newMode.getDescription()));
     }
 
     private void applyCamoToShield() {
@@ -377,7 +378,10 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
                 pass = block.getBlockLayer().ordinal();
             }
         }
-        sendServerCommand(RFToolsMessages.INSTANCE, ShieldTEBase.CMD_APPLYCAMO, new Argument("pass", pass));
+        sendServerCommand(RFToolsMessages.INSTANCE, ShieldTEBase.CMD_APPLYCAMO,
+                TypedMap.builder()
+                        .put(PARAM_PASS, pass)
+                        .build());
     }
 
     private void enableButtons() {

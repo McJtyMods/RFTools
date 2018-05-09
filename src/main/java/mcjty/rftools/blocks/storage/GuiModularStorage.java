@@ -9,12 +9,9 @@ import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Button;
-import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Argument;
 import mcjty.lib.network.Arguments;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
@@ -43,7 +40,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -51,6 +48,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static mcjty.rftools.blocks.storage.ModularStorageContainer.CONTAINER_GRID;
+import static mcjty.rftools.blocks.storage.ModularStorageTileEntity.*;
 
 
 public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEntity> {
@@ -131,8 +129,10 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
         Panel modePanel = setupModePanel();
 
-        cycleButton = new Button(mc, this).setText("C").setTooltips("Cycle to the next storage module").setLayoutHint(new PositionalLayout.PositionalHint(5, ySize-23, 16, 16)).
-                addButtonEvent(parent -> cycleStorage());
+        cycleButton = new Button(mc, this)
+                .setName("cycle")
+                .setText("C").setTooltips("Cycle to the next storage module").setLayoutHint(new PositionalLayout.PositionalHint(5, ySize-23, 16, 16))
+                .addButtonEvent(parent -> cycleStorage());
 
         Panel toplevel = new Panel(mc, this).setLayout(new PositionalLayout()).addChild(itemList).addChild(slider)
                 .addChild(modePanel)
@@ -205,7 +205,9 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         amountLabel.setTooltips("Amount of stacks / maximum amount");
         amountLabel.setText("?/?");
 
-        compactButton = new Button(mc, this).setLayoutHint(4, 39, 12, 12).setText("z").setTooltips("Compact equal stacks")
+        compactButton = new Button(mc, this)
+                .setName("compact")
+                .setLayoutHint(4, 39, 12, 12).setText("z").setTooltips("Compact equal stacks")
                 .addButtonEvent(parent -> compact());
 
         if (tileEntity != null) {
@@ -251,7 +253,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
     private void cycleStorage() {
         if (tileEntity != null) {
-            sendServerCommand(RFToolsMessages.INSTANCE, ModularStorageTileEntity.CMD_CYCLE);
+            window.sendAction(RFToolsMessages.INSTANCE, tileEntity, ModularStorageTileEntity.ACTION_CYCLE);
         } else {
             sendServerCommand(RFTools.MODID, CommandHandler.CMD_CYCLE_STORAGE);
         }
@@ -259,7 +261,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
     private void compact() {
         if (tileEntity != null) {
-            sendServerCommand(RFToolsMessages.INSTANCE, ModularStorageTileEntity.CMD_COMPACT);
+            window.sendAction(RFToolsMessages.INSTANCE, tileEntity, ModularStorageTileEntity.ACTION_COMPACT);
         } else {
             sendServerCommand(RFTools.MODID, CommandHandler.CMD_COMPACT);
         }
@@ -272,10 +274,12 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             tileEntity.setFilter(filter.getText());
             tileEntity.setGroupMode(groupMode.getCurrentChoiceIndex() == 1);
             sendServerCommand(RFToolsMessages.INSTANCE, ModularStorageTileEntity.CMD_SETTINGS,
-                    new Argument("sortMode", sortMode.getCurrentChoice()),
-                    new Argument("viewMode", viewMode.getCurrentChoice()),
-                    new Argument("filter", filter.getText()),
-                    new Argument("groupMode", groupMode.getCurrentChoiceIndex() == 1));
+                    TypedMap.builder()
+                    .put(PARAM_SORTMODE, sortMode.getCurrentChoice())
+                    .put(PARAM_VIEWMODE, viewMode.getCurrentChoice())
+                    .put(PARAM_FILTER, filter.getText())
+                    .put(PARAM_GROUPMODE, groupMode.getCurrentChoiceIndex() == 1)
+                    .build());
         } else {
             RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItemStorage(
                     new Argument("sortMode", sortMode.getCurrentChoice()),
@@ -371,7 +375,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             Slot slot = getSlotAtPosition(x, y);
             if (slot instanceof GhostOutputSlot) {
                 if (tileEntity != null) {
-                    sendServerCommand(RFToolsMessages.INSTANCE, ModularStorageTileEntity.CMD_CLEARGRID);
+                    window.sendAction(RFToolsMessages.INSTANCE, tileEntity, ModularStorageTileEntity.ACTION_CLEARGRID);
                 } else {
                     sendServerCommand(RFTools.MODID, CommandHandler.CMD_CLEAR_GRID);
                 }

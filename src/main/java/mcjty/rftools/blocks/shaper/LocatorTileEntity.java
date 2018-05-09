@@ -1,10 +1,11 @@
 package mcjty.rftools.blocks.shaper;
 
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
-import mcjty.lib.network.Argument;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.Counter;
 import mcjty.lib.varia.EnergyTools;
-import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.shapes.BeaconType;
 import mcjty.rftools.shapes.ScanDataManager;
@@ -34,12 +35,22 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
-import java.util.Map;
 
 public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implements ITickable {
 
-    public static final String CMD_MODE = "setMode";
-    public static final String CMD_SETTINGS = "setSettings";
+    public static final String CMD_SETTINGS = "locator.setSettings";
+
+    public static final Key<String> PARAM_HOSTILE_TYPE = new Key<>("hostile", Type.STRING);
+    public static final Key<String> PARAM_PASSIVE_TYPE = new Key<>("passive", Type.STRING);
+    public static final Key<String> PARAM_PLAYER_TYPE = new Key<>("player", Type.STRING);
+    public static final Key<String> PARAM_ENERGY_TYPE = new Key<>("energy", Type.STRING);
+    public static final Key<Boolean> PARAM_HOSTILE_BEACON = new Key<>("hostileBeacon", Type.BOOLEAN);
+    public static final Key<Boolean> PARAM_PASSIVE_BEACON = new Key<>("passiveBeacon", Type.BOOLEAN);
+    public static final Key<Boolean> PARAM_PLAYER_BEACON = new Key<>("playerBeacon", Type.BOOLEAN);
+    public static final Key<Boolean> PARAM_ENERGY_BEACON = new Key<>("energyBeacon", Type.BOOLEAN);
+    public static final Key<String> PARAM_FILTER = new Key<>("filter", Type.STRING);
+    public static final Key<Integer> PARAM_MIN_ENERGY = new Key<>("minEnergy", Type.INTEGER);
+    public static final Key<Integer> PARAM_MAX_ENERGY = new Key<>("maxEnergy", Type.INTEGER);
 
     private int counter = 0;
 
@@ -348,32 +359,28 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
 
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+        boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
         }
-        if (CMD_MODE.equals(command)) {
-            String m = args.get("rs").getString();
-            setRSMode(RedstoneMode.getMode(m));
-            return true;
-        } else if (CMD_SETTINGS.equals(command)) {
-            hostileType = BeaconType.getTypeByCode(args.get("hostile").getString());
-            passiveType = BeaconType.getTypeByCode(args.get("passive").getString());
-            playerType = BeaconType.getTypeByCode(args.get("player").getString());
-            energyType = BeaconType.getTypeByCode(args.get("energy").getString());
-            hostileBeacon = args.get("hostileBeacon").getBoolean();
-            passiveBeacon = args.get("passiveBeacon").getBoolean();
-            playerBeacon = args.get("playerBeacon").getBoolean();
-            energyBeacon = args.get("energyBeacon").getBoolean();
-            filter = args.get("filter").getString();
-            if (args.containsKey("minEnergy")) {
-                minEnergy = args.get("minEnergy").getInteger();
+        if (CMD_SETTINGS.equals(command)) {
+            hostileType = BeaconType.getTypeByCode(params.get(PARAM_HOSTILE_TYPE));
+            passiveType = BeaconType.getTypeByCode(params.get(PARAM_PASSIVE_TYPE));
+            playerType = BeaconType.getTypeByCode(params.get(PARAM_PLAYER_TYPE));
+            energyType = BeaconType.getTypeByCode(params.get(PARAM_ENERGY_TYPE));
+            hostileBeacon = params.get(PARAM_HOSTILE_BEACON);
+            passiveBeacon = params.get(PARAM_PASSIVE_BEACON);
+            playerBeacon = params.get(PARAM_PLAYER_BEACON);
+            energyBeacon = params.get(PARAM_ENERGY_BEACON);
+            filter = params.get(PARAM_FILTER);
+            if (params.get(PARAM_MIN_ENERGY) != null) {
+                minEnergy = params.get(PARAM_MIN_ENERGY);
             } else {
                 minEnergy = null;
             }
-            if (args.containsKey("maxEnergy")) {
-                maxEnergy = args.get("maxEnergy").getInteger();
+            if (params.get(PARAM_MAX_ENERGY) != null) {
+                maxEnergy = params.get(PARAM_MAX_ENERGY);
             } else {
                 maxEnergy = null;
             }

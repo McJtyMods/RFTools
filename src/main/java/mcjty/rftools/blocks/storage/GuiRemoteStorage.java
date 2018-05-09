@@ -7,12 +7,15 @@ import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.EnergyBar;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.network.Argument;
+import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.*;
+import java.awt.Rectangle;
+
+import static mcjty.rftools.blocks.storage.RemoteStorageTileEntity.PARAM_GLOBAL;
+import static mcjty.rftools.blocks.storage.RemoteStorageTileEntity.PARAM_INDEX;
 
 
 public class GuiRemoteStorage extends GenericGuiContainer<RemoteStorageTileEntity> {
@@ -59,8 +62,10 @@ public class GuiRemoteStorage extends GenericGuiContainer<RemoteStorageTileEntit
 
     private void changeGlobal(int index) {
         sendServerCommand(RFToolsMessages.INSTANCE, RemoteStorageTileEntity.CMD_SETGLOBAL,
-                new Argument("index", index),
-                new Argument("global", global[index].getCurrentChoiceIndex() == 1));
+                TypedMap.builder()
+                        .put(PARAM_INDEX, index)
+                        .put(PARAM_GLOBAL, global[index].getCurrentChoiceIndex() == 1)
+                        .build());
     }
 
     @Override

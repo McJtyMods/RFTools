@@ -7,8 +7,9 @@ import mcjty.lib.api.smartwrench.SmartWrenchSelector;
 import mcjty.lib.compat.RedstoneFluxCompatibility;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.entity.DefaultAction;
 import mcjty.lib.entity.GenericTileEntity;
-import mcjty.lib.network.Argument;
+import mcjty.lib.entity.IAction;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.GlobalCoordinate;
@@ -17,7 +18,6 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.items.powercell.PowerCellCardItem;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -33,7 +33,6 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.common.Optional;
 
-import java.util.Map;
 import java.util.Set;
 
 import static mcjty.rftools.blocks.powercell.PowerCellConfiguration.advancedFactor;
@@ -46,10 +45,24 @@ import static mcjty.rftools.blocks.powercell.PowerCellConfiguration.simpleFactor
 public class PowerCellTileEntity extends GenericTileEntity implements IEnergyProvider, IEnergyReceiver,
         DefaultSidedInventory, ITickable, SmartWrenchSelector, MachineInformation {
 
-    public static String CMD_SETNONE = "setNone";
-    public static String CMD_SETINPUT = "setInput";
-    public static String CMD_SETOUTPUT = "setOutput";
-    public static String CMD_CLEARSTATS = "clearStats";
+    public static final String ACTION_SETNONE = "setNone";
+    public static final String ACTION_SETINPUT = "setInput";
+    public static final String ACTION_SETOUTPUT = "setOutput";
+    public static final String ACTION_CLEARSTATS = "clearStats";
+
+    @Override
+    public IAction[] getActions() {
+        return new IAction[] {
+                new DefaultAction<>(ACTION_SETNONE, PowerCellTileEntity::setAllNone),
+                new DefaultAction<>(ACTION_SETINPUT, PowerCellTileEntity::setAllInput),
+                new DefaultAction<>(ACTION_SETOUTPUT, PowerCellTileEntity::setAllOutput),
+                new DefaultAction<>(ACTION_CLEARSTATS, te -> {
+                    ((PowerCellTileEntity) te).totalExtracted = 0;
+                    ((PowerCellTileEntity) te).totalInserted = 0;
+                    te.markDirty();
+                }),
+        };
+    }
 
     private static final String[] TAGS = new String[]{"rfpertick_out", "rfpertick_in", "rftotal_in", "rftotal_out"};
     private static final String[] TAG_DESCRIPTIONS = new String[] {
@@ -617,37 +630,25 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         return canPlayerAccess(player);
     }
 
-    @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
-        if (rc) {
-            return true;
+    public void setAllOutput() {
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            modes[facing.ordinal()] = Mode.MODE_OUTPUT;
         }
-        if (CMD_SETNONE.equals(command)) {
-            for (EnumFacing facing : EnumFacing.VALUES) {
-                modes[facing.ordinal()] = Mode.MODE_NONE;
-            }
-            markDirtyClient();
-            return true;
-        } else if (CMD_SETINPUT.equals(command)) {
-            for (EnumFacing facing : EnumFacing.VALUES) {
-                modes[facing.ordinal()] = Mode.MODE_INPUT;
-            }
-            markDirtyClient();
-            return true;
-        } else if (CMD_SETOUTPUT.equals(command)) {
-            for (EnumFacing facing : EnumFacing.VALUES) {
-                modes[facing.ordinal()] = Mode.MODE_OUTPUT;
-            }
-            markDirtyClient();
-            return true;
-        } else if (CMD_CLEARSTATS.equals(command)) {
-            totalExtracted = 0;
-            totalInserted = 0;
-            markDirty();
-            return true;
+        markDirtyClient();
+    }
+
+    private void setAllInput() {
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            modes[facing.ordinal()] = Mode.MODE_INPUT;
         }
-        return false;
+        markDirtyClient();
+    }
+
+    private void setAllNone() {
+        for (EnumFacing facing : EnumFacing.VALUES) {
+            modes[facing.ordinal()] = Mode.MODE_NONE;
+        }
+        markDirtyClient();
     }
 
     @Override

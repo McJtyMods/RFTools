@@ -8,20 +8,17 @@ import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
-import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.gui.widgets.TextField;
-import mcjty.lib.network.Argument;
+import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.PacketGetPlayers;
 import mcjty.rftools.network.RFToolsMessages;
 import org.lwjgl.input.Keyboard;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.util.*;
-import java.util.List;
+
+import static mcjty.rftools.blocks.teleporter.MatterTransmitterTileEntity.PARAM_PLAYER;
 
 public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterTileEntity> {
     public static final int MATTER_WIDTH = 180;
@@ -31,7 +28,6 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
 
     private EnergyBar energyBar;
     private ChoiceLabel privateSetting;
-    private ToggleButton beamToggle;
     private WidgetList allowedPlayers;
     private Button addButton;
     private Button delButton;
@@ -68,21 +64,19 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
         energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredHeight(12).setDesiredWidth(80).setMaxValue(maxEnergyStored).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 
-        TextField textField = new TextField(mc, this).setTooltips("Use this name to", "identify this transmitter", "in the dialer").addTextEvent((parent, newText) -> setTransmitterName(newText));
-        textField.setText(tileEntity.getName());
+        TextField textField = new TextField(mc, this)
+                .setName("name")
+                .setTooltips("Use this name to", "identify this transmitter", "in the dialer");
         Panel namePanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Name:")).addChild(textField).setDesiredHeight(16);
 
-        privateSetting = new ChoiceLabel(mc, this).addChoices(ACCESS_PUBLIC, ACCESS_PRIVATE).setDesiredHeight(14).setDesiredWidth(60).
+        privateSetting = new ChoiceLabel(mc, this)
+                .setName("private")
+                .addChoices(ACCESS_PUBLIC, ACCESS_PRIVATE).setDesiredHeight(14).setDesiredWidth(60).
             setChoiceTooltip(ACCESS_PUBLIC, "Everyone can access this transmitter", "and change the dialing destination").
-            setChoiceTooltip(ACCESS_PRIVATE, "Only people in the access list below", "can access this transmitter").
-            addChoiceEvent((parent, newChoice) -> changeAccessMode(newChoice));
-        if (tileEntity.isPrivateAccess()) {
-            privateSetting.setChoice(ACCESS_PRIVATE);
-        } else {
-            privateSetting.setChoice(ACCESS_PUBLIC);
-        }
-        beamToggle = new ToggleButton(mc, this).setText("Hide").setCheckMarker(true).setDesiredHeight(14).setDesiredWidth(49).setTooltips("Hide the teleportation beam")
-                .addButtonEvent(parent -> changeBeamState()).setPressed(tileEntity.isBeamHidden());
+            setChoiceTooltip(ACCESS_PRIVATE, "Only people in the access list below", "can access this transmitter");
+        ToggleButton beamToggle = new ToggleButton(mc, this)
+                .setName("beam")
+                .setText("Hide").setCheckMarker(true).setDesiredHeight(14).setDesiredWidth(49).setTooltips("Hide the teleportation beam");
         Panel privatePanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Access:")).addChild(privateSetting).addChild(beamToggle).setDesiredHeight(16);
 
         allowedPlayers = new WidgetList(mc, this);
@@ -106,27 +100,25 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
         listDirty = 0;
         requestPlayers();
         tileEntity.requestRfFromServer(RFTools.MODID);
-    }
 
-    private void setTransmitterName(String text) {
-        sendServerCommand(RFToolsMessages.INSTANCE, MatterTransmitterTileEntity.CMD_SETNAME, new Argument("name", text));
-    }
-
-    private void changeBeamState() {
-        sendServerCommand(RFToolsMessages.INSTANCE, MatterTransmitterTileEntity.CMD_SETBEAM, new Argument("hide", beamToggle.isPressed()));
-    }
-
-    private void changeAccessMode(String newAccess) {
-        sendServerCommand(RFToolsMessages.INSTANCE, MatterTransmitterTileEntity.CMD_SETPRIVATE, new Argument("private", ACCESS_PRIVATE.equals(newAccess)));
+        window.bind(RFToolsMessages.INSTANCE, "name", tileEntity, MatterTransmitterTileEntity.VALUE_NAME.getName());
+        window.bind(RFToolsMessages.INSTANCE, "private", tileEntity, MatterTransmitterTileEntity.VALUE_PRIVATE.getName());
+        window.bind(RFToolsMessages.INSTANCE, "beam", tileEntity, MatterTransmitterTileEntity.VALUE_BEAM.getName());
     }
 
     private void addPlayer() {
-        sendServerCommand(RFToolsMessages.INSTANCE, MatterTransmitterTileEntity.CMD_ADDPLAYER, new Argument("player", nameField.getText()));
+        sendServerCommand(RFToolsMessages.INSTANCE, MatterTransmitterTileEntity.CMD_ADDPLAYER,
+                TypedMap.builder()
+                        .put(PARAM_PLAYER, nameField.getText())
+                        .build());
         listDirty = 0;
     }
 
     private void delPlayer() {
-        sendServerCommand(RFToolsMessages.INSTANCE, MatterTransmitterTileEntity.CMD_DELPLAYER, new Argument("player", players.get(allowedPlayers.getSelected())));
+        sendServerCommand(RFToolsMessages.INSTANCE, MatterTransmitterTileEntity.CMD_DELPLAYER,
+                TypedMap.builder()
+                        .put(PARAM_PLAYER, nameField.getText())
+                        .build());
         listDirty = 0;
     }
 

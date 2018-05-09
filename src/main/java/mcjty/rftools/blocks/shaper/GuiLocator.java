@@ -3,15 +3,13 @@ package mcjty.rftools.blocks.shaper;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.GenericGuiContainer;
 import mcjty.lib.entity.GenericEnergyStorageTileEntity;
+import mcjty.lib.entity.GenericTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.gui.widgets.TextField;
-import mcjty.lib.network.Argument;
 import mcjty.lib.network.Arguments;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
@@ -19,11 +17,11 @@ import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.BeaconType;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.*;
-import java.util.ArrayList;
+import java.awt.Rectangle;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import static mcjty.rftools.blocks.shaper.LocatorTileEntity.*;
 
 public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
 
@@ -34,7 +32,6 @@ public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     private EnergyBar energyBar;
-    private ImageChoiceLabel redstoneMode;
 
     private ColorChoiceLabel hostile;
     private ColorChoiceLabel passive;
@@ -72,7 +69,7 @@ public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
         toplevel.addChild(energyBar);
 
-        initRedstoneMode();
+        ImageChoiceLabel redstoneMode = initRedstoneMode();
         toplevel.addChild(redstoneMode);
 
         hostile = new ColorChoiceLabel(mc, this);
@@ -138,6 +135,8 @@ public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
         tileEntity.requestRfFromServer(RFTools.MODID);
 
         energyConsumption = 0;
+
+        window.bind(RFToolsMessages.INSTANCE, "redstone", tileEntity, GenericTileEntity.VALUE_RSMODE.getName());
     }
 
     private static final Map<Integer, BeaconType> COLOR_TO_TYPE = new HashMap<>();
@@ -160,48 +159,40 @@ public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
     }
 
     private void update() {
-        List<Argument> arguments = new ArrayList<>();
-        arguments.add(new Argument("hostile", COLOR_TO_TYPE.get(hostile.getCurrentColor()).getCode()));
-        arguments.add(new Argument("passive", COLOR_TO_TYPE.get(passive.getCurrentColor()).getCode()));
-        arguments.add(new Argument("player", COLOR_TO_TYPE.get(player.getCurrentColor()).getCode()));
-        arguments.add(new Argument("energy", COLOR_TO_TYPE.get(energy.getCurrentColor()).getCode()));
-        arguments.add(new Argument("hostileBeacon", hostileBeacon.isPressed()));
-        arguments.add(new Argument("passiveBeacon", passiveBeacon.isPressed()));
-        arguments.add(new Argument("playerBeacon", playerBeacon.isPressed()));
-        arguments.add(new Argument("energyBeacon", energyBeacon.isPressed()));
-        arguments.add(new Argument("filter", filter.getText()));
+        TypedMap.Builder builder = TypedMap.builder();
+        builder.put(PARAM_HOSTILE_TYPE, COLOR_TO_TYPE.get(hostile.getCurrentColor()).getCode());
+        builder.put(PARAM_PASSIVE_TYPE, COLOR_TO_TYPE.get(passive.getCurrentColor()).getCode());
+        builder.put(PARAM_PLAYER_TYPE, COLOR_TO_TYPE.get(player.getCurrentColor()).getCode());
+        builder.put(PARAM_ENERGY_TYPE, COLOR_TO_TYPE.get(energy.getCurrentColor()).getCode());
+        builder.put(PARAM_HOSTILE_BEACON, hostileBeacon.isPressed());
+        builder.put(PARAM_PASSIVE_BEACON, passiveBeacon.isPressed());
+        builder.put(PARAM_PLAYER_BEACON, playerBeacon.isPressed());
+        builder.put(PARAM_ENERGY_BEACON, energyBeacon.isPressed());
+        builder.put(PARAM_FILTER, filter.getText());
         if (!minEnergy.getText().trim().isEmpty()) {
             try {
-                arguments.add(new Argument("minEnergy", Integer.parseInt(minEnergy.getText())));
+                builder.put(PARAM_MIN_ENERGY, Integer.parseInt(minEnergy.getText()));
             } catch (NumberFormatException e) {
             }
         }
         if (!maxEnergy.getText().trim().isEmpty()) {
             try {
-                arguments.add(new Argument("maxEnergy", Integer.parseInt(maxEnergy.getText())));
+                builder.put(PARAM_MAX_ENERGY, Integer.parseInt(maxEnergy.getText()));
             } catch (NumberFormatException e) {
             }
         }
 
-        sendServerCommand(RFToolsMessages.INSTANCE, LocatorTileEntity.CMD_SETTINGS,
-                arguments.toArray(new Argument[arguments.size()])
-        );
+        sendServerCommand(RFToolsMessages.INSTANCE, LocatorTileEntity.CMD_SETTINGS, builder.build());
     }
 
-    private void initRedstoneMode() {
-        redstoneMode = new ImageChoiceLabel(mc, this).
-                addChoiceEvent((parent, newChoice) -> changeRedstoneMode()).
+    private ImageChoiceLabel initRedstoneMode() {
+        ImageChoiceLabel redstoneMode = new ImageChoiceLabel(mc, this).
+                setName("redstone").
                 addChoice(RedstoneMode.REDSTONE_IGNORED.getDescription(), "Redstone mode:\nIgnored", iconGuiElements, 0, 0).
                 addChoice(RedstoneMode.REDSTONE_OFFREQUIRED.getDescription(), "Redstone mode:\nOff to activate", iconGuiElements, 16, 0).
                 addChoice(RedstoneMode.REDSTONE_ONREQUIRED.getDescription(), "Redstone mode:\nOn to activate", iconGuiElements, 32, 0);
         redstoneMode.setLayoutHint(8, 10, 16, 16);
-        redstoneMode.setCurrentChoice(tileEntity.getRSMode().ordinal());
-    }
-
-    private void changeRedstoneMode() {
-        tileEntity.setRSMode(RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()]);
-        sendServerCommand(RFToolsMessages.INSTANCE, LocatorTileEntity.CMD_MODE,
-                new Argument("rs", RedstoneMode.values()[redstoneMode.getCurrentChoiceIndex()].getDescription()));
+        return redstoneMode;
     }
 
     static int cnt = 10;

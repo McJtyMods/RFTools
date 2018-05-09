@@ -8,8 +8,8 @@ import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.network.Argument;
 import mcjty.lib.network.Arguments;
+import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
@@ -19,6 +19,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.Rectangle;
+
+import static mcjty.rftools.blocks.security.SecurityManagerTileEntity.*;
 
 public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileEntity> {
     public static final int SECURITYMANAGER_WIDTH = 244;
@@ -113,7 +115,10 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
         if (channelFromServer != null) {
             channelFromServer.setName(channelName);
         }
-        sendServerCommand(RFToolsMessages.INSTANCE, SecurityManagerTileEntity.CMD_SETCHANNELNAME, new Argument("name", channelName));
+        sendServerCommand(RFToolsMessages.INSTANCE, SecurityManagerTileEntity.CMD_SETCHANNELNAME,
+                TypedMap.builder()
+                        .put(PARAM_NAME, channelName)
+                        .build());
     }
 
     private void updateSettings() {
@@ -122,7 +127,10 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
         if (channelFromServer != null) {
             channelFromServer.setWhitelist(whitelist);
         }
-        sendServerCommand(RFToolsMessages.INSTANCE, SecurityManagerTileEntity.CMD_SETMODE, new Argument("whitelist", whitelist));
+        sendServerCommand(RFToolsMessages.INSTANCE, SecurityManagerTileEntity.CMD_SETMODE,
+                TypedMap.builder()
+                        .put(PARAM_WHITELIST, whitelist)
+                        .build());
     }
 
     private void populatePlayers() {
@@ -140,11 +148,17 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
     }
 
     private void addPlayer() {
-        sendServerCommand(RFToolsMessages.INSTANCE, SecurityManagerTileEntity.CMD_ADDPLAYER, new Argument("player", nameField.getText()));
+        sendServerCommand(RFToolsMessages.INSTANCE, SecurityManagerTileEntity.CMD_ADDPLAYER,
+                TypedMap.builder()
+                        .put(PARAM_PLAYER, nameField.getText())
+                        .build());
     }
 
     private void delPlayer() {
-        sendServerCommand(RFToolsMessages.INSTANCE, SecurityManagerTileEntity.CMD_DELPLAYER, new Argument("player", nameField.getText()));
+        sendServerCommand(RFToolsMessages.INSTANCE, SecurityManagerTileEntity.CMD_DELPLAYER,
+                TypedMap.builder()
+                        .put(PARAM_PLAYER, nameField.getText())
+                        .build());
     }
 
     private int getCardID() {

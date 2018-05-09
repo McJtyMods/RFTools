@@ -3,8 +3,10 @@ package mcjty.rftools.blocks.storagemonitor;
 import com.google.common.base.Function;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
-import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
-import mcjty.lib.network.Argument;
+import mcjty.lib.entity.*;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.ItemStackTools;
@@ -48,16 +50,37 @@ import java.util.stream.Stream;
 public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable,
         CraftingGridProvider, JEIRecipeAcceptor, IStorageScanner {
 
-    public static final String CMD_SETRADIUS = "setRadius";
-    public static final String CMD_UP = "up";
-    public static final String CMD_TOP = "top";
-    public static final String CMD_DOWN = "down";
-    public static final String CMD_BOTTOM = "bottom";
-    public static final String CMD_REMOVE = "remove";
-    public static final String CMD_TOGGLEROUTABLE = "toggleRoutable";
-    public static final String CMD_TOGGLEEXPORT = "toggleExport";
-    public static final String CMD_SETVIEW = "setView";
-    public static final String CMD_CLEARGRID = "clearGrid";
+    public static final String CMD_UP = "scanner.up";
+    public static final String CMD_TOP = "scanner.top";
+    public static final String CMD_DOWN = "scanner.down";
+    public static final String CMD_BOTTOM = "scanner.bottom";
+    public static final String CMD_REMOVE = "scanner.remove";
+    public static final String CMD_TOGGLEROUTABLE = "scanner.toggleRoutable";
+    public static final String CMD_SETVIEW = "scanner.setView";
+
+    public static final Key<Integer> PARAM_INDEX = new Key<>("index", Type.INTEGER);
+    public static final Key<BlockPos> PARAM_POS = new Key<>("pos", Type.BLOCKPOS);
+    public static final Key<Boolean> PARAM_VIEW = new Key<>("view", Type.BOOLEAN);
+
+    public static final String ACTION_CLEARGRID = "clearGrid";
+
+    public static final Key<Boolean> VALUE_EXPORT = new Key<>("export", Type.BOOLEAN);
+    public static final Key<Integer> VALUE_RADIUS = new Key<>("radius", Type.INTEGER);
+
+    @Override
+    public IAction[] getActions() {
+        return new IAction[] {
+                new DefaultAction<>(ACTION_CLEARGRID, StorageScannerTileEntity::clearGrid),
+        };
+    }
+
+    @Override
+    public IValue[] getValues() {
+        return new IValue[] {
+                new DefaultValue<>(VALUE_EXPORT, StorageScannerTileEntity::isExportToCurrent, StorageScannerTileEntity::setExportToCurrent),
+                new DefaultValue<>(VALUE_RADIUS, StorageScannerTileEntity::getRadius, StorageScannerTileEntity::setRadius),
+        };
+    }
 
     private static final int[] SLOTS = new int[]{0, 1, 2};
 
@@ -476,7 +499,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     public void setExportToCurrent(boolean exportToCurrent) {
         this.exportToCurrent = exportToCurrent;
-        markDirty();
+        markDirtyClient();
     }
 
     private void toggleExportRoutable() {
@@ -1043,40 +1066,31 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, Map<String, Argument> args) {
-        boolean rc = super.execute(playerMP, command, args);
+    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+        boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
         }
-        if (CMD_SETRADIUS.equals(command)) {
-            setRadius(args.get("r").getInteger());
-            return true;
-        } else if (CMD_UP.equals(command)) {
-            moveUp(args.get("index").getInteger());
+        if (CMD_UP.equals(command)) {
+            moveUp(params.get(PARAM_INDEX));
             return true;
         } else if (CMD_TOP.equals(command)) {
-            moveTop(args.get("index").getInteger());
+            moveTop(params.get(PARAM_INDEX));
             return true;
         } else if (CMD_DOWN.equals(command)) {
-            moveDown(args.get("index").getInteger());
+            moveDown(params.get(PARAM_INDEX));
             return true;
         } else if (CMD_BOTTOM.equals(command)) {
-            moveBottom(args.get("index").getInteger());
+            moveBottom(params.get(PARAM_INDEX));
             return true;
         } else if (CMD_REMOVE.equals(command)) {
-            removeInventory(args.get("index").getInteger());
+            removeInventory(params.get(PARAM_INDEX));
             return true;
         } else if (CMD_TOGGLEROUTABLE.equals(command)) {
-            toggleRoutable(args.get("pos").getCoordinate());
-            return true;
-        } else if (CMD_TOGGLEEXPORT.equals(command)) {
-            toggleExportRoutable();
+            toggleRoutable(params.get(PARAM_POS));
             return true;
         } else if (CMD_SETVIEW.equals(command)) {
-            setOpenWideView(args.get("b").getBoolean());
-            return true;
-        } else if (CMD_CLEARGRID.equals(command)) {
-            clearGrid();
+            setOpenWideView(params.get(PARAM_VIEW));
             return true;
         }
         return false;

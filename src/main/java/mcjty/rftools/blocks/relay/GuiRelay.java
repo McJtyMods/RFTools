@@ -6,20 +6,15 @@ import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
-import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.gui.widgets.TextField;
-import mcjty.lib.network.Argument;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.*;
-import java.util.ArrayList;
+import java.awt.Rectangle;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
@@ -132,22 +127,22 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
     }
 
     private void changeSettings() {
-        List<Argument> arguments = new ArrayList<>();
+        TypedMap.Builder builder = TypedMap.builder();
         for (int i = 0 ; i < 6 ; i++) {
-            addArgument(arguments, i, "On");
-            addArgument(arguments, i, "Off");
+            addArgument(builder, i, RelayTileEntity.PARAM_INPUTON, RelayTileEntity.PARAM_RFON, "On");
+            addArgument(builder, i, RelayTileEntity.PARAM_INPUTOFF, RelayTileEntity.PARAM_RFOFF, "Off");
         }
 
-        sendServerCommand(RFToolsMessages.INSTANCE, RelayTileEntity.CMD_SETTINGS, arguments.toArray(new Argument[arguments.size()]));
+        sendServerCommand(RFToolsMessages.INSTANCE, RelayTileEntity.CMD_SETTINGS, builder.build());
     }
 
-    private void addArgument(List<Argument> arguments, int i, String suffix) {
+    private void addArgument(TypedMap.Builder builder, int i, Key<Boolean>[] inputKeys, Key<Integer>[] rfKeys, String suffix) {
         char prefix = RelayTileEntity.DUNSWE.charAt(i);
         String key = prefix + suffix;
         int energy = Integer.parseInt(energyValues.get(key).getText());
         boolean input = "Input".equals(inputOutputs.get(key).getCurrentChoice());
-        arguments.add(new Argument(key, energy));
-        arguments.add(new Argument(prefix + "In" + suffix, input));
+        builder.put(rfKeys[i], energy);
+        builder.put(inputKeys[i], input);
     }
 
     @Override
