@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.monitor;
 
-import mcjty.lib.network.CommandHandler;
+import mcjty.lib.network.ICommandHandler;
 import mcjty.lib.network.PacketRequestListFromServer;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.Logging;
@@ -35,11 +35,11 @@ public class PacketGetAdjacentTankBlocks extends PacketRequestListFromServer<Blo
 
         private void handle(PacketGetAdjacentTankBlocks message, MessageContext ctx) {
             TileEntity te = ctx.getServerHandler().player.getEntityWorld().getTileEntity(message.pos);
-            if(!(te instanceof CommandHandler)) {
+            if(!(te instanceof ICommandHandler)) {
                 Logging.log("createStartScanPacket: TileEntity is not a CommandHandler!");
                 return;
             }
-            CommandHandler commandHandler = (CommandHandler) te;
+            ICommandHandler commandHandler = (ICommandHandler) te;
             List<BlockPos> list = commandHandler.executeWithResultList(message.command, message.params, Type.create(BlockPos.class));
             RFToolsMessages.INSTANCE.sendTo(new PacketAdjacentBlocksReady(message.pos, RFMonitorBlockTileEntity.CLIENTCMD_ADJACENTBLOCKSREADY, list), ctx.getServerHandler().player);
         }

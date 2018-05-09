@@ -1,7 +1,7 @@
 package mcjty.rftools.network;
 
 import io.netty.buffer.ByteBuf;
-import mcjty.lib.network.CommandHandler;
+import mcjty.lib.network.ICommandHandler;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.network.PacketRequestListFromServer;
 import mcjty.lib.typed.TypedMap;
@@ -49,11 +49,11 @@ public class PacketGetPlayers extends PacketRequestListFromServer<String, Packet
 
         private void handle(PacketGetPlayers message, MessageContext ctx) {
             TileEntity te = ctx.getServerHandler().player.getEntityWorld().getTileEntity(message.pos);
-            if(!(te instanceof CommandHandler)) {
+            if(!(te instanceof ICommandHandler)) {
                 Logging.log("createStartScanPacket: TileEntity is not a CommandHandler!");
                 return;
             }
-            CommandHandler commandHandler = (CommandHandler) te;
+            ICommandHandler commandHandler = (ICommandHandler) te;
             List<String> list = commandHandler.executeWithResultList(message.command, message.params, Type.STRING);
             RFToolsMessages.INSTANCE.sendTo(new PacketPlayersReady(message.pos, message.clientcmd, list), ctx.getServerHandler().player);
         }

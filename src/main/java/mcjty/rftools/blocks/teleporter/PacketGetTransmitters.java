@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.teleporter;
 
-import mcjty.lib.network.CommandHandler;
+import mcjty.lib.network.ICommandHandler;
 import mcjty.lib.network.PacketHandler;
 import mcjty.lib.network.PacketRequestListFromServer;
 import mcjty.lib.typed.TypedMap;
@@ -35,11 +35,11 @@ public class PacketGetTransmitters extends PacketRequestListFromServer<Transmitt
 
         private void handle(PacketGetTransmitters message, MessageContext ctx) {
             TileEntity te = ctx.getServerHandler().player.getEntityWorld().getTileEntity(message.pos);
-            if(!(te instanceof CommandHandler)) {
+            if(!(te instanceof ICommandHandler)) {
                 Logging.log("createStartScanPacket: TileEntity is not a CommandHandler!");
                 return;
             }
-            CommandHandler commandHandler = (CommandHandler) te;
+            ICommandHandler commandHandler = (ICommandHandler) te;
             List<TransmitterInfo> list = commandHandler.executeWithResultList(message.command, message.params, Type.create(TransmitterInfo.class));
             SimpleNetworkWrapper wrapper = PacketHandler.modNetworking.get(message.modid);
             PacketTransmittersReady msg = new PacketTransmittersReady(message.pos, DialingDeviceTileEntity.CLIENTCMD_GETTRANSMITTERS, list);
