@@ -11,7 +11,6 @@ import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.gui.widgets.ScrollableLabel;
-import mcjty.lib.network.Argument;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.lib.varia.RedstoneMode;
@@ -582,7 +581,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
 
     @Nonnull
     @Override
-    public <T> List<T> executeWithResultList(String command, Map<String, Argument> args, Type<T> type) {
+    public <T> List<T> executeWithResultList(String command, TypedMap args, Type<T> type) {
         List<T> rc = super.executeWithResultList(command, args, type);
         if (!rc.isEmpty()) {
             return rc;

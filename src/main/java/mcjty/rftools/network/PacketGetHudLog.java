@@ -2,8 +2,9 @@ package mcjty.rftools.network;
 
 import mcjty.lib.network.PacketRequestServerList;
 import mcjty.lib.network.PacketRequestServerListHandler;
-import mcjty.rftools.RFTools;
 import mcjty.lib.typed.Type;
+import mcjty.lib.typed.TypedMap;
+import mcjty.rftools.RFTools;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
@@ -19,7 +20,7 @@ public class PacketGetHudLog extends PacketRequestServerList<String> {
     }
 
     public PacketGetHudLog(BlockPos pos) {
-        super(RFTools.MODID, pos, CMD_GETHUDLOG);
+        super(RFTools.MODID, pos, CMD_GETHUDLOG, TypedMap.EMPTY);
     }
 
     public static class Handler extends PacketRequestServerListHandler<PacketGetHudLog, String> {

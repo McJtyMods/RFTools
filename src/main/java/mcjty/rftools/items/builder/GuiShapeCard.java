@@ -8,7 +8,9 @@ import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.network.Argument;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
+import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import mcjty.rftools.network.RFToolsMessages;
@@ -316,15 +318,16 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
             }
         } else {
             RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTShapeCard(
-                    new Argument("shapenew", getCurrentShape().getDescription()),
-                    new Argument("solid", isSolid()),
-                    new Argument("dimX", dx),
-                    new Argument("dimY", dy),
-                    new Argument("dimZ", dz),
-                    new Argument("offsetX", parseInt(offsetX.getText())),
-                    new Argument("offsetY", parseInt(offsetY.getText())),
-                    new Argument("offsetZ", parseInt(offsetZ.getText()))
-            ));
+                    TypedMap.builder()
+                            .put(new Key<>("shapenew", Type.STRING), getCurrentShape().getDescription())
+                            .put(new Key<>("solid", Type.BOOLEAN), isSolid())
+                            .put(new Key<>("dimX", Type.INTEGER), dx)
+                            .put(new Key<>("dimY", Type.INTEGER), dy)
+                            .put(new Key<>("dimZ", Type.INTEGER), dz)
+                            .put(new Key<>("offsetX", Type.INTEGER), parseInt(offsetX.getText()))
+                            .put(new Key<>("offsetY", Type.INTEGER), parseInt(offsetY.getText()))
+                            .put(new Key<>("offsetZ", Type.INTEGER), parseInt(offsetZ.getText()))
+                            .build()));
         }
     }
 
@@ -349,15 +352,16 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
             }
         } else {
             RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTShapeCard(
-                    new Argument("voidstone", stone.isPressed()),
-                    new Argument("voidcobble", cobble.isPressed()),
-                    new Argument("voiddirt", dirt.isPressed()),
-                    new Argument("voidgravel", gravel.isPressed()),
-                    new Argument("voidsand", sand.isPressed()),
-                    new Argument("voidnetherrack", netherrack.isPressed()),
-                    new Argument("voidendstone", endstone.isPressed()),
-                    new Argument("oredict", oredict.isPressed())
-            ));
+                    TypedMap.builder()
+                            .put(new Key<>("voidstone", Type.BOOLEAN), stone.isPressed())
+                            .put(new Key<>("voidcobble", Type.BOOLEAN), cobble.isPressed())
+                            .put(new Key<>("voiddirt", Type.BOOLEAN), dirt.isPressed())
+                            .put(new Key<>("voidgravel", Type.BOOLEAN), gravel.isPressed())
+                            .put(new Key<>("voidsand", Type.BOOLEAN), sand.isPressed())
+                            .put(new Key<>("voidnetherrack", Type.BOOLEAN), netherrack.isPressed())
+                            .put(new Key<>("voidendstone", Type.BOOLEAN), endstone.isPressed())
+                            .put(new Key<>("oredict", Type.BOOLEAN), oredict.isPressed())
+                            .build()));
         }
     }
 

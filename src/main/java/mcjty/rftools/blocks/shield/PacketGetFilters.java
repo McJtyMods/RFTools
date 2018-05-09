@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.shield;
 
 import mcjty.lib.network.CommandHandler;
 import mcjty.lib.network.PacketRequestListFromServer;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.shield.filters.ShieldFilter;
@@ -22,7 +23,7 @@ public class PacketGetFilters extends PacketRequestListFromServer<ShieldFilter, 
     }
 
     public PacketGetFilters(BlockPos pos) {
-        super(RFTools.MODID, pos, ShieldTEBase.CMD_GETFILTERS);
+        super(RFTools.MODID, pos, ShieldTEBase.CMD_GETFILTERS, TypedMap.EMPTY);
     }
 
     public static class Handler implements IMessageHandler<PacketGetFilters, IMessage> {
@@ -39,7 +40,7 @@ public class PacketGetFilters extends PacketRequestListFromServer<ShieldFilter, 
                 return;
             }
             CommandHandler commandHandler = (CommandHandler) te;
-            List<ShieldFilter> list = commandHandler.executeWithResultList(message.command, message.args, Type.create(ShieldFilter.class));
+            List<ShieldFilter> list = commandHandler.executeWithResultList(message.command, message.params, Type.create(ShieldFilter.class));
             RFToolsMessages.INSTANCE.sendTo(new PacketFiltersReady(message.pos, ShieldTEBase.CLIENTCMD_GETFILTERS, list), ctx.getServerHandler().player);
         }
     }

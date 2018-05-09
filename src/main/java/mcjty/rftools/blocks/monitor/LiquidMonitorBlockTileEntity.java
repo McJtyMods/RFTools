@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.monitor;
 
 import mcjty.lib.container.BaseBlock;
 import mcjty.lib.entity.GenericTileEntity;
-import mcjty.lib.network.Argument;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.CapabilityTools;
 import mcjty.lib.typed.Type;
 import net.minecraft.block.properties.PropertyInteger;
@@ -20,7 +20,6 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements ITickable {
     // Data that is saved
@@ -241,7 +240,7 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
 
     @Nonnull
     @Override
-    public <T> List<T> executeWithResultList(String command, Map<String, Argument> args, Type<T> type) {
+    public <T> List<T> executeWithResultList(String command, TypedMap args, Type<T> type) {
         List<T> rc = super.executeWithResultList(command, args, type);
         if (!rc.isEmpty()) {
             return rc;

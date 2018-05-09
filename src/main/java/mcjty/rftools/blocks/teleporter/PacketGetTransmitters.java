@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.teleporter;
 import mcjty.lib.network.CommandHandler;
 import mcjty.lib.network.PacketHandler;
 import mcjty.lib.network.PacketRequestListFromServer;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.lib.typed.Type;
@@ -22,7 +23,7 @@ public class PacketGetTransmitters extends PacketRequestListFromServer<Transmitt
     }
 
     public PacketGetTransmitters(BlockPos pos) {
-        super(RFTools.MODID, pos, DialingDeviceTileEntity.CMD_GETTRANSMITTERS);
+        super(RFTools.MODID, pos, DialingDeviceTileEntity.CMD_GETTRANSMITTERS, TypedMap.EMPTY);
     }
 
     public static class Handler implements IMessageHandler<PacketGetTransmitters, IMessage> {
@@ -39,7 +40,7 @@ public class PacketGetTransmitters extends PacketRequestListFromServer<Transmitt
                 return;
             }
             CommandHandler commandHandler = (CommandHandler) te;
-            List<TransmitterInfo> list = commandHandler.executeWithResultList(message.command, message.args, Type.create(TransmitterInfo.class));
+            List<TransmitterInfo> list = commandHandler.executeWithResultList(message.command, message.params, Type.create(TransmitterInfo.class));
             SimpleNetworkWrapper wrapper = PacketHandler.modNetworking.get(message.modid);
             PacketTransmittersReady msg = new PacketTransmittersReady(message.pos, DialingDeviceTileEntity.CLIENTCMD_GETTRANSMITTERS, list);
             wrapper.sendTo(msg, ctx.getServerHandler().player);

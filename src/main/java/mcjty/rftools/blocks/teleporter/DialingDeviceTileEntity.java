@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
-import mcjty.lib.network.Argument;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
@@ -21,7 +20,6 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
 
@@ -34,8 +32,10 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
     public static final String CMD_FAVORITE = "dialer.favorite";
     public static final String CMD_SHOWFAVORITE = "dialer.showFavorite";
     public static final Key<String> PARAM_PLAYER = new Key<>("player", Type.STRING);
-    public static final Key<BlockPos> PARAM_RECEIVER = new Key<>("receiver", Type.BLOCKPOS);
+    public static final Key<BlockPos> PARAM_POS = new Key<>("pos", Type.BLOCKPOS);
     public static final Key<Integer> PARAM_DIMENSION = new Key<>("dimension", Type.INTEGER);
+    public static final Key<BlockPos> PARAM_TRANSMITTER = new Key<>("transmitter", Type.BLOCKPOS);
+    public static final Key<Integer> PARAM_TRANS_DIMENSION = new Key<>("transDimension", Type.INTEGER);
     public static final Key<Boolean> PARAM_FAVORITE = new Key<>("favorite", Type.BOOLEAN);
 
     public static final String CLIENTCMD_DIAL = "dialResult";
@@ -227,13 +227,13 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
 
     @Nonnull
     @Override
-    public <T> List<T> executeWithResultList(String command, Map<String, Argument> args, Type<T> type) {
+    public <T> List<T> executeWithResultList(String command, TypedMap args, Type<T> type) {
         List<T> rc = super.executeWithResultList(command, args, type);
         if (!rc.isEmpty()) {
             return rc;
         }
         if (CMD_GETRECEIVERS.equals(command)) {
-            String playerName = args.get("player").getString();
+            String playerName = args.get(PARAM_PLAYER);
             return type.convert(searchReceivers(playerName));
         } else if (CMD_GETTRANSMITTERS.equals(command)) {
             return type.convert(searchTransmitters());
@@ -250,7 +250,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
         }
         if (CMD_FAVORITE.equals(command)) {
             String player = params.get(PARAM_PLAYER);
-            BlockPos receiver = params.get(PARAM_RECEIVER);
+            BlockPos receiver = params.get(PARAM_POS);
             int dimension = params.get(PARAM_DIMENSION);
             boolean favorite = params.get(PARAM_FAVORITE);
             changeFavorite(player, receiver, dimension, favorite);
@@ -265,30 +265,28 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
     }
 
     @Override
-    public Integer executeWithResultInteger(String command, Map<String, Argument> args) {
+    public Integer executeWithResultInteger(String command, TypedMap args) {
         Integer rc = super.executeWithResultInteger(command, args);
         if (rc != null) {
             return rc;
         }
         if (CMD_CHECKSTATUS.equals(command)) {
-            BlockPos c = args.get("c").getCoordinate();
-            int dim = args.get("dim").getInteger();
+            BlockPos c = args.get(PARAM_POS);
+            int dim = args.get(PARAM_DIMENSION);
             return checkStatus(c, dim);
         } else if (CMD_DIAL.equals(command)) {
-            String player = args.get("player").getString();
-            BlockPos transmitter = args.get("trans").getCoordinate();
-            int transDim = args.get("transDim").getInteger();
-            BlockPos c = args.get("c").getCoordinate();
-            int dim = args.get("dim").getInteger();
-
+            String player = args.get(PARAM_PLAYER);
+            BlockPos transmitter = args.get(PARAM_TRANSMITTER);
+            int transDim = args.get(PARAM_TRANS_DIMENSION);
+            BlockPos c = args.get(PARAM_POS);
+            int dim = args.get(PARAM_DIMENSION);
             return dial(player, transmitter, transDim, c, dim, false);
         } else if (CMD_DIALONCE.equals(command)) {
-            String player = args.get("player").getString();
-            BlockPos transmitter = args.get("trans").getCoordinate();
-            int transDim = args.get("transDim").getInteger();
-            BlockPos c = args.get("c").getCoordinate();
-            int dim = args.get("dim").getInteger();
-
+            String player = args.get(PARAM_PLAYER);
+            BlockPos transmitter = args.get(PARAM_TRANSMITTER);
+            int transDim = args.get(PARAM_TRANS_DIMENSION);
+            BlockPos c = args.get(PARAM_POS);
+            int dim = args.get(PARAM_DIMENSION);
             return dial(player, transmitter, transDim, c, dim, true);
         }
         return null;

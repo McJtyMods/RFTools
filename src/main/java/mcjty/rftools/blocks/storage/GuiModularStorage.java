@@ -9,8 +9,9 @@ import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.network.Argument;
 import mcjty.lib.network.Arguments;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.CommandHandler;
@@ -42,7 +43,6 @@ import org.lwjgl.input.Mouse;
 
 import java.awt.Rectangle;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -102,7 +102,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
         if (height > 510) {
             ySize = STORAGE_HEIGHT2;
-        } else  if (height > 340) {
+        } else if (height > 340) {
             ySize = STORAGE_HEIGHT1;
         } else {
             ySize = STORAGE_HEIGHT0;
@@ -122,7 +122,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     public void initGui() {
         super.initGui();
 
-        itemList = new WidgetList(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(5, 3, 235, ySize-89)).setNoSelectionMode(true).setUserObject(new Integer(-1)).
+        itemList = new WidgetList(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(5, 3, 235, ySize - 89)).setNoSelectionMode(true).setUserObject(new Integer(-1)).
                 setLeftMargin(0).setRowheight(-1);
         Slider slider = new Slider(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(241, 3, 11, ySize - 89)).setDesiredWidth(11).setVertical().setScrollable(itemList);
 
@@ -131,7 +131,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
         cycleButton = new Button(mc, this)
                 .setName("cycle")
-                .setText("C").setTooltips("Cycle to the next storage module").setLayoutHint(new PositionalLayout.PositionalHint(5, ySize-23, 16, 16))
+                .setText("C").setTooltips("Cycle to the next storage module").setLayoutHint(new PositionalLayout.PositionalHint(5, ySize - 23, 16, 16))
                 .addButtonEvent(parent -> cycleStorage());
 
         Panel toplevel = new Panel(mc, this).setLayout(new PositionalLayout()).addChild(itemList).addChild(slider)
@@ -139,12 +139,12 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
                 .addChild(cycleButton);
 
         toplevel.setBackgrounds(iconLocationTop, iconLocation);
-        toplevel.setBackgroundLayout(false, ySize-STORAGE_HEIGHT0+2);
+        toplevel.setBackgroundLayout(false, ySize - STORAGE_HEIGHT0 + 2);
 
         if (tileEntity == null) {
             // We must hide three slots.
             ImageLabel hideLabel = new ImageLabel(mc, this);
-            hideLabel.setLayoutHint(new PositionalLayout.PositionalHint(4, ySize-26-3*18, 20, 55));
+            hideLabel.setLayoutHint(new PositionalLayout.PositionalHint(4, ySize - 26 - 3 * 18, 20, 55));
             hideLabel.setImage(guiElements, 32, 32);
             toplevel.addChild(hideLabel);
         }
@@ -226,7 +226,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             }
         }
 
-        return new Panel(mc, this).setLayout(new PositionalLayout()).setLayoutHint(new PositionalLayout.PositionalHint(24, ySize-80, 64, 77))
+        return new Panel(mc, this).setLayout(new PositionalLayout()).setLayoutHint(new PositionalLayout.PositionalHint(24, ySize - 80, 64, 77))
                 .setFilledRectThickness(-2)
                 .setFilledBackground(StyleConfig.colorListBackground)
                 .addChildren(filter, viewMode, sortMode, groupMode, amountLabel, compactButton);
@@ -275,17 +275,19 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             tileEntity.setGroupMode(groupMode.getCurrentChoiceIndex() == 1);
             sendServerCommand(RFToolsMessages.INSTANCE, ModularStorageTileEntity.CMD_SETTINGS,
                     TypedMap.builder()
-                    .put(PARAM_SORTMODE, sortMode.getCurrentChoice())
-                    .put(PARAM_VIEWMODE, viewMode.getCurrentChoice())
-                    .put(PARAM_FILTER, filter.getText())
-                    .put(PARAM_GROUPMODE, groupMode.getCurrentChoiceIndex() == 1)
-                    .build());
+                            .put(PARAM_SORTMODE, sortMode.getCurrentChoice())
+                            .put(PARAM_VIEWMODE, viewMode.getCurrentChoice())
+                            .put(PARAM_FILTER, filter.getText())
+                            .put(PARAM_GROUPMODE, groupMode.getCurrentChoiceIndex() == 1)
+                            .build());
         } else {
             RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItemStorage(
-                    new Argument("sortMode", sortMode.getCurrentChoice()),
-                    new Argument("viewMode", viewMode.getCurrentChoice()),
-                    new Argument("filter", filter.getText()),
-                    new Argument("groupMode", groupMode.getCurrentChoiceIndex() == 1)));
+                    TypedMap.builder()
+                            .put(new Key<>("sortMode", Type.STRING), sortMode.getCurrentChoice())
+                            .put(new Key<>("viewMode", Type.STRING), viewMode.getCurrentChoice())
+                            .put(new Key<>("filter", Type.STRING), filter.getText())
+                            .put(new Key<>("groupMode", Type.BOOLEAN), groupMode.getCurrentChoiceIndex() == 1)
+                            .build()));
         }
     }
 
@@ -348,7 +350,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             Logging.log("        " + a.getCanonicalName());
         }
         Logging.log("        Super:" + o.getClass().getGenericSuperclass());
-        for (Type type : o.getClass().getGenericInterfaces()) {
+        for (java.lang.reflect.Type type : o.getClass().getGenericInterfaces()) {
             Logging.log("        type:" + type.getClass().getCanonicalName());
         }
 
@@ -428,7 +430,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         }
 
         int max;
-        List<Pair<ItemStack,Integer>> items = new ArrayList<>();
+        List<Pair<ItemStack, Integer>> items = new ArrayList<>();
         if (tileEntity != null) {
             for (int i = ModularStorageContainer.SLOT_STORAGE; i < tileEntity.getSizeInventory(); i++) {
                 ItemStack stack = tileEntity.getStackInSlot(i);
@@ -442,7 +444,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             max = tileEntity.getSizeInventory() - ModularStorageContainer.SLOT_STORAGE;
         } else {
             // Also works for ModularStorageItemContainer
-            for (int i = 0; i < RemoteStorageItemContainer.MAXSIZE_STORAGE ; i++) {
+            for (int i = 0; i < RemoteStorageItemContainer.MAXSIZE_STORAGE; i++) {
                 Slot slot = inventorySlots.getSlot(i);
                 ItemStack stack = slot.getStack();
                 if (!stack.isEmpty()) {
@@ -469,7 +471,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         ItemSorter itemSorter = typeModule.getSorters().get(sort);
         Collections.sort(items, itemSorter.getComparator());
 
-        Pair<Panel,Integer> currentPos = MutablePair.of(null, 0);
+        Pair<Panel, Integer> currentPos = MutablePair.of(null, 0);
         Pair<ItemStack, Integer> prevItem = null;
         for (Pair<ItemStack, Integer> item : items) {
             currentPos = addItemToList(item.getKey(), itemList, currentPos, numcolumns, labelWidth, spacing, item.getValue(),
@@ -543,8 +545,8 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         }
     }
 
-    private Pair<Panel,Integer> addItemToList(ItemStack stack, WidgetList itemList, Pair<Panel,Integer> currentPos, int numcolumns, int labelWidth, int spacing, int slot,
-                                              boolean newgroup, String groupName) {
+    private Pair<Panel, Integer> addItemToList(ItemStack stack, WidgetList itemList, Pair<Panel, Integer> currentPos, int numcolumns, int labelWidth, int spacing, int slot,
+                                               boolean newgroup, String groupName) {
         Panel panel = currentPos.getKey();
         if (panel == null || currentPos.getValue() >= numcolumns || (newgroup && groupName != null)) {
             if (newgroup && groupName != null) {

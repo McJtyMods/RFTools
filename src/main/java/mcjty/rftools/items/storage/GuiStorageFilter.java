@@ -6,7 +6,9 @@ import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.network.Argument;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
+import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.Minecraft;
@@ -14,7 +16,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 
 public class GuiStorageFilter extends GenericGuiContainer<GenericTileEntity> {
@@ -88,11 +90,13 @@ public class GuiStorageFilter extends GenericGuiContainer<GenericTileEntity> {
 
     private void updateSettings() {
         RFToolsMessages.INSTANCE.sendToServer(new PacketUpdateNBTItemFilter(
-                new Argument("blacklistMode", blacklistMode.getCurrentChoice()),
-                new Argument("oredictMode", oredictMode.getCurrentChoiceIndex() == 1),
-                new Argument("damageMode", damageMode.getCurrentChoiceIndex() == 1),
-                new Argument("modMode", modMode.getCurrentChoiceIndex() == 1),
-                new Argument("nbtMode", nbtMode.getCurrentChoiceIndex() == 1)));
+                TypedMap.builder()
+                        .put(new Key<>("blacklistMode", Type.STRING), blacklistMode.getCurrentChoice())
+                        .put(new Key<>("oredictMode", Type.BOOLEAN), oredictMode.getCurrentChoiceIndex() == 1)
+                        .put(new Key<>("damageMode", Type.BOOLEAN), damageMode.getCurrentChoiceIndex() == 1)
+                        .put(new Key<>("modMode", Type.BOOLEAN), modMode.getCurrentChoiceIndex() == 1)
+                        .put(new Key<>("nbtMode", Type.BOOLEAN), nbtMode.getCurrentChoiceIndex() == 1)
+                        .build()));
    }
 
     @Override

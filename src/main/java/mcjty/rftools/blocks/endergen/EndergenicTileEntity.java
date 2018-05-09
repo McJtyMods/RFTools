@@ -6,11 +6,11 @@ import mcjty.lib.compat.RedstoneFluxCompatibility;
 import mcjty.lib.entity.DefaultValue;
 import mcjty.lib.entity.GenericEnergyProviderTileEntity;
 import mcjty.lib.entity.IValue;
-import mcjty.lib.network.Argument;
 import mcjty.lib.network.Arguments;
 import mcjty.lib.network.PacketSendClientCommand;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.GlobalCoordinate;
@@ -788,7 +788,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     }
 
     @Override
-    public Integer executeWithResultInteger(String command, Map<String, Argument> args) {
+    public Integer executeWithResultInteger(String command, TypedMap args) {
         Integer rc = super.executeWithResultInteger(command, args);
         if (rc != null) {
             return rc;
@@ -829,7 +829,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
 
     @Nonnull
     @Override
-    public <T> List<T> executeWithResultList(String command, Map<String, Argument> args, Type<T> type) {
+    public <T> List<T> executeWithResultList(String command, TypedMap args, Type<T> type) {
         List<T> list = super.executeWithResultList(command, args, type);
         if (!list.isEmpty()) {
             return list;

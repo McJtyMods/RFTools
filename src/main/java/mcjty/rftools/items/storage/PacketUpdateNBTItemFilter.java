@@ -1,8 +1,8 @@
 package mcjty.rftools.items.storage;
 
-import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketUpdateNBTItem;
 import mcjty.lib.network.PacketUpdateNBTItemHandler;
+import mcjty.lib.typed.TypedMap;
 import net.minecraft.item.ItemStack;
 
 public class PacketUpdateNBTItemFilter extends PacketUpdateNBTItem {
@@ -10,7 +10,7 @@ public class PacketUpdateNBTItemFilter extends PacketUpdateNBTItem {
     public PacketUpdateNBTItemFilter() {
     }
 
-    public PacketUpdateNBTItemFilter(Argument... arguments) {
+    public PacketUpdateNBTItemFilter(TypedMap arguments) {
         super(arguments);
     }
 

@@ -8,11 +8,7 @@ import mcjty.lib.gui.events.DefaultSelectionEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
-import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.network.Argument;
 import mcjty.lib.network.PacketRequestIntegerFromServer;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.BlockPosTools;
@@ -24,7 +20,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.input.Keyboard;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -224,7 +220,11 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         BlockPos c = destination.getCoordinate();
         RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(RFTools.MODID, tileEntity.getPos(),
                 DialingDeviceTileEntity.CMD_CHECKSTATUS,
-                DialingDeviceTileEntity.CLIENTCMD_STATUS, new Argument("c", c), new Argument("dim", destination.getDimension())));
+                DialingDeviceTileEntity.CLIENTCMD_STATUS,
+                TypedMap.builder()
+                        .put(PARAM_POS, c)
+                        .put(PARAM_DIMENSION, destination.getDimension())
+                        .build()));
 
         lastCheckedReceiver = true;
         listDirty = 0;
@@ -310,9 +310,13 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(RFTools.MODID, tileEntity.getPos(),
                 once ? DialingDeviceTileEntity.CMD_DIALONCE : DialingDeviceTileEntity.CMD_DIAL,
                 DialingDeviceTileEntity.CLIENTCMD_DIAL,
-                new Argument("player", mc.player.getName()),
-                new Argument("trans", transmitterInfo.getCoordinate()), new Argument("transDim", mc.world.provider.getDimension()),
-                new Argument("c", destination.getCoordinate()), new Argument("dim", destination.getDimension())));
+                TypedMap.builder()
+                        .put(PARAM_PLAYER, mc.player.getName())
+                        .put(PARAM_TRANSMITTER, transmitterInfo.getCoordinate())
+                        .put(PARAM_TRANS_DIMENSION, mc.world.provider.getDimension())
+                        .put(PARAM_POS, destination.getCoordinate())
+                        .put(PARAM_DIMENSION, destination.getDimension())
+                        .build()));
 
         lastDialedTransmitter = true;
         listDirty = 0;
@@ -336,9 +340,13 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         }
         RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(RFTools.MODID, tileEntity.getPos(), DialingDeviceTileEntity.CMD_DIAL,
                 DialingDeviceTileEntity.CLIENTCMD_DIAL,
-                new Argument("player", mc.player.getName()),
-                new Argument("trans", transmitterInfo.getCoordinate()), new Argument("transDim", mc.world.provider.getDimension()),
-                new Argument("c", (BlockPos) null), new Argument("dim", 0)));
+                TypedMap.builder()
+                        .put(PARAM_PLAYER, mc.player.getName())
+                        .put(PARAM_TRANSMITTER, transmitterInfo.getCoordinate())
+                        .put(PARAM_TRANS_DIMENSION, mc.world.provider.getDimension())
+                        .put(PARAM_POS, null)
+                        .put(PARAM_DIMENSION, 0)
+                        .build()));
 
         lastDialedTransmitter = true;
         listDirty = 0;
@@ -374,7 +382,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         sendServerCommand(RFToolsMessages.INSTANCE, DialingDeviceTileEntity.CMD_FAVORITE,
                 TypedMap.builder()
                     .put(PARAM_PLAYER, mc.player.getName())
-                    .put(PARAM_RECEIVER, destination.getCoordinate())
+                    .put(PARAM_POS, destination.getCoordinate())
                     .put(PARAM_DIMENSION, destination.getDimension())
                     .put(PARAM_FAVORITE, !favorite)
                     .build());

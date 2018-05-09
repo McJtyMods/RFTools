@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.CommandHandler;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.network.PacketRequestListFromServer;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.lib.typed.Type;
@@ -35,7 +36,7 @@ public class PacketGetPlayers extends PacketRequestListFromServer<String, Packet
     }
 
     public PacketGetPlayers(BlockPos pos, String cmd, String clientcmd) {
-        super(RFTools.MODID, pos, cmd);
+        super(RFTools.MODID, pos, cmd, TypedMap.EMPTY);
         this.clientcmd = clientcmd;
     }
 
@@ -53,7 +54,7 @@ public class PacketGetPlayers extends PacketRequestListFromServer<String, Packet
                 return;
             }
             CommandHandler commandHandler = (CommandHandler) te;
-            List<String> list = commandHandler.executeWithResultList(message.command, message.args, Type.STRING);
+            List<String> list = commandHandler.executeWithResultList(message.command, message.params, Type.STRING);
             RFToolsMessages.INSTANCE.sendTo(new PacketPlayersReady(message.pos, message.clientcmd, list), ctx.getServerHandler().player);
         }
     }

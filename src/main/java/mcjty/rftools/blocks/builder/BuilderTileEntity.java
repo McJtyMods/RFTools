@@ -7,7 +7,6 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.entity.*;
 import mcjty.lib.gui.widgets.ChoiceLabel;
-import mcjty.lib.network.Argument;
 import mcjty.lib.network.Arguments;
 import mcjty.lib.network.PacketRequestIntegerFromServer;
 import mcjty.lib.typed.Key;
@@ -2297,7 +2296,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public void requestCurrentLevel() {
         RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(RFTools.MODID, getPos(),
                 CMD_GETLEVEL,
-                CLIENTCMD_GETLEVEL));
+                CLIENTCMD_GETLEVEL, TypedMap.EMPTY));
     }
 
     public static int getCurrentLevelClientSide() {
@@ -2329,7 +2328,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Nonnull
     @Override
-    public <T> List<T> executeWithResultList(String command, Map<String, Argument> args, Type<T> type) {
+    public <T> List<T> executeWithResultList(String command, TypedMap args, Type<T> type) {
         List<T> rc = super.executeWithResultList(command, args, type);
         if (!rc.isEmpty()) {
             return rc;
@@ -2355,7 +2354,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
 
     @Override
-    public Integer executeWithResultInteger(String command, Map<String, Argument> args) {
+    public Integer executeWithResultInteger(String command, TypedMap args) {
         Integer rc = super.executeWithResultInteger(command, args);
         if (rc != null) {
             return rc;

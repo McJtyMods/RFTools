@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.monitor;
 
 import mcjty.lib.network.CommandHandler;
 import mcjty.lib.network.PacketRequestListFromServer;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
@@ -22,7 +23,7 @@ public class PacketGetAdjacentTankBlocks extends PacketRequestListFromServer<Blo
     }
 
     public PacketGetAdjacentTankBlocks(BlockPos pos) {
-        super(RFTools.MODID, pos, LiquidMonitorBlockTileEntity.CMD_GETADJACENTBLOCKS);
+        super(RFTools.MODID, pos, LiquidMonitorBlockTileEntity.CMD_GETADJACENTBLOCKS, TypedMap.EMPTY);
     }
 
     public static class Handler implements IMessageHandler<PacketGetAdjacentTankBlocks, IMessage> {
@@ -39,7 +40,7 @@ public class PacketGetAdjacentTankBlocks extends PacketRequestListFromServer<Blo
                 return;
             }
             CommandHandler commandHandler = (CommandHandler) te;
-            List<BlockPos> list = commandHandler.executeWithResultList(message.command, message.args, Type.create(BlockPos.class));
+            List<BlockPos> list = commandHandler.executeWithResultList(message.command, message.params, Type.create(BlockPos.class));
             RFToolsMessages.INSTANCE.sendTo(new PacketAdjacentBlocksReady(message.pos, RFMonitorBlockTileEntity.CLIENTCMD_ADJACENTBLOCKSREADY, list), ctx.getServerHandler().player);
         }
     }

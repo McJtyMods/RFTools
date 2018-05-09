@@ -3,7 +3,6 @@ package mcjty.rftools.blocks.teleporter;
 import mcjty.lib.entity.DefaultValue;
 import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.entity.IValue;
-import mcjty.lib.network.Argument;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
@@ -268,7 +267,7 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
 
     @Nonnull
     @Override
-    public <T> List<T> executeWithResultList(String command, Map<String, Argument> args, Type<T> type) {
+    public <T> List<T> executeWithResultList(String command, TypedMap args, Type<T> type) {
         List<T> rc = super.executeWithResultList(command, args, type);
         if (!rc.isEmpty()) {
             return rc;
