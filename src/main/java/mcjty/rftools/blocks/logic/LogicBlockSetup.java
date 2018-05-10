@@ -1,16 +1,19 @@
 package mcjty.rftools.blocks.logic;
 
-import mcjty.lib.builder.BlockFlags;
 import mcjty.lib.blocks.GenericBlock;
+import mcjty.lib.builder.BlockFlags;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.varia.ItemStackTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
-import mcjty.rftools.blocks.logic.analog.AnalogBlock;
+import mcjty.rftools.blocks.logic.analog.AnalogTileEntity;
+import mcjty.rftools.blocks.logic.analog.GuiAnalog;
 import mcjty.rftools.blocks.logic.counter.CounterBlock;
 import mcjty.rftools.blocks.logic.digit.DigitTileEntity;
-import mcjty.rftools.blocks.logic.invchecker.InvCheckerBlock;
-import mcjty.rftools.blocks.logic.sensor.SensorBlock;
+import mcjty.rftools.blocks.logic.invchecker.GuiInvChecker;
+import mcjty.rftools.blocks.logic.invchecker.InvCheckerTileEntity;
+import mcjty.rftools.blocks.logic.sensor.GuiSensor;
+import mcjty.rftools.blocks.logic.sensor.SensorTileEntity;
 import mcjty.rftools.blocks.logic.sequencer.SequencerBlock;
 import mcjty.rftools.blocks.logic.threelogic.ThreeLogicBlock;
 import mcjty.rftools.blocks.logic.timer.GuiTimer;
@@ -27,10 +30,10 @@ public class LogicBlockSetup {
     public static RedstoneTransmitterBlock redstoneTransmitterBlock;
     public static RedstoneReceiverBlock redstoneReceiverBlock;
     public static ThreeLogicBlock threeLogicBlock;
-    public static InvCheckerBlock invCheckerBlock;
-    public static SensorBlock sensorBlock;
-    public static AnalogBlock analogBlock;
 
+    public static GenericBlock<InvCheckerTileEntity, GenericContainer> invCheckerBlock;
+    public static GenericBlock<SensorTileEntity, GenericContainer> sensorBlock;
+    public static GenericBlock<AnalogTileEntity, GenericContainer> analogBlock;
     public static GenericBlock<DigitTileEntity, GenericContainer> digitBlock;
     public static GenericBlock<WireTileEntity, GenericContainer> wireBlock;
     public static GenericBlock<TimerTileEntity, GenericContainer> timerBlock;
@@ -41,10 +44,31 @@ public class LogicBlockSetup {
         redstoneTransmitterBlock = new RedstoneTransmitterBlock();
         redstoneReceiverBlock = new RedstoneReceiverBlock();
         threeLogicBlock = new ThreeLogicBlock();
-        invCheckerBlock = new InvCheckerBlock();
-        sensorBlock = new SensorBlock();
-        analogBlock = new AnalogBlock();
 
+        invCheckerBlock = ModBlocks.logicFactory.<InvCheckerTileEntity> builder("invchecker_block")
+                .tileEntityClass(InvCheckerTileEntity.class)
+                .guiId(RFTools.GUI_INVCHECKER)
+                .container(InvCheckerTileEntity.CONTAINER_FACTORY)
+                .flags(BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
+                .info("message.rftools.shiftmessage")
+                .infoExtended("message.rftools.invchecker")
+                .build();
+        sensorBlock = ModBlocks.logicFactory.<SensorTileEntity> builder("sensor_block")
+                .tileEntityClass(SensorTileEntity.class)
+                .guiId(RFTools.GUI_SENSOR)
+                .container(SensorTileEntity.CONTAINER_FACTORY)
+                .flags(BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
+                .info("message.rftools.shiftmessage")
+                .infoExtended("message.rftools.sensor")
+                .build();
+        analogBlock = ModBlocks.logicFactory.<AnalogTileEntity> builder("analog_block")
+                .tileEntityClass(AnalogTileEntity.class)
+                .guiId(RFTools.GUI_ANALOG)
+                .emptyContainer()
+                .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
+                .info("message.rftools.shiftmessage")
+                .infoExtended("message.rftools.analog")
+                .build();
         digitBlock = ModBlocks.logicFactory.<DigitTileEntity> builder("digit_block")
                 .tileEntityClass(DigitTileEntity.class)
                 .emptyContainer()
@@ -83,10 +107,18 @@ public class LogicBlockSetup {
         redstoneTransmitterBlock.initModel();
         redstoneReceiverBlock.initModel();
         threeLogicBlock.initModel();
+
         invCheckerBlock.initModel();
+        invCheckerBlock.setGuiClass(GuiInvChecker.class);
+
         sensorBlock.initModel();
+        sensorBlock.setGuiClass(GuiSensor.class);
+
         wireBlock.initModel();
+
         analogBlock.initModel();
+        analogBlock.setGuiClass(GuiAnalog.class);
+
         digitBlock.initModel();
     }
 }

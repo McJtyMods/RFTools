@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.logic.invchecker;
 
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.widgets.ChoiceLabel;
@@ -15,7 +16,7 @@ public class GuiInvChecker extends GenericGuiContainer<InvCheckerTileEntity> {
     public static final String META_MATCH = "Match";
     public static final String META_IGNORE = "Ignore";
 
-    public GuiInvChecker(InvCheckerTileEntity invCheckerTileEntity, InvCheckerContainer container) {
+    public GuiInvChecker(InvCheckerTileEntity invCheckerTileEntity, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, invCheckerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "invchecker");
     }
 

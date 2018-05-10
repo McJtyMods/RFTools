@@ -2,16 +2,24 @@ package mcjty.rftools.blocks.logic.invchecker;
 
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
+import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
-import mcjty.lib.tileentity.LogicTileEntity;
 import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.gui.widgets.TextField;
+import mcjty.lib.tileentity.LogicTileEntity;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.CapabilityTools;
 import mcjty.lib.varia.Logging;
-import mcjty.lib.typed.TypedMap;
+import mcjty.rftools.RFTools;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
@@ -20,9 +28,17 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.oredict.OreDictionary;
+
+import java.util.List;
 
 import static mcjty.rftools.blocks.logic.invchecker.GuiInvChecker.META_MATCH;
 import static mcjty.rftools.blocks.logic.invchecker.GuiInvChecker.OREDICT_USE;
@@ -34,6 +50,9 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
     public static final String CMD_SETOREDICT = "inv.setOreDict";
     public static final String CMD_SETMETA = "inv.setUseMeta";
 
+    public static final String CONTAINER_INVENTORY = "container";
+    public static final int SLOT_ITEMMATCH = 0;
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(new ResourceLocation(RFTools.MODID, "gui/invchecker.gui"));
 
     private int amount = 1;
     private int slot = 0;
@@ -43,7 +62,7 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
 
     private int checkCounter = 0;
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, InvCheckerContainer.factory, 1);
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, 1);
 
     @Override
     protected boolean needsCustomInvWrapper() {
@@ -275,5 +294,21 @@ public class InvCheckerTileEntity extends LogicTileEntity implements ITickable, 
         }
         return false;
     }
+
+    @Override
+    @Optional.Method(modid = "theoneprobe")
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        boolean rc = checkOutput();
+        probeInfo.text(TextFormatting.GREEN + "Output: " + TextFormatting.WHITE + (rc ? "on" : "off"));
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    @Optional.Method(modid = "waila")
+    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.addWailaBody(itemStack, currenttip, accessor, config);
+    }
+
 
 }

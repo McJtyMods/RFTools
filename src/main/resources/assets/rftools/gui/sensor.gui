@@ -1,10 +1,17 @@
+container {
+    slot('ghost') {
+        pos(154,24)
+    }
+    playerslots(10,70)
+}
+
 window {
     size(180,152)
 
-    event('number,'sensor.setNumber')
-    event('type,'sensor.setType')
-    event('area,'sensor.setArea')
-    event('group,'sensor.setGroup')
+    event('number','sensor.setNumber')
+    event('type','sensor.setType')
+    event('area','sensor.setArea')
+    event('group','sensor.setGroup')
 
     panel('','positional') {
         bg1('rftools:textures/gui/sensor.png')

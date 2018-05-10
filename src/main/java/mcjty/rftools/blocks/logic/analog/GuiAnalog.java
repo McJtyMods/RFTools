@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.logic.analog;
 
 import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.widgets.TextField;
@@ -20,7 +21,7 @@ public class GuiAnalog extends GenericGuiContainer<AnalogTileEntity> {
     private TextField addLess;
     private TextField addGreater;
 
-    public GuiAnalog(AnalogTileEntity te, EmptyContainer container) {
+    public GuiAnalog(AnalogTileEntity te, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, RFTools.GUI_MANUAL_MAIN, "analog");
     }
 

@@ -298,3 +298,15 @@ message.rftools.timer=\
 message.rftools.digit=\
     @fThis logic block is just a simple\n\
     @fdigit that shows the redstone input value
+message.rftools.analog=\
+    @fThis logic block can do\n\
+    @fcalculations on analog redstone
+message.rftools.sensor=\
+    @fThis logic block gives a redstone signal\n\
+    @fdepending on various circumstances in\n\
+    @ffront of it. Like block placement, crop\n\
+    @fgrowth level, number of entities, ...
+message.rftools.invchecker=\
+    @fThis logic block gives a redstone signal\n\
+    @fif the amount of items in an inventory slot.\n\
+    @fexceeds a certain value

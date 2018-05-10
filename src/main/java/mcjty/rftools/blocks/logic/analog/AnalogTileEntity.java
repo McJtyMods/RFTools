@@ -4,9 +4,18 @@ import mcjty.lib.tileentity.LogicTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
-import mcjty.rftools.blocks.logic.LogicBlockSetup;
+import mcjty.lib.varia.LogicFacing;
+import mcjty.rftools.blocks.logic.threelogic.ThreeLogicBlock;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class AnalogTileEntity extends LogicTileEntity {
 
@@ -117,9 +126,59 @@ public class AnalogTileEntity extends LogicTileEntity {
             addLess = params.get(PARAM_ADD_LESS);
             addGreater = params.get(PARAM_ADD_GT);
             markDirtyClient();
-            LogicBlockSetup.analogBlock.checkRedstone(world, pos);
+            checkRedstone(world, pos);
             return true;
         }
         return false;
+    }
+
+    private static Set<BlockPos> loopDetector = new HashSet<>();
+
+    @Override
+    public void checkRedstone(World world, BlockPos pos) {
+        IBlockState state = world.getBlockState(pos);
+        if (loopDetector.add(pos)) {
+            try {
+                LogicFacing facing = getFacing(state);
+                EnumFacing downSide = facing.getSide();
+                EnumFacing inputSide = facing.getInputSide();
+                EnumFacing rightSide = ThreeLogicBlock.rotateLeft(downSide, inputSide);
+                EnumFacing leftSide = ThreeLogicBlock.rotateRight(downSide, inputSide);
+
+                int outputStrength;
+                int inputStrength = getInputStrength(world, pos, inputSide);
+                int inputLeft = getInputStrength(world, pos, leftSide);
+                int inputRight = getInputStrength(world, pos, rightSide);
+                if (inputLeft == inputRight) {
+                    outputStrength = (int) (inputStrength * getMulEqual() + getAddEqual());
+                } else if (inputLeft < inputRight) {
+                    outputStrength = (int) (inputStrength * getMulLess() + getAddLess());
+                } else {
+                    outputStrength = (int) (inputStrength * getMulGreater() + getAddGreater());
+                }
+                if (outputStrength > 15) {
+                    outputStrength = 15;
+                } else if (outputStrength < 0) {
+                    outputStrength = 0;
+                }
+
+                int oldPower = getPowerLevel();
+                setPowerInput(outputStrength);
+                if (oldPower != outputStrength) {
+                    world.notifyNeighborsOfStateChange(pos, getBlockType(), false);
+                }
+            } finally {
+                loopDetector.remove(pos);
+            }
+        }
+    }
+
+    @Override
+    public int getRedstoneOutput(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+        if (side == getFacing(state).getInputSide()) {
+            return getPowerLevel();
+        } else {
+            return 0;
+        }
     }
 }

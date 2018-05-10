@@ -1,3 +1,10 @@
+container {
+    slot('ghost') {
+        pos(154,24)
+    }
+    playerslots(10,70)
+}
+
 window {
     size(180,152)
 

@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.logic.sensor;
 
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.widgets.ChoiceLabel;
@@ -13,7 +14,7 @@ public class GuiSensor extends GenericGuiContainer<SensorTileEntity> {
 
     private ChoiceLabel typeLabel;
 
-    public GuiSensor(SensorTileEntity sensorTileEntity, SensorContainer container) {
+    public GuiSensor(SensorTileEntity sensorTileEntity, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, sensorTileEntity, container, RFTools.GUI_MANUAL_MAIN, "sensor");
     }
 

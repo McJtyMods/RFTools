@@ -1,12 +1,19 @@
 package mcjty.rftools.blocks.logic.sensor;
 
+import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
-import mcjty.lib.tileentity.LogicTileEntity;
 import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.gui.widgets.TextField;
-import mcjty.rftools.varia.NamedEnum;
+import mcjty.lib.tileentity.LogicTileEntity;
 import mcjty.lib.typed.TypedMap;
+import mcjty.rftools.RFTools;
+import mcjty.rftools.varia.NamedEnum;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.BlockLiquid;
@@ -24,13 +31,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
+import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 import java.util.function.Function;
@@ -42,6 +55,9 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     public static final String CMD_SETAREA = "sensor.setArea";
     public static final String CMD_SETGROUP = "sensor.setGroup";
 
+    public static final String CONTAINER_INVENTORY = "container";
+    public static final int SLOT_ITEMMATCH = 0;
+    public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(new ResourceLocation(RFTools.MODID, "gui/sensor.gui"));
 
     private int number = 0;
     private SensorType sensorType = SensorType.SENSOR_BLOCK;
@@ -51,7 +67,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
     private int checkCounter = 0;
     private AxisAlignedBB cachedBox = null;
 
-    private InventoryHelper inventoryHelper = new InventoryHelper(this, SensorContainer.factory, 1);
+    private InventoryHelper inventoryHelper = new InventoryHelper(this, CONTAINER_FACTORY, 1);
 
     @Override
     protected boolean needsCustomInvWrapper() {
@@ -394,4 +410,37 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         }
         return false;
     }
+
+    @Override
+    public void rotateBlock(EnumFacing axis) {
+        invalidateCache();
+    }
+
+    @Override
+    @Optional.Method(modid = "theoneprobe")
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        SensorType sensorType = getSensorType();
+        if (sensorType.isSupportsNumber()) {
+            probeInfo.text("Type: " + sensorType.getName() + " (" + getNumber() + ")");
+        } else {
+            probeInfo.text("Type: " + sensorType.getName());
+        }
+        int blockCount = getAreaType().getBlockCount();
+        if (blockCount == 1) {
+            probeInfo.text("Area: 1 block");
+        } else {
+            probeInfo.text("Area: " + blockCount + " blocks");
+        }
+        boolean rc = checkSensor();
+        probeInfo.text(TextFormatting.GREEN + "Output: " + TextFormatting.WHITE + (rc ? "on" : "off"));
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    @Optional.Method(modid = "waila")
+    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.addWailaBody(itemStack, currenttip, accessor, config);
+    }
+
 }
