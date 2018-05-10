@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.monitor;
 
 import io.netty.buffer.ByteBuf;
-import mcjty.lib.network.ClientCommandHandler;
+import mcjty.lib.network.IClientCommandHandler;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.network.PacketListFromServer;
 import mcjty.lib.varia.Logging;
@@ -43,11 +43,11 @@ public class PacketAdjacentBlocksReady extends PacketListFromServer<PacketAdjace
 
         private void handle(PacketAdjacentBlocksReady message, MessageContext ctx) {
             TileEntity te = RFTools.proxy.getClientWorld().getTileEntity(message.pos);
-            if(!(te instanceof ClientCommandHandler)) {
+            if(!(te instanceof IClientCommandHandler)) {
                 Logging.log("createInventoryReadyPacket: TileEntity is not a ClientCommandHandler!");
                 return;
             }
-            ClientCommandHandler clientCommandHandler = (ClientCommandHandler) te;
+            IClientCommandHandler clientCommandHandler = (IClientCommandHandler) te;
             if (!clientCommandHandler.execute(message.command, message.list, Type.create(BlockPos.class))) {
                 Logging.log("Command " + message.command + " was not handled!");
             }
