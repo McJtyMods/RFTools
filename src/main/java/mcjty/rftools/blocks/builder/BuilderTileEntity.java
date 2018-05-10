@@ -2031,7 +2031,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         int cx = x >> 4;
         int cz = z >> 4;
 
-        if (RFToolsTools.chunkLoaded(getWorld(), new BlockPos(x, 0, z))) {
+        if (WorldTools.chunkLoaded(getWorld(), new BlockPos(x, 0, z))) {
             return true;
         }
 

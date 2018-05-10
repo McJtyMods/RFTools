@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.environmental;
 
 import mcjty.lib.varia.GlobalCoordinate;
+import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
 import mcjty.rftools.blocks.environmental.modules.PeacefulEModule;
 import mcjty.rftools.varia.RFToolsTools;
@@ -47,7 +48,7 @@ public class PeacefulAreaManager {
                 if (world != null) {
                     BlockPos c = entryCoordinate.getCoordinate();
                     // If the world is not loaded we don't do anything and we also don't remove the area since we have no information about it.
-                    if (RFToolsTools.chunkLoaded(world, c)) {
+                    if (WorldTools.chunkLoaded(world, c)) {
                         boolean removeArea = true;
                         TileEntity te = world.getTileEntity(c);
                         if (te instanceof EnvironmentalControllerTileEntity) {

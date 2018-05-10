@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.storagemonitor;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -63,7 +64,7 @@ public class PacketRequestItem implements IMessage {
             if (world == null) {
                 return;
             }
-            if (!RFToolsTools.chunkLoaded(world, message.pos)) {
+            if (!WorldTools.chunkLoaded(world, message.pos)) {
                 return;
             }
             TileEntity te = world.getTileEntity(message.pos);

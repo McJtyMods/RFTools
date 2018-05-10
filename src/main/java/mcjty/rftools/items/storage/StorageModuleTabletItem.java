@@ -4,6 +4,7 @@ import cofh.redstoneflux.api.IEnergyContainerItem;
 import mcjty.lib.varia.IEnergyItem;
 import mcjty.lib.varia.ItemCapabilityProvider;
 import mcjty.lib.varia.Logging;
+import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
@@ -129,7 +130,7 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
                     int monitorz = tagCompound.getInteger("monitorz");
                     BlockPos pos = new BlockPos(monitorx, monitory, monitorz);
                     WorldServer w = DimensionManager.getWorld(monitordim);
-                    if (w == null || !RFToolsTools.chunkLoaded(w, pos)) {
+                    if (w == null || !WorldTools.chunkLoaded(w, pos)) {
                         player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Storage scanner is out of range!"), false);
                     } else {
                         player.openGui(RFTools.instance, RFTools.GUI_REMOTE_STORAGESCANNER_ITEM, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);

@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.network.clientinfo.InfoPacketClient;
 import mcjty.lib.network.clientinfo.InfoPacketServer;
+import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
@@ -51,7 +52,7 @@ public class SearchItemsInfoPacketServer implements InfoPacketServer {
             return Optional.empty();
         }
 
-        if (!RFToolsTools.chunkLoaded(world, pos)) {
+        if (!WorldTools.chunkLoaded(world, pos)) {
             return Optional.empty();
         }
 

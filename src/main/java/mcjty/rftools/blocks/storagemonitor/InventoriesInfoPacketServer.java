@@ -5,6 +5,7 @@ import mcjty.lib.network.NetworkTools;
 import mcjty.lib.network.clientinfo.InfoPacketClient;
 import mcjty.lib.network.clientinfo.InfoPacketServer;
 import mcjty.lib.varia.BlockTools;
+import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.blocks.storage.ModularStorageContainer;
 import mcjty.rftools.blocks.storage.ModularStorageTileEntity;
 import mcjty.rftools.varia.RFToolsTools;
@@ -58,7 +59,7 @@ public class InventoriesInfoPacketServer implements InfoPacketServer {
             return Optional.empty();
         }
 
-        if (!RFToolsTools.chunkLoaded(world, pos)) {
+        if (!WorldTools.chunkLoaded(world, pos)) {
             return Optional.empty();
         }
 
@@ -86,7 +87,7 @@ public class InventoriesInfoPacketServer implements InfoPacketServer {
         IBlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
         String displayName;
-        if (!RFToolsTools.chunkLoaded(world, pos)) {
+        if (!WorldTools.chunkLoaded(world, pos)) {
             displayName = "[UNLOADED]";
             block = null;
         } else if (world.isAirBlock(pos)) {

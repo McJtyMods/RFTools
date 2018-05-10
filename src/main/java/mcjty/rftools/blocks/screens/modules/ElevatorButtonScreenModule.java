@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.screens.modules;
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
@@ -99,7 +100,7 @@ public class ElevatorButtonScreenModule implements IScreenModule<ElevatorButtonS
             return null;
         }
 
-        if (!RFToolsTools.chunkLoaded(world, coordinate)) {
+        if (!WorldTools.chunkLoaded(world, coordinate)) {
             return null;
         }
 
@@ -156,7 +157,7 @@ public class ElevatorButtonScreenModule implements IScreenModule<ElevatorButtonS
             return;
         }
 
-        if (!RFToolsTools.chunkLoaded(world, coordinate)) {
+        if (!WorldTools.chunkLoaded(world, coordinate)) {
             return;
         }
 

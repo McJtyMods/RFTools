@@ -3,6 +3,7 @@ package mcjty.rftools.wheelsupport;
 import mcjty.intwheel.api.IWheelAction;
 import mcjty.intwheel.api.WheelActionElement;
 import mcjty.lib.varia.Logging;
+import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.blocks.storage.ModularStorageItemInventory;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.storage.RemoteStorageItemInventory;
@@ -102,7 +103,7 @@ public class FindBlockAction implements IWheelAction {
                     int monitorz = tagCompound.getInteger("monitorz");
                     BlockPos mpos = new BlockPos(monitorx, monitory, monitorz);
                     WorldServer w = DimensionManager.getWorld(monitordim);
-                    if (w == null || !RFToolsTools.chunkLoaded(w, mpos)) {
+                    if (w == null || !WorldTools.chunkLoaded(w, mpos)) {
                         player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Storage scanner is out of range!"), false);
                     } else {
                         TileEntity te = w.getTileEntity(mpos);

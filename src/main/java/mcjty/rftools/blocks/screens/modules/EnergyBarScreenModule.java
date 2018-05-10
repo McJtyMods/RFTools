@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.screens.modules;
 
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.EnergyTools;
+import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.api.screens.data.IModuleDataContents;
@@ -26,7 +27,7 @@ public class EnergyBarScreenModule implements IScreenModule<IModuleDataContents>
             return null;
         }
 
-        if (!RFToolsTools.chunkLoaded(world, coordinate)) {
+        if (!WorldTools.chunkLoaded(world, coordinate)) {
             return null;
         }
 

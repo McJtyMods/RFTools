@@ -10,6 +10,7 @@ import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
+import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -413,7 +414,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         }
         BlockPos c = destination.getCoordinate();
 
-        boolean exists = RFToolsTools.chunkLoaded(w, c);
+        boolean exists = WorldTools.chunkLoaded(w, c);
         if (!exists) {
             if (TeleportConfiguration.matterTransmitterLoadChunk == -1) {
                 return TeleportationTools.STATUS_UNKNOWN;

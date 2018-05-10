@@ -7,6 +7,7 @@ import mcjty.lib.bindings.DefaultValue;
 import mcjty.lib.bindings.IValue;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
+import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import mcjty.rftools.varia.RFToolsTools;
@@ -72,7 +73,7 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
             BlockPos scannerPos = RFToolsTools.getPositionFromModule(module);
             WorldServer world = DimensionManager.getWorld(dimension);
 
-            if (RFToolsTools.chunkLoaded(world, scannerPos)) {
+            if (WorldTools.chunkLoaded(world, scannerPos)) {
                 TileEntity te = world.getTileEntity(scannerPos);
                 if (te instanceof StorageScannerTileEntity) {
                     StorageScannerTileEntity scannerTE = (StorageScannerTileEntity) te;

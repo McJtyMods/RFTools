@@ -8,10 +8,7 @@ import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
-import mcjty.lib.varia.BlockPosTools;
-import mcjty.lib.varia.BlockTools;
-import mcjty.lib.varia.ItemStackTools;
-import mcjty.lib.varia.SoundTools;
+import mcjty.lib.varia.*;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.general.IInventoryTracker;
 import mcjty.rftools.api.storage.IStorageScanner;
@@ -242,7 +239,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     private boolean checkForRoutableInventories() {
         return inventories.stream()
-                .filter(p -> isValid(p) && (!p.equals(getPos()) && isRoutable(p)) && RFToolsTools.chunkLoaded(getWorld(), p))
+                .filter(p -> isValid(p) && (!p.equals(getPos()) && isRoutable(p)) && WorldTools.chunkLoaded(getWorld(), p))
                 .anyMatch(p -> getWorld().getTileEntity(p) != null);
     }
 
@@ -262,7 +259,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         }
         final ItemStack finalStack = stack;
         Iterator<TileEntity> iterator = inventories.stream()
-                .filter(p -> testAccess.apply(p) && !p.equals(getPos()) && isRoutable(p) && RFToolsTools.chunkLoaded(getWorld(), p) && getInputMatcher(p).test(finalStack))
+                .filter(p -> testAccess.apply(p) && !p.equals(getPos()) && isRoutable(p) && WorldTools.chunkLoaded(getWorld(), p) && getInputMatcher(p).test(finalStack))
                 .map(getWorld()::getTileEntity)
                 .filter(te -> te != null && !(te instanceof StorageScannerTileEntity))
                 .iterator();
@@ -335,7 +332,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     public int countItems(Predicate<ItemStack> matcher, boolean starred, @Nullable Integer maxneeded) {
         final int[] cc = {0};
         inventories.stream()
-                .filter(p -> isValid(p) && ((!starred) || isRoutable(p)) && RFToolsTools.chunkLoaded(getWorld(), p))
+                .filter(p -> isValid(p) && ((!starred) || isRoutable(p)) && WorldTools.chunkLoaded(getWorld(), p))
                 .map(getWorld()::getTileEntity)
                 .filter(te -> te != null && !(te instanceof StorageScannerTileEntity))
                 .allMatch(te -> {
@@ -362,7 +359,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         }
         Set<Integer> oredictMatches = getOredictMatchers(stack, oredict);
         Iterator<TileEntity> iterator = inventories.stream()
-                .filter(p -> isValid(p) && ((!starred) || isRoutable(p)) && RFToolsTools.chunkLoaded(getWorld(), p))
+                .filter(p -> isValid(p) && ((!starred) || isRoutable(p)) && WorldTools.chunkLoaded(getWorld(), p))
                 .map(getWorld()::getTileEntity)
                 .filter(te -> te != null && !(te instanceof StorageScannerTileEntity))
                 .iterator();
@@ -791,7 +788,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     @Nullable
     private IItemHandler getItemHandlerAt(BlockPos p) {
-        if (!RFToolsTools.chunkLoaded(getWorld(), p)) {
+        if (!WorldTools.chunkLoaded(getWorld(), p)) {
             return null;
         }
         TileEntity te = getWorld().getTileEntity(p);

@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.storage;
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.blocks.LogicSlabBlock;
 import mcjty.lib.varia.ModuleSupport;
+import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.storagemonitor.GuiStorageScanner;
@@ -139,7 +140,7 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
                     int dimension = RFToolsTools.getDimensionFromModule(module);
                     BlockPos pos = RFToolsTools.getPositionFromModule(module);
                     WorldServer world = DimensionManager.getWorld(dimension);
-                    if (!RFToolsTools.chunkLoaded(world, pos)) {
+                    if (!WorldTools.chunkLoaded(world, pos)) {
                         entityPlayer.sendStatusMessage(new TextComponentString(TextFormatting.YELLOW + "Storage scanner out of range!"), false);
                         return null;
                     }

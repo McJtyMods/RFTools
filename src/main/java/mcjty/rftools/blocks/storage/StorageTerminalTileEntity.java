@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.storage;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.tileentity.LogicTileEntity;
+import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import mcjty.rftools.craftinggrid.*;
@@ -62,7 +63,7 @@ public class StorageTerminalTileEntity extends LogicTileEntity implements Defaul
         WorldServer world = DimensionManager.getWorld(dimension);
 
         StorageScannerTileEntity scannerTE = null;
-        if (RFToolsTools.chunkLoaded(world, scannerPos)) {
+        if (WorldTools.chunkLoaded(world, scannerPos)) {
             TileEntity te = world.getTileEntity(scannerPos);
             if (te instanceof StorageScannerTileEntity) {
                 scannerTE = (StorageScannerTileEntity) te;

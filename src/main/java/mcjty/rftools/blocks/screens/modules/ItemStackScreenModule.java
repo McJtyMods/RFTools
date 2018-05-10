@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.CapabilityTools;
+import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
@@ -86,7 +87,7 @@ public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModul
             return null;
         }
 
-        if (!RFToolsTools.chunkLoaded(world, coordinate)) {
+        if (!WorldTools.chunkLoaded(world, coordinate)) {
             return null;
         }
 

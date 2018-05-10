@@ -18,13 +18,6 @@ import java.util.Map;
 
 public class RFToolsTools {
 
-    public static boolean chunkLoaded(World world, BlockPos pos) {
-        if (world == null || pos == null) {
-            return false;
-        }
-        return world.isBlockLoaded(pos);
-    }
-
     public static boolean hasModuleTarget(ItemStack stack) {
         if (!stack.hasTagCompound()) {
             return false;

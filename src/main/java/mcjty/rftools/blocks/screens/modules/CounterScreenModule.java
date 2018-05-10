@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.screens.modules;
 
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.api.screens.data.IModuleDataInteger;
@@ -25,7 +26,7 @@ public class CounterScreenModule implements IScreenModule<IModuleDataInteger> {
             return null;
         }
 
-        if (!RFToolsTools.chunkLoaded(world, coordinate)) {
+        if (!WorldTools.chunkLoaded(world, coordinate)) {
             return null;
         }
 
