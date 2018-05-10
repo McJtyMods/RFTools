@@ -313,3 +313,14 @@ message.rftools.invchecker=\
 message.rftools.threelogic=\
     @fThis logic block can do various logical\n\
     @foperations on three inputs.
+message.rftools.counter=\
+    @aCounter: %s\n\
+    @aCurrent: %s\n\
+    @fThis logic block counts redstone pulses and emits\n\
+    @fa signal once a certain number has been reached.
+message.rftools.sequencer=\
+    @aDelay: %s\n\
+    @aMode: %s\n\
+    @aBits: %s\n\
+    @fThis logic block emits a series of redstone\n\
+    @fsignals in a pattern that you can set in the GUI.

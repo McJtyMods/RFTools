@@ -3,7 +3,7 @@ package mcjty.rftools;
 import mcjty.lib.McJtyLib;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
 import mcjty.rftools.blocks.endergen.EndergenicTileEntity;
-import mcjty.rftools.blocks.logic.counter.CounterBlock;
+import mcjty.rftools.blocks.logic.counter.CounterTileEntity;
 import mcjty.rftools.blocks.security.SecurityCardItem;
 import mcjty.rftools.blocks.security.SecurityConfiguration;
 import mcjty.rftools.blocks.shaper.GuiLocator;
@@ -68,7 +68,7 @@ public class ClientCommandHandler {
             return true;
         });
         McJtyLib.registerClientCommand(RFTools.MODID, CMD_RETURN_COUNTER_INFO, (player, arguments) -> {
-            CounterBlock.cntReceived = arguments.getInt();
+            CounterTileEntity.cntReceived = arguments.getInt();
             return true;
         });
     }

@@ -1,10 +1,29 @@
 package mcjty.rftools.blocks.logic.counter;
 
-import mcjty.lib.tileentity.LogicTileEntity;
 import mcjty.lib.gui.widgets.TextField;
+import mcjty.lib.network.Arguments;
+import mcjty.lib.tileentity.LogicTileEntity;
 import mcjty.lib.typed.TypedMap;
+import mcjty.rftools.CommandHandler;
+import mcjty.rftools.network.RFToolsMessages;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.List;
 
 public class CounterTileEntity extends LogicTileEntity {
 
@@ -93,6 +112,12 @@ public class CounterTileEntity extends LogicTileEntity {
     }
 
     @Override
+    public void checkRedstone(World world, BlockPos pos) {
+        super.checkRedstone(world, pos);
+        update();
+    }
+
+    @Override
     public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
@@ -119,4 +144,34 @@ public class CounterTileEntity extends LogicTileEntity {
         }
         return false;
     }
+
+    @Override
+    @Optional.Method(modid = "theoneprobe")
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        probeInfo.text(TextFormatting.GREEN + "Current: " + getCurrent());
+    }
+
+    private static long lastTime = 0;
+
+    // Client side
+    public static int cntReceived = 0;
+
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    @Optional.Method(modid = "waila")
+    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+        super.addWailaBody(itemStack, currenttip, accessor, config);
+
+        if (System.currentTimeMillis() - lastTime > 500) {
+            lastTime = System.currentTimeMillis();
+            RFToolsMessages.sendToServer(CommandHandler.CMD_GET_COUNTER_INFO,
+                    Arguments.builder().value(getWorld().provider.getDimension()).value(getPos()));
+        }
+
+        currenttip.add(TextFormatting.GREEN + "Current: " + cntReceived);
+    }
+
+
 }

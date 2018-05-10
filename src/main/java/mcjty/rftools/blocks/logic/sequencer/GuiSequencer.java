@@ -1,14 +1,14 @@
 package mcjty.rftools.blocks.logic.sequencer;
 
-import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.gui.widgets.TextField;
+import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.lib.typed.TypedMap;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
 
     private List<ImageChoiceLabel> bits = new ArrayList<>();
 
-    public GuiSequencer(SequencerTileEntity sequencerTileEntity, EmptyContainer container) {
+    public GuiSequencer(SequencerTileEntity sequencerTileEntity, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, sequencerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "sequencer");
     }
 

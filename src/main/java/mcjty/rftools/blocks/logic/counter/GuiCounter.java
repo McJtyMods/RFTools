@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.logic.counter;
 
-import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.widgets.TextField;
@@ -14,7 +14,7 @@ public class GuiCounter extends GenericGuiContainer<CounterTileEntity> {
 
     private TextField currentField;
 
-    public GuiCounter(CounterTileEntity counterTileEntity, EmptyContainer container) {
+    public GuiCounter(CounterTileEntity counterTileEntity, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, counterTileEntity, container, RFTools.GUI_MANUAL_MAIN, "counter");
     }
 
@@ -52,7 +52,7 @@ public class GuiCounter extends GenericGuiContainer<CounterTileEntity> {
             requestCurrentCounter();
         }
 
-        currentField.setText(String.valueOf(CounterBlock.cntReceived));
+        currentField.setText(String.valueOf(CounterTileEntity.cntReceived));
 
         drawWindow();
     }

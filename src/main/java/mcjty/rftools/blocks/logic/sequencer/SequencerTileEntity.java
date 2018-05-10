@@ -7,9 +7,20 @@ import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
+import mcjty.rftools.theoneprobe.TheOneProbeSupport;
+import mcjty.theoneprobe.api.ElementAlignment;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.ProbeMode;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Optional;
 
 public class SequencerTileEntity extends LogicTileEntity implements ITickable {
 
@@ -330,4 +341,19 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
         }
         return false;
     }
+
+    @Override
+    @Optional.Method(modid = "theoneprobe")
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+        IProbeInfo horizontal = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
+        horizontal.text(TextFormatting.GREEN + "Mode: " + getMode().getDescription());
+        TheOneProbeSupport.addSequenceElement(horizontal, getCycleBits(),
+                getCurrentStep(), mode == ProbeMode.EXTENDED);
+        int currentStep = getCurrentStep();
+        boolean rc = checkOutput();
+        probeInfo.text(TextFormatting.GREEN + "Step: " + TextFormatting.WHITE + currentStep +
+                TextFormatting.GREEN + " -> " + TextFormatting.WHITE + (rc ? "on" : "off"));
+    }
+
 }

@@ -8,13 +8,16 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.logic.analog.AnalogTileEntity;
 import mcjty.rftools.blocks.logic.analog.GuiAnalog;
-import mcjty.rftools.blocks.logic.counter.CounterBlock;
+import mcjty.rftools.blocks.logic.counter.CounterTileEntity;
+import mcjty.rftools.blocks.logic.counter.GuiCounter;
 import mcjty.rftools.blocks.logic.digit.DigitTileEntity;
 import mcjty.rftools.blocks.logic.invchecker.GuiInvChecker;
 import mcjty.rftools.blocks.logic.invchecker.InvCheckerTileEntity;
 import mcjty.rftools.blocks.logic.sensor.GuiSensor;
 import mcjty.rftools.blocks.logic.sensor.SensorTileEntity;
-import mcjty.rftools.blocks.logic.sequencer.SequencerBlock;
+import mcjty.rftools.blocks.logic.sequencer.GuiSequencer;
+import mcjty.rftools.blocks.logic.sequencer.SequencerMode;
+import mcjty.rftools.blocks.logic.sequencer.SequencerTileEntity;
 import mcjty.rftools.blocks.logic.threelogic.GuiThreeLogic;
 import mcjty.rftools.blocks.logic.threelogic.ThreeLogicTileEntity;
 import mcjty.rftools.blocks.logic.timer.GuiTimer;
@@ -26,11 +29,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LogicBlockSetup {
-    public static SequencerBlock sequencerBlock;
-    public static CounterBlock counterBlock;
     public static RedstoneTransmitterBlock redstoneTransmitterBlock;
     public static RedstoneReceiverBlock redstoneReceiverBlock;
 
+    public static GenericBlock<SequencerTileEntity, GenericContainer> sequencerBlock;
+    public static GenericBlock<CounterTileEntity, GenericContainer> counterBlock;
     public static GenericBlock<ThreeLogicTileEntity, GenericContainer> threeLogicBlock;
     public static GenericBlock<InvCheckerTileEntity, GenericContainer> invCheckerBlock;
     public static GenericBlock<SensorTileEntity, GenericContainer> sensorBlock;
@@ -40,11 +43,30 @@ public class LogicBlockSetup {
     public static GenericBlock<TimerTileEntity, GenericContainer> timerBlock;
 
     public static void init() {
-        sequencerBlock = new SequencerBlock();
-        counterBlock = new CounterBlock();
         redstoneTransmitterBlock = new RedstoneTransmitterBlock();
         redstoneReceiverBlock = new RedstoneReceiverBlock();
 
+        sequencerBlock = ModBlocks.logicFactory.<SequencerTileEntity> builder("sequencer_block")
+                .tileEntityClass(SequencerTileEntity.class)
+                .guiId(RFTools.GUI_SEQUENCER)
+                .emptyContainer()
+                .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
+                .info("message.rftools.shiftmessage")
+                .infoExtended("message.rftools.sequencer")
+                .infoExtendedParameter(ItemStackTools.intGetter("delay", 0))
+                .infoExtendedParameter(stack -> ItemStackTools.mapTag(stack, compound -> SequencerMode.values()[compound.getInteger("mode")].getDescription(), "<none>"))
+                .infoExtendedParameter(stack -> ItemStackTools.mapTag(stack, compound -> Long.toHexString(compound.getLong("bits")), "<unset>"))
+                .build();
+        counterBlock = ModBlocks.logicFactory.<CounterTileEntity> builder("counter_block")
+                .tileEntityClass(CounterTileEntity.class)
+                .guiId(RFTools.GUI_COUNTER)
+                .emptyContainer()
+                .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
+                .info("message.rftools.shiftmessage")
+                .infoExtended("message.rftools.counter")
+                .infoExtendedParameter(ItemStackTools.intGetter("counter", 0))
+                .infoExtendedParameter(ItemStackTools.intGetter("current", 0))
+                .build();
         threeLogicBlock = ModBlocks.logicFactory.<ThreeLogicTileEntity> builder("logic_block")
                 .tileEntityClass(ThreeLogicTileEntity.class)
                 .guiId(RFTools.GUI_THREE_LOGIC)
@@ -107,11 +129,14 @@ public class LogicBlockSetup {
     @SideOnly(Side.CLIENT)
     public static void initClient() {
         sequencerBlock.initModel();
+        sequencerBlock.setGuiClass(GuiSequencer.class);
 
         timerBlock.initModel();
         timerBlock.setGuiClass(GuiTimer.class);
 
         counterBlock.initModel();
+        counterBlock.setGuiClass(GuiCounter.class);
+
         redstoneTransmitterBlock.initModel();
         redstoneReceiverBlock.initModel();
 
