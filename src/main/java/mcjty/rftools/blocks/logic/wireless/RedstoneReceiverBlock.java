@@ -1,22 +1,13 @@
 package mcjty.rftools.blocks.logic.wireless;
 
-import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.blocks.GenericItemBlock;
+import mcjty.lib.container.EmptyContainer;
 import mcjty.rftools.RFTools;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.ProbeMode;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -51,34 +42,6 @@ public class RedstoneReceiverBlock extends RedstoneChannelBlock<RedstoneReceiver
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
-    }
-
-    @Override
-    @Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
-        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
-        TileEntity te = world.getTileEntity(data.getPos());
-        if (te instanceof RedstoneReceiverTileEntity) {
-            RedstoneReceiverTileEntity rrte = (RedstoneReceiverTileEntity)te;
-            probeInfo.text(TextFormatting.GREEN + "Analog mode: " + rrte.getAnalog());
-            probeInfo.text(TextFormatting.GREEN + "Output: " + TextFormatting.WHITE + rrte.checkOutput());
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    @Optional.Method(modid = "waila")
-    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        super.getWailaBody(itemStack, currenttip, accessor, config);
-        TileEntity te = accessor.getTileEntity();
-        if (te instanceof RedstoneReceiverTileEntity) {
-            RedstoneReceiverTileEntity rrte = (RedstoneReceiverTileEntity)te;
-            currenttip.add(TextFormatting.GREEN + "Analog mode: " + rrte.getAnalog());
-
-            // Redstone channels aren't currently available on the client. @todo issue #1616
-            //currenttip.add(TextFormatting.GREEN + "Output: " + TextFormatting.WHITE + rrte.checkOutput());
-        }
-        return currenttip;
     }
 
     @Override
