@@ -104,14 +104,14 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         ImageChoiceLabel redstoneMode = initRedstoneMode();
         initDamageType();
 
-        filterList = new WidgetList(mc, this).setDesiredHeight(120).
+        filterList = new WidgetList(mc, this).setName("filters").setDesiredHeight(120).
                 addSelectionEvent(new DefaultSelectionEvent() {
                     @Override
                     public void select(Widget parent, int index) {
                         selectFilter();
                     }
                 });
-        Slider filterSlider = new Slider(mc, this).setVertical().setScrollable(filterList).setDesiredWidth(11).setDesiredHeight(120);
+        Slider filterSlider = new Slider(mc, this).setVertical().setScrollableName("filters").setDesiredWidth(11).setDesiredHeight(120);
         Panel filterPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3))
                 .setLayoutHint(12, 10, 154, 124).addChildren(filterList, filterSlider)
                 .setFilledBackground(0xff9e9e9e);

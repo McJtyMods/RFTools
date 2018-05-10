@@ -153,20 +153,20 @@ public class GuiDevelopersDelight extends GuiScreen {
     }
 
     private Panel createBlockClassesPage() {
-        blockClassList = new WidgetList(mc, this);
-        Slider listSlider = new Slider(mc, this).setDesiredWidth(11).setVertical().setScrollable(blockClassList);
+        blockClassList = new WidgetList(mc, this).setName("blocks");
+        Slider listSlider = new Slider(mc, this).setDesiredWidth(11).setVertical().setScrollableName("blocks");
         return new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(blockClassList).addChild(listSlider);
     }
 
     private Panel createTeClassesPage() {
-        teClassList = new WidgetList(mc, this);
-        Slider listSlider = new Slider(mc, this).setDesiredWidth(11).setVertical().setScrollable(teClassList);
+        teClassList = new WidgetList(mc, this).setName("classes");
+        Slider listSlider = new Slider(mc, this).setDesiredWidth(11).setVertical().setScrollableName("classes");
         return new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(teClassList).addChild(listSlider);
     }
 
     private Panel createNbtDataPage() {
-        nbtDataList = new WidgetList(mc, this);
-        Slider listSlider = new Slider(mc, this).setDesiredWidth(11).setVertical().setScrollable(nbtDataList);
+        nbtDataList = new WidgetList(mc, this).setName("nbtdata");
+        Slider listSlider = new Slider(mc, this).setDesiredWidth(11).setVertical().setScrollableName("nbtdata");
         return new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(nbtDataList).addChild(listSlider);
     }
 

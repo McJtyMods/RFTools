@@ -74,14 +74,14 @@ public class GuiNetworkMonitor extends GuiItemScreen {
     public void initGui() {
         super.initGui();
 
-        list = new WidgetList(mc, this).addSelectionEvent(new DefaultSelectionEvent() {
+        list = new WidgetList(mc, this).setName("list").addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void doubleClick(Widget parent, int index) {
                 hilightBlock(index);
             }
         });
         listDirty = 0;
-        Slider listSlider = new Slider(mc, this).setDesiredWidth(11).setVertical().setScrollable(list);
+        Slider listSlider = new Slider(mc, this).setDesiredWidth(11).setVertical().setScrollableName("list");
         Panel listPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(list).addChild(listSlider);
 
         showRfPerTick = new ToggleButton(mc, this).setCheckMarker(true).setText("RF/tick").setDesiredWidth(80).addButtonEvent(parent -> previousRfMillis = 0).setDesiredHeight(14);

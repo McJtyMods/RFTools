@@ -51,13 +51,13 @@ public class GuiTeleportProbe extends GuiScreen {
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
 
-        list = new WidgetList(mc, this).addSelectionEvent(new DefaultSelectionEvent() {
+        list = new WidgetList(mc, this).setName("list").addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void doubleClick(Widget parent, int index) {
                 teleport(index);
             }
         });
-        Slider listSlider = new Slider(mc, this).setDesiredWidth(11).setVertical().setScrollable(list);
+        Slider listSlider = new Slider(mc, this).setDesiredWidth(11).setVertical().setScrollableName("list");
         Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChild(list).addChild(listSlider);
         toplevel.setBounds(new Rectangle(k, l, xSize, ySize));
 

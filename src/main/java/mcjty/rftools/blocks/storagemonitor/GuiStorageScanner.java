@@ -236,9 +236,9 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     }
 
     private Panel makeItemPanel() {
-        itemList = new WidgetList(mc, this).setPropagateEventsToChildren(true)
+        itemList = new WidgetList(mc, this).setName("items").setPropagateEventsToChildren(true)
             .setInvisibleSelection(true);
-        Slider itemListSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(itemList);
+        Slider itemListSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollableName("items");
         return new Panel(mc, this)
                 .setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(1))
                 .setLayoutHint(new PositionalLayout.PositionalHint(getStoragePanelWidth() + 6, 4, 256-getStoragePanelWidth()-12, 86+54))
@@ -246,7 +246,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     }
 
     private Panel makeStoragePanel(Panel energyPanel) {
-        storageList = new WidgetList(mc, this).addSelectionEvent(new DefaultSelectionEvent() {
+        storageList = new WidgetList(mc, this).setName("storage").addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget parent, int index) {
                 getInventoryOnServer();
@@ -258,7 +258,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             }
         }).setPropagateEventsToChildren(true);
 
-        Slider storageListSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(storageList);
+        Slider storageListSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollableName("storage");
 
         return new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(1))
                 .setLayoutHint(new PositionalLayout.PositionalHint(3, 4, getStoragePanelWidth(), 86+54))

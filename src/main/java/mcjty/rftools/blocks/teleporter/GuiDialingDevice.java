@@ -137,7 +137,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
     }
 
     private Panel setupReceiverPanel() {
-        receiverList = new WidgetList(mc, this).setRowheight(14).setDesiredHeight(100).setPropagateEventsToChildren(true).addSelectionEvent(new DefaultSelectionEvent() {
+        receiverList = new WidgetList(mc, this).setName("receivers").setRowheight(14).setDesiredHeight(100).setPropagateEventsToChildren(true).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget parent, int index) {
                 clearSelectedStatus();
@@ -148,13 +148,13 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
                 hilightSelectedReceiver(index);
             }
         });
-        Slider receiverSlider = new Slider(mc, this).setDesiredWidth(11).setDesiredHeight(100).setVertical().setScrollable(receiverList);
+        Slider receiverSlider = new Slider(mc, this).setDesiredWidth(11).setDesiredHeight(100).setVertical().setScrollableName("receivers");
         return new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChildren(receiverList, receiverSlider).setDesiredHeight(106)
                 .setFilledBackground(0xff9e9e9e);
     }
 
     private Panel setupTransmitterPanel() {
-        transmitterList = new WidgetList(mc, this).setRowheight(18).setDesiredHeight(58).addSelectionEvent(new DefaultSelectionEvent() {
+        transmitterList = new WidgetList(mc, this).setName("transmitters").setRowheight(18).setDesiredHeight(58).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget parent, int index) {
                 clearSelectedStatus();
@@ -166,7 +166,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
                 hilightSelectedTransmitter(index);
             }
         });
-        Slider transmitterSlider = new Slider(mc, this).setDesiredWidth(11).setDesiredHeight(58).setVertical().setScrollable(transmitterList);
+        Slider transmitterSlider = new Slider(mc, this).setDesiredWidth(11).setDesiredHeight(58).setVertical().setScrollableName("transmitters");
         return new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChildren(transmitterList, transmitterSlider).setDesiredHeight(64)
                 .setFilledBackground(0xff9e9e9e);
     }

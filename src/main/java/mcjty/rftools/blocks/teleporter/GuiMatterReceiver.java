@@ -70,8 +70,8 @@ public class GuiMatterReceiver extends GenericGuiContainer<MatterReceiverTileEnt
                 setChoiceTooltip(ACCESS_PRIVATE, "Only people in the access list below", "can dial to this receiver");
         Panel privatePanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(new Label(mc, this).setText("Access:")).addChild(privateSetting).setDesiredHeight(16);
 
-        allowedPlayers = new WidgetList(mc, this);
-        Slider allowedPlayerSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(allowedPlayers);
+        allowedPlayers = new WidgetList(mc, this).setName("allowedplayers");
+        Slider allowedPlayerSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollableName("allowedplayers");
         Panel allowedPlayersPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChild(allowedPlayers).addChild(allowedPlayerSlider)
                 .setFilledBackground(0xff9e9e9e);
 

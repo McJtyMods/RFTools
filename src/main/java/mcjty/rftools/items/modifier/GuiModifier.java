@@ -91,10 +91,10 @@ public class GuiModifier extends GenericGuiContainer<GenericTileEntity> {
         down.setLayoutHint(142, 30, 30, 13);
         toplevel.addChild(down);
 
-        list = new WidgetList(mc, this);
+        list = new WidgetList(mc, this).setName("list");
         list.setLayoutHint(9, 45, 153, 95);
         toplevel.addChild(list);
-        Slider slider = new Slider(mc, this).setVertical().setScrollable(list);
+        Slider slider = new Slider(mc, this).setVertical().setScrollableName("list");
         slider.setLayoutHint(162, 45, 10, 95);
         toplevel.addChild(slider);
 

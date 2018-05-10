@@ -48,14 +48,14 @@ public class GuiLiquidMonitor extends GenericGuiContainer<LiquidMonitorBlockTile
     public void initGui() {
         super.initGui();
 
-        list = new WidgetList(mc, this).addSelectionEvent(new DefaultSelectionEvent() {
+        list = new WidgetList(mc, this).setName("list").addSelectionEvent(new DefaultSelectionEvent() {
             @Override
             public void select(Widget parent, int index) {
                 setSelectedBlock(index);
             }
         });
         listDirty = 0;
-        Slider listSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollable(list);
+        Slider listSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollableName("list");
         Panel listPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChildren(list, listSlider);
 
         alarmModeChoiceLabel = new ChoiceLabel(mc, this).addChoices(
@@ -65,7 +65,7 @@ public class GuiLiquidMonitor extends GenericGuiContainer<LiquidMonitorBlockTile
                 addChoiceEvent((parent, newChoice) -> changeAlarmMode(RFMonitorMode.getModeFromDescription(newChoice)));
         alarmModeChoiceLabel.setChoice(tileEntity.getAlarmMode().getDescription());
 
-        alarmLabel = new ScrollableLabel(mc, this).setSuffix("%").setDesiredWidth(30).setRealMinimum(0).setRealMaximum(100).
+        alarmLabel = new ScrollableLabel(mc, this).setName("alarm").setSuffix("%").setDesiredWidth(30).setRealMinimum(0).setRealMaximum(100).
                 setRealValue(tileEntity.getAlarmLevel()).
                 addValueEvent((parent, newValue) -> changeAlarmValue(newValue));
         Slider alarmSlider = new Slider(mc, this).
@@ -73,7 +73,7 @@ public class GuiLiquidMonitor extends GenericGuiContainer<LiquidMonitorBlockTile
                 setMinimumKnobSize(15).
                 setHorizontal().
                 setTooltips("Alarm level").
-                setScrollable(alarmLabel);
+                setScrollableName("alarm");
         Panel alarmPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChildren(alarmModeChoiceLabel, alarmSlider, alarmLabel).setDesiredHeight(20);
 
         Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout()).addChildren(listPanel, alarmPanel);
