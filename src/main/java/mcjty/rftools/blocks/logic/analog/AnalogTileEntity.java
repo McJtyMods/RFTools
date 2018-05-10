@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.logic.analog;
 
-import mcjty.lib.container.LogicTileEntity;
+import mcjty.lib.tileentity.LogicTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;

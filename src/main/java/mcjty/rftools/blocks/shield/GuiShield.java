@@ -2,8 +2,8 @@ package mcjty.rftools.blocks.shield;
 
 import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.GenericGuiContainer;
-import mcjty.lib.entity.GenericEnergyStorageTileEntity;
-import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.DefaultSelectionEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;

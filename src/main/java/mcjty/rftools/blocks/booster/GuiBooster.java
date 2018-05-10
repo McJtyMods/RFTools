@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.booster;
 
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.GenericGuiContainer;
-import mcjty.lib.entity.GenericEnergyStorageTileEntity;
+import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.widgets.EnergyBar;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;

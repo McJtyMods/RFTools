@@ -2,7 +2,7 @@ package mcjty.rftools.items.creativeonly;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.base.GeneralConfig;
-import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.block.Block;
@@ -45,7 +45,7 @@ public class ShardWandItem extends GenericRFToolsItem {
                     }
                     genericTileEntity.setInfused(infused);
                 } else {
-                    Logging.message(player, "This block doesn't have the right tile entity!");
+                    Logging.message(player, "This block doesn't have the right tile bindings!");
                 }
             } else {
                 Logging.message(player, "This block is not infusable!");

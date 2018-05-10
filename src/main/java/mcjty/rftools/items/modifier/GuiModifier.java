@@ -1,7 +1,7 @@
 package mcjty.rftools.items.modifier;
 
 import mcjty.lib.container.GenericGuiContainer;
-import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;

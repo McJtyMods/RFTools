@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.shield;
 
 import mcjty.lib.McJtyRegister;
-import mcjty.lib.container.DamageMetadataItemBlock;
+import mcjty.lib.blocks.DamageMetadataItemBlock;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;

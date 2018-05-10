@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 import java.util.function.Predicate;
 
 /**
- * This interface is implemented by the RFTools Storage Scanner tile entity
+ * This interface is implemented by the RFTools Storage Scanner tile bindings
  */
 public interface IStorageScanner {
 

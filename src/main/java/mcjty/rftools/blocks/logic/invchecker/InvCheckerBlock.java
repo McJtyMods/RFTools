@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.logic.invchecker;
 
-import mcjty.lib.container.LogicSlabBlock;
+import mcjty.lib.blocks.LogicSlabBlock;
 import mcjty.rftools.RFTools;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;

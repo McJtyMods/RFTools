@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.logic.wireless;
 
-import mcjty.lib.container.LogicTileEntity;
+import mcjty.lib.tileentity.LogicTileEntity;
 import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class RedstoneChannelTileEntity extends LogicTileEntity {

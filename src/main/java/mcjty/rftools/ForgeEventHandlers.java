@@ -57,7 +57,7 @@ import java.util.List;
 public class ForgeEventHandlers {
 
     // Workaround for the charged porter so that the teleport can be done outside
-    // of the entity tick loop
+    // of the bindings tick loop
     private static List<Pair<TeleportDestination,EntityPlayer>> playersToTeleportHere = new ArrayList<>();
 
     public static void addPlayerToTeleportHere(TeleportDestination destination, EntityPlayer player) {

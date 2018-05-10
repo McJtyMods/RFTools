@@ -2,9 +2,9 @@ package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
-import mcjty.lib.container.LogicTileEntity;
-import mcjty.lib.entity.DefaultValue;
-import mcjty.lib.entity.IValue;
+import mcjty.lib.tileentity.LogicTileEntity;
+import mcjty.lib.bindings.DefaultValue;
+import mcjty.lib.bindings.IValue;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.rftools.blocks.screens.ScreenSetup;

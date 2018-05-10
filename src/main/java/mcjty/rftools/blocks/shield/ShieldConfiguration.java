@@ -12,11 +12,11 @@ public class ShieldConfiguration {
     public static int rfCamo = 2;
     // This amount is added for a shield block.
     public static int rfShield = 2;
-    // The amount of RF to use per entity for a single damage spike.
+    // The amount of RF to use per bindings for a single damage spike.
     public static int rfDamage = 1000;
-    // The amount of RF to use per entity for a single damage spike (used when simulating player style damage).
+    // The amount of RF to use per bindings for a single damage spike (used when simulating player style damage).
     public static int rfDamagePlayer = 2000;
-    // The amount of damage to apply to a given entity.
+    // The amount of damage to apply to a given bindings.
     public static float damage = 5.0f;
     // Maximum size of a shield in blocks.
     public static int maxShieldSize = 256;
@@ -58,11 +58,11 @@ public class ShieldConfiguration {
         rfShield = cfg.get(CATEGORY_SHIELD, "shieldRfShield", rfShield,
                 "RF/tick for every 10 block addeds in case of shield mode").getInt();
         rfDamage = cfg.get(CATEGORY_SHIELD, "shieldRfDamage", rfDamage,
-                "The amount of RF to consume for a single spike of damage for one entity").getInt();
+                "The amount of RF to consume for a single spike of damage for one bindings").getInt();
         rfDamagePlayer = cfg.get(CATEGORY_SHIELD, "shieldRfDamagePlayer", rfDamagePlayer,
-                "The amount of RF to consume for a single spike of damage for one entity (used in case of player-type damage)").getInt();
+                "The amount of RF to consume for a single spike of damage for one bindings (used in case of player-type damage)").getInt();
         damage = (float) cfg.get(CATEGORY_SHIELD, "shieldDamage", damage,
-                "The amount of damage to do for a single spike on one entity").getDouble();
+                "The amount of damage to do for a single spike on one bindings").getDouble();
         disableShieldBlocksToUncorruptWorld = cfg.get(CATEGORY_SHIELD, "disableShieldBlocksToUncorruptWorld", disableShieldBlocksToUncorruptWorld,
                 "Set this to true if you have a corrupted world due to a bad camo block in the shield system. Load your world, remove the offending block from the shield, exit MC and then set this back to false").getBoolean();
         allowInvisibleShield = cfg.get(CATEGORY_SHIELD, "allowInvisibleShield", allowInvisibleShield,

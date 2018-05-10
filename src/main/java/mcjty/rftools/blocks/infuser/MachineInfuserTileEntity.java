@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.infuser;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.base.GeneralConfig;
 import mcjty.lib.container.*;
-import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.items.ModItems;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;

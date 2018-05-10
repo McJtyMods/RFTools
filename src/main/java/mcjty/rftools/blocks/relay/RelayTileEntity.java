@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.relay;
 
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.compat.RedstoneFluxCompatibility;
-import mcjty.lib.entity.GenericEnergyHandlerTileEntity;
+import mcjty.lib.tileentity.GenericEnergyHandlerTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;

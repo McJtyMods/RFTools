@@ -6,7 +6,7 @@ import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.SimpleComponent;
 import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.api.smartwrench.SmartWrenchSelector;
-import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
@@ -41,7 +41,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
     private int id = -1;
     private boolean active = false;
 
-    // Relative coordinates (relative to this tile entity)
+    // Relative coordinates (relative to this tile bindings)
     private Set<BlockPos> protectedBlocks = new HashSet<>();
 
     @Override

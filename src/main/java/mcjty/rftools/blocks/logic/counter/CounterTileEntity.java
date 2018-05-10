@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.logic.counter;
 
-import mcjty.lib.container.LogicTileEntity;
+import mcjty.lib.tileentity.LogicTileEntity;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.typed.TypedMap;
 import net.minecraft.entity.player.EntityPlayerMP;

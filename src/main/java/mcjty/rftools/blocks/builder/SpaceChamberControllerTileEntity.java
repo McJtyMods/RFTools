@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.builder;
 
-import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
 import net.minecraft.entity.player.EntityPlayer;

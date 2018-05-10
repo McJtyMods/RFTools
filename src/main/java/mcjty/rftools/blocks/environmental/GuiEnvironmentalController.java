@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.environmental;
 import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.GenericGuiContainer;
-import mcjty.lib.entity.GenericEnergyStorageTileEntity;
+import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.widgets.*;
@@ -16,7 +16,7 @@ import net.minecraft.util.ResourceLocation;
 import java.util.ArrayList;
 import java.util.List;
 
-import static mcjty.lib.entity.GenericEnergyStorageTileEntity.getCurrentRF;
+import static mcjty.lib.tileentity.GenericEnergyStorageTileEntity.getCurrentRF;
 import static mcjty.rftools.blocks.environmental.EnvironmentalControllerTileEntity.*;
 
 public class GuiEnvironmentalController extends GenericGuiContainer<EnvironmentalControllerTileEntity> {

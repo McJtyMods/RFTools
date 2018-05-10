@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.logic.sequencer;
 
-import mcjty.lib.container.LogicTileEntity;
+import mcjty.lib.tileentity.LogicTileEntity;
 import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.gui.widgets.TextField;

@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.monitor;
 
-import mcjty.lib.container.BaseBlock;
-import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.blocks.BaseBlock;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.typed.Type;

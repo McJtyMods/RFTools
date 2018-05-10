@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.booster;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
-import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.lib.varia.RedstoneMode;

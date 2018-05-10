@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.infuser;
 
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.GenericGuiContainer;
-import mcjty.lib.entity.GenericEnergyStorageTileEntity;
+import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.EnergyBar;
@@ -13,7 +13,7 @@ import net.minecraft.util.ResourceLocation;
 
 import java.awt.Rectangle;
 
-import static mcjty.lib.entity.GenericEnergyStorageTileEntity.getCurrentRF;
+import static mcjty.lib.tileentity.GenericEnergyStorageTileEntity.getCurrentRF;
 
 public class GuiMachineInfuser extends GenericGuiContainer<MachineInfuserTileEntity> {
     public static final int INFUSER_WIDTH = 180;

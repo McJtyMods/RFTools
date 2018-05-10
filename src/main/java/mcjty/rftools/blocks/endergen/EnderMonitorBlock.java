@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.endergen;
 
 import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.container.LogicSlabBlock;
+import mcjty.lib.blocks.LogicSlabBlock;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;

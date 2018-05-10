@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.screens;
 
-import mcjty.lib.container.BaseBlock;
+import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.font.TrueTypeFont;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.RFTools;

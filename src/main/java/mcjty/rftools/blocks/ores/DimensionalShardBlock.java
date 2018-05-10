@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.ores;
 
 import mcjty.lib.McJtyRegister;
-import mcjty.lib.container.DamageMetadataItemBlock;
+import mcjty.lib.blocks.DamageMetadataItemBlock;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.ModItems;
 import net.minecraft.block.Block;

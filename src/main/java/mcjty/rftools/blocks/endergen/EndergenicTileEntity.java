@@ -3,9 +3,9 @@ package mcjty.rftools.blocks.endergen;
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.compat.RedstoneFluxCompatibility;
-import mcjty.lib.entity.DefaultValue;
-import mcjty.lib.entity.GenericEnergyProviderTileEntity;
-import mcjty.lib.entity.IValue;
+import mcjty.lib.bindings.DefaultValue;
+import mcjty.lib.tileentity.GenericEnergyProviderTileEntity;
+import mcjty.lib.bindings.IValue;
 import mcjty.lib.network.Arguments;
 import mcjty.lib.network.PacketSendClientCommand;
 import mcjty.lib.typed.Key;
@@ -73,10 +73,10 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     }
 
     // The current chargingMode status.
-    // CHARGE_IDLE means this entity is doing nothing.
+    // CHARGE_IDLE means this bindings is doing nothing.
     // A positive number means it is chargingMode up from 0 to 15. When it reaches 15 it will go back to idle unless
     // it was hit by an endergenic pearl in the mean time. In that case it goes to 'holding' state.
-    // CHARGE_HOLDING means this entity is holding an endergenic pearl. Whie it does that it consumes
+    // CHARGE_HOLDING means this bindings is holding an endergenic pearl. Whie it does that it consumes
     // energy. If internal energy is depleted then the endergenic pearl is lost and the mode goes
     // back to idle.
     private int chargingMode = CHARGE_IDLE;

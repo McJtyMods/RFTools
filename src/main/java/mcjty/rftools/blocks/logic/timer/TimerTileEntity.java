@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.logic.timer;
 
-import mcjty.lib.container.LogicTileEntity;
+import mcjty.lib.tileentity.LogicTileEntity;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.gui.widgets.ToggleButton;
 import mcjty.theoneprobe.api.IProbeHitData;

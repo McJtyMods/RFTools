@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.api.IModuleSupport;
-import mcjty.lib.container.LogicSlabBlock;
+import mcjty.lib.blocks.LogicSlabBlock;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.screens.ScreenSetup;

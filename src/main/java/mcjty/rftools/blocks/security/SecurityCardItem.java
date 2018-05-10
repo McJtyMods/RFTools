@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.security;
 
-import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.network.Arguments;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.CommandHandler;

@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.endergen;
 
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericGuiContainer;
-import mcjty.lib.entity.GenericEnergyStorageTileEntity;
+import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.widgets.EnergyBar;
 import mcjty.lib.gui.widgets.TextField;
@@ -12,7 +12,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 
-import static mcjty.lib.entity.GenericEnergyStorageTileEntity.getCurrentRF;
+import static mcjty.lib.tileentity.GenericEnergyStorageTileEntity.getCurrentRF;
 
 public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
 

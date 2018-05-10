@@ -9,7 +9,7 @@ public interface ShieldFilter {
     public static final int ACTION_SOLID = 1;           // Entities that match this filter are blocked
     public static final int ACTION_DAMAGE = 2;          // Entities that match this filter get damage (can be combined with solid)
 
-    /// Return true if this entity matches the filter.
+    /// Return true if this bindings matches the filter.
     boolean match(Entity entity);
 
     int getAction();

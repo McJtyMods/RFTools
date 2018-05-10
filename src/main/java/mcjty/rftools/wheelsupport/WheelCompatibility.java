@@ -2,7 +2,7 @@ package mcjty.rftools.wheelsupport;
 
 import mcjty.intwheel.api.IInteractionWheel;
 import mcjty.intwheel.api.IWheelActionProvider;
-import mcjty.lib.container.GenericBlock;
+import mcjty.lib.blocks.GenericBlock;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.screens.ScreenBlock;

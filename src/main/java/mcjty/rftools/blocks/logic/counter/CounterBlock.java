@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.logic.counter;
 
 import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.container.LogicSlabBlock;
+import mcjty.lib.blocks.LogicSlabBlock;
 import mcjty.lib.network.Arguments;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;

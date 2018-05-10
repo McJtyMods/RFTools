@@ -1,7 +1,7 @@
 package mcjty.rftools.items.storage;
 
 import mcjty.lib.container.GenericGuiContainer;
-import mcjty.lib.entity.GenericTileEntity;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;

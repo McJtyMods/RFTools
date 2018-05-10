@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.teleporter;
 
-import mcjty.lib.entity.DefaultValue;
-import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
-import mcjty.lib.entity.IValue;
+import mcjty.lib.bindings.DefaultValue;
+import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.bindings.IValue;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;

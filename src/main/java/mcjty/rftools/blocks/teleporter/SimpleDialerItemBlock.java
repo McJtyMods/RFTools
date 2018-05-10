@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.teleporter;
 
-import mcjty.lib.container.GenericItemBlock;
+import mcjty.lib.blocks.GenericItemBlock;
 import mcjty.lib.varia.*;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;

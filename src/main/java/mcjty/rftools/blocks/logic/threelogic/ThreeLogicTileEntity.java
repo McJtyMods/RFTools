@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.logic.threelogic;
 
-import mcjty.lib.container.LogicTileEntity;
+import mcjty.lib.tileentity.LogicTileEntity;
 import mcjty.rftools.blocks.logic.LogicBlockSetup;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;

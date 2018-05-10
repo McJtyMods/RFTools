@@ -98,7 +98,7 @@ public class PacketSelectRecipe implements IMessage {
         private void handle(PacketSelectRecipe message, MessageContext ctx) {
             TileEntity te = ctx.getServerHandler().player.getEntityWorld().getTileEntity(message.pos);
             if(!(te instanceof CrafterBaseTE)) {
-                Logging.logError("Wrong type of tile entity (expected CrafterBaseTE)!");
+                Logging.logError("Wrong type of tile bindings (expected CrafterBaseTE)!");
                 return;
             }
             CrafterBaseTE crafterBlockTileEntity = (CrafterBaseTE) te;

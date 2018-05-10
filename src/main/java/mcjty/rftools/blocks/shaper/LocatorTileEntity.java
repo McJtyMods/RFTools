@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.shaper;
 
-import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
@@ -203,7 +203,7 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
             return true;
         }
 
-        // Check if the entity has a name tag
+        // Check if the bindings has a name tag
         if (entity.hasCustomName()) {
             String nameTag = entity.getCustomNameTag().toLowerCase();
             if (nameTag.contains(filt)) {

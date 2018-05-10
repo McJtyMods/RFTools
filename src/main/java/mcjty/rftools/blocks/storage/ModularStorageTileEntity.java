@@ -2,9 +2,9 @@ package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
-import mcjty.lib.entity.DefaultAction;
-import mcjty.lib.entity.GenericTileEntity;
-import mcjty.lib.entity.IAction;
+import mcjty.lib.bindings.DefaultAction;
+import mcjty.lib.tileentity.GenericTileEntity;
+import mcjty.lib.bindings.IAction;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;

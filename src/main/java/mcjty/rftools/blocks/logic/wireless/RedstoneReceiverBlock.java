@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.logic.wireless;
 
 import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.container.GenericItemBlock;
+import mcjty.lib.blocks.GenericItemBlock;
 import mcjty.rftools.RFTools;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;

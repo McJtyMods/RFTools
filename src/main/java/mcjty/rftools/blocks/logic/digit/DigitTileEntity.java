@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.logic.digit;
 
 
-import mcjty.lib.container.LogicTileEntity;
+import mcjty.lib.tileentity.LogicTileEntity;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;

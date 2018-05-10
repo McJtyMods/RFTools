@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.elevator;
 
 
-import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.varia.Broadcaster;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
@@ -47,7 +47,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import static mcjty.lib.container.BaseBlock.FACING_HORIZ;
+import static mcjty.lib.blocks.BaseBlock.FACING_HORIZ;
 
 public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implements ITickable {
 
@@ -270,7 +270,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
             if (!this.entitiesOnPlatform.contains(entity)) {
                 // Entity was on the platform before but it isn't anymore. If it was a player we do a safety check
                 // to ensure it is still in the patform shaft and in that case put it back on the platform.
-                // We also put back the entity if we know the list is complete.
+                // We also put back the bindings if we know the list is complete.
                 if (entity instanceof EntityPlayer || entitiesOnPlatformComplete) {
                     if (entity.getEntityBoundingBox().intersects(getAABBBigMargin())) {
                         // Entity is no longer on the platform but was on the platform before and

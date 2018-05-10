@@ -3,7 +3,8 @@ package mcjty.rftools.blocks.storagemonitor;
 import com.google.common.base.Function;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
-import mcjty.lib.entity.*;
+import mcjty.lib.bindings.*;
+import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
@@ -98,7 +99,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     private Set<BlockPos> routable = new HashSet<>();
     private int radius = 1;
 
-    // This is set on a client-side dummy tile entity for a tablet
+    // This is set on a client-side dummy tile bindings for a tablet
     private Integer monitorDim;
 
     private boolean exportToCurrent = false;
@@ -116,7 +117,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         radius = (StorageScannerConfiguration.xnetRequired && RFTools.instance.xnet) ? 0 : 1;
     }
 
-    // This constructor is used for constructing a dummy client-side tile entity when
+    // This constructor is used for constructing a dummy client-side tile bindings when
     // accessing the storage scanner remotely
     public StorageScannerTileEntity(EntityPlayer entityPlayer, int monitordim) {
         super(StorageScannerConfiguration.MAXENERGY, StorageScannerConfiguration.RECEIVEPERTICK);
@@ -1107,9 +1108,9 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     /**
      * This is used client side only for the GUI.
      * Return the position of the crafting grid container. This
-     * is either the position of this tile entity (in case we are just looking
+     * is either the position of this tile bindings (in case we are just looking
      * directly at the storage scanner), the position of a 'watching' tile
-     * entity (in case we are a dummy for the storage terminal) or else null
+     * bindings (in case we are a dummy for the storage terminal) or else null
      * in case we're using a handheld item.
      *
      * @return

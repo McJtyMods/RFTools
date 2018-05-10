@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.logic.threelogic;
 
 import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.container.LogicFacing;
-import mcjty.lib.container.LogicSlabBlock;
+import mcjty.lib.varia.LogicFacing;
+import mcjty.lib.blocks.LogicSlabBlock;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;

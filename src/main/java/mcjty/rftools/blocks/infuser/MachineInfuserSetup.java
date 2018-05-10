@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.infuser;
 
-import mcjty.lib.container.GenericBlock;
+import mcjty.lib.blocks.GenericBlock;
 import mcjty.lib.container.GenericContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;

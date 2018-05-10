@@ -1,7 +1,8 @@
 package mcjty.rftools.blocks.shaper;
 
 import mcjty.lib.container.*;
-import mcjty.lib.entity.*;
+import mcjty.lib.bindings.*;
+import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.varia.RedstoneMode;

@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.spawner;
 
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.container.*;
-import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.lib.varia.EntityTools;
 import mcjty.lib.varia.Logging;
@@ -39,7 +39,7 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.List;
 
-//import net.minecraft.entity.monster.SkeletonType;
+//import net.minecraft.bindings.monster.SkeletonType;
 
 public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, MachineInformation, ITickable {
 

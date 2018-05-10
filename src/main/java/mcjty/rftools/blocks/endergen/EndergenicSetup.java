@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.endergen;
 
 import mcjty.lib.builder.BlockFlags;
-import mcjty.lib.container.BaseBlock;
-import mcjty.lib.container.GenericBlock;
+import mcjty.lib.blocks.BaseBlock;
+import mcjty.lib.blocks.GenericBlock;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.varia.ItemStackTools;
 import mcjty.rftools.RFTools;

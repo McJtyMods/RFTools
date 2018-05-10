@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.crafter;
 
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
-import mcjty.lib.entity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.varia.ItemStackList;
 import mcjty.lib.varia.Logging;

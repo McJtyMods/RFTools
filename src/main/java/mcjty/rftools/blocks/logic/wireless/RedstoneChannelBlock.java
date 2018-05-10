@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.logic.wireless;
 
-import mcjty.lib.container.LogicSlabBlock;
+import mcjty.lib.blocks.LogicSlabBlock;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.screenmodules.ButtonModuleItem;

@@ -117,7 +117,7 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public void onGuiOpen(GuiOpenEvent event) {
-        // If a shape card GUI was opened by a tile entity GUI, restore the tile entity GUI when it's closed
+        // If a shape card GUI was opened by a tile bindings GUI, restore the tile bindings GUI when it's closed
         if(event.getGui() == null) {
             net.minecraft.client.gui.GuiScreen old = Minecraft.getMinecraft().currentScreen;
             if(old instanceof GuiShapeCard &&((GuiShapeCard)old).fromTE) {

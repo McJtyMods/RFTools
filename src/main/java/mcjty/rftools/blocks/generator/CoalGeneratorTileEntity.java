@@ -6,7 +6,7 @@ import mcjty.lib.compat.RedstoneFluxCompatibility;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
-import mcjty.lib.entity.GenericEnergyProviderTileEntity;
+import mcjty.lib.tileentity.GenericEnergyProviderTileEntity;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.RedstoneMode;

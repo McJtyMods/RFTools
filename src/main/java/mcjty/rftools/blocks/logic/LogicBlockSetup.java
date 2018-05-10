@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.logic;
 
 import mcjty.lib.builder.BlockFlags;
-import mcjty.lib.container.GenericBlock;
+import mcjty.lib.blocks.GenericBlock;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.varia.ItemStackTools;
 import mcjty.rftools.RFTools;

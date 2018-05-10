@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.api.IModuleSupport;
-import mcjty.lib.container.BaseBlock;
-import mcjty.lib.container.GenericItemBlock;
+import mcjty.lib.blocks.BaseBlock;
+import mcjty.lib.blocks.GenericItemBlock;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
