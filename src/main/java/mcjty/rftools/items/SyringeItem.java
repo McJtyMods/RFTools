@@ -34,7 +34,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-//import net.minecraft.bindings.monster.SkeletonType;
+//import net.minecraft.entity.monster.SkeletonType;
 
 public class SyringeItem extends GenericRFToolsItem {
 

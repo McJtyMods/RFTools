@@ -71,7 +71,7 @@ public class BuilderConfiguration {
         builderRfPerSkipped = cfg.get(CATEGORY_BUILDER, "builderRfPerSkipped", builderRfPerSkipped,
                 "RF per block that is skipped (used when a filter is added to the builder)").getInt();
         builderRfPerEntity = cfg.get(CATEGORY_BUILDER, "builderRfPerEntity", builderRfPerEntity,
-                "RF per bindings move operation for the builder").getInt();
+                "RF per entity move operation for the builder").getInt();
         builderRfPerPlayer = cfg.get(CATEGORY_BUILDER, "builderRfPerPlayer", builderRfPerPlayer,
                 "RF per player move operation for the builder").getInt();
         teMode = BuilderTileEntityMode.find(cfg.get(CATEGORY_BUILDER, "tileEntityMode", teMode.getName(),

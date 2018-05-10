@@ -58,11 +58,11 @@ public class ShieldConfiguration {
         rfShield = cfg.get(CATEGORY_SHIELD, "shieldRfShield", rfShield,
                 "RF/tick for every 10 block addeds in case of shield mode").getInt();
         rfDamage = cfg.get(CATEGORY_SHIELD, "shieldRfDamage", rfDamage,
-                "The amount of RF to consume for a single spike of damage for one bindings").getInt();
+                "The amount of RF to consume for a single spike of damage for one entity").getInt();
         rfDamagePlayer = cfg.get(CATEGORY_SHIELD, "shieldRfDamagePlayer", rfDamagePlayer,
-                "The amount of RF to consume for a single spike of damage for one bindings (used in case of player-type damage)").getInt();
+                "The amount of RF to consume for a single spike of damage for one entity (used in case of player-type damage)").getInt();
         damage = (float) cfg.get(CATEGORY_SHIELD, "shieldDamage", damage,
-                "The amount of damage to do for a single spike on one bindings").getDouble();
+                "The amount of damage to do for a single spike on one entity").getDouble();
         disableShieldBlocksToUncorruptWorld = cfg.get(CATEGORY_SHIELD, "disableShieldBlocksToUncorruptWorld", disableShieldBlocksToUncorruptWorld,
                 "Set this to true if you have a corrupted world due to a bad camo block in the shield system. Load your world, remove the offending block from the shield, exit MC and then set this back to false").getBoolean();
         allowInvisibleShield = cfg.get(CATEGORY_SHIELD, "allowInvisibleShield", allowInvisibleShield,

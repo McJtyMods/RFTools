@@ -45,7 +45,7 @@ public class ShardWandItem extends GenericRFToolsItem {
                     }
                     genericTileEntity.setInfused(infused);
                 } else {
-                    Logging.message(player, "This block doesn't have the right tile bindings!");
+                    Logging.message(player, "This block doesn't have the right tile entity!");
                 }
             } else {
                 Logging.message(player, "This block is not infusable!");
