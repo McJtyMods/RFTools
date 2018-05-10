@@ -39,7 +39,7 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.List;
 
-//import net.minecraft.bindings.monster.SkeletonType;
+//import net.minecraft.entity.monster.SkeletonType;
 
 public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, MachineInformation, ITickable {
 

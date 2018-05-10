@@ -12,11 +12,11 @@ public class ShieldConfiguration {
     public static int rfCamo = 2;
     // This amount is added for a shield block.
     public static int rfShield = 2;
-    // The amount of RF to use per bindings for a single damage spike.
+    // The amount of RF to use per entity for a single damage spike.
     public static int rfDamage = 1000;
-    // The amount of RF to use per bindings for a single damage spike (used when simulating player style damage).
+    // The amount of RF to use per entity for a single damage spike (used when simulating player style damage).
     public static int rfDamagePlayer = 2000;
-    // The amount of damage to apply to a given bindings.
+    // The amount of damage to apply to a given entity.
     public static float damage = 5.0f;
     // Maximum size of a shield in blocks.
     public static int maxShieldSize = 256;

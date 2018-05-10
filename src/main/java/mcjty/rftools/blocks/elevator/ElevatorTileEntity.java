@@ -270,7 +270,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
             if (!this.entitiesOnPlatform.contains(entity)) {
                 // Entity was on the platform before but it isn't anymore. If it was a player we do a safety check
                 // to ensure it is still in the patform shaft and in that case put it back on the platform.
-                // We also put back the bindings if we know the list is complete.
+                // We also put back the entity if we know the list is complete.
                 if (entity instanceof EntityPlayer || entitiesOnPlatformComplete) {
                     if (entity.getEntityBoundingBox().intersects(getAABBBigMargin())) {
                         // Entity is no longer on the platform but was on the platform before and

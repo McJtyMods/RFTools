@@ -181,7 +181,7 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
             NoTickShieldBlockTileEntity shieldBlockTileEntity = (NoTickShieldBlockTileEntity) world.getTileEntity(pos);
             int cdData = shieldBlockTileEntity.getCollisionData();
             if ((cdData & META_ITEMS) == 0) {
-                // Items should be able to pass through. We just move the bindings to below this block.
+                // Items should be able to pass through. We just move the entity to below this block.
                 entity.setPosition(entity.posX, entity.posY-1, entity.posZ);
             }
         }

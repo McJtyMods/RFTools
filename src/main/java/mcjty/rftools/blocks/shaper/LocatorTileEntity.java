@@ -203,7 +203,7 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
             return true;
         }
 
-        // Check if the bindings has a name tag
+        // Check if the entity has a name tag
         if (entity.hasCustomName()) {
             String nameTag = entity.getCustomNameTag().toLowerCase();
             if (nameTag.contains(filt)) {

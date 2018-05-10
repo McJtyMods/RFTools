@@ -22,7 +22,7 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
 
     private ShieldRenderingMode shieldRenderingMode = ShieldRenderingMode.MODE_SHIELD;
 
-    protected int damageBits = 0;     // A 4-bit value indicating if a specific type of bindings should get damage.
+    protected int damageBits = 0;     // A 4-bit value indicating if a specific type of entity should get damage.
     private int collisionData = 0;  // A 4-bit value indicating collision detection data.
 
     // Coordinate of the shield block.

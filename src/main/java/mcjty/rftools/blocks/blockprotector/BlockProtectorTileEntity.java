@@ -41,7 +41,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
     private int id = -1;
     private boolean active = false;
 
-    // Relative coordinates (relative to this tile bindings)
+    // Relative coordinates (relative to this tile entity)
     private Set<BlockPos> protectedBlocks = new HashSet<>();
 
     @Override
