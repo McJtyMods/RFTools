@@ -76,10 +76,8 @@ public class GuiMatterReceiver extends GenericGuiContainer<MatterReceiverTileEnt
                 .setFilledBackground(0xff9e9e9e);
 
         nameField = new TextField(mc, this);
-        addButton = new Button(mc, this).setText("Add").setDesiredHeight(13).setDesiredWidth(34).setTooltips("Add a player to the access list").
-                addButtonEvent(parent -> addPlayer());
-        delButton = new Button(mc, this).setText("Del").setDesiredHeight(13).setDesiredWidth(34).setTooltips("Remove the selected player", "from the access list").
-                addButtonEvent(parent -> delPlayer());
+        addButton = new Button(mc, this).setChannel("addplayer").setText("Add").setDesiredHeight(13).setDesiredWidth(34).setTooltips("Add a player to the access list");
+        delButton = new Button(mc, this).setChannel("delplayer").setText("Del").setDesiredHeight(13).setDesiredWidth(34).setTooltips("Remove the selected player", "from the access list");
         Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChildren(nameField, addButton, delButton).setDesiredHeight(16);
 
         Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setHorizontalMargin(3).setVerticalMargin(3).setSpacing(1)).
@@ -94,6 +92,8 @@ public class GuiMatterReceiver extends GenericGuiContainer<MatterReceiverTileEnt
 
         window.bind(RFToolsMessages.INSTANCE, "name", tileEntity, MatterReceiverTileEntity.VALUE_NAME.getName());
         window.bind(RFToolsMessages.INSTANCE, "private", tileEntity, MatterReceiverTileEntity.VALUE_PRIVATE.getName());
+        window.event("addplayer", (source, params) -> addPlayer());
+        window.event("delplayer", (source, params) -> delPlayer());
     }
 
     private void addPlayer() {

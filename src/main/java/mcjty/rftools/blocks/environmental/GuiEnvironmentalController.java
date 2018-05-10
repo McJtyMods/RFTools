@@ -77,11 +77,11 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
     }
 
     private void setupEvents() {
-        window.addChannelEvent("add", (source, params) -> addPlayer());
-        window.addChannelEvent("del", (source, params) -> delPlayer());
-        window.addChannelEvent("mode", (source, params) -> changeMode(params.get(ChoiceLabel.PARAM_CHOICE)));
-        window.addChannelEvent("miny", (source, params) -> sendBounds(true));
-        window.addChannelEvent("maxy", (source, params) -> sendBounds(false));
+        window.event("add", (source, params) -> addPlayer());
+        window.event("del", (source, params) -> delPlayer());
+        window.event("mode", (source, params) -> changeMode(params.get(ChoiceLabel.PARAM_CHOICE)));
+        window.event("miny", (source, params) -> sendBounds(true));
+        window.event("maxy", (source, params) -> sendBounds(false));
     }
 
 

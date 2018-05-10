@@ -92,10 +92,8 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
                 .setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT)
                 .setLayoutHint(44, 30, 24, 15);
         angleLabel.setRealValue(tileEntity.getAngleInt());
-        Button angleM = new Button(mc, this).setText("-").setLayoutHint(5, 30, 10, 15)
-                .addButtonEvent(parent -> min(angleLabel));
-        Button angleP = new Button(mc, this).setText("+").setLayoutHint(70, 30, 10, 15)
-                .addButtonEvent(parent -> plus(angleLabel));
+        Button angleM = new Button(mc, this).setChannel("anglemin").setText("-").setLayoutHint(5, 30, 10, 15);
+        Button angleP = new Button(mc, this).setChannel("angleplus").setText("+").setLayoutHint(70, 30, 10, 15);
         angleSlider = new Slider(mc, this).setHorizontal().setScrollable(angleLabel)
                 .setLayoutHint(5, 46, 76, 15);
         toplevel.addChildren(angleI, angleLabel, angleSlider, angleM, angleP);
@@ -107,10 +105,8 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
                 .setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT)
                 .setLayoutHint(44, 62, 24, 15);
         scaleLabel.setRealValue(tileEntity.getScaleInt());
-        Button scaleM = new Button(mc, this).setText("-").setLayoutHint(5, 62, 10, 15)
-                .addButtonEvent(parent -> min(scaleLabel));
-        Button scaleP = new Button(mc, this).setText("+").setLayoutHint(70, 62, 10, 15)
-                .addButtonEvent(parent -> plus(scaleLabel));
+        Button scaleM = new Button(mc, this).setChannel("scalemin").setText("-").setLayoutHint(5, 62, 10, 15);
+        Button scaleP = new Button(mc, this).setChannel("scaleplus").setText("+").setLayoutHint(70, 62, 10, 15);
         scaleSlider = new Slider(mc, this).setHorizontal().setScrollable(scaleLabel)
                 .setLayoutHint(5, 78, 76, 15);
         toplevel.addChildren(scaleI, scaleLabel, scaleSlider, scaleM, scaleP);
@@ -122,10 +118,8 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
                 .setHorizontalAlignment(HorizontalAlignment.ALIGN_RIGHT)
                 .setLayoutHint(44, 94, 24, 15);
         offsetLabel.setRealValue(tileEntity.getOffsetInt());
-        Button offsetM = new Button(mc, this).setText("-").setLayoutHint(5, 94, 10, 15)
-                .addButtonEvent(parent -> min(offsetLabel));
-        Button offsetP = new Button(mc, this).setText("+").setLayoutHint(70, 94, 10, 15)
-                .addButtonEvent(parent -> plus(offsetLabel));
+        Button offsetM = new Button(mc, this).setChannel("offsetmin").setText("-").setLayoutHint(5, 94, 10, 15);
+        Button offsetP = new Button(mc, this).setChannel("offsetplus").setText("+").setLayoutHint(70, 94, 10, 15);
         offsetSlider = new Slider(mc, this).setHorizontal().setScrollable(offsetLabel)
                 .setLayoutHint(5, 110, 76, 15);
         toplevel.addChildren(offsetI, offsetLabel, offsetSlider, offsetM, offsetP);
@@ -174,6 +168,13 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
         window = new Window(this, toplevel);
 
         tileEntity.requestRfFromServer(RFTools.MODID);
+
+        window.event("anglemin", (source, params) -> min(angleLabel));
+        window.event("angleplus", (source, params) -> plus(angleLabel));
+        window.event("scalemin", (source, params) -> min(scaleLabel));
+        window.event("scaleplus", (source, params) -> plus(scaleLabel));
+        window.event("offsetmin", (source, params) -> min(offsetLabel));
+        window.event("offsetplus", (source, params) -> plus(offsetLabel));
     }
 
     private void initSidePanel() {

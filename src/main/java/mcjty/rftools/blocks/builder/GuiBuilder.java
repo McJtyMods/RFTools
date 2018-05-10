@@ -42,8 +42,8 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     }
 
     private void setupEvents() {
-        window.addChannelEvent("cardgui", (source, params) -> openCardGui());
-        window.addChannelEvent("anchor", (source, params) -> selectAnchor(source.getName()));
+        window.event("cardgui", (source, params) -> openCardGui());
+        window.event("anchor", (source, params) -> selectAnchor(source.getName()));
     }
 
     private void initializeFields() {

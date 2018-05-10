@@ -12,6 +12,10 @@ import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
+import mcjty.lib.gui.widgets.Button;
+import mcjty.lib.gui.widgets.Label;
+import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.Arguments;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.lib.typed.TypedMap;
@@ -31,9 +35,10 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 import java.util.function.Predicate;
 
 import static mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity.*;
@@ -98,16 +103,11 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 .setTooltips("Toggle wide storage list");
         openViewButton.setPressed(tileEntity.isOpenWideView());
         openViewButton.addButtonEvent(widget -> toggleView());
-        upButton = new Button(mc, this).setText("U").setTooltips("Move inventory up")
-                .addButtonEvent(widget -> moveUp());
-        topButton = new Button(mc, this).setText("T").setTooltips("Move inventory to the top")
-                .addButtonEvent(widget -> moveTop());
-        downButton = new Button(mc, this).setText("D").setTooltips("Move inventory down")
-                .addButtonEvent(widget -> moveDown());
-        bottomButton = new Button(mc, this).setText("B").setTooltips("Move inventory to the bottom")
-                .addButtonEvent(widget -> moveBottom());
-        removeButton = new Button(mc, this).setText("R").setTooltips("Remove inventory from list")
-                .addButtonEvent(widget -> removeFromList());
+        upButton = new Button(mc, this).setChannel("up").setText("U").setTooltips("Move inventory up");
+        topButton = new Button(mc, this).setChannel("top").setText("T").setTooltips("Move inventory to the top");
+        downButton = new Button(mc, this).setChannel("down").setText("D").setTooltips("Move inventory down");
+        bottomButton = new Button(mc, this).setChannel("bottom").setText("B").setTooltips("Move inventory to the bottom");
+        removeButton = new Button(mc, this).setChannel("remove").setText("R").setTooltips("Remove inventory from list");
 
         Panel energyPanel = new Panel(mc, this).setLayout(new VerticalLayout().setVerticalMargin(0).setSpacing(1))
                 .setDesiredWidth(10);
@@ -131,11 +131,10 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         itemPanel = makeItemPanel();
 
         Button scanButton = new Button(mc, this)
+                .setChannel("scan")
                 .setText("Scan")
                 .setDesiredWidth(50)
-                .setDesiredHeight(14)
-                .addButtonEvent(parent -> RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID,
-                        new InventoriesInfoPacketServer(tileEntity.getDimension(), tileEntity.getStorageScannerPos(), true))));
+                .setDesiredHeight(14);
         if (RFTools.instance.xnet) {
             if (StorageScannerConfiguration.xnetRequired) {
                 scanButton
@@ -202,6 +201,13 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
         window.bind(RFToolsMessages.INSTANCE, "export", tileEntity, StorageScannerTileEntity.VALUE_EXPORT.getName());
         window.bind(RFToolsMessages.INSTANCE, "radius", tileEntity, StorageScannerTileEntity.VALUE_RADIUS.getName());
+        window.event("up", (source, params) -> moveUp());
+        window.event("top", (source, params) -> moveTop());
+        window.event("down", (source, params) -> moveDown());
+        window.event("bottom", (source, params) -> moveBottom());
+        window.event("remove", (source, params) -> removeFromList());
+        window.event("scan", (source, params) -> RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID,
+                new InventoriesInfoPacketServer(tileEntity.getDimension(), tileEntity.getStorageScannerPos(), true))));
 
         Keyboard.enableRepeatEvents(true);
 

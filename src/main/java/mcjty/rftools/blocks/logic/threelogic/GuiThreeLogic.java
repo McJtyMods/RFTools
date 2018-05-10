@@ -28,7 +28,7 @@ public class GuiThreeLogic extends GenericGuiContainer<ThreeLogicTileEntity> {
     }
 
     private void setupEvents() {
-        window.addChannelEvent("choice", (source, params) -> {
+        window.event("choice", (source, params) -> {
             String name = source.getName();
             int i = Integer.parseInt(name.substring(name.length()-1));
             String current = params.get(ChoiceLabel.PARAM_CHOICE);

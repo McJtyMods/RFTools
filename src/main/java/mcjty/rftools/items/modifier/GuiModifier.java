@@ -6,6 +6,9 @@ import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
+import mcjty.lib.gui.widgets.Button;
+import mcjty.lib.gui.widgets.Label;
+import mcjty.lib.gui.widgets.Panel;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.network.RFToolsMessages;
@@ -15,7 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 
@@ -72,24 +75,20 @@ public class GuiModifier extends GenericGuiContainer<GenericTileEntity> {
         op.setLayoutHint(110, 9, 40, 14);
         toplevel.addChild(op);
 
-        add = new Button(mc, this).setText("Add");
+        add = new Button(mc, this).setChannel("add").setText("Add");
         add.setLayoutHint(10, 30, 40, 13);
-        add.addButtonEvent(parent -> addOp());
         toplevel.addChild(add);
 
-        del = new Button(mc, this).setText("Del");
+        del = new Button(mc, this).setChannel("del").setText("Del");
         del.setLayoutHint(52, 30, 40, 13);
-        del.addButtonEvent(parent -> delOp());
         toplevel.addChild(del);
 
-        up = new Button(mc, this).setText("Up");
+        up = new Button(mc, this).setChannel("up").setText("Up");
         up.setLayoutHint(110, 30, 30, 13);
-        up.addButtonEvent(parent -> upOp());
         toplevel.addChild(up);
 
-        down = new Button(mc, this).setText("Down");
+        down = new Button(mc, this).setChannel("down").setText("Down");
         down.setLayoutHint(142, 30, 30, 13);
-        down.addButtonEvent(parent -> downOp());
         toplevel.addChild(down);
 
         list = new WidgetList(mc, this);
@@ -102,6 +101,11 @@ public class GuiModifier extends GenericGuiContainer<GenericTileEntity> {
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
+
+        window.event("add", (source, params) -> addOp());
+        window.event("del", (source, params) -> delOp());
+        window.event("up", (source, params) -> upOp());
+        window.event("down", (source, params) -> downOp());
     }
 
     private void refreshList() {

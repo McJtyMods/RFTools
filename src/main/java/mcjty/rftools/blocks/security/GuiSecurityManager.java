@@ -60,10 +60,10 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
             .setEnabledFlags("card");
         Widget addButton = new Button(mc, this).setText("Add").setDesiredHeight(14).setDesiredWidth(34).setTooltips("Add a player to the access list")
                 .setEnabledFlags("card")
-                .addButtonEvent(parent -> addPlayer()).setName("addbutton");
+                .setName("addbutton").setChannel("addbutton");
         Widget delButton = new Button(mc, this).setText("Del").setDesiredHeight(14).setDesiredWidth(34).setTooltips("Remove the selected player", "from the access list")
                 .setEnabledFlags("card")
-                .addButtonEvent(parent -> delPlayer()).setName("delbutton");
+                .setName("delbutton").setChannel("delbutton");
         Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChildren(nameField, addButton, delButton).setDesiredHeight(16)
                 .setLayoutHint(new PositionalLayout.PositionalHint(72, 100, SECURITYMANAGER_WIDTH - 76, 14));
 
@@ -82,6 +82,9 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
         window = new Window(this, toplevel);
         Keyboard.enableRepeatEvents(true);
+
+        window.event("addbutton", (source, params) -> addPlayer());
+        window.event("delbutton", (source, params) -> delPlayer());
 
 
 //        window = new Window(this, new ResourceLocation(RFTools.MODID, "gui/security_manager.json"));

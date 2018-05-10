@@ -8,15 +8,20 @@ import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
+import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.*;
+import mcjty.lib.gui.widgets.Label;
+import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.PacketGetPlayers;
 import mcjty.rftools.network.RFToolsMessages;
 import org.lwjgl.input.Keyboard;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 import static mcjty.rftools.blocks.teleporter.MatterTransmitterTileEntity.PARAM_PLAYER;
 
@@ -85,10 +90,8 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
                 .setFilledBackground(0xff9e9e9e);
 
         nameField = new TextField(mc, this);
-        addButton = new Button(mc, this).setText("Add").setDesiredHeight(13).setDesiredWidth(34).setTooltips("Add a player to the access list").
-            addButtonEvent(parent -> addPlayer());
-        delButton = new Button(mc, this).setText("Del").setDesiredHeight(13).setDesiredWidth(34).setTooltips("Remove the selected player", "from the access list").
-            addButtonEvent(parent -> delPlayer());
+        addButton = new Button(mc, this).setChannel("addplayer").setText("Add").setDesiredHeight(13).setDesiredWidth(34).setTooltips("Add a player to the access list");
+        delButton = new Button(mc, this).setChannel("delplayer").setText("Del").setDesiredHeight(13).setDesiredWidth(34).setTooltips("Remove the selected player", "from the access list");
         Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(nameField).addChild(addButton).addChild(delButton).setDesiredHeight(16);
 
         Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setHorizontalMargin(3).setVerticalMargin(3).setSpacing(1)).
@@ -104,6 +107,8 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
         window.bind(RFToolsMessages.INSTANCE, "name", tileEntity, MatterTransmitterTileEntity.VALUE_NAME.getName());
         window.bind(RFToolsMessages.INSTANCE, "private", tileEntity, MatterTransmitterTileEntity.VALUE_PRIVATE.getName());
         window.bind(RFToolsMessages.INSTANCE, "beam", tileEntity, MatterTransmitterTileEntity.VALUE_BEAM.getName());
+        window.event("addplayer", (source, params) -> addPlayer());
+        window.event("delplayer", (source, params) -> delPlayer());
     }
 
     private void addPlayer() {

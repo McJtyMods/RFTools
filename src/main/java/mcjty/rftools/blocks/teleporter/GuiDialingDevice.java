@@ -8,7 +8,10 @@ import mcjty.lib.gui.events.DefaultSelectionEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
+import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.*;
+import mcjty.lib.gui.widgets.Label;
+import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.network.PacketRequestIntegerFromServer;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.BlockPosTools;
@@ -20,7 +23,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.input.Keyboard;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,16 +84,13 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         Panel transmitterPanel = setupTransmitterPanel();
         Panel receiverPanel = setupReceiverPanel();
 
-        dialButton = new Button(mc, this).setText("Dial").setTooltips("Start a connection between", "the selected transmitter", "and the selected receiver").
-                setDesiredHeight(14).setDesiredWidth(65).
-                addButtonEvent(parent -> dial(false));
-        dialOnceButton = new Button(mc, this).setText("Dial Once").setTooltips("Dial a connection for a", "single teleport").
-                setDesiredHeight(14).setDesiredWidth(65).
-                addButtonEvent(parent -> dial(true));
-        interruptButton = new Button(mc, this).setText("Interrupt").setTooltips("Interrupt a connection", "for the selected transmitter").
-                setDesiredHeight(14).setDesiredWidth(65).
-                addButtonEvent(parent -> interruptDial());
-        favoriteButton = new ImageChoiceLabel(mc, this).addChoiceEvent((parent, newChoice) -> changeShowFavorite()).setDesiredWidth(10).setDesiredHeight(10);
+        dialButton = new Button(mc, this).setChannel("dial").setText("Dial").setTooltips("Start a connection between", "the selected transmitter", "and the selected receiver").
+                setDesiredHeight(14).setDesiredWidth(65);
+        dialOnceButton = new Button(mc, this).setChannel("dialonce").setText("Dial Once").setTooltips("Dial a connection for a", "single teleport").
+                setDesiredHeight(14).setDesiredWidth(65);
+        interruptButton = new Button(mc, this).setChannel("interrupt").setText("Interrupt").setTooltips("Interrupt a connection", "for the selected transmitter").
+                setDesiredHeight(14).setDesiredWidth(65);
+        favoriteButton = new ImageChoiceLabel(mc, this).setChannel("favorite").setDesiredWidth(10).setDesiredHeight(10);
         favoriteButton.addChoice("No", "Unfavorited receiver", guielements, 131, 19);
         favoriteButton.addChoice("Yes", "Favorited receiver", guielements, 115, 19);
         favoriteButton.setCurrentChoice(tileEntity.isShowOnlyFavorites() ? 1 : 0);
@@ -99,10 +99,9 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
                 addChild(favoriteButton).setDesiredHeight(16);
 
         analyzerAvailable =  DialingDeviceTileEntity.isDestinationAnalyzerAvailable(mc.world, tileEntity.getPos());
-        statusButton = new Button(mc, this).setText("Check").
+        statusButton = new Button(mc, this).setChannel("check").setText("Check").
                 setDesiredHeight(14).setDesiredWidth(65).
-                setEnabled(analyzerAvailable).
-                addButtonEvent(parent -> checkStatus());
+                setEnabled(analyzerAvailable);
         if (analyzerAvailable) {
             statusButton.setTooltips("Check the status of", "the selected receiver");
         } else {
@@ -117,6 +116,13 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
                 addChildren(energyBar, transmitterPanel, receiverPanel, buttonPanel, statusPanel);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, DIALER_WIDTH, DIALER_HEIGHT));
         window = new mcjty.lib.gui.Window(this, toplevel);
+
+        window.event("dial", (source, params) -> dial(false));
+        window.event("dialonce", (source, params) -> dial(true));
+        window.event("interrupt", (source, params) -> interruptDial());
+        window.event("favorite", (source, params) -> changeShowFavorite());
+        window.event("check", (source, params) -> checkStatus());
+
         Keyboard.enableRepeatEvents(true);
 
         fromServer_receivers = null;

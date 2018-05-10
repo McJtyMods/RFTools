@@ -97,16 +97,13 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
         operationLabels[0].setEnabled(false);
 
         for (int i = 0; i < ComposerTileEntity.SLOT_COUNT ; i++) {
-            configButton[i] = new Button(mc, this).setText("?");
+            configButton[i] = new Button(mc, this).setText("?").setChannel("config" + i);
             configButton[i].setLayoutHint(new PositionalLayout.PositionalHint(3, 7 + i*18+2, 13, 12));
-            int finalI = i;
-            configButton[i].addButtonEvent(parent -> openCardGui(finalI));
             configButton[i].setTooltips("Click to open the card gui");
             toplevel.addChild(configButton[i]);
         }
-        outConfigButton = new Button(mc, this).setText("?");
+        outConfigButton = new Button(mc, this).setText("?").setChannel("outconfig");
         outConfigButton.setLayoutHint(new PositionalLayout.PositionalHint(3, 200+2, 13, 12));
-        outConfigButton.addButtonEvent(parent -> openCardGui(-1));
         outConfigButton.setTooltips("Click to open the card gui");
         toplevel.addChild(outConfigButton);
 
@@ -146,6 +143,13 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
         sideWindow = new Window(this, sidePanel);
 
         window = new Window(this, toplevel);
+
+        for (int i = 0; i < ComposerTileEntity.SLOT_COUNT ; i++) {
+            int finalI1 = i;
+            window.event("config" + i, (source, params) -> openCardGui(finalI1));
+        }
+        window.event("outconfig", (source, params) -> openCardGui(-1));
+
     }
 
 

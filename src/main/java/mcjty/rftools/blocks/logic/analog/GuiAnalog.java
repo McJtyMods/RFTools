@@ -53,7 +53,7 @@ public class GuiAnalog extends GenericGuiContainer<AnalogTileEntity> {
     }
 
     private void setupEvents() {
-        window.addChannelEvent("update", (source, params) -> updateAnalog());
+        window.event("update", (source, params) -> updateAnalog());
     }
 
     private static double safeDouble(String f) {

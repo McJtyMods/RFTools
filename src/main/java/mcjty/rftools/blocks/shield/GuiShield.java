@@ -9,7 +9,11 @@ import mcjty.lib.gui.events.DefaultSelectionEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
+import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.*;
+import mcjty.lib.gui.widgets.Label;
+import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
@@ -19,7 +23,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,8 +116,8 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
                 .setLayoutHint(12, 10, 154, 124).addChildren(filterList, filterSlider)
                 .setFilledBackground(0xff9e9e9e);
 
-        Button applyCamo = new Button(mc, this).setText("Set").setTooltips("Set the camouflage block").
-                setLayoutHint(51, 142, 28, 16).addButtonEvent(parent -> applyCamoToShield());
+        Button applyCamo = new Button(mc, this).setChannel("camo").setText("Set").setTooltips("Set the camouflage block").
+                setLayoutHint(51, 142, 28, 16);
 //        applyCamo.setEnabled(false);
 //        applyCamo.setTooltips("Not implemented yet");   // @todo
         colorSelector = new ColorSelector(mc, this)
@@ -123,14 +127,10 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
 
         player = new TextField(mc, this).setTooltips("Optional player name").setLayoutHint(170, 44, 80, 14);
 
-        addFilter = new Button(mc, this).setText("Add").setTooltips("Add selected filter").setLayoutHint(4, 6, 36, 14).
-                addButtonEvent(parent -> addNewFilter());
-        delFilter = new Button(mc, this).setText("Del").setTooltips("Delete selected filter").setLayoutHint(39, 6, 36, 14).
-                addButtonEvent(parent -> removeSelectedFilter());
-        upFilter = new Button(mc, this).setText("Up").setTooltips("Move filter up").setLayoutHint(4, 22, 36, 14).
-                addButtonEvent(parent -> moveFilterUp());
-        downFilter = new Button(mc, this).setText("Down").setTooltips("Move filter down").setLayoutHint(39, 22, 36, 14).
-                addButtonEvent(parent -> moveFilterDown());
+        addFilter = new Button(mc, this).setChannel("addfilter").setText("Add").setTooltips("Add selected filter").setLayoutHint(4, 6, 36, 14);
+        delFilter = new Button(mc, this).setChannel("delfilter").setText("Del").setTooltips("Delete selected filter").setLayoutHint(39, 6, 36, 14);
+        upFilter = new Button(mc, this).setChannel("upfilter").setText("Up").setTooltips("Move filter up").setLayoutHint(4, 22, 36, 14);
+        downFilter = new Button(mc, this).setChannel("downfilter").setText("Down").setTooltips("Move filter down").setLayoutHint(39, 22, 36, 14);
 
         Panel controlPanel = new Panel(mc, this).setLayout(new PositionalLayout()).setLayoutHint(170, 58, 80, 43)
                 .addChildren(addFilter, delFilter, upFilter, downFilter)
@@ -154,6 +154,11 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         window.bind(RFToolsMessages.INSTANCE, "visibility", tileEntity, ShieldTEBase.VALUE_SHIELDVISMODE.getName());
         window.bind(RFToolsMessages.INSTANCE, "damage", tileEntity, ShieldTEBase.VALUE_DAMAGEMODE.getName());
         window.bind(RFToolsMessages.INSTANCE, "color", tileEntity, ShieldTEBase.VALUE_COLOR.getName());
+        window.event("camo", (source, params) -> applyCamoToShield());
+        window.event("addfilter", (source, params) -> addNewFilter());
+        window.event("delfilter", (source, params) -> removeSelectedFilter());
+        window.event("upfilter", (source, params) -> moveFilterUp());
+        window.event("downfilter", (source, params) -> moveFilterDown());
 
         listDirty = 0;
         requestFilters();

@@ -63,12 +63,12 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
     }
 
     private void setupEvents() {
-        window.addChannelEvent("grid", (source, params) -> {
+        window.event("grid", (source, params) -> {
             int bit = Integer.parseInt(source.getName().substring("grid".length()));
             changeBit(bit, params.get(ImageChoiceLabel.PARAM_CHOICE));
         });
-        window.addChannelEvent("flip", (source, params) -> flipGrid());
-        window.addChannelEvent("clear", (source, params) -> fillGrid());
+        window.event("flip", (source, params) -> flipGrid());
+        window.event("clear", (source, params) -> fillGrid());
     }
 
     private void flipGrid() {

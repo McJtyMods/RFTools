@@ -61,8 +61,8 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         }
 //        sendChangeToServer(-1, null, null, false, CraftingRecipe.CraftMode.EXT);
 
-        window.addChannelEvent("apply", (source, params) -> applyRecipe());
-        window.addChannelEvent("select", (source, params) -> selectRecipe());
+        window.event("apply", (source, params) -> applyRecipe());
+        window.event("select", (source, params) -> selectRecipe());
 
         tileEntity.requestRfFromServer(RFTools.MODID);
     }

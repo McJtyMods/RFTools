@@ -131,8 +131,8 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
         cycleButton = new Button(mc, this)
                 .setName("cycle")
-                .setText("C").setTooltips("Cycle to the next storage module").setLayoutHint(new PositionalLayout.PositionalHint(5, ySize - 23, 16, 16))
-                .addButtonEvent(parent -> cycleStorage());
+                .setChannel("cycle")
+                .setText("C").setTooltips("Cycle to the next storage module").setLayoutHint(new PositionalLayout.PositionalHint(5, ySize - 23, 16, 16));
 
         Panel toplevel = new Panel(mc, this).setLayout(new PositionalLayout()).addChild(itemList).addChild(slider)
                 .addChild(modePanel)
@@ -152,6 +152,9 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
+
+        window.event("cycle", (source, params) -> cycleStorage());
+        window.event("compact", (source, params) -> compact());
 
         if (ModularStorageConfiguration.autofocusSearch) {
             window.setTextFocus(filter);
@@ -207,8 +210,8 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
 
         compactButton = new Button(mc, this)
                 .setName("compact")
-                .setLayoutHint(4, 39, 12, 12).setText("z").setTooltips("Compact equal stacks")
-                .addButtonEvent(parent -> compact());
+                .setChannel("compact")
+                .setLayoutHint(4, 39, 12, 12).setText("z").setTooltips("Compact equal stacks");
 
         if (tileEntity != null) {
             filter.setText(ModularStorageConfiguration.clearSearchOnOpen ? "" : tileEntity.getFilter());
