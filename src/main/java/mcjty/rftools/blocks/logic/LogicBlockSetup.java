@@ -15,7 +15,8 @@ import mcjty.rftools.blocks.logic.invchecker.InvCheckerTileEntity;
 import mcjty.rftools.blocks.logic.sensor.GuiSensor;
 import mcjty.rftools.blocks.logic.sensor.SensorTileEntity;
 import mcjty.rftools.blocks.logic.sequencer.SequencerBlock;
-import mcjty.rftools.blocks.logic.threelogic.ThreeLogicBlock;
+import mcjty.rftools.blocks.logic.threelogic.GuiThreeLogic;
+import mcjty.rftools.blocks.logic.threelogic.ThreeLogicTileEntity;
 import mcjty.rftools.blocks.logic.timer.GuiTimer;
 import mcjty.rftools.blocks.logic.timer.TimerTileEntity;
 import mcjty.rftools.blocks.logic.wire.WireTileEntity;
@@ -29,8 +30,8 @@ public class LogicBlockSetup {
     public static CounterBlock counterBlock;
     public static RedstoneTransmitterBlock redstoneTransmitterBlock;
     public static RedstoneReceiverBlock redstoneReceiverBlock;
-    public static ThreeLogicBlock threeLogicBlock;
 
+    public static GenericBlock<ThreeLogicTileEntity, GenericContainer> threeLogicBlock;
     public static GenericBlock<InvCheckerTileEntity, GenericContainer> invCheckerBlock;
     public static GenericBlock<SensorTileEntity, GenericContainer> sensorBlock;
     public static GenericBlock<AnalogTileEntity, GenericContainer> analogBlock;
@@ -43,8 +44,15 @@ public class LogicBlockSetup {
         counterBlock = new CounterBlock();
         redstoneTransmitterBlock = new RedstoneTransmitterBlock();
         redstoneReceiverBlock = new RedstoneReceiverBlock();
-        threeLogicBlock = new ThreeLogicBlock();
 
+        threeLogicBlock = ModBlocks.logicFactory.<ThreeLogicTileEntity> builder("logic_block")
+                .tileEntityClass(ThreeLogicTileEntity.class)
+                .guiId(RFTools.GUI_THREE_LOGIC)
+                .emptyContainer()
+                .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
+                .info("message.rftools.shiftmessage")
+                .infoExtended("message.rftools.threelogic")
+                .build();
         invCheckerBlock = ModBlocks.logicFactory.<InvCheckerTileEntity> builder("invchecker_block")
                 .tileEntityClass(InvCheckerTileEntity.class)
                 .guiId(RFTools.GUI_INVCHECKER)
@@ -106,7 +114,9 @@ public class LogicBlockSetup {
         counterBlock.initModel();
         redstoneTransmitterBlock.initModel();
         redstoneReceiverBlock.initModel();
+
         threeLogicBlock.initModel();
+        threeLogicBlock.setGuiClass(GuiThreeLogic.class);
 
         invCheckerBlock.initModel();
         invCheckerBlock.setGuiClass(GuiInvChecker.class);

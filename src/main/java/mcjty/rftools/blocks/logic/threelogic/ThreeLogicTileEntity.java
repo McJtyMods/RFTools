@@ -1,12 +1,19 @@
 package mcjty.rftools.blocks.logic.threelogic;
 
 import mcjty.lib.tileentity.LogicTileEntity;
-import mcjty.rftools.blocks.logic.LogicBlockSetup;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
+import mcjty.lib.varia.LogicFacing;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class ThreeLogicTileEntity extends LogicTileEntity {
 
@@ -76,9 +83,56 @@ public class ThreeLogicTileEntity extends LogicTileEntity {
         if (CMD_SETSTATE.equals(command)) {
             logicTable[params.get(PARAM_INDEX)] = params.get(PARAM_STATE);
             markDirtyClient();
-            LogicBlockSetup.threeLogicBlock.checkRedstone(world, pos);
+            checkRedstone(world, pos);
             return true;
         }
         return false;
+    }
+
+    private static Set<BlockPos> loopDetector = new HashSet<>();
+
+
+    @Override
+    public void checkRedstone(World world, BlockPos pos) {
+        IBlockState state = world.getBlockState(pos);
+        if (loopDetector.add(pos)) {
+            try {
+                LogicFacing facing = getFacing(state);
+                EnumFacing downSide = facing.getSide();
+                EnumFacing inputSide = facing.getInputSide();
+                EnumFacing leftSide = rotateLeft(downSide, inputSide);
+                EnumFacing rightSide = rotateRight(downSide, inputSide);
+
+                int powered1 = getInputStrength(world, pos, leftSide) > 0 ? 1 : 0;
+                int powered2 = getInputStrength(world, pos, inputSide) > 0 ? 2 : 0;
+                int powered3 = getInputStrength(world, pos, rightSide) > 0 ? 4 : 0;
+                setPowerInput(powered1 + powered2 + powered3);
+                checkRedstone();
+            } finally {
+                loopDetector.remove(pos);
+            }
+        }
+    }
+
+    public static EnumFacing rotateLeft(EnumFacing downSide, EnumFacing inputSide) {
+        switch (downSide) {
+            case DOWN:
+                return inputSide.rotateY();
+            case UP:
+                return inputSide.rotateYCCW();
+            case NORTH:
+                return inputSide.rotateAround(EnumFacing.Axis.Z);
+            case SOUTH:
+                return inputSide.getOpposite().rotateAround(EnumFacing.Axis.Z);
+            case WEST:
+                return inputSide.rotateAround(EnumFacing.Axis.X);
+            case EAST:
+                return inputSide.getOpposite().rotateAround(EnumFacing.Axis.X);
+        }
+        return inputSide;
+    }
+
+    public static EnumFacing rotateRight(EnumFacing downSide, EnumFacing inputSide) {
+        return rotateLeft(downSide.getOpposite(), inputSide);
     }
 }

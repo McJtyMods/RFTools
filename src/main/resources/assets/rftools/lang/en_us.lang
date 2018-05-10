@@ -310,3 +310,6 @@ message.rftools.invchecker=\
     @fThis logic block gives a redstone signal\n\
     @fif the amount of items in an inventory slot.\n\
     @fexceeds a certain value
+message.rftools.threelogic=\
+    @fThis logic block can do various logical\n\
+    @foperations on three inputs.

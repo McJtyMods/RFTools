@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.logic.threelogic;
 
 import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.widgets.ChoiceLabel;
@@ -14,7 +15,7 @@ import static mcjty.rftools.blocks.logic.threelogic.ThreeLogicTileEntity.PARAM_S
 
 public class GuiThreeLogic extends GenericGuiContainer<ThreeLogicTileEntity> {
 
-    public GuiThreeLogic(ThreeLogicTileEntity threeLogicTileEntity, EmptyContainer container) {
+    public GuiThreeLogic(ThreeLogicTileEntity threeLogicTileEntity, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, threeLogicTileEntity, container, RFTools.GUI_MANUAL_MAIN, "threelogic");
     }
 
