@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
-import mcjty.lib.gui.RenderHelper;
+import mcjty.lib.client.RenderHelper;
 import mcjty.rftools.api.screens.*;
 import mcjty.rftools.api.screens.data.IModuleDataBoolean;
 import mcjty.rftools.blocks.screens.modulesclient.helper.ScreenTextHelper;

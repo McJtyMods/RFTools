@@ -1,6 +1,6 @@
 package mcjty.rftools.hud;
 
-import mcjty.lib.gui.HudRenderHelper;
+import mcjty.lib.client.HudRenderHelper;
 import mcjty.rftools.network.PacketGetHudLog;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.EnumFacing;

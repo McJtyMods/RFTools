@@ -2,7 +2,7 @@ package mcjty.rftools.items.builder;
 
 import mcjty.lib.base.StyleConfig;
 import mcjty.lib.gui.GuiItemScreen;
-import mcjty.lib.gui.RenderHelper;
+import mcjty.lib.client.RenderHelper;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;

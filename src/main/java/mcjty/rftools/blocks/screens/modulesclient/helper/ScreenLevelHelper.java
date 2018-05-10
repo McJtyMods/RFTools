@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.screens.modulesclient.helper;
 
-import mcjty.lib.gui.RenderHelper;
+import mcjty.lib.client.RenderHelper;
 import mcjty.rftools.api.screens.FormatStyle;
 import mcjty.rftools.api.screens.ILevelRenderHelper;
 import mcjty.rftools.api.screens.ModuleRenderInfo;

@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.environmental;
 
-import mcjty.lib.gui.RenderHelper;
+import mcjty.lib.client.RenderHelper;
 import mcjty.rftools.RFTools;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;

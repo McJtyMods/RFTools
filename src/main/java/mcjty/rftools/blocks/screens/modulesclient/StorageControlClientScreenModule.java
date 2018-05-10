@@ -53,8 +53,8 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
                         int x = xx * 40;
                         boolean hilighted = renderInfo.hitx >= x+8 && renderInfo.hitx <= x + 38 && renderInfo.hity >= y-7 && renderInfo.hity <= y + 22;
                         if (hilighted) {
-//                            mcjty.lib.gui.RenderHelper.drawBeveledBox(5 + xx * 30, 10 + yy * 24 - 4, 29 + xx * 30, 10 + yy * 24 + 20, 0xffffffff, 0xffffffff, 0xff333333);
-                            mcjty.lib.gui.RenderHelper.drawFlatButtonBox((int) (5 + xx * 30.5f), 10 + yy * 24 - 4, (int) (29 + xx * 30.5f), 10 + yy * 24 + 20, 0xffffffff, 0xff333333, 0xffffffff);
+//                            mcjty.lib.client.RenderHelper.drawBeveledBox(5 + xx * 30, 10 + yy * 24 - 4, 29 + xx * 30, 10 + yy * 24 + 20, 0xffffffff, 0xffffffff, 0xff333333);
+                            mcjty.lib.client.RenderHelper.drawFlatButtonBox((int) (5 + xx * 30.5f), 10 + yy * 24 - 4, (int) (29 + xx * 30.5f), 10 + yy * 24 + 20, 0xffffffff, 0xff333333, 0xffffffff);
                         }
                     }
                     i++;

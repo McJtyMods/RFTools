@@ -2,8 +2,8 @@ package mcjty.rftools;
 
 import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.api.smartwrench.SmartWrenchMode;
-import mcjty.lib.gui.BlockOutlineRenderer;
-import mcjty.lib.gui.HudRenderHelper;
+import mcjty.lib.client.BlockOutlineRenderer;
+import mcjty.lib.client.HudRenderHelper;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorConfiguration;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorTileEntity;
@@ -125,7 +125,7 @@ public class RenderWorldLastEventHandler {
                 float mx = c.getX();
                 float my = c.getY();
                 float mz = c.getZ();
-                mcjty.lib.gui.RenderHelper.renderHighLightedBlocksOutline(buffer, mx, my, mz, 0.0f, 1.0f, 1.0f, 1.0f);
+                mcjty.lib.client.RenderHelper.renderHighLightedBlocksOutline(buffer, mx, my, mz, 0.0f, 1.0f, 1.0f, 1.0f);
             }
 
             tessellator.draw();

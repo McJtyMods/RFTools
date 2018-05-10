@@ -1,7 +1,7 @@
 package mcjty.rftools;
 
 import mcjty.lib.McJtyLib;
-import mcjty.lib.gui.RenderHelper;
+import mcjty.lib.client.RenderHelper;
 import mcjty.lib.preferences.PreferencesProperties;
 import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
 import net.minecraft.client.Minecraft;
