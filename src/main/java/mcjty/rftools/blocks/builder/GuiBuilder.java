@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.builder;
 
 import mcjty.lib.container.GenericContainer;
-import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.ChoiceLabel;

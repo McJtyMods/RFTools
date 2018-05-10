@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.endergen;
 
 import mcjty.lib.container.GenericContainer;
-import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;

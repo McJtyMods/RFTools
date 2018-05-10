@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.logic.timer;
 
 import mcjty.lib.container.GenericContainer;
-import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.gui.widgets.ToggleButton;

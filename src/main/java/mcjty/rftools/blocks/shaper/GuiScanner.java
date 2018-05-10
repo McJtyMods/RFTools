@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.shaper;
 
 import mcjty.lib.container.GenericContainer;
-import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.gui.Window;

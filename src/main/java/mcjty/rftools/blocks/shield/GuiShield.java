@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.shield;
 
 import mcjty.lib.base.StyleConfig;
-import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.gui.Window;

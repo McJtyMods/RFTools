@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.GenericContainer;
-import mcjty.lib.container.GenericGuiContainer;
+import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.container.GhostOutputSlot;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
