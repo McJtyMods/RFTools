@@ -47,7 +47,6 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
         init();
         setBlockUnbreakable();
         setResistance(6000000.0F);
-        setCreativeTab(RFTools.tabRfTools);
         McJtyRegister.registerLater(this, RFTools.instance, ItemBlock.class);
         initTE();
     }
