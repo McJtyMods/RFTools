@@ -483,6 +483,10 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             panel.addChild(new ImageLabel(mc, this).setImage(guielements, destination.isValid() ? 80 : 96, 0).setDesiredWidth(16));
             transmitterList.addChild(panel);
         }
+
+        if (transmitterList.getChildCount() == 1) {
+            transmitterList.setSelected(0);
+        }
     }
 
 
