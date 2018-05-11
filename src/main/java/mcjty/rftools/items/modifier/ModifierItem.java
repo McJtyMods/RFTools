@@ -19,6 +19,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -98,12 +99,14 @@ public class ModifierItem extends GenericRFToolsItem {
         stack.getTagCompound().setTag("ops", tagList);
     }
 
-    public static ItemStackList getItemStacks(NBTTagCompound tagCompound) {
-        NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+    public static ItemStackList getItemStacks(@Nullable NBTTagCompound tagCompound) {
         ItemStackList stacks = ItemStackList.create(ModifierContainer.COUNT_SLOTS);
-        for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
-            NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            stacks.set(i, new ItemStack(nbtTagCompound));
+        if (tagCompound != null) {
+            NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < bufferTagList.tagCount(); i++) {
+                NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
+                stacks.set(i, new ItemStack(nbtTagCompound));
+            }
         }
         return stacks;
     }
