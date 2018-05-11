@@ -22,8 +22,8 @@ public class ShieldContainer extends GenericContainer {
     public static final ContainerFactory factory = new ContainerFactory() {
         @Override
         protected void setup() {
-            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), CONTAINER_INVENTORY, SLOT_BUFFER, 31, 142, 1, 18, 1, 18);
-            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(BuilderSetup.shapeCardItem)), CONTAINER_INVENTORY, SLOT_SHAPE, 31, 200, 1, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_INPUT), CONTAINER_INVENTORY, SLOT_BUFFER, 26, 142, 1, 18, 1, 18);
+            addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(BuilderSetup.shapeCardItem)), CONTAINER_INVENTORY, SLOT_SHAPE, 26, 200, 1, 18, 1, 18);
             addSlotBox(new SlotDefinition(SlotType.SLOT_SPECIFICITEM, new ItemStack(ModItems.dimensionalShardItem)), CONTAINER_INVENTORY, SLOT_SHARD, 229, 118, 1, 18, 1, 18);
             layoutPlayerInventorySlots(85, 142);
         }

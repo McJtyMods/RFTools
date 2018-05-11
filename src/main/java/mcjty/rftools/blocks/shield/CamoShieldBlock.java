@@ -27,6 +27,10 @@ public class CamoShieldBlock extends AbstractShieldBlock {
     public static final String CAMO = "camo";
     public static final CamoProperty CAMOID = new CamoProperty("camoid");
 
+    public CamoShieldBlock(String registryName, String unlocName, boolean opaque) {
+        super(registryName, unlocName, opaque);
+    }
+
     @Override
     @SideOnly(Side.CLIENT)
     public void initModel() {
@@ -40,31 +44,9 @@ public class CamoShieldBlock extends AbstractShieldBlock {
         ModelLoader.setCustomStateMapper(this, ignoreState);
     }
 
-
-    @Override
-    protected void init() {
-        setRegistryName("camo_shield_block");
-        setUnlocalizedName("rftools.camo_shield_block");
-    }
-
-    @Override
-    protected void initTE() {
-//        GameRegistry.registerTileEntity(TickShieldSolidBlockTileEntity.class, RFTools.MODID + "_" + getRegistryName());
-    }
-
     @Override
     public TileEntity createNewTileEntity(World world, int metadata) {
         return new TickShieldSolidBlockTileEntity();
-    }
-
-    @Override
-    public boolean isBlockNormalCube(IBlockState state) {
-        return false;
-    }
-
-    @Override
-    public boolean isOpaqueCube(IBlockState state) {
-        return false;
     }
 
     @Override
@@ -86,7 +68,7 @@ public class CamoShieldBlock extends AbstractShieldBlock {
     @Override
     public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
         Block block = world.getBlockState(pos.offset(side)).getBlock();
-        if (block == ShieldSetup.camoShieldBlock || block == ShieldSetup.noTickCamoShieldBlock) {
+        if (block instanceof CamoShieldBlock) {
             return false;
         }
         return true;

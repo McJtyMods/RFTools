@@ -78,6 +78,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     public static final Key<Integer> VALUE_SHIELDVISMODE = new Key<>("shieldVisMode", Type.INTEGER);
     public static final Key<Integer> VALUE_DAMAGEMODE = new Key<>("damageMode", Type.INTEGER);
     public static final Key<Integer> VALUE_COLOR = new Key<>("color", Type.INTEGER);
+    public static final Key<Boolean> VALUE_LIGHT = new Key<>("light", Type.BOOLEAN);
 
     @Override
     public IValue[] getValues() {
@@ -86,6 +87,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
                 new DefaultValue<>(VALUE_SHIELDVISMODE, te -> ((ShieldTEBase) te).getShieldRenderingMode().ordinal(), (te, value) -> ((ShieldTEBase) te).setShieldRenderingMode(ShieldRenderingMode.values()[value])),
                 new DefaultValue<>(VALUE_DAMAGEMODE, te -> ((ShieldTEBase) te).getDamageMode().ordinal(), (te, value) -> ((ShieldTEBase) te).setDamageMode(DamageTypeMode.values()[value])),
                 new DefaultValue<>(VALUE_COLOR, ShieldTEBase::getShieldColor, ShieldTEBase::setShieldColor),
+                new DefaultValue<>(VALUE_LIGHT, ShieldTEBase::isBlockLight, ShieldTEBase::setBlockLight),
         };
     }
 
@@ -104,6 +106,9 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
 
     // Render pass for the camo block.
     private int camoRenderPass = 0;
+
+    // If true light is blocked
+    private boolean blockLight = false;
 
     private int supportedBlocks;
     private float damageFactor = 1.0f;
@@ -267,6 +272,16 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         return filters;
     }
 
+    public boolean isBlockLight() {
+        return blockLight;
+    }
+
+    public void setBlockLight(boolean blockLight) {
+        this.blockLight = blockLight;
+        updateShield();
+        markDirtyClient();
+    }
+
     public int getShieldColor() {
         return shieldColor;
     }
@@ -375,29 +390,29 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         return new int[] { camoId, meta, te };
     }
 
-    private Block calculateShieldBlock(int damageBits, int[] camoId) {
+    private Block calculateShieldBlock(int damageBits, int[] camoId, boolean blockLight) {
         if (!shieldActive || powerTimeout > 0) {
             return Blocks.AIR;
         }
         if (ShieldConfiguration.allowInvisibleShield && ShieldRenderingMode.MODE_INVISIBLE.equals(shieldRenderingMode)) {
             if (damageBits == 0) {
-                return ShieldSetup.noTickInvisibleShieldBlock;
+                return blockLight ? ShieldSetup.noTickInvisibleShieldBlockOpaque : ShieldSetup.noTickInvisibleShieldBlock;
             } else {
-                return ShieldSetup.invisibleShieldBlock;
+                return blockLight ? ShieldSetup.invisibleShieldBlockOpaque : ShieldSetup.invisibleShieldBlock;
             }
         }
 
         if (camoId[0] == -1) {
             if (damageBits == 0) {
-                return ShieldSetup.noTickSolidShieldBlock;
+                return blockLight ? ShieldSetup.noTickSolidShieldBlockOpaque : ShieldSetup.noTickSolidShieldBlock;
             } else {
-                return ShieldSetup.solidShieldBlock;
+                return blockLight ? ShieldSetup.solidShieldBlockOpaque : ShieldSetup.solidShieldBlock;
             }
         } else {
             if (damageBits == 0) {
-                return ShieldSetup.noTickCamoShieldBlock;
+                return blockLight ? ShieldSetup.noTickCamoShieldBlockOpaque : ShieldSetup.noTickCamoShieldBlock;
             } else {
-                return ShieldSetup.camoShieldBlock;
+                return blockLight ? ShieldSetup.camoShieldBlockOpaque : ShieldSetup.camoShieldBlock;
             }
         }
     }
@@ -708,7 +723,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             int[] camoId = calculateCamoId();
             int cddata = calculateShieldCollisionData();
             int damageBits = calculateDamageBits();
-            Block block = calculateShieldBlock(damageBits, camoId);
+            Block block = calculateShieldBlock(damageBits, camoId, blockLight);
 
             for (Map.Entry<BlockPos, IBlockState> entry : templateBlocks.entrySet()) {
                 BlockPos templateBlock = entry.getKey();
@@ -734,7 +749,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         int[] camoId = calculateCamoId();
         int cddata = calculateShieldCollisionData();
         int damageBits = calculateDamageBits();
-        Block block = calculateShieldBlock(damageBits, camoId);
+        Block block = calculateShieldBlock(damageBits, camoId, blockLight);
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
@@ -928,6 +943,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         rsMode = RedstoneMode.values()[(tagCompound.getByte("rsMode"))];
         damageMode = DamageTypeMode.values()[(tagCompound.getByte("damageMode"))];
         camoRenderPass = tagCompound.getInteger("camoRenderPass");
+        blockLight = tagCompound.getBoolean("blocklight");
 
         shieldColor = tagCompound.getInteger("shieldColor");
         if (shieldColor == 0) {
@@ -952,6 +968,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         tagCompound.setByte("damageMode", (byte) damageMode.ordinal());
 
         tagCompound.setInteger("camoRenderPass", camoRenderPass);
+        tagCompound.setBoolean("blocklight", blockLight);
         tagCompound.setInteger("shieldColor", shieldColor);
 
         writeFiltersToNBT(tagCompound);
@@ -1026,6 +1043,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         shieldRenderingMode = ShieldRenderingMode.values()[tagCompound.getInteger("visMode")];
         damageMode = DamageTypeMode.values()[(tagCompound.getByte("damageMode"))];
         camoRenderPass = tagCompound.getInteger("camoRenderPass");
+        blockLight = tagCompound.getBoolean("blocklight");
 
         shieldColor = tagCompound.getInteger("shieldColor");
         if (shieldColor == 0) {
@@ -1090,6 +1108,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         tagCompound.setByte("damageMode", (byte) damageMode.ordinal());
 
         tagCompound.setInteger("camoRenderPass", camoRenderPass);
+        tagCompound.setBoolean("blocklight", blockLight);
         tagCompound.setInteger("shieldColor", shieldColor);
 
         writeFiltersToNBT(tagCompound);

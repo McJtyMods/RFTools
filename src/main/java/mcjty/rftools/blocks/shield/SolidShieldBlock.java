@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.shield;
 
-import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
@@ -14,7 +13,6 @@ import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -23,10 +21,8 @@ public class SolidShieldBlock extends AbstractShieldBlock {
     public static final PropertyInteger ICON_TOPDOWN = PropertyInteger.create("icontopdown", 0, 5);
     public static final PropertyInteger ICON_SIDE = PropertyInteger.create("iconside", 0, 5);
 
-    @Override
-    protected void init() {
-        setRegistryName("solid_shield_block");
-        setUnlocalizedName("rftools.solid_shield_block");
+    public SolidShieldBlock(String registryName, String unlocName, boolean opaque) {
+        super(registryName, unlocName, opaque);
     }
 
     @SideOnly(Side.CLIENT)
@@ -44,23 +40,8 @@ public class SolidShieldBlock extends AbstractShieldBlock {
     }
 
     @Override
-    protected void initTE() {
-        GameRegistry.registerTileEntity(TickShieldSolidBlockTileEntity.class, RFTools.MODID + "_" + getRegistryName());
-    }
-
-    @Override
     public TileEntity createNewTileEntity(World world, int metadata) {
         return new TickShieldSolidBlockTileEntity();
-    }
-
-    @Override
-    public boolean isBlockNormalCube(IBlockState state) {
-        return false;
-    }
-
-    @Override
-    public boolean isOpaqueCube(IBlockState state) {
-        return false;
     }
 
     @Override
@@ -82,7 +63,7 @@ public class SolidShieldBlock extends AbstractShieldBlock {
     @Override
     public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
         Block block = world.getBlockState(pos.offset(side)).getBlock();
-        if (block == ShieldSetup.solidShieldBlock || block == ShieldSetup.noTickSolidShieldBlock) {
+        if (block instanceof SolidShieldBlock) {
             return false;
         }
         return true;

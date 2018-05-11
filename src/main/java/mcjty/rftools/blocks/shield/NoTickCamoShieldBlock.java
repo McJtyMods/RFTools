@@ -5,15 +5,8 @@ import net.minecraft.world.World;
 
 public class NoTickCamoShieldBlock extends CamoShieldBlock {
 
-    @Override
-    protected void init() {
-        setRegistryName("notick_camo_shield_block");
-        setUnlocalizedName("rftools.notick_camo_shield_block");
-    }
-
-    @Override
-    protected void initTE() {
-//        GameRegistry.registerTileEntity(NoTickShieldSolidBlockTileEntity.class, RFTools.MODID + "_" + getRegistryName());
+    public NoTickCamoShieldBlock(String registryName, String unlocName, boolean opaque) {
+        super(registryName, unlocName, opaque);
     }
 
     @Override

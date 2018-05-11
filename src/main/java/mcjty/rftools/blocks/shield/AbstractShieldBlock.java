@@ -41,14 +41,14 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
     public static final int META_HOSTILE = 4;           // If set the blocked for hostile mobs
     public static final int META_PLAYERS = 8;           // If set the blocked for (some) players
 
-
-    public AbstractShieldBlock() {
+    public AbstractShieldBlock(String registryName, String unlocName, boolean opaque) {
         super(Material.GLASS);
-        init();
+        this.lightOpacity = opaque ? 255 : 0;
+        setRegistryName(registryName);
+        setUnlocalizedName(unlocName);
         setBlockUnbreakable();
         setResistance(6000000.0F);
         McJtyRegister.registerLater(this, RFTools.instance, ItemBlock.class);
-        initTE();
     }
 
     public static boolean activateBlock(Block block, World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
@@ -59,13 +59,19 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
         return state.getPropertyKeys();
     }
 
-    protected abstract void init();
-
-    protected abstract void initTE();
-
     @SideOnly(Side.CLIENT)
     public void initModel() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
+    }
+
+    @Override
+    public boolean isOpaqueCube(IBlockState state) {
+        return false;
+    }
+
+    @Override
+    public boolean isBlockNormalCube(IBlockState state) {
+        return false;
     }
 
     @Override

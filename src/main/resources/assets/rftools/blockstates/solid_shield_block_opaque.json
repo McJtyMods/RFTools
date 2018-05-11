@@ -1,0 +1,26 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "rftools:solid_shield_block"
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}],
+    "iconside": {
+      "0": { "textures": { "side": "rftools:blocks/shield/shield0" } },
+      "1": { "textures": { "side": "rftools:blocks/shield/shield1" } },
+      "2": { "textures": { "side": "rftools:blocks/shield/shield2" } },
+      "3": { "textures": { "side": "rftools:blocks/shield/shield3" } },
+      "4": { "textures": { "side": "rftools:blocks/shield/shieldtransparent" } },
+      "5": { "textures": { "side": "rftools:blocks/shield/shieldfull" } }
+    },
+    "icontopdown": {
+      "0": { "textures": { "topdown": "rftools:blocks/shield/shield0" } },
+      "1": { "textures": { "topdown": "rftools:blocks/shield/shield1" } },
+      "2": { "textures": { "topdown": "rftools:blocks/shield/shield2" } },
+      "3": { "textures": { "topdown": "rftools:blocks/shield/shield3" } },
+      "4": { "textures": { "topdown": "rftools:blocks/shield/shieldtransparent" } },
+      "5": { "textures": { "topdown": "rftools:blocks/shield/shieldfull" } }
+    }
+  }
+}

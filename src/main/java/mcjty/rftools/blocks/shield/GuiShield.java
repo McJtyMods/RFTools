@@ -117,13 +117,14 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
                 .setFilledBackground(0xff9e9e9e);
 
         Button applyCamo = new Button(mc, this).setChannel("camo").setText("Set").setTooltips("Set the camouflage block").
-                setLayoutHint(51, 142, 28, 16);
-//        applyCamo.setEnabled(false);
-//        applyCamo.setTooltips("Not implemented yet");   // @todo
+                setLayoutHint(46, 142, 30, 16);
         colorSelector = new ColorSelector(mc, this)
                 .setName("color")
                 .setTooltips("Color for the shield")
-                .setLayoutHint(31, 177, 48, 16);
+                .setLayoutHint(25, 177, 30, 16);
+
+        ToggleButton light = new ToggleButton(mc, this).setName("light").setCheckMarker(true).setText("L").setTooltips("If pressed, light is blocked", "by the shield")
+                .setLayoutHint(56, 177, 23, 16);
 
         player = new TextField(mc, this).setTooltips("Optional player name").setLayoutHint(170, 44, 80, 14);
 
@@ -145,7 +146,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout()).addChildren(energyBar,
                 visibilityOptions, applyCamo, redstoneMode, filterPanel, actionOptions,
                 typeOptions, player, controlPanel, damageType,
-                colorSelector, lootingBonus);
+                colorSelector, lootingBonus, light);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -154,6 +155,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         window.bind(RFToolsMessages.INSTANCE, "visibility", tileEntity, ShieldTEBase.VALUE_SHIELDVISMODE.getName());
         window.bind(RFToolsMessages.INSTANCE, "damage", tileEntity, ShieldTEBase.VALUE_DAMAGEMODE.getName());
         window.bind(RFToolsMessages.INSTANCE, "color", tileEntity, ShieldTEBase.VALUE_COLOR.getName());
+        window.bind(RFToolsMessages.INSTANCE, "light", tileEntity, ShieldTEBase.VALUE_LIGHT.getName());
         window.event("camo", (source, params) -> applyCamoToShield());
         window.event("addfilter", (source, params) -> addNewFilter());
         window.event("delfilter", (source, params) -> removeSelectedFilter());
@@ -329,7 +331,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
     private void initVisibilityMode() {
         visibilityOptions = new ChoiceLabel(mc, this)
                 .setName("visibility")
-                .setLayoutHint(31, 161, 48, 14);
+                .setLayoutHint(25, 161, 54, 14);
         for (ShieldRenderingMode m : ShieldRenderingMode.values()) {
             if ((!ShieldConfiguration.allowInvisibleShield) && m == ShieldRenderingMode.MODE_INVISIBLE) {
                 continue;
