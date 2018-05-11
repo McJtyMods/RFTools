@@ -33,6 +33,7 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.common.Optional;
 
+import javax.annotation.Nullable;
 import java.util.Set;
 
 import static mcjty.rftools.blocks.powercell.PowerCellConfiguration.advancedFactor;
@@ -159,7 +160,13 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         markDirty();
     }
 
+    @Nullable
     public PowerCellNetwork.Network getNetwork() {
+        if (world.isRemote) {
+            // Safety
+            return null;
+        }
+
         int networkId = getNetworkId();
         if (networkId == -1) {
             return null;
@@ -485,10 +492,10 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     }
 
     private int receiveEnergyMulti(int maxReceive, boolean simulate) {
-        PowerCellNetwork.Network network = getNetwork();
         if (getWorld().isRemote) {
-            throw new RuntimeException("Some mod is trying to receive energy from an RFTools powercell at the client side. That is illegal!");
+            return 0;   // Safety
         }
+        PowerCellNetwork.Network network = getNetwork();
         int totEnergy = network.calculateMaximumEnergy();
 
         int maxInsert = Math.min(totEnergy - network.getEnergy(), maxReceive);
@@ -539,7 +546,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
     private int extractEnergyMulti(int maxExtract, boolean simulate, int maximum) {
         if (getWorld().isRemote) {
-            throw new RuntimeException("Some mod is trying to extract energy from an RFTools powercell at the client side. That is illegal!");
+            return 0; // Safety
         }
         PowerCellNetwork.Network network = getNetwork();
         if (maxExtract > maximum) {
@@ -574,6 +581,9 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     }
 
     public int getEnergyStored() {
+        if (world.isRemote) {
+            return 0;
+        }
         int networkId = getNetworkId();
         if (networkId == -1) {
             return energy;
@@ -589,6 +599,9 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     }
 
     public int getMaxEnergyStored() {
+        if (world.isRemote) {
+            return 0;
+        }
         int networkId = getNetworkId();
         if (networkId == -1) {
             return PowerCellConfiguration.rfPerNormalCell * getPowerFactor() / simpleFactor;
