@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.logic.sensor;
 
+import mcjty.lib.blocks.LogicSlabBlock;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
@@ -7,6 +8,7 @@ import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.tileentity.LogicTileEntity;
 import mcjty.lib.typed.TypedMap;
+import mcjty.lib.varia.LogicFacing;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.varia.NamedEnum;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -135,30 +137,31 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
 
     public boolean checkSensor() {
         boolean newout;
-        EnumFacing inputSide = getFacing(getWorld().getBlockState(getPos())).getInputSide();
+        LogicFacing facing = getFacing(getWorld().getBlockState(getPos()));
+        EnumFacing inputSide = facing.getInputSide();
         BlockPos newpos = getPos().offset(inputSide);
 
         switch (sensorType) {
             case SENSOR_BLOCK:
-                newout = checkBlockOrFluid(newpos, inputSide, this::checkBlock);
+                newout = checkBlockOrFluid(newpos, facing, inputSide, this::checkBlock);
                 break;
             case SENSOR_FLUID:
-                newout = checkBlockOrFluid(newpos, inputSide, this::checkFluid);
+                newout = checkBlockOrFluid(newpos, facing, inputSide, this::checkFluid);
                 break;
             case SENSOR_GROWTHLEVEL:
-                newout = checkGrowthLevel(newpos, inputSide);
+                newout = checkGrowthLevel(newpos, facing, inputSide);
                 break;
             case SENSOR_ENTITIES:
-                newout = checkEntities(newpos, inputSide, Entity.class);
+                newout = checkEntities(newpos, facing, inputSide, Entity.class);
                 break;
             case SENSOR_PLAYERS:
-                newout = checkEntities(newpos, inputSide, EntityPlayer.class);
+                newout = checkEntities(newpos, facing, inputSide, EntityPlayer.class);
                 break;
             case SENSOR_HOSTILE:
-                newout = checkEntitiesHostile(newpos, inputSide);
+                newout = checkEntitiesHostile(newpos, facing, inputSide);
                 break;
             case SENSOR_PASSIVE:
-                newout = checkEntitiesPassive(newpos, inputSide);
+                newout = checkEntitiesPassive(newpos, facing, inputSide);
                 break;
             default:
                 newout = false;
@@ -166,9 +169,37 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         return newout;
     }
 
-    private boolean checkBlockOrFluid(BlockPos newpos, EnumFacing dir, Function<BlockPos, Boolean> blockChecker) {
+    private boolean checkBlockOrFluid(BlockPos newpos, LogicFacing facing, EnumFacing dir, Function<BlockPos, Boolean> blockChecker) {
         int blockCount = areaType.getBlockCount();
-        for (int i = 0 ; i < blockCount ; i++) {
+        if (blockCount > 0) {
+            Boolean x = checkBlockOrFluidRow(newpos, dir, blockChecker, blockCount);
+            if (x != null) return x;
+        } else if (blockCount < 0) {
+            // Area
+            EnumFacing downSide = facing.getSide();
+            EnumFacing inputSide = facing.getInputSide();
+            EnumFacing rightSide = LogicSlabBlock.rotateLeft(downSide, inputSide);
+            EnumFacing leftSide = LogicSlabBlock.rotateRight(downSide, inputSide);
+
+            blockCount = -blockCount;
+            Boolean x = checkBlockOrFluidRow(newpos, dir, blockChecker, blockCount);
+            if (x != null) return x;
+
+            for (int i = 1 ; i <= (blockCount-1)/2 ; i++) {
+                BlockPos p = newpos.offset(leftSide, i);
+                x = checkBlockOrFluidRow(p, dir, blockChecker, blockCount);
+                if (x != null) return x;
+                p = newpos.offset(rightSide, i);
+                x = checkBlockOrFluidRow(p, dir, blockChecker, blockCount);
+                if (x != null) return x;
+            }
+        }
+
+        return groupType == GroupType.GROUP_ALL;
+    }
+
+    private Boolean checkBlockOrFluidRow(BlockPos newpos, EnumFacing dir, Function<BlockPos, Boolean> blockChecker, int count) {
+        for (int i = 0; i < count; i++) {
             boolean result = blockChecker.apply(newpos);
             if (result && groupType == GroupType.GROUP_ONE) {
                 return true;
@@ -178,7 +209,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
             }
             newpos = newpos.offset(dir);
         }
-        return groupType == GroupType.GROUP_ALL;
+        return null;
     }
 
     private boolean checkBlock(BlockPos newpos) {
@@ -242,9 +273,36 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         return blockName.equals(matcherBlockName);
     }
 
-    private boolean checkGrowthLevel(BlockPos newpos, EnumFacing dir) {
+    private boolean checkGrowthLevel(BlockPos newpos, LogicFacing facing, EnumFacing dir) {
         int blockCount = areaType.getBlockCount();
-        for (int i = 0 ; i < blockCount ; i++) {
+        if (blockCount > 0) {
+            Boolean x = checkGrowthLevelRow(newpos, dir, blockCount);
+            if (x != null) return x;
+        } else if (blockCount < 0) {
+            // Area
+            EnumFacing downSide = facing.getSide();
+            EnumFacing inputSide = facing.getInputSide();
+            EnumFacing rightSide = LogicSlabBlock.rotateLeft(downSide, inputSide);
+            EnumFacing leftSide = LogicSlabBlock.rotateRight(downSide, inputSide);
+
+            blockCount = -blockCount;
+            Boolean x = checkGrowthLevelRow(newpos, dir, blockCount);
+            if (x != null) return x;
+
+            for (int i = 1 ; i <= (blockCount-1)/2 ; i++) {
+                BlockPos p = newpos.offset(leftSide, i);
+                x = checkGrowthLevelRow(p, dir, blockCount);
+                if (x != null) return x;
+                p = newpos.offset(rightSide, i);
+                x = checkGrowthLevelRow(p, dir, blockCount);
+                if (x != null) return x;
+            }
+        }
+        return groupType == GroupType.GROUP_ALL;
+    }
+
+    private Boolean checkGrowthLevelRow(BlockPos newpos, EnumFacing dir, int blockCount) {
+        for (int i = 0; i < blockCount; i++) {
             boolean result = checkGrowthLevel(newpos);
             if (result && groupType == GroupType.GROUP_ONE) {
                 return true;
@@ -254,7 +312,7 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
             }
             newpos = newpos.offset(dir);
         }
-        return groupType == GroupType.GROUP_ALL;
+        return null;
     }
 
     private boolean checkGrowthLevel(BlockPos newpos) {
@@ -281,26 +339,46 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         cachedBox = null;
     }
 
-    private AxisAlignedBB getCachedBox(BlockPos pos1, EnumFacing dir) {
+    private AxisAlignedBB getCachedBox(BlockPos pos1, LogicFacing facing, EnumFacing dir) {
         if (cachedBox == null) {
             int n = areaType.getBlockCount();
-            cachedBox = new AxisAlignedBB(pos1);
-            if (n > 1) {
-                BlockPos pos2 = pos1.offset(dir, n-1);
+
+            if (n > 0) {
+                cachedBox = new AxisAlignedBB(pos1);
+                if (n > 1) {
+                    BlockPos pos2 = pos1.offset(dir, n - 1);
+                    cachedBox = cachedBox.union(new AxisAlignedBB(pos2));
+                }
+                cachedBox = cachedBox.expand(.1, .1, .1);
+            } else {
+                n = -n;
+                cachedBox = new AxisAlignedBB(pos1);
+
+                // Area
+                EnumFacing downSide = facing.getSide();
+                EnumFacing inputSide = facing.getInputSide();
+                EnumFacing rightSide = LogicSlabBlock.rotateLeft(downSide, inputSide);
+                EnumFacing leftSide = LogicSlabBlock.rotateRight(downSide, inputSide);
+                if (n > 1) {
+                    BlockPos pos2 = pos1.offset(dir, n - 1);
+                    cachedBox = cachedBox.union(new AxisAlignedBB(pos2));
+                }
+                BlockPos pos2 = pos1.offset(leftSide, (n-1)/2);
+                cachedBox = cachedBox.union(new AxisAlignedBB(pos2));
+                pos2 = pos1.offset(rightSide, (n-1)/2);
                 cachedBox = cachedBox.union(new AxisAlignedBB(pos2));
             }
-            cachedBox = cachedBox.expand(.1, .1, .1);
         }
         return cachedBox;
     }
 
-    private boolean checkEntities(BlockPos pos1, EnumFacing dir, Class<? extends Entity> clazz) {
-        List<Entity> entities = getWorld().getEntitiesWithinAABB(clazz, getCachedBox(pos1, dir));
+    private boolean checkEntities(BlockPos pos1, LogicFacing facing, EnumFacing dir, Class<? extends Entity> clazz) {
+        List<Entity> entities = getWorld().getEntitiesWithinAABB(clazz, getCachedBox(pos1, facing, dir));
         return entities.size() >= number;
     }
 
-    private boolean checkEntitiesHostile(BlockPos pos1, EnumFacing dir) {
-        List<Entity> entities = getWorld().getEntitiesWithinAABB(EntityCreature.class, getCachedBox(pos1, dir));
+    private boolean checkEntitiesHostile(BlockPos pos1, LogicFacing facing, EnumFacing dir) {
+        List<Entity> entities = getWorld().getEntitiesWithinAABB(EntityCreature.class, getCachedBox(pos1, facing, dir));
         int cnt = 0;
         for (Entity entity : entities) {
             if (entity instanceof IMob) {
@@ -313,8 +391,8 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         return false;
     }
 
-    private boolean checkEntitiesPassive(BlockPos pos1, EnumFacing dir) {
-        List<Entity> entities = getWorld().getEntitiesWithinAABB(EntityCreature.class, getCachedBox(pos1, dir));
+    private boolean checkEntitiesPassive(BlockPos pos1, LogicFacing facing, EnumFacing dir) {
+        List<Entity> entities = getWorld().getEntitiesWithinAABB(EntityCreature.class, getCachedBox(pos1, facing, dir));
         int cnt = 0;
         for (Entity entity : entities) {
             if (entity instanceof IAnimals && !(entity instanceof IMob)) {

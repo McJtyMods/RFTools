@@ -32,6 +32,15 @@ window {
                 choice('Area 5') {
                     tooltips('5 blocks in front of sensor')
                 }
+                choice('Area 3x3') {
+                    tooltips('3x3 blocks in front of sensor')
+                }
+                choice('Area 5x5') {
+                    tooltips('5x5 blocks in front of sensor')
+                }
+                choice('Area 7x7') {
+                    tooltips('7x7 blocks in front of sensor')
+                }
             }
         }
         label('','Area:') {

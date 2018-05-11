@@ -1,11 +1,11 @@
 package mcjty.rftools.blocks.logic.analog;
 
+import mcjty.lib.blocks.LogicSlabBlock;
 import mcjty.lib.tileentity.LogicTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.LogicFacing;
-import mcjty.rftools.blocks.logic.threelogic.ThreeLogicTileEntity;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -142,8 +142,8 @@ public class AnalogTileEntity extends LogicTileEntity {
                 LogicFacing facing = getFacing(state);
                 EnumFacing downSide = facing.getSide();
                 EnumFacing inputSide = facing.getInputSide();
-                EnumFacing rightSide = ThreeLogicTileEntity.rotateLeft(downSide, inputSide);
-                EnumFacing leftSide = ThreeLogicTileEntity.rotateRight(downSide, inputSide);
+                EnumFacing rightSide = LogicSlabBlock.rotateLeft(downSide, inputSide);
+                EnumFacing leftSide = LogicSlabBlock.rotateRight(downSide, inputSide);
 
                 int outputStrength;
                 int inputStrength = getInputStrength(world, pos, inputSide);
