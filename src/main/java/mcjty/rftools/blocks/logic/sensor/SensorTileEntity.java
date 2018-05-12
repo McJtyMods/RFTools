@@ -507,6 +507,8 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
         int blockCount = getAreaType().getBlockCount();
         if (blockCount == 1) {
             probeInfo.text("Area: 1 block");
+        } else if (blockCount < 0) {
+            probeInfo.text("Area: " + (-blockCount) + "x" + (-blockCount) + " blocks");
         } else {
             probeInfo.text("Area: " + blockCount + " blocks");
         }
