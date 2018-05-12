@@ -57,7 +57,6 @@ public class GuiCraftingGrid {
                         int guiLeft, int guiTop, int xSize, int ySize) {
         this.mc = mc;
         this.gui = gui;
-        SimpleNetworkWrapper network1 = network;
         this.provider = provider;
         this.pos = pos;
 

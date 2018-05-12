@@ -220,17 +220,18 @@ public class StorageCraftingTools {
             return;
         }
 
-        if (!craftingRecipe.getResult().isEmpty() && craftingRecipe.getResult().getCount() > 0) {
+        ItemStack recipeResult = recipe.getRecipeOutput();
+        if (!recipeResult.isEmpty() && recipeResult.getCount() > 0) {
             if (n == -1) {
-                n = craftingRecipe.getResult().getMaxStackSize();
+                n = recipeResult.getMaxStackSize();
             }
 
-            int remainder = n % craftingRecipe.getResult().getCount();
-            n /= craftingRecipe.getResult().getCount();
+            int remainder = n % recipeResult.getCount();
+            n /= recipeResult.getCount();
             if (remainder != 0) {
                 n++;
             }
-            if (n * craftingRecipe.getResult().getCount() > craftingRecipe.getResult().getMaxStackSize()) {
+            if (n * recipeResult.getCount() > recipeResult.getMaxStackSize()) {
                 n--;
             }
 
@@ -260,17 +261,18 @@ public class StorageCraftingTools {
             return new int[0];
         }
 
-        if (!craftingRecipe.getResult().isEmpty() && craftingRecipe.getResult().getCount() > 0) {
+        ItemStack recipeResult = recipe.getRecipeOutput();
+        if (!recipeResult.isEmpty() && recipeResult.getCount() > 0) {
             if (n == -1) {
-                n = craftingRecipe.getResult().getMaxStackSize();
+                n = recipeResult.getMaxStackSize();
             }
 
-            int remainder = n % craftingRecipe.getResult().getCount();
-            n /= craftingRecipe.getResult().getCount();
+            int remainder = n % recipeResult.getCount();
+            n /= recipeResult.getCount();
             if (remainder != 0) {
                 n++;
             }
-            if (n * craftingRecipe.getResult().getCount() > craftingRecipe.getResult().getMaxStackSize()) {
+            if (n * recipeResult.getCount() > recipeResult.getMaxStackSize()) {
                 n--;
             }
 
