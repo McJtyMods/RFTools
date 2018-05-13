@@ -9,8 +9,6 @@ import mcjty.rftools.blocks.builder.PacketChamberInfoReady;
 import mcjty.rftools.blocks.crafter.CrafterConfiguration;
 import mcjty.rftools.blocks.crafter.PacketCrafter;
 import mcjty.rftools.blocks.monitor.*;
-import mcjty.rftools.blocks.powercell.PowerCellInfoPacketClient;
-import mcjty.rftools.blocks.powercell.PowerCellInfoPacketServer;
 import mcjty.rftools.blocks.screens.network.*;
 import mcjty.rftools.blocks.security.PacketSecurityInfoReady;
 import mcjty.rftools.blocks.security.SecurityConfiguration;
@@ -22,7 +20,10 @@ import mcjty.rftools.blocks.spawner.SpawnerInfoPacketServer;
 import mcjty.rftools.blocks.storage.PacketSyncSlotsToClient;
 import mcjty.rftools.blocks.storage.PacketUpdateNBTItemStorage;
 import mcjty.rftools.blocks.storagemonitor.*;
-import mcjty.rftools.blocks.teleporter.*;
+import mcjty.rftools.blocks.teleporter.PacketGetReceivers;
+import mcjty.rftools.blocks.teleporter.PacketGetTransmitters;
+import mcjty.rftools.blocks.teleporter.PacketReceiversReady;
+import mcjty.rftools.blocks.teleporter.PacketTransmittersReady;
 import mcjty.rftools.craftinggrid.PacketCraftTestResultToClient;
 import mcjty.rftools.craftinggrid.PacketGridToClient;
 import mcjty.rftools.craftinggrid.PacketGridToServer;
@@ -107,7 +108,6 @@ public class RFToolsMessages {
         net.registerMessage(PacketProjectorClientNotification.Handler.class, PacketProjectorClientNotification.class, PacketHandler.nextPacketID(), Side.CLIENT);
         net.registerMessage(PacketReturnExtraData.Handler.class, PacketReturnExtraData.class, PacketHandler.nextPacketID(), Side.CLIENT);
 
-        PacketHandler.register(PacketHandler.nextPacketID(), PowerCellInfoPacketServer.class, PowerCellInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), InventoriesInfoPacketServer.class, InventoriesInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), SearchItemsInfoPacketServer.class, SearchItemsInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), GetContentsInfoPacketServer.class, GetContentsInfoPacketClient.class);

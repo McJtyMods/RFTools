@@ -4,12 +4,15 @@ import cofh.redstoneflux.api.IEnergyProvider;
 import cofh.redstoneflux.api.IEnergyReceiver;
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.api.smartwrench.SmartWrenchSelector;
+import mcjty.lib.bindings.DefaultAction;
+import mcjty.lib.bindings.IAction;
 import mcjty.lib.compat.RedstoneFluxCompatibility;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
-import mcjty.lib.bindings.DefaultAction;
 import mcjty.lib.tileentity.GenericTileEntity;
-import mcjty.lib.bindings.IAction;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.GlobalCoordinate;
@@ -33,6 +36,7 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.common.Optional;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Set;
 
@@ -46,10 +50,31 @@ import static mcjty.rftools.blocks.powercell.PowerCellConfiguration.simpleFactor
 public class PowerCellTileEntity extends GenericTileEntity implements IEnergyProvider, IEnergyReceiver,
         DefaultSidedInventory, ITickable, SmartWrenchSelector, MachineInformation {
 
+    public static final String CMD_GET_INFO = "getInfo";
+    public static final String CLIENTCMD_GET_INFO = "getInfo";
+    public static final Key<Integer> PARAM_ENERGY = new Key<>("energy", Type.INTEGER);
+    public static final Key<Integer> PARAM_BLOCKS = new Key<>("block", Type.INTEGER);
+    public static final Key<Integer> PARAM_SIMPLEBLOCKS = new Key<>("simpleblocks", Type.INTEGER);
+    public static final Key<Integer> PARAM_ADVANCEDBLOCKS = new Key<>("advancedblocks", Type.INTEGER);
+    public static final Key<Long> PARAM_TOTAL_INSERTED = new Key<>("totalinserted", Type.LONG);
+    public static final Key<Long> PARAM_TOTAL_EXTRACTED = new Key<>("totalextracted", Type.LONG);
+    public static final Key<Integer> PARAM_RFPERTICK = new Key<>("rfpertick", Type.INTEGER);
+    public static final Key<Double> PARAM_COSTFACTOR = new Key<>("costfactor", Type.DOUBLE);
+
     public static final String ACTION_SETNONE = "setNone";
     public static final String ACTION_SETINPUT = "setInput";
     public static final String ACTION_SETOUTPUT = "setOutput";
     public static final String ACTION_CLEARSTATS = "clearStats";
+
+    // Client side for tooltip purposes
+    public static int tooltipEnergy = 0;
+    public static int tooltipBlocks = 0;
+    public static int tooltipSimpleBlocks = 0;
+    public static int tooltipAdvancedBlocks = 0;
+    public static long tooltipInserted = 0;
+    public static long tooltipExtracted = 0;
+    public static int tooltipRfPerTick = 0;
+    public static float tooltipCostFactor = 0;
 
     @Override
     public IAction[] getActions() {
@@ -698,6 +723,61 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
             Logging.message(player, "Block: " + BlockPosTools.toString(b.getCoordinate()) + " (" + b.getDimension() + "): " + msg);
         });
+    }
+
+    @Override
+    public TypedMap executeWithResult(String command, TypedMap args) {
+        TypedMap rc = super.executeWithResult(command, args);
+        if (rc != null) {
+            return rc;
+        }
+        if (CMD_GET_INFO.equals(command)) {
+            if (networkId == -1) {
+                return TypedMap.builder()
+                        .put(PARAM_ENERGY, getEnergy())
+                        .put(PARAM_BLOCKS, 1)
+                        .put(PARAM_SIMPLEBLOCKS, isSimple() ? 1 : 0)
+                        .put(PARAM_ADVANCEDBLOCKS, isAdvanced() ? 1 : 0)
+                        .put(PARAM_TOTAL_INSERTED, getTotalInserted())
+                        .put(PARAM_TOTAL_EXTRACTED, getTotalExtracted())
+                        .put(PARAM_RFPERTICK, getRfPerTickPerSide())
+                        .put(PARAM_COSTFACTOR, 1.0)
+                        .build();
+            } else {
+                PowerCellNetwork.Network network = getNetwork();
+                return TypedMap.builder()
+                        .put(PARAM_ENERGY, network.getEnergy())
+                        .put(PARAM_BLOCKS, network.getBlockCount())
+                        .put(PARAM_SIMPLEBLOCKS, network.getSimpleBlockCount())
+                        .put(PARAM_ADVANCEDBLOCKS, network.getAdvancedBlockCount())
+                        .put(PARAM_TOTAL_INSERTED, getTotalInserted())
+                        .put(PARAM_TOTAL_EXTRACTED, getTotalExtracted())
+                        .put(PARAM_RFPERTICK, getRfPerTickPerSide())
+                        .put(PARAM_COSTFACTOR, (double) getCostFactor())
+                        .build();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public boolean receiveDataFromServer(String command, @Nonnull TypedMap result) {
+        boolean rc = super.receiveDataFromServer(command, result);
+        if (rc) {
+            return true;
+        }
+        if (CLIENTCMD_GET_INFO.equals(command)) {
+            tooltipEnergy = result.get(PARAM_ENERGY);
+            tooltipBlocks = result.get(PARAM_BLOCKS);
+            tooltipSimpleBlocks = result.get(PARAM_SIMPLEBLOCKS);
+            tooltipAdvancedBlocks = result.get(PARAM_ADVANCEDBLOCKS);
+            tooltipInserted = result.get(PARAM_TOTAL_INSERTED);
+            tooltipExtracted = result.get(PARAM_TOTAL_EXTRACTED);
+            tooltipRfPerTick = result.get(PARAM_RFPERTICK);
+            PowerCellTileEntity.tooltipCostFactor = result.get(PARAM_COSTFACTOR).floatValue();
+            return true;
+        }
+        return false;
     }
 
     // Forge energy

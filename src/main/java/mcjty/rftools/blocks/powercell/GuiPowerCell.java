@@ -7,7 +7,7 @@ import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.EnergyBar;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
+import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
@@ -93,7 +93,8 @@ public class GuiPowerCell extends GenericGuiContainer<PowerCellTileEntity> {
     private void requestRF() {
         if (System.currentTimeMillis() - lastTime > 250) {
             lastTime = System.currentTimeMillis();
-            RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new PowerCellInfoPacketServer(tileEntity)));
+            tileEntity.requestDataFromServer(RFTools.MODID, PowerCellTileEntity.CMD_GET_INFO, PowerCellTileEntity.CLIENTCMD_GET_INFO,
+                    TypedMap.EMPTY);
         }
     }
 
@@ -104,12 +105,12 @@ public class GuiPowerCell extends GenericGuiContainer<PowerCellTileEntity> {
 
         requestRF();
 
-        stats.setTooltips("Power statistics. Press to clear:", "Inserted: " + PowerCellInfoPacketClient.tooltipInserted, "Extracted: " + PowerCellInfoPacketClient.tooltipExtracted);
+        stats.setTooltips("Power statistics. Press to clear:", "Inserted: " + PowerCellTileEntity.tooltipInserted, "Extracted: " + PowerCellTileEntity.tooltipExtracted);
 
-        int maxValue = (PowerCellInfoPacketClient.tooltipBlocks - PowerCellInfoPacketClient.tooltipAdvancedBlocks - PowerCellInfoPacketClient.tooltipSimpleBlocks) * PowerCellConfiguration.rfPerNormalCell;
-        maxValue += PowerCellInfoPacketClient.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerNormalCell * PowerCellConfiguration.advancedFactor;
-        maxValue += PowerCellInfoPacketClient.tooltipSimpleBlocks * PowerCellConfiguration.rfPerNormalCell / PowerCellConfiguration.simpleFactor;
+        int maxValue = (PowerCellTileEntity.tooltipBlocks - PowerCellTileEntity.tooltipAdvancedBlocks - PowerCellTileEntity.tooltipSimpleBlocks) * PowerCellConfiguration.rfPerNormalCell;
+        maxValue += PowerCellTileEntity.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerNormalCell * PowerCellConfiguration.advancedFactor;
+        maxValue += PowerCellTileEntity.tooltipSimpleBlocks * PowerCellConfiguration.rfPerNormalCell / PowerCellConfiguration.simpleFactor;
         energyBar.setMaxValue(maxValue);
-        energyBar.setValue(PowerCellInfoPacketClient.tooltipEnergy);
+        energyBar.setValue(PowerCellTileEntity.tooltipEnergy);
     }
 }

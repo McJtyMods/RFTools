@@ -4,12 +4,11 @@ import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.api.smartwrench.SmartWrenchMode;
 import mcjty.lib.crafting.INBTPreservingIngredient;
-import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
-import mcjty.rftools.network.RFToolsMessages;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
@@ -181,8 +180,8 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
         super.getWailaBody(itemStack, currenttip, accessor, config);
         TileEntity tileEntity = accessor.getTileEntity();
         if (tileEntity instanceof PowerCellTileEntity) {
-            PowerCellTileEntity powerCellTileEntity = (PowerCellTileEntity) tileEntity;
-            int id = powerCellTileEntity.getNetworkId();
+            PowerCellTileEntity powercell = (PowerCellTileEntity) tileEntity;
+            int id = powercell.getNetworkId();
             if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             if (id != -1) {
                 currenttip.add(TextFormatting.GREEN + "ID: " + new DecimalFormat("#.##").format(id));
@@ -192,22 +191,23 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
            }
             if (System.currentTimeMillis() - lastTime > 250) {
                 lastTime = System.currentTimeMillis();
-                RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new PowerCellInfoPacketServer(powerCellTileEntity)));
+                powercell.requestDataFromServer(RFTools.MODID, PowerCellTileEntity.CMD_GET_INFO, PowerCellTileEntity.CLIENTCMD_GET_INFO,
+                        TypedMap.EMPTY);
             }
-            long total = (PowerCellInfoPacketClient.tooltipBlocks - PowerCellInfoPacketClient.tooltipAdvancedBlocks - (long) PowerCellInfoPacketClient.tooltipSimpleBlocks) * PowerCellConfiguration.rfPerNormalCell;
-            total += (long) PowerCellInfoPacketClient.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerNormalCell * advancedFactor;
-            total += (long) PowerCellInfoPacketClient.tooltipSimpleBlocks * PowerCellConfiguration.rfPerNormalCell / PowerCellConfiguration.simpleFactor;
+            long total = (PowerCellTileEntity.tooltipBlocks - PowerCellTileEntity.tooltipAdvancedBlocks - (long) PowerCellTileEntity.tooltipSimpleBlocks) * PowerCellConfiguration.rfPerNormalCell;
+            total += (long) PowerCellTileEntity.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerNormalCell * advancedFactor;
+            total += (long) PowerCellTileEntity.tooltipSimpleBlocks * PowerCellConfiguration.rfPerNormalCell / PowerCellConfiguration.simpleFactor;
             if (total > Integer.MAX_VALUE) {
                 total = Integer.MAX_VALUE;
             }
 
-            currenttip.add(TextFormatting.GREEN + "Energy: " + PowerCellInfoPacketClient.tooltipEnergy + "/" + total + " RF (" +
-                PowerCellInfoPacketClient.tooltipRfPerTick + " RF/t)");
-            PowerCellTileEntity.Mode mode = powerCellTileEntity.getMode(accessor.getSide());
+            currenttip.add(TextFormatting.GREEN + "Energy: " + PowerCellTileEntity.tooltipEnergy + "/" + total + " RF (" +
+                PowerCellTileEntity.tooltipRfPerTick + " RF/t)");
+            PowerCellTileEntity.Mode mode = powercell.getMode(accessor.getSide());
             if (mode == PowerCellTileEntity.Mode.MODE_INPUT) {
                 currenttip.add(TextFormatting.YELLOW + "Side: input");
             } else if (mode == PowerCellTileEntity.Mode.MODE_OUTPUT) {
-                int cost = (int) ((PowerCellInfoPacketClient.tooltipCostFactor - 1.0f) * 1000.0f);
+                int cost = (int) ((PowerCellTileEntity.tooltipCostFactor - 1.0f) * 1000.0f);
                  currenttip.add(TextFormatting.YELLOW + "Side: output (cost " + cost / 10 + "." + cost % 10 + "%)");
             }
         }
