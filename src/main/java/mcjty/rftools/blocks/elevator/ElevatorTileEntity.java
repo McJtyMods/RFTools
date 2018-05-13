@@ -470,7 +470,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     private boolean canMoveBlock(BlockPos pos) {
         World world = getWorld();
         IBlockState state = world.getBlockState(pos);
-        return state == movingState && state.getBlockHardness(world, pos) >= 0 && BuilderTileEntity.allowedToBreak(state, world, pos, BuilderTileEntity.getHarvester());
+        return state == movingState && state.getBlockHardness(world, pos) >= 0 && BuilderTileEntity.allowedToBreak(state, world, pos, BuilderTileEntity.getHarvester(world));
     }
 
     // Always called on controller TE (bottom one)
