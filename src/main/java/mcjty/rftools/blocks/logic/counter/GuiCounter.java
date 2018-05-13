@@ -4,7 +4,7 @@ import mcjty.lib.container.GenericContainer;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.widgets.TextField;
-import mcjty.lib.network.Arguments;
+import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
@@ -60,6 +60,6 @@ public class GuiCounter extends GenericGuiContainer<CounterTileEntity> {
     private void requestCurrentCounter() {
         lastTime = System.currentTimeMillis();
         RFToolsMessages.sendToServer(CommandHandler.CMD_GET_COUNTER_INFO,
-                Arguments.builder().value(tileEntity.getWorld().provider.getDimension()).value(tileEntity.getPos()));
+                TypedMap.builder().put(CommandHandler.PARAM_DIMENSION, tileEntity.getWorld().provider.getDimension()).put(CommandHandler.PARAM_POS, tileEntity.getPos()));
     }
 }

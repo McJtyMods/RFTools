@@ -8,7 +8,6 @@ import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.network.Arguments;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
@@ -107,7 +106,7 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
         }
         listDirty--;
         if (listDirty <= 0) {
-            sendServerCommand(RFTools.MODID, CommandHandler.CMD_GET_SECURITY_INFO, Arguments.builder().value(id).build());
+            sendServerCommand(RFTools.MODID, CommandHandler.CMD_GET_SECURITY_INFO, TypedMap.builder().put(CommandHandler.PARAM_ID, id).build());
             listDirty = 20;
         }
     }

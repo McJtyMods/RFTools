@@ -1,9 +1,8 @@
 package mcjty.rftools.blocks.storagemonitor;
 
 import mcjty.lib.base.StyleConfig;
-import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.container.GhostOutputSlot;
-import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
+import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.BlockRenderEvent;
 import mcjty.lib.gui.events.DefaultSelectionEvent;
@@ -16,8 +15,8 @@ import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
-import mcjty.lib.network.Arguments;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
+import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
@@ -222,7 +221,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
         BlockPos pos = tileEntity.getCraftingGridContainerPos();
         craftingGrid.initGui(modBase, network, mc, this, pos, tileEntity.getCraftingGridProvider(), guiLeft, guiTop, xSize, ySize);
-        sendServerCommand(RFTools.MODID, CommandHandler.CMD_REQUEST_GRID_SYNC, Arguments.builder().value(pos).build());
+        sendServerCommand(RFTools.MODID, CommandHandler.CMD_REQUEST_GRID_SYNC, TypedMap.builder().put(CommandHandler.PARAM_POS, pos).build());
 
         if (StorageScannerConfiguration.hilightStarredOnGuiOpen) {
             storageList.setSelected(0);

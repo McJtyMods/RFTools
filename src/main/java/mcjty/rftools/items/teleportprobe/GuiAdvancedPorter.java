@@ -7,7 +7,7 @@ import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
-import mcjty.lib.network.Arguments;
+import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
@@ -63,7 +63,7 @@ public class GuiAdvancedPorter extends GuiItemScreen {
                     .addChild(destination)
                     .addChild(new Button(mc, this).setText("Set").setDesiredWidth(30).setDesiredHeight(16).addButtonEvent(parent -> {
                         if (targets[i] != -1) {
-                            RFToolsMessages.sendToServer(CommandHandler.CMD_SET_TARGET, Arguments.builder().value(targets[i]));
+                            RFToolsMessages.sendToServer(CommandHandler.CMD_SET_TARGET, TypedMap.builder().put(CommandHandler.PARAM_TARGET, targets[i]));
                             target = targets[i];
                         }
                     }))
@@ -71,7 +71,7 @@ public class GuiAdvancedPorter extends GuiItemScreen {
                         if (targets[i] != -1 && targets[i] == target) {
                             target = -1;
                         }
-                        RFToolsMessages.sendToServer(CommandHandler.CMD_CLEAR_TARGET, Arguments.builder().value(i));
+                        RFToolsMessages.sendToServer(CommandHandler.CMD_CLEAR_TARGET, TypedMap.builder().put(CommandHandler.PARAM_TARGET, i));
                         targets[i] = -1;
                     })).setDesiredHeight(16);
     }

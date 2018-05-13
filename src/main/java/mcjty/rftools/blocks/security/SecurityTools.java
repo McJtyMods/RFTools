@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.security;
 
-import mcjty.lib.network.Arguments;
+import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.ClientCommandHandler;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,6 +24,6 @@ public class SecurityTools {
             return;
         }
         RFToolsMessages.sendToClient(player, ClientCommandHandler.CMD_RETURN_SECURITY_NAME,
-                Arguments.builder().value(channel.getName()));
+                TypedMap.builder().put(ClientCommandHandler.PARAM_NAME, channel.getName()));
     }
 }

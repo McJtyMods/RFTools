@@ -10,7 +10,7 @@ import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.network.Arguments;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.BlockTools;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
@@ -102,13 +102,13 @@ public class GuiCraftingGrid {
 
     private void craft(int n) {
         RFToolsMessages.sendToServer(CommandHandler.CMD_CRAFT_FROM_GRID,
-                Arguments.builder().value(n).value(false).value(pos));
+                TypedMap.builder().put(CommandHandler.PARAM_COUNT, n).put(CommandHandler.PARAM_TEST, false).put(CommandHandler.PARAM_POS, pos));
     }
 
     private void testCraft(int n) {
         if (lastTestAmount != n || lastTestTimer <= 0) {
             RFToolsMessages.sendToServer(CommandHandler.CMD_CRAFT_FROM_GRID,
-                    Arguments.builder().value(n).value(true).value(pos));
+                    TypedMap.builder().put(CommandHandler.PARAM_COUNT, n).put(CommandHandler.PARAM_TEST, true).put(CommandHandler.PARAM_POS, pos));
             lastTestAmount = n;
             lastTestTimer = 20;
         }

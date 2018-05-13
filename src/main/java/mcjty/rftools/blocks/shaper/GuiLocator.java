@@ -8,7 +8,6 @@ import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.network.Arguments;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.CommandHandler;
@@ -209,7 +208,7 @@ public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
         if (cnt < 0) {
             cnt = 10;
             sendServerCommand(RFTools.MODID, CommandHandler.CMD_REQUEST_LOCATOR_ENERGY,
-                    Arguments.builder().value(tileEntity.getPos()).build());
+                    TypedMap.builder().put(CommandHandler.PARAM_POS, tileEntity.getPos()).build());
         }
         energyLabel.setText(energyConsumption + " RF");
     }

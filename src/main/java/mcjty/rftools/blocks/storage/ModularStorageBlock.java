@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.api.IModuleSupport;
-import mcjty.lib.network.Arguments;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
@@ -238,8 +238,9 @@ public class ModularStorageBlock extends GenericRFToolsBlock<ModularStorageTileE
                 if (System.currentTimeMillis() - lastTime > 500) {
                     lastTime = System.currentTimeMillis();
                     RFToolsMessages.sendToServer(CommandHandler.CMD_REQUEST_STORAGE_INFO,
-                            Arguments.builder().value(modularStorageTileEntity.getWorld().provider.getDimension())
-                                .value(modularStorageTileEntity.getPos()));
+                            TypedMap.builder()
+                                    .put(CommandHandler.PARAM_DIMENSION, modularStorageTileEntity.getWorld().provider.getDimension())
+                                    .put(CommandHandler.PARAM_POS, modularStorageTileEntity.getPos()));
                 }
                 if (!nameModuleReceived.isEmpty()) {
                     currenttip.add(TextFormatting.YELLOW + "Module: " + TextFormatting.WHITE + nameModuleReceived);

@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.network.Arguments;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
@@ -84,7 +84,7 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock<MatterTransmitte
                 int destId = tagCompound.getInteger("destId");
                 if (System.currentTimeMillis() - lastTime > 500) {
                     lastTime = System.currentTimeMillis();
-                    RFToolsMessages.sendToServer(CommandHandler.CMD_GET_DESTINATION_INFO, Arguments.builder().value(destId));
+                    RFToolsMessages.sendToServer(CommandHandler.CMD_GET_DESTINATION_INFO, TypedMap.builder().put(CommandHandler.PARAM_ID, destId));
                 }
 
                 String destname = "?";
@@ -153,7 +153,7 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock<MatterTransmitte
                 if (System.currentTimeMillis() - lastTime > 500) {
                     lastTime = System.currentTimeMillis();
                     RFToolsMessages.sendToServer(CommandHandler.CMD_GET_DESTINATION_INFO,
-                            Arguments.builder().value(matterTransmitterTileEntity.getTeleportId()));
+                            TypedMap.builder().put(CommandHandler.PARAM_ID, matterTransmitterTileEntity.getTeleportId()));
                 }
 
                 String name = "?";

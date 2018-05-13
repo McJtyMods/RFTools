@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.shaper;
 
-import mcjty.lib.network.Arguments;
+import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.ClientCommandHandler;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.PacketReturnExtraData;
@@ -25,13 +25,13 @@ public class ShaperTools {
         if (te instanceof LocatorTileEntity) {
             int energy = ((LocatorTileEntity) te).getEnergyPerScan();
             RFToolsMessages.sendToClient(player, ClientCommandHandler.CMD_RETURN_ENERGY_CONSUMPTION,
-                    Arguments.builder().value(energy));
+                    TypedMap.builder().put(ClientCommandHandler.PARAM_ENERGY, energy));
         }
     }
 
     public static void requestScanDirty(EntityPlayer player, int scanId) {
         int counter = ScanDataManager.getScans().loadScan(scanId).getDirtyCounter();
         RFToolsMessages.sendToClient(player, ClientCommandHandler.CMD_RETURN_SCAN_DIRTY,
-                Arguments.builder().value(scanId).value(counter));
+                TypedMap.builder().put(ClientCommandHandler.PARAM_SCANID, scanId).put(ClientCommandHandler.PARAM_COUNTER, counter));
     }
 }

@@ -1,7 +1,7 @@
 package mcjty.rftools.shapes;
 
 import io.netty.buffer.ByteBuf;
-import mcjty.lib.network.AbstractServerCommandTyped;
+import mcjty.lib.network.TypedMapTools;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
@@ -22,12 +22,12 @@ public class PacketUpdateNBTShapeCard implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        args = AbstractServerCommandTyped.readArguments(buf);
+        args = TypedMapTools.readArguments(buf);
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        AbstractServerCommandTyped.writeArguments(buf, args);
+        TypedMapTools.writeArguments(buf, args);
     }
 
     public PacketUpdateNBTShapeCard() {

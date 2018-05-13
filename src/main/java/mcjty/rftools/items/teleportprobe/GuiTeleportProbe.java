@@ -5,8 +5,10 @@ import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.DefaultSelectionEvent;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
+import mcjty.lib.gui.widgets.Label;
+import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.network.Arguments;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.blocks.teleporter.TeleportDestinationClientInfo;
@@ -15,7 +17,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.math.BlockPos;
 import org.lwjgl.input.Mouse;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +74,7 @@ public class GuiTeleportProbe extends GuiScreen {
         TeleportDestinationClientInfo destination = destinationList.get(index);
         BlockPos c = destination.getCoordinate();
         RFToolsMessages.sendToServer(CommandHandler.CMD_FORCE_TELEPORT,
-                Arguments.builder().value(destination.getDimension()).value(c));
+                TypedMap.builder().put(CommandHandler.PARAM_DIMENSION, destination.getDimension()).put(CommandHandler.PARAM_POS, c));
     }
 
     public static void setReceivers(List<TeleportDestinationClientInfo> destinationList) {

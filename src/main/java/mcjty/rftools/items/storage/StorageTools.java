@@ -2,7 +2,7 @@ package mcjty.rftools.items.storage;
 
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.container.InventoryHelper;
-import mcjty.lib.network.Arguments;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.ClientCommandHandler;
 import mcjty.rftools.blocks.storage.*;
@@ -115,6 +115,6 @@ public class StorageTools {
             }
         }
         RFToolsMessages.sendToClient(player, ClientCommandHandler.CMD_RETURN_STORAGE_INFO,
-                Arguments.builder().value(cnt).value(nameModule));
+                TypedMap.builder().put(ClientCommandHandler.PARAM_COUNTER, cnt).put(ClientCommandHandler.PARAM_NAME, nameModule));
     }
 }

@@ -1,6 +1,6 @@
 package mcjty.rftools.shapes;
 
-import mcjty.lib.network.Arguments;
+import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.network.RFToolsMessages;
 
@@ -49,7 +49,7 @@ public class ScanDataManagerClient {
 
     // Client side only
     public void requestExtraDataClient(int id) {
-        RFToolsMessages.sendToServer(CommandHandler.CMD_REQUEST_SHAPE_DATA, Arguments.builder().value(id));
+        RFToolsMessages.sendToServer(CommandHandler.CMD_REQUEST_SHAPE_DATA, TypedMap.builder().put(CommandHandler.PARAM_ID, id));
     }
 
     // Client side only
@@ -67,7 +67,7 @@ public class ScanDataManagerClient {
         }
         scan.dirtyRequestTimeout--;
         if (scan.dirtyRequestTimeout <= 0) {
-            RFToolsMessages.sendToServer(CommandHandler.CMD_REQUEST_SCAN_DIRTY, Arguments.builder().value(id));
+            RFToolsMessages.sendToServer(CommandHandler.CMD_REQUEST_SCAN_DIRTY, TypedMap.builder().put(CommandHandler.PARAM_ID, id));
             scan.dirtyRequestTimeout = 20;
         }
         return scan.getDirtyCounter();

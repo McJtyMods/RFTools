@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.security;
 
 import mcjty.lib.tileentity.GenericTileEntity;
-import mcjty.lib.network.Arguments;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
@@ -51,7 +51,7 @@ public class SecurityCardItem extends GenericRFToolsItem {
         if (channel != -1) {
             if (System.currentTimeMillis() - lastTime > 250) {
                 lastTime = System.currentTimeMillis();
-                RFToolsMessages.sendToServer(CommandHandler.CMD_GET_SECURITY_NAME, Arguments.builder().value(channel));
+                RFToolsMessages.sendToServer(CommandHandler.CMD_GET_SECURITY_NAME, TypedMap.builder().put(CommandHandler.PARAM_ID, channel));
             }
             list.add(TextFormatting.YELLOW + "Channel: " + channel + " (" + channelNameFromServer + ")");
         } else {

@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.logic.counter;
 
 import mcjty.lib.gui.widgets.TextField;
-import mcjty.lib.network.Arguments;
 import mcjty.lib.tileentity.LogicTileEntity;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.CommandHandler;
@@ -167,7 +166,7 @@ public class CounterTileEntity extends LogicTileEntity {
         if (System.currentTimeMillis() - lastTime > 500) {
             lastTime = System.currentTimeMillis();
             RFToolsMessages.sendToServer(CommandHandler.CMD_GET_COUNTER_INFO,
-                    Arguments.builder().value(getWorld().provider.getDimension()).value(getPos()));
+                    TypedMap.builder().put(CommandHandler.PARAM_DIMENSION, getWorld().provider.getDimension()).put(CommandHandler.PARAM_POS, getPos()));
         }
 
         currenttip.add(TextFormatting.GREEN + "Current: " + cntReceived);

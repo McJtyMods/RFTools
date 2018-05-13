@@ -2,12 +2,11 @@ package mcjty.rftools.blocks.endergen;
 
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.api.information.IMachineInformation;
-import mcjty.lib.compat.RedstoneFluxCompatibility;
 import mcjty.lib.bindings.DefaultValue;
-import mcjty.lib.tileentity.GenericEnergyProviderTileEntity;
 import mcjty.lib.bindings.IValue;
-import mcjty.lib.network.Arguments;
+import mcjty.lib.compat.RedstoneFluxCompatibility;
 import mcjty.lib.network.PacketSendClientCommand;
+import mcjty.lib.tileentity.GenericEnergyProviderTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
@@ -549,7 +548,11 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
                     .stream()
                     .forEach(p -> RFToolsMessages.INSTANCE.sendTo(
                             new PacketSendClientCommand(RFTools.MODID, ClientCommandHandler.CMD_FLASH_ENDERGENIC,
-                                    Arguments.builder().value(getPos()).value(goodCounter).value(badCounter).build()),
+                                    TypedMap.builder()
+                                            .put(ClientCommandHandler.PARAM_POS, getPos())
+                                            .put(ClientCommandHandler.PARAM_GOODCOUNTER, goodCounter)
+                                            .put(ClientCommandHandler.PARAM_BADCOUNTER, badCounter)
+                                            .build()),
                             (EntityPlayerMP) p));
         }
     }

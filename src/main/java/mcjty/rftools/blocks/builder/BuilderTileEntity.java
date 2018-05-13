@@ -7,7 +7,6 @@ import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.bindings.*;
 import mcjty.lib.gui.widgets.ChoiceLabel;
-import mcjty.lib.network.Arguments;
 import mcjty.lib.network.PacketRequestIntegerFromServer;
 import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.typed.Key;
@@ -26,7 +25,6 @@ import mcjty.rftools.network.PacketGetHudLog;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.proxy.CommonProxy;
 import mcjty.rftools.shapes.Shape;
-import mcjty.rftools.varia.RFToolsTools;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
@@ -783,7 +781,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     double d2 = z - player.posZ;
                     if (d0 * d0 + d1 * d1 + d2 * d2 < sqradius) {
                         RFToolsMessages.sendToClient(player, ClientCommandHandler.CMD_POSITION_TO_CLIENT,
-                                Arguments.builder().value(getPos()).value(scan));
+                                TypedMap.builder().put(ClientCommandHandler.PARAM_POS, getPos()).put(ClientCommandHandler.PARAM_SCAN, scan));
                     }
                 }
             }
