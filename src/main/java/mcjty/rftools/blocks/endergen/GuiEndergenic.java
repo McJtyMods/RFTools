@@ -2,11 +2,11 @@ package mcjty.rftools.blocks.endergen;
 
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.gui.GenericGuiContainer;
-import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.widgets.EnergyBar;
 import mcjty.lib.gui.widgets.TextField;
-import mcjty.lib.network.PacketRequestIntegerFromServer;
+import mcjty.lib.network.PacketRequestDataFromServer;
+import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
@@ -76,14 +76,8 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
         timer--;
         if (timer <= 0) {
             timer = 20;
-            RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(RFTools.MODID, tileEntity.getPos(),
-                    EndergenicTileEntity.CMD_GETSTAT_RF, EndergenicTileEntity.CLIENTCMD_GETSTAT_RF, TypedMap.EMPTY));
-            RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(RFTools.MODID, tileEntity.getPos(),
-                    EndergenicTileEntity.CMD_GETSTAT_LOST, EndergenicTileEntity.CLIENTCMD_GETSTAT_LOST, TypedMap.EMPTY));
-            RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(RFTools.MODID, tileEntity.getPos(),
-                    EndergenicTileEntity.CMD_GETSTAT_LAUNCHED, EndergenicTileEntity.CLIENTCMD_GETSTAT_LAUNCHED, TypedMap.EMPTY));
-            RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(RFTools.MODID, tileEntity.getPos(),
-                    EndergenicTileEntity.CMD_GETSTAT_OPPORTUNITIES, EndergenicTileEntity.CLIENTCMD_GETSTAT_OPPORTUNITIES, TypedMap.EMPTY));
+            RFToolsMessages.INSTANCE.sendToServer(new PacketRequestDataFromServer(RFTools.MODID, tileEntity.getPos(),
+                    EndergenicTileEntity.CMD_GETSTATS, EndergenicTileEntity.CLIENTCMD_GETSTATS, TypedMap.EMPTY));
         }
     }
 }

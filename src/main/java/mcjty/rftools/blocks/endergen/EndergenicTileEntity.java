@@ -46,14 +46,13 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
 
     private static Random random = new Random();
 
-    public static final String CMD_GETSTAT_RF = "getStatRF";
-    public static final String CLIENTCMD_GETSTAT_RF = "getStatRF";
-    public static final String CMD_GETSTAT_LOST = "getStatLost";
-    public static final String CLIENTCMD_GETSTAT_LOST = "getStatLost";
-    public static final String CMD_GETSTAT_LAUNCHED = "getStatLaunched";
-    public static final String CLIENTCMD_GETSTAT_LAUNCHED = "getStatLaunched";
-    public static final String CMD_GETSTAT_OPPORTUNITIES = "getStatOpp";
-    public static final String CLIENTCMD_GETSTAT_OPPORTUNITIES = "getStatOpp";
+    public static final String CMD_GETSTATS = "getStats";
+    public static final String CLIENTCMD_GETSTATS = "getStats";
+
+    public static Key<Integer> PARAM_STATRF = new Key<>("statrf", Type.INTEGER);
+    public static Key<Integer> PARAM_STATLOST = new Key<>("statlost", Type.INTEGER);
+    public static Key<Integer> PARAM_STATLAUNCHED = new Key<>("statlaunched", Type.INTEGER);
+    public static Key<Integer> PARAM_STATOPPORTUNITIES = new Key<>("statopportunities", Type.INTEGER);
 
     private static final String[] TAGS = new String[]{"rftick", "lost", "launched", "opportunities"};
     private static final String[] TAG_DESCRIPTIONS = new String[]{"Average RF/tick for the last 5 seconds", "Amount of pearls that were lost during the last 5 seconds",
@@ -791,40 +790,33 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     }
 
     @Override
-    public Integer executeWithResultInteger(String command, TypedMap args) {
-        Integer rc = super.executeWithResultInteger(command, args);
+    public TypedMap executeWithResult(String command, TypedMap args) {
+        TypedMap rc = super.executeWithResult(command, args);
         if (rc != null) {
             return rc;
         }
-        if (CMD_GETSTAT_RF.equals(command)) {
-            return lastRfPerTick;
-        } else if (CMD_GETSTAT_LOST.equals(command)) {
-            return lastPearlsLost;
-        } else if (CMD_GETSTAT_LAUNCHED.equals(command)) {
-            return lastPearlsLaunched;
-        } else if (CMD_GETSTAT_OPPORTUNITIES.equals(command)) {
-            return lastChargeCounter;
+        if (CMD_GETSTATS.equals(command)) {
+            return TypedMap.builder()
+                    .put(PARAM_STATRF, lastRfPerTick)
+                    .put(PARAM_STATLOST, lastPearlsLost)
+                    .put(PARAM_STATLAUNCHED, lastPearlsLaunched)
+                    .put(PARAM_STATRF, lastChargeCounter)
+                    .build();
         }
         return null;
     }
 
     @Override
-    public boolean execute(String command, Integer value) {
-        boolean rc = super.execute(command, value);
+    public boolean receiveDataFromServer(String command, @Nonnull TypedMap value) {
+        boolean rc = super.receiveDataFromServer(command, value);
         if (rc) {
             return true;
         }
-        if (CLIENTCMD_GETSTAT_RF.equals(command)) {
-            GuiEndergenic.fromServer_lastRfPerTick = value;
-            return true;
-        } else if (CLIENTCMD_GETSTAT_LOST.equals(command)) {
-            GuiEndergenic.fromServer_lastPearlsLost = value;
-            return true;
-        } else if (CLIENTCMD_GETSTAT_LAUNCHED.equals(command)) {
-            GuiEndergenic.fromServer_lastPearlsLaunched = value;
-            return true;
-        } else if (CLIENTCMD_GETSTAT_OPPORTUNITIES.equals(command)) {
-            GuiEndergenic.fromServer_lastPearlOpportunities = value;
+        if (CLIENTCMD_GETSTATS.equals(command)) {
+            GuiEndergenic.fromServer_lastRfPerTick = value.get(PARAM_STATRF);
+            GuiEndergenic.fromServer_lastPearlsLost = value.get(PARAM_STATLOST);
+            GuiEndergenic.fromServer_lastPearlsLaunched = value.get(PARAM_STATLAUNCHED);
+            GuiEndergenic.fromServer_lastPearlOpportunities = value.get(PARAM_STATOPPORTUNITIES);
             return true;
         }
         return false;
@@ -844,8 +836,8 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     }
 
     @Override
-    public <T> boolean execute(String command, List<T> list, Type<T> type) {
-        boolean rc = super.execute(command, list, type);
+    public <T> boolean receiveListFromServer(String command, List<T> list, Type<T> type) {
+        boolean rc = super.receiveListFromServer(command, list, type);
         if (rc) {
             return true;
         }

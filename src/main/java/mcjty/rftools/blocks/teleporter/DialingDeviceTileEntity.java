@@ -28,6 +28,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
     public static final String CLIENTCMD_GETRECEIVERS = "getReceivers";
     public static final String CMD_DIAL = "dial";
     public static final String CMD_DIALONCE = "dialOnce";
+    public static final Key<Integer> PARAM_STATUS = new Key<>("status", Type.INTEGER);
 
     public static final String CMD_FAVORITE = "dialer.favorite";
     public static final String CMD_SHOWFAVORITE = "dialer.showFavorite";
@@ -265,36 +266,36 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
     }
 
     @Override
-    public Integer executeWithResultInteger(String command, TypedMap args) {
-        Integer rc = super.executeWithResultInteger(command, args);
+    public TypedMap executeWithResult(String command, TypedMap args) {
+        TypedMap rc = super.executeWithResult(command, args);
         if (rc != null) {
             return rc;
         }
         if (CMD_CHECKSTATUS.equals(command)) {
             BlockPos c = args.get(PARAM_POS);
             int dim = args.get(PARAM_DIMENSION);
-            return checkStatus(c, dim);
+            return TypedMap.builder().put(PARAM_STATUS, checkStatus(c, dim)).build();
         } else if (CMD_DIAL.equals(command)) {
             String player = args.get(PARAM_PLAYER);
             BlockPos transmitter = args.get(PARAM_TRANSMITTER);
             int transDim = args.get(PARAM_TRANS_DIMENSION);
             BlockPos c = args.get(PARAM_POS);
             int dim = args.get(PARAM_DIMENSION);
-            return dial(player, transmitter, transDim, c, dim, false);
+            return TypedMap.builder().put(PARAM_STATUS, dial(player, transmitter, transDim, c, dim, false)).build();
         } else if (CMD_DIALONCE.equals(command)) {
             String player = args.get(PARAM_PLAYER);
             BlockPos transmitter = args.get(PARAM_TRANSMITTER);
             int transDim = args.get(PARAM_TRANS_DIMENSION);
             BlockPos c = args.get(PARAM_POS);
             int dim = args.get(PARAM_DIMENSION);
-            return dial(player, transmitter, transDim, c, dim, true);
+            return TypedMap.builder().put(PARAM_STATUS, dial(player, transmitter, transDim, c, dim, true)).build();
         }
         return null;
     }
 
     @Override
-    public <T> boolean execute(String command, List<T> list, Type<T> type) {
-        boolean rc = super.execute(command, list, type);
+    public <T> boolean receiveListFromServer(String command, List<T> list, Type<T> type) {
+        boolean rc = super.receiveListFromServer(command, list, type);
         if (rc) {
             return true;
         }
@@ -309,16 +310,16 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
     }
 
     @Override
-    public boolean execute(String command, Integer result) {
-        boolean rc = super.execute(command, result);
+    public boolean receiveDataFromServer(String command, @Nonnull TypedMap result) {
+        boolean rc = super.receiveDataFromServer(command, result);
         if (rc) {
             return true;
         }
         if (CLIENTCMD_STATUS.equals(command)) {
-            GuiDialingDevice.fromServer_receiverStatus = result;
+            GuiDialingDevice.fromServer_receiverStatus = result.get(PARAM_STATUS);
             return true;
         } else if (CLIENTCMD_DIAL.equals(command)) {
-            GuiDialingDevice.fromServer_dialResult = result;
+            GuiDialingDevice.fromServer_dialResult = result.get(PARAM_STATUS);
             return true;
         }
         return false;

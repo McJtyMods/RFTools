@@ -37,7 +37,7 @@ public class PacketReceiversReady extends PacketListFromServer<PacketReceiversRe
                 return;
             }
             IClientCommandHandler clientCommandHandler = (IClientCommandHandler) te;
-            if (!clientCommandHandler.execute(message.command, message.list, Type.create(TeleportDestinationClientInfo.class))) {
+            if (!clientCommandHandler.receiveListFromServer(message.command, message.list, Type.create(TeleportDestinationClientInfo.class))) {
                 Logging.log("Command " + message.command + " was not handled!");
             }
         }

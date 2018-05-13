@@ -11,7 +11,6 @@ import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.WorldTools;
-import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -671,8 +670,8 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
     }
 
     @Override
-    public <T> boolean execute(String command, List<T> list, Type<T> type) {
-        boolean rc = super.execute(command, list, type);
+    public <T> boolean receiveListFromServer(String command, List<T> list, Type<T> type) {
+        boolean rc = super.receiveListFromServer(command, list, type);
         if (rc) {
             return true;
         }

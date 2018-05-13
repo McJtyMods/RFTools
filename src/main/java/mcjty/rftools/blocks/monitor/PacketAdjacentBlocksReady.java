@@ -48,7 +48,7 @@ public class PacketAdjacentBlocksReady extends PacketListFromServer<PacketAdjace
                 return;
             }
             IClientCommandHandler clientCommandHandler = (IClientCommandHandler) te;
-            if (!clientCommandHandler.execute(message.command, message.list, Type.create(BlockPos.class))) {
+            if (!clientCommandHandler.receiveListFromServer(message.command, message.list, Type.create(BlockPos.class))) {
                 Logging.log("Command " + message.command + " was not handled!");
             }
         }

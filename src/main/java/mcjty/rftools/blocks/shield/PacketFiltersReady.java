@@ -39,7 +39,7 @@ public class PacketFiltersReady extends PacketListFromServer<PacketFiltersReady,
                 return;
             }
             IClientCommandHandler clientCommandHandler = (IClientCommandHandler) te;
-            if (!clientCommandHandler.execute(message.command, message.list, Type.create(ShieldFilter.class))) {
+            if (!clientCommandHandler.receiveListFromServer(message.command, message.list, Type.create(ShieldFilter.class))) {
                 Logging.log("Command " + message.command + " was not handled!");
             }
         }

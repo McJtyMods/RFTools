@@ -12,7 +12,7 @@ import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.network.PacketRequestIntegerFromServer;
+import mcjty.lib.network.PacketRequestDataFromServer;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
@@ -224,7 +224,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             return;
         }
         BlockPos c = destination.getCoordinate();
-        RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(RFTools.MODID, tileEntity.getPos(),
+        RFToolsMessages.INSTANCE.sendToServer(new PacketRequestDataFromServer(RFTools.MODID, tileEntity.getPos(),
                 DialingDeviceTileEntity.CMD_CHECKSTATUS,
                 DialingDeviceTileEntity.CLIENTCMD_STATUS,
                 TypedMap.builder()
@@ -313,7 +313,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             return;
         }
 
-        RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(RFTools.MODID, tileEntity.getPos(),
+        RFToolsMessages.INSTANCE.sendToServer(new PacketRequestDataFromServer(RFTools.MODID, tileEntity.getPos(),
                 once ? DialingDeviceTileEntity.CMD_DIALONCE : DialingDeviceTileEntity.CMD_DIAL,
                 DialingDeviceTileEntity.CLIENTCMD_DIAL,
                 TypedMap.builder()
@@ -344,7 +344,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         if (transmitterInfo == null) {
             return;
         }
-        RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(RFTools.MODID, tileEntity.getPos(), DialingDeviceTileEntity.CMD_DIAL,
+        RFToolsMessages.INSTANCE.sendToServer(new PacketRequestDataFromServer(RFTools.MODID, tileEntity.getPos(), DialingDeviceTileEntity.CMD_DIAL,
                 DialingDeviceTileEntity.CLIENTCMD_DIAL,
                 TypedMap.builder()
                         .put(PARAM_PLAYER, mc.player.getName())

@@ -1,13 +1,16 @@
 package mcjty.rftools.blocks.builder;
 
 import com.mojang.authlib.GameProfile;
+import mcjty.lib.bindings.DefaultAction;
+import mcjty.lib.bindings.DefaultValue;
+import mcjty.lib.bindings.IAction;
+import mcjty.lib.bindings.IValue;
 import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
-import mcjty.lib.bindings.*;
 import mcjty.lib.gui.widgets.ChoiceLabel;
-import mcjty.lib.network.PacketRequestIntegerFromServer;
+import mcjty.lib.network.PacketRequestDataFromServer;
 import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
@@ -97,6 +100,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     public static final String CMD_GETLEVEL = "getLevel";
     public static final String CLIENTCMD_GETLEVEL = "getLevel";
+    public static final Key<Integer> PARAM_LEVEL = new Key<>("level", Type.INTEGER);
 
     public static final int SLOT_TAB = 0;
     public static final int SLOT_FILTER = 1;
@@ -2293,7 +2297,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     // Request the current scan level.
     public void requestCurrentLevel() {
-        RFToolsMessages.INSTANCE.sendToServer(new PacketRequestIntegerFromServer(RFTools.MODID, getPos(),
+        RFToolsMessages.INSTANCE.sendToServer(new PacketRequestDataFromServer(RFTools.MODID, getPos(),
                 CMD_GETLEVEL,
                 CLIENTCMD_GETLEVEL, TypedMap.EMPTY));
     }
@@ -2339,8 +2343,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     @Override
-    public <T> boolean execute(String command, List<T> list, Type<T> type) {
-        boolean rc = super.execute(command, list, type);
+    public <T> boolean receiveListFromServer(String command, List<T> list, Type<T> type) {
+        boolean rc = super.receiveListFromServer(command, list, type);
         if (rc) {
             return true;
         }
@@ -2353,25 +2357,25 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
 
     @Override
-    public Integer executeWithResultInteger(String command, TypedMap args) {
-        Integer rc = super.executeWithResultInteger(command, args);
+    public TypedMap executeWithResult(String command, TypedMap args) {
+        TypedMap rc = super.executeWithResult(command, args);
         if (rc != null) {
             return rc;
         }
         if (CMD_GETLEVEL.equals(command)) {
-            return scan == null ? -1 : scan.getY();
+            return TypedMap.builder().put(PARAM_LEVEL, scan == null ? -1 : scan.getY()).build();
         }
         return null;
     }
 
     @Override
-    public boolean execute(String command, Integer result) {
-        boolean rc = super.execute(command, result);
+    public boolean receiveDataFromServer(String command, @Nonnull TypedMap result) {
+        boolean rc = super.receiveDataFromServer(command, result);
         if (rc) {
             return true;
         }
         if (CLIENTCMD_GETLEVEL.equals(command)) {
-            currentLevel = result;
+            currentLevel = result.get(PARAM_LEVEL);
             return true;
         }
         return false;
