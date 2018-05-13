@@ -224,13 +224,13 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             return;
         }
         BlockPos c = destination.getCoordinate();
-        RFToolsMessages.INSTANCE.sendToServer(new PacketRequestDataFromServer(RFTools.MODID, tileEntity.getPos(),
+        tileEntity.requestDataFromServer(RFTools.MODID,
                 DialingDeviceTileEntity.CMD_CHECKSTATUS,
                 DialingDeviceTileEntity.CLIENTCMD_STATUS,
                 TypedMap.builder()
                         .put(PARAM_POS, c)
                         .put(PARAM_DIMENSION, destination.getDimension())
-                        .build()));
+                        .build());
 
         lastCheckedReceiver = true;
         listDirty = 0;
@@ -313,7 +313,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             return;
         }
 
-        RFToolsMessages.INSTANCE.sendToServer(new PacketRequestDataFromServer(RFTools.MODID, tileEntity.getPos(),
+        tileEntity.requestDataFromServer(RFTools.MODID,
                 once ? DialingDeviceTileEntity.CMD_DIALONCE : DialingDeviceTileEntity.CMD_DIAL,
                 DialingDeviceTileEntity.CLIENTCMD_DIAL,
                 TypedMap.builder()
@@ -322,7 +322,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
                         .put(PARAM_TRANS_DIMENSION, mc.world.provider.getDimension())
                         .put(PARAM_POS, destination.getCoordinate())
                         .put(PARAM_DIMENSION, destination.getDimension())
-                        .build()));
+                        .build());
 
         lastDialedTransmitter = true;
         listDirty = 0;
@@ -344,7 +344,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         if (transmitterInfo == null) {
             return;
         }
-        RFToolsMessages.INSTANCE.sendToServer(new PacketRequestDataFromServer(RFTools.MODID, tileEntity.getPos(), DialingDeviceTileEntity.CMD_DIAL,
+        tileEntity.requestDataFromServer(RFTools.MODID, DialingDeviceTileEntity.CMD_DIAL,
                 DialingDeviceTileEntity.CLIENTCMD_DIAL,
                 TypedMap.builder()
                         .put(PARAM_PLAYER, mc.player.getName())
@@ -352,7 +352,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
                         .put(PARAM_TRANS_DIMENSION, mc.world.provider.getDimension())
                         .put(PARAM_POS, null)
                         .put(PARAM_DIMENSION, 0)
-                        .build()));
+                        .build());
 
         lastDialedTransmitter = true;
         listDirty = 0;

@@ -2297,9 +2297,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     // Request the current scan level.
     public void requestCurrentLevel() {
-        RFToolsMessages.INSTANCE.sendToServer(new PacketRequestDataFromServer(RFTools.MODID, getPos(),
+        requestDataFromServer(RFTools.MODID,
                 CMD_GETLEVEL,
-                CLIENTCMD_GETLEVEL, TypedMap.EMPTY));
+                CLIENTCMD_GETLEVEL, TypedMap.EMPTY);
     }
 
     public static int getCurrentLevelClientSide() {
