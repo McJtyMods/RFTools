@@ -357,8 +357,12 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
     private void startSearch(String text) {
         if (!text.isEmpty()) {
-            RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID,
-                    new SearchItemsInfoPacketServer(tileEntity.getDimension(), tileEntity.getStorageScannerPos(), text)));
+            sendServerCommand(RFTools.MODID, CommandHandler.CMD_SCANNER_SEARCH,
+                    TypedMap.builder()
+                            .put(CommandHandler.PARAM_SCANNER_DIM, tileEntity.getDimension())
+                            .put(CommandHandler.PARAM_SCANNER_POS, tileEntity.getStorageScannerPos())
+                            .put(CommandHandler.PARAM_SEARCH_TEXT, text)
+                            .build());
         }
     }
 

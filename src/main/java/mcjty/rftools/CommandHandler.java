@@ -27,9 +27,11 @@ public class CommandHandler {
     public static final String CMD_CYCLE_STORAGE = "cycleStorage";
 
     public static final String CMD_REQUEST_SCANNER_CONTENTS = "requestScannerContents";
+    public static final String CMD_SCANNER_SEARCH = "scannerSearch";
     public static final Key<Integer> PARAM_SCANNER_DIM = new Key<>("scannerdim", Type.INTEGER);
     public static final Key<BlockPos> PARAM_SCANNER_POS = new Key<>("scannerpos", Type.BLOCKPOS);
     public static final Key<BlockPos> PARAM_INV_POS = new Key<>("invpos", Type.BLOCKPOS);
+    public static final Key<String> PARAM_SEARCH_TEXT = new Key<>("text", Type.STRING);
 
     public static final String CMD_REQUEST_STORAGE_INFO = "requestStorageInfo";
     public static final Key<Integer> PARAM_DIMENSION = new Key<>("dimension", Type.INTEGER);
@@ -68,6 +70,10 @@ public class CommandHandler {
     public static void registerCommands() {
         McJtyLib.registerCommand(RFTools.MODID, CMD_REQUEST_SCANNER_CONTENTS, (player, arguments) -> {
             StorageScannerTools.requestContents(player, arguments.get(PARAM_SCANNER_DIM), arguments.get(PARAM_SCANNER_POS), arguments.get(PARAM_INV_POS));
+            return true;
+        });
+        McJtyLib.registerCommand(RFTools.MODID, CMD_SCANNER_SEARCH, (player, arguments) -> {
+            StorageScannerTools.scannerSearch(player, arguments.get(PARAM_SCANNER_DIM), arguments.get(PARAM_SCANNER_POS), arguments.get(PARAM_SEARCH_TEXT));
             return true;
         });
         McJtyLib.registerCommand(RFTools.MODID, CMD_COMPACT, (player, arguments) -> {

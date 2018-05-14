@@ -109,7 +109,6 @@ public class RFToolsMessages {
         net.registerMessage(PacketReturnExtraData.Handler.class, PacketReturnExtraData.class, PacketHandler.nextPacketID(), Side.CLIENT);
 
         PacketHandler.register(PacketHandler.nextPacketID(), InventoriesInfoPacketServer.class, InventoriesInfoPacketClient.class);
-        PacketHandler.register(PacketHandler.nextPacketID(), SearchItemsInfoPacketServer.class, SearchItemsInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), ScannerInfoPacketServer.class, ScannerInfoPacketClient.class);
     }
 
