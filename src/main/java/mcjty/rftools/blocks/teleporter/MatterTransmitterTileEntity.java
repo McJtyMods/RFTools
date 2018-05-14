@@ -73,6 +73,11 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
     public static final Key<Boolean> VALUE_BEAM = new Key<>("beam", Type.BOOLEAN);
 
     @Override
+    protected boolean needsCustomInvWrapper() {
+        return true;
+    }
+
+    @Override
     public IValue[] getValues() {
         return new IValue[] {
                 new DefaultValue<>(VALUE_NAME, MatterTransmitterTileEntity::getName, MatterTransmitterTileEntity::setName),
