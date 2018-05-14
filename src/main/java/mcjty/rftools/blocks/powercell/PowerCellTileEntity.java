@@ -51,7 +51,6 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         DefaultSidedInventory, ITickable, SmartWrenchSelector, MachineInformation {
 
     public static final String CMD_GET_INFO = "getInfo";
-    public static final String CLIENTCMD_GET_INFO = "getInfo";
     public static final Key<Integer> PARAM_ENERGY = new Key<>("energy", Type.INTEGER);
     public static final Key<Integer> PARAM_BLOCKS = new Key<>("block", Type.INTEGER);
     public static final Key<Integer> PARAM_SIMPLEBLOCKS = new Key<>("simpleblocks", Type.INTEGER);
@@ -766,7 +765,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         if (rc) {
             return true;
         }
-        if (CLIENTCMD_GET_INFO.equals(command)) {
+        if (CMD_GET_INFO.equals(command)) {
             tooltipEnergy = result.get(PARAM_ENERGY);
             tooltipBlocks = result.get(PARAM_BLOCKS);
             tooltipSimpleBlocks = result.get(PARAM_SIMPLEBLOCKS);

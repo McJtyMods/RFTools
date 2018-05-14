@@ -36,7 +36,6 @@ import java.util.*;
 public class ScreenTileEntity extends GenericTileEntity implements ITickable, DefaultSidedInventory {
 
     public static final String CMD_SCREEN_INFO = "getScreenInfo";
-    public static final String CLIENTCMD_SCREEN_INFO = "getScreenInfo";
     public static final Key<List<String>> PARAM_INFO = new Key<>("info", Type.STRING_LIST);
 
     // Client side data for CMD_SCREEN_INFO
@@ -822,7 +821,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         if (rc) {
             return rc;
         }
-        if (CLIENTCMD_SCREEN_INFO.equals(command)) {
+        if (CMD_SCREEN_INFO.equals(command)) {
             infoReceived = result.get(PARAM_INFO);
             return true;
         }

@@ -169,7 +169,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
         }
         if (System.currentTimeMillis() - lastTime > 500) {
             lastTime = System.currentTimeMillis();
-            te.requestDataFromServer(RFTools.MODID, ScreenTileEntity.CMD_SCREEN_INFO, ScreenTileEntity.CLIENTCMD_SCREEN_INFO, TypedMap.EMPTY);
+            te.requestDataFromServer(RFTools.MODID, ScreenTileEntity.CMD_SCREEN_INFO, TypedMap.EMPTY);
         }
         currenttip.addAll(ScreenTileEntity.infoReceived);
         return currenttip;

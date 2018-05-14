@@ -47,7 +47,6 @@ import java.util.List;
 public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, MachineInformation, ITickable {
 
     public static final String CMD_GET_SPAWNERINFO = "getSpawnerInfo";
-    public static final String CLIENTCMD_GET_SPAWNERINFO = "getSpawnerInfo";
     public static final Key<Double> PARAM_MATTER0 = new Key<>("matter0", Type.DOUBLE);
     public static final Key<Double> PARAM_MATTER1 = new Key<>("matter1", Type.DOUBLE);
     public static final Key<Double> PARAM_MATTER2 = new Key<>("matter2", Type.DOUBLE);
@@ -471,7 +470,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         if (te instanceof SpawnerTileEntity) {
             if (System.currentTimeMillis() - lastTime > 500) {
                 lastTime = System.currentTimeMillis();
-                ((SpawnerTileEntity) te).requestDataFromServer(RFTools.MODID, SpawnerTileEntity.CMD_GET_SPAWNERINFO, SpawnerTileEntity.CLIENTCMD_GET_SPAWNERINFO, TypedMap.EMPTY);
+                ((SpawnerTileEntity) te).requestDataFromServer(RFTools.MODID, SpawnerTileEntity.CMD_GET_SPAWNERINFO, TypedMap.EMPTY);
             }
 
             if (matterReceived0 >= 0) {
@@ -507,7 +506,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         if (rc) {
             return rc;
         }
-        if (CLIENTCMD_GET_SPAWNERINFO.equals(command)) {
+        if (CMD_GET_SPAWNERINFO.equals(command)) {
             matterReceived0 = result.get(PARAM_MATTER0).floatValue();
             matterReceived1 = result.get(PARAM_MATTER1).floatValue();
             matterReceived2 = result.get(PARAM_MATTER2).floatValue();

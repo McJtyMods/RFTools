@@ -39,11 +39,9 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
     public static final Key<Integer> PARAM_TRANS_DIMENSION = new Key<>("transDimension", Type.INTEGER);
     public static final Key<Boolean> PARAM_FAVORITE = new Key<>("favorite", Type.BOOLEAN);
 
-    public static final String CLIENTCMD_DIAL = "dialResult";
     public static final String CMD_GETTRANSMITTERS = "getTransmitters";
     public static final String CLIENTCMD_GETTRANSMITTERS = "getTransmitters";
     public static final String CMD_CHECKSTATUS = "checkStatus";
-    public static final String CLIENTCMD_STATUS = "status";
     public static final int DIAL_RECEIVER_BLOCKED_MASK = 0x1;       // One value for blocked or not on receiver side
     public static final int DIAL_TRANSMITTER_BLOCKED_MASK = 0x2;    // One value for blocked or not on transmitter side
     public static final int DIAL_INVALID_DESTINATION_MASK = 0x4;    // The destination is somehow invalid
@@ -315,10 +313,10 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
         if (rc) {
             return true;
         }
-        if (CLIENTCMD_STATUS.equals(command)) {
+        if (CMD_CHECKSTATUS.equals(command)) {
             GuiDialingDevice.fromServer_receiverStatus = result.get(PARAM_STATUS);
             return true;
-        } else if (CLIENTCMD_DIAL.equals(command)) {
+        } else if (CMD_DIAL.equals(command) || CMD_DIALONCE.equals(command)) {
             GuiDialingDevice.fromServer_dialResult = result.get(PARAM_STATUS);
             return true;
         }

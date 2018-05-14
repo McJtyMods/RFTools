@@ -98,7 +98,7 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
             if (list != null) {
                 if (System.currentTimeMillis() - lastTime > 100) {
                     lastTime = System.currentTimeMillis();
-                    tileEntity.requestDataFromServer(RFTools.MODID, SpawnerTileEntity.CMD_GET_SPAWNERINFO, SpawnerTileEntity.CLIENTCMD_GET_SPAWNERINFO, TypedMap.EMPTY);
+                    tileEntity.requestDataFromServer(RFTools.MODID, SpawnerTileEntity.CMD_GET_SPAWNERINFO, TypedMap.EMPTY);
 //                    RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new SpawnerInfoPacketServer(
 //                            tileEntity.getWorld().provider.getDimension(),
 //                            tileEntity.getPos())));

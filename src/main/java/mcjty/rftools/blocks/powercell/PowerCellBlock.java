@@ -191,8 +191,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
            }
             if (System.currentTimeMillis() - lastTime > 250) {
                 lastTime = System.currentTimeMillis();
-                powercell.requestDataFromServer(RFTools.MODID, PowerCellTileEntity.CMD_GET_INFO, PowerCellTileEntity.CLIENTCMD_GET_INFO,
-                        TypedMap.EMPTY);
+                powercell.requestDataFromServer(RFTools.MODID, PowerCellTileEntity.CMD_GET_INFO, TypedMap.EMPTY);
             }
             long total = (PowerCellTileEntity.tooltipBlocks - PowerCellTileEntity.tooltipAdvancedBlocks - (long) PowerCellTileEntity.tooltipSimpleBlocks) * PowerCellConfiguration.rfPerNormalCell;
             total += (long) PowerCellTileEntity.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerNormalCell * advancedFactor;

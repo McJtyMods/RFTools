@@ -226,7 +226,6 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         BlockPos c = destination.getCoordinate();
         tileEntity.requestDataFromServer(RFTools.MODID,
                 DialingDeviceTileEntity.CMD_CHECKSTATUS,
-                DialingDeviceTileEntity.CLIENTCMD_STATUS,
                 TypedMap.builder()
                         .put(PARAM_POS, c)
                         .put(PARAM_DIMENSION, destination.getDimension())
@@ -315,7 +314,6 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
 
         tileEntity.requestDataFromServer(RFTools.MODID,
                 once ? DialingDeviceTileEntity.CMD_DIALONCE : DialingDeviceTileEntity.CMD_DIAL,
-                DialingDeviceTileEntity.CLIENTCMD_DIAL,
                 TypedMap.builder()
                         .put(PARAM_PLAYER, mc.player.getName())
                         .put(PARAM_TRANSMITTER, transmitterInfo.getCoordinate())
@@ -345,7 +343,6 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
             return;
         }
         tileEntity.requestDataFromServer(RFTools.MODID, DialingDeviceTileEntity.CMD_DIAL,
-                DialingDeviceTileEntity.CLIENTCMD_DIAL,
                 TypedMap.builder()
                         .put(PARAM_PLAYER, mc.player.getName())
                         .put(PARAM_TRANSMITTER, transmitterInfo.getCoordinate())

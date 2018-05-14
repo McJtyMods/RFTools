@@ -47,7 +47,6 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     private static Random random = new Random();
 
     public static final String CMD_GETSTATS = "getStats";
-    public static final String CLIENTCMD_GETSTATS = "getStats";
 
     public static Key<Integer> PARAM_STATRF = new Key<>("statrf", Type.INTEGER);
     public static Key<Integer> PARAM_STATLOST = new Key<>("statlost", Type.INTEGER);
@@ -812,7 +811,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
         if (rc) {
             return true;
         }
-        if (CLIENTCMD_GETSTATS.equals(command)) {
+        if (CMD_GETSTATS.equals(command)) {
             GuiEndergenic.fromServer_lastRfPerTick = value.get(PARAM_STATRF);
             GuiEndergenic.fromServer_lastPearlsLost = value.get(PARAM_STATLOST);
             GuiEndergenic.fromServer_lastPearlsLaunched = value.get(PARAM_STATLAUNCHED);

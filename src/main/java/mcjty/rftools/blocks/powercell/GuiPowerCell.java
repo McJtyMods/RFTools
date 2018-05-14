@@ -93,8 +93,7 @@ public class GuiPowerCell extends GenericGuiContainer<PowerCellTileEntity> {
     private void requestRF() {
         if (System.currentTimeMillis() - lastTime > 250) {
             lastTime = System.currentTimeMillis();
-            tileEntity.requestDataFromServer(RFTools.MODID, PowerCellTileEntity.CMD_GET_INFO, PowerCellTileEntity.CLIENTCMD_GET_INFO,
-                    TypedMap.EMPTY);
+            tileEntity.requestDataFromServer(RFTools.MODID, PowerCellTileEntity.CMD_GET_INFO, TypedMap.EMPTY);
         }
     }
 

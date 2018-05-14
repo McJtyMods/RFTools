@@ -76,8 +76,7 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
         timer--;
         if (timer <= 0) {
             timer = 20;
-            tileEntity.requestDataFromServer(RFTools.MODID,
-                    EndergenicTileEntity.CMD_GETSTATS, EndergenicTileEntity.CLIENTCMD_GETSTATS, TypedMap.EMPTY);
+            tileEntity.requestDataFromServer(RFTools.MODID, EndergenicTileEntity.CMD_GETSTATS, TypedMap.EMPTY);
         }
     }
 }

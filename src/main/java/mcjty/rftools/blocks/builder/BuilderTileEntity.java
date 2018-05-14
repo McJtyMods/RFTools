@@ -99,7 +99,6 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public static final Key<Integer> PARAM_ANCHOR_INDEX = new Key<>("anchorIndex", Type.INTEGER);
 
     public static final String CMD_GETLEVEL = "getLevel";
-    public static final String CLIENTCMD_GETLEVEL = "getLevel";
     public static final Key<Integer> PARAM_LEVEL = new Key<>("level", Type.INTEGER);
 
     public static final int SLOT_TAB = 0;
@@ -2298,9 +2297,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     // Request the current scan level.
     public void requestCurrentLevel() {
-        requestDataFromServer(RFTools.MODID,
-                CMD_GETLEVEL,
-                CLIENTCMD_GETLEVEL, TypedMap.EMPTY);
+        requestDataFromServer(RFTools.MODID, CMD_GETLEVEL, TypedMap.EMPTY);
     }
 
     public static int getCurrentLevelClientSide() {
@@ -2375,7 +2372,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (rc) {
             return true;
         }
-        if (CLIENTCMD_GETLEVEL.equals(command)) {
+        if (CMD_GETLEVEL.equals(command)) {
             currentLevel = result.get(PARAM_LEVEL);
             return true;
         }
