@@ -11,7 +11,6 @@ import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.BlockPosTools;
@@ -69,7 +68,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     private boolean init = false;
 
     // From server: all the positions with inventories
-    public static List<InventoriesInfoPacketClient.InventoryInfo> fromServer_inventories = new ArrayList<>();
+    public static List<PacketReturnInventoryInfo.InventoryInfo> fromServer_inventories = new ArrayList<>();
     // From server: all the positions with inventories matching the search
     public static Set<BlockPos> fromServer_foundInventories = new HashSet<>();
     // From server: the contents of an inventory
@@ -200,8 +199,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         window.event("down", (source, params) -> moveDown());
         window.event("bottom", (source, params) -> moveBottom());
         window.event("remove", (source, params) -> removeFromList());
-        window.event("scan", (source, params) -> RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID,
-                new InventoriesInfoPacketServer(tileEntity.getDimension(), tileEntity.getStorageScannerPos(), true))));
+        window.event("scan", (source, params) -> RFToolsMessages.INSTANCE.sendToServer(new PacketGetInventoryInfo(tileEntity.getDimension(), tileEntity.getStorageScannerPos(), true)));
 
         Keyboard.enableRepeatEvents(true);
 
@@ -347,7 +345,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             // Starred
             return;
         }
-        InventoriesInfoPacketClient.InventoryInfo c = fromServer_inventories.get(index - 1);
+        PacketReturnInventoryInfo.InventoryInfo c = fromServer_inventories.get(index - 1);
         if (c != null) {
             RFTools.instance.clientInfo.hilightBlock(c.getPos(), System.currentTimeMillis() + 1000 * StorageScannerConfiguration.hilightTime);
             Logging.message(mc.player, "The inventory is now highlighted");
@@ -386,7 +384,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             }
             selected--;
             if (selected < fromServer_inventories.size()) {
-                InventoriesInfoPacketClient.InventoryInfo info = fromServer_inventories.get(selected);
+                PacketReturnInventoryInfo.InventoryInfo info = fromServer_inventories.get(selected);
                 if (info == null) {
                     return null;
                 } else {
@@ -400,8 +398,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     private void requestListsIfNeeded() {
         listDirty--;
         if (listDirty <= 0) {
-            RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID,
-                    new InventoriesInfoPacketServer(tileEntity.getDimension(), tileEntity.getStorageScannerPos(), false)));
+            RFToolsMessages.INSTANCE.sendToServer(new PacketGetInventoryInfo(tileEntity.getDimension(), tileEntity.getStorageScannerPos(), false));
             getInventoryOnServer();
             listDirty = 20;
         }
@@ -480,7 +477,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     private void updateStorageList() {
         storageList.removeChildren();
         addStorageLine(null, "All routable", false);
-        for (InventoriesInfoPacketClient.InventoryInfo c : fromServer_inventories) {
+        for (PacketReturnInventoryInfo.InventoryInfo c : fromServer_inventories) {
             String displayName = c.getName();
             boolean routable = c.isRoutable();
             addStorageLine(c, displayName, routable);
@@ -489,7 +486,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
         storageList.clearHilightedRows();
         int i = 0;
-        for (InventoriesInfoPacketClient.InventoryInfo c : fromServer_inventories) {
+        for (PacketReturnInventoryInfo.InventoryInfo c : fromServer_inventories) {
             if (fromServer_foundInventories.contains(c.getPos())) {
                 storageList.addHilightedRow(i + 1);
             }
@@ -497,7 +494,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         }
     }
 
-    private void addStorageLine(InventoriesInfoPacketClient.InventoryInfo c, String displayName, boolean routable) {
+    private void addStorageLine(PacketReturnInventoryInfo.InventoryInfo c, String displayName, boolean routable) {
         Panel panel;
         if (c == null) {
             panel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(8).setHorizontalMargin(5));

@@ -1,14 +1,13 @@
 package mcjty.rftools.blocks.storagemonitor;
 
+
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.lib.network.clientinfo.InfoPacketClient;
-import mcjty.lib.network.clientinfo.InfoPacketServer;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.blocks.storage.ModularStorageContainer;
 import mcjty.rftools.blocks.storage.ModularStorageTileEntity;
-import mcjty.rftools.varia.RFToolsTools;
+import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -17,13 +16,17 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class InventoriesInfoPacketServer implements InfoPacketServer {
+public class PacketGetInventoryInfo implements IMessage {
 
     private int id;
     private BlockPos pos;
@@ -43,17 +46,31 @@ public class InventoriesInfoPacketServer implements InfoPacketServer {
         byteBuf.writeBoolean(doscan);
     }
 
-    public InventoriesInfoPacketServer() {
+    public PacketGetInventoryInfo() {
     }
 
-    public InventoriesInfoPacketServer(int worldId, BlockPos pos, boolean doscan) {
+    public PacketGetInventoryInfo(int worldId, BlockPos pos, boolean doscan) {
         this.id = worldId;
         this.pos = pos;
         this.doscan = doscan;
     }
 
-    @Override
-    public Optional<InfoPacketClient> onMessageServer(EntityPlayerMP entityPlayerMP) {
+    public static class Handler implements IMessageHandler<PacketGetInventoryInfo, IMessage> {
+        @Override
+        public IMessage onMessage(PacketGetInventoryInfo message, MessageContext ctx) {
+            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(()
+                    -> message.onMessageServer(ctx.getServerHandler().player)
+                    .ifPresent(p -> sendReplyToClient(p, ctx.getServerHandler().player)));
+            return null;
+        }
+
+        private void sendReplyToClient(List<PacketReturnInventoryInfo.InventoryInfo> reply, EntityPlayerMP player) {
+            PacketReturnInventoryInfo msg = new PacketReturnInventoryInfo(reply);
+            RFToolsMessages.INSTANCE.sendTo(msg, player);
+        }
+    }
+
+    public Optional<List<PacketReturnInventoryInfo.InventoryInfo>> onMessageServer(EntityPlayerMP entityPlayerMP) {
         World world = DimensionManager.getWorld(id);
         if (world == null) {
             return Optional.empty();
@@ -73,17 +90,17 @@ public class InventoriesInfoPacketServer implements InfoPacketServer {
                 inventories = scannerTileEntity.getAllInventories();
             }
 
-            List<InventoriesInfoPacketClient.InventoryInfo> invs = inventories
+            List<PacketReturnInventoryInfo.InventoryInfo> invs = inventories
                     .map(pos -> toInventoryInfo(world, pos, scannerTileEntity))
                     .collect(Collectors.toList());
 
-            return Optional.of(new InventoriesInfoPacketClient(invs));
+            return Optional.of(invs);
         }
 
         return Optional.empty();
     }
 
-    private static InventoriesInfoPacketClient.InventoryInfo toInventoryInfo(World world, BlockPos pos, StorageScannerTileEntity te) {
+    private static PacketReturnInventoryInfo.InventoryInfo toInventoryInfo(World world, BlockPos pos, StorageScannerTileEntity te) {
         IBlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
         String displayName;
@@ -106,6 +123,7 @@ public class InventoriesInfoPacketServer implements InfoPacketServer {
                 }
             }
         }
-        return new InventoriesInfoPacketClient.InventoryInfo(pos, displayName, te.isRoutable(pos), block);
+        return new PacketReturnInventoryInfo.InventoryInfo(pos, displayName, te.isRoutable(pos), block);
     }
+
 }

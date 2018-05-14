@@ -19,9 +19,9 @@ import mcjty.rftools.blocks.shield.PacketFiltersReady;
 import mcjty.rftools.blocks.shield.PacketGetFilters;
 import mcjty.rftools.blocks.storage.PacketSyncSlotsToClient;
 import mcjty.rftools.blocks.storage.PacketUpdateNBTItemStorage;
-import mcjty.rftools.blocks.storagemonitor.InventoriesInfoPacketClient;
-import mcjty.rftools.blocks.storagemonitor.InventoriesInfoPacketServer;
+import mcjty.rftools.blocks.storagemonitor.PacketGetInventoryInfo;
 import mcjty.rftools.blocks.storagemonitor.PacketRequestItem;
+import mcjty.rftools.blocks.storagemonitor.PacketReturnInventoryInfo;
 import mcjty.rftools.blocks.teleporter.PacketGetReceivers;
 import mcjty.rftools.blocks.teleporter.PacketGetTransmitters;
 import mcjty.rftools.blocks.teleporter.PacketReceiversReady;
@@ -83,6 +83,7 @@ public class RFToolsMessages {
         net.registerMessage(PacketUpdateNBTItemInventoryShape.Handler.class, PacketUpdateNBTItemInventoryShape.class, PacketHandler.nextPacketID(), Side.SERVER);
         net.registerMessage(PacketUpdateNBTItemFilter.Handler.class, PacketUpdateNBTItemFilter.class, PacketHandler.nextPacketID(), Side.SERVER);
         net.registerMessage(PacketUpdateNBTItemStorage.Handler.class, PacketUpdateNBTItemStorage.class, PacketHandler.nextPacketID(), Side.SERVER);
+        net.registerMessage(PacketGetInventoryInfo.Handler.class, PacketGetInventoryInfo.class, PacketHandler.nextPacketID(), Side.SERVER);
 
         // Client side
         net.registerMessage(PacketPlayersReady.Handler.class, PacketPlayersReady.class, PacketHandler.nextPacketID(), Side.CLIENT);
@@ -109,8 +110,7 @@ public class RFToolsMessages {
         net.registerMessage(PacketReturnShapeData.Handler.class, PacketReturnShapeData.class, PacketHandler.nextPacketID(), Side.CLIENT);
         net.registerMessage(PacketProjectorClientNotification.Handler.class, PacketProjectorClientNotification.class, PacketHandler.nextPacketID(), Side.CLIENT);
         net.registerMessage(PacketReturnExtraData.Handler.class, PacketReturnExtraData.class, PacketHandler.nextPacketID(), Side.CLIENT);
-
-        PacketHandler.register(PacketHandler.nextPacketID(), InventoriesInfoPacketServer.class, InventoriesInfoPacketClient.class);
+        net.registerMessage(PacketReturnInventoryInfo.Handler.class, PacketReturnInventoryInfo.class, PacketHandler.nextPacketID(), Side.CLIENT);
     }
 
     public static void sendToServer(String command, @Nonnull TypedMap.Builder argumentBuilder) {
