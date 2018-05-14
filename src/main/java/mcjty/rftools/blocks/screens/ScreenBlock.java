@@ -3,16 +3,13 @@ package mcjty.rftools.blocks.screens;
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.blocks.GenericItemBlock;
-import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.api.screens.ITooltipInfo;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
-import mcjty.rftools.blocks.screens.network.ScreenInfoPacketClient;
-import mcjty.rftools.blocks.screens.network.ScreenInfoPacketServer;
-import mcjty.rftools.network.RFToolsMessages;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
@@ -131,7 +128,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
             }
             IScreenModule module = screenTileEntity.getHoveringModule();
             if (module instanceof ITooltipInfo) {
-                String[] info = ((ITooltipInfo) module).getInfo(world, screenTileEntity.getHoveringX(), screenTileEntity.getHoveringY(), player);
+                List<String> info = ((ITooltipInfo) module).getInfo(world, screenTileEntity.getHoveringX(), screenTileEntity.getHoveringY());
                 for (String s : info) {
                     probeInfo.text(s);
                 }
@@ -172,10 +169,9 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
         }
         if (System.currentTimeMillis() - lastTime > 500) {
             lastTime = System.currentTimeMillis();
-            RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new ScreenInfoPacketServer(te.getWorld().provider.getDimension(),
-                    te.getPos())));
+            te.requestDataFromServer(RFTools.MODID, ScreenTileEntity.CMD_SCREEN_INFO, ScreenTileEntity.CLIENTCMD_SCREEN_INFO, TypedMap.EMPTY);
         }
-        Collections.addAll(currenttip, ScreenInfoPacketClient.infoReceived);
+        currenttip.addAll(ScreenTileEntity.infoReceived);
         return currenttip;
     }
 

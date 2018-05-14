@@ -112,7 +112,6 @@ public class RFToolsMessages {
         PacketHandler.register(PacketHandler.nextPacketID(), SearchItemsInfoPacketServer.class, SearchItemsInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), GetContentsInfoPacketServer.class, GetContentsInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), SpawnerInfoPacketServer.class, SpawnerInfoPacketClient.class);
-        PacketHandler.register(PacketHandler.nextPacketID(), ScreenInfoPacketServer.class, ScreenInfoPacketClient.class);
         PacketHandler.register(PacketHandler.nextPacketID(), ScannerInfoPacketServer.class, ScannerInfoPacketClient.class);
     }
 

@@ -30,9 +30,17 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 public class ScreenTileEntity extends GenericTileEntity implements ITickable, DefaultSidedInventory {
+
+    public static final String CMD_SCREEN_INFO = "getScreenInfo";
+    public static final String CLIENTCMD_SCREEN_INFO = "getScreenInfo";
+    public static final Key<List<String>> PARAM_INFO = new Key<>("info", Type.STRING_LIST);
+
+    // Client side data for CMD_SCREEN_INFO
+    public static List<String> infoReceived = Collections.emptyList();
 
     public static final String CMD_CLICK = "screen.click";
     public static final String CMD_HOVER = "screen.hover";
@@ -784,6 +792,38 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         } else if (CMD_SETTRUETYPE.equals(command)) {
             int b = params.get(PARAM_TRUETYPE);
             setTrueTypeMode(b);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public TypedMap executeWithResult(String command, TypedMap args) {
+        TypedMap rc = super.executeWithResult(command, args);
+        if (rc != null) {
+            return rc;
+        }
+        if (CMD_SCREEN_INFO.equals(command)) {
+            IScreenModule module = getHoveringModule();
+            List<String> info = Collections.emptyList();
+            if (module instanceof ITooltipInfo) {
+                info = ((ITooltipInfo) module).getInfo(world, getHoveringX(), getHoveringY());
+            }
+            return TypedMap.builder()
+                    .put(PARAM_INFO, info)
+                    .build();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean receiveDataFromServer(String command, @Nonnull TypedMap result) {
+        boolean rc = super.receiveDataFromServer(command, result);
+        if (rc) {
+            return rc;
+        }
+        if (CLIENTCMD_SCREEN_INFO.equals(command)) {
+            infoReceived = result.get(PARAM_INFO);
             return true;
         }
         return false;

@@ -13,7 +13,6 @@ import mcjty.rftools.api.screens.ITooltipInfo;
 import mcjty.rftools.api.screens.data.IModuleData;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
-import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
@@ -25,6 +24,9 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+
+import java.util.Collections;
+import java.util.List;
 
 public class StorageControlScreenModule implements IScreenModule<StorageControlScreenModule.ModuleDataStacks>, ITooltipInfo,
         IScreenModuleUpdater {
@@ -142,16 +144,15 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
     }
 
     @Override
-    public String[] getInfo(World world, int x, int y, EntityPlayer player) {
+    public List<String> getInfo(World world, int x, int y) {
         StorageScannerTileEntity te = getStorageScanner(dim, coordinate);
         if (te != null) {
             int i = getHighlightedStack(x, y);
             if (i != -1 && !stacks.get(i).isEmpty()) {
-                return new String[]{
-                        TextFormatting.GREEN + "Item: " + TextFormatting.WHITE + stacks.get(i).getDisplayName()};
+                return Collections.singletonList(TextFormatting.GREEN + "Item: " + TextFormatting.WHITE + stacks.get(i).getDisplayName());
             }
         }
-        return new String[0];
+        return Collections.emptyList();
     }
 
     protected void setupCoordinateFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
