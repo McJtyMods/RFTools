@@ -586,11 +586,10 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         } else {
             if (System.currentTimeMillis() - lastTime > 300) {
                 lastTime = System.currentTimeMillis();
-                RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new ScannerInfoPacketServer(tileEntity.getDimension(),
-                        tileEntity.getPos())));
+                tileEntity.requestDataFromServer(RFTools.MODID, StorageScannerTileEntity.CMD_SCANNER_INFO, TypedMap.EMPTY);
             }
-            energyBar.setValue(ScannerInfoPacketClient.rfReceived);
-            exportToStarred.setCurrentChoice(ScannerInfoPacketClient.exportToCurrentReceived ? 0 : 1);
+            energyBar.setValue(rfReceived);
+            exportToStarred.setCurrentChoice(exportToCurrentReceived ? 0 : 1);
         }
 
         drawWindow();

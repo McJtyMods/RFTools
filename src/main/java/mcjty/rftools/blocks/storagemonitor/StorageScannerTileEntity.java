@@ -1,9 +1,12 @@
 package mcjty.rftools.blocks.storagemonitor;
 
 import com.google.common.base.Function;
+import mcjty.lib.bindings.DefaultAction;
+import mcjty.lib.bindings.DefaultValue;
+import mcjty.lib.bindings.IAction;
+import mcjty.lib.bindings.IValue;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
-import mcjty.lib.bindings.*;
 import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
@@ -14,7 +17,6 @@ import mcjty.rftools.api.general.IInventoryTracker;
 import mcjty.rftools.api.storage.IStorageScanner;
 import mcjty.rftools.craftinggrid.*;
 import mcjty.rftools.jei.JEIRecipeAcceptor;
-import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
@@ -48,6 +50,10 @@ import java.util.stream.Stream;
 public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable,
         CraftingGridProvider, JEIRecipeAcceptor, IStorageScanner {
 
+    public static final String CMD_SCANNER_INFO = "getScannerInfo";
+    public static final Key<Integer> PARAM_ENERGY = new Key<>("energy", Type.INTEGER);
+    public static final Key<Boolean> PARAM_EXPORT = new Key<>("export", Type.BOOLEAN);
+
     public static final String CMD_UP = "scanner.up";
     public static final String CMD_TOP = "scanner.top";
     public static final String CMD_DOWN = "scanner.down";
@@ -64,6 +70,10 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     public static final Key<Boolean> VALUE_EXPORT = new Key<>("export", Type.BOOLEAN);
     public static final Key<Integer> VALUE_RADIUS = new Key<>("radius", Type.INTEGER);
+
+    // Client side data returned by CMD_SCANNER_INFO
+    public static int rfReceived = 0;
+    public static boolean exportToCurrentReceived = false;
 
     @Override
     public IAction[] getActions() {
@@ -1089,6 +1099,36 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             return true;
         } else if (CMD_SETVIEW.equals(command)) {
             setOpenWideView(params.get(PARAM_VIEW));
+            return true;
+        }
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public TypedMap executeWithResult(String command, TypedMap args) {
+        TypedMap result = super.executeWithResult(command, args);
+        if (result != null) {
+            return result;
+        }
+        if (CMD_SCANNER_INFO.equals(command)) {
+            return TypedMap.builder()
+                    .put(PARAM_ENERGY, getEnergyStored())
+                    .put(PARAM_EXPORT, isExportToCurrent())
+                    .build();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean receiveDataFromServer(String command, @Nonnull TypedMap result) {
+        boolean rc = super.receiveDataFromServer(command, result);
+        if (rc) {
+            return rc;
+        }
+        if (CMD_SCANNER_INFO.equals(command)) {
+            rfReceived = result.get(PARAM_ENERGY);
+            exportToCurrentReceived = result.get(PARAM_EXPORT);
             return true;
         }
         return false;
