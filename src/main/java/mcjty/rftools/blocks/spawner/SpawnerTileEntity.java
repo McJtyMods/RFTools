@@ -3,7 +3,9 @@ package mcjty.rftools.blocks.spawner;
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.container.*;
 import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
-import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.EntityTools;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.ModuleSupport;
@@ -11,7 +13,6 @@ import mcjty.lib.varia.OrientationTools;
 import mcjty.rftools.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.ModItems;
-import mcjty.rftools.network.RFToolsMessages;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
@@ -35,6 +36,8 @@ import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.List;
@@ -42,6 +45,17 @@ import java.util.List;
 //import net.minecraft.entity.monster.SkeletonType;
 
 public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, MachineInformation, ITickable {
+
+    public static final String CMD_GET_SPAWNERINFO = "getSpawnerInfo";
+    public static final String CLIENTCMD_GET_SPAWNERINFO = "getSpawnerInfo";
+    public static final Key<Double> PARAM_MATTER0 = new Key<>("matter0", Type.DOUBLE);
+    public static final Key<Double> PARAM_MATTER1 = new Key<>("matter1", Type.DOUBLE);
+    public static final Key<Double> PARAM_MATTER2 = new Key<>("matter2", Type.DOUBLE);
+
+    // Client side for CMD_GET_SPAWNERINFO
+    public static float matterReceived0 = -1;
+    public static float matterReceived1 = -1;
+    public static float matterReceived2 = -1;
 
     public static final int SLOT_SYRINGE = 0;
     public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory() {
@@ -457,18 +471,48 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         if (te instanceof SpawnerTileEntity) {
             if (System.currentTimeMillis() - lastTime > 500) {
                 lastTime = System.currentTimeMillis();
-                RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new SpawnerInfoPacketServer(te.getWorld().provider.getDimension(),
-                        te.getPos())));
+                ((SpawnerTileEntity) te).requestDataFromServer(RFTools.MODID, SpawnerTileEntity.CMD_GET_SPAWNERINFO, SpawnerTileEntity.CLIENTCMD_GET_SPAWNERINFO, TypedMap.EMPTY);
             }
 
-            float[] matter = SpawnerInfoPacketClient.matterReceived;
-            if (matter != null && matter.length == 3) {
+            if (matterReceived0 >= 0) {
                 DecimalFormat fmt = new DecimalFormat("#.##");
                 fmt.setRoundingMode(RoundingMode.DOWN);
-                currenttip.add(TextFormatting.GREEN + "Key Matter: " + fmt.format(matter[0]));
-                currenttip.add(TextFormatting.GREEN + "Bulk Matter: " + fmt.format(matter[1]));
-                currenttip.add(TextFormatting.GREEN + "Living Matter: " + fmt.format(matter[2]));
+                currenttip.add(TextFormatting.GREEN + "Key Matter: " + fmt.format(matterReceived0));
+                currenttip.add(TextFormatting.GREEN + "Bulk Matter: " + fmt.format(matterReceived1));
+                currenttip.add(TextFormatting.GREEN + "Living Matter: " + fmt.format(matterReceived2));
             }
         }
+    }
+
+    @Nullable
+    @Override
+    public TypedMap executeWithResult(String command, TypedMap args) {
+        TypedMap rc = super.executeWithResult(command, args);
+        if (rc != null) {
+            return rc;
+        }
+        if (CMD_GET_SPAWNERINFO.equals(command)) {
+            return TypedMap.builder()
+                    .put(PARAM_MATTER0, (double)matter[0])
+                    .put(PARAM_MATTER1, (double)matter[1])
+                    .put(PARAM_MATTER2, (double)matter[2])
+                    .build();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean receiveDataFromServer(String command, @Nonnull TypedMap result) {
+        boolean rc = super.receiveDataFromServer(command, result);
+        if (rc) {
+            return rc;
+        }
+        if (CLIENTCMD_GET_SPAWNERINFO.equals(command)) {
+            matterReceived0 = result.get(PARAM_MATTER0).floatValue();
+            matterReceived1 = result.get(PARAM_MATTER1).floatValue();
+            matterReceived2 = result.get(PARAM_MATTER2).floatValue();
+            return true;
+        }
+        return false;
     }
 }

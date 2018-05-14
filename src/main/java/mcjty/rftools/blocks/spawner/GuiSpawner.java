@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.spawner;
 
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.gui.GenericGuiContainer;
-import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
@@ -10,7 +9,8 @@ import mcjty.lib.gui.widgets.BlockRender;
 import mcjty.lib.gui.widgets.EnergyBar;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
+import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
+import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.SyringeItem;
 import mcjty.rftools.network.RFToolsMessages;
@@ -98,15 +98,13 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
             if (list != null) {
                 if (System.currentTimeMillis() - lastTime > 100) {
                     lastTime = System.currentTimeMillis();
-                    RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new SpawnerInfoPacketServer(
-                            tileEntity.getWorld().provider.getDimension(),
-                            tileEntity.getPos())));
+                    tileEntity.requestDataFromServer(RFTools.MODID, SpawnerTileEntity.CMD_GET_SPAWNERINFO, SpawnerTileEntity.CLIENTCMD_GET_SPAWNERINFO, TypedMap.EMPTY);
+//                    RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID, new SpawnerInfoPacketServer(
+//                            tileEntity.getWorld().provider.getDimension(),
+//                            tileEntity.getPos())));
                 }
 
-                float[] matter = SpawnerInfoPacketClient.matterReceived;
-                if (matter == null || matter.length != 3) {
-                    matter = new float[] { 0, 0, 0 };
-                }
+                float[] matter = new float[] { SpawnerTileEntity.matterReceived0, SpawnerTileEntity.matterReceived1, SpawnerTileEntity.matterReceived2 };
 
                 for (SpawnerConfiguration.MobSpawnAmount spawnAmount : list) {
                     ItemStack b = spawnAmount.getObject();
