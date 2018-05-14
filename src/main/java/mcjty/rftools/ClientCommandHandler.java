@@ -10,12 +10,19 @@ import mcjty.rftools.blocks.security.SecurityCardItem;
 import mcjty.rftools.blocks.security.SecurityConfiguration;
 import mcjty.rftools.blocks.shaper.GuiLocator;
 import mcjty.rftools.blocks.storage.ModularStorageBlock;
+import mcjty.rftools.blocks.storagemonitor.GuiStorageScanner;
 import mcjty.rftools.blocks.teleporter.MatterTransmitterBlock;
 import mcjty.rftools.shapes.ScanDataManagerClient;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
+import java.util.List;
+
 public class ClientCommandHandler {
+
+    public static final String CMD_RETURN_SCANNER_CONTENTS = "returnScannerContents";
+    public static final Key<List<ItemStack>> PARAM_STACKS = new Key<>("stacks", Type.ITEMSTACK_LIST);
 
     public static final String CMD_RETURN_DESTINATION_INFO = "returnDestinationInfo";
     public static final Key<Integer> PARAM_ID = new Key<>("id", Type.INTEGER);
@@ -43,6 +50,10 @@ public class ClientCommandHandler {
     public static final String CMD_RETURN_COUNTER_INFO = "returnCounterInfo";
 
     public static void registerCommands() {
+        McJtyLib.registerClientCommand(RFTools.MODID, CMD_RETURN_SCANNER_CONTENTS, (player, arguments) -> {
+            GuiStorageScanner.fromServer_inventory = arguments.get(PARAM_STACKS);
+            return true;
+        });
         McJtyLib.registerClientCommand(RFTools.MODID, CMD_RETURN_DESTINATION_INFO, (player, arguments) -> {
             MatterTransmitterBlock.setDestinationInfo(arguments.get(PARAM_ID), arguments.get(PARAM_NAME));
             return true;

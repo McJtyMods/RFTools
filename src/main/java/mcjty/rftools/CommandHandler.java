@@ -9,6 +9,7 @@ import mcjty.rftools.blocks.logic.counter.CounterTileEntity;
 import mcjty.rftools.blocks.security.SecurityConfiguration;
 import mcjty.rftools.blocks.security.SecurityTools;
 import mcjty.rftools.blocks.shaper.ShaperTools;
+import mcjty.rftools.blocks.storagemonitor.StorageScannerTools;
 import mcjty.rftools.craftinggrid.StorageCraftingTools;
 import mcjty.rftools.items.storage.StorageTools;
 import mcjty.rftools.items.teleportprobe.PorterTools;
@@ -24,6 +25,11 @@ public class CommandHandler {
     public static final String CMD_COMPACT = "compact";
     public static final String CMD_CLEAR_GRID = "clearGrid";
     public static final String CMD_CYCLE_STORAGE = "cycleStorage";
+
+    public static final String CMD_REQUEST_SCANNER_CONTENTS = "requestScannerContents";
+    public static final Key<Integer> PARAM_SCANNER_DIM = new Key<>("scannerdim", Type.INTEGER);
+    public static final Key<BlockPos> PARAM_SCANNER_POS = new Key<>("scannerpos", Type.BLOCKPOS);
+    public static final Key<BlockPos> PARAM_INV_POS = new Key<>("invpos", Type.BLOCKPOS);
 
     public static final String CMD_REQUEST_STORAGE_INFO = "requestStorageInfo";
     public static final Key<Integer> PARAM_DIMENSION = new Key<>("dimension", Type.INTEGER);
@@ -60,6 +66,10 @@ public class CommandHandler {
     public static final String CMD_GET_COUNTER_INFO = "getCounterInfo";
 
     public static void registerCommands() {
+        McJtyLib.registerCommand(RFTools.MODID, CMD_REQUEST_SCANNER_CONTENTS, (player, arguments) -> {
+            StorageScannerTools.requestContents(player, arguments.get(PARAM_SCANNER_DIM), arguments.get(PARAM_SCANNER_POS), arguments.get(PARAM_INV_POS));
+            return true;
+        });
         McJtyLib.registerCommand(RFTools.MODID, CMD_COMPACT, (player, arguments) -> {
             StorageTools.compact(player);
             return true;
@@ -140,12 +150,11 @@ public class CommandHandler {
         });
         McJtyLib.registerCommand(RFTools.MODID, CMD_GET_COUNTER_INFO, (player, arguments) -> {
             WorldServer world = DimensionManager.getWorld(arguments.get(PARAM_DIMENSION));
-            int cnt = -1;
             if (world != null) {
                 TileEntity te = world.getTileEntity(arguments.get(PARAM_POS));
                 if (te instanceof CounterTileEntity) {
                     CounterTileEntity tileEntity = (CounterTileEntity) te;
-                    cnt = tileEntity.getCurrent();
+                    int cnt = tileEntity.getCurrent();
                     RFToolsMessages.sendToClient(player, ClientCommandHandler.CMD_RETURN_COUNTER_INFO,
                             TypedMap.builder().put(ClientCommandHandler.PARAM_COUNTER, cnt));
                 }
@@ -153,4 +162,5 @@ public class CommandHandler {
             return true;
         });
     }
+
 }

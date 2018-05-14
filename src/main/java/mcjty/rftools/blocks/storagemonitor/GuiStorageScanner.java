@@ -11,10 +11,6 @@ import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
-import mcjty.lib.gui.widgets.Button;
-import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.Panel;
-import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.clientinfo.PacketGetInfoFromServer;
 import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.lib.typed.TypedMap;
@@ -34,10 +30,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.*;
-import java.util.List;
 import java.util.function.Predicate;
 
 import static mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity.*;
@@ -161,7 +156,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             startSearch(newText);
         });
         Panel searchPanel = new Panel(mc, this)
-                .setLayoutHint(new PositionalLayout.PositionalHint(8, 142, 256-11, 18))
+                .setLayoutHint(new PositionalLayout.PositionalHint(8, 142, 256 - 11, 18))
                 .setLayout(new HorizontalLayout()).setDesiredHeight(18)
                 .addChild(new Label(mc, this).setText("Search:"))
                 .addChild(searchField);
@@ -236,11 +231,11 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
     private Panel makeItemPanel() {
         itemList = new WidgetList(mc, this).setName("items").setPropagateEventsToChildren(true)
-            .setInvisibleSelection(true);
+                .setInvisibleSelection(true);
         Slider itemListSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollableName("items");
         return new Panel(mc, this)
                 .setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(1))
-                .setLayoutHint(new PositionalLayout.PositionalHint(getStoragePanelWidth() + 6, 4, 256-getStoragePanelWidth()-12, 86+54))
+                .setLayoutHint(new PositionalLayout.PositionalHint(getStoragePanelWidth() + 6, 4, 256 - getStoragePanelWidth() - 12, 86 + 54))
                 .addChild(itemList).addChild(itemListSlider);
     }
 
@@ -260,15 +255,15 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         Slider storageListSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollableName("storage");
 
         return new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(1))
-                .setLayoutHint(new PositionalLayout.PositionalHint(3, 4, getStoragePanelWidth(), 86+54))
-                .setDesiredHeight(86+54)
+                .setLayoutHint(new PositionalLayout.PositionalHint(3, 4, getStoragePanelWidth(), 86 + 54))
+                .setDesiredHeight(86 + 54)
                 .addChild(energyPanel)
                 .addChild(storageList).addChild(storageListSlider);
     }
 
     private void toggleView() {
-        storagePanel.setLayoutHint(new PositionalLayout.PositionalHint(3, 4, getStoragePanelWidth(), 86+54));
-        itemPanel.setLayoutHint(new PositionalLayout.PositionalHint(getStoragePanelWidth() + 6, 4, 256-getStoragePanelWidth()-12, 86+54));
+        storagePanel.setLayoutHint(new PositionalLayout.PositionalHint(3, 4, getStoragePanelWidth(), 86 + 54));
+        itemPanel.setLayoutHint(new PositionalLayout.PositionalHint(getStoragePanelWidth() + 6, 4, 256 - getStoragePanelWidth() - 12, 86 + 54));
         // Force layout dirty:
         window.getToplevel().setBounds(window.getToplevel().getBounds());
         listDirty = 0;
@@ -312,35 +307,35 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
     private void moveUp() {
         sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_UP,
-                TypedMap.builder().put(PARAM_INDEX, storageList.getSelected()-1).build());
-        storageList.setSelected(storageList.getSelected()-1);
+                TypedMap.builder().put(PARAM_INDEX, storageList.getSelected() - 1).build());
+        storageList.setSelected(storageList.getSelected() - 1);
         listDirty = 0;
     }
 
     private void moveTop() {
         sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_TOP,
-                TypedMap.builder().put(PARAM_INDEX, storageList.getSelected()-1).build());
+                TypedMap.builder().put(PARAM_INDEX, storageList.getSelected() - 1).build());
         storageList.setSelected(1);
         listDirty = 0;
     }
 
     private void moveDown() {
         sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_DOWN,
-                TypedMap.builder().put(PARAM_INDEX, storageList.getSelected()-1).build());
-        storageList.setSelected(storageList.getSelected()+1);
+                TypedMap.builder().put(PARAM_INDEX, storageList.getSelected() - 1).build());
+        storageList.setSelected(storageList.getSelected() + 1);
         listDirty = 0;
     }
 
     private void moveBottom() {
         sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_BOTTOM,
-                TypedMap.builder().put(PARAM_INDEX, storageList.getSelected()-1).build());
-        storageList.setSelected(storageList.getChildCount()-1);
+                TypedMap.builder().put(PARAM_INDEX, storageList.getSelected() - 1).build());
+        storageList.setSelected(storageList.getChildCount() - 1);
         listDirty = 0;
     }
 
     private void removeFromList() {
         sendServerCommand(RFToolsMessages.INSTANCE, tileEntity.getDimension(), StorageScannerTileEntity.CMD_REMOVE,
-                TypedMap.builder().put(PARAM_INDEX, storageList.getSelected()-1).build());
+                TypedMap.builder().put(PARAM_INDEX, storageList.getSelected() - 1).build());
         listDirty = 0;
     }
 
@@ -352,7 +347,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             // Starred
             return;
         }
-        InventoriesInfoPacketClient.InventoryInfo c = fromServer_inventories.get(index-1);
+        InventoriesInfoPacketClient.InventoryInfo c = fromServer_inventories.get(index - 1);
         if (c != null) {
             RFTools.instance.clientInfo.hilightBlock(c.getPos(), System.currentTimeMillis() + 1000 * StorageScannerConfiguration.hilightTime);
             Logging.message(mc.player, "The inventory is now highlighted");
@@ -370,8 +365,12 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     private void getInventoryOnServer() {
         BlockPos c = getSelectedContainerPos();
         if (c != null) {
-            RFToolsMessages.INSTANCE.sendToServer(new PacketGetInfoFromServer(RFTools.MODID,
-                    new GetContentsInfoPacketServer(tileEntity.getDimension(), tileEntity.getStorageScannerPos(), c)));
+            sendServerCommand(RFTools.MODID, CommandHandler.CMD_REQUEST_SCANNER_CONTENTS,
+                    TypedMap.builder()
+                            .put(CommandHandler.PARAM_SCANNER_DIM, tileEntity.getDimension())
+                            .put(CommandHandler.PARAM_SCANNER_POS, tileEntity.getStorageScannerPos())
+                            .put(CommandHandler.PARAM_INV_POS, c)
+                            .build());
         }
     }
 
@@ -407,7 +406,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     private void updateContentsList() {
         itemList.removeChildren();
 
-        Pair<Panel,Integer> currentPos = MutablePair.of(null, 0);
+        Pair<Panel, Integer> currentPos = MutablePair.of(null, 0);
         int numcolumns = openViewButton.isPressed() ? 5 : 9;
         int spacing = 3;
 
@@ -425,7 +424,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         }
     }
 
-    private Pair<Panel,Integer> addItemToList(ItemStack item, WidgetList itemList, Pair<Panel,Integer> currentPos, int numcolumns, int spacing) {
+    private Pair<Panel, Integer> addItemToList(ItemStack item, WidgetList itemList, Pair<Panel, Integer> currentPos, int numcolumns, int spacing) {
         Panel panel = currentPos.getKey();
         if (panel == null || currentPos.getValue() >= numcolumns) {
             panel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(spacing).setHorizontalMargin(1))
@@ -488,7 +487,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         int i = 0;
         for (InventoriesInfoPacketClient.InventoryInfo c : fromServer_inventories) {
             if (fromServer_foundInventories.contains(c.getPos())) {
-                storageList.addHilightedRow(i+1);
+                storageList.addHilightedRow(i + 1);
             }
             i++;
         }
@@ -562,7 +561,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             upButton.setEnabled(false);
             downButton.setEnabled(true);
             bottomButton.setEnabled(true);
-        } else if (selected == storageList.getChildCount()-1) {
+        } else if (selected == storageList.getChildCount() - 1) {
             topButton.setEnabled(true);
             upButton.setEnabled(true);
             downButton.setEnabled(false);
@@ -620,8 +619,8 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     protected List<String> addCustomLines(List<String> oldList, BlockRender blockRender, ItemStack stack) {
         if (blockRender.getUserObject() instanceof Integer) {
             List<String> newlist = new ArrayList<>();
-            newlist.add(TextFormatting.GREEN + "Click: "+ TextFormatting.WHITE + "full stack");
-            newlist.add(TextFormatting.GREEN + "Shift + click: "+ TextFormatting.WHITE + "single item");
+            newlist.add(TextFormatting.GREEN + "Click: " + TextFormatting.WHITE + "full stack");
+            newlist.add(TextFormatting.GREEN + "Shift + click: " + TextFormatting.WHITE + "single item");
             newlist.add("");
             newlist.addAll(oldList);
             return newlist;
