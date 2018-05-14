@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.elevator;
 
 
+import com.mojang.authlib.GameProfile;
 import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.varia.Broadcaster;
@@ -38,6 +39,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -78,9 +81,21 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     private Set<Entity> entitiesOnPlatform = new HashSet<>();
     private boolean entitiesOnPlatformComplete = false; // If true then we know entitiesOnPlatform is complete, otherwise it only contains players.
 
+    private FakePlayer harvester = null;
+
     public ElevatorTileEntity() {
         super(ElevatorConfiguration.MAXENERGY, ElevatorConfiguration.RFPERTICK);
     }
+
+    private FakePlayer getHarvester() {
+        if (harvester == null) {
+            harvester = FakePlayerFactory.get((WorldServer) world, new GameProfile(UUID.nameUUIDFromBytes("rftools_elevator".getBytes()), "rftools_elevator"));
+        }
+        harvester.setWorld(world);
+        harvester.setPosition(pos.getX(), pos.getY(), pos.getZ());
+        return harvester;
+    }
+
 
     public void clearCaches(EnumFacing side) {
         for (int y = 0 ; y < getWorld().getHeight() ; y++) {
@@ -470,7 +485,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     private boolean canMoveBlock(BlockPos pos) {
         World world = getWorld();
         IBlockState state = world.getBlockState(pos);
-        return state == movingState && state.getBlockHardness(world, pos) >= 0 && BuilderTileEntity.allowedToBreak(state, world, pos, BuilderTileEntity.getHarvester(world));
+        return state == movingState && state.getBlockHardness(world, pos) >= 0 && BuilderTileEntity.allowedToBreak(state, world, pos, getHarvester());
     }
 
     // Always called on controller TE (bottom one)

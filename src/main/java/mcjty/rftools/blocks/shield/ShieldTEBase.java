@@ -482,7 +482,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         return shieldActive;
     }
 
-    private static FakePlayer killer = null;
+    private FakePlayer killer = null;
     private ItemStack lootingSword = ItemStack.EMPTY;
 
     public void applyDamageToEntity(Entity entity) {
@@ -494,8 +494,10 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         } else {
             rf = ShieldConfiguration.rfDamagePlayer;
             if (killer == null) {
-                killer = FakePlayerFactory.get(DimensionManager.getWorld(0), new GameProfile(new UUID(111, 222), "rftools_shield"));
+                killer = FakePlayerFactory.get(DimensionManager.getWorld(0), new GameProfile(UUID.nameUUIDFromBytes("rftools_shield".getBytes()), "rftools_shield"));
             }
+            killer.setWorld(world);
+            killer.setPosition(pos.getX(), pos.getY(), pos.getZ());
             FakePlayer fakePlayer = killer;
             ItemStack shards = getStackInSlot(ShieldContainer.SLOT_SHARD);
             if (!shards.isEmpty() && shards.getCount() >= ShieldConfiguration.shardsPerLootingKill) {

@@ -15,6 +15,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.util.FakePlayer;
 
 import java.util.HashMap;
 import java.util.List;
@@ -51,7 +52,7 @@ public class BuilderTools {
 
         BlockPos minCorner = chamberChannel.getMinCorner();
         BlockPos maxCorner = chamberChannel.getMaxCorner();
-        findBlocks(world, blocks, costs, stacks, minCorner, maxCorner);
+        findBlocks(player, world, blocks, costs, stacks, minCorner, maxCorner);
 
         Counter<String> entitiesWithCount = new Counter<>();
         Counter<String> entitiesWithCost = new Counter<>();
@@ -90,7 +91,7 @@ public class BuilderTools {
         }
     }
 
-    private static void findBlocks(World world, Counter<IBlockState> blocks, Counter<IBlockState> costs, Map<IBlockState, ItemStack> stacks, BlockPos minCorner, BlockPos maxCorner) {
+    private static void findBlocks(EntityPlayer harvester, World world, Counter<IBlockState> blocks, Counter<IBlockState> costs, Map<IBlockState, ItemStack> stacks, BlockPos minCorner, BlockPos maxCorner) {
         for (int x = minCorner.getX() ; x <= maxCorner.getX() ; x++) {
             for (int y = minCorner.getY() ; y <= maxCorner.getY() ; y++) {
                 for (int z = minCorner.getZ() ; z <= maxCorner.getZ() ; z++) {
@@ -108,7 +109,7 @@ public class BuilderTools {
                         }
 
                         TileEntity te = world.getTileEntity(p);
-                        BuilderSetup.BlockInformation info = BuilderTileEntity.getBlockInformation(world, p, block, te);
+                        BuilderSetup.BlockInformation info = BuilderTileEntity.getBlockInformation(harvester, world, p, block, te);
                         if (info.getBlockLevel() == SupportBlock.STATUS_ERROR) {
                             costs.put(state, -1);
                         } else {

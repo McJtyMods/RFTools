@@ -10,7 +10,6 @@ import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.gui.widgets.ChoiceLabel;
-import mcjty.lib.network.PacketRequestDataFromServer;
 import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
@@ -61,6 +60,7 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.IPlantable;
@@ -184,7 +184,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     // Drops from a block that we broke but couldn't fit in an inventory
     private List<ItemStack> overflowItems = null;
 
-    private static FakePlayer harvester = null;
+    private FakePlayer harvester = null;
 
     public BuilderTileEntity() {
         super(BuilderConfiguration.BUILDER_MAXENERGY, BuilderConfiguration.BUILDER_RECEIVEPERTICK);
@@ -229,11 +229,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return true;
     }
 
-    public static FakePlayer getHarvester(World world) {
+    private FakePlayer getHarvester() {
         if (harvester == null) {
-            harvester = FakePlayerFactory.get(DimensionManager.getWorld(0), new GameProfile(new UUID(111, 333), "rftools_builder"));
+            harvester = FakePlayerFactory.get((WorldServer) world,  new GameProfile(UUID.nameUUIDFromBytes("rftools_builder".getBytes()), "rftools_builder"));
         }
         harvester.setWorld(world);
+        harvester.setPosition(pos.getX(), pos.getY(), pos.getZ());
         return harvester;
     }
 
@@ -1042,7 +1043,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 return waitOrSkip("Cannot find block!\nor missing inventory\non top or below");    // We could not find a block. Wait
             }
 
-            FakePlayer fakePlayer = getHarvester(getWorld());
+            FakePlayer fakePlayer = getHarvester();
             IBlockState newState = BlockTools.placeStackAt(fakePlayer, stack, getWorld(), srcPos, pickState);
             if (!ItemStack.areItemStacksEqual(stack, item.peek())) { // Did we actually use up whatever we were holding?
                 if(!stack.isEmpty()) { // Are we holding something else that we should put back?
@@ -1151,7 +1152,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 return skip();
             }
 
-            FakePlayer fakePlayer = getHarvester(getWorld());
+            FakePlayer fakePlayer = getHarvester();
             if (allowedToBreak(srcState, getWorld(), srcPos, fakePlayer)) {
                 ItemStack filter = getStackInSlot(SLOT_FILTER);
                 if (!filter.isEmpty()) {
@@ -1243,7 +1244,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             } else {
                 // We assume here the liquid is placable.
                 Block block = fluid.getBlock();
-                FakePlayer fakePlayer = getHarvester(getWorld());
+                FakePlayer fakePlayer = getHarvester();
                 getWorld().setBlockState(srcPos, block.getDefaultState(), 11);
 
                 if (!silent) {
@@ -1272,7 +1273,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
 
         if (block.getBlockHardness(srcState, getWorld(), srcPos) >= 0) {
-            FakePlayer fakePlayer = getHarvester(getWorld());
+            FakePlayer fakePlayer = getHarvester();
             if (allowedToBreak(srcState, getWorld(), srcPos, fakePlayer)) {
                 if (checkAndInsertFluids(fluid)) {
                     consumeEnergy(rfNeeded);
@@ -1305,7 +1306,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             // Skip a 3x3x3 block around the builder.
             return skip();
         }
-        FakePlayer fakePlayer = getHarvester(getWorld());
+        FakePlayer fakePlayer = getHarvester();
         if (allowedToBreak(srcState, getWorld(), srcPos, fakePlayer)) {
             if (block.getBlockHardness(srcState, getWorld(), srcPos) >= 0) {
                 ItemStack filter = getStackInSlot(SLOT_FILTER);
@@ -1616,13 +1617,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         return b;
     }
 
-    public static BuilderSetup.BlockInformation getBlockInformation(World world, BlockPos pos, Block block, TileEntity tileEntity) {
+    public static BuilderSetup.BlockInformation getBlockInformation(EntityPlayer fakePlayer, World world, BlockPos pos, Block block, TileEntity tileEntity) {
         IBlockState state = world.getBlockState(pos);
         if (isEmpty(state, block)) {
             return BuilderSetup.BlockInformation.FREE;
         }
 
-        FakePlayer fakePlayer = getHarvester(world);
         if (!allowedToBreak(state, world, pos, fakePlayer)) {
             return BuilderSetup.BlockInformation.INVALID;
         }
@@ -1653,7 +1653,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private int isMovable(World world, BlockPos pos, Block block, TileEntity tileEntity) {
-        return getBlockInformation(world, pos, block, tileEntity).getBlockLevel();
+        return getBlockInformation(getHarvester(), world, pos, block, tileEntity).getBlockLevel();
     }
 
     public static boolean isEmptyOrReplacable(World world, BlockPos pos) {
@@ -1716,7 +1716,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 return;
             }
 
-            FakePlayer fakePlayer = getHarvester(destWorld);
+            FakePlayer fakePlayer = getHarvester();
             IBlockState newState = BlockTools.placeStackAt(fakePlayer, consumedStack, destWorld, destPos, srcState);
             destWorld.setBlockState(destPos, newState, 3);  // placeBlockAt can reset the orientation. Restore it here
 
@@ -1841,7 +1841,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 return;
             }
             TileEntity srcTileEntity = srcWorld.getTileEntity(srcPos);
-            BuilderSetup.BlockInformation srcInformation = getBlockInformation(srcWorld, srcPos, srcBlock, srcTileEntity);
+            BuilderSetup.BlockInformation srcInformation = getBlockInformation(getHarvester(), srcWorld, srcPos, srcBlock, srcTileEntity);
             if (srcInformation.getBlockLevel() == SupportBlock.STATUS_ERROR) {
                 return;
             }
@@ -1899,12 +1899,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return;
         }
 
-        BuilderSetup.BlockInformation srcInformation = getBlockInformation(srcWorld, srcPos, srcBlock, srcTileEntity);
+        BuilderSetup.BlockInformation srcInformation = getBlockInformation(getHarvester(), srcWorld, srcPos, srcBlock, srcTileEntity);
         if (srcInformation.getBlockLevel() == SupportBlock.STATUS_ERROR) {
             return;
         }
 
-        BuilderSetup.BlockInformation dstInformation = getBlockInformation(destWorld, dstPos, dstBlock, dstTileEntity);
+        BuilderSetup.BlockInformation dstInformation = getBlockInformation(getHarvester(), destWorld, dstPos, dstBlock, dstTileEntity);
         if (dstInformation.getBlockLevel() == SupportBlock.STATUS_ERROR) {
             return;
         }
