@@ -53,13 +53,13 @@ public class ButtonScreenModule implements IScreenModule<IModuleDataBoolean> {
                         RedstoneChannels channels = RedstoneChannels.getChannels(world);
                         RedstoneChannels.RedstoneChannel ch = channels.getOrCreateChannel(channel);
                         ch.setValue((ch.getValue() == 0) ? 15 : 0);
-                        channels.save(world);
+                        channels.save();
                     }
                 } else {
                     RedstoneChannels channels = RedstoneChannels.getChannels(world);
                     RedstoneChannels.RedstoneChannel ch = channels.getOrCreateChannel(channel);
                     ch.setValue(clicked ? 15 : 0);
-                    channels.save(world);
+                    channels.save();
                 }
             } else {
                 if (player != null) {

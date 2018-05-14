@@ -65,7 +65,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
             SecurityChannels securityChannels = SecurityChannels.getChannels(getWorld());
             int id = securityChannels.newChannel();
             tagCompound.setInteger("channel", id);
-            securityChannels.save(getWorld());
+            securityChannels.save();
             markDirtyClient();
         }
     }
@@ -102,7 +102,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
             int id = tagCompound.getInteger("channel");
             SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
             channel.addPlayer(player);
-            securityChannels.save(getWorld());
+            securityChannels.save();
             markDirtyClient();
         }
     }
@@ -117,7 +117,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
             int id = tagCompound.getInteger("channel");
             SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
             channel.delPlayer(player);
-            securityChannels.save(getWorld());
+            securityChannels.save();
             markDirtyClient();
         }
     }
@@ -132,7 +132,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
             int id = tagCompound.getInteger("channel");
             SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
             channel.setWhitelist(whitelist);
-            securityChannels.save(getWorld());
+            securityChannels.save();
             markDirtyClient();
         }
     }
@@ -147,7 +147,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
             int id = tagCompound.getInteger("channel");
             SecurityChannels.SecurityChannel channel = securityChannels.getOrCreateChannel(id);
             channel.setName(name);
-            securityChannels.save(getWorld());
+            securityChannels.save();
             markDirtyClient();
         }
     }

@@ -198,14 +198,14 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
         World w = mcjty.lib.varia.TeleportationTools.getWorldForDimension(dim);
         if (w == null) {
             TeleportDestinations destinations = TeleportDestinations.getDestinations(getWorld());
-            destinations.cleanupInvalid(getWorld());
+            destinations.cleanupInvalid();
             return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
         }
 
         TileEntity tileEntity = w.getTileEntity(c);
         if (!(tileEntity instanceof MatterReceiverTileEntity)) {
             TeleportDestinations destinations = TeleportDestinations.getDestinations(getWorld());
-            destinations.cleanupInvalid(getWorld());
+            destinations.cleanupInvalid();
             return DialingDeviceTileEntity.DIAL_INVALID_DESTINATION_MASK;
         }
 

@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.powercell;
 
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
+import mcjty.lib.worlddata.AbstractWorldData;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.apideps.RFToolsDimensionChecker;
 import net.minecraft.block.state.IBlockState;
@@ -10,7 +11,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.*;
@@ -18,47 +18,26 @@ import java.util.*;
 import static mcjty.rftools.blocks.powercell.PowerCellConfiguration.advancedFactor;
 import static mcjty.rftools.blocks.powercell.PowerCellConfiguration.simpleFactor;
 
-public class PowerCellNetwork extends WorldSavedData {
+public class PowerCellNetwork extends AbstractWorldData<PowerCellNetwork> {
 
-    public static final String POWERCELL_NETWORK_NAME = "RFToolsPowerCellNetwork";
-    private static PowerCellNetwork instance = null;
+    private static final String POWERCELL_NETWORK_NAME = "RFToolsPowerCellNetwork";
 
     private int lastId = 0;
 
     private final Map<Integer,Network> networks = new HashMap<>();
 
-    public PowerCellNetwork(String identifier) {
-        super(identifier);
+    public PowerCellNetwork(String name) {
+        super(name);
     }
 
-    public void save(World world) {
-        world.setData(POWERCELL_NETWORK_NAME, this);
-        markDirty();
-    }
-
-    public static void clearInstance() {
-        if (instance != null) {
-            instance.networks.clear();
-            instance = null;
-        }
-    }
-
-    public static PowerCellNetwork getChannels() {
-        return instance;
+    @Override
+    public void clear() {
+        networks.clear();
+        lastId = 0;
     }
 
     public static PowerCellNetwork getChannels(World world) {
-        if (world.isRemote) {
-            return null;
-        }
-        if (instance != null) {
-            return instance;
-        }
-        instance = (PowerCellNetwork) world.loadData(PowerCellNetwork.class, POWERCELL_NETWORK_NAME);
-        if (instance == null) {
-            instance = new PowerCellNetwork(POWERCELL_NETWORK_NAME);
-        }
-        return instance;
+        return getData(world, PowerCellNetwork.class, POWERCELL_NETWORK_NAME);
     }
 
     public Network getOrCreateNetwork(int id) {

@@ -125,7 +125,7 @@ public class SpaceChamberControllerBlock extends GenericRFToolsBlock<SpaceChambe
             if (te.getChannel() == -1) {
                 int id = chamberRepository.newChannel();
                 te.setChannel(id);
-                chamberRepository.save(world);
+                chamberRepository.save();
             }
             // @todo
 //            onNeighborBlockChange(world, pos, state, this);
@@ -139,7 +139,7 @@ public class SpaceChamberControllerBlock extends GenericRFToolsBlock<SpaceChambe
             SpaceChamberControllerTileEntity te = (SpaceChamberControllerTileEntity) world.getTileEntity(pos);
             if (te.getChannel() != -1) {
                 chamberRepository.deleteChannel(te.getChannel());
-                chamberRepository.save(world);
+                chamberRepository.save();
             }
         }
         super.breakBlock(world, pos, state);

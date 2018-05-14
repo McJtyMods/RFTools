@@ -70,7 +70,7 @@ public abstract class RedstoneChannelBlock<T extends RedstoneChannelTileEntity, 
                         if(channel == -1) {
                             RedstoneChannels redstoneChannels = RedstoneChannels.getChannels(world);
                             channel = redstoneChannels.newChannel();
-                            redstoneChannels.save(world);
+                            redstoneChannels.save();
                             tagCompound.setInteger("channel", channel);
                         }
                         rcte.setChannel(channel);

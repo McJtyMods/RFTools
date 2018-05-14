@@ -1,57 +1,36 @@
 package mcjty.rftools.blocks.builder;
 
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.lib.worlddata.AbstractWorldData;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class SpaceChamberRepository extends WorldSavedData {
+public class SpaceChamberRepository extends AbstractWorldData<SpaceChamberRepository> {
 
-    public static final String SPACECHAMBER_CHANNELS_NAME = "RFToolsSpaceChambers";
-    private static SpaceChamberRepository instance = null;
+    private static final String SPACECHAMBER_CHANNELS_NAME = "RFToolsSpaceChambers";
 
     private int lastId = 0;
 
     private final Map<Integer,SpaceChamberChannel> channels = new HashMap<>();
 
-    public SpaceChamberRepository(String identifier) {
-        super(identifier);
+    public SpaceChamberRepository(String name) {
+        super(name);
     }
 
-    public void save(World world) {
-        world.setData(SPACECHAMBER_CHANNELS_NAME, this);
-        markDirty();
-    }
-
-    public static void clearInstance() {
-        if (instance != null) {
-            instance.channels.clear();
-            instance = null;
-        }
-    }
-
-    public static SpaceChamberRepository getChannels() {
-        return instance;
+    @Override
+    public void clear() {
+        channels.clear();
+        lastId = 0;
     }
 
     public static SpaceChamberRepository getChannels(World world) {
-        if (world.isRemote) {
-            return null;
-        }
-        if (instance != null) {
-            return instance;
-        }
-        instance = (SpaceChamberRepository) world.loadData(SpaceChamberRepository.class, SPACECHAMBER_CHANNELS_NAME);
-        if (instance == null) {
-            instance = new SpaceChamberRepository(SPACECHAMBER_CHANNELS_NAME);
-        }
-        return instance;
+        return getData(SpaceChamberRepository.class, SPACECHAMBER_CHANNELS_NAME);
     }
 
     public SpaceChamberChannel getOrCreateChannel(int id) {

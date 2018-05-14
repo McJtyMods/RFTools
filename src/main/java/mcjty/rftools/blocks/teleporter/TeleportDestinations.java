@@ -1,6 +1,9 @@
 package mcjty.rftools.blocks.teleporter;
 
-import mcjty.lib.varia.*;
+import mcjty.lib.varia.BlockPosTools;
+import mcjty.lib.varia.GlobalCoordinate;
+import mcjty.lib.varia.Logging;
+import mcjty.lib.worlddata.AbstractWorldData;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -10,23 +13,30 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.*;
 
-public class TeleportDestinations extends WorldSavedData {
-    public static final String TPDESTINATIONS_NAME = "TPDestinations";
-    private static TeleportDestinations instance = null;
+public class TeleportDestinations extends AbstractWorldData<TeleportDestinations> {
+
+    private static final String TPDESTINATIONS_NAME = "TPDestinations";
 
     private final Map<GlobalCoordinate,TeleportDestination> destinations = new HashMap<>();
     private final Map<Integer,GlobalCoordinate> destinationById = new HashMap<>();
     private final Map<GlobalCoordinate,Integer> destinationIdByCoordinate = new HashMap<>();
     private int lastId = 0;
 
-    public TeleportDestinations(String identifier) {
-        super(identifier);
+    public TeleportDestinations(String name) {
+        super(name);
+    }
+
+    @Override
+    public void clear() {
+        destinationById.clear();
+        destinationIdByCoordinate.clear();
+        destinations.clear();
+        lastId = 0;
     }
 
     public static String getDestinationName(TeleportDestinations destinations, int receiverId) {
@@ -48,21 +58,7 @@ public class TeleportDestinations extends WorldSavedData {
         return name;
     }
 
-    public void save(World world) {
-        world.setData(TPDESTINATIONS_NAME, this);
-        markDirty();
-    }
-
-    public static void clearInstance() {
-        if (instance != null) {
-            instance.destinations.clear();
-            instance.destinationById.clear();
-            instance.destinationIdByCoordinate.clear();
-            instance = null;
-        }
-    }
-
-    public void cleanupInvalid(World world) {
+    public void cleanupInvalid() {
         Set<GlobalCoordinate> keys = new HashSet<>(destinations.keySet());
         for (GlobalCoordinate key : keys) {
             World transWorld = mcjty.lib.varia.TeleportationTools.getWorldForDimension(key.getDimension());
@@ -90,17 +86,7 @@ public class TeleportDestinations extends WorldSavedData {
     }
 
     public static TeleportDestinations getDestinations(World world) {
-        if (world.isRemote) {
-            return null;
-        }
-        if (instance != null) {
-            return instance;
-        }
-        instance = (TeleportDestinations) world.loadData(TeleportDestinations.class, TPDESTINATIONS_NAME);
-        if (instance == null) {
-            instance = new TeleportDestinations(TPDESTINATIONS_NAME);
-        }
-        return instance;
+        return getData(world, TeleportDestinations.class, TPDESTINATIONS_NAME);
     }
 
 

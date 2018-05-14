@@ -1,27 +1,34 @@
 package mcjty.rftools.blocks.blockprotector;
 
 import mcjty.lib.varia.GlobalCoordinate;
+import mcjty.lib.worlddata.AbstractWorldData;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.*;
 
-public class BlockProtectors extends WorldSavedData {
+public class BlockProtectors extends AbstractWorldData<BlockProtectors> {
+
     public static final String PROTECTORS_NAME = "RFToolsBlockProtectors";
-    private static BlockProtectors instance = null;
 
     private final Map<Integer,GlobalCoordinate> protectorById = new HashMap<>();
     private final Map<GlobalCoordinate,Integer> protectorIdByCoordinate = new HashMap<>();
     private int lastId = 0;
 
-    public BlockProtectors(String identifier) {
-        super(identifier);
+    public BlockProtectors(String name) {
+        super(name);
+    }
+
+    @Override
+    public void clear() {
+        protectorById.clear();
+        protectorIdByCoordinate.clear();
+        lastId = 0;
     }
 
     public static Collection<GlobalCoordinate> getProtectors(World world, int x, int y, int z) {
@@ -54,31 +61,9 @@ public class BlockProtectors extends WorldSavedData {
         return false;
     }
 
-    public void save(World world) {
-        world.setData(PROTECTORS_NAME, this);
-        markDirty();
-    }
-
-    public static void clearInstance() {
-        if (instance != null) {
-            instance.protectorById.clear();
-            instance.protectorIdByCoordinate.clear();
-            instance = null;
-        }
-    }
 
     public static BlockProtectors getProtectors(World world) {
-        if (world.isRemote) {
-            return null;
-        }
-        if (instance != null) {
-            return instance;
-        }
-        instance = (BlockProtectors) world.loadData(BlockProtectors.class, PROTECTORS_NAME);
-        if (instance == null) {
-            instance = new BlockProtectors(PROTECTORS_NAME);
-        }
-        return instance;
+        return AbstractWorldData.getData(world, BlockProtectors.class, PROTECTORS_NAME);
     }
 
     // Set an old id to a new position (after moving a receiver).

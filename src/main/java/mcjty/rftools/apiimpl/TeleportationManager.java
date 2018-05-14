@@ -39,7 +39,7 @@ public class TeleportationManager implements ITeleportationManager {
         GlobalCoordinate gc = new GlobalCoordinate(pos, world.provider.getDimension());
         TeleportDestination destination = destinations.addDestination(gc);
         destination.setName(name);
-        destinations.save(world);
+        destinations.save();
     }
 
     @Override
@@ -51,6 +51,6 @@ public class TeleportationManager implements ITeleportationManager {
     public void removeReceiverDestinations(World world, int dim) {
         TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
         destinations.removeDestinationsInDimension(dim);
-        destinations.save(world);
+        destinations.save();
     }
 }

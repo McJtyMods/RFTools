@@ -1,55 +1,34 @@
 package mcjty.rftools.blocks.logic.wireless;
 
+import mcjty.lib.worlddata.AbstractWorldData;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
-import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class RedstoneChannels extends WorldSavedData {
+public class RedstoneChannels extends AbstractWorldData<RedstoneChannels> {
 
-    public static final String REDSTONE_CHANNELS_NAME = "RfToolsRedstoneChannels";
-    private static RedstoneChannels instance = null;
+    private static final String REDSTONE_CHANNELS_NAME = "RfToolsRedstoneChannels";
 
     private int lastId = 0;
 
     private final Map<Integer,RedstoneChannel> channels = new HashMap<>();
 
-    public RedstoneChannels(String identifier) {
-        super(identifier);
+    public RedstoneChannels(String name) {
+        super(name);
     }
 
-    public void save(World world) {
-        world.setData(REDSTONE_CHANNELS_NAME, this);
-        markDirty();
-    }
-
-    public static void clearInstance() {
-        if (instance != null) {
-            instance.channels.clear();
-            instance = null;
-        }
-    }
-
-    public static RedstoneChannels getChannels() {
-        return instance;
+    @Override
+    public void clear() {
+        channels.clear();
+        lastId = 0;
     }
 
     public static RedstoneChannels getChannels(World world) {
-        if (world.isRemote) {
-            return null;
-        }
-        if (instance != null) {
-            return instance;
-        }
-        instance = (RedstoneChannels) world.loadData(RedstoneChannels.class, REDSTONE_CHANNELS_NAME);
-        if (instance == null) {
-            instance = new RedstoneChannels(REDSTONE_CHANNELS_NAME);
-        }
-        return instance;
+        return getData(world, RedstoneChannels.class, REDSTONE_CHANNELS_NAME);
     }
 
     public RedstoneChannel getOrCreateChannel(int id) {

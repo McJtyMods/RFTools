@@ -214,7 +214,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
         } else {
             RemoteStorageIdRegistry registry = RemoteStorageIdRegistry.getRegistry(getWorld());
             id = registry.getNewId();
-            registry.save(getWorld());
+            registry.save();
             tagCompound.setInteger("id", id);
         }
 

@@ -61,7 +61,7 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
             GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().provider.getDimension());
             id = destinations.getNewId(gc);
 
-            destinations.save(getWorld());
+            destinations.save();
             setId(id);
         }
         return id;
@@ -82,7 +82,7 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
         TeleportDestination destination = destinations.getDestination(getPos(), getWorld().provider.getDimension());
         if (destination != null) {
             destination.setName(name);
-            destinations.save(getWorld());
+            destinations.save();
         }
 
         markDirtyClient();
@@ -111,7 +111,7 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
                 destinations.assignId(gc, id);
             }
             destinations.addDestination(gc);
-            destinations.save(getWorld());
+            destinations.save();
 
             markDirty();
         }
@@ -136,7 +136,7 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
                 destinations.assignId(gc, id);
             }
 
-            destinations.save(getWorld());
+            destinations.save();
         }
         markDirtyClient();
     }

@@ -115,7 +115,7 @@ public class MatterReceiverBlock extends GenericRFToolsBlock<MatterReceiverTileE
 
         destinations.getNewId(gc);
         destinations.addDestination(gc);
-        destinations.save(world);
+        destinations.save();
 
         return state;
     }
@@ -141,7 +141,7 @@ public class MatterReceiverBlock extends GenericRFToolsBlock<MatterReceiverTileE
         }
         TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
         destinations.removeDestination(pos, world.provider.getDimension());
-        destinations.save(world);
+        destinations.save();
     }
 
     @Override

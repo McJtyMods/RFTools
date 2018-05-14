@@ -131,7 +131,7 @@ public class BlockProtectorBlock extends GenericRFToolsBlock<BlockProtectorTileE
         GlobalCoordinate gc = new GlobalCoordinate(pos, world.provider.getDimension());
 
         protectors.getNewId(gc);
-        protectors.save(world);
+        protectors.save();
 
         return rc;
     }
@@ -166,7 +166,7 @@ public class BlockProtectorBlock extends GenericRFToolsBlock<BlockProtectorTileE
         }
         BlockProtectors protectors = BlockProtectors.getProtectors(world);
         protectors.removeDestination(pos, world.provider.getDimension());
-        protectors.save(world);
+        protectors.save();
     }
 
     @Override

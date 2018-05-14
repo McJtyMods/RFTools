@@ -247,8 +247,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
             BlockProtectors protectors = BlockProtectors.getProtectors(getWorld());
             GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().provider.getDimension());
             id = protectors.getNewId(gc);
-
-            protectors.save(getWorld());
+            protectors.save();
             setId(id);
         }
         return id;
@@ -279,7 +278,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
             protectors.assignId(gc, id);
         }
 
-        protectors.save(getWorld());
+        protectors.save();
         markDirtyClient();
     }
 

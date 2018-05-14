@@ -256,7 +256,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
                     network.receiveEnergy(energy);
                     Block block = world.getBlockState(pos).getBlock();
                     network.add(world, powerCellTileEntity.getGlobalPos(), isAdvanced(block), isSimple(block));
-                    powerCellNetwork.save(world);
+                    powerCellNetwork.save();
                 }
             }
         } else if (!stack.hasTagCompound() && !world.isRemote) {
@@ -306,7 +306,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
                     int a = network.extractEnergySingleBlock(isAdvanced(), isSimple());
                     Block block = world.getBlockState(pos).getBlock();
                     network.remove(world, cellTileEntity.getGlobalPos(), PowerCellBlock.isAdvanced(block), PowerCellBlock.isSimple(block));
-                    PowerCellNetwork.getChannels(world).save(world);
+                    PowerCellNetwork.getChannels(world).save();
                     cellTileEntity.setNetworkId(-1);
                 }
             }
@@ -325,7 +325,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
                     int a = network.extractEnergySingleBlock(isAdvanced(), isSimple());
                     Block block = world.getBlockState(pos).getBlock();
                     network.remove(world, cellTileEntity.getGlobalPos(), PowerCellBlock.isAdvanced(block), PowerCellBlock.isSimple(block));
-                    PowerCellNetwork.getChannels(world).save(world);
+                    PowerCellNetwork.getChannels(world).save();
                 }
             }
         }

@@ -35,7 +35,7 @@ public class RedstoneScreenModule implements IScreenModule<IModuleDataInteger> {
             }
             return null;
         }
-        RedstoneChannels channels = RedstoneChannels.getChannels();
+        RedstoneChannels channels = RedstoneChannels.getChannels(worldObj);
         if (channels == null) {
             return null;
         }

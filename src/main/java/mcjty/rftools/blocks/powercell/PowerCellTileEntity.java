@@ -388,7 +388,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
             if (network != null) {
                 energy = network.extractEnergySingleBlock(isAdvanced(), isSimple());
                 network.remove(getWorld(), getGlobalPos(), isAdvanced(), isSimple());
-                PowerCellNetwork.getChannels(getWorld()).save(getWorld());
+                PowerCellNetwork.getChannels(getWorld()).save();
             }
         }
         networkId = -1;
@@ -408,7 +408,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
             PowerCellNetwork.Network network = getNetwork();
             network.add(getWorld(), getGlobalPos(), isAdvanced(), isSimple());
             network.receiveEnergy(energy);
-            channels.save(getWorld());
+            channels.save();
         } else {
             networkId = id;
         }
@@ -526,7 +526,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         if (maxInsert > 0) {
             if (!simulate) {
                 maxInsert = network.receiveEnergy(maxInsert);
-                PowerCellNetwork.getChannels(getWorld()).save(getWorld());
+                PowerCellNetwork.getChannels(getWorld()).save();
             }
         }
         return isCreative() ? maxReceive : maxInsert;
@@ -578,7 +578,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         }
         if (!simulate) {
             maxExtract = network.extractEnergy(maxExtract);
-            PowerCellNetwork.getChannels(getWorld()).save(getWorld());
+            PowerCellNetwork.getChannels(getWorld()).save();
         }
         return maxExtract;
     }

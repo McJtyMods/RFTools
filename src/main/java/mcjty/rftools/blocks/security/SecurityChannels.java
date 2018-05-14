@@ -1,10 +1,10 @@
 package mcjty.rftools.blocks.security;
 
+import mcjty.lib.worlddata.AbstractWorldData;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.world.World;
-import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
@@ -12,47 +12,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SecurityChannels extends WorldSavedData {
+public class SecurityChannels extends AbstractWorldData<SecurityChannels> {
 
-    public static final String SECURITY_CHANNELS_NAME = "RFToolsSecurityChannels";
-    private static SecurityChannels instance = null;
+    private static final String SECURITY_CHANNELS_NAME = "RFToolsSecurityChannels";
 
     private int lastId = 0;
 
     private final Map<Integer,SecurityChannel> channels = new HashMap<>();
 
-    public SecurityChannels(String identifier) {
-        super(identifier);
+    public SecurityChannels(String name) {
+        super(name);
     }
 
-    public void save(World world) {
-        world.setData(SECURITY_CHANNELS_NAME, this);
-        markDirty();
-    }
-
-    public static void clearInstance() {
-        if (instance != null) {
-            instance.channels.clear();
-            instance = null;
-        }
-    }
-
-    public static SecurityChannels getChannels() {
-        return instance;
+    @Override
+    public void clear() {
+        channels.clear();
+        lastId = 0;
     }
 
     public static SecurityChannels getChannels(World world) {
-        if (world.isRemote) {
-            return null;
-        }
-        if (instance != null) {
-            return instance;
-        }
-        instance = (SecurityChannels) world.loadData(SecurityChannels.class, SECURITY_CHANNELS_NAME);
-        if (instance == null) {
-            instance = new SecurityChannels(SECURITY_CHANNELS_NAME);
-        }
-        return instance;
+        return getData(world, SecurityChannels.class, SECURITY_CHANNELS_NAME);
     }
 
     public SecurityChannel getOrCreateChannel(int id) {

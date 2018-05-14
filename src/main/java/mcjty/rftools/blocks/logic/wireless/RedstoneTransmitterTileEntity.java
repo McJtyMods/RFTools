@@ -30,7 +30,7 @@ public class RedstoneTransmitterTileEntity extends RedstoneChannelTileEntity {
             RedstoneChannels channels = RedstoneChannels.getChannels(getWorld());
             RedstoneChannels.RedstoneChannel ch = channels.getOrCreateChannel(channel);
             ch.setValue(powerLevel);
-            channels.save(getWorld());
+            channels.save();
         }
     }
 

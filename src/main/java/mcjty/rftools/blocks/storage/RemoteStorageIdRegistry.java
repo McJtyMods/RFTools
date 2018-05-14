@@ -2,50 +2,37 @@ package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.WorldTools;
-import mcjty.rftools.varia.RFToolsTools;
+import mcjty.lib.worlddata.AbstractWorldData;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.DimensionManager;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class RemoteStorageIdRegistry extends WorldSavedData {
-    public static final String RFTOOLS_REMOTE_STORAGE = "RFToolsRemoteStorage";
-    private static RemoteStorageIdRegistry instance = null;
+public class RemoteStorageIdRegistry extends AbstractWorldData<RemoteStorageIdRegistry> {
+
+    private static final String RFTOOLS_REMOTE_STORAGE = "RFToolsRemoteStorage";
 
     private int lastId = 0;
     private Map<Integer,GlobalCoordinate> storages = new HashMap<>();
     private Map<Integer,Long> lastPublishTime = new HashMap<>();
 
-    public RemoteStorageIdRegistry(String identifier) {
-        super(identifier);
+    public RemoteStorageIdRegistry(String name) {
+        super(name);
     }
 
-    public void save(World world) {
-        world.setData(RFTOOLS_REMOTE_STORAGE, this);
-        markDirty();
-    }
-
-    public static void clearInstance() {
-        instance = null;
+    @Override
+    public void clear() {
+        storages.clear();
+        lastPublishTime.clear();
+        lastId = 0;
     }
 
     public static RemoteStorageIdRegistry getRegistry(World world) {
-        if (world.isRemote) {
-            return null;
-        }
-        if (instance != null) {
-            return instance;
-        }
-        instance = (RemoteStorageIdRegistry) world.loadData(RemoteStorageIdRegistry.class, RFTOOLS_REMOTE_STORAGE);
-        if (instance == null) {
-            instance = new RemoteStorageIdRegistry(RFTOOLS_REMOTE_STORAGE);
-        }
-        return instance;
+        return getData(world, RemoteStorageIdRegistry.class, RFTOOLS_REMOTE_STORAGE);
     }
 
     public static RemoteStorageTileEntity getRemoteStorage(World world, int id) {

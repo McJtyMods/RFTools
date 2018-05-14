@@ -7,14 +7,6 @@ import mcjty.rftools.api.screens.IScreenModuleRegistry;
 import mcjty.rftools.api.teleportation.ITeleportationManager;
 import mcjty.rftools.apiimpl.ScreenModuleRegistry;
 import mcjty.rftools.apiimpl.TeleportationManager;
-import mcjty.rftools.blocks.blockprotector.BlockProtectorConfiguration;
-import mcjty.rftools.blocks.blockprotector.BlockProtectors;
-import mcjty.rftools.blocks.logic.wireless.RedstoneChannels;
-import mcjty.rftools.blocks.powercell.PowerCellNetwork;
-import mcjty.rftools.blocks.security.SecurityChannels;
-import mcjty.rftools.blocks.security.SecurityConfiguration;
-import mcjty.rftools.blocks.storage.RemoteStorageIdRegistry;
-import mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import mcjty.rftools.commands.CommandRftCfg;
 import mcjty.rftools.commands.CommandRftDb;
 import mcjty.rftools.commands.CommandRftShape;
@@ -23,7 +15,6 @@ import mcjty.rftools.integration.computers.OpenComputersIntegration;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.manual.GuiRFToolsManual;
 import mcjty.rftools.proxy.CommonProxy;
-import mcjty.rftools.shapes.ScanDataManager;
 import mcjty.rftools.wheelsupport.WheelSupport;
 import mcjty.rftools.xnet.XNetSupport;
 import net.minecraft.creativetab.CreativeTabs;
@@ -195,20 +186,6 @@ public class RFTools implements ModBase {
         event.registerServerCommand(new CommandRftShape());
         event.registerServerCommand(new CommandRftDb());
         event.registerServerCommand(new CommandRftCfg());
-    }
-
-    @Mod.EventHandler
-    public void serverStopped(FMLServerStoppedEvent event) {
-        Logging.log("RFTools: server is stopping. Shutting down gracefully");
-        TeleportDestinations.clearInstance();
-        RemoteStorageIdRegistry.clearInstance();
-        RedstoneChannels.clearInstance();
-        PowerCellNetwork.clearInstance();
-        ScanDataManager.clearInstance();
-        if(SecurityConfiguration.enabled)
-            SecurityChannels.clearInstance();
-        if(BlockProtectorConfiguration.enabled)
-            BlockProtectors.clearInstance();
     }
 
     /**

@@ -1,6 +1,7 @@
 package mcjty.rftools.shapes;
 
 import mcjty.lib.varia.Logging;
+import mcjty.lib.worlddata.AbstractWorldData;
 import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -11,7 +12,6 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 
@@ -20,10 +20,9 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ScanDataManager extends WorldSavedData {
+public class ScanDataManager extends AbstractWorldData<ScanDataManager> {
 
-    public static final String SCANDATA_NETWORK_NAME = "RFToolsScanData";
-    private static ScanDataManager instance = null;
+    private static final String SCANDATA_NETWORK_NAME = "RFToolsScanData";
 
     private int lastId = 0;
 
@@ -32,8 +31,15 @@ public class ScanDataManager extends WorldSavedData {
     // This data is not persisted
     private final Map<Integer, ScanExtraData> scanData = new HashMap<>();
 
-    public ScanDataManager(String identifier) {
-        super(identifier);
+    public ScanDataManager(String name) {
+        super(name);
+    }
+
+    @Override
+    public void clear() {
+        scans.clear();
+        scanData.clear();
+        lastId = 0;
     }
 
     public void save(int scanId) {
@@ -53,13 +59,6 @@ public class ScanDataManager extends WorldSavedData {
         markDirty();
     }
 
-    public static void clearInstance() {
-        if (instance != null) {
-            instance.scans.clear();
-            instance = null;
-        }
-    }
-
     public ScanExtraData getExtraData(int id) {
         ScanExtraData data = scanData.get(id);
         if (data == null) {
@@ -76,15 +75,7 @@ public class ScanDataManager extends WorldSavedData {
     }
 
     public static ScanDataManager getScans() {
-        World world = DimensionManager.getWorld(0);
-        if (instance != null) {
-            return instance;
-        }
-        instance = (ScanDataManager) world.loadData(ScanDataManager.class, SCANDATA_NETWORK_NAME);
-        if (instance == null) {
-            instance = new ScanDataManager(SCANDATA_NETWORK_NAME);
-        }
-        return instance;
+        return getData(ScanDataManager.class, SCANDATA_NETWORK_NAME);
     }
 
     @Nonnull
