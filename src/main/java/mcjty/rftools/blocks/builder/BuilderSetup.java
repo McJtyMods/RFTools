@@ -153,7 +153,7 @@ public class BuilderSetup {
     }
 
     private static void readBuilderBlocksConfig() {
-        File modConfigDir = CommonProxy.modConfigDir;
+        File modConfigDir = RFTools.proxy.modConfigDir;
         File file = new File(modConfigDir.getPath() + File.separator + "rftools", "userbuilder.json");
         try(FileInputStream inputstream = new FileInputStream(file)) {
             parseBuilderJson(inputstream);

@@ -1,9 +1,8 @@
 package mcjty.rftools.proxy;
 
-import com.google.common.util.concurrent.ListenableFuture;
-import mcjty.lib.McJtyLib;
 import mcjty.lib.base.GeneralConfig;
 import mcjty.lib.network.PacketHandler;
+import mcjty.lib.proxy.AbstractCommonProxy;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.WrenchChecker;
 import mcjty.rftools.CommandHandler;
@@ -41,10 +40,8 @@ import mcjty.rftools.world.ModWorldgen;
 import mcjty.rftools.world.WorldTickHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -60,22 +57,19 @@ import org.apache.logging.log4j.Level;
 
 import java.io.File;
 import java.lang.reflect.Method;
-import java.util.concurrent.Callable;
 
-public abstract class CommonProxy {
+public abstract class CommonProxy extends AbstractCommonProxy {
 
-    public static File modConfigDir;
-    private Configuration mainConfig;
-
+    @Override
     public void preInit(FMLPreInitializationEvent e) {
+        super.preInit(e);
+
         MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
-        McJtyLib.preInit(e);
         CommandHandler.registerCommands();
         reflect();
 
         GeneralConfig.preInit(e);
 
-        modConfigDir = e.getModConfigurationDirectory();
         mainConfig = new Configuration(new File(modConfigDir.getPath() + File.separator + "rftools", "rftools.cfg"));
 
         CapabilityManager.INSTANCE.register(BuffProperties.class, new Capability.IStorage<BuffProperties>() {
@@ -202,13 +196,17 @@ public abstract class CommonProxy {
         }
     }
 
+    @Override
     public void init(FMLInitializationEvent e) {
+        super.init(e);
         NetworkRegistry.INSTANCE.registerGuiHandler(RFTools.instance, new GuiProxy());
         MinecraftForge.EVENT_BUS.register(WorldTickHandler.instance);
         ModCrafting.init();
     }
 
+    @Override
     public void postInit(FMLPostInitializationEvent e) {
+        super.postInit(e);
 //        MobConfiguration.readModdedMobConfig(mainConfig);
 //        if (mainConfig.hasChanged()) {
 //            mainConfig.save();
@@ -218,21 +216,4 @@ public abstract class CommonProxy {
         mainConfig = null;
         WrenchChecker.init();
     }
-
-    public World getClientWorld() {
-        throw new IllegalStateException("This should only be called from client side");
-    }
-
-    public EntityPlayer getClientPlayer() {
-        throw new IllegalStateException("This should only be called from client side");
-    }
-
-    public <V> ListenableFuture<V> addScheduledTaskClient(Callable<V> callableToSchedule) {
-        throw new IllegalStateException("This should only be called from client side");
-    }
-
-    public ListenableFuture<Object> addScheduledTaskClient(Runnable runnableToSchedule) {
-        throw new IllegalStateException("This should only be called from client side");
-    }
-
 }
