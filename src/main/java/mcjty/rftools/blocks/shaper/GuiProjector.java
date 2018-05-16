@@ -189,7 +189,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
 
     private void initRsPanel(Panel sidePanel, int o, String label) {
         int dy = o * 53;
-        sidePanel.addChild(new Label<>(mc, this)
+        sidePanel.addChild(new Label(mc, this)
                 .setText(label)
                 .setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT)
                 .setLayoutHint(new PositionalLayout.PositionalHint(8, dy+8, 12, 13)));

@@ -89,7 +89,7 @@ public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
         player.setCurrentColor(tileEntity.getPlayerType().getColor());
         playerBeacon.setPressed(tileEntity.isPlayerBeacon());
 
-        toplevel.addChild(new Label<>(mc, this)
+        toplevel.addChild(new Label(mc, this)
                 .setText("Filter")
                 .setLayoutHint(8, 82, 40, 14));
         filter = new TextField(mc, this);
@@ -104,20 +104,20 @@ public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
         energy.setCurrentColor(tileEntity.getEnergyType().getColor());
         energyBeacon.setPressed(tileEntity.isEnergyBeacon());
 
-        toplevel.addChild(new Label<>(mc, this).setText("<").setLayoutHint(153, 98, 10, 14));
+        toplevel.addChild(new Label(mc, this).setText("<").setLayoutHint(153, 98, 10, 14));
         minEnergy = new TextField(mc, this).setLayoutHint(162, 98, 25, 14);
         minEnergy.setText(tileEntity.getMinEnergy() == null ? "" : Integer.toString(tileEntity.getMinEnergy()));
         minEnergy.addTextEvent((parent, newText) -> update());
-        toplevel.addChild(new Label<>(mc, this).setText("%").setLayoutHint(187, 98, 10, 14));
+        toplevel.addChild(new Label(mc, this).setText("%").setLayoutHint(187, 98, 10, 14));
         toplevel.addChild(minEnergy);
-        toplevel.addChild(new Label<>(mc, this).setText(">").setLayoutHint(205, 98, 10, 14));
+        toplevel.addChild(new Label(mc, this).setText(">").setLayoutHint(205, 98, 10, 14));
         maxEnergy = new TextField(mc, this).setLayoutHint(214, 98, 25, 14);
         maxEnergy.setText(tileEntity.getMaxEnergy() == null ? "" : Integer.toString(tileEntity.getMaxEnergy()));
         maxEnergy.addTextEvent((parent, newText) -> update());
         toplevel.addChild(maxEnergy);
-        toplevel.addChild(new Label<>(mc, this).setText("%").setLayoutHint(238, 98, 10, 14));
+        toplevel.addChild(new Label(mc, this).setText("%").setLayoutHint(238, 98, 10, 14));
 
-        toplevel.addChild(new Label<>(mc, this)
+        toplevel.addChild(new Label(mc, this)
                 .setColor(0x993300)
                 .setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT)
                 .setText("RF per scan (every " + ScannerConfiguration.ticksPerLocatorScan + " ticks):")
@@ -141,7 +141,7 @@ public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
     private static final Map<Integer, BeaconType> COLOR_TO_TYPE = new HashMap<>();
 
     private void addBeaconSetting(Panel toplevel, ColorChoiceLabel choice, ToggleButton toggle, int y, String label) {
-        toplevel.addChild(new Label<>(mc, this).setText(label).setLayoutHint(new PositionalLayout.PositionalHint(8, y, 40, 14)));
+        toplevel.addChild(new Label(mc, this).setText(label).setLayoutHint(new PositionalLayout.PositionalHint(8, y, 40, 14)));
         choice.setLayoutHint(new PositionalLayout.PositionalHint(50, y, 30, 14));
         for (BeaconType type : BeaconType.VALUES) {
             choice.addColors(type.getColor());
