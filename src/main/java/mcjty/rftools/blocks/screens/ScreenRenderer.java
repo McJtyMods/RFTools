@@ -98,7 +98,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
 
             Map<Integer, IModuleData> screenData = updateScreenData(tileEntity);
 
-            List<IClientScreenModule> modules = tileEntity.getClientScreenModules();
+            List<IClientScreenModule<?>> modules = tileEntity.getClientScreenModules();
             if (tileEntity.isShowHelp()) {
                 modules = ScreenTileEntity.getHelpingScreenModules();
             }
@@ -129,7 +129,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
 
     private ClientScreenModuleHelper clientScreenModuleHelper = new ClientScreenModuleHelper();
 
-    private void renderModules(FontRenderer fontrenderer, ScreenTileEntity tileEntity, IClientScreenModule.TransformMode mode, List<IClientScreenModule> modules, Map<Integer, IModuleData> screenData, int size) {
+    private void renderModules(FontRenderer fontrenderer, ScreenTileEntity tileEntity, IClientScreenModule.TransformMode mode, List<IClientScreenModule<?>> modules, Map<Integer, IModuleData> screenData, int size) {
         float f3;
         float factor = size + 1.0f;
         int currenty = 7;
@@ -138,7 +138,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         BlockPos pos = tileEntity.getPos();
 
         RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
-        IClientScreenModule hitModule = null;
+        IClientScreenModule<?> hitModule = null;
         ScreenTileEntity.ModuleRaytraceResult hit = null;
         IBlockState blockState = getWorld().getBlockState(pos);
         Block block = blockState.getBlock();

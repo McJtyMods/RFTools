@@ -65,7 +65,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     public static Map<GlobalCoordinate, Map<Integer, IModuleData>> screenData = new HashMap<>();
 
     // Cached client screen modules
-    private List<IClientScreenModule> clientScreenModules = null;
+    private List<IClientScreenModule<?>> clientScreenModules = null;
 
     // A list of tags linked to computer modules.
     private final Map<String,List<ComputerScreenModule>> computerModules = new HashMap<>();
@@ -150,7 +150,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
             if (cm.ticks > 0) {
                 newClickedModules.add(cm);
             } else {
-                List<IClientScreenModule> modules = getClientScreenModules();
+                List<IClientScreenModule<?>> modules = getClientScreenModules();
                 if (cm.module < modules.size()) {
                     modules.get(cm.module).mouseClick(getWorld(), cm.x, cm.y, false);
                 }
@@ -172,7 +172,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
                 List<IScreenModule> modules = getScreenModules();
                 if (cm.module < modules.size()) {
                     ItemStack itemStack = inventoryHelper.getStackInSlot(cm.module);
-                    IScreenModule module = modules.get(cm.module);
+                    IScreenModule<?> module = modules.get(cm.module);
                     module.mouseClick(getWorld(), cm.x, cm.y, false, null);
                     if (module instanceof IScreenModuleUpdater) {
                         NBTTagCompound newCompound = ((IScreenModuleUpdater) module).update(itemStack.getTagCompound(), getWorld(), null);
@@ -291,7 +291,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
             return;
         }
 
-        List<IClientScreenModule> modules = getClientScreenModules();
+        List<IClientScreenModule<?>> modules = getClientScreenModules();
         int module = result.getModuleIndex();
         if (isActivated(module)) {
             // We are getting a hit twice. Module is already activated. Do nothing
@@ -375,8 +375,8 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         int currenty = 7;
 
         int moduleIndex = 0;
-        List<IClientScreenModule> clientScreenModules = getClientScreenModules();
-        for (IClientScreenModule module : clientScreenModules) {
+        List<IClientScreenModule<?>> clientScreenModules = getClientScreenModules();
+        for (IClientScreenModule<?> module : clientScreenModules) {
             if (module != null) {
                 int height = module.getHeight();
                 // Check if this module has enough room
@@ -398,7 +398,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
 
     private void hitScreenServer(EntityPlayer player, int x, int y, int module) {
         List<IScreenModule> screenModules = getScreenModules();
-        IScreenModule screenModule = screenModules.get(module);
+        IScreenModule<?> screenModule = screenModules.get(module);
         if (screenModule != null) {
             ItemStack itemStack = inventoryHelper.getStackInSlot(module);
             screenModule.mouseClick(getWorld(), x, y, true, player);
@@ -577,9 +577,9 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         markDirty();
     }
 
-    private static List<IClientScreenModule> helpingScreenModules = null;
+    private static List<IClientScreenModule<?>> helpingScreenModules = null;
 
-    public static List<IClientScreenModule> getHelpingScreenModules() {
+    public static List<IClientScreenModule<?>> getHelpingScreenModules() {
         if (helpingScreenModules == null) {
             helpingScreenModules = new ArrayList<>();
             addLine("Read me", 0x7799ff, true);
@@ -605,7 +605,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
 
 
     // This is called client side.
-    public List<IClientScreenModule> getClientScreenModules() {
+    public List<IClientScreenModule<?>> getClientScreenModules() {
         if (clientScreenModules == null) {
             needsServerData = false;
             showHelp = true;
@@ -614,7 +614,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
                 ItemStack itemStack = inventoryHelper.getStackInSlot(i);
                 if (!itemStack.isEmpty() && ScreenBlock.hasModuleProvider(itemStack)) {
                     IModuleProvider moduleProvider = ScreenBlock.getModuleProvider(itemStack);
-                    IClientScreenModule clientScreenModule;
+                    IClientScreenModule<?> clientScreenModule;
                     try {
                         clientScreenModule = moduleProvider.getClientScreenModule().newInstance();
                     } catch (InstantiationException e) {
@@ -673,7 +673,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
                 ItemStack itemStack = inventoryHelper.getStackInSlot(i);
                 if (!itemStack.isEmpty() && ScreenBlock.hasModuleProvider(itemStack)) {
                     IModuleProvider moduleProvider = ScreenBlock.getModuleProvider(itemStack);
-                    IScreenModule screenModule;
+                    IScreenModule<?> screenModule;
                     try {
                         screenModule = moduleProvider.getServerScreenModule().newInstance();
                     } catch (InstantiationException e) {
@@ -740,7 +740,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         Map<Integer, IModuleData> map = new HashMap<>();
         List<IScreenModule> screenModules = getScreenModules();
         int moduleIndex = 0;
-        for (IScreenModule module : screenModules) {
+        for (IScreenModule<?> module : screenModules) {
             if (module != null) {
                 IModuleData data = module.getData(screenDataHelper, getWorld(), millis);
                 if (data != null) {
@@ -752,7 +752,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         return map;
     }
 
-    public IScreenModule getHoveringModule() {
+    public IScreenModule<?> getHoveringModule() {
         if (hoveringModule == -1) {
             return null;
         }
@@ -803,7 +803,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
             return rc;
         }
         if (CMD_SCREEN_INFO.equals(command)) {
-            IScreenModule module = getHoveringModule();
+            IScreenModule<?> module = getHoveringModule();
             List<String> info = Collections.emptyList();
             if (module instanceof ITooltipInfo) {
                 info = ((ITooltipInfo) module).getInfo(world, getHoveringX(), getHoveringY());
