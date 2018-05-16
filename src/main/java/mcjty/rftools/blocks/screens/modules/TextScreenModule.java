@@ -9,7 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class TextScreenModule implements IScreenModule {
+public class TextScreenModule implements IScreenModule<IModuleData> {
 
     @Override
     public IModuleData getData(IScreenDataHelper helper, World worldObj, long millis) {

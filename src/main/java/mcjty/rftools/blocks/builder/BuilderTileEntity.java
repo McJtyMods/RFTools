@@ -212,8 +212,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     @Override
-    public IAction[] getActions() {
-        return new IAction[] {
+    public IAction<?>[] getActions() {
+        return new IAction<?>[] {
                 new DefaultAction<>("restart", BuilderTileEntity::restartScan)
         };
     }

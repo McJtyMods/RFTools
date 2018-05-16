@@ -76,7 +76,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
     public static float tooltipCostFactor = 0;
 
     @Override
-    public IAction[] getActions() {
+    public IAction<?>[] getActions() {
         return new IAction[] {
                 new DefaultAction<>(ACTION_SETNONE, PowerCellTileEntity::setAllNone),
                 new DefaultAction<>(ACTION_SETINPUT, PowerCellTileEntity::setAllInput),

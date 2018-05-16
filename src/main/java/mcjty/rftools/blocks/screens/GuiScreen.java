@@ -121,7 +121,7 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
             final ItemStack slot = tileEntity.getStackInSlot(i);
             if (!slot.isEmpty() && ScreenBlock.hasModuleProvider(slot)) {
                 IModuleProvider moduleProvider = ScreenBlock.getModuleProvider(slot);
-                Class<? extends IClientScreenModule> clientScreenModuleClass = moduleProvider.getClientScreenModule();
+                Class<? extends IClientScreenModule<?>> clientScreenModuleClass = moduleProvider.getClientScreenModule();
                 if (!clientScreenModuleClass.isInstance(clientScreenModules[i])) {
                     installModuleGui(i, slot, moduleProvider, clientScreenModuleClass);
                 }
@@ -147,7 +147,7 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
         }
     }
 
-    private void installModuleGui(int i, final ItemStack slot, IModuleProvider moduleProvider, Class<? extends IClientScreenModule> clientScreenModuleClass) {
+    private void installModuleGui(int i, final ItemStack slot, IModuleProvider moduleProvider, Class<? extends IClientScreenModule<?>> clientScreenModuleClass) {
         buttons[i].setEnabled(true);
         toplevel.removeChild(modulePanels[i]);
         try {

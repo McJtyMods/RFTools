@@ -29,7 +29,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
     public static final String ACTION_DETACH = "detach";
 
     @Override
-    public IAction[] getActions() {
+    public IAction<?>[] getActions() {
         return new IAction[] {
                 new DefaultAction<>(ACTION_SCAN, ScreenControllerTileEntity::scan),
                 new DefaultAction<>(ACTION_DETACH, ScreenControllerTileEntity::detach),

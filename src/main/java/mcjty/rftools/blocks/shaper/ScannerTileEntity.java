@@ -54,7 +54,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     public static Key<BlockPos> VALUE_OFFSET = new Key<>("offset", Type.BLOCKPOS);
 
     @Override
-    public IValue[] getValues() {
+    public IValue<?, ?>[] getValues() {
         return new IValue[] {
                 new DefaultValue<>(VALUE_RSMODE, ScannerTileEntity::getRSModeInt, ScannerTileEntity::setRSModeInt),
                 new DefaultValue<>(VALUE_OFFSET, ScannerTileEntity::getDataOffset, ScannerTileEntity::setDataOffset),
@@ -62,7 +62,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     @Override
-    public IAction[] getActions() {
+    public IAction<?>[] getActions() {
         return new IAction[] {
                 new DefaultAction<>(ACTION_SCAN, ScannerTileEntity::scan)
         };

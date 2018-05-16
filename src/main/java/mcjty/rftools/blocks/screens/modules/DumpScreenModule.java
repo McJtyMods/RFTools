@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.screens.modules;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
+import mcjty.rftools.api.screens.data.IModuleData;
 import mcjty.rftools.api.screens.data.IModuleDataBoolean;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
@@ -14,7 +15,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
-public class DumpScreenModule implements IScreenModule {
+public class DumpScreenModule implements IScreenModule<IModuleData> {
 
     public static int COLS = 7;
     public static int ROWS = 4;

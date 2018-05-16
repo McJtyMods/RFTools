@@ -508,7 +508,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             panel.addChild(new BlockRender(mc, this).setRenderItem(c.getBlock()));
         }
         if (openViewButton.isPressed()) {
-            AbstractWidget label;
+            AbstractWidget<?> label;
             label = new Label(mc, this).setColor(StyleConfig.colorTextInListNormal)
                     .setText(displayName)
                     .setDynamic(true)

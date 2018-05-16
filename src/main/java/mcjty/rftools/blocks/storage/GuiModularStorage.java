@@ -557,7 +557,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         Panel panel = currentPos.getKey();
         if (panel == null || currentPos.getValue() >= numcolumns || (newgroup && groupName != null)) {
             if (newgroup && groupName != null) {
-                AbstractWidget groupLabel = new Label(mc, this).setText(groupName).setColor(ModularStorageConfiguration.groupForeground)
+                AbstractWidget<?> groupLabel = new Label(mc, this).setText(groupName).setColor(ModularStorageConfiguration.groupForeground)
                         .setColor(StyleConfig.colorTextInListNormal)
                         .setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setFilledBackground(ModularStorageConfiguration.groupBackground).setDesiredHeight(10)
                         .setDesiredWidth(231);
@@ -577,7 +577,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             } else {
                 displayName = typeModule.getShortLabel(stack);
             }
-            AbstractWidget label = new Label(mc, this).setText(displayName).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setDesiredWidth(labelWidth).setUserObject(new Integer(-1));
+            AbstractWidget<?> label = new Label(mc, this).setText(displayName).setColor(StyleConfig.colorTextInListNormal).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setDesiredWidth(labelWidth).setUserObject(new Integer(-1));
             panel.addChild(label);
         }
         currentPos.setValue(currentPos.getValue() + 1);

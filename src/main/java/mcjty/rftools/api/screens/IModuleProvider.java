@@ -10,9 +10,9 @@ public interface IModuleProvider {
     @CapabilityInject(IModuleProvider.class)
     public static Capability<IModuleProvider> CAPABILITY = null;
 
-    Class<? extends IScreenModule> getServerScreenModule();
+    Class<? extends IScreenModule<?>> getServerScreenModule();
 
-    Class<? extends IClientScreenModule> getClientScreenModule();
+    Class<? extends IClientScreenModule<?>> getClientScreenModule();
 
     String getName();
 }
