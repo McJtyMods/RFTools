@@ -60,7 +60,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
     private static long lastTime = 0;
 
     public PowerCellBlock(String name, Class<? extends PowerCellTileEntity> clazz) {
-        super(Material.IRON, clazz, PowerCellContainer.class, name, true);
+        super(Material.IRON, clazz, PowerCellContainer::new, name, true);
     }
 
     @SideOnly(Side.CLIENT)

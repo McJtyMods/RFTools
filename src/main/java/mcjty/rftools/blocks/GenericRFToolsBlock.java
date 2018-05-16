@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks;
 
 import mcjty.lib.blocks.GenericBlock;
-import mcjty.lib.blocks.GenericItemBlock;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
@@ -11,27 +10,23 @@ import mcjty.rftools.blocks.security.SecurityConfiguration;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
+import java.util.function.BiFunction;
+
 public abstract class GenericRFToolsBlock<T extends GenericTileEntity, C extends Container> extends GenericBlock<T, C> {
 
-    public GenericRFToolsBlock(Material material,
-                               Class<? extends T> tileEntityClass,
-                               Class<? extends C> containerClass,
-                               String name, boolean isContainer) {
-        super(RFTools.instance, material, tileEntityClass, containerClass, GenericItemBlock.class, name, isContainer);
+    public GenericRFToolsBlock(Material material, Class<? extends T> tileEntityClass, BiFunction<EntityPlayer, IInventory, C> containerFactory, String name, boolean isContainer) {
+        super(RFTools.instance, material, tileEntityClass, containerFactory, name, isContainer);
         setCreativeTab(RFTools.tabRfTools);
     }
 
-    public GenericRFToolsBlock(Material material,
-                               Class<? extends T> tileEntityClass,
-                               Class<? extends C> containerClass,
-                               Class<? extends ItemBlock> itemBlockClass,
-                               String name, boolean isContainer) {
-        super(RFTools.instance, material, tileEntityClass, containerClass, itemBlockClass, name, isContainer);
+    public GenericRFToolsBlock(Material material, Class<? extends T> tileEntityClass, BiFunction<EntityPlayer, IInventory, C> containerFactory, Class<? extends ItemBlock> itemBlockClass, String name, boolean isContainer) {
+        super(RFTools.instance, material, tileEntityClass, containerFactory, itemBlockClass, name, isContainer);
         setCreativeTab(RFTools.tabRfTools);
     }
 

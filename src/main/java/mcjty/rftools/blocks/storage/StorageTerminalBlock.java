@@ -47,7 +47,7 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
     public static final PropertyBool MODULE = PropertyBool.create("module");
 
     public StorageTerminalBlock() {
-        super(RFTools.instance, Material.IRON, StorageTerminalTileEntity.class, StorageTerminalContainer.class, "storage_terminal", true);
+        super(RFTools.instance, Material.IRON, StorageTerminalTileEntity.class, StorageTerminalContainer::new, "storage_terminal", true);
     }
 
     @SideOnly(Side.CLIENT)

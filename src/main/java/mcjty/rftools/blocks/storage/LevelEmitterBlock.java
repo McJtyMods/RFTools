@@ -35,7 +35,7 @@ public class LevelEmitterBlock extends LogicSlabBlock<LevelEmitterTileEntity, Le
     public static final PropertyBool MODULE = PropertyBool.create("module");
 
     public LevelEmitterBlock() {
-        super(RFTools.instance, Material.IRON, LevelEmitterTileEntity.class, LevelEmitterContainer.class, "level_emitter", true);
+        super(RFTools.instance, Material.IRON, LevelEmitterTileEntity.class, LevelEmitterContainer::new, "level_emitter", true);
     }
 
     @SideOnly(Side.CLIENT)

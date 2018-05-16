@@ -32,7 +32,7 @@ import java.util.List;
 public class MatterReceiverBlock extends GenericRFToolsBlock<MatterReceiverTileEntity, EmptyContainer> implements Infusable {
 
     public MatterReceiverBlock() {
-        super(Material.IRON, MatterReceiverTileEntity.class, EmptyContainer.class, "matter_receiver", false);
+        super(Material.IRON, MatterReceiverTileEntity.class, EmptyContainer::new, "matter_receiver", false);
         setDefaultState(this.blockState.getBaseState());
     }
 

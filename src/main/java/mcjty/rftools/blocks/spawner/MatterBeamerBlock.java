@@ -41,7 +41,7 @@ public class MatterBeamerBlock extends GenericRFToolsBlock<MatterBeamerTileEntit
     public static final PropertyBool WORKING = PropertyBool.create("working");
 
     public MatterBeamerBlock() {
-        super(Material.IRON, MatterBeamerTileEntity.class, MatterBeamerContainer.class, "matter_beamer", true);
+        super(Material.IRON, MatterBeamerTileEntity.class, MatterBeamerContainer::new, "matter_beamer", true);
     }
 
     @Override

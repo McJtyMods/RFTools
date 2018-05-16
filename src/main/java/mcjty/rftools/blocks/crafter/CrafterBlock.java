@@ -30,7 +30,7 @@ public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterCont
         /*, IRedstoneConnectable*/ {
 
     public CrafterBlock(String blockName, Class<? extends CrafterBaseTE> tileEntityClass) {
-        super(Material.IRON, tileEntityClass, CrafterContainer.class, blockName, true);
+        super(Material.IRON, tileEntityClass, CrafterContainer::new, blockName, true);
     }
 
     @SideOnly(Side.CLIENT)

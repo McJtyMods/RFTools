@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.logic.wireless;
 
-import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.blocks.GenericItemBlock;
+import mcjty.lib.container.EmptyContainer;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -21,7 +21,7 @@ import java.util.List;
 public class RedstoneTransmitterBlock extends RedstoneChannelBlock<RedstoneTransmitterTileEntity, EmptyContainer> {
 
     public RedstoneTransmitterBlock() {
-        super(Material.IRON, "redstone_transmitter_block", RedstoneTransmitterTileEntity.class, EmptyContainer.class, GenericItemBlock.class);
+        super(Material.IRON, RedstoneTransmitterTileEntity.class, EmptyContainer::new, GenericItemBlock.class, "redstone_transmitter_block");
     }
 
     @Override

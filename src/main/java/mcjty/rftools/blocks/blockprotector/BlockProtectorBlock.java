@@ -44,7 +44,7 @@ public class BlockProtectorBlock extends GenericRFToolsBlock<BlockProtectorTileE
     public static final PropertyBool WORKING = PropertyBool.create("working");
 
     public BlockProtectorBlock() {
-        super(Material.IRON, BlockProtectorTileEntity.class, BlockProtectorContainer.class, "block_protector", true);
+        super(Material.IRON, BlockProtectorTileEntity.class, BlockProtectorContainer::new, "block_protector", true);
     }
 
     @SideOnly(Side.CLIENT)

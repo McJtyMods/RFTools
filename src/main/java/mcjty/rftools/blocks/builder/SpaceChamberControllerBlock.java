@@ -30,7 +30,7 @@ import java.util.List;
 public class SpaceChamberControllerBlock extends GenericRFToolsBlock<SpaceChamberControllerTileEntity, EmptyContainer> {
 
     public SpaceChamberControllerBlock() {
-        super(Material.IRON, SpaceChamberControllerTileEntity.class, EmptyContainer.class, "space_chamber_controller", true);
+        super(Material.IRON, SpaceChamberControllerTileEntity.class, EmptyContainer::new, "space_chamber_controller", true);
     }
 
     @Override

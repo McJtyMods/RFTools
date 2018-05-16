@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.logic.wireless;
 
+import mcjty.lib.base.ModBase;
 import mcjty.lib.blocks.LogicSlabBlock;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
@@ -9,6 +10,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -23,10 +25,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 public abstract class RedstoneChannelBlock<T extends RedstoneChannelTileEntity, C extends Container> extends LogicSlabBlock<T, C> {
-    public RedstoneChannelBlock(Material material, String name, Class<? extends T> tileEntityClass, Class<? extends C> containerClass, Class<? extends ItemBlock> itemBlockClass) {
-        super(RFTools.instance, material, tileEntityClass, containerClass, itemBlockClass, name, false);
+
+    public RedstoneChannelBlock(Material material, Class<? extends T> tileEntityClass, BiFunction<EntityPlayer, IInventory, C> containerFactory, Class<? extends ItemBlock> itemBlockClass, String name) {
+        super(RFTools.instance, material, tileEntityClass, containerFactory, itemBlockClass, name, false);
     }
 
     @SideOnly(Side.CLIENT)

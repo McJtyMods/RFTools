@@ -38,7 +38,7 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock<MatterTransmitte
     public static String clientSideName = "?";
 
     public MatterTransmitterBlock() {
-        super(Material.IRON, MatterTransmitterTileEntity.class, EmptyContainer.class, "matter_transmitter", false);
+        super(Material.IRON, MatterTransmitterTileEntity.class, EmptyContainer::new, "matter_transmitter", false);
         setDefaultState(this.blockState.getBaseState());
     }
 

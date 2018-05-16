@@ -36,7 +36,7 @@ public class ShieldBlock extends GenericRFToolsBlock<ShieldTEBase, ShieldContain
     private final int max;
 
     public ShieldBlock(String blockName, Class<? extends ShieldTEBase> clazz, int max) {
-        super(Material.IRON, clazz, ShieldContainer.class, blockName, true);
+        super(Material.IRON, clazz, ShieldContainer::new, blockName, true);
         this.max = max;
     }
 

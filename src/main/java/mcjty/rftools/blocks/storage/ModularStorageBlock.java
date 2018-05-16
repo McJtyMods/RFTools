@@ -52,7 +52,7 @@ public class ModularStorageBlock extends GenericRFToolsBlock<ModularStorageTileE
     public static String nameModuleReceived = "";
 
     public ModularStorageBlock() {
-        super(Material.IRON, ModularStorageTileEntity.class, ModularStorageContainer.class, "modular_storage", true);
+        super(Material.IRON, ModularStorageTileEntity.class, ModularStorageContainer::new, "modular_storage", true);
     }
 
     @SideOnly(Side.CLIENT)

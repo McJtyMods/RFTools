@@ -20,7 +20,7 @@ import java.util.List;
 public class ScreenControllerBlock extends GenericRFToolsBlock<ScreenControllerTileEntity, ScreenControllerContainer> implements Infusable {
 
     public ScreenControllerBlock() {
-        super(Material.IRON, ScreenControllerTileEntity.class, ScreenControllerContainer.class, "screen_controller", false);
+        super(Material.IRON, ScreenControllerTileEntity.class, ScreenControllerContainer::new, "screen_controller", false);
     }
 
     @Override

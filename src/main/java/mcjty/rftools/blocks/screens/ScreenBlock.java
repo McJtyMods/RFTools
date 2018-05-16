@@ -56,7 +56,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
     public static final PropertyDirection HORIZONTAL_FACING = PropertyDirection.create("horizontal_facing", EnumFacing.Plane.HORIZONTAL);
 
     public ScreenBlock(String name, Class<? extends ScreenTileEntity> clazz) {
-        super(Material.IRON, clazz, ScreenContainer.class, GenericItemBlock.class, name, true);
+        super(Material.IRON, clazz, ScreenContainer::new, GenericItemBlock.class, name, true);
     }
 
     @Override
