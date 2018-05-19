@@ -136,7 +136,7 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
             setInvalid();
             return;
         }
-        EnergyTools.EnergyLevelMulti energy = EnergyTools.getEnergyLevelMulti(tileEntity);
+        EnergyTools.EnergyLevel energy = EnergyTools.getEnergyLevelMulti(tileEntity);
         long maxEnergy = energy.getMaxEnergy();
         int ratio = 0;  // Will be set as metadata;
         boolean alarm = false;

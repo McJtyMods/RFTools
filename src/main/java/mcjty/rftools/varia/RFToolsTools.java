@@ -82,9 +82,9 @@ public class RFToolsTools {
                     TileEntity te = world.getTileEntity(p);
                     if (EnergyTools.isEnergyTE(te)) {
                         EnergyTools.EnergyLevel level = EnergyTools.getEnergyLevel(te);
-                        Integer usage = null;
+                        Long usage = null;
                         if (te instanceof IMachineInformation) {
-                            usage = ((IMachineInformation) te).getEnergyDiffPerTick();
+                            usage = (long)((IMachineInformation) te).getEnergyDiffPerTick(); // TODO can we change IMachineInformation?
                         }
                         result.put(p, new MachineInfo(level.getEnergy(), level.getMaxEnergy(), usage));
                     }

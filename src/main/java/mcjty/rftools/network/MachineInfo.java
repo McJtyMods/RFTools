@@ -1,25 +1,25 @@
 package mcjty.rftools.network;
 
 public class MachineInfo {
-    private final int energy;
-    private final int maxEnergy;
-    private final Integer energyPerTick;
+    private final long energy;
+    private final long maxEnergy;
+    private final Long energyPerTick;
 
-    public MachineInfo(int energy, int maxEnergy, Integer energyPerTick) {
+    public MachineInfo(long energy, long maxEnergy, Long energyPerTick) {
         this.energy = energy;
         this.maxEnergy = maxEnergy;
         this.energyPerTick = energyPerTick;
     }
 
-    public int getEnergy() {
+    public long getEnergy() {
         return energy;
     }
 
-    public int getMaxEnergy() {
+    public long getMaxEnergy() {
         return maxEnergy;
     }
 
-    public Integer getEnergyPerTick() {
+    public Long getEnergyPerTick() {
         return energyPerTick;
     }
 }

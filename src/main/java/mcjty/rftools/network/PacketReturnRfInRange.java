@@ -23,11 +23,11 @@ public class PacketReturnRfInRange implements IMessage {
         levels = new HashMap<>(size);
         for (int i = 0 ; i < size ; i++) {
             BlockPos pos = NetworkTools.readPos(buf);
-            int e = buf.readInt();
-            int m = buf.readInt();
-            Integer usage = null;
+            long e = buf.readLong();
+            long m = buf.readLong();
+            Long usage = null;
             if (buf.readBoolean()) {
-                usage = buf.readInt();
+                usage = buf.readLong();
             }
             levels.put(pos, new MachineInfo(e, m, usage));
         }
@@ -39,11 +39,11 @@ public class PacketReturnRfInRange implements IMessage {
         for (Map.Entry<BlockPos, MachineInfo> entry : levels.entrySet()) {
             NetworkTools.writePos(buf, entry.getKey());
             MachineInfo info = entry.getValue();
-            buf.writeInt(info.getEnergy());
-            buf.writeInt(info.getMaxEnergy());
+            buf.writeLong(info.getEnergy());
+            buf.writeLong(info.getMaxEnergy());
             if (info.getEnergyPerTick() != null) {
                 buf.writeBoolean(true);
-                buf.writeInt(info.getEnergyPerTick());
+                buf.writeLong(info.getEnergyPerTick());
             } else {
                 buf.writeBoolean(false);
             }

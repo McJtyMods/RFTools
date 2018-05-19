@@ -6,15 +6,15 @@ import net.minecraft.util.math.BlockPos;
 
 public class BlockInfo {
     private BlockPos coordinate;
-    private int energyStored;
-    private int maxEnergyStored;
+    private long energyStored;
+    private long maxEnergyStored;
 
     public BlockInfo(TileEntity tileEntity, BlockPos coordinate) {
         this.coordinate = coordinate;
         fetchEnergyValues(tileEntity);
     }
 
-    public BlockInfo(BlockPos coordinate, int energyStored, int maxEnergyStored) {
+    public BlockInfo(BlockPos coordinate, long energyStored, long maxEnergyStored) {
         this.coordinate = coordinate;
         this.energyStored = energyStored;
         this.maxEnergyStored = maxEnergyStored;
@@ -30,11 +30,11 @@ public class BlockInfo {
         energyStored = energyLevel.getEnergy();
     }
 
-    public int getEnergyStored() {
+    public long getEnergyStored() {
         return energyStored;
     }
 
-    public int getMaxEnergyStored() {
+    public long getMaxEnergyStored() {
         return maxEnergyStored;
     }
 
@@ -65,8 +65,8 @@ public class BlockInfo {
     @Override
     public int hashCode() {
         int result = coordinate != null ? coordinate.hashCode() : 0;
-        result = 31 * result + energyStored;
-        result = 31 * result + maxEnergyStored;
+        result = 31 * result + Long.hashCode(energyStored);
+        result = 31 * result + Long.hashCode(maxEnergyStored);
         return result;
     }
 }

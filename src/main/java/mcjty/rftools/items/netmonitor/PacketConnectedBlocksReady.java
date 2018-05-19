@@ -27,7 +27,7 @@ public class PacketConnectedBlocksReady implements IMessage {
         blockInfoMap = new HashMap<>();
         for (int i = 0 ; i < size ; i++) {
             BlockPos coordinate = new BlockPos(buf.readShort() + minx, buf.readShort() + miny, buf.readShort() + minz);
-            BlockInfo blockInfo = new BlockInfo(coordinate, buf.readInt(), buf.readInt());
+            BlockInfo blockInfo = new BlockInfo(coordinate, buf.readLong(), buf.readLong());
             blockInfoMap.put(coordinate, blockInfo);
         }
     }
@@ -44,8 +44,8 @@ public class PacketConnectedBlocksReady implements IMessage {
             buf.writeShort(c.getX() - minx);
             buf.writeShort(c.getY() - miny);
             buf.writeShort(c.getZ() - minz);
-            buf.writeInt(me.getValue().getEnergyStored());
-            buf.writeInt(me.getValue().getMaxEnergyStored());
+            buf.writeLong(me.getValue().getEnergyStored());
+            buf.writeLong(me.getValue().getMaxEnergyStored());
         }
     }
 

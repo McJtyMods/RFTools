@@ -195,7 +195,7 @@ public class RenderWorldLastEventHandler {
                             unit = "";
                         }
                     }
-                    int usage = info.getEnergyPerTick();
+                    long usage = info.getEnergyPerTick();
                     if (usage < 0) {
                         log.add(TextFormatting.RED + "" + usage + unit + "/t");
                     } else if (usage > 0) {

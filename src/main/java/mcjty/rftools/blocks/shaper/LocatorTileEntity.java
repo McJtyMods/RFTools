@@ -141,7 +141,7 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
                                         TileEntity tileEntity = scanWorld.getTileEntity(mpos);
                                         if (EnergyTools.isEnergyTE(tileEntity)) {
                                             BlockPos pos = mpos.subtract(center);
-                                            EnergyTools.EnergyLevelMulti el = EnergyTools.getEnergyLevelMulti(tileEntity);
+                                            EnergyTools.EnergyLevel el = EnergyTools.getEnergyLevelMulti(tileEntity);
                                             long max = el.getMaxEnergy();
                                             long e = el.getEnergy();
                                             int pct = max > 0 ? (int) (e * 100 / max) : 0;

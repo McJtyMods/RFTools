@@ -32,7 +32,7 @@ public class GuiNetworkMonitor extends GuiItemScreen {
     private Map<BlockPos, EnergyBar> labelMap;
 
     // Previous rf for a given coordinate.
-    private Map<BlockPos, Integer> previousRf = null;
+    private Map<BlockPos, Long> previousRf = null;
     private long previousRfMillis = 0;
 
     // A map mapping index in our widget list to coordinates.
@@ -119,8 +119,8 @@ public class GuiNetworkMonitor extends GuiItemScreen {
         for (Map.Entry<BlockPos,BlockInfo> me : connectedBlocks.entrySet()) {
             BlockInfo blockInfo = me.getValue();
 
-            int energy = blockInfo.getEnergyStored();
-            int maxEnergy = blockInfo.getMaxEnergyStored();
+            long energy = blockInfo.getEnergyStored();
+            long maxEnergy = blockInfo.getMaxEnergyStored();
 
             EnergyBar energyLabel = labelMap.get(me.getKey());
             // First test if this label isn't filtered out.
@@ -130,14 +130,14 @@ public class GuiNetworkMonitor extends GuiItemScreen {
         }
     }
 
-    private void setEnergyLabel(long millis, boolean rftick, boolean recalcPerTick, Map.Entry<BlockPos, BlockInfo> me, int energy, int maxEnergy, EnergyBar energyLabel) {
+    private void setEnergyLabel(long millis, boolean rftick, boolean recalcPerTick, Map.Entry<BlockPos, BlockInfo> me, long energy, long maxEnergy, EnergyBar energyLabel) {
         energyLabel.setValue(energy).setMaxValue(maxEnergy).setShowRfPerTick(rftick);
         if (rftick && recalcPerTick) {
             long dt = millis - previousRfMillis;
-            int rft = 0;
+            long rft = 0;
             if (dt > 0 && previousRf != null && previousRf.containsKey(me.getKey())) {
                 rft = energy - previousRf.get(me.getKey());
-                rft = rft * 50 / (int)dt;
+                rft = rft * 50 / dt;
             }
             energyLabel.setRfPerTick(rft);
         }
@@ -171,8 +171,8 @@ public class GuiNetworkMonitor extends GuiItemScreen {
                     continue;
                 }
 
-                int energy = blockInfo.getEnergyStored();
-                int maxEnergy = blockInfo.getMaxEnergyStored();
+                long energy = blockInfo.getEnergyStored();
+                long maxEnergy = blockInfo.getMaxEnergyStored();
 
                 int color = getTextColor(blockInfo);
 
