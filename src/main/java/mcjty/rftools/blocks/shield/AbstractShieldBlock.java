@@ -48,7 +48,7 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
         setUnlocalizedName(unlocName);
         setBlockUnbreakable();
         setResistance(6000000.0F);
-        McJtyRegister.registerLater(this, RFTools.instance, ItemBlock.class);
+        McJtyRegister.registerLater(this, RFTools.instance, ItemBlock::new);
     }
 
     public static boolean activateBlock(Block block, World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {

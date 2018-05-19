@@ -19,7 +19,7 @@ public class MachineFrame extends Block {
         setUnlocalizedName("rftools.machine_frame");
         setRegistryName("machine_frame");
         setCreativeTab(RFTools.tabRfTools);
-        McJtyRegister.registerLater(this, RFTools.instance, ItemBlock.class);
+        McJtyRegister.registerLater(this, RFTools.instance, ItemBlock::new);
     }
 
     @SideOnly(Side.CLIENT)

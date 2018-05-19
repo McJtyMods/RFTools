@@ -63,7 +63,7 @@ public class ShieldTemplateBlock extends Block {
         setUnlocalizedName("rftools.shield_template_block");
         setRegistryName("shield_template_block");
         setCreativeTab(RFTools.tabRfTools);
-        McJtyRegister.registerLater(this, RFTools.instance, DamageMetadataItemBlock.class);
+        McJtyRegister.registerLater(this, RFTools.instance, DamageMetadataItemBlock::new);
         setDefaultState(this.blockState.getBaseState().withProperty(COLOR, TemplateColor.BLUE));
     }
 

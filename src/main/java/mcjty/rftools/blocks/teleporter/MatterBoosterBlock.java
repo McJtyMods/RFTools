@@ -32,7 +32,7 @@ public class MatterBoosterBlock extends Block {
         setHardness(2.0f);
         setSoundType(SoundType.METAL);
         setHarvestLevel("pickaxe", 0);
-        McJtyRegister.registerLater(this, RFTools.instance, ItemBlock.class);
+        McJtyRegister.registerLater(this, RFTools.instance, ItemBlock::new);
         setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
     }
 
