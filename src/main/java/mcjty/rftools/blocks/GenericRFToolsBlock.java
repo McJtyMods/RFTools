@@ -7,6 +7,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.security.OrphaningCardItem;
 import mcjty.rftools.blocks.security.SecurityChannels;
 import mcjty.rftools.blocks.security.SecurityConfiguration;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -17,6 +18,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public abstract class GenericRFToolsBlock<T extends GenericTileEntity, C extends Container> extends GenericBlock<T, C> {
 
@@ -25,8 +27,9 @@ public abstract class GenericRFToolsBlock<T extends GenericTileEntity, C extends
         setCreativeTab(RFTools.tabRfTools);
     }
 
-    public GenericRFToolsBlock(Material material, Class<? extends T> tileEntityClass, BiFunction<EntityPlayer, IInventory, C> containerFactory, Class<? extends ItemBlock> itemBlockClass, String name, boolean isContainer) {
-        super(RFTools.instance, material, tileEntityClass, containerFactory, itemBlockClass, name, isContainer);
+    public GenericRFToolsBlock(Material material, Class<? extends T> tileEntityClass, BiFunction<EntityPlayer, IInventory, C> containerFactory,
+                               Function<Block, ItemBlock> itemBlockFunction, String name, boolean isContainer) {
+        super(RFTools.instance, material, tileEntityClass, containerFactory, itemBlockFunction, name, isContainer);
         setCreativeTab(RFTools.tabRfTools);
     }
 
