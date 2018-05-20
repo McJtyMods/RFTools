@@ -37,8 +37,8 @@ public class MonitorSetup {
     @SideOnly(Side.CLIENT)
     public static void initClient() {
         monitorBlock.initModel();
-        monitorBlock.setGuiClass(GuiRFMonitor.class);
+        monitorBlock.setGuiFactory(GuiRFMonitor::new);
         liquidMonitorBlock.initModel();
-        liquidMonitorBlock.setGuiClass(GuiLiquidMonitor.class);
+        liquidMonitorBlock.setGuiFactory(GuiLiquidMonitor::new);
     }
 }

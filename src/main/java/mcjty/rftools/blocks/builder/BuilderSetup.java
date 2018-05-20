@@ -114,26 +114,26 @@ public class BuilderSetup {
         spaceChamberControllerBlock.initModel();
 
         builderBlock.initModel();
-        builderBlock.setGuiClass(GuiBuilder.class);
+        builderBlock.setGuiFactory(GuiBuilder::new);
         ClientRegistry.bindTileEntitySpecialRenderer(BuilderTileEntity.class, new BuilderRenderer());
 
         supportBlock.initModel();
 
         composerBlock.initModel();
-        composerBlock.setGuiClass(GuiComposer.class);
+        composerBlock.setGuiFactory(GuiComposer::new);
 
         scannerBlock.initModel();
-        scannerBlock.setGuiClass(GuiScanner.class);
+        scannerBlock.setGuiFactory(GuiScanner::new);
 
         remoteScannerBlock.initModel();
-        remoteScannerBlock.setGuiClass(GuiScanner.class);
+        remoteScannerBlock.setGuiFactory(GuiScanner::new);
 
         projectorBlock.initModel();
-        projectorBlock.setGuiClass(GuiProjector.class);
+        projectorBlock.setGuiFactory(GuiProjector::new);
         ClientRegistry.bindTileEntitySpecialRenderer(ProjectorTileEntity.class, new ProjectorRenderer());
 
         locatorBlock.initModel();
-        locatorBlock.setGuiClass(GuiLocator.class);
+        locatorBlock.setGuiFactory(GuiLocator::new);
 
         spaceChamberCardItem.initModel();
         shapeCardItem.initModel();

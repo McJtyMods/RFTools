@@ -23,6 +23,6 @@ public class MachineInfuserSetup {
     @SideOnly(Side.CLIENT)
     public static void initClient() {
         machineInfuserBlock.initModel();
-        machineInfuserBlock.setGuiClass(GuiMachineInfuser.class);
+        machineInfuserBlock.setGuiFactory(GuiMachineInfuser::new);
     }
 }

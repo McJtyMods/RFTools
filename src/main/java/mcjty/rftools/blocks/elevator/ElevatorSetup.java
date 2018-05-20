@@ -30,6 +30,6 @@ public class ElevatorSetup {
     public static void initClient() {
         elevatorBlock.initModel();
         ClientRegistry.bindTileEntitySpecialRenderer(ElevatorTileEntity.class, new ElevatorTESR());
-        elevatorBlock.setGuiClass(GuiElevator.class);
+        elevatorBlock.setGuiFactory(GuiElevator::new);
     }
 }

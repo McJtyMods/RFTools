@@ -26,6 +26,6 @@ public class RelaySetup {
     @SideOnly(Side.CLIENT)
     public static void initClient() {
         relayBlock.initModel();
-        relayBlock.setGuiClass(GuiRelay.class);
+        relayBlock.setGuiFactory(GuiRelay::new);
     }
 }

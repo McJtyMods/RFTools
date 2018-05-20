@@ -26,7 +26,7 @@ public class SpawnerSetup {
     @SideOnly(Side.CLIENT)
     public static void initClient() {
         spawnerBlock.initModel();
-        spawnerBlock.setGuiClass(GuiSpawner.class);
+        spawnerBlock.setGuiFactory(GuiSpawner::new);
 
         matterBeamerBlock.initModel();
     }

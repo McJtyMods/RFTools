@@ -28,6 +28,6 @@ public class BoosterSetup {
     @SideOnly(Side.CLIENT)
     public static void initClient() {
         boosterBlock.initModel();
-        boosterBlock.setGuiClass(GuiBooster.class);
+        boosterBlock.setGuiFactory(GuiBooster::new);
     }
 }

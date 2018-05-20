@@ -39,7 +39,7 @@ public class SecuritySetup {
     public static void initClient() {
         if(!SecurityConfiguration.enabled) return;
         securityManagerBlock.initModel();
-        securityManagerBlock.setGuiClass(GuiSecurityManager.class);
+        securityManagerBlock.setGuiFactory(GuiSecurityManager::new);
         orphaningCardItem.initModel();
         securityCardItem.initModel();
     }

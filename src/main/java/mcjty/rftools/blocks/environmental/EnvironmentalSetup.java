@@ -100,7 +100,7 @@ public class EnvironmentalSetup {
     public static void initClient() {
 
         environmentalControllerBlock.initModel();
-        environmentalControllerBlock.setGuiClass(GuiEnvironmentalController.class);
+        environmentalControllerBlock.setGuiFactory(GuiEnvironmentalController::new);
         ClientRegistry.bindTileEntitySpecialRenderer(EnvironmentalControllerTileEntity.class, new EnvironmentalTESR());
 
         regenerationEModuleItem.initModel();

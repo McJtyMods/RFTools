@@ -30,7 +30,7 @@ public class CoalGeneratorSetup {
     public static void initClient() {
         if(CoalGeneratorConfiguration.enabled) {
             coalGeneratorBlock.initModel();
-            coalGeneratorBlock.setGuiClass(GuiCoalGenerator.class);
+            coalGeneratorBlock.setGuiFactory(GuiCoalGenerator::new);
         }
     }
 }

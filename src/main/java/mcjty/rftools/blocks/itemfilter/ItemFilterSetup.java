@@ -34,6 +34,6 @@ public class ItemFilterSetup {
     @SideOnly(Side.CLIENT)
     public static void initClient() {
         itemFilterBlock.initModel();
-        itemFilterBlock.setGuiClass(GuiItemFilter.class);
+        itemFilterBlock.setGuiFactory(GuiItemFilter::new);
     }
 }

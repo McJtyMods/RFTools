@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.endergen;
 
 import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.widgets.EnergyBar;
@@ -30,7 +31,7 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
 
     private int timer = 10;
 
-    public GuiEndergenic(EndergenicTileEntity endergenicTileEntity, EmptyContainer container) {
+    public GuiEndergenic(EndergenicTileEntity endergenicTileEntity, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, endergenicTileEntity, container, RFTools.GUI_MANUAL_MAIN, "power");
         GenericEnergyStorageTileEntity.setCurrentRF(endergenicTileEntity.getEnergyStored());
     }

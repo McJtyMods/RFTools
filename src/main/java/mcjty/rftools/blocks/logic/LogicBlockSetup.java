@@ -129,30 +129,30 @@ public class LogicBlockSetup {
     @SideOnly(Side.CLIENT)
     public static void initClient() {
         sequencerBlock.initModel();
-        sequencerBlock.setGuiClass(GuiSequencer.class);
+        sequencerBlock.setGuiFactory(GuiSequencer::new);
 
         timerBlock.initModel();
-        timerBlock.setGuiClass(GuiTimer.class);
+        timerBlock.setGuiFactory(GuiTimer::new);
 
         counterBlock.initModel();
-        counterBlock.setGuiClass(GuiCounter.class);
+        counterBlock.setGuiFactory(GuiCounter::new);
 
         redstoneTransmitterBlock.initModel();
         redstoneReceiverBlock.initModel();
 
         threeLogicBlock.initModel();
-        threeLogicBlock.setGuiClass(GuiThreeLogic.class);
+        threeLogicBlock.setGuiFactory(GuiThreeLogic::new);
 
         invCheckerBlock.initModel();
-        invCheckerBlock.setGuiClass(GuiInvChecker.class);
+        invCheckerBlock.setGuiFactory(GuiInvChecker::new);
 
         sensorBlock.initModel();
-        sensorBlock.setGuiClass(GuiSensor.class);
+        sensorBlock.setGuiFactory(GuiSensor::new);
 
         wireBlock.initModel();
 
         analogBlock.initModel();
-        analogBlock.setGuiClass(GuiAnalog.class);
+        analogBlock.setGuiFactory(GuiAnalog::new);
 
         digitBlock.initModel();
     }

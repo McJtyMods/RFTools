@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.endergen;
 
-import mcjty.lib.builder.BlockFlags;
 import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.blocks.GenericBlock;
+import mcjty.lib.builder.BlockFlags;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.varia.ItemStackTools;
 import mcjty.rftools.RFTools;
@@ -50,11 +50,11 @@ public class EndergenicSetup {
     @SideOnly(Side.CLIENT)
     public static void initClient() {
         endergenicBlock.initModel();
-        endergenicBlock.setGuiClass(GuiEndergenic.class);
+        endergenicBlock.setGuiFactory(GuiEndergenic::new);
         ClientRegistry.bindTileEntitySpecialRenderer(EndergenicTileEntity.class, new EndergenicRenderer());
 
         pearlInjectorBlock.initModel();
-        pearlInjectorBlock.setGuiClass(GuiPearlInjector.class);
+        pearlInjectorBlock.setGuiFactory(GuiPearlInjector::new);
 
         enderMonitorBlock.initModel();
     }
