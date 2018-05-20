@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.blocks.LogicSlabBlock;
+import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.RFTools;
@@ -41,6 +42,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEntity, StorageTerminalContainer> {
 
@@ -52,8 +54,8 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<GuiStorageTerminal> getGuiClass() {
-        return GuiStorageTerminal.class;
+    public BiFunction<StorageTerminalTileEntity, StorageTerminalContainer, GenericGuiContainer<? super StorageTerminalTileEntity>> getGuiFactory() {
+        return GuiStorageTerminal::new;
     }
 
     @Override

@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
@@ -28,6 +29,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 public class MatterReceiverBlock extends GenericRFToolsBlock<MatterReceiverTileEntity, EmptyContainer> implements Infusable {
 
@@ -38,8 +40,8 @@ public class MatterReceiverBlock extends GenericRFToolsBlock<MatterReceiverTileE
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<GuiMatterReceiver> getGuiClass() {
-        return GuiMatterReceiver.class;
+    public BiFunction<MatterReceiverTileEntity, EmptyContainer, GenericGuiContainer<? super MatterReceiverTileEntity>> getGuiFactory() {
+        return GuiMatterReceiver::new;
     }
 
     @SideOnly(Side.CLIENT)

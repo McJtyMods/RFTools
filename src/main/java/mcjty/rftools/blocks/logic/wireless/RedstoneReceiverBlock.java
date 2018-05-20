@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.logic.wireless;
 
 import mcjty.lib.blocks.GenericItemBlock;
 import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
@@ -13,6 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 public class RedstoneReceiverBlock extends RedstoneChannelBlock<RedstoneReceiverTileEntity, EmptyContainer> {
 
@@ -22,8 +24,8 @@ public class RedstoneReceiverBlock extends RedstoneChannelBlock<RedstoneReceiver
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<GuiRedstoneReceiver> getGuiClass() {
-        return GuiRedstoneReceiver.class;
+    public BiFunction<RedstoneReceiverTileEntity, EmptyContainer, GenericGuiContainer<? super RedstoneReceiverTileEntity>> getGuiFactory() {
+        return GuiRedstoneReceiver::new;
     }
 
     @Override

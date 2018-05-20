@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.blockprotector;
 
 import mcjty.lib.api.Infusable;
+import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
@@ -36,6 +37,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 //@Optional.InterfaceList({
 //        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
@@ -49,8 +51,8 @@ public class BlockProtectorBlock extends GenericRFToolsBlock<BlockProtectorTileE
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<GuiBlockProtector> getGuiClass() {
-        return GuiBlockProtector.class;
+    public BiFunction<BlockProtectorTileEntity, BlockProtectorContainer, GenericGuiContainer<? super BlockProtectorTileEntity>> getGuiFactory() {
+        return GuiBlockProtector::new;
     }
 
     @Override

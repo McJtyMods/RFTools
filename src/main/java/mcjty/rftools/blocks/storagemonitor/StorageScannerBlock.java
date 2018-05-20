@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.storagemonitor;
 
 import mcjty.lib.api.Infusable;
+import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.material.Material;
@@ -13,6 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 public class StorageScannerBlock extends GenericRFToolsBlock<StorageScannerTileEntity, StorageScannerContainer> implements Infusable {
 
@@ -22,8 +24,8 @@ public class StorageScannerBlock extends GenericRFToolsBlock<StorageScannerTileE
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<GuiStorageScanner> getGuiClass() {
-        return GuiStorageScanner.class;
+    public BiFunction<StorageScannerTileEntity, StorageScannerContainer, GenericGuiContainer<? super StorageScannerTileEntity>> getGuiFactory() {
+        return GuiStorageScanner::new;
     }
 
     @SideOnly(Side.CLIENT)

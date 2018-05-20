@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.endergen;
 
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.blocks.LogicSlabBlock;
+import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
@@ -13,6 +14,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 public class EnderMonitorBlock extends LogicSlabBlock<EnderMonitorTileEntity, EmptyContainer> {
 
@@ -33,8 +35,8 @@ public class EnderMonitorBlock extends LogicSlabBlock<EnderMonitorTileEntity, Em
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<GuiEnderMonitor> getGuiClass() {
-        return GuiEnderMonitor.class;
+    public BiFunction<EnderMonitorTileEntity, EmptyContainer, GenericGuiContainer<? super EnderMonitorTileEntity>> getGuiFactory() {
+        return GuiEnderMonitor::new;
     }
 
     @SideOnly(Side.CLIENT)

@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.blocks.LogicSlabBlock;
+import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.screens.ScreenSetup;
@@ -29,6 +30,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 public class LevelEmitterBlock extends LogicSlabBlock<LevelEmitterTileEntity, LevelEmitterContainer> {
 
@@ -40,8 +42,8 @@ public class LevelEmitterBlock extends LogicSlabBlock<LevelEmitterTileEntity, Le
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<GuiLevelEmitter> getGuiClass() {
-        return GuiLevelEmitter.class;
+    public BiFunction<LevelEmitterTileEntity, LevelEmitterContainer, GenericGuiContainer<? super LevelEmitterTileEntity>> getGuiFactory() {
+        return GuiLevelEmitter::new;
     }
 
     @Override

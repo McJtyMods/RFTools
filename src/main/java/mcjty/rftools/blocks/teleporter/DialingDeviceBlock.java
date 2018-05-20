@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.material.Material;
@@ -14,6 +15,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 public class DialingDeviceBlock extends GenericRFToolsBlock<DialingDeviceTileEntity, EmptyContainer> implements Infusable {
 
@@ -23,8 +25,8 @@ public class DialingDeviceBlock extends GenericRFToolsBlock<DialingDeviceTileEnt
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<GuiDialingDevice> getGuiClass() {
-        return GuiDialingDevice.class;
+    public BiFunction<DialingDeviceTileEntity, EmptyContainer, GenericGuiContainer<? super DialingDeviceTileEntity>> getGuiFactory() {
+        return GuiDialingDevice::new;
     }
 
     @SideOnly(Side.CLIENT)

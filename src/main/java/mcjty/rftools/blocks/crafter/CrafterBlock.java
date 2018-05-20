@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.crafter;
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.crafting.INBTPreservingIngredient;
+import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
@@ -23,6 +24,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 //@Optional.InterfaceList({
 //        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
@@ -35,8 +37,8 @@ public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterCont
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<GuiCrafter> getGuiClass() {
-        return GuiCrafter.class;
+    public BiFunction<CrafterBaseTE, CrafterContainer, GenericGuiContainer<? super CrafterBaseTE>> getGuiFactory() {
+        return GuiCrafter::new;
     }
 
     @SideOnly(Side.CLIENT)

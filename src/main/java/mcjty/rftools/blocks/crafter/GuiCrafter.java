@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.crafter;
 
 import mcjty.lib.base.StyleConfig;
+import mcjty.lib.container.GenericContainer;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.lib.client.RenderHelper;
@@ -34,17 +35,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
 
     private static int lastSelected = -1;
 
-    public GuiCrafter(CrafterBlockTileEntity1 te, CrafterContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, RFTools.GUI_MANUAL_MAIN, "crafter");
-        GenericEnergyStorageTileEntity.setCurrentRF(te.getEnergyStored());
-    }
-
-    public GuiCrafter(CrafterBlockTileEntity2 te, CrafterContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, RFTools.GUI_MANUAL_MAIN, "crafter");
-        GenericEnergyStorageTileEntity.setCurrentRF(te.getEnergyStored());
-    }
-
-    public GuiCrafter(CrafterBlockTileEntity3 te, CrafterContainer container) {
+    public GuiCrafter(CrafterBaseTE te, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, RFTools.GUI_MANUAL_MAIN, "crafter");
         GenericEnergyStorageTileEntity.setCurrentRF(te.getEnergyStored());
     }

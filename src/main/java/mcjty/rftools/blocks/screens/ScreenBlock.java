@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.screens;
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.blocks.GenericItemBlock;
+import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
@@ -51,6 +52,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiFunction;
 
 public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenContainer> {
     public static final PropertyDirection HORIZONTAL_FACING = PropertyDirection.create("horizontal_facing", EnumFacing.Plane.HORIZONTAL);
@@ -508,8 +510,8 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<GuiScreen> getGuiClass() {
-        return GuiScreen.class;
+    public BiFunction<ScreenTileEntity, ScreenContainer, GenericGuiContainer<? super ScreenTileEntity>> getGuiFactory() {
+        return GuiScreen::new;
     }
 
     @SideOnly(Side.CLIENT)

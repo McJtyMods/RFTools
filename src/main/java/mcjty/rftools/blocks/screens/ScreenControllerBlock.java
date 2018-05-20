@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.api.Infusable;
+import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.material.Material;
@@ -16,6 +17,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 public class ScreenControllerBlock extends GenericRFToolsBlock<ScreenControllerTileEntity, ScreenControllerContainer> implements Infusable {
 
@@ -28,9 +30,10 @@ public class ScreenControllerBlock extends GenericRFToolsBlock<ScreenControllerT
         return RFTools.GUI_SCREENCONTROLLER;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
-    public Class<GuiScreenController> getGuiClass() {
-        return GuiScreenController.class;
+    public BiFunction<ScreenControllerTileEntity, ScreenControllerContainer, GenericGuiContainer<? super ScreenControllerTileEntity>> getGuiFactory() {
+        return GuiScreenController::new;
     }
 
     @SideOnly(Side.CLIENT)

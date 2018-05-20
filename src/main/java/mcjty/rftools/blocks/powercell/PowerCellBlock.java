@@ -4,6 +4,7 @@ import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.api.smartwrench.SmartWrenchMode;
 import mcjty.lib.crafting.INBTPreservingIngredient;
+import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
@@ -43,6 +44,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.function.BiFunction;
 
 import static mcjty.rftools.blocks.powercell.PowerCellConfiguration.advancedFactor;
 import static mcjty.rftools.blocks.powercell.PowerCellConfiguration.simpleFactor;
@@ -65,8 +67,8 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<GuiPowerCell> getGuiClass() {
-        return GuiPowerCell.class;
+    public BiFunction<PowerCellTileEntity, PowerCellContainer, GenericGuiContainer<? super PowerCellTileEntity>> getGuiFactory() {
+        return GuiPowerCell::new;
     }
 
     @Override

@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.shield;
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.crafting.INBTPreservingIngredient;
+import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.ModuleSupport;
@@ -27,6 +28,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 //@Optional.InterfaceList({
 //        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
@@ -52,8 +54,8 @@ public class ShieldBlock extends GenericRFToolsBlock<ShieldTEBase, ShieldContain
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<GuiShield> getGuiClass() {
-        return GuiShield.class;
+    public BiFunction<ShieldTEBase, ShieldContainer, GenericGuiContainer<? super ShieldTEBase>> getGuiFactory() {
+        return GuiShield::new;
     }
 
     @Override

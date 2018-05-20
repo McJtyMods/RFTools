@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.spawner;
 
 import mcjty.lib.api.Infusable;
+import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -33,6 +34,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 //@Optional.InterfaceList({
 //        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
@@ -118,8 +120,8 @@ public class MatterBeamerBlock extends GenericRFToolsBlock<MatterBeamerTileEntit
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<GuiMatterBeamer> getGuiClass() {
-        return GuiMatterBeamer.class;
+    public BiFunction<MatterBeamerTileEntity, MatterBeamerContainer, GenericGuiContainer<? super MatterBeamerTileEntity>> getGuiFactory() {
+        return GuiMatterBeamer::new;
     }
 
     @Override

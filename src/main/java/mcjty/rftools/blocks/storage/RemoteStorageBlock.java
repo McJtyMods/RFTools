@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.api.Infusable;
+import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import net.minecraft.block.material.Material;
@@ -13,6 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 public class RemoteStorageBlock extends GenericRFToolsBlock<RemoteStorageTileEntity, RemoteStorageContainer> implements Infusable {
 
@@ -22,8 +24,8 @@ public class RemoteStorageBlock extends GenericRFToolsBlock<RemoteStorageTileEnt
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<GuiRemoteStorage> getGuiClass() {
-        return GuiRemoteStorage.class;
+    public BiFunction<RemoteStorageTileEntity, RemoteStorageContainer, GenericGuiContainer<? super RemoteStorageTileEntity>> getGuiFactory() {
+        return GuiRemoteStorage::new;
     }
 
     @Override

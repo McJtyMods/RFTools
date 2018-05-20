@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.api.IModuleSupport;
+import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.CommandHandler;
@@ -38,6 +39,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 import static mcjty.rftools.blocks.storage.ModularAmountOverlay.*;
 import static mcjty.rftools.blocks.storage.ModularTypeModule.*;
@@ -57,8 +59,8 @@ public class ModularStorageBlock extends GenericRFToolsBlock<ModularStorageTileE
 
     @SideOnly(Side.CLIENT)
     @Override
-    public Class<GuiModularStorage> getGuiClass() {
-        return GuiModularStorage.class;
+    public BiFunction<ModularStorageTileEntity, ModularStorageContainer, GenericGuiContainer<? super ModularStorageTileEntity>> getGuiFactory() {
+        return GuiModularStorage::new;
     }
 
     @SideOnly(Side.CLIENT)
