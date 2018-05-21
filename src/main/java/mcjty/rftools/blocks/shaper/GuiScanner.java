@@ -202,7 +202,7 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
 
         drawWindow();
 
-        int currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
+        long currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
         tileEntity.requestRfFromServer(RFTools.MODID);
 

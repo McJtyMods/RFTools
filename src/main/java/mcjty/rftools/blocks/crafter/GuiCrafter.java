@@ -246,7 +246,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int x, int y) {
         drawWindow();
-        int currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
+        long currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
         tileEntity.requestRfFromServer(RFTools.MODID);
 

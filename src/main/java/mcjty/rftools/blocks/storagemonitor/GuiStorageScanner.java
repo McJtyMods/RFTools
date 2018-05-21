@@ -576,7 +576,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
         if (!tileEntity.isDummy()) {
             tileEntity.requestRfFromServer(RFTools.MODID);
-            int currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
+            long currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
 
             energyBar.setValue(currentRF);
             exportToStarred.setCurrentChoice(tileEntity.isExportToCurrent() ? 0 : 1);

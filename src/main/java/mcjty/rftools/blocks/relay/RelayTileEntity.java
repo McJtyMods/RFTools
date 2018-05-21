@@ -170,13 +170,13 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
 
                     if (RFTools.redstoneflux && RedstoneFluxCompatibility.isEnergyConnection(te)) {
                         if (RedstoneFluxCompatibility.canConnectEnergy(te, opposite)) {
-                            received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
+                            received = (int) EnergyTools.receiveEnergy(te, opposite, rfToGive);
                         } else {
                             received = 0;
                         }
                     } else {
                         // Forge unit
-                        received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
+                        received = (int) EnergyTools.receiveEnergy(te, opposite, rfToGive);
                     }
 
                     powerOut += received;

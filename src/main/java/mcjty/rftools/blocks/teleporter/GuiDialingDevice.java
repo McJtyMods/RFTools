@@ -507,7 +507,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         enableButtons();
 
         drawWindow();
-        int currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
+        long currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
         tileEntity.requestRfFromServer(RFTools.MODID);
     }

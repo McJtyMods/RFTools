@@ -37,7 +37,7 @@ public class GuiBooster extends GenericGuiContainer<BoosterTileEntity> {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
-        int currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
+        long currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
         tileEntity.requestRfFromServer(RFTools.MODID);
 

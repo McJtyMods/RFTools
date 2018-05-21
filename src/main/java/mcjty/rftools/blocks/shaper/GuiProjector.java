@@ -323,7 +323,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
 
         drawWindow();
 
-        int currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
+        long currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
         tileEntity.requestRfFromServer(RFTools.MODID);
 

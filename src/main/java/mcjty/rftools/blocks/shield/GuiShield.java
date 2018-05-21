@@ -411,7 +411,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         populateFilters();
         enableButtons();
         drawWindow();
-        int currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
+        long currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
         colorSelector.setCurrentColor(tileEntity.getShieldColor());
 

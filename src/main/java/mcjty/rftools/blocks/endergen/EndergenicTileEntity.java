@@ -407,7 +407,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
                 log("Server Tick: insufficient energy to hold pearl (" + rfStored + " vs " + rf + ")");
                 discardPearl("Not enough energy to hold pearl");
             } else {
-                int rfExtracted = storage.extractEnergy(rf, false);
+                long rfExtracted = storage.extractEnergy(rf, false);
                 log("Server Tick: holding pearl, consume " + rfExtracted + " RF");
                 rfLost += rfExtracted;
             }
@@ -505,13 +505,13 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
                 int received;
                 if (RFTools.redstoneflux && RedstoneFluxCompatibility.isEnergyConnection(te)) {
                     if (RedstoneFluxCompatibility.canConnectEnergy(te, opposite)) {
-                        received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
+                        received = (int) EnergyTools.receiveEnergy(te, opposite, rfToGive);
                     } else {
                         received = 0;
                     }
                 } else {
                     // Forge unit
-                    received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
+                    received = (int) EnergyTools.receiveEnergy(te, opposite, rfToGive);
                 }
                 energyStored -= storage.extractEnergy(received, false);
                 if (energyStored <= 0) {

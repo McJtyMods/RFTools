@@ -177,7 +177,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
         populatePlayers();
         enableButtons();
 
-        int currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
+        long currentRF = GenericEnergyStorageTileEntity.getCurrentRF();
         energyBar.setValue(currentRF);
         tileEntity.requestRfFromServer(RFTools.MODID);
 
