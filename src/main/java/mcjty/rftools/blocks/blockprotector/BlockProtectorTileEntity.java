@@ -75,7 +75,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     @Override
-    public int getEnergyDiffPerTick() {
+    public long getEnergyDiffPerTick() {
         return active ? -getRfPerTick() : 0;
     }
 

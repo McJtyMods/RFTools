@@ -529,7 +529,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     }
 
     @Override
-    public int getEnergyDiffPerTick() {
+    public long getEnergyDiffPerTick() {
         return shieldActive ? getRfPerTick() : 0;
     }
 

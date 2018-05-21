@@ -65,7 +65,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
     }
 
     @Override
-    public int getEnergyDiffPerTick() {
+    public long getEnergyDiffPerTick() {
         return burning > 0 ? getRfPerTick() : 0;
     }
 

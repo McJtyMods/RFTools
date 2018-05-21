@@ -84,7 +84,7 @@ public class RFToolsTools {
                         EnergyTools.EnergyLevel level = EnergyTools.getEnergyLevel(te);
                         Long usage = null;
                         if (te instanceof IMachineInformation) {
-                            usage = (long)((IMachineInformation) te).getEnergyDiffPerTick(); // TODO can we change IMachineInformation?
+                            usage = ((IMachineInformation) te).getEnergyDiffPerTick();
                         }
                         result.put(p, new MachineInfo(level.getEnergy(), level.getMaxEnergy(), usage));
                     }

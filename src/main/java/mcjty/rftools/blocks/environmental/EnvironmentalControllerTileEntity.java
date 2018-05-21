@@ -116,7 +116,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     }
 
     @Override
-    public int getEnergyDiffPerTick() {
+    public long getEnergyDiffPerTick() {
         return isActive() ? -getTotalRfPerTick() : 0;
     }
 

@@ -134,7 +134,7 @@ public class EndergenicTileEntity extends GenericEnergyProviderTileEntity implem
     }
 
     @Override
-    public int getEnergyDiffPerTick() {
+    public long getEnergyDiffPerTick() {
         return rfGained - rfLost;
     }
 
