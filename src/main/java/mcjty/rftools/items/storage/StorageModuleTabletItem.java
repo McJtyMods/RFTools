@@ -10,7 +10,6 @@ import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.items.screenmodules.StorageControlModuleItem;
-import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
@@ -231,6 +230,26 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
         } else {
             list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
         }
+    }
+
+    @Override
+    public long receiveEnergyL(ItemStack container, long maxReceive, boolean simulate) {
+        return receiveEnergy(container, (int) maxReceive, simulate);
+    }
+
+    @Override
+    public long extractEnergyL(ItemStack container, long maxExtract, boolean simulate) {
+        return extractEnergy(container, (int) maxExtract, simulate);
+    }
+
+    @Override
+    public long getEnergyStoredL(ItemStack container) {
+        return getEnergyStored(container);
+    }
+
+    @Override
+    public long getMaxEnergyStoredL(ItemStack container) {
+        return getMaxEnergyStored(container);
     }
 
     @Override

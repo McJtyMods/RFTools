@@ -285,6 +285,25 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
         }
     }
 
+    @Override
+    public long receiveEnergyL(ItemStack container, long maxReceive, boolean simulate) {
+        return receiveEnergy(container, (int) maxReceive, simulate);
+    }
+
+    @Override
+    public long extractEnergyL(ItemStack container, long maxExtract, boolean simulate) {
+        return extractEnergy(container, (int) maxExtract, simulate);
+    }
+
+    @Override
+    public long getEnergyStoredL(ItemStack container) {
+        return getEnergyStored(container);
+    }
+
+    @Override
+    public long getMaxEnergyStoredL(ItemStack container) {
+        return getMaxEnergyStored(container);
+    }
 
     @Override
     public int receiveEnergy(ItemStack container, int maxReceive, boolean simulate) {
