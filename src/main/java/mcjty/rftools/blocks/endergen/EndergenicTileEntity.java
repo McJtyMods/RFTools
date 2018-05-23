@@ -490,7 +490,7 @@ public class EndergenicTileEntity extends GenericEnergyReceiverTileEntity implem
             BlockPos o = getPos().offset(dir);
             TileEntity te = getWorld().getTileEntity(o);
             EnumFacing opposite = dir.getOpposite();
-            if (EnergyTools.isEnergyTE(te) || (te != null && te.hasCapability(CapabilityEnergy.ENERGY, opposite))) {
+            if (EnergyTools.isEnergyTE(te, opposite) || (te != null && te.hasCapability(CapabilityEnergy.ENERGY, opposite))) {
                 int rfToGive;
                 if (EndergenicConfiguration.rfOutput <= energyStored) {
                     rfToGive = EndergenicConfiguration.rfOutput;

@@ -86,11 +86,12 @@ public class EnergyModuleItem extends GenericRFToolsItem implements IModuleProvi
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
         }
-        if (EnergyTools.isEnergyTE(te)) {
+        if (EnergyTools.isEnergyTE(te, facing)) {
             tagCompound.setInteger("monitordim", world.provider.getDimension());
             tagCompound.setInteger("monitorx", pos.getX());
             tagCompound.setInteger("monitory", pos.getY());
             tagCompound.setInteger("monitorz", pos.getZ());
+            tagCompound.setInteger("monitorside", facing.getIndex());
             IBlockState state = player.getEntityWorld().getBlockState(pos);
             Block block = state.getBlock();
             String name = "<invalid>";
@@ -106,6 +107,7 @@ public class EnergyModuleItem extends GenericRFToolsItem implements IModuleProvi
             tagCompound.removeTag("monitorx");
             tagCompound.removeTag("monitory");
             tagCompound.removeTag("monitorz");
+            tagCompound.removeTag("monitorside");
             tagCompound.removeTag("monitorname");
             if (world.isRemote) {
                 Logging.message(player, "Energy module is cleared");

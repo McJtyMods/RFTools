@@ -205,7 +205,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyReceiverTileEntity imp
             BlockPos pos = getPos().offset(facing);
             TileEntity te = getWorld().getTileEntity(pos);
             EnumFacing opposite = facing.getOpposite();
-            if (EnergyTools.isEnergyTE(te) || (te != null && te.hasCapability(CapabilityEnergy.ENERGY, opposite))) {
+            if (EnergyTools.isEnergyTE(te, opposite) || (te != null && te.hasCapability(CapabilityEnergy.ENERGY, opposite))) {
                 int rfToGive = CoalGeneratorConfiguration.SENDPERTICK <= energyStored ? CoalGeneratorConfiguration.SENDPERTICK : energyStored;
                 int received;
 

@@ -4,6 +4,7 @@ import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -22,6 +23,9 @@ public class EnergyPlusBarScreenModule extends EnergyBarScreenModule {
                     this.dim = tagCompound.getInteger("dim");
                 }
                 coordinate = new BlockPos(tagCompound.getInteger("monitorx"), tagCompound.getInteger("monitory"), tagCompound.getInteger("monitorz"));
+                if(tagCompound.hasKey("monitorside")) {
+                    side = EnumFacing.VALUES[tagCompound.getInteger("monitorside")];
+                }
             }
         }
     }

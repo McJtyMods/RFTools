@@ -335,7 +335,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
                 BlockPos pos = getPos().offset(face);
                 TileEntity te = getWorld().getTileEntity(pos);
                 EnumFacing opposite = face.getOpposite();
-                if (EnergyTools.isEnergyTE(te) || (te != null && te.hasCapability(CapabilityEnergy.ENERGY, opposite))) {
+                if (EnergyTools.isEnergyTE(te, opposite) || (te != null && te.hasCapability(CapabilityEnergy.ENERGY, opposite))) {
                     // If the adjacent block is also a powercell then we only send energy if this cell is local or the other cell has a different id
                     if ((!(te instanceof PowerCellTileEntity)) || getNetworkId() == -1 || ((PowerCellTileEntity) te).getNetworkId() != getNetworkId()) {
                         float factor = getCostFactor();

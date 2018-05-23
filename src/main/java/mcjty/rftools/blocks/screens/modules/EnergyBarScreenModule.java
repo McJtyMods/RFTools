@@ -11,6 +11,7 @@ import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
@@ -18,6 +19,7 @@ import net.minecraftforge.common.DimensionManager;
 public class EnergyBarScreenModule implements IScreenModule<IModuleDataContents> {
     protected int dim = 0;
     protected BlockPos coordinate = BlockPosTools.INVALID;
+    protected EnumFacing side = EnumFacing.DOWN;
     protected ScreenModuleHelper helper = new ScreenModuleHelper();
 
     @Override
@@ -32,10 +34,10 @@ public class EnergyBarScreenModule implements IScreenModule<IModuleDataContents>
         }
 
         TileEntity te = world.getTileEntity(coordinate);
-        if (!EnergyTools.isEnergyTE(te)) {
+        if (!EnergyTools.isEnergyTE(te, side)) {
             return null;
         }
-        EnergyTools.EnergyLevel energyLevel = EnergyTools.getEnergyLevelMulti(te);
+        EnergyTools.EnergyLevel energyLevel = EnergyTools.getEnergyLevelMulti(te, side);
         long energy = energyLevel.getEnergy();
         long maxEnergy = energyLevel.getMaxEnergy();
         return helper.getContentsValue(millis, energy, maxEnergy);
@@ -60,6 +62,9 @@ public class EnergyBarScreenModule implements IScreenModule<IModuleDataContents>
                     int dz = Math.abs(c.getZ() - pos.getZ());
                     if (dx <= 64 && dy <= 64 && dz <= 64) {
                         coordinate = c;
+                        if(tagCompound.hasKey("monitorside")) {
+                            side = EnumFacing.VALUES[tagCompound.getInteger("monitorside")];
+                        }
                     }
                 }
             }

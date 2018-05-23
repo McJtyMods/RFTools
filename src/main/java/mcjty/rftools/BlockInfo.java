@@ -1,7 +1,10 @@
 package mcjty.rftools;
 
+import javax.annotation.Nullable;
+
 import mcjty.lib.varia.EnergyTools;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
 public class BlockInfo {
@@ -9,9 +12,9 @@ public class BlockInfo {
     private long energyStored;
     private long maxEnergyStored;
 
-    public BlockInfo(TileEntity tileEntity, BlockPos coordinate) {
+    public BlockInfo(TileEntity tileEntity, @Nullable EnumFacing side, BlockPos coordinate) {
         this.coordinate = coordinate;
-        fetchEnergyValues(tileEntity);
+        fetchEnergyValues(tileEntity, side);
     }
 
     public BlockInfo(BlockPos coordinate, long energyStored, long maxEnergyStored) {
@@ -24,8 +27,8 @@ public class BlockInfo {
         return coordinate;
     }
 
-    private void fetchEnergyValues(TileEntity tileEntity) {
-        EnergyTools.EnergyLevel energyLevel = EnergyTools.getEnergyLevel(tileEntity);
+    private void fetchEnergyValues(TileEntity tileEntity, @Nullable EnumFacing side) {
+        EnergyTools.EnergyLevel energyLevel = EnergyTools.getEnergyLevel(tileEntity, side);
         maxEnergyStored = energyLevel.getMaxEnergy();
         energyStored = energyLevel.getEnergy();
     }

@@ -80,8 +80,8 @@ public class RFToolsTools {
                 for (int z = -range; z <= range; z++) {
                     BlockPos p = pos.add(x, y, z);
                     TileEntity te = world.getTileEntity(p);
-                    if (EnergyTools.isEnergyTE(te)) {
-                        EnergyTools.EnergyLevel level = EnergyTools.getEnergyLevel(te);
+                    if (EnergyTools.isEnergyTE(te, null)) {
+                        EnergyTools.EnergyLevel level = EnergyTools.getEnergyLevel(te, null);
                         Long usage = null;
                         if (te instanceof IMachineInformation) {
                             usage = ((IMachineInformation) te).getEnergyDiffPerTick();
