@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.relay;
 
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.compat.RedstoneFluxCompatibility;
-import mcjty.lib.tileentity.GenericEnergyHandlerTileEntity;
+import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
@@ -26,7 +26,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fml.common.Optional;
 
-public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements ITickable, MachineInformation {
+public class RelayTileEntity extends GenericEnergyReceiverTileEntity implements ITickable, MachineInformation {
 
     public static final int MAXENERGY = 50000;
     public static final int RECEIVEPERTICK = 50000;
@@ -187,11 +187,6 @@ public class RelayTileEntity extends GenericEnergyHandlerTileEntity implements I
                 }
             }
         }
-    }
-
-    @Override
-    public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
-        return 0;
     }
 
     @Override

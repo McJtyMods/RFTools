@@ -6,7 +6,7 @@ import mcjty.lib.compat.RedstoneFluxCompatibility;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
-import mcjty.lib.tileentity.GenericEnergyProviderTileEntity;
+import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.RedstoneMode;
@@ -44,7 +44,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity implements ITickable, DefaultSidedInventory,
+public class CoalGeneratorTileEntity extends GenericEnergyReceiverTileEntity implements ITickable, DefaultSidedInventory,
         IMachineInformation {
 
     public static final String CMD_RSMODE = "coalgen.setRsMode";
@@ -177,11 +177,6 @@ public class CoalGeneratorTileEntity extends GenericEnergyProviderTileEntity imp
 
     public boolean isWorking() {
         return burning > 0 && isMachineEnabled();
-    }
-
-    @Override
-    public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
-        return 0;
     }
 
     private void handleChargingItem() {
