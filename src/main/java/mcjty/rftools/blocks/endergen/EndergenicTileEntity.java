@@ -6,7 +6,7 @@ import mcjty.lib.bindings.DefaultValue;
 import mcjty.lib.bindings.IValue;
 import mcjty.lib.compat.RedstoneFluxCompatibility;
 import mcjty.lib.network.PacketSendClientCommand;
-import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
@@ -41,7 +41,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
-public class EndergenicTileEntity extends GenericEnergyReceiverTileEntity implements ITickable, MachineInformation,
+public class EndergenicTileEntity extends GenericEnergyStorageTileEntity implements ITickable, MachineInformation,
         IHudSupport, IMachineInformation {
 
     private static Random random = new Random();
