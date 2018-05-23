@@ -93,7 +93,7 @@ public class EnergyPlusModuleItem extends GenericRFToolsItem implements IModuleP
         if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
         }
-        if (EnergyTools.isEnergyTE(te)) {
+        if (EnergyTools.isEnergyTE(te, facing)) {
             tagCompound.setInteger("monitordim", world.provider.getDimension());
             tagCompound.setInteger("monitorx", pos.getX());
             tagCompound.setInteger("monitory", pos.getY());

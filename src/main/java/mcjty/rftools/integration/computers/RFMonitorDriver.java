@@ -32,11 +32,11 @@ public class RFMonitorDriver {
                 }
 
                 TileEntity monitor = tile.getWorld().getTileEntity(tile.getMonitor());
-                if (!EnergyTools.isEnergyTE(monitor)) {
+                if (!EnergyTools.isEnergyTE(monitor, null)) {
                     return new Object[] {null, "Invalid monitored block"};
                 }
 
-                return new Object[]{EnergyTools.getEnergyLevelMulti(monitor).getEnergy()};
+                return new Object[]{EnergyTools.getEnergyLevelMulti(monitor, null).getEnergy()};
             }
 
             @Callback(doc = "function():number; Get the maximum stored energy")
@@ -46,11 +46,11 @@ public class RFMonitorDriver {
                 }
 
                 TileEntity monitor = tile.getWorld().getTileEntity(tile.getMonitor());
-                if (!EnergyTools.isEnergyTE(monitor)) {
+                if (!EnergyTools.isEnergyTE(monitor, null)) {
                     return new Object[] {null, "Invalid monitored block"};
                 }
 
-                return new Object[]{EnergyTools.getEnergyLevelMulti(monitor).getMaxEnergy()};
+                return new Object[]{EnergyTools.getEnergyLevelMulti(monitor, null).getMaxEnergy()};
             }
 
             @Callback(doc="function(level:int):true or nil, string; Set the alarm level")

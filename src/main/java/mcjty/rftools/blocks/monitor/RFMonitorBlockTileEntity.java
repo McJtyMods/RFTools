@@ -100,7 +100,7 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
                         if (dx != 0 || dy != 0 || dz != 0) {
                             TileEntity tileEntity = getWorld().getTileEntity(new BlockPos(xx, yy, zz));
                             if (tileEntity != null) {
-                                if (EnergyTools.isEnergyTE(tileEntity)) {
+                                if (EnergyTools.isEnergyTE(tileEntity, null)) {
                                     adjacentBlocks.add(new BlockPos(xx, yy, zz));
                                 }
                             }
@@ -132,11 +132,11 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
         counter = 20;
 
         TileEntity tileEntity = getWorld().getTileEntity(monitor);
-        if (!EnergyTools.isEnergyTE(tileEntity)) {
+        if (!EnergyTools.isEnergyTE(tileEntity, null)) {
             setInvalid();
             return;
         }
-        EnergyTools.EnergyLevel energy = EnergyTools.getEnergyLevelMulti(tileEntity);
+        EnergyTools.EnergyLevel energy = EnergyTools.getEnergyLevelMulti(tileEntity, null);
         long maxEnergy = energy.getMaxEnergy();
         int ratio = 0;  // Will be set as metadata;
         boolean alarm = false;

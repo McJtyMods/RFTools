@@ -89,8 +89,8 @@ public class PacketGetConnectedBlocks implements IMessage {
             }
             TileEntity tileEntity = world.getTileEntity(pos);
             if (tileEntity != null) {
-                if (EnergyTools.isEnergyTE(tileEntity)) {
-                    connectedBlocks.put(pos, new BlockInfo(tileEntity, pos));
+                if (EnergyTools.isEnergyTE(tileEntity, null)) {
+                    connectedBlocks.put(pos, new BlockInfo(tileEntity, null, pos));
                     findConnectedBlocks(connectedBlocks, world, pos.up());
                     findConnectedBlocks(connectedBlocks, world, pos.down());
                     findConnectedBlocks(connectedBlocks, world, pos.east());
