@@ -19,7 +19,7 @@ import java.util.function.BiFunction;
 public class RedstoneReceiverBlock extends RedstoneChannelBlock<RedstoneReceiverTileEntity, EmptyContainer> {
 
     public RedstoneReceiverBlock() {
-        super(Material.IRON, RedstoneReceiverTileEntity.class, EmptyContainer::new, GenericItemBlock.class, "redstone_receiver_block");
+        super(Material.IRON, RedstoneReceiverTileEntity.class, EmptyContainer::new, GenericItemBlock::new, "redstone_receiver_block");
     }
 
     @SideOnly(Side.CLIENT)

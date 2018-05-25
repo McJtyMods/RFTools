@@ -5,6 +5,7 @@ import mcjty.lib.blocks.LogicSlabBlock;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.screenmodules.ButtonModuleItem;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
@@ -26,11 +27,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public abstract class RedstoneChannelBlock<T extends RedstoneChannelTileEntity, C extends Container> extends LogicSlabBlock<T, C> {
 
-    public RedstoneChannelBlock(Material material, Class<? extends T> tileEntityClass, BiFunction<EntityPlayer, IInventory, C> containerFactory, Class<? extends ItemBlock> itemBlockClass, String name) {
-        super(RFTools.instance, material, tileEntityClass, containerFactory, itemBlockClass, name, false);
+    public RedstoneChannelBlock(Material material, Class<? extends T> tileEntityClass, BiFunction<EntityPlayer, IInventory, C> containerFactory, Function<Block, ItemBlock> itemBlockFactory, String name) {
+        super(RFTools.instance, material, tileEntityClass, containerFactory, itemBlockFactory, name, false);
     }
 
     @SideOnly(Side.CLIENT)

@@ -33,7 +33,7 @@ import java.util.List;
 public class SimpleDialerBlock extends LogicSlabBlock<SimpleDialerTileEntity, EmptyContainer> {
 
     public SimpleDialerBlock() {
-        super(RFTools.instance, Material.IRON, SimpleDialerTileEntity.class, EmptyContainer::new, SimpleDialerItemBlock.class, "simple_dialer", false);
+        super(RFTools.instance, Material.IRON, SimpleDialerTileEntity.class, EmptyContainer::new, SimpleDialerItemBlock::new, "simple_dialer", false);
     }
 
     @Override

@@ -21,7 +21,7 @@ import java.util.List;
 public class RedstoneTransmitterBlock extends RedstoneChannelBlock<RedstoneTransmitterTileEntity, EmptyContainer> {
 
     public RedstoneTransmitterBlock() {
-        super(Material.IRON, RedstoneTransmitterTileEntity.class, EmptyContainer::new, GenericItemBlock.class, "redstone_transmitter_block");
+        super(Material.IRON, RedstoneTransmitterTileEntity.class, EmptyContainer::new, GenericItemBlock::new, "redstone_transmitter_block");
     }
 
     @Override
