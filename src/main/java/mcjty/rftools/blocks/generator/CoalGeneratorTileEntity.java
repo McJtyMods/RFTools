@@ -187,14 +187,8 @@ public class CoalGeneratorTileEntity extends GenericEnergyStorageTileEntity impl
         }
         int energyStored = getEnergyStored();
         int rfToGive = Math.min(CoalGeneratorConfiguration.CHARGEITEMPERTICK, energyStored);
-        if (stack.hasCapability(CapabilityEnergy.ENERGY, null)) {
-            IEnergyStorage capability = stack.getCapability(CapabilityEnergy.ENERGY, null);
-            int received = capability.receiveEnergy(rfToGive, false);
-            storage.extractEnergy(received, false);
-        } else if (McJtyLib.redstoneflux && RedstoneFluxCompatibility.isEnergyItem(stack.getItem())) {
-            int received = RedstoneFluxCompatibility.receiveEnergy(stack.getItem(), stack, rfToGive, false);
-            storage.extractEnergy(received, false);
-        }
+        int received = (int)EnergyTools.receiveEnergy(stack, rfToGive);
+        storage.extractEnergy(received, false);
     }
 
     private void handleSendingEnergy() {
@@ -233,8 +227,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyStorageTileEntity impl
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
         if (index == SLOT_CHARGEITEM) {
-            boolean rf = McJtyLib.redstoneflux && RedstoneFluxCompatibility.isEnergyItem(stack.getItem());
-            return rf;
+            return EnergyTools.isEnergyItem(stack);
         } else if (index == SLOT_COALINPUT) {
             return stack.getItem() == Items.COAL || stack.getItem() == Item.getItemFromBlock(Blocks.COAL_BLOCK);
         }

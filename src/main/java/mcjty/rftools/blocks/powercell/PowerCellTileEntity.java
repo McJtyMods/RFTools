@@ -315,13 +315,8 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         }
 
         int rfToGive = Math.min(PowerCellConfiguration.CHARGEITEMPERTICK, getEnergyStored());
-        int received;
-        if (stack.hasCapability(CapabilityEnergy.ENERGY, null)) {
-            IEnergyStorage capability = stack.getCapability(CapabilityEnergy.ENERGY, null);
-            received = capability.receiveEnergy(rfToGive, false);
-        } else if (McJtyLib.redstoneflux && RedstoneFluxCompatibility.isEnergyItem(stack.getItem())) {
-            received = RedstoneFluxCompatibility.receiveEnergy(stack.getItem(), stack, rfToGive, false);
-        } else {
+        int received = (int)EnergyTools.receiveEnergy(stack, rfToGive);
+        if (received == 0) {
             return;
         }
         extractEnergyInternal(received, false, PowerCellConfiguration.CHARGEITEMPERTICK);
