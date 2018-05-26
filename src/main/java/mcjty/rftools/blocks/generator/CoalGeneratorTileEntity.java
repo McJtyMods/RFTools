@@ -1,9 +1,6 @@
 package mcjty.rftools.blocks.generator;
 
-
-import mcjty.lib.McJtyLib;
 import mcjty.lib.api.information.IMachineInformation;
-import mcjty.lib.compat.RedstoneFluxCompatibility;
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
@@ -36,8 +33,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -125,7 +120,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyStorageTileEntity impl
 
             if (burning > 0) {
                 burning--;
-                int rf = getRfPerTick();
+                long rf = getRfPerTick();
                 modifyEnergyStored(rf);
                 if (burning == 0) {
                     markDirtyClient();
@@ -155,9 +150,9 @@ public class CoalGeneratorTileEntity extends GenericEnergyStorageTileEntity impl
         }
     }
 
-    public int getRfPerTick() {
-        int rf = CoalGeneratorConfiguration.rfPerTick;
-        rf += (int) (rf * getInfusedFactor());
+    public long getRfPerTick() {
+        long rf = CoalGeneratorConfiguration.rfPerTick;
+        rf += (long) (rf * getInfusedFactor());
         return rf;
     }
 
@@ -185,24 +180,24 @@ public class CoalGeneratorTileEntity extends GenericEnergyStorageTileEntity impl
         if (stack.isEmpty()) {
             return;
         }
-        int energyStored = getEnergyStored();
-        int rfToGive = Math.min(CoalGeneratorConfiguration.CHARGEITEMPERTICK, energyStored);
-        int received = (int)EnergyTools.receiveEnergy(stack, rfToGive);
+        long storedPower = getStoredPower();
+        long rfToGive = Math.min(CoalGeneratorConfiguration.CHARGEITEMPERTICK, storedPower);
+        long received = EnergyTools.receiveEnergy(stack, rfToGive);
         storage.extractEnergy(received, false);
     }
 
     private void handleSendingEnergy() {
-        int energyStored = getEnergyStored();
+        long storedPower = getStoredPower();
 
         for (EnumFacing facing : EnumFacing.VALUES) {
             BlockPos pos = getPos().offset(facing);
             TileEntity te = getWorld().getTileEntity(pos);
             EnumFacing opposite = facing.getOpposite();
             if (EnergyTools.isEnergyTE(te, opposite)) {
-                int rfToGive = Math.min(CoalGeneratorConfiguration.SENDPERTICK, energyStored);
-                int received = (int) EnergyTools.receiveEnergy(te, opposite, rfToGive);
-                energyStored -= storage.extractEnergy(received, false);
-                if (energyStored <= 0) {
+                long rfToGive = Math.min(CoalGeneratorConfiguration.SENDPERTICK, storedPower);
+                long received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
+                storedPower -= storage.extractEnergy(received, false);
+                if (storedPower <= 0) {
                     break;
                 }
             }

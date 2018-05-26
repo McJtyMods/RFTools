@@ -21,7 +21,7 @@ public class CoalGeneratorSetup {
                     .guiId(RFTools.GUI_COALGENERATOR)
                     .info("message.rftools.shiftmessage")
                     .infoExtended("message.rftools.coalgenerator")
-                    .infoExtendedParameter(stack -> Integer.toString(CoalGeneratorConfiguration.rfPerTick))
+                    .infoExtendedParameter(stack -> Long.toString(CoalGeneratorConfiguration.rfPerTick))
                     .build();
         }
     }
