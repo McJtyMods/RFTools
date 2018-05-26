@@ -184,15 +184,13 @@ public class CoalGeneratorTileEntity extends GenericEnergyStorageTileEntity impl
         if (stack.isEmpty()) {
             return;
         }
+        int energyStored = getEnergyStored();
+        int rfToGive = Math.min(CoalGeneratorConfiguration.CHARGEITEMPERTICK, energyStored);
         if (stack.hasCapability(CapabilityEnergy.ENERGY, null)) {
             IEnergyStorage capability = stack.getCapability(CapabilityEnergy.ENERGY, null);
-            int energyStored = getEnergyStored();
-            int rfToGive = CoalGeneratorConfiguration.CHARGEITEMPERTICK <= energyStored ? CoalGeneratorConfiguration.CHARGEITEMPERTICK : energyStored;
             int received = capability.receiveEnergy(rfToGive, false);
             storage.extractEnergy(received, false);
         } else if (RFTools.redstoneflux && RedstoneFluxCompatibility.isEnergyItem(stack.getItem())) {
-            int energyStored = getEnergyStored();
-            int rfToGive = CoalGeneratorConfiguration.CHARGEITEMPERTICK <= energyStored ? CoalGeneratorConfiguration.CHARGEITEMPERTICK : energyStored;
             int received = RedstoneFluxCompatibility.receiveEnergy(stack.getItem(), stack, rfToGive, false);
             storage.extractEnergy(received, false);
         }
@@ -205,20 +203,9 @@ public class CoalGeneratorTileEntity extends GenericEnergyStorageTileEntity impl
             BlockPos pos = getPos().offset(facing);
             TileEntity te = getWorld().getTileEntity(pos);
             EnumFacing opposite = facing.getOpposite();
-            if (EnergyTools.isEnergyTE(te, opposite) || (te != null && te.hasCapability(CapabilityEnergy.ENERGY, opposite))) {
-                int rfToGive = CoalGeneratorConfiguration.SENDPERTICK <= energyStored ? CoalGeneratorConfiguration.SENDPERTICK : energyStored;
-                int received;
-
-                if (RFTools.redstoneflux && RedstoneFluxCompatibility.isEnergyConnection(te)) {
-                    if (RedstoneFluxCompatibility.canConnectEnergy(te, opposite)) {
-                        received = (int) EnergyTools.receiveEnergy(te, opposite, rfToGive);
-                    } else {
-                        received = 0;
-                    }
-                } else {
-                    // Forge unit
-                    received = (int) EnergyTools.receiveEnergy(te, opposite, rfToGive);
-                }
+            if (EnergyTools.isEnergyTE(te, opposite)) {
+                int rfToGive = Math.min(CoalGeneratorConfiguration.SENDPERTICK, energyStored);
+                int received = (int) EnergyTools.receiveEnergy(te, opposite, rfToGive);
                 energyStored -= storage.extractEnergy(received, false);
                 if (energyStored <= 0) {
                     break;
