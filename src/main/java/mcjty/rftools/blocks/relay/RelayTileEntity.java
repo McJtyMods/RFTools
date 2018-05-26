@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.relay;
 
+import mcjty.lib.McJtyLib;
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.compat.RedstoneFluxCompatibility;
 import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
@@ -8,7 +9,6 @@ import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.OrientationTools;
-import mcjty.rftools.RFTools;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
@@ -168,7 +168,7 @@ public class RelayTileEntity extends GenericEnergyReceiverTileEntity implements 
                     }
                     int received;
 
-                    if (RFTools.redstoneflux && RedstoneFluxCompatibility.isEnergyConnection(te)) {
+                    if (McJtyLib.redstoneflux && RedstoneFluxCompatibility.isEnergyConnection(te)) {
                         if (RedstoneFluxCompatibility.canConnectEnergy(te, opposite)) {
                             received = (int) EnergyTools.receiveEnergy(te, opposite, rfToGive);
                         } else {

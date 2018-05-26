@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.endergen;
 
+import mcjty.lib.McJtyLib;
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.bindings.DefaultValue;
@@ -498,7 +499,7 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
                     rfToGive = energyStored;
                 }
                 int received;
-                if (RFTools.redstoneflux && RedstoneFluxCompatibility.isEnergyConnection(te)) {
+                if (McJtyLib.redstoneflux && RedstoneFluxCompatibility.isEnergyConnection(te)) {
                     if (RedstoneFluxCompatibility.canConnectEnergy(te, opposite)) {
                         received = (int) EnergyTools.receiveEnergy(te, opposite, rfToGive);
                     } else {

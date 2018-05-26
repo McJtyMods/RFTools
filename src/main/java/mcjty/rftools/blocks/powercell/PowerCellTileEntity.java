@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.powercell;
 
 import cofh.redstoneflux.api.IEnergyProvider;
 import cofh.redstoneflux.api.IEnergyReceiver;
+import mcjty.lib.McJtyLib;
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.api.smartwrench.SmartWrenchSelector;
 import mcjty.lib.bindings.DefaultAction;
@@ -17,7 +18,6 @@ import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.items.powercell.PowerCellCardItem;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -319,7 +319,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         if (stack.hasCapability(CapabilityEnergy.ENERGY, null)) {
             IEnergyStorage capability = stack.getCapability(CapabilityEnergy.ENERGY, null);
             received = capability.receiveEnergy(rfToGive, false);
-        } else if (RFTools.redstoneflux && RedstoneFluxCompatibility.isEnergyItem(stack.getItem())) {
+        } else if (McJtyLib.redstoneflux && RedstoneFluxCompatibility.isEnergyItem(stack.getItem())) {
             received = RedstoneFluxCompatibility.receiveEnergy(stack.getItem(), stack, rfToGive, false);
         } else {
             return;
@@ -344,7 +344,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
 
                         int rfToGive = Math.min(rfPerTick, (int) (energyStored / factor));
 
-                        if (RFTools.redstoneflux && RedstoneFluxCompatibility.isEnergyConnection(te)) {
+                        if (McJtyLib.redstoneflux && RedstoneFluxCompatibility.isEnergyConnection(te)) {
                             if (RedstoneFluxCompatibility.canConnectEnergy(te, opposite)) {
                                 received = (int) EnergyTools.receiveEnergy(te, opposite, rfToGive);
                             } else {

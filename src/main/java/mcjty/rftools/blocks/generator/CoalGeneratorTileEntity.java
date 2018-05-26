@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.generator;
 
 
+import mcjty.lib.McJtyLib;
 import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.compat.RedstoneFluxCompatibility;
 import mcjty.lib.container.ContainerFactory;
@@ -190,7 +191,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyStorageTileEntity impl
             IEnergyStorage capability = stack.getCapability(CapabilityEnergy.ENERGY, null);
             int received = capability.receiveEnergy(rfToGive, false);
             storage.extractEnergy(received, false);
-        } else if (RFTools.redstoneflux && RedstoneFluxCompatibility.isEnergyItem(stack.getItem())) {
+        } else if (McJtyLib.redstoneflux && RedstoneFluxCompatibility.isEnergyItem(stack.getItem())) {
             int received = RedstoneFluxCompatibility.receiveEnergy(stack.getItem(), stack, rfToGive, false);
             storage.extractEnergy(received, false);
         }
@@ -232,7 +233,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyStorageTileEntity impl
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
         if (index == SLOT_CHARGEITEM) {
-            boolean rf = RFTools.redstoneflux && RedstoneFluxCompatibility.isEnergyItem(stack.getItem());
+            boolean rf = McJtyLib.redstoneflux && RedstoneFluxCompatibility.isEnergyItem(stack.getItem());
             return rf;
         } else if (index == SLOT_COALINPUT) {
             return stack.getItem() == Items.COAL || stack.getItem() == Item.getItemFromBlock(Blocks.COAL_BLOCK);
