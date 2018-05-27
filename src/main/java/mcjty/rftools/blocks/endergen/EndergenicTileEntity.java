@@ -481,36 +481,20 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
     }
 
     private void handleSendingEnergy() {
-        int energyStored = getEnergyStored();
-        if (energyStored <= EndergenicConfiguration.keepRfInBuffer) {
+        int energyAvailable = getEnergyStored() - EndergenicConfiguration.keepRfInBuffer;
+        if (energyAvailable <= 0) {
             return;
         }
-        energyStored -= EndergenicConfiguration.keepRfInBuffer;
 
         for (EnumFacing dir : EnumFacing.VALUES) {
             BlockPos o = getPos().offset(dir);
             TileEntity te = getWorld().getTileEntity(o);
             EnumFacing opposite = dir.getOpposite();
-            if (EnergyTools.isEnergyTE(te, opposite) || (te != null && te.hasCapability(CapabilityEnergy.ENERGY, opposite))) {
-                int rfToGive;
-                if (EndergenicConfiguration.rfOutput <= energyStored) {
-                    rfToGive = EndergenicConfiguration.rfOutput;
-                } else {
-                    rfToGive = energyStored;
-                }
-                int received;
-                if (McJtyLib.redstoneflux && RedstoneFluxCompatibility.isEnergyConnection(te)) {
-                    if (RedstoneFluxCompatibility.canConnectEnergy(te, opposite)) {
-                        received = (int) EnergyTools.receiveEnergy(te, opposite, rfToGive);
-                    } else {
-                        received = 0;
-                    }
-                } else {
-                    // Forge unit
-                    received = (int) EnergyTools.receiveEnergy(te, opposite, rfToGive);
-                }
-                energyStored -= storage.extractEnergy(received, false);
-                if (energyStored <= 0) {
+            if (EnergyTools.isEnergyTE(te, opposite)) {
+                int rfToGive = Math.min(EndergenicConfiguration.rfOutput, energyAvailable);
+                int received = (int) EnergyTools.receiveEnergy(te, opposite, rfToGive);
+                energyAvailable -= storage.extractEnergy(received, false);
+                if (energyAvailable <= 0) {
                     break;
                 }
             }
