@@ -779,7 +779,7 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
                     .put(PARAM_STATRF, lastRfPerTick)
                     .put(PARAM_STATLOST, lastPearlsLost)
                     .put(PARAM_STATLAUNCHED, lastPearlsLaunched)
-                    .put(PARAM_STATRF, lastChargeCounter)
+                    .put(PARAM_STATOPPORTUNITIES, lastChargeCounter)
                     .build();
         }
         return null;
