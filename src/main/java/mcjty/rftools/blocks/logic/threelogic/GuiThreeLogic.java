@@ -53,9 +53,4 @@ public class GuiThreeLogic extends GenericGuiContainer<ThreeLogicTileEntity> {
             }
         }
     }
-
-    @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        drawWindow();
-    }
 }

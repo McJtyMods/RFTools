@@ -26,9 +26,4 @@ public class GuiRedstoneReceiver extends GenericGuiContainer<RedstoneReceiverTil
         ToggleButton analog = window.findChild("analog");
         analog.setPressed(tileEntity.getAnalog());
     }
-
-    @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        drawWindow();
-    }
 }

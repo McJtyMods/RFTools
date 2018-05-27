@@ -144,9 +144,4 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
         builder.put(rfKeys[i], energy);
         builder.put(inputKeys[i], input);
     }
-
-    @Override
-    protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
-        drawWindow();
-    }
 }

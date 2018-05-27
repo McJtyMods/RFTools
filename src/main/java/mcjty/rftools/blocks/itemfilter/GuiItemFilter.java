@@ -89,9 +89,4 @@ public class GuiItemFilter extends GenericGuiContainer<ItemFilterTileEntity> {
                         .put(PARAM_OUTPUT, output)
                         .build());
     }
-
-    @Override
-    protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
-        drawWindow();
-    }
 }

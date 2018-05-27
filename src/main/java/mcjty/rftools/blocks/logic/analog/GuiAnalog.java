@@ -84,10 +84,4 @@ public class GuiAnalog extends GenericGuiContainer<AnalogTileEntity> {
                         .put(AnalogTileEntity.PARAM_ADD_GT, safeInt(addGreater.getText()))
                         .build());
     }
-
-
-    @Override
-    protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
-        drawWindow();
-    }
 }

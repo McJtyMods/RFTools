@@ -80,9 +80,4 @@ public class GuiLevelEmitter extends GenericGuiContainer<LevelEmitterTileEntity>
         window.bind(RFToolsMessages.INSTANCE, "starred", tileEntity, LevelEmitterTileEntity.VALUE_STARRED.getName());
         window.bind(RFToolsMessages.INSTANCE, "oredict", tileEntity, LevelEmitterTileEntity.VALUE_OREDICT.getName());
     }
-
-    @Override
-    protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
-        drawWindow();
-    }
 }

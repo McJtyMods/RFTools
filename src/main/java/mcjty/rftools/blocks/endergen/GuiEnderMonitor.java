@@ -22,9 +22,4 @@ public class GuiEnderMonitor extends GenericGuiContainer<EnderMonitorTileEntity>
         ChoiceLabel mode = window.findChild("mode");
         mode.setChoice(tileEntity.getMode().getDescription());
     }
-
-    @Override
-    protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
-        drawWindow();
-    }
 }

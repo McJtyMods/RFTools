@@ -96,9 +96,4 @@ public class GuiSequencer extends GenericGuiContainer<SequencerTileEntity> {
                         .put(SequencerTileEntity.PARAM_CHOICE, newChoice)
                         .build());
     }
-
-    @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        drawWindow();
-    }
 }

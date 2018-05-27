@@ -22,9 +22,4 @@ public class GuiElevator extends GenericGuiContainer<ElevatorTileEntity> {
         TextField elevator = window.findChild("name");
         elevator.setText(tileEntity.getName());
     }
-
-    @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        drawWindow();
-    }
 }

@@ -98,9 +98,4 @@ public class GuiStorageFilter extends GenericGuiContainer<GenericTileEntity> {
                         .put(new Key<>("nbtMode", Type.BOOLEAN), nbtMode.getCurrentChoiceIndex() == 1)
                         .build()));
    }
-
-    @Override
-    protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
-        drawWindow();
-    }
 }

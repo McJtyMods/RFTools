@@ -41,9 +41,4 @@ public class GuiInvChecker extends GenericGuiContainer<InvCheckerTileEntity> {
         ChoiceLabel oreDictLabel = window.findChild("ore");
         oreDictLabel.setChoice(tileEntity.isOreDict() ? OREDICT_USE : OREDICT_IGNORE);
     }
-
-    @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        drawWindow();
-    }
 }

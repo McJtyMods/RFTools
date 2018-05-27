@@ -18,10 +18,4 @@ public class GuiPearlInjector extends GenericGuiContainer<PearlInjectorTileEntit
         window = new Window(this, tileEntity, RFToolsMessages.INSTANCE, new ResourceLocation(RFTools.MODID, "gui/pearl_injector.gui"));
         super.initGui();
     }
-
-
-    @Override
-    protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
-        drawWindow();
-    }
 }

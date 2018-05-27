@@ -33,9 +33,4 @@ public class GuiStorageTerminal extends GenericGuiContainer<StorageTerminalTileE
 
         window = new Window(this, toplevel);
     }
-
-    @Override
-    protected void drawGuiContainerBackgroundLayer(float v, int i, int i2) {
-        drawWindow();
-    }
 }

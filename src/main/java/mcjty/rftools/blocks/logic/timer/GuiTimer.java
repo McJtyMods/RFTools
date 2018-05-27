@@ -34,9 +34,4 @@ public class GuiTimer extends GenericGuiContainer<TimerTileEntity> {
         ToggleButton redstonePauses = window.findChild("pauses");
         redstonePauses.setPressed(tileEntity.getRedstonePauses());
     }
-
-    @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        drawWindow();
-    }
 }
