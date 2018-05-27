@@ -23,7 +23,7 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
     private TextField lastLaunchedPearls;
     private TextField lastOpportunities;
 
-    public static int fromServer_lastRfPerTick = 0;
+    public static long fromServer_lastRfPerTick = 0;
     public static int fromServer_lastPearlsLost = 0;
     public static int fromServer_lastPearlsLaunched = 0;
     public static int fromServer_lastPearlOpportunities = 0;

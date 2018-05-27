@@ -49,7 +49,7 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
 
     public static final String CMD_GETSTATS = "getStats";
 
-    public static Key<Integer> PARAM_STATRF = new Key<>("statrf", Type.INTEGER);
+    public static Key<Long> PARAM_STATRF = new Key<>("statrf", Type.LONG);
     public static Key<Integer> PARAM_STATLOST = new Key<>("statlost", Type.INTEGER);
     public static Key<Integer> PARAM_STATLAUNCHED = new Key<>("statlaunched", Type.INTEGER);
     public static Key<Integer> PARAM_STATOPPORTUNITIES = new Key<>("statopportunities", Type.INTEGER);
@@ -92,8 +92,8 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
 
     // Statistics for this generator.
     // These values count what is happening.
-    private int rfGained = 0;
-    private int rfLost = 0;
+    private long rfGained = 0;
+    private long rfLost = 0;
     private int pearlsLaunched = 0;
     private int pearlsLost = 0;
     private int chargeCounter = 0;
@@ -101,9 +101,9 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
     private int ticks = 100;
 
     // These values actually contain valid statistics.
-    private int lastRfPerTick = 0;
-    private int lastRfGained = 0;
-    private int lastRfLost = 0;
+    private long lastRfPerTick = 0;
+    private long lastRfGained = 0;
+    private long lastRfLost = 0;
     private int lastPearlsLost = 0;
     private int lastPearlsLaunched = 0;
     private int lastChargeCounter = 0;
@@ -122,7 +122,7 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
 
     // This table indicates how much RF is produced when an endergenic pearl hits this block
     // at that specific chargingMode.
-    private static int rfPerHit[] = new int[]{0, 100, 150, 200, 400, 800, 1600, 3200, 6400, 8000, 12800, 8000, 6400, 2500, 1000, 100};
+    private static long rfPerHit[] = new long[]{0, 100, 150, 200, 400, 800, 1600, 3200, 6400, 8000, 12800, 8000, 6400, 2500, 1000, 100};
 
     private int tickCounter = 0;            // Only used for logging, counts server ticks.
 
@@ -305,15 +305,15 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
         return badCounter;
     }
 
-    public int getLastRfPerTick() {
+    public long getLastRfPerTick() {
         return lastRfPerTick;
     }
 
-    public int getLastRfGained() {
+    public long getLastRfGained() {
         return lastRfGained;
     }
 
-    public int getLastRfLost() {
+    public long getLastRfLost() {
         return lastRfLost;
     }
 
@@ -399,10 +399,10 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
 
         if (chargingMode == CHARGE_HOLDING) {
             // Consume energy to keep the endergenic pearl.
-            int rf = EndergenicConfiguration.rfToHoldPearl;
-            rf = (int) (rf * (3.0f - getInfusedFactor()) / 3.0f);
+            long rf = EndergenicConfiguration.rfToHoldPearl;
+            rf = (long) (rf * (3.0f - getInfusedFactor()) / 3.0f);
 
-            int rfStored = getEnergyStored();
+            long rfStored = getStoredPower();
             if (rfStored < rf) {
                 // Not enough energy. Pearl is lost.
                 log("Server Tick: insufficient energy to hold pearl (" + rfStored + " vs " + rf + ")");
@@ -443,7 +443,7 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
     public String getData(int index, long millis) {
         switch (index) {
             case 0:
-                return Integer.toString(lastRfPerTick);
+                return Long.toString(lastRfPerTick);
             case 1:
                 return Integer.toString(lastPearlsLost);
             case 2:
@@ -481,7 +481,7 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
     }
 
     private void handleSendingEnergy() {
-        int energyAvailable = getEnergyStored() - EndergenicConfiguration.keepRfInBuffer;
+        long energyAvailable = getStoredPower() - EndergenicConfiguration.keepRfInBuffer;
         if (energyAvailable <= 0) {
             return;
         }
@@ -491,8 +491,8 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
             TileEntity te = getWorld().getTileEntity(o);
             EnumFacing opposite = dir.getOpposite();
             if (EnergyTools.isEnergyTE(te, opposite)) {
-                int rfToGive = Math.min(EndergenicConfiguration.rfOutput, energyAvailable);
-                int received = (int) EnergyTools.receiveEnergy(te, opposite, rfToGive);
+                long rfToGive = Math.min(EndergenicConfiguration.rfOutput, energyAvailable);
+                long received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
                 energyAvailable -= storage.extractEnergy(received, false);
                 if (energyAvailable <= 0) {
                     break;
@@ -621,8 +621,8 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
         } else {
             pearlArrivedAt = chargingMode;
             // Otherwise we get RF and this block goes into holding mode.
-            int rf = (int) (rfPerHit[chargingMode] * EndergenicConfiguration.powergenFactor);
-            rf = (int) (rf * (getInfusedFactor() + 2.0f) / 2.0f);
+            long rf = (long) (rfPerHit[chargingMode] * EndergenicConfiguration.powergenFactor);
+            rf = (long) (rf * (getInfusedFactor() + 2.0f) / 2.0f);
 
             // Give a bonus for pearls that have been around a bit longer.
             int a = age * 5;
