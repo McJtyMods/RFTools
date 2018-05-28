@@ -40,8 +40,8 @@ public final class ModBlocks {
 
 
     public static void init() {
-        builderFactory = new GenericBlockBuilderFactory(RFTools.instance);
-        logicFactory = new LogicSlabBlockBuilderFactory(RFTools.instance);
+        builderFactory = new GenericBlockBuilderFactory(RFTools.instance).creativeTabs(RFTools.tabRfTools);
+        logicFactory = new LogicSlabBlockBuilderFactory(RFTools.instance).creativeTabs(RFTools.tabRfTools);
 
         initBaseBlocks();
 
