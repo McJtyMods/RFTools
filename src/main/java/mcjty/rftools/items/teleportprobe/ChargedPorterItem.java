@@ -1,7 +1,7 @@
 package mcjty.rftools.items.teleportprobe;
 
-import cofh.redstoneflux.api.IEnergyContainerItem;
 import mcjty.lib.crafting.INBTPreservingIngredient;
+import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.IEnergyItem;
 import mcjty.lib.varia.ItemCapabilityProvider;
@@ -24,15 +24,13 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-@Optional.Interface(modid = "redstoneflux", iface = "cofh.redstoneflux.api.IEnergyContainerItem")
-public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem, IEnergyContainerItem, INBTPreservingIngredient {
+public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem, INBTPreservingIngredient {
 
     private int capacity;
     private int maxReceive;
@@ -287,31 +285,11 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
 
     @Override
     public long receiveEnergyL(ItemStack container, long maxReceive, boolean simulate) {
-        return receiveEnergy(container, (int) maxReceive, simulate);
-    }
-
-    @Override
-    public long extractEnergyL(ItemStack container, long maxExtract, boolean simulate) {
-        return extractEnergy(container, (int) maxExtract, simulate);
-    }
-
-    @Override
-    public long getEnergyStoredL(ItemStack container) {
-        return getEnergyStored(container);
-    }
-
-    @Override
-    public long getMaxEnergyStoredL(ItemStack container) {
-        return getMaxEnergyStored(container);
-    }
-
-    @Override
-    public int receiveEnergy(ItemStack container, int maxReceive, boolean simulate) {
         if (container.getTagCompound() == null) {
             container.setTagCompound(new NBTTagCompound());
         }
         int energy = container.getTagCompound().getInteger("Energy");
-        int energyReceived = Math.min(capacity - energy, Math.min(this.maxReceive, maxReceive));
+        int energyReceived = Math.min(capacity - energy, Math.min(this.maxReceive, EnergyTools.unsignedClampToInt(maxReceive)));
 
         if (!simulate) {
             energy += energyReceived;
@@ -321,12 +299,12 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
     }
 
     @Override
-    public int extractEnergy(ItemStack container, int maxExtract, boolean simulate) {
+    public long extractEnergyL(ItemStack container, long maxExtract, boolean simulate) {
         if (container.getTagCompound() == null || !container.getTagCompound().hasKey("Energy")) {
             return 0;
         }
         int energy = container.getTagCompound().getInteger("Energy");
-        int energyExtracted = Math.min(energy, Math.min(this.maxExtract, maxExtract));
+        int energyExtracted = Math.min(energy, Math.min(this.maxExtract, EnergyTools.unsignedClampToInt(maxExtract)));
 
         if (!simulate) {
             energy -= energyExtracted;
@@ -350,7 +328,7 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
     }
 
     @Override
-    public int getEnergyStored(ItemStack container) {
+    public long getEnergyStoredL(ItemStack container) {
         if (container.getTagCompound() == null || !container.getTagCompound().hasKey("Energy")) {
             return 0;
         }
@@ -358,7 +336,7 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
     }
 
     @Override
-    public int getMaxEnergyStored(ItemStack container) {
+    public long getMaxEnergyStoredL(ItemStack container) {
         return capacity;
     }
 }
