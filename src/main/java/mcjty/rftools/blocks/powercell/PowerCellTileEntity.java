@@ -18,6 +18,8 @@ import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.items.powercell.PowerCellCardItem;
+import net.darkhax.tesla.api.ITeslaConsumer;
+import net.darkhax.tesla.api.ITeslaHolder;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -769,7 +771,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyRec
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityEnergy.ENERGY) {
+        if (capability == CapabilityEnergy.ENERGY || capability == EnergyTools.TESLA_HOLDER || (capability == EnergyTools.TESLA_CONSUMER && facing != null)) {
             return true;
         }
         return super.hasCapability(capability, facing);
@@ -777,7 +779,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyRec
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityEnergy.ENERGY) {
+        if (capability == CapabilityEnergy.ENERGY || capability == EnergyTools.TESLA_HOLDER || (capability == EnergyTools.TESLA_CONSUMER && facing != null)) {
             if (facing == null) {
                 if (nullHandler == null) {
                     createNullHandler();
@@ -793,7 +795,11 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyRec
         return super.getCapability(capability, facing);
     }
 
-    private class SidedHandler implements IEnergyStorage {
+    @Optional.InterfaceList({
+        @Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaConsumer", modid = "tesla"),
+        @Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaHolder", modid = "tesla")
+    })
+    private class SidedHandler implements IEnergyStorage, ITeslaConsumer, ITeslaHolder {
         private final EnumFacing facing;
 
         private SidedHandler(EnumFacing facing) {
@@ -829,13 +835,32 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyRec
         public boolean canReceive() {
             return true;
         }
+
+        @Optional.Method(modid = "tesla")
+        @Override
+        public long getStoredPower() {
+            return PowerCellTileEntity.this.getEnergyStored();
+        }
+
+        @Optional.Method(modid = "tesla")
+        @Override
+        public long getCapacity() {
+            return PowerCellTileEntity.this.getMaxEnergyStored();
+        }
+
+        @Optional.Method(modid = "tesla")
+        @Override
+        public long givePower(long power, boolean simulated) {
+            return PowerCellTileEntity.this.receiveEnergyFacing(facing, EnergyTools.unsignedClampToInt(power), simulated);
+        }
     }
 
     private void createSidedHandler(EnumFacing facing) {
         sidedHandlers[facing.ordinal()] = new SidedHandler(facing);
     }
 
-    private class NullHandler implements IEnergyStorage {
+    @Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaHolder", modid = "tesla")
+    private class NullHandler implements IEnergyStorage, ITeslaHolder {
         @Override
         public int receiveEnergy(int maxReceive, boolean simulate) {
             return 0;
@@ -864,6 +889,18 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyRec
         @Override
         public boolean canReceive() {
             return false;
+        }
+
+        @Optional.Method(modid = "tesla")
+        @Override
+        public long getStoredPower() {
+            return PowerCellTileEntity.this.getEnergyStored();
+        }
+
+        @Optional.Method(modid = "tesla")
+        @Override
+        public long getCapacity() {
+            return PowerCellTileEntity.this.getMaxEnergyStored();
         }
     }
 
