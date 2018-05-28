@@ -175,6 +175,7 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
         }
     }
 
+    // deliberately not @Optional, as other power APIs delegate to this method
     @Override
     public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
         boolean redstoneSignal = powerLevel > 0;
@@ -278,8 +279,16 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
     private RelayEnergyStorage nullStorage;
 
     @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        if (capability == EnergyTools.TESLA_CONSUMER) { // no need to test for CapabilityEnergy.ENERGY or TESLA_HOLDER, as super already does this
+            return true;
+        }
+        return super.hasCapability(capability, facing);
+    }
+
+    @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityEnergy.ENERGY) {
+        if (capability == CapabilityEnergy.ENERGY || capability == EnergyTools.TESLA_CONSUMER || capability == EnergyTools.TESLA_HOLDER) {
             if (facing == null) {
                 if (nullStorage == null) {
                     nullStorage = new RelayEnergyStorage(this, null);

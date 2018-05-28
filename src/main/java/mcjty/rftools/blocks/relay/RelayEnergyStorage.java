@@ -1,11 +1,20 @@
 package mcjty.rftools.blocks.relay;
 
+import net.darkhax.tesla.api.ITeslaConsumer;
+import net.darkhax.tesla.api.ITeslaHolder;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fml.common.Optional;
 
 import javax.annotation.Nullable;
 
-class RelayEnergyStorage implements IEnergyStorage {
+import mcjty.lib.varia.EnergyTools;
+
+@Optional.InterfaceList({
+    @Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaConsumer", modid = "tesla"),
+    @Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaHolder", modid = "tesla")
+})
+class RelayEnergyStorage implements IEnergyStorage, ITeslaConsumer, ITeslaHolder {
     private final RelayTileEntity relayTileEntity;
     private final EnumFacing side;
 
@@ -42,5 +51,23 @@ class RelayEnergyStorage implements IEnergyStorage {
     @Override
     public boolean canReceive() {
         return true;
+    }
+
+    @Optional.Method(modid = "tesla")
+    @Override
+    public long givePower(long power, boolean simulated) {
+        return relayTileEntity.receiveEnergy(EnergyTools.unsignedClampToInt(power), simulated);
+    }
+
+    @Optional.Method(modid = "tesla")
+    @Override
+    public long getStoredPower() {
+        return relayTileEntity.getEnergyStored();
+    }
+
+    @Optional.Method(modid = "tesla")
+    @Override
+    public long getCapacity() {
+        return relayTileEntity.getMaxEnergyStored();
     }
 }
