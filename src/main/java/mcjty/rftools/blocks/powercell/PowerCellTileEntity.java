@@ -782,12 +782,12 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyRec
         if (capability == CapabilityEnergy.ENERGY || capability == EnergyTools.TESLA_HOLDER || (capability == EnergyTools.TESLA_CONSUMER && facing != null)) {
             if (facing == null) {
                 if (nullHandler == null) {
-                    createNullHandler();
+                    nullHandler = new NullHandler();
                 }
                 return (T) nullHandler;
             } else {
                 if (sidedHandlers[facing.ordinal()] == null) {
-                    createSidedHandler(facing);
+                    sidedHandlers[facing.ordinal()] = new SidedHandler(facing);
                 }
                 return (T) sidedHandlers[facing.ordinal()];
             }
@@ -855,10 +855,6 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyRec
         }
     }
 
-    private void createSidedHandler(EnumFacing facing) {
-        sidedHandlers[facing.ordinal()] = new SidedHandler(facing);
-    }
-
     @Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaHolder", modid = "tesla")
     private class NullHandler implements IEnergyStorage, ITeslaHolder {
         @Override
@@ -902,9 +898,5 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyRec
         public long getCapacity() {
             return PowerCellTileEntity.this.getMaxEnergyStored();
         }
-    }
-
-    private void createNullHandler() {
-        nullHandler = new NullHandler();
     }
 }
