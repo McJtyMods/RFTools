@@ -1,9 +1,7 @@
 package mcjty.rftools.blocks.relay;
 
 import cofh.redstoneflux.api.IEnergyReceiver;
-import mcjty.lib.McJtyLib;
 import mcjty.lib.api.MachineInformation;
-import mcjty.lib.compat.RedstoneFluxCompatibility;
 import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;

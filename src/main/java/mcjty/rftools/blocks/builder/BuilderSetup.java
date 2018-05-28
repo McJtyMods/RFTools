@@ -14,7 +14,6 @@ import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.shaper.*;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.builder.SpaceChamberCardItem;
-import mcjty.rftools.proxy.CommonProxy;
 import net.minecraft.block.Block;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;

@@ -4,7 +4,6 @@ import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
 import mcjty.rftools.blocks.environmental.modules.PeacefulEModule;
-import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;

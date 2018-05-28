@@ -1,11 +1,9 @@
 package mcjty.rftools.blocks.endergen;
 
-import mcjty.lib.McJtyLib;
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.bindings.DefaultValue;
 import mcjty.lib.bindings.IValue;
-import mcjty.lib.compat.RedstoneFluxCompatibility;
 import mcjty.lib.network.PacketSendClientCommand;
 import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.lib.typed.Key;
@@ -35,8 +33,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.energy.CapabilityEnergy;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;

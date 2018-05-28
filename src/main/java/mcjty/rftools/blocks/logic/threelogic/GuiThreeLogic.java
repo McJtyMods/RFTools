@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.logic.threelogic;
 
-import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.Window;

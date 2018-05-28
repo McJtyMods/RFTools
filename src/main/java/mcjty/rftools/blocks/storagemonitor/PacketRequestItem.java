@@ -3,7 +3,6 @@ package mcjty.rftools.blocks.storagemonitor;
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.varia.WorldTools;
-import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;

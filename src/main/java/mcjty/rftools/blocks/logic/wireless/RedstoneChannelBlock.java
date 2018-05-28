@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.logic.wireless;
 
-import mcjty.lib.base.ModBase;
 import mcjty.lib.blocks.LogicSlabBlock;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
