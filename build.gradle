@@ -15,28 +15,12 @@ buildscript {
     }
 }
 
+plugins {
+    id 'com.matthewprenger.cursegradle' version '1.0.10'
+}
+
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'maven'
-
-// More user properties
-ext.user = parseConfig(file('extra.properties'))
-if (ext.user != null) {
-    ext.user.each { k, v ->
-        project.ext.set(k, v)
-    }
-}
-
-// parse and import external config
-def parseConfig(File config) {
-    if (!config.exists())
-        return null
-
-    config.withReader {
-        def prop = new Properties()
-        prop.load(it)
-        return (new ConfigSlurper().parse(prop))
-    }
-}
 
 repositories {
     maven { // The repo from which to get waila
@@ -76,7 +60,6 @@ repositories {
     }
 }
 
-version = "1.12-7.50"
 def ENV = System.getenv()
 if (ENV.DRONE_BUILD_NUMBER) {
     version += ".n" + ENV.DRONE_BUILD_NUMBER
@@ -193,6 +176,62 @@ task("uploadJars", dependsOn: "reobf") {
                     }
                 }
             }
+        }
+    }
+}
+
+String getChangelogText() {
+    def changelogFile = file('changelog.txt')
+    String str = ''
+    int lineCount = 0
+    boolean done = false
+    changelogFile.eachLine {
+        if (done || it == null) {
+            return
+        }
+        if (it.size() > 1) {
+            def temp = it
+            if (lineCount == 0) {
+                temp = "${modname} ${version}"
+                temp = "<h2>$temp</h2>"
+            } else if (it.startsWith('-')) {
+                temp = "&nbsp;&nbsp;&nbsp;$temp"
+                temp = temp.replaceAll("(\\S+\\/\\S+)#([0-9]+)\\b", "<a href=\"https://github.com/\$1/issues/\$2\">\$0</a>");
+                temp = temp.replaceAll("#([0-9]+)\\b(?!<\\/a>)", "<a href=\"https://github.com/$github_project/issues/\$1\">\$0</a>");
+            } else {
+                temp = "<h4>$temp</h4>"
+            }
+            str += "$temp<br/>"
+            lineCount++
+            return
+        } else {
+            done = true
+        }
+    }
+    return str
+}
+
+tasks.curseforge.enabled = project.hasProperty('curseforge_key')
+
+curseforge {
+    if (project.hasProperty('curseforge_key')) {
+        apiKey = project.curseforge_key
+    }
+
+    project {
+        id = project.projectId
+        changelog = System.getenv('CHANGELOG') == null || System.getenv('CHANGELOG').equals('none') ? getChangelogText() : System.getenv('CHANGELOG')
+        changelogType = 'html'
+        releaseType = project.curse_type
+        addGameVersion '1.12.2'
+        mainArtifact(jar) {
+            displayName = "${modname} - ${version}"
+        }
+        relations {
+            requiredLibrary 'mcjtylib'
+            optionalLibrary 'the-one-probe'
+            optionalLibrary 'interaction-wheel'
+            optionalLibrary 'redstone-flux'
         }
     }
 }

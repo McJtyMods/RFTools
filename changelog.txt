@@ -1,0 +1,11 @@
+7.50alpha:
+- Made compatible with the latest McJtyLib (3.0.0)
+- A few blocks respect the new ‘tallChunkFriendly’ config in McJtyLib which changes to a less efficient way to encode positions but one that is more friendly towards mods that increase the maximum build height
+- Use the new color selector in McJtyLib where appropriate
+- Fixed a null pointer exception on the modifier item in certain cases (#1723)
+- The technical shield blocks no longer go to the creative tab/JEI
+- New feature to let a shield block light (regardless of how it otherwise looks)
+- Made the RFTools powercell less crashy if someone is trying to insert/extract/examine energy from it client-side. It will return 0 now
+- The sensor can now also detect in an area of 3x3, 5x5, or 7x7 instead of only a row of blocks ahead of it
+- Fixed the crafting grid so that you no longer have to store the recipe for it to work
+- Made usage of fakeplayer more sane which might fix some issues in combination with FTB Utilities
