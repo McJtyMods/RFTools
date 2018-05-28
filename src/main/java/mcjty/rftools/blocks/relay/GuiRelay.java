@@ -12,6 +12,7 @@ import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 
 import java.awt.Rectangle;
 import java.util.HashMap;
@@ -116,12 +117,7 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
         } catch (NumberFormatException e) {
             energy = 0;
         }
-        energy += amount;
-        if (energy < 0) {
-            energy = 0;
-        } else if (energy > 50000) {
-            energy = 50000;
-        }
+        energy = MathHelper.clamp(energy + amount, 0, 50000);
         energyField.setText(Integer.toString(energy));
         changeSettings();
     }
