@@ -1,9 +1,10 @@
 package mcjty.rftools.blocks.relay;
 
+import cofh.redstoneflux.api.IEnergyReceiver;
 import mcjty.lib.McJtyLib;
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.compat.RedstoneFluxCompatibility;
-import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
@@ -26,7 +27,8 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fml.common.Optional;
 
-public class RelayTileEntity extends GenericEnergyReceiverTileEntity implements ITickable, MachineInformation {
+@Optional.Interface(iface="cofh.redstoneflux.api.IEnergyReceiver", modid="redstoneflux")
+public class RelayTileEntity extends GenericEnergyStorageTileEntity implements ITickable, MachineInformation, IEnergyReceiver {
 
     public static final int MAXENERGY = 50000;
     public static final int RECEIVEPERTICK = 50000;
@@ -198,7 +200,7 @@ public class RelayTileEntity extends GenericEnergyReceiverTileEntity implements 
         int side = OrientationTools.reorient(from, state).ordinal();
         if (inputMode[side]) {
             int[] rf = redstoneSignal ? rfOn : rfOff;
-            int actual = super.receiveEnergy(Math.min(maxReceive, rf[side]), simulate);
+            int actual = (int)storage.receiveEnergy(Math.min(maxReceive, rf[side]), simulate);
             if (!simulate) {
                 powerIn += actual;
             }
