@@ -161,25 +161,9 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
             if (rf[side] > 0 && !inputMode[side]) {
                 TileEntity te = getWorld().getTileEntity(getPos().offset(facing));
                 EnumFacing opposite = facing.getOpposite();
-                if (EnergyTools.isEnergyTE(te, opposite) || (te != null && te.hasCapability(CapabilityEnergy.ENERGY, opposite))) {
-                    int rfToGive;
-                    if (rf[side] <= energyStored) {
-                        rfToGive = rf[side];
-                    } else {
-                        rfToGive = energyStored;
-                    }
-                    int received;
-
-                    if (McJtyLib.redstoneflux && RedstoneFluxCompatibility.isEnergyConnection(te)) {
-                        if (RedstoneFluxCompatibility.canConnectEnergy(te, opposite)) {
-                            received = (int) EnergyTools.receiveEnergy(te, opposite, rfToGive);
-                        } else {
-                            received = 0;
-                        }
-                    } else {
-                        // Forge unit
-                        received = (int) EnergyTools.receiveEnergy(te, opposite, rfToGive);
-                    }
+                if (EnergyTools.isEnergyTE(te, opposite)) {
+                    int rfToGive = Math.min(rf[side], energyStored);
+                    int received = (int) EnergyTools.receiveEnergy(te, opposite, rfToGive);
 
                     powerOut += received;
                     energyStored -= storage.extractEnergy(received, false);
