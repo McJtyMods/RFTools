@@ -804,71 +804,81 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
         return super.getCapability(capability, facing);
     }
 
+    private class SidedHandler implements IEnergyStorage {
+        private final EnumFacing facing;
+
+        private SidedHandler(EnumFacing facing) {
+            this.facing = facing;
+        }
+
+        @Override
+        public int receiveEnergy(int maxReceive, boolean simulate) {
+            return PowerCellTileEntity.this.receiveEnergyFacing(facing, maxReceive, simulate);
+        }
+
+        @Override
+        public int extractEnergy(int maxExtract, boolean simulate) {
+            return 0;
+        }
+
+        @Override
+        public int getEnergyStored() {
+            return PowerCellTileEntity.this.getEnergyStored();
+        }
+
+        @Override
+        public int getMaxEnergyStored() {
+            return PowerCellTileEntity.this.getMaxEnergyStored();
+        }
+
+        @Override
+        public boolean canExtract() {
+            return false;
+        }
+
+        @Override
+        public boolean canReceive() {
+            return true;
+        }
+    }
+
     private void createSidedHandler(EnumFacing facing) {
-        sidedHandlers[facing.ordinal()] = new IEnergyStorage() {
-            @Override
-            public int receiveEnergy(int maxReceive, boolean simulate) {
-                return PowerCellTileEntity.this.receiveEnergyFacing(facing, maxReceive, simulate);
-            }
+        sidedHandlers[facing.ordinal()] = new SidedHandler(facing);
+    }
 
-            @Override
-            public int extractEnergy(int maxExtract, boolean simulate) {
-                return 0;
-            }
+    private class NullHandler implements IEnergyStorage {
+        @Override
+        public int receiveEnergy(int maxReceive, boolean simulate) {
+            return 0;
+        }
 
-            @Override
-            public int getEnergyStored() {
-                return PowerCellTileEntity.this.getEnergyStored();
-            }
+        @Override
+        public int extractEnergy(int maxExtract, boolean simulate) {
+            return 0;
+        }
 
-            @Override
-            public int getMaxEnergyStored() {
-                return PowerCellTileEntity.this.getMaxEnergyStored();
-            }
+        @Override
+        public int getEnergyStored() {
+            return PowerCellTileEntity.this.getEnergyStored();
+        }
 
-            @Override
-            public boolean canExtract() {
-                return false;
-            }
+        @Override
+        public int getMaxEnergyStored() {
+            return PowerCellTileEntity.this.getMaxEnergyStored();
+        }
 
-            @Override
-            public boolean canReceive() {
-                return true;
-            }
-        };
+        @Override
+        public boolean canExtract() {
+            return false;
+        }
+
+        @Override
+        public boolean canReceive() {
+            return false;
+        }
     }
 
     private void createNullHandler() {
-        nullHandler = new IEnergyStorage() {
-            @Override
-            public int receiveEnergy(int maxReceive, boolean simulate) {
-                return 0;
-            }
-
-            @Override
-            public int extractEnergy(int maxExtract, boolean simulate) {
-                return 0;
-            }
-
-            @Override
-            public int getEnergyStored() {
-                return PowerCellTileEntity.this.getEnergyStored();
-            }
-
-            @Override
-            public int getMaxEnergyStored() {
-                return PowerCellTileEntity.this.getMaxEnergyStored();
-            }
-
-            @Override
-            public boolean canExtract() {
-                return false;
-            }
-
-            @Override
-            public boolean canReceive() {
-                return false;
-            }
-        };
+        nullHandler = new NullHandler();
     }
 }
