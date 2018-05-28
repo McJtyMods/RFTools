@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.powercell;
 
-import cofh.redstoneflux.api.IEnergyProvider;
 import cofh.redstoneflux.api.IEnergyReceiver;
 import mcjty.lib.McJtyLib;
 import mcjty.lib.api.MachineInformation;
@@ -43,11 +42,8 @@ import java.util.Set;
 import static mcjty.rftools.blocks.powercell.PowerCellConfiguration.advancedFactor;
 import static mcjty.rftools.blocks.powercell.PowerCellConfiguration.simpleFactor;
 
-@Optional.InterfaceList({
-        @Optional.Interface(iface = "cofh.redstoneflux.api.IEnergyProvider", modid = "redstoneflux"),
-        @Optional.Interface(iface = "cofh.redstoneflux.api.IEnergyReceiver", modid = "redstoneflux")
-})
-public class PowerCellTileEntity extends GenericTileEntity implements IEnergyProvider, IEnergyReceiver,
+@Optional.Interface(iface = "cofh.redstoneflux.api.IEnergyReceiver", modid = "redstoneflux")
+public class PowerCellTileEntity extends GenericTileEntity implements IEnergyReceiver,
         DefaultSidedInventory, ITickable, SmartWrenchSelector, MachineInformation {
 
     public static final String CMD_GET_INFO = "getInfo";
@@ -538,13 +534,6 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyPro
             }
         }
         return isCreative() ? maxReceive : maxInsert;
-    }
-
-    @Optional.Method(modid = "redstoneflux")
-    @Override
-    public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
-        return 0;
-//        return extractEnergyInternal(maxExtract, simulate, PowerCellConfiguration.rfPerTick * getAdvancedFactor());
     }
 
     private int extractEnergyInternal(int maxExtract, boolean simulate, int maximum) {
