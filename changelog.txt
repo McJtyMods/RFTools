@@ -9,3 +9,4 @@
 - The sensor can now also detect in an area of 3x3, 5x5, or 7x7 instead of only a row of blocks ahead of it
 - Fixed the crafting grid so that you no longer have to store the recipe for it to work
 - Made usage of fakeplayer more sane which might fix some issues in combination with FTB Utilities
+- Added support for (E) exa, (Z) zetta, and (Y) yotta (to complete the list of kilo, mega, giga, tera, and peta) for the screen modules (in case there is a HUGE amount of power)
