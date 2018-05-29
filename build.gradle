@@ -100,7 +100,7 @@ dependencies {
     deobfCompile "com.github.mcjty:intwheel:${intwheel_version}"
     if (!project.hasProperty("singleproject")) {
         deobfCompile "com.github.mcjty:mcjtylib:${mcjtylib_version}"
-        deobfCompile "com.github.mcjty:xnet:1.12-1.7.0-alpha"
+        deobfCompile "com.github.mcjty:xnet:1.12-1.6.7"
     } else {
 	compile project(':McJtyLib')
 	compile project(':XNet')
