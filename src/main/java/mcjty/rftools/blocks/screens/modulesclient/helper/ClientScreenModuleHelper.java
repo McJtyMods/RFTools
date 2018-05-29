@@ -139,7 +139,7 @@ public class ClientScreenModuleHelper implements IModuleRenderHelper {
                     return in;
                 }
                 int exp = (int) (Math.log(contents) / Math.log(unit));
-                char pre = "KMGTP".charAt(exp-1);
+                char pre = "KMGTPEZY".charAt(exp-1);
                 return String.format("%.1f %s", contents / Math.pow(unit, exp), pre);
             }
             case MODE_COMMAS:
