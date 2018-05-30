@@ -32,14 +32,11 @@ public class BlockProtectors extends AbstractWorldData<BlockProtectors> {
     }
 
     public static Collection<GlobalCoordinate> getProtectors(World world, int x, int y, int z) {
-        Collection<GlobalCoordinate> protectors;
-        BlockProtectors blockProtectors = getProtectors(world);
-        if (blockProtectors == null) {
-            protectors = Collections.emptyList();
-        } else {
-            protectors = blockProtectors.findProtectors(x, y, z, world.provider.getDimension(), 2);
+        if (world.isRemote) {
+            return Collections.emptyList();
         }
-        return protectors;
+        BlockProtectors blockProtectors = getProtectors(world);
+        return blockProtectors.findProtectors(x, y, z, world.provider.getDimension(), 2);
     }
 
     public static boolean checkHarvestProtection(int x, int y, int z, IBlockAccess world, Collection<GlobalCoordinate> protectors) {
