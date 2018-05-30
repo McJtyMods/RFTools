@@ -109,7 +109,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     public void update() {
         if (!getWorld().isRemote) {
             if (progress != null) {
-                if (getEnergyStored() >= getEnergyPerTick()) {
+                if (getStoredPower() >= getEnergyPerTick()) {
                     consumeEnergy(getEnergyPerTick());
                     int done = 0;
                     while (progress != null && done < ScannerConfiguration.surfaceAreaPerTick) {
@@ -123,7 +123,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         }
     }
 
-    protected int getEnergyPerTick() {
+    protected long getEnergyPerTick() {
         return ScannerConfiguration.SCANNER_PERTICK;
     }
 

@@ -5,10 +5,10 @@ import net.minecraftforge.common.config.Configuration;
 public class ScannerConfiguration {
     public static final String CATEGORY_SCANNER = "scanner";
 
-    public static int SCANNER_MAXENERGY = 500000;
-    public static int SCANNER_RECEIVEPERTICK = 20000;
-    public static int SCANNER_PERTICK = 1000;
-    public static int REMOTE_SCANNER_PERTICK = 2000;
+    public static long SCANNER_MAXENERGY = 500000;
+    public static long SCANNER_RECEIVEPERTICK = 20000;
+    public static long SCANNER_PERTICK = 1000;
+    public static long REMOTE_SCANNER_PERTICK = 2000;
 
     public static int LOCATOR_MAXENERGY = 2000000;
     public static int LOCATOR_RECEIVEPERTICK = 20000;
@@ -46,13 +46,13 @@ public class ScannerConfiguration {
 
     public static void init(Configuration cfg) {
         SCANNER_MAXENERGY = cfg.get(CATEGORY_SCANNER, "scannerMaxRF", SCANNER_MAXENERGY,
-                "Maximum RF storage that the scanner can hold").getInt();
+                "Maximum RF storage that the scanner can hold").getLong();
         SCANNER_RECEIVEPERTICK = cfg.get(CATEGORY_SCANNER, "scannerRFPerTick", SCANNER_RECEIVEPERTICK,
-                "RF per tick that the scanner can receive").getInt();
+                "RF per tick that the scanner can receive").getLong();
         SCANNER_PERTICK = cfg.get(CATEGORY_SCANNER, "scannerUsePerTick", SCANNER_PERTICK,
-                "Amount of RF needed per tick during the scan").getInt();
+                "Amount of RF needed per tick during the scan").getLong();
         REMOTE_SCANNER_PERTICK = cfg.get(CATEGORY_SCANNER, "remoteScannerUsePerTick", REMOTE_SCANNER_PERTICK,
-                "Amount of RF needed per tick during the scan for a remote scanner").getInt();
+                "Amount of RF needed per tick during the scan for a remote scanner").getLong();
         LOCATOR_MAXENERGY = cfg.get(CATEGORY_SCANNER, "locatorMaxRF", LOCATOR_MAXENERGY,
                 "Maximum RF storage that the locator can hold").getInt();
         LOCATOR_RECEIVEPERTICK = cfg.get(CATEGORY_SCANNER, "locatorRFPerTick", LOCATOR_RECEIVEPERTICK,
