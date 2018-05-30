@@ -92,7 +92,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     public static final int SIZE_HUGE = 2;
 
     // Cached server screen modules
-    private List<IScreenModule> screenModules = null;
+    private List<IScreenModule<?>> screenModules = null;
     private List<ActivatedModule> clickedModules = new ArrayList<>();
 
     private static class ActivatedModule {
@@ -169,7 +169,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
             if (cm.ticks > 0) {
                 newClickedModules.add(cm);
             } else {
-                List<IScreenModule> modules = getScreenModules();
+                List<IScreenModule<?>> modules = getScreenModules();
                 if (cm.module < modules.size()) {
                     ItemStack itemStack = inventoryHelper.getStackInSlot(cm.module);
                     IScreenModule<?> module = modules.get(cm.module);
@@ -397,7 +397,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     }
 
     private void hitScreenServer(EntityPlayer player, int x, int y, int module) {
-        List<IScreenModule> screenModules = getScreenModules();
+        List<IScreenModule<?>> screenModules = getScreenModules();
         IScreenModule<?> screenModule = screenModules.get(module);
         if (screenModule != null) {
             ItemStack itemStack = inventoryHelper.getStackInSlot(module);
@@ -664,7 +664,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     }
 
     // This is called server side.
-    public List<IScreenModule> getScreenModules() {
+    public List<IScreenModule<?>> getScreenModules() {
         if (screenModules == null) {
             totalRfPerTick = 0;
             controllerNeededInCreative = false;
@@ -738,7 +738,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     // This is called server side.
     public Map<Integer, IModuleData> getScreenData(long millis) {
         Map<Integer, IModuleData> map = new HashMap<>();
-        List<IScreenModule> screenModules = getScreenModules();
+        List<IScreenModule<?>> screenModules = getScreenModules();
         int moduleIndex = 0;
         for (IScreenModule<?> module : screenModules) {
             if (module != null) {

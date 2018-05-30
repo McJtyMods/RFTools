@@ -128,7 +128,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
                     probeInfo.text(TextFormatting.GREEN + (power ? "Consuming " : "Needs ") + rfPerTick + " RF/tick");
                 }
             }
-            IScreenModule module = screenTileEntity.getHoveringModule();
+            IScreenModule<?> module = screenTileEntity.getHoveringModule();
             if (module instanceof ITooltipInfo) {
                 List<String> info = ((ITooltipInfo) module).getInfo(world, screenTileEntity.getHoveringX(), screenTileEntity.getHoveringY());
                 for (String s : info) {

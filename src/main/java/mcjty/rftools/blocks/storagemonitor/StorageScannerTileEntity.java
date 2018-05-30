@@ -76,7 +76,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     public static boolean exportToCurrentReceived = false;
 
     @Override
-    public IAction[] getActions() {
+    public IAction<?>[] getActions() {
         return new IAction[] {
                 new DefaultAction<>(ACTION_CLEARGRID, StorageScannerTileEntity::clearGrid),
         };

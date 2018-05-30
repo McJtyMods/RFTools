@@ -199,7 +199,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public static final Key<Boolean> VALUE_ENTITIES = new Key<>("entities", Type.BOOLEAN);
 
     @Override
-    public IValue[] getValues() {
+    public IValue<?, ?>[] getValues() {
         return new IValue[] {
                 new DefaultValue<>(VALUE_RSMODE, BuilderTileEntity::getRSModeInt, BuilderTileEntity::setRSModeInt),
                 new DefaultValue<>(VALUE_WAIT, BuilderTileEntity::isWaitMode, BuilderTileEntity::setWaitMode),
