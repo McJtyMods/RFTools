@@ -60,7 +60,7 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
     public static final Key<BlockPos> VALUE_DESTINATION = new Key<>("destination", Type.BLOCKPOS);
 
     @Override
-    public IValue[] getValues() {
+    public IValue<?, ?>[] getValues() {
         return new IValue[] {
                 new DefaultValue<>(VALUE_DESTINATION, EndergenicTileEntity::getDestination, EndergenicTileEntity::setDestination)
         };

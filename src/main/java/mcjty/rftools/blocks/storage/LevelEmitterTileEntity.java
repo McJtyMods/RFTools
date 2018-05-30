@@ -29,7 +29,7 @@ public class LevelEmitterTileEntity extends LogicTileEntity implements DefaultSi
     public static final Key<Boolean> VALUE_STARRED = new Key<>("starred", Type.BOOLEAN);
 
     @Override
-    public IValue[] getValues() {
+    public IValue<?, ?>[] getValues() {
         return new IValue[] {
                 new DefaultValue<>(VALUE_AMOUNT, LevelEmitterTileEntity::getAmount, LevelEmitterTileEntity::setAmount),
                 new DefaultValue<>(VALUE_OREDICT, LevelEmitterTileEntity::isOreDict, LevelEmitterTileEntity::setOreDict),

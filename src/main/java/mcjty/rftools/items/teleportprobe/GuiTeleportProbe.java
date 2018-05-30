@@ -55,7 +55,7 @@ public class GuiTeleportProbe extends GuiScreen {
 
         list = new WidgetList(mc, this).setName("list").addSelectionEvent(new DefaultSelectionEvent() {
             @Override
-            public void doubleClick(Widget parent, int index) {
+            public void doubleClick(Widget<?> parent, int index) {
                 teleport(index);
             }
         });

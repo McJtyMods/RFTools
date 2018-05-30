@@ -233,7 +233,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
         row.add(blockRender);
         blockRender.addSelectionEvent(new BlockRenderEvent() {
             @Override
-            public void select(Widget widget) {
+            public void select(Widget<?> widget) {
                 ItemStack holding = Minecraft.getMinecraft().player.inventory.getItemStack();
                 if (holding.isEmpty()) {
                     currentData.removeTag(tagname);
@@ -250,7 +250,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
             }
 
             @Override
-            public void doubleClick(Widget widget) {
+            public void doubleClick(Widget<?> widget) {
 
             }
         });

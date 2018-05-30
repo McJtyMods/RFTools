@@ -138,12 +138,12 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
     private Panel setupReceiverPanel() {
         receiverList = new WidgetList(mc, this).setName("receivers").setRowheight(14).setDesiredHeight(100).setPropagateEventsToChildren(true).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
-            public void select(Widget parent, int index) {
+            public void select(Widget<?> parent, int index) {
                 clearSelectedStatus();
             }
 
             @Override
-            public void doubleClick(Widget parent, int index) {
+            public void doubleClick(Widget<?> parent, int index) {
                 hilightSelectedReceiver(index);
             }
         });
@@ -155,13 +155,13 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
     private Panel setupTransmitterPanel() {
         transmitterList = new WidgetList(mc, this).setName("transmitters").setRowheight(18).setDesiredHeight(58).addSelectionEvent(new DefaultSelectionEvent() {
             @Override
-            public void select(Widget parent, int index) {
+            public void select(Widget<?> parent, int index) {
                 clearSelectedStatus();
                 selectReceiverFromTransmitter();
             }
 
             @Override
-            public void doubleClick(Widget parent, int index) {
+            public void doubleClick(Widget<?> parent, int index) {
                 hilightSelectedTransmitter(index);
             }
         });

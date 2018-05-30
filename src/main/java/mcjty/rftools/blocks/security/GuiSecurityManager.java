@@ -57,10 +57,10 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
 
         nameField = new TextField(mc, this).setDesiredHeight(15).setName("name")
             .setEnabledFlags("card");
-        Widget addButton = new Button(mc, this).setText("Add").setDesiredHeight(14).setDesiredWidth(34).setTooltips("Add a player to the access list")
+        Widget<?> addButton = new Button(mc, this).setText("Add").setDesiredHeight(14).setDesiredWidth(34).setTooltips("Add a player to the access list")
                 .setEnabledFlags("card")
                 .setName("addbutton").setChannel("addbutton");
-        Widget delButton = new Button(mc, this).setText("Del").setDesiredHeight(14).setDesiredWidth(34).setTooltips("Remove the selected player", "from the access list")
+        Widget<?> delButton = new Button(mc, this).setText("Del").setDesiredHeight(14).setDesiredWidth(34).setTooltips("Remove the selected player", "from the access list")
                 .setEnabledFlags("card")
                 .setName("delbutton").setChannel("delbutton");
         Panel buttonPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(3).setSpacing(1)).addChildren(nameField, addButton, delButton).setDesiredHeight(16)

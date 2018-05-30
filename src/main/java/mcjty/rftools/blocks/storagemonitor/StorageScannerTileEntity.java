@@ -83,7 +83,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     @Override
-    public IValue[] getValues() {
+    public IValue<?, ?>[] getValues() {
         return new IValue[] {
                 new DefaultValue<>(VALUE_EXPORT, StorageScannerTileEntity::isExportToCurrent, StorageScannerTileEntity::setExportToCurrent),
                 new DefaultValue<>(VALUE_RADIUS, StorageScannerTileEntity::getRadius, StorageScannerTileEntity::setRadius),

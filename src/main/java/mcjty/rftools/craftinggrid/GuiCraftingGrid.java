@@ -63,11 +63,11 @@ public class GuiCraftingGrid {
         recipeList = new WidgetList(mc, gui).setLayoutHint(5, 5, 56, 102);
         recipeList.addSelectionEvent(new DefaultSelectionEvent() {
             @Override
-            public void select(Widget parent, int index) {
+            public void select(Widget<?> parent, int index) {
             }
 
             @Override
-            public void doubleClick(Widget parent, int index) {
+            public void doubleClick(Widget<?> parent, int index) {
                 selectRecipe();
             }
         });

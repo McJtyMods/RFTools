@@ -50,7 +50,7 @@ public class GuiLiquidMonitor extends GenericGuiContainer<LiquidMonitorBlockTile
 
         list = new WidgetList(mc, this).setName("list").addSelectionEvent(new DefaultSelectionEvent() {
             @Override
-            public void select(Widget parent, int index) {
+            public void select(Widget<?> parent, int index) {
                 setSelectedBlock(index);
             }
         });

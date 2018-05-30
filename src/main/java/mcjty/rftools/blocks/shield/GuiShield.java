@@ -107,7 +107,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
         filterList = new WidgetList(mc, this).setName("filters").setDesiredHeight(120).
                 addSelectionEvent(new DefaultSelectionEvent() {
                     @Override
-                    public void select(Widget parent, int index) {
+                    public void select(Widget<?> parent, int index) {
                         selectFilter();
                     }
                 });
