@@ -237,12 +237,12 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
     private void updateRs() {
         TypedMap.Builder builder = TypedMap.builder();
         for (int i = 0 ; i < 4 ; i++) {
-            builder.put(ProjectorTileEntity.PARAM_OPON[i], rsLabelOn[i].getCurrentChoice());
-            builder.put(ProjectorTileEntity.PARAM_OPOFF[i], rsLabelOff[i].getCurrentChoice());
+            builder.put(ProjectorTileEntity.PARAM_OPON.get(i), rsLabelOn[i].getCurrentChoice());
+            builder.put(ProjectorTileEntity.PARAM_OPOFF.get(i), rsLabelOff[i].getCurrentChoice());
             String text = valOn[i].getText();
             if (!text.trim().isEmpty()) {
                 try {
-                    builder.put(ProjectorTileEntity.PARAM_VALON[i], Double.parseDouble(text));
+                    builder.put(ProjectorTileEntity.PARAM_VALON.get(i), Double.parseDouble(text));
                 } catch (NumberFormatException e) {
                     // Ignore
                 }
@@ -250,7 +250,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
             text = valOff[i].getText();
             if (!text.trim().isEmpty()) {
                 try {
-                    builder.put(ProjectorTileEntity.PARAM_VALOFF[i], Double.parseDouble(text));
+                    builder.put(ProjectorTileEntity.PARAM_VALOFF.get(i), Double.parseDouble(text));
                 } catch (NumberFormatException e) {
                     // Ignore
                 }

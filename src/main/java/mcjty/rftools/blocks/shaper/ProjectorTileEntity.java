@@ -31,6 +31,9 @@ import javax.annotation.Nullable;
 
 import static net.minecraft.util.EnumFacing.*;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable {
 
     public static final String CMD_RSSETTINGS = "projector.rsSettings";
@@ -39,25 +42,25 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
     public static final Key<String> PARAM_OPON_S = new Key<>("opOn_s", Type.STRING);
     public static final Key<String> PARAM_OPON_W = new Key<>("opOn_w", Type.STRING);
     public static final Key<String> PARAM_OPON_E = new Key<>("opOn_e", Type.STRING);
-    public static final Key<String>[] PARAM_OPON = new Key[] { PARAM_OPON_N, PARAM_OPON_S, PARAM_OPON_W, PARAM_OPON_E };
+    public static final List<Key<String>> PARAM_OPON = Arrays.asList(PARAM_OPON_N, PARAM_OPON_S, PARAM_OPON_W, PARAM_OPON_E);
 
     public static final Key<String> PARAM_OPOFF_N = new Key<>("opOff_n", Type.STRING);
     public static final Key<String> PARAM_OPOFF_S = new Key<>("opOff_s", Type.STRING);
     public static final Key<String> PARAM_OPOFF_W = new Key<>("opOff_w", Type.STRING);
     public static final Key<String> PARAM_OPOFF_E = new Key<>("opOff_e", Type.STRING);
-    public static final Key<String>[] PARAM_OPOFF = new Key[] { PARAM_OPOFF_N, PARAM_OPOFF_S, PARAM_OPOFF_W, PARAM_OPOFF_E };
+    public static final List<Key<String>> PARAM_OPOFF = Arrays.asList(PARAM_OPOFF_N, PARAM_OPOFF_S, PARAM_OPOFF_W, PARAM_OPOFF_E);
 
     public static final Key<Double> PARAM_VALON_N = new Key<>("valOn_n", Type.DOUBLE);
     public static final Key<Double> PARAM_VALON_S = new Key<>("valOn_s", Type.DOUBLE);
     public static final Key<Double> PARAM_VALON_W = new Key<>("valOn_w", Type.DOUBLE);
     public static final Key<Double> PARAM_VALON_E = new Key<>("valOn_e", Type.DOUBLE);
-    public static final Key<Double>[] PARAM_VALON = new Key[] { PARAM_VALON_N, PARAM_VALON_S, PARAM_VALON_W, PARAM_VALON_E };
+    public static final List<Key<Double>> PARAM_VALON = Arrays.asList(PARAM_VALON_N, PARAM_VALON_S, PARAM_VALON_W, PARAM_VALON_E);
 
     public static final Key<Double> PARAM_VALOFF_N = new Key<>("valOff_n", Type.DOUBLE);
     public static final Key<Double> PARAM_VALOFF_S = new Key<>("valOff_s", Type.DOUBLE);
     public static final Key<Double> PARAM_VALOFF_W = new Key<>("valOff_w", Type.DOUBLE);
     public static final Key<Double> PARAM_VALOFF_E = new Key<>("valOff_e", Type.DOUBLE);
-    public static final Key<Double>[] PARAM_VALOFF = new Key[] { PARAM_VALOFF_N, PARAM_VALOFF_S, PARAM_VALOFF_W, PARAM_VALOFF_E };
+    public static final List<Key<Double>> PARAM_VALOFF = Arrays.asList(PARAM_VALOFF_N, PARAM_VALOFF_S, PARAM_VALOFF_W, PARAM_VALOFF_E);
 
     public static final String CMD_SETTINGS = "projector.settings";
 
@@ -513,10 +516,10 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
         if (CMD_RSSETTINGS.equals(command)) {
             for (EnumFacing facing : EnumFacing.HORIZONTALS) {
                 int idx = facing.ordinal()-2;
-                String opOn = params.get(PARAM_OPON[idx]);
-                String opOff = params.get(PARAM_OPOFF[idx]);
-                Double valOn = params.get(PARAM_VALON[idx]);
-                Double valOff = params.get(PARAM_VALOFF[idx]);
+                String opOn = params.get(PARAM_OPON.get(idx));
+                String opOff = params.get(PARAM_OPOFF.get(idx));
+                Double valOn = params.get(PARAM_VALON.get(idx));
+                Double valOff = params.get(PARAM_VALOFF.get(idx));
                 operations[idx].setOpcodeOn(ProjectorOpcode.getByCode(opOn));
                 operations[idx].setOpcodeOff(ProjectorOpcode.getByCode(opOff));
                 operations[idx].setValueOn(valOn);
