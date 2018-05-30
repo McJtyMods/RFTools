@@ -328,25 +328,14 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyRec
                 BlockPos pos = getPos().offset(face);
                 TileEntity te = getWorld().getTileEntity(pos);
                 EnumFacing opposite = face.getOpposite();
-                if (EnergyTools.isEnergyTE(te, opposite) || (te != null && te.hasCapability(CapabilityEnergy.ENERGY, opposite))) {
+                if (EnergyTools.isEnergyTE(te, opposite)) {
                     // If the adjacent block is also a powercell then we only send energy if this cell is local or the other cell has a different id
                     if ((!(te instanceof PowerCellTileEntity)) || getNetworkId() == -1 || ((PowerCellTileEntity) te).getNetworkId() != getNetworkId()) {
                         float factor = getCostFactor();
                         int rfPerTick = getRfPerTickPerSide();
-                        int received;
-
                         int rfToGive = Math.min(rfPerTick, (int) (energyStored / factor));
 
-                        if (McJtyLib.redstoneflux && RedstoneFluxCompatibility.isEnergyConnection(te)) {
-                            if (RedstoneFluxCompatibility.canConnectEnergy(te, opposite)) {
-                                received = (int) EnergyTools.receiveEnergy(te, opposite, rfToGive);
-                            } else {
-                                received = 0;
-                            }
-                        } else {
-                            // Forge unit
-                            received = (int) EnergyTools.receiveEnergy(te, opposite, rfToGive);
-                        }
+                        int received = (int) EnergyTools.receiveEnergy(te, opposite, rfToGive);
 
                         energyStored -= extractEnergyInternal(received, false, Integer.MAX_VALUE);
                         if (energyStored <= 0) {
