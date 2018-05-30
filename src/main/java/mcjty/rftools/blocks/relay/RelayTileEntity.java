@@ -281,7 +281,7 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == EnergyTools.TESLA_CONSUMER) { // no need to test for CapabilityEnergy.ENERGY or TESLA_HOLDER, as super already does this
+        if (capability == EnergyTools.TESLA_CONSUMER) { // no need to test for CapabilityEnergy.ENERGY, as super already does this
             return true;
         }
         return super.hasCapability(capability, facing);
@@ -289,7 +289,7 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityEnergy.ENERGY || capability == EnergyTools.TESLA_CONSUMER || capability == EnergyTools.TESLA_HOLDER) {
+        if (capability == CapabilityEnergy.ENERGY || capability == EnergyTools.TESLA_CONSUMER) {
             if (facing == null) {
                 if (nullStorage == null) {
                     nullStorage = new RelayEnergyStorage(this, null);
