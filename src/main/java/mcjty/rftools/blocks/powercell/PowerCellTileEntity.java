@@ -1,12 +1,10 @@
 package mcjty.rftools.blocks.powercell;
 
 import cofh.redstoneflux.api.IEnergyReceiver;
-import mcjty.lib.McJtyLib;
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.api.smartwrench.SmartWrenchSelector;
 import mcjty.lib.bindings.DefaultAction;
 import mcjty.lib.bindings.IAction;
-import mcjty.lib.compat.RedstoneFluxCompatibility;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.tileentity.GenericTileEntity;
