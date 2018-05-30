@@ -240,12 +240,12 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     private Panel makeStoragePanel(Panel energyPanel) {
         storageList = new WidgetList(mc, this).setName("storage").addSelectionEvent(new DefaultSelectionEvent() {
             @Override
-            public void select(Widget parent, int index) {
+            public void select(Widget<?> parent, int index) {
                 getInventoryOnServer();
             }
 
             @Override
-            public void doubleClick(Widget parent, int index) {
+            public void doubleClick(Widget<?> parent, int index) {
                 hilightSelectedContainer(index);
             }
         }).setPropagateEventsToChildren(true);
@@ -441,7 +441,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 .setHilightOnHover(true);
         blockRender.addSelectionEvent(new BlockRenderEvent() {
             @Override
-            public void select(Widget widget) {
+            public void select(Widget<?> widget) {
                 BlockRender br = (BlockRender) widget;
                 Object item = br.getRenderItem();
                 if (item != null) {
@@ -451,7 +451,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
             }
 
             @Override
-            public void doubleClick(Widget widget) {
+            public void doubleClick(Widget<?> widget) {
             }
         });
         panel.addChild(blockRender);

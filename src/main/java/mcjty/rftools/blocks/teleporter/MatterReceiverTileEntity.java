@@ -38,7 +38,7 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
     public static final Key<Boolean> VALUE_PRIVATE = new Key<>("private", Type.BOOLEAN);
 
     @Override
-    public IValue[] getValues() {
+    public IValue<?, ?>[] getValues() {
         return new IValue[] {
                 new DefaultValue<>(VALUE_NAME, MatterReceiverTileEntity::getName, MatterReceiverTileEntity::setName),
                 new DefaultValue<>(VALUE_PRIVATE, MatterReceiverTileEntity::isPrivateAccess, MatterReceiverTileEntity::setPrivateAccess),

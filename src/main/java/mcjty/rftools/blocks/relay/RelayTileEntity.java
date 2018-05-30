@@ -1,5 +1,8 @@
 package mcjty.rftools.blocks.relay;
 
+import java.util.Arrays;
+import java.util.List;
+
 import cofh.redstoneflux.api.IEnergyReceiver;
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
@@ -39,7 +42,7 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
     public static final Key<Boolean> PARAM_INPUTON_S = new Key<>("inputOnS", Type.BOOLEAN);
     public static final Key<Boolean> PARAM_INPUTON_W = new Key<>("inputOnW", Type.BOOLEAN);
     public static final Key<Boolean> PARAM_INPUTON_E = new Key<>("inputOnE", Type.BOOLEAN);
-    public static final Key<Boolean>[] PARAM_INPUTON = new Key[] { PARAM_INPUTON_D, PARAM_INPUTON_U, PARAM_INPUTON_N, PARAM_INPUTON_S, PARAM_INPUTON_W, PARAM_INPUTON_E };
+    public static final List<Key<Boolean>> PARAM_INPUTON = Arrays.asList(PARAM_INPUTON_D, PARAM_INPUTON_U, PARAM_INPUTON_N, PARAM_INPUTON_S, PARAM_INPUTON_W, PARAM_INPUTON_E);
 
     public static final Key<Boolean> PARAM_INPUTOFF_D = new Key<>("inputOffD", Type.BOOLEAN);
     public static final Key<Boolean> PARAM_INPUTOFF_U = new Key<>("inputOffU", Type.BOOLEAN);
@@ -47,7 +50,7 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
     public static final Key<Boolean> PARAM_INPUTOFF_S = new Key<>("inputOffS", Type.BOOLEAN);
     public static final Key<Boolean> PARAM_INPUTOFF_W = new Key<>("inputOffW", Type.BOOLEAN);
     public static final Key<Boolean> PARAM_INPUTOFF_E = new Key<>("inputOffE", Type.BOOLEAN);
-    public static final Key<Boolean>[] PARAM_INPUTOFF = new Key[] { PARAM_INPUTOFF_D, PARAM_INPUTOFF_U, PARAM_INPUTOFF_N, PARAM_INPUTOFF_S, PARAM_INPUTOFF_W, PARAM_INPUTOFF_E };
+    public static final List<Key<Boolean>> PARAM_INPUTOFF = Arrays.asList(PARAM_INPUTOFF_D, PARAM_INPUTOFF_U, PARAM_INPUTOFF_N, PARAM_INPUTOFF_S, PARAM_INPUTOFF_W, PARAM_INPUTOFF_E);
 
     public static final Key<Integer> PARAM_RFON_D = new Key<>("rfOnD", Type.INTEGER);
     public static final Key<Integer> PARAM_RFON_U = new Key<>("rfOnU", Type.INTEGER);
@@ -55,7 +58,7 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
     public static final Key<Integer> PARAM_RFON_S = new Key<>("rfOnS", Type.INTEGER);
     public static final Key<Integer> PARAM_RFON_W = new Key<>("rfOnW", Type.INTEGER);
     public static final Key<Integer> PARAM_RFON_E = new Key<>("rfOnE", Type.INTEGER);
-    public static final Key<Integer>[] PARAM_RFON = new Key[] { PARAM_RFON_D, PARAM_RFON_U, PARAM_RFON_N, PARAM_RFON_S, PARAM_RFON_W, PARAM_RFON_E };
+    public static final List<Key<Integer>> PARAM_RFON = Arrays.asList(PARAM_RFON_D, PARAM_RFON_U, PARAM_RFON_N, PARAM_RFON_S, PARAM_RFON_W, PARAM_RFON_E);
 
     public static final Key<Integer> PARAM_RFOFF_D = new Key<>("rfOffD", Type.INTEGER);
     public static final Key<Integer> PARAM_RFOFF_U = new Key<>("rfOffU", Type.INTEGER);
@@ -63,7 +66,7 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
     public static final Key<Integer> PARAM_RFOFF_S = new Key<>("rfOffS", Type.INTEGER);
     public static final Key<Integer> PARAM_RFOFF_W = new Key<>("rfOffW", Type.INTEGER);
     public static final Key<Integer> PARAM_RFOFF_E = new Key<>("rfOffE", Type.INTEGER);
-    public static final Key<Integer>[] PARAM_RFOFF = new Key[] { PARAM_RFOFF_D, PARAM_RFOFF_U, PARAM_RFOFF_N, PARAM_RFOFF_S, PARAM_RFOFF_W, PARAM_RFOFF_E };
+    public static final List<Key<Integer>> PARAM_RFOFF = Arrays.asList(PARAM_RFOFF_D, PARAM_RFOFF_U, PARAM_RFOFF_N, PARAM_RFOFF_S, PARAM_RFOFF_W, PARAM_RFOFF_E);
 
     public static final PropertyBool ENABLED = PropertyBool.create("enabled");
 
@@ -262,10 +265,10 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
         if (CMD_SETTINGS.equals(command)) {
             for (int i = 0 ; i < 6 ; i++) {
                 char prefix = DUNSWE.charAt(i);
-                inputModeOn[i] = params.get(PARAM_INPUTON[i]);
-                inputModeOff[i] = params.get(PARAM_INPUTOFF[i]);
-                rfOn[i] = params.get(PARAM_RFON[i]);
-                rfOff[i] = params.get(PARAM_RFOFF[i]);
+                inputModeOn[i] = params.get(PARAM_INPUTON.get(i));
+                inputModeOff[i] = params.get(PARAM_INPUTOFF.get(i));
+                rfOn[i] = params.get(PARAM_RFON.get(i));
+                rfOff[i] = params.get(PARAM_RFOFF.get(i));
             }
             markDirtyClient();
             return true;
@@ -278,7 +281,7 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == EnergyTools.TESLA_CONSUMER) { // no need to test for CapabilityEnergy.ENERGY or TESLA_HOLDER, as super already does this
+        if (capability == EnergyTools.TESLA_CONSUMER) { // no need to test for CapabilityEnergy.ENERGY, as super already does this
             return true;
         }
         return super.hasCapability(capability, facing);
@@ -286,7 +289,7 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityEnergy.ENERGY || capability == EnergyTools.TESLA_CONSUMER || capability == EnergyTools.TESLA_HOLDER) {
+        if (capability == CapabilityEnergy.ENERGY || capability == EnergyTools.TESLA_CONSUMER) {
             if (facing == null) {
                 if (nullStorage == null) {
                     nullStorage = new RelayEnergyStorage(this, null);

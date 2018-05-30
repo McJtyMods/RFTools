@@ -9,7 +9,7 @@ public class RemoteScannerTileEntity extends ScannerTileEntity {
 
 
     @Override
-    protected int getEnergyPerTick() {
+    protected long getEnergyPerTick() {
         return ScannerConfiguration.REMOTE_SCANNER_PERTICK;
     }
 

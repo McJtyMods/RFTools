@@ -81,7 +81,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     public static final Key<Boolean> VALUE_LIGHT = new Key<>("light", Type.BOOLEAN);
 
     @Override
-    public IValue[] getValues() {
+    public IValue<?, ?>[] getValues() {
         return new IValue[]{
                 new DefaultValue<>(VALUE_RSMODE, ShieldTEBase::getRSModeInt, ShieldTEBase::setRSModeInt),
                 new DefaultValue<>(VALUE_SHIELDVISMODE, te -> ((ShieldTEBase) te).getShieldRenderingMode().ordinal(), (te, value) -> ((ShieldTEBase) te).setShieldRenderingMode(ShieldRenderingMode.values()[value])),

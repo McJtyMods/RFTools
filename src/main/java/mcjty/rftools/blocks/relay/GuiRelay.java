@@ -16,6 +16,7 @@ import net.minecraft.util.math.MathHelper;
 
 import java.awt.Rectangle;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
@@ -132,12 +133,12 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
         sendServerCommand(RFToolsMessages.INSTANCE, RelayTileEntity.CMD_SETTINGS, builder.build());
     }
 
-    private void addArgument(TypedMap.Builder builder, int i, Key<Boolean>[] inputKeys, Key<Integer>[] rfKeys, String suffix) {
+    private void addArgument(TypedMap.Builder builder, int i, List<Key<Boolean>> inputKeys, List<Key<Integer>> rfKeys, String suffix) {
         char prefix = RelayTileEntity.DUNSWE.charAt(i);
         String key = prefix + suffix;
         int energy = Integer.parseInt(energyValues.get(key).getText());
         boolean input = "Input".equals(inputOutputs.get(key).getCurrentChoice());
-        builder.put(rfKeys[i], energy);
-        builder.put(inputKeys[i], input);
+        builder.put(rfKeys.get(i), energy);
+        builder.put(inputKeys.get(i), input);
     }
 }
