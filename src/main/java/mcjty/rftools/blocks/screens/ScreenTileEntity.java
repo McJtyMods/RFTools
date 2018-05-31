@@ -53,9 +53,9 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     public static Key<Boolean> VALUE_BRIGHT = new Key<>("bright", Type.BOOLEAN);
 
     @Override
-    public IValue<?, ?>[] getValues() {
+    public IValue<?>[] getValues() {
         return new IValue[] {
-                new DefaultValue<>(VALUE_BRIGHT, ScreenTileEntity::isBright, ScreenTileEntity::setBright),
+                new DefaultValue<>(VALUE_BRIGHT, this::isBright, this::setBright),
         };
     }
 

@@ -199,22 +199,22 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     public static final Key<Boolean> VALUE_ENTITIES = new Key<>("entities", Type.BOOLEAN);
 
     @Override
-    public IValue<?, ?>[] getValues() {
+    public IValue<?>[] getValues() {
         return new IValue[] {
-                new DefaultValue<>(VALUE_RSMODE, BuilderTileEntity::getRSModeInt, BuilderTileEntity::setRSModeInt),
-                new DefaultValue<>(VALUE_WAIT, BuilderTileEntity::isWaitMode, BuilderTileEntity::setWaitMode),
-                new DefaultValue<>(VALUE_LOOP, BuilderTileEntity::hasLoopMode, BuilderTileEntity::setLoopMode),
-                new DefaultValue<>(VALUE_HILIGHT, BuilderTileEntity::isHilightMode, BuilderTileEntity::setHilightMode),
-                new DefaultValue<>(VALUE_SUPPORT, BuilderTileEntity::hasSupportMode, BuilderTileEntity::setSupportMode),
-                new DefaultValue<>(VALUE_SILENT, BuilderTileEntity::isSilent, BuilderTileEntity::setSilent),
-                new DefaultValue<>(VALUE_ENTITIES, BuilderTileEntity::hasEntityMode, BuilderTileEntity::setEntityMode),
+                new DefaultValue<>(VALUE_RSMODE, this::getRSModeInt, this::setRSModeInt),
+                new DefaultValue<>(VALUE_WAIT, this::isWaitMode, this::setWaitMode),
+                new DefaultValue<>(VALUE_LOOP, this::hasLoopMode, this::setLoopMode),
+                new DefaultValue<>(VALUE_HILIGHT, this::isHilightMode, this::setHilightMode),
+                new DefaultValue<>(VALUE_SUPPORT, this::hasSupportMode, this::setSupportMode),
+                new DefaultValue<>(VALUE_SILENT, this::isSilent, this::setSilent),
+                new DefaultValue<>(VALUE_ENTITIES, this::hasEntityMode, this::setEntityMode),
         };
     }
 
     @Override
-    public IAction<?>[] getActions() {
-        return new IAction<?>[] {
-                new DefaultAction<>("restart", BuilderTileEntity::restartScan)
+    public IAction[] getActions() {
+        return new IAction[] {
+                new DefaultAction("restart", this::restartScan)
         };
     }
 

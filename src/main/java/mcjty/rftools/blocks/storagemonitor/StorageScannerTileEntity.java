@@ -76,17 +76,17 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     public static boolean exportToCurrentReceived = false;
 
     @Override
-    public IAction<?>[] getActions() {
+    public IAction[] getActions() {
         return new IAction[] {
-                new DefaultAction<>(ACTION_CLEARGRID, StorageScannerTileEntity::clearGrid),
+                new DefaultAction(ACTION_CLEARGRID, this::clearGrid),
         };
     }
 
     @Override
-    public IValue<?, ?>[] getValues() {
+    public IValue<?>[] getValues() {
         return new IValue[] {
-                new DefaultValue<>(VALUE_EXPORT, StorageScannerTileEntity::isExportToCurrent, StorageScannerTileEntity::setExportToCurrent),
-                new DefaultValue<>(VALUE_RADIUS, StorageScannerTileEntity::getRadius, StorageScannerTileEntity::setRadius),
+                new DefaultValue<>(VALUE_EXPORT, this::isExportToCurrent, this::setExportToCurrent),
+                new DefaultValue<>(VALUE_RADIUS, this::getRadius, this::setRadius),
         };
     }
 
