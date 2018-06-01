@@ -78,11 +78,11 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
     }
 
     @Override
-    public IValue<?, ?>[] getValues() {
+    public IValue<?>[] getValues() {
         return new IValue[] {
-                new DefaultValue<>(VALUE_NAME, MatterTransmitterTileEntity::getName, MatterTransmitterTileEntity::setName),
-                new DefaultValue<>(VALUE_PRIVATE, MatterTransmitterTileEntity::isPrivateAccess, MatterTransmitterTileEntity::setPrivateAccess),
-                new DefaultValue<>(VALUE_BEAM, MatterTransmitterTileEntity::isBeamHidden, MatterTransmitterTileEntity::setBeamHidden),
+                new DefaultValue<>(VALUE_NAME, this::getName, this::setName),
+                new DefaultValue<>(VALUE_PRIVATE, this::isPrivateAccess, this::setPrivateAccess),
+                new DefaultValue<>(VALUE_BEAM, this::isBeamHidden, this::setBeamHidden),
         };
     }
 

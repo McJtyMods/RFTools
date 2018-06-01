@@ -72,15 +72,15 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyRec
     public static float tooltipCostFactor = 0;
 
     @Override
-    public IAction<?>[] getActions() {
+    public IAction[] getActions() {
         return new IAction[] {
-                new DefaultAction<>(ACTION_SETNONE, PowerCellTileEntity::setAllNone),
-                new DefaultAction<>(ACTION_SETINPUT, PowerCellTileEntity::setAllInput),
-                new DefaultAction<>(ACTION_SETOUTPUT, PowerCellTileEntity::setAllOutput),
-                new DefaultAction<>(ACTION_CLEARSTATS, te -> {
-                    ((PowerCellTileEntity) te).totalExtracted = 0;
-                    ((PowerCellTileEntity) te).totalInserted = 0;
-                    te.markDirty();
+                new DefaultAction(ACTION_SETNONE, this::setAllNone),
+                new DefaultAction(ACTION_SETINPUT, this::setAllInput),
+                new DefaultAction(ACTION_SETOUTPUT, this::setAllOutput),
+                new DefaultAction(ACTION_CLEARSTATS, () -> {
+                    this.totalExtracted = 0;
+                    this.totalInserted = 0;
+                    this.markDirty();
                 }),
         };
     }

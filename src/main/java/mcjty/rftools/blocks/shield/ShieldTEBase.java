@@ -81,13 +81,13 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     public static final Key<Boolean> VALUE_LIGHT = new Key<>("light", Type.BOOLEAN);
 
     @Override
-    public IValue<?, ?>[] getValues() {
+    public IValue<?>[] getValues() {
         return new IValue[]{
-                new DefaultValue<>(VALUE_RSMODE, ShieldTEBase::getRSModeInt, ShieldTEBase::setRSModeInt),
-                new DefaultValue<>(VALUE_SHIELDVISMODE, te -> ((ShieldTEBase) te).getShieldRenderingMode().ordinal(), (te, value) -> ((ShieldTEBase) te).setShieldRenderingMode(ShieldRenderingMode.values()[value])),
-                new DefaultValue<>(VALUE_DAMAGEMODE, te -> ((ShieldTEBase) te).getDamageMode().ordinal(), (te, value) -> ((ShieldTEBase) te).setDamageMode(DamageTypeMode.values()[value])),
-                new DefaultValue<>(VALUE_COLOR, ShieldTEBase::getShieldColor, ShieldTEBase::setShieldColor),
-                new DefaultValue<>(VALUE_LIGHT, ShieldTEBase::isBlockLight, ShieldTEBase::setBlockLight),
+                new DefaultValue<>(VALUE_RSMODE, this::getRSModeInt, this::setRSModeInt),
+                new DefaultValue<>(VALUE_SHIELDVISMODE, () -> this.getShieldRenderingMode().ordinal(), (value) -> this.setShieldRenderingMode(ShieldRenderingMode.values()[value])),
+                new DefaultValue<>(VALUE_DAMAGEMODE, () -> this.getDamageMode().ordinal(), (value) -> this.setDamageMode(DamageTypeMode.values()[value])),
+                new DefaultValue<>(VALUE_COLOR, this::getShieldColor, this::setShieldColor),
+                new DefaultValue<>(VALUE_LIGHT, this::isBlockLight, this::setBlockLight),
         };
     }
 

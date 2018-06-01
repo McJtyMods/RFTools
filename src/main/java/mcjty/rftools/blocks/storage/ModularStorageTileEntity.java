@@ -51,11 +51,11 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
     public static final String ACTION_CLEARGRID = "clearGrid";
 
     @Override
-    public IAction<?>[] getActions() {
+    public IAction[] getActions() {
         return new IAction[] {
-                new DefaultAction<>(ACTION_COMPACT, te -> ((ModularStorageTileEntity)te).compact()),
-                new DefaultAction<>(ACTION_CYCLE, te -> ((ModularStorageTileEntity)te).cycle()),
-                new DefaultAction<>(ACTION_CLEARGRID, te -> ((ModularStorageTileEntity)te).clearGrid()),
+                new DefaultAction(ACTION_COMPACT, this::compact),
+                new DefaultAction(ACTION_CYCLE, this::cycle),
+                new DefaultAction(ACTION_CLEARGRID, this::clearGrid),
         };
     }
 
