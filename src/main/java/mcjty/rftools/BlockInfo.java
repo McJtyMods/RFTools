@@ -9,18 +9,18 @@ import net.minecraft.util.math.BlockPos;
 
 public class BlockInfo {
     private BlockPos coordinate;
-    private long energyStored;
-    private long maxEnergyStored;
+    private long storedPower;
+    private long capacity;
 
     public BlockInfo(TileEntity tileEntity, @Nullable EnumFacing side, BlockPos coordinate) {
         this.coordinate = coordinate;
         fetchEnergyValues(tileEntity, side);
     }
 
-    public BlockInfo(BlockPos coordinate, long energyStored, long maxEnergyStored) {
+    public BlockInfo(BlockPos coordinate, long storedPower, long capacity) {
         this.coordinate = coordinate;
-        this.energyStored = energyStored;
-        this.maxEnergyStored = maxEnergyStored;
+        this.storedPower = storedPower;
+        this.capacity = capacity;
     }
 
     public BlockPos getCoordinate() {
@@ -29,16 +29,16 @@ public class BlockInfo {
 
     private void fetchEnergyValues(TileEntity tileEntity, @Nullable EnumFacing side) {
         EnergyTools.EnergyLevel energyLevel = EnergyTools.getEnergyLevel(tileEntity, side);
-        maxEnergyStored = energyLevel.getMaxEnergy();
-        energyStored = energyLevel.getEnergy();
+        capacity = energyLevel.getMaxEnergy();
+        storedPower = energyLevel.getEnergy();
     }
 
-    public long getEnergyStored() {
-        return energyStored;
+    public long getStoredPower() {
+        return storedPower;
     }
 
-    public long getMaxEnergyStored() {
-        return maxEnergyStored;
+    public long getCapacity() {
+        return capacity;
     }
 
     @Override
@@ -52,10 +52,10 @@ public class BlockInfo {
 
         BlockInfo blockInfo = (BlockInfo) o;
 
-        if (energyStored != blockInfo.energyStored) {
+        if (storedPower != blockInfo.storedPower) {
             return false;
         }
-        if (maxEnergyStored != blockInfo.maxEnergyStored) {
+        if (capacity != blockInfo.capacity) {
             return false;
         }
         if (coordinate != null ? !coordinate.equals(blockInfo.coordinate) : blockInfo.coordinate != null) {
@@ -68,8 +68,8 @@ public class BlockInfo {
     @Override
     public int hashCode() {
         int result = coordinate != null ? coordinate.hashCode() : 0;
-        result = 31 * result + Long.hashCode(energyStored);
-        result = 31 * result + Long.hashCode(maxEnergyStored);
+        result = 31 * result + Long.hashCode(storedPower);
+        result = 31 * result + Long.hashCode(capacity);
         return result;
     }
 }

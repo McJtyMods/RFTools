@@ -119,8 +119,8 @@ public class GuiNetworkMonitor extends GuiItemScreen {
         for (Map.Entry<BlockPos,BlockInfo> me : connectedBlocks.entrySet()) {
             BlockInfo blockInfo = me.getValue();
 
-            long energy = blockInfo.getEnergyStored();
-            long maxEnergy = blockInfo.getMaxEnergyStored();
+            long energy = blockInfo.getStoredPower();
+            long maxEnergy = blockInfo.getCapacity();
 
             EnergyBar energyLabel = labelMap.get(me.getKey());
             // First test if this label isn't filtered out.
@@ -171,8 +171,8 @@ public class GuiNetworkMonitor extends GuiItemScreen {
                     continue;
                 }
 
-                long energy = blockInfo.getEnergyStored();
-                long maxEnergy = blockInfo.getMaxEnergyStored();
+                long energy = blockInfo.getStoredPower();
+                long maxEnergy = blockInfo.getCapacity();
 
                 int color = getTextColor(blockInfo);
 
@@ -209,7 +209,7 @@ public class GuiNetworkMonitor extends GuiItemScreen {
             previousRfMillis = millis;
             previousRf = new HashMap<>(connectedBlocks.size());
             for (Map.Entry<BlockPos, BlockInfo> me : connectedBlocks.entrySet()) {
-                previousRf.put(me.getKey(), me.getValue().getEnergyStored());
+                previousRf.put(me.getKey(), me.getValue().getStoredPower());
             }
         }
     }

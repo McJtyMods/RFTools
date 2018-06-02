@@ -44,8 +44,8 @@ public class PacketConnectedBlocksReady implements IMessage {
             buf.writeShort(c.getX() - minx);
             buf.writeShort(c.getY() - miny);
             buf.writeShort(c.getZ() - minz);
-            buf.writeLong(me.getValue().getEnergyStored());
-            buf.writeLong(me.getValue().getMaxEnergyStored());
+            buf.writeLong(me.getValue().getStoredPower());
+            buf.writeLong(me.getValue().getCapacity());
         }
     }
 
