@@ -21,7 +21,7 @@ class RelayEnergyStorage implements IEnergyStorage, ITeslaConsumer {
 
     @Override
     public int receiveEnergy(int maxReceive, boolean simulate) {
-        return relayTileEntity.receiveEnergy(maxReceive, simulate);
+        return relayTileEntity.receiveEnergy(side, maxReceive, simulate);
     }
 
     @Override
@@ -52,6 +52,6 @@ class RelayEnergyStorage implements IEnergyStorage, ITeslaConsumer {
     @Optional.Method(modid = "tesla")
     @Override
     public long givePower(long power, boolean simulated) {
-        return relayTileEntity.receiveEnergy(EnergyTools.unsignedClampToInt(power), simulated);
+        return relayTileEntity.receiveEnergy(side, EnergyTools.unsignedClampToInt(power), simulated);
     }
 }
