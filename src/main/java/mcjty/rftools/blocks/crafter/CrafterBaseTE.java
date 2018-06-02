@@ -295,7 +295,10 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         // 100%: rf -> rf / 2
         int rf = (int) (CrafterConfiguration.rfPerOperation * (2.0f - getInfusedFactor()) / 2.0f);
 
-        int steps = Math.min(rf == 0 ? Integer.MAX_VALUE : getEnergyStored() / rf, speedMode == SPEED_FAST ? CrafterConfiguration.speedOperations : 1);
+        int steps = speedMode == SPEED_FAST ? CrafterConfiguration.speedOperations : 1;
+        if(rf > 0) {
+            steps = Math.min(steps, getEnergyStored() / rf);
+        }
 
         int i;
         for (i = 0; i < steps; ++i) {
