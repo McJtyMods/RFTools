@@ -43,7 +43,6 @@ public class BlockProtectorEventHandlers {
         List<BlockPos> affectedBlocks = event.getAffectedBlocks();
         List<BlockPos> toremove = new ArrayList<>();
 
-        int rf = 0;
         for (GlobalCoordinate protector : protectors) {
             BlockPos pos = protector.getCoordinate();
             TileEntity te = event.getWorld().getTileEntity(pos);
@@ -58,7 +57,6 @@ public class BlockProtectorEventHandlers {
                         int rfneeded = blockProtectorTileEntity.attemptExplosionProtection((float) (distanceTo / explosion.size), explosion.size);
                         if (rfneeded > 0) {
                             toremove.add(block);
-                            rf += rfneeded;
                         } else {
                             blockProtectorTileEntity.removeProtection(relative);
                         }
