@@ -260,10 +260,7 @@ public class TeleportationTools {
             return 0;
         }
 
-        int extracted = rf;
-        if (rf > matterReceiverTileEntity.getEnergyStored()) {
-            extracted = matterReceiverTileEntity.getEnergyStored();
-        }
+        int extracted = Math.min(rf, matterReceiverTileEntity.getEnergyStored());
         matterReceiverTileEntity.consumeEnergy(rf);
 
         int remainingRf = matterReceiverTileEntity.getEnergyStored();
