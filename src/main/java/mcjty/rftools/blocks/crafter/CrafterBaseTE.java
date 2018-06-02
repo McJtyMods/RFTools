@@ -297,7 +297,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
         int steps = speedMode == SPEED_FAST ? CrafterConfiguration.speedOperations : 1;
         if(rf > 0) {
-            steps = Math.min(steps, getEnergyStored() / rf);
+            steps = (int)Math.min(steps, getStoredPower() / rf);
         }
 
         int i;

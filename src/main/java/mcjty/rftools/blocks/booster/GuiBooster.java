@@ -16,7 +16,7 @@ public class GuiBooster extends GenericGuiContainer<BoosterTileEntity> {
 
     public GuiBooster(BoosterTileEntity boosterTileEntity, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, boosterTileEntity, container, RFTools.GUI_MANUAL_MAIN, "booster");
-        GenericEnergyStorageTileEntity.setCurrentRF(boosterTileEntity.getEnergyStored());
+        GenericEnergyStorageTileEntity.setCurrentRF(boosterTileEntity.getStoredPower());
     }
 
     @Override
@@ -30,7 +30,7 @@ public class GuiBooster extends GenericGuiContainer<BoosterTileEntity> {
     private void initializeFields() {
         energyBar = window.findChild("energybar");
 
-        energyBar.setMaxValue(tileEntity.getMaxEnergyStored());
+        energyBar.setMaxValue(tileEntity.getCapacity());
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
         ((ImageChoiceLabel) window.findChild("redstone")).setCurrentChoice(tileEntity.getRSMode().ordinal());
     }

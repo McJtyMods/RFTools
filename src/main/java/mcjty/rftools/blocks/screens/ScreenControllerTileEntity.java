@@ -290,8 +290,8 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
             return;
         }
         tickCounter = 20;
-        int rf = getEnergyStored();
-        int rememberRf = rf;
+        long rf = getStoredPower();
+        long rememberRf = rf;
         boolean fixesAreNeeded = false;
         for (BlockPos c : connectedScreens) {
             TileEntity te = getWorld().getTileEntity(c);

@@ -362,7 +362,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
             return;
         }
 
-        int rf = getEnergyStored();
+        long rf = getStoredPower();
         if (!isMachineEnabled()) {
             rf = 0;
         }

@@ -76,7 +76,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
 
     public GuiStorageScanner(StorageScannerTileEntity storageScannerTileEntity, StorageScannerContainer storageScannerContainer) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, storageScannerTileEntity, storageScannerContainer, RFTools.GUI_MANUAL_MAIN, "stomon");
-        GenericEnergyStorageTileEntity.setCurrentRF(storageScannerTileEntity.getEnergyStored());
+        GenericEnergyStorageTileEntity.setCurrentRF(storageScannerTileEntity.getStoredPower());
 
         craftingGrid = new GuiCraftingGrid();
 
@@ -88,7 +88,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored();
+        long maxEnergyStored = tileEntity.getCapacity();
         energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setVertical().setDesiredWidth(10).setDesiredHeight(50).setMaxValue(maxEnergyStored).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 

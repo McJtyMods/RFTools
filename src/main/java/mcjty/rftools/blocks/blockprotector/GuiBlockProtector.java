@@ -14,7 +14,7 @@ public class GuiBlockProtector extends GenericGuiContainer<BlockProtectorTileEnt
 
     public GuiBlockProtector(BlockProtectorTileEntity blockProtectorTileEntity, BlockProtectorContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, blockProtectorTileEntity, container, RFTools.GUI_MANUAL_MAIN, "protect");
-        GenericEnergyStorageTileEntity.setCurrentRF(blockProtectorTileEntity.getEnergyStored());
+        GenericEnergyStorageTileEntity.setCurrentRF(blockProtectorTileEntity.getStoredPower());
     }
 
     @Override
@@ -30,7 +30,7 @@ public class GuiBlockProtector extends GenericGuiContainer<BlockProtectorTileEnt
     private void initializeFields() {
         energyBar = window.findChild("energybar");
 
-        energyBar.setMaxValue(tileEntity.getMaxEnergyStored());
+        energyBar.setMaxValue(tileEntity.getCapacity());
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
         ((ImageChoiceLabel) window.findChild("redstone")).setCurrentChoice(tileEntity.getRSMode().ordinal());
     }

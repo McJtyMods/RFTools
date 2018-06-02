@@ -670,7 +670,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
 
         // Check if we have enough energy
         int rfNeeded = (int) (ElevatorConfiguration.rfPerHeightUnit * Math.abs(getPos().getY() - platformPos.getY()) * (3.0f - getInfusedFactor()) / 3.0f);
-        if (controller.getEnergyStored() < rfNeeded) {
+        if (controller.getStoredPower() < rfNeeded) {
             Broadcaster.broadcast(getWorld(), getPos().getX(), getPos().getY(), getPos().getZ(), TextFormatting.RED + "Not enough power to move the elevator platform!", 10);
             return;
         }
@@ -887,7 +887,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     @Optional.Method(modid = "waila")
     public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         super.addWailaBody(itemStack, currenttip, accessor, config);
-        int energy = getEnergyStored();
+        long energy = getStoredPower();
         currenttip.add(TextFormatting.GREEN + "RF: " + energy);
         if (getName() != null && !getName().isEmpty()) {
             currenttip.add(TextFormatting.BLUE + "Name: " + getName());

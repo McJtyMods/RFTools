@@ -39,7 +39,7 @@ public class GuiRemoteStorage extends GenericGuiContainer<RemoteStorageTileEntit
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored();
+        long maxEnergyStored = tileEntity.getCapacity();
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(10, 7, 8, 54).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 

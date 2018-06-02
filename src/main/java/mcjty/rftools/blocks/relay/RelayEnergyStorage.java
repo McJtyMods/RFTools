@@ -31,12 +31,12 @@ class RelayEnergyStorage implements IEnergyStorage, ITeslaConsumer {
 
     @Override
     public int getEnergyStored() {
-        return relayTileEntity.getEnergyStored();
+        return EnergyTools.getIntEnergyStored(relayTileEntity.getStoredPower(), relayTileEntity.getCapacity());
     }
 
     @Override
     public int getMaxEnergyStored() {
-        return relayTileEntity.getMaxEnergyStored();
+        return EnergyTools.unsignedClampToInt(relayTileEntity.getCapacity());
     }
 
     @Override

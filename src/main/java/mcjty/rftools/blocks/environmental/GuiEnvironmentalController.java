@@ -56,7 +56,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
 
     private void initializeFields() {
         energyBar = window.findChild("energybar");
-        energyBar.setMaxValue(tileEntity.getMaxEnergyStored());
+        energyBar.setMaxValue(tileEntity.getCapacity());
         energyBar.setValue(getCurrentRF());
 
         ((ImageChoiceLabel)window.findChild("redstone")).setCurrentChoice(tileEntity.getRSMode().ordinal());

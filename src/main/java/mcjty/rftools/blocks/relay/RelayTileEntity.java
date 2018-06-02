@@ -150,7 +150,7 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
         int[] rf = redstoneSignal ? rfOn : rfOff;
         boolean[] inputMode = redstoneSignal ? inputModeOn : inputModeOff;
 
-        int energyStored = getEnergyStored();
+        long energyStored = getStoredPower();
         if (energyStored <= 0) {
             return;
         }
@@ -163,7 +163,7 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
                 TileEntity te = getWorld().getTileEntity(getPos().offset(facing));
                 EnumFacing opposite = facing.getOpposite();
                 if (EnergyTools.isEnergyTE(te, opposite)) {
-                    int rfToGive = Math.min(rf[side], energyStored);
+                    int rfToGive = (int) Math.min(rf[side], energyStored);
                     int received = (int) EnergyTools.receiveEnergy(te, opposite, rfToGive);
 
                     powerOut += received;

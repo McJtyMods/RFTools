@@ -25,7 +25,7 @@ public class GuiMachineInfuser extends GenericGuiContainer<MachineInfuserTileEnt
 
     public GuiMachineInfuser(MachineInfuserTileEntity machineInfuserTileEntity, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, machineInfuserTileEntity, container, 0/*@todoRFTools.GUI_MANUAL_DIMENSION*/, "infuser");
-        GenericEnergyStorageTileEntity.setCurrentRF(machineInfuserTileEntity.getEnergyStored());
+        GenericEnergyStorageTileEntity.setCurrentRF(machineInfuserTileEntity.getStoredPower());
 
         xSize = INFUSER_WIDTH;
         ySize = INFUSER_HEIGHT;
@@ -49,7 +49,7 @@ public class GuiMachineInfuser extends GenericGuiContainer<MachineInfuserTileEnt
 
     private void initializeFields() {
         energyBar = window.findChild("energybar");
-        energyBar.setMaxValue(tileEntity.getMaxEnergyStored());
+        energyBar.setMaxValue(tileEntity.getCapacity());
         energyBar.setValue(getCurrentRF());
     }
 

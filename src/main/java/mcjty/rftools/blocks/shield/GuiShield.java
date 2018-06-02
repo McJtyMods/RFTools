@@ -84,7 +84,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
 
     public GuiShield(ShieldTEBase shieldTileEntity, ShieldContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, shieldTileEntity, container, RFTools.GUI_MANUAL_SHAPE, "shield");
-        GenericEnergyStorageTileEntity.setCurrentRF(shieldTileEntity.getEnergyStored());
+        GenericEnergyStorageTileEntity.setCurrentRF(shieldTileEntity.getStoredPower());
 
         xSize = SHIELD_WIDTH;
         ySize = SHIELD_HEIGHT;
@@ -94,7 +94,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored();
+        long maxEnergyStored = tileEntity.getCapacity();
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(12, 141, 10, 76).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 

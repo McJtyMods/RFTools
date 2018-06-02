@@ -26,7 +26,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
 
     public GuiBuilder(BuilderTileEntity builderTileEntity, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, builderTileEntity, container, RFTools.GUI_MANUAL_SHAPE, "builder");
-        setCurrentRF(builderTileEntity.getEnergyStored());
+        setCurrentRF(builderTileEntity.getStoredPower());
     }
 
     @Override
@@ -54,7 +54,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
         anchor[2] = window.findChild("anchor2");
         anchor[3] = window.findChild("anchor3");
 
-        energyBar.setMaxValue(tileEntity.getMaxEnergyStored());
+        energyBar.setMaxValue(tileEntity.getCapacity());
         energyBar.setValue(getCurrentRF());
         ((ChoiceLabel) window.findChild("mode")).setChoice(MODES[tileEntity.getMode()]);
         ChoiceLabel rotateButton = window.findChild("rotate");

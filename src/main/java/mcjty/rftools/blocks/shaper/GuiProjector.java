@@ -80,7 +80,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored();
+        long maxEnergyStored = tileEntity.getCapacity();
         energyBar = new EnergyBar(mc, this).setHorizontal().setMaxValue(maxEnergyStored).setLayoutHint(6, 184, 75, 10).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
         toplevel.addChild(energyBar);

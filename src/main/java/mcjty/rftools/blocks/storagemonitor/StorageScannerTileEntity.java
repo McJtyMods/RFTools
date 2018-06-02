@@ -51,7 +51,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         CraftingGridProvider, JEIRecipeAcceptor, IStorageScanner {
 
     public static final String CMD_SCANNER_INFO = "getScannerInfo";
-    public static final Key<Integer> PARAM_ENERGY = new Key<>("energy", Type.INTEGER);
+    public static final Key<Long> PARAM_ENERGY = new Key<>("energy", Type.LONG);
     public static final Key<Boolean> PARAM_EXPORT = new Key<>("export", Type.BOOLEAN);
 
     public static final String CMD_UP = "scanner.up";
@@ -72,7 +72,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     public static final Key<Integer> VALUE_RADIUS = new Key<>("radius", Type.INTEGER);
 
     // Client side data returned by CMD_SCANNER_INFO
-    public static int rfReceived = 0;
+    public static long rfReceived = 0;
     public static boolean exportToCurrentReceived = false;
 
     @Override
@@ -205,7 +205,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             }
 
             if (inventoryHelper.containsItem(StorageScannerContainer.SLOT_IN)) {
-                if (getEnergyStored() < StorageScannerConfiguration.rfPerInsert) {
+                if (getStoredPower() < StorageScannerConfiguration.rfPerInsert) {
                     return;
                 }
 
@@ -216,7 +216,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                 consumeEnergy(StorageScannerConfiguration.rfPerInsert);
             }
             if (inventoryHelper.containsItem(StorageScannerContainer.SLOT_IN_AUTO)) {
-                if (getEnergyStored() < StorageScannerConfiguration.rfPerInsert) {
+                if (getStoredPower() < StorageScannerConfiguration.rfPerInsert) {
                     return;
                 }
 
@@ -231,7 +231,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
 
     public ItemStack injectStackFromScreen(ItemStack stack, EntityPlayer player) {
-        if (getEnergyStored() < StorageScannerConfiguration.rfPerInsert) {
+        if (getStoredPower() < StorageScannerConfiguration.rfPerInsert) {
             player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Not enough power to insert items!"), false);
             return stack;
         }
@@ -292,7 +292,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         if (stack.isEmpty()) {
             return;
         }
-        if (getEnergyStored() < StorageScannerConfiguration.rfPerRequest) {
+        if (getStoredPower() < StorageScannerConfiguration.rfPerRequest) {
             player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Not enough power to request items!"), false);
             return;
         }
@@ -733,7 +733,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     @Override
     public ItemStack requestItem(Predicate<ItemStack> matcher, boolean simulate, int amount, boolean doRoutable) {
-        if (getEnergyStored() < StorageScannerConfiguration.rfPerRequest) {
+        if (getStoredPower() < StorageScannerConfiguration.rfPerRequest) {
             return ItemStack.EMPTY;
         }
         return inventories.stream()
@@ -762,7 +762,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         if (match.isEmpty()) {
             return ItemStack.EMPTY;
         }
-        if (getEnergyStored() < StorageScannerConfiguration.rfPerRequest) {
+        if (getStoredPower() < StorageScannerConfiguration.rfPerRequest) {
             return ItemStack.EMPTY;
         }
 
@@ -836,7 +836,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     @Override
     public ItemStack insertItem(ItemStack stack, boolean simulate) {
-        if (getEnergyStored() < StorageScannerConfiguration.rfPerInsert) {
+        if (getStoredPower() < StorageScannerConfiguration.rfPerInsert) {
             return stack;
         }
 
@@ -892,7 +892,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         if (amount == -1) {
             amount = requested.getMaxStackSize();
         }
-        if (getEnergyStored() < rf) {
+        if (getStoredPower() < rf) {
             return;
         }
 
@@ -1113,7 +1113,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         }
         if (CMD_SCANNER_INFO.equals(command)) {
             return TypedMap.builder()
-                    .put(PARAM_ENERGY, getEnergyStored())
+                    .put(PARAM_ENERGY, getStoredPower())
                     .put(PARAM_EXPORT, isExportToCurrent())
                     .build();
         }

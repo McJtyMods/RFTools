@@ -31,7 +31,7 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
 
     public GuiEndergenic(EndergenicTileEntity endergenicTileEntity, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, endergenicTileEntity, container, RFTools.GUI_MANUAL_MAIN, "power");
-        GenericEnergyStorageTileEntity.setCurrentRF(endergenicTileEntity.getEnergyStored());
+        GenericEnergyStorageTileEntity.setCurrentRF(endergenicTileEntity.getStoredPower());
     }
 
     @Override
@@ -51,7 +51,7 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
         lastLaunchedPearls = window.findChild("lastlaunched");
         lastOpportunities = window.findChild("lastopp");
 
-        energyBar.setMaxValue(tileEntity.getMaxEnergyStored());
+        energyBar.setMaxValue(tileEntity.getCapacity());
         energyBar.setValue(getCurrentRF());
     }
 

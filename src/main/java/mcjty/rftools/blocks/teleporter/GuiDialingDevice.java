@@ -66,7 +66,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
 
     public GuiDialingDevice(DialingDeviceTileEntity dialingDeviceTileEntity, EmptyContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, dialingDeviceTileEntity, container, RFTools.GUI_MANUAL_MAIN, "tpdialer");
-        GenericEnergyStorageTileEntity.setCurrentRF(dialingDeviceTileEntity.getEnergyStored());
+        GenericEnergyStorageTileEntity.setCurrentRF(dialingDeviceTileEntity.getStoredPower());
 
         xSize = DIALER_WIDTH;
         ySize = DIALER_HEIGHT;
@@ -76,7 +76,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored();
+        long maxEnergyStored = tileEntity.getCapacity();
         energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredWidth(80).setDesiredHeight(12).setMaxValue(maxEnergyStored).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 

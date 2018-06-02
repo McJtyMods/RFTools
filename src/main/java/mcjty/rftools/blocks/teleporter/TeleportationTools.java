@@ -224,7 +224,7 @@ public class TeleportationTools {
             int cost = TeleportConfiguration.rfPerDial;
             cost = (int) (cost * (2.0f - dialingDeviceTileEntity.getInfusedFactor()) / 2.0f);
 
-            if (dialingDeviceTileEntity.getEnergyStored() < cost) {
+            if (dialingDeviceTileEntity.getStoredPower() < cost) {
                 return DialingDeviceTileEntity.DIAL_DIALER_POWER_LOW_MASK;
             }
 
@@ -260,10 +260,10 @@ public class TeleportationTools {
             return 0;
         }
 
-        int extracted = Math.min(rf, matterReceiverTileEntity.getEnergyStored());
+        int extracted = (int)Math.min(rf, matterReceiverTileEntity.getStoredPower());
         matterReceiverTileEntity.consumeEnergy(rf);
 
-        int remainingRf = matterReceiverTileEntity.getEnergyStored();
+        long remainingRf = matterReceiverTileEntity.getStoredPower();
         if (remainingRf <= 1) {
             Logging.warn(player, "The matter receiver has run out of power!");
         } else if (remainingRf < (TeleportConfiguration.RECEIVER_MAXENERGY / 10)) {

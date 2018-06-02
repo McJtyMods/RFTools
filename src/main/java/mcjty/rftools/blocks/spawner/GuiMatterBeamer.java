@@ -22,7 +22,7 @@ public class GuiMatterBeamer extends GenericGuiContainer<MatterBeamerTileEntity>
 
     public GuiMatterBeamer(MatterBeamerTileEntity beamerTileEntity, MatterBeamerContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, beamerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "spawner");
-        GenericEnergyStorageTileEntity.setCurrentRF(beamerTileEntity.getEnergyStored());
+        GenericEnergyStorageTileEntity.setCurrentRF(beamerTileEntity.getStoredPower());
 
         xSize = BEAMER_WIDTH;
         ySize = BEAMER_HEIGHT;
@@ -32,7 +32,7 @@ public class GuiMatterBeamer extends GenericGuiContainer<MatterBeamerTileEntity>
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored();
+        long maxEnergyStored = tileEntity.getCapacity();
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(10, 7, 8, 54).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 

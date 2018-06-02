@@ -190,7 +190,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
         int cost = TeleportConfiguration.rfPerCheck;
         cost = (int) (cost * (2.0f - getInfusedFactor()) / 2.0f);
 
-        if (getEnergyStored() < cost) {
+        if (getStoredPower() < cost) {
             return DialingDeviceTileEntity.DIAL_DIALER_POWER_LOW_MASK;
         }
         consumeEnergy(cost);

@@ -86,7 +86,7 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
                 }
 
                 int energy = getEnergyPerScan(scanner);
-                if (getEnergyStored() < energy) {
+                if (getStoredPower() < energy) {
                     // Do nothing
                     return;
                 }

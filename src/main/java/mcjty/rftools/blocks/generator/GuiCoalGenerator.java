@@ -18,7 +18,7 @@ public class GuiCoalGenerator extends GenericGuiContainer<CoalGeneratorTileEntit
 
     public GuiCoalGenerator(CoalGeneratorTileEntity tileEntity, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, tileEntity, container, RFTools.GUI_MANUAL_MAIN, "coalgen");
-        GenericEnergyStorageTileEntity.setCurrentRF(tileEntity.getEnergyStored());
+        GenericEnergyStorageTileEntity.setCurrentRF(tileEntity.getStoredPower());
     }
 
     @Override
@@ -33,7 +33,7 @@ public class GuiCoalGenerator extends GenericGuiContainer<CoalGeneratorTileEntit
 
     private void initializeFields() {
         energyBar = window.findChild("energybar");
-        energyBar.setMaxValue(tileEntity.getMaxEnergyStored());
+        energyBar.setMaxValue(tileEntity.getCapacity());
         energyBar.setValue(getCurrentRF());
 
         ((ImageChoiceLabel) window.findChild("redstone")).setCurrentChoice(tileEntity.getRSMode().ordinal());

@@ -239,7 +239,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         rf = (int) (rf * (2.0f - getInfusedFactor()) / 2.0f);
-        if (getEnergyStored() < rf) {
+        if (getStoredPower() < rf) {
             return;
         }
         consumeEnergy(rf);

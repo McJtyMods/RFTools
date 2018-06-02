@@ -311,7 +311,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
 
     private void consumeIdlePower() {
         if (TeleportConfiguration.rfMatterIdleTick > 0 && teleportingPlayer == null) {
-            if (getEnergyStored() >= TeleportConfiguration.rfMatterIdleTick) {
+            if (getStoredPower() >= TeleportConfiguration.rfMatterIdleTick) {
                 consumeEnergy(TeleportConfiguration.rfMatterIdleTick);
             } else {
                 setTeleportDestination(null, false);
@@ -368,7 +368,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         } else {
             int rf = rfPerTick;
 
-            if (getEnergyStored() < rf) {
+            if (getStoredPower() < rf) {
                 // We don't have enough energy to handle this tick.
                 handleEnergyShortage();
             } else {
@@ -534,7 +534,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         }
 
         boolean boosted = DialingDeviceTileEntity.isMatterBoosterAvailable(getWorld(), getPos());
-        if (boosted && getEnergyStored() < TeleportConfiguration.rfBoostedTeleport) {
+        if (boosted && getStoredPower() < TeleportConfiguration.rfBoostedTeleport) {
             // Not enough energy. We cannot do a boosted teleport.
             boosted = false;
         }
@@ -613,7 +613,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             int cost = TeleportationTools.calculateRFCost(getWorld(), getPos(), dest);
             cost = (int) (cost * (4.0f - getInfusedFactor()) / 4.0f);
 
-            if (getEnergyStored() < cost) {
+            if (getStoredPower() < cost) {
                 Logging.warn(player, "Not enough power to start the teleport!");
                 cooldownTimer = 80;
                 return;

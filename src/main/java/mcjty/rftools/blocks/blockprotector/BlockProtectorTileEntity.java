@@ -161,7 +161,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
         if (!isMachineEnabled()) {
             return false;
         }
-        int rf = getEnergyStored();
+        long rf = getStoredPower();
         if (BlockProtectorConfiguration.rfForHarvestAttempt > rf) {
             return false;
         }
@@ -174,7 +174,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
         if (!isMachineEnabled()) {
             return -1;
         }
-        int rf = getEnergyStored();
+        long rf = getStoredPower();
         int rfneeded = (int) (BlockProtectorConfiguration.rfForExplosionProtection * (1.0 - distance) * radius / 8.0f) + 1;
         rfneeded = (int) (rfneeded * (2.0f - getInfusedFactor()) / 2.0f);
 

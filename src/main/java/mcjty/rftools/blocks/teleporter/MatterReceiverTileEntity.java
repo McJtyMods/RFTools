@@ -186,7 +186,7 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
             return DialingDeviceTileEntity.DIAL_RECEIVER_BLOCKED_MASK;
         }
 
-        if (getEnergyStored() < TeleportConfiguration.rfPerTeleportReceiver) {
+        if (getStoredPower() < TeleportConfiguration.rfPerTeleportReceiver) {
             return DialingDeviceTileEntity.DIAL_RECEIVER_POWER_LOW_MASK;
         }
 

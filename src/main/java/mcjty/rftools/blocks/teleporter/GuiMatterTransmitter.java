@@ -50,7 +50,7 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
 
     public GuiMatterTransmitter(MatterTransmitterTileEntity transmitterTileEntity, EmptyContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, transmitterTileEntity, container, RFTools.GUI_MANUAL_MAIN, "tptransmitter");
-        GenericEnergyStorageTileEntity.setCurrentRF(transmitterTileEntity.getEnergyStored());
+        GenericEnergyStorageTileEntity.setCurrentRF(transmitterTileEntity.getStoredPower());
 
         xSize = MATTER_WIDTH;
         ySize = MATTER_HEIGHT;
@@ -65,7 +65,7 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored();
+        long maxEnergyStored = tileEntity.getCapacity();
         energyBar = new EnergyBar(mc, this).setFilledRectThickness(1).setHorizontal().setDesiredHeight(12).setDesiredWidth(80).setMaxValue(maxEnergyStored).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 

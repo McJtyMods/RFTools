@@ -120,7 +120,7 @@ public class MachineInfuserTileEntity extends GenericEnergyReceiverTileEntity im
         int rf = MachineInfuserConfiguration.rfPerTick;
         rf = (int) (rf * (2.0f - getInfusedFactor()) / 2.0f);
 
-        if (getEnergyStored() < rf) {
+        if (getStoredPower() < rf) {
             // Not enough energy.
             return;
         }

@@ -27,12 +27,12 @@ public class MachineInfuserDriver {
 
             @Callback(doc = "function():number; Get the currently stored energy")
             public Object[] getEnergy(Context c, Arguments a) {
-                return new Object[]{tile.getEnergyStored()};
+                return new Object[]{tile.getStoredPower()};
             }
 
             @Callback(doc = "function():number; Get the maximum stored energy")
             public Object[] getMaxEnergy(Context c, Arguments a) {
-                return new Object[]{tile.getMaxEnergyStored()};
+                return new Object[]{tile.getCapacity()};
             }
 
             @Callback(doc = "function():number; Get the maximum number of dimensional shards a machine can be infused with")

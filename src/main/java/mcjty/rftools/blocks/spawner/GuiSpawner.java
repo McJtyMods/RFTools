@@ -41,7 +41,7 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
 
     public GuiSpawner(SpawnerTileEntity spawnerTileEntity, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, spawnerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "spawner");
-        GenericEnergyStorageTileEntity.setCurrentRF(spawnerTileEntity.getEnergyStored());
+        GenericEnergyStorageTileEntity.setCurrentRF(spawnerTileEntity.getStoredPower());
 
         xSize = SPAWNER_WIDTH;
         ySize = SPAWNER_HEIGHT;
@@ -51,7 +51,7 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored();
+        long maxEnergyStored = tileEntity.getCapacity();
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(10, 7, 8, 54).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 

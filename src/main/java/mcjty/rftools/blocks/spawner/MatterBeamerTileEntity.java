@@ -105,7 +105,7 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
         int numblocks = Math.min(maxblocks, itemStack.getCount());
 
         int rf = (int) (SpawnerConfiguration.beamRfPerObject * numblocks * (4.0f - getInfusedFactor()) / 4.0f);
-        if (getEnergyStored() < rf) {
+        if (getStoredPower() < rf) {
             return;
         }
         consumeEnergy(rf);

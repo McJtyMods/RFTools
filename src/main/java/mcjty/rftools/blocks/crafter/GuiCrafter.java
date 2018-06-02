@@ -37,7 +37,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
 
     public GuiCrafter(CrafterBaseTE te, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, RFTools.GUI_MANUAL_MAIN, "crafter");
-        GenericEnergyStorageTileEntity.setCurrentRF(te.getEnergyStored());
+        GenericEnergyStorageTileEntity.setCurrentRF(te.getStoredPower());
     }
 
     @Override
@@ -65,7 +65,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         keepItem = window.findChild("keep");
         internalRecipe = window.findChild("internal");
 
-        energyBar.setMaxValue(tileEntity.getMaxEnergyStored());
+        energyBar.setMaxValue(tileEntity.getCapacity());
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
         ((ImageChoiceLabel) window.findChild("redstone")).setCurrentChoice(tileEntity.getRSMode().ordinal());
         ((ImageChoiceLabel) window.findChild("speed")).setCurrentChoice(tileEntity.getSpeedMode());

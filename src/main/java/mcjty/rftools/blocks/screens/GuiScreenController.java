@@ -25,7 +25,7 @@ public class GuiScreenController extends GenericGuiContainer<ScreenControllerTil
 
     public GuiScreenController(ScreenControllerTileEntity screenControllerTileEntity, ScreenControllerContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, screenControllerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "screens");
-        GenericEnergyStorageTileEntity.setCurrentRF(screenControllerTileEntity.getEnergyStored());
+        GenericEnergyStorageTileEntity.setCurrentRF(screenControllerTileEntity.getStoredPower());
 
         xSize = CONTROLLER_WIDTH;
         ySize = CONTROLLER_HEIGHT;
@@ -35,7 +35,7 @@ public class GuiScreenController extends GenericGuiContainer<ScreenControllerTil
     public void initGui() {
         super.initGui();
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored();
+        long maxEnergyStored = tileEntity.getCapacity();
         energyBar = new EnergyBar(mc, this).setVertical().setMaxValue(maxEnergyStored).setLayoutHint(10, 7, 8, 54).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
 

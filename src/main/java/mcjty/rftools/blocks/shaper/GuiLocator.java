@@ -63,7 +63,7 @@ public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
 
         Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
-        int maxEnergyStored = tileEntity.getMaxEnergyStored();
+        long maxEnergyStored = tileEntity.getCapacity();
         energyBar = new EnergyBar(mc, this).setHorizontal().setMaxValue(maxEnergyStored).setLayoutHint(28, 10, 70, 10).setShowText(false);
         energyBar.setValue(GenericEnergyStorageTileEntity.getCurrentRF());
         toplevel.addChild(energyBar);

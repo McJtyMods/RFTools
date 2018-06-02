@@ -127,7 +127,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
 
             boolean a = active;
             if (a) {
-                if (getEnergyStored() < ScannerConfiguration.PROJECTOR_USEPERTICK) {
+                if (getStoredPower() < ScannerConfiguration.PROJECTOR_USEPERTICK) {
                     a = false;
                 }
             }
