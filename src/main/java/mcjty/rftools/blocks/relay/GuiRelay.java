@@ -21,7 +21,7 @@ import java.util.Map;
 
 public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
     public static final int RELAY_WIDTH = 255;
-    public static final int RELAY_HEIGHT = 130;
+    public static final int RELAY_HEIGHT = 148;
 
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
@@ -43,7 +43,7 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
         Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout());
 
         toplevel.addChild(createRedstonePanel());
-        for (int i = 0 ; i < 6 ; i++) {
+        for (int i = 0 ; i < 7 ; i++) {
             toplevel.addChild(createSidePanel(i));
         }
 
@@ -60,9 +60,19 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
                 addChildren(redstoneOff, redstoneOn);
     }
 
+    private static final String[] tooltips = {
+            "Down",
+            "Up",
+            "Back",
+            "Front",
+            "Left",
+            "Right",
+            "Internal (null)"
+    };
+
     private Panel createSidePanel(int side) {
-        String labelText = String.valueOf(RelayTileEntity.DUNSWE.charAt(side));
-        Label label = new Label(mc, this).setText(labelText);
+        String labelText = String.valueOf(RelayTileEntity.DUNSWEI.charAt(side));
+        Label label = new Label(mc, this).setText(labelText).setTooltips(tooltips[side]);
         label.setDesiredWidth(14).setDesiredHeight(14);
         return new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(1)).
                 addChild(label).
@@ -71,7 +81,7 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
     }
 
     private Panel createSubPanel(int side, String redstoneState) {
-        String labelText = String.valueOf(RelayTileEntity.DUNSWE.charAt(side));
+        String labelText = String.valueOf(RelayTileEntity.DUNSWEI.charAt(side));
 
         int rf;
         boolean input;
@@ -125,7 +135,7 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
 
     private void changeSettings() {
         TypedMap.Builder builder = TypedMap.builder();
-        for (int i = 0 ; i < 6 ; i++) {
+        for (int i = 0 ; i < 7 ; i++) {
             addArgument(builder, i, RelayTileEntity.PARAM_INPUTON, RelayTileEntity.PARAM_RFON, "On");
             addArgument(builder, i, RelayTileEntity.PARAM_INPUTOFF, RelayTileEntity.PARAM_RFOFF, "Off");
         }
@@ -134,7 +144,7 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
     }
 
     private void addArgument(TypedMap.Builder builder, int i, List<Key<Boolean>> inputKeys, List<Key<Integer>> rfKeys, String suffix) {
-        char prefix = RelayTileEntity.DUNSWE.charAt(i);
+        char prefix = RelayTileEntity.DUNSWEI.charAt(i);
         String key = prefix + suffix;
         int energy = Integer.parseInt(energyValues.get(key).getText());
         boolean input = "Input".equals(inputOutputs.get(key).getCurrentChoice());

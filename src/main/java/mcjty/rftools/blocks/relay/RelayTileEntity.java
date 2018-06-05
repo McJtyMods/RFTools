@@ -42,7 +42,8 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
     public static final Key<Boolean> PARAM_INPUTON_S = new Key<>("inputOnS", Type.BOOLEAN);
     public static final Key<Boolean> PARAM_INPUTON_W = new Key<>("inputOnW", Type.BOOLEAN);
     public static final Key<Boolean> PARAM_INPUTON_E = new Key<>("inputOnE", Type.BOOLEAN);
-    public static final List<Key<Boolean>> PARAM_INPUTON = Arrays.asList(PARAM_INPUTON_D, PARAM_INPUTON_U, PARAM_INPUTON_N, PARAM_INPUTON_S, PARAM_INPUTON_W, PARAM_INPUTON_E);
+    public static final Key<Boolean> PARAM_INPUTON_I = new Key<>("inputOnI", Type.BOOLEAN);
+    public static final List<Key<Boolean>> PARAM_INPUTON = Arrays.asList(PARAM_INPUTON_D, PARAM_INPUTON_U, PARAM_INPUTON_N, PARAM_INPUTON_S, PARAM_INPUTON_W, PARAM_INPUTON_E, PARAM_INPUTON_I);
 
     public static final Key<Boolean> PARAM_INPUTOFF_D = new Key<>("inputOffD", Type.BOOLEAN);
     public static final Key<Boolean> PARAM_INPUTOFF_U = new Key<>("inputOffU", Type.BOOLEAN);
@@ -50,7 +51,8 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
     public static final Key<Boolean> PARAM_INPUTOFF_S = new Key<>("inputOffS", Type.BOOLEAN);
     public static final Key<Boolean> PARAM_INPUTOFF_W = new Key<>("inputOffW", Type.BOOLEAN);
     public static final Key<Boolean> PARAM_INPUTOFF_E = new Key<>("inputOffE", Type.BOOLEAN);
-    public static final List<Key<Boolean>> PARAM_INPUTOFF = Arrays.asList(PARAM_INPUTOFF_D, PARAM_INPUTOFF_U, PARAM_INPUTOFF_N, PARAM_INPUTOFF_S, PARAM_INPUTOFF_W, PARAM_INPUTOFF_E);
+    public static final Key<Boolean> PARAM_INPUTOFF_I = new Key<>("inputOffI", Type.BOOLEAN);
+    public static final List<Key<Boolean>> PARAM_INPUTOFF = Arrays.asList(PARAM_INPUTOFF_D, PARAM_INPUTOFF_U, PARAM_INPUTOFF_N, PARAM_INPUTOFF_S, PARAM_INPUTOFF_W, PARAM_INPUTOFF_E, PARAM_INPUTOFF_I);
 
     public static final Key<Integer> PARAM_RFON_D = new Key<>("rfOnD", Type.INTEGER);
     public static final Key<Integer> PARAM_RFON_U = new Key<>("rfOnU", Type.INTEGER);
@@ -58,7 +60,8 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
     public static final Key<Integer> PARAM_RFON_S = new Key<>("rfOnS", Type.INTEGER);
     public static final Key<Integer> PARAM_RFON_W = new Key<>("rfOnW", Type.INTEGER);
     public static final Key<Integer> PARAM_RFON_E = new Key<>("rfOnE", Type.INTEGER);
-    public static final List<Key<Integer>> PARAM_RFON = Arrays.asList(PARAM_RFON_D, PARAM_RFON_U, PARAM_RFON_N, PARAM_RFON_S, PARAM_RFON_W, PARAM_RFON_E);
+    public static final Key<Integer> PARAM_RFON_I = new Key<>("rfOnI", Type.INTEGER);
+    public static final List<Key<Integer>> PARAM_RFON = Arrays.asList(PARAM_RFON_D, PARAM_RFON_U, PARAM_RFON_N, PARAM_RFON_S, PARAM_RFON_W, PARAM_RFON_E, PARAM_RFON_I);
 
     public static final Key<Integer> PARAM_RFOFF_D = new Key<>("rfOffD", Type.INTEGER);
     public static final Key<Integer> PARAM_RFOFF_U = new Key<>("rfOffU", Type.INTEGER);
@@ -66,7 +69,8 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
     public static final Key<Integer> PARAM_RFOFF_S = new Key<>("rfOffS", Type.INTEGER);
     public static final Key<Integer> PARAM_RFOFF_W = new Key<>("rfOffW", Type.INTEGER);
     public static final Key<Integer> PARAM_RFOFF_E = new Key<>("rfOffE", Type.INTEGER);
-    public static final List<Key<Integer>> PARAM_RFOFF = Arrays.asList(PARAM_RFOFF_D, PARAM_RFOFF_U, PARAM_RFOFF_N, PARAM_RFOFF_S, PARAM_RFOFF_W, PARAM_RFOFF_E);
+    public static final Key<Integer> PARAM_RFOFF_I = new Key<>("rfOffI", Type.INTEGER);
+    public static final List<Key<Integer>> PARAM_RFOFF = Arrays.asList(PARAM_RFOFF_D, PARAM_RFOFF_U, PARAM_RFOFF_N, PARAM_RFOFF_S, PARAM_RFOFF_W, PARAM_RFOFF_E, PARAM_RFOFF_I);
 
     public static final PropertyBool ENABLED = PropertyBool.create("enabled");
 
@@ -75,11 +79,11 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
             "The current RF/t output given by this block (last 2 seconds)",
             "The current RF/t input received by this block (last 2 seconds)"};
 
-    private boolean[] inputModeOn = new boolean[] { false, false, false, false, false, false };
-    private boolean[] inputModeOff = new boolean[] { false, false, false, false, false, false };
-    private int rfOn[] = new int[] { 1000, 1000, 1000, 1000, 1000, 1000 };
-    private int rfOff[] = new int[] { 0, 0, 0, 0, 0, 0 };
-    public static final String DUNSWE = "DUBFLR";
+    private boolean[] inputModeOn = new boolean[] { false, false, false, false, false, false, false };
+    private boolean[] inputModeOff = new boolean[] { false, false, false, false, false, false, false };
+    private int rfOn[] = new int[] { 1000, 1000, 1000, 1000, 1000, 1000, 1000 };
+    private int rfOff[] = new int[] { 0, 0, 0, 0, 0, 0, 0 };
+    public static final String DUNSWEI = "DUBFLRI";
 
     private int lastRfPerTickIn = 0;
     private int lastRfPerTickOut = 0;
@@ -156,7 +160,7 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
         }
 
         IBlockState state = getWorld().getBlockState(getPos());
-        for (EnumFacing facing : EnumFacing.VALUES) {
+        for (EnumFacing facing : EnumFacing.VALUES) { // there's no sensible way to send power out the null side, so just send it out the real sides
             int side = OrientationTools.reorient(facing, state).ordinal();
 //            int side = facing.ordinal();
             if (rf[side] > 0 && !inputMode[side]) {
@@ -183,7 +187,7 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
 
         boolean[] inputMode = redstoneSignal ? inputModeOn : inputModeOff;
         IBlockState state = getWorld().getBlockState(getPos());
-        int side = OrientationTools.reorient(from, state).ordinal();
+        int side = from == null ? 6 : OrientationTools.reorient(from, state).ordinal();
         if (inputMode[side]) {
             int[] rf = redstoneSignal ? rfOn : rfOff;
             int actual = (int)storage.receiveEnergy(Math.min(maxReceive, rf[side]), simulate);
@@ -218,7 +222,7 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
             // Old block
             int on = tagCompound.getInteger("rfOn");
             int off = tagCompound.getInteger("rfOff");
-            for (int i = 0 ; i < 6 ; i++) {
+            for (int i = 0 ; i < 7 ; i++) {
                 rfOn[i] = on;
                 rfOff[i] = off;
                 inputModeOn[i] = false;
@@ -227,15 +231,15 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
         } else {
             int[] on = tagCompound.getIntArray("on");
             int[] off = tagCompound.getIntArray("off");
-            System.arraycopy(on, 0, rfOn, 0, Math.min(6, on.length));
-            System.arraycopy(off, 0, rfOff, 0, Math.min(6, off.length));
+            System.arraycopy(on, 0, rfOn, 0, Math.min(7, on.length));
+            System.arraycopy(off, 0, rfOff, 0, Math.min(7, off.length));
 
             byte[] inOn = tagCompound.getByteArray("inputOn");
             byte[] inOff = tagCompound.getByteArray("inputOff");
-            for (int i = 0 ; i < Math.min(6, inOn.length) ; i++) {
+            for (int i = 0 ; i < Math.min(7, inOn.length) ; i++) {
                 inputModeOn[i] = inOn[i] > 0;
             }
-            for (int i = 0 ; i < Math.min(6, inOff.length) ; i++) {
+            for (int i = 0 ; i < Math.min(7, inOff.length) ; i++) {
                 inputModeOff[i] = inOff[i] > 0;
             }
         }
@@ -246,8 +250,8 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
         super.writeRestorableToNBT(tagCompound);
         tagCompound.setIntArray("on", rfOn);
         tagCompound.setIntArray("off", rfOff);
-        byte[] inOn = new byte[6];
-        byte[] inOff = new byte[6];
+        byte[] inOn = new byte[7];
+        byte[] inOff = new byte[7];
         for (int i = 0 ; i < 6 ; i++) {
             inOn[i] = (byte) (inputModeOn[i] ? 1 : 0);
             inOff[i] = (byte) (inputModeOff[i] ? 1 : 0);
@@ -263,8 +267,8 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
             return true;
         }
         if (CMD_SETTINGS.equals(command)) {
-            for (int i = 0 ; i < 6 ; i++) {
-                char prefix = DUNSWE.charAt(i);
+            for (int i = 0 ; i < 7 ; i++) {
+                char prefix = DUNSWEI.charAt(i);
                 inputModeOn[i] = params.get(PARAM_INPUTON.get(i));
                 inputModeOff[i] = params.get(PARAM_INPUTOFF.get(i));
                 rfOn[i] = params.get(PARAM_RFON.get(i));
@@ -276,8 +280,7 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
         return false;
     }
 
-    private RelayEnergyStorage facingStorage[] = new RelayEnergyStorage[6];
-    private RelayEnergyStorage nullStorage;
+    private RelayEnergyStorage facingStorage[] = new RelayEnergyStorage[7];
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
@@ -290,17 +293,11 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
         if (capability == CapabilityEnergy.ENERGY || capability == EnergyTools.TESLA_CONSUMER) {
-            if (facing == null) {
-                if (nullStorage == null) {
-                    nullStorage = new RelayEnergyStorage(this, null);
-                }
-                return (T) nullStorage;
-            } else {
-                if (facingStorage[facing.ordinal()] == null) {
-                    facingStorage[facing.ordinal()] = new RelayEnergyStorage(this, facing);
-                }
-                return (T) facingStorage[facing.ordinal()];
+            int facingOrdinal = facing == null ? 6 : facing.ordinal();
+            if (facingStorage[facingOrdinal] == null) {
+                facingStorage[facingOrdinal] = new RelayEnergyStorage(this, facing);
             }
+            return (T) facingStorage[facingOrdinal];
         }
         return super.getCapability(capability, facing);
     }
