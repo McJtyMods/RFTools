@@ -1,3 +1,7 @@
+7.51:
+- Joseph C. Sible Fixed a crash bug with the power relay in combination with the BeeKeeper
+- Also implemented support for getting power from the 'null' side as a special case in the GUI
+
 7.50:
 - Made compatible with the latest McJtyLib (3.0.0)
 - A few blocks respect the new ‘tallChunkFriendly’ config in McJtyLib which changes to a less efficient way to encode positions but one that is more friendly towards mods that increase the maximum build height
