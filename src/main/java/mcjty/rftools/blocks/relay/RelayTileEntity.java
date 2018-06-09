@@ -252,7 +252,7 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
         tagCompound.setIntArray("off", rfOff);
         byte[] inOn = new byte[7];
         byte[] inOff = new byte[7];
-        for (int i = 0 ; i < 6 ; i++) {
+        for (int i = 0 ; i < 7 ; i++) {
             inOn[i] = (byte) (inputModeOn[i] ? 1 : 0);
             inOff[i] = (byte) (inputModeOff[i] ? 1 : 0);
         }
