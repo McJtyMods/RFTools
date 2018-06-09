@@ -202,8 +202,12 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private List<SpawnerConfiguration.MobSpawnAmount> getSpawnAmounts() {
         List<SpawnerConfiguration.MobSpawnAmount> spawnAmounts = SpawnerConfiguration.mobSpawnAmounts.get(mobId);
-        if (spawnAmounts == null) {
+        boolean isDefault = spawnAmounts == null;
+        if (isDefault) {
             spawnAmounts = SpawnerConfiguration.defaultSpawnAmounts;
+        }
+        if(spawnAmounts.size() != 3) {
+            throw new IllegalStateException("The mob spawn amounts list for mob " + mobId + (isDefault ? " (the default list)" : "") + " is the wrong size. Instead of 3 elements, it contained " + spawnAmounts.size());
         }
         return spawnAmounts;
     }
