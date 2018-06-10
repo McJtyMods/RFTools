@@ -51,6 +51,7 @@ public class BuilderSetup {
                 .rotationType(BaseBlock.RotationType.HORIZROTATION)
                 .moduleSupport(BuilderTileEntity.MODULE_SUPPORT)
                 .guiId(RFTools.GUI_BUILDER)
+                .infusable()
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.builder")
                 .build();

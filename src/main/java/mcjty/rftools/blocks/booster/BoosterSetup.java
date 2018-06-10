@@ -19,6 +19,7 @@ public class BoosterSetup {
                 .rotationType(BaseBlock.RotationType.NONE)
                 .flags(BlockFlags.REDSTONE_CHECK)
                 .guiId(RFTools.GUI_BOOSTER)
+                .infusable()
                 .moduleSupport(BoosterTileEntity.MODULE_SUPPORT)
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.booster")

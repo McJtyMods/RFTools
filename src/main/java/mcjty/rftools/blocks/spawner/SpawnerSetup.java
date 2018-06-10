@@ -15,6 +15,7 @@ public class SpawnerSetup {
         spawnerBlock = ModBlocks.builderFactory.<SpawnerTileEntity> builder("spawner")
                 .tileEntityClass(SpawnerTileEntity.class)
                 .container(SpawnerTileEntity.CONTAINER_FACTORY)
+                .infusable()
                 .guiId(RFTools.GUI_SPAWNER)
                 .moduleSupport(SpawnerTileEntity.MODULE_SUPPORT)
                 .info("message.rftools.shiftmessage")

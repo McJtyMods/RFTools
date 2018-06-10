@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.infuser;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.base.GeneralConfig;
+import mcjty.lib.blocks.GenericBlock;
 import mcjty.lib.container.*;
 import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.items.ModItems;
@@ -95,7 +96,7 @@ public class MachineInfuserTileEntity extends GenericEnergyReceiverTileEntity im
             return null;
         }
         Block block = ((ItemBlock)item).getBlock();
-        if (!(block instanceof Infusable)) {
+        if (!(block instanceof Infusable || (block instanceof GenericBlock && ((GenericBlock) block).isInfusable()))) {
             return null;
         }
         NBTTagCompound tagCompound = stack.getTagCompound();

@@ -20,6 +20,7 @@ public class ElevatorSetup {
                 .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT)
                 .rotationType(BaseBlock.RotationType.HORIZROTATION)
                 .emptyContainer()
+                .infusable()
                 .guiId(RFTools.GUI_ELEVATOR)
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.elevator")

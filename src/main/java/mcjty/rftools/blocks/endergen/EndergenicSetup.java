@@ -26,6 +26,7 @@ public class EndergenicSetup {
                 .emptyContainer()
                 .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.NON_OPAQUE, BlockFlags.RENDER_TRANSLUCENT)
                 .rotationType(BaseBlock.RotationType.NONE)
+                .infusable()
                 .guiId(RFTools.GUI_ENDERGENIC)
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.endergenic")

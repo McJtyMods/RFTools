@@ -63,6 +63,7 @@ public class EnvironmentalSetup {
                 .container(EnvironmentalControllerTileEntity.CONTAINER_FACTORY)
                 .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.NON_OPAQUE, BlockFlags.RENDER_SOLID, BlockFlags.RENDER_TRANSLUCENT)
                 .lightValue(13)
+                .infusable()
                 .rotationType(BaseBlock.RotationType.NONE)
                 .moduleSupport(EnvironmentalControllerTileEntity.MODULE_SUPPORT)
                 .guiId(RFTools.GUI_ENVIRONMENTAL_CONTROLLER)
