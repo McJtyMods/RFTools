@@ -74,6 +74,9 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
         minyTextField = window.findChild("miny");
         maxyTextField = window.findChild("maxy");
         nameField = window.findChild("name");
+
+        minyTextField.setText(Integer.toString(tileEntity.getMiny()));
+        maxyTextField.setText(Integer.toString(tileEntity.getMaxy()));
     }
 
     private void setupEvents() {
