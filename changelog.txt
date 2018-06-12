@@ -1,3 +1,7 @@
+7.52:
+- Various blocks could no longer be infused and also didn't show their current infusion value (already infused blocks would still do their bonus however)
+- Fixed a problem with the environmental controller bui
+
 7.51:
 - Joseph C. Sible Fixed a crash bug with the power relay in combination with the BeeKeeper
 - Also implemented support for getting power from the 'null' side as a special case in the GUI
