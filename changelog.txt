@@ -1,3 +1,7 @@
+7.53:
+- Fixed a problem with the matter transmitter incorrectly being handled like an inventory
+- Fixed the matter beamer not supporting item capabilities
+
 7.52:
 - Various blocks could no longer be infused and also didn't show their current infusion value (already infused blocks would still do their bonus however)
 - Fixed a problem with the environmental controller bui

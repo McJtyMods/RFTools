@@ -51,6 +51,11 @@ public class MatterBeamerTileEntity extends GenericEnergyReceiverTileEntity impl
     }
 
     @Override
+    protected boolean needsCustomInvWrapper() {
+        return true;
+    }
+
+    @Override
     public InventoryHelper getInventoryHelper() {
         return inventoryHelper;
     }
