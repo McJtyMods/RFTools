@@ -36,10 +36,11 @@ public class RemoteStorageIdRegistry extends AbstractWorldData<RemoteStorageIdRe
     }
 
     public static RemoteStorageTileEntity getRemoteStorage(World world, int id) {
-        RemoteStorageIdRegistry registry = RemoteStorageIdRegistry.getRegistry(world);
-        if (registry == null) {
+        if (world.isRemote) {
             return null;
         }
+
+        RemoteStorageIdRegistry registry = RemoteStorageIdRegistry.getRegistry(world);
         GlobalCoordinate coordinate = registry.getStorage(id);
         if (coordinate == null) {
             return null;
