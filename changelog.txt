@@ -1,3 +1,6 @@
+7.54:
+- Fixed a crash with the storage tablet
+
 7.53:
 - Fixed a problem with the matter transmitter incorrectly being handled like an inventory
 - Fixed the matter beamer not supporting item capabilities
