@@ -39,6 +39,9 @@ public class CamoBakedModel implements IBakedModel {
 
     @Override
     public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
+        if (state == null) {
+            return Collections.emptyList();
+        }
         IExtendedBlockState extendedBlockState = (IExtendedBlockState) state;
         CamoBlockId facadeId = extendedBlockState.getValue(CamoShieldBlock.CAMOID);
         if (facadeId == null) {
