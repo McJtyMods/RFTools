@@ -869,6 +869,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             ItemStack stack = ItemStackTools.getStack(tileEntity, i);
             if (ItemHandlerHelper.canItemStacksStack(requested, stack)) {
                 ItemStack extracted = ItemStackTools.extractItem(tileEntity, i, todo[0]);
+                System.out.println("    ITEM " + stack.getDisplayName() + " (index " + i + ")   -> extracted = " + extracted.getDisplayName() + " (" + extracted.getCount() + ")");
                 todo[0] -= extracted.getCount();
                 if (outSlot.isEmpty()) {
                     outSlot = extracted;
@@ -885,6 +886,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     // Meant to be used from the gui
     public void requestStack(BlockPos invPos, ItemStack requested, int amount, EntityPlayer player) {
+        System.out.println("REQUEST ATTEMPT: " + requested.getDisplayName() + " (amount " + amount + ")");
         int rf = StorageScannerConfiguration.rfPerRequest;
         if (amount >= 0) {
             rf /= 10;       // Less RF usage for requesting less items
@@ -893,6 +895,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             amount = requested.getMaxStackSize();
         }
         if (getStoredPower() < rf) {
+            System.out.println("FAIL: not enough power: " + getStoredPower() + " < " + rf);
             return;
         }
 
@@ -902,9 +905,11 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         if (!outSlot.isEmpty()) {
             // Check if the items are the same and there is room
             if (!ItemHandlerHelper.canItemStacksStack(outSlot, requested)) {
+                System.out.println("FAIL: output slot not empty and items cannot stack there! (" + outSlot.getDisplayName() + ")");
                 return;
             }
             if (outSlot.getCount() >= requested.getMaxStackSize()) {
+                System.out.println("FAIL: output slot already full! (" + outSlot.getDisplayName() + ")");
                 return;
             }
             todo[0] = Math.min(todo[0], requested.getMaxStackSize() - outSlot.getCount());
@@ -917,6 +922,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             while (iterator.hasNext()) {
                 BlockPos blockPos = iterator.next();
                 outSlot = requestStackFromInv(blockPos, requested, todo, outSlot);
+                System.out.println("ATTEMPT(a) from " + BlockPosTools.toString(blockPos) + " -> " + outSlot.getDisplayName() + " (" + outSlot.stackSize + ") todo=" + todo[0]);
                 if (todo[0] == 0) {
                     break;
                 }
@@ -924,12 +930,14 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             }
         } else {
             if (isOutputFromGui(invPos)) {
+                System.out.println("ATTEMPT(b) from " + BlockPosTools.toString(invPos) + " -> " + outSlot.getDisplayName() + " (" + outSlot.stackSize + ") todo=" + todo[0]);
                 outSlot = requestStackFromInv(invPos, requested, todo, outSlot);
             }
         }
 
         if (todo[0] == amount) {
             // Nothing happened
+            System.out.println("FAIL: nothing happens: " + todo[0] + ", " + amount);
             return;
         }
 
