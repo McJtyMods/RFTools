@@ -922,7 +922,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             while (iterator.hasNext()) {
                 BlockPos blockPos = iterator.next();
                 outSlot = requestStackFromInv(blockPos, requested, todo, outSlot);
-                System.out.println("ATTEMPT(a) from " + BlockPosTools.toString(blockPos) + " -> " + outSlot.getDisplayName() + " (" + outSlot.stackSize + ") todo=" + todo[0]);
+                System.out.println("ATTEMPT(a) from " + BlockPosTools.toString(blockPos) + " -> " + outSlot.getDisplayName() + " (" + outSlot.getCount() + ") todo=" + todo[0]);
                 if (todo[0] == 0) {
                     break;
                 }
@@ -930,7 +930,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             }
         } else {
             if (isOutputFromGui(invPos)) {
-                System.out.println("ATTEMPT(b) from " + BlockPosTools.toString(invPos) + " -> " + outSlot.getDisplayName() + " (" + outSlot.stackSize + ") todo=" + todo[0]);
+                System.out.println("ATTEMPT(b) from " + BlockPosTools.toString(invPos) + " -> " + outSlot.getDisplayName() + " (" + outSlot.getCount() + ") todo=" + todo[0]);
                 outSlot = requestStackFromInv(invPos, requested, todo, outSlot);
             }
         }
