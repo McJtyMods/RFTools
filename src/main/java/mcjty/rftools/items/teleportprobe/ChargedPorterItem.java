@@ -206,7 +206,7 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
             BlockPos playerCoordinate = new BlockPos((int) player.posX, (int) player.posY, (int) player.posZ);
             int cost = TeleportationTools.calculateRFCost(world, playerCoordinate, destination);
             cost *= 1.5f;
-            int energy = getEnergyStored(stack);
+            long energy = getEnergyStoredL(stack);
             if (cost > energy) {
                 Logging.message(player, TextFormatting.RED + "Not enough energy to start the teleportation!");
                 return;
