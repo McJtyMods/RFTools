@@ -255,7 +255,7 @@ public class ModularStorageConfiguration {
         categoryMapper.put("mcjty.rftools.items.teleportprobe.ChargedPorterItem", "Technical");
         categoryMapper.put("mcjty.rftools.items.manual.RFToolsManualItem", "Books");
         categoryMapper.put("mcjty.rftools.items.manual.RFToolsShapeManualItem", "Books");
-        categoryMapper.put("mcjty.rftools.items.manual.RFToolsManualDimensionItem", "Books");
+        categoryMapper.put("mcjty.rftools.items.manual.RFToolsDimensionManualItem", "Books");
         categoryMapper.put("mcjty.rftools.items.devdelight.DevelopersDelightItem", "Technical");
         categoryMapper.put("mcjty.rftools.items.dimlets.DimletTemplate", "Dimlets");
         categoryMapper.put("mcjty.rftools.items.dimlets.EmptyDimensionTab", "Dimlets");
