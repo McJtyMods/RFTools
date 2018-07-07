@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.shield;
 
 import mcjty.rftools.RFTools;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ICustomModelLoader;
@@ -13,6 +14,9 @@ public class BakedModelLoader implements ICustomModelLoader {
     @Override
     public boolean accepts(ResourceLocation modelLocation) {
         if (!modelLocation.getResourceDomain().equals(RFTools.MODID)) {
+            return false;
+        }
+        if (modelLocation instanceof ModelResourceLocation && ((ModelResourceLocation)modelLocation).getVariant().equals("inventory")) {
             return false;
         }
         return CamoShieldBlock.CAMO.equals(modelLocation.getResourcePath());
