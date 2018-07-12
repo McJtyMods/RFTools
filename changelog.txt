@@ -1,3 +1,9 @@
+7.55:
+- Some manual fixes by Evan Cobb
+- Fixes for the charged porter from Evan Cobb
+- The redstone receiver and transmitter were missing from the creative tab
+- Joseph fixed camo shields the right way
+
 7.54:
 - Fixed a crash with the storage tablet
 
