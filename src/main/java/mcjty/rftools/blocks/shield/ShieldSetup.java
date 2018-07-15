@@ -53,10 +53,10 @@ public class ShieldSetup {
             camoShieldBlockOpaque = new CamoShieldBlock("camo_shield_block_opaque", "rftools.camo_shield_block", true);
             noTickCamoShieldBlockOpaque = new NoTickCamoShieldBlock("notick_camo_shield_block_opaque", "rftools.notick_camo_shield_block", true);
 
-            GameRegistry.registerTileEntity(TickShieldBlockTileEntity.class, RFTools.MODID + "_invisible_shield_block");
-            GameRegistry.registerTileEntity(NoTickShieldBlockTileEntity.class, RFTools.MODID + "_notick_invisible_shield_block");
-            GameRegistry.registerTileEntity(TickShieldSolidBlockTileEntity.class, RFTools.MODID + "_solid_shield_block");
-            GameRegistry.registerTileEntity(NoTickShieldSolidBlockTileEntity.class, RFTools.MODID + "_notick_solid_shield_block");
+            GameRegistry.registerTileEntity(TickShieldBlockTileEntity.class, RFTools.MODID + ":invisible_shield_block");
+            GameRegistry.registerTileEntity(NoTickShieldBlockTileEntity.class, RFTools.MODID + ":notick_invisible_shield_block");
+            GameRegistry.registerTileEntity(TickShieldSolidBlockTileEntity.class, RFTools.MODID + ":solid_shield_block");
+            GameRegistry.registerTileEntity(NoTickShieldSolidBlockTileEntity.class, RFTools.MODID + ":notick_solid_shield_block");
         }
     }
 
