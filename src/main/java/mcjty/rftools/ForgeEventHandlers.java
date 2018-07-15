@@ -82,7 +82,7 @@ public class ForgeEventHandlers {
 
     @SubscribeEvent
     public void registerBlocks(RegistryEvent.Register<Block> event) {
-        ModFixs modFixs = FMLCommonHandler.instance().getDataFixer().init(RFTools.MODID, 1);
+        ModFixs modFixs = FMLCommonHandler.instance().getDataFixer().init(RFTools.MODID, 2);
         McJtyRegister.registerBlocks(RFTools.instance, event.getRegistry(), modFixs, 1);
 
         // We used to accidentally register TEs with names like "minecraft:rftools_solid_shield_block" instead of "rftools:solid_shield_block".
@@ -97,7 +97,7 @@ public class ForgeEventHandlers {
         oldToNewIdMap.put("minecraft:" + RFTools.MODID + "_solid_shield_block", RFTools.MODID + ":solid_shield_block");
         oldToNewIdMap.put(RFTools.MODID + "_notick_solid_shield_block", RFTools.MODID + ":notick_solid_shield_block");
         oldToNewIdMap.put("minecraft:" + RFTools.MODID + "_notick_solid_shield_block", RFTools.MODID + ":notick_solid_shield_block");
-        modFixs.registerFix(FixTypes.BLOCK_ENTITY, new TileEntityNamespace(oldToNewIdMap, 1));
+        modFixs.registerFix(FixTypes.BLOCK_ENTITY, new TileEntityNamespace(oldToNewIdMap, 2));
     }
 
     @SubscribeEvent
