@@ -20,9 +20,11 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -30,6 +32,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.ChunkCache;
@@ -37,6 +40,7 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -63,6 +67,17 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
 
     public PowerCellBlock(String name, Class<? extends PowerCellTileEntity> clazz) {
         super(Material.IRON, clazz, PowerCellContainer::new, name, true);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void initModel() {
+        // If a block and item model have the same name, the block model wins even when rendering the item,
+        // due to MinecraftForge/MinecraftForge#4898. Since we have powercell blocks and items with different
+        // models, append "_item" to powercell items.
+        ResourceLocation blockRegistryName = getRegistryName();
+        ResourceLocation itemRegistryName = new ResourceLocation(blockRegistryName.getResourceDomain(), blockRegistryName.getResourcePath() + "_item");
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(itemRegistryName, "inventory"));
     }
 
     @SideOnly(Side.CLIENT)
