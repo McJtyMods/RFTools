@@ -23,7 +23,7 @@ import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
 import mcjty.rftools.blocks.shield.filters.*;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.builder.ShapeCardItem;
-import mcjty.rftools.shapes.Shape;
+import mcjty.rftools.shapes.IFormula;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -634,12 +634,12 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             templateState = Blocks.AIR.getDefaultState();
 
             ItemStack shapeItem = inventoryHelper.getStackInSlot(ShieldContainer.SLOT_SHAPE);
-            Shape shape = ShapeCardItem.getShape(shapeItem);
+            IFormula shape = ShapeCardItem.getShape(shapeItem);
             boolean solid = ShapeCardItem.isSolid(shapeItem);
             BlockPos dimension = ShapeCardItem.getClampedDimension(shapeItem, ShieldConfiguration.maxShieldDimension);
             BlockPos offset = ShapeCardItem.getClampedOffset(shapeItem, ShieldConfiguration.maxShieldOffset);
             Map<BlockPos, IBlockState> col = new HashMap<>();
-            ShapeCardItem.composeFormula(shapeItem, shape.getFormulaFactory().get(), getWorld(), getPos(), dimension, offset, col, supportedBlocks, solid, false, null);
+            ShapeCardItem.composeFormula(shapeItem, shape, getWorld(), getPos(), dimension, offset, col, supportedBlocks, solid, false, null);
             coordinates = col;
         } else {
             if(!findTemplateState()) return;

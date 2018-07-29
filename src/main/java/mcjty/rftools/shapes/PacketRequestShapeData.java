@@ -43,7 +43,7 @@ public class PacketRequestShapeData implements IMessage {
 
         private void handle(PacketRequestShapeData message, MessageContext ctx) {
 
-            Shape shape = ShapeCardItem.getShape(message.card);
+            IFormula shape = ShapeCardItem.getShape(message.card);
             boolean solid = ShapeCardItem.isSolid(message.card);
             BlockPos dimension = ShapeCardItem.getDimension(message.card);
 
@@ -56,7 +56,7 @@ public class PacketRequestShapeData implements IMessage {
             int dy = clamped.getY();
             ItemStack card = message.card.copy();
 
-            IFormula formula = shape.getFormulaFactory().get();
+            IFormula formula = shape;
             formula = formula.correctFormula(solid);
             formula.setup(new BlockPos(0, 0, 0), clamped, new BlockPos(0, 0, 0), message.card.getTagCompound());
 

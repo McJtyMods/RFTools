@@ -10,6 +10,10 @@ public interface IFormula {
 
     void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card);
 
+    String getDescription();
+
+    String getShapeName();
+
     default void getCheckSumClient(NBTTagCompound cardTag, Check32 crc) {
         ShapeCardItem.getLocalChecksum(cardTag, crc);
     }
@@ -62,6 +66,16 @@ public interface IFormula {
                 @Override
                 public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
                     IFormula.this.setup(thisCoord, dimension, offset, card);
+                }
+
+                @Override
+                public String getDescription() {
+                    return IFormula.this.getDescription();
+                }
+
+                @Override
+                public String getShapeName() {
+                    return IFormula.this.getShapeName();
                 }
 
                 @Override
