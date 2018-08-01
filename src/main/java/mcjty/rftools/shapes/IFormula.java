@@ -14,6 +14,8 @@ public interface IFormula {
 
     String getShapeName();
 
+    IFormula newInstance();
+
     default void getCheckSumClient(NBTTagCompound cardTag, Check32 crc) {
         ShapeCardItem.getLocalChecksum(cardTag, crc);
     }
@@ -76,6 +78,11 @@ public interface IFormula {
                 @Override
                 public String getShapeName() {
                     return IFormula.this.getShapeName();
+                }
+
+                @Override
+                public IFormula newInstance() {
+                    return IFormula.this.newInstance();
                 }
 
                 @Override

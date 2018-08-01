@@ -84,21 +84,21 @@ public class ShapeRegistry {
     //allows you to get a shape by its description (Name)
     public static IFormula getShapebyDescription(String description) {
 
-        return descriptionMap.get(description);
+        return descriptionMap.get(description).newInstance();
 
     }
 
     //get a shape by its name (name as in registry name)
     public static IFormula getShapebyName(String name) {
 
-        return nameMap.get(name);
+        return nameMap.get(name).newInstance();
 
     }
 
     //get a shape by its name (name as in registry name) via common names enum
     public static IFormula getShapebyName(CommonNames name) {
 
-        return nameMap.get(name.toString());
+        return nameMap.get(name.toString()).newInstance();
 
     }
 

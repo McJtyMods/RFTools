@@ -130,6 +130,11 @@ public class Formulas {
         }
 
         @Override
+        public IFormula newInstance() {
+            return new FormulaScan();
+        }
+
+        @Override
         public boolean isBorder(int x, int y, int z) {
             if (x <= x1 || x >= x1+dx-1 || y <= y1 || y >= y1+dy-1 || z <= z1 || z >= z1+dz-1) {
                 return isInsideSafe(x, y, z);
@@ -260,6 +265,11 @@ public class Formulas {
         @Override
         public String getShapeName() {
             return ShapeRegistry.CommonNames.SHAPE_COMPOSITION.toString();
+        }
+
+        @Override
+        public IFormula newInstance() {
+            return new FormulaComposition();
         }
 
         @Override
@@ -415,6 +425,11 @@ public class Formulas {
         }
 
         @Override
+        public IFormula newInstance() {
+            return new FormulaTorus();
+        }
+
+        @Override
         public boolean isInside(int x, int y, int z) {
             double rr = bigRadius - Math.sqrt((x - centerx) * (x - centerx) + (z - centerz) * (z - centerz));
             double f = rr * rr + (y - centery) * (y - centery) - smallRadius * smallRadius;
@@ -451,6 +466,11 @@ public class Formulas {
         @Override
         public String getShapeName() {
             return ShapeRegistry.CommonNames.SHAPE_HEART.toString();
+        }
+
+        @Override
+        public IFormula newInstance() {
+            return new FormulaHeart();
         }
 
         @Override
@@ -505,6 +525,11 @@ public class Formulas {
         }
 
         @Override
+        public IFormula newInstance() {
+            return new FormulaSphere();
+        }
+
+        @Override
         public boolean isInside(int x, int y, int z) {
             double distance = Math.sqrt(squaredDistance3D(centerx, centery, centerz, x, y, z, dx2, dy2, dz2));
             return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1);
@@ -547,6 +572,11 @@ public class Formulas {
         @Override
         public String getShapeName() {
             return ShapeRegistry.CommonNames.SHAPE_TOPDOME.toString();
+        }
+
+        @Override
+        public IFormula newInstance() {
+            return new FormulaTopDome();
         }
 
         @Override
@@ -598,6 +628,11 @@ public class Formulas {
         }
 
         @Override
+        public IFormula newInstance() {
+            return new FormulaBottomDome();
+        }
+
+        @Override
         public boolean isInside(int x, int y, int z) {
             if (y > centery) {
                 return false;
@@ -640,6 +675,11 @@ public class Formulas {
         @Override
         public String getShapeName() {
             return ShapeRegistry.CommonNames.SHAPE_BOX.toString();
+        }
+
+        @Override
+        public IFormula newInstance() {
+            return new FormulaBox();
         }
 
         @Override
@@ -693,6 +733,11 @@ public class Formulas {
         }
 
         @Override
+        public IFormula newInstance() {
+            return new FormulaCappedCylinder();
+        }
+
+        @Override
         public boolean isInside(int x, int y, int z) {
             if (y < y1 || y >= y2) {
                 return false;
@@ -734,6 +779,11 @@ public class Formulas {
         @Override
         public String getShapeName() {
             return ShapeRegistry.CommonNames.SHAPE_CYLINDER.toString();
+        }
+
+        @Override
+        public IFormula newInstance() {
+            return new FormulaCylinder();
         }
 
         @Override
@@ -782,6 +832,11 @@ public class Formulas {
         }
 
         @Override
+        public IFormula newInstance() {
+            return new FormulaCone();
+        }
+
+        @Override
         public boolean isInside(int x, int y, int z) {
             double distance = Math.sqrt(squaredDistance2D(centerx, centerz, x, z, dx2, dz2));
             return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) *  (topy-y) / dy;
@@ -820,6 +875,11 @@ public class Formulas {
         @Override
         public String getShapeName() {
             return ShapeRegistry.CommonNames.SHAPE_PYRAMID.toString();
+        }
+
+        @Override
+        public IFormula newInstance() {
+            return new FormulaPrism();
         }
 
         @Override
