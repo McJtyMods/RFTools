@@ -44,6 +44,7 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings.Mapping;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -54,11 +55,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ForgeEventHandlers {
 
@@ -229,6 +226,22 @@ public class ForgeEventHandlers {
                         block.onBlockClicked(event.getWorld(), event.getPos(), event.getEntityPlayer());
                     }
 
+                    event.setCanceled(true);
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onLivingFall(LivingFallEvent event) {
+        if (event.getEntityLiving() instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) event.getEntityLiving();
+            BuffProperties buffProperties = PlayerExtendedProperties.getBuffProperties(player);
+            if (buffProperties != null) {
+                if (buffProperties.hasBuff(PlayerBuff.BUFF_FEATHERFALLING)) {
+                    event.setDamageMultiplier(event.getDamageMultiplier() / 2);
+                }
+                if (buffProperties.hasBuff(PlayerBuff.BUFF_FEATHERFALLINGPLUS)) {
                     event.setCanceled(true);
                 }
             }

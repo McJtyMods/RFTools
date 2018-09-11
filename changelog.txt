@@ -3,6 +3,7 @@
 - Joseph fixed log warnings due to tile entities being registered with names like "minecraft:rftools_solid_shield_block" instead of "rftools:solid_shield_block".
 - Joseph fixed powercell items using the wrong model (#1808)
 - Fixed log spam by the storage scanner
+- Apparently the feather falling module was never implemented. Now they work. The normal feather falling module will half the damage while the plus version will totally negate it.
 
 7.55:
 - Some manual fixes by Evan Cobb
