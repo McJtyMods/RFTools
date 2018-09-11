@@ -90,7 +90,7 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
         }
         if (CMD_SETMODE.equals(command)) {
             Integer side = params.get(PARAM_SIDE);
-            Integer slot = params.get(PARAM_SIDE);
+            Integer slot = params.get(PARAM_SLOT);
             Boolean input = params.get(PARAM_INPUT);
             Boolean output = params.get(PARAM_OUTPUT);
 
