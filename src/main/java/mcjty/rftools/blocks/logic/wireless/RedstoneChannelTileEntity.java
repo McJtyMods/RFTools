@@ -52,7 +52,13 @@ public abstract class RedstoneChannelTileEntity extends LogicTileEntity {
     @Optional.Method(modid = "theoneprobe")
     public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
         super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
-        probeInfo.text(TextFormatting.GREEN + "Channel: " + getChannel(false));
+        int channel = getChannel(false);
+        if(channel == -1) {
+            probeInfo.text(TextFormatting.YELLOW + "No channel set! Right-click with another");
+            probeInfo.text(TextFormatting.YELLOW + "transmitter or receiver to pair");
+        } else {
+            probeInfo.text(TextFormatting.GREEN + "Channel: " + channel);
+        }
     }
 
     @SideOnly(Side.CLIENT)
@@ -60,7 +66,13 @@ public abstract class RedstoneChannelTileEntity extends LogicTileEntity {
     @Optional.Method(modid = "waila")
     public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         super.addWailaBody(itemStack, currenttip, accessor, config);
-        currenttip.add(TextFormatting.GREEN + "Channel: " + getChannel(false));
+        int channel = getChannel(false);
+        if(channel == -1) {
+            currenttip.add(TextFormatting.YELLOW + "No channel set! Right-click with another");
+            currenttip.add(TextFormatting.YELLOW + "transmitter or receiver to pair");
+        } else {
+            currenttip.add(TextFormatting.GREEN + "Channel: " + channel);
+        }
     }
 
 
