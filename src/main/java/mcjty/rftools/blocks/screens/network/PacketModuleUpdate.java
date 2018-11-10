@@ -53,17 +53,15 @@ public class PacketModuleUpdate implements IMessage {
     public static class Handler implements IMessageHandler<PacketModuleUpdate, IMessage> {
         @Override
         public IMessage onMessage(PacketModuleUpdate message, MessageContext ctx) {
-            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
+            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+                TileEntity te = ctx.getServerHandler().player.getEntityWorld().getTileEntity(message.pos);
+                if(!(te instanceof ScreenTileEntity)) {
+                    Logging.logError("PacketModuleUpdate: TileEntity is not a SimpleScreenTileEntity!");
+                    return;
+                }
+                ((ScreenTileEntity) te).updateModuleData(message.slotIndex, message.tagCompound);
+            });
             return null;
-        }
-
-        private void handle(PacketModuleUpdate message, MessageContext ctx) {
-            TileEntity te = ctx.getServerHandler().player.getEntityWorld().getTileEntity(message.pos);
-            if(!(te instanceof ScreenTileEntity)) {
-                Logging.logError("PacketModuleUpdate: TileEntity is not a SimpleScreenTileEntity!");
-                return;
-            }
-            ((ScreenTileEntity) te).updateModuleData(message.slotIndex, message.tagCompound);
         }
 
     }

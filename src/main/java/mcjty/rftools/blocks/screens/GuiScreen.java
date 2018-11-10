@@ -147,15 +147,13 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
         }
     }
 
-    private void installModuleGui(int i, final ItemStack slot, IModuleProvider moduleProvider, Class<? extends IClientScreenModule<?>> clientScreenModuleClass) {
+    private void installModuleGui(int i, ItemStack slot, IModuleProvider moduleProvider, Class<? extends IClientScreenModule<?>> clientScreenModuleClass) {
         buttons[i].setEnabled(true);
         toplevel.removeChild(modulePanels[i]);
         try {
             IClientScreenModule<?> clientScreenModule = clientScreenModuleClass.newInstance();
             clientScreenModules[i] = clientScreenModule;
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException|IllegalAccessException e) {
             throw new RuntimeException(e);
         }
 
@@ -165,11 +163,10 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
         }
 
         final NBTTagCompound finalTagCompound = tagCompound;
-        final int finalI = i;
         ScreenModuleGuiBuilder guiBuilder = new ScreenModuleGuiBuilder(mc, this, tagCompound, () -> {
             slot.setTagCompound(finalTagCompound);
-            tileEntity.setInventorySlotContents(finalI, slot);
-            RFToolsMessages.INSTANCE.sendToServer(new PacketModuleUpdate(tileEntity.getPos(), finalI, finalTagCompound));
+            tileEntity.setInventorySlotContents(i, slot);
+            RFToolsMessages.INSTANCE.sendToServer(new PacketModuleUpdate(tileEntity.getPos(), i, finalTagCompound));
         });
         clientScreenModules[i].createGui(guiBuilder);
         modulePanels[i] = guiBuilder.build();
