@@ -1,3 +1,6 @@
+7.57:
+- Mitigated a bug where the screen block could let players set arbitrary NBT on items
+
 7.56:
 - WARNING: Do not load any worlds with RFTools 7.55 or earlier if you last saved them with RFTools 7.56 or later!
 - Joseph fixed log warnings due to tile entities being registered with names like "minecraft:rftools_solid_shield_block" instead of "rftools:solid_shield_block".
