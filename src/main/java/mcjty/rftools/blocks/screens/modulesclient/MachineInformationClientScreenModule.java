@@ -62,21 +62,19 @@ public class MachineInformationClientScreenModule implements IClientScreenModule
     @Override
     public void createGui(IModuleGuiBuilder guiBuilder) {
         // @todo Hacky, solve this better
-        Minecraft mc = Minecraft.getMinecraft();
+        World world = Minecraft.getMinecraft().world;
         NBTTagCompound currentData = guiBuilder.getCurrentData();
-//        int dim = currentData.getInteger("monitordim");
-        TileEntity tileEntity = mc.world.getTileEntity(new BlockPos(currentData.getInteger("monitorx"), currentData.getInteger("monitory"), currentData.getInteger("monitorz")));
-        IModuleGuiBuilder.Choice[] choices;
-
-        if (tileEntity instanceof MachineInformation) {
-            MachineInformation information = (MachineInformation)tileEntity;
-            int count = information.getTagCount();
-            choices = new IModuleGuiBuilder.Choice[count];
-            for (int i = 0; i < count; ++i) {
-                choices[i] = new IModuleGuiBuilder.Choice(information.getTagName(i), information.getTagDescription(i));
-            }
-        } else {
-            choices = EMPTY_CHOICES;
+        IModuleGuiBuilder.Choice[] choices = EMPTY_CHOICES;
+        if((currentData.hasKey("monitordim") ? currentData.getInteger("monitordim") : currentData.getInteger("dim")) == world.provider.getDimension()) {
+	        TileEntity tileEntity = world.getTileEntity(new BlockPos(currentData.getInteger("monitorx"), currentData.getInteger("monitory"), currentData.getInteger("monitorz")));
+	        if (tileEntity instanceof MachineInformation) {
+	            MachineInformation information = (MachineInformation)tileEntity;
+	            int count = information.getTagCount();
+	            choices = new IModuleGuiBuilder.Choice[count];
+	            for (int i = 0; i < count; ++i) {
+	                choices[i] = new IModuleGuiBuilder.Choice(information.getTagName(i), information.getTagDescription(i));
+	            }
+	        }
         }
 
         guiBuilder
