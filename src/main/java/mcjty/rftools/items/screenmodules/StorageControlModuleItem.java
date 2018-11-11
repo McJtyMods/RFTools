@@ -5,6 +5,7 @@ import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.StorageControlScreenModule;
@@ -120,6 +121,17 @@ public class StorageControlModuleItem extends GenericRFToolsItem implements IMod
     @Override
     public String getName() {
         return "Stor";
+    }
+
+    @Override
+    public void createGui(IModuleGuiBuilder guiBuilder) {
+        guiBuilder
+                .ghostStack("stack0").ghostStack("stack1").ghostStack("stack2").nl()
+                .ghostStack("stack3").ghostStack("stack4").ghostStack("stack5").nl()
+                .ghostStack("stack6").ghostStack("stack7").ghostStack("stack8").nl()
+                .toggle("starred", "Starred", "If enabled only count items", "in 'starred' inventories", "(mark inventories in storage scanner)")
+                .toggle("oredict", "Ore Dict", "If enabled use ore dictionary", "to match items").nl()
+                .block("monitor").nl();
     }
 
 }

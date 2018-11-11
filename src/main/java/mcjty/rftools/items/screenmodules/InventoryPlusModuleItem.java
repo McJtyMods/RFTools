@@ -3,6 +3,7 @@ package mcjty.rftools.items.screenmodules;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.CapabilityTools;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ItemStackPlusScreenModule;
@@ -127,5 +128,15 @@ public class InventoryPlusModuleItem extends GenericRFToolsItem implements IModu
     @Override
     public String getName() {
         return "Inv";
+    }
+
+    @Override
+    public void createGui(IModuleGuiBuilder guiBuilder) {
+        guiBuilder.
+                label("Slot 1:").integer("slot1", "Slot index to show").nl().
+                label("Slot 2:").integer("slot2", "Slot index to show").nl().
+                label("Slot 3:").integer("slot3", "Slot index to show").nl().
+                label("Slot 4:").integer("slot4", "Slot index to show").nl().
+                block("monitor").nl();
     }
 }

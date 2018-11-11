@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
 import mcjty.rftools.api.screens.IClientScreenModule;
-import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
 import mcjty.rftools.api.screens.ModuleRenderInfo;
 import mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
@@ -39,15 +38,6 @@ public class ComputerClientScreenModule implements IClientScreenModule<ComputerS
     @Override
     public void mouseClick(World world, int x, int y, boolean clicked) {
 
-    }
-
-    @Override
-    public void createGui(IModuleGuiBuilder guiBuilder) {
-        guiBuilder
-                .leftLabel("Contents of this module is").nl()
-                .leftLabel("controlled with a computer.").nl()
-                .leftLabel("Only works with OpenComputers.").nl() // "Only works with OC or CC."
-                .label("Tag:").text("moduleTag", "Tag used by LUA to identify module").nl();
     }
 
     @Override

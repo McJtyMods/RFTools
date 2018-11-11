@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
 import mcjty.rftools.api.screens.IClientScreenModule;
-import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
 import mcjty.rftools.api.screens.ModuleRenderInfo;
 import mcjty.rftools.api.screens.data.IModuleData;
@@ -55,13 +54,6 @@ public class ClockClientScreenModule implements IClientScreenModule<IModuleData>
     @Override
     public void mouseClick(World world, int x, int y, boolean clicked) {
 
-    }
-
-    @Override
-    public void createGui(IModuleGuiBuilder guiBuilder) {
-        guiBuilder.
-                label("Label:").text("text", "Label text").color("color", "Label color").nl().
-                toggle("large", "Large", "Large or small font").nl();
     }
 
     @Override

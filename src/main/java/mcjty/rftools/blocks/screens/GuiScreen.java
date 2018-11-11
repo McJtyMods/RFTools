@@ -168,7 +168,7 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
             tileEntity.setInventorySlotContents(i, slot);
             RFToolsMessages.INSTANCE.sendToServer(new PacketModuleUpdate(tileEntity.getPos(), i, finalTagCompound));
         });
-        clientScreenModules[i].createGui(guiBuilder);
+        moduleProvider.createGui(guiBuilder);
         modulePanels[i] = guiBuilder.build();
         modulePanels[i].setLayoutHint(80, 8, 170, 114);
         modulePanels[i].setFilledRectThickness(-2).setFilledBackground(0xff8b8b8b);

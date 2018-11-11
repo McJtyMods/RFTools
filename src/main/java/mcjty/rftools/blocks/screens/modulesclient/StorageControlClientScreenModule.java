@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.screens.modulesclient;
 
 import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.api.screens.IClientScreenModule;
-import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
 import mcjty.rftools.api.screens.ModuleRenderInfo;
 import mcjty.rftools.blocks.screens.modules.StorageControlScreenModule;
@@ -189,17 +188,6 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
         tessellator.draw();
     }
 
-
-    @Override
-    public void createGui(IModuleGuiBuilder guiBuilder) {
-        guiBuilder
-                .ghostStack("stack0").ghostStack("stack1").ghostStack("stack2").nl()
-                .ghostStack("stack3").ghostStack("stack4").ghostStack("stack5").nl()
-                .ghostStack("stack6").ghostStack("stack7").ghostStack("stack8").nl()
-                .toggle("starred", "Starred", "If enabled only count items", "in 'starred' inventories", "(mark inventories in storage scanner)")
-                .toggle("oredict", "Ore Dict", "If enabled use ore dictionary", "to match items").nl()
-                .block("monitor").nl();
-    }
 
     @Override
     public void setupFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {

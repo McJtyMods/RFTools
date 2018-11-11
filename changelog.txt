@@ -1,3 +1,6 @@
+7.58:
+- This release requires that you also upgrade all other mods that add screen modules (RFTools Control, RFTools Dimensions, Deep Resonance)
+
 7.57:
 - Mitigated a bug where the screen block could let players set arbitrary NBT on items
 

@@ -1,5 +1,6 @@
 package mcjty.rftools.items.screenmodules;
 
+import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ButtonScreenModule;
@@ -43,6 +44,16 @@ public class ButtonModuleItem extends GenericRFToolsItem implements IModuleProvi
     @Override
     public String getName() {
         return "Button";
+    }
+
+    @Override
+    public void createGui(IModuleGuiBuilder guiBuilder) {
+        guiBuilder
+                .label("Label:").text("text", "Label text").color("color", "Label color").nl()
+                .label("Button:").text("button", "Button text").color("buttonColor", "Button color").nl()
+                .toggle("toggle", "Toggle", "Toggle button mode")
+                .choices("align", "Label alignment", "Left", "Center", "Right").nl();
+
     }
 
     @SideOnly(Side.CLIENT)

@@ -2,6 +2,7 @@ package mcjty.rftools.items.screenmodules;
 
 import java.util.List;
 
+import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
@@ -39,6 +40,15 @@ public class ComputerModuleItem extends GenericRFToolsItem implements IModulePro
     @Override
     public String getName() {
         return "Comp";
+    }
+
+    @Override
+    public void createGui(IModuleGuiBuilder guiBuilder) {
+        guiBuilder
+                .leftLabel("Contents of this module is").nl()
+                .leftLabel("controlled with a computer.").nl()
+                .leftLabel("Only works with OpenComputers.").nl() // "Only works with OC or CC."
+                .label("Tag:").text("moduleTag", "Tag used by LUA to identify module").nl();
     }
 
     @SideOnly(Side.CLIENT)

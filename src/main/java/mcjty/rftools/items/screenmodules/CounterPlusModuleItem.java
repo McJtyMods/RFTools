@@ -2,6 +2,7 @@ package mcjty.rftools.items.screenmodules;
 
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.logic.counter.CounterTileEntity;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
@@ -51,6 +52,16 @@ public class CounterPlusModuleItem extends GenericRFToolsItem implements IModule
     @Override
     public String getName() {
         return "Count";
+    }
+
+    @Override
+    public void createGui(IModuleGuiBuilder guiBuilder) {
+        guiBuilder
+                .label("Label:").text("text", "Label text").nl()
+                .label("L:").color("color", "Color for the label").label("C:").color("cntcolor", "Color for the counter").nl()
+                .format("format")
+                .choices("align", "Label alignment", "Left", "Center", "Right").nl()
+                .label("Block:").block("monitor").nl();
     }
 
     @SideOnly(Side.CLIENT)

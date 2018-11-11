@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
 import mcjty.rftools.api.screens.IClientScreenModule;
-import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
 import mcjty.rftools.api.screens.ModuleRenderInfo;
 import mcjty.rftools.blocks.screens.modules.ItemStackScreenModule;
@@ -170,16 +169,6 @@ public class ItemStackClientScreenModule implements IClientScreenModule<ItemStac
         tessellator.draw();
     }
 
-
-    @Override
-    public void createGui(IModuleGuiBuilder guiBuilder) {
-        guiBuilder.
-                label("Slot 1:").integer("slot1", "Slot index to show").nl().
-                label("Slot 2:").integer("slot2", "Slot index to show").nl().
-                label("Slot 3:").integer("slot3", "Slot index to show").nl().
-                label("Slot 4:").integer("slot4", "Slot index to show").nl().
-                block("monitor").nl();
-    }
 
     @Override
     public void setupFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {

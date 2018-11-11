@@ -44,21 +44,6 @@ public class DumpClientScreenModule implements IClientScreenModule<IModuleData> 
     public void mouseClick(World world, int x, int y, boolean clicked) {
     }
 
-    @Override
-    public void createGui(IModuleGuiBuilder guiBuilder) {
-        int index = 0;
-        for (int y = 0 ; y < DumpScreenModule.ROWS ; y++) {
-            for (int x = 0 ; x < DumpScreenModule.COLS ; x++) {
-                guiBuilder.ghostStack("stack" + index);
-                index++;
-            }
-            guiBuilder.nl();
-        }
-        guiBuilder
-                .label("Label:").text("text", "Label text").color("color", "Label color").nl()
-                .toggle("oredict", "Ore Dict", "If enabled use ore dictionary", "to match items");
-    }
-
 
     @Override
     public void setupFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {

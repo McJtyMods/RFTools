@@ -2,6 +2,7 @@ package mcjty.rftools.items.screenmodules;
 
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.logic.wireless.RedstoneChannelTileEntity;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
@@ -58,6 +59,16 @@ public class RedstoneModuleItem extends GenericRFToolsItem implements IModulePro
     @Override
     public String getName() {
         return "Red";
+    }
+
+    @Override
+    public void createGui(IModuleGuiBuilder guiBuilder) {
+        guiBuilder
+                .label("Label:").text("text", "Label text").color("color", "Color for the label").nl()
+                .label("Yes:").text("yestext", "Positive text").color("yescolor", "Color for the positive text").nl()
+                .label("No:").text("notext", "Negative text").color("nocolor", "Color for the negative text").nl()
+                .choices("align", "Label alignment", "Left", "Center", "Right").toggle("analog", "Analog mode", "Whether to show the exact level").nl()
+                .label("Block:").block("monitor").nl();
     }
 
     @SideOnly(Side.CLIENT)

@@ -38,15 +38,6 @@ public class TextClientScreenModule implements IClientScreenModule<IModuleData> 
 
     }
 
-    @Override
-    public void createGui(IModuleGuiBuilder guiBuilder) {
-        guiBuilder
-                .label("Text:").text("text", "Text to show").color("color", "Color for the text").nl()
-                .toggle("large", "Large", "Large or small font")
-                .choices("align", "Text alignment", "Left", "Center", "Right").nl();
-
-    }
-
     public void setLine(String line) {
         this.line = line;
         cache.setDirty();

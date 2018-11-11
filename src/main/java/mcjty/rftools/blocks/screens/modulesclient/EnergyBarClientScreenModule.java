@@ -57,16 +57,6 @@ public class EnergyBarClientScreenModule implements IClientScreenModule<IModuleD
     }
 
     @Override
-    public void createGui(IModuleGuiBuilder guiBuilder) {
-        guiBuilder
-                .label("Label:").text("text", "Label text").color("color", "Color for the label").nl()
-                .label("RF+:").color("rfcolor", "Color for the RF text").label("RF-:").color("rfcolor_neg", "Color for the negative", "RF/tick ratio").nl()
-                .toggleNegative("hidebar", "Bar", "Toggle visibility of the", "energy bar").mode("RF").format("format").nl()
-                .choices("align", "Label alignment", "Left", "Center", "Right").nl()
-                .label("Block:").block("monitor").nl();
-    }
-
-    @Override
     public void setupFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             line = tagCompound.getString("text");

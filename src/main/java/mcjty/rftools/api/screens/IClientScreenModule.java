@@ -67,13 +67,6 @@ public interface IClientScreenModule<T extends IModuleData> {
     void mouseClick(World world, int x, int y, boolean clicked);
 
     /**
-     * Create the gui for your module.
-     *
-     * @param guiBuilder
-     */
-    void createGui(IModuleGuiBuilder guiBuilder);
-
-    /**
      * This is called when your module is being instantiated from a saved world
      * so you can setup your data. The tags that are given to the tagCompound
      * depend on how you set up your GUI in the IClientScreenModule.

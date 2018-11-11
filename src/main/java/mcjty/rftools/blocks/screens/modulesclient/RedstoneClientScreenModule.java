@@ -69,16 +69,6 @@ public class RedstoneClientScreenModule implements IClientScreenModule<IModuleDa
     }
 
     @Override
-    public void createGui(IModuleGuiBuilder guiBuilder) {
-        guiBuilder
-                .label("Label:").text("text", "Label text").color("color", "Color for the label").nl()
-                .label("Yes:").text("yestext", "Positive text").color("yescolor", "Color for the positive text").nl()
-                .label("No:").text("notext", "Negative text").color("nocolor", "Color for the negative text").nl()
-                .choices("align", "Label alignment", "Left", "Center", "Right").toggle("analog", "Analog mode", "Whether to show the exact level").nl()
-                .label("Block:").block("monitor").nl();
-    }
-
-    @Override
     public void setupFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             line = tagCompound.getString("text");

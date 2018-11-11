@@ -3,6 +3,7 @@ package mcjty.rftools.items.screenmodules;
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.MachineInformationScreenModule;
@@ -51,6 +52,31 @@ public class MachineInformationModuleItem extends GenericRFToolsItem implements 
     @Override
     public String getName() {
         return "Info";
+    }
+
+    private static final IModuleGuiBuilder.Choice[] EMPTY_CHOICES = new IModuleGuiBuilder.Choice[0];
+
+    @Override
+    public void createGui(IModuleGuiBuilder guiBuilder) {
+        World world = guiBuilder.getWorld();
+        NBTTagCompound currentData = guiBuilder.getCurrentData();
+        IModuleGuiBuilder.Choice[] choices = EMPTY_CHOICES;
+        if((currentData.hasKey("monitordim") ? currentData.getInteger("monitordim") : currentData.getInteger("dim")) == world.provider.getDimension()) {
+	        TileEntity tileEntity = world.getTileEntity(new BlockPos(currentData.getInteger("monitorx"), currentData.getInteger("monitory"), currentData.getInteger("monitorz")));
+	        if (tileEntity instanceof MachineInformation) {
+	            MachineInformation information = (MachineInformation)tileEntity;
+	            int count = information.getTagCount();
+	            choices = new IModuleGuiBuilder.Choice[count];
+	            for (int i = 0; i < count; ++i) {
+	                choices[i] = new IModuleGuiBuilder.Choice(information.getTagName(i), information.getTagDescription(i));
+	            }
+	        }
+        }
+
+        guiBuilder
+                .label("L:").color("color", "Color for the label").label("Txt:").color("txtcolor", "Color for the text").nl()
+                .choices("monitorTag", choices).nl()
+                .block("monitor").nl();
     }
 
     @SideOnly(Side.CLIENT)

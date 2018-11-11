@@ -4,6 +4,7 @@ import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.DumpScreenModule;
@@ -54,6 +55,21 @@ public class DumpModuleItem extends GenericRFToolsItem implements IModuleProvide
     @Override
     public String getName() {
         return "Dump";
+    }
+
+    @Override
+    public void createGui(IModuleGuiBuilder guiBuilder) {
+        int index = 0;
+        for (int y = 0 ; y < DumpScreenModule.ROWS ; y++) {
+            for (int x = 0 ; x < DumpScreenModule.COLS ; x++) {
+                guiBuilder.ghostStack("stack" + index);
+                index++;
+            }
+            guiBuilder.nl();
+        }
+        guiBuilder
+                .label("Label:").text("text", "Label text").color("color", "Label color").nl()
+                .toggle("oredict", "Ore Dict", "If enabled use ore dictionary", "to match items");
     }
 
     @SideOnly(Side.CLIENT)

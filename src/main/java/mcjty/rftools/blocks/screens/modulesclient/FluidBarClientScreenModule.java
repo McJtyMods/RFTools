@@ -57,16 +57,6 @@ public class FluidBarClientScreenModule implements IClientScreenModule<IModuleDa
     }
 
     @Override
-    public void createGui(IModuleGuiBuilder guiBuilder) {
-        guiBuilder
-                .label("Label:").text("text", "Label text").color("color", "Color for the label").nl()
-                .label("mb+:").color("rfcolor", "Color for the mb text").label("mb-:").color("rfcolor_neg", "Color for the negative", "mb/tick ratio").nl()
-                .toggleNegative("hidebar", "Bar", "Toggle visibility of the", "fluid bar").mode("mb").format("format").nl()
-                .choices("align", "Label alignment", "Left", "Center", "Right").nl()
-                .label("Block:").block("monitor").nl();
-    }
-
-    @Override
     public void setupFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             line = tagCompound.getString("text");

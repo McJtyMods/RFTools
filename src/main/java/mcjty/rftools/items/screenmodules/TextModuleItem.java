@@ -1,5 +1,6 @@
 package mcjty.rftools.items.screenmodules;
 
+import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.TextScreenModule;
@@ -51,5 +52,14 @@ public class TextModuleItem extends GenericRFToolsItem implements IModuleProvide
     @Override
     public String getName() {
         return "Text";
+    }
+
+    @Override
+    public void createGui(IModuleGuiBuilder guiBuilder) {
+        guiBuilder
+                .label("Text:").text("text", "Text to show").color("color", "Color for the text").nl()
+                .toggle("large", "Large", "Large or small font")
+                .choices("align", "Text alignment", "Left", "Center", "Right").nl();
+
     }
 }

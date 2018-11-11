@@ -64,16 +64,6 @@ public class CounterClientScreenModule implements IClientScreenModule<IModuleDat
     }
 
     @Override
-    public void createGui(IModuleGuiBuilder guiBuilder) {
-        guiBuilder
-                .label("Label:").text("text", "Label text").nl()
-                .label("L:").color("color", "Color for the label").label("C:").color("cntcolor", "Color for the counter").nl()
-                .format("format")
-                .choices("align", "Label alignment", "Left", "Center", "Right").nl()
-                .label("Block:").block("monitor").nl();
-    }
-
-    @Override
     public void setupFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             line = tagCompound.getString("text");

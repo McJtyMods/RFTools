@@ -1,5 +1,6 @@
 package mcjty.rftools.items.screenmodules;
 
+import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ClockScreenModule;
@@ -46,5 +47,12 @@ public class ClockModuleItem extends GenericRFToolsItem implements IModuleProvid
     @Override
     public String getName() {
         return "Clock";
+    }
+
+    @Override
+    public void createGui(IModuleGuiBuilder guiBuilder) {
+        guiBuilder.
+                label("Label:").text("text", "Label text").color("color", "Label color").nl().
+                toggle("large", "Large", "Large or small font").nl();
     }
 }

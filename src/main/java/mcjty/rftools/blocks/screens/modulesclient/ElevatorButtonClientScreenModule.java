@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.screens.modulesclient;
 
 import mcjty.lib.client.RenderHelper;
 import mcjty.rftools.api.screens.IClientScreenModule;
-import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
 import mcjty.rftools.api.screens.ModuleRenderInfo;
 import mcjty.rftools.blocks.elevator.ElevatorTileEntity;
@@ -160,17 +159,6 @@ public class ElevatorButtonClientScreenModule implements IClientScreenModule<Ele
 
     @Override
     public void mouseClick(World world, int x, int y, boolean clicked) {
-    }
-
-    @Override
-    public void createGui(IModuleGuiBuilder guiBuilder) {
-        guiBuilder
-                .color("buttonColor", "Button color").color("curColor", "Current level button color").nl()
-                .toggle("vertical", "Vertical", "Order the buttons vertically").toggle("large", "Large", "Larger buttons").nl()
-                .toggle("lights", "Lights", "Use buttons resembling lights").toggle("start1", "Start 1", "start numbering at 1 instead of 0").nl()
-                .text("l0", "Level 0 name").text("l1", "Level 1 name").text("l2", "Level 2 name").text("l3", "Level 3 name").nl()
-                .text("l4", "Level 4 name").text("l5", "Level 5 name").text("l6", "Level 6 name").text("l7", "Level 7 name").nl()
-                .label("Block:").block("elevator").nl();
     }
 
     @Override
