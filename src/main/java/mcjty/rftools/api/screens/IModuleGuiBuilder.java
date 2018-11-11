@@ -42,13 +42,40 @@ public interface IModuleGuiBuilder {
     IModuleGuiBuilder color(String tagname, String... tooltip);
 
     /**
-     * A choice selector.
+     * A choice selector that saves the text of the selected choice.
 
      * @param tagname the tag that will be used to save the choice in your NBT
      * @param choices
      * @return
      */
     IModuleGuiBuilder choices(String tagname, String tooltip, String... choices);
+
+    public static class Choice {
+        private final String name;
+        private final String[] tooltips;
+
+        public Choice(String name, String... tooltips) {
+            this.name = name;
+            this.tooltips = tooltips;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String[] getTooltips() {
+            return tooltips;
+        }
+    }
+
+    /**
+     * A choice selector that saves the zero-based index of the selected choice.
+
+     * @param tagname the tag that will be used to save the choice in your NBT
+     * @param choices
+     * @return
+     */
+    IModuleGuiBuilder choices(String tagname, Choice... choices);
 
     /**
      * A combobox component that can be used to specify a format. This allows

@@ -17,7 +17,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
     private Minecraft mc;
@@ -172,6 +174,32 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
             String currentChoice = currentData.getString(tagname);
             if (!currentChoice.isEmpty()) {
                 choiceLabel.setChoice(currentChoice);
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public IModuleGuiBuilder choices(String tagname, Choice... choices) {
+        ChoiceLabel choiceLabel = new ChoiceLabel(mc, gui)
+                .setDesiredWidth(50).setDesiredHeight(14);
+        Map<String, Integer> choicesMap = new HashMap<>(choices.length);
+        for (int i = 0; i < choices.length; ++i) {
+            Choice c = choices[i];
+            String name = c.getName();
+            choicesMap.put(name, i);
+            choiceLabel.addChoices(name);
+            choiceLabel.setChoiceTooltip(name, c.getTooltips());
+        }
+        choiceLabel.addChoiceEvent((parent, newChoice) -> {
+            currentData.setInteger(tagname, choicesMap.get(newChoice));
+            moduleGuiChanged.updateData();
+        });
+        row.add(choiceLabel);
+        if (currentData != null) {
+            int currentChoice = currentData.getInteger(tagname);
+            if (currentChoice < choices.length && currentChoice >= 0) {
+                choiceLabel.setChoice(choices[currentChoice].getName());
             }
         }
         return this;
