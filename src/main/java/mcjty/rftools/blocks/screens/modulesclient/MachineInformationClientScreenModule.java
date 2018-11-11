@@ -5,7 +5,6 @@ import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.api.screens.*;
 import mcjty.rftools.api.screens.data.IModuleDataString;
 import mcjty.rftools.blocks.screens.modulesclient.helper.ScreenTextHelper;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
@@ -61,8 +60,7 @@ public class MachineInformationClientScreenModule implements IClientScreenModule
 
     @Override
     public void createGui(IModuleGuiBuilder guiBuilder) {
-        // @todo Hacky, solve this better
-        World world = Minecraft.getMinecraft().player.getEntityWorld();
+        World world = guiBuilder.getWorld();
         NBTTagCompound currentData = guiBuilder.getCurrentData();
         IModuleGuiBuilder.Choice[] choices = EMPTY_CHOICES;
         if((currentData.hasKey("monitordim") ? currentData.getInteger("monitordim") : currentData.getInteger("dim")) == world.provider.getDimension()) {

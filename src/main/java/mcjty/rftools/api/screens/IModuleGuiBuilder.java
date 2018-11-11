@@ -1,6 +1,7 @@
 package mcjty.rftools.api.screens;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 
 /**
  * A builder to help create gui's for your screen modules. The 'tagname' parameter is what will
@@ -23,6 +24,8 @@ import net.minecraft.nbt.NBTTagCompound;
 public interface IModuleGuiBuilder {
 
     NBTTagCompound getCurrentData();
+
+    World getWorld();
 
     IModuleGuiBuilder label(String text);
 

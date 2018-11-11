@@ -43,6 +43,11 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
         return currentData;
     }
 
+    @Override
+    public World getWorld() {
+        return mc.player.getEntityWorld();
+    }
+
     public IModuleGuiChanged getModuleGuiChanged() {
         return moduleGuiChanged;
     }
@@ -231,7 +236,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
                 // For compatibility reasons.
                 dim = currentData.getInteger("dim");
             }
-            World world = mc.player.getEntityWorld();
+            World world = getWorld();
             if (dim == world.provider.getDimension()) {
                 int x = currentData.getInteger(tagnamePos+"x");
                 int y = currentData.getInteger(tagnamePos+"y");
