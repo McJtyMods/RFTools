@@ -6,6 +6,7 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.screens.ScreenBlock;
 import mcjty.rftools.blocks.screens.ScreenTileEntity;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -60,12 +61,18 @@ public class PacketModuleUpdate implements IMessage {
             FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
                 EntityPlayerMP player = ctx.getServerHandler().player;
                 World world = player.getEntityWorld();
-                Block block = world.getBlockState(message.pos).getBlock();
+                BlockPos pos = message.pos;
+                Block block = world.getBlockState(pos).getBlock();
+                // adapted from NetHandlerPlayServer.processTryUseItemOnBlock
+                double dist = player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() + 3;
+                if(player.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) >= dist * dist) {
+                    return;
+                }
                 if(!(block instanceof ScreenBlock)) {
                     Logging.logError("PacketModuleUpdate: Block is not a ScreenBlock!");
                     return;
                 }
-                TileEntity te = world.getTileEntity(message.pos);
+                TileEntity te = world.getTileEntity(pos);
                 if(((ScreenBlock)block).checkAccess(world, player, te)) {
                     return;
                 }
