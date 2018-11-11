@@ -48,19 +48,6 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
         return mc.player.getEntityWorld();
     }
 
-    public IModuleGuiChanged getModuleGuiChanged() {
-        return moduleGuiChanged;
-    }
-
-    public Gui getGui() {
-        return gui;
-    }
-
-    public ScreenModuleGuiBuilder overridePanel(Panel p) {
-        panel = p;
-        return this;
-    }
-
     public Panel build() {
         nl();
         return panel;
