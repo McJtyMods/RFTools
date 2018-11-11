@@ -570,11 +570,14 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
 
     public void updateModuleData(int slot, NBTTagCompound tagCompound) {
         ItemStack stack = inventoryHelper.getStackInSlot(slot);
-        if(stack.isEmpty() || !ScreenBlock.hasModuleProvider(stack)) {
+        IModuleProvider moduleProvider = ScreenBlock.getModuleProvider(stack);
+        if(stack.isEmpty() || moduleProvider == null) {
             Logging.logError("PacketModuleUpdate: ItemStack does not have a module provider!");
             return;
         }
-        stack.setTagCompound(tagCompound);
+        NbtSanitizerModuleGuiBuilder sanitizer = new NbtSanitizerModuleGuiBuilder(getWorld(), stack.getTagCompound());
+        moduleProvider.createGui(sanitizer);
+        stack.setTagCompound(sanitizer.sanitizeNbt(tagCompound));
         screenModules = null;
         clientScreenModules = null;
         computerModules.clear();
