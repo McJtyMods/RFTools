@@ -62,7 +62,7 @@ public class MachineInformationClientScreenModule implements IClientScreenModule
     @Override
     public void createGui(IModuleGuiBuilder guiBuilder) {
         // @todo Hacky, solve this better
-        World world = Minecraft.getMinecraft().world;
+        World world = Minecraft.getMinecraft().player.getEntityWorld();
         NBTTagCompound currentData = guiBuilder.getCurrentData();
         IModuleGuiBuilder.Choice[] choices = EMPTY_CHOICES;
         if((currentData.hasKey("monitordim") ? currentData.getInteger("monitordim") : currentData.getInteger("dim")) == world.provider.getDimension()) {
