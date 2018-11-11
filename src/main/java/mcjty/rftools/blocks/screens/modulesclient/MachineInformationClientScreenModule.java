@@ -4,7 +4,6 @@ import mcjty.lib.api.MachineInformation;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.api.screens.*;
 import mcjty.rftools.api.screens.data.IModuleDataString;
-import mcjty.rftools.blocks.screens.modulesclient.helper.ScreenModuleGuiBuilder;
 import mcjty.rftools.blocks.screens.modulesclient.helper.ScreenTextHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -64,7 +63,7 @@ public class MachineInformationClientScreenModule implements IClientScreenModule
     public void createGui(IModuleGuiBuilder guiBuilder) {
         // @todo Hacky, solve this better
         Minecraft mc = Minecraft.getMinecraft();
-        NBTTagCompound currentData = ((ScreenModuleGuiBuilder)guiBuilder).getCurrentData();
+        NBTTagCompound currentData = guiBuilder.getCurrentData();
 //        int dim = currentData.getInteger("monitordim");
         TileEntity tileEntity = mc.world.getTileEntity(new BlockPos(currentData.getInteger("monitorx"), currentData.getInteger("monitory"), currentData.getInteger("monitorz")));
         IModuleGuiBuilder.Choice[] choices;

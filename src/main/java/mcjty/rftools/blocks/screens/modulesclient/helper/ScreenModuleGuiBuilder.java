@@ -38,6 +38,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
         panel = new Panel(mc, gui).setLayout(new VerticalLayout().setVerticalMargin(3).setSpacing(1));
     }
 
+    @Override
     public NBTTagCompound getCurrentData() {
         return currentData;
     }
