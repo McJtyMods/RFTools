@@ -34,7 +34,7 @@ public class ScreenConfiguration {
     public static void init(Configuration cfg) {
         CONTROLLER_MAXENERGY = cfg.get(CATEGORY_SCREEN, "screenControllerMaxRF", CONTROLLER_MAXENERGY,
                 "Maximum RF storage that the screen controller can hold").getInt();
-        CONTROLLER_RECEIVEPERTICK = cfg.get(CATEGORY_SCREEN, "dimletResearcherRFPerTick", CONTROLLER_RECEIVEPERTICK,
+        CONTROLLER_RECEIVEPERTICK = cfg.get(CATEGORY_SCREEN, "screenControllerRFPerTick", CONTROLLER_RECEIVEPERTICK,
                 "RF per tick that the the screen controller can receive").getInt();
 
         BUTTON_RFPERTICK = cfg.get(CATEGORY_SCREEN, "buttonRFPerTick", BUTTON_RFPERTICK,
