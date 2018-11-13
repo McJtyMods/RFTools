@@ -1,6 +1,8 @@
 7.58:
 - This release requires that you also upgrade all other mods that add screen modules (RFTools Control, RFTools Dimensions, Deep Resonance)
 - Fully fixed the bug where the screen block could let players set arbitrary NBT on items
+- Fixed a misnamed config entry in the screen section
+- New config option 'screenRefreshTiming' to control the refresh rate for screens
 
 7.57:
 - Mitigated a bug where the screen block could let players set arbitrary NBT on items
