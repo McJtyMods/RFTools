@@ -25,6 +25,7 @@ public class ScreenConfiguration {
     public static int REDSTONE_RFPERTICK = 4;
     public static int TEXT_RFPERTICK = 0;
     public static int STORAGE_CONTROL_RFPERTICK = 6;
+    public static int SCREEN_REFRESH_TIMING = 500;
 
     public static boolean useTruetype = true;
     public static String font = "rftools:fonts/ubuntu.ttf";
@@ -80,6 +81,9 @@ public class ScreenConfiguration {
                 "The size of the font").getDouble();
         additionalCharacters = cfg.get(CATEGORY_SCREEN, "additionalCharacters", additionalCharacters,
                 "Additional characters that should be supported by the truetype system").getString();
+
+        SCREEN_REFRESH_TIMING = cfg.get(CATEGORY_SCREEN, "screenRefreshTiming", SCREEN_REFRESH_TIMING,
+                "How many times the screen will update. Higher numbers make the screens less accurate but better for network bandwidth").getInt();
     }
 
 }

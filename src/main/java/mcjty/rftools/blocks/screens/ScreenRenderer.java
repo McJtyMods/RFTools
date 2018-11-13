@@ -113,7 +113,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
 
     private Map<Integer, IModuleData> updateScreenData(ScreenTileEntity screenTileEntity) {
         long millis = System.currentTimeMillis();
-        if ((millis - screenTileEntity.lastTime > 500) && screenTileEntity.isNeedsServerData()) {
+        if ((millis - screenTileEntity.lastTime > ScreenConfiguration.SCREEN_REFRESH_TIMING) && screenTileEntity.isNeedsServerData()) {
             screenTileEntity.lastTime = millis;
             GlobalCoordinate pos = new GlobalCoordinate(screenTileEntity.getPos(), screenTileEntity.getWorld().provider.getDimension());
             RFToolsMessages.INSTANCE.sendToServer(new PacketGetScreenData(RFTools.MODID, pos, millis));
