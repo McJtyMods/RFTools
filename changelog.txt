@@ -1,3 +1,6 @@
+7.59:
+- Joseph fixed the storage scanner double-counting the contents of double chests.
+
 7.58:
 - This release requires that you also upgrade all other mods that add screen modules (RFTools Control, RFTools Dimensions, Deep Resonance)
 - Fully fixed the bug where the screen block could let players set arbitrary NBT on items

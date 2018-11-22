@@ -682,14 +682,18 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         // First remove all inventories that are either out of range or no longer an inventory:
         List<BlockPos> old = inventories;
         Set<BlockPos> oldAdded = new HashSet<>();
+        Set<IItemHandler> seenItemHandlers = new HashSet<>();
         inventories = new ArrayList<>();
 
         for (BlockPos p : old) {
             if (xnetAccess.containsKey(p) || inRange(p)) {
                 TileEntity te = getWorld().getTileEntity(p);
                 if (InventoryHelper.isInventory(te) && !(te instanceof StorageScannerTileEntity)) {
-                    inventories.add(p);
-                    oldAdded.add(p);
+                    IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                    if (handler == null || seenItemHandlers.add(handler)) {
+                        inventories.add(p);
+                        oldAdded.add(p);
+                    }
                 }
             }
         }
@@ -699,12 +703,12 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             for (int z = getPos().getZ() - radius; z <= getPos().getZ() + radius; z++) {
                 for (int y = getPos().getY() - radius; y <= getPos().getY() + radius; y++) {
                     BlockPos p = new BlockPos(x, y, z);
-                    inventoryAddNew(oldAdded, p);
+                    inventoryAddNew(oldAdded, seenItemHandlers, p);
                 }
             }
         }
         for (BlockPos p : xnetAccess.keySet()) {
-            inventoryAddNew(oldAdded, p);
+            inventoryAddNew(oldAdded, seenItemHandlers, p);
             inventoriesFromXNet.add(p);
         }
 
@@ -716,12 +720,15 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                 .filter(this::isValid);
     }
 
-    private void inventoryAddNew(Set<BlockPos> oldAdded, BlockPos p) {
+    private void inventoryAddNew(Set<BlockPos> oldAdded, Set<IItemHandler> seenItemHandlers, BlockPos p) {
         if (!oldAdded.contains(p)) {
             TileEntity te = getWorld().getTileEntity(p);
             if (InventoryHelper.isInventory(te) && !(te instanceof StorageScannerTileEntity)) {
                 if (!inventories.contains(p)) {
-                    inventories.add(p);
+                    IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                    if (handler == null || seenItemHandlers.add(handler)) {
+                        inventories.add(p);
+                    }
                 }
             }
         }
