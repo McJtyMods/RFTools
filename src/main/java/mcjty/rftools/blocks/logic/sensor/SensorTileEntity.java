@@ -17,9 +17,8 @@ import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockCrops;
 import net.minecraft.block.BlockLiquid;
-import net.minecraft.block.BlockNetherWart;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
@@ -47,6 +46,7 @@ import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
@@ -317,20 +317,16 @@ public class SensorTileEntity extends LogicTileEntity implements ITickable, Defa
 
     private boolean checkGrowthLevel(BlockPos newpos) {
         IBlockState state = getWorld().getBlockState(newpos);
-        Block block = state.getBlock();
-        int pct;
-        if (block instanceof BlockCrops) {
-            BlockCrops crops = (BlockCrops) block;
-            int age = crops.getAge(state);
-            int maxAge = crops.getMaxAge();
-            pct = (age * 100) / maxAge;
-        } else if (block instanceof BlockNetherWart) {
-            BlockNetherWart wart = (BlockNetherWart) block;
-            int age = state.getValue(BlockNetherWart.AGE);
-            int maxAge = 3;
-            pct = (age * 100) / maxAge;
-        } else {
-            pct = 0;
+        int pct = 0;
+        for (IProperty<?> property : state.getProperties().keySet()) {
+            if(!"age".equals(property.getName())) continue;
+            if(property.getValueClass() == Integer.class) {
+                IProperty<Integer> integerProperty = (IProperty<Integer>)property;
+                int age = state.getValue(integerProperty);
+                int maxAge = Collections.max(integerProperty.getAllowedValues());
+                pct = (age * 100) / maxAge;
+            }
+            break;
         }
         return pct >= number;
     }

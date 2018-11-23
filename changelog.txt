@@ -1,5 +1,6 @@
 7.59:
 - Joseph fixed the storage scanner double-counting the contents of double chests.
+- Joseph made the sensor able to measure the growth of any block with an integer property named "age".
 
 7.58:
 - This release requires that you also upgrade all other mods that add screen modules (RFTools Control, RFTools Dimensions, Deep Resonance)
