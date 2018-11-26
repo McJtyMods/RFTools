@@ -82,6 +82,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     private int trueTypeMode = 0;           // 0 is default, -1 is disabled, 1 is truetype
 
     // Sever side, the module we are hovering over
+    // Client side, the last set of values we sent to the server
     private int hoveringModule = -1;
     private int hoveringX = -1;
     private int hoveringY = -1;
@@ -266,23 +267,29 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     }
 
     public void focusModuleClient(double hitX, double hitY, double hitZ, EnumFacing side, EnumFacing horizontalFacing) {
+        int x, y, module;
         ModuleRaytraceResult result = getHitModule(hitX, hitY, hitZ, side, horizontalFacing);
         if (result == null) {
-            RFToolsMessages.INSTANCE.sendToServer(new PacketServerCommandTyped(getPos(), CMD_HOVER,
-                    TypedMap.builder()
-                            .put(PARAM_X, -1)
-                            .put(PARAM_Y, -1)
-                            .put(PARAM_MODULE, -1)
-                            .build()));
-            return;
+            x = -1;
+            y = -1;
+            module = -1;
+        } else {
+            x = result.getX();
+            y = result.getY() - result.getCurrenty();
+            module = result.getModuleIndex();
         }
 
-        RFToolsMessages.INSTANCE.sendToServer(new PacketServerCommandTyped(getPos(), CMD_HOVER,
-                TypedMap.builder()
-                        .put(PARAM_X, result.getX())
-                        .put(PARAM_Y, result.getY() - result.getCurrenty())
-                        .put(PARAM_MODULE, result.getModuleIndex())
-                        .build()));
+        if (x != hoveringX || y != hoveringY || module != hoveringModule) {
+            RFToolsMessages.INSTANCE.sendToServer(new PacketServerCommandTyped(getPos(), CMD_HOVER,
+                    TypedMap.builder()
+                            .put(PARAM_X, x)
+                            .put(PARAM_Y, y)
+                            .put(PARAM_MODULE, module)
+                            .build()));
+            hoveringX = x;
+            hoveringY = y;
+            hoveringModule = module;
+        }
     }
 
     public void hitScreenClient(double hitX, double hitY, double hitZ, EnumFacing side, EnumFacing horizontalFacing) {
