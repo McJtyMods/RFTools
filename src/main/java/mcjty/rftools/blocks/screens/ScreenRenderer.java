@@ -156,7 +156,9 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
                 if (hit != null) {
                     hitModule = modules.get(hit.getModuleIndex());
                 }
-                tileEntity.focusModuleClient(xx, yy, zz, mouseOver.sideHit, horizontalFacing);
+                if (RFTools.instance.top) {
+                    tileEntity.focusModuleClient(xx, yy, zz, mouseOver.sideHit, horizontalFacing);
+                }
             }
         }
 

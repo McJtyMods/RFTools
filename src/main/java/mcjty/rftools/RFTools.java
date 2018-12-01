@@ -51,6 +51,7 @@ public class RFTools implements ModBase {
     // Are some mods loaded?.
     public boolean rftoolsDimensions = false;
     public boolean xnet = false;
+    public boolean top = false;
 
     public static ScreenModuleRegistry screenModuleRegistry = new ScreenModuleRegistry();
 
@@ -173,6 +174,8 @@ public class RFTools implements ModBase {
         if (Loader.isModLoaded("opencomputers")) {
             OpenComputersIntegration.init();
         }
+
+        top = Loader.isModLoaded("theoneprobe");
     }
 
     @Mod.EventHandler
