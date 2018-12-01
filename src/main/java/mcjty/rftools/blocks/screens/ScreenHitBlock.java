@@ -90,11 +90,15 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
         int dy = screenHitTileEntity.getDy();
         int dz = screenHitTileEntity.getDz();
         BlockPos rpos = pos.add(dx, dy, dz);
-        Block block = world.getBlockState(rpos).getBlock();
+        IBlockState state = world.getBlockState(rpos);
+        Block block = state.getBlock();
         if (block instanceof ScreenBlock) {
             TileEntity te = world.getTileEntity(rpos);
             if (te instanceof ScreenTileEntity) {
-                ((ScreenBlock) block).getWailaBodyScreen(currenttip, accessor.getPlayer(), (ScreenTileEntity) te);
+                RayTraceResult mouseOver = accessor.getMOP();
+                ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
+                ScreenTileEntity.ModuleRaytraceResult hit = screenTileEntity.getHitModule(mouseOver.hitVec.x - pos.getX() - dx, mouseOver.hitVec.y - pos.getY() - dy, mouseOver.hitVec.z - pos.getZ() - dz, mouseOver.sideHit, state.getValue(ScreenBlock.HORIZONTAL_FACING));
+                ((ScreenBlock) block).getWailaBodyScreen(currenttip, accessor.getPlayer(), screenTileEntity, hit);
             }
         }
         return currenttip;

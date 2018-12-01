@@ -767,6 +767,10 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     }
 
     public IScreenModule<?> getHoveringModule() {
+        return getHoveringModule(hoveringModule);
+    }
+
+    public IScreenModule<?> getHoveringModule(int hoveringModule) {
         if (hoveringModule == -1) {
             return null;
         }
@@ -817,10 +821,10 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
             return rc;
         }
         if (CMD_SCREEN_INFO.equals(command)) {
-            IScreenModule<?> module = getHoveringModule();
+            IScreenModule<?> module = getHoveringModule(args.get(PARAM_MODULE));
             List<String> info = Collections.emptyList();
             if (module instanceof ITooltipInfo) {
-                info = ((ITooltipInfo) module).getInfo(world, getHoveringX(), getHoveringY());
+                info = ((ITooltipInfo) module).getInfo(world, args.get(PARAM_X), args.get(PARAM_Y));
             }
             return TypedMap.builder()
                     .put(PARAM_INFO, info)

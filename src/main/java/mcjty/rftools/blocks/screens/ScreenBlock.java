@@ -11,6 +11,7 @@ import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.api.screens.ITooltipInfo;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.rftools.blocks.screens.ScreenTileEntity.ModuleRaytraceResult;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
@@ -147,7 +148,11 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
         super.getWailaBody(itemStack, currenttip, accessor, config);
         TileEntity te = accessor.getTileEntity();
         if (te instanceof ScreenTileEntity) {
-            return getWailaBodyScreen(currenttip, accessor.getPlayer(), (ScreenTileEntity) te);
+            RayTraceResult mouseOver = accessor.getMOP();
+            ScreenTileEntity screenTileEntity = (ScreenTileEntity) te;
+            BlockPos pos = accessor.getPosition();
+            ScreenTileEntity.ModuleRaytraceResult hit = screenTileEntity.getHitModule(mouseOver.hitVec.x - pos.getX(), mouseOver.hitVec.y - pos.getY(), mouseOver.hitVec.z - pos.getZ(), mouseOver.sideHit, accessor.getBlockState().getValue(ScreenBlock.HORIZONTAL_FACING));
+            return getWailaBodyScreen(currenttip, accessor.getPlayer(), screenTileEntity, hit);
         } else {
             return Collections.emptyList();
         }
@@ -155,7 +160,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
 
     @SideOnly(Side.CLIENT)
     @Optional.Method(modid = "waila")
-    public List<String> getWailaBodyScreen(List<String> currenttip, EntityPlayer player, ScreenTileEntity te) {
+    public List<String> getWailaBodyScreen(List<String> currenttip, EntityPlayer player, ScreenTileEntity te, ModuleRaytraceResult hit) {
         if (!te.isConnected() && te.isControllerNeeded()) {
             currenttip.add(TextFormatting.YELLOW + "[NOT CONNECTED]");
         }
@@ -171,7 +176,21 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
         }
         if (System.currentTimeMillis() - lastTime > 500) {
             lastTime = System.currentTimeMillis();
-            te.requestDataFromServer(RFTools.MODID, ScreenTileEntity.CMD_SCREEN_INFO, TypedMap.EMPTY);
+            int x, y, module;
+            if (hit == null) {
+                x = -1;
+                y = -1;
+                module = -1;
+            } else {
+                x = hit.getX();
+                y = hit.getY() - hit.getCurrenty();
+                module = hit.getModuleIndex();
+            }
+            te.requestDataFromServer(RFTools.MODID, ScreenTileEntity.CMD_SCREEN_INFO, TypedMap.builder()
+                    .put(ScreenTileEntity.PARAM_X, x)
+                    .put(ScreenTileEntity.PARAM_Y, y)
+                    .put(ScreenTileEntity.PARAM_MODULE, module)
+                    .build());
         }
         currenttip.addAll(ScreenTileEntity.infoReceived);
         return currenttip;
