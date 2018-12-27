@@ -5,24 +5,15 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 
 import java.util.List;
 
-public class TickShieldBlockTileEntity extends NoTickShieldBlockTileEntity implements ITickable {
+public class TickShieldBlockTileEntity extends NoTickShieldBlockTileEntity {
 
     @Override
-    public void update() {
-        if (!getWorld().isRemote) {
-            if (damageBits != 0) {
-                handleDamage();
-            }
-        }
-    }
-
-    private void handleDamage() {
-        if (getWorld().getTotalWorldTime() % 10 != 0) {
+    public void handleDamage(Entity entity) {
+        if (damageBits == 0 || getWorld().isRemote || getWorld().getTotalWorldTime() % 10 != 0) {
             return;
         }
         if (beamBox == null) {
@@ -35,8 +26,7 @@ public class TickShieldBlockTileEntity extends NoTickShieldBlockTileEntity imple
         if (shieldBlock != null) {
             ShieldTEBase shieldTileEntity = (ShieldTEBase) getWorld().getTileEntity(shieldBlock);
             if (shieldTileEntity != null) {
-                List<Entity> l = getWorld().getEntitiesWithinAABB(Entity.class, beamBox);
-                for (Entity entity : l) {
+                if (entity.getEntityBoundingBox().intersects(beamBox)) {
                     if ((damageBits & AbstractShieldBlock.META_HOSTILE) != 0 && entity instanceof IMob) {
                         if (checkEntityDamage(shieldTileEntity, HostileFilter.HOSTILE)) {
                             shieldTileEntity.applyDamageToEntity(entity);

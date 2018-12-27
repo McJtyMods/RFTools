@@ -182,8 +182,8 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
 
     @Override
     public void onEntityCollidedWithBlock(World world, BlockPos pos, IBlockState state, Entity entity) {
+        NoTickShieldBlockTileEntity shieldBlockTileEntity = (NoTickShieldBlockTileEntity) world.getTileEntity(pos);
         if (!(entity instanceof EntityLivingBase)) {
-            NoTickShieldBlockTileEntity shieldBlockTileEntity = (NoTickShieldBlockTileEntity) world.getTileEntity(pos);
             int cdData = shieldBlockTileEntity.getCollisionData();
             if ((cdData & META_ITEMS) == 0) {
                 // Items should be able to pass through. We just move the entity to below this block.
@@ -191,7 +191,7 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
             }
         }
 
-        // Possibly check for damage.
+        shieldBlockTileEntity.handleDamage(entity);
     }
 
     @Override

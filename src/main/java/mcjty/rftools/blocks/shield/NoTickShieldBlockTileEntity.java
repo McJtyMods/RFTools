@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.shield;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -170,5 +171,8 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
         readFromNBT(packet.getNbtCompound());
+    }
+
+    public void handleDamage(Entity entity) {
     }
 }
