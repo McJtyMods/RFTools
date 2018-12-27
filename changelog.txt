@@ -1,3 +1,7 @@
+7.60:
+- Joseph further reduced screens' network traffic
+- Joseph made shield blocks no longer be ticking tile entities, even if they do damage
+
 7.59:
 - Joseph fixed the storage scanner double-counting the contents of double chests.
 - Joseph made the sensor able to measure the growth of any block with an integer property named "age".
