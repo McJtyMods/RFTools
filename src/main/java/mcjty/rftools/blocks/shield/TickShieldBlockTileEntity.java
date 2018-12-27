@@ -12,9 +12,6 @@ import java.util.List;
 
 public class TickShieldBlockTileEntity extends NoTickShieldBlockTileEntity implements ITickable {
 
-    // Damage timer is not saved with the TE as it is not needed.
-    private int damageTimer = 10;
-
     @Override
     public void update() {
         if (!getWorld().isRemote) {
@@ -25,11 +22,9 @@ public class TickShieldBlockTileEntity extends NoTickShieldBlockTileEntity imple
     }
 
     private void handleDamage() {
-        damageTimer--;
-        if (damageTimer > 0) {
+        if (getWorld().getTotalWorldTime() % 10 != 0) {
             return;
         }
-        damageTimer = 10;
         if (beamBox == null) {
             int xCoord = getPos().getX();
             int yCoord = getPos().getY();
