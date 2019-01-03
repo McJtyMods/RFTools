@@ -1,8 +1,9 @@
 package mcjty.rftools.blocks.screens;
 
+import mcjty.lib.McJtyLib;
 import mcjty.lib.blocks.BaseBlock;
-import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.blocks.GenericBlock;
+import mcjty.lib.container.EmptyContainer;
 import mcjty.rftools.RFTools;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
@@ -14,7 +15,6 @@ import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -29,8 +29,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -115,10 +113,9 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
     public void initModel() {
-        ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(this), 0, ScreenTileEntity.class);
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
+        McJtyLib.proxy.initTESRItemStack(Item.getItemFromBlock(this), 0, ScreenTileEntity.class);
+        super.initModel();
     }
 
 
