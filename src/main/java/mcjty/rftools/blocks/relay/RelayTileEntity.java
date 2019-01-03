@@ -1,9 +1,5 @@
 package mcjty.rftools.blocks.relay;
 
-import java.util.Arrays;
-import java.util.List;
-
-import cofh.redstoneflux.api.IEnergyReceiver;
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.lib.typed.Key;
@@ -28,8 +24,10 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fml.common.Optional;
 
-@Optional.Interface(iface="cofh.redstoneflux.api.IEnergyReceiver", modid="redstoneflux")
-public class RelayTileEntity extends GenericEnergyStorageTileEntity implements ITickable, MachineInformation, IEnergyReceiver {
+import java.util.Arrays;
+import java.util.List;
+
+public class RelayTileEntity extends GenericEnergyStorageTileEntity implements ITickable, MachineInformation {
 
     public static final int MAXENERGY = 50000;
     public static final int RECEIVEPERTICK = 50000;
@@ -181,7 +179,6 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
     }
 
     // deliberately not @Optional, as other power APIs delegate to this method
-    @Override
     public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
         boolean redstoneSignal = powerLevel > 0;
 

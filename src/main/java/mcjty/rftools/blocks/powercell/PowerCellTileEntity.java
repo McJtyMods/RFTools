@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.powercell;
 
-import cofh.redstoneflux.api.IEnergyReceiver;
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.api.smartwrench.SmartWrenchSelector;
 import mcjty.lib.bindings.DefaultAction;
@@ -42,9 +41,7 @@ import java.util.Set;
 import static mcjty.rftools.blocks.powercell.PowerCellConfiguration.advancedFactor;
 import static mcjty.rftools.blocks.powercell.PowerCellConfiguration.simpleFactor;
 
-@Optional.Interface(iface = "cofh.redstoneflux.api.IEnergyReceiver", modid = "redstoneflux")
-public class PowerCellTileEntity extends GenericTileEntity implements IEnergyReceiver,
-        DefaultSidedInventory, ITickable, SmartWrenchSelector, MachineInformation {
+public class PowerCellTileEntity extends GenericTileEntity implements DefaultSidedInventory, ITickable, SmartWrenchSelector, MachineInformation {
 
     public static final String CMD_GET_INFO = "getInfo";
     public static final Key<Integer> PARAM_ENERGY = new Key<>("energy", Type.INTEGER);
@@ -469,12 +466,6 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyRec
         this.totalInserted = 0;
     }
 
-    @Optional.Method(modid = "redstoneflux")
-    @Override
-    public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
-        return receiveEnergyFacing(from, maxReceive, simulate);
-    }
-
     public int receiveEnergyFacing(EnumFacing from, int maxReceive, boolean simulate) {
         if (modes[from.ordinal()] != Mode.MODE_INPUT) {
             return 0;
@@ -571,12 +562,6 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyRec
         return maxExtract;
     }
 
-    @Optional.Method(modid = "redstoneflux")
-    @Override
-    public int getEnergyStored(EnumFacing from) {
-        return getEnergyStored();
-    }
-
     public int getEnergyStored() {
         if (world.isRemote) {
             return 0;
@@ -587,12 +572,6 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyRec
         }
         PowerCellNetwork.Network network = getNetwork();
         return network.getEnergy();
-    }
-
-    @Optional.Method(modid = "redstoneflux")
-    @Override
-    public int getMaxEnergyStored(EnumFacing from) {
-        return getMaxEnergyStored();
     }
 
     public int getMaxEnergyStored() {
@@ -616,12 +595,6 @@ public class PowerCellTileEntity extends GenericTileEntity implements IEnergyRec
         if (index == PowerCellContainer.SLOT_CARDCOPY && stack.getItem() != PowerCellSetup.powerCellCardItem) {
             return false;
         }
-        return true;
-    }
-
-    @Optional.Method(modid = "redstoneflux")
-    @Override
-    public boolean canConnectEnergy(EnumFacing from) {
         return true;
     }
 
