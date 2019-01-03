@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import org.lwjgl.opengl.GL11;
 
 public class EndergenicRenderer extends TileEntitySpecialRenderer<EndergenicTileEntity> {
@@ -70,5 +71,9 @@ public class EndergenicRenderer extends TileEntitySpecialRenderer<EndergenicTile
         if (showOverlay) {
             HudRenderer.renderHud(tileEntity, x, y, z);
         }
+    }
+
+    public static void register() {
+        ClientRegistry.bindTileEntitySpecialRenderer(EndergenicTileEntity.class, new EndergenicRenderer());
     }
 }

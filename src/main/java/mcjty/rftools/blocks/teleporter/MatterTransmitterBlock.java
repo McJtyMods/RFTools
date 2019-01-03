@@ -25,7 +25,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -56,11 +55,10 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock<MatterTransmitte
         return GuiMatterTransmitter::new;
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
     public void initModel() {
         super.initModel();
-        ClientRegistry.bindTileEntitySpecialRenderer(MatterTransmitterTileEntity.class, new BeamRenderer());
+        BeamRenderer.register();
     }
 
     @SideOnly(Side.CLIENT)

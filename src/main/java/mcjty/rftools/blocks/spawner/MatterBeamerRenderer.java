@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import org.lwjgl.opengl.GL11;
 
 public class MatterBeamerRenderer extends TileEntitySpecialRenderer<MatterBeamerTileEntity> {
@@ -68,6 +69,10 @@ public class MatterBeamerRenderer extends TileEntitySpecialRenderer<MatterBeamer
             this.bindTexture(txt);
             RenderGlowEffect.renderGlow(tessellator, x, y, z);
         }
+    }
+
+    public static void register() {
+        ClientRegistry.bindTileEntitySpecialRenderer(MatterBeamerTileEntity.class, new MatterBeamerRenderer());
     }
 }
 

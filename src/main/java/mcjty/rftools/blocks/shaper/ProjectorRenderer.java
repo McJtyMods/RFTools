@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.shaper;
 import mcjty.rftools.shapes.ShapeRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -32,5 +33,9 @@ public class ProjectorRenderer extends TileEntitySpecialRenderer<ProjectorTileEn
                 ProjectorSounds.stopSound(te.getPos());
             }
         }
+    }
+
+    public static void register() {
+        ClientRegistry.bindTileEntitySpecialRenderer(ProjectorTileEntity.class, new ProjectorRenderer());
     }
 }

@@ -9,7 +9,6 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -52,7 +51,7 @@ public class EndergenicSetup {
     public static void initClient() {
         endergenicBlock.initModel();
         endergenicBlock.setGuiFactory(GuiEndergenic::new);
-        ClientRegistry.bindTileEntitySpecialRenderer(EndergenicTileEntity.class, new EndergenicRenderer());
+        EndergenicRenderer.register();
 
         pearlInjectorBlock.initModel();
         pearlInjectorBlock.setGuiFactory(GuiPearlInjector::new);

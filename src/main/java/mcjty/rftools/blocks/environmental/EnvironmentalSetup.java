@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.environmental;
 
-import mcjty.lib.builder.BlockFlags;
 import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.blocks.GenericBlock;
+import mcjty.lib.builder.BlockFlags;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.varia.ItemStackTools;
 import mcjty.rftools.RFTools;
@@ -22,7 +22,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -102,7 +101,7 @@ public class EnvironmentalSetup {
 
         environmentalControllerBlock.initModel();
         environmentalControllerBlock.setGuiFactory(GuiEnvironmentalController::new);
-        ClientRegistry.bindTileEntitySpecialRenderer(EnvironmentalControllerTileEntity.class, new EnvironmentalTESR());
+        EnvironmentalTESR.register();
 
         regenerationEModuleItem.initModel();
         regenerationPlusEModuleItem.initModel();

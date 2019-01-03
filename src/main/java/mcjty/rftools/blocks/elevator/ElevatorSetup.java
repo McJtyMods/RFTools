@@ -1,12 +1,11 @@
 package mcjty.rftools.blocks.elevator;
 
-import mcjty.lib.builder.BlockFlags;
 import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.blocks.GenericBlock;
+import mcjty.lib.builder.BlockFlags;
 import mcjty.lib.container.GenericContainer;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -30,7 +29,7 @@ public class ElevatorSetup {
     @SideOnly(Side.CLIENT)
     public static void initClient() {
         elevatorBlock.initModel();
-        ClientRegistry.bindTileEntitySpecialRenderer(ElevatorTileEntity.class, new ElevatorTESR());
+        ElevatorTESR.register();
         elevatorBlock.setGuiFactory(GuiElevator::new);
     }
 }

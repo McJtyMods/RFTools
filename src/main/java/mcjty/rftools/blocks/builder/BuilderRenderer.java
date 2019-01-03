@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.builder;
 
 import mcjty.rftools.hud.HudRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -14,5 +15,9 @@ public class BuilderRenderer extends TileEntitySpecialRenderer<BuilderTileEntity
         if (BuilderConfiguration.showProgressHud) {
             HudRenderer.renderHud(te, x, y, z);
         }
+    }
+
+    public static void register() {
+        ClientRegistry.bindTileEntitySpecialRenderer(BuilderTileEntity.class, new BuilderRenderer());
     }
 }

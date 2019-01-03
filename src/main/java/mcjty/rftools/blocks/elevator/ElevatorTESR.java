@@ -18,6 +18,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldType;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import org.lwjgl.opengl.GL11;
 
 public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> {
@@ -124,5 +125,7 @@ public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> 
         }
     }
 
-
+    public static void register() {
+        ClientRegistry.bindTileEntitySpecialRenderer(ElevatorTileEntity.class, new ElevatorTESR());
+    }
 }

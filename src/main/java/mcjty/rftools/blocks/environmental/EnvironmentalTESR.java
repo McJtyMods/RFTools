@@ -5,6 +5,7 @@ import mcjty.rftools.RFTools;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
@@ -34,5 +35,9 @@ public class EnvironmentalTESR extends TileEntitySpecialRenderer<EnvironmentalCo
             RenderHelper.renderBillboardQuadBright(0.3f + random.nextFloat() * .05f);
             GlStateManager.popMatrix();
         }
+    }
+
+    public static void register() {
+        ClientRegistry.bindTileEntitySpecialRenderer(EnvironmentalControllerTileEntity.class, new EnvironmentalTESR());
     }
 }

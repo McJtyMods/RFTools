@@ -2,9 +2,9 @@ package mcjty.rftools.blocks.builder;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import mcjty.lib.builder.BlockFlags;
 import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.blocks.GenericBlock;
+import mcjty.lib.builder.BlockFlags;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.ItemStackTools;
@@ -15,7 +15,6 @@ import mcjty.rftools.blocks.shaper.*;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.builder.SpaceChamberCardItem;
 import net.minecraft.block.Block;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -115,7 +114,7 @@ public class BuilderSetup {
 
         builderBlock.initModel();
         builderBlock.setGuiFactory(GuiBuilder::new);
-        ClientRegistry.bindTileEntitySpecialRenderer(BuilderTileEntity.class, new BuilderRenderer());
+        BuilderRenderer.register();
 
         supportBlock.initModel();
 
@@ -130,7 +129,7 @@ public class BuilderSetup {
 
         projectorBlock.initModel();
         projectorBlock.setGuiFactory(GuiProjector::new);
-        ClientRegistry.bindTileEntitySpecialRenderer(ProjectorTileEntity.class, new ProjectorRenderer());
+        ProjectorRenderer.register();
 
         locatorBlock.initModel();
         locatorBlock.setGuiFactory(GuiLocator::new);
