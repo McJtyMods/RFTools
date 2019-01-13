@@ -74,6 +74,15 @@ public class SpawnerConfiguration {
 //                "If the number of entities around the spawner exceeds this number it will automatically stop spawning").getInt();
 
         readLivingConfig(cfg);
+
+        defaultMobSpawnRf = 10000;
+        defaultSpawnAmounts.add(new MobSpawnAmount(new ItemStack(Items.DIAMOND), 1.0f));
+        defaultSpawnAmounts.add(new MobSpawnAmount(new ItemStack(Blocks.DIRT), 20));
+        defaultSpawnAmounts.add(new MobSpawnAmount(ItemStack.EMPTY, 120.0f));
+
+        if (cfg.getCategory(CATEGORY_MOBSPAWNAMOUNTS).isEmpty()) {
+            setupInitialMobSpawnConfig(cfg);
+        }
         readMobSpawnAmountConfig(cfg);
     }
 
@@ -145,15 +154,7 @@ public class SpawnerConfiguration {
     }
 
     public static void readMobSpawnAmountConfig(Configuration cfg) {
-        defaultMobSpawnRf = 10000;
-        defaultSpawnAmounts.add(new MobSpawnAmount(new ItemStack(Items.DIAMOND), 1.0f));
-        defaultSpawnAmounts.add(new MobSpawnAmount(new ItemStack(Blocks.DIRT), 20));
-        defaultSpawnAmounts.add(new MobSpawnAmount(ItemStack.EMPTY, 120.0f));
-
         ConfigCategory category = cfg.getCategory(CATEGORY_MOBSPAWNAMOUNTS);
-        if (category.isEmpty()) {
-            setupInitialMobSpawnConfig(cfg);
-        }
         for (Map.Entry<String, Property> entry : category.entrySet()) {
             String key = entry.getKey();
 
