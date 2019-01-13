@@ -1,8 +1,10 @@
 package mcjty.rftools.blocks.crafter;
 
 import mcjty.lib.container.*;
+import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.RFTools;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -71,5 +73,28 @@ public class CrafterContainer extends GenericContainer {
             };
         }
         return super.createSlot(slotFactory, inventory, index, x, y, slotType);
+    }
+
+    @Override
+    public ItemStack slotClick(int index, int button, ClickType mode, EntityPlayer player) {
+        // Allow replacing input slot ghost items by shift-clicking.
+        if (mode == ClickType.QUICK_MOVE &&
+            index >= CrafterContainer.SLOT_BUFFER &&
+            index < CrafterContainer.SLOT_BUFFEROUT) {
+
+            int offset = index - CrafterContainer.SLOT_BUFFER;
+            ItemStackList ghostSlots = crafterBaseTE.getGhostSlots();
+            ItemStack ghostSlot = ghostSlots.get(offset);
+            ItemStack clickedWith = player.inventory.getItemStack();
+            if (!ghostSlot.isEmpty() && !ghostSlot.isItemEqual(clickedWith)) {
+                ItemStack copy = clickedWith.copy();
+                copy.setCount(1);
+                ghostSlots.set(offset, copy);
+                detectAndSendChanges();
+                return ItemStack.EMPTY;
+            }
+        }
+
+        return super.slotClick(index, button, mode, player);
     }
 }
