@@ -81,18 +81,17 @@ public class SpawnerConfiguration {
         ConfigCategory category = cfg.getCategory(CATEGORY_LIVINGMATTER);
         if (category.isEmpty()) {
             setupInitialLivingConfig(cfg);
-        } else {
-            for (Map.Entry<String, Property> entry : category.entrySet()) {
-                String[] value = entry.getValue().getStringList();
-                try {
-                    // value[0] is type and is no longer used
-                    String name = value[1];
-                    Float factor = Float.parseFloat(value[2]);
-                    livingMatter.put(new ResourceLocation(name), factor);
-                } catch (Exception e) {
-                    Logging.logError("Badly formatted 'livingmatter' configuration option!");
-                    return;
-                }
+        }
+        for (Map.Entry<String, Property> entry : category.entrySet()) {
+            String[] value = entry.getValue().getStringList();
+            try {
+                // value[0] is type and is no longer used
+                String name = value[1];
+                Float factor = Float.parseFloat(value[2]);
+                livingMatter.put(new ResourceLocation(name), factor);
+            } catch (Exception e) {
+                Logging.logError("Badly formatted 'livingmatter' configuration option!");
+                return;
             }
         }
     }
@@ -137,13 +136,11 @@ public class SpawnerConfiguration {
 
     private static int addLiving(Configuration cfg, Block block, int counter, float factor) {
         cfg.get(CATEGORY_LIVINGMATTER, "living." + counter, new String[] { "B", block.getRegistryName().toString(), Float.toString(factor) });
-        livingMatter.put(block.getRegistryName(), factor);
         return counter+1;
     }
 
     private static int addLiving(Configuration cfg, Item item, int counter, float factor) {
         cfg.get(CATEGORY_LIVINGMATTER, "living." + counter, new String[] { "I", item.getRegistryName().toString(), Float.toString(factor) });
-        livingMatter.put(item.getRegistryName(), factor);
         return counter+1;
     }
 
@@ -156,30 +153,29 @@ public class SpawnerConfiguration {
         ConfigCategory category = cfg.getCategory(CATEGORY_MOBSPAWNAMOUNTS);
         if (category.isEmpty()) {
             setupInitialMobSpawnConfig(cfg);
-        } else {
-            for (Map.Entry<String, Property> entry : category.entrySet()) {
-                String key = entry.getKey();
+        }
+        for (Map.Entry<String, Property> entry : category.entrySet()) {
+            String key = entry.getKey();
 
-                String[] splitted = entry.getValue().getStringList();
+            String[] splitted = entry.getValue().getStringList();
 
-                int materialType;
-                if (key.endsWith(".spawnamount.0")) {
-                    materialType = MATERIALTYPE_KEY;
-                } else if (key.endsWith(".spawnamount.1")) {
-                    materialType = MATERIALTYPE_BULK;
-                } else {
-                    materialType = MATERIALTYPE_LIVING;
-                }
-                String id = key.substring(0, key.indexOf(".spawnamount"));
-                setSpawnAmounts(id, materialType, splitted);
+            int materialType;
+            if (key.endsWith(".spawnamount.0")) {
+                materialType = MATERIALTYPE_KEY;
+            } else if (key.endsWith(".spawnamount.1")) {
+                materialType = MATERIALTYPE_BULK;
+            } else {
+                materialType = MATERIALTYPE_LIVING;
             }
+            String id = key.substring(0, key.indexOf(".spawnamount"));
+            setSpawnAmounts(id, materialType, splitted);
+        }
 
-            category = cfg.getCategory(CATEGORY_MOBSPAWNRF);
-            for (Map.Entry<String, Property> entry : category.entrySet()) {
-                String key = entry.getKey();
-                int rf = entry.getValue().getInt();
-                mobSpawnRf.put(key, rf);
-            }
+        category = cfg.getCategory(CATEGORY_MOBSPAWNRF);
+        for (Map.Entry<String, Property> entry : category.entrySet()) {
+            String key = entry.getKey();
+            int rf = entry.getValue().getInt();
+            mobSpawnRf.put(key, rf);
         }
     }
 
@@ -340,8 +336,7 @@ public class SpawnerConfiguration {
     }
 
     private static void addMobSpawnRF(Configuration cfg, String name, int rf) {
-        rf = cfg.get(CATEGORY_MOBSPAWNRF, name, rf).getInt();
-        mobSpawnRf.put(name, rf);
+        cfg.get(CATEGORY_MOBSPAWNRF, name, rf);
     }
 
     public static void addMobSpawnAmount(Configuration cfg, Class<? extends EntityLiving> clazz, int materialType, Object object, int meta, float amount) {
@@ -362,9 +357,8 @@ public class SpawnerConfiguration {
             type = "L";
             itemname = null;
         }
-        String[] splitted = cfg.get(CATEGORY_MOBSPAWNAMOUNTS, id + ".spawnamount." + materialType,
-                new String[] { type, itemname == null ? "" : itemname.toString(), Integer.toString(meta), Float.toString(amount) }).getStringList();
-        setSpawnAmounts(id, materialType, splitted);
+        cfg.get(CATEGORY_MOBSPAWNAMOUNTS, id + ".spawnamount." + materialType,
+                new String[] { type, itemname == null ? "" : itemname.toString(), Integer.toString(meta), Float.toString(amount) });
     }
 
     private static void setSpawnAmounts(String id, int materialType, String[] splitted) {
