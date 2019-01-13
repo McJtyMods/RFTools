@@ -83,7 +83,6 @@ public class SpawnerConfiguration {
         if (cfg.getCategory(CATEGORY_MOBSPAWNAMOUNTS).isEmpty()) {
             setupInitialMobSpawnConfig(cfg);
         }
-        readMobSpawnAmountConfig(cfg);
     }
 
     private static void readLivingConfig(Configuration cfg) {

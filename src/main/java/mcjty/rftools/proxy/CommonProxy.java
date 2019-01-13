@@ -202,6 +202,7 @@ public abstract class CommonProxy extends AbstractCommonProxy {
         NetworkRegistry.INSTANCE.registerGuiHandler(RFTools.instance, new GuiProxy());
         MinecraftForge.EVENT_BUS.register(WorldTickHandler.instance);
         ModCrafting.init();
+        SpawnerConfiguration.readMobSpawnAmountConfig(mainConfig);
     }
 
     @Override
