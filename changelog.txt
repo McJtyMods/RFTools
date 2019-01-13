@@ -1,7 +1,10 @@
 7.60:
+- Needs McJtyLib 3.1.0
+- Support for COFH RF API is removed. Only Forge Energy is supported now
 - Joseph further reduced screens' network traffic
 - Joseph made shield blocks no longer be ticking tile entities, even if they do damage
 - Joseph fixed the Spawner not working properly with items from other mods
+- Some cleanups
 
 7.59:
 - Joseph fixed the storage scanner double-counting the contents of double chests.

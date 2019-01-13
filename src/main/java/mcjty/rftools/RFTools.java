@@ -37,9 +37,9 @@ import java.util.function.Function;
         version = RFTools.VERSION)
 public class RFTools implements ModBase {
     public static final String MODID = "rftools";
-    public static final String VERSION = "7.59";
+    public static final String VERSION = "7.60";
     public static final String MIN_FORGE_VER = "14.22.0.2464";
-    public static final String MIN_MCJTYLIB_VER = "3.0.5";
+    public static final String MIN_MCJTYLIB_VER = "3.1.0";
     public static final String MIN_XNET_VER = "1.7.0";
 
     @SidedProxy(clientSide = "mcjty.rftools.proxy.ClientProxy", serverSide = "mcjty.rftools.proxy.ServerProxy")
