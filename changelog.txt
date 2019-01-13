@@ -5,6 +5,8 @@
 - Joseph made shield blocks no longer be ticking tile entities, even if they do damage
 - Joseph fixed the Spawner not working properly with items from other mods
 - Some cleanups
+- TheMuso added OpenComputers support for the crafter
+- John Doe added support for shift-click to replace crafter input ghost items
 
 7.59:
 - Joseph fixed the storage scanner double-counting the contents of double chests.
