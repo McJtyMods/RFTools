@@ -25,6 +25,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
@@ -269,5 +270,21 @@ public class ModularStorageBlock extends GenericRFToolsBlock<ModularStorageTileE
             // @todo achievements
 //            Achievements.trigger((EntityPlayer) placer, Achievements.allTheItems);
         }
+    }
+    @Override
+    public boolean hasComparatorInputOverride(IBlockState state)
+    {
+        return true;
+    }
+
+    @Override
+    public int getComparatorInputOverride(IBlockState blockState, World worldIn, BlockPos pos)
+    {
+        TileEntity te = worldIn.getTileEntity(pos);
+        if(te instanceof ModularStorageTileEntity) {
+            ModularStorageTileEntity mste = (ModularStorageTileEntity) te;
+            return MathHelper.floor(((float) mste.getNumStacks() / mste.getMaxSize()) * 14.0F) + (mste.getNumStacks() > 0 ? 1 : 0);
+        }
+        return 0;
     }
 }
