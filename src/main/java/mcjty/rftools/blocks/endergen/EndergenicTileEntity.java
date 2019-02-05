@@ -11,10 +11,10 @@ import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.EnergyTools;
-import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.ClientCommandHandler;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.TickOrderHandler;
 import mcjty.rftools.hud.IHudSupport;
 import mcjty.rftools.network.PacketGetHudLog;
 import mcjty.rftools.network.RFToolsMessages;
@@ -36,10 +36,9 @@ import net.minecraftforge.common.util.Constants;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.function.Predicate;
 
 public class EndergenicTileEntity extends GenericEnergyStorageTileEntity implements ITickable, MachineInformation,
-        IHudSupport, IMachineInformation {
+        IHudSupport, IMachineInformation, TickOrderHandler.ICheckStateServer {
 
     private static Random random = new Random();
 
@@ -122,10 +121,6 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
 
     private int tickCounter = 0;            // Only used for logging, counts server ticks.
 
-    // We enqueue endergenics for processing later
-    public static List<EndergenicTileEntity> todoEndergenics = new ArrayList<>();
-    public static Set<GlobalCoordinate> endergenicsAdded = new HashSet<>();
-
     public EndergenicTileEntity() {
         super(5000000, 20000);
     }
@@ -170,82 +165,8 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
         }
 
         if (!getWorld().isRemote) {
-            queueWork();
+            TickOrderHandler.queueEndergenic(this);
         }
-    }
-
-    // Postpone the actual tick to after all other TE's have ticked (in a WorldTickEvent)
-    private void queueWork() {
-        GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().provider.getDimension());
-        if (endergenicsAdded.contains(gc)) {
-            // We're already there. Nothing to do
-            return;
-        }
-
-        // Find an endergenic with an injector.
-        EndergenicTileEntity withInjector = findEndergenicWithPredicate(new HashSet<>(), EndergenicTileEntity::hasInjector);
-        if (withInjector != null) {
-            // From this injector locate if possible an injector that has a pearl and use
-            // that one instead as the head of the endergenic list for post-tick processing.
-            EndergenicTileEntity loop = withInjector.findEndergenicWithPredicate(new HashSet<>(), p -> !p.pearls.isEmpty());
-            if (loop == null) loop = withInjector;
-            Set<BlockPos> done = new HashSet<>();
-
-            while (loop != null) {
-                done.add(loop.getPos());
-                addToQueue(loop, new GlobalCoordinate(loop.getPos(), getWorld().provider.getDimension()));
-                loop = loop.getDestinationTE();
-                if (loop == null || done.contains(loop.getPos())) {
-                    loop = null;
-                }
-            }
-        }
-        // In all cases we add this endergenic. This will not do anything
-        // if it was already added before
-        addToQueue(this, gc);
-    }
-
-    private void addToQueue(EndergenicTileEntity endergenicWithInjector, GlobalCoordinate gc2) {
-        if (!endergenicsAdded.contains(gc2)) {
-            todoEndergenics.add(endergenicWithInjector);
-            endergenicsAdded.add(gc2);
-        }
-    }
-
-    private EndergenicTileEntity findEndergenicWithPredicate(Set<BlockPos> done, Predicate<EndergenicTileEntity> pred) {
-        if (pred.test(this)) {
-            return this;
-        }
-        if (destination == null) {
-            return null;
-        }
-        // Avoid eternal loops
-        done.add(getPos());
-        if (done.contains(destination)) {
-            return null;
-        }
-        TileEntity te = getWorld().getTileEntity(destination);
-        if (te instanceof EndergenicTileEntity) {
-            return ((EndergenicTileEntity) te).findEndergenicWithPredicate(done, pred);
-        }
-        return null;
-    }
-
-    private boolean hasInjector() {
-        for (EnumFacing dir : EnumFacing.VALUES) {
-            IBlockState state = getWorld().getBlockState(getPos().offset(dir));
-            if (state.getBlock() == EndergenicSetup.pearlInjectorBlock) {
-                TileEntity te = getWorld().getTileEntity(getPos().offset(dir));
-                if (te instanceof PearlInjectorTileEntity) {
-                    PearlInjectorTileEntity injector = (PearlInjectorTileEntity) te;
-                    EndergenicTileEntity endergenic = injector.findEndergenicTileEntity();
-                    if (endergenic == this) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     @Override
@@ -337,6 +258,7 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
         return goodCounter;
     }
 
+    @Override
     public void checkStateServer() {
         tickCounter++;
 
@@ -551,7 +473,7 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
      *
      * @return the destination TE or null if there is no valid one
      */
-    private EndergenicTileEntity getDestinationTE() {
+    public EndergenicTileEntity getDestinationTE() {
         if (destination == null) {
             return null;
         }
