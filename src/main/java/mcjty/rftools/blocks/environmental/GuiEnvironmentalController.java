@@ -21,12 +21,12 @@ import static mcjty.rftools.blocks.environmental.EnvironmentalControllerTileEnti
 
 public class GuiEnvironmentalController extends GenericGuiContainer<EnvironmentalControllerTileEntity> {
 
-    public static final String MODE_BLACKLIST = "BL";
-    public static final String MODE_WHITELIST = "WL";
-    public static final String MODE_HOSTILE = "Host";
-    public static final String MODE_PASSIVE = "Pass";
-    public static final String MODE_MOBS = "Mobs";
-    public static final String MODE_ALL = "All";
+    public static final String BLACKLIST = "BL";
+    public static final String WHITELIST = "WL";
+    public static final String HOSTILE = "Host";
+    public static final String PASSIVE = "Pass";
+    public static final String MOBS = "Mobs";
+    public static final String ALL = "All";
 
     // A copy of the players we're currently showing.
     private List<String> players = null;
@@ -37,6 +37,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
     private TextField maxyTextField;
     private TextField nameField;
     private WidgetList playersList;
+    private ChoiceLabel modeLabel;
 
     public GuiEnvironmentalController(EnvironmentalControllerTileEntity tileEntity, GenericContainer container) {
         super(RFTools.instance, RFToolsMessages.INSTANCE, tileEntity, container, RFTools.GUI_MANUAL_MAIN, "envctrl");
@@ -74,9 +75,30 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
         minyTextField = window.findChild("miny");
         maxyTextField = window.findChild("maxy");
         nameField = window.findChild("name");
+        modeLabel = window.findChild("mode");
 
         minyTextField.setText(Integer.toString(tileEntity.getMiny()));
         maxyTextField.setText(Integer.toString(tileEntity.getMaxy()));
+        switch (tileEntity.getMode()) {
+            case MODE_BLACKLIST:
+                modeLabel.setChoice(BLACKLIST);
+                break;
+            case MODE_WHITELIST:
+                modeLabel.setChoice(WHITELIST);
+                break;
+            case MODE_HOSTILE:
+                modeLabel.setChoice(HOSTILE);
+                break;
+            case MODE_PASSIVE:
+                modeLabel.setChoice(PASSIVE);
+                break;
+            case MODE_MOBS:
+                modeLabel.setChoice(MOBS);
+                break;
+            case MODE_ALL:
+                modeLabel.setChoice(ALL);
+                break;
+        }
     }
 
     private void setupEvents() {
@@ -90,15 +112,15 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
 
     private void changeMode(String newAccess) {
         EnvironmentalControllerTileEntity.EnvironmentalMode newmode;
-        if (MODE_ALL.equals(newAccess)) {
+        if (ALL.equals(newAccess)) {
             newmode = EnvironmentalControllerTileEntity.EnvironmentalMode.MODE_ALL;
-        } else if (MODE_BLACKLIST.equals(newAccess)) {
+        } else if (BLACKLIST.equals(newAccess)) {
             newmode = EnvironmentalControllerTileEntity.EnvironmentalMode.MODE_BLACKLIST;
-        } else if (MODE_WHITELIST.equals(newAccess)) {
+        } else if (WHITELIST.equals(newAccess)) {
             newmode = EnvironmentalControllerTileEntity.EnvironmentalMode.MODE_WHITELIST;
-        } else if (MODE_MOBS.equals(newAccess)) {
+        } else if (MOBS.equals(newAccess)) {
             newmode = EnvironmentalControllerTileEntity.EnvironmentalMode.MODE_MOBS;
-        } else if (MODE_PASSIVE.equals(newAccess)) {
+        } else if (PASSIVE.equals(newAccess)) {
             newmode = EnvironmentalControllerTileEntity.EnvironmentalMode.MODE_PASSIVE;
         } else {
             newmode = EnvironmentalControllerTileEntity.EnvironmentalMode.MODE_HOSTILE;

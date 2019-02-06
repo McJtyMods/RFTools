@@ -58,7 +58,7 @@ window {
         }
         panel('','horizontal') {
             hint(26,120,162,16)
-            choicelabel {
+            choicelabel('mode') {
                 channel('mode')
                 desired(40,15)
                 choices {
