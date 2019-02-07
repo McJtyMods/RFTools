@@ -6,6 +6,7 @@ import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.varia.OrientationTools;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.TickOrderHandler;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -17,7 +18,7 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
-public class PearlInjectorTileEntity extends GenericTileEntity implements DefaultSidedInventory, ITickable {
+public class PearlInjectorTileEntity extends GenericTileEntity implements DefaultSidedInventory, ITickable, TickOrderHandler.ICheckStateServer {
 
     public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(new ResourceLocation(RFTools.MODID, "gui/pearl_injector.gui"));
 
@@ -56,11 +57,12 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
     @Override
     public void update() {
         if (!getWorld().isRemote) {
-            checkStateServer();
+            TickOrderHandler.queuePearlInjector(this);
         }
     }
 
-    private void checkStateServer() {
+    @Override
+    public void checkStateServer() {
         boolean pulse = (powerLevel > 0) && !prevIn;
         if (prevIn == powerLevel > 0) {
             return;

@@ -3,6 +3,7 @@ package mcjty.rftools.blocks.logic.timer;
 import mcjty.lib.tileentity.LogicTileEntity;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.gui.widgets.ToggleButton;
+import mcjty.rftools.TickOrderHandler;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
@@ -16,7 +17,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
 
-public class TimerTileEntity extends LogicTileEntity implements ITickable {
+public class TimerTileEntity extends LogicTileEntity implements ITickable, TickOrderHandler.ICheckStateServer {
 
     public static final String CMD_SETDELAY = "timer.setDelay";
     public static final String CMD_SETPAUSES = "timer.setPauses";
@@ -60,11 +61,12 @@ public class TimerTileEntity extends LogicTileEntity implements ITickable {
     @Override
     public void update() {
         if (!getWorld().isRemote) {
-            checkStateServer();
+            TickOrderHandler.queueTimer(this);
         }
     }
 
-    private void checkStateServer() {
+    @Override
+    public void checkStateServer() {
         boolean pulse = (powerLevel > 0) && !prevIn;
         prevIn = powerLevel > 0;
 

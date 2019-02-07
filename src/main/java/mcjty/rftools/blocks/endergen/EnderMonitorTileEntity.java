@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.endergen;
 
 import mcjty.lib.tileentity.LogicTileEntity;
 import mcjty.lib.gui.widgets.ChoiceLabel;
+import mcjty.rftools.TickOrderHandler;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
@@ -22,7 +23,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class EnderMonitorTileEntity extends LogicTileEntity implements ITickable {
+public class EnderMonitorTileEntity extends LogicTileEntity implements ITickable, TickOrderHandler.ICheckStateServer {
 
     public static final String CMD_MODE = "endermonitor.setMode";
 
@@ -58,11 +59,12 @@ public class EnderMonitorTileEntity extends LogicTileEntity implements ITickable
     @Override
     public void update() {
         if (!getWorld().isRemote) {
-            checkStateServer();
+            TickOrderHandler.queueEnderMonitor(this);
         }
     }
 
-    private void checkStateServer() {
+    @Override
+    public void checkStateServer() {
         int newout = 0;
 
         if (needpulse) {

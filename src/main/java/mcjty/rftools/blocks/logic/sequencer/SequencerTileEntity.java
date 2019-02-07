@@ -7,6 +7,7 @@ import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
+import mcjty.rftools.TickOrderHandler;
 import mcjty.rftools.theoneprobe.TheOneProbeSupport;
 import mcjty.theoneprobe.api.ElementAlignment;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -21,7 +22,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
 
-public class SequencerTileEntity extends LogicTileEntity implements ITickable {
+public class SequencerTileEntity extends LogicTileEntity implements ITickable, TickOrderHandler.ICheckStateServer {
 
     public static final String CMD_MODE = "sequencer.mode";
     public static final String CMD_FLIPBITS = "sequencer.flipBits";
@@ -136,12 +137,12 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable {
     @Override
     public void update() {
         if (!getWorld().isRemote) {
-            checkStateServer();
+            TickOrderHandler.queueSequencer(this);
         }
     }
 
-    private void checkStateServer() {
-
+    @Override
+    public void checkStateServer() {
         boolean pulse = (powerLevel > 0) && !prevIn;
         prevIn = powerLevel > 0;
 
