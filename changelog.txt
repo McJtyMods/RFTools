@@ -1,3 +1,8 @@
+Upcoming:
+- Fix a divide by zero if the shape card has wrong dimensions
+- Fix the gui of the environmental controller
+- Endergenic
+
 7.60:
 - Needs McJtyLib 3.1.0
 - Support for COFH RF API is removed. Only Forge Energy is supported now

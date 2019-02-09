@@ -248,7 +248,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
             tagCompound.setInteger("scanoffy", dataOffset.getY());
             tagCompound.setInteger("scanoffz", dataOffset.getZ());
         }
-        if (progress == null) {
+        if (progress == null || progress.dimX == 0) {
             tagCompound.setInteger("progress", -1);
         } else {
             tagCompound.setInteger("progress", (progress.x-progress.tl.getX()) * 100 / progress.dimX);
