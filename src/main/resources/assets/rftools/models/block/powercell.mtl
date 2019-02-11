@@ -11,34 +11,34 @@ newmtl None_powercellD.png
 Ka 0.000000 0.000000 0.000000
 Kd 0.8 0.8 0.8
 d 1
-map_Kd rftools:blocks/powercelld
+map_Kd rftools:blocks/powercell
 
 newmtl None_powercellE.png
 Ka 0.000000 0.000000 0.000000
 Kd 0.8 0.8 0.8
 d 1
-map_Kd rftools:blocks/powercelle
+map_Kd rftools:blocks/powercell
 
 newmtl None_powercellN.png
 Ka 0.000000 0.000000 0.000000
 Kd 0.8 0.8 0.8
 d 1
-map_Kd rftools:blocks/powercelln
+map_Kd rftools:blocks/powercell
 
 newmtl None_powercellS.png
 Ka 0.000000 0.000000 0.000000
 Kd 0.8 0.8 0.8
 d 1
-map_Kd rftools:blocks/powercells
+map_Kd rftools:blocks/powercell
 
 newmtl None_powercellU.png
 Ka 0.000000 0.000000 0.000000
 Kd 0.8 0.8 0.8
 d 1
-map_Kd rftools:blocks/powercellu
+map_Kd rftools:blocks/powercell
 
 newmtl None_powercellW.png
 Ka 0.000000 0.000000 0.000000
 Kd 0.8 0.8 0.8
 d 1
-map_Kd rftools:blocks/powercellw
+map_Kd rftools:blocks/powercell

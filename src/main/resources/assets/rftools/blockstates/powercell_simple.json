@@ -5,12 +5,12 @@
     "custom": { "flip-v": true },
     "textures": {
       "particle": "rftools:blocks/powercellsimple",
-      "#rftools:blocks/powercellw": "rftools:blocks/powercellsimple",
-      "#rftools:blocks/powercelle": "rftools:blocks/powercellsimple",
-      "#rftools:blocks/powercelln": "rftools:blocks/powercellsimple",
-      "#rftools:blocks/powercells": "rftools:blocks/powercellsimple",
-      "#rftools:blocks/powercellu": "rftools:blocks/powercellsimple",
-      "#rftools:blocks/powercelld": "rftools:blocks/powercellsimple"
+      "#None_powercellW.png": "rftools:blocks/powercellsimple",
+      "#None_powercellE.png": "rftools:blocks/powercellsimple",
+      "#None_powercellN.png": "rftools:blocks/powercellsimple",
+      "#None_powercellS.png": "rftools:blocks/powercellsimple",
+      "#None_powercellU.png": "rftools:blocks/powercellsimple",
+      "#None_powercellD.png": "rftools:blocks/powercellsimple"
     },
     "transform": "forge:default-block"
   },
@@ -18,34 +18,34 @@
     "normal": [{}],
     "inventory": [{}],
     "down": {
-      "none": { "textures": { "#rftools:blocks/powercelld": "rftools:blocks/powercellsimple" } },
-      "input": { "textures": { "#rftools:blocks/powercelld": "rftools:blocks/powercellinsimple" } },
-      "output": { "textures": { "#rftools:blocks/powercelld": "rftools:blocks/powercelloutsimple" } }
+      "none": { "textures": { "#None_powercellD.png": "rftools:blocks/powercellsimple" } },
+      "input": { "textures": { "#None_powercellD.png": "rftools:blocks/powercellinsimple" } },
+      "output": { "textures": { "#None_powercellD.png": "rftools:blocks/powercelloutsimple" } }
     },
     "east": {
-      "none": { "textures": { "#rftools:blocks/powercelle": "rftools:blocks/powercellsimple" } },
-      "input": { "textures": { "#rftools:blocks/powercelle": "rftools:blocks/powercellinsimple" } },
-      "output": { "textures": { "#rftools:blocks/powercelle": "rftools:blocks/powercelloutsimple" } }
+      "none": { "textures": { "#None_powercellE.png": "rftools:blocks/powercellsimple" } },
+      "input": { "textures": { "#None_powercellE.png": "rftools:blocks/powercellinsimple" } },
+      "output": { "textures": { "#None_powercellE.png": "rftools:blocks/powercelloutsimple" } }
     },
     "north": {
-      "none": { "textures": { "#rftools:blocks/powercelln": "rftools:blocks/powercellsimple" } },
-      "input": { "textures": { "#rftools:blocks/powercelln": "rftools:blocks/powercellinsimple" } },
-      "output": { "textures": { "#rftools:blocks/powercelln": "rftools:blocks/powercelloutsimple" } }
+      "none": { "textures": { "#None_powercellN.png": "rftools:blocks/powercellsimple" } },
+      "input": { "textures": { "#None_powercellN.png": "rftools:blocks/powercellinsimple" } },
+      "output": { "textures": { "#None_powercellN.png": "rftools:blocks/powercelloutsimple" } }
     },
     "south": {
-      "none": { "textures": { "#rftools:blocks/powercells": "rftools:blocks/powercellsimple" } },
-      "input": { "textures": { "#rftools:blocks/powercells": "rftools:blocks/powercellinsimple" } },
-      "output": { "textures": { "#rftools:blocks/powercells": "rftools:blocks/powercelloutsimple" } }
+      "none": { "textures": { "#None_powercellS.png": "rftools:blocks/powercellsimple" } },
+      "input": { "textures": { "#None_powercellS.png": "rftools:blocks/powercellinsimple" } },
+      "output": { "textures": { "#None_powercellS.png": "rftools:blocks/powercelloutsimple" } }
     },
     "up": {
-      "none": { "textures": { "#rftools:blocks/powercellu": "rftools:blocks/powercellsimple" } },
-      "input": { "textures": { "#rftools:blocks/powercellu": "rftools:blocks/powercellinsimple" } },
-      "output": { "textures": { "#rftools:blocks/powercellu": "rftools:blocks/powercelloutsimple" } }
+      "none": { "textures": { "#None_powercellU.png": "rftools:blocks/powercellsimple" } },
+      "input": { "textures": { "#None_powercellU.png": "rftools:blocks/powercellinsimple" } },
+      "output": { "textures": { "#None_powercellU.png": "rftools:blocks/powercelloutsimple" } }
     },
     "west": {
-      "none": { "textures": { "#rftools:blocks/powercellw": "rftools:blocks/powercellsimple" } },
-      "input": { "textures": { "#rftools:blocks/powercellw": "rftools:blocks/powercellinsimple" } },
-      "output": { "textures": { "#rftools:blocks/powercellw": "rftools:blocks/powercelloutsimple" } }
+      "none": { "textures": { "#None_powercellW.png": "rftools:blocks/powercellsimple" } },
+      "input": { "textures": { "#None_powercellW.png": "rftools:blocks/powercellinsimple" } },
+      "output": { "textures": { "#None_powercellW.png": "rftools:blocks/powercelloutsimple" } }
     }
   }
 }
