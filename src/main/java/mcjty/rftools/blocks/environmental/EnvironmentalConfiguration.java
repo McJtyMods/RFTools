@@ -46,7 +46,7 @@ public class EnvironmentalConfiguration {
         ENVIRONMENTAL_RECEIVEPERTICK = cfg.get(CATEGORY_ENVIRONMENTAL, "environmentalRFPerTick", ENVIRONMENTAL_RECEIVEPERTICK,
                 "RF per tick that the the environmental controller can receive").getInt();
         ENVIRONMENTAL_MAXRADIUS = cfg.get(CATEGORY_ENVIRONMENTAL, "environmentalMaxRadius", ENVIRONMENTAL_MAXRADIUS,
-                "Max radius of environmental controller")
+                "Max radius of environmental controller").getInt();
         MIN_USAGE = cfg.get(CATEGORY_ENVIRONMENTAL, "environmentalMinRFUsage", MIN_USAGE,
                 "The minimum RF/tick usage that an active controller consumes").getInt();
 
