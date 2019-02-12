@@ -79,16 +79,16 @@ public class TickOrderHandler {
             At this point everything else has ticked already, including redstone. If a redstone source entity is now
             ticked *before* its destination entity the delay depends on if there is a direct connection or a redstone
             connection between the blocks. If an redstone source entity is ticked *before* its destination entity the
-            delay is always exactly one tick. The tick order was chosen in order for the most common and useful
-            combinations to have consistent delay, i.e. one tick.
+            delay is always exactly one tick.
 
             There is exactly *one tick* delay between both w/ and w/o redstone between:
-            * Ender Monitor -> Pearl Injector, Endergenic, Sequencer, Timer
-            * Timer -> Pearl Injector, Endergenic, Sequencer
-            * Sequencer -> Pearl Injector, Endergenic
+            * Ender Monitor -> Pearl Injector, Endergenic
+            * Timer -> Pearl Injector, Endergenic
+            * Sequencer -> Pearl Injector, Endergenic, Timer
 
             There is *no* delay w/o redstone and *one tick* delay w/ redstone between:
-            * Sequencer -> Timer
+            * Ender Monitor -> Sequencer, Timer
+            * Timer -> Sequencer
 
             There is *no* delay or *one tick* delay (placement/load order/redstone dependent) between:
             * Sequencer -> Sequencer
@@ -101,8 +101,8 @@ public class TickOrderHandler {
         connectedEndergenics = checkStateServer(dimension, connectedEndergenics); // In order of connection
         endergenics = checkStateServer(dimension, endergenics); // Unconnected
 
-        sequencers = checkStateServer(dimension, sequencers);
-        timers = checkStateServer(dimension, timers);
         enderMonitors = checkStateServer(dimension, enderMonitors);
+        timers = checkStateServer(dimension, timers);
+        sequencers = checkStateServer(dimension, sequencers);
     }
 }
