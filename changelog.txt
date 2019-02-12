@@ -1,7 +1,8 @@
-Upcoming:
+7.61:
 - Fix a divide by zero if the shape card has wrong dimensions
 - Fix the gui of the environmental controller
-- Endergenic
+- Quidrex made the endergenic logic much more stable
+- Fixed a bug with the endergenic which caused it not work very well in other dimensions
 
 7.60:
 - Needs McJtyLib 3.1.0
