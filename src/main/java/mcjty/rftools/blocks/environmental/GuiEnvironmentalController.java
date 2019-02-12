@@ -65,8 +65,8 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
         int r = tileEntity.getRadius();
         if (r < 5) {
             r = 5;
-        } else if (r > 100) {
-            r = 100;
+        } else if (r > EnvironmentalConfiguration.ENVIRONMENTAL_MAXRADIUS) {
+            r = EnvironmentalConfiguration.ENVIRONMENTAL_MAXRADIUS;
         }
         ((ScrollableLabel)window.findChild("radius")).setRealValue(r);
 
