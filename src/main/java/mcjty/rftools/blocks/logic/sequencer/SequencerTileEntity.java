@@ -163,6 +163,11 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickable, T
         handleCycle(powerLevel > 0);
     }
 
+    @Override
+    public int getDimension() {
+        return world.provider.getDimension();
+    }
+
     public boolean checkOutput() {
         return currentStep == -1 ? endState : getCycleBit(currentStep);
     }

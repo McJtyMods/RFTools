@@ -294,7 +294,7 @@ public class ForgeEventHandlers {
     @SubscribeEvent
     public void onPostWorldTick(TickEvent.WorldTickEvent event) {
         if (!event.world.isRemote) {
-            TickOrderHandler.postWorldTick();
+            TickOrderHandler.postWorldTick(event.world.provider.getDimension());
         }
     }
 

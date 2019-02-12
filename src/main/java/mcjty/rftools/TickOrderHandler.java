@@ -12,6 +12,7 @@ import java.util.List;
 public class TickOrderHandler {
     public interface ICheckStateServer {
         void checkStateServer();
+        int getDimension();
     }
 
     private static List<PearlInjectorTileEntity> pearlInjectors = new ArrayList<>();
@@ -54,14 +55,19 @@ public class TickOrderHandler {
         enderMonitors.add(enderMonitor);
     }
 
-    private static <T extends ICheckStateServer> void checkStateServer(List<T> tileEntities) {
-        for (ICheckStateServer tileEntity : tileEntities) {
-            tileEntity.checkStateServer();
+    private static <T extends ICheckStateServer> List<T> checkStateServer(int dimension, List<T> tileEntities) {
+        List<T> remainingTes = new ArrayList<>();
+        for (T tileEntity : tileEntities) {
+            if (tileEntity.getDimension() == dimension) {
+                tileEntity.checkStateServer();
+            } else {
+                remainingTes.add(tileEntity);
+            }
         }
-        tileEntities.clear();
+        return remainingTes;
     }
 
-    static void postWorldTick() {
+    static void postWorldTick(int dimension) {
         /*
             There is *no* pearl delay between:
             * Pearl Injector -> Endergenic (connected)
@@ -88,14 +94,15 @@ public class TickOrderHandler {
             * Sequencer -> Sequencer
             * Timer -> Timer
          */
-        checkStateServer(pearlInjectors);
+        pearlInjectors = checkStateServer(dimension, pearlInjectors);
 
         endergenics.removeAll(connectedEndergenics);
-        checkStateServer(connectedEndergenics); // In order of connection
-        checkStateServer(endergenics); // Unconnected
 
-        checkStateServer(sequencers);
-        checkStateServer(timers);
-        checkStateServer(enderMonitors);
+        connectedEndergenics = checkStateServer(dimension, connectedEndergenics); // In order of connection
+        endergenics = checkStateServer(dimension, endergenics); // Unconnected
+
+        sequencers = checkStateServer(dimension, sequencers);
+        timers = checkStateServer(dimension, timers);
+        enderMonitors = checkStateServer(dimension, enderMonitors);
     }
 }

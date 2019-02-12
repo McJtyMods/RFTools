@@ -75,6 +75,11 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
         markDirty();
     }
 
+    @Override
+    public int getDimension() {
+        return world.provider.getDimension();
+    }
+
     private boolean takePearl() {
         for (int i = 0 ; i < inventoryHelper.getCount() ; i++) {
             ItemStack stack = inventoryHelper.getStackInSlot(i);

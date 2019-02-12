@@ -77,6 +77,11 @@ public class EnderMonitorTileEntity extends LogicTileEntity implements ITickable
     }
 
     @Override
+    public int getDimension() {
+        return world.provider.getDimension();
+    }
+
+    @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         powerOutput = tagCompound.getBoolean("rs") ? 15 : 0;

@@ -343,6 +343,11 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
     }
 
     @Override
+    public int getDimension() {
+        return world.provider.getDimension();
+    }
+
+    @Override
     public int getTagCount() {
         return TAGS.length;
     }

@@ -92,6 +92,11 @@ public class TimerTileEntity extends LogicTileEntity implements ITickable, TickO
     }
 
     @Override
+    public int getDimension() {
+        return world.provider.getDimension();
+    }
+
+    @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         powerOutput = tagCompound.getBoolean("rs") ? 15 : 0;
