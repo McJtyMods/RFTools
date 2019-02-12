@@ -27,6 +27,15 @@ public class TickOrderHandler {
     private TickOrderHandler() {
     }
 
+    public static void clean() {
+        pearlInjectors.clear();
+        connectedEndergenics.clear();
+        endergenics.clear();
+        sequencers.clear();
+        timers.clear();
+        enderMonitors.clear();
+    }
+
     public static void queuePearlInjector(PearlInjectorTileEntity pearlInjector) {
         pearlInjectors.add(pearlInjector);
 

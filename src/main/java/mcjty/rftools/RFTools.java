@@ -186,6 +186,12 @@ public class RFTools implements ModBase {
         event.registerServerCommand(new CommandRftCfg());
     }
 
+    @Mod.EventHandler
+    public void serverStarted(FMLServerAboutToStartEvent event) {
+        TickOrderHandler.clean();
+    }
+
+
     /**
      * Handle interaction with other mods, complete your setup based on this.
      */
