@@ -68,7 +68,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
         } else if (r > EnvironmentalConfiguration.ENVIRONMENTAL_MAXRADIUS) {
             r = EnvironmentalConfiguration.ENVIRONMENTAL_MAXRADIUS;
         }
-        ((ScrollableLabel)window.findChild("radius")).setRealValue(r);
+        ((ScrollableLabel)window.findChild("radius")).setRealValue(r).setRealMaximum(EnvironmentalConfiguration.ENVIRONMENTAL_MAXRADIUS);
 
         playersList = window.findChild("players");
 
