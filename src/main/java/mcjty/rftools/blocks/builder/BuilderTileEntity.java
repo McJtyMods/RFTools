@@ -2380,7 +2380,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     @Override
-    public void onBlockBreak(World workd, BlockPos pos, IBlockState state) {
+    public void onBlockBreak(World world, BlockPos pos, IBlockState state) {
         if (hasSupportMode()) {
             clearSupportBlocks();
         }

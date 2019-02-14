@@ -870,8 +870,8 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     }
 
     @Override
-    public void onBlockBreak(World workd, BlockPos pos, IBlockState state) {
-        super.onBlockBreak(workd, pos, state);
+    public void onBlockBreak(World world, BlockPos pos, IBlockState state) {
+        super.onBlockBreak(world, pos, state);
         clearCaches(state.getValue(FACING_HORIZ));
     }
 

@@ -616,7 +616,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     }
 
     @Override
-    public void onBlockBreak(World workd, BlockPos pos, IBlockState state) {
+    public void onBlockBreak(World world, BlockPos pos, IBlockState state) {
         deactivate();
     }
 
