@@ -10,7 +10,7 @@ import mcjty.lib.container.InventoryHelper;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
-import mcjty.rftools.shapes.Shape;
+import mcjty.rftools.shapes.IFormula;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -34,7 +34,7 @@ public enum ShapeCardType {
             list.add("    Shape card");
             ItemStack shapeCard = inventoryHelper.getStackInSlot(BuilderTileEntity.SLOT_TAB);
             if (!shapeCard.isEmpty()) {
-                Shape shape = ShapeCardItem.getShape(shapeCard);
+                IFormula shape = ShapeCardItem.getShape(shapeCard);
                 if (shape != null) {
                     list.add("    " + shape.getDescription());
                 }

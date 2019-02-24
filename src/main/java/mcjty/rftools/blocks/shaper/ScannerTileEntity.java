@@ -16,7 +16,7 @@ import mcjty.rftools.items.modifier.ModifierItem;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.shapes.ScanDataManager;
-import mcjty.rftools.shapes.Shape;
+import mcjty.rftools.shapes.ShapeRegistry;
 import mcjty.rftools.shapes.StatePalette;
 import mcjty.rftools.varia.RLE;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -279,9 +279,9 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void updateScanCard(ItemStack cardOut) {
         if (!cardOut.isEmpty()) {
-            if (!ShapeCardItem.getShape(cardOut).isScan()) {
+            if (! ShapeRegistry.isScan(ShapeCardItem.getShape(cardOut))) {
                 boolean solid = ShapeCardItem.isSolid(cardOut);
-                ShapeCardItem.setShape(cardOut, Shape.SHAPE_SCAN, solid);
+                ShapeCardItem.setShape(cardOut, ShapeRegistry.getShapebyName(ShapeRegistry.CommonNames.SHAPE_SCAN), solid);
             }
             NBTTagCompound tagOut = cardOut.getTagCompound();
             if (dataDim != null) {

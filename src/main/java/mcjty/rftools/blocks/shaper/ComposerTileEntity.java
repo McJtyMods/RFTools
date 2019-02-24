@@ -4,9 +4,9 @@ import mcjty.lib.container.*;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.items.builder.ShapeCardItem;
-import mcjty.rftools.shapes.Shape;
 import mcjty.rftools.shapes.ShapeModifier;
 import mcjty.rftools.shapes.ShapeOperation;
+import mcjty.rftools.shapes.ShapeRegistry;
 import mcjty.rftools.shapes.ShapeRotation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -63,8 +63,8 @@ public class ComposerTileEntity extends GenericTileEntity implements DefaultSide
                     }
                 }
                 ShapeCardItem.setChildren(output, list);
-                if (!ShapeCardItem.getShape(output).isComposition()) {
-                    ShapeCardItem.setShape(output, Shape.SHAPE_COMPOSITION, true);
+                if (! ShapeRegistry.isComposition(ShapeCardItem.getShape(output))) {
+                    ShapeCardItem.setShape(output, ShapeRegistry.getShapebyName(ShapeRegistry.CommonNames.SHAPE_COMPOSITION), true);
                 }
             }
         }

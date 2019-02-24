@@ -26,7 +26,7 @@ import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.network.PacketGetHudLog;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.proxy.CommonProxy;
-import mcjty.rftools.shapes.Shape;
+import mcjty.rftools.shapes.IFormula;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
@@ -323,9 +323,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         ItemStack shapeCard = inventoryHelper.getStackInSlot(SLOT_TAB);
         BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
         BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
-        Shape shape = ShapeCardItem.getShape(shapeCard);
+        IFormula shape = ShapeCardItem.getShape(shapeCard);
         Map<BlockPos, IBlockState> blocks = new HashMap<>();
-        ShapeCardItem.composeFormula(shapeCard, shape.getFormulaFactory().get(), getWorld(), getPos(), dimension, offset, blocks, BuilderConfiguration.maxBuilderDimension * 256 * BuilderConfiguration.maxBuilderDimension, false, false, null);
+        ShapeCardItem.composeFormula(shapeCard, shape, getWorld(), getPos(), dimension, offset, blocks, BuilderConfiguration.maxBuilderDimension * 256 * BuilderConfiguration.maxBuilderDimension, false, false, null);
         for (Map.Entry<BlockPos, IBlockState> entry : blocks.entrySet()) {
             BlockPos p = entry.getKey();
             if (getWorld().isAirBlock(p)) {
@@ -384,9 +384,9 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         ItemStack shapeCard = inventoryHelper.getStackInSlot(SLOT_TAB);
         BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
         BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
-        Shape shape = ShapeCardItem.getShape(shapeCard);
+        IFormula shape = ShapeCardItem.getShape(shapeCard);
         Map<BlockPos, IBlockState> blocks = new HashMap<>();
-        ShapeCardItem.composeFormula(shapeCard, shape.getFormulaFactory().get(), getWorld(), getPos(), dimension, offset, blocks, BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension, false, false, null);
+        ShapeCardItem.composeFormula(shapeCard, shape, getWorld(), getPos(), dimension, offset, blocks, BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension, false, false, null);
         for (Map.Entry<BlockPos, IBlockState> entry : blocks.entrySet()) {
             BlockPos block = entry.getKey();
             if (getWorld().getBlockState(block).getBlock() == BuilderSetup.supportBlock) {
@@ -954,12 +954,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (cachedBlocks == null) {
             cachedBlocks = new HashMap<>();
             ItemStack shapeCard = inventoryHelper.getStackInSlot(SLOT_TAB);
-            Shape shape = ShapeCardItem.getShape(shapeCard);
+            IFormula shape = ShapeCardItem.getShape(shapeCard);
             boolean solid = ShapeCardItem.isSolid(shapeCard);
             BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
             BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
             boolean forquarry = !ShapeCardItem.isNormalShapeCard(shapeCard);
-            ShapeCardItem.composeFormula(shapeCard, shape.getFormulaFactory().get(), getWorld(), getPos(), dimension, offset, cachedBlocks, BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension, solid, forquarry, chunk);
+            ShapeCardItem.composeFormula(shapeCard, shape, getWorld(), getPos(), dimension, offset, cachedBlocks, BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension, solid, forquarry, chunk);
             cachedChunk = chunk;
         }
         return cachedBlocks;

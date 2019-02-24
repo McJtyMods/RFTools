@@ -120,6 +120,21 @@ public class Formulas {
         }
 
         @Override
+        public String getDescription() {
+            return "Scan";
+        }
+
+        @Override
+        public String getShapeName() {
+            return ShapeRegistry.CommonNames.SHAPE_SCAN.toString();
+        }
+
+        @Override
+        public IFormula newInstance() {
+            return new FormulaScan();
+        }
+
+        @Override
         public boolean isBorder(int x, int y, int z) {
             if (x <= x1 || x >= x1+dx-1 || y <= y1 || y >= y1+dy-1 || z <= z1 || z >= z1+dz-1) {
                 return isInsideSafe(x, y, z);
@@ -240,6 +255,21 @@ public class Formulas {
                 }
                 blockStates.add(state);
             }
+        }
+
+        @Override
+        public String getDescription() {
+            return "Composition";
+        }
+
+        @Override
+        public String getShapeName() {
+            return ShapeRegistry.CommonNames.SHAPE_COMPOSITION.toString();
+        }
+
+        @Override
+        public IFormula newInstance() {
+            return new FormulaComposition();
         }
 
         @Override
@@ -385,6 +415,21 @@ public class Formulas {
         }
 
         @Override
+        public String getDescription() {
+            return "Torus";
+        }
+
+        @Override
+        public String getShapeName() {
+            return ShapeRegistry.CommonNames.SHAPE_TORUS.toString();
+        }
+
+        @Override
+        public IFormula newInstance() {
+            return new FormulaTorus();
+        }
+
+        @Override
         public boolean isInside(int x, int y, int z) {
             double rr = bigRadius - Math.sqrt((x - centerx) * (x - centerx) + (z - centerz) * (z - centerz));
             double f = rr * rr + (y - centery) * (y - centery) - smallRadius * smallRadius;
@@ -411,6 +456,21 @@ public class Formulas {
             centerx = xCoord + offset.getX() + ((dx % 2 != 0) ? 0.0f : -.5f);
             centery = yCoord + offset.getY() + ((dy % 2 != 0) ? 0.0f : -.5f);
             centerz = zCoord + offset.getZ() + ((dz % 2 != 0) ? 0.0f : -.5f);
+        }
+
+        @Override
+        public String getDescription() {
+            return "Heart";
+        }
+
+        @Override
+        public String getShapeName() {
+            return ShapeRegistry.CommonNames.SHAPE_HEART.toString();
+        }
+
+        @Override
+        public IFormula newInstance() {
+            return new FormulaHeart();
         }
 
         @Override
@@ -455,6 +515,21 @@ public class Formulas {
         }
 
         @Override
+        public String getDescription() {
+            return "Sphere";
+        }
+
+        @Override
+        public String getShapeName() {
+            return ShapeRegistry.CommonNames.SHAPE_SPHERE.toString();
+        }
+
+        @Override
+        public IFormula newInstance() {
+            return new FormulaSphere();
+        }
+
+        @Override
         public boolean isInside(int x, int y, int z) {
             double distance = Math.sqrt(squaredDistance3D(centerx, centery, centerz, x, y, z, dx2, dy2, dz2));
             return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1);
@@ -487,6 +562,21 @@ public class Formulas {
             dy2 = dy == 0 ? .5f : ((dy + factor) * (dy + factor)) / 4.0f;
             dz2 = dz == 0 ? .5f : ((dz + factor) * (dz + factor)) / 4.0f;
             davg = (int) ((dx + dy + dz + factor * 3) / 3);
+        }
+
+        @Override
+        public String getDescription() {
+            return "Top Dome";
+        }
+
+        @Override
+        public String getShapeName() {
+            return ShapeRegistry.CommonNames.SHAPE_TOPDOME.toString();
+        }
+
+        @Override
+        public IFormula newInstance() {
+            return new FormulaTopDome();
         }
 
         @Override
@@ -528,6 +618,21 @@ public class Formulas {
         }
 
         @Override
+        public String getDescription() {
+            return "Bottom Dome";
+        }
+
+        @Override
+        public String getShapeName() {
+            return ShapeRegistry.CommonNames.SHAPE_BOTTOMDOME.toString();
+        }
+
+        @Override
+        public IFormula newInstance() {
+            return new FormulaBottomDome();
+        }
+
+        @Override
         public boolean isInside(int x, int y, int z) {
             if (y > centery) {
                 return false;
@@ -560,6 +665,21 @@ public class Formulas {
             x2 = x1 + dx;
             y2 = y1 + dy;
             z2 = z1 + dz;
+        }
+
+        @Override
+        public String getDescription() {
+            return "Box";
+        }
+
+        @Override
+        public String getShapeName() {
+            return ShapeRegistry.CommonNames.SHAPE_BOX.toString();
+        }
+
+        @Override
+        public IFormula newInstance() {
+            return new FormulaBox();
         }
 
         @Override
@@ -603,6 +723,21 @@ public class Formulas {
         }
 
         @Override
+        public String getDescription() {
+            return "Capped Cylinder";
+        }
+
+        @Override
+        public String getShapeName() {
+            return ShapeRegistry.CommonNames.SHAPE_CAPPEDCYLINDER.toString();
+        }
+
+        @Override
+        public IFormula newInstance() {
+            return new FormulaCappedCylinder();
+        }
+
+        @Override
         public boolean isInside(int x, int y, int z) {
             if (y < y1 || y >= y2) {
                 return false;
@@ -634,6 +769,21 @@ public class Formulas {
             dx2 = dx == 0 ? .5f : ((dx + factor) * (dx + factor)) / 4.0f;
             dz2 = dz == 0 ? .5f : ((dz + factor) * (dz + factor)) / 4.0f;
             davg = (int) ((dx + dz + factor * 2) / 2);
+        }
+
+        @Override
+        public String getDescription() {
+            return "Cylinder";
+        }
+
+        @Override
+        public String getShapeName() {
+            return ShapeRegistry.CommonNames.SHAPE_CYLINDER.toString();
+        }
+
+        @Override
+        public IFormula newInstance() {
+            return new FormulaCylinder();
         }
 
         @Override
@@ -672,6 +822,21 @@ public class Formulas {
         }
 
         @Override
+        public String getDescription() {
+            return "Cone";
+        }
+
+        @Override
+        public String getShapeName() {
+            return ShapeRegistry.CommonNames.SHAPE_CONE.toString();
+        }
+
+        @Override
+        public IFormula newInstance() {
+            return new FormulaCone();
+        }
+
+        @Override
         public boolean isInside(int x, int y, int z) {
             double distance = Math.sqrt(squaredDistance2D(centerx, centerz, x, z, dx2, dz2));
             return ((int) (distance * (davg / 2 + 1))) <= (davg / 2 - 1) *  (topy-y) / dy;
@@ -700,6 +865,21 @@ public class Formulas {
             x2 = x1 + dx;
             y2 = y1 + dy;
             z2 = z1 + dz;
+        }
+
+        @Override
+        public String getDescription() {
+            return "Pyramid";
+        }
+
+        @Override
+        public String getShapeName() {
+            return ShapeRegistry.CommonNames.SHAPE_PYRAMID.toString();
+        }
+
+        @Override
+        public IFormula newInstance() {
+            return new FormulaPrism();
         }
 
         @Override

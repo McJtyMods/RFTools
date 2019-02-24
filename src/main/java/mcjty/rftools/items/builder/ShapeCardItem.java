@@ -119,7 +119,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
 
                         setMode(stack, MODE_NONE);
                         setCorner1(stack, null);
-                        setShape(stack, Shape.SHAPE_BOX, true);
+                        setShape(stack, ShapeRegistry.getShapebyName(ShapeRegistry.CommonNames.SHAPE_BOX), true);
                     }
                 }
             }
@@ -276,19 +276,19 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
             }
         }
 
-        Shape shape = getShape(itemStack);
+        IFormula shape = getShape(itemStack);
         boolean issolid = isSolid(itemStack);
         list.add(TextFormatting.GREEN + "Shape " + shape.getDescription() + " (" + (issolid ? "Solid" : "Hollow") + ")");
         list.add(TextFormatting.GREEN + "Dimension " + BlockPosTools.toString(getDimension(itemStack)));
         list.add(TextFormatting.GREEN + "Offset " + BlockPosTools.toString(getOffset(itemStack)));
 
-        if (shape.isComposition()) {
+        if (ShapeRegistry.isComposition(shape)) {
             NBTTagCompound card = itemStack.getTagCompound();
             NBTTagList children = card.getTagList("children", Constants.NBT.TAG_COMPOUND);
             list.add(TextFormatting.DARK_GREEN + "Formulas: " + children.tagCount());
         }
 
-        if (shape.isScan()) {
+        if (ShapeRegistry.isScan(shape)) {
             NBTTagCompound card = itemStack.getTagCompound();
             int scanid = card.getInteger("scanid");
             list.add(TextFormatting.DARK_GREEN + "Scan id: " + scanid);
@@ -373,22 +373,22 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         return tagCompound.getBoolean("void" + material);
     }
 
-    public static Shape getShape(ItemStack stack) {
+    public static IFormula getShape(ItemStack stack) {
         NBTTagCompound tagCompound = stack.getTagCompound();
         return getShape(tagCompound);
     }
 
-    public static Shape getShape(NBTTagCompound tagCompound) {
+    public static IFormula getShape(NBTTagCompound tagCompound) {
         if (tagCompound == null) {
-            return Shape.SHAPE_BOX;
+            return ShapeRegistry.getShapebyName(ShapeRegistry.CommonNames.SHAPE_BOX);
         }
         if (!tagCompound.hasKey("shape") && !tagCompound.hasKey("shapenew")) {
-            return Shape.SHAPE_BOX;
+            return ShapeRegistry.getShapebyName(ShapeRegistry.CommonNames.SHAPE_BOX);
         }
-        Shape shape;
+        IFormula shape;
         if (tagCompound.hasKey("shapenew")) {
             String sn = tagCompound.getString("shapenew");
-            shape = Shape.getShape(sn);
+            shape = ShapeRegistry.getShapebyDescription(sn);
         } else {
             int shapedeprecated = tagCompound.getInteger("shape");
             ShapeDeprecated sd = ShapeDeprecated.getShape(shapedeprecated);
@@ -396,7 +396,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         }
 
         if (shape == null) {
-            return Shape.SHAPE_BOX;
+            return ShapeRegistry.getShapebyName(ShapeRegistry.CommonNames.SHAPE_BOX);
         }
         return shape;
     }
@@ -426,9 +426,9 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
     }
 
     public static IFormula createCorrectFormula(NBTTagCompound tagCompound) {
-        Shape shape = getShape(tagCompound);
+        IFormula shape = getShape(tagCompound);
         boolean solid = isSolid(tagCompound);
-        IFormula formula = shape.getFormulaFactory().get();
+        IFormula formula = shape;
         return formula.correctFormula(solid);
     }
 
@@ -437,8 +437,8 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
             return 0;
         }
         NBTTagCompound tagCompound = getCompound(stack);
-        Shape shape = getShape(tagCompound);
-        if (shape != Shape.SHAPE_SCAN) {
+        IFormula shape = getShape(tagCompound);
+        if (shape != ShapeRegistry.getShapebyName(ShapeRegistry.CommonNames.SHAPE_SCAN)) {
             return 0;
         }
         return tagCompound.getInteger("scanid");
@@ -453,11 +453,11 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
     }
 
     private static int getScanIdRecursive(NBTTagCompound tagCompound) {
-        Shape shape = getShape(tagCompound);
-        if (tagCompound.hasKey("scanid") && shape == Shape.SHAPE_SCAN) {
+        IFormula shape = getShape(tagCompound);
+        if (tagCompound.hasKey("scanid") && shape == ShapeRegistry.getShapebyName(ShapeRegistry.CommonNames.SHAPE_SCAN)) {
             return tagCompound.getInteger("scanid");
         }
-        if (shape == Shape.SHAPE_COMPOSITION) {
+        if (shape == ShapeRegistry.getShapebyName(ShapeRegistry.CommonNames.SHAPE_COMPOSITION)) {
             // See if there is a scan in the composition that has a scan id
             NBTTagList children = tagCompound.getTagList("children", Constants.NBT.TAG_COMPOUND);
             for (int i = 0 ; i < children.tagCount() ; i++) {
@@ -478,8 +478,8 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
     }
 
     public static void getFormulaCheckClient(ItemStack stack, Check32 crc) {
-        Shape shape = getShape(stack);
-        IFormula formula = shape.getFormulaFactory().get();
+        IFormula shape = getShape(stack);
+        IFormula formula = shape;
         formula.getCheckSumClient(stack.getTagCompound(), crc);
     }
 
@@ -487,7 +487,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         if (tagCompound == null) {
             return;
         }
-        crc.add(getShape(tagCompound).ordinal());
+        crc.add(ShapeRegistry.ordinal(getShape(tagCompound)));
         BlockPos dim = getDimension(tagCompound);
         crc.add(dim.getX());
         crc.add(dim.getY());
@@ -497,7 +497,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
 
 
 
-    public static void setShape(ItemStack stack, Shape shape, boolean solid) {
+    public static void setShape(ItemStack stack, IFormula shape, boolean solid) {
         NBTTagCompound tagCompound = getCompound(stack);
         if (isSolid(tagCompound) == solid && getShape(tagCompound).equals(shape)) {
             // Nothing happens
@@ -682,11 +682,11 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
 
 
     // Used for saving
-    public static int getDataPositions(ItemStack stack, Shape shape, boolean solid, RLE positions, StatePalette statePalette) {
+    public static int getDataPositions(ItemStack stack, IFormula shape, boolean solid, RLE positions, StatePalette statePalette) {
         BlockPos dimension = ShapeCardItem.getDimension(stack);
         BlockPos clamped = new BlockPos(Math.min(dimension.getX(), 512), Math.min(dimension.getY(), 256), Math.min(dimension.getZ(), 512));
 
-        IFormula formula = shape.getFormulaFactory().get();
+        IFormula formula = shape;
         int dx = clamped.getX();
         int dy = clamped.getY();
         int dz = clamped.getZ();
@@ -787,7 +787,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
             return;
         }
 
-        Shape shape = ShapeCardItem.getShape(card);
+        IFormula shape = ShapeCardItem.getShape(card);
         boolean solid = ShapeCardItem.isSolid(card);
         BlockPos offset = ShapeCardItem.getOffset(card);
         BlockPos dimension = ShapeCardItem.getDimension(card);
@@ -825,9 +825,9 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
             return;
         }
 
-        Shape shape = ShapeCardItem.getShape(card);
+        IFormula shape = ShapeCardItem.getShape(card);
 
-        if (shape != Shape.SHAPE_SCAN) {
+        if (shape != ShapeRegistry.getShapebyName(ShapeRegistry.CommonNames.SHAPE_SCAN)) {
             player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "To load a file into this card you need a linked 'scan' type card!"), false);
             return;
         }
@@ -901,7 +901,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         scans.save(scanId);
         ShapeCardItem.setDimension(card, dimension.getX(), dimension.getY(), dimension.getZ());
         ShapeCardItem.setOffset(card, offset.getX(), offset.getY(), offset.getZ());
-        ShapeCardItem.setShape(card, Shape.SHAPE_SCAN, true);
+        ShapeCardItem.setShape(card, ShapeRegistry.getShapebyName(ShapeRegistry.CommonNames.SHAPE_SCAN), true);
     }
 
 

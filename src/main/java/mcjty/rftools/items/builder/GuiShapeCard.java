@@ -14,10 +14,7 @@ import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.rftools.shapes.IShapeParentGui;
-import mcjty.rftools.shapes.PacketUpdateNBTShapeCard;
-import mcjty.rftools.shapes.ShapeID;
-import mcjty.rftools.shapes.ShapeRenderer;
+import mcjty.rftools.shapes.*;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -154,18 +151,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         getShapeRenderer().initView(getPreviewLeft(), guiTop);
 
         shapeLabel = new ChoiceLabel(mc, this).setDesiredWidth(100).setDesiredHeight(16).addChoices(
-                mcjty.rftools.shapes.Shape.SHAPE_BOX.getDescription(),
-                mcjty.rftools.shapes.Shape.SHAPE_TOPDOME.getDescription(),
-                mcjty.rftools.shapes.Shape.SHAPE_BOTTOMDOME.getDescription(),
-                mcjty.rftools.shapes.Shape.SHAPE_SPHERE.getDescription(),
-                mcjty.rftools.shapes.Shape.SHAPE_CYLINDER.getDescription(),
-                mcjty.rftools.shapes.Shape.SHAPE_CAPPEDCYLINDER.getDescription(),
-                mcjty.rftools.shapes.Shape.SHAPE_PRISM.getDescription(),
-                mcjty.rftools.shapes.Shape.SHAPE_TORUS.getDescription(),
-                mcjty.rftools.shapes.Shape.SHAPE_CONE.getDescription(),
-                mcjty.rftools.shapes.Shape.SHAPE_HEART.getDescription(),
-                mcjty.rftools.shapes.Shape.SHAPE_COMPOSITION.getDescription(),
-                mcjty.rftools.shapes.Shape.SHAPE_SCAN.getDescription()
+                ShapeRegistry.getAllDescriptions()
         ).addChoiceEvent((parent, newChoice) -> updateSettings());
 
         solidLabel = new ChoiceLabel(mc, this).setDesiredWidth(50).setDesiredHeight(16).addChoices(
@@ -175,7 +161,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
 
         Panel shapePanel = new Panel(mc, this).setLayout(new HorizontalLayout()).addChild(shapeLabel).addChild(solidLabel);
 
-        mcjty.rftools.shapes.Shape shape = ShapeCardItem.getShape(heldItem);
+        mcjty.rftools.shapes.IFormula shape = ShapeCardItem.getShape(heldItem);
         shapeLabel.setChoice(shape.getDescription());
         boolean solid = ShapeCardItem.isSolid(heldItem);
         solidLabel.setChoice(solid ? "Solid" : "Hollow");
@@ -256,12 +242,12 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
     }
 
     private boolean isTorus() {
-        mcjty.rftools.shapes.Shape shape = getCurrentShape();
-        return mcjty.rftools.shapes.Shape.SHAPE_TORUS.equals(shape);
+        mcjty.rftools.shapes.IFormula shape = getCurrentShape();
+        return ShapeRegistry.getShapebyName(ShapeRegistry.CommonNames.SHAPE_TORUS).equals(shape);
     }
 
-    private mcjty.rftools.shapes.Shape getCurrentShape() {
-        return mcjty.rftools.shapes.Shape.getShape(shapeLabel.getCurrentChoice());
+    private mcjty.rftools.shapes.IFormula getCurrentShape() {
+        return ShapeRegistry.getShapebyDescription(shapeLabel.getCurrentChoice());
     }
 
     private boolean isSolid() {

@@ -15,6 +15,7 @@ import mcjty.rftools.integration.computers.OpenComputersIntegration;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.manual.GuiRFToolsManual;
 import mcjty.rftools.proxy.CommonProxy;
+import mcjty.rftools.shapes.ShapeRegistry;
 import mcjty.rftools.wheelsupport.WheelSupport;
 import mcjty.rftools.xnet.XNetSupport;
 import net.minecraft.creativetab.CreativeTabs;
@@ -146,6 +147,7 @@ public class RFTools implements ModBase {
         MainCompatHandler.registerWaila();
         MainCompatHandler.registerTOP();
         WheelSupport.registerWheel();
+        ShapeRegistry.registerCommonShapes();
     }
 
     /**
