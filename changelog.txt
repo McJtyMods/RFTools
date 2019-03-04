@@ -1,3 +1,6 @@
+Upcoming:
+- Fix a problem with the screen dump module not working properly in some cases
+
 7.61:
 - Fix a divide by zero if the shape card has wrong dimensions
 - Fix the gui of the environmental controller

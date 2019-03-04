@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.screens.modules;
 
 import mcjty.lib.varia.BlockPosTools;
+import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.api.screens.data.IModuleData;
@@ -20,7 +21,7 @@ public class DumpScreenModule implements IScreenModule<IModuleData> {
     public static int COLS = 7;
     public static int ROWS = 4;
 
-    private ItemStack[] stacks = new ItemStack[COLS*ROWS];
+    private ItemStackList stacks = ItemStackList.create(COLS*ROWS);
     protected int dim = 0;
     protected BlockPos coordinate = BlockPosTools.INVALID;
     private boolean oredict = false;
@@ -34,9 +35,9 @@ public class DumpScreenModule implements IScreenModule<IModuleData> {
     public void setupFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             setupCoordinateFromNBT(tagCompound, dim, pos);
-            for (int i = 0; i < stacks.length; i++) {
+            for (int i = 0; i < stacks.size(); i++) {
                 if (tagCompound.hasKey("stack" + i)) {
-                    stacks[i] = new ItemStack(tagCompound.getCompoundTag("stack" + i));
+                    stacks.set(i, new ItemStack(tagCompound.getCompoundTag("stack" + i)));
                 }
             }
         }
