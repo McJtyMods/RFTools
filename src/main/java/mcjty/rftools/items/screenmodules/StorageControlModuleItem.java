@@ -4,13 +4,13 @@ import mcjty.lib.crafting.INBTPreservingIngredient;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.StorageControlScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.StorageControlClientScreenModule;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
@@ -60,7 +60,7 @@ public class StorageControlModuleItem extends GenericRFToolsItem implements IMod
             list.add(TextFormatting.WHITE + "for remote access to a storage scanner controlled");
             list.add(TextFormatting.WHITE + "system");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 

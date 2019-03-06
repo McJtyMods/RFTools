@@ -11,6 +11,7 @@ import mcjty.lib.gui.widgets.*;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.inventory.Slot;
 import net.minecraft.nbt.NBTTagCompound;
@@ -38,7 +39,7 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
     public static SecurityChannels.SecurityChannel channelFromServer = null;
 
     public GuiSecurityManager(SecurityManagerTileEntity securityManagerTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, securityManagerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "security");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, securityManagerTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "security");
 
         xSize = SECURITYMANAGER_WIDTH;
         ySize = SECURITYMANAGER_HEIGHT;

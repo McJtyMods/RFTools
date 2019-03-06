@@ -4,6 +4,7 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.SpaceChamberControllerTileEntity;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -59,7 +60,7 @@ public class SpaceChamberCardItem extends GenericRFToolsItem {
             list.add(TextFormatting.GREEN + "Base cost: " + BuilderConfiguration.builderRfPerOperation + " RF/t per block");
             list.add(TextFormatting.GREEN + "(final cost depends on infusion level)");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 
@@ -110,7 +111,7 @@ public class SpaceChamberCardItem extends GenericRFToolsItem {
 
     private void showDetailsGui(World world, EntityPlayer player) {
         if (world.isRemote) {
-            player.openGui(RFTools.instance, RFTools.GUI_CHAMBER_DETAILS, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
+            player.openGui(RFTools.instance, GuiProxy.GUI_CHAMBER_DETAILS, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
         }
     }
 

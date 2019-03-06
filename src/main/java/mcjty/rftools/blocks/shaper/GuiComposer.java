@@ -10,6 +10,7 @@ import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.builder.GuiShapeCard;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
@@ -49,7 +50,7 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
 
 
     public GuiComposer(ComposerTileEntity composerTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, composerTileEntity, container, RFTools.GUI_MANUAL_SHAPE, "composer");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, composerTileEntity, container, GuiProxy.GUI_MANUAL_SHAPE, "composer");
 
         xSize = SHAPER_WIDTH;
         ySize = SHAPER_HEIGHT;
@@ -182,7 +183,7 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
             GuiShapeCard.fromTEPos = tileEntity.getPos();
             GuiShapeCard.fromTEStackSlot = slot;
             GuiShapeCard.returnGui = this;
-            player.openGui(RFTools.instance, RFTools.GUI_SHAPECARD_COMPOSER, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
+            player.openGui(RFTools.instance, GuiProxy.GUI_SHAPECARD_COMPOSER, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
         }
     }
 

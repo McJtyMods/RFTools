@@ -3,6 +3,7 @@ package mcjty.rftools.items.storage;
 import mcjty.lib.McJtyRegister;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.sorters.*;
+import mcjty.rftools.gui.GuiProxy;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
@@ -23,7 +24,7 @@ public class GenericTypeItem extends StorageTypeItem {
         setMaxStackSize(16);
         setUnlocalizedName("generic_module");
         setRegistryName("generic_module");
-        setCreativeTab(RFTools.tabRfTools);
+        setCreativeTab(RFTools.setup.getTab());
         McJtyRegister.registerLater(this, RFTools.instance);
     }
 
@@ -63,7 +64,7 @@ public class GenericTypeItem extends StorageTypeItem {
             list.add(TextFormatting.WHITE + "This module extends the Modular Storage block");
             list.add(TextFormatting.WHITE + "with support for sorting items in general");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 }

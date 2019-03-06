@@ -15,6 +15,7 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.PacketGetPlayers;
 import mcjty.rftools.network.RFToolsMessages;
 import org.lwjgl.input.Keyboard;
@@ -49,7 +50,7 @@ public class GuiMatterTransmitter extends GenericGuiContainer<MatterTransmitterT
 
 
     public GuiMatterTransmitter(MatterTransmitterTileEntity transmitterTileEntity, EmptyContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, transmitterTileEntity, container, RFTools.GUI_MANUAL_MAIN, "tptransmitter");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, transmitterTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "tptransmitter");
         GenericEnergyStorageTileEntity.setCurrentRF(transmitterTileEntity.getStoredPower());
 
         xSize = MATTER_WIDTH;

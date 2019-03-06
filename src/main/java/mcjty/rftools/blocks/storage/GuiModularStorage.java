@@ -24,6 +24,7 @@ import mcjty.rftools.blocks.storage.modules.TypeModule;
 import mcjty.rftools.blocks.storage.sorters.ItemSorter;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import mcjty.rftools.craftinggrid.GuiCraftingGrid;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.storage.StorageModuleItem;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
@@ -94,7 +95,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
     }
 
     public GuiModularStorage(ModularStorageTileEntity modularStorageTileEntity, Container container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, modularStorageTileEntity, container, RFTools.GUI_MANUAL_MAIN, "storage");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, modularStorageTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "storage");
 
         craftingGrid = new GuiCraftingGrid();
 

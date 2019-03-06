@@ -2,8 +2,8 @@ package mcjty.rftools.blocks.storagemonitor;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.gui.GenericGuiContainer;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.rftools.gui.GuiProxy;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
@@ -39,12 +39,12 @@ public class StorageScannerBlock extends GenericRFToolsBlock<StorageScannerTileE
             list.add(TextFormatting.WHITE + "for items in all those inventories.");
             list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 
     @Override
     public int getGuiID() {
-        return RFTools.GUI_STORAGE_SCANNER;
+        return GuiProxy.GUI_STORAGE_SCANNER;
     }
 }

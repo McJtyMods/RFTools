@@ -2,6 +2,7 @@ package mcjty.rftools.items.teleportprobe;
 
 import mcjty.lib.McJtyRegister;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -19,7 +20,7 @@ public class TeleportProbeItem extends Item {
     public TeleportProbeItem() {
         setUnlocalizedName("teleport_probe");
         setRegistryName("teleport_probe");
-        setCreativeTab(RFTools.tabRfTools);
+        setCreativeTab(RFTools.setup.getTab());
         setMaxStackSize(1);
         McJtyRegister.registerLater(this, RFTools.instance);
     }
@@ -38,7 +39,7 @@ public class TeleportProbeItem extends Item {
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (world.isRemote) {
-            player.openGui(RFTools.instance, RFTools.GUI_TELEPORTPROBE, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
+            player.openGui(RFTools.instance, GuiProxy.GUI_TELEPORTPROBE, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
             return new ActionResult<>(EnumActionResult.SUCCESS, stack);
         }
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);

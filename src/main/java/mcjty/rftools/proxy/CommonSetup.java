@@ -1,14 +1,12 @@
 package mcjty.rftools.proxy;
 
 import mcjty.lib.base.GeneralConfig;
+import mcjty.lib.compat.MainCompatHandler;
 import mcjty.lib.network.PacketHandler;
-import mcjty.lib.proxy.AbstractCommonProxy;
+import mcjty.lib.setup.DefaultCommonSetup;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.WrenchChecker;
-import mcjty.rftools.CommandHandler;
-import mcjty.rftools.ForgeEventHandlers;
-import mcjty.rftools.GeneralConfiguration;
-import mcjty.rftools.RFTools;
+import mcjty.rftools.*;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorConfiguration;
@@ -31,15 +29,19 @@ import mcjty.rftools.blocks.storagemonitor.StorageScannerConfiguration;
 import mcjty.rftools.blocks.teleporter.TeleportConfiguration;
 import mcjty.rftools.crafting.ModCrafting;
 import mcjty.rftools.gui.GuiProxy;
+import mcjty.rftools.integration.computers.OpenComputersIntegration;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.netmonitor.NetworkMonitorConfiguration;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.playerprops.BuffProperties;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
+import mcjty.rftools.wheelsupport.WheelSupport;
 import mcjty.rftools.world.ModWorldgen;
 import mcjty.rftools.world.WorldTickHandler;
+import mcjty.rftools.xnet.XNetSupport;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.ForgeChunkManager;
@@ -47,7 +49,9 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -58,7 +62,13 @@ import org.apache.logging.log4j.Level;
 import java.io.File;
 import java.lang.reflect.Method;
 
-public abstract class CommonProxy extends AbstractCommonProxy {
+public class CommonSetup extends DefaultCommonSetup {
+
+    // Are some mods loaded?.
+    public boolean rftoolsDimensions = false;
+    public boolean xnet = false;
+    public boolean top = false;
+
 
     @Override
     public void preInit(FMLPreInitializationEvent e) {
@@ -130,6 +140,15 @@ public abstract class CommonProxy extends AbstractCommonProxy {
 
         ForgeChunkManager.setForcedChunkLoadingCallback(RFTools.instance, (tickets, world) -> {
         });
+
+        MainCompatHandler.registerWaila();
+        MainCompatHandler.registerTOP();
+        WheelSupport.registerWheel();
+    }
+
+    @Override
+    public void createTabs() {
+        createTab("RfTools", new ItemStack(ModItems.rfToolsManualItem));
     }
 
     public static Method Block_getSilkTouch;
@@ -203,6 +222,29 @@ public abstract class CommonProxy extends AbstractCommonProxy {
         MinecraftForge.EVENT_BUS.register(WorldTickHandler.instance);
         ModCrafting.init();
         SpawnerConfiguration.readMobSpawnAmountConfig(mainConfig);
+
+
+        Achievements.init();
+
+        if (Loader.isModLoaded("rftoolsdim")) {
+            rftoolsDimensions = true;
+            Logging.log("RFTools Detected Dimensions addon: enabling support");
+            FMLInterModComms.sendFunctionMessage("rftoolsdim", "getDimensionManager", "mcjty.rftools.apideps.RFToolsDimensionChecker$GetDimensionManager");
+        }
+
+        FMLInterModComms.sendFunctionMessage("theoneprobe", "getTheOneProbe", "mcjty.rftools.theoneprobe.TheOneProbeSupport");
+
+        if (Loader.isModLoaded("xnet")) {
+            xnet = true;
+            Logging.log("RFTools Detected XNet: enabling support");
+            FMLInterModComms.sendFunctionMessage("xnet", "getXNet", XNetSupport.GetXNet.class.getName());
+        }
+
+        if (Loader.isModLoaded("opencomputers")) {
+            OpenComputersIntegration.init();
+        }
+
+        top = Loader.isModLoaded("theoneprobe");
     }
 
     @Override

@@ -2,8 +2,8 @@ package mcjty.rftools.blocks.infuser;
 
 import mcjty.lib.blocks.GenericBlock;
 import mcjty.lib.container.GenericContainer;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.gui.GuiProxy;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -14,7 +14,7 @@ public class MachineInfuserSetup {
         machineInfuserBlock = ModBlocks.builderFactory.<MachineInfuserTileEntity> builder("machine_infuser")
                 .tileEntityClass(MachineInfuserTileEntity.class)
                 .container(MachineInfuserTileEntity.CONTAINER_FACTORY)
-                .guiId(RFTools.GUI_MACHINE_INFUSER)
+                .guiId(GuiProxy.GUI_MACHINE_INFUSER)
                 .infusable()
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.infuser")

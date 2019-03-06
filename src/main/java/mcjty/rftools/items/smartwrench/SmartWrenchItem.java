@@ -43,7 +43,7 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
     public SmartWrenchItem() {
         setUnlocalizedName("smartwrench");
         setRegistryName("smartwrench");
-        setCreativeTab(RFTools.tabRfTools);
+        setCreativeTab(RFTools.setup.getTab());
         setMaxStackSize(1);
         McJtyRegister.registerLater(this, RFTools.instance);
     }

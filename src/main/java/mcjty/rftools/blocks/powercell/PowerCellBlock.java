@@ -10,6 +10,7 @@ import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
@@ -88,7 +89,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
 
     @Override
     public int getGuiID() {
-        return RFTools.GUI_POWERCELL;
+        return GuiProxy.GUI_POWERCELL;
     }
 
     @Override
@@ -108,7 +109,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
             list.add(TextFormatting.YELLOW + "Infusing bonus: reduced long distance power");
             list.add(TextFormatting.YELLOW + "extraction cost and increased RF/tick output");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 

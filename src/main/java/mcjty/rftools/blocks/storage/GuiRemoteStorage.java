@@ -9,6 +9,7 @@ import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 
@@ -29,7 +30,7 @@ public class GuiRemoteStorage extends GenericGuiContainer<RemoteStorageTileEntit
     private ImageChoiceLabel global[] = new ImageChoiceLabel[] { null, null, null, null };
 
     public GuiRemoteStorage(RemoteStorageTileEntity remoteStorageTileEntity, RemoteStorageContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, remoteStorageTileEntity, container, RFTools.GUI_MANUAL_MAIN, "remotestor");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, remoteStorageTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "remotestor");
 
         xSize = STORAGE_WIDTH;
         ySize = STORAGE_HEIGHT;

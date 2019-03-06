@@ -4,8 +4,8 @@ import mcjty.lib.api.Infusable;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
@@ -57,7 +57,7 @@ public class BlockProtectorBlock extends GenericRFToolsBlock<BlockProtectorTileE
 
     @Override
     public int getGuiID() {
-        return RFTools.GUI_BLOCK_PROTECTOR;
+        return GuiProxy.GUI_BLOCK_PROTECTOR;
     }
 
     @SideOnly(Side.CLIENT)
@@ -75,7 +75,7 @@ public class BlockProtectorBlock extends GenericRFToolsBlock<BlockProtectorTileE
             list.add(TextFormatting.WHITE + "and other breackage.");
             list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 

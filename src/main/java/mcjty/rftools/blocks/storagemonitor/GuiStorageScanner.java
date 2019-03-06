@@ -18,6 +18,7 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.craftinggrid.GuiCraftingGrid;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -75,7 +76,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
     public static List<ItemStack> fromServer_inventory = new ArrayList<>();
 
     public GuiStorageScanner(StorageScannerTileEntity storageScannerTileEntity, StorageScannerContainer storageScannerContainer) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, storageScannerTileEntity, storageScannerContainer, RFTools.GUI_MANUAL_MAIN, "stomon");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, storageScannerTileEntity, storageScannerContainer, GuiProxy.GUI_MANUAL_MAIN, "stomon");
         GenericEnergyStorageTileEntity.setCurrentRF(storageScannerTileEntity.getStoredPower());
 
         craftingGrid = new GuiCraftingGrid();
@@ -128,7 +129,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 .setText("Scan")
                 .setDesiredWidth(50)
                 .setDesiredHeight(14);
-        if (RFTools.instance.xnet) {
+        if (RFTools.setup.xnet) {
             if (StorageScannerConfiguration.xnetRequired) {
                 scanButton
                         .setTooltips("Do a scan of all", "storage units connected", "with an active XNet channel");
@@ -144,7 +145,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 .setLayoutHint(1, 1, 1, 1)
                 .setName("radius")
                 .setVisible(false)
-                .setRealMinimum(RFTools.instance.xnet ? 0 : 1)
+                .setRealMinimum(RFTools.setup.xnet ? 0 : 1)
                 .setRealMaximum(20);
         visibleRadiusLabel = new Label(mc, this);
         visibleRadiusLabel.setDesiredWidth(40);
@@ -172,7 +173,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 .setFilledBackground(StyleConfig.colorListBackground)
                 .setLayout(new VerticalLayout().setVerticalMargin(6).setSpacing(1))
                 .addChild(scanButton);
-        if (!(RFTools.instance.xnet && StorageScannerConfiguration.xnetRequired)) {
+        if (!(RFTools.setup.xnet && StorageScannerConfiguration.xnetRequired)) {
             scanPanel.addChild(radiusSlider);
         }
         scanPanel.addChildren(visibleRadiusLabel, radiusLabel);

@@ -28,7 +28,7 @@ public class DestinationAnalyzerBlock extends Block {
         super(Material.IRON);
         setUnlocalizedName("rftools.destination_analyzer");
         setRegistryName("destination_analyzer");
-        setCreativeTab(RFTools.tabRfTools);
+        setCreativeTab(RFTools.setup.getTab());
         setHardness(2.0f);
         setSoundType(SoundType.METAL);
         setHarvestLevel("pickaxe", 0);

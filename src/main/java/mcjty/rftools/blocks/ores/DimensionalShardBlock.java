@@ -76,7 +76,7 @@ public class DimensionalShardBlock extends Block {
         setUnlocalizedName("rftools.dimensional_shard_ore");
         setRegistryName("dimensional_shard_ore");
         setLightLevel(0.5f);
-        setCreativeTab(RFTools.tabRfTools);
+        setCreativeTab(RFTools.setup.getTab());
         McJtyRegister.registerLater(this, RFTools.instance, DamageMetadataItemBlock::new);
     }
 

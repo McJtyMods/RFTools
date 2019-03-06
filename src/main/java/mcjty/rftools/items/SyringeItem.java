@@ -3,7 +3,7 @@ package mcjty.rftools.items;
 import mcjty.lib.varia.EntityTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.GeneralConfiguration;
-import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
@@ -176,7 +176,7 @@ public class SyringeItem extends GenericRFToolsItem {
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             list.add(TextFormatting.WHITE + "Use this to extract essence from mobs");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 

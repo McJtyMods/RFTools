@@ -4,8 +4,8 @@ import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.blocks.GenericBlock;
 import mcjty.lib.builder.BlockFlags;
 import mcjty.lib.container.GenericContainer;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.gui.GuiProxy;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -20,7 +20,7 @@ public class ElevatorSetup {
                 .rotationType(BaseBlock.RotationType.HORIZROTATION)
                 .emptyContainer()
                 .infusable()
-                .guiId(RFTools.GUI_ELEVATOR)
+                .guiId(GuiProxy.GUI_ELEVATOR)
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.elevator")
                 .build();

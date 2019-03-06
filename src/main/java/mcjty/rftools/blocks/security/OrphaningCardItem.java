@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.security;
 
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -41,7 +41,7 @@ public class OrphaningCardItem extends GenericRFToolsItem {
             list.add(TextFormatting.WHITE + "the owner. You can only do this on blocks you own");
             list.add(TextFormatting.WHITE + "(unless you are admin)");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 

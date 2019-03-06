@@ -2,8 +2,8 @@ package mcjty.rftools.blocks.storage;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.gui.GenericGuiContainer;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.rftools.gui.GuiProxy;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
@@ -30,7 +30,7 @@ public class RemoteStorageBlock extends GenericRFToolsBlock<RemoteStorageTileEnt
 
     @Override
     public int getGuiID() {
-        return RFTools.GUI_REMOTE_STORAGE;
+        return GuiProxy.GUI_REMOTE_STORAGE;
     }
 
     @SideOnly(Side.CLIENT)
@@ -43,7 +43,7 @@ public class RemoteStorageBlock extends GenericRFToolsBlock<RemoteStorageTileEnt
             list.add(TextFormatting.WHITE + "Requires energy to do this.");
             list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 }

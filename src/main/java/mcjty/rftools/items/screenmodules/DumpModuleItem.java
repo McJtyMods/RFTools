@@ -3,13 +3,13 @@ package mcjty.rftools.items.screenmodules;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.DumpScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.DumpClientScreenModule;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
@@ -90,7 +90,7 @@ public class DumpModuleItem extends GenericRFToolsItem implements IModuleProvide
             list.add(TextFormatting.WHITE + "This screen module allows you to dump");
             list.add(TextFormatting.WHITE + "a lot of items through a storage scanner");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 

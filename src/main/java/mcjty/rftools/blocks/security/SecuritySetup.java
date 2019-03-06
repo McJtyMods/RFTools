@@ -3,8 +3,8 @@ package mcjty.rftools.blocks.security;
 import mcjty.lib.blocks.GenericBlock;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.varia.ItemStackTools;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.gui.GuiProxy;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
@@ -23,7 +23,7 @@ public class SecuritySetup {
         securityManagerBlock = ModBlocks.builderFactory.<SecurityManagerTileEntity> builder("security_manager")
                 .tileEntityClass(SecurityManagerTileEntity.class)
                 .container(SecurityManagerTileEntity.CONTAINER_FACTORY)
-                .guiId(RFTools.GUI_SECURITY_MANAGER)
+                .guiId(GuiProxy.GUI_SECURITY_MANAGER)
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.security_manager")
                 .infoExtendedParameter(stack -> {

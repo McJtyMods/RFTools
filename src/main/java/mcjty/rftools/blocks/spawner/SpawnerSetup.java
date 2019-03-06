@@ -2,8 +2,8 @@ package mcjty.rftools.blocks.spawner;
 
 import mcjty.lib.blocks.GenericBlock;
 import mcjty.lib.container.GenericContainer;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.gui.GuiProxy;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -16,7 +16,7 @@ public class SpawnerSetup {
                 .tileEntityClass(SpawnerTileEntity.class)
                 .container(SpawnerTileEntity.CONTAINER_FACTORY)
                 .infusable()
-                .guiId(RFTools.GUI_SPAWNER)
+                .guiId(GuiProxy.GUI_SPAWNER)
                 .moduleSupport(SpawnerTileEntity.MODULE_SUPPORT)
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.spawner")

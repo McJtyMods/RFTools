@@ -10,6 +10,7 @@ import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -41,7 +42,7 @@ public class GuiChamberDetails extends GuiItemScreen {
     private Label info2Label;
 
     public GuiChamberDetails() {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, CHAMBER_XSIZE, CHAMBER_YSIZE, RFTools.GUI_MANUAL_SHAPE, "chambercard");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, CHAMBER_XSIZE, CHAMBER_YSIZE, GuiProxy.GUI_MANUAL_SHAPE, "chambercard");
         requestChamberInfoFromServer();
     }
 

@@ -8,6 +8,7 @@ import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 
@@ -27,7 +28,7 @@ public class GuiLevelEmitter extends GenericGuiContainer<LevelEmitterTileEntity>
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/levelemitter.png");
 
     public GuiLevelEmitter(LevelEmitterTileEntity levelEmitterTileEntity, LevelEmitterContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, levelEmitterTileEntity, container, RFTools.GUI_MANUAL_MAIN, "levelemit");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, levelEmitterTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "levelemit");
 
         xSize = STORAGE_WIDTH;
         ySize = STORAGE_HEIGHT;

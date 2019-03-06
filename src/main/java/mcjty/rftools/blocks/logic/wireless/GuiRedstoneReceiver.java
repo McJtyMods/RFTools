@@ -5,13 +5,14 @@ import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.widgets.ToggleButton;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 
 public class GuiRedstoneReceiver extends GenericGuiContainer<RedstoneReceiverTileEntity> {
 
     public GuiRedstoneReceiver(RedstoneReceiverTileEntity redstoneReceiverTileEntity, EmptyContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, redstoneReceiverTileEntity, container, RFTools.GUI_MANUAL_MAIN, "redrec");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, redstoneReceiverTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "redrec");
     }
 
     @Override

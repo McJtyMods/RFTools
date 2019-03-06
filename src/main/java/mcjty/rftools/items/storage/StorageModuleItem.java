@@ -4,6 +4,7 @@ import mcjty.lib.crafting.INBTPreservingIngredient;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.*;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
@@ -88,7 +89,7 @@ public class StorageModuleItem extends GenericRFToolsItem implements INBTPreserv
                 list.add(TextFormatting.WHITE + "This module supports " + max + " stacks");
             }
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 

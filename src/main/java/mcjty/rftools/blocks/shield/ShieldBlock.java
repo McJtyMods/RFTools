@@ -7,9 +7,9 @@ import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.ModuleSupport;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.blocks.builder.BuilderSetup;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -60,7 +60,7 @@ public class ShieldBlock extends GenericRFToolsBlock<ShieldTEBase, ShieldContain
 
     @Override
     public int getGuiID() {
-        return RFTools.GUI_SHIELD;
+        return GuiProxy.GUI_SHIELD;
     }
 
     @SideOnly(Side.CLIENT)
@@ -79,7 +79,7 @@ public class ShieldBlock extends GenericRFToolsBlock<ShieldTEBase, ShieldContain
             list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption and");
             list.add(TextFormatting.YELLOW + "increased damage.");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 

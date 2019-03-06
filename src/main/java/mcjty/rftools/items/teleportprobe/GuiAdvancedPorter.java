@@ -10,6 +10,7 @@ import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 
 import java.awt.Rectangle;
@@ -27,7 +28,7 @@ public class GuiAdvancedPorter extends GuiItemScreen {
     private static String[] names = new String[AdvancedChargedPorterItem.MAXTARGETS];
 
     public GuiAdvancedPorter() {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, xSize, ySize, RFTools.GUI_MANUAL_MAIN, "porter");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, xSize, ySize, GuiProxy.GUI_MANUAL_MAIN, "porter");
     }
 
     public static void setInfo(int target, int[] targets, String[] names) {

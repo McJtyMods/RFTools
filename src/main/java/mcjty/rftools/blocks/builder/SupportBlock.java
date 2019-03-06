@@ -43,7 +43,7 @@ public class SupportBlock extends Block {
         super(Material.GLASS, MapColor.CYAN);
         setUnlocalizedName("rftools.support_block");
         setRegistryName("support_block");
-        setCreativeTab(RFTools.tabRfTools);
+        setCreativeTab(RFTools.setup.getTab());
         McJtyRegister.registerLater(this, RFTools.instance, ItemBlock::new);
     }
 

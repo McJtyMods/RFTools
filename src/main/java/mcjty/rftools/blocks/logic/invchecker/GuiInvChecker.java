@@ -6,6 +6,7 @@ import mcjty.lib.gui.Window;
 import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 
@@ -17,7 +18,7 @@ public class GuiInvChecker extends GenericGuiContainer<InvCheckerTileEntity> {
     public static final String META_IGNORE = "Ignore";
 
     public GuiInvChecker(InvCheckerTileEntity invCheckerTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, invCheckerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "invchecker");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, invCheckerTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "invchecker");
     }
 
     @Override

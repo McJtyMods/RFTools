@@ -1,6 +1,7 @@
 package mcjty.rftools.items.netmonitor;
 
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -26,7 +27,7 @@ public class NetworkMonitorItem extends GenericRFToolsItem {
     public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (world.isRemote) {
             GuiNetworkMonitor.setSelected(pos);
-            player.openGui(RFTools.instance, RFTools.GUI_LIST_BLOCKS, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
+            player.openGui(RFTools.instance, GuiProxy.GUI_LIST_BLOCKS, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
             return EnumActionResult.SUCCESS;
         }
         return EnumActionResult.SUCCESS;

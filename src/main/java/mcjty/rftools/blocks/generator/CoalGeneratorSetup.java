@@ -3,8 +3,8 @@ package mcjty.rftools.blocks.generator;
 import mcjty.lib.builder.BlockFlags;
 import mcjty.lib.blocks.GenericBlock;
 import mcjty.lib.container.GenericContainer;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.gui.GuiProxy;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -18,7 +18,7 @@ public class CoalGeneratorSetup {
                     .container(CoalGeneratorTileEntity.CONTAINER_FACTORY)
                     .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.RENDER_SOLID, BlockFlags.RENDER_CUTOUT)
                     .property(CoalGeneratorTileEntity.WORKING)
-                    .guiId(RFTools.GUI_COALGENERATOR)
+                    .guiId(GuiProxy.GUI_COALGENERATOR)
                     .infusable()
                     .info("message.rftools.shiftmessage")
                     .infoExtended("message.rftools.coalgenerator")

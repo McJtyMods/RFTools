@@ -4,6 +4,7 @@ import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageTileEntity;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
@@ -65,7 +66,7 @@ public class StorageFilterItem extends GenericRFToolsItem {
             list.add(TextFormatting.YELLOW + "Sneak-right click on an inventory to");
             list.add(TextFormatting.YELLOW + "configure the filter based on contents");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 
@@ -135,7 +136,7 @@ public class StorageFilterItem extends GenericRFToolsItem {
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
-            player.openGui(RFTools.instance, RFTools.GUI_STORAGE_FILTER, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
+            player.openGui(RFTools.instance, GuiProxy.GUI_STORAGE_FILTER, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
             return new ActionResult<>(EnumActionResult.SUCCESS, stack);
         }
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);

@@ -6,6 +6,7 @@ import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
@@ -67,7 +68,7 @@ public class SimpleDialerBlock extends LogicSlabBlock<SimpleDialerTileEntity, Em
             list.add(TextFormatting.WHITE + "When this block gets a redstone signal it");
             list.add(TextFormatting.WHITE + "dials or interrupts a transmitter.");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 

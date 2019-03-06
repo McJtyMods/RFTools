@@ -7,6 +7,7 @@ import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 
@@ -15,7 +16,7 @@ public class GuiCounter extends GenericGuiContainer<CounterTileEntity> {
     private TextField currentField;
 
     public GuiCounter(CounterTileEntity counterTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, counterTileEntity, container, RFTools.GUI_MANUAL_MAIN, "counter");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, counterTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "counter");
     }
 
     @Override

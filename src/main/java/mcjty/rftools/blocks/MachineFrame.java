@@ -18,7 +18,7 @@ public class MachineFrame extends Block {
         super(Material.IRON);
         setUnlocalizedName("rftools.machine_frame");
         setRegistryName("machine_frame");
-        setCreativeTab(RFTools.tabRfTools);
+        setCreativeTab(RFTools.setup.getTab());
         McJtyRegister.registerLater(this, RFTools.instance, ItemBlock::new);
     }
 

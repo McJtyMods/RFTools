@@ -13,6 +13,7 @@ import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.BlockInfo;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -57,7 +58,7 @@ public class GuiNetworkMonitor extends GuiItemScreen {
     }
 
     public GuiNetworkMonitor() {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, MONITOR_XSIZE, MONITOR_YSIZE, RFTools.GUI_MANUAL_MAIN, "netmon");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, MONITOR_XSIZE, MONITOR_YSIZE, GuiProxy.GUI_MANUAL_MAIN, "netmon");
         listDirty = 0;
         previousRfMillis = 0;
     }

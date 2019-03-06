@@ -11,6 +11,7 @@ import mcjty.rftools.blocks.storagemonitor.GuiStorageScanner;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerContainer;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.varia.RFToolsTools;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
@@ -78,7 +79,7 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
             list.add(TextFormatting.WHITE + "a Storage Control Screen Module so");
             list.add(TextFormatting.WHITE + "that you can access a Storage Scanner");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 
@@ -121,7 +122,7 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
 
     @Override
     public int getGuiID() {
-        return RFTools.GUI_STORAGE_TERMINAL;
+        return GuiProxy.GUI_STORAGE_TERMINAL;
     }
 
     private static ItemStack getModule(TileEntity tileEntity) {
@@ -236,7 +237,7 @@ public class StorageTerminalBlock extends LogicSlabBlock<StorageTerminalTileEnti
                 if (player.isSneaking()) {
                     player.openGui(this.modBase, this.getGuiID(), world, x, y, z);
                 } else {
-                    player.openGui(this.modBase, RFTools.GUI_STORAGE_TERMINAL_SCANNER, world, x, y, z);
+                    player.openGui(this.modBase, GuiProxy.GUI_STORAGE_TERMINAL_SCANNER, world, x, y, z);
                 }
                 return true;
             }

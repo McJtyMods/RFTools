@@ -12,6 +12,7 @@ import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.CommandHandler;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.BeaconType;
 import net.minecraft.util.ResourceLocation;
@@ -51,7 +52,7 @@ public class GuiLocator extends GenericGuiContainer<LocatorTileEntity> {
     public static int energyConsumption = 0;
 
     public GuiLocator(LocatorTileEntity tileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, tileEntity, container, RFTools.GUI_MANUAL_SHAPE, "locator");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, tileEntity, container, GuiProxy.GUI_MANUAL_SHAPE, "locator");
 
         xSize = LOCATOR_WIDTH;
         ySize = LOCATOR_HEIGHT;

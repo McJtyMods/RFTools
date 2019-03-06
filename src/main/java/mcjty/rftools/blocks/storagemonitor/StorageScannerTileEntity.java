@@ -121,7 +121,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     public StorageScannerTileEntity() {
         super(StorageScannerConfiguration.MAXENERGY, StorageScannerConfiguration.RECEIVEPERTICK);
         monitorDim = null;
-        radius = (StorageScannerConfiguration.xnetRequired && RFTools.instance.xnet) ? 0 : 1;
+        radius = (StorageScannerConfiguration.xnetRequired && RFTools.setup.xnet) ? 0 : 1;
     }
 
     // This constructor is used for constructing a dummy client-side tile entity when
@@ -486,7 +486,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     public void setRadius(int v) {
         radius = v;
-        if (StorageScannerConfiguration.xnetRequired && RFTools.instance.xnet) {
+        if (StorageScannerConfiguration.xnetRequired && RFTools.setup.xnet) {
             radius = 0;
         }
         markDirtyClient();
@@ -671,7 +671,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     public Stream<BlockPos> findInventories() {
-        if (RFTools.instance.xnet && StorageScannerConfiguration.xnetRequired) {
+        if (RFTools.setup.xnet && StorageScannerConfiguration.xnetRequired) {
             radius = 0;
         }
 

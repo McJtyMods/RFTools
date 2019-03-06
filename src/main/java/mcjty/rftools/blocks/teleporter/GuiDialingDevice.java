@@ -16,6 +16,7 @@ import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -65,7 +66,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
 
 
     public GuiDialingDevice(DialingDeviceTileEntity dialingDeviceTileEntity, EmptyContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, dialingDeviceTileEntity, container, RFTools.GUI_MANUAL_MAIN, "tpdialer");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, dialingDeviceTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "tpdialer");
         GenericEnergyStorageTileEntity.setCurrentRF(dialingDeviceTileEntity.getStoredPower());
 
         xSize = DIALER_WIDTH;

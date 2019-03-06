@@ -10,6 +10,7 @@ import mcjty.lib.gui.widgets.*;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -30,7 +31,7 @@ public class GuiRelay extends GenericGuiContainer<RelayTileEntity> {
     private Map<String,TextField> energyValues = new HashMap<>();
 
     public GuiRelay(RelayTileEntity relayTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, relayTileEntity, container, RFTools.GUI_MANUAL_MAIN, "prelay");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, relayTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "prelay");
 
         xSize = RELAY_WIDTH;
         ySize = RELAY_HEIGHT;

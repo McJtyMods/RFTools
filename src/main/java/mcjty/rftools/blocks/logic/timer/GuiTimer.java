@@ -6,13 +6,14 @@ import mcjty.lib.gui.Window;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.gui.widgets.ToggleButton;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 
 public class GuiTimer extends GenericGuiContainer<TimerTileEntity> {
 
     public GuiTimer(TimerTileEntity timerTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, timerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "timer");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, timerTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "timer");
     }
 
     @Override

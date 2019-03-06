@@ -6,6 +6,7 @@ import mcjty.rftools.blocks.storage.sorters.CountItemSorter;
 import mcjty.rftools.blocks.storage.sorters.ItemSorter;
 import mcjty.rftools.blocks.storage.sorters.NameItemSorter;
 import mcjty.rftools.blocks.storage.sorters.OreTypeItemSorter;
+import mcjty.rftools.gui.GuiProxy;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
@@ -26,7 +27,7 @@ public class OreDictTypeItem extends StorageTypeItem {
         setMaxStackSize(16);
         setUnlocalizedName("oredict_module");
         setRegistryName("oredict_module");
-        setCreativeTab(RFTools.tabRfTools);
+        setCreativeTab(RFTools.setup.getTab());
         McJtyRegister.registerLater(this, RFTools.instance);
     }
 
@@ -64,7 +65,7 @@ public class OreDictTypeItem extends StorageTypeItem {
             list.add(TextFormatting.WHITE + "This module extends the Modular Storage block");
             list.add(TextFormatting.WHITE + "with Ore dictionary specific capabilities");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 }

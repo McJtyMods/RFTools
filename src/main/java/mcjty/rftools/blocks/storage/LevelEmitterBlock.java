@@ -6,6 +6,7 @@ import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.screens.ScreenSetup;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.theoneprobe.api.ElementAlignment;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
@@ -66,7 +67,7 @@ public class LevelEmitterBlock extends LogicSlabBlock<LevelEmitterTileEntity, Le
             list.add(TextFormatting.WHITE + "Storage Control Screen Module so that");
             list.add(TextFormatting.WHITE + "you can count items in your storage");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 
@@ -112,7 +113,7 @@ public class LevelEmitterBlock extends LogicSlabBlock<LevelEmitterTileEntity, Le
 
     @Override
     public int getGuiID() {
-        return RFTools.GUI_STORAGE_TERMINAL;
+        return GuiProxy.GUI_STORAGE_TERMINAL;
     }
 
     private static ItemStack getModule(TileEntity tileEntity) {

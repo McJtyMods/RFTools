@@ -21,7 +21,7 @@ public class MachineBase extends Block {
         super(Material.IRON);
         setUnlocalizedName("rftools.machine_base");
         setRegistryName("machine_base");
-        setCreativeTab(RFTools.tabRfTools);
+        setCreativeTab(RFTools.setup.getTab());
         McJtyRegister.registerLater(this, RFTools.instance, ItemBlock::new);
     }
 

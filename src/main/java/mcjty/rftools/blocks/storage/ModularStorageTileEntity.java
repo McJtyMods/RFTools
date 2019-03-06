@@ -1,16 +1,16 @@
 package mcjty.rftools.blocks.storage;
 
+import mcjty.lib.bindings.DefaultAction;
+import mcjty.lib.bindings.IAction;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
-import mcjty.lib.bindings.DefaultAction;
 import mcjty.lib.tileentity.GenericTileEntity;
-import mcjty.lib.bindings.IAction;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.ItemStackList;
 import mcjty.lib.varia.NullSidedInvWrapper;
-import mcjty.rftools.ClientInfo;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.api.general.IInventoryTracker;
 import mcjty.rftools.craftinggrid.*;
 import mcjty.rftools.items.storage.StorageFilterCache;
@@ -631,7 +631,7 @@ public class ModularStorageTileEntity extends GenericTileEntity implements ITick
         World world = getWorld();
         if (world == null) {
             if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
-                world = ClientInfo.getWorld();
+                world = RFTools.proxy.getClientWorld();
             } else {
                 world = DimensionManager.getWorld(0);
             }

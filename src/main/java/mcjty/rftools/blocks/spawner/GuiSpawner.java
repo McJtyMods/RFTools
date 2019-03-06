@@ -12,6 +12,7 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.SyringeItem;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
@@ -40,7 +41,7 @@ public class GuiSpawner extends GenericGuiContainer<SpawnerTileEntity> {
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/spawner.png");
 
     public GuiSpawner(SpawnerTileEntity spawnerTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, spawnerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "spawner");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, spawnerTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "spawner");
         GenericEnergyStorageTileEntity.setCurrentRF(spawnerTileEntity.getStoredPower());
 
         xSize = SPAWNER_WIDTH;

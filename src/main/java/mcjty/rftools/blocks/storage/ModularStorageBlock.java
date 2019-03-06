@@ -5,8 +5,8 @@ import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.CommandHandler;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
@@ -69,7 +69,7 @@ public class ModularStorageBlock extends GenericRFToolsBlock<ModularStorageTileE
 
     @Override
     public int getGuiID() {
-        return RFTools.GUI_MODULAR_STORAGE;
+        return GuiProxy.GUI_MODULAR_STORAGE;
     }
 
     @SideOnly(Side.CLIENT)
@@ -83,7 +83,7 @@ public class ModularStorageBlock extends GenericRFToolsBlock<ModularStorageTileE
             list.add(TextFormatting.WHITE + "You must first insert a storage module item before");
             list.add(TextFormatting.WHITE + "you can use it");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 

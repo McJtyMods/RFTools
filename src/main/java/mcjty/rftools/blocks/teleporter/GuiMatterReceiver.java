@@ -11,6 +11,7 @@ import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.PacketGetPlayers;
 import mcjty.rftools.network.RFToolsMessages;
 import org.lwjgl.input.Keyboard;
@@ -44,7 +45,7 @@ public class GuiMatterReceiver extends GenericGuiContainer<MatterReceiverTileEnt
 
 
     public GuiMatterReceiver(MatterReceiverTileEntity matterReceiverTileEntity, EmptyContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, matterReceiverTileEntity, container, RFTools.GUI_MANUAL_MAIN, "tpreceiver");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, matterReceiverTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "tpreceiver");
         GenericEnergyStorageTileEntity.setCurrentRF(matterReceiverTileEntity.getStoredPower());
 
         xSize = MATTER_WIDTH;

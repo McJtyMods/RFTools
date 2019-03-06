@@ -4,7 +4,7 @@ import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.CommandHandler;
-import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.util.ITooltipFlag;
@@ -64,7 +64,7 @@ public class SecurityCardItem extends GenericRFToolsItem {
             list.add(TextFormatting.WHITE + "If you want to copy the channel from a block to");
             list.add(TextFormatting.WHITE + "a card you can right click with an unlinked card");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 

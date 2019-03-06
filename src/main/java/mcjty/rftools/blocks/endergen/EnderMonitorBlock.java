@@ -4,6 +4,7 @@ import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.blocks.LogicSlabBlock;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
@@ -20,7 +21,7 @@ public class EnderMonitorBlock extends LogicSlabBlock<EnderMonitorTileEntity, Em
 
     public EnderMonitorBlock() {
         super(RFTools.instance, Material.IRON, EnderMonitorTileEntity.class, EmptyContainer::new, "ender_monitor", false);
-        setCreativeTab(RFTools.tabRfTools);
+        setCreativeTab(RFTools.setup.getTab());
     }
 
     @Override
@@ -30,7 +31,7 @@ public class EnderMonitorBlock extends LogicSlabBlock<EnderMonitorTileEntity, Em
 
     @Override
     public int getGuiID() {
-        return RFTools.GUI_ENDERMONITOR;
+        return GuiProxy.GUI_ENDERMONITOR;
     }
 
     @SideOnly(Side.CLIENT)

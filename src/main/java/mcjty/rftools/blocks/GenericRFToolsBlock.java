@@ -24,13 +24,13 @@ public abstract class GenericRFToolsBlock<T extends GenericTileEntity, C extends
 
     public GenericRFToolsBlock(Material material, Class<? extends T> tileEntityClass, BiFunction<EntityPlayer, IInventory, C> containerFactory, String name, boolean isContainer) {
         super(RFTools.instance, material, tileEntityClass, containerFactory, name, isContainer);
-        setCreativeTab(RFTools.tabRfTools);
+        setCreativeTab(RFTools.setup.getTab());
     }
 
     public GenericRFToolsBlock(Material material, Class<? extends T> tileEntityClass, BiFunction<EntityPlayer, IInventory, C> containerFactory,
                                Function<Block, ItemBlock> itemBlockFunction, String name, boolean isContainer) {
         super(RFTools.instance, material, tileEntityClass, containerFactory, itemBlockFunction, name, isContainer);
-        setCreativeTab(RFTools.tabRfTools);
+        setCreativeTab(RFTools.setup.getTab());
     }
 
     @Override

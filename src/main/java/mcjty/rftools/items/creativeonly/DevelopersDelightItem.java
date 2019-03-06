@@ -4,6 +4,7 @@ import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.NBTTools;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -28,7 +29,7 @@ public class DevelopersDelightItem extends GenericRFToolsItem {
         if (world.isRemote) {
             dumpInfo(world, pos);
             GuiDevelopersDelight.setSelected(pos);
-            player.openGui(RFTools.instance, RFTools.GUI_DEVELOPERS_DELIGHT, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
+            player.openGui(RFTools.instance, GuiProxy.GUI_DEVELOPERS_DELIGHT, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
             return EnumActionResult.SUCCESS;
         }
         return EnumActionResult.SUCCESS;

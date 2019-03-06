@@ -3,8 +3,8 @@ package mcjty.rftools.blocks.teleporter;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.gui.GenericGuiContainer;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.rftools.gui.GuiProxy;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
@@ -43,13 +43,13 @@ public class DialingDeviceBlock extends GenericRFToolsBlock<DialingDeviceTileEnt
             list.add(TextFormatting.WHITE + "has enough power to be safe.");
             list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 
 
     @Override
     public int getGuiID() {
-        return RFTools.GUI_DIALING_DEVICE;
+        return GuiProxy.GUI_DIALING_DEVICE;
     }
 }

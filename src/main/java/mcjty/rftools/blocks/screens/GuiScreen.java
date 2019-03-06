@@ -14,6 +14,7 @@ import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.modulesclient.helper.ScreenModuleGuiBuilder;
 import mcjty.rftools.blocks.screens.network.PacketModuleUpdate;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -45,7 +46,7 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
     }
 
     public GuiScreen(ScreenTileEntity screenTileEntity, ScreenContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, screenTileEntity, container, RFTools.GUI_MANUAL_MAIN, "screens");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, screenTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "screens");
 
         xSize = SCREEN_WIDTH;
         ySize = SCREEN_HEIGHT;

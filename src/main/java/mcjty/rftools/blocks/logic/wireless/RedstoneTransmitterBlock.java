@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.logic.wireless;
 
 import mcjty.lib.blocks.GenericItemBlock;
 import mcjty.lib.container.EmptyContainer;
-import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -39,7 +39,7 @@ public class RedstoneTransmitterBlock extends RedstoneChannelBlock<RedstoneTrans
             list.add(TextFormatting.WHITE + "Place down to create a channel or else right");
             list.add(TextFormatting.WHITE + "click on receiver/transmitter to use that channel");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 

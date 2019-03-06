@@ -9,6 +9,7 @@ import mcjty.lib.gui.widgets.EnergyBar;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.builder.GuiShapeCard;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.Minecraft;
@@ -25,7 +26,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     private ImageChoiceLabel anchor[] = new ImageChoiceLabel[4];
 
     public GuiBuilder(BuilderTileEntity builderTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, builderTileEntity, container, RFTools.GUI_MANUAL_SHAPE, "builder");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, builderTileEntity, container, GuiProxy.GUI_MANUAL_SHAPE, "builder");
         setCurrentRF(builderTileEntity.getStoredPower());
     }
 
@@ -71,7 +72,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
             GuiShapeCard.fromTEPos = tileEntity.getPos();
             GuiShapeCard.fromTEStackSlot = SLOT_TAB;
             GuiShapeCard.returnGui = this;
-            player.openGui(RFTools.instance, RFTools.GUI_SHAPECARD_COMPOSER, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
+            player.openGui(RFTools.instance, GuiProxy.GUI_SHAPECARD_COMPOSER, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
         }
     }
 

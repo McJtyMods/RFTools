@@ -4,8 +4,8 @@ import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.blocks.GenericBlock;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.varia.ItemStackTools;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.gui.GuiProxy;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
@@ -21,7 +21,7 @@ public class ItemFilterSetup {
                 .tileEntityClass(ItemFilterTileEntity.class)
                 .container(ItemFilterTileEntity.CONTAINER_FACTORY)
                 .rotationType(BaseBlock.RotationType.NONE)
-                .guiId(RFTools.GUI_ITEMFILTER)
+                .guiId(GuiProxy.GUI_ITEMFILTER)
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.itemfilter")
                 .infoExtendedParameter(stack -> {

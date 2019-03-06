@@ -9,6 +9,7 @@ import mcjty.lib.gui.widgets.EnergyBar;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 
@@ -24,7 +25,7 @@ public class GuiScreenController extends GenericGuiContainer<ScreenControllerTil
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/screencontroller.png");
 
     public GuiScreenController(ScreenControllerTileEntity screenControllerTileEntity, ScreenControllerContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, screenControllerTileEntity, container, RFTools.GUI_MANUAL_MAIN, "screens");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, screenControllerTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "screens");
         GenericEnergyStorageTileEntity.setCurrentRF(screenControllerTileEntity.getStoredPower());
 
         xSize = CONTROLLER_WIDTH;

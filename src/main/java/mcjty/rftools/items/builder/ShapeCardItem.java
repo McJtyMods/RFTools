@@ -5,6 +5,7 @@ import mcjty.lib.varia.*;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.shapes.*;
 import mcjty.rftools.varia.RLE;
@@ -299,7 +300,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
             list.add(TextFormatting.YELLOW + "Then right click to mark two corners of wanted area");
             type.addInformation(list);
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 
@@ -588,7 +589,7 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (world.isRemote) {
-            player.openGui(RFTools.instance, RFTools.GUI_SHAPECARD, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
+            player.openGui(RFTools.instance, GuiProxy.GUI_SHAPECARD, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
             return new ActionResult<>(EnumActionResult.SUCCESS, stack);
         }
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);

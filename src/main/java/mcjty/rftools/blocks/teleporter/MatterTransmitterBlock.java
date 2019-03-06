@@ -6,8 +6,8 @@ import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.CommandHandler;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
@@ -111,7 +111,7 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock<MatterTransmitte
             list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption and");
             list.add(TextFormatting.YELLOW + "increased teleportation speed.");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 
@@ -171,7 +171,7 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock<MatterTransmitte
 
     @Override
     public int getGuiID() {
-        return RFTools.GUI_MATTER_TRANSMITTER;
+        return GuiProxy.GUI_MATTER_TRANSMITTER;
     }
 
     @Override

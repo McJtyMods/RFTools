@@ -2,8 +2,8 @@ package mcjty.rftools.blocks.spawner;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.gui.GenericGuiContainer;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
@@ -78,7 +78,7 @@ public class MatterBeamerBlock extends GenericRFToolsBlock<MatterBeamerTileEntit
             list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power usage");
             list.add(TextFormatting.YELLOW + "increased speed and less material needed");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 
@@ -124,7 +124,7 @@ public class MatterBeamerBlock extends GenericRFToolsBlock<MatterBeamerTileEntit
 
     @Override
     public int getGuiID() {
-        return RFTools.GUI_MATTER_BEAMER;
+        return GuiProxy.GUI_MATTER_BEAMER;
     }
 
     @Override

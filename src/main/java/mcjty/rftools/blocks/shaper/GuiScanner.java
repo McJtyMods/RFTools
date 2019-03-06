@@ -11,6 +11,7 @@ import mcjty.lib.gui.widgets.*;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.IShapeParentGui;
@@ -48,14 +49,14 @@ public class GuiScanner extends GenericGuiContainer<ScannerTileEntity> implement
     private int filterCnt = 0;
 
     public GuiScanner(ScannerTileEntity shaperTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, shaperTileEntity, container, RFTools.GUI_MANUAL_SHAPE, "scanner");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, shaperTileEntity, container, GuiProxy.GUI_MANUAL_SHAPE, "scanner");
 
         xSize = SCANNER_WIDTH;
         ySize = SCANNER_HEIGHT;
     }
 
     public GuiScanner(RemoteScannerTileEntity shaperTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, shaperTileEntity, container, RFTools.GUI_MANUAL_SHAPE, "remote_scanner");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, shaperTileEntity, container, GuiProxy.GUI_MANUAL_SHAPE, "remote_scanner");
 
         xSize = SCANNER_WIDTH;
         ySize = SCANNER_HEIGHT;

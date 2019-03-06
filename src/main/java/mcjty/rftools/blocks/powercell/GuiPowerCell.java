@@ -9,6 +9,7 @@ import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 
@@ -26,7 +27,7 @@ public class GuiPowerCell extends GenericGuiContainer<PowerCellTileEntity> {
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/powercell.png");
 
     public GuiPowerCell(PowerCellTileEntity te, PowerCellContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, RFTools.GUI_MANUAL_MAIN, "powercell");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, GuiProxy.GUI_MANUAL_MAIN, "powercell");
 
         xSize = POWERCELL_WIDTH;
         ySize = POWERCELL_HEIGHT;

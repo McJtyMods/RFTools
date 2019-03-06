@@ -13,6 +13,7 @@ import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.api.screens.ITooltipInfo;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.blocks.screens.ScreenTileEntity.ModuleRaytraceResult;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
@@ -520,7 +521,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
 
     @Override
     public int getGuiID() {
-        return RFTools.GUI_SCREEN;
+        return GuiProxy.GUI_SCREEN;
     }
 
     @SideOnly(Side.CLIENT)
@@ -571,7 +572,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
             list.add(TextFormatting.WHITE + "This screen cannot be directly powered. It has to be remotely");
             list.add(TextFormatting.WHITE + "powered by a nearby Screen Controller.");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 

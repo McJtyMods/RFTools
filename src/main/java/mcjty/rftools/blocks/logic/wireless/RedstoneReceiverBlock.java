@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.logic.wireless;
 import mcjty.lib.blocks.GenericItemBlock;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.gui.GenericGuiContainer;
-import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
@@ -42,12 +42,12 @@ public class RedstoneReceiverBlock extends RedstoneChannelBlock<RedstoneReceiver
             list.add(TextFormatting.WHITE + "a linked transmitter. Right click on a transmitter");
             list.add(TextFormatting.WHITE + "(or other receiver) to link");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 
     @Override
     public int getGuiID() {
-        return RFTools.GUI_REDSTONE_RECEIVER;
+        return GuiProxy.GUI_REDSTONE_RECEIVER;
     }
 }

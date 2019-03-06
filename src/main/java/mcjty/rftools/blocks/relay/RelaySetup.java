@@ -3,8 +3,8 @@ package mcjty.rftools.blocks.relay;
 import mcjty.lib.builder.BlockFlags;
 import mcjty.lib.blocks.GenericBlock;
 import mcjty.lib.container.GenericContainer;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.gui.GuiProxy;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -16,7 +16,7 @@ public class RelaySetup {
                 .tileEntityClass(RelayTileEntity.class)
                 .flags(BlockFlags.REDSTONE_CHECK)
                 .emptyContainer()
-                .guiId(RFTools.GUI_RELAY)
+                .guiId(GuiProxy.GUI_RELAY)
                 .property(RelayTileEntity.ENABLED)
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.relay")

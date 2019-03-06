@@ -32,7 +32,7 @@ public abstract class RedstoneChannelBlock<T extends RedstoneChannelTileEntity, 
 
     public RedstoneChannelBlock(Material material, Class<? extends T> tileEntityClass, BiFunction<EntityPlayer, IInventory, C> containerFactory, Function<Block, ItemBlock> itemBlockFactory, String name) {
         super(RFTools.instance, material, tileEntityClass, containerFactory, itemBlockFactory, name, false);
-        setCreativeTab(RFTools.tabRfTools);
+        setCreativeTab(RFTools.setup.getTab());
     }
 
     @SideOnly(Side.CLIENT)

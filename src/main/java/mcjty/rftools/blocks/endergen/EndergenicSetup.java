@@ -5,8 +5,8 @@ import mcjty.lib.blocks.GenericBlock;
 import mcjty.lib.builder.BlockFlags;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.varia.ItemStackTools;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
+import mcjty.rftools.gui.GuiProxy;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
@@ -26,7 +26,7 @@ public class EndergenicSetup {
                 .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.NON_OPAQUE, BlockFlags.RENDER_TRANSLUCENT)
                 .rotationType(BaseBlock.RotationType.NONE)
                 .infusable()
-                .guiId(RFTools.GUI_ENDERGENIC)
+                .guiId(GuiProxy.GUI_ENDERGENIC)
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.endergenic")
                 .build();
@@ -35,7 +35,7 @@ public class EndergenicSetup {
                 .tileEntityClass(PearlInjectorTileEntity.class)
                 .container(PearlInjectorTileEntity.CONTAINER_FACTORY)
                 .flags(BlockFlags.REDSTONE_CHECK)
-                .guiId(RFTools.GUI_PEARL_INJECTOR)
+                .guiId(GuiProxy.GUI_PEARL_INJECTOR)
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.pearl_injector")
                 .infoExtendedParameter(stack -> {

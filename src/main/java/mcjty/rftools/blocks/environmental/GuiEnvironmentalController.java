@@ -8,6 +8,7 @@ import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.widgets.*;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.PacketGetPlayers;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.lib.typed.TypedMap;
@@ -40,7 +41,7 @@ public class GuiEnvironmentalController extends GenericGuiContainer<Environmenta
     private ChoiceLabel modeLabel;
 
     public GuiEnvironmentalController(EnvironmentalControllerTileEntity tileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, tileEntity, container, RFTools.GUI_MANUAL_MAIN, "envctrl");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, tileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "envctrl");
     }
 
     @Override

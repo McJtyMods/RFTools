@@ -7,6 +7,7 @@ import mcjty.lib.gui.Window;
 import mcjty.lib.gui.widgets.EnergyBar;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 
@@ -17,7 +18,7 @@ public class GuiCoalGenerator extends GenericGuiContainer<CoalGeneratorTileEntit
     private EnergyBar energyBar;
 
     public GuiCoalGenerator(CoalGeneratorTileEntity tileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, tileEntity, container, RFTools.GUI_MANUAL_MAIN, "coalgen");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, tileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "coalgen");
         GenericEnergyStorageTileEntity.setCurrentRF(tileEntity.getStoredPower());
     }
 

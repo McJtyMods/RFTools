@@ -18,6 +18,7 @@ import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.shield.filters.*;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -83,7 +84,7 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
     }
 
     public GuiShield(ShieldTEBase shieldTileEntity, ShieldContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, shieldTileEntity, container, RFTools.GUI_MANUAL_SHAPE, "shield");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, shieldTileEntity, container, GuiProxy.GUI_MANUAL_SHAPE, "shield");
         GenericEnergyStorageTileEntity.setCurrentRF(shieldTileEntity.getStoredPower());
 
         xSize = SHIELD_WIDTH;

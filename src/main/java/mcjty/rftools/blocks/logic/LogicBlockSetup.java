@@ -4,7 +4,6 @@ import mcjty.lib.blocks.GenericBlock;
 import mcjty.lib.builder.BlockFlags;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.varia.ItemStackTools;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.logic.analog.AnalogTileEntity;
 import mcjty.rftools.blocks.logic.analog.GuiAnalog;
@@ -25,6 +24,7 @@ import mcjty.rftools.blocks.logic.timer.TimerTileEntity;
 import mcjty.rftools.blocks.logic.wire.WireTileEntity;
 import mcjty.rftools.blocks.logic.wireless.RedstoneReceiverBlock;
 import mcjty.rftools.blocks.logic.wireless.RedstoneTransmitterBlock;
+import mcjty.rftools.gui.GuiProxy;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -48,7 +48,7 @@ public class LogicBlockSetup {
 
         sequencerBlock = ModBlocks.logicFactory.<SequencerTileEntity> builder("sequencer_block")
                 .tileEntityClass(SequencerTileEntity.class)
-                .guiId(RFTools.GUI_SEQUENCER)
+                .guiId(GuiProxy.GUI_SEQUENCER)
                 .emptyContainer()
                 .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
                 .info("message.rftools.shiftmessage")
@@ -59,7 +59,7 @@ public class LogicBlockSetup {
                 .build();
         counterBlock = ModBlocks.logicFactory.<CounterTileEntity> builder("counter_block")
                 .tileEntityClass(CounterTileEntity.class)
-                .guiId(RFTools.GUI_COUNTER)
+                .guiId(GuiProxy.GUI_COUNTER)
                 .emptyContainer()
                 .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
                 .info("message.rftools.shiftmessage")
@@ -69,7 +69,7 @@ public class LogicBlockSetup {
                 .build();
         threeLogicBlock = ModBlocks.logicFactory.<ThreeLogicTileEntity> builder("logic_block")
                 .tileEntityClass(ThreeLogicTileEntity.class)
-                .guiId(RFTools.GUI_THREE_LOGIC)
+                .guiId(GuiProxy.GUI_THREE_LOGIC)
                 .emptyContainer()
                 .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
                 .info("message.rftools.shiftmessage")
@@ -77,7 +77,7 @@ public class LogicBlockSetup {
                 .build();
         invCheckerBlock = ModBlocks.logicFactory.<InvCheckerTileEntity> builder("invchecker_block")
                 .tileEntityClass(InvCheckerTileEntity.class)
-                .guiId(RFTools.GUI_INVCHECKER)
+                .guiId(GuiProxy.GUI_INVCHECKER)
                 .container(InvCheckerTileEntity.CONTAINER_FACTORY)
                 .flags(BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
                 .info("message.rftools.shiftmessage")
@@ -85,7 +85,7 @@ public class LogicBlockSetup {
                 .build();
         sensorBlock = ModBlocks.logicFactory.<SensorTileEntity> builder("sensor_block")
                 .tileEntityClass(SensorTileEntity.class)
-                .guiId(RFTools.GUI_SENSOR)
+                .guiId(GuiProxy.GUI_SENSOR)
                 .container(SensorTileEntity.CONTAINER_FACTORY)
                 .flags(BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
                 .info("message.rftools.shiftmessage")
@@ -93,7 +93,7 @@ public class LogicBlockSetup {
                 .build();
         analogBlock = ModBlocks.logicFactory.<AnalogTileEntity> builder("analog_block")
                 .tileEntityClass(AnalogTileEntity.class)
-                .guiId(RFTools.GUI_ANALOG)
+                .guiId(GuiProxy.GUI_ANALOG)
                 .emptyContainer()
                 .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
                 .info("message.rftools.shiftmessage")
@@ -117,7 +117,7 @@ public class LogicBlockSetup {
                 .build();
         timerBlock = ModBlocks.logicFactory.<TimerTileEntity> builder("timer_block")
                 .tileEntityClass(TimerTileEntity.class)
-                .guiId(RFTools.GUI_TIMER)
+                .guiId(GuiProxy.GUI_TIMER)
                 .emptyContainer()
                 .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
                 .info("message.rftools.shiftmessage")

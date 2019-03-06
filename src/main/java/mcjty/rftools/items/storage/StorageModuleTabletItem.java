@@ -8,6 +8,7 @@ import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.items.screenmodules.StorageControlModuleItem;
 import net.minecraft.client.renderer.block.model.ModelBakery;
@@ -130,7 +131,7 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
                     if (w == null || !WorldTools.chunkLoaded(w, pos)) {
                         player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Storage scanner is out of range!"), false);
                     } else {
-                        player.openGui(RFTools.instance, RFTools.GUI_REMOTE_STORAGESCANNER_ITEM, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
+                        player.openGui(RFTools.instance, GuiProxy.GUI_REMOTE_STORAGESCANNER_ITEM, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
                     }
                 } else {
                     player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Storage module is not linked to a storage scanner!"), false);
@@ -140,9 +141,9 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
                     Logging.message(player, TextFormatting.YELLOW + "This remote storage module is not linked!");
                     return new ActionResult<>(EnumActionResult.FAIL, stack);
                 }
-                player.openGui(RFTools.instance, RFTools.GUI_REMOTE_STORAGE_ITEM, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
+                player.openGui(RFTools.instance, GuiProxy.GUI_REMOTE_STORAGE_ITEM, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
             } else {
-                player.openGui(RFTools.instance, RFTools.GUI_MODULAR_STORAGE_ITEM, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
+                player.openGui(RFTools.instance, GuiProxy.GUI_MODULAR_STORAGE_ITEM, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
             }
             return new ActionResult<>(EnumActionResult.SUCCESS, stack);
         }
@@ -226,7 +227,7 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
             list.add("You can also craft this with a storage control");
             list.add("screen module for remote access to a storage scanner");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 

@@ -13,6 +13,7 @@ import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.craftinggrid.CraftingRecipe;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -36,7 +37,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
     private static int lastSelected = -1;
 
     public GuiCrafter(CrafterBaseTE te, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, RFTools.GUI_MANUAL_MAIN, "crafter");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, GuiProxy.GUI_MANUAL_MAIN, "crafter");
         GenericEnergyStorageTileEntity.setCurrentRF(te.getStoredPower());
     }
 

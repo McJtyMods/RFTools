@@ -182,8 +182,8 @@ public class PowerCellNetwork extends AbstractWorldData<PowerCellNetwork> {
             GlobalCoordinate c1 = blob1.iterator().next();
             GlobalCoordinate c2 = blob2.iterator().next();
 
-            boolean dim1rftools = RFTools.instance.rftoolsDimensions && RFToolsDimensionChecker.isRFToolsDimension(world, c1.getDimension());
-            boolean dim2rftools = RFTools.instance.rftoolsDimensions && RFToolsDimensionChecker.isRFToolsDimension(world, c2.getDimension());
+            boolean dim1rftools = RFTools.setup.rftoolsDimensions && RFToolsDimensionChecker.isRFToolsDimension(world, c1.getDimension());
+            boolean dim2rftools = RFTools.setup.rftoolsDimensions && RFToolsDimensionChecker.isRFToolsDimension(world, c2.getDimension());
             double rftoolsdimMult = 1.0;
             if (dim1rftools) {
                 rftoolsdimMult *= PowerCellConfiguration.powerCellRFToolsDimensionAdvantage;

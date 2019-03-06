@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.builder;
 
 import mcjty.lib.container.EmptyContainer;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
@@ -52,7 +52,7 @@ public class SpaceChamberControllerBlock extends GenericRFToolsBlock<SpaceChambe
             list.add(TextFormatting.WHITE + "This block is one of the eight corners of an");
             list.add(TextFormatting.WHITE + "area of space you want to copy/move elsewhere");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 

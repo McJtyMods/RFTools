@@ -8,6 +8,7 @@ import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 
@@ -30,7 +31,7 @@ public class GuiEndergenic extends GenericGuiContainer<EndergenicTileEntity> {
     private int timer = 10;
 
     public GuiEndergenic(EndergenicTileEntity endergenicTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, endergenicTileEntity, container, RFTools.GUI_MANUAL_MAIN, "power");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, endergenicTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "power");
         GenericEnergyStorageTileEntity.setCurrentRF(endergenicTileEntity.getStoredPower());
     }
 

@@ -23,7 +23,7 @@ public class SpaceChamberBlock extends Block {
         setHarvestLevel("pickaxe", 0);
         setUnlocalizedName("rftools.space_chamber");
         setRegistryName("space_chamber");
-        setCreativeTab(RFTools.tabRfTools);
+        setCreativeTab(RFTools.setup.getTab());
         McJtyRegister.registerLater(this, RFTools.instance, ItemBlock::new);
     }
 

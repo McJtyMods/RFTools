@@ -12,6 +12,7 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.shaper.*;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.builder.SpaceChamberCardItem;
 import net.minecraft.block.Block;
@@ -49,7 +50,7 @@ public class BuilderSetup {
                 .flags(BlockFlags.REDSTONE_CHECK)
                 .rotationType(BaseBlock.RotationType.HORIZROTATION)
                 .moduleSupport(BuilderTileEntity.MODULE_SUPPORT)
-                .guiId(RFTools.GUI_BUILDER)
+                .guiId(GuiProxy.GUI_BUILDER)
                 .infusable()
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.builder")
@@ -58,7 +59,7 @@ public class BuilderSetup {
         composerBlock = ModBlocks.builderFactory.<ComposerTileEntity> builder("composer")
                 .tileEntityClass(ComposerTileEntity.class)
                 .container(ComposerTileEntity.CONTAINER_FACTORY)
-                .guiId(RFTools.GUI_COMPOSER)
+                .guiId(GuiProxy.GUI_COMPOSER)
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.composer")
                 .build();
@@ -67,7 +68,7 @@ public class BuilderSetup {
                 .tileEntityClass(LocatorTileEntity.class)
                 .flags(BlockFlags.REDSTONE_CHECK)
                 .emptyContainer()
-                .guiId(RFTools.GUI_LOCATOR)
+                .guiId(GuiProxy.GUI_LOCATOR)
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.locator")
                 .build();
@@ -77,7 +78,7 @@ public class BuilderSetup {
                 .flags(BlockFlags.REDSTONE_CHECK)
                 .rotationType(BaseBlock.RotationType.HORIZROTATION)
                 .container(ProjectorTileEntity.CONTAINER_FACTORY)
-                .guiId(RFTools.GUI_PROJECTOR)
+                .guiId(GuiProxy.GUI_PROJECTOR)
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.projector")
                 .build();
@@ -86,7 +87,7 @@ public class BuilderSetup {
                 .tileEntityClass(ScannerTileEntity.class)
                 .flags(BlockFlags.REDSTONE_CHECK)
                 .container(ScannerTileEntity.CONTAINER_FACTORY)
-                .guiId(RFTools.GUI_SCANNER)
+                .guiId(GuiProxy.GUI_SCANNER)
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.scanner")
                 .infoExtendedParameter(ItemStackTools.intGetter("scanid", -1))
@@ -95,7 +96,7 @@ public class BuilderSetup {
                 .tileEntityClass(RemoteScannerTileEntity.class)
                 .flags(BlockFlags.REDSTONE_CHECK)
                 .container(ScannerTileEntity.CONTAINER_FACTORY)
-                .guiId(RFTools.GUI_SCANNER)
+                .guiId(GuiProxy.GUI_SCANNER)
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.remote_scanner")
                 .infoExtendedParameter(ItemStackTools.intGetter("scanid", -1))
@@ -152,7 +153,7 @@ public class BuilderSetup {
     }
 
     private static void readBuilderBlocksConfig() {
-        File modConfigDir = RFTools.proxy.modConfigDir;
+        File modConfigDir = RFTools.setup.getModConfigDir();
         File file = new File(modConfigDir.getPath() + File.separator + "rftools", "userbuilder.json");
         try(FileInputStream inputstream = new FileInputStream(file)) {
             parseBuilderJson(inputstream);

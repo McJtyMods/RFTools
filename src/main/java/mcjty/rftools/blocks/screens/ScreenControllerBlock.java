@@ -2,8 +2,8 @@ package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.api.Infusable;
 import mcjty.lib.gui.GenericGuiContainer;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
+import mcjty.rftools.gui.GuiProxy;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
@@ -27,7 +27,7 @@ public class ScreenControllerBlock extends GenericRFToolsBlock<ScreenControllerT
 
     @Override
     public int getGuiID() {
-        return RFTools.GUI_SCREENCONTROLLER;
+        return GuiProxy.GUI_SCREENCONTROLLER;
     }
 
     @SideOnly(Side.CLIENT)
@@ -49,7 +49,7 @@ public class ScreenControllerBlock extends GenericRFToolsBlock<ScreenControllerT
             list.add(TextFormatting.WHITE + "are in range.");
             list.add(TextFormatting.YELLOW + "Infusing bonus: increased range for screens.");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 

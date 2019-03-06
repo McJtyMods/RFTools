@@ -28,7 +28,7 @@ public class MatterBoosterBlock extends Block {
         super(Material.IRON);
         setUnlocalizedName("rftools.matter_booster");
         setRegistryName("matter_booster");
-        setCreativeTab(RFTools.tabRfTools);
+        setCreativeTab(RFTools.setup.getTab());
         setHardness(2.0f);
         setSoundType(SoundType.METAL);
         setHarvestLevel("pickaxe", 0);

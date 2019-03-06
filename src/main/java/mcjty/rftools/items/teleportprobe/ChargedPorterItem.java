@@ -7,8 +7,8 @@ import mcjty.lib.varia.IEnergyItem;
 import mcjty.lib.varia.ItemCapabilityProvider;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.ForgeEventHandlers;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.*;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -279,7 +279,7 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
             list.add("on a receiver to set the destination.");
             list.add("Right click to perform the teleport.");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 

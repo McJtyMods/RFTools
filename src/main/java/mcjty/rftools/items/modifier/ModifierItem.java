@@ -2,6 +2,7 @@ package mcjty.rftools.items.modifier;
 
 import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.items.ModItems;
 import net.minecraft.client.util.ITooltipFlag;
@@ -191,7 +192,7 @@ public class ModifierItem extends GenericRFToolsItem {
             list.add(TextFormatting.WHITE + "This module can be used by the area scanner to");
             list.add(TextFormatting.WHITE + "modify the scanned output");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 
@@ -200,7 +201,7 @@ public class ModifierItem extends GenericRFToolsItem {
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
-            player.openGui(RFTools.instance, RFTools.GUI_MODIFIER_MODULE, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
+            player.openGui(RFTools.instance, GuiProxy.GUI_MODIFIER_MODULE, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
             return new ActionResult<>(EnumActionResult.SUCCESS, stack);
         }
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);

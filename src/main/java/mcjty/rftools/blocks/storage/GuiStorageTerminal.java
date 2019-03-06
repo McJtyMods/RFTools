@@ -4,6 +4,7 @@ import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.ResourceLocation;
 
@@ -17,7 +18,7 @@ public class GuiStorageTerminal extends GenericGuiContainer<StorageTerminalTileE
     private static final ResourceLocation iconLocation = new ResourceLocation(RFTools.MODID, "textures/gui/storageterminal.png");
 
     public GuiStorageTerminal(StorageTerminalTileEntity storageTerminalTileEntity, StorageTerminalContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, storageTerminalTileEntity, container, RFTools.GUI_MANUAL_MAIN, "storterminal");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, storageTerminalTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "storterminal");
 
         xSize = STORAGE_WIDTH;
         ySize = STORAGE_HEIGHT;

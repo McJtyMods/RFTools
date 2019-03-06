@@ -14,6 +14,7 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.BlockTools;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -39,7 +40,7 @@ public class GuiLiquidMonitor extends GenericGuiContainer<LiquidMonitorBlockTile
 
 
     public GuiLiquidMonitor(LiquidMonitorBlockTileEntity liquidMonitorBlockTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, liquidMonitorBlockTileEntity, container, RFTools.GUI_MANUAL_MAIN, "liqmonitor");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, liquidMonitorBlockTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "liqmonitor");
         xSize = 256;
         ySize = 180;
     }

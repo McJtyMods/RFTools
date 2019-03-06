@@ -37,7 +37,7 @@ public class RFToolsWorldGenerator implements IWorldGenerator {
         }
 
         Set<Integer> oregen;
-        if (RFTools.instance.rftoolsDimensions) {
+        if (RFTools.setup.rftoolsDimensions) {
             oregen = GeneralConfiguration.oregenDimensionsWithDimensions;
         } else {
             oregen = GeneralConfiguration.oregenDimensionsWithoutDimensions;

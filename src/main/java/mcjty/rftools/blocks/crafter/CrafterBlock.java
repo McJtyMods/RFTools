@@ -5,9 +5,9 @@ import mcjty.lib.api.Infusable;
 import mcjty.lib.crafting.INBTPreservingIngredient;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.varia.ModuleSupport;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
+import mcjty.rftools.gui.GuiProxy;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -92,7 +92,7 @@ public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterCont
             list.add(TextFormatting.WHITE + "of previous steps.");
             list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
         } else {
-            list.add(TextFormatting.WHITE + RFTools.SHIFT_MESSAGE);
+            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
         }
     }
 
@@ -128,6 +128,6 @@ public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterCont
 //
     @Override
     public int getGuiID() {
-        return RFTools.GUI_CRAFTER;
+        return GuiProxy.GUI_CRAFTER;
     }
 }

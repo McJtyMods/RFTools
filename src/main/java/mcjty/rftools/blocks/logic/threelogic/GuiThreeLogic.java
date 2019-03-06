@@ -5,6 +5,7 @@ import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.lib.typed.TypedMap;
 import net.minecraft.util.ResourceLocation;
@@ -15,7 +16,7 @@ import static mcjty.rftools.blocks.logic.threelogic.ThreeLogicTileEntity.PARAM_S
 public class GuiThreeLogic extends GenericGuiContainer<ThreeLogicTileEntity> {
 
     public GuiThreeLogic(ThreeLogicTileEntity threeLogicTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, threeLogicTileEntity, container, RFTools.GUI_MANUAL_MAIN, "threelogic");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, threeLogicTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "threelogic");
     }
 
     @Override

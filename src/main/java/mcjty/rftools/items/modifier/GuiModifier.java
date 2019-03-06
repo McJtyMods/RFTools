@@ -10,6 +10,7 @@ import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.Minecraft;
@@ -40,7 +41,7 @@ public class GuiModifier extends GenericGuiContainer<GenericTileEntity> {
 
 
     public GuiModifier(ModifierContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, null, container, RFTools.GUI_MANUAL_SHAPE, "modifier");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, null, container, GuiProxy.GUI_MANUAL_SHAPE, "modifier");
         xSize = MODIFIER_WIDTH;
         ySize = MODIFIER_HEIGHT;
     }

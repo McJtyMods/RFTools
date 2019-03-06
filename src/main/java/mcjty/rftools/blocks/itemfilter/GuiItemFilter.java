@@ -8,6 +8,7 @@ import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -26,7 +27,7 @@ public class GuiItemFilter extends GenericGuiContainer<ItemFilterTileEntity> {
     private ImageChoiceLabel[] bits = new ImageChoiceLabel[ItemFilterTileEntity.BUFFER_SIZE * 6];
 
     public GuiItemFilter(ItemFilterTileEntity itemFilterTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, itemFilterTileEntity, container, RFTools.GUI_MANUAL_MAIN, "filter");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, itemFilterTileEntity, container, GuiProxy.GUI_MANUAL_MAIN, "filter");
 
         xSize = ITEMFILTER_WIDTH;
         ySize = ITEMFILTER_HEIGHT;

@@ -10,6 +10,7 @@ import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.shapes.IShapeParentGui;
 import mcjty.rftools.shapes.ShapeRenderer;
@@ -59,7 +60,7 @@ public class GuiProjector extends GenericGuiContainer<ProjectorTileEntity> imple
     private ShapeRenderer shapeRenderer = null;
 
     public GuiProjector(ProjectorTileEntity te, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, RFTools.GUI_MANUAL_SHAPE, "projector");
+        super(RFTools.instance, RFToolsMessages.INSTANCE, te, container, GuiProxy.GUI_MANUAL_SHAPE, "projector");
 
         xSize = PROJECTOR_WIDTH;
         ySize = PROJECTOR_HEIGHT;
