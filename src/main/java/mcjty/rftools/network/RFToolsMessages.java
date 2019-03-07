@@ -45,7 +45,6 @@ import mcjty.rftools.items.teleportprobe.PacketTargetsReady;
 import mcjty.rftools.jei.PacketSendRecipe;
 import mcjty.rftools.playerprops.PacketSendBuffsToClient;
 import mcjty.rftools.shapes.*;
-import mcjty.theoneprobe.TheOneProbe;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
@@ -63,7 +62,7 @@ public class RFToolsMessages {
 
     public static void registerMessages(String name) {
         SimpleChannel net2 = ChannelBuilder
-                .named(new ResourceLocation(TheOneProbe.MODID, name))
+                .named(new ResourceLocation(RFTools.MODID, name))
                 .networkProtocolVersion(() -> "1.0")
                 .clientAcceptedVersions(s -> true)
                 .serverAcceptedVersions(s -> true)
