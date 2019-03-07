@@ -2,16 +2,16 @@ package mcjty.rftools.blocks.crafter;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.lib.thirteen.Context;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.craftinggrid.CraftingRecipe;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+
+import java.util.function.Supplier;
 
 public class PacketCrafter implements IMessage {
     private BlockPos pos;
@@ -20,6 +20,7 @@ public class PacketCrafter implements IMessage {
     private ItemStack items[];
     private boolean keepOne;
     private CraftingRecipe.CraftMode craftInternal;
+
 
     @Override
     public void fromBytes(ByteBuf buf) {
@@ -69,6 +70,10 @@ public class PacketCrafter implements IMessage {
     public PacketCrafter() {
     }
 
+    public PacketCrafter(ByteBuf buf) {
+        fromBytes(buf);
+    }
+
     public PacketCrafter(BlockPos pos, int recipeIndex, InventoryCrafting inv, ItemStack result, boolean keepOne, CraftingRecipe.CraftMode craftInternal) {
         this.pos = pos;
         this.recipeIndex = recipeIndex;
@@ -92,29 +97,29 @@ public class PacketCrafter implements IMessage {
         this.craftInternal = craftInternal;
     }
 
-    public static class Handler implements IMessageHandler<PacketCrafter, IMessage> {
-        @Override
-        public IMessage onMessage(PacketCrafter message, MessageContext ctx) {
-            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
-            return null;
-        }
-
-        private void handle(PacketCrafter message, MessageContext ctx) {
-            TileEntity te = ctx.getServerHandler().player.getEntityWorld().getTileEntity(message.pos);
+    public void handle(Supplier<Context> supplier) {
+        Context ctx = supplier.get();
+        ctx.enqueueWork(() -> {
+            TileEntity te = ctx.getSender().getEntityWorld().getTileEntity(pos);
             if(!(te instanceof CrafterBaseTE)) {
                 Logging.logError("Wrong type of tile entity (expected CrafterBaseTE)!");
                 return;
             }
             CrafterBaseTE crafterBlockTileEntity = (CrafterBaseTE) te;
             crafterBlockTileEntity.noRecipesWork = false;
-            if (message.recipeIndex != -1) {
-                CraftingRecipe recipe = crafterBlockTileEntity.getRecipe(message.recipeIndex);
-                recipe.setRecipe(message.items, message.items[9]);
-                recipe.setKeepOne(message.keepOne);
-                recipe.setCraftMode(message.craftInternal);
-                crafterBlockTileEntity.selectRecipe(message.recipeIndex);
-                crafterBlockTileEntity.markDirtyClient();
+            if (recipeIndex != -1) {
+                updateRecipe(crafterBlockTileEntity);
             }
-        }
+        });
+        ctx.setPacketHandled(true);
+    }
+
+    private void updateRecipe(CrafterBaseTE crafterBlockTileEntity) {
+        CraftingRecipe recipe = crafterBlockTileEntity.getRecipe(recipeIndex);
+        recipe.setRecipe(items, items[9]);
+        recipe.setKeepOne(keepOne);
+        recipe.setCraftMode(craftInternal);
+        crafterBlockTileEntity.selectRecipe(recipeIndex);
+        crafterBlockTileEntity.markDirtyClient();
     }
 }

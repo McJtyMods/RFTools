@@ -2,16 +2,16 @@ package mcjty.rftools.blocks.storagemonitor;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.lib.thirteen.Context;
 import mcjty.lib.varia.WorldTools;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+
+import java.util.function.Supplier;
 
 public class PacketRequestItem implements IMessage {
 
@@ -43,6 +43,10 @@ public class PacketRequestItem implements IMessage {
     public PacketRequestItem() {
     }
 
+    public PacketRequestItem(ByteBuf buf) {
+        fromBytes(buf);
+    }
+
     public PacketRequestItem(int dimensionId, BlockPos pos, BlockPos inventoryPos, ItemStack item, int amount) {
         this.dimensionId = dimensionId;
         this.pos = pos;
@@ -51,28 +55,22 @@ public class PacketRequestItem implements IMessage {
         this.amount = amount;
     }
 
-    public static class Handler implements IMessageHandler<PacketRequestItem, IMessage> {
-        @Override
-        public IMessage onMessage(PacketRequestItem message, MessageContext ctx) {
-            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
-            return null;
-        }
-
-        public void handle(PacketRequestItem message, MessageContext ctx) {
-            WorldServer world = DimensionManager.getWorld(message.dimensionId);
+    public void handle(Supplier<Context> supplier) {
+        Context ctx = supplier.get();
+        ctx.enqueueWork(() -> {
+            WorldServer world = DimensionManager.getWorld(dimensionId);
             if (world == null) {
                 return;
             }
-            if (!WorldTools.chunkLoaded(world, message.pos)) {
+            if (!WorldTools.chunkLoaded(world, pos)) {
                 return;
             }
-            TileEntity te = world.getTileEntity(message.pos);
+            TileEntity te = world.getTileEntity(pos);
             if (te instanceof StorageScannerTileEntity) {
                 StorageScannerTileEntity tileEntity = (StorageScannerTileEntity) te;
-                tileEntity.requestStack(message.inventoryPos, message.item, message.amount, ctx.getServerHandler().player);
+                tileEntity.requestStack(inventoryPos, item, amount, ctx.getSender());
             }
-        }
-
+        });
+        ctx.setPacketHandled(true);
     }
-
 }

@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.builder;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.lib.thirteen.Context;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.builder.GuiChamberDetails;
@@ -14,12 +15,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class PacketChamberInfoReady implements IMessage {
     private Map<IBlockState,Integer> blocks;
@@ -143,6 +143,10 @@ public class PacketChamberInfoReady implements IMessage {
     public PacketChamberInfoReady() {
     }
 
+    public PacketChamberInfoReady(ByteBuf buf) {
+        fromBytes(buf);
+    }
+
     public PacketChamberInfoReady(Map<IBlockState,Integer> blocks, Map<IBlockState,Integer> costs,
                                   Map<IBlockState,ItemStack> stacks,
                                   Map<String,Integer> entities, Map<String,Integer> entityCosts,
@@ -155,17 +159,12 @@ public class PacketChamberInfoReady implements IMessage {
         this.realEntities = new HashMap<>(realEntities);
     }
 
-    public static class Handler implements IMessageHandler<PacketChamberInfoReady, IMessage> {
-        @Override
-        public IMessage onMessage(PacketChamberInfoReady message, MessageContext ctx) {
-            RFTools.proxy.addScheduledTaskClient(() -> handle(message, ctx));
-            return null;
-        }
-
-        private void handle(PacketChamberInfoReady message, MessageContext ctx) {
-            GuiChamberDetails.setItemsWithCount(message.blocks, message.costs, message.stacks,
-                    message.entities, message.entityCosts, message.realEntities, message.playerNames);
-        }
+    public void handle(Supplier<Context> supplier) {
+        Context ctx = supplier.get();
+        ctx.enqueueWork(() -> {
+            GuiChamberDetails.setItemsWithCount(blocks, costs, stacks,
+                    entities, entityCosts, realEntities, playerNames);
+        });
+        ctx.setPacketHandled(true);
     }
-
 }

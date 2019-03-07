@@ -2,13 +2,13 @@ package mcjty.rftools.shapes;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.lib.thirteen.Context;
 import mcjty.rftools.blocks.shaper.ComposerTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+
+import java.util.function.Supplier;
 
 public class PacketSendComposerData implements IMessage {
     private BlockPos pos;
@@ -43,25 +43,23 @@ public class PacketSendComposerData implements IMessage {
     public PacketSendComposerData() {
     }
 
+    public PacketSendComposerData(ByteBuf buf) {
+        fromBytes(buf);
+    }
+
     public PacketSendComposerData(BlockPos pos, ShapeModifier[] modifiers) {
         this.pos = pos;
         this.modifiers = modifiers;
     }
 
-    public static class Handler implements IMessageHandler<PacketSendComposerData, IMessage> {
-        @Override
-        public IMessage onMessage(PacketSendComposerData message, MessageContext ctx) {
-            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
-            return null;
-        }
-
-        private void handle(PacketSendComposerData message, MessageContext ctx) {
-            TileEntity te = ctx.getServerHandler().player.getEntityWorld().getTileEntity(message.pos);
+    public void handle(Supplier<Context> supplier) {
+        Context ctx = supplier.get();
+        ctx.enqueueWork(() -> {
+            TileEntity te = ctx.getSender().getEntityWorld().getTileEntity(pos);
             if (te instanceof ComposerTileEntity) {
-                ((ComposerTileEntity) te).setModifiers(message.modifiers);
+                ((ComposerTileEntity) te).setModifiers(modifiers);
             }
-        }
-
+        });
+        ctx.setPacketHandled(true);
     }
-
 }

@@ -2,16 +2,16 @@ package mcjty.rftools.blocks.screens.network;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.lib.thirteen.Context;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.data.IModuleData;
 import mcjty.rftools.api.screens.data.IModuleDataFactory;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class PacketReturnScreenData implements IMessage {
     private GlobalCoordinate pos;
@@ -46,9 +46,6 @@ public class PacketReturnScreenData implements IMessage {
         }
     }
 
-    public PacketReturnScreenData() {
-    }
-
     public GlobalCoordinate getPos() {
         return pos;
     }
@@ -57,17 +54,23 @@ public class PacketReturnScreenData implements IMessage {
         return screenData;
     }
 
+    public PacketReturnScreenData() {
+    }
+
+    public PacketReturnScreenData(ByteBuf buf) {
+        fromBytes(buf);
+    }
+
     public PacketReturnScreenData(GlobalCoordinate pos, Map<Integer, IModuleData> screenData) {
         this.pos = pos;
         this.screenData = screenData;
     }
 
-    public static class Handler implements IMessageHandler<PacketReturnScreenData, IMessage> {
-        @Override
-        public IMessage onMessage(PacketReturnScreenData message, MessageContext ctx) {
-            RFTools.proxy.addScheduledTaskClient(() -> PacketGetScreenDataHelper.setScreenData(message));
-            return null;
-        }
-
+    public void handle(Supplier<Context> supplier) {
+        Context ctx = supplier.get();
+        ctx.enqueueWork(() -> {
+            PacketGetScreenDataHelper.setScreenData(this);
+        });
+        ctx.setPacketHandled(true);
     }
 }

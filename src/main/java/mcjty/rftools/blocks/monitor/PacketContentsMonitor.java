@@ -2,13 +2,13 @@ package mcjty.rftools.blocks.monitor;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.lib.thirteen.Context;
 import mcjty.lib.varia.Logging;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+
+import java.util.function.Supplier;
 
 public class PacketContentsMonitor implements IMessage {
     private BlockPos pos;
@@ -21,6 +21,10 @@ public class PacketContentsMonitor implements IMessage {
         monitor = null;
         alarmLevel = -1;
         alarmMode = RFMonitorMode.MODE_OFF;
+    }
+
+    public PacketContentsMonitor(ByteBuf buf) {
+        fromBytes(buf);
     }
 
     public PacketContentsMonitor(BlockPos pos, BlockPos monitor) {
@@ -60,35 +64,30 @@ public class PacketContentsMonitor implements IMessage {
         buf.writeByte(alarmMode.getIndex());
     }
 
-    public static class Handler implements IMessageHandler<PacketContentsMonitor, IMessage> {
-        @Override
-        public IMessage onMessage(PacketContentsMonitor message, MessageContext ctx) {
-            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
-            return null;
-        }
-
-        private void handle(PacketContentsMonitor message, MessageContext ctx) {
-            TileEntity te = ctx.getServerHandler().player.getEntityWorld().getTileEntity(message.pos);
+    public void handle(Supplier<Context> supplier) {
+        Context ctx = supplier.get();
+        ctx.enqueueWork(() -> {
+            TileEntity te = ctx.getSender().getEntityWorld().getTileEntity(pos);
             if (te instanceof RFMonitorBlockTileEntity) {
                 RFMonitorBlockTileEntity monitorBlockTileEntity = (RFMonitorBlockTileEntity) te;
-                if (message.monitor != null) {
-                    monitorBlockTileEntity.setMonitor(message.monitor);
+                if (monitor != null) {
+                    monitorBlockTileEntity.setMonitor(monitor);
                 }
-                if (message.alarmLevel != -1) {
-                    monitorBlockTileEntity.setAlarm(message.alarmMode, message.alarmLevel);
+                if (alarmLevel != -1) {
+                    monitorBlockTileEntity.setAlarm(alarmMode, alarmLevel);
                 }
             } else if (te instanceof LiquidMonitorBlockTileEntity) {
                 LiquidMonitorBlockTileEntity liquidMonitorBlockTileEntity = (LiquidMonitorBlockTileEntity) te;
-                if (message.monitor != null) {
-                    liquidMonitorBlockTileEntity.setMonitor(message.monitor);
+                if (monitor != null) {
+                    liquidMonitorBlockTileEntity.setMonitor(monitor);
                 }
-                if (message.alarmLevel != -1) {
-                    liquidMonitorBlockTileEntity.setAlarm(message.alarmMode, message.alarmLevel);
+                if (alarmLevel != -1) {
+                    liquidMonitorBlockTileEntity.setAlarm(alarmMode, alarmLevel);
                 }
             } else {
                 Logging.log("TileEntity is not a RFMonitorBlockTileEntity!");
             }
-        }
-
+        });
+        ctx.setPacketHandled(true);
     }
 }

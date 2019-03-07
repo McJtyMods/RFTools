@@ -1,14 +1,14 @@
 package mcjty.rftools.items.modifier;
 
 import io.netty.buffer.ByteBuf;
+import mcjty.lib.thirteen.Context;
 import mcjty.rftools.items.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+
+import java.util.function.Supplier;
 
 public class PacketUpdateModifier implements IMessage {
     private ModifierCommand cmd = ModifierCommand.ADD;
@@ -35,6 +35,10 @@ public class PacketUpdateModifier implements IMessage {
     public PacketUpdateModifier() {
     }
 
+    public PacketUpdateModifier(ByteBuf buf) {
+        fromBytes(buf);
+    }
+
     public PacketUpdateModifier(ModifierCommand cmd, int index, ModifierFilterType type, ModifierFilterOperation op) {
         this.cmd = cmd;
         this.index = index;
@@ -42,19 +46,15 @@ public class PacketUpdateModifier implements IMessage {
         this.op = op;
     }
 
-    public static class Handler implements IMessageHandler<PacketUpdateModifier, IMessage> {
-        @Override
-        public IMessage onMessage(PacketUpdateModifier message, MessageContext ctx) {
-            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
-            return null;
-        }
-
-        private void handle(PacketUpdateModifier message, MessageContext ctx) {
-            EntityPlayer player = ctx.getServerHandler().player;
+    public void handle(Supplier<Context> supplier) {
+        Context ctx = supplier.get();
+        ctx.enqueueWork(() -> {
+            EntityPlayer player = ctx.getSender();
             ItemStack heldItem = player.getHeldItem(EnumHand.MAIN_HAND);
             if (!heldItem.isEmpty() && heldItem.getItem() == ModItems.modifierItem) {
-                ModifierItem.performCommand(player, heldItem, message.cmd, message.index, message.type, message.op);
+                ModifierItem.performCommand(player, heldItem, cmd, index, type, op);
             }
-        }
+        });
+        ctx.setPacketHandled(true);
     }
 }

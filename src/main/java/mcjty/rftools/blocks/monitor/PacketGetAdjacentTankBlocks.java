@@ -1,47 +1,62 @@
 package mcjty.rftools.blocks.monitor;
 
+import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.ICommandHandler;
-import mcjty.lib.network.PacketRequestListFromServer;
+import mcjty.lib.network.NetworkTools;
+import mcjty.lib.network.TypedMapTools;
+import mcjty.lib.thirteen.Context;
+import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.lib.typed.Type;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import java.util.List;
+import java.util.function.Supplier;
 
-public class PacketGetAdjacentTankBlocks extends PacketRequestListFromServer<BlockPos, PacketGetAdjacentTankBlocks, PacketAdjacentTankBlocksReady> {
+public class PacketGetAdjacentTankBlocks implements IMessage {
+
+    protected BlockPos pos;
+    protected TypedMap params;
 
     public PacketGetAdjacentTankBlocks() {
+    }
 
+    public PacketGetAdjacentTankBlocks(ByteBuf buf) {
+        fromBytes(buf);
     }
 
     public PacketGetAdjacentTankBlocks(BlockPos pos) {
-        super(RFTools.MODID, pos, LiquidMonitorBlockTileEntity.CMD_GETADJACENTBLOCKS, TypedMap.EMPTY);
+        this.pos = pos;
+        this.params = TypedMap.EMPTY;
     }
 
-    public static class Handler implements IMessageHandler<PacketGetAdjacentTankBlocks, IMessage> {
-        @Override
-        public IMessage onMessage(PacketGetAdjacentTankBlocks message, MessageContext ctx) {
-            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
-            return null;
-        }
+    @Override
+    public void fromBytes(ByteBuf buf) {
+        pos = NetworkTools.readPos(buf);
+        params = TypedMapTools.readArguments(buf);
+    }
 
-        private void handle(PacketGetAdjacentTankBlocks message, MessageContext ctx) {
-            TileEntity te = ctx.getServerHandler().player.getEntityWorld().getTileEntity(message.pos);
+    @Override
+    public void toBytes(ByteBuf buf) {
+        NetworkTools.writePos(buf, pos);
+        TypedMapTools.writeArguments(buf, params);
+    }
+
+    public void handle(Supplier<Context> supplier) {
+        Context ctx = supplier.get();
+        ctx.enqueueWork(() -> {
+            TileEntity te = ctx.getSender().getEntityWorld().getTileEntity(pos);
             if(!(te instanceof ICommandHandler)) {
                 Logging.log("createStartScanPacket: TileEntity is not a CommandHandler!");
                 return;
             }
             ICommandHandler commandHandler = (ICommandHandler) te;
-            List<BlockPos> list = commandHandler.executeWithResultList(message.command, message.params, Type.create(BlockPos.class));
-            RFToolsMessages.INSTANCE.sendTo(new PacketAdjacentBlocksReady(message.pos, RFMonitorBlockTileEntity.CLIENTCMD_ADJACENTBLOCKSREADY, list), ctx.getServerHandler().player);
-        }
+            List<BlockPos> list = commandHandler.executeWithResultList(LiquidMonitorBlockTileEntity.CMD_GETADJACENTBLOCKS, params, Type.create(BlockPos.class));
+            RFToolsMessages.INSTANCE.sendTo(new PacketAdjacentBlocksReady(pos, RFMonitorBlockTileEntity.CLIENTCMD_ADJACENTBLOCKSREADY, list), ctx.getSender());
+        });
+        ctx.setPacketHandled(true);
     }
 }

@@ -1,15 +1,14 @@
 package mcjty.rftools.items.teleportprobe;
 
 import io.netty.buffer.ByteBuf;
-import mcjty.rftools.RFTools;
+import mcjty.lib.thirteen.Context;
 import mcjty.rftools.blocks.teleporter.TeleportDestination;
 import mcjty.rftools.blocks.teleporter.TeleportDestinationClientInfo;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class PacketAllReceiversReady implements IMessage {
     private List<TeleportDestinationClientInfo> destinationList;
@@ -34,16 +33,20 @@ public class PacketAllReceiversReady implements IMessage {
     public PacketAllReceiversReady() {
     }
 
+    public PacketAllReceiversReady(ByteBuf buf) {
+        fromBytes(buf);
+    }
+
     public PacketAllReceiversReady(List<TeleportDestinationClientInfo> destinationList) {
         this.destinationList = new ArrayList<>();
         this.destinationList.addAll(destinationList);
     }
 
-    public static class Handler implements IMessageHandler<PacketAllReceiversReady, IMessage> {
-        @Override
-        public IMessage onMessage(PacketAllReceiversReady message, MessageContext ctx) {
-            RFTools.proxy.addScheduledTaskClient(() -> GuiTeleportProbe.setReceivers(message.destinationList));
-            return null;
-        }
+    public void handle(Supplier<Context> supplier) {
+        Context ctx = supplier.get();
+        ctx.enqueueWork(() -> {
+            GuiTeleportProbe.setReceivers(destinationList);
+        });
+        ctx.setPacketHandled(true);
     }
 }

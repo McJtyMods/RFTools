@@ -129,8 +129,7 @@ public class CommonSetup extends DefaultCommonSetup {
 
         readMainConfig();
 
-        SimpleNetworkWrapper network = PacketHandler.registerMessages(RFTools.MODID, "rftools");
-        RFToolsMessages.registerNetworkMessages(network);
+        RFToolsMessages.registerMessages("rftools");
 
         ModItems.init();
         ModBlocks.init();

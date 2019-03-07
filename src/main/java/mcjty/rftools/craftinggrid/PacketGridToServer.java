@@ -2,14 +2,14 @@ package mcjty.rftools.craftinggrid;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.lib.thirteen.Context;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+
+import java.util.function.Supplier;
 
 public class PacketGridToServer extends PacketGridSync implements IMessage {
 
@@ -47,6 +47,10 @@ public class PacketGridToServer extends PacketGridSync implements IMessage {
     public PacketGridToServer() {
     }
 
+    public PacketGridToServer(ByteBuf buf) {
+        fromBytes(buf);
+    }
+
     public PacketGridToServer(BlockPos pos, CraftingGrid grid) {
         init(pos, grid);
         stacks = new ItemStack[10];
@@ -55,24 +59,20 @@ public class PacketGridToServer extends PacketGridSync implements IMessage {
         }
     }
 
-    public static class Handler implements IMessageHandler<PacketGridToServer, IMessage> {
-        @Override
-        public IMessage onMessage(PacketGridToServer message, MessageContext ctx) {
-            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
-            return null;
-        }
-
-        private void handle(PacketGridToServer message, MessageContext ctx) {
-            EntityPlayerMP player = ctx.getServerHandler().player;
+    public void handle(Supplier<Context> supplier) {
+        Context ctx = supplier.get();
+        ctx.enqueueWork(() -> {
+            EntityPlayerMP player = ctx.getSender();
             World world = player.getEntityWorld();
-            CraftingGridProvider provider = message.handleMessage(world, player);
+            CraftingGridProvider provider = handleMessage(world, player);
             if (provider != null) {
                 CraftingGridInventory inventory = provider.getCraftingGrid().getCraftingGridInventory();
                 for (int i = 0 ; i < 10 ; i++) {
-                    inventory.setInventorySlotContents(i, message.stacks[i]);
+                    inventory.setInventorySlotContents(i, stacks[i]);
                 }
                 provider.markInventoryDirty();
             }
-        }
+        });
+        ctx.setPacketHandled(true);
     }
 }

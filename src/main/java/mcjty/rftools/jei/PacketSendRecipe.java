@@ -2,6 +2,7 @@ package mcjty.rftools.jei;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.lib.thirteen.Context;
 import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.blocks.storage.ModularStorageItemContainer;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
@@ -12,10 +13,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+
+import java.util.function.Supplier;
 
 public class PacketSendRecipe implements IMessage {
     private ItemStackList stacks;
@@ -61,44 +61,43 @@ public class PacketSendRecipe implements IMessage {
     public PacketSendRecipe() {
     }
 
+    public PacketSendRecipe(ByteBuf buf) {
+        fromBytes(buf);
+    }
+
     public PacketSendRecipe(ItemStackList stacks, BlockPos pos) {
         this.stacks = stacks;
         this.pos = pos;
     }
 
-    public static class Handler implements IMessageHandler<PacketSendRecipe, IMessage> {
-        @Override
-        public IMessage onMessage(PacketSendRecipe message, MessageContext ctx) {
-            FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
-            return null;
-        }
-
-        private void handle(PacketSendRecipe message, MessageContext ctx) {
-            EntityPlayerMP player = ctx.getServerHandler().player;
+    public void handle(Supplier<Context> supplier) {
+        Context ctx = supplier.get();
+        ctx.enqueueWork(() -> {
+            EntityPlayerMP player = ctx.getSender();
             World world = player.getEntityWorld();
-            if (message.pos == null) {
+            if (pos == null) {
                 // Handle tablet version
                 ItemStack mainhand = player.getHeldItemMainhand();
                 if (!mainhand.isEmpty() && mainhand.getItem() == ModularStorageSetup.storageModuleTabletItem) {
                     if (player.openContainer instanceof ModularStorageItemContainer) {
                         ModularStorageItemContainer storageItemContainer = (ModularStorageItemContainer) player.openContainer;
-                        storageItemContainer.getJEIRecipeAcceptor().setGridContents(message.stacks);
+                        storageItemContainer.getJEIRecipeAcceptor().setGridContents(stacks);
                     } else if (player.openContainer instanceof RemoteStorageItemContainer) {
                         RemoteStorageItemContainer storageItemContainer = (RemoteStorageItemContainer) player.openContainer;
-                        storageItemContainer.getJEIRecipeAcceptor().setGridContents(message.stacks);
+                        storageItemContainer.getJEIRecipeAcceptor().setGridContents(stacks);
                     } else if (player.openContainer instanceof StorageScannerContainer) {
                         StorageScannerContainer storageItemContainer = (StorageScannerContainer) player.openContainer;
-                        storageItemContainer.getStorageScannerTileEntity().setGridContents(message.stacks);
+                        storageItemContainer.getStorageScannerTileEntity().setGridContents(stacks);
                     }
                 }
             } else {
-                TileEntity te = world.getTileEntity(message.pos);
+                TileEntity te = world.getTileEntity(pos);
                 if (te instanceof JEIRecipeAcceptor) {
                     JEIRecipeAcceptor acceptor = (JEIRecipeAcceptor) te;
-                    acceptor.setGridContents(message.stacks);
+                    acceptor.setGridContents(stacks);
                 }
             }
-        }
-
+        });
+        ctx.setPacketHandled(true);
     }
 }
