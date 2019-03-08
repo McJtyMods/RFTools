@@ -2,18 +2,18 @@ package mcjty.rftools.blocks.storage;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.lib.thirteen.Context;
 import mcjty.rftools.RFTools;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class PacketSyncSlotsToClient implements IMessage {
 
@@ -72,6 +72,10 @@ public class PacketSyncSlotsToClient implements IMessage {
     public PacketSyncSlotsToClient() {
     }
 
+    public PacketSyncSlotsToClient(ByteBuf buf) {
+        fromBytes(buf);
+    }
+
     public PacketSyncSlotsToClient(BlockPos pos,
                                    String sortMode, String viewMode, boolean groupMode, String filter,
                                    int maxSize, int numStacks, List<Pair<Integer,ItemStack>> items) {
@@ -85,27 +89,21 @@ public class PacketSyncSlotsToClient implements IMessage {
         this.items = items;
     }
 
-    public static class Handler implements IMessageHandler<PacketSyncSlotsToClient, IMessage> {
-        @Override
-        public IMessage onMessage(PacketSyncSlotsToClient message, MessageContext ctx) {
-            RFTools.proxy.addScheduledTaskClient(() -> handle(message, ctx));
-            return null;
-        }
-
-        public void handle(PacketSyncSlotsToClient message, MessageContext ctx) {
-            TileEntity te = RFTools.proxy.getClientWorld().getTileEntity(message.pos);
+    public void handle(Supplier<Context> supplier) {
+        Context ctx = supplier.get();
+        ctx.enqueueWork(() -> {
+            TileEntity te = RFTools.proxy.getClientWorld().getTileEntity(pos);
             if (te instanceof ModularStorageTileEntity) {
                 ModularStorageTileEntity storage = (ModularStorageTileEntity) te;
-                storage.syncInventoryFromServer(message.maxSize, message.numStacks, message.sortMode, message.viewMode, message.groupMode, message.filter);
+                storage.syncInventoryFromServer(maxSize, numStacks, sortMode, viewMode, groupMode, filter);
                 Container container = RFTools.proxy.getClientPlayer().openContainer;
                 if (container instanceof ModularStorageContainer) {
-                    for (Pair<Integer, ItemStack> pair : message.items) {
+                    for (Pair<Integer, ItemStack> pair : items) {
                         container.putStackInSlot(pair.getLeft(), pair.getRight());
                     }
                 }
             }
-        }
-
+        });
+        ctx.setPacketHandled(true);
     }
-
 }

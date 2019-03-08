@@ -2,12 +2,11 @@ package mcjty.rftools.blocks.security;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.rftools.RFTools;
+import mcjty.lib.thirteen.Context;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public class PacketSecurityInfoReady implements IMessage {
 
@@ -41,19 +40,19 @@ public class PacketSecurityInfoReady implements IMessage {
     public PacketSecurityInfoReady() {
     }
 
+    public PacketSecurityInfoReady(ByteBuf buf) {
+        fromBytes(buf);
+    }
+
     public PacketSecurityInfoReady(SecurityChannels.SecurityChannel channel) {
         this.channel = channel;
     }
 
-    public static class Handler implements IMessageHandler<PacketSecurityInfoReady, IMessage> {
-        @Override
-        public IMessage onMessage(PacketSecurityInfoReady message, MessageContext ctx) {
-            RFTools.proxy.addScheduledTaskClient(() -> handle(message, ctx));
-            return null;
-        }
-
-        private void handle(PacketSecurityInfoReady message, MessageContext ctx) {
-            GuiSecurityManager.channelFromServer = message.channel;
-        }
+    public void handle(Supplier<Context> supplier) {
+        Context ctx = supplier.get();
+        ctx.enqueueWork(() -> {
+            GuiSecurityManager.channelFromServer = channel;
+        });
+        ctx.setPacketHandled(true);
     }
 }

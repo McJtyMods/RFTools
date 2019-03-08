@@ -2,13 +2,12 @@ package mcjty.rftools.shapes;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.rftools.RFTools;
+import mcjty.lib.thirteen.Context;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public class PacketReturnExtraData implements IMessage {
 
@@ -51,20 +50,20 @@ public class PacketReturnExtraData implements IMessage {
     public PacketReturnExtraData() {
     }
 
+    public PacketReturnExtraData(ByteBuf buf) {
+        fromBytes(buf);
+    }
+
     public PacketReturnExtraData(int scanId, ScanExtraData extraData) {
         this.scanId = scanId;
         this.data = extraData;
     }
 
-    public static class Handler implements IMessageHandler<PacketReturnExtraData, IMessage> {
-        @Override
-        public IMessage onMessage(PacketReturnExtraData message, MessageContext ctx) {
-            RFTools.proxy.addScheduledTaskClient(() -> handle(message));
-            return null;
-        }
-
-        private void handle(PacketReturnExtraData message) {
-            ScanDataManagerClient.getScansClient().registerExtraDataFromServer(message.scanId, message.data);
-        }
+    public void handle(Supplier<Context> supplier) {
+        Context ctx = supplier.get();
+        ctx.enqueueWork(() -> {
+            ScanDataManagerClient.getScansClient().registerExtraDataFromServer(scanId, data);
+        });
+        ctx.setPacketHandled(true);
     }
 }

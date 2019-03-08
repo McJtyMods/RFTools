@@ -1,15 +1,14 @@
 package mcjty.rftools.playerprops;
 
 import io.netty.buffer.ByteBuf;
+import mcjty.lib.thirteen.Context;
 import mcjty.rftools.PlayerBuff;
-import mcjty.rftools.RFTools;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class PacketSendBuffsToClient implements IMessage {
     private List<PlayerBuff> buffs;
@@ -18,7 +17,7 @@ public class PacketSendBuffsToClient implements IMessage {
     public void fromBytes(ByteBuf buf) {
         int size = buf.readByte();
         buffs = new ArrayList<>(size);
-        for (int i = 0 ; i < size ; i++) {
+        for (int i = 0; i < size; i++) {
             buffs.add(PlayerBuff.values()[buf.readByte()]);
         }
     }
@@ -35,7 +34,11 @@ public class PacketSendBuffsToClient implements IMessage {
         buffs = null;
     }
 
-    public PacketSendBuffsToClient(Map<PlayerBuff,Integer> buffs) {
+    public PacketSendBuffsToClient(ByteBuf buf) {
+        fromBytes(buf);
+    }
+
+    public PacketSendBuffsToClient(Map<PlayerBuff, Integer> buffs) {
         this.buffs = new ArrayList<>(buffs.keySet());
     }
 
@@ -43,16 +46,12 @@ public class PacketSendBuffsToClient implements IMessage {
         return buffs;
     }
 
-    public static class Handler implements IMessageHandler<PacketSendBuffsToClient, IMessage> {
-        @Override
-        public IMessage onMessage(PacketSendBuffsToClient message, MessageContext ctx) {
-            RFTools.proxy.addScheduledTaskClient(() -> handle(message, ctx));
-            return null;
-        }
-
-        private void handle(PacketSendBuffsToClient message, MessageContext ctx) {
-            SendBuffsToClientHelper.setBuffs(message);
-        }
+    public void handle(Supplier<Context> supplier) {
+        Context ctx = supplier.get();
+        ctx.enqueueWork(() -> {
+            SendBuffsToClientHelper.setBuffs(this);
+        });
+        ctx.setPacketHandled(true);
     }
-
 }
+

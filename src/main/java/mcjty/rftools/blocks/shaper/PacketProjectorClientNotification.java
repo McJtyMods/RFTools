@@ -2,12 +2,13 @@ package mcjty.rftools.blocks.shaper;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.lib.thirteen.Context;
 import mcjty.rftools.RFTools;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+
+import java.util.function.Supplier;
 
 public class PacketProjectorClientNotification implements IMessage {
     private BlockPos pos;
@@ -88,6 +89,10 @@ public class PacketProjectorClientNotification implements IMessage {
     public PacketProjectorClientNotification() {
     }
 
+    public PacketProjectorClientNotification(ByteBuf buf) {
+        fromBytes(buf);
+    }
+
     public PacketProjectorClientNotification(ProjectorTileEntity tileEntity) {
         pos = tileEntity.getPos();
         verticalOffset = tileEntity.getVerticalOffset();
@@ -101,18 +106,14 @@ public class PacketProjectorClientNotification implements IMessage {
         counter = tileEntity.getCounter();
     }
 
-    public static class Handler implements IMessageHandler<PacketProjectorClientNotification, IMessage> {
-        @Override
-        public IMessage onMessage(PacketProjectorClientNotification message, MessageContext ctx) {
-            RFTools.proxy.addScheduledTaskClient(() -> handle(message));
-            return null;
-        }
-
-        private void handle(PacketProjectorClientNotification message) {
-            TileEntity te = RFTools.proxy.getClientWorld().getTileEntity(message.pos);
+    public void handle(Supplier<Context> supplier) {
+        Context ctx = supplier.get();
+        ctx.enqueueWork(() -> {
+            TileEntity te = RFTools.proxy.getClientWorld().getTileEntity(pos);
             if (te instanceof ProjectorTileEntity) {
-                ((ProjectorTileEntity) te).updateFromServer(message);
+                ((ProjectorTileEntity) te).updateFromServer(this);
             }
-        }
+        });
+        ctx.setPacketHandled(true);
     }
 }

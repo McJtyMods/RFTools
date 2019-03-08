@@ -2,15 +2,14 @@ package mcjty.rftools.items.creativeonly;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.rftools.RFTools;
+import mcjty.lib.thirteen.Context;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class PacketDelightingInfoReady implements IMessage {
     private List<String> blockClasses;
@@ -69,6 +68,10 @@ public class PacketDelightingInfoReady implements IMessage {
     public PacketDelightingInfoReady() {
     }
 
+    public PacketDelightingInfoReady(ByteBuf buf) {
+        fromBytes(buf);
+    }
+
     public PacketDelightingInfoReady(List<String> blockClasses, List<String> teClasses, Map<String,DelightingInfoHelper.NBTDescription> nbtData, int metadata) {
         this.blockClasses = new ArrayList<>(blockClasses);
         this.teClasses = new ArrayList<>(teClasses);
@@ -76,20 +79,14 @@ public class PacketDelightingInfoReady implements IMessage {
         this.metadata = metadata;
     }
 
-
-    public static class Handler implements IMessageHandler<PacketDelightingInfoReady, IMessage> {
-        @Override
-        public IMessage onMessage(PacketDelightingInfoReady message, MessageContext ctx) {
-            RFTools.proxy.addScheduledTaskClient(() -> handle(message, ctx));
-            return null;
-        }
-
-        private void handle(PacketDelightingInfoReady message, MessageContext ctx) {
-            GuiDevelopersDelight.setServerBlockClasses(message.blockClasses);
-            GuiDevelopersDelight.setServerTEClasses(message.teClasses);
-            GuiDevelopersDelight.setServerNBTData(message.nbtData);
-            GuiDevelopersDelight.setMetadata(message.metadata);
-        }
-
+    public void handle(Supplier<Context> supplier) {
+        Context ctx = supplier.get();
+        ctx.enqueueWork(() -> {
+            GuiDevelopersDelight.setServerBlockClasses(blockClasses);
+            GuiDevelopersDelight.setServerTEClasses(teClasses);
+            GuiDevelopersDelight.setServerNBTData(nbtData);
+            GuiDevelopersDelight.setMetadata(metadata);
+        });
+        ctx.setPacketHandled(true);
     }
 }

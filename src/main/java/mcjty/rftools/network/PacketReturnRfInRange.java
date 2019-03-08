@@ -2,14 +2,13 @@ package mcjty.rftools.network;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.rftools.RFTools;
+import mcjty.lib.thirteen.Context;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class PacketReturnRfInRange implements IMessage {
     private Map<BlockPos, MachineInfo> levels;
@@ -57,19 +56,20 @@ public class PacketReturnRfInRange implements IMessage {
     public PacketReturnRfInRange() {
     }
 
+    public PacketReturnRfInRange(ByteBuf buf) {
+        fromBytes(buf);
+    }
+
     public PacketReturnRfInRange(Map<BlockPos, MachineInfo> levels) {
         this.levels = levels;
     }
 
-    public static class Handler implements IMessageHandler<PacketReturnRfInRange, IMessage> {
-        @Override
-        public IMessage onMessage(PacketReturnRfInRange message, MessageContext ctx) {
-            RFTools.proxy.addScheduledTaskClient(() -> handle(message));
-            return null;
-        }
-
-        private void handle(PacketReturnRfInRange message) {
-            clientLevels = message.levels;
-        }
+    public void handle(Supplier<Context> supplier) {
+        Context ctx = supplier.get();
+        ctx.enqueueWork(() -> {
+            clientLevels = levels;
+        });
+        ctx.setPacketHandled(true);
     }
+
 }

@@ -3,16 +3,16 @@ package mcjty.rftools.blocks.storagemonitor;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
+import mcjty.lib.thirteen.Context;
 import net.minecraft.block.Block;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class PacketReturnInventoryInfo implements IMessage {
 
@@ -58,16 +58,19 @@ public class PacketReturnInventoryInfo implements IMessage {
     public PacketReturnInventoryInfo() {
     }
 
+    public PacketReturnInventoryInfo(ByteBuf buf) {
+    }
+
     public PacketReturnInventoryInfo(List<InventoryInfo> inventories) {
         this.inventories = inventories;
     }
 
-    public static class Handler implements IMessageHandler<PacketReturnInventoryInfo, IMessage> {
-        @Override
-        public IMessage onMessage(PacketReturnInventoryInfo message, MessageContext ctx) {
-            ReturnInfoHelper.onMessageFromServer(message);
-            return null;
-        }
+    public void handle(Supplier<Context> supplier) {
+        Context ctx = supplier.get();
+        ctx.enqueueWork(() -> {
+            ReturnInfoHelper.onMessageFromServer(this);
+        });
+        ctx.setPacketHandled(true);
     }
 
     public static class InventoryInfo {

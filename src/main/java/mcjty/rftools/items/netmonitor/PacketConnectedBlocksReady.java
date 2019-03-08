@@ -1,21 +1,20 @@
 package mcjty.rftools.items.netmonitor;
 
 import io.netty.buffer.ByteBuf;
+import mcjty.lib.thirteen.Context;
 import mcjty.rftools.BlockInfo;
-import mcjty.rftools.RFTools;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class PacketConnectedBlocksReady implements IMessage {
     private int minx;
     private int miny;
     private int minz;
-    private Map<BlockPos,BlockInfo> blockInfoMap;
+    private Map<BlockPos, BlockInfo> blockInfoMap;
 
     @Override
     public void fromBytes(ByteBuf buf) {
@@ -25,7 +24,7 @@ public class PacketConnectedBlocksReady implements IMessage {
 
         int size = buf.readInt();
         blockInfoMap = new HashMap<>();
-        for (int i = 0 ; i < size ; i++) {
+        for (int i = 0; i < size; i++) {
             BlockPos coordinate = new BlockPos(buf.readShort() + minx, buf.readShort() + miny, buf.readShort() + minz);
             BlockInfo blockInfo = new BlockInfo(coordinate, buf.readLong(), buf.readLong());
             blockInfoMap.put(coordinate, blockInfo);
@@ -39,7 +38,7 @@ public class PacketConnectedBlocksReady implements IMessage {
         buf.writeInt(minz);
 
         buf.writeInt(blockInfoMap.size());
-        for (Map.Entry<BlockPos,BlockInfo> me : blockInfoMap.entrySet()) {
+        for (Map.Entry<BlockPos, BlockInfo> me : blockInfoMap.entrySet()) {
             BlockPos c = me.getKey();
             buf.writeShort(c.getX() - minx);
             buf.writeShort(c.getY() - miny);
@@ -52,7 +51,11 @@ public class PacketConnectedBlocksReady implements IMessage {
     public PacketConnectedBlocksReady() {
     }
 
-    public PacketConnectedBlocksReady(Map<BlockPos,BlockInfo> blockInfoMap, int minx, int miny, int minz) {
+    public PacketConnectedBlocksReady(ByteBuf buf) {
+        fromBytes(buf);
+    }
+
+    public PacketConnectedBlocksReady(Map<BlockPos, BlockInfo> blockInfoMap, int minx, int miny, int minz) {
         this.blockInfoMap = new HashMap<>(blockInfoMap);
 
         this.minx = minx;
@@ -60,16 +63,12 @@ public class PacketConnectedBlocksReady implements IMessage {
         this.minz = minz;
     }
 
-    public static class Handler implements IMessageHandler<PacketConnectedBlocksReady, IMessage> {
-        @Override
-        public IMessage onMessage(PacketConnectedBlocksReady message, MessageContext ctx) {
-            RFTools.proxy.addScheduledTaskClient(() -> handle(message, ctx));
-            return null;
-        }
-
-        private void handle(PacketConnectedBlocksReady message, MessageContext ctx) {
-            GuiNetworkMonitor.setServerConnectedBlocks(message.blockInfoMap);
-        }
-
+    public void handle(Supplier<Context> supplier) {
+        Context ctx = supplier.get();
+        ctx.enqueueWork(() -> {
+            GuiNetworkMonitor.setServerConnectedBlocks(blockInfoMap);
+        });
+        ctx.setPacketHandled(true);
     }
 }
+

@@ -2,7 +2,7 @@ package mcjty.rftools.shapes;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
-import mcjty.rftools.RFTools;
+import mcjty.lib.thirteen.Context;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.varia.RLE;
 import net.minecraft.block.Block;
@@ -11,9 +11,9 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+
+import java.util.function.Supplier;
 
 public class PacketReturnShapeData implements IMessage {
     private ShapeID id;
@@ -89,6 +89,10 @@ public class PacketReturnShapeData implements IMessage {
     public PacketReturnShapeData() {
     }
 
+    public PacketReturnShapeData(ByteBuf buf) {
+        fromBytes(buf);
+    }
+
     public PacketReturnShapeData(ShapeID id, RLE positions, StatePalette statePalette, BlockPos dimension, int count, int offsetY, String msg) {
         this.id = id;
         this.positions = positions;
@@ -99,19 +103,14 @@ public class PacketReturnShapeData implements IMessage {
         this.msg = msg;
     }
 
-    public static class Handler implements IMessageHandler<PacketReturnShapeData, IMessage> {
-        @Override
-        public IMessage onMessage(PacketReturnShapeData message, MessageContext ctx) {
-            RFTools.proxy.addScheduledTaskClient(() -> handle(message));
-            return null;
-        }
+    public void handle(Supplier<Context> supplier) {
+        Context ctx = supplier.get();
+        ctx.enqueueWork(() -> {
+            int dx = dimension.getX();
+            int dy = dimension.getY();
+            int dz = dimension.getZ();
 
-        private void handle(PacketReturnShapeData message) {
-            int dx = message.dimension.getX();
-            int dy = message.dimension.getY();
-            int dz = message.dimension.getZ();
-
-            RLE rle = message.positions;
+            RLE rle = positions;
             RenderData.RenderPlane plane = null;
 
             if (rle != null) {
@@ -119,7 +118,7 @@ public class PacketReturnShapeData implements IMessage {
 
                 rle.reset();
 //                for (int oy = 0; oy < dy; oy++) {
-                int oy = message.offsetY;
+                int oy = offsetY;
                 int y = oy - dy / 2;
 
                 RenderData.RenderStrip strips[] = new RenderData.RenderStrip[dx];
@@ -136,7 +135,7 @@ public class PacketReturnShapeData implements IMessage {
                                 strip.add(dummy);
                             } else {
                                 data--;
-                                strip.add(message.statePalette.getPalette().get(data));
+                                strip.add(statePalette.getPalette().get(data));
                             }
                         } else {
                             strip.add(null);
@@ -144,10 +143,11 @@ public class PacketReturnShapeData implements IMessage {
                     }
 
                     strip.close();
-                    plane = new RenderData.RenderPlane(strips, y, oy, -dz / 2, message.count);
+                    plane = new RenderData.RenderPlane(strips, y, oy, -dz / 2, count);
                 }
             }
-            ShapeRenderer.setRenderData(message.id, plane, message.offsetY, dy, message.msg);
-        }
+            ShapeRenderer.setRenderData(id, plane, offsetY, dy, msg);
+        });
+        ctx.setPacketHandled(true);
     }
 }
