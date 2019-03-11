@@ -34,7 +34,7 @@ public class RFTools implements ModBase {
     public static final String MIN_MCJTYLIB_VER = "3.1.0";
     public static final String MIN_XNET_VER = "1.7.0";
 
-    @SidedProxy(clientSide = "mcjty.rftools.proxy.ClientProxy", serverSide = "mcjty.rftools.proxy.ServerProxy")
+    @SidedProxy(clientSide = "mcjty.rftools.setup.ClientProxy", serverSide = "mcjty.rftools.setup.ServerProxy")
     public static IProxy proxy;
     public static CommonSetup setup = new CommonSetup();
 
