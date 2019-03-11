@@ -1,4 +1,4 @@
-package mcjty.rftools.proxy;
+package mcjty.rftools.setup;
 
 import mcjty.lib.blocks.GenericBlock;
 import mcjty.rftools.RFTools;

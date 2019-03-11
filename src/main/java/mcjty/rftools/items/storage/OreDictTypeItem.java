@@ -6,7 +6,7 @@ import mcjty.rftools.blocks.storage.sorters.CountItemSorter;
 import mcjty.rftools.blocks.storage.sorters.ItemSorter;
 import mcjty.rftools.blocks.storage.sorters.NameItemSorter;
 import mcjty.rftools.blocks.storage.sorters.OreTypeItemSorter;
-import mcjty.rftools.proxy.GuiProxy;
+import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;

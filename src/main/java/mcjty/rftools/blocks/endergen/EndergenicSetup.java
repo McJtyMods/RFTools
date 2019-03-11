@@ -6,7 +6,7 @@ import mcjty.lib.builder.BlockFlags;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.varia.ItemStackTools;
 import mcjty.rftools.blocks.ModBlocks;
-import mcjty.rftools.proxy.GuiProxy;
+import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;

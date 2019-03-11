@@ -1,4 +1,4 @@
-package mcjty.rftools.proxy;
+package mcjty.rftools.setup;
 
 import mcjty.lib.McJtyLibClient;
 import mcjty.lib.font.FontLoader;

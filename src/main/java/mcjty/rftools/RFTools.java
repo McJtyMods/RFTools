@@ -11,7 +11,7 @@ import mcjty.rftools.commands.CommandRftDb;
 import mcjty.rftools.commands.CommandRftShape;
 import mcjty.rftools.commands.CommandRftTp;
 import mcjty.rftools.items.manual.GuiRFToolsManual;
-import mcjty.rftools.proxy.CommonSetup;
+import mcjty.rftools.setup.CommonSetup;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;

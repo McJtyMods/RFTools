@@ -4,7 +4,7 @@ import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.NBTTools;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.proxy.GuiProxy;
+import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;

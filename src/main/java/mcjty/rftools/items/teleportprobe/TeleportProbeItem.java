@@ -2,7 +2,7 @@ package mcjty.rftools.items.teleportprobe;
 
 import mcjty.lib.McJtyRegister;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.proxy.GuiProxy;
+import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;

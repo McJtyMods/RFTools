@@ -10,7 +10,7 @@ import mcjty.rftools.api.screens.data.IModuleData;
 import mcjty.rftools.blocks.screens.modulesclient.helper.ClientScreenModuleHelper;
 import mcjty.rftools.blocks.screens.network.PacketGetScreenData;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.rftools.proxy.ClientProxy;
+import mcjty.rftools.setup.ClientProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;

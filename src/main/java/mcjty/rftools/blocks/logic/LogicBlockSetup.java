@@ -24,7 +24,7 @@ import mcjty.rftools.blocks.logic.timer.TimerTileEntity;
 import mcjty.rftools.blocks.logic.wire.WireTileEntity;
 import mcjty.rftools.blocks.logic.wireless.RedstoneReceiverBlock;
 import mcjty.rftools.blocks.logic.wireless.RedstoneTransmitterBlock;
-import mcjty.rftools.proxy.GuiProxy;
+import mcjty.rftools.setup.GuiProxy;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 

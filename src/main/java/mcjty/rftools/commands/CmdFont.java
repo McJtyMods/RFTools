@@ -3,7 +3,7 @@ package mcjty.rftools.commands;
 import mcjty.lib.font.FontLoader;
 import mcjty.lib.font.TrueTypeFont;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
-import mcjty.rftools.proxy.ClientProxy;
+import mcjty.rftools.setup.ClientProxy;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;

@@ -11,7 +11,7 @@ import mcjty.rftools.blocks.storagemonitor.GuiStorageScanner;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerContainer;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
-import mcjty.rftools.proxy.GuiProxy;
+import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.varia.RFToolsTools;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;

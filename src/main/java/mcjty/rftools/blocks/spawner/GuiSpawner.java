@@ -12,7 +12,7 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.proxy.GuiProxy;
+import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.items.SyringeItem;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;

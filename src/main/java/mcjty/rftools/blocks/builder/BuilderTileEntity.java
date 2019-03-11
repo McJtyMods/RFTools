@@ -25,7 +25,7 @@ import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.network.PacketGetHudLog;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.rftools.proxy.CommonSetup;
+import mcjty.rftools.setup.CommonSetup;
 import mcjty.rftools.shapes.Shape;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;

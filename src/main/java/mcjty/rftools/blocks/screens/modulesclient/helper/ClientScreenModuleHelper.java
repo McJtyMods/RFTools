@@ -4,7 +4,7 @@ import mcjty.lib.client.RenderHelper;
 import mcjty.rftools.api.screens.*;
 import mcjty.rftools.api.screens.data.IModuleDataContents;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
-import mcjty.rftools.proxy.ClientProxy;
+import mcjty.rftools.setup.ClientProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 

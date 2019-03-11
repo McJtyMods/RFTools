@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.screens;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
-import mcjty.rftools.proxy.GuiProxy;
+import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;

@@ -4,7 +4,7 @@ import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.blocks.LogicSlabBlock;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.proxy.GuiProxy;
+import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;

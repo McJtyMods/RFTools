@@ -8,7 +8,7 @@ import mcjty.lib.varia.ItemStackTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.crafting.NBTMatchingRecipe;
-import mcjty.rftools.proxy.GuiProxy;
+import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.items.SyringeItem;
 import mcjty.rftools.items.envmodules.*;
 import net.minecraft.enchantment.Enchantment;
