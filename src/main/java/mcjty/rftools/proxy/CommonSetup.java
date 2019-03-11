@@ -3,7 +3,6 @@ package mcjty.rftools.proxy;
 import mcjty.lib.compat.MainCompatHandler;
 import mcjty.lib.setup.DefaultCommonSetup;
 import mcjty.lib.varia.Logging;
-import mcjty.lib.varia.WrenchChecker;
 import mcjty.rftools.*;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.ModBlocks;
@@ -54,8 +53,6 @@ public class CommonSetup extends DefaultCommonSetup {
         NetworkRegistry.INSTANCE.registerGuiHandler(RFTools.instance, new GuiProxy());
         MinecraftForge.EVENT_BUS.register(WorldTickHandler.instance);
 
-        setupModCompat();
-
         CommandHandler.registerCommands();
         RFTools.screenModuleRegistry.registerBuiltins();
         reflect();
@@ -70,7 +67,8 @@ public class CommonSetup extends DefaultCommonSetup {
         ModWorldgen.init();
     }
 
-    private void setupModCompat() {
+    @Override
+    protected void setupModCompat() {
         MainCompatHandler.registerWaila();
         MainCompatHandler.registerTOP();
         WheelSupport.registerWheel();
@@ -89,6 +87,10 @@ public class CommonSetup extends DefaultCommonSetup {
             FMLInterModComms.sendFunctionMessage("xnet", "getXNet", XNetSupport.GetXNet.class.getName());
         }
         top = Loader.isModLoaded("theoneprobe");
+
+        if (Loader.isModLoaded("opencomputers")) {
+            OpenComputersIntegration.init();
+        }
     }
 
     private void setupCapabilities() {
@@ -157,16 +159,11 @@ public class CommonSetup extends DefaultCommonSetup {
         SpawnerConfiguration.readMobSpawnAmountConfig(ConfigSetup.mainConfig);
 
         Achievements.init();
-
-        if (Loader.isModLoaded("opencomputers")) {
-            OpenComputersIntegration.init();
-        }
     }
 
     @Override
     public void postInit(FMLPostInitializationEvent e) {
         super.postInit(e);
         ConfigSetup.postInit();
-        WrenchChecker.init();
     }
 }
