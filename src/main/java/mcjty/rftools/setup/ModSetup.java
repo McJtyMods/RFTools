@@ -1,7 +1,7 @@
 package mcjty.rftools.setup;
 
 import mcjty.lib.compat.MainCompatHandler;
-import mcjty.lib.setup.DefaultCommonSetup;
+import mcjty.lib.setup.DefaultModSetup;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.*;
 import mcjty.rftools.api.screens.IModuleProvider;
@@ -37,7 +37,7 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.lang.reflect.Method;
 
-public class CommonSetup extends DefaultCommonSetup {
+public class ModSetup extends DefaultModSetup {
 
     // Are some mods loaded?.
     public boolean rftoolsDimensions = false;

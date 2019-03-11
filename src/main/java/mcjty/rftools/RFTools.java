@@ -11,7 +11,7 @@ import mcjty.rftools.commands.CommandRftDb;
 import mcjty.rftools.commands.CommandRftShape;
 import mcjty.rftools.commands.CommandRftTp;
 import mcjty.rftools.items.manual.GuiRFToolsManual;
-import mcjty.rftools.setup.CommonSetup;
+import mcjty.rftools.setup.ModSetup;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -36,7 +36,7 @@ public class RFTools implements ModBase {
 
     @SidedProxy(clientSide = "mcjty.rftools.setup.ClientProxy", serverSide = "mcjty.rftools.setup.ServerProxy")
     public static IProxy proxy;
-    public static CommonSetup setup = new CommonSetup();
+    public static ModSetup setup = new ModSetup();
 
     @Mod.Instance("rftools")
     public static RFTools instance;

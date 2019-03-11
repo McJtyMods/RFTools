@@ -25,7 +25,7 @@ import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.network.PacketGetHudLog;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.rftools.setup.CommonSetup;
+import mcjty.rftools.setup.ModSetup;
 import mcjty.rftools.shapes.Shape;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
@@ -1174,7 +1174,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     if(silk && block.canSilkHarvest(getWorld(), srcPos, srcState, fakePlayer)) {
                         ItemStack drop;
                         try {
-                            drop = (ItemStack) CommonSetup.Block_getSilkTouch.invoke(block, srcState);
+                            drop = (ItemStack) ModSetup.Block_getSilkTouch.invoke(block, srcState);
                         } catch (IllegalAccessException|InvocationTargetException e) {
                             throw new RuntimeException(e);
                         }
