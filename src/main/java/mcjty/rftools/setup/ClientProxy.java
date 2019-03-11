@@ -9,26 +9,21 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.RenderGameOverlayEventHandler;
 import mcjty.rftools.RenderWorldLastEventHandler;
 import mcjty.rftools.blocks.ModBlocks;
-import mcjty.rftools.blocks.elevator.ElevatorSounds;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.ScreenSetup;
-import mcjty.rftools.blocks.shaper.ProjectorSounds;
 import mcjty.rftools.blocks.shield.BakedModelLoader;
-import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.builder.GuiShapeCard;
 import mcjty.rftools.keys.KeyBindings;
 import mcjty.rftools.keys.KeyInputHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -64,20 +59,8 @@ public class ClientProxy extends DefaultClientProxy {
     }
 
     @SubscribeEvent
-    public void registerModels(ModelRegistryEvent event) {
-        ModItems.initClient();
-        ModBlocks.initClient();
-    }
-
-    @SubscribeEvent
     public void colorHandlerEventBlock(ColorHandlerEvent.Block event) {
         ModBlocks.initColorHandlers(event.getBlockColors());
-    }
-
-    @SubscribeEvent
-    public void registerSounds(RegistryEvent.Register<SoundEvent> sounds) {
-        ElevatorSounds.init(sounds.getRegistry());
-        ProjectorSounds.init(sounds.getRegistry());
     }
 
     @Override
