@@ -8,7 +8,6 @@ import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.spawner.SpawnerConfiguration;
 import mcjty.rftools.crafting.ModCrafting;
-import mcjty.rftools.gui.GuiProxy;
 import mcjty.rftools.integration.computers.OpenComputersIntegration;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.network.RFToolsMessages;
@@ -50,8 +49,8 @@ public class CommonSetup extends DefaultCommonSetup {
         super.preInit(e);
 
         MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
-        NetworkRegistry.INSTANCE.registerGuiHandler(RFTools.instance, new GuiProxy());
         MinecraftForge.EVENT_BUS.register(WorldTickHandler.instance);
+        NetworkRegistry.INSTANCE.registerGuiHandler(RFTools.instance, new GuiProxy());
 
         CommandHandler.registerCommands();
         RFTools.screenModuleRegistry.registerBuiltins();

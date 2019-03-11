@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.spawner;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
-import mcjty.rftools.gui.GuiProxy;
+import mcjty.rftools.proxy.GuiProxy;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;

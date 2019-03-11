@@ -9,7 +9,7 @@ import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.blocks.builder.BuilderSetup;
-import mcjty.rftools.gui.GuiProxy;
+import mcjty.rftools.proxy.GuiProxy;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;

@@ -10,7 +10,7 @@ import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.gui.GuiProxy;
+import mcjty.rftools.proxy.GuiProxy;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.Minecraft;

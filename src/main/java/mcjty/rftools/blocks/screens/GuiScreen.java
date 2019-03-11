@@ -14,7 +14,7 @@ import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.modulesclient.helper.ScreenModuleGuiBuilder;
 import mcjty.rftools.blocks.screens.network.PacketModuleUpdate;
-import mcjty.rftools.gui.GuiProxy;
+import mcjty.rftools.proxy.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

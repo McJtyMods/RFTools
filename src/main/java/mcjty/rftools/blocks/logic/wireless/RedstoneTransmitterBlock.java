@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.logic.wireless;
 
 import mcjty.lib.blocks.GenericItemBlock;
 import mcjty.lib.container.EmptyContainer;
-import mcjty.rftools.gui.GuiProxy;
+import mcjty.rftools.proxy.GuiProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
