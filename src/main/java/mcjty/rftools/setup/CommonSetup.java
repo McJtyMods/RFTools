@@ -7,16 +7,17 @@ import mcjty.rftools.*;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.spawner.SpawnerConfiguration;
+import mcjty.rftools.config.ConfigSetup;
 import mcjty.rftools.crafting.ModCrafting;
-import mcjty.rftools.integration.computers.OpenComputersIntegration;
+import mcjty.rftools.compat.computers.OpenComputersIntegration;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.playerprops.BuffProperties;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
-import mcjty.rftools.wheelsupport.WheelSupport;
+import mcjty.rftools.compat.wheelsupport.WheelSupport;
 import mcjty.rftools.world.ModWorldgen;
 import mcjty.rftools.world.WorldTickHandler;
-import mcjty.rftools.xnet.XNetSupport;
+import mcjty.rftools.compat.xnet.XNetSupport;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
@@ -75,10 +76,10 @@ public class CommonSetup extends DefaultCommonSetup {
         if (Loader.isModLoaded("rftoolsdim")) {
             rftoolsDimensions = true;
             Logging.log("RFTools Detected Dimensions addon: enabling support");
-            FMLInterModComms.sendFunctionMessage("rftoolsdim", "getDimensionManager", "mcjty.rftools.apideps.RFToolsDimensionChecker$GetDimensionManager");
+            FMLInterModComms.sendFunctionMessage("rftoolsdim", "getDimensionManager", "mcjty.rftools.compat.RFToolsDimensionChecker$GetDimensionManager");
         }
 
-        FMLInterModComms.sendFunctionMessage("theoneprobe", "getTheOneProbe", "mcjty.rftools.theoneprobe.TheOneProbeSupport");
+        FMLInterModComms.sendFunctionMessage("theoneprobe", "getTheOneProbe", "mcjty.rftools.compat.theoneprobe.TheOneProbeSupport");
 
         if (Loader.isModLoaded("xnet")) {
             xnet = true;

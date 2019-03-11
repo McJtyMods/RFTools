@@ -7,7 +7,7 @@ import mcjty.lib.varia.WorldTools;
 import mcjty.rftools.blocks.screens.ScreenSetup;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import mcjty.rftools.craftinggrid.*;
-import mcjty.rftools.jei.JEIRecipeAcceptor;
+import mcjty.rftools.compat.jei.JEIRecipeAcceptor;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

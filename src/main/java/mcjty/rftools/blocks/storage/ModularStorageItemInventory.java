@@ -6,7 +6,7 @@ import mcjty.rftools.craftinggrid.CraftingGridProvider;
 import mcjty.rftools.craftinggrid.InventoriesItemSource;
 import mcjty.rftools.craftinggrid.StorageCraftingTools;
 import mcjty.rftools.items.storage.StorageModuleItem;
-import mcjty.rftools.jei.JEIRecipeAcceptor;
+import mcjty.rftools.compat.jei.JEIRecipeAcceptor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;

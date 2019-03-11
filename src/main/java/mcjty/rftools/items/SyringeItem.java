@@ -2,7 +2,7 @@ package mcjty.rftools.items;
 
 import mcjty.lib.varia.EntityTools;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.GeneralConfiguration;
+import mcjty.rftools.config.GeneralConfiguration;
 import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;

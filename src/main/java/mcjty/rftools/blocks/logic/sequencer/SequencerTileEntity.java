@@ -8,7 +8,7 @@ import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.TickOrderHandler;
-import mcjty.rftools.theoneprobe.TheOneProbeSupport;
+import mcjty.rftools.compat.theoneprobe.TheOneProbeSupport;
 import mcjty.theoneprobe.api.ElementAlignment;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;

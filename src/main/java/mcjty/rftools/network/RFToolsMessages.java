@@ -42,14 +42,13 @@ import mcjty.rftools.items.storage.PacketUpdateNBTItemFilter;
 import mcjty.rftools.items.teleportprobe.PacketAllReceiversReady;
 import mcjty.rftools.items.teleportprobe.PacketGetAllReceivers;
 import mcjty.rftools.items.teleportprobe.PacketTargetsReady;
-import mcjty.rftools.jei.PacketSendRecipe;
+import mcjty.rftools.compat.jei.PacketSendRecipe;
 import mcjty.rftools.playerprops.PacketSendBuffsToClient;
 import mcjty.rftools.shapes.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.relauncher.Side;
 
 import javax.annotation.Nonnull;
 

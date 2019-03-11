@@ -17,7 +17,7 @@ import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.items.storage.StorageModuleItem;
 import mcjty.rftools.items.storage.StorageTypeItem;
-import mcjty.rftools.jei.JEIRecipeAcceptor;
+import mcjty.rftools.compat.jei.JEIRecipeAcceptor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;

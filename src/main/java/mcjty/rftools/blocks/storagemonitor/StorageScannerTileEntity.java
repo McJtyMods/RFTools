@@ -16,7 +16,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.api.general.IInventoryTracker;
 import mcjty.rftools.api.storage.IStorageScanner;
 import mcjty.rftools.craftinggrid.*;
-import mcjty.rftools.jei.JEIRecipeAcceptor;
+import mcjty.rftools.compat.jei.JEIRecipeAcceptor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;

@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.storage;
 import mcjty.lib.container.*;
 import mcjty.rftools.craftinggrid.CraftingGridInventory;
 import mcjty.rftools.craftinggrid.CraftingGridProvider;
-import mcjty.rftools.jei.JEIRecipeAcceptor;
+import mcjty.rftools.compat.jei.JEIRecipeAcceptor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;

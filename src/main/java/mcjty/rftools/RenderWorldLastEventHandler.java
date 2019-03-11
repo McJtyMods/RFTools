@@ -16,6 +16,7 @@ import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import mcjty.rftools.network.MachineInfo;
 import mcjty.rftools.network.PacketReturnRfInRange;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.setup.CommandHandler;
 import mcjty.rftools.shapes.ShapeDataManagerClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;

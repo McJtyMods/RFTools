@@ -3,7 +3,7 @@ package mcjty.rftools.keys;
 import mcjty.lib.debugtools.DumpBlockNBT;
 import mcjty.lib.debugtools.DumpItemNBT;
 import mcjty.lib.typed.TypedMap;
-import mcjty.rftools.CommandHandler;
+import mcjty.rftools.setup.CommandHandler;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;

@@ -1,6 +1,6 @@
 package mcjty.rftools.world;
 
-import mcjty.rftools.GeneralConfiguration;
+import mcjty.rftools.config.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.ores.DimensionalShardBlock;

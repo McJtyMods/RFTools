@@ -10,7 +10,7 @@ import mcjty.lib.varia.EntityTools;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.lib.varia.OrientationTools;
-import mcjty.rftools.GeneralConfiguration;
+import mcjty.rftools.config.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.items.ModItems;
 import mcjty.theoneprobe.api.IProbeHitData;

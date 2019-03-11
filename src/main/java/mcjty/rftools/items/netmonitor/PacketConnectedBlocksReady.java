@@ -2,7 +2,7 @@ package mcjty.rftools.items.netmonitor;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.thirteen.Context;
-import mcjty.rftools.BlockInfo;
+import mcjty.rftools.varia.BlockInfo;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 

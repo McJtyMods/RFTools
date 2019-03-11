@@ -4,7 +4,7 @@ import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.worlddata.AbstractWorldData;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.apideps.RFToolsDimensionChecker;
+import mcjty.rftools.compat.RFToolsDimensionChecker;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
