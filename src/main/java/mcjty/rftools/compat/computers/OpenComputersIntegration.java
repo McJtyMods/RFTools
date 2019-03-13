@@ -19,7 +19,7 @@ public class OpenComputersIntegration {
         Driver.add(new PowercellDriver.OCDriver());
         Driver.add(new PearlInjectorDriver.OCDriver());
         Driver.add(new EndergenicDriver.OCDriver());
-        if(CrafterConfiguration.enabled)
+        if(CrafterConfiguration.enabled.get())
             Driver.add(new CrafterDriver.OCDriver());
     }
 }

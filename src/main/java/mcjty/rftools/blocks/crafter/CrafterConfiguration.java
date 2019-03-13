@@ -1,23 +1,39 @@
 package mcjty.rftools.blocks.crafter;
 
-import net.minecraftforge.common.config.Configuration;
+import mcjty.lib.thirteen.ConfigSpec;
 
 public class CrafterConfiguration {
-    public static final String CATEGORY_CRAFTER = "crafter";
-    public static boolean enabled = true;
-    public static int MAXENERGY = 50000;
-    public static int RECEIVEPERTICK = 500;
-    public static int rfPerOperation = 100;
-    public static int speedOperations = 5;
 
-    public static void init(Configuration cfg) {
-        cfg.addCustomCategoryComment(CrafterConfiguration.CATEGORY_CRAFTER, "Settings for the crafter");
-        enabled = cfg.get(CATEGORY_CRAFTER, "enabled", enabled, "Whether the crafter should exist").getBoolean();
-        rfPerOperation = cfg.get(CATEGORY_CRAFTER, "rfPerOperation", rfPerOperation, "Amount of RF used per crafting operation").getInt();
-        speedOperations = cfg.get(CATEGORY_CRAFTER, "speedOperations", speedOperations, "How many operations to do at once in fast mode").getInt();
-        MAXENERGY = cfg.get(CATEGORY_CRAFTER, "crafterMaxRF", MAXENERGY,
-                "Maximum RF storage that the crafter can hold").getInt();
-        RECEIVEPERTICK = cfg.get(CATEGORY_CRAFTER, "crafterRFPerTick", RECEIVEPERTICK,
-                "RF per tick that the crafter can receive").getInt();
+    public static final String CATEGORY_CRAFTER = "crafter";
+
+    public static ConfigSpec.BooleanValue enabled;
+    public static ConfigSpec.IntValue MAXENERGY;
+    public static ConfigSpec.IntValue RECEIVEPERTICK;
+    public static ConfigSpec.IntValue rfPerOperation;
+    public static ConfigSpec.IntValue speedOperations;
+
+    public static void init(ConfigSpec.Builder SERVER_BUILDER, ConfigSpec.Builder CLIENT_BUILDER) {
+        SERVER_BUILDER.comment("Settings for the crafter").push(CATEGORY_CRAFTER);
+        CLIENT_BUILDER.comment("Settings for the crafter").push(CATEGORY_CRAFTER);
+
+        enabled = SERVER_BUILDER
+                .comment("Whether the crafter should exist")
+                .define("enabled", true);
+
+        rfPerOperation = SERVER_BUILDER
+                .comment("Amount of RF used per crafting operation")
+                .defineInRange("rfPerOperation", 100, 0, Integer.MAX_VALUE);
+        speedOperations = SERVER_BUILDER
+                .comment("How many operations to do at once in fast mode")
+                .defineInRange("speedOperations", 5, 0, Integer.MAX_VALUE);
+        MAXENERGY = SERVER_BUILDER
+                .comment("Maximum RF storage that the crafter can hold")
+                .defineInRange("crafterMaxRF", 50000, 0, Integer.MAX_VALUE);
+        RECEIVEPERTICK = SERVER_BUILDER
+                .comment("RF per tick that the crafter can receive")
+                .defineInRange("crafterRFPerTick", 500, 0, Integer.MAX_VALUE);
+
+        SERVER_BUILDER.pop();
+        CLIENT_BUILDER.pop();
     }
 }

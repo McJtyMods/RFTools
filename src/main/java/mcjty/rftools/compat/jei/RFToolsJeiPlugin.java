@@ -34,7 +34,7 @@ public class RFToolsJeiPlugin extends BlankModPlugin {
     @Override
     public void register(@Nonnull IModRegistry registry) {
         IRecipeTransferRegistry transferRegistry = registry.getRecipeTransferRegistry();
-        if(CrafterConfiguration.enabled)
+        if(CrafterConfiguration.enabled.get())
             CrafterRecipeTransferHandler.register(transferRegistry);
         ModularStorageRecipeTransferHandler.register(transferRegistry);
         ModularStorageItemRecipeTransferHandler.register(transferRegistry);

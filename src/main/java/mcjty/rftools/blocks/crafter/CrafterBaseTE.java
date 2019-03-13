@@ -70,7 +70,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     }, 3, 3);
 
     public CrafterBaseTE(int supportedRecipes) {
-        super(CrafterConfiguration.MAXENERGY, CrafterConfiguration.RECEIVEPERTICK);
+        super(CrafterConfiguration.MAXENERGY.get(), CrafterConfiguration.RECEIVEPERTICK.get());
         recipes = new CraftingRecipe[supportedRecipes];
         for (int i = 0; i < recipes.length; ++i) {
             recipes[i] = new CraftingRecipe();
@@ -293,9 +293,9 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
         // 0%: rf -> rf
         // 100%: rf -> rf / 2
-        int rf = (int) (CrafterConfiguration.rfPerOperation * (2.0f - getInfusedFactor()) / 2.0f);
+        int rf = (int) (CrafterConfiguration.rfPerOperation.get() * (2.0f - getInfusedFactor()) / 2.0f);
 
-        int steps = speedMode == SPEED_FAST ? CrafterConfiguration.speedOperations : 1;
+        int steps = speedMode == SPEED_FAST ? CrafterConfiguration.speedOperations.get() : 1;
         if(rf > 0) {
             steps = (int)Math.min(steps, getStoredPower() / rf);
         }

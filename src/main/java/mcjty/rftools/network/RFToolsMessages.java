@@ -70,7 +70,7 @@ public class RFToolsMessages {
         INSTANCE = net.getNetwork();
 
         // Server side
-        if (CrafterConfiguration.enabled) {
+        if (CrafterConfiguration.enabled.get()) {
             net.registerMessageServer(id(), PacketCrafter.class, PacketCrafter::toBytes, PacketCrafter::new, PacketCrafter::handle);
         }
 
