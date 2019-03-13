@@ -55,8 +55,6 @@ public class ModSetup extends DefaultModSetup {
         MinecraftForge.EVENT_BUS.register(WorldTickHandler.instance);
         NetworkRegistry.INSTANCE.registerGuiHandler(RFTools.instance, new GuiProxy());
 
-        ConfigSetup.init();
-
         CommandHandler.registerCommands();
         RFTools.screenModuleRegistry.registerBuiltins();
         reflect();
@@ -94,6 +92,11 @@ public class ModSetup extends DefaultModSetup {
         if (Loader.isModLoaded("opencomputers")) {
             OpenComputersIntegration.init();
         }
+    }
+
+    @Override
+    protected void setupConfig() {
+        ConfigSetup.init();
     }
 
     private void setupCapabilities() {
