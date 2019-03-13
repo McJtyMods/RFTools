@@ -57,9 +57,6 @@ import static mcjty.rftools.blocks.storage.ModularStorageTileEntity.*;
 
 public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEntity> {
     public static final int STORAGE_WIDTH = 256;
-    public static final int STORAGE_HEIGHT0 = ModularStorageConfiguration.height1;
-    public static final int STORAGE_HEIGHT1 = ModularStorageConfiguration.height2;
-    public static final int STORAGE_HEIGHT2 = ModularStorageConfiguration.height3;
 
     public static final String VIEW_LIST = "list";
     public static final String VIEW_COLUMNS = "columns";
@@ -105,18 +102,18 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         int height = scaledresolution.getScaledHeight();
 
         if (height > 510) {
-            ySize = STORAGE_HEIGHT2;
+            ySize = ModularStorageConfiguration.height3.get();
         } else if (height > 340) {
-            ySize = STORAGE_HEIGHT1;
+            ySize = ModularStorageConfiguration.height2.get();
         } else {
-            ySize = STORAGE_HEIGHT0;
+            ySize = ModularStorageConfiguration.height1.get();
         }
 
         IInventory gridInventory = ((GenericContainer) container).getInventory(CONTAINER_GRID);
         for (Object o : container.inventorySlots) {
             Slot slot = (Slot) o;
             if (slot.inventory != gridInventory) {
-                slot.yPos = slot.yPos + ySize - STORAGE_HEIGHT0;
+                slot.yPos = slot.yPos + ySize - ModularStorageConfiguration.height1.get();
                 //                slot.yPos += ySize - STORAGE_HEIGHT0;
             }
         }
@@ -144,7 +141,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
                 .addChild(cycleButton);
 
         toplevel.setBackgrounds(iconLocationTop, iconLocation);
-        toplevel.setBackgroundLayout(false, ySize - STORAGE_HEIGHT0 + 2);
+        toplevel.setBackgroundLayout(false, ySize - ModularStorageConfiguration.height1.get() + 2);
 
         if (tileEntity == null) {
             // We must hide three slots.
@@ -161,7 +158,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         window.event("cycle", (source, params) -> cycleStorage());
         window.event("compact", (source, params) -> compact());
 
-        if (ModularStorageConfiguration.autofocusSearch) {
+        if (ModularStorageConfiguration.autofocusSearch.get()) {
             window.setTextFocus(filter);
         }
 
@@ -219,7 +216,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
                 .setLayoutHint(4, 39, 12, 12).setText("z").setTooltips("Compact equal stacks");
 
         if (tileEntity != null) {
-            filter.setText(ModularStorageConfiguration.clearSearchOnOpen ? "" : tileEntity.getFilter());
+            filter.setText(ModularStorageConfiguration.clearSearchOnOpen.get() ? "" : tileEntity.getFilter());
             setViewMode(tileEntity.getViewMode());
             setSortMode(tileEntity.getSortMode());
             groupMode.setCurrentChoice(tileEntity.isGroupMode() ? 1 : 0);
@@ -227,7 +224,7 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             ItemStack heldItem = Minecraft.getMinecraft().player.getHeldItem(EnumHand.MAIN_HAND);
             if (!heldItem.isEmpty() && heldItem.hasTagCompound()) {
                 NBTTagCompound tagCompound = heldItem.getTagCompound();
-                filter.setText(ModularStorageConfiguration.clearSearchOnOpen ? "" : tagCompound.getString("filter"));
+                filter.setText(ModularStorageConfiguration.clearSearchOnOpen.get() ? "" : tagCompound.getString("filter"));
                 setViewMode(tagCompound.getString("viewMode"));
                 setSortMode(tagCompound.getString("sortMode"));
                 groupMode.setCurrentChoice(tagCompound.getBoolean("groupMode") ? 1 : 0);
@@ -558,9 +555,9 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
         Panel panel = currentPos.getKey();
         if (panel == null || currentPos.getValue() >= numcolumns || (newgroup && groupName != null)) {
             if (newgroup && groupName != null) {
-                AbstractWidget<?> groupLabel = new Label(mc, this).setText(groupName).setColor(ModularStorageConfiguration.groupForeground)
+                AbstractWidget<?> groupLabel = new Label(mc, this).setText(groupName).setColor(ModularStorageConfiguration.groupForeground.get())
                         .setColor(StyleConfig.colorTextInListNormal)
-                        .setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setFilledBackground(ModularStorageConfiguration.groupBackground).setDesiredHeight(10)
+                        .setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setFilledBackground(ModularStorageConfiguration.groupBackground.get()).setDesiredHeight(10)
                         .setDesiredWidth(231);
                 itemList.addChild(new Panel(mc, this).setLayout(new HorizontalLayout().setHorizontalMargin(2).setVerticalMargin(0)).setDesiredHeight(10).addChild(groupLabel));
             }

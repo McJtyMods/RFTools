@@ -1,108 +1,119 @@
 package mcjty.rftools.blocks.storage;
 
-import mcjty.lib.varia.Logging;
-import net.minecraftforge.common.config.ConfigCategory;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
+import mcjty.lib.thirteen.ConfigSpec;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ModularStorageConfiguration {
     public static final String CATEGORY_STORAGE = "storage";
     public static final String CATEGORY_STORAGE_CONFIG = "storageconfig";
 
-    public static int groupBackground = 0xffeedd33;
-    public static int groupForeground = 0xff000000;
+    public static ConfigSpec.IntValue groupBackground;
+    public static ConfigSpec.IntValue groupForeground;
 
-    public static int REMOTE_MAXENERGY = 100000;
-    public static int REMOTE_RECEIVEPERTICK = 300;
+    public static ConfigSpec.IntValue REMOTE_MAXENERGY;
+    public static ConfigSpec.IntValue REMOTE_RECEIVEPERTICK;
 
-    public static int TABLET_MAXENERGY = 20000;
-    public static int TABLET_RECEIVEPERTICK = 500;
-    public static int TABLET_CONSUMEPERUSE = 100;    // Base consumption per usage for the remote storage unit.
-    public static int TABLET_CONSUMEPERUSE_SCANNER = 100;    // Consumption per usage for the storage scanner version
-    public static int TABLET_EXTRACONSUME = 100;     // Extra RF usage per storage tier.
+    public static ConfigSpec.IntValue TABLET_MAXENERGY;
+    public static ConfigSpec.IntValue TABLET_RECEIVEPERTICK;
+    public static ConfigSpec.IntValue TABLET_CONSUMEPERUSE;    // Base consumption per usage for the remote storage unit.
+    public static ConfigSpec.IntValue TABLET_CONSUMEPERUSE_SCANNER;    // Consumption per usage for the storage scanner version
+    public static ConfigSpec.IntValue TABLET_EXTRACONSUME;     // Extra RF usage per storage tier.
 
-    public static int remoteShareLocal = 10;         // RF/tick to share this inventory locally (same dimension).
-    public static int remoteShareGlobal = 50;        // RF/tick to share this inventory to other dimensions.
+    public static ConfigSpec.IntValue remoteShareLocal;         // RF/tick to share this inventory locally (same dimension).
+    public static ConfigSpec.IntValue remoteShareGlobal;        // RF/tick to share this inventory to other dimensions.
 
-    public static boolean autofocusSearch = false;  // If true we set auto focus on the search field when opening the GUI.
-    public static boolean clearSearchOnOpen = true; // If true we clear the search field when opening the GUI
+    public static ConfigSpec.BooleanValue autofocusSearch;  // If true we set auto focus on the search field when opening the GUI.
+    public static ConfigSpec.BooleanValue clearSearchOnOpen; // If true we clear the search field when opening the GUI
 
-    public static int height1 = 236;
-    public static int height2 = 320;
-    public static int height3 = 490;
+    public static ConfigSpec.IntValue height1;
+    public static ConfigSpec.IntValue height2;
+    public static ConfigSpec.IntValue height3;
+
+    private static ConfigSpec.ConfigValue<List<? extends String>> categories;
 
     public static Map<String,String> categoryMapper = new HashMap<>();
 
-    public static void init(Configuration cfg) {
-        cfg.addCustomCategoryComment(ModularStorageConfiguration.CATEGORY_STORAGE, "Settings for the modular storage system");
-        groupBackground = cfg.get(CATEGORY_STORAGE, "groupBackground", groupBackground,
-                "Background color for group lines").getInt();
-        groupForeground = cfg.get(CATEGORY_STORAGE, "groupForeground", groupForeground,
-                "Foreground color for group lines").getInt();
+    public static void init(ConfigSpec.Builder SERVER_BUILDER, ConfigSpec.Builder CLIENT_BUILDER) {
+        SERVER_BUILDER.comment("Settings for the modular storage system").push(CATEGORY_STORAGE);
+        CLIENT_BUILDER.comment("Settings for the modular storage system").push(CATEGORY_STORAGE);
 
-        REMOTE_MAXENERGY = cfg.get(CATEGORY_STORAGE, "remoteStorageMaxRF", REMOTE_MAXENERGY,
-                "Maximum RF storage that the remote storage block can hold").getInt();
-        REMOTE_RECEIVEPERTICK = cfg.get(CATEGORY_STORAGE, "remoteStorageRFPerTick", REMOTE_RECEIVEPERTICK,
-                "RF per tick that the remote storage block can receive").getInt();
+        groupBackground = CLIENT_BUILDER
+                .comment("Background color for group lines")
+                .defineInRange("groupBackground", 0xffeedd33, 0, Integer.MAX_VALUE);
+        groupForeground = CLIENT_BUILDER
+                .comment("Foreground color for group lines")
+                .defineInRange("groupForeground", 0xff000000, 0, Integer.MAX_VALUE);
 
-        TABLET_MAXENERGY = cfg.get(CATEGORY_STORAGE, "tabletMaxRF", TABLET_MAXENERGY,
-                "Maximum RF storage that the storage tablet can hold").getInt();
-        TABLET_RECEIVEPERTICK = cfg.get(CATEGORY_STORAGE, "tabletRFPerTick", TABLET_RECEIVEPERTICK,
-                "RF per tick that the storage tablet can receive").getInt();
-        TABLET_CONSUMEPERUSE = cfg.get(CATEGORY_STORAGE, "tabletRFUsage", TABLET_CONSUMEPERUSE,
-                "RF per usage of the storage tablet").getInt();
-        TABLET_CONSUMEPERUSE_SCANNER = cfg.get(CATEGORY_STORAGE, "tabletRFUsageScanner", TABLET_CONSUMEPERUSE_SCANNER,
-                "RF per usage of the storage tablet when used in combation with the scanner module").getInt();
-        TABLET_EXTRACONSUME = cfg.get(CATEGORY_STORAGE, "tabletExtraRFUsage", TABLET_EXTRACONSUME,
-                "Extra RF per usage per storage tier").getInt();
+        REMOTE_MAXENERGY = SERVER_BUILDER
+                .comment("Maximum RF storage that the remote storage block can hold")
+                .defineInRange("remoteStorageMaxRF", 100000, 0, Integer.MAX_VALUE);
+        REMOTE_RECEIVEPERTICK = SERVER_BUILDER
+                .comment("RF per tick that the remote storage block can receive")
+                .defineInRange("remoteStorageRFPerTick", 300, 0, Integer.MAX_VALUE);
 
-        remoteShareLocal = cfg.get(CATEGORY_STORAGE, "remoteShareLocal", remoteShareLocal,
-                "RF/tick to share an inventory to the same dimension").getInt();
-        remoteShareGlobal = cfg.get(CATEGORY_STORAGE, "remoteShareGlobal", remoteShareGlobal,
-                "RF/tick to share an inventory to all dimensions").getInt();
+        TABLET_MAXENERGY = SERVER_BUILDER
+                .comment("Maximum RF storage that the storage tablet can hold")
+                .defineInRange("tabletMaxRF", 20000, 0, Integer.MAX_VALUE);
+        TABLET_RECEIVEPERTICK = SERVER_BUILDER
+                .comment("RF per tick that the storage tablet can receive")
+                .defineInRange("tabletRFPerTick", 500, 0, Integer.MAX_VALUE);
+        TABLET_CONSUMEPERUSE = SERVER_BUILDER
+                .comment("RF per usage of the storage tablet")
+                .defineInRange("tabletRFUsage", 100, 0, Integer.MAX_VALUE);
+        TABLET_CONSUMEPERUSE_SCANNER = SERVER_BUILDER
+                .comment("RF per usage of the storage tablet when used in combation with the scanner module")
+                .defineInRange("tabletRFUsageScanner", 100, 0, Integer.MAX_VALUE);
+        TABLET_EXTRACONSUME = SERVER_BUILDER
+                .comment("Extra RF per usage per storage tier")
+                .defineInRange("tabletExtraRFUsage", 100, 0, Integer.MAX_VALUE);
 
-        autofocusSearch = cfg.get(CATEGORY_STORAGE, "autofocusSearch", autofocusSearch,
-                "If true we automatically set the focus on the search field when opening the GUI for the modular storage. Set to false if you don't want that").getBoolean();
-        clearSearchOnOpen = cfg.get(CATEGORY_STORAGE, "clearSearchOnOpen", clearSearchOnOpen,
-                "If true we clear the search field when opening the GUI for the modular storage. Set to false if you don't want that").getBoolean();
+        remoteShareLocal = SERVER_BUILDER
+                .comment("RF/tick to share an inventory to the same dimension")
+                .defineInRange("remoteShareLocal", 10, 0, Integer.MAX_VALUE);
+        remoteShareGlobal = SERVER_BUILDER
+                .comment("RF/tick to share an inventory to all dimensions")
+                .defineInRange("remoteShareGlobal", 50, 0, Integer.MAX_VALUE);
 
-        height1 = cfg.get(CATEGORY_STORAGE, "modularStorageGuiHeight1", height1, "The height for the smallest style modular storage GUI").getInt();
-        height2 = cfg.get(CATEGORY_STORAGE, "modularStorageGuiHeight2", height2, "The height for the middle style modular storage GUI").getInt();
-        height3 = cfg.get(CATEGORY_STORAGE, "modularStorageGuiHeight3", height3, "The height for the tallest style modular storage GUI").getInt();
+        autofocusSearch = CLIENT_BUILDER
+                .comment("If true we automatically set the focus on the search field when opening the GUI for the modular storage. Set to false if you don't want that")
+                .define("autofocusSearch", false);
+        clearSearchOnOpen = CLIENT_BUILDER
+                .comment("If true we clear the search field when opening the GUI for the modular storage. Set to false if you don't want that")
+                .define("clearSearchOnOpen", true);
+
+        height1 = SERVER_BUILDER
+                .comment("The height for the smallest style modular storage GUI")
+                .defineInRange("modularStorageGuiHeight1", 236, 0, 1000000);
+        height2 = SERVER_BUILDER
+                .comment("The height for the middle style modular storage GUI")
+                .defineInRange("modularStorageGuiHeight2", 320, 0, 1000000);
+        height3 = SERVER_BUILDER
+                .comment("The height for the tallest style modular storage GUI")
+                .defineInRange("modularStorageGuiHeight3", 490, 0, 1000000);
 
         initCategories();
-        ConfigCategory category = cfg.getCategory(CATEGORY_STORAGE_CONFIG);
+        List<String> defValues = new ArrayList<>();
+        for (Map.Entry<String, String> entry : categoryMapper.entrySet()) {
+            String v = entry.getKey() + "=" + entry.getValue();
+            defValues.add(v);
+        }
+        categories = SERVER_BUILDER.defineList("categories", defValues, o -> o instanceof String);
 
-        // Make a copy of the keys we already have.
-        Set<String> keys = new HashSet<>(categoryMapper.keySet());
-        // Scan the config to see if there were updates.
-        for (String key : keys) {
-            categoryMapper.put(key, cfg.get(CATEGORY_STORAGE_CONFIG, key, categoryMapper.get(key)).getString());
-        }
-        // Now find all new keys in the config and add those.
-        for (Map.Entry<String, Property> entry : category.entrySet()) {
-            String key = entry.getKey();
-            if (!categoryMapper.containsKey(key)) {
-                categoryMapper.put(key, entry.getValue().getString());
-            }
-        }
+        SERVER_BUILDER.pop();
+        CLIENT_BUILDER.pop();
     }
 
-    private static void formatClassification(String type, String name, Class<?> clz, String group) {
-        StringBuilder sb = new StringBuilder();
-        Formatter formatter = new Formatter(sb, Locale.US);
-        formatter.format("%1$-1.1s Name:%2$-30.30s Class:%3$-50.50s Group:%4$-20.20s", type, name, clz.getCanonicalName(), group);
-        Logging.log(sb.toString());
-    }
-
-    private static void formateAsCode(Class<?> clz, String group) {
-        StringBuilder sb = new StringBuilder();
-        Formatter formatter = new Formatter(sb, Locale.US);
-        formatter.format("categoryMapper.put(\"%1$s\", \"%2$s\");", clz.getCanonicalName(), group);
-        Logging.log(sb.toString());
+    public static void resolve() {
+        categoryMapper.clear();
+        for (String s : categories.get()) {
+            String[] split = StringUtils.split(s, "=");
+            categoryMapper.put(split[0], split[1]);
+        }
     }
 
     public static String getCategory(Class<?> cls) {

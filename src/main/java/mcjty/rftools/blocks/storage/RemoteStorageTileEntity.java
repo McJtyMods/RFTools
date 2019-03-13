@@ -41,7 +41,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
     private int version = 0;
 
     public RemoteStorageTileEntity() {
-        super(ModularStorageConfiguration.REMOTE_MAXENERGY, ModularStorageConfiguration.REMOTE_RECEIVEPERTICK);
+        super(ModularStorageConfiguration.REMOTE_MAXENERGY.get(), ModularStorageConfiguration.REMOTE_RECEIVEPERTICK.get());
     }
 
     @Override
@@ -52,7 +52,7 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
     private int timer = 0;
 
     public boolean isPowerLow() {
-        return getStoredPower() < ModularStorageConfiguration.remoteShareLocal;
+        return getStoredPower() < ModularStorageConfiguration.remoteShareLocal.get();
     }
 
     @Override
@@ -89,9 +89,9 @@ public class RemoteStorageTileEntity extends GenericEnergyReceiverTileEntity imp
                 if (tagCompound != null && tagCompound.hasKey("id")) {
                     int rf;
                     if (isGlobal(i)) {
-                        rf = ModularStorageConfiguration.remoteShareGlobal;
+                        rf = ModularStorageConfiguration.remoteShareGlobal.get();
                     } else {
-                        rf = ModularStorageConfiguration.remoteShareLocal;
+                        rf = ModularStorageConfiguration.remoteShareLocal.get();
                     }
                     rf = (int) (rf * (2.0f - getInfusedFactor()) / 2.0f);
 

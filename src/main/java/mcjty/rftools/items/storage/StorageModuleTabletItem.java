@@ -51,9 +51,9 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
         super("storage_module_tablet");
         setMaxStackSize(1);
 
-        capacity = ModularStorageConfiguration.TABLET_MAXENERGY;
-        maxReceive = ModularStorageConfiguration.TABLET_RECEIVEPERTICK;
-        maxExtract = ModularStorageConfiguration.TABLET_CONSUMEPERUSE;
+        capacity = ModularStorageConfiguration.TABLET_MAXENERGY.get();
+        maxReceive = ModularStorageConfiguration.TABLET_RECEIVEPERTICK.get();
+        maxExtract = ModularStorageConfiguration.TABLET_CONSUMEPERUSE.get();
     }
 
     @Override
@@ -103,11 +103,11 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
             int moduleDamage = tagCompound.getInteger("childDamage");
             int rfNeeded;
             if (moduleDamage == META_FOR_SCANNER) {
-                rfNeeded = ModularStorageConfiguration.TABLET_CONSUMEPERUSE_SCANNER;
+                rfNeeded = ModularStorageConfiguration.TABLET_CONSUMEPERUSE_SCANNER.get();
             } else {
-                rfNeeded = ModularStorageConfiguration.TABLET_CONSUMEPERUSE;
+                rfNeeded = ModularStorageConfiguration.TABLET_CONSUMEPERUSE.get();
                 if (moduleDamage != StorageModuleItem.STORAGE_REMOTE) {
-                    rfNeeded += ModularStorageConfiguration.TABLET_EXTRACONSUME * (moduleDamage + 1);
+                    rfNeeded += ModularStorageConfiguration.TABLET_EXTRACONSUME.get() * (moduleDamage + 1);
                 }
             }
 
