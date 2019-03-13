@@ -10,6 +10,7 @@ public class MachineInfuserConfiguration {
     public static int rfPerTick = 600;
 
     public static void init(Configuration cfg) {
+        cfg.addCustomCategoryComment(MachineInfuserConfiguration.CATEGORY_INFUSER, "Settings for the infuser");
         rfPerTick = cfg.get(CATEGORY_INFUSER, "generatePerTick", rfPerTick, "Amount of RF used per tick while infusing").getInt();
         MAXENERGY = cfg.get(CATEGORY_INFUSER, "infuserMaxRF", MAXENERGY,
                 "Maximum RF storage that the infuser can hold").getInt();

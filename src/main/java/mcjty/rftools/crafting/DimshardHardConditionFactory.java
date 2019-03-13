@@ -15,9 +15,9 @@ public class DimshardHardConditionFactory implements IConditionFactory {
     public BooleanSupplier parse(JsonContext context, JsonObject json) {
         return () -> {
             if (RFTools.setup.rftoolsDimensions) {
-                return GeneralConfiguration.dimensionalShardRecipeWithDimensions == CRAFT_HARD;
+                return GeneralConfiguration.dimensionalShardRecipeWithDimensions.get() == CRAFT_HARD;
             } else {
-                return GeneralConfiguration.dimensionalShardRecipeWithoutDimensions == CRAFT_HARD;
+                return GeneralConfiguration.dimensionalShardRecipeWithoutDimensions.get() == CRAFT_HARD;
             }
         };
     }

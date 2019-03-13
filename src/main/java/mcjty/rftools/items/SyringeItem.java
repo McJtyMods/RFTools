@@ -80,10 +80,10 @@ public class SyringeItem extends GenericRFToolsItem {
             }
             if (level <= 0) {
                 level = 0;
-            } else if (level >= GeneralConfiguration.maxMobInjections) {
+            } else if (level >= GeneralConfiguration.maxMobInjections.get()) {
                 level = 5;
             } else {
-                level = ((level-1) * 4 / (GeneralConfiguration.maxMobInjections-1)) + 1;
+                level = ((level-1) * 4 / (GeneralConfiguration.maxMobInjections.get()-1)) + 1;
             }
             String domain = getRegistryName().getResourceDomain();
             String path = getRegistryName().getResourcePath();
@@ -107,7 +107,7 @@ public class SyringeItem extends GenericRFToolsItem {
                     Logging.message(player, TextFormatting.BLUE + "Mob: " + mobName);
                 }
                 int level = tagCompound.getInteger("level");
-                level = level * 100 / GeneralConfiguration.maxMobInjections;
+                level = level * 100 / GeneralConfiguration.maxMobInjections.get();
                 Logging.message(player, TextFormatting.BLUE + "Essence level: " + level + "%");
             }
             return new ActionResult<>(EnumActionResult.SUCCESS, stack);
@@ -134,7 +134,7 @@ public class SyringeItem extends GenericRFToolsItem {
                     tagCompound.setString("mobId", id);
                     tagCompound.setInteger("level", 1);
                 } else {
-                    tagCompound.setInteger("level", Math.min(tagCompound.getInteger("level") + 1, GeneralConfiguration.maxMobInjections));
+                    tagCompound.setInteger("level", Math.min(tagCompound.getInteger("level") + 1, GeneralConfiguration.maxMobInjections.get()));
                 }
             }
         }
@@ -169,7 +169,7 @@ public class SyringeItem extends GenericRFToolsItem {
                 list.add(TextFormatting.BLUE + "Mob: " + mobName);
             }
             int level = tagCompound.getInteger("level");
-            level = level * 100 / GeneralConfiguration.maxMobInjections;
+            level = level * 100 / GeneralConfiguration.maxMobInjections.get();
             list.add(TextFormatting.BLUE + "Essence level: " + level + "%");
         }
 
@@ -194,7 +194,7 @@ public class SyringeItem extends GenericRFToolsItem {
             name = id;
         }
         tagCompound.setString("mobName", name);
-        tagCompound.setInteger("level", GeneralConfiguration.maxMobInjections);
+        tagCompound.setInteger("level", GeneralConfiguration.maxMobInjections.get());
         syringe.setTagCompound(tagCompound);
         return syringe;
     }

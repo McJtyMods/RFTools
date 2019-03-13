@@ -13,6 +13,7 @@ public class CoalGeneratorConfiguration {
     public static int ticksPerCoal = 600;
 
     public static void init(Configuration cfg) {
+        cfg.addCustomCategoryComment(CoalGeneratorConfiguration.CATEGORY_COALGEN, "Settings for the coal generator");
         enabled = cfg.get(CATEGORY_COALGEN, "enabled", enabled, "Whether the coal generator should exist").getBoolean();
         rfPerTick = cfg.get(CATEGORY_COALGEN, "generatePerTick", rfPerTick, "Amount of RF generated per tick").getInt();
         ticksPerCoal = cfg.get(CATEGORY_COALGEN, "ticksPerCoal", ticksPerCoal, "Amount of ticks generated per coal").getInt();

@@ -9,6 +9,7 @@ public class BoosterConfiguration {
     public static float energyMultiplier = 500000;
 
     public static void init(Configuration cfg) {
+        cfg.addCustomCategoryComment(BoosterConfiguration.CATEGORY_BOOSTER, "Settings for the booster");
         BOOSTER_MAXENERGY = cfg.get(CATEGORY_BOOSTER, "boosterMaxRF", BOOSTER_MAXENERGY,
                 "Maximum RF storage that the booster can hold").getInt();
         BOOSTER_RECEIVEPERTICK = cfg.get(CATEGORY_BOOSTER, "boosterRFPerTick", BOOSTER_RECEIVEPERTICK,

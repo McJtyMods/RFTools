@@ -58,6 +58,7 @@ public class BuilderConfiguration {
 
 
     public static void init(Configuration cfg) {
+        cfg.addCustomCategoryComment(BuilderConfiguration.CATEGORY_BUILDER, "Settings for the builder");
         BUILDER_MAXENERGY = cfg.get(CATEGORY_BUILDER, "builderMaxRF", BUILDER_MAXENERGY,
                 "Maximum RF storage that the builder can hold").getInt();
         BUILDER_RECEIVEPERTICK = cfg.get(CATEGORY_BUILDER, "builderRFPerTick", BUILDER_RECEIVEPERTICK,

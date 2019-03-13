@@ -45,6 +45,7 @@ public class ScannerConfiguration {
 
 
     public static void init(Configuration cfg) {
+        cfg.addCustomCategoryComment(ScannerConfiguration.CATEGORY_SCANNER, "Settings for the scanner, composer, and projector");
         SCANNER_MAXENERGY = cfg.get(CATEGORY_SCANNER, "scannerMaxRF", SCANNER_MAXENERGY,
                 "Maximum RF storage that the scanner can hold").getInt();
         SCANNER_RECEIVEPERTICK = cfg.get(CATEGORY_SCANNER, "scannerRFPerTick", SCANNER_RECEIVEPERTICK,

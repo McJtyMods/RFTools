@@ -1,5 +1,6 @@
 package mcjty.rftools.config;
 
+import mcjty.lib.thirteen.ConfigSpec;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorConfiguration;
@@ -28,6 +29,16 @@ import java.io.File;
 
 public class ConfigSetup {
 
+    private static final ConfigSpec.Builder SERVER_BUILDER = new ConfigSpec.Builder();
+    private static final ConfigSpec.Builder CLIENT_BUILDER = new ConfigSpec.Builder();
+
+    static {
+        GeneralConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
+    }
+
+    public static ConfigSpec SERVER_CONFIG;
+    public static ConfigSpec CLIENT_CONFIG;
+
     public static Configuration mainConfig;
 
     public static void init() {
@@ -35,31 +46,11 @@ public class ConfigSetup {
         Configuration cfg = mainConfig;
         try {
             cfg.load();
-            cfg.addCustomCategoryComment(GeneralConfiguration.CATEGORY_GENERAL, "General settings");
-            cfg.addCustomCategoryComment(SecurityConfiguration.CATEGORY_SECURITY, "Settings for the block security system");
-            cfg.addCustomCategoryComment(CoalGeneratorConfiguration.CATEGORY_COALGEN, "Settings for the coal generator");
-            cfg.addCustomCategoryComment(CrafterConfiguration.CATEGORY_CRAFTER, "Settings for the crafter");
-            cfg.addCustomCategoryComment(ModularStorageConfiguration.CATEGORY_STORAGE, "Settings for the modular storage system");
-            cfg.addCustomCategoryComment(ModularStorageConfiguration.CATEGORY_STORAGE_CONFIG, "Generic item module categories for various items");
-            cfg.addCustomCategoryComment(ScreenConfiguration.CATEGORY_SCREEN, "Settings for the screen system");
-            cfg.addCustomCategoryComment(MachineInfuserConfiguration.CATEGORY_INFUSER, "Settings for the infuser");
-            cfg.addCustomCategoryComment(BuilderConfiguration.CATEGORY_BUILDER, "Settings for the builder");
-            cfg.addCustomCategoryComment(ScannerConfiguration.CATEGORY_SCANNER, "Settings for the scanner, composer, and projector");
-            cfg.addCustomCategoryComment(PowerCellConfiguration.CATEGORY_POWERCELL, "Settings for the powercell");
-            cfg.addCustomCategoryComment(ShieldConfiguration.CATEGORY_SHIELD, "Settings for the shield system");
-            cfg.addCustomCategoryComment(EnvironmentalConfiguration.CATEGORY_ENVIRONMENTAL, "Settings for the environmental controller");
-            cfg.addCustomCategoryComment(SpawnerConfiguration.CATEGORY_SPAWNER, "Settings for the spawner system");
-            cfg.addCustomCategoryComment(SpawnerConfiguration.CATEGORY_MOBSPAWNAMOUNTS, "Amount of materials needed to spawn mobs");
-            cfg.addCustomCategoryComment(SpawnerConfiguration.CATEGORY_MOBSPAWNRF, "Amount of RF needed to spawn mobs");
-            cfg.addCustomCategoryComment(SpawnerConfiguration.CATEGORY_LIVINGMATTER, "Blocks and items that are seen as living for the spawner");
-            cfg.addCustomCategoryComment(BlockProtectorConfiguration.CATEGORY_BLOCKPROTECTOR, "Settings for the block protector machine");
-            cfg.addCustomCategoryComment(NetworkMonitorConfiguration.CATEGORY_NETWORK_MONITOR, "Settings for the network monitor item");
-            cfg.addCustomCategoryComment(EndergenicConfiguration.CATEGORY_ENDERGENIC, "Settings for the endergenic generator");
-            cfg.addCustomCategoryComment(StorageScannerConfiguration.CATEGORY_STORAGE_MONITOR, "Settings for the storage scanner machine");
-            cfg.addCustomCategoryComment(ElevatorConfiguration.CATEGORY_ELEVATOR, "Settings for the elevator");
-            cfg.addCustomCategoryComment(BoosterConfiguration.CATEGORY_BOOSTER, "Settings for the booster");
+            SERVER_CONFIG = SERVER_BUILDER.build(mainConfig);
+            CLIENT_CONFIG = CLIENT_BUILDER.build(mainConfig);
 
-            GeneralConfiguration.init(cfg);
+            GeneralConfiguration.resolve();
+
             SecurityConfiguration.init(cfg);
             CoalGeneratorConfiguration.init(cfg);
             CrafterConfiguration.init(cfg);

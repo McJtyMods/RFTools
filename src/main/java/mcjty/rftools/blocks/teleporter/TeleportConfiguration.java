@@ -67,6 +67,7 @@ public class TeleportConfiguration {
     public static boolean logTeleportUsages = false;
 
     public static void init(Configuration cfg) {
+        cfg.addCustomCategoryComment(CATEGORY_TELEPORTER, "Settings for the teleportation system");
         TRANSMITTER_MAXENERGY = cfg.get(CATEGORY_TELEPORTER, "transmitterMaxRF", TRANSMITTER_MAXENERGY,
                 "Maximum RF storage that the matter transmitter can hold. This should be at least equal to 'rfStartTeleportDim'").getInt();
         TRANSMITTER_RECEIVEPERTICK = cfg.get(CATEGORY_TELEPORTER, "transmitterRFPerTick", TRANSMITTER_RECEIVEPERTICK,

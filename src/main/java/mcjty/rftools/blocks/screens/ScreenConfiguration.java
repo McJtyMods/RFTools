@@ -33,6 +33,7 @@ public class ScreenConfiguration {
     public static String additionalCharacters = "";
 
     public static void init(Configuration cfg) {
+        cfg.addCustomCategoryComment(ScreenConfiguration.CATEGORY_SCREEN, "Settings for the screen system");
         CONTROLLER_MAXENERGY = cfg.get(CATEGORY_SCREEN, "screenControllerMaxRF", CONTROLLER_MAXENERGY,
                 "Maximum RF storage that the screen controller can hold").getInt();
         CONTROLLER_RECEIVEPERTICK = cfg.get(CATEGORY_SCREEN, "screenControllerRFPerTick", CONTROLLER_RECEIVEPERTICK,

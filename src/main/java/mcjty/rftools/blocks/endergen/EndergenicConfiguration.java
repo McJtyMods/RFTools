@@ -20,6 +20,7 @@ public class EndergenicConfiguration {
     public static double powergenFactor = 2.0;
 
     public static void init(Configuration cfg) {
+        cfg.addCustomCategoryComment(EndergenicConfiguration.CATEGORY_ENDERGENIC, "Settings for the endergenic generator");
         chanceLost = cfg.get(CATEGORY_ENDERGENIC, "endergenicChanceLost", chanceLost,
                 "The chance (in 1/10 percent, so 1000 = 100%) that an endergenic pearl is lost while trying to hold it").getInt();
         rfToHoldPearl = cfg.get(CATEGORY_ENDERGENIC, "endergenicRfHolding", rfToHoldPearl,

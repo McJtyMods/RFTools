@@ -39,6 +39,7 @@ public class ShieldConfiguration {
     public static boolean allowInvisibleShield = true;
 
     public static void init(Configuration cfg) {
+        cfg.addCustomCategoryComment(ShieldConfiguration.CATEGORY_SHIELD, "Settings for the shield system");
         MAXENERGY = cfg.get(CATEGORY_SHIELD, "shieldMaxRF", MAXENERGY,
                 "Maximum RF storage that the shield block can hold").getInt();
         RECEIVEPERTICK = cfg.get(CATEGORY_SHIELD, "shieldRFPerTick", RECEIVEPERTICK,

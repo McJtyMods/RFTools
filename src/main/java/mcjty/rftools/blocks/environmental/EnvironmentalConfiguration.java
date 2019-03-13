@@ -40,6 +40,7 @@ public class EnvironmentalConfiguration {
     public static float mobsPowerMultiplier = 2.0f;
 
     public static void init(Configuration cfg) {
+        cfg.addCustomCategoryComment(EnvironmentalConfiguration.CATEGORY_ENVIRONMENTAL, "Settings for the environmental controller");
         ENVIRONMENTAL_MAXENERGY = cfg.get(CATEGORY_ENVIRONMENTAL, "environmentalMaxRF", ENVIRONMENTAL_MAXENERGY,
                 "Maximum RF storage that the environmental controller can hold").getInt();
         ENVIRONMENTAL_RECEIVEPERTICK = cfg.get(CATEGORY_ENVIRONMENTAL, "environmentalRFPerTick", ENVIRONMENTAL_RECEIVEPERTICK,

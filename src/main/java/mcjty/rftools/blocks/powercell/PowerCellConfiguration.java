@@ -18,6 +18,7 @@ public class PowerCellConfiguration {
     public static int CHARGEITEMPERTICK = 30000;
 
     public static void init(Configuration cfg) {
+        cfg.addCustomCategoryComment(PowerCellConfiguration.CATEGORY_POWERCELL, "Settings for the powercell");
         rfPerTick = cfg.get(CATEGORY_POWERCELL, "rfPerTick", rfPerTick, "Base amount of RF/tick that can be extracted/inserted in this block").getInt();
         rfPerNormalCell = cfg.get(CATEGORY_POWERCELL, "rfPerNormalCell", rfPerNormalCell, "Maximum RF storage that a single cell can hold").getInt();
 

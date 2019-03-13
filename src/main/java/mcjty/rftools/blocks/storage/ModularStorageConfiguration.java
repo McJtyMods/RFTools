@@ -37,6 +37,7 @@ public class ModularStorageConfiguration {
     public static Map<String,String> categoryMapper = new HashMap<>();
 
     public static void init(Configuration cfg) {
+        cfg.addCustomCategoryComment(ModularStorageConfiguration.CATEGORY_STORAGE, "Settings for the modular storage system");
         groupBackground = cfg.get(CATEGORY_STORAGE, "groupBackground", groupBackground,
                 "Background color for group lines").getInt();
         groupForeground = cfg.get(CATEGORY_STORAGE, "groupForeground", groupForeground,

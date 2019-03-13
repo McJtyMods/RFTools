@@ -13,6 +13,7 @@ public class BlockProtectorConfiguration {
     public static int maxProtectDistance = 10;
 
     public static void init(Configuration cfg) {
+        cfg.addCustomCategoryComment(BlockProtectorConfiguration.CATEGORY_BLOCKPROTECTOR, "Settings for the block protector machine");
         enabled = cfg.get(CATEGORY_BLOCKPROTECTOR, "enabled", enabled, "Whether the block protector should exist").getBoolean();
         rfPerProtectedBlock = cfg.get(CATEGORY_BLOCKPROTECTOR, "rfPerProtectedBlock", rfPerProtectedBlock, "Amount of passive RF/tick used for every protected block").getInt();
         rfForHarvestAttempt = cfg.get(CATEGORY_BLOCKPROTECTOR, "rfForHarvestAttempt", rfForHarvestAttempt, "The RF that is consumed to protect against a single harvest attempt").getInt();

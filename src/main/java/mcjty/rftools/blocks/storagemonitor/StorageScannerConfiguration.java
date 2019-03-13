@@ -16,6 +16,7 @@ public class StorageScannerConfiguration {
     public static boolean xnetRequired = false;
 
     public static void init(Configuration cfg) {
+        cfg.addCustomCategoryComment(StorageScannerConfiguration.CATEGORY_STORAGE_MONITOR, "Settings for the storage scanner machine");
         rfPerRequest = cfg.get(CATEGORY_STORAGE_MONITOR, "rfPerRequest", rfPerRequest, "Amount of RF used to request an item").getInt();
         rfPerInsert = cfg.get(CATEGORY_STORAGE_MONITOR, "rfPerInsert", rfPerInsert, "Amount of RF used to insert an item").getInt();
         hilightTime = cfg.get(CATEGORY_STORAGE_MONITOR, "hilightTime", hilightTime, "Time (in seconds) to hilight a block in the world").getInt();

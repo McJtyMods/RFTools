@@ -32,7 +32,7 @@ public class RFToolsWorldGenerator implements IWorldGenerator {
     }
 
     public void generateWorld(Random random, int chunkX, int chunkZ, World world, boolean newGen) {
-        if (!newGen && !GeneralConfiguration.retrogen) {
+        if (!newGen && !GeneralConfiguration.retrogen.get()) {
             return;
         }
 
@@ -57,8 +57,8 @@ public class RFToolsWorldGenerator implements IWorldGenerator {
                 base = Blocks.STONE.getDefaultState();
             }
             addOreSpawn(ore, base, world, random, chunkX * 16, chunkZ * 16,
-                        GeneralConfiguration.oreMinimumVeinSize, GeneralConfiguration.oreMaximumVeinSize, GeneralConfiguration.oreMaximumVeinCount,
-                        GeneralConfiguration.oreMinimumHeight, GeneralConfiguration.oreMaximumHeight);
+                        GeneralConfiguration.oreMinimumVeinSize.get(), GeneralConfiguration.oreMaximumVeinSize.get(), GeneralConfiguration.oreMaximumVeinCount.get(),
+                        GeneralConfiguration.oreMinimumHeight.get(), GeneralConfiguration.oreMaximumHeight.get());
         }
 
         if (!newGen) {
@@ -100,20 +100,20 @@ public class RFToolsWorldGenerator implements IWorldGenerator {
         Pair<Integer,Integer> cCoord = Pair.of(event.getChunk().x, event.getChunk().z);
 
         if (tag != null) {
-            boolean generated = GeneralConfiguration.retrogen && !tag.hasKey("generated");
+            boolean generated = GeneralConfiguration.retrogen.get() && !tag.hasKey("generated");
             if (generated) {
 //                Logging.log("Queuing Retrogen for chunk: " + cCoord.toString() + ".");
                 regen = true;
             }
         } else {
-            regen = GeneralConfiguration.retrogen;
+            regen = GeneralConfiguration.retrogen.get();
         }
 
         if (regen) {
             ArrayDeque<WorldTickHandler.RetroChunkCoord> chunks = WorldTickHandler.chunksToGen.get(dim);
 
             if (chunks == null) {
-                WorldTickHandler.chunksToGen.put(dim, new ArrayDeque<WorldTickHandler.RetroChunkCoord>(128));
+                WorldTickHandler.chunksToGen.put(dim, new ArrayDeque<>(128));
                 chunks = WorldTickHandler.chunksToGen.get(dim);
             }
             if (chunks != null) {

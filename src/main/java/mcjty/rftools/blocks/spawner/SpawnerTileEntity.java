@@ -154,7 +154,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
         }
         mobId = EntityTools.fixEntityId(mobId);
         int level = tagCompound.getInteger("level");
-        if (level < GeneralConfiguration.maxMobInjections) {
+        if (level < GeneralConfiguration.maxMobInjections.get()) {
             clearMatter();
             return;
         }

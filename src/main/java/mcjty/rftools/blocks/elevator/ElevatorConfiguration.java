@@ -18,6 +18,7 @@ public class ElevatorConfiguration {
     public static float loopVolumeFactor = 1.0f;        // How much to decrease volume of the looping sound.
 
     public static void init(Configuration cfg) {
+        cfg.addCustomCategoryComment(ElevatorConfiguration.CATEGORY_ELEVATOR, "Settings for the elevator");
         rfPerHeightUnit = cfg.get(CATEGORY_ELEVATOR, "rfPerHeightUnit", rfPerHeightUnit, "Amount of RF used per height level when moving").getInt();
         maxPlatformSize = cfg.get(CATEGORY_ELEVATOR, "maxPlatformSize", maxPlatformSize, "Maximum platform size that can be moved").getInt();
         minimumSpeed = cfg.get(CATEGORY_ELEVATOR, "minimumSpeed", minimumSpeed, "Mimumum elevator speed").getDouble();
