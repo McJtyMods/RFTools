@@ -92,7 +92,7 @@ public class RenderData {
     }
 
     public boolean tooOld() {
-        return touchTime + ScannerConfiguration.clientRenderDataTimeout < System.currentTimeMillis();
+        return touchTime + ScannerConfiguration.clientRenderDataTimeout.get() < System.currentTimeMillis();
     }
 
 
@@ -124,7 +124,7 @@ public class RenderData {
         protected net.minecraft.client.renderer.vertex.VertexBuffer vbo;
 
         public void cleanup() {
-            if (useVBO) {
+            if (useVBO.get()) {
                 if (vbo != null) {
                     vbo.deleteGlBuffers();
                     vbo = null;
@@ -138,7 +138,7 @@ public class RenderData {
         }
 
         public void render() {
-            if (useVBO) {
+            if (useVBO.get()) {
                 if (vbo != null) {
                     vbo.bindBuffer();
                     GlStateManager.glEnableClientState(GL11.GL_VERTEX_ARRAY);
@@ -158,7 +158,7 @@ public class RenderData {
         }
 
         public BufferBuilder createRenderList(BufferBuilder buffer) {
-            if (useVBO) {
+            if (useVBO.get()) {
                 vbo = new net.minecraft.client.renderer.vertex.VertexBuffer(DefaultVertexFormats.POSITION_COLOR);
                 buffer = vboBuffer;
             } else {
@@ -169,7 +169,7 @@ public class RenderData {
         }
 
         public void performRenderToList(Tessellator tessellator, BufferBuilder buffer) {
-            if (useVBO) {
+            if (useVBO.get()) {
                 buffer.finishDrawing();
                 buffer.reset();
                 vbo.bufferData(buffer.getByteBuffer());

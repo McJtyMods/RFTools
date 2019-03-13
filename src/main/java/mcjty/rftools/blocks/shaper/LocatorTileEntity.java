@@ -68,7 +68,7 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
     private Integer maxEnergy = null;
 
     public LocatorTileEntity() {
-        super(ScannerConfiguration.LOCATOR_MAXENERGY, ScannerConfiguration.LOCATOR_RECEIVEPERTICK);
+        super(ScannerConfiguration.LOCATOR_MAXENERGY.get(), ScannerConfiguration.LOCATOR_RECEIVEPERTICK.get());
     }
 
     @Override
@@ -77,7 +77,7 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
             counter--;
             markDirtyQuick();
             if (counter <= 0) {
-                counter = ScannerConfiguration.ticksPerLocatorScan;
+                counter = ScannerConfiguration.ticksPerLocatorScan.get();
 
                 ScannerTileEntity scanner = getScanner();
                 if (scanner == null || scanner.getDataDim() == null) {
@@ -122,7 +122,7 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
             int dz = (dim.getZ() + 15) / 16;
 
             int chunks = dx * dz;
-            if (chunks <= ScannerConfiguration.locatorMaxEnergyChunks) {
+            if (chunks <= ScannerConfiguration.locatorMaxEnergyChunks.get()) {
                 BlockPos end = scanner.getLastCorner();
                 int minChunkX = start.getX() >> 4;
                 int minChunkZ = start.getZ() >> 4;
@@ -171,7 +171,7 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
 
         for (Entity entity : entities) {
             BlockPos pos = entity.getPosition().subtract(center);
-            if (counter.getOrDefault(pos, 0) < ScannerConfiguration.locatorEntitySafety) {
+            if (counter.getOrDefault(pos, 0) < ScannerConfiguration.locatorEntitySafety.get()) {
                 if (dofilter) {
                     if (!checkFilter(filt, entity)) {
                         continue;
@@ -233,22 +233,22 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
         int subchunks = dx * dy * dz;
         int chunks = dx * dz;
 
-        int energy = ScannerConfiguration.LOCATOR_PERSCAN_BASE;
-        energy += (int) (energy + subchunks * ScannerConfiguration.LOCATOR_PERSCAN_CHUNK);
+        int energy = ScannerConfiguration.LOCATOR_PERSCAN_BASE.get();
+        energy += (int) (energy + subchunks * ScannerConfiguration.LOCATOR_PERSCAN_CHUNK.get());
         if (hostileType != BeaconType.BEACON_OFF) {
-            energy += (int) (energy + subchunks * ScannerConfiguration.LOCATOR_PERSCAN_HOSTILE);
+            energy += (int) (energy + subchunks * ScannerConfiguration.LOCATOR_PERSCAN_HOSTILE.get());
         }
         if (passiveType != BeaconType.BEACON_OFF) {
-            energy += (int) (energy + subchunks * ScannerConfiguration.LOCATOR_PERSCAN_PASSIVE);
+            energy += (int) (energy + subchunks * ScannerConfiguration.LOCATOR_PERSCAN_PASSIVE.get());
         }
         if (playerType != BeaconType.BEACON_OFF) {
-            energy += (int) (energy + subchunks * ScannerConfiguration.LOCATOR_PERSCAN_PLAYER);
+            energy += (int) (energy + subchunks * ScannerConfiguration.LOCATOR_PERSCAN_PLAYER.get());
         }
-        if (energyType != BeaconType.BEACON_OFF && chunks <= ScannerConfiguration.locatorMaxEnergyChunks) {
-            energy += (int) (energy + subchunks * ScannerConfiguration.LOCATOR_PERSCAN_ENERGY);
+        if (energyType != BeaconType.BEACON_OFF && chunks <= ScannerConfiguration.locatorMaxEnergyChunks.get()) {
+            energy += (int) (energy + subchunks * ScannerConfiguration.LOCATOR_PERSCAN_ENERGY.get());
         }
         if (filter == null || !filter.trim().isEmpty()) {
-            energy += (int) (energy + subchunks * ScannerConfiguration.LOCATOR_FILTER_COST);
+            energy += (int) (energy + subchunks * ScannerConfiguration.LOCATOR_FILTER_COST.get());
         }
         return energy;
     }

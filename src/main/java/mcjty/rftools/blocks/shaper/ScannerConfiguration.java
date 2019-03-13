@@ -1,118 +1,151 @@
 package mcjty.rftools.blocks.shaper;
 
-import net.minecraftforge.common.config.Configuration;
+import mcjty.lib.thirteen.ConfigSpec;
 
 public class ScannerConfiguration {
     public static final String CATEGORY_SCANNER = "scanner";
 
-    public static int SCANNER_MAXENERGY = 500000; // TODO change these to longs once Configuration supports them
-    public static int SCANNER_RECEIVEPERTICK = 20000;
-    public static int SCANNER_PERTICK = 1000;
-    public static int REMOTE_SCANNER_PERTICK = 2000;
+    public static ConfigSpec.IntValue SCANNER_MAXENERGY; // TODO change these to longs once Configuration supports them
+    public static ConfigSpec.IntValue SCANNER_RECEIVEPERTICK;
+    public static ConfigSpec.IntValue SCANNER_PERTICK;
+    public static ConfigSpec.IntValue REMOTE_SCANNER_PERTICK;
 
-    public static int LOCATOR_MAXENERGY = 2000000;
-    public static int LOCATOR_RECEIVEPERTICK = 20000;
-    public static int LOCATOR_PERSCAN_BASE = 5000;
-    public static double LOCATOR_PERSCAN_CHUNK = 0.1;
-    public static double LOCATOR_PERSCAN_HOSTILE = 1;
-    public static double LOCATOR_PERSCAN_PASSIVE = 0.5;
-    public static double LOCATOR_PERSCAN_PLAYER = 2;
-    public static double LOCATOR_PERSCAN_ENERGY = 5;
-    public static double LOCATOR_FILTER_COST = 0.5;
+    public static ConfigSpec.IntValue LOCATOR_MAXENERGY;
+    public static ConfigSpec.IntValue LOCATOR_RECEIVEPERTICK;
+    public static ConfigSpec.IntValue LOCATOR_PERSCAN_BASE;
+    public static ConfigSpec.DoubleValue LOCATOR_PERSCAN_CHUNK;
+    public static ConfigSpec.DoubleValue LOCATOR_PERSCAN_HOSTILE;
+    public static ConfigSpec.DoubleValue LOCATOR_PERSCAN_PASSIVE;
+    public static ConfigSpec.DoubleValue LOCATOR_PERSCAN_PLAYER;
+    public static ConfigSpec.DoubleValue LOCATOR_PERSCAN_ENERGY;
+    public static ConfigSpec.DoubleValue LOCATOR_FILTER_COST;
 
-    public static int ticksPerLocatorScan = 40;
-    public static int locatorBeaconHeight = 30;
-    public static int locatorEntitySafety = 10;
-    public static int locatorMaxEnergyChunks = 5*5;
+    public static ConfigSpec.IntValue ticksPerLocatorScan;
+    public static ConfigSpec.IntValue locatorBeaconHeight;
+    public static ConfigSpec.IntValue locatorEntitySafety;
+    public static ConfigSpec.IntValue locatorMaxEnergyChunks;
 
-    public static int PROJECTOR_MAXENERGY = 500000;
-    public static int PROJECTOR_RECEIVEPERTICK = 10000;
-    public static int PROJECTOR_USEPERTICK = 1000;
+    public static ConfigSpec.IntValue PROJECTOR_MAXENERGY;
+    public static ConfigSpec.IntValue PROJECTOR_RECEIVEPERTICK;
+    public static ConfigSpec.IntValue PROJECTOR_USEPERTICK;
 
-    public static boolean useVBO = true;
+    public static ConfigSpec.BooleanValue useVBO;
 
     // Maximum dimension when the shape card is used for projection/scanner
-    public static int maxScannerDimension = 512;
-    public static int maxScannerOffset = 2048;
+    public static ConfigSpec.IntValue maxScannerDimension;
+    public static ConfigSpec.IntValue maxScannerOffset;
 
-    public static int surfaceAreaPerTick = 512*256*2;
-    public static int planeSurfacePerTick = 200*200;
-    public static int clientRenderDataTimeout = 10000;
+    public static ConfigSpec.IntValue surfaceAreaPerTick;
+    public static ConfigSpec.IntValue planeSurfacePerTick;
+    public static ConfigSpec.IntValue clientRenderDataTimeout;
 
-    public static int projectorFlashTimeout = 400;
+    public static ConfigSpec.IntValue projectorFlashTimeout;
 
-    public static float baseProjectorVolume = 0.4f;      // Use 0 to turn off projector sounds
+    public static ConfigSpec.DoubleValue baseProjectorVolume;      // Use 0 to turn off projector sounds
 
 
-    public static void init(Configuration cfg) {
-        cfg.addCustomCategoryComment(ScannerConfiguration.CATEGORY_SCANNER, "Settings for the scanner, composer, and projector");
-        SCANNER_MAXENERGY = cfg.get(CATEGORY_SCANNER, "scannerMaxRF", SCANNER_MAXENERGY,
-                "Maximum RF storage that the scanner can hold").getInt();
-        SCANNER_RECEIVEPERTICK = cfg.get(CATEGORY_SCANNER, "scannerRFPerTick", SCANNER_RECEIVEPERTICK,
-                "RF per tick that the scanner can receive").getInt();
-        SCANNER_PERTICK = cfg.get(CATEGORY_SCANNER, "scannerUsePerTick", SCANNER_PERTICK,
-                "Amount of RF needed per tick during the scan").getInt();
-        REMOTE_SCANNER_PERTICK = cfg.get(CATEGORY_SCANNER, "remoteScannerUsePerTick", REMOTE_SCANNER_PERTICK,
-                "Amount of RF needed per tick during the scan for a remote scanner").getInt();
-        LOCATOR_MAXENERGY = cfg.get(CATEGORY_SCANNER, "locatorMaxRF", LOCATOR_MAXENERGY,
-                "Maximum RF storage that the locator can hold").getInt();
-        LOCATOR_RECEIVEPERTICK = cfg.get(CATEGORY_SCANNER, "locatorRFPerTick", LOCATOR_RECEIVEPERTICK,
-                "RF per tick that the locator can receive").getInt();
+    public static void init(ConfigSpec.Builder SERVER_BUILDER, ConfigSpec.Builder CLIENT_BUILDER) {
+        SERVER_BUILDER.comment("Settings for the scanner, composer, and projector").push(CATEGORY_SCANNER);
+        CLIENT_BUILDER.comment("Settings for the scanner, composer, and projector").push(CATEGORY_SCANNER);
 
-        LOCATOR_PERSCAN_BASE = cfg.get(CATEGORY_SCANNER, "locatorUsePerTickBase", LOCATOR_PERSCAN_BASE,
-                "Fixed amount of RF needed for a scan").getInt();
-        LOCATOR_PERSCAN_CHUNK = cfg.get(CATEGORY_SCANNER, "locatorUsePerTickChunk", LOCATOR_PERSCAN_CHUNK,
-                "Base amount of RF needed for a scan per 16x16x16 subchunk").getDouble();
-        LOCATOR_PERSCAN_HOSTILE = cfg.get(CATEGORY_SCANNER, "locatorUsePerTickHostile", LOCATOR_PERSCAN_HOSTILE,
-                "Additional amount of RF per 16x16x16 subchunk needed for a scan for hostile entities").getDouble();
-        LOCATOR_PERSCAN_PASSIVE = cfg.get(CATEGORY_SCANNER, "locatorUsePerTickPassive", LOCATOR_PERSCAN_PASSIVE,
-                "Additional amount of RF per 16x16x16 subchunk needed for a scan for passive entities").getDouble();
-        LOCATOR_PERSCAN_PLAYER = cfg.get(CATEGORY_SCANNER, "locatorUsePerTickPlayer", LOCATOR_PERSCAN_PLAYER,
-                "Additional amount of RF per 16x16x16 subchunk needed for a scan for players").getDouble();
-        LOCATOR_PERSCAN_ENERGY = cfg.get(CATEGORY_SCANNER, "locatorUsePerTickEnergy", LOCATOR_PERSCAN_ENERGY,
-                "Additional amount of RF per 16x16x16 subchunk needed for a scan for low energy").getDouble();
-        LOCATOR_FILTER_COST = cfg.get(CATEGORY_SCANNER, "locatorFilterCost", LOCATOR_FILTER_COST,
-                "Additional amount of RF per 16x16x16 subchunk needed for a filtered scan").getDouble();
+        SCANNER_MAXENERGY = SERVER_BUILDER
+                .comment("Maximum RF storage that the scanner can hold")
+                .defineInRange("scannerMaxRF", 500000, 0, Integer.MAX_VALUE);
+        SCANNER_RECEIVEPERTICK = SERVER_BUILDER
+                .comment("RF per tick that the scanner can receive")
+                .defineInRange("scannerRFPerTick", 20000, 0, Integer.MAX_VALUE);
+        SCANNER_PERTICK = SERVER_BUILDER
+                .comment("Amount of RF needed per tick during the scan")
+                .defineInRange("scannerUsePerTick", 1000, 0, Integer.MAX_VALUE);
+        REMOTE_SCANNER_PERTICK = SERVER_BUILDER
+                .comment("Amount of RF needed per tick during the scan for a remote scanner")
+                .defineInRange("remoteScannerUsePerTick", 2000, 0, Integer.MAX_VALUE);
+        LOCATOR_MAXENERGY = SERVER_BUILDER
+                .comment("Maximum RF storage that the locator can hold")
+                .defineInRange("locatorMaxRF", 2000000, 0, Integer.MAX_VALUE);
+        LOCATOR_RECEIVEPERTICK = SERVER_BUILDER
+                .comment("RF per tick that the locator can receive")
+                .defineInRange("locatorRFPerTick", 20000, 0, Integer.MAX_VALUE);
+        LOCATOR_PERSCAN_BASE = SERVER_BUILDER
+                .comment("Fixed amount of RF needed for a scan")
+                .defineInRange("locatorUsePerTickBase", 5000, 0, Integer.MAX_VALUE);
 
-        PROJECTOR_MAXENERGY = cfg.get(CATEGORY_SCANNER, "projectorMaxRF", PROJECTOR_MAXENERGY,
-                "Maximum RF storage that the projector can hold").getInt();
-        PROJECTOR_RECEIVEPERTICK = cfg.get(CATEGORY_SCANNER, "projectorRFPerTick", PROJECTOR_RECEIVEPERTICK,
-                "RF per tick that the projector can receive").getInt();
-        PROJECTOR_USEPERTICK = cfg.get(CATEGORY_SCANNER, "projectorUsePerTick", PROJECTOR_USEPERTICK,
-                "RF/t for the projector while it is in use").getInt();
+        LOCATOR_PERSCAN_CHUNK = SERVER_BUILDER
+                .comment("Base amount of RF needed for a scan per 16x16x16 subchunk")
+                .defineInRange("locatorUsePerTickChunk", 0.1, 0, 1000000000.0);
+        LOCATOR_PERSCAN_HOSTILE = SERVER_BUILDER
+                .comment("Additional amount of RF per 16x16x16 subchunk needed for a scan for hostile entities")
+                .defineInRange("locatorUsePerTickHostile", 1.0, 0, 1000000000.0);
+        LOCATOR_PERSCAN_PASSIVE = SERVER_BUILDER
+                .comment("Additional amount of RF per 16x16x16 subchunk needed for a scan for passive entities")
+                .defineInRange("locatorUsePerTickPassive", 0.5, 0, 1000000000.0);
+        LOCATOR_PERSCAN_PLAYER = SERVER_BUILDER
+                .comment("Additional amount of RF per 16x16x16 subchunk needed for a scan for players")
+                .defineInRange("locatorUsePerTickPlayer", 2, 0, 1000000000.0);
+        LOCATOR_PERSCAN_ENERGY = SERVER_BUILDER
+                .comment("Additional amount of RF per 16x16x16 subchunk needed for a scan for low energy")
+                .defineInRange("locatorUsePerTickEnergy", 5, 0, 1000000000.0);
+        LOCATOR_FILTER_COST = SERVER_BUILDER
+                .comment("Additional amount of RF per 16x16x16 subchunk needed for a filtered scan")
+                .defineInRange("locatorFilterCost", 0.5, 0, 1000000000.0);
 
-        ticksPerLocatorScan = cfg.get(CATEGORY_SCANNER, "ticksPerLocatorScan", ticksPerLocatorScan,
-                "Number of ticks between every scan of the locator").getInt();
-        locatorBeaconHeight = cfg.get(CATEGORY_SCANNER, "locatorBeaconHeight", locatorBeaconHeight,
-                "Height of the beacon in case beacons are used").getInt();
-        locatorEntitySafety = cfg.get(CATEGORY_SCANNER, "locatorEntitySafety", locatorEntitySafety,
-                "Maximum amount of entities in a single block to show markers/beacons for").getInt();
-        locatorMaxEnergyChunks = cfg.get(CATEGORY_SCANNER, "locatorMaxEnergyChunks", locatorMaxEnergyChunks,
-                "Maximum amount of 16x16 chunks we support for energy scanning").getInt();
+        PROJECTOR_MAXENERGY = SERVER_BUILDER
+                .comment("Maximum RF storage that the projector can hold")
+                .defineInRange("projectorMaxRF", 500000, 0, Integer.MAX_VALUE);
+        PROJECTOR_RECEIVEPERTICK = SERVER_BUILDER
+                .comment("RF per tick that the projector can receive")
+                .defineInRange("projectorRFPerTick", 10000, 0, Integer.MAX_VALUE);
+        PROJECTOR_USEPERTICK = SERVER_BUILDER
+                .comment("RF/t for the projector while it is in use")
+                .defineInRange("projectorUsePerTick", 1000, 0, Integer.MAX_VALUE);
 
-        maxScannerOffset = cfg.get(CATEGORY_SCANNER, "maxScannerOffset", maxScannerOffset,
-                "Maximum offset of the shape when a shape card is used in the scanner/projector").getInt();
-        maxScannerDimension = cfg.get(CATEGORY_SCANNER, "maxScannerDimension", maxScannerDimension,
-                "Maximum dimension of the shape when a scanner/projector card is used").getInt();
+        ticksPerLocatorScan = SERVER_BUILDER
+                .comment("Number of ticks between every scan of the locator")
+                .defineInRange("ticksPerLocatorScan", 40, 0, Integer.MAX_VALUE);
+        locatorBeaconHeight = CLIENT_BUILDER
+                .comment("Height of the beacon in case beacons are used")
+                .defineInRange("locatorBeaconHeight", 30, 0, Integer.MAX_VALUE);
+        locatorEntitySafety = SERVER_BUILDER
+                .comment("Maximum amount of entities in a single block to show markers/beacons for")
+                .defineInRange("locatorEntitySafety", 10, 0, Integer.MAX_VALUE);
+        locatorMaxEnergyChunks = SERVER_BUILDER
+                .comment("Maximum amount of 16x16 chunks we support for energy scanning")
+                .defineInRange("locatorMaxEnergyChunks", 5*5, 0, Integer.MAX_VALUE);
 
-        surfaceAreaPerTick = cfg.get(CATEGORY_SCANNER, "surfaceAreaPerTick", surfaceAreaPerTick,
-                "The amount of surface area the scanner will scan in a tick. Increasing this will increase the speed of the scanner but cause more strain on the server",
-                100, 32768*32768).getInt();
-        planeSurfacePerTick = cfg.get(CATEGORY_SCANNER, "planeSurfacePerTick", planeSurfacePerTick,
-                "The amount of 'surface area' that the server will send to the client for the projector. Increasing this will increase the speed at which projections are ready but also increase the load for server and client",
-                100, 10000000).getInt();
-        clientRenderDataTimeout = cfg.get(CATEGORY_SCANNER, "clientRenderDataTimeout", clientRenderDataTimeout,
-                "The amount of milliseconds before the client will remove shape render data that hasn't been used. Decreasing this will free memory faster at the cost of having to update shape renders more often",
-                100, 1000000).getInt();
+        maxScannerOffset = SERVER_BUILDER
+                .comment("Maximum offset of the shape when a shape card is used in the scanner/projector")
+                .defineInRange("maxScannerOffset", 2048, 0, Integer.MAX_VALUE);
+        maxScannerDimension = SERVER_BUILDER
+                .comment("Maximum dimension of the shape when a scanner/projector card is used")
+                .defineInRange("maxScannerDimension", 512, 0, 10000);
 
-        projectorFlashTimeout = cfg.get(CATEGORY_SCANNER, "projectorFlashTimeout", projectorFlashTimeout,
-                "The amount of milliseconds that a scanline 'flash' will exist on the client",
-                10, 1000000).getInt();
+        surfaceAreaPerTick = SERVER_BUILDER
+                .comment("The amount of surface area the scanner will scan in a tick. Increasing this will increase the speed of the scanner but cause more strain on the server")
+                .defineInRange("surfaceAreaPerTick", 512*256*2,
+                100, 32768*32768);
+        planeSurfacePerTick = SERVER_BUILDER
+                .comment("The amount of 'surface area' that the server will send to the client for the projector. Increasing this will increase the speed at which projections are ready but also increase the load for server and client")
+                .defineInRange("planeSurfacePerTick", 200*200,
+                100, 10000000);
+        clientRenderDataTimeout = CLIENT_BUILDER
+                .comment("The amount of milliseconds before the client will remove shape render data that hasn't been used. Decreasing this will free memory faster at the cost of having to update shape renders more often")
+                .defineInRange("clientRenderDataTimeout", 10000,
+                100, 1000000);
 
-        baseProjectorVolume = (float) cfg.get(CATEGORY_SCANNER, "baseProjectorVolume", baseProjectorVolume,
-                "The volume for the projector sound (0.0 is off)").getDouble();
+        projectorFlashTimeout = CLIENT_BUILDER
+                .comment("The amount of milliseconds that a scanline 'flash' will exist on the client")
+                .defineInRange("projectorFlashTimeout", 400,
+                10, 1000000);
 
-        useVBO = cfg.get(CATEGORY_SCANNER, "useVBO", useVBO,
-                "Use VBO for rendering shapecard views. Otherwise display lists").getBoolean();
+        baseProjectorVolume = CLIENT_BUILDER
+                .comment("The volume for the projector sound (0.0 is off)")
+                .defineInRange("baseProjectorVolume", 0.4, 0, 1.0);
+
+        useVBO = CLIENT_BUILDER
+                .comment("Use VBO for rendering shapecard views. Otherwise display lists")
+                .define("useVBO", true);
+
+        SERVER_BUILDER.pop();
+        CLIENT_BUILDER.pop();
     }
 }

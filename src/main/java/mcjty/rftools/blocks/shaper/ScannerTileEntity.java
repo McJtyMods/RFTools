@@ -101,7 +101,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     private int progressBusy = -1;
 
     public ScannerTileEntity() {
-        super(ScannerConfiguration.SCANNER_MAXENERGY, ScannerConfiguration.SCANNER_RECEIVEPERTICK);
+        super(ScannerConfiguration.SCANNER_MAXENERGY.get(), ScannerConfiguration.SCANNER_RECEIVEPERTICK.get());
         setRSMode(RedstoneMode.REDSTONE_ONREQUIRED);
     }
 
@@ -112,7 +112,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
                 if (getStoredPower() >= getEnergyPerTick()) {
                     consumeEnergy(getEnergyPerTick());
                     int done = 0;
-                    while (progress != null && done < ScannerConfiguration.surfaceAreaPerTick) {
+                    while (progress != null && done < ScannerConfiguration.surfaceAreaPerTick.get()) {
                         progressScan();
                         done += dataDim.getZ() * dataDim.getY();  // We scan planes on the x axis
                     }
@@ -124,7 +124,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     protected long getEnergyPerTick() {
-        return ScannerConfiguration.SCANNER_PERTICK;
+        return ScannerConfiguration.SCANNER_PERTICK.get();
     }
 
     public int getScanProgress() {

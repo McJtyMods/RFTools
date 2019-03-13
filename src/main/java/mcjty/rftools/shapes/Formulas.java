@@ -220,8 +220,8 @@ public class Formulas {
                 ShapeRotation rotation = ShapeRotation.getByName(rot);
                 modifiers.add(new ShapeModifier(operation, flip, rotation));
 
-                BlockPos dim = ShapeCardItem.getClampedDimension(childTag, ScannerConfiguration.maxScannerDimension);
-                BlockPos off = ShapeCardItem.getClampedOffset(childTag, ScannerConfiguration.maxScannerOffset);
+                BlockPos dim = ShapeCardItem.getClampedDimension(childTag, ScannerConfiguration.maxScannerDimension.get());
+                BlockPos off = ShapeCardItem.getClampedOffset(childTag, ScannerConfiguration.maxScannerOffset.get());
                 BlockPos o = off.add(offset);
                 formula.setup(thisCoord, dim, o, childTag);
                 formulas.add(formula);

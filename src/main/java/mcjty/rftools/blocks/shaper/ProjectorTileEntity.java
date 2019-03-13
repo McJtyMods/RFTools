@@ -106,7 +106,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
     private boolean doNotifyClients = false;  // Set to true to notify clients
 
     public ProjectorTileEntity() {
-        super(ScannerConfiguration.PROJECTOR_MAXENERGY, ScannerConfiguration.PROJECTOR_RECEIVEPERTICK);
+        super(ScannerConfiguration.PROJECTOR_MAXENERGY.get(), ScannerConfiguration.PROJECTOR_RECEIVEPERTICK.get());
         for (int i = 0 ; i < operations.length ; i++) {
             operations[i] = new ProjectorOperation();
         }
@@ -127,7 +127,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
 
             boolean a = active;
             if (a) {
-                if (getStoredPower() < ScannerConfiguration.PROJECTOR_USEPERTICK) {
+                if (getStoredPower() < ScannerConfiguration.PROJECTOR_USEPERTICK.get()) {
                     a = false;
                 }
             }
@@ -138,7 +138,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
             }
 
             if (projecting) {
-                consumeEnergy(ScannerConfiguration.PROJECTOR_USEPERTICK);
+                consumeEnergy(ScannerConfiguration.PROJECTOR_USEPERTICK.get());
             }
             if (doNotifyClients) {
                 doNotifyClients = false;

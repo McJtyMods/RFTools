@@ -66,7 +66,7 @@ public class ScanDataManager extends AbstractWorldData<ScanDataManager> {
             scanData.put(id, data);
         } else {
             // Longer to accomodate for delay on locator
-            if (data.getBirthTime() + (ScannerConfiguration.ticksPerLocatorScan*100) < System.currentTimeMillis()) {
+            if (data.getBirthTime() + (ScannerConfiguration.ticksPerLocatorScan.get()*100) < System.currentTimeMillis()) {
                 data = new ScanExtraData();
                 scanData.put(id, data);
             }

@@ -312,7 +312,7 @@ public class ShapeRenderer {
                         createRenderData(tessellator, buffer, plane, data, grayscale);
                         plane.markClean();
                     }
-                    boolean flash = showScan && (plane.getBirthtime() > time-ScannerConfiguration.projectorFlashTimeout);
+                    boolean flash = showScan && (plane.getBirthtime() > time-ScannerConfiguration.projectorFlashTimeout.get());
                     if (flash) {
                         needScanSound = true;
                         GlStateManager.enableBlend();
@@ -468,10 +468,10 @@ public class ShapeRenderer {
 
             if (doBeacon) {
                 buffer.setTranslation(origOffsetX, origOffsetY+.2f, origOffsetZ);
-                addSideN(buffer, r, g, b, .1f, ScannerConfiguration.locatorBeaconHeight);
-                addSideS(buffer, r, g, b, .1f, ScannerConfiguration.locatorBeaconHeight);
-                addSideW(buffer, r, g, b, .1f, ScannerConfiguration.locatorBeaconHeight);
-                addSideE(buffer, r, g, b, .1f, ScannerConfiguration.locatorBeaconHeight);
+                addSideN(buffer, r, g, b, .1f, ScannerConfiguration.locatorBeaconHeight.get());
+                addSideS(buffer, r, g, b, .1f, ScannerConfiguration.locatorBeaconHeight.get());
+                addSideW(buffer, r, g, b, .1f, ScannerConfiguration.locatorBeaconHeight.get());
+                addSideE(buffer, r, g, b, .1f, ScannerConfiguration.locatorBeaconHeight.get());
             }
 
             buffer.setTranslation(origOffsetX, origOffsetY, origOffsetZ);

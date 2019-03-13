@@ -45,6 +45,6 @@ public class ProjectorSound extends MovingSound {
             donePlaying = true;
             return;
         }
-        volume = ScannerConfiguration.baseProjectorVolume;
+        volume = (float) ScannerConfiguration.baseProjectorVolume.get();
     }
 }

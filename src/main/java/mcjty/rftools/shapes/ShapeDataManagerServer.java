@@ -82,7 +82,7 @@ public class ShapeDataManagerServer {
             ShapeID shapeID = entry.getKey();
             WorkQueue queue = entry.getValue();
 
-            int pertick = ScannerConfiguration.planeSurfacePerTick;
+            int pertick = ScannerConfiguration.planeSurfacePerTick.get();
             while (!queue.workQueue.isEmpty()) {
                 WorkUnit unit = queue.workQueue.removeFirst();
                 queue.workingOn.remove(unit.getOffsetY());
