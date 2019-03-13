@@ -55,13 +55,14 @@ public class ModSetup extends DefaultModSetup {
         MinecraftForge.EVENT_BUS.register(WorldTickHandler.instance);
         NetworkRegistry.INSTANCE.registerGuiHandler(RFTools.instance, new GuiProxy());
 
+        ConfigSetup.init();
+
         CommandHandler.registerCommands();
         RFTools.screenModuleRegistry.registerBuiltins();
         reflect();
         ForgeChunkManager.setForcedChunkLoadingCallback(RFTools.instance, (tickets, world) -> { });
         setupCapabilities();
 
-        ConfigSetup.init();
         RFToolsMessages.registerMessages("rftools");
 
         ModItems.init();
