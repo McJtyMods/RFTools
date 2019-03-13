@@ -33,7 +33,7 @@ public class MachineInfuserTileEntity extends GenericEnergyReceiverTileEntity im
     private int infusing = 0;
 
     public MachineInfuserTileEntity() {
-        super(MachineInfuserConfiguration.MAXENERGY, MachineInfuserConfiguration.RECEIVEPERTICK);
+        super(MachineInfuserConfiguration.MAXENERGY.get(), MachineInfuserConfiguration.RECEIVEPERTICK.get());
     }
 
     @Override
@@ -118,7 +118,7 @@ public class MachineInfuserTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     private void startInfusing() {
-        int rf = MachineInfuserConfiguration.rfPerTick;
+        int rf = MachineInfuserConfiguration.rfPerTick.get();
         rf = (int) (rf * (2.0f - getInfusedFactor()) / 2.0f);
 
         if (getStoredPower() < rf) {
