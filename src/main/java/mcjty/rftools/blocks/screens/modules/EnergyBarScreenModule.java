@@ -72,7 +72,7 @@ public class EnergyBarScreenModule implements IScreenModule<IModuleDataContents>
 
     @Override
     public int getRfPerTick() {
-        return ScreenConfiguration.ENERGY_RFPERTICK;
+        return ScreenConfiguration.ENERGY_RFPERTICK.get();
     }
 
     @Override

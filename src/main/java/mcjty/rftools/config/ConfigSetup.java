@@ -38,6 +38,7 @@ public class ConfigSetup {
         CoalGeneratorConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
         CrafterConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
         ModularStorageConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
+        ScreenConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
     }
 
     public static ConfigSpec SERVER_CONFIG;
@@ -53,7 +54,6 @@ public class ConfigSetup {
             SERVER_CONFIG = SERVER_BUILDER.build(mainConfig);
             CLIENT_CONFIG = CLIENT_BUILDER.build(mainConfig);
 
-            ScreenConfiguration.init(cfg);
             MachineInfuserConfiguration.init(cfg);
             BuilderConfiguration.init(cfg);
             ScannerConfiguration.init(cfg);

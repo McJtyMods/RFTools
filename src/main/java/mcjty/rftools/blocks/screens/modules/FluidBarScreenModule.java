@@ -79,7 +79,7 @@ public class FluidBarScreenModule implements IScreenModule<IModuleDataContents> 
 
     @Override
     public int getRfPerTick() {
-        return ScreenConfiguration.FLUID_RFPERTICK;
+        return ScreenConfiguration.FLUID_RFPERTICK.get();
     }
 
     @Override

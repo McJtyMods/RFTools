@@ -23,7 +23,7 @@ public class TextScreenModule implements IScreenModule<IModuleData> {
 
     @Override
     public int getRfPerTick() {
-        return ScreenConfiguration.TEXT_RFPERTICK;
+        return ScreenConfiguration.TEXT_RFPERTICK.get();
     }
 
     @Override

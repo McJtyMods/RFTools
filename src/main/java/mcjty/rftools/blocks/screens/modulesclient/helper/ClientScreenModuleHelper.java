@@ -68,7 +68,7 @@ public class ClientScreenModuleHelper implements IModuleRenderHelper {
                 }
             }
             if (diffTxt != null) {
-                if (ScreenConfiguration.useTruetype) {
+                if (ScreenConfiguration.useTruetype.get()) {
                     float r = (col >> 16 & 255) / 255.0f;
                     float g = (col >> 8 & 255) / 255.0f;
                     float b = (col & 255) / 255.0f;

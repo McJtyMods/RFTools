@@ -176,7 +176,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
 
     @Override
     public int getRfPerTick() {
-        return ScreenConfiguration.STORAGE_CONTROL_RFPERTICK;
+        return ScreenConfiguration.STORAGE_CONTROL_RFPERTICK.get();
     }
 
 

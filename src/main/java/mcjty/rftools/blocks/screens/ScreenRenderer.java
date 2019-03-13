@@ -114,7 +114,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
 
     private Map<Integer, IModuleData> updateScreenData(ScreenTileEntity screenTileEntity) {
         long millis = System.currentTimeMillis();
-        if ((millis - screenTileEntity.lastTime > ScreenConfiguration.SCREEN_REFRESH_TIMING) && screenTileEntity.isNeedsServerData()) {
+        if ((millis - screenTileEntity.lastTime > ScreenConfiguration.SCREEN_REFRESH_TIMING.get()) && screenTileEntity.isNeedsServerData()) {
             screenTileEntity.lastTime = millis;
             GlobalCoordinate pos = new GlobalCoordinate(screenTileEntity.getPos(), screenTileEntity.getWorld().provider.getDimension());
             RFToolsMessages.INSTANCE.sendToServer(new PacketGetScreenData(RFTools.MODID, pos, millis));
@@ -214,7 +214,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
                         switch (tileEntity.getTrueTypeMode()) {
                             case -1: break;
                             case 1: font = ClientProxy.font; break;
-                            case 0: font = ScreenConfiguration.useTruetype ? ClientProxy.font : null; break;
+                            case 0: font = ScreenConfiguration.useTruetype.get() ? ClientProxy.font : null; break;
                         }
                         ModuleRenderInfo renderInfo = new ModuleRenderInfo(factor, pos, hitx, hity, font);
                         module.render(clientScreenModuleHelper, fontrenderer, currenty, data, renderInfo);

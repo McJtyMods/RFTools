@@ -25,7 +25,7 @@ public class ItemStackPlusScreenModule extends ItemStackScreenModule {
 
     @Override
     public int getRfPerTick() {
-        return ScreenConfiguration.ITEMSTACKPLUS_RFPERTICK;
+        return ScreenConfiguration.ITEMSTACKPLUS_RFPERTICK.get();
     }
 
     @Override

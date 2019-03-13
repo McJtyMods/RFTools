@@ -28,7 +28,7 @@ public class FluidPlusBarScreenModule extends FluidBarScreenModule {
 
     @Override
     public int getRfPerTick() {
-        return ScreenConfiguration.FLUIDPLUS_RFPERTICK;
+        return ScreenConfiguration.FLUIDPLUS_RFPERTICK.get();
     }
 
     @Override

@@ -42,7 +42,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
     private int tickCounter = 20;
 
     public ScreenControllerTileEntity() {
-        super(ScreenConfiguration.CONTROLLER_MAXENERGY, ScreenConfiguration.CONTROLLER_RECEIVEPERTICK);
+        super(ScreenConfiguration.CONTROLLER_MAXENERGY.get(), ScreenConfiguration.CONTROLLER_RECEIVEPERTICK.get());
     }
 
 //    @Override

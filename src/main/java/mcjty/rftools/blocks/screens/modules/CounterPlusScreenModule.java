@@ -27,7 +27,7 @@ public class CounterPlusScreenModule extends CounterScreenModule {
 
     @Override
     public int getRfPerTick() {
-        return ScreenConfiguration.COUNTERPLUS_RFPERTICK;
+        return ScreenConfiguration.COUNTERPLUS_RFPERTICK.get();
     }
 
     @Override

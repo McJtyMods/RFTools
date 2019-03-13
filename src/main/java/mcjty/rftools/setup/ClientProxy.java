@@ -51,8 +51,8 @@ public class ClientProxy extends DefaultClientProxy {
         MinecraftForge.EVENT_BUS.register(new KeyInputHandler());
         KeyBindings.init();
 
-        font = FontLoader.createFont(new ResourceLocation(ScreenConfiguration.font), ScreenConfiguration.fontSize, false, Font.TRUETYPE_FONT,
-                ScreenConfiguration.additionalCharacters.toCharArray());
+        font = FontLoader.createFont(new ResourceLocation(ScreenConfiguration.font.get()), (float) ScreenConfiguration.fontSize.get(), false, Font.TRUETYPE_FONT,
+                ScreenConfiguration.additionalCharacters.get().toCharArray());
     }
 
     @SubscribeEvent

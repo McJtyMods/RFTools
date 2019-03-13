@@ -59,7 +59,7 @@ public class ComputerScreenModule implements IScreenModule<ComputerScreenModule.
     }
     @Override
     public int getRfPerTick() {
-        return ScreenConfiguration.COMPUTER_RFPERTICK;
+        return ScreenConfiguration.COMPUTER_RFPERTICK.get();
     }
     @Override
     public void mouseClick(World world, int x, int y, boolean clicked, EntityPlayer player) {

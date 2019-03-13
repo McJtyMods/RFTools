@@ -71,6 +71,6 @@ public class ButtonScreenModule implements IScreenModule<IModuleDataBoolean> {
 
     @Override
     public int getRfPerTick() {
-        return ScreenConfiguration.BUTTON_RFPERTICK;
+        return ScreenConfiguration.BUTTON_RFPERTICK.get();
     }
 }

@@ -72,7 +72,7 @@ public class MachineInformationScreenModule implements IScreenModule<IModuleData
 
     @Override
     public int getRfPerTick() {
-        return ScreenConfiguration.MACHINEINFO_RFPERTICK;
+        return ScreenConfiguration.MACHINEINFO_RFPERTICK.get();
     }
 
     @Override

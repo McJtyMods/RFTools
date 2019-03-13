@@ -32,7 +32,7 @@ public class EnergyPlusBarScreenModule extends EnergyBarScreenModule {
 
     @Override
     public int getRfPerTick() {
-        return ScreenConfiguration.ENERGYPLUS_RFPERTICK;
+        return ScreenConfiguration.ENERGYPLUS_RFPERTICK.get();
     }
 
     @Override

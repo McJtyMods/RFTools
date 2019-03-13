@@ -219,6 +219,6 @@ public class ElevatorButtonScreenModule implements IScreenModule<ElevatorButtonS
 
     @Override
     public int getRfPerTick() {
-        return ScreenConfiguration.ELEVATOR_BUTTON_RFPERTICK;
+        return ScreenConfiguration.ELEVATOR_BUTTON_RFPERTICK.get();
     }
 }

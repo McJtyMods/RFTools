@@ -188,7 +188,7 @@ public class ItemStackScreenModule implements IScreenModule<ItemStackScreenModul
 
     @Override
     public int getRfPerTick() {
-        return ScreenConfiguration.ITEMSTACK_RFPERTICK;
+        return ScreenConfiguration.ITEMSTACK_RFPERTICK.get();
     }
 
     @Override

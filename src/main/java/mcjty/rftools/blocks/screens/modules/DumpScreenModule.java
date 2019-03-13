@@ -106,6 +106,6 @@ public class DumpScreenModule implements IScreenModule<IModuleData> {
 
     @Override
     public int getRfPerTick() {
-        return ScreenConfiguration.DUMP_RFPERTICK;
+        return ScreenConfiguration.DUMP_RFPERTICK.get();
     }
 }

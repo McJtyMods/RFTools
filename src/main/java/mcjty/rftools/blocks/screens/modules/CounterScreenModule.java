@@ -65,7 +65,7 @@ public class CounterScreenModule implements IScreenModule<IModuleDataInteger> {
 
     @Override
     public int getRfPerTick() {
-        return ScreenConfiguration.COUNTER_RFPERTICK;
+        return ScreenConfiguration.COUNTER_RFPERTICK.get();
     }
 
     @Override

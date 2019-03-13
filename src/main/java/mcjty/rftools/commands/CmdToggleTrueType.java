@@ -21,7 +21,8 @@ public class CmdToggleTrueType extends AbstractRfToolsCommand {
 
     @Override
     public void execute(ICommandSender sender, String[] args) {
-        ScreenConfiguration.useTruetype = !ScreenConfiguration.useTruetype;
+        // @todo fix the 1.13 way?
+        //        ScreenConfiguration.useTruetype.set(!ScreenConfiguration.useTruetype.get());
     }
 
     @Override

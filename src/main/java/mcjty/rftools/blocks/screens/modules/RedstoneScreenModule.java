@@ -76,7 +76,7 @@ public class RedstoneScreenModule implements IScreenModule<IModuleDataInteger> {
 
     @Override
     public int getRfPerTick() {
-        return ScreenConfiguration.REDSTONE_RFPERTICK;
+        return ScreenConfiguration.REDSTONE_RFPERTICK.get();
     }
 
     @Override

@@ -47,9 +47,10 @@ public class CmdFont extends AbstractRfToolsCommand {
             return;
         }
 
-        ScreenConfiguration.font = fetchString(sender, args, 1, "rftools:fonts/ubuntu.ttf");
-        ScreenConfiguration.fontSize = fetchFloat(sender, args, 2, 40);
-        TrueTypeFont font = FontLoader.createFont(new ResourceLocation(ScreenConfiguration.font), ScreenConfiguration.fontSize, false);
+        // @todo, fix the 1.13 way
+//        ScreenConfiguration.font = fetchString(sender, args, 1, "rftools:fonts/ubuntu.ttf");
+//        ScreenConfiguration.fontSize = fetchFloat(sender, args, 2, 40);
+        TrueTypeFont font = FontLoader.createFont(new ResourceLocation(ScreenConfiguration.font.get()), (float) ScreenConfiguration.fontSize.get(), false);
         if (font == null) {
             ITextComponent component = new TextComponentString(TextFormatting.RED + "Could not load font!");
             if (sender instanceof EntityPlayer) {

@@ -23,7 +23,7 @@ public class ClockScreenModule implements IScreenModule<IModuleData> {
 
     @Override
     public int getRfPerTick() {
-        return ScreenConfiguration.CLOCK_RFPERTICK;
+        return ScreenConfiguration.CLOCK_RFPERTICK.get();
     }
 
     @Override
