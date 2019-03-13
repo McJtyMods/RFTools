@@ -103,7 +103,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            int totpower = PowerCellConfiguration.rfPerNormalCell * getPowerFactor() / simpleFactor;
+            int totpower = PowerCellConfiguration.rfPerNormalCell.get() * getPowerFactor() / simpleFactor.get();
             list.add(TextFormatting.WHITE + "This block can store power (" + totpower + " RF)");
             list.add(TextFormatting.WHITE + "Optionally in a big multi dimensional structure");
             list.add(TextFormatting.YELLOW + "Infusing bonus: reduced long distance power");
@@ -147,7 +147,7 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
         if (isSimple()) {
             return 1;
         }
-        return isAdvanced() ? (advancedFactor * simpleFactor) : simpleFactor;
+        return isAdvanced() ? (advancedFactor.get() * simpleFactor.get()) : simpleFactor.get();
     }
 
     @Override
@@ -206,9 +206,9 @@ public class PowerCellBlock extends GenericRFToolsBlock<PowerCellTileEntity, Pow
                 lastTime = System.currentTimeMillis();
                 powercell.requestDataFromServer(RFTools.MODID, PowerCellTileEntity.CMD_GET_INFO, TypedMap.EMPTY);
             }
-            long total = (PowerCellTileEntity.tooltipBlocks - PowerCellTileEntity.tooltipAdvancedBlocks - (long) PowerCellTileEntity.tooltipSimpleBlocks) * PowerCellConfiguration.rfPerNormalCell;
-            total += (long) PowerCellTileEntity.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerNormalCell * advancedFactor;
-            total += (long) PowerCellTileEntity.tooltipSimpleBlocks * PowerCellConfiguration.rfPerNormalCell / PowerCellConfiguration.simpleFactor;
+            long total = (PowerCellTileEntity.tooltipBlocks - PowerCellTileEntity.tooltipAdvancedBlocks - (long) PowerCellTileEntity.tooltipSimpleBlocks) * PowerCellConfiguration.rfPerNormalCell.get();
+            total += (long) PowerCellTileEntity.tooltipAdvancedBlocks * PowerCellConfiguration.rfPerNormalCell.get() * advancedFactor.get();
+            total += (long) PowerCellTileEntity.tooltipSimpleBlocks * PowerCellConfiguration.rfPerNormalCell.get() / PowerCellConfiguration.simpleFactor.get();
             if (total > Integer.MAX_VALUE) {
                 total = Integer.MAX_VALUE;
             }

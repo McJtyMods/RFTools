@@ -118,9 +118,9 @@ public class PowerCellNetwork extends AbstractWorldData<PowerCellNetwork> {
         }
 
         public int calculateMaximumEnergy() {
-            long totEnergyLong = (long) PowerCellConfiguration.rfPerNormalCell * (getBlockCount() - getAdvancedBlockCount() - getSimpleBlockCount())
-                    + (long) PowerCellConfiguration.rfPerNormalCell * advancedFactor * getAdvancedBlockCount()
-                    + ((long) PowerCellConfiguration.rfPerNormalCell * getSimpleBlockCount() / simpleFactor);
+            long totEnergyLong = (long) PowerCellConfiguration.rfPerNormalCell.get() * (getBlockCount() - getAdvancedBlockCount() - getSimpleBlockCount())
+                    + (long) PowerCellConfiguration.rfPerNormalCell.get() * advancedFactor.get() * getAdvancedBlockCount()
+                    + ((long) PowerCellConfiguration.rfPerNormalCell.get() * getSimpleBlockCount() / simpleFactor.get());
             if (totEnergyLong > Integer.MAX_VALUE) {
                 return Integer.MAX_VALUE;
             }
@@ -186,20 +186,20 @@ public class PowerCellNetwork extends AbstractWorldData<PowerCellNetwork> {
             boolean dim2rftools = RFTools.setup.rftoolsDimensions && RFToolsDimensionChecker.isRFToolsDimension(world, c2.getDimension());
             double rftoolsdimMult = 1.0;
             if (dim1rftools) {
-                rftoolsdimMult *= PowerCellConfiguration.powerCellRFToolsDimensionAdvantage;
+                rftoolsdimMult *= PowerCellConfiguration.powerCellRFToolsDimensionAdvantage.get();
             }
             if (dim2rftools) {
-                rftoolsdimMult *= PowerCellConfiguration.powerCellRFToolsDimensionAdvantage;
+                rftoolsdimMult *= PowerCellConfiguration.powerCellRFToolsDimensionAdvantage.get();
             }
 
             if (c1.getDimension() != c2.getDimension()) {
-                return PowerCellConfiguration.powerCellDistanceCap * rftoolsdimMult;
+                return PowerCellConfiguration.powerCellDistanceCap .get()* rftoolsdimMult;
             }
             double dist = Math.sqrt(c1.getCoordinate().distanceSq(c2.getCoordinate()));
-            if (dist > PowerCellConfiguration.powerCellDistanceCap) {
-                dist = PowerCellConfiguration.powerCellDistanceCap;
-            } else if (dist < PowerCellConfiguration.powerCellMinDistance) {
-                dist = PowerCellConfiguration.powerCellMinDistance;
+            if (dist > PowerCellConfiguration.powerCellDistanceCap.get()) {
+                dist = PowerCellConfiguration.powerCellDistanceCap.get();
+            } else if (dist < PowerCellConfiguration.powerCellMinDistance.get()) {
+                dist = PowerCellConfiguration.powerCellMinDistance.get();
             }
             return dist * rftoolsdimMult;
         }
@@ -229,7 +229,7 @@ public class PowerCellNetwork extends AbstractWorldData<PowerCellNetwork> {
 
                             // 'factor' indicates the cost of getting power out of blocks part of 'blob2'
                             // from the perspective of 'blob'.
-                            double factor = 1 + (dist / PowerCellConfiguration.powerCellDistanceCap) * (PowerCellConfiguration.powerCellCostFactor - 1) * part;
+                            double factor = 1 + (dist / PowerCellConfiguration.powerCellDistanceCap.get()) * (PowerCellConfiguration.powerCellCostFactor.get() - 1) * part;
 
                             totalfactor += factor;
                         }
@@ -277,14 +277,14 @@ public class PowerCellNetwork extends AbstractWorldData<PowerCellNetwork> {
         public int getEnergySingleBlock(boolean advanced, boolean simple) {
             // Count how many blocks there would be if all powercells would be simple blocks:
             int simpleBlockCount = Math.max(1,
-                    (blocks.size() - advancedBlocks - simpleBlocks) * simpleFactor
-                    + advancedBlocks * advancedFactor * simpleFactor
+                    (blocks.size() - advancedBlocks - simpleBlocks) * simpleFactor.get()
+                    + advancedBlocks * advancedFactor.get() * simpleFactor.get()
                     + simpleBlocks);
             long rc = energy / simpleBlockCount;
             if (advanced) {
-                rc *= advancedFactor * simpleFactor;
+                rc *= advancedFactor.get() * simpleFactor.get();
             } else if (!simple) {
-                rc *= simpleFactor;
+                rc *= simpleFactor.get();
             }
             return rc > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int)rc;
         }

@@ -307,12 +307,12 @@ public class PowerCellTileEntity extends GenericTileEntity implements DefaultSid
             return;
         }
 
-        int rfToGive = Math.min(PowerCellConfiguration.CHARGEITEMPERTICK, getEnergyStored());
+        int rfToGive = Math.min(PowerCellConfiguration.CHARGEITEMPERTICK.get(), getEnergyStored());
         int received = (int)EnergyTools.receiveEnergy(stack, rfToGive);
         if (received == 0) {
             return;
         }
-        extractEnergyInternal(received, false, PowerCellConfiguration.CHARGEITEMPERTICK);
+        extractEnergyInternal(received, false, PowerCellConfiguration.CHARGEITEMPERTICK.get());
     }
 
     private void sendOutEnergy() {
@@ -356,7 +356,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements DefaultSid
     }
 
     public int getRfPerTickPerSide() {
-        return (int) (PowerCellConfiguration.rfPerTick * getPowerFactor() / simpleFactor * (getInfusedFactor()*.5+1));
+        return (int) (PowerCellConfiguration.rfPerTick.get() * getPowerFactor() / simpleFactor.get() * (getInfusedFactor()*.5+1));
     }
 
     private void handleCardRemoval() {
@@ -409,7 +409,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements DefaultSid
         if (isSimple()) {
             return 1;
         }
-        return isAdvanced() ? (advancedFactor * simpleFactor) : simpleFactor;
+        return isAdvanced() ? (advancedFactor.get() * simpleFactor.get()) : simpleFactor.get();
     }
 
     public int getEnergy() {
@@ -504,7 +504,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements DefaultSid
     }
 
     private int receiveEnergyLocal(int maxReceive, boolean simulate) {
-        long capacityL = (long)PowerCellConfiguration.rfPerNormalCell * getPowerFactor() / simpleFactor;
+        long capacityL = (long)PowerCellConfiguration.rfPerNormalCell.get() * getPowerFactor() / simpleFactor.get();
         int capacity = capacityL > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int)capacityL;
         int maxInsert = Math.min(capacity - energy, maxReceive);
         if (maxInsert > 0) {
@@ -580,7 +580,7 @@ public class PowerCellTileEntity extends GenericTileEntity implements DefaultSid
         }
         int networkId = getNetworkId();
         if (networkId == -1) {
-            return PowerCellConfiguration.rfPerNormalCell * getPowerFactor() / simpleFactor;
+            return PowerCellConfiguration.rfPerNormalCell.get() * getPowerFactor() / simpleFactor.get();
         }
         PowerCellNetwork.Network network = getNetwork();
         return network.calculateMaximumEnergy();
