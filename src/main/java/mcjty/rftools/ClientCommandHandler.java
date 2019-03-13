@@ -66,7 +66,7 @@ public class ClientCommandHandler {
             MatterTransmitterBlock.setDestinationInfo(arguments.get(PARAM_ID), arguments.get(PARAM_NAME));
             return true;
         });
-        if(SecurityConfiguration.enabled) {
+        if(SecurityConfiguration.enabled.get()) {
             McJtyLib.registerClientCommand(RFTools.MODID, CMD_RETURN_SECURITY_NAME, (player, arguments) -> {
                 SecurityCardItem.channelNameFromServer = arguments.get(PARAM_NAME);
                 return true;

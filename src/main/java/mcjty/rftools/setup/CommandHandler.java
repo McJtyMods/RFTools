@@ -138,7 +138,7 @@ public class CommandHandler {
             BuilderTools.returnChamberInfo(player);
             return true;
         });
-        if(SecurityConfiguration.enabled) {
+        if(SecurityConfiguration.enabled.get()) {
             McJtyLib.registerCommand(RFTools.MODID, CMD_GET_SECURITY_INFO, (player, arguments) -> {
                 SecurityTools.returnSecurityInfo(player, arguments.get(PARAM_ID));
                 return true;

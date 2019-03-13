@@ -35,7 +35,7 @@ public abstract class GenericRFToolsBlock<T extends GenericTileEntity, C extends
 
     @Override
     public boolean checkAccess(World world, EntityPlayer player, TileEntity te) {
-        if (SecurityConfiguration.enabled && te instanceof GenericTileEntity) {
+        if (SecurityConfiguration.enabled.get() && te instanceof GenericTileEntity) {
             GenericTileEntity genericTileEntity = (GenericTileEntity) te;
             if ((!OrphaningCardItem.isPrivileged(player, world)) && (!player.getPersistentID().equals(genericTileEntity.getOwnerUUID()))) {
                 int securityChannel = genericTileEntity.getSecurityChannel();

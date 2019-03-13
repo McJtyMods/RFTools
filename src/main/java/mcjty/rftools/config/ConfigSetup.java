@@ -34,6 +34,7 @@ public class ConfigSetup {
 
     static {
         GeneralConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
+        SecurityConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
     }
 
     public static ConfigSpec SERVER_CONFIG;
@@ -51,7 +52,6 @@ public class ConfigSetup {
 
             GeneralConfiguration.resolve();
 
-            SecurityConfiguration.init(cfg);
             CoalGeneratorConfiguration.init(cfg);
             CrafterConfiguration.init(cfg);
             ModularStorageConfiguration.init(cfg);

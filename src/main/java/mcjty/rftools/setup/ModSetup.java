@@ -61,9 +61,9 @@ public class ModSetup extends DefaultModSetup {
         ForgeChunkManager.setForcedChunkLoadingCallback(RFTools.instance, (tickets, world) -> { });
         setupCapabilities();
 
+        ConfigSetup.init();
         RFToolsMessages.registerMessages("rftools");
 
-        ConfigSetup.init();
         ModItems.init();
         ModBlocks.init();
         ModWorldgen.init();

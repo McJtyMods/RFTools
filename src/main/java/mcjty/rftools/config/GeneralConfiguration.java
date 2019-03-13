@@ -2,7 +2,7 @@ package mcjty.rftools.config;
 
 import mcjty.lib.thirteen.ConfigSpec;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -67,16 +67,12 @@ public class GeneralConfiguration {
                 .comment("Craftability of dimensional shards if RFTools Dimension is not present: 0=not, 1=easy, 2=hard")
                 .defineInRange("dimensionalShardRecipeWithoutDimensions", CRAFT_HARD, 0, 2);
 
-        List<Integer> defaults = new ArrayList<>();
-        defaults.add(-1);
-        defaults.add(1);
-
         dimensionalShardOregenWithDimensions = SERVER_BUILDER
                 .comment("Oregen for dimensional shards in case RFTools Dimensions is present")
-                .defineIntList("dimensionalShardOregenWithDimensions", defaults, o -> o instanceof Integer);
+                .defineIntList("dimensionalShardOregenWithDimensions", Arrays.asList(-1, 1), o -> o instanceof Integer);
         dimensionalShardOregenWithoutDimensions = SERVER_BUILDER
                 .comment("Oregen for dimensional shards in case RFTools Dimensions is not present")
-                .defineIntList("dimensionalShardOregenWithoutDimensions", defaults, o -> o instanceof Integer);
+                .defineIntList("dimensionalShardOregenWithoutDimensions", Arrays.asList(-1, 1), o -> o instanceof Integer);
 
         maxMobInjections = SERVER_BUILDER
                 .comment("Amount of injections needed to get a fully absorbed mob essence")

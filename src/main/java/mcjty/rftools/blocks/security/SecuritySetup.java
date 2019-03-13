@@ -19,7 +19,7 @@ public class SecuritySetup {
     public static OrphaningCardItem orphaningCardItem;
 
     public static void init() {
-        if(!SecurityConfiguration.enabled) return;
+        if(!SecurityConfiguration.enabled.get()) return;
         securityManagerBlock = ModBlocks.builderFactory.<SecurityManagerTileEntity> builder("security_manager")
                 .tileEntityClass(SecurityManagerTileEntity.class)
                 .container(SecurityManagerTileEntity.CONTAINER_FACTORY)
@@ -37,7 +37,7 @@ public class SecuritySetup {
 
     @SideOnly(Side.CLIENT)
     public static void initClient() {
-        if(!SecurityConfiguration.enabled) return;
+        if(!SecurityConfiguration.enabled.get()) return;
         securityManagerBlock.initModel();
         securityManagerBlock.setGuiFactory(GuiSecurityManager::new);
         orphaningCardItem.initModel();
