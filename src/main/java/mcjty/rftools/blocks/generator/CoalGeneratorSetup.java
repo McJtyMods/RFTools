@@ -12,7 +12,7 @@ public class CoalGeneratorSetup {
     public static GenericBlock<CoalGeneratorTileEntity, GenericContainer> coalGeneratorBlock;
 
     public static void init() {
-        if(CoalGeneratorConfiguration.enabled) {
+        if(CoalGeneratorConfiguration.enabled.get()) {
             coalGeneratorBlock = ModBlocks.builderFactory.<CoalGeneratorTileEntity> builder("coalgenerator")
                     .tileEntityClass(CoalGeneratorTileEntity.class)
                     .container(CoalGeneratorTileEntity.CONTAINER_FACTORY)
@@ -22,14 +22,14 @@ public class CoalGeneratorSetup {
                     .infusable()
                     .info("message.rftools.shiftmessage")
                     .infoExtended("message.rftools.coalgenerator")
-                    .infoExtendedParameter(stack -> Long.toString(CoalGeneratorConfiguration.rfPerTick))
+                    .infoExtendedParameter(stack -> Long.toString(CoalGeneratorConfiguration.rfPerTick.get()))
                     .build();
         }
     }
 
     @SideOnly(Side.CLIENT)
     public static void initClient() {
-        if(CoalGeneratorConfiguration.enabled) {
+        if(CoalGeneratorConfiguration.enabled.get()) {
             coalGeneratorBlock.initModel();
             coalGeneratorBlock.setGuiFactory(GuiCoalGenerator::new);
         }

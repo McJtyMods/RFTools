@@ -57,7 +57,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyStorageTileEntity impl
     private int burning;
 
     public CoalGeneratorTileEntity() {
-        super(CoalGeneratorConfiguration.MAXENERGY, CoalGeneratorConfiguration.SENDPERTICK);
+        super(CoalGeneratorConfiguration.MAXENERGY.get(), CoalGeneratorConfiguration.SENDPERTICK.get());
     }
 
     @Override
@@ -132,7 +132,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyStorageTileEntity impl
 
             if (inventoryHelper.containsItem(SLOT_COALINPUT)) {
                 ItemStack extracted = inventoryHelper.decrStackSize(SLOT_COALINPUT, 1);
-                burning = CoalGeneratorConfiguration.ticksPerCoal;
+                burning = CoalGeneratorConfiguration.ticksPerCoal.get();
                 if (extracted.getItem() == Item.getItemFromBlock(Blocks.COAL_BLOCK)) {
                     burning *= 9;
                 }
@@ -151,7 +151,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyStorageTileEntity impl
     }
 
     public long getRfPerTick() {
-        long rf = CoalGeneratorConfiguration.rfPerTick;
+        long rf = CoalGeneratorConfiguration.rfPerTick.get();
         rf += (long) (rf * getInfusedFactor());
         return rf;
     }
@@ -181,7 +181,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyStorageTileEntity impl
             return;
         }
         long storedPower = getStoredPower();
-        long rfToGive = Math.min(CoalGeneratorConfiguration.CHARGEITEMPERTICK, storedPower);
+        long rfToGive = Math.min(CoalGeneratorConfiguration.CHARGEITEMPERTICK.get(), storedPower);
         long received = EnergyTools.receiveEnergy(stack, rfToGive);
         storage.extractEnergy(received, false);
     }
@@ -194,7 +194,7 @@ public class CoalGeneratorTileEntity extends GenericEnergyStorageTileEntity impl
             TileEntity te = getWorld().getTileEntity(pos);
             EnumFacing opposite = facing.getOpposite();
             if (EnergyTools.isEnergyTE(te, opposite)) {
-                long rfToGive = Math.min(CoalGeneratorConfiguration.SENDPERTICK, storedPower);
+                long rfToGive = Math.min(CoalGeneratorConfiguration.SENDPERTICK.get(), storedPower);
                 long received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
                 storedPower -= storage.extractEnergy(received, false);
                 if (storedPower <= 0) {

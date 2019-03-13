@@ -1,27 +1,43 @@
 package mcjty.rftools.blocks.generator;
 
-import net.minecraftforge.common.config.Configuration;
+import mcjty.lib.thirteen.ConfigSpec;
 
 public class CoalGeneratorConfiguration {
 
     public static final String CATEGORY_COALGEN = "coalgen";
-    public static boolean enabled = true;
-    public static int MAXENERGY = 500000; // TODO change these to longs once Configuration supports them
-    public static int SENDPERTICK = 2000;
-    public static int CHARGEITEMPERTICK = 1000;
-    public static int rfPerTick = 60;
-    public static int ticksPerCoal = 600;
 
-    public static void init(Configuration cfg) {
-        cfg.addCustomCategoryComment(CoalGeneratorConfiguration.CATEGORY_COALGEN, "Settings for the coal generator");
-        enabled = cfg.get(CATEGORY_COALGEN, "enabled", enabled, "Whether the coal generator should exist").getBoolean();
-        rfPerTick = cfg.get(CATEGORY_COALGEN, "generatePerTick", rfPerTick, "Amount of RF generated per tick").getInt();
-        ticksPerCoal = cfg.get(CATEGORY_COALGEN, "ticksPerCoal", ticksPerCoal, "Amount of ticks generated per coal").getInt();
-        MAXENERGY = cfg.get(CATEGORY_COALGEN, "generatorMaxRF", MAXENERGY,
-                "Maximum RF storage that the generator can hold").getInt();
-        SENDPERTICK = cfg.get(CATEGORY_COALGEN, "generatorRFPerTick", SENDPERTICK,
-                              "RF per tick that the generator can send").getInt();
-        CHARGEITEMPERTICK = cfg.get(CATEGORY_COALGEN, "generatorChargePerTick", CHARGEITEMPERTICK,
-                              "RF per tick that the generator can charge items with").getInt();
+    public static ConfigSpec.BooleanValue enabled;
+    public static ConfigSpec.IntValue MAXENERGY; // TODO change these to longs once Configuration supports them
+    public static ConfigSpec.IntValue SENDPERTICK;
+    public static ConfigSpec.IntValue CHARGEITEMPERTICK;
+    public static ConfigSpec.IntValue rfPerTick;
+    public static ConfigSpec.IntValue ticksPerCoal;
+
+    public static void init(ConfigSpec.Builder SERVER_BUILDER, ConfigSpec.Builder CLIENT_BUILDER) {
+        SERVER_BUILDER.comment("Settings for the coal generator").push(CATEGORY_COALGEN);
+        CLIENT_BUILDER.comment("Settings for the coal generator").push(CATEGORY_COALGEN);
+
+        enabled = SERVER_BUILDER
+                .comment("Whether the coal generator should exist")
+                .define("enabled", true);
+
+        rfPerTick = SERVER_BUILDER
+                .comment("Amount of RF generated per tick")
+                .defineInRange("generatePerTick", 60, 0, Integer.MAX_VALUE);
+        ticksPerCoal = SERVER_BUILDER
+                .comment("Amount of ticks generated per coal")
+                .defineInRange("ticksPerCoal", 600, 0, Integer.MAX_VALUE);
+        MAXENERGY = SERVER_BUILDER
+                .comment("Maximum RF storage that the generator can hold")
+                .defineInRange("generatorMaxRF", 500000, 0, Integer.MAX_VALUE);
+        SENDPERTICK = SERVER_BUILDER
+                .comment("RF per tick that the generator can send")
+                .defineInRange("generatorRFPerTick", 2000, 0, Integer.MAX_VALUE);
+        CHARGEITEMPERTICK = SERVER_BUILDER
+                .comment("RF per tick that the generator can charge items with")
+                .defineInRange("generatorChargePerTick", 1000, 0, Integer.MAX_VALUE);
+
+        SERVER_BUILDER.pop();
+        CLIENT_BUILDER.pop();
     }
 }

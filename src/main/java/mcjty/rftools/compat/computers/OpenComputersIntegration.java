@@ -12,7 +12,7 @@ public class OpenComputersIntegration {
         Driver.add(new DialingDeviceDriver.OCDriver());
         Driver.add(new MatterReceiverDriver.OCDriver());
         Driver.add(new MatterTransmitterDriver.OCDriver());
-        if(CoalGeneratorConfiguration.enabled)
+        if(CoalGeneratorConfiguration.enabled.get())
             Driver.add(new CoalGeneratorDriver.OCDriver());
         Driver.add(new RFMonitorDriver.OCDriver());
         Driver.add(new LiquidMonitorDriver.OCDriver());
