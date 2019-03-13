@@ -83,9 +83,9 @@ public class BuilderTools {
             }
 
             if (entity instanceof EntityPlayer) {
-                entitiesWithCost.increment(canonicalName, BuilderConfiguration.builderRfPerPlayer);
+                entitiesWithCost.increment(canonicalName, BuilderConfiguration.builderRfPerPlayer.get());
             } else {
-                entitiesWithCost.increment(canonicalName, BuilderConfiguration.builderRfPerEntity);
+                entitiesWithCost.increment(canonicalName, BuilderConfiguration.builderRfPerEntity.get());
             }
         }
     }
@@ -112,7 +112,7 @@ public class BuilderTools {
                         if (info.getBlockLevel() == SupportBlock.STATUS_ERROR) {
                             costs.put(state, -1);
                         } else {
-                            costs.increment(state, (int) (BuilderConfiguration.builderRfPerOperation * info.getCostFactor()));
+                            costs.increment(state, (int) (BuilderConfiguration.builderRfPerOperation.get() * info.getCostFactor()));
                         }
                     }
                 }

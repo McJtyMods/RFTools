@@ -265,13 +265,13 @@ public class ShapeCardItem extends GenericRFToolsItem implements INBTPreservingI
         super.addInformation(itemStack, player, list, whatIsThis);
 
         ShapeCardType type = ShapeCardType.fromDamage(itemStack.getItemDamage());
-        if (!BuilderConfiguration.shapeCardAllowed) {
+        if (!BuilderConfiguration.shapeCardAllowed.get()) {
             list.add(TextFormatting.RED + "Disabled in config!");
         } else if (type != ShapeCardType.CARD_SHAPE) {
-            if (!BuilderConfiguration.quarryAllowed) {
+            if (!BuilderConfiguration.quarryAllowed.get()) {
                 list.add(TextFormatting.RED + "Disabled in config!");
             } else if (type.isQuarry() && type.isClearing()) {
-                if (!BuilderConfiguration.clearingQuarryAllowed) {
+                if (!BuilderConfiguration.clearingQuarryAllowed.get()) {
                     list.add(TextFormatting.RED + "Disabled in config!");
                 }
             }

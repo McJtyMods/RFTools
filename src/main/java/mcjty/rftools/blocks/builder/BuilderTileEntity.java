@@ -150,7 +150,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private int scanLocCnt = 0;
     private static Map<BlockPos, Pair<Long, BlockPos>> scanLocClient = new HashMap<>();
 
-    private int collectCounter = BuilderConfiguration.collectTimer;
+    private int collectCounter = BuilderConfiguration.collectTimer.get();
     private int collectXP = 0;
 
     private boolean boxValid = false;
@@ -186,7 +186,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     private FakePlayer harvester = null;
 
     public BuilderTileEntity() {
-        super(BuilderConfiguration.BUILDER_MAXENERGY, BuilderConfiguration.BUILDER_RECEIVEPERTICK);
+        super(BuilderConfiguration.BUILDER_MAXENERGY.get(), BuilderConfiguration.BUILDER_RECEIVEPERTICK.get());
         setRSMode(RedstoneMode.REDSTONE_ONREQUIRED);
     }
 
@@ -321,11 +321,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void makeSupportBlocksShaped() {
         ItemStack shapeCard = inventoryHelper.getStackInSlot(SLOT_TAB);
-        BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
-        BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
+        BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension.get());
+        BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset.get());
         Shape shape = ShapeCardItem.getShape(shapeCard);
         Map<BlockPos, IBlockState> blocks = new HashMap<>();
-        ShapeCardItem.composeFormula(shapeCard, shape.getFormulaFactory().get(), getWorld(), getPos(), dimension, offset, blocks, BuilderConfiguration.maxBuilderDimension * 256 * BuilderConfiguration.maxBuilderDimension, false, false, null);
+        ShapeCardItem.composeFormula(shapeCard, shape.getFormulaFactory().get(), getWorld(), getPos(), dimension, offset, blocks, BuilderConfiguration.maxBuilderDimension.get() * 256 * BuilderConfiguration.maxBuilderDimension.get(), false, false, null);
         for (Map.Entry<BlockPos, IBlockState> entry : blocks.entrySet()) {
             BlockPos p = entry.getKey();
             if (getWorld().isAirBlock(p)) {
@@ -382,11 +382,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void clearSupportBlocksShaped() {
         ItemStack shapeCard = inventoryHelper.getStackInSlot(SLOT_TAB);
-        BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
-        BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
+        BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension.get());
+        BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset.get());
         Shape shape = ShapeCardItem.getShape(shapeCard);
         Map<BlockPos, IBlockState> blocks = new HashMap<>();
-        ShapeCardItem.composeFormula(shapeCard, shape.getFormulaFactory().get(), getWorld(), getPos(), dimension, offset, blocks, BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension, false, false, null);
+        ShapeCardItem.composeFormula(shapeCard, shape.getFormulaFactory().get(), getWorld(), getPos(), dimension, offset, blocks, BuilderConfiguration.maxSpaceChamberDimension.get() * BuilderConfiguration.maxSpaceChamberDimension.get() * BuilderConfiguration.maxSpaceChamberDimension.get(), false, false, null);
         for (Map.Entry<BlockPos, IBlockState> entry : blocks.entrySet()) {
             BlockPos block = entry.getKey();
             if (getWorld().getBlockState(block).getBlock() == BuilderSetup.supportBlock) {
@@ -695,7 +695,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void checkStateServerShaped() {
         float factor = getInfusedFactor();
-        for (int i = 0; i < BuilderConfiguration.quarryBaseSpeed + (factor * BuilderConfiguration.quarryInfusionSpeedFactor); i++) {
+        for (int i = 0; i < BuilderConfiguration.quarryBaseSpeed.get() + (factor * BuilderConfiguration.quarryInfusionSpeedFactor.get()); i++) {
             if (scan != null) {
                 handleBlockShaped();
             }
@@ -799,7 +799,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (collectCounter > 0) {
             return;
         }
-        collectCounter = BuilderConfiguration.collectTimer;
+        collectCounter = BuilderConfiguration.collectTimer.get();
         if (!loopMode) {
             scan = null;
         }
@@ -807,7 +807,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         long rf = getStoredPower();
         float area = (maxBox.getX() - minBox.getX() + 1) * (maxBox.getY() - minBox.getY() + 1) * (maxBox.getZ() - minBox.getZ() + 1);
         float infusedFactor = (4.0f - getInfusedFactor()) / 4.0f;
-        int rfNeeded = (int) (BuilderConfiguration.collectRFPerTickPerArea * area * infusedFactor) * BuilderConfiguration.collectTimer;
+        int rfNeeded = (int) (BuilderConfiguration.collectRFPerTickPerArea.get() * area * infusedFactor) * BuilderConfiguration.collectTimer.get();
         if (rfNeeded > rf) {
             // Not enough energy.
             return;
@@ -836,7 +836,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         int xp = orb.getXpValue();
 
         rf = getStoredPower();
-        rfNeeded = (int) (BuilderConfiguration.collectRFPerXP * infusedFactor * xp);
+        rfNeeded = (int) (BuilderConfiguration.collectRFPerXP.get() * infusedFactor * xp);
         if (rfNeeded > rf) {
             // Not enough energy.
             return true;
@@ -865,7 +865,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         ItemStack stack = item.getItem();
 
         rf = getStoredPower();
-        rfNeeded = (int) (BuilderConfiguration.collectRFPerItem * infusedFactor) * stack.getCount();
+        rfNeeded = (int) (BuilderConfiguration.collectRFPerItem.get() * infusedFactor) * stack.getCount();
         if (rfNeeded > rf) {
             // Not enough energy.
             return true;
@@ -887,8 +887,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         if (shapeCard.isEmpty()) {
             return;
         }
-        BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
-        BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
+        BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension.get());
+        BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset.get());
 
         BlockPos minCorner = ShapeCardItem.getMinCorner(getPos(), dimension, offset);
         BlockPos maxCorner = ShapeCardItem.getMaxCorner(getPos(), dimension, offset);
@@ -956,10 +956,10 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             ItemStack shapeCard = inventoryHelper.getStackInSlot(SLOT_TAB);
             Shape shape = ShapeCardItem.getShape(shapeCard);
             boolean solid = ShapeCardItem.isSolid(shapeCard);
-            BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension);
-            BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset);
+            BlockPos dimension = ShapeCardItem.getClampedDimension(shapeCard, BuilderConfiguration.maxBuilderDimension.get());
+            BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset.get());
             boolean forquarry = !ShapeCardItem.isNormalShapeCard(shapeCard);
-            ShapeCardItem.composeFormula(shapeCard, shape.getFormulaFactory().get(), getWorld(), getPos(), dimension, offset, cachedBlocks, BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension * BuilderConfiguration.maxSpaceChamberDimension, solid, forquarry, chunk);
+            ShapeCardItem.composeFormula(shapeCard, shape.getFormulaFactory().get(), getWorld(), getPos(), dimension, offset, cachedBlocks, BuilderConfiguration.maxSpaceChamberDimension.get() * BuilderConfiguration.maxSpaceChamberDimension.get() * BuilderConfiguration.maxSpaceChamberDimension.get(), solid, forquarry, chunk);
             cachedChunk = chunk;
         }
         return cachedBlocks;
@@ -1016,7 +1016,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     hardness = 1.0f;
                 } else {
                     if (getCachedVoidableBlocks().contains(block)) {
-                        rfNeeded = (int) (BuilderConfiguration.builderRfPerQuarry * BuilderConfiguration.voidShapeCardFactor);
+                        rfNeeded = (int) (BuilderConfiguration.builderRfPerQuarry.get() * BuilderConfiguration.voidShapeCardFactor.get());
                     }
                     hardness = block.getBlockHardness(state, getWorld(), srcPos);
                 }
@@ -1146,7 +1146,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                 // We can skip dirt if we are not clearing.
                 return skip();
             }
-            if ((!BuilderConfiguration.quarryTileEntities) && getWorld().getTileEntity(srcPos) != null) {
+            if ((!BuilderConfiguration.quarryTileEntities.get()) && getWorld().getTileEntity(srcPos) != null) {
                 // Skip tile entities
                 return skip();
             }
@@ -1159,7 +1159,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     if (filterCache != null) {
                         boolean match = filterCache.match(block.getItem(getWorld(), srcPos, srcState));
                         if (!match) {
-                            consumeEnergy(Math.min(rfNeeded, BuilderConfiguration.builderRfPerSkipped));
+                            consumeEnergy(Math.min(rfNeeded, BuilderConfiguration.builderRfPerSkipped.get()));
                             return skip();   // Skip this
                         }
                     }
@@ -1314,7 +1314,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
                     if (filterCache != null) {
                         boolean match = filterCache.match(block.getItem(getWorld(), srcPos, srcState));
                         if (!match) {
-                            consumeEnergy(Math.min(rfNeeded, BuilderConfiguration.builderRfPerSkipped));
+                            consumeEnergy(Math.min(rfNeeded, BuilderConfiguration.builderRfPerSkipped.get()));
                             return skip();   // Skip this
                         }
                     }
@@ -1628,7 +1628,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
         BuilderSetup.BlockInformation blockInformation = BuilderSetup.getBlockInformation(block);
         if (tileEntity != null) {
-            switch (BuilderConfiguration.teMode) {
+            switch (BuilderConfiguration.teMode.get()) {
                 case MOVE_FORBIDDEN:
                     return BuilderSetup.BlockInformation.INVALID;
                 case MOVE_WHITELIST:
@@ -1698,7 +1698,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private void copyBlock(World srcWorld, BlockPos srcPos, World destWorld, BlockPos destPos) {
         long rf = getStoredPower();
-        int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation * getDimensionCostFactor(srcWorld, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
+        int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation.get() * getDimensionCostFactor(srcWorld, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
         if (rfNeeded > rf) {
             // Not enough energy.
             return;
@@ -1742,7 +1742,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private double getDimensionCostFactor(World world, World destWorld) {
-        return destWorld.provider.getDimension() == world.provider.getDimension() ? 1.0 : BuilderConfiguration.dimensionCostFactor;
+        return destWorld.provider.getDimension() == world.provider.getDimension() ? 1.0 : BuilderConfiguration.dimensionCostFactor.get();
     }
 
     private boolean consumeEntityEnergy(int rfNeeded, int rfNeededPlayer, Entity entity) {
@@ -1763,8 +1763,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private void moveEntities(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
-        int rfNeeded = (int) (BuilderConfiguration.builderRfPerEntity * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
-        int rfNeededPlayer = (int) (BuilderConfiguration.builderRfPerPlayer * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
+        int rfNeeded = (int) (BuilderConfiguration.builderRfPerEntity.get() * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
+        int rfNeededPlayer = (int) (BuilderConfiguration.builderRfPerPlayer.get() * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
 
         // Check for entities.
         List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(x - .1, y - .1, z - .1, x + 1.1, y + 1.1, z + 1.1));
@@ -1783,8 +1783,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     private void swapEntities(World world, int x, int y, int z, World destWorld, int destX, int destY, int destZ) {
-        int rfNeeded = (int) (BuilderConfiguration.builderRfPerEntity * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
-        int rfNeededPlayer = (int) (BuilderConfiguration.builderRfPerPlayer * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
+        int rfNeeded = (int) (BuilderConfiguration.builderRfPerEntity.get() * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
+        int rfNeededPlayer = (int) (BuilderConfiguration.builderRfPerPlayer.get() * getDimensionCostFactor(world, destWorld) * (4.0f - getInfusedFactor()) / 4.0f);
 
         // Check for entities.
         List<Entity> entitiesSrc = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(x, y, z, x + 1, y + 1, z + 1));
@@ -1846,7 +1846,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             }
 
             long rf = getStoredPower();
-            int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation * getDimensionCostFactor(srcWorld, destWorld) * srcInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
+            int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation.get() * getDimensionCostFactor(srcWorld, destWorld) * srcInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
             if (rfNeeded > rf) {
                 // Not enough energy.
                 return;
@@ -1909,8 +1909,8 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         }
 
         long rf = getStoredPower();
-        int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation * getDimensionCostFactor(srcWorld, destWorld) * srcInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
-        rfNeeded += (int) (BuilderConfiguration.builderRfPerOperation * getDimensionCostFactor(srcWorld, destWorld) * dstInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
+        int rfNeeded = (int) (BuilderConfiguration.builderRfPerOperation.get() * getDimensionCostFactor(srcWorld, destWorld) * srcInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
+        rfNeeded += (int) (BuilderConfiguration.builderRfPerOperation.get() * getDimensionCostFactor(srcWorld, destWorld) * dstInformation.getCostFactor() * (4.0f - getInfusedFactor()) / 4.0f);
         if (rfNeeded > rf) {
             // Not enough energy.
             return;
@@ -2037,7 +2037,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
             return true;
         }
 
-        if (BuilderConfiguration.quarryChunkloads) {
+        if (BuilderConfiguration.quarryChunkloads.get()) {
             if (ticket == null) {
                 ticket = ForgeChunkManager.requestTicket(RFTools.instance, getWorld(), ForgeChunkManager.Type.NORMAL);
                 if (ticket == null) {

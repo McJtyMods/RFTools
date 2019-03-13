@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.builder;
 
+import mcjty.lib.thirteen.ConfigSpec;
 import mcjty.lib.varia.Logging;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.CommandBase;
@@ -7,133 +8,169 @@ import net.minecraft.command.InvalidBlockStateException;
 import net.minecraft.command.NumberInvalidException;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 public class BuilderConfiguration {
     public static final String CATEGORY_BUILDER = "builder";
 
-    public static int BUILDER_MAXENERGY = 1000000;
-    public static int BUILDER_RECEIVEPERTICK = 20000;
+    public static ConfigSpec.IntValue BUILDER_MAXENERGY;// = 1000000;
+    public static ConfigSpec.IntValue BUILDER_RECEIVEPERTICK;// = 20000;
 
-    public static int builderRfPerOperation = 500;
-    public static int builderRfPerLiquid = 300;
-    public static int builderRfPerQuarry = 300;
-    public static int builderRfPerSkipped = 50;
-    public static int builderRfPerEntity = 5000;
-    public static int builderRfPerPlayer = 40000;
-    public static double dimensionCostFactor = 5.0f;
+    public static ConfigSpec.IntValue builderRfPerOperation;// = 500;
+    public static ConfigSpec.IntValue builderRfPerLiquid;// = 300;
+    public static ConfigSpec.IntValue builderRfPerQuarry;// = 300;
+    public static ConfigSpec.IntValue builderRfPerSkipped;// = 50;
+    public static ConfigSpec.IntValue builderRfPerEntity;// = 5000;
+    public static ConfigSpec.IntValue builderRfPerPlayer;// = 40000;
+    public static ConfigSpec.DoubleValue dimensionCostFactor;
 
-    public static BuilderTileEntityMode teMode = BuilderTileEntityMode.MOVE_WHITELIST;
+    public static ConfigSpec.ConfigValue<BuilderTileEntityMode> teMode;
 
-    public static boolean showProgressHud = true;
+    public static ConfigSpec.BooleanValue showProgressHud;
 
-    public static int maxSpaceChamberDimension = 128;
+    public static ConfigSpec.IntValue maxSpaceChamberDimension;
 
-    public static double voidShapeCardFactor = 0.5;
-    public static double silkquarryShapeCardFactor = 3;
-    public static double fortunequarryShapeCardFactor = 2;
+    public static ConfigSpec.DoubleValue voidShapeCardFactor;
+    public static ConfigSpec.DoubleValue silkquarryShapeCardFactor;
+    public static ConfigSpec.DoubleValue fortunequarryShapeCardFactor;
 
-    public static String quarryReplace = "minecraft:dirt";
+    public static ConfigSpec.ConfigValue<String> quarryReplace;
     private static IBlockState quarryReplaceBlock = null;
 
-    public static boolean quarryChunkloads = true;
-    public static boolean shapeCardAllowed = true;
-    public static boolean quarryAllowed = true;
-    public static boolean clearingQuarryAllowed = true;
+    public static ConfigSpec.BooleanValue quarryChunkloads;
+    public static ConfigSpec.BooleanValue shapeCardAllowed;
+    public static ConfigSpec.BooleanValue quarryAllowed;
+    public static ConfigSpec.BooleanValue clearingQuarryAllowed;
 
-    public static int quarryBaseSpeed = 8;
-    public static int quarryInfusionSpeedFactor = 20;
-    public static boolean quarryTileEntities = true;
+    public static ConfigSpec.IntValue quarryBaseSpeed;
+    public static ConfigSpec.IntValue quarryInfusionSpeedFactor;
+    public static ConfigSpec.BooleanValue quarryTileEntities;
 
-    public static int maxBuilderOffset = 260;
-    public static int maxBuilderDimension = 512;
+    public static ConfigSpec.IntValue maxBuilderOffset;
+    public static ConfigSpec.IntValue maxBuilderDimension;
 
-    public static boolean oldSphereCylinderShape = false;
+    public static ConfigSpec.BooleanValue oldSphereCylinderShape;
 
-    public static int collectTimer = 10;
-    public static int collectRFPerItem = 20;
-    public static float collectRFPerXP = 2;
-    public static float collectRFPerTickPerArea = 0.5f;
+    public static ConfigSpec.IntValue collectTimer;
+    public static ConfigSpec.IntValue collectRFPerItem;
+    public static ConfigSpec.DoubleValue collectRFPerXP;
+    public static ConfigSpec.DoubleValue collectRFPerTickPerArea;
 
+    public static void init(ConfigSpec.Builder SERVER_BUILDER, ConfigSpec.Builder CLIENT_BUILDER) {
+        SERVER_BUILDER.comment("Settings for the builder").push(CATEGORY_BUILDER);
+        CLIENT_BUILDER.comment("Settings for the builder").push(CATEGORY_BUILDER);
 
-    public static void init(Configuration cfg) {
-        cfg.addCustomCategoryComment(BuilderConfiguration.CATEGORY_BUILDER, "Settings for the builder");
-        BUILDER_MAXENERGY = cfg.get(CATEGORY_BUILDER, "builderMaxRF", BUILDER_MAXENERGY,
-                "Maximum RF storage that the builder can hold").getInt();
-        BUILDER_RECEIVEPERTICK = cfg.get(CATEGORY_BUILDER, "builderRFPerTick", BUILDER_RECEIVEPERTICK,
-                "RF per tick that the builder can receive").getInt();
-        builderRfPerOperation = cfg.get(CATEGORY_BUILDER, "builderRfPerOperation", builderRfPerOperation,
-                "RF per block operation for the builder when used to build").getInt();
-        builderRfPerLiquid = cfg.get(CATEGORY_BUILDER, "builderRfPerLiquid", builderRfPerLiquid,
-                "Base RF per block operation for the builder when used as a pump").getInt();
-        builderRfPerQuarry = cfg.get(CATEGORY_BUILDER, "builderRfPerQuarry", builderRfPerQuarry,
-                "Base RF per block operation for the builder when used as a quarry or voider (actual cost depends on hardness of block)").getInt();
-        builderRfPerSkipped = cfg.get(CATEGORY_BUILDER, "builderRfPerSkipped", builderRfPerSkipped,
-                "RF per block that is skipped (used when a filter is added to the builder)").getInt();
-        builderRfPerEntity = cfg.get(CATEGORY_BUILDER, "builderRfPerEntity", builderRfPerEntity,
-                "RF per entity move operation for the builder").getInt();
-        builderRfPerPlayer = cfg.get(CATEGORY_BUILDER, "builderRfPerPlayer", builderRfPerPlayer,
-                "RF per player move operation for the builder").getInt();
-        teMode = BuilderTileEntityMode.find(cfg.get(CATEGORY_BUILDER, "tileEntityMode", teMode.getName(),
-                "Can Tile Entities be moved? 'forbidden' means never, 'whitelist' means only whitelisted, 'blacklist' means all except blacklisted, 'allowed' means all").getString());
-        maxSpaceChamberDimension = cfg.get(CATEGORY_BUILDER, "maxSpaceChamberDimension", maxSpaceChamberDimension,
-                "Maximum dimension for the space chamber").getInt();
-        dimensionCostFactor = cfg.get(CATEGORY_BUILDER, "dimensionCostFactor", dimensionCostFactor,
-                "How much more expensive a move accross dimensions is").getDouble();
+        BUILDER_MAXENERGY = SERVER_BUILDER
+                .comment("Maximum RF storage that the builder can hold")
+                .defineInRange("builderMaxRF", 1000000, 0, Integer.MAX_VALUE);
+        BUILDER_RECEIVEPERTICK = SERVER_BUILDER
+                .comment("RF per tick that the builder can receive")
+                .defineInRange("builderRFPerTick", 20000, 0, Integer.MAX_VALUE);
+        builderRfPerOperation = SERVER_BUILDER
+                .comment("RF per block operation for the builder when used to build")
+                .defineInRange("builderRfPerOperation", 500, 0, Integer.MAX_VALUE);
+        builderRfPerLiquid = SERVER_BUILDER
+                .comment("Base RF per block operation for the builder when used as a pump")
+                .defineInRange("builderRfPerLiquid", 300, 0, Integer.MAX_VALUE);
+        builderRfPerQuarry = SERVER_BUILDER
+                .comment("Base RF per block operation for the builder when used as a quarry or voider (actual cost depends on hardness of block)")
+                .defineInRange("builderRfPerQuarry", 300, 0, Integer.MAX_VALUE);
+        builderRfPerSkipped = SERVER_BUILDER
+                .comment("RF per block that is skipped (used when a filter is added to the builder)")
+                .defineInRange("builderRfPerSkipped", 50, 0, Integer.MAX_VALUE);
+        builderRfPerEntity = SERVER_BUILDER
+                .comment("RF per entity move operation for the builder")
+                .defineInRange("builderRfPerEntity", 5000, 0, Integer.MAX_VALUE);
+        builderRfPerPlayer = SERVER_BUILDER
+                .comment("RF per player move operation for the builder")
+                .defineInRange("builderRfPerPlayer", 40000, 0, Integer.MAX_VALUE);
+        teMode = SERVER_BUILDER
+                .comment("Can Tile Entities be moved? 'forbidden' means never, 'whitelist' means only whitelisted, 'blacklist' means all except blacklisted, 'allowed' means all")
+                .defineEnum("tileEntityMode", BuilderTileEntityMode.MOVE_WHITELIST, BuilderTileEntityMode.values());
+        maxSpaceChamberDimension = SERVER_BUILDER
+                .comment("Maximum dimension for the space chamber")
+                .defineInRange("maxSpaceChamberDimension", 128, 0, 100000);
 
-        collectTimer = cfg.get(CATEGORY_BUILDER, "collectTimer", collectTimer,
-                "How many ticks we wait before collecting again (with the builder 'collect items' mode)").getInt();
-        collectRFPerItem = cfg.get(CATEGORY_BUILDER, "collectRFPerItem", collectRFPerItem,
-                "The cost of collecting an item (builder 'collect items' mode))").getInt();
-        collectRFPerXP = (float) cfg.get(CATEGORY_BUILDER, "collectRFPerXP", collectRFPerXP,
-                "The cost of collecting 1 XP level (builder 'collect items' mode))").getDouble();
-        collectRFPerTickPerArea = (float) cfg.get(CATEGORY_BUILDER, "collectRFPerTickPerArea", collectRFPerTickPerArea,
-                "The RF/t per area to keep checking for items in a given area (builder 'collect items' mode))").getDouble();
+        collectTimer = SERVER_BUILDER
+                .comment("How many ticks we wait before collecting again (with the builder 'collect items' mode)")
+                .defineInRange("collectTimer", 10, 0, Integer.MAX_VALUE);
+        collectRFPerItem = SERVER_BUILDER
+                .comment("The cost of collecting an item (builder 'collect items' mode))")
+                .defineInRange("collectRFPerItem", 20, 0, Integer.MAX_VALUE);
 
-        voidShapeCardFactor = cfg.get(CATEGORY_BUILDER, "voidShapeCardFactor", voidShapeCardFactor,
-                "The RF per operation of the builder is multiplied with this factor when using the void shape card").getDouble();
-        silkquarryShapeCardFactor = cfg.get(CATEGORY_BUILDER, "silkquarryShapeCardFactor", silkquarryShapeCardFactor,
-                "The RF per operation of the builder is multiplied with this factor when using the silk quarry shape card").getDouble();
-        fortunequarryShapeCardFactor = cfg.get(CATEGORY_BUILDER, "fortunequarryShapeCardFactor", fortunequarryShapeCardFactor,
-                "The RF per operation of the builder is multiplied with this factor when using the fortune quarry shape card").getDouble();
+        dimensionCostFactor = SERVER_BUILDER
+                .comment("How much more expensive a move accross dimensions is")
+                .defineInRange("dimensionCostFactor", 5.0, 0, 1000000.0);
 
-        quarryReplace = cfg.getString(CATEGORY_BUILDER, "quarryReplacE", quarryReplace, "Use this block for the builder to replace with");
-        quarryTileEntities = cfg.get(CATEGORY_BUILDER, "quarryTileEntities", quarryTileEntities,
-                "If true the quarry will also quarry tile entities. Otherwise it just ignores them").getBoolean();
-        quarryChunkloads = cfg.get(CATEGORY_BUILDER, "quarryChunkloads", quarryChunkloads,
-                "If true the quarry will chunkload a chunk at a time. If false the quarry will stop if a chunk is not loaded").getBoolean();
-        shapeCardAllowed = cfg.get(CATEGORY_BUILDER, "shapeCardAllowed", shapeCardAllowed,
-                "If true we allow shape cards to be crafted. Note that in order to use the quarry system you must also enable this").getBoolean();
-        quarryAllowed = cfg.get(CATEGORY_BUILDER, "quarryAllowed", quarryAllowed,
-                "If true we allow quarry cards to be crafted").getBoolean();
-        clearingQuarryAllowed = cfg.get(CATEGORY_BUILDER, "clearingQuarryAllowed", clearingQuarryAllowed,
-                "If true we allow the clearing quarry cards to be crafted (these can be heavier on the server)").getBoolean();
+        collectRFPerXP = SERVER_BUILDER
+                .comment("The cost of collecting 1 XP level (builder 'collect items' mode))")
+                .defineInRange("collectRFPerXP", 2.0, 0, 1000000.0);
+        collectRFPerTickPerArea = SERVER_BUILDER
+                .comment("The RF/t per area to keep checking for items in a given area (builder 'collect items' mode))")
+                .defineInRange("collectRFPerTickPerArea", 0.5, 0, 1000000.0);
 
-        quarryBaseSpeed = cfg.get(CATEGORY_BUILDER, "quarryBaseSpeed", quarryBaseSpeed,
-                "The base speed (number of blocks per tick) of the quarry").getInt();
-        quarryInfusionSpeedFactor = cfg.get(CATEGORY_BUILDER, "quarryInfusionSpeedFactor", quarryInfusionSpeedFactor,
-                "Multiply the infusion factor with this value and add that to the quarry base speed").getInt();
+        voidShapeCardFactor = SERVER_BUILDER
+                .comment("The RF per operation of the builder is multiplied with this factor when using the void shape card")
+                .defineInRange("voidShapeCardFactor", 0.5, 0, 1000000.0);
+        silkquarryShapeCardFactor = SERVER_BUILDER
+                .comment("The RF per operation of the builder is multiplied with this factor when using the silk quarry shape card")
+                .defineInRange("silkquarryShapeCardFactor", 3.0, 0, 1000000.0);
+        fortunequarryShapeCardFactor = SERVER_BUILDER
+                .comment("The RF per operation of the builder is multiplied with this factor when using the fortune quarry shape card")
+                .defineInRange("fortunequarryShapeCardFactor", 2, 0, 1000000.0);
 
-        maxBuilderOffset = cfg.get(CATEGORY_BUILDER, "maxBuilderOffset", maxBuilderOffset,
-                "Maximum offset of the shape when a shape card is used in the builder").getInt();
-        maxBuilderDimension = cfg.get(CATEGORY_BUILDER, "maxBuilderDimension", maxBuilderDimension,
-                "Maximum dimension of the shape when a shape card is used in the builder").getInt();
+        quarryReplace = SERVER_BUILDER
+                .comment("Use this block for the builder to replace with")
+                .define("quarryReplacE", "minecraft:dirt");
+        quarryTileEntities = SERVER_BUILDER
+                .comment("If true the quarry will also quarry tile entities. Otherwise it just ignores them")
+                .define("quarryTileEntities", true);
+        quarryChunkloads = SERVER_BUILDER
+                .comment("If true the quarry will chunkload a chunk at a time. If false the quarry will stop if a chunk is not loaded")
+                .define("quarryChunkloads", true);
+        shapeCardAllowed = SERVER_BUILDER
+                .comment("If true we allow shape cards to be crafted. Note that in order to use the quarry system you must also enable this")
+                .define("shapeCardAllowed", true);
+        quarryAllowed = SERVER_BUILDER
+                .comment("If true we allow quarry cards to be crafted")
+                .define("quarryAllowed", true);
+        clearingQuarryAllowed = SERVER_BUILDER
+                .comment("If true we allow the clearing quarry cards to be crafted (these can be heavier on the server)")
+                .define("clearingQuarryAllowed", true);
 
-        oldSphereCylinderShape = cfg.get(CATEGORY_BUILDER, "oldSphereCylinderShape", oldSphereCylinderShape,
-                "If true we go back to the old (wrong) sphere/cylinder calculation for the builder/shield").getBoolean();
-        showProgressHud = cfg.get(CATEGORY_BUILDER, "showProgressHud", showProgressHud,
-                "If true a holo hud with current progress is shown above the builder").getBoolean();
+        quarryBaseSpeed = SERVER_BUILDER
+                .comment("The base speed (number of blocks per tick) of the quarry")
+                .defineInRange("quarryBaseSpeed", 8, 0, Integer.MAX_VALUE);
+        quarryInfusionSpeedFactor = SERVER_BUILDER
+                .comment("Multiply the infusion factor with this value and add that to the quarry base speed")
+                .defineInRange("quarryInfusionSpeedFactor", 20, 0, Integer.MAX_VALUE);
+
+        maxBuilderOffset = SERVER_BUILDER
+                .comment("Maximum offset of the shape when a shape card is used in the builder")
+                .defineInRange("maxBuilderOffset", 260, 0, Integer.MAX_VALUE);
+        maxBuilderDimension = SERVER_BUILDER
+                .comment("Maximum dimension of the shape when a shape card is used in the builder")
+                .defineInRange("maxBuilderDimension", 512, 0, Integer.MAX_VALUE);
+
+        oldSphereCylinderShape = SERVER_BUILDER
+                .comment("If true we go back to the old (wrong) sphere/cylinder calculation for the builder/shield")
+                .define("oldSphereCylinderShape", false);
+        showProgressHud = CLIENT_BUILDER
+                .comment("If true a holo hud with current progress is shown above the builder")
+                .define("showProgressHud", true);
+
+        SERVER_BUILDER.pop();
+        CLIENT_BUILDER.pop();
     }
 
     public static IBlockState getQuarryReplace() {
         if (quarryReplaceBlock == null) {
-            int index = quarryReplace.indexOf(' ');
+            int index = quarryReplace.get().indexOf(' ');
             if(index == -1) {
-                quarryReplaceBlock = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(quarryReplace)).getDefaultState();
+                quarryReplaceBlock = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(quarryReplace.get())).getDefaultState();
             } else {
                 try {
-                    quarryReplaceBlock = CommandBase.convertArgToBlockState(ForgeRegistries.BLOCKS.getValue(new ResourceLocation(quarryReplace.substring(0, index))), quarryReplace.substring(index + 1));
+                    quarryReplaceBlock = CommandBase.convertArgToBlockState(ForgeRegistries.BLOCKS.getValue(new ResourceLocation(quarryReplace.get().substring(0, index))), quarryReplace.get().substring(index + 1));
                 } catch (NumberInvalidException | InvalidBlockStateException e) {
                     Logging.logError("Invalid builder quarry replace block: " + quarryReplace, e);
                 }

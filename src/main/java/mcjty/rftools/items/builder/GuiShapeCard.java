@@ -280,7 +280,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         int dx = parseInt(dimX.getText());
         int dy = parseInt(dimY.getText());
         int dz = parseInt(dimZ.getText());
-        int max = Math.max(ScannerConfiguration.maxScannerDimension, BuilderConfiguration.maxBuilderDimension);
+        int max = Math.max(ScannerConfiguration.maxScannerDimension, BuilderConfiguration.maxBuilderDimension.get());
         if (dx < 0) {
             dx = 0;
         } else if (dx > max) {

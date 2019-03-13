@@ -28,7 +28,7 @@ public class SpaceChamberControllerTileEntity extends GenericTileEntity {
         int x2 = x1;
         int y2 = y1;
         int z2 = z1;
-        for (int i = 1 ; i < BuilderConfiguration.maxSpaceChamberDimension; i++) {
+        for (int i = 1 ; i < BuilderConfiguration.maxSpaceChamberDimension.get(); i++) {
             if (x2 == x1) {
                 if (getWorld().getBlockState(new BlockPos(x1 - i, y1, z1)).getBlock() == BuilderSetup.spaceChamberBlock) {
                     x2 = x1-i;
@@ -55,7 +55,7 @@ public class SpaceChamberControllerTileEntity extends GenericTileEntity {
             return;
         }
 
-        for (int i = 1 ; i < BuilderConfiguration.maxSpaceChamberDimension; i++) {
+        for (int i = 1 ; i < BuilderConfiguration.maxSpaceChamberDimension.get(); i++) {
             if (getWorld().getBlockState(new BlockPos(x1, y1 - i, z1)).getBlock() == BuilderSetup.spaceChamberBlock) {
                 y2 = y1-i;
                 break;
