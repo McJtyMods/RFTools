@@ -6,6 +6,7 @@ public class EnvironmentalConfiguration {
     public static final String CATEGORY_ENVIRONMENTAL = "environmental";
     public static int ENVIRONMENTAL_MAXENERGY = 500000;
     public static int ENVIRONMENTAL_RECEIVEPERTICK = 20000;
+    public static int ENVIRONMENTAL_MAXRADIUS = 100;
     public static int MIN_USAGE = 5;
 
     public static float FEATHERFALLING_RFPERTICK = 0.001f;
@@ -45,6 +46,8 @@ public class EnvironmentalConfiguration {
                 "Maximum RF storage that the environmental controller can hold").getInt();
         ENVIRONMENTAL_RECEIVEPERTICK = cfg.get(CATEGORY_ENVIRONMENTAL, "environmentalRFPerTick", ENVIRONMENTAL_RECEIVEPERTICK,
                 "RF per tick that the the environmental controller can receive").getInt();
+        ENVIRONMENTAL_MAXRADIUS = cfg.get(CATEGORY_ENVIRONMENTAL, "environmentalMaxRadius", ENVIRONMENTAL_MAXRADIUS,
+                "Max radius of environmental controller").getInt();
         MIN_USAGE = cfg.get(CATEGORY_ENVIRONMENTAL, "environmentalMinRFUsage", MIN_USAGE,
                 "The minimum RF/tick usage that an active controller consumes").getInt();
 
