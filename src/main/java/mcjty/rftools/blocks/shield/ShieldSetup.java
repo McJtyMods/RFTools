@@ -31,9 +31,9 @@ public class ShieldSetup {
 
     public static void init() {
         shieldBlock1 = new ShieldBlock("shield_block1", ShieldTileEntity.class, ShieldTileEntity.MAX_SHIELD_SIZE);
-        shieldBlock2 = new ShieldBlock("shield_block2", ShieldTileEntity2.class, ShieldTileEntity2.MAX_SHIELD_SIZE);
-        shieldBlock3 = new ShieldBlock("shield_block3", ShieldTileEntity3.class, ShieldTileEntity3.MAX_SHIELD_SIZE);
-        shieldBlock4 = new ShieldBlock("shield_block4", ShieldTileEntity4.class, ShieldTileEntity4.MAX_SHIELD_SIZE);
+        shieldBlock2 = new ShieldBlock("shield_block2", ShieldTileEntity2.class, ShieldConfiguration.maxShieldSize.get() * 4);
+        shieldBlock3 = new ShieldBlock("shield_block3", ShieldTileEntity3.class, ShieldConfiguration.maxShieldSize.get() * 16);
+        shieldBlock4 = new ShieldBlock("shield_block4", ShieldTileEntity4.class, ShieldConfiguration.maxShieldSize.get() * 128);
 
         invisibleShieldBlock = new InvisibleShieldBlock("invisible_shield_block", "rftools.invisible_shield_block", false);
         noTickInvisibleShieldBlock = new NoTickInvisibleShieldBlock("notick_invisible_shield_block", "rftools.notick_invisible_shield_block", false);
@@ -42,7 +42,7 @@ public class ShieldSetup {
 
         shieldTemplateBlock = new ShieldTemplateBlock();
 
-        if (!ShieldConfiguration.disableShieldBlocksToUncorruptWorld) {
+        if (!ShieldConfiguration.disableShieldBlocksToUncorruptWorld.get()) {
             solidShieldBlock = new SolidShieldBlock("solid_shield_block", "rftools.solid_shield_block", false);
             noTickSolidShieldBlock = new NoTickSolidShieldBlock("notick_solid_shield_block", "rftools.notick_solid_shield_block", false);
             camoShieldBlock = new CamoShieldBlock("camo_shield_block", "rftools.camo_shield_block", false);
@@ -71,7 +71,7 @@ public class ShieldSetup {
         noTickInvisibleShieldBlock.initModel();
         invisibleShieldBlockOpaque.initModel();
         noTickInvisibleShieldBlockOpaque.initModel();
-        if (!ShieldConfiguration.disableShieldBlocksToUncorruptWorld) {
+        if (!ShieldConfiguration.disableShieldBlocksToUncorruptWorld.get()) {
             solidShieldBlock.initModel();
             noTickSolidShieldBlock.initModel();
             camoShieldBlock.initModel();
@@ -85,7 +85,7 @@ public class ShieldSetup {
 
     @SideOnly(Side.CLIENT)
     public static void initClientPost() {
-        if (!ShieldConfiguration.disableShieldBlocksToUncorruptWorld) {
+        if (!ShieldConfiguration.disableShieldBlocksToUncorruptWorld.get()) {
             solidShieldBlock.initBlockColors();
             noTickSolidShieldBlock.initBlockColors();
             solidShieldBlockOpaque.initBlockColors();
@@ -95,7 +95,7 @@ public class ShieldSetup {
 
     @SideOnly(Side.CLIENT)
     public static void initColorHandlers(BlockColors blockColors) {
-        if (!ShieldConfiguration.disableShieldBlocksToUncorruptWorld) {
+        if (!ShieldConfiguration.disableShieldBlocksToUncorruptWorld.get()) {
             camoShieldBlock.initColorHandler(blockColors);
             noTickCamoShieldBlock.initColorHandler(blockColors);
             camoShieldBlockOpaque.initColorHandler(blockColors);

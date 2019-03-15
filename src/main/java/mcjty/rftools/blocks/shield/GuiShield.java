@@ -334,12 +334,12 @@ public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
                 .setName("visibility")
                 .setLayoutHint(25, 161, 54, 14);
         for (ShieldRenderingMode m : ShieldRenderingMode.values()) {
-            if ((!ShieldConfiguration.allowInvisibleShield) && m == ShieldRenderingMode.MODE_INVISIBLE) {
+            if ((!ShieldConfiguration.allowInvisibleShield.get()) && m == ShieldRenderingMode.MODE_INVISIBLE) {
                 continue;
             }
             visibilityOptions.addChoices(m.getDescription());
         }
-        if (ShieldConfiguration.allowInvisibleShield) {
+        if (ShieldConfiguration.allowInvisibleShield.get()) {
             visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_INVISIBLE.getDescription(), "Shield is completely invisible");
         }
         visibilityOptions.setChoiceTooltip(ShieldRenderingMode.MODE_SHIELD.getDescription(), "Default shield texture");

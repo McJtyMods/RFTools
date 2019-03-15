@@ -394,7 +394,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         if (!shieldActive || powerTimeout > 0) {
             return Blocks.AIR;
         }
-        if (ShieldConfiguration.allowInvisibleShield && ShieldRenderingMode.MODE_INVISIBLE.equals(shieldRenderingMode)) {
+        if (ShieldConfiguration.allowInvisibleShield.get() && ShieldRenderingMode.MODE_INVISIBLE.equals(shieldRenderingMode)) {
             if (damageBits == 0) {
                 return blockLight ? ShieldSetup.noTickInvisibleShieldBlockOpaque : ShieldSetup.noTickInvisibleShieldBlock;
             } else {
@@ -465,11 +465,11 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         if (s < 10) {
             s = 10;
         }
-        int rf = ShieldConfiguration.rfBase * s / 10;
+        int rf = ShieldConfiguration.rfBase.get() * s / 10;
         if (ShieldRenderingMode.MODE_SHIELD.equals(shieldRenderingMode)) {
-            rf += ShieldConfiguration.rfShield * s / 10;
+            rf += ShieldConfiguration.rfShield.get() * s / 10;
         } else if (ShieldRenderingMode.MODE_MIMIC.equals(shieldRenderingMode)) {
-            rf += ShieldConfiguration.rfCamo * s / 10;
+            rf += ShieldConfiguration.rfCamo.get() * s / 10;
         }
         return rf;
     }
@@ -489,10 +489,10 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         DamageSource source;
         int rf;
         if (DamageTypeMode.DAMAGETYPE_GENERIC.equals(damageMode)) {
-            rf = ShieldConfiguration.rfDamage;
+            rf = ShieldConfiguration.rfDamage.get();
             source = DamageSource.GENERIC;
         } else {
-            rf = ShieldConfiguration.rfDamagePlayer;
+            rf = ShieldConfiguration.rfDamagePlayer.get();
             if (killer == null) {
                 killer = FakePlayerFactory.get(DimensionManager.getWorld(0), new GameProfile(UUID.nameUUIDFromBytes("rftools_shield".getBytes()), "rftools_shield"));
             }
@@ -500,10 +500,10 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             killer.setPosition(pos.getX(), pos.getY(), pos.getZ());
             FakePlayer fakePlayer = killer;
             ItemStack shards = getStackInSlot(ShieldContainer.SLOT_SHARD);
-            if (!shards.isEmpty() && shards.getCount() >= ShieldConfiguration.shardsPerLootingKill) {
-                decrStackSize(ShieldContainer.SLOT_SHARD, ShieldConfiguration.shardsPerLootingKill);
+            if (!shards.isEmpty() && shards.getCount() >= ShieldConfiguration.shardsPerLootingKill.get()) {
+                decrStackSize(ShieldContainer.SLOT_SHARD, ShieldConfiguration.shardsPerLootingKill.get());
                 if (lootingSword.isEmpty()) {
-                    lootingSword = EnvironmentalSetup.createEnchantedItem(Items.DIAMOND_SWORD, Enchantments.LOOTING, ShieldConfiguration.lootingKillBonus);
+                    lootingSword = EnvironmentalSetup.createEnchantedItem(Items.DIAMOND_SWORD, Enchantments.LOOTING, ShieldConfiguration.lootingKillBonus.get());
                 }
                 lootingSword.setItemDamage(0);
                 fakePlayer.setHeldItem(EnumHand.MAIN_HAND, lootingSword);
@@ -521,7 +521,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         }
         consumeEnergy(rf);
 
-        float damage = ShieldConfiguration.damage;
+        float damage = (float) ShieldConfiguration.damage.get();
         damage *= damageFactor;
         damage = damage * (1.0f + getInfusedFactor() / 2.0f);
 
@@ -636,8 +636,8 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             ItemStack shapeItem = inventoryHelper.getStackInSlot(ShieldContainer.SLOT_SHAPE);
             Shape shape = ShapeCardItem.getShape(shapeItem);
             boolean solid = ShapeCardItem.isSolid(shapeItem);
-            BlockPos dimension = ShapeCardItem.getClampedDimension(shapeItem, ShieldConfiguration.maxShieldDimension);
-            BlockPos offset = ShapeCardItem.getClampedOffset(shapeItem, ShieldConfiguration.maxShieldOffset);
+            BlockPos dimension = ShapeCardItem.getClampedDimension(shapeItem, ShieldConfiguration.maxShieldDimension.get());
+            BlockPos offset = ShapeCardItem.getClampedOffset(shapeItem, ShieldConfiguration.maxShieldOffset.get());
             Map<BlockPos, IBlockState> col = new HashMap<>();
             ShapeCardItem.composeFormula(shapeItem, shape.getFormulaFactory().get(), getWorld(), getPos(), dimension, offset, col, supportedBlocks, solid, false, null);
             coordinates = col;
@@ -702,7 +702,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         }
 
         float squaredDistance = (float) getPos().distanceSq(pos.getX(), pos.getY(), pos.getZ());
-        if (squaredDistance > ShieldConfiguration.maxDisjointShieldDistance * ShieldConfiguration.maxDisjointShieldDistance) {
+        if (squaredDistance > ShieldConfiguration.maxDisjointShieldDistance.get() * ShieldConfiguration.maxDisjointShieldDistance.get()) {
             Logging.message(player, TextFormatting.YELLOW + "This template is too far to connect to the shield!");
             return;
         }
