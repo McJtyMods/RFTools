@@ -51,6 +51,7 @@ public class ConfigSetup {
         StorageScannerConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
         ElevatorConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
         BoosterConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
+        TeleportConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
     }
 
     public static ConfigSpec SERVER_CONFIG;
@@ -66,7 +67,6 @@ public class ConfigSetup {
             SERVER_CONFIG = SERVER_BUILDER.build(mainConfig);
             CLIENT_CONFIG = CLIENT_BUILDER.build(mainConfig);
 
-            TeleportConfiguration.init(cfg);
             SpawnerConfiguration.init(cfg);
 
         } catch (Exception e1) {

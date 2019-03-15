@@ -96,13 +96,13 @@ public class TeleportationTools {
      */
     public static int calculateRFCost(World world, BlockPos c1, TeleportDestination teleportDestination) {
         if (world.provider.getDimension() != teleportDestination.getDimension()) {
-            return TeleportConfiguration.rfStartTeleportBaseDim;
+            return TeleportConfiguration.rfStartTeleportBaseDim.get();
         } else {
             BlockPos c2 = teleportDestination.getCoordinate();
             double dist = new Vec3d(c1.getX(), c1.getY(), c1.getZ()).distanceTo(new Vec3d(c2.getX(), c2.getY(), c2.getZ()));
-            int rf = TeleportConfiguration.rfStartTeleportBaseLocal + (int)(TeleportConfiguration.rfStartTeleportDist * dist);
-            if (rf > TeleportConfiguration.rfStartTeleportBaseDim) {
-                rf = TeleportConfiguration.rfStartTeleportBaseDim;
+            int rf = TeleportConfiguration.rfStartTeleportBaseLocal.get() + (int)(TeleportConfiguration.rfStartTeleportDist.get() * dist);
+            if (rf > TeleportConfiguration.rfStartTeleportBaseDim.get()) {
+                rf = TeleportConfiguration.rfStartTeleportBaseDim.get();
             }
             return rf;
         }
@@ -117,13 +117,13 @@ public class TeleportationTools {
      */
     public static int calculateTime(World world, BlockPos c1, TeleportDestination teleportDestination) {
         if (world.provider.getDimension() != teleportDestination.getDimension()) {
-            return TeleportConfiguration.timeTeleportBaseDim;
+            return TeleportConfiguration.timeTeleportBaseDim.get();
         } else {
             BlockPos c2 = teleportDestination.getCoordinate();
             double dist = new Vec3d(c1.getX(), c1.getY(), c1.getZ()).distanceTo(new Vec3d(c2.getX(), c2.getY(), c2.getZ()));
-            int time = TeleportConfiguration.timeTeleportBaseLocal + (int)(TeleportConfiguration.timeTeleportDist * dist / 1000);
-            if (time > TeleportConfiguration.timeTeleportBaseDim) {
-                time = TeleportConfiguration.timeTeleportBaseDim;
+            int time = TeleportConfiguration.timeTeleportBaseLocal.get() + (int)(TeleportConfiguration.timeTeleportDist.get() * dist / 1000);
+            if (time > TeleportConfiguration.timeTeleportBaseDim.get()) {
+                time = TeleportConfiguration.timeTeleportBaseDim.get();
             }
             return time;
         }
@@ -146,7 +146,7 @@ public class TeleportationTools {
             player.setPositionAndUpdate(c.getX()+0.5, c.getY()+1, c.getZ()+0.5);
         }
 
-        if (TeleportConfiguration.whooshMessage) {
+        if (TeleportConfiguration.whooshMessage.get()) {
             Logging.message(player, "Whoosh!");
         }
         // @todo achievements
@@ -161,11 +161,11 @@ public class TeleportationTools {
 
         severity = applyBadEffectIfNeeded(player, severity, bad, good, boostNeeded);
         if (severity <= 0) {
-            if (TeleportConfiguration.teleportVolume >= 0.01) {
-                SoundTools.playSound(player.getEntityWorld(), ModSounds.whoosh, player.posX, player.posY, player.posZ, TeleportConfiguration.teleportVolume, 1.0f);
+            if (TeleportConfiguration.teleportVolume.get() >= 0.01) {
+                SoundTools.playSound(player.getEntityWorld(), ModSounds.whoosh, player.posX, player.posY, player.posZ, TeleportConfiguration.teleportVolume.get(), 1.0f);
             }
         }
-        if (TeleportConfiguration.logTeleportUsages) {
+        if (TeleportConfiguration.logTeleportUsages.get()) {
             Logging.log("Teleport: Player " + player.getName() + " from " + old + " (dim " + oldId + ") to " + dest.getCoordinate() + " (dim " + dest.getDimension() + ") with severity " + severity);
         }
         return boostNeeded;
@@ -221,7 +221,7 @@ public class TeleportationTools {
         }
 
         if (dialingDeviceTileEntity != null) {
-            int cost = TeleportConfiguration.rfPerDial;
+            int cost = TeleportConfiguration.rfPerDial.get();
             cost = (int) (cost * (2.0f - dialingDeviceTileEntity.getInfusedFactor()) / 2.0f);
 
             if (dialingDeviceTileEntity.getStoredPower() < cost) {
@@ -253,7 +253,7 @@ public class TeleportationTools {
         }
 
         MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
-        int rf = TeleportConfiguration.rfPerTeleportReceiver;
+        int rf = TeleportConfiguration.rfPerTeleportReceiver.get();
         rf = (int) (rf * (2.0f - matterReceiverTileEntity.getInfusedFactor()) / 2.0f);
 
         if (rf <= 0) {
@@ -266,9 +266,9 @@ public class TeleportationTools {
         long remainingRf = matterReceiverTileEntity.getStoredPower();
         if (remainingRf <= 1) {
             Logging.warn(player, "The matter receiver has run out of power!");
-        } else if (remainingRf < (TeleportConfiguration.RECEIVER_MAXENERGY / 10)) {
+        } else if (remainingRf < (TeleportConfiguration.RECEIVER_MAXENERGY.get() / 10)) {
             Logging.warn(player, "The matter receiver is getting very low on power!");
-        } else if (remainingRf < (TeleportConfiguration.RECEIVER_MAXENERGY / 5)) {
+        } else if (remainingRf < (TeleportConfiguration.RECEIVER_MAXENERGY.get() / 5)) {
             Logging.warn(player, "The matter receiver is getting low on power!");
         }
 
@@ -306,8 +306,8 @@ public class TeleportationTools {
             return 0;
         }
 
-        if (TeleportConfiguration.teleportErrorVolume >= 0.01) {
-            SoundTools.playSound(player.getEntityWorld(), ModSounds.error, player.posX, player.posY, player.posZ, TeleportConfiguration.teleportVolume, 1.0f);
+        if (TeleportConfiguration.teleportErrorVolume.get() >= 0.01) {
+            SoundTools.playSound(player.getEntityWorld(), ModSounds.error, player.posX, player.posY, player.posZ, TeleportConfiguration.teleportErrorVolume.get(), 1.0f);
         }
 
         applyEffectForSeverity(player, severity, boostNeeded);
@@ -353,7 +353,7 @@ public class TeleportationTools {
     }
 
     public static boolean checkValidTeleport(EntityPlayer player, int srcId, int dstId) {
-        if (TeleportConfiguration.preventInterdimensionalTeleports) {
+        if (TeleportConfiguration.preventInterdimensionalTeleports.get()) {
             if (srcId == dstId) {
                 Logging.warn(player, "Teleportation in the same dimension is not allowed!");
                 return false;

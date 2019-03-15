@@ -48,7 +48,7 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
     private BlockPos cachedPos;
 
     public MatterReceiverTileEntity() {
-        super(TeleportConfiguration.RECEIVER_MAXENERGY, TeleportConfiguration.RECEIVER_RECEIVEPERTICK);
+        super(TeleportConfiguration.RECEIVER_MAXENERGY.get(), TeleportConfiguration.RECEIVER_RECEIVEPERTICK.get());
     }
 
     public String getName() {
@@ -186,7 +186,7 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
             return DialingDeviceTileEntity.DIAL_RECEIVER_BLOCKED_MASK;
         }
 
-        if (getStoredPower() < TeleportConfiguration.rfPerTeleportReceiver) {
+        if (getStoredPower() < TeleportConfiguration.rfPerTeleportReceiver.get()) {
             return DialingDeviceTileEntity.DIAL_RECEIVER_POWER_LOW_MASK;
         }
 

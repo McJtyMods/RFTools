@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.teleporter;
 
+import mcjty.lib.thirteen.ConfigSpec;
 import mcjty.lib.varia.Logging;
-import net.minecraftforge.common.config.Configuration;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashSet;
@@ -10,151 +10,191 @@ import java.util.Set;
 public class TeleportConfiguration {
     public static final String CATEGORY_TELEPORTER = "teleporter";
 
-    public static int TRANSMITTER_MAXENERGY = 200000;
-    public static int TRANSMITTER_RECEIVEPERTICK = 1000;
-    public static int RECEIVER_MAXENERGY = 100000;
-    public static int RECEIVER_RECEIVEPERTICK = 500;
-    public static int DIALER_MAXENERGY = 50000;
-    public static int DIALER_RECEIVEPERTICK = 100;
-    public static int horizontalDialerRange = 10;           // Horizontal range the dialing device can check for transmitters
-    public static int verticalDialerRange = 5;              // Vertical range the dialing device can check for transmitters
-    public static int rfPerDial = 1000;                     // RF Consumed by dialing device when making a new dial
-    public static int rfPerCheck = 5000;                    // RF Used to do a check on a receiver.
-    public static int rfDialedConnectionPerTick = 10;       // RF Consumed by transmitter when a dial is active and not doing anything else
+    public static ConfigSpec.IntValue TRANSMITTER_MAXENERGY;
+    public static ConfigSpec.IntValue TRANSMITTER_RECEIVEPERTICK;
+    public static ConfigSpec.IntValue RECEIVER_MAXENERGY;
+    public static ConfigSpec.IntValue RECEIVER_RECEIVEPERTICK;
+    public static ConfigSpec.IntValue DIALER_MAXENERGY;
+    public static ConfigSpec.IntValue DIALER_RECEIVEPERTICK;
+    public static ConfigSpec.IntValue horizontalDialerRange;           // Horizontal range the dialing device can check for transmitters
+    public static ConfigSpec.IntValue verticalDialerRange;              // Vertical range the dialing device can check for transmitters
+    public static ConfigSpec.IntValue rfPerDial;                     // RF Consumed by dialing device when making a new dial
+    public static ConfigSpec.IntValue rfPerCheck;                    // RF Used to do a check on a receiver.
+    public static ConfigSpec.IntValue rfDialedConnectionPerTick;       // RF Consumed by transmitter when a dial is active and not doing anything else
 
-    public static int ADVANCED_CHARGEDPORTER_MAXENERGY = 1000000;     // Maximum RF capacity of a charged porter item. Teleporting costs 50% more then normal so keep this into account
-    public static int CHARGEDPORTER_MAXENERGY = 200000;     // Maximum RF capacity of a charged porter item. Teleporting costs 50% more then normal so keep this into account
-    public static int CHARGEDPORTER_RECEIVEPERTICK = 2000;
+    public static ConfigSpec.IntValue ADVANCED_CHARGEDPORTER_MAXENERGY;     // Maximum RF capacity of a charged porter item. Teleporting costs 50% more then normal so keep this into account
+    public static ConfigSpec.IntValue CHARGEDPORTER_MAXENERGY;     // Maximum RF capacity of a charged porter item. Teleporting costs 50% more then normal so keep this into account
+    public static ConfigSpec.IntValue CHARGEDPORTER_RECEIVEPERTICK;
 
-    public static int advancedSpeedBonus = 4;               // How much faster the speed of the advanced porter is
+    public static ConfigSpec.IntValue advancedSpeedBonus;               // How much faster the speed of the advanced porter is
 
     // The following flags are used to calculate power usage for even starting a teleport. The rfStartTeleportBaseDim (cost of
     // teleporting to another dimension) is also the cap of the local teleport which is calculated by doing
     // rfStartTelelportBaseLocal + dist * rfStartTeleportDist
-    public static int rfStartTeleportBaseLocal = 5000;      // Base RF consumed by transmitter when starting a teleport in same dimension
-    public static int rfStartTeleportBaseDim = 100000;      // Base RF consumed by transmitter when starting a teleport to another dimension
-    public static int rfStartTeleportDist = 10;             // RF per distance unit when starting a teleport
-    public static int rfTeleportPerTick = 500;              // During the time the teleport is busy this RF is used per tick on the transmitter
-    public static int rfMatterIdleTick = 0;                 // The rf per tick a dialed transmitter consumes.
-    public static int rfPerTeleportReceiver = 5000;         // On the receiver side we need this amount of power
-    public static int rfBoostedTeleport = 20000;            // The RF needed to do a boosted teleportation
+    public static ConfigSpec.IntValue rfStartTeleportBaseLocal;      // Base RF consumed by transmitter when starting a teleport in same dimension
+    public static ConfigSpec.IntValue rfStartTeleportBaseDim;      // Base RF consumed by transmitter when starting a teleport to another dimension
+    public static ConfigSpec.IntValue rfStartTeleportDist;             // RF per distance unit when starting a teleport
+    public static ConfigSpec.IntValue rfTeleportPerTick;              // During the time the teleport is busy this RF is used per tick on the transmitter
+    public static ConfigSpec.IntValue rfMatterIdleTick;                 // The rf per tick a dialed transmitter consumes.
+    public static ConfigSpec.IntValue rfPerTeleportReceiver;         // On the receiver side we need this amount of power
+    public static ConfigSpec.IntValue rfBoostedTeleport;            // The RF needed to do a boosted teleportation
 
     // The following flags are used to calculate the time used for doing the actual teleportation. Same principle as with
     // the power usage above with regards to local/dimensional teleport.
-    public static int timeTeleportBaseLocal = 5;
-    public static int timeTeleportBaseDim = 50;
-    public static int timeTeleportDist = 10;                // Value in militicks (1000 == 1 tick)
+    public static ConfigSpec.IntValue timeTeleportBaseLocal;
+    public static ConfigSpec.IntValue timeTeleportBaseDim;
+    public static ConfigSpec.IntValue timeTeleportDist;                // Value in militicks (1000 == 1 tick)
 
     // Base volume for the teleporting sound (whoosh!)
-    public static float teleportVolume = 1.0f;
-    public static float teleportErrorVolume = 1.0f;
+    public static ConfigSpec.DoubleValue teleportVolume;
+    public static ConfigSpec.DoubleValue teleportErrorVolume;
 
     // Set these flags if you want the matter transmitter to more aggressively check for receiver quality. Possibly with some performance penalty.
-    public static int matterTransmitterLoadChunk = -1;
-    public static int matterTransmitterLoadWorld = -1;
+    public static ConfigSpec.IntValue matterTransmitterLoadChunk;
+    public static ConfigSpec.IntValue matterTransmitterLoadWorld;
 
-    public static boolean whooshMessage = true;
+    public static ConfigSpec.BooleanValue whooshMessage;
 
     // Prevent inter-dimensional teleportation.
-    public static boolean preventInterdimensionalTeleports = false;
+    public static ConfigSpec.BooleanValue preventInterdimensionalTeleports;
     // Blacklist the following dimensions to be able to teleport from.
-    public static String blacklistedTeleportationSources = "";
+    public static ConfigSpec.ConfigValue<String> blacklistedTeleportationSources;
     private static Set<Integer> blacklistedTeleportationSourcesSet = null;
     // Blacklist the following dimensions to be able to teleport too.
-    public static String blacklistedTeleportationDestinations = "";
+    public static ConfigSpec.ConfigValue<String> blacklistedTeleportationDestinations;
     private static Set<Integer> blacklistedTeleportationDestinationsSet = null;
 
-    public static boolean logTeleportUsages = false;
+    public static ConfigSpec.BooleanValue logTeleportUsages;
 
-    public static void init(Configuration cfg) {
-        cfg.addCustomCategoryComment(CATEGORY_TELEPORTER, "Settings for the teleportation system");
-        TRANSMITTER_MAXENERGY = cfg.get(CATEGORY_TELEPORTER, "transmitterMaxRF", TRANSMITTER_MAXENERGY,
-                "Maximum RF storage that the matter transmitter can hold. This should be at least equal to 'rfStartTeleportDim'").getInt();
-        TRANSMITTER_RECEIVEPERTICK = cfg.get(CATEGORY_TELEPORTER, "transmitterRFPerTick", TRANSMITTER_RECEIVEPERTICK,
-                "RF per tick that the matter transmitter can receive. It is recommended to keep this at least equal to 'rfTeleportPerTick'").getInt();
+    public static void init(ConfigSpec.Builder SERVER_BUILDER, ConfigSpec.Builder CLIENT_BUILDER) {
+        SERVER_BUILDER.comment("Settings for the teleportation system").push(CATEGORY_TELEPORTER);
+        CLIENT_BUILDER.comment("Settings for the teleportation system").push(CATEGORY_TELEPORTER);
 
-        RECEIVER_MAXENERGY = cfg.get(CATEGORY_TELEPORTER, "receiverMaxRF", RECEIVER_MAXENERGY,
-                "Maximum RF storage that the matter receiver can hold").getInt();
-        RECEIVER_RECEIVEPERTICK = cfg.get(CATEGORY_TELEPORTER, "receiverRFPerTick", RECEIVER_RECEIVEPERTICK,
-                "RF per tick that the matter receiver can receive").getInt();
+        TRANSMITTER_MAXENERGY = SERVER_BUILDER
+                .comment("Maximum RF storage that the matter transmitter can hold. This should be at least equal to 'rfStartTeleportDim'")
+                .defineInRange("transmitterMaxRF", 200000, 0, Integer.MAX_VALUE);
+        TRANSMITTER_RECEIVEPERTICK = SERVER_BUILDER
+                .comment("RF per tick that the matter transmitter can receive. It is recommended to keep this at least equal to 'rfTeleportPerTick'")
+                .defineInRange("transmitterRFPerTick", 1000, 0, Integer.MAX_VALUE);
 
-        DIALER_MAXENERGY = cfg.get(CATEGORY_TELEPORTER, "dialerMaxRF", DIALER_MAXENERGY,
-                "Maximum RF storage that the dialing device can hold").getInt();
-        DIALER_RECEIVEPERTICK = cfg.get(CATEGORY_TELEPORTER, "dialerRFPerTick", DIALER_RECEIVEPERTICK,
-                "RF per tick that the dialing device can receive").getInt();
+        RECEIVER_MAXENERGY = SERVER_BUILDER
+                .comment("Maximum RF storage that the matter receiver can hold")
+                .defineInRange("receiverMaxRF", 100000, 0, Integer.MAX_VALUE);
+        RECEIVER_RECEIVEPERTICK = SERVER_BUILDER
+                .comment("RF per tick that the matter receiver can receive")
+                .defineInRange("receiverRFPerTick", 500, 0, Integer.MAX_VALUE);
 
-        ADVANCED_CHARGEDPORTER_MAXENERGY = cfg.get(CATEGORY_TELEPORTER, "advancedChargedPorterMaxRF", ADVANCED_CHARGEDPORTER_MAXENERGY,
-                "Maximum RF storage that the advanced charged porter item can hold (note that teleporting this way uses 50% more RF then with a matter transmitter)").getInt();
-        CHARGEDPORTER_MAXENERGY = cfg.get(CATEGORY_TELEPORTER, "chargedPorterMaxRF", CHARGEDPORTER_MAXENERGY,
-                "Maximum RF storage that the charged porter item can hold (note that teleporting this way uses 50% more RF then with a matter transmitter)").getInt();
-        CHARGEDPORTER_RECEIVEPERTICK = cfg.get(CATEGORY_TELEPORTER, "chargedPorterRFPerTick", CHARGEDPORTER_RECEIVEPERTICK,
-                "RF per tick that the the charged porter item can receive").getInt();
-        advancedSpeedBonus = cfg.get(CATEGORY_TELEPORTER, "advancedSpeedBonus", advancedSpeedBonus,
-                "The speed bonus for the advanced charged porter (compared to the normal one)").getInt();
+        DIALER_MAXENERGY = SERVER_BUILDER
+                .comment("Maximum RF storage that the dialing device can hold")
+                .defineInRange("dialerMaxRF", 50000, 0, Integer.MAX_VALUE);
+        DIALER_RECEIVEPERTICK = SERVER_BUILDER
+                .comment("RF per tick that the dialing device can receive")
+                .defineInRange("dialerRFPerTick", 100, 0, Integer.MAX_VALUE);
 
-        horizontalDialerRange = cfg.get(CATEGORY_TELEPORTER, "horizontalDialerRange", horizontalDialerRange,
-                "The horizontal range the dialing device uses to check for transmitters. These are the transmitters the dialing device will be able to control").getInt();
-        verticalDialerRange = cfg.get(CATEGORY_TELEPORTER, "verticalDialerRange", verticalDialerRange,
-                "The vertical range the dialing device uses to check for transmitters").getInt();
+        ADVANCED_CHARGEDPORTER_MAXENERGY = SERVER_BUILDER
+                .comment("Maximum RF storage that the advanced charged porter item can hold (note that teleporting this way uses 50% more RF then with a matter transmitter)")
+                .defineInRange("advancedChargedPorterMaxRF", 1000000, 0, Integer.MAX_VALUE);
+        CHARGEDPORTER_MAXENERGY = SERVER_BUILDER
+                .comment("Maximum RF storage that the charged porter item can hold (note that teleporting this way uses 50% more RF then with a matter transmitter)")
+                .defineInRange("chargedPorterMaxRF", 200000, 0, Integer.MAX_VALUE);
+        CHARGEDPORTER_RECEIVEPERTICK = SERVER_BUILDER
+                .comment("RF per tick that the the charged porter item can receive")
+                .defineInRange("chargedPorterRFPerTick", 2000, 0, Integer.MAX_VALUE);
+        advancedSpeedBonus = SERVER_BUILDER
+                .comment("The speed bonus for the advanced charged porter (compared to the normal one)")
+                .defineInRange("advancedSpeedBonus", 4, 0, Integer.MAX_VALUE);
 
-        rfPerDial = cfg.get(CATEGORY_TELEPORTER, "rfPerDial", rfPerDial,
-                "The amount of RF consumed when dialing a transmitter to another receiver").getInt();
-        rfPerCheck = cfg.get(CATEGORY_TELEPORTER, "rfPerCheck", rfPerCheck,
-                "The amount of RF consumed when the dialing device checks for the capabilities of a receiver ('Check' button)").getInt();
-        rfDialedConnectionPerTick = cfg.get(CATEGORY_TELEPORTER, "rfDialedConnectionPerTick", rfDialedConnectionPerTick,
-                "The amount of RF that is consumed by the matter transmitter when a dial is active").getInt();
+        horizontalDialerRange = SERVER_BUILDER
+                .comment("The horizontal range the dialing device uses to check for transmitters. These are the transmitters the dialing device will be able to control")
+                .defineInRange("horizontalDialerRange", 10, 0, Integer.MAX_VALUE);
+        verticalDialerRange = SERVER_BUILDER
+                .comment("The vertical range the dialing device uses to check for transmitters")
+                .defineInRange("verticalDialerRange", 5, 0, Integer.MAX_VALUE);
 
-        rfStartTeleportBaseLocal = cfg.get(CATEGORY_TELEPORTER, "rfStartTeleportLocal", rfStartTeleportBaseLocal,
-                "The amount of RF that is consumed by a matter transmitter when the player goes to stand in the teleportation beam allowing the teleportation process to start. This value is used for a teleport in the same dimension. In addition to this value the 'rfStartTeleportDist' is also added per traveled distance").getInt();
-        rfStartTeleportBaseDim = cfg.get(CATEGORY_TELEPORTER, "rfStartTeleportDim", rfStartTeleportBaseDim,
-                "The amount of RF that is consumed by a matter transmitter when the player goes to stand in the teleportation beam allowing the teleportation process to start. This version is for a teleportation to another dimension and in this case 'rfStartTeleportDist' is not used. This value also acts as the maximum rf that can be consumed for a local teleport").getInt();
-        rfStartTeleportDist = cfg.get(CATEGORY_TELEPORTER, "rfStartTeleportDist", rfStartTeleportDist,
-                "For every unit in distance this value is added to the initial RF cost for starting the teleportation. This value is not used when teleporting to another dimension").getInt();
-        rfTeleportPerTick = cfg.get(CATEGORY_TELEPORTER, "rfTeleportPerTick", rfTeleportPerTick,
-                "For the duration of the teleport process this value represents the amount of RF that is consumed by the matter transmitter for every tick").getInt();
-        rfMatterIdleTick = cfg.get(CATEGORY_TELEPORTER, "rfMatterIdleTick", rfMatterIdleTick,
-                "The amount of RF/tick an idle dialed transmitter consumes").getInt();
+        rfPerDial = SERVER_BUILDER
+                .comment("The amount of RF consumed when dialing a transmitter to another receiver")
+                .defineInRange("rfPerDial", 1000, 0, Integer.MAX_VALUE);
+        rfPerCheck = SERVER_BUILDER
+                .comment("The amount of RF consumed when the dialing device checks for the capabilities of a receiver ('Check' button)")
+                .defineInRange("rfPerCheck", 5000, 0, Integer.MAX_VALUE);
+        rfDialedConnectionPerTick = SERVER_BUILDER
+                .comment("The amount of RF that is consumed by the matter transmitter when a dial is active")
+                .defineInRange("rfDialedConnectionPerTick", 10, 0, Integer.MAX_VALUE);
 
-        rfPerTeleportReceiver = cfg.get(CATEGORY_TELEPORTER, "rfPerTeleportReceiver", rfPerTeleportReceiver,
-                "This is the amount of RF that is consumed at the receiving side for every teleport. This RF is only consumed when the teleportation actually happens").getInt();
-        rfBoostedTeleport = cfg.get(CATEGORY_TELEPORTER, "rfBoostedTeleport", rfBoostedTeleport,
-                "This is the amount of RF that is consumed at a boosted transmitter in case the receiver doesn't have enough power").getInt();
+        rfStartTeleportBaseLocal = SERVER_BUILDER
+                .comment("The amount of RF that is consumed by a matter transmitter when the player goes to stand in the teleportation beam allowing the teleportation process to start. This value is used for a teleport in the same dimension. In addition to this value the 'rfStartTeleportDist' is also added per traveled distance")
+                .defineInRange("rfStartTeleportLocal", 5000, 0, Integer.MAX_VALUE);
+        rfStartTeleportBaseDim = SERVER_BUILDER
+                .comment("The amount of RF that is consumed by a matter transmitter when the player goes to stand in the teleportation beam allowing the teleportation process to start. This version is for a teleportation to another dimension and in this case 'rfStartTeleportDist' is not used. This value also acts as the maximum rf that can be consumed for a local teleport")
+                .defineInRange("rfStartTeleportDim", 100000, 0, Integer.MAX_VALUE);
+        rfStartTeleportDist = SERVER_BUILDER
+                .comment("For every unit in distance this value is added to the initial RF cost for starting the teleportation. This value is not used when teleporting to another dimension")
+                .defineInRange("rfStartTeleportDist", 10, 0, Integer.MAX_VALUE);
+        rfTeleportPerTick = SERVER_BUILDER
+                .comment("For the duration of the teleport process this value represents the amount of RF that is consumed by the matter transmitter for every tick")
+                .defineInRange("rfTeleportPerTick", 500, 0, Integer.MAX_VALUE);
+        rfMatterIdleTick = SERVER_BUILDER
+                .comment("The amount of RF/tick an idle dialed transmitter consumes")
+                .defineInRange("rfMatterIdleTick", 0, 0, Integer.MAX_VALUE);
 
-        timeTeleportBaseLocal = cfg.get(CATEGORY_TELEPORTER, "timeTeleportBaseLocal", timeTeleportBaseLocal,
-                "The base time used for a teleportation for a local teleport. The 'timeTeleportDist' value is added per distance traveled").getInt();
-        timeTeleportBaseDim = cfg.get(CATEGORY_TELEPORTER, "timeTeleportBaseDim", timeTeleportBaseDim,
-                "The base time used for a teleportation to another dimension. The 'timeTeleportDist' value is not used").getInt();
-        timeTeleportDist = cfg.get(CATEGORY_TELEPORTER, "timeTeleportDist", timeTeleportDist,
-                "The amount of time that is added depending on distance for a local teleport. This value is in militicks which means that 1000 is one tick and one tick is 1/20 of a second").getInt();
+        rfPerTeleportReceiver = SERVER_BUILDER
+                .comment("This is the amount of RF that is consumed at the receiving side for every teleport. This RF is only consumed when the teleportation actually happens")
+                .defineInRange("rfPerTeleportReceiver", 5000, 0, Integer.MAX_VALUE);
+        rfBoostedTeleport = SERVER_BUILDER
+                .comment("This is the amount of RF that is consumed at a boosted transmitter in case the receiver doesn't have enough power")
+                .defineInRange("rfBoostedTeleport", 20000, 0, Integer.MAX_VALUE);
 
-        whooshMessage = cfg.get(CATEGORY_TELEPORTER, "whooshMessage", whooshMessage,
-                "Set this to false to disable the 'whoosh' message on teleport").getBoolean();
+        timeTeleportBaseLocal = SERVER_BUILDER
+                .comment("The base time used for a teleportation for a local teleport. The 'timeTeleportDist' value is added per distance traveled")
+                .defineInRange("timeTeleportBaseLocal", 5, 0, Integer.MAX_VALUE);
+        timeTeleportBaseDim = SERVER_BUILDER
+                .comment("The base time used for a teleportation to another dimension. The 'timeTeleportDist' value is not used")
+                .defineInRange("timeTeleportBaseDim", 50, 0, Integer.MAX_VALUE);
+        timeTeleportDist = SERVER_BUILDER
+                .comment("The amount of time that is added depending on distance for a local teleport. This value is in militicks which means that 1000 is one tick and one tick is 1/20 of a second")
+                .defineInRange("timeTeleportDist", 10, 0, Integer.MAX_VALUE);
 
-        teleportVolume = (float) cfg.get(CATEGORY_TELEPORTER, "volumeTeleport", teleportVolume,
-                "The volume for the teleporting sound (1.0 is default)").getDouble();
-        teleportErrorVolume = (float) cfg.get(CATEGORY_TELEPORTER, "volumeTeleportError", teleportErrorVolume,
-                "The volume for the error sound when teleportation fails (1.0 is default)").getDouble();
+        whooshMessage = SERVER_BUILDER
+            .comment("Set this to false to disable the 'whoosh' message on teleport")
+            .define("whooshMessage", true);
 
-        matterTransmitterLoadChunk = cfg.get(CATEGORY_TELEPORTER, "checkUnloadedChunk", matterTransmitterLoadChunk,
-                "The amount of ticks that a matter transmitter with destination checker will wait before checking a receiver in case the chunk is not loaded (-1 to disable this check completely)").getInt();
-        matterTransmitterLoadWorld = cfg.get(CATEGORY_TELEPORTER, "checkUnloadedWorld", matterTransmitterLoadWorld,
-                "The amount of ticks that a matter transmitter with destination checker will wait before checking a receiver in case the world is not loaded (-1 to disable this check completely)").getInt();
+        teleportVolume = SERVER_BUILDER
+                .comment("The volume for the teleporting sound (1.0 is default)")
+                .defineInRange("volumeTeleport", 1.0, 0.0, 1.0);
+        teleportErrorVolume = SERVER_BUILDER
+                .comment("The volume for the error sound when teleportation fails (1.0 is default)")
+                .defineInRange("volumeTeleportError", 1.0, 0.0, 1.0);
 
-        logTeleportUsages = cfg.get(CATEGORY_TELEPORTER, "logTeleportUsages", logTeleportUsages,
-                "If this is true then all usages of the teleport system are logged").getBoolean();
+        matterTransmitterLoadChunk = SERVER_BUILDER
+                .comment("The amount of ticks that a matter transmitter with destination checker will wait before checking a receiver in case the chunk is not loaded (-1 to disable this check completely)")
+                .defineInRange("checkUnloadedChunk", -1, -1, Integer.MAX_VALUE);
+        matterTransmitterLoadWorld = SERVER_BUILDER
+                .comment("The amount of ticks that a matter transmitter with destination checker will wait before checking a receiver in case the world is not loaded (-1 to disable this check completely)")
+                .defineInRange("checkUnloadedWorld", -1, -1, Integer.MAX_VALUE);
 
-        preventInterdimensionalTeleports = cfg.get(CATEGORY_TELEPORTER, "preventInterdimensionalTeleports", preventInterdimensionalTeleports,
-                "If this is true then the RFTools teleportation system cannot be used to travel in the same dimension").getBoolean();
-        blacklistedTeleportationSources = cfg.get(CATEGORY_TELEPORTER, "blacklistedTeleportationSources", blacklistedTeleportationSources,
-                "Comma separated list of dimension ids that the teleportation system can't teleport from").getString();
-        blacklistedTeleportationDestinations = cfg.get(CATEGORY_TELEPORTER, "blacklistedTeleportationDestinations", blacklistedTeleportationDestinations,
-                "Comma separated list of dimension ids that the teleportation system can't teleport to").getString();
+        logTeleportUsages = SERVER_BUILDER
+            .comment("If this is true then all usages of the teleport system are logged")
+            .define("logTeleportUsages", false);
+
+        preventInterdimensionalTeleports = SERVER_BUILDER
+            .comment("If this is true then the RFTools teleportation system cannot be used to travel in the same dimension")
+            .define("preventInterdimensionalTeleports", false);
+
+        blacklistedTeleportationSources = SERVER_BUILDER
+                .comment("Comma separated list of dimension ids that the teleportation system can't teleport from")
+                .define("blacklistedTeleportationSources", "");
+        blacklistedTeleportationDestinations = SERVER_BUILDER
+                .comment("Comma separated list of dimension ids that the teleportation system can't teleport to")
+                .define("blacklistedTeleportationDestinations", "");
+
+        SERVER_BUILDER.pop();
+        CLIENT_BUILDER.pop();
     }
 
     public static Set<Integer> getBlacklistedTeleportationSources() {
         if (blacklistedTeleportationSourcesSet == null) {
             blacklistedTeleportationSourcesSet = new HashSet<>();
-            String[] strings = StringUtils.split(blacklistedTeleportationSources, ',');
+            String[] strings = StringUtils.split(blacklistedTeleportationSources.get(), ',');
             for (String string : strings) {
                 try {
                     blacklistedTeleportationSourcesSet.add(Integer.parseInt(string));
@@ -169,7 +209,7 @@ public class TeleportConfiguration {
     public static Set<Integer> getBlacklistedTeleportationDestinations() {
         if (blacklistedTeleportationDestinationsSet == null) {
             blacklistedTeleportationDestinationsSet = new HashSet<>();
-            String[] strings = StringUtils.split(blacklistedTeleportationDestinations, ',');
+            String[] strings = StringUtils.split(blacklistedTeleportationDestinations.get(), ',');
             for (String string : strings) {
                 try {
                     blacklistedTeleportationDestinationsSet.add(Integer.parseInt(string));

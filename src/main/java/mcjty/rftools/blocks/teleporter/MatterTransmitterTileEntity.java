@@ -82,7 +82,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
     }
 
     public MatterTransmitterTileEntity() {
-        super(TeleportConfiguration.TRANSMITTER_MAXENERGY, TeleportConfiguration.TRANSMITTER_RECEIVEPERTICK);
+        super(TeleportConfiguration.TRANSMITTER_MAXENERGY.get(), TeleportConfiguration.TRANSMITTER_RECEIVEPERTICK.get());
     }
 
     public String getName() {
@@ -305,9 +305,9 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
     }
 
     private void consumeIdlePower() {
-        if (TeleportConfiguration.rfMatterIdleTick > 0 && teleportingPlayer == null) {
-            if (getStoredPower() >= TeleportConfiguration.rfMatterIdleTick) {
-                consumeEnergy(TeleportConfiguration.rfMatterIdleTick);
+        if (TeleportConfiguration.rfMatterIdleTick.get() > 0 && teleportingPlayer == null) {
+            if (getStoredPower() >= TeleportConfiguration.rfMatterIdleTick.get()) {
+                consumeEnergy(TeleportConfiguration.rfMatterIdleTick.get());
             } else {
                 setTeleportDestination(null, false);
             }
@@ -404,21 +404,21 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         World w = DimensionManager.getWorld(dimension);
         // By default we will not check if the dimension is not loaded. Can be changed in config.
         if (w == null) {
-            if (TeleportConfiguration.matterTransmitterLoadWorld == -1) {
+            if (TeleportConfiguration.matterTransmitterLoadWorld.get() == -1) {
                 return TeleportationTools.STATUS_UNKNOWN;
             } else {
                 w = getWorld().getMinecraftServer().getWorld(dimension);
-                checkReceiverStatusCounter = TeleportConfiguration.matterTransmitterLoadWorld;
+                checkReceiverStatusCounter = TeleportConfiguration.matterTransmitterLoadWorld.get();
             }
         }
         BlockPos c = destination.getCoordinate();
 
         boolean exists = WorldTools.chunkLoaded(w, c);
         if (!exists) {
-            if (TeleportConfiguration.matterTransmitterLoadChunk == -1) {
+            if (TeleportConfiguration.matterTransmitterLoadChunk.get() == -1) {
                 return TeleportationTools.STATUS_UNKNOWN;
             } else {
-                checkReceiverStatusCounter = TeleportConfiguration.matterTransmitterLoadChunk;
+                checkReceiverStatusCounter = TeleportConfiguration.matterTransmitterLoadChunk.get();
             }
         }
 
@@ -529,7 +529,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         }
 
         boolean boosted = DialingDeviceTileEntity.isMatterBoosterAvailable(getWorld(), getPos());
-        if (boosted && getStoredPower() < TeleportConfiguration.rfBoostedTeleport) {
+        if (boosted && getStoredPower() < TeleportConfiguration.rfBoostedTeleport.get()) {
             // Not enough energy. We cannot do a boosted teleport.
             boosted = false;
         }
@@ -537,7 +537,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         if (player != null) {
             boolean boostNeeded = TeleportationTools.performTeleport(player, dest, badTicks, totalTicks, boosted);
             if (boostNeeded) {
-                consumeEnergy(TeleportConfiguration.rfBoostedTeleport);
+                consumeEnergy(TeleportConfiguration.rfBoostedTeleport.get());
             }
         }
 
@@ -626,7 +626,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
             teleportTimer = TeleportationTools.calculateTime(getWorld(), getPos(), dest);
             teleportTimer = (int) (teleportTimer * (1.2f - getInfusedFactor()) / 1.2f);
 
-            int rf = TeleportConfiguration.rfTeleportPerTick;
+            int rf = TeleportConfiguration.rfTeleportPerTick.get();
             rf = (int) (rf * (4.0f - getInfusedFactor()) / 4.0f);
             int totalRfUsed = cost + rf * (teleportTimer+1);
             rfPerTick = totalRfUsed / (teleportTimer+1);

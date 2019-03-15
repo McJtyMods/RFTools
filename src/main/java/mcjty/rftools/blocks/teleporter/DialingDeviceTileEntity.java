@@ -59,7 +59,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
     private boolean showOnlyFavorites = false;
 
     public DialingDeviceTileEntity() {
-        super(TeleportConfiguration.DIALER_MAXENERGY, TeleportConfiguration.DIALER_RECEIVEPERTICK);
+        super(TeleportConfiguration.DIALER_MAXENERGY.get(), TeleportConfiguration.DIALER_RECEIVEPERTICK.get());
     }
 
     /**
@@ -141,8 +141,8 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
         int y = getPos().getY();
         int z = getPos().getZ();
 
-        int hrange = TeleportConfiguration.horizontalDialerRange;
-        int vrange = TeleportConfiguration.verticalDialerRange;
+        int hrange = TeleportConfiguration.horizontalDialerRange.get();
+        int vrange = TeleportConfiguration.verticalDialerRange.get();
 
         List<TransmitterInfo> transmitters = new ArrayList<>();
         for (int dy = -vrange ; dy <= vrange ; dy++) {
@@ -187,7 +187,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
 
     // Server side only
     private int checkStatus(BlockPos c, int dim) {
-        int cost = TeleportConfiguration.rfPerCheck;
+        int cost = TeleportConfiguration.rfPerCheck.get();
         cost = (int) (cost * (2.0f - getInfusedFactor()) / 2.0f);
 
         if (getStoredPower() < cost) {
