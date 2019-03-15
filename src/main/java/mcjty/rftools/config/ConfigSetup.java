@@ -49,6 +49,7 @@ public class ConfigSetup {
         NetworkMonitorConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
         EndergenicConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
         StorageScannerConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
+        ElevatorConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
     }
 
     public static ConfigSpec SERVER_CONFIG;
@@ -64,7 +65,6 @@ public class ConfigSetup {
             SERVER_CONFIG = SERVER_BUILDER.build(mainConfig);
             CLIENT_CONFIG = CLIENT_BUILDER.build(mainConfig);
 
-            ElevatorConfiguration.init(cfg);
             BoosterConfiguration.init(cfg);
             TeleportConfiguration.init(cfg);
             SpawnerConfiguration.init(cfg);

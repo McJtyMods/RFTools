@@ -84,7 +84,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     private FakePlayer harvester = null;
 
     public ElevatorTileEntity() {
-        super(ElevatorConfiguration.MAXENERGY, ElevatorConfiguration.RFPERTICK);
+        super(ElevatorConfiguration.MAXENERGY.get(), ElevatorConfiguration.RFPERTICK.get());
     }
 
     private FakePlayer getHarvester() {
@@ -186,7 +186,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
 
     @SideOnly(Side.CLIENT)
     protected void handleSound() {
-        if (ElevatorConfiguration.baseElevatorVolume < 0.01f) {
+        if (ElevatorConfiguration.baseElevatorVolume.get() < 0.01f) {
             // No sounds.
             return;
         }
@@ -195,8 +195,8 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
             stopSounds();
             return;
         }
-        boolean startup = Math.abs(startY-movingY) < ElevatorConfiguration.maxSpeedDistanceStart;
-        boolean shutdown = Math.abs(movingY-stopY) < ElevatorConfiguration.maxSpeedDistanceEnd * 2;
+        boolean startup = Math.abs(startY-movingY) < ElevatorConfiguration.maxSpeedDistanceStart.get();
+        boolean shutdown = Math.abs(movingY-stopY) < ElevatorConfiguration.maxSpeedDistanceEnd.get() * 2;
 
         if (shutdown) {
             if (!ElevatorSounds.isStopPlaying(getWorld(), pos)) {
@@ -231,9 +231,9 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     private double calculateSpeed() {
         // The speed center y location is the location at which speed is maximum.
         // It is located closer to the end to make sure slowing down is a shorter period then speeding up.
-        double speedDiff = ElevatorConfiguration.maximumSpeed - ElevatorConfiguration.minimumSpeed;
-        double speedFromStart = ElevatorConfiguration.minimumSpeed + speedDiff * Math.abs((movingY - startY) / ElevatorConfiguration.maxSpeedDistanceStart);
-        double speedFromStop = ElevatorConfiguration.minimumSpeed + speedDiff * Math.abs((movingY - stopY) / ElevatorConfiguration.maxSpeedDistanceEnd);
+        double speedDiff = ElevatorConfiguration.maximumSpeed.get() - ElevatorConfiguration.minimumSpeed.get();
+        double speedFromStart = ElevatorConfiguration.minimumSpeed.get() + speedDiff * Math.abs((movingY - startY) / ElevatorConfiguration.maxSpeedDistanceStart.get());
+        double speedFromStop = ElevatorConfiguration.minimumSpeed.get() + speedDiff * Math.abs((movingY - stopY) / ElevatorConfiguration.maxSpeedDistanceEnd.get());
         double d = Math.min(speedFromStart, speedFromStop);
         if (stopY < startY) {
             d = -d;
@@ -492,14 +492,14 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     private void getBounds(BlockPos start) {
         EnumFacing side = getWorld().getBlockState(getPos()).getValue(FACING_HORIZ);
         bounds = new Bounds();
-        for (int a = 1; a < ElevatorConfiguration.maxPlatformSize; a++) {
+        for (int a = 1; a < ElevatorConfiguration.maxPlatformSize.get(); a++) {
             BlockPos offset = start.offset(side, a);
             if (canMoveBlock(offset)) {
                 getWorld().setBlockToAir(offset);
                 bounds.addPos(offset);
                 positions.add(getPosAtY(offset, getPos().getY()));
 
-                for (int b = 1; b <= (ElevatorConfiguration.maxPlatformSize / 2); b++) {
+                for (int b = 1; b <= (ElevatorConfiguration.maxPlatformSize.get() / 2); b++) {
                     BlockPos offsetLeft = offset.offset(side.rotateY(), b);
                     if (canMoveBlock(offsetLeft)) {
                         getWorld().setBlockToAir(offsetLeft);
@@ -510,7 +510,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
                     }
                 }
 
-                for (int b = 1; b <= (ElevatorConfiguration.maxPlatformSize / 2); b++) {
+                for (int b = 1; b <= (ElevatorConfiguration.maxPlatformSize.get() / 2); b++) {
                     BlockPos offsetRight = offset.offset(side.rotateYCCW(), b);
                     if (canMoveBlock(offsetRight)) {
                         getWorld().setBlockToAir(offsetRight);
@@ -669,7 +669,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         }
 
         // Check if we have enough energy
-        int rfNeeded = (int) (ElevatorConfiguration.rfPerHeightUnit * Math.abs(getPos().getY() - platformPos.getY()) * (3.0f - getInfusedFactor()) / 3.0f);
+        int rfNeeded = (int) (ElevatorConfiguration.rfPerHeightUnit.get() * Math.abs(getPos().getY() - platformPos.getY()) * (3.0f - getInfusedFactor()) / 3.0f);
         if (controller.getStoredPower() < rfNeeded) {
             Broadcaster.broadcast(getWorld(), getPos().getX(), getPos().getY(), getPos().getZ(), TextFormatting.RED + "Not enough power to move the elevator platform!", 10);
             return;

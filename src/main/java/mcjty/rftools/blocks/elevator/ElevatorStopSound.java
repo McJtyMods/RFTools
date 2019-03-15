@@ -40,6 +40,6 @@ public class ElevatorStopSound extends MovingSound {
             donePlaying = true;
             return;
         }
-        volume = ElevatorConfiguration.baseElevatorVolume;
+        volume = (float) ElevatorConfiguration.baseElevatorVolume.get();
     }
 }

@@ -42,8 +42,8 @@ public class ElevatorLoopSound extends MovingSound {
             donePlaying = true;
             return;
         }
-        volume = ElevatorConfiguration.baseElevatorVolume * scaleDown;
-        if (scaleDown > ElevatorConfiguration.loopVolumeFactor) {
+        volume = (float) (ElevatorConfiguration.baseElevatorVolume.get() * scaleDown);
+        if (scaleDown > ElevatorConfiguration.loopVolumeFactor.get()) {
             scaleDown -= 0.01f;
         }
     }
