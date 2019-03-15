@@ -119,15 +119,15 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     private CraftingGrid craftingGrid = new CraftingGrid();
 
     public StorageScannerTileEntity() {
-        super(StorageScannerConfiguration.MAXENERGY, StorageScannerConfiguration.RECEIVEPERTICK);
+        super(StorageScannerConfiguration.MAXENERGY.get(), StorageScannerConfiguration.RECEIVEPERTICK.get());
         monitorDim = null;
-        radius = (StorageScannerConfiguration.xnetRequired && RFTools.setup.xnet) ? 0 : 1;
+        radius = (StorageScannerConfiguration.xnetRequired.get() && RFTools.setup.xnet) ? 0 : 1;
     }
 
     // This constructor is used for constructing a dummy client-side tile entity when
     // accessing the storage scanner remotely
     public StorageScannerTileEntity(EntityPlayer entityPlayer, int monitordim) {
-        super(StorageScannerConfiguration.MAXENERGY, StorageScannerConfiguration.RECEIVEPERTICK);
+        super(StorageScannerConfiguration.MAXENERGY.get(), StorageScannerConfiguration.RECEIVEPERTICK.get());
 //        this.entityPlayer = entityPlayer;
         this.monitorDim = monitordim;
     }
@@ -205,7 +205,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             }
 
             if (inventoryHelper.containsItem(StorageScannerContainer.SLOT_IN)) {
-                if (getStoredPower() < StorageScannerConfiguration.rfPerInsert) {
+                if (getStoredPower() < StorageScannerConfiguration.rfPerInsert.get()) {
                     return;
                 }
 
@@ -213,10 +213,10 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                 stack = injectStackInternal(stack, exportToCurrent, this::isInputFromGui);
                 inventoryHelper.setInventorySlotContents(64, StorageScannerContainer.SLOT_IN, stack);
 
-                consumeEnergy(StorageScannerConfiguration.rfPerInsert);
+                consumeEnergy(StorageScannerConfiguration.rfPerInsert.get());
             }
             if (inventoryHelper.containsItem(StorageScannerContainer.SLOT_IN_AUTO)) {
-                if (getStoredPower() < StorageScannerConfiguration.rfPerInsert) {
+                if (getStoredPower() < StorageScannerConfiguration.rfPerInsert.get()) {
                     return;
                 }
 
@@ -224,14 +224,14 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                 stack = injectStackInternal(stack, false, this::isInputFromAuto);
                 inventoryHelper.setInventorySlotContents(64, StorageScannerContainer.SLOT_IN_AUTO, stack);
 
-                consumeEnergy(StorageScannerConfiguration.rfPerInsert);
+                consumeEnergy(StorageScannerConfiguration.rfPerInsert.get());
             }
         }
     }
 
 
     public ItemStack injectStackFromScreen(ItemStack stack, EntityPlayer player) {
-        if (getStoredPower() < StorageScannerConfiguration.rfPerInsert) {
+        if (getStoredPower() < StorageScannerConfiguration.rfPerInsert.get()) {
             player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Not enough power to insert items!"), false);
             return stack;
         }
@@ -241,7 +241,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         }
         stack = injectStackInternal(stack, false, this::isInputFromScreen);
         if (stack.isEmpty()) {
-            consumeEnergy(StorageScannerConfiguration.rfPerInsert);
+            consumeEnergy(StorageScannerConfiguration.rfPerInsert.get());
             SoundTools.playSound(getWorld(), SoundEvents.ENTITY_ITEM_PICKUP, getPos().getX(), getPos().getY(), getPos().getZ(), 1.0f, 3.0f);
         }
         return stack;
@@ -292,7 +292,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         if (stack.isEmpty()) {
             return;
         }
-        if (getStoredPower() < StorageScannerConfiguration.rfPerRequest) {
+        if (getStoredPower() < StorageScannerConfiguration.rfPerRequest.get()) {
             player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Not enough power to request items!"), false);
             return;
         }
@@ -314,7 +314,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                     }
                 });
         if (orig != cnt[0]) {
-            consumeEnergy(StorageScannerConfiguration.rfPerRequest);
+            consumeEnergy(StorageScannerConfiguration.rfPerRequest.get());
             SoundTools.playSound(getWorld(), SoundEvents.ENTITY_ITEM_PICKUP, getPos().getX(), getPos().getY(), getPos().getZ(), 1.0f, 1.0f);
         }
     }
@@ -486,7 +486,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     public void setRadius(int v) {
         radius = v;
-        if (StorageScannerConfiguration.xnetRequired && RFTools.setup.xnet) {
+        if (StorageScannerConfiguration.xnetRequired.get() && RFTools.setup.xnet) {
             radius = 0;
         }
         markDirtyClient();
@@ -671,7 +671,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     public Stream<BlockPos> findInventories() {
-        if (RFTools.setup.xnet && StorageScannerConfiguration.xnetRequired) {
+        if (RFTools.setup.xnet && StorageScannerConfiguration.xnetRequired.get()) {
             radius = 0;
         }
 
@@ -740,7 +740,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     @Override
     public ItemStack requestItem(Predicate<ItemStack> matcher, boolean simulate, int amount, boolean doRoutable) {
-        if (getStoredPower() < StorageScannerConfiguration.rfPerRequest) {
+        if (getStoredPower() < StorageScannerConfiguration.rfPerRequest.get()) {
             return ItemStack.EMPTY;
         }
         return inventories.stream()
@@ -769,7 +769,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         if (match.isEmpty()) {
             return ItemStack.EMPTY;
         }
-        if (getStoredPower() < StorageScannerConfiguration.rfPerRequest) {
+        if (getStoredPower() < StorageScannerConfiguration.rfPerRequest.get()) {
             return ItemStack.EMPTY;
         }
 
@@ -798,7 +798,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
                     return cnt[0] > 0;
                 });
         if (!result[0].isEmpty()) {
-            consumeEnergy(StorageScannerConfiguration.rfPerRequest);
+            consumeEnergy(StorageScannerConfiguration.rfPerRequest.get());
         }
         return result[0];
     }
@@ -843,7 +843,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     @Override
     public ItemStack insertItem(ItemStack stack, boolean simulate) {
-        if (getStoredPower() < StorageScannerConfiguration.rfPerInsert) {
+        if (getStoredPower() < StorageScannerConfiguration.rfPerInsert.get()) {
             return stack;
         }
 
@@ -860,7 +860,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
             toInsert = ItemHandlerHelper.insertItem(handler, toInsert, simulate);
         }
 
-        consumeEnergy(StorageScannerConfiguration.rfPerInsert);
+        consumeEnergy(StorageScannerConfiguration.rfPerInsert.get());
         return toInsert;
     }
 
@@ -892,7 +892,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
 
     // Meant to be used from the gui
     public void requestStack(BlockPos invPos, ItemStack requested, int amount, EntityPlayer player) {
-        int rf = StorageScannerConfiguration.rfPerRequest;
+        int rf = StorageScannerConfiguration.rfPerRequest.get();
         if (amount >= 0) {
             rf /= 10;       // Less RF usage for requesting less items
         }
@@ -943,7 +943,7 @@ public class StorageScannerTileEntity extends GenericEnergyReceiverTileEntity im
         consumeEnergy(rf);
         setInventorySlotContents(StorageScannerContainer.SLOT_OUT, outSlot);
 
-        if (StorageScannerConfiguration.requestStraightToInventory) {
+        if (StorageScannerConfiguration.requestStraightToInventory.get()) {
             if (player.inventory.addItemStackToInventory(outSlot)) {
                 setInventorySlotContents(StorageScannerContainer.SLOT_OUT, ItemStack.EMPTY);
             }

@@ -130,7 +130,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 .setDesiredWidth(50)
                 .setDesiredHeight(14);
         if (RFTools.setup.xnet) {
-            if (StorageScannerConfiguration.xnetRequired) {
+            if (StorageScannerConfiguration.xnetRequired.get()) {
                 scanButton
                         .setTooltips("Do a scan of all", "storage units connected", "with an active XNet channel");
             } else {
@@ -173,7 +173,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
                 .setFilledBackground(StyleConfig.colorListBackground)
                 .setLayout(new VerticalLayout().setVerticalMargin(6).setSpacing(1))
                 .addChild(scanButton);
-        if (!(RFTools.setup.xnet && StorageScannerConfiguration.xnetRequired)) {
+        if (!(RFTools.setup.xnet && StorageScannerConfiguration.xnetRequired.get())) {
             scanPanel.addChild(radiusSlider);
         }
         scanPanel.addChildren(visibleRadiusLabel, radiusLabel);
@@ -217,7 +217,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         craftingGrid.initGui(modBase, network, mc, this, pos, tileEntity.getCraftingGridProvider(), guiLeft, guiTop, xSize, ySize);
         sendServerCommand(RFTools.MODID, CommandHandler.CMD_REQUEST_GRID_SYNC, TypedMap.builder().put(CommandHandler.PARAM_POS, pos).build());
 
-        if (StorageScannerConfiguration.hilightStarredOnGuiOpen) {
+        if (StorageScannerConfiguration.hilightStarredOnGuiOpen.get()) {
             storageList.setSelected(0);
         }
 
@@ -348,7 +348,7 @@ public class GuiStorageScanner extends GenericGuiContainer<StorageScannerTileEnt
         }
         PacketReturnInventoryInfo.InventoryInfo c = fromServer_inventories.get(index - 1);
         if (c != null) {
-            RFTools.instance.clientInfo.hilightBlock(c.getPos(), System.currentTimeMillis() + 1000 * StorageScannerConfiguration.hilightTime);
+            RFTools.instance.clientInfo.hilightBlock(c.getPos(), System.currentTimeMillis() + 1000 * StorageScannerConfiguration.hilightTime.get());
             Logging.message(mc.player, "The inventory is now highlighted");
             mc.player.closeScreen();
         }
