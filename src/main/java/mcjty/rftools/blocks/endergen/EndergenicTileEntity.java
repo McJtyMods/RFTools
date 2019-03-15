@@ -289,7 +289,7 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
 
         // First check if we're holding a pearl to see if the pearl will be lost.
         if (chargingMode == CHARGE_HOLDING) {
-            if (random.nextInt(1000) <= EndergenicConfiguration.chanceLost) {
+            if (random.nextInt(1000) <= EndergenicConfiguration.chanceLost.get()) {
                 // Pearl is lost.
                 log("Server Tick: discard pearl randomly");
                 discardPearl("Random pearl discard");
@@ -317,7 +317,7 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
 
         if (chargingMode == CHARGE_HOLDING) {
             // Consume energy to keep the endergenic pearl.
-            long rf = EndergenicConfiguration.rfToHoldPearl;
+            long rf = EndergenicConfiguration.rfToHoldPearl.get();
             rf = (long) (rf * (3.0f - getInfusedFactor()) / 3.0f);
 
             long rfStored = getStoredPower();
@@ -404,7 +404,7 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
     }
 
     private void handleSendingEnergy() {
-        long energyAvailable = getStoredPower() - EndergenicConfiguration.keepRfInBuffer;
+        long energyAvailable = getStoredPower() - EndergenicConfiguration.keepRfInBuffer.get();
         if (energyAvailable <= 0) {
             return;
         }
@@ -414,7 +414,7 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
             TileEntity te = getWorld().getTileEntity(o);
             EnumFacing opposite = dir.getOpposite();
             if (EnergyTools.isEnergyTE(te, opposite)) {
-                long rfToGive = Math.min(EndergenicConfiguration.rfOutput, energyAvailable);
+                long rfToGive = Math.min(EndergenicConfiguration.rfOutput.get(), energyAvailable);
                 long received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
                 energyAvailable -= storage.extractEnergy(received, false);
                 if (energyAvailable <= 0) {
@@ -544,7 +544,7 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
         } else {
             pearlArrivedAt = chargingMode;
             // Otherwise we get RF and this block goes into holding mode.
-            long rf = (long) (rfPerHit[chargingMode] * EndergenicConfiguration.powergenFactor);
+            long rf = (long) (rfPerHit[chargingMode] * EndergenicConfiguration.powergenFactor.get());
             rf = (long) (rf * (getInfusedFactor() + 2.0f) / 2.0f);
 
             // Give a bonus for pearls that have been around a bit longer.

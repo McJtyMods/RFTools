@@ -47,6 +47,7 @@ public class ConfigSetup {
         EnvironmentalConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
         BlockProtectorConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
         NetworkMonitorConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
+        EndergenicConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
     }
 
     public static ConfigSpec SERVER_CONFIG;
@@ -62,7 +63,6 @@ public class ConfigSetup {
             SERVER_CONFIG = SERVER_BUILDER.build(mainConfig);
             CLIENT_CONFIG = CLIENT_BUILDER.build(mainConfig);
 
-            EndergenicConfiguration.init(cfg);
             StorageScannerConfiguration.init(cfg);
             ElevatorConfiguration.init(cfg);
             BoosterConfiguration.init(cfg);
