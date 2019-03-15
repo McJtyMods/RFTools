@@ -59,7 +59,7 @@ public class RenderWorldLastEventHandler {
             return;
         }
         if (heldItem.getItem() == ModItems.smartWrenchItem) {
-            if (BlockProtectorConfiguration.enabled && SmartWrenchItem.getCurrentMode(heldItem) == SmartWrenchMode.MODE_SELECT) {
+            if (BlockProtectorConfiguration.enabled.get() && SmartWrenchItem.getCurrentMode(heldItem) == SmartWrenchMode.MODE_SELECT) {
                 GlobalCoordinate current = SmartWrenchItem.getCurrentBlock(heldItem);
                 if (current != null) {
                     if (current.getDimension() == mc.world.provider.getDimension()) {

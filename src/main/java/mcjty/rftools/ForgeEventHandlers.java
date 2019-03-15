@@ -151,7 +151,7 @@ public class ForgeEventHandlers {
         if (heldItem.isEmpty() || heldItem.getItem() == null) {
             return;
         }
-        if (BlockProtectorConfiguration.enabled && player.isSneaking() && WrenchChecker.isAWrench(heldItem.getItem())) {
+        if (BlockProtectorConfiguration.enabled.get() && player.isSneaking() && WrenchChecker.isAWrench(heldItem.getItem())) {
             // If the block is protected we prevent sneak-wrenching it.
             if (heldItem.getItem() instanceof SmartWrenchItem) {
                 // But if it is a smart wrench in select mode we allow it

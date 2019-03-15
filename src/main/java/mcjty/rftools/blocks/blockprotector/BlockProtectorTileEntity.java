@@ -71,7 +71,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     public BlockProtectorTileEntity() {
-        super(BlockProtectorConfiguration.MAXENERGY, BlockProtectorConfiguration.RECEIVEPERTICK);
+        super(BlockProtectorConfiguration.MAXENERGY.get(), BlockProtectorConfiguration.RECEIVEPERTICK.get());
     }
 
     @Override
@@ -130,7 +130,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     private int getRfPerTick() {
-        return protectedBlocks.size() * BlockProtectorConfiguration.rfPerProtectedBlock;
+        return protectedBlocks.size() * BlockProtectorConfiguration.rfPerProtectedBlock.get();
     }
 
     @Override
@@ -162,10 +162,10 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
             return false;
         }
         long rf = getStoredPower();
-        if (BlockProtectorConfiguration.rfForHarvestAttempt > rf) {
+        if (BlockProtectorConfiguration.rfForHarvestAttempt.get() > rf) {
             return false;
         }
-        consumeEnergy(BlockProtectorConfiguration.rfForHarvestAttempt);
+        consumeEnergy(BlockProtectorConfiguration.rfForHarvestAttempt.get());
         return true;
     }
 
@@ -175,7 +175,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
             return -1;
         }
         long rf = getStoredPower();
-        int rfneeded = (int) (BlockProtectorConfiguration.rfForExplosionProtection * (1.0 - distance) * radius / 8.0f) + 1;
+        int rfneeded = (int) (BlockProtectorConfiguration.rfForExplosionProtection.get() * (1.0 - distance) * radius / 8.0f) + 1;
         rfneeded = (int) (rfneeded * (2.0f - getInfusedFactor()) / 2.0f);
 
         if (rfneeded > rf) {
@@ -232,9 +232,9 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
-        if (Math.abs(pos.getX()-xCoord) > BlockProtectorConfiguration.maxProtectDistance
-                || Math.abs(pos.getY()-yCoord) > BlockProtectorConfiguration.maxProtectDistance
-                || Math.abs(pos.getZ()-zCoord) > BlockProtectorConfiguration.maxProtectDistance) {
+        if (Math.abs(pos.getX()-xCoord) > BlockProtectorConfiguration.maxProtectDistance.get()
+                || Math.abs(pos.getY()-yCoord) > BlockProtectorConfiguration.maxProtectDistance.get()
+                || Math.abs(pos.getZ()-zCoord) > BlockProtectorConfiguration.maxProtectDistance.get()) {
             Logging.message(player, TextFormatting.RED + "Block out of range of the block protector!");
             return;
         }
