@@ -1,17 +1,28 @@
 package mcjty.rftools.items.netmonitor;
 
-import net.minecraftforge.common.config.Configuration;
+import mcjty.lib.thirteen.ConfigSpec;
 
 public class NetworkMonitorConfiguration {
     public static final String CATEGORY_NETWORK_MONITOR = "networkmonitor";
-    public static boolean enabled = true;
-    public static int hilightTime = 5;
-    public static int maximumBlocks = 500;
+    public static ConfigSpec.BooleanValue enabled;
+    public static ConfigSpec.IntValue hilightTime;
+    public static ConfigSpec.IntValue maximumBlocks;
 
-    public static void init(Configuration cfg) {
-        cfg.addCustomCategoryComment(NetworkMonitorConfiguration.CATEGORY_NETWORK_MONITOR, "Settings for the network monitor item");
-        enabled = cfg.get(CATEGORY_NETWORK_MONITOR, "enabled", enabled, "Whether the network monitor should exist").getBoolean();
-        hilightTime = cfg.get(CATEGORY_NETWORK_MONITOR, "hilightTime", hilightTime, "Time (in seconds) to hilight a block in the world").getInt();
-        maximumBlocks = cfg.get(CATEGORY_NETWORK_MONITOR, "maximumBlocks", maximumBlocks, "Maximum amount of blocks to show in monitor (do NOT increase above 1800!)").getInt();
+    public static void init(ConfigSpec.Builder SERVER_BUILDER, ConfigSpec.Builder CLIENT_BUILDER) {
+        SERVER_BUILDER.comment("Settings for the network monitor item").push(CATEGORY_NETWORK_MONITOR);
+        CLIENT_BUILDER.comment("Settings for the network monitor item").push(CATEGORY_NETWORK_MONITOR);
+
+        enabled = SERVER_BUILDER
+                .comment("Whether the network monitor should exist")
+                .define("enabled", true);
+        hilightTime = SERVER_BUILDER
+                .comment("Time (in seconds) to hilight a block in the world")
+                .defineInRange("hilightTime", 5, 0, Integer.MAX_VALUE);
+        maximumBlocks = SERVER_BUILDER
+                .comment("Maximum amount of blocks to show in monitor (do NOT increase above 1800!)")
+                .defineInRange("maximumBlocks", 5000, 0, 1800);
+
+        SERVER_BUILDER.pop();
+        CLIENT_BUILDER.pop();
     }
 }

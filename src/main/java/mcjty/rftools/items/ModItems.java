@@ -41,7 +41,7 @@ public final class ModItems {
         syringeItem = new SyringeItem();
         peaceEssenceItem = new PeaceEssenceItem();
         developersDelightItem = new DevelopersDelightItem();
-        if(NetworkMonitorConfiguration.enabled)
+        if(NetworkMonitorConfiguration.enabled.get())
             networkMonitorItem = new NetworkMonitorItem();
         modifierItem = new ModifierItem();
     }
@@ -58,7 +58,7 @@ public final class ModItems {
         syringeItem.initModel();
         peaceEssenceItem.initModel();
         developersDelightItem.initModel();
-        if(NetworkMonitorConfiguration.enabled)
+        if(NetworkMonitorConfiguration.enabled.get())
             networkMonitorItem.initModel();
         modifierItem.initModel();
     }

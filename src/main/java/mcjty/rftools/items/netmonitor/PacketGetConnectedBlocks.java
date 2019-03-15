@@ -46,8 +46,8 @@ public class PacketGetConnectedBlocks implements IMessage {
             Map<BlockPos,BlockInfo> connectedBlocks = new HashMap<>();
             findConnectedBlocks(connectedBlocks, player.getEntityWorld(), pos);
 
-            if (connectedBlocks.size() > NetworkMonitorConfiguration.maximumBlocks) {
-                connectedBlocks = compactConnectedBlocks(connectedBlocks, pos, NetworkMonitorConfiguration.maximumBlocks);
+            if (connectedBlocks.size() > NetworkMonitorConfiguration.maximumBlocks.get()) {
+                connectedBlocks = compactConnectedBlocks(connectedBlocks, pos, NetworkMonitorConfiguration.maximumBlocks.get());
             }
 
             int minx = 300000000;
