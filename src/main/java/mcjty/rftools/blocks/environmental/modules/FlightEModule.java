@@ -11,6 +11,6 @@ public class FlightEModule extends BuffEModule {
 
     @Override
     public float getRfPerTick() {
-        return EnvironmentalConfiguration.FLIGHT_RFPERTICK;
+        return (float) EnvironmentalConfiguration.FLIGHT_RFPERTICK.get();
     }
 }

@@ -11,7 +11,7 @@ public class SlownessEModule extends PotionEffectModule {
 
     @Override
     public float getRfPerTick() {
-        return EnvironmentalConfiguration.SLOWNESS_RFPERTICK;
+        return (float) EnvironmentalConfiguration.SLOWNESS_RFPERTICK.get();
     }
 
     @Override
@@ -21,7 +21,7 @@ public class SlownessEModule extends PotionEffectModule {
 
     @Override
     protected boolean allowedForPlayers() {
-        return EnvironmentalConfiguration.slownessAvailable;
+        return EnvironmentalConfiguration.slownessAvailable.get();
     }
 
 }

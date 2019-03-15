@@ -11,7 +11,7 @@ public class HastePlusEModule extends PotionEffectModule {
 
     @Override
     public float getRfPerTick() {
-        return EnvironmentalConfiguration.HASTEPLUS_RFPERTICK;
+        return (float) EnvironmentalConfiguration.HASTEPLUS_RFPERTICK.get();
     }
 
     @Override

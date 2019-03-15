@@ -44,6 +44,7 @@ public class ConfigSetup {
         ScannerConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
         PowerCellConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
         ShieldConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
+        EnvironmentalConfiguration.init(SERVER_BUILDER, CLIENT_BUILDER);
     }
 
     public static ConfigSpec SERVER_CONFIG;
@@ -59,7 +60,6 @@ public class ConfigSetup {
             SERVER_CONFIG = SERVER_BUILDER.build(mainConfig);
             CLIENT_CONFIG = CLIENT_BUILDER.build(mainConfig);
 
-            EnvironmentalConfiguration.init(cfg);
             SpawnerConfiguration.init(cfg);
             BlockProtectorConfiguration.init(cfg);
             NetworkMonitorConfiguration.init(cfg);

@@ -1,106 +1,141 @@
 package mcjty.rftools.blocks.environmental;
 
-import net.minecraftforge.common.config.Configuration;
+import mcjty.lib.thirteen.ConfigSpec;
 
 public class EnvironmentalConfiguration {
     public static final String CATEGORY_ENVIRONMENTAL = "environmental";
-    public static int ENVIRONMENTAL_MAXENERGY = 500000;
-    public static int ENVIRONMENTAL_RECEIVEPERTICK = 20000;
-    public static int MIN_USAGE = 5;
+    public static ConfigSpec.IntValue ENVIRONMENTAL_MAXENERGY;
+    public static ConfigSpec.IntValue ENVIRONMENTAL_RECEIVEPERTICK;
+    public static ConfigSpec.IntValue MIN_USAGE;
 
-    public static float FEATHERFALLING_RFPERTICK = 0.001f;
-    public static float FEATHERFALLINGPLUS_RFPERTICK = 0.003f;
-    public static float FLIGHT_RFPERTICK = 0.004f;
-    public static float GLOWING_RFPERTICK = 0.001f;
-    public static float HASTE_RFPERTICK = 0.001f;
-    public static float HASTEPLUS_RFPERTICK = 0.003f;
-    public static float NIGHTVISION_RFPERTICK = 0.001f;
-    public static float PEACEFUL_RFPERTICK = 0.001f;
-    public static float REGENERATION_RFPERTICK = 0.0015f;
-    public static float REGENERATIONPLUS_RFPERTICK = 0.0045f;
-    public static float SATURATION_RFPERTICK = 0.001f;
-    public static float SATURATIONPLUS_RFPERTICK = 0.003f;
-    public static float SPEED_RFPERTICK = 0.001f;
-    public static float SPEEDPLUS_RFPERTICK = 0.003f;
-    public static float WATERBREATHING_RFPERTICK = 0.001f;
-    public static float LUCK_RFPERTICK = 0.002f;
-    public static float NOTELEPORT_RFPERTICK = 0.002f;
+    public static ConfigSpec.DoubleValue FEATHERFALLING_RFPERTICK;
+    public static ConfigSpec.DoubleValue FEATHERFALLINGPLUS_RFPERTICK;
+    public static ConfigSpec.DoubleValue FLIGHT_RFPERTICK;
+    public static ConfigSpec.DoubleValue GLOWING_RFPERTICK;
+    public static ConfigSpec.DoubleValue HASTE_RFPERTICK;
+    public static ConfigSpec.DoubleValue HASTEPLUS_RFPERTICK;
+    public static ConfigSpec.DoubleValue NIGHTVISION_RFPERTICK;
+    public static ConfigSpec.DoubleValue PEACEFUL_RFPERTICK;
+    public static ConfigSpec.DoubleValue REGENERATION_RFPERTICK;
+    public static ConfigSpec.DoubleValue REGENERATIONPLUS_RFPERTICK;
+    public static ConfigSpec.DoubleValue SATURATION_RFPERTICK;
+    public static ConfigSpec.DoubleValue SATURATIONPLUS_RFPERTICK;
+    public static ConfigSpec.DoubleValue SPEED_RFPERTICK;
+    public static ConfigSpec.DoubleValue SPEEDPLUS_RFPERTICK;
+    public static ConfigSpec.DoubleValue WATERBREATHING_RFPERTICK;
+    public static ConfigSpec.DoubleValue LUCK_RFPERTICK;
+    public static ConfigSpec.DoubleValue NOTELEPORT_RFPERTICK;
 
     // Debuffs
-    public static float BLINDNESS_RFPERTICK = 0.01f;
-    public static float WEAKNESS_RFPERTICK = 0.01f;
-    public static float POISON_RFPERTICK = 0.02f;
-    public static float SLOWNESS_RFPERTICK = 0.012f;
+    public static ConfigSpec.DoubleValue BLINDNESS_RFPERTICK;
+    public static ConfigSpec.DoubleValue WEAKNESS_RFPERTICK;
+    public static ConfigSpec.DoubleValue POISON_RFPERTICK;
+    public static ConfigSpec.DoubleValue SLOWNESS_RFPERTICK;
 
-    public static boolean blindnessAvailable = false;
-    public static boolean weaknessAvailable = false;
-    public static boolean poisonAvailable = false;
-    public static boolean slownessAvailable = false;
+    public static ConfigSpec.BooleanValue blindnessAvailable;
+    public static ConfigSpec.BooleanValue weaknessAvailable;
+    public static ConfigSpec.BooleanValue poisonAvailable;
+    public static ConfigSpec.BooleanValue slownessAvailable;
 
-    public static float mobsPowerMultiplier = 2.0f;
+    public static ConfigSpec.DoubleValue mobsPowerMultiplier;
 
-    public static void init(Configuration cfg) {
-        cfg.addCustomCategoryComment(EnvironmentalConfiguration.CATEGORY_ENVIRONMENTAL, "Settings for the environmental controller");
-        ENVIRONMENTAL_MAXENERGY = cfg.get(CATEGORY_ENVIRONMENTAL, "environmentalMaxRF", ENVIRONMENTAL_MAXENERGY,
-                "Maximum RF storage that the environmental controller can hold").getInt();
-        ENVIRONMENTAL_RECEIVEPERTICK = cfg.get(CATEGORY_ENVIRONMENTAL, "environmentalRFPerTick", ENVIRONMENTAL_RECEIVEPERTICK,
-                "RF per tick that the the environmental controller can receive").getInt();
-        MIN_USAGE = cfg.get(CATEGORY_ENVIRONMENTAL, "environmentalMinRFUsage", MIN_USAGE,
-                "The minimum RF/tick usage that an active controller consumes").getInt();
+    public static void init(ConfigSpec.Builder SERVER_BUILDER, ConfigSpec.Builder CLIENT_BUILDER) {
+        SERVER_BUILDER.comment("Settings for the environmental controller").push(CATEGORY_ENVIRONMENTAL);
+        CLIENT_BUILDER.comment("Settings for the environmental controller").push(CATEGORY_ENVIRONMENTAL);
 
-        mobsPowerMultiplier = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "mobsPowerMultiplier", mobsPowerMultiplier,
-                "When the environmental controller is used on mobs the power usage is multiplied with this").getDouble();
+        ENVIRONMENTAL_MAXENERGY = SERVER_BUILDER
+                .comment("Maximum RF storage that the environmental controller can hold")
+                .defineInRange("environmentalMaxRF", 500000, 0, Integer.MAX_VALUE);
+        ENVIRONMENTAL_RECEIVEPERTICK = SERVER_BUILDER
+                .comment("RF per tick that the the environmental controller can receive")
+                .defineInRange("environmentalRFPerTick", 20000, 0, Integer.MAX_VALUE);
+        MIN_USAGE = SERVER_BUILDER
+                .comment("The minimum RF/tick usage that an active controller consumes")
+                .defineInRange("environmentalMinRFUsage", 5, 0, Integer.MAX_VALUE);
 
-        FEATHERFALLING_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "featherfallingRFPerTick", FEATHERFALLING_RFPERTICK,
-                "RF per tick/per block for the feather falling module").getDouble();
-        FEATHERFALLINGPLUS_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "featherfallingPlusRFPerTick", FEATHERFALLINGPLUS_RFPERTICK,
-                "RF per tick/per block for the feather falling plus module").getDouble();
-        FLIGHT_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "flightRFPerTick", FLIGHT_RFPERTICK,
-                "RF per tick/per block for the flight module").getDouble();
-        GLOWING_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "glowingRFPerTick", GLOWING_RFPERTICK,
-                "RF per tick/per block for the glowing module").getDouble();
-        HASTE_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "hasteRFPerTick", HASTE_RFPERTICK,
-                "RF per tick/per block for the haste module").getDouble();
-        HASTEPLUS_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "hastePlusRFPerTick", HASTEPLUS_RFPERTICK,
-                "RF per tick/per block for the haste plus module").getDouble();
-        NIGHTVISION_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "nightvisionRFPerTick", NIGHTVISION_RFPERTICK,
-                "RF per tick/per block for the night vision module").getDouble();
-        PEACEFUL_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "peacefulRFPerTick", PEACEFUL_RFPERTICK,
-                "RF per tick/per block for the peaceful module").getDouble();
-        REGENERATION_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "regenerationRFPerTick", REGENERATION_RFPERTICK,
-                "RF per tick/per block for the regeneration module").getDouble();
-        REGENERATIONPLUS_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "regenerationPlusRFPerTick", REGENERATIONPLUS_RFPERTICK,
-                "RF per tick/per block for the regeneration plus module").getDouble();
-        SATURATION_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "saturationRFPerTick", SATURATION_RFPERTICK,
-                "RF per tick/per block for the saturation module").getDouble();
-        SATURATIONPLUS_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "saturationPlusRFPerTick", SATURATIONPLUS_RFPERTICK,
-                "RF per tick/per block for the saturation plus module").getDouble();
-        SPEED_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "speedRFPerTick", SPEED_RFPERTICK,
-                "RF per tick/per block for the speed module").getDouble();
-        SPEEDPLUS_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "speedPlusRFPerTick", SPEEDPLUS_RFPERTICK,
-                "RF per tick/per block for the speed plus module").getDouble();
-        WATERBREATHING_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "watherBreathingRFPerTick", WATERBREATHING_RFPERTICK,
-                "RF per tick/per block for the wather breathing module").getDouble();
-        LUCK_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "luckRFPerTick", LUCK_RFPERTICK,
-                "RF per tick/per block for the luck module").getDouble();
-        NOTELEPORT_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "noTeleportRFPerTick", NOTELEPORT_RFPERTICK,
-                "RF per tick/per block for the noTeleport module").getDouble();
+        mobsPowerMultiplier = SERVER_BUILDER
+                .comment("When the environmental controller is used on mobs the power usage is multiplied with this")
+                .defineInRange("mobsPowerMultiplier", 2.0, 0.0, 100000000.0);
 
-        BLINDNESS_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "blindnessRFPerTick", BLINDNESS_RFPERTICK,
-                "RF per tick/per block for the blindness module").getDouble();
-        blindnessAvailable = cfg.get(CATEGORY_ENVIRONMENTAL, "blindnessAvailable", blindnessAvailable,
-                "Set to true to make the blindness module work on players").getBoolean();
-        WEAKNESS_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "weaknessRFPerTick", WEAKNESS_RFPERTICK,
-                "RF per tick/per block for the weakness module").getDouble();
-        weaknessAvailable = cfg.get(CATEGORY_ENVIRONMENTAL, "weaknessAvailable", weaknessAvailable,
-                "Set to true to make the weakness module work on players").getBoolean();
-        POISON_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "poisonRFPerTick", POISON_RFPERTICK,
-                "RF per tick/per block for the poison module").getDouble();
-        poisonAvailable = cfg.get(CATEGORY_ENVIRONMENTAL, "poisonAvailable", poisonAvailable,
-                "Set to true to make the poison module work on players").getBoolean();
-        SLOWNESS_RFPERTICK = (float) cfg.get(CATEGORY_ENVIRONMENTAL, "slownessRFPerTick", SLOWNESS_RFPERTICK,
-                "RF per tick/per block for the slowness module").getDouble();
-        slownessAvailable = cfg.get(CATEGORY_ENVIRONMENTAL, "slownessAvailable", slownessAvailable,
-                "Set to true to make the slowness module work on players").getBoolean();
+        FEATHERFALLING_RFPERTICK = SERVER_BUILDER
+                .comment("RF per tick/per block for the feather falling module")
+                .defineInRange("featherfallingRFPerTick", 0.001, 0.0, 1000000000.0);
+        FEATHERFALLINGPLUS_RFPERTICK = SERVER_BUILDER
+                .comment("RF per tick/per block for the feather falling plus module")
+                .defineInRange("featherfallingPlusRFPerTick",  0.003, 0.0, 1000000000.0);
+        FLIGHT_RFPERTICK = SERVER_BUILDER
+                .comment("RF per tick/per block for the flight module")
+                .defineInRange("flightRFPerTick", 0.004, 0.0, 1000000000.0);
+        GLOWING_RFPERTICK = SERVER_BUILDER
+                .comment("RF per tick/per block for the glowing module")
+                .defineInRange("glowingRFPerTick", 0.001, 0.0, 1000000000.0);
+        HASTE_RFPERTICK = SERVER_BUILDER
+                .comment("RF per tick/per block for the haste module")
+                .defineInRange("hasteRFPerTick", 0.001, 0.0, 1000000000.0);
+        HASTEPLUS_RFPERTICK = SERVER_BUILDER
+                .comment("RF per tick/per block for the haste plus module")
+                .defineInRange("hastePlusRFPerTick", 0.003, 0.0, 1000000000.0);
+        NIGHTVISION_RFPERTICK = SERVER_BUILDER
+                .comment("RF per tick/per block for the night vision module")
+                .defineInRange("nightvisionRFPerTick", 0.001, 0.0, 1000000000.0);
+        PEACEFUL_RFPERTICK = SERVER_BUILDER
+                .comment("RF per tick/per block for the peaceful module")
+                .defineInRange("peacefulRFPerTick", 0.001, 0.0, 1000000000.0);
+        REGENERATION_RFPERTICK = SERVER_BUILDER
+                .comment("RF per tick/per block for the regeneration module")
+                .defineInRange("regenerationRFPerTick", 0.0015, 0.0, 1000000000.0);
+        REGENERATIONPLUS_RFPERTICK = SERVER_BUILDER
+                .comment("RF per tick/per block for the regeneration plus module")
+                .defineInRange("regenerationPlusRFPerTick", 0.0045, 0.0, 1000000000.0);
+        SATURATION_RFPERTICK = SERVER_BUILDER
+                .comment("RF per tick/per block for the saturation module")
+                .defineInRange("saturationRFPerTick", 0.001, 0.0, 1000000000.0);
+        SATURATIONPLUS_RFPERTICK = SERVER_BUILDER
+                .comment("RF per tick/per block for the saturation plus module")
+                .defineInRange("saturationPlusRFPerTick", 0.003, 0.0, 1000000000.0);
+        SPEED_RFPERTICK = SERVER_BUILDER
+                .comment("RF per tick/per block for the speed module")
+                .defineInRange("speedRFPerTick", 0.001, 0.0, 1000000000.0);
+        SPEEDPLUS_RFPERTICK = SERVER_BUILDER
+                .comment("RF per tick/per block for the speed plus module")
+                .defineInRange("speedPlusRFPerTick", 0.003, 0.0, 1000000000.0);
+        WATERBREATHING_RFPERTICK = SERVER_BUILDER
+                .comment("RF per tick/per block for the wather breathing module")
+                .defineInRange("watherBreathingRFPerTick", 0.001, 0.0, 1000000000.0);
+        LUCK_RFPERTICK = SERVER_BUILDER
+                .comment("RF per tick/per block for the luck module")
+                .defineInRange("luckRFPerTick", 0.002, 0.0, 1000000000.0);
+        NOTELEPORT_RFPERTICK = SERVER_BUILDER
+                .comment("RF per tick/per block for the noTeleport module")
+                .defineInRange("noTeleportRFPerTick", 0.002, 0.0, 1000000000.0);
+
+        BLINDNESS_RFPERTICK = SERVER_BUILDER
+                .comment("RF per tick/per block for the blindness module")
+                .defineInRange("blindnessRFPerTick", 0.01, 0.0, 1000000000.0);
+        blindnessAvailable = SERVER_BUILDER
+                .comment("Set to true to make the blindness module work on players")
+                .define("blindnessAvailable", false);
+        WEAKNESS_RFPERTICK = SERVER_BUILDER
+                .comment("RF per tick/per block for the weakness module")
+                .defineInRange("weaknessRFPerTick", 0.01, 0.0, 1000000000.0);
+        weaknessAvailable = SERVER_BUILDER
+                .comment("Set to true to make the weakness module work on players")
+                .define("weaknessAvailable", false);
+        POISON_RFPERTICK = SERVER_BUILDER
+                .comment("RF per tick/per block for the poison module")
+                .defineInRange("poisonRFPerTick", 0.02, 0.0, 1000000000.0);
+        poisonAvailable = SERVER_BUILDER
+                .comment("Set to true to make the poison module work on players")
+                .define("poisonAvailable", false);
+        SLOWNESS_RFPERTICK = SERVER_BUILDER
+                .comment("RF per tick/per block for the slowness module")
+                .defineInRange("slownessRFPerTick", 0.012, 0.0, 1000000000.0);
+        slownessAvailable = SERVER_BUILDER
+                .comment("Set to true to make the slowness module work on players")
+                .define("slownessAvailable", false);
+
+        SERVER_BUILDER.pop();
+        CLIENT_BUILDER.pop();
+
     }
 }

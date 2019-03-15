@@ -11,7 +11,7 @@ public class WeaknessEModule extends PotionEffectModule {
 
     @Override
     public float getRfPerTick() {
-        return EnvironmentalConfiguration.WEAKNESS_RFPERTICK;
+        return (float) EnvironmentalConfiguration.WEAKNESS_RFPERTICK.get();
     }
 
     @Override
@@ -21,7 +21,7 @@ public class WeaknessEModule extends PotionEffectModule {
 
     @Override
     protected boolean allowedForPlayers() {
-        return EnvironmentalConfiguration.weaknessAvailable;
+        return EnvironmentalConfiguration.weaknessAvailable.get();
     }
 
 }

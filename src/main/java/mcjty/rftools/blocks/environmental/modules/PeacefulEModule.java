@@ -16,7 +16,7 @@ public class PeacefulEModule extends BuffEModule {
 
     @Override
     public float getRfPerTick() {
-        return EnvironmentalConfiguration.REGENERATION_RFPERTICK;
+        return (float) EnvironmentalConfiguration.REGENERATION_RFPERTICK.get();
     }
 
     @Override

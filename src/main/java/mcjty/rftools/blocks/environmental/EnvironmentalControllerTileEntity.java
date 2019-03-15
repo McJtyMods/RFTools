@@ -112,7 +112,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     private int powerTimeout = 0;
 
     public EnvironmentalControllerTileEntity() {
-        super(EnvironmentalConfiguration.ENVIRONMENTAL_MAXENERGY, EnvironmentalConfiguration.ENVIRONMENTAL_RECEIVEPERTICK);
+        super(EnvironmentalConfiguration.ENVIRONMENTAL_MAXENERGY.get(), EnvironmentalConfiguration.ENVIRONMENTAL_RECEIVEPERTICK.get());
     }
 
     @Override
@@ -228,7 +228,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
             case MODE_PASSIVE:
             case MODE_MOBS:
             case MODE_ALL:
-                return EnvironmentalConfiguration.mobsPowerMultiplier;
+                return (float) EnvironmentalConfiguration.mobsPowerMultiplier.get();
         }
         return 1.0f;
     }
@@ -303,8 +303,8 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         if (environmentModules.isEmpty()) {
             return rfNeeded;
         }
-        if (rfNeeded < EnvironmentalConfiguration.MIN_USAGE) {
-            rfNeeded = EnvironmentalConfiguration.MIN_USAGE;
+        if (rfNeeded < EnvironmentalConfiguration.MIN_USAGE.get()) {
+            rfNeeded = EnvironmentalConfiguration.MIN_USAGE.get();
         }
         return rfNeeded;
     }

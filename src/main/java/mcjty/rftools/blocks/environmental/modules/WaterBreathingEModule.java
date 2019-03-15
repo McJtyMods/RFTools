@@ -11,7 +11,7 @@ public class WaterBreathingEModule extends PotionEffectModule {
 
     @Override
     public float getRfPerTick() {
-        return EnvironmentalConfiguration.WATERBREATHING_RFPERTICK;
+        return (float) EnvironmentalConfiguration.WATERBREATHING_RFPERTICK.get();
     }
 
     @Override

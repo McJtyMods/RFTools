@@ -11,7 +11,7 @@ public class SpeedEModule extends PotionEffectModule {
 
     @Override
     public float getRfPerTick() {
-        return EnvironmentalConfiguration.SPEED_RFPERTICK;
+        return (float) EnvironmentalConfiguration.SPEED_RFPERTICK.get();
     }
 
     @Override

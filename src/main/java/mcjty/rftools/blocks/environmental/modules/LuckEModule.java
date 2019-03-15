@@ -11,7 +11,7 @@ public class LuckEModule extends PotionEffectModule {
 
     @Override
     public float getRfPerTick() {
-        return EnvironmentalConfiguration.LUCK_RFPERTICK;
+        return (float) EnvironmentalConfiguration.LUCK_RFPERTICK.get();
     }
 
     @Override

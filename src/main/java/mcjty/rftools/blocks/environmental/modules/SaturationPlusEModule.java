@@ -11,7 +11,7 @@ public class SaturationPlusEModule extends PotionEffectModule {
 
     @Override
     public float getRfPerTick() {
-        return EnvironmentalConfiguration.SATURATIONPLUS_RFPERTICK;
+        return (float) EnvironmentalConfiguration.SATURATIONPLUS_RFPERTICK.get();
     }
 
     @Override

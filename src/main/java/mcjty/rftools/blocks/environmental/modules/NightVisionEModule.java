@@ -11,7 +11,7 @@ public class NightVisionEModule extends PotionEffectModule {
 
     @Override
     public float getRfPerTick() {
-        return EnvironmentalConfiguration.NIGHTVISION_RFPERTICK;
+        return (float) EnvironmentalConfiguration.NIGHTVISION_RFPERTICK.get();
     }
 
     @Override
