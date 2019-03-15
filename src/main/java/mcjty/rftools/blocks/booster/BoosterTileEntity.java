@@ -47,7 +47,7 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
     private EnvironmentModule cachedModule;
 
     public BoosterTileEntity() {
-        super(BoosterConfiguration.BOOSTER_MAXENERGY, BoosterConfiguration.BOOSTER_RECEIVEPERTICK);
+        super(BoosterConfiguration.BOOSTER_MAXENERGY.get(), BoosterConfiguration.BOOSTER_RECEIVEPERTICK.get());
     }
 
     @Override
@@ -98,7 +98,7 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
             }
             if (cachedModule != null) {
                 long rf = getStoredPower();
-                int rfNeeded = (int) (cachedModule.getRfPerTick() * BoosterConfiguration.energyMultiplier);
+                int rfNeeded = (int) (cachedModule.getRfPerTick() * BoosterConfiguration.energyMultiplier.get());
                 rfNeeded = (int) (rfNeeded * (3.0f - getInfusedFactor()) / 3.0f);
                 for (EntityLivingBase entity : searchEntities()) {
                     if (rfNeeded <= rf) {
