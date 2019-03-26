@@ -92,7 +92,8 @@ public class EnergyBarClientScreenModule implements IClientScreenModule<IModuleD
             boolean showpct = tagCompound.getBoolean("showpct");
             rfRenderer.settings(hidebar, hidetext, showpct, showdiff);
 
-            rfRenderer.format(FormatStyle.values()[tagCompound.getInteger("format")]);
+//            rfRenderer.format(FormatStyle.values()[tagCompound.getInteger("format")]);
+            rfRenderer.format(FormatStyle.getStyle(tagCompound.getString("format")));
 
             setupCoordinateFromNBT(tagCompound, dim, pos);
         }

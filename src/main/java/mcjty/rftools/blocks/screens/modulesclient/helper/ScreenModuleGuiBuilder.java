@@ -305,7 +305,8 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
                 setChoiceTooltip(modeCompact, "Compact format: 3.1M").
                 setChoiceTooltip(modeCommas, "Comma format: 3,123,555").
                 addChoiceEvent((parent, newChoice) -> {
-                    currentData.setInteger(tagname, FormatStyle.getStyle(newChoice).ordinal());
+//                    currentData.setInteger(tagname, FormatStyle.getStyle(newChoice).ordinal());
+                    currentData.setString(tagname, FormatStyle.getStyle(newChoice).getName());
                     moduleGuiChanged.updateData();
                 });
 
