@@ -16,6 +16,7 @@ import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 
 /**
  * Allow only changes to the NBT that could have been legitimately made via the GUI.
@@ -41,7 +42,7 @@ public class NbtSanitizerModuleGuiBuilder implements IModuleGuiBuilder {
 
         for(Map.Entry<String, Set<String>> entry : enumKeys.entrySet()) {
             String key = entry.getKey();
-            if(fromClient.hasKey(key, 8)) {
+            if(fromClient.hasKey(key, Constants.NBT.TAG_STRING)) {
                 String value = fromClient.getString(key);
                 if(entry.getValue().contains(value)) {
                     newCompound.setString(key, value);
@@ -50,14 +51,14 @@ public class NbtSanitizerModuleGuiBuilder implements IModuleGuiBuilder {
         }
 
         for(String key : stringKeys) {
-            if(fromClient.hasKey(key, 8)) {
+            if(fromClient.hasKey(key, Constants.NBT.TAG_STRING)) {
                 newCompound.setString(key, fromClient.getString(key));
             }
         }
 
         for(Map.Entry<String, Integer> entry : boundedIntegerKeys.entrySet()) {
             String key = entry.getKey();
-            if(fromClient.hasKey(key, 3)) {
+            if(fromClient.hasKey(key, Constants.NBT.TAG_INT)) {
                 int value = fromClient.getInteger(key);
                 if(value >= 0 && value < entry.getValue()) {
                     newCompound.setInteger(key, value);
@@ -66,12 +67,12 @@ public class NbtSanitizerModuleGuiBuilder implements IModuleGuiBuilder {
         }
 
         for(String key : integerKeys) {
-            if(fromClient.hasKey(key, 3)) {
+            if(fromClient.hasKey(key, Constants.NBT.TAG_INT)) {
                 newCompound.setInteger(key, fromClient.getInteger(key));
             }
         }
 
-        if(hasModeKeys && fromClient.hasKey("showdiff", 1) && fromClient.hasKey("showpct", 1) && fromClient.hasKey("hidetext", 1)) {
+        if(hasModeKeys && fromClient.hasKey("showdiff", Constants.NBT.TAG_BYTE) && fromClient.hasKey("showpct", Constants.NBT.TAG_BYTE) && fromClient.hasKey("hidetext", Constants.NBT.TAG_BYTE)) {
             boolean showdiff = fromClient.getBoolean("showdiff");
             boolean showpct = fromClient.getBoolean("showpct");
             boolean hidetext = fromClient.getBoolean("hidetext");
@@ -83,13 +84,13 @@ public class NbtSanitizerModuleGuiBuilder implements IModuleGuiBuilder {
         }
 
         for(String key : booleanKeys) {
-            if(fromClient.hasKey(key, 1)) {
+            if(fromClient.hasKey(key, Constants.NBT.TAG_BYTE)) {
                 newCompound.setBoolean(key, fromClient.getBoolean(key));
             }
         }
 
         for(String key : itemKeys) {
-            if(fromClient.hasKey(key, 10)) {
+            if(fromClient.hasKey(key, Constants.NBT.TAG_COMPOUND)) {
                 NBTTagCompound tag = new NBTTagCompound();
                 new ItemStack(fromClient.getCompoundTag(key)).writeToNBT(tag);
                 newCompound.setTag(key, tag);
