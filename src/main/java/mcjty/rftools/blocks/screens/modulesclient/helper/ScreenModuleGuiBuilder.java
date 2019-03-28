@@ -310,7 +310,8 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
                     moduleGuiChanged.updateData();
                 });
 
-        FormatStyle currentFormat = FormatStyle.values()[currentData.getInteger(tagname)];
+        //FormatStyle currentFormat = FormatStyle.values()[currentData.getInteger(tagname)];
+        FormatStyle currentFormat = FormatStyle.getStyle(currentData.getString(tagname));
         modeButton.setChoice(currentFormat.getName());
 
         return modeButton;
