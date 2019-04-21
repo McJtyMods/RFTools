@@ -1,6 +1,7 @@
 Upcoming:
-- Fix a problem with the screen dump module not working properly in some cases
-- Fix a problem with the wireless logic block not correctly sending a block update to the destination block
+- Fixed a problem with the screen dump module not working properly in some cases
+- Fixed a problem with the wireless logic block not correctly sending a block update to the destination block
+- Fixed the digit logic block not always updating visually
 - Lykrast maded machines face the user in first person, like pumpkins do. This means you now see the front of the machine instead of the side/back when holding in your hand.
 - Tcheinen added the comparator functions for the modular storage block. Like vanilla chests it will return 0 when empty, 15 when full, and for all other cases (number of stacks/max stacks) * 14 + 1
 
