@@ -60,7 +60,7 @@ public class ButtonModuleItem extends GenericRFToolsItem implements IModuleProvi
     @Override
     public void addInformation(ItemStack itemStack, @Nullable World player, List<String> list, ITooltipFlag advanced) {
         super.addInformation(itemStack, player, list, advanced);
-        list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.BUTTON_RFPERTICK + " RF/tick");
+        list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.BUTTON_RFPERTICK.get() + " RF/tick");
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
             list.add(TextFormatting.YELLOW + "Label: " + tagCompound.getString("text"));
