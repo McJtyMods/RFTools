@@ -148,7 +148,7 @@ public class ModSetup extends DefaultModSetup {
 
     @Override
     public void createTabs() {
-        createTab("RfTools", new ItemStack(ModItems.rfToolsManualItem));
+        createTab("RfTools", () -> new ItemStack(ModItems.rfToolsManualItem));
     }
 
     public static Method Block_getSilkTouch;
