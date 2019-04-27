@@ -27,7 +27,7 @@ public class HasteEModuleItem extends GenericRFToolsItem implements EnvModulePro
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add("This module gives haste bonus when");
         list.add("used in the environmental controller.");
-        list.add(TextFormatting.GREEN + "Uses " + EnvironmentalConfiguration.HASTE_RFPERTICK + " RF/tick (per cubic block)");
+        list.add(TextFormatting.GREEN + "Uses " + EnvironmentalConfiguration.HASTE_RFPERTICK.get() + " RF/tick (per cubic block)");
     }
 
     @Override

@@ -43,7 +43,7 @@ public class StorageControlModuleItem extends GenericRFToolsItem implements IMod
     @Override
     public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag advanced) {
         super.addInformation(itemStack, player, list, advanced);
-        list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.STORAGE_CONTROL_RFPERTICK + " RF/tick");
+        list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.STORAGE_CONTROL_RFPERTICK.get() + " RF/tick");
         boolean hasTarget = false;
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {

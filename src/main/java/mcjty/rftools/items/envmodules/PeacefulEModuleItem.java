@@ -27,7 +27,7 @@ public class PeacefulEModuleItem extends GenericRFToolsItem implements EnvModule
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add("This module prevents hostile mob spawning");
         list.add("when used in the environmental controller.");
-        list.add(TextFormatting.GREEN + "Uses " + EnvironmentalConfiguration.REGENERATION_RFPERTICK + " RF/tick (per cubic block)");
+        list.add(TextFormatting.GREEN + "Uses " + EnvironmentalConfiguration.REGENERATION_RFPERTICK.get() + " RF/tick (per cubic block)");
     }
 
     @Override

@@ -27,7 +27,7 @@ public class LuckEModuleItem extends GenericRFToolsItem implements EnvModuleProv
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add("This module gives luck bonus when");
         list.add("used in the environmental controller.");
-        list.add(TextFormatting.GREEN + "Uses " + EnvironmentalConfiguration.LUCK_RFPERTICK + " RF/tick (per cubic block)");
+        list.add(TextFormatting.GREEN + "Uses " + EnvironmentalConfiguration.LUCK_RFPERTICK.get() + " RF/tick (per cubic block)");
     }
 
     @Override

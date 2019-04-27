@@ -28,7 +28,7 @@ public class FeatherFallingPlusEModuleItem extends GenericRFToolsItem implements
         list.add("This module gives feather falling bonus");
         list.add("when used in the environmental controller.");
         list.add(TextFormatting.GOLD + "Damage will be reduced to zero.");
-        list.add(TextFormatting.GREEN + "Uses " + EnvironmentalConfiguration.FEATHERFALLINGPLUS_RFPERTICK + " RF/tick (per cubic block)");
+        list.add(TextFormatting.GREEN + "Uses " + EnvironmentalConfiguration.FEATHERFALLINGPLUS_RFPERTICK.get() + " RF/tick (per cubic block)");
     }
 
     @Override

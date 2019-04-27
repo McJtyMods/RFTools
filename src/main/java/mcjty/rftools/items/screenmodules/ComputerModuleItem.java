@@ -55,7 +55,7 @@ public class ComputerModuleItem extends GenericRFToolsItem implements IModulePro
     @Override
     public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.COMPUTER_RFPERTICK + " RF/tick");
+        list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.COMPUTER_RFPERTICK.get() + " RF/tick");
     }
 
 }

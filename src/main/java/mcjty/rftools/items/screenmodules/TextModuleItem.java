@@ -32,7 +32,7 @@ public class TextModuleItem extends GenericRFToolsItem implements IModuleProvide
     @Override
     public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.TEXT_RFPERTICK + " RF/tick");
+        list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.TEXT_RFPERTICK.get() + " RF/tick");
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         if (tagCompound != null) {
             list.add(TextFormatting.YELLOW + "Text: " + tagCompound.getString("text"));

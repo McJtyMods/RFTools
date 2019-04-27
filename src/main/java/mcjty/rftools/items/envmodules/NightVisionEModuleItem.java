@@ -27,7 +27,7 @@ public class NightVisionEModuleItem extends GenericRFToolsItem implements EnvMod
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add("This module gives night vision bonus");
         list.add("when used in the environmental controller.");
-        list.add(TextFormatting.GREEN + "Uses " + EnvironmentalConfiguration.NIGHTVISION_RFPERTICK + " RF/tick (per cubic block)");
+        list.add(TextFormatting.GREEN + "Uses " + EnvironmentalConfiguration.NIGHTVISION_RFPERTICK.get() + " RF/tick (per cubic block)");
     }
 
     @Override

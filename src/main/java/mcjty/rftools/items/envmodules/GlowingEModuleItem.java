@@ -27,7 +27,7 @@ public class GlowingEModuleItem extends GenericRFToolsItem implements EnvModuleP
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add("This module gives glowing enchantment when");
         list.add("used in the environmental controller.");
-        list.add(TextFormatting.GREEN + "Uses " + EnvironmentalConfiguration.GLOWING_RFPERTICK + " RF/tick (per cubic block)");
+        list.add(TextFormatting.GREEN + "Uses " + EnvironmentalConfiguration.GLOWING_RFPERTICK.get() + " RF/tick (per cubic block)");
     }
 
     @Override

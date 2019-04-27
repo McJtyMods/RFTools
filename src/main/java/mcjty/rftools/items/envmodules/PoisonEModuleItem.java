@@ -27,7 +27,7 @@ public class PoisonEModuleItem extends GenericRFToolsItem implements EnvModulePr
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add("This module gives poison when");
         list.add("used in the environmental controller.");
-        list.add(TextFormatting.GREEN + "Uses " + EnvironmentalConfiguration.POISON_RFPERTICK + " RF/tick (per cubic block)");
+        list.add(TextFormatting.GREEN + "Uses " + EnvironmentalConfiguration.POISON_RFPERTICK.get() + " RF/tick (per cubic block)");
         if (!EnvironmentalConfiguration.poisonAvailable.get()) {
             list.add(TextFormatting.RED + "This module only works on mobs (see config)");
         }

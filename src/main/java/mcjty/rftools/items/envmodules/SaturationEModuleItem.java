@@ -27,7 +27,7 @@ public class SaturationEModuleItem extends GenericRFToolsItem implements EnvModu
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add("This module gives saturation bonus when");
         list.add("used in the environmental controller.");
-        list.add(TextFormatting.GREEN + "Uses " + EnvironmentalConfiguration.SATURATION_RFPERTICK + " RF/tick (per cubic block)");
+        list.add(TextFormatting.GREEN + "Uses " + EnvironmentalConfiguration.SATURATION_RFPERTICK.get() + " RF/tick (per cubic block)");
     }
 
     @Override

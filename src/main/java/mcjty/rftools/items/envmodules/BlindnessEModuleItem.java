@@ -27,7 +27,7 @@ public class BlindnessEModuleItem extends GenericRFToolsItem implements EnvModul
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add("This module gives blindness when");
         list.add("used in the environmental controller.");
-        list.add(TextFormatting.GREEN + "Uses " + EnvironmentalConfiguration.BLINDNESS_RFPERTICK + " RF/tick (per cubic block)");
+        list.add(TextFormatting.GREEN + "Uses " + EnvironmentalConfiguration.BLINDNESS_RFPERTICK.get() + " RF/tick (per cubic block)");
         if (!EnvironmentalConfiguration.blindnessAvailable.get()) {
             list.add(TextFormatting.RED + "This module only works on mobs (see config)");
         }

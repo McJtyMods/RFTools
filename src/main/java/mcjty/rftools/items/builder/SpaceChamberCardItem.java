@@ -57,7 +57,7 @@ public class SpaceChamberCardItem extends GenericRFToolsItem {
             list.add(TextFormatting.WHITE + "the area contents.");
             list.add(TextFormatting.WHITE + "Insert it in a builder to copy/move the");
             list.add(TextFormatting.WHITE + "linked area");
-            list.add(TextFormatting.GREEN + "Base cost: " + BuilderConfiguration.builderRfPerOperation + " RF/t per block");
+            list.add(TextFormatting.GREEN + "Base cost: " + BuilderConfiguration.builderRfPerOperation.get() + " RF/t per block");
             list.add(TextFormatting.GREEN + "(final cost depends on infusion level)");
         } else {
             list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);

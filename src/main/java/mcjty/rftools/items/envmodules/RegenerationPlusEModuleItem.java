@@ -27,7 +27,7 @@ public class RegenerationPlusEModuleItem extends GenericRFToolsItem implements E
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add("This module gives regeneration III bonus when");
         list.add("used in the environmental controller.");
-        list.add(TextFormatting.GREEN + "Uses " + EnvironmentalConfiguration.REGENERATIONPLUS_RFPERTICK + " RF/tick (per cubic block)");
+        list.add(TextFormatting.GREEN + "Uses " + EnvironmentalConfiguration.REGENERATIONPLUS_RFPERTICK.get() + " RF/tick (per cubic block)");
     }
 
     @Override
