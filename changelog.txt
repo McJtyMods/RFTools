@@ -1,3 +1,6 @@
+Upcoming:
+- Wrong default config value for maximumBlocks (network monitor configuration)
+
 7.70:
 - Depends on McJtyLib 3.5.0!
 - Fixed a problem with the screen dump module not working properly in some cases

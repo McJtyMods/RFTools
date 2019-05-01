@@ -20,7 +20,7 @@ public class NetworkMonitorConfiguration {
                 .defineInRange("hilightTime", 5, 0, Integer.MAX_VALUE);
         maximumBlocks = SERVER_BUILDER
                 .comment("Maximum amount of blocks to show in monitor (do NOT increase above 1800!)")
-                .defineInRange("maximumBlocks", 5000, 0, 1800);
+                .defineInRange("maximumBlocks", 500, 0, 1800);
 
         SERVER_BUILDER.pop();
         CLIENT_BUILDER.pop();
