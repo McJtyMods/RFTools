@@ -40,6 +40,7 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
     public static final int META_PASSIVE = 2;           // If set the blocked for passive mobs
     public static final int META_HOSTILE = 4;           // If set the blocked for hostile mobs
     public static final int META_PLAYERS = 8;           // If set the blocked for (some) players
+    public static final AxisAlignedBB COLLISION_BOX = new AxisAlignedBB(0.002, 0.002, 0.002, 0.998, 0.998, 0.998);
 
     public AbstractShieldBlock(String registryName, String unlocName, boolean opaque) {
         super(Material.GLASS);
@@ -91,6 +92,11 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
     @Override
     public EnumPushReaction getMobilityFlag(IBlockState state) {
         return EnumPushReaction.BLOCK;
+    }
+
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+        return COLLISION_BOX;
     }
 
     @Override
