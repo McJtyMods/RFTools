@@ -1,5 +1,7 @@
-Upcoming:
+7.71:
 - Wrong default config value for maximumBlocks (network monitor configuration)
+- Joseph fixed an off-by-one error in the oregenerator
+- Joseph fixed Solid/Damage for shields by using a smaller collision box for blocking movement than for dealing damage
 
 7.70:
 - Depends on McJtyLib 3.5.0!
