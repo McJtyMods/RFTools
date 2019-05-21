@@ -602,7 +602,10 @@ public class GuiModularStorage extends GenericGuiContainer<ModularStorageTileEnt
             viewMode.setCurrentChoice(tileEntity.getViewMode());
             sortMode.setCurrentChoice(tileEntity.getSortMode());
             groupMode.setCurrentChoice(tileEntity.isGroupMode() ? 1 : 0);
-            filter.setText(tileEntity.getFilter());
+            String curFilter = tileEntity.getFilter();
+            if (!this.filter.getText().equals(curFilter)) {
+                this.filter.setText(curFilter);
+            }
         }
 
         drawWindow();

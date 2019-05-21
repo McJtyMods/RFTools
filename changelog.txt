@@ -1,3 +1,6 @@
+Upcoming:
+- Fixed modular storage so it works nicely with the new selection feature in McJtyLib
+
 7.71:
 - Wrong default config value for maximumBlocks (network monitor configuration)
 - Joseph fixed an off-by-one error in the oregenerator
