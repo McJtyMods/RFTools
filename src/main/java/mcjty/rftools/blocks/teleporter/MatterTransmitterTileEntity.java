@@ -455,13 +455,17 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         return false;
     }
 
-    private void searchForNearestPlayer() {
+    private void prepareBeamBox() {
         if (beamBox == null) {
             int xCoord = getPos().getX();
             int yCoord = getPos().getY();
             int zCoord = getPos().getZ();
             beamBox = new AxisAlignedBB(xCoord, yCoord + 1, zCoord, xCoord + 1, yCoord + 3, zCoord + 1);
         }
+    }
+
+    private void searchForNearestPlayer() {
+        prepareBeamBox();
 
         List<Entity> l = getWorld().getEntitiesWithinAABB(EntityPlayer.class, beamBox);
         Entity nearestPlayer = findNearestPlayer(l);
