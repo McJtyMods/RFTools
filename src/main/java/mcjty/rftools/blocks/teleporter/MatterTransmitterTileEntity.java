@@ -578,6 +578,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         if (playerBB == null) {
             return true;
         }
+        prepareBeamBox();
         if (!playerBB.intersects(beamBox)) {
             Logging.message(player, "Teleportation was interrupted!");
             return true;
