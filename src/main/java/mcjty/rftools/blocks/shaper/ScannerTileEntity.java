@@ -186,8 +186,10 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
 
     public int getScanId() {
         if (scanId == 0) {
-            scanId = ScanDataManager.getScans().newScan(getWorld());
-            markDirtyQuick();
+            if (!world.isRemote) {
+                scanId = ScanDataManager.getScans().newScan(world);
+                markDirtyQuick();
+            }
         }
         return scanId;
     }
