@@ -330,7 +330,7 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         for (Map.Entry<BlockPos, IBlockState> entry : blocks.entrySet()) {
             BlockPos p = entry.getKey();
             if (world.isAirBlock(p)) {
-                world.setBlockState(p, state, Constants.BlockFlags.SEND_TO_CLIENTS);
+                world.setBlockState(p, state, 2);
             }
         }
     }
