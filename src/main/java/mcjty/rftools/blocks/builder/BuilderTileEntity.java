@@ -325,11 +325,12 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset.get());
         Shape shape = ShapeCardItem.getShape(shapeCard);
         Map<BlockPos, IBlockState> blocks = new HashMap<>();
-        ShapeCardItem.composeFormula(shapeCard, shape.getFormulaFactory().get(), getWorld(), getPos(), dimension, offset, blocks, BuilderConfiguration.maxBuilderDimension.get() * 256 * BuilderConfiguration.maxBuilderDimension.get(), false, false, null);
+        ShapeCardItem.composeFormula(shapeCard, shape.getFormulaFactory().get(), world, getPos(), dimension, offset, blocks, BuilderConfiguration.maxBuilderDimension.get() * 256 * BuilderConfiguration.maxBuilderDimension.get(), false, false, null);
+        IBlockState state = BuilderSetup.supportBlock.getDefaultState().withProperty(SupportBlock.STATUS, SupportBlock.STATUS_OK);
         for (Map.Entry<BlockPos, IBlockState> entry : blocks.entrySet()) {
             BlockPos p = entry.getKey();
-            if (getWorld().isAirBlock(p)) {
-                getWorld().setBlockState(p, BuilderSetup.supportBlock.getDefaultState().withProperty(SupportBlock.STATUS, SupportBlock.STATUS_OK), 3);
+            if (world.isAirBlock(p)) {
+                world.setBlockState(p, state, Constants.BlockFlags.SEND_TO_CLIENTS);
             }
         }
     }
@@ -386,11 +387,11 @@ public class BuilderTileEntity extends GenericEnergyReceiverTileEntity implement
         BlockPos offset = ShapeCardItem.getClampedOffset(shapeCard, BuilderConfiguration.maxBuilderOffset.get());
         Shape shape = ShapeCardItem.getShape(shapeCard);
         Map<BlockPos, IBlockState> blocks = new HashMap<>();
-        ShapeCardItem.composeFormula(shapeCard, shape.getFormulaFactory().get(), getWorld(), getPos(), dimension, offset, blocks, BuilderConfiguration.maxSpaceChamberDimension.get() * BuilderConfiguration.maxSpaceChamberDimension.get() * BuilderConfiguration.maxSpaceChamberDimension.get(), false, false, null);
+        ShapeCardItem.composeFormula(shapeCard, shape.getFormulaFactory().get(), world, getPos(), dimension, offset, blocks, BuilderConfiguration.maxSpaceChamberDimension.get() * BuilderConfiguration.maxSpaceChamberDimension.get() * BuilderConfiguration.maxSpaceChamberDimension.get(), false, false, null);
         for (Map.Entry<BlockPos, IBlockState> entry : blocks.entrySet()) {
-            BlockPos block = entry.getKey();
-            if (getWorld().getBlockState(block).getBlock() == BuilderSetup.supportBlock) {
-                getWorld().setBlockToAir(block);
+            BlockPos p = entry.getKey();
+            if (world.getBlockState(p).getBlock() == BuilderSetup.supportBlock) {
+                world.setBlockToAir(p);
             }
         }
     }

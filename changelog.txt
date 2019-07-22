@@ -2,6 +2,7 @@ Upcoming:
 - Fixed modular storage so it works nicely with the new selection feature in McJtyLib
 - Fixed the scanner so that it doesn't cause server-side crashes for client-siude code
 - Joseph fixed a crash involving the matter transmitter
+- Fixed the Builder so that it no longer causes crashes when enabling support mode for large areas
 
 7.71:
 - Wrong default config value for maximumBlocks (network monitor configuration)
