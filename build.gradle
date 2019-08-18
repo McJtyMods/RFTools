@@ -1,26 +1,22 @@
+
+// For those who want the bleeding edge
 buildscript {
     repositories {
+        maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
-        maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
-        }
-        maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
+        mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
     }
 }
 
-plugins {
-    id 'com.matthewprenger.cursegradle' version '1.1.0'
-}
+//plugins {
+    //id 'com.matthewprenger.cursegradle' version '1.1.0'
+//}
 
-apply plugin: 'net.minecraftforge.gradle.forge'
-apply plugin: 'maven'
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'eclipse'
 
 repositories {
     maven { // The repo from which to get waila
@@ -65,173 +61,67 @@ if (ENV.DRONE_BUILD_NUMBER) {
     version += ".n" + ENV.DRONE_BUILD_NUMBER
 }
 group= "com.github.mcjty" // http://maven.apache.org/guideRs/mini/guide-naming-conventions.html
-archivesBaseName = "rftools"
+archivesBaseName = "rftoolsutility"
+
+if (System.getenv('BUILD_NUMBER') != null) {
+    version += "-${System.getenv('BUILD_NUMBER')}"
+}
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 minecraft {
-    version = "${minecraft_version}-${forge_version}"
-    runDir = "run"
-    mappings = mcp_mappings
-    useDepAts = true
-}
+    mappings channel: 'snapshot', version: "${mcp_mappings}"
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
-task deobfJar(type: Jar) {
-    from sourceSets.main.output
-    classifier = 'dev'
-}
-
-artifacts {
-    archives sourceJar
-    archives deobfJar
-}
-
-
-dependencies {
-    deobfCompile "mezz.jei:jei_${jei_version}"
-    deobfCompile "mcp.mobius.waila:Hwyla:${waila_version}"
-    deobfCompile "mcjty.theoneprobe:TheOneProbe-${top_version}"
-    deobfCompile "cofh:RedstoneFlux:${redstoneflux_version}"
-    deobfCompile "net.darkhax.tesla:Tesla-${tesla_version}"
-    //deobfCompile "pl.asie.charset:charset:0.5.0.164"
-    compile "team.chisel.ctm:CTM:MC1.12-0.2.3.12"
-
-    deobfCompile "com.github.mcjty:intwheel:${intwheel_version}"
-    if (!project.hasProperty("singleproject")) {
-        deobfCompile "com.github.mcjty:mcjtylib:${mcjtylib_version}"
-        deobfCompile "com.github.mcjty:xnet:1.12-1.7.0"
-    } else {
-	compile project(':McJtyLib')
-	compile project(':XNet')
+    runs {
+        client = {
+            // recommended logging data for a userdev environment
+            properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
+            // recommended logging level for the console
+            properties 'forge.logging.console.level': 'debug'
+            workingDirectory project.file('run').canonicalPath
+            source sourceSets.main
+        }
+        server = {
+            // recommended logging data for a userdev environment
+            properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
+            // recommended logging level for the console
+            properties 'forge.logging.console.level': 'debug'
+            workingDirectory project.file('run').canonicalPath
+            source sourceSets.main
+        }
     }
-    compile "li.cil.oc:OpenComputers:${oc_version}"
 }
 
 jar {
     manifest {
-        attributes 'FMLAT': 'rftools_at.cfg'
+        attributes 'FMLAT': 'accesstransformer.cfg'
     }
 }
 
-processResources
-{
-    // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
-
-    // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-                
-        // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    if (findProject(':TheOneProbe') != null) {
+        compile project(':TheOneProbe')
+    } else {
+        compile fg.deobf(project.dependencies.create("mcjty.theoneprobe:TheOneProbe-${top_version}") {
+            transitive = false
+        })
     }
-        
-    // copy everything else, thats not the mcmod.info
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
+    if (findProject(':McJtyLib') != null) {
+        compile project(':McJtyLib')
+    } else {
+        compile fg.deobf (project.dependencies.create("com.github.mcjty:mcjtylib:${mcjtylib_version}") {
+            transitive = false
+        })
     }
-}
-
-task("uploadJars", dependsOn: "reobf") {
-    description = "uploads JARs"
-    if (System.getenv("local_maven") != null) {
-        apply plugin: 'maven'
-        uploadArchives {
-            repositories {
-                mavenDeployer {
-                    repository(url: "file://" + System.getenv("local_maven"))
-                    pom {
-                        groupId = project.group
-                        version = project.version
-                        artifactId = project.archivesBaseName
-                        project {
-                            name project.archivesBaseName
-                            packaging 'jar'
-                            description 'RFTools'
-                            scm {
-                                url 'https://github.com/McJty/RFTools'
-                                connection 'scm:git:git@github.com:McJty/RFTools.git'
-                                developerConnection 'scm:git:git@github.com:McJty/RFTools.git'
-                            }
-                            issueManagement {
-                                system 'github'
-                                url 'https://github.com/McJty/RFTools/issues'
-                            }
-                            licenses {
-                                license {
-                                    name 'MIT'
-                                    distribution 'repo'
-                                }
-                            }
-                            developers {
-                                developer {
-                                    id 'McJty'
-                                    name 'McJty'
-                                    roles { role 'developer' }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    if (findProject(':RFToolsBase') != null) {
+        compile project(':RFToolsBase')
+    } else {
+        compile fg.deobf (project.dependencies.create("com.github.mcjty:rftoolsbase:${rftoolsbase_version}") {
+            transitive = false
+        })
     }
 }
 
-String getChangelogText() {
-    def changelogFile = file('changelog.txt')
-    String str = ''
-    int lineCount = 0
-    boolean done = false
-    changelogFile.eachLine {
-        if (done || it == null) {
-            return
-        }
-        if (it.size() > 1) {
-            def temp = it
-            if (lineCount == 0) {
-                temp = "${modname} ${version}"
-                temp = "<h2>$temp</h2>"
-            } else if (it.startsWith('-')) {
-                temp = "&nbsp;&nbsp;&nbsp;$temp"
-                temp = temp.replaceAll("(\\S+\\/\\S+)#([0-9]+)\\b", "<a href=\"https://github.com/\$1/issues/\$2\">\$0</a>");
-                temp = temp.replaceAll("#([0-9]+)\\b(?!<\\/a>)", "<a href=\"https://github.com/$github_project/issues/\$1\">\$0</a>");
-            } else {
-                temp = "<h4>$temp</h4>"
-            }
-            str += "$temp<br/>"
-            lineCount++
-            return
-        } else {
-            done = true
-        }
-    }
-    return str
-}
-
-tasks.curseforge.enabled = project.hasProperty('curseforge_key')
-
-curseforge {
-    if (project.hasProperty('curseforge_key')) {
-        apiKey = project.curseforge_key
-    }
-
-    project {
-        id = project.projectId
-        changelog = System.getenv('CHANGELOG') == null || System.getenv('CHANGELOG').equals('none') ? getChangelogText() : System.getenv('CHANGELOG')
-        changelogType = 'html'
-        releaseType = project.curse_type
-        addGameVersion '1.12.2'
-        mainArtifact(jar) {
-            displayName = "${modname} - ${version}"
-        }
-        relations {
-            requiredLibrary 'mcjtylib'
-            optionalLibrary 'the-one-probe'
-            optionalLibrary 'interaction-wheel'
-            optionalLibrary 'redstone-flux'
-        }
-    }
-}

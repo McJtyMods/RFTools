@@ -1,16 +1,10 @@
 package mcjty.rftools.blocks.shield;
 
 import com.mojang.authlib.GameProfile;
-import li.cil.oc.api.machine.Arguments;
-import li.cil.oc.api.machine.Callback;
-import li.cil.oc.api.machine.Context;
-import li.cil.oc.api.network.SimpleComponent;
 import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.api.smartwrench.SmartWrenchSelector;
-import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.bindings.DefaultValue;
-import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.bindings.IValue;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
@@ -26,17 +20,8 @@ import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.shapes.Shape;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Enchantments;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
@@ -45,15 +30,11 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
-import net.minecraftforge.fml.common.Optional;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-//        @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")
-@Optional.InterfaceList(@Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers"))
 public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, SmartWrenchSelector, ITickable,
         IMachineInformation, SimpleComponent { // @todo }, IPeripheral {
 
