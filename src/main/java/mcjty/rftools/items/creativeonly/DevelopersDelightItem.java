@@ -5,15 +5,14 @@ import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.NBTTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.setup.GuiProxy;
-import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -25,28 +24,28 @@ public class DevelopersDelightItem extends GenericRFToolsItem {
     }
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public ActionResultType onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction facing, float hitX, float hitY, float hitZ) {
         if (world.isRemote) {
             dumpInfo(world, pos);
             GuiDevelopersDelight.setSelected(pos);
             player.openGui(RFTools.instance, GuiProxy.GUI_DEVELOPERS_DELIGHT, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
-            return EnumActionResult.SUCCESS;
+            return ActionResultType.SUCCESS;
         }
-        return EnumActionResult.SUCCESS;
+        return ActionResultType.SUCCESS;
     }
 
     private void dumpInfo(World world, BlockPos pos) {
         if (world.isAirBlock(pos)) {
             return;
         }
-        IBlockState state = world.getBlockState(pos);
+        BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
         int meta = block.getMetaFromState(state);
         String modid = BlockTools.getModidForBlock(block);
         Logging.log("Block: " + block.getUnlocalizedName() + ", Meta: " + meta + ", Mod: " + modid);
         TileEntity tileEntity = world.getTileEntity(pos);
         if (tileEntity != null) {
-            NBTTagCompound tag = new NBTTagCompound();
+            CompoundNBT tag = new CompoundNBT();
             try {
                 tileEntity.writeToNBT(tag);
                 StringBuffer buffer = new StringBuffer();

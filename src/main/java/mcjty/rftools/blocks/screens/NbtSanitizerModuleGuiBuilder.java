@@ -14,7 +14,7 @@ import com.google.common.collect.ImmutableSet;
 import mcjty.rftools.api.screens.FormatStyle;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
@@ -30,15 +30,15 @@ public class NbtSanitizerModuleGuiBuilder implements IModuleGuiBuilder {
     private final Set<String> booleanKeys = new HashSet<>();
     private final Set<String> itemKeys = new HashSet<>();
     private final World world;
-    @Nullable private final NBTTagCompound oldCompound;
+    @Nullable private final CompoundNBT oldCompound;
 
-    public NbtSanitizerModuleGuiBuilder(World world, @Nullable NBTTagCompound oldCompound) {
+    public NbtSanitizerModuleGuiBuilder(World world, @Nullable CompoundNBT oldCompound) {
         this.world = world;
         this.oldCompound = oldCompound;
     }
 
-    public NBTTagCompound sanitizeNbt(NBTTagCompound fromClient) {
-        NBTTagCompound newCompound = oldCompound != null ? oldCompound.copy() : new NBTTagCompound();
+    public CompoundNBT sanitizeNbt(CompoundNBT fromClient) {
+        CompoundNBT newCompound = oldCompound != null ? oldCompound.copy() : new CompoundNBT();
 
         for(Map.Entry<String, Set<String>> entry : enumKeys.entrySet()) {
             String key = entry.getKey();
@@ -91,7 +91,7 @@ public class NbtSanitizerModuleGuiBuilder implements IModuleGuiBuilder {
 
         for(String key : itemKeys) {
             if(fromClient.hasKey(key, Constants.NBT.TAG_COMPOUND)) {
-                NBTTagCompound tag = new NBTTagCompound();
+                CompoundNBT tag = new CompoundNBT();
                 new ItemStack(fromClient.getCompoundTag(key)).writeToNBT(tag);
                 newCompound.setTag(key, tag);
             } else {
@@ -103,7 +103,7 @@ public class NbtSanitizerModuleGuiBuilder implements IModuleGuiBuilder {
     }
 
     @Override
-    public NBTTagCompound getCurrentData() {
+    public CompoundNBT getCurrentData() {
         return oldCompound.copy();
     }
 

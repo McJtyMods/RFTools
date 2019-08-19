@@ -1,6 +1,6 @@
 package mcjty.rftools.shapes;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,10 +9,10 @@ import java.util.Map;
 
 public class StatePalette {
 
-    private List<IBlockState> palette = new ArrayList<>();
-    private Map<IBlockState, Integer> paletteIndex = new HashMap<>();
+    private List<BlockState> palette = new ArrayList<>();
+    private Map<BlockState, Integer> paletteIndex = new HashMap<>();
 
-    public int alloc(IBlockState state, int def) {
+    public int alloc(BlockState state, int def) {
         if (state == null) {
             return def;
         }
@@ -30,12 +30,12 @@ public class StatePalette {
         return idx;
     }
 
-    public void add(IBlockState state) {
+    public void add(BlockState state) {
         paletteIndex.put(state, palette.size());
         palette.add(state);
     }
 
-    public List<IBlockState> getPalette() {
+    public List<BlockState> getPalette() {
         return palette;
     }
 }

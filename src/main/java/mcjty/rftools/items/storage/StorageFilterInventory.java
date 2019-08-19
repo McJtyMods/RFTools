@@ -1,30 +1,30 @@
 package mcjty.rftools.items.storage;
 
 import mcjty.lib.varia.ItemStackList;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
 
 public class StorageFilterInventory implements IInventory {
     private ItemStackList stacks = ItemStackList.create(StorageFilterContainer.FILTER_SLOTS);
-    private final EntityPlayer entityPlayer;
+    private final PlayerEntity PlayerEntity;
 
-    public StorageFilterInventory(EntityPlayer player) {
-        this.entityPlayer = player;
-        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
+    public StorageFilterInventory(PlayerEntity player) {
+        this.PlayerEntity = player;
+        CompoundNBT tagCompound = PlayerEntity.getHeldItem(Hand.MAIN_HAND).getTag();
         if (tagCompound == null) {
-            tagCompound = new NBTTagCompound();
-            entityPlayer.getHeldItem(EnumHand.MAIN_HAND).setTagCompound(tagCompound);
+            tagCompound = new CompoundNBT();
+            PlayerEntity.getHeldItem(Hand.MAIN_HAND).setTagCompound(tagCompound);
         }
         NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
-            NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            stacks.set(i, new ItemStack(nbtTagCompound));
+            CompoundNBT CompoundNBT = bufferTagList.getCompoundTagAt(i);
+            stacks.set(i, new ItemStack(CompoundNBT));
         }
     }
 
@@ -97,26 +97,26 @@ public class StorageFilterInventory implements IInventory {
 
     @Override
     public void markDirty() {
-        ItemStack heldItem = entityPlayer.getHeldItem(EnumHand.MAIN_HAND);
+        ItemStack heldItem = PlayerEntity.getHeldItem(Hand.MAIN_HAND);
         if (!(heldItem).isEmpty()) {
-            NBTTagCompound tagCompound = heldItem.getTagCompound();
+            CompoundNBT tagCompound = heldItem.getTag();
             convertItemsToNBT(tagCompound, stacks);
         }
     }
 
-    public static void convertItemsToNBT(NBTTagCompound tagCompound, ItemStackList stacks) {
+    public static void convertItemsToNBT(CompoundNBT tagCompound, ItemStackList stacks) {
         NBTTagList bufferTagList = new NBTTagList();
         for (ItemStack stack : stacks) {
-            NBTTagCompound nbtTagCompound = new NBTTagCompound();
+            CompoundNBT CompoundNBT = new CompoundNBT();
             if (!stack.isEmpty()) {
-                stack.writeToNBT(nbtTagCompound);
+                stack.writeToNBT(CompoundNBT);
             }
-            bufferTagList.appendTag(nbtTagCompound);
+            bufferTagList.appendTag(CompoundNBT);
         }
         tagCompound.setTag("Items", bufferTagList);
     }
 
-    public boolean isUsable(EntityPlayer player) {
+    public boolean isUsable(PlayerEntity player) {
         return true;
     }
 
@@ -133,12 +133,12 @@ public class StorageFilterInventory implements IInventory {
     }
 
     @Override
-    public void openInventory(EntityPlayer player) {
+    public void openInventory(PlayerEntity player) {
 
     }
 
     @Override
-    public void closeInventory(EntityPlayer player) {
+    public void closeInventory(PlayerEntity player) {
 
     }
 
@@ -178,7 +178,7 @@ public class StorageFilterInventory implements IInventory {
     }
 
     @Override
-    public boolean isUsableByPlayer(EntityPlayer player) {
+    public boolean isUsableByPlayer(PlayerEntity player) {
         return isUsable(player);
     }
 

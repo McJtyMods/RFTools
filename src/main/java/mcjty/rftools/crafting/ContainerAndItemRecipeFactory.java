@@ -9,7 +9,7 @@ import net.minecraft.block.Block;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper.ShapedPrimer;
@@ -60,9 +60,9 @@ public class ContainerAndItemRecipeFactory implements IRecipeFactory {
                     }
                 }
 
-                NBTTagCompound tagCompound = null;
+                CompoundNBT tagCompound = null;
                 if (!itemstackForNBT.isEmpty()) {
-                    tagCompound = itemstackForNBT.getTagCompound();
+                    tagCompound = itemstackForNBT.getTag();
                     if (tagCompound != null) {
                         tagCompound = tagCompound.copy();
                     }
@@ -71,9 +71,9 @@ public class ContainerAndItemRecipeFactory implements IRecipeFactory {
                     result.setTagCompound(tagCompound);
                 }
 
-                NBTTagCompound tagCompoundTablet = null;
+                CompoundNBT tagCompoundTablet = null;
                 if (!tabletItem.isEmpty()) {
-                    tagCompoundTablet = tabletItem.getTagCompound();
+                    tagCompoundTablet = tabletItem.getTag();
                 }
                 if (tagCompoundTablet != null) {
                     getCompound(result).setInteger("Energy", tagCompoundTablet.getInteger("Energy"));
@@ -96,11 +96,11 @@ public class ContainerAndItemRecipeFactory implements IRecipeFactory {
             return result;
         }
 
-        private static NBTTagCompound getCompound(ItemStack stack) {
-            if (stack.getTagCompound() == null) {
-                stack.setTagCompound(new NBTTagCompound());
+        private static CompoundNBT getCompound(ItemStack stack) {
+            if (stack.getTag() == null) {
+                stack.setTagCompound(new CompoundNBT());
             }
-            return stack.getTagCompound();
+            return stack.getTag();
         }
     }
 }

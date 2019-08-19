@@ -3,8 +3,6 @@ package mcjty.rftools.network;
 import mcjty.lib.network.PacketHandler;
 import mcjty.lib.network.PacketSendClientCommand;
 import mcjty.lib.network.PacketSendServerCommand;
-import mcjty.lib.thirteen.ChannelBuilder;
-import mcjty.lib.thirteen.SimpleChannel;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.builder.PacketChamberInfoReady;
@@ -19,11 +17,6 @@ import mcjty.rftools.blocks.security.SecurityConfiguration;
 import mcjty.rftools.blocks.shaper.PacketProjectorClientNotification;
 import mcjty.rftools.blocks.shield.PacketFiltersReady;
 import mcjty.rftools.blocks.shield.PacketGetFilters;
-import mcjty.rftools.blocks.storage.PacketSyncSlotsToClient;
-import mcjty.rftools.blocks.storage.PacketUpdateNBTItemStorage;
-import mcjty.rftools.blocks.storagemonitor.PacketGetInventoryInfo;
-import mcjty.rftools.blocks.storagemonitor.PacketRequestItem;
-import mcjty.rftools.blocks.storagemonitor.PacketReturnInventoryInfo;
 import mcjty.rftools.blocks.teleporter.PacketGetReceivers;
 import mcjty.rftools.blocks.teleporter.PacketGetTransmitters;
 import mcjty.rftools.blocks.teleporter.PacketReceiversReady;
@@ -45,29 +38,29 @@ import mcjty.rftools.items.teleportprobe.PacketTargetsReady;
 import mcjty.rftools.compat.jei.PacketSendRecipe;
 import mcjty.rftools.playerprops.PacketSendBuffsToClient;
 import mcjty.rftools.shapes.*;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 import javax.annotation.Nonnull;
 
 public class RFToolsMessages {
-    public static SimpleNetworkWrapper INSTANCE;
+    public static SimpleChannel INSTANCE;
 
     private static int id() {
         return PacketHandler.nextPacketID();
     }
 
     public static void registerMessages(String name) {
-        SimpleChannel net = ChannelBuilder
+        SimpleChannel net = NetworkRegistry.ChannelBuilder
                 .named(new ResourceLocation(RFTools.MODID, name))
                 .networkProtocolVersion(() -> "1.0")
                 .clientAcceptedVersions(s -> true)
                 .serverAcceptedVersions(s -> true)
                 .simpleChannel();
 
-        INSTANCE = net.getNetwork();
+        INSTANCE = net;
 
         // Server side
         if (CrafterConfiguration.enabled.get()) {
@@ -139,11 +132,11 @@ public class RFToolsMessages {
         INSTANCE.sendToServer(new PacketSendServerCommand(RFTools.MODID, command, TypedMap.EMPTY));
     }
 
-    public static void sendToClient(EntityPlayer player, String command, @Nonnull TypedMap.Builder argumentBuilder) {
+    public static void sendToClient(PlayerEntity player, String command, @Nonnull TypedMap.Builder argumentBuilder) {
         INSTANCE.sendTo(new PacketSendClientCommand(RFTools.MODID, command, argumentBuilder.build()), (EntityPlayerMP) player);
     }
 
-    public static void sendToClient(EntityPlayer player, String command) {
+    public static void sendToClient(PlayerEntity player, String command) {
         INSTANCE.sendTo(new PacketSendClientCommand(RFTools.MODID, command, TypedMap.EMPTY), (EntityPlayerMP) player);
     }
 }

@@ -5,8 +5,8 @@ import mcjty.xnet.api.gui.IEditorGui;
 import mcjty.xnet.api.gui.IndicatorIcon;
 import mcjty.xnet.api.helper.AbstractConnectorSettings;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,7 +35,7 @@ public class StorageConnectorSettings extends AbstractConnectorSettings {
     private Mode mode = Mode.INVENTORY;
     private InventoryAccessSettings accessSettings = new InventoryAccessSettings();
 
-    public StorageConnectorSettings(@Nonnull EnumFacing side) {
+    public StorageConnectorSettings(@Nonnull Direction side) {
         super(side);
     }
 
@@ -48,7 +48,7 @@ public class StorageConnectorSettings extends AbstractConnectorSettings {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
+    public void readFromNBT(CompoundNBT tag) {
         super.readFromNBT(tag);
         mode = Mode.values()[tag.getByte("mode")];
         accessSettings.setBlockInputGui(tag.getBoolean("bigui"));
@@ -59,7 +59,7 @@ public class StorageConnectorSettings extends AbstractConnectorSettings {
         accessSettings.setBlockOutputScreen(tag.getBoolean("boscreen"));
         for (int i = 0 ; i < InventoryAccessSettings.FILTER_SIZE ; i++) {
             if (tag.hasKey("filter" + i)) {
-                NBTTagCompound itemTag = tag.getCompoundTag("filter" + i);
+                CompoundNBT itemTag = tag.getCompoundTag("filter" + i);
                 accessSettings.getFilters().set(i, new ItemStack(itemTag));
             } else {
                 accessSettings.getFilters().set(i, ItemStack.EMPTY);
@@ -72,7 +72,7 @@ public class StorageConnectorSettings extends AbstractConnectorSettings {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tag) {
+    public void writeToNBT(CompoundNBT tag) {
         super.writeToNBT(tag);
         tag.setByte("mode", (byte) mode.ordinal());
         tag.setBoolean("bigui", accessSettings.isBlockInputGui());
@@ -83,7 +83,7 @@ public class StorageConnectorSettings extends AbstractConnectorSettings {
         tag.setBoolean("boscreen", accessSettings.isBlockOutputScreen());
         for (int i = 0 ; i < InventoryAccessSettings.FILTER_SIZE ; i++) {
             if (!accessSettings.getFilters().get(i).isEmpty()) {
-                NBTTagCompound itemTag = new NBTTagCompound();
+                CompoundNBT itemTag = new CompoundNBT();
                 accessSettings.getFilters().get(i).writeToNBT(itemTag);
                 tag.setTag("filter" + i, itemTag);
             }

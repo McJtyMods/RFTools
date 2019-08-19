@@ -15,7 +15,7 @@ import mcjty.rftools.varia.BlockInfo;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 
@@ -177,7 +177,7 @@ public class GuiNetworkMonitor extends GuiItemScreen {
 
                 int color = getTextColor(blockInfo);
 
-                IBlockState state = mc.world.getBlockState(coordinate);
+                BlockState state = mc.world.getBlockState(coordinate);
                 String displayName = BlockTools.getReadableName(mc.world, coordinate);
 
                 if (filter != null) {

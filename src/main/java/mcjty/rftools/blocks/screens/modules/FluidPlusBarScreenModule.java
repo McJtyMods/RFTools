@@ -2,15 +2,15 @@ package mcjty.rftools.blocks.screens.modules;
 
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class FluidPlusBarScreenModule extends FluidBarScreenModule {
 
     @Override
-    public void setupFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
+    public void setupFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             helper.setShowdiff(tagCompound.getBoolean("showdiff"));
             coordinate = BlockPosTools.INVALID;
@@ -32,7 +32,7 @@ public class FluidPlusBarScreenModule extends FluidBarScreenModule {
     }
 
     @Override
-    public void mouseClick(World world, int x, int y, boolean clicked, EntityPlayer player) {
+    public void mouseClick(World world, int x, int y, boolean clicked, PlayerEntity player) {
 
     }
 }

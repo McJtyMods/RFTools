@@ -1,15 +1,13 @@
 package mcjty.rftools.blocks.elevator;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.audio.MovingSound;
+import net.minecraft.client.audio.ISound;
+import net.minecraft.client.audio.TickableSound;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
-@SideOnly(Side.CLIENT)
-public class ElevatorStopSound extends MovingSound {
+public class ElevatorStopSound extends TickableSound {
     private final World world;
     private final BlockPos pos;
 
@@ -18,23 +16,29 @@ public class ElevatorStopSound extends MovingSound {
         this.world = world;
         this.pos = new BlockPos(x, y, z);
 
-        this.xPosF = x;
-        this.yPosF = y;
-        this.zPosF = z;
+        this.x = x;
+        this.y = y;
+        this.z = z;
 
-        this.attenuationType = AttenuationType.LINEAR;
+        this.attenuationType = ISound.AttenuationType.LINEAR;
         this.repeat = true;
         this.repeatDelay = 0;
     }
 
     public void move(float x, float y, float z) {
-        xPosF = x;
-        yPosF = y;
-        zPosF = z;
+        x = x;
+        y = y;
+        z = z;
+    }
+
+
+    @Override
+    public boolean isDonePlaying() {
+        return false;
     }
 
     @Override
-    public void update() {
+    public void tick() {
         Block block = world.getBlockState(pos).getBlock();
         if (block != ElevatorSetup.elevatorBlock) {
             donePlaying = true;

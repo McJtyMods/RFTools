@@ -16,7 +16,7 @@ import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
@@ -48,7 +48,7 @@ public class GuiModifier extends GenericGuiContainer<GenericTileEntity> {
 
     private ItemStack getItem() {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        return player.getHeldItem(EnumHand.MAIN_HAND);
+        return player.getHeldItem(Hand.MAIN_HAND);
     }
 
     private boolean isValidItem() {

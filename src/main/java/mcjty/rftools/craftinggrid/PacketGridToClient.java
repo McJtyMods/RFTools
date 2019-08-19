@@ -3,7 +3,7 @@ package mcjty.rftools.craftinggrid;
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.thirteen.Context;
 import mcjty.rftools.RFTools;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -37,7 +37,7 @@ public class PacketGridToClient extends PacketGridSync implements IMessage {
         Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
             World world = RFTools.proxy.getClientWorld();
-            EntityPlayer player = RFTools.proxy.getClientPlayer();
+            PlayerEntity player = RFTools.proxy.getClientPlayer();
             handleMessage(world, player);
         });
         ctx.setPacketHandled(true);

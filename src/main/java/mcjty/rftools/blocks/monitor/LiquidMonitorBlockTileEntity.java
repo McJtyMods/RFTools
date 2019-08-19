@@ -6,10 +6,10 @@ import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.CapabilityTools;
 import mcjty.lib.typed.Type;
 import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -148,7 +148,7 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
             }
 //        } else if (tileEntity instanceof IFluidHandler) {
 //            IFluidHandler handler = (IFluidHandler) tileEntity;
-//            FluidTankInfo[] tankInfo = handler.getTankInfo(EnumFacing.DOWN);
+//            FluidTankInfo[] tankInfo = handler.getTankInfo(Direction.DOWN);
 //            if (tankInfo != null && tankInfo.length > 0) {
 //                if (tankInfo[0].fluid != null) {
 //                    stored = tankInfo[0].fluid.amount;
@@ -200,7 +200,7 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(CompoundNBT tagCompound) {
         super.readFromNBT(tagCompound);
         if (tagCompound.hasKey("monitorX")) {
             monitor = new BlockPos(tagCompound.getInteger("monitorX"), tagCompound.getInteger("monitorY"), tagCompound.getInteger("monitorZ"));
@@ -211,7 +211,7 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
     }
 
     @Override
-    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+    public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         fluidlevel = tagCompound.getInteger("fluidlevel");
         alarmMode = RFMonitorMode.getModeFromIndex(tagCompound.getByte("alarmMode"));
@@ -219,7 +219,7 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         super.writeToNBT(tagCompound);
         if (monitor != null) {
             tagCompound.setInteger("monitorX", monitor.getX());
@@ -231,7 +231,7 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
     }
 
     @Override
-    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+    public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         tagCompound.setInteger("fluidlevel", getFluidLevel());
         tagCompound.setByte("alarmMode", (byte) alarmMode.getIndex());
@@ -265,14 +265,14 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
     }
 
     @Override
-    public IBlockState getActualState(IBlockState state) {
+    public BlockState getActualState(BlockState state) {
         int level = getFluidLevel();
         return state.withProperty(LEVEL, level);
     }
 
     @Override
-    public int getRedstoneOutput(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
-        EnumFacing direction = state.getValue(BaseBlock.FACING);
+    public int getRedstoneOutput(BlockState state, IBlockAccess world, BlockPos pos, Direction side) {
+        Direction direction = state.getValue(BaseBlock.FACING);
         if (side == direction) {
             return isPowered() ? 15 : 0;
         }

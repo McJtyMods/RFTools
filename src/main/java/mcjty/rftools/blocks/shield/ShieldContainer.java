@@ -6,7 +6,7 @@ import mcjty.lib.container.SlotDefinition;
 import mcjty.lib.container.SlotType;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.items.ModItems;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
@@ -30,7 +30,7 @@ public class ShieldContainer extends GenericContainer {
     };
 
 
-    public ShieldContainer(EntityPlayer player, IInventory containerInventory) {
+    public ShieldContainer(PlayerEntity player, IInventory containerInventory) {
         super(factory);
         addInventory(CONTAINER_INVENTORY, containerInventory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);

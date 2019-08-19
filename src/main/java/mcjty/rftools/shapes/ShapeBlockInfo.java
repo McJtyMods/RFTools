@@ -4,7 +4,7 @@ import mcjty.rftools.blocks.builder.BuilderSetup;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSlab;
 import net.minecraft.block.material.MapColor;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.init.Blocks;
@@ -104,7 +104,7 @@ public class ShapeBlockInfo {
     }
 
     // WARNING! Keep up-to-date together with nonSolidBlocks!
-    private static IBlockRender getBlockRender(IBlockState state) {
+    private static IBlockRender getBlockRender(BlockState state) {
         if (state == null) {
             return null;
         }
@@ -156,7 +156,7 @@ public class ShapeBlockInfo {
         return render;
     }
 
-    private static Col getColor(IBlockState state) {
+    private static Col getColor(BlockState state) {
         if (state == null) {
             return COL_DEFAULT;
         }
@@ -197,7 +197,7 @@ public class ShapeBlockInfo {
     }
 
     @Nonnull
-    public static ShapeBlockInfo getBlockInfo(Map<IBlockState, ShapeBlockInfo> palette, IBlockState state) {
+    public static ShapeBlockInfo getBlockInfo(Map<BlockState, ShapeBlockInfo> palette, BlockState state) {
         ShapeBlockInfo info = palette.get(state);
         if (info != null) {
             return info;

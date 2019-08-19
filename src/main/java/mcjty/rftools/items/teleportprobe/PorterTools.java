@@ -6,11 +6,11 @@ import mcjty.rftools.ClientCommandHandler;
 import mcjty.rftools.blocks.teleporter.TeleportDestination;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumHand;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -19,12 +19,12 @@ import net.minecraft.world.World;
 
 public class PorterTools {
 
-    public static void clearTarget(EntityPlayer player, int index) {
-        ItemStack heldItem = player.getHeldItem(EnumHand.MAIN_HAND);
+    public static void clearTarget(PlayerEntity player, int index) {
+        ItemStack heldItem = player.getHeldItem(Hand.MAIN_HAND);
         if (heldItem.isEmpty()) {
             return;
         }
-        NBTTagCompound tagCompound = heldItem.getTagCompound();
+        CompoundNBT tagCompound = heldItem.getTag();
         if (tagCompound == null) {
             return;
         }
@@ -37,7 +37,7 @@ public class PorterTools {
         }
     }
 
-    public static void forceTeleport(EntityPlayer player, int dimension, BlockPos pos) {
+    public static void forceTeleport(PlayerEntity player, int dimension, BlockPos pos) {
         boolean probeInMainHand = !player.getHeldItemMainhand().isEmpty() && player.getHeldItemMainhand().getItem() instanceof TeleportProbeItem;
         boolean probeInOffHand = !player.getHeldItemOffhand().isEmpty() && player.getHeldItemOffhand().getItem() instanceof TeleportProbeItem;
         if ((!probeInMainHand) && (!probeInOffHand)) {
@@ -55,10 +55,10 @@ public class PorterTools {
         }
     }
 
-    public static void cycleDestination(EntityPlayer player, boolean next) {
+    public static void cycleDestination(PlayerEntity player, boolean next) {
         ItemStack stack = player.getHeldItemMainhand();
         if (!stack.isEmpty() && stack.getItem() instanceof AdvancedChargedPorterItem) {
-            NBTTagCompound tagCompound = stack.getTagCompound();
+            CompoundNBT tagCompound = stack.getTag();
             if (tagCompound == null) {
                 return;
             }
@@ -83,7 +83,7 @@ public class PorterTools {
         }
     }
 
-    private static int checkTarget(EntityPlayer playerEntity, NBTTagCompound tagCompound, TeleportDestinations destinations, int curtarget, int donext, int tgt) {
+    private static int checkTarget(PlayerEntity playerEntity, CompoundNBT tagCompound, TeleportDestinations destinations, int curtarget, int donext, int tgt) {
         if (tagCompound.hasKey("target" + tgt)) {
             int target = tagCompound.getInteger("target" + tgt);
             GlobalCoordinate gc = destinations.getCoordinateForId(target);
@@ -108,7 +108,7 @@ public class PorterTools {
         return donext;
     }
 
-    public static void returnDestinationInfo(EntityPlayer player, int receiverId) {
+    public static void returnDestinationInfo(PlayerEntity player, int receiverId) {
         World world = player.getEntityWorld();
         TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
         String name = TeleportDestinations.getDestinationName(destinations, receiverId);
@@ -116,24 +116,24 @@ public class PorterTools {
                 TypedMap.builder().put(ClientCommandHandler.PARAM_ID, receiverId).put(ClientCommandHandler.PARAM_NAME, name));
     }
 
-    public static void setTarget(EntityPlayer player, int target) {
-        ItemStack heldItem = player.getHeldItem(EnumHand.MAIN_HAND);
+    public static void setTarget(PlayerEntity player, int target) {
+        ItemStack heldItem = player.getHeldItem(Hand.MAIN_HAND);
         if (heldItem.isEmpty()) {
             return;
         }
-        NBTTagCompound tagCompound = heldItem.getTagCompound();
+        CompoundNBT tagCompound = heldItem.getTag();
         if (tagCompound == null) {
             return;
         }
         tagCompound.setInteger("target", target);
     }
 
-    public static void returnTargets(EntityPlayer player) {
-        ItemStack heldItem = player.getHeldItem(EnumHand.MAIN_HAND);
+    public static void returnTargets(PlayerEntity player) {
+        ItemStack heldItem = player.getHeldItem(Hand.MAIN_HAND);
         if (heldItem.isEmpty()) {
             return;
         }
-        NBTTagCompound tagCompound = heldItem.getTagCompound();
+        CompoundNBT tagCompound = heldItem.getTag();
 
         int target = -1;
         int targets[] = new int[AdvancedChargedPorterItem.MAXTARGETS];

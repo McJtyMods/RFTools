@@ -3,13 +3,13 @@ package mcjty.rftools.blocks.teleporter;
 import mcjty.lib.blocks.GenericItemBlock;
 import mcjty.lib.varia.*;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -20,12 +20,12 @@ public class SimpleDialerItemBlock extends GenericItemBlock {
     }
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public ActionResultType onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
         TileEntity te = world.getTileEntity(pos);
-        NBTTagCompound tagCompound = stack.getTagCompound();
+        CompoundNBT tagCompound = stack.getTag();
         if (tagCompound == null) {
-            tagCompound = new NBTTagCompound();
+            tagCompound = new CompoundNBT();
         }
 
         if (te instanceof MatterTransmitterTileEntity) {
@@ -34,7 +34,7 @@ public class SimpleDialerItemBlock extends GenericItemBlock {
 
                 if (!matterTransmitterTileEntity.checkAccess(player.getName())) {
                     Logging.message(player, TextFormatting.RED + "You have no access to this matter transmitter!");
-                    return EnumActionResult.FAIL;
+                    return ActionResultType.FAIL;
                 }
 
                 tagCompound.setInteger("transX", matterTransmitterTileEntity.getPos().getX());
@@ -47,7 +47,7 @@ public class SimpleDialerItemBlock extends GenericItemBlock {
                     boolean access = checkReceiverAccess(player, world, id);
                     if (!access) {
                         Logging.message(player, TextFormatting.RED + "You have no access to the matter receiver!");
-                        return EnumActionResult.FAIL;
+                        return ActionResultType.FAIL;
                     }
 
                     tagCompound.setInteger("receiver", id);
@@ -64,7 +64,7 @@ public class SimpleDialerItemBlock extends GenericItemBlock {
                 boolean access = checkReceiverAccess(player, world, id);
                 if (!access) {
                     Logging.message(player, TextFormatting.RED + "You have no access to this matter receiver!");
-                    return EnumActionResult.FAIL;
+                    return ActionResultType.FAIL;
                 }
 
                 tagCompound.setInteger("receiver", id);
@@ -75,10 +75,10 @@ public class SimpleDialerItemBlock extends GenericItemBlock {
         }
 
         stack.setTagCompound(tagCompound);
-        return EnumActionResult.SUCCESS;
+        return ActionResultType.SUCCESS;
     }
 
-    private boolean checkReceiverAccess(EntityPlayer player, World world, Integer id) {
+    private boolean checkReceiverAccess(PlayerEntity player, World world, Integer id) {
         boolean access = true;
         TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
         GlobalCoordinate coordinate = destinations.getCoordinateForId(id);

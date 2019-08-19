@@ -5,10 +5,10 @@ import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 
 public class SecurityManagerTileEntity extends GenericTileEntity implements DefaultSidedInventory {
 
@@ -44,10 +44,10 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
         return true;
     }
 
-    private NBTTagCompound getOrCreateNBT(ItemStack cardStack) {
-        NBTTagCompound tagCompound = cardStack.getTagCompound();
+    private CompoundNBT getOrCreateNBT(ItemStack cardStack) {
+        CompoundNBT tagCompound = cardStack.getTag();
         if (tagCompound == null) {
-            tagCompound = new NBTTagCompound();
+            tagCompound = new CompoundNBT();
             cardStack.setTagCompound(tagCompound);
         }
         return tagCompound;
@@ -60,7 +60,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
         if (cardStack.isEmpty()) {
             return;
         }
-        NBTTagCompound tagCompound = getOrCreateNBT(cardStack);
+        CompoundNBT tagCompound = getOrCreateNBT(cardStack);
         if (!tagCompound.hasKey("channel")) {
             SecurityChannels securityChannels = SecurityChannels.getChannels(getWorld());
             int id = securityChannels.newChannel();
@@ -83,17 +83,17 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
             return;
         }
 
-        NBTTagCompound masterNBT = masterCard.getTagCompound();
+        CompoundNBT masterNBT = masterCard.getTag();
         if (masterNBT == null) {
             return;
         }
-        NBTTagCompound linkerNBT = getOrCreateNBT(linkerCard);
+        CompoundNBT linkerNBT = getOrCreateNBT(linkerCard);
         linkerNBT.setInteger("channel", masterNBT.getInteger("channel"));
         markDirtyClient();
     }
 
     private void addPlayer(String player) {
-        NBTTagCompound tagCompound = getCardInfo();
+        CompoundNBT tagCompound = getCardInfo();
         if (tagCompound == null) {
             return;
         }
@@ -108,7 +108,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
     }
 
     private void delPlayer(String player) {
-        NBTTagCompound tagCompound = getCardInfo();
+        CompoundNBT tagCompound = getCardInfo();
         if (tagCompound == null) {
             return;
         }
@@ -123,7 +123,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
     }
 
     private void setWhiteListMode(boolean whitelist) {
-        NBTTagCompound tagCompound = getCardInfo();
+        CompoundNBT tagCompound = getCardInfo();
         if (tagCompound == null) {
             return;
         }
@@ -138,7 +138,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
     }
 
     private void setChannelName(String name) {
-        NBTTagCompound tagCompound = getCardInfo();
+        CompoundNBT tagCompound = getCardInfo();
         if (tagCompound == null) {
             return;
         }
@@ -152,7 +152,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
         }
     }
 
-    private NBTTagCompound getCardInfo() {
+    private CompoundNBT getCardInfo() {
         ItemStack cardStack = inventoryHelper.getStackInSlot(SLOT_CARD);
         if (cardStack.isEmpty()) {
             return null;
@@ -187,7 +187,7 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
     }
 
     @Override
-    public boolean isUsableByPlayer(EntityPlayer player) {
+    public boolean isUsableByPlayer(PlayerEntity player) {
         return canPlayerAccess(player);
     }
 
@@ -197,13 +197,13 @@ public class SecurityManagerTileEntity extends GenericTileEntity implements Defa
     }
 
     @Override
-    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+    public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
     }
 
     @Override
-    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+    public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
     }

@@ -5,10 +5,10 @@ import mcjty.lib.varia.EnergyTools;
 import mcjty.rftools.network.MachineInfo;
 import mcjty.rftools.network.PacketReturnRfInRange;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -22,36 +22,36 @@ public class RFToolsTools {
         if (!stack.hasTagCompound()) {
             return false;
         }
-        return stack.getTagCompound().hasKey("monitorx");
+        return stack.getTag().hasKey("monitorx");
     }
 
     public static int getDimensionFromModule(ItemStack stack) {
         if (!stack.hasTagCompound()) {
             return 0;
         }
-        return stack.getTagCompound().getInteger("monitordim");
+        return stack.getTag().getInteger("monitordim");
     }
 
     public static void setPositionInModule(ItemStack stack, Integer dimension, BlockPos pos, String name) {
         if (!stack.hasTagCompound()) {
-            stack.setTagCompound(new NBTTagCompound());
+            stack.setTagCompound(new CompoundNBT());
         }
         if (dimension != null) {
-            stack.getTagCompound().setInteger("monitordim", dimension);
+            stack.getTag().setInteger("monitordim", dimension);
         }
         if (name != null) {
-            stack.getTagCompound().setString("monitorname", name);
+            stack.getTag().setString("monitorname", name);
         }
-        stack.getTagCompound().setInteger("monitorx", pos.getX());
-        stack.getTagCompound().setInteger("monitory", pos.getY());
-        stack.getTagCompound().setInteger("monitorz", pos.getZ());
+        stack.getTag().setInteger("monitorx", pos.getX());
+        stack.getTag().setInteger("monitory", pos.getY());
+        stack.getTag().setInteger("monitorz", pos.getZ());
     }
 
     public static void clearPositionInModule(ItemStack stack) {
         if (!stack.hasTagCompound()) {
-            stack.setTagCompound(new NBTTagCompound());
+            stack.setTagCompound(new CompoundNBT());
         }
-        NBTTagCompound tagCompound = stack.getTagCompound();
+        CompoundNBT tagCompound = stack.getTag();
         tagCompound.removeTag("monitordim");
         tagCompound.removeTag("monitorx");
         tagCompound.removeTag("monitory");
@@ -63,14 +63,14 @@ public class RFToolsTools {
         if (!stack.hasTagCompound()) {
             return null;
         }
-        NBTTagCompound tagCompound = stack.getTagCompound();
+        CompoundNBT tagCompound = stack.getTag();
         int monitorx = tagCompound.getInteger("monitorx");
         int monitory = tagCompound.getInteger("monitory");
         int monitorz = tagCompound.getInteger("monitorz");
         return new BlockPos(monitorx, monitory, monitorz);
     }
 
-    public static void returnRfInRange(EntityPlayer player) {
+    public static void returnRfInRange(PlayerEntity player) {
         BlockPos pos = player.getPosition();
         World world = player.getEntityWorld();
         Map<BlockPos, MachineInfo> result = new HashMap<>();

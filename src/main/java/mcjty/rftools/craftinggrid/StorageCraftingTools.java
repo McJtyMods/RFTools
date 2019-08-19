@@ -6,7 +6,7 @@ import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.storage.RemoteStorageItemContainer;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerContainer;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
@@ -28,10 +28,10 @@ import java.util.List;
 public class StorageCraftingTools {
 
     @Nonnull
-    private static int[] tryRecipe(EntityPlayer player, CraftingRecipe craftingRecipe, int n, IItemSource itemSource, boolean strictDamage) {
+    private static int[] tryRecipe(PlayerEntity player, CraftingRecipe craftingRecipe, int n, IItemSource itemSource, boolean strictDamage) {
         InventoryCrafting workInventory = new InventoryCrafting(new Container() {
             @Override
-            public boolean canInteractWith(EntityPlayer var1) {
+            public boolean canInteractWith(PlayerEntity var1) {
                 return false;
             }
         }, 3, 3);
@@ -96,11 +96,11 @@ public class StorageCraftingTools {
         return missingCount;
     }
 
-    private static List<ItemStack> testAndConsumeCraftingItems(EntityPlayer player, CraftingRecipe craftingRecipe,
+    private static List<ItemStack> testAndConsumeCraftingItems(PlayerEntity player, CraftingRecipe craftingRecipe,
                                                                IItemSource itemSource, boolean strictDamage) {
         InventoryCrafting workInventory = new InventoryCrafting(new Container() {
             @Override
-            public boolean canInteractWith(EntityPlayer var1) {
+            public boolean canInteractWith(PlayerEntity var1) {
                 return false;
             }
         }, 3, 3);
@@ -196,7 +196,7 @@ public class StorageCraftingTools {
         return count;
     }
 
-    private static void undo(EntityPlayer player, IItemSource itemSource, List<Pair<IItemKey, ItemStack>> undo) {
+    private static void undo(PlayerEntity player, IItemSource itemSource, List<Pair<IItemKey, ItemStack>> undo) {
         for (Pair<IItemKey, ItemStack> pair : undo) {
             ItemStack stack = pair.getValue();
             if (!itemSource.insertStack(pair.getKey(), stack)) {
@@ -213,7 +213,7 @@ public class StorageCraftingTools {
         player.openContainer.detectAndSendChanges();
     }
 
-    public static void craftItems(EntityPlayer player, int n, CraftingRecipe craftingRecipe, IItemSource itemSource) {
+    public static void craftItems(PlayerEntity player, int n, CraftingRecipe craftingRecipe, IItemSource itemSource) {
         IRecipe recipe = craftingRecipe.getCachedRecipe(player.getEntityWorld());
         if (recipe == null) {
             // @todo give error?
@@ -254,7 +254,7 @@ public class StorageCraftingTools {
 
 
     @Nonnull
-    public static int[] testCraftItems(EntityPlayer player, int n, CraftingRecipe craftingRecipe, IItemSource itemSource) {
+    public static int[] testCraftItems(PlayerEntity player, int n, CraftingRecipe craftingRecipe, IItemSource itemSource) {
         IRecipe recipe = craftingRecipe.getCachedRecipe(player.getEntityWorld());
         if (recipe == null) {
             // @todo give error?
@@ -298,7 +298,7 @@ public class StorageCraftingTools {
         return new int[0];
     }
 
-    public static void craftFromGrid(EntityPlayer player, int count, boolean test, BlockPos pos) {
+    public static void craftFromGrid(PlayerEntity player, int count, boolean test, BlockPos pos) {
         player.addStat(StatList.CRAFTING_TABLE_INTERACTION);
         int[] testResult = new int[0];
         if (pos == null) {
@@ -327,7 +327,7 @@ public class StorageCraftingTools {
         }
     }
 
-    public static void requestGridSync(EntityPlayer player, BlockPos pos) {
+    public static void requestGridSync(PlayerEntity player, BlockPos pos) {
         World world = player.getEntityWorld();
         CraftingGridProvider provider = null;
         if (pos == null) {

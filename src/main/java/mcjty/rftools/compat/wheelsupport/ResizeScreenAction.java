@@ -5,7 +5,7 @@ import mcjty.intwheel.api.WheelActionElement;
 import mcjty.rftools.blocks.screens.ScreenBlock;
 import mcjty.rftools.blocks.screens.ScreenHitBlock;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -26,12 +26,12 @@ public class ResizeScreenAction implements IWheelAction {
     }
 
     @Override
-    public boolean performClient(EntityPlayer player, World world, @Nullable BlockPos pos, boolean extended) {
+    public boolean performClient(PlayerEntity player, World world, @Nullable BlockPos pos, boolean extended) {
         return true;
     }
 
     @Override
-    public void performServer(EntityPlayer player, World world, @Nullable BlockPos pos, boolean extended) {
+    public void performServer(PlayerEntity player, World world, @Nullable BlockPos pos, boolean extended) {
         if (pos != null) {
             Block block = world.getBlockState(pos).getBlock();
             if (block instanceof ScreenBlock) {

@@ -14,13 +14,13 @@ import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -46,7 +46,7 @@ public class SimpleDialerBlock extends LogicSlabBlock<SimpleDialerTileEntity, Em
     @Override
     public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
             if (tagCompound.hasKey("transX")) {
                 int transX = tagCompound.getInteger("transX");
@@ -74,7 +74,7 @@ public class SimpleDialerBlock extends LogicSlabBlock<SimpleDialerTileEntity, Em
 
     @Override
     @Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
         super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
         TileEntity te = world.getTileEntity(data.getPos());
         if (te instanceof SimpleDialerTileEntity) {
@@ -98,7 +98,7 @@ public class SimpleDialerBlock extends LogicSlabBlock<SimpleDialerTileEntity, Em
     @Optional.Method(modid = "waila")
     public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         super.getWailaBody(itemStack, currenttip, accessor, config);
-        NBTTagCompound tagCompound = accessor.getNBTData();
+        CompoundNBT tagCompound = accessor.getNBTData();
         if (tagCompound != null) {
             if (tagCompound.hasKey("transX")) {
                 int transX = tagCompound.getInteger("transX");
@@ -120,7 +120,7 @@ public class SimpleDialerBlock extends LogicSlabBlock<SimpleDialerTileEntity, Em
 
 
     @Override
-    protected boolean wrenchUse(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
+    protected boolean wrenchUse(World world, BlockPos pos, Direction side, PlayerEntity player) {
         if (!world.isRemote) {
             SimpleDialerTileEntity simpleDialerTileEntity = (SimpleDialerTileEntity) world.getTileEntity(pos);
             boolean onceMode = !simpleDialerTileEntity.isOnceMode();
@@ -136,7 +136,7 @@ public class SimpleDialerBlock extends LogicSlabBlock<SimpleDialerTileEntity, Em
 
 
     @Override
-    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
+    public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
         super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
         TileEntity te = worldIn.getTileEntity(pos);
         if (te instanceof SimpleDialerTileEntity) {

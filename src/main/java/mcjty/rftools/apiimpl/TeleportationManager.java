@@ -3,7 +3,7 @@ package mcjty.rftools.apiimpl;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.api.teleportation.ITeleportationManager;
 import mcjty.rftools.blocks.teleporter.*;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -43,7 +43,7 @@ public class TeleportationManager implements ITeleportationManager {
     }
 
     @Override
-    public void teleportPlayer(EntityPlayer player, int dimension, BlockPos location) {
+    public void teleportPlayer(PlayerEntity player, int dimension, BlockPos location) {
         mcjty.lib.varia.TeleportationTools.teleportToDimension(player, dimension, location.getX(), location.getY(), location.getZ());
     }
 

@@ -1,7 +1,7 @@
 package mcjty.rftools.items.modifier;
 
 import mcjty.lib.container.*;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 
@@ -23,7 +23,7 @@ public class ModifierContainer extends GenericContainer {
         }
     };
 
-    public ModifierContainer(EntityPlayer player) {
+    public ModifierContainer(PlayerEntity player) {
         super(factory);
         addInventory(CONTAINER_INVENTORY, new ModifierInventory(player));
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
@@ -36,7 +36,7 @@ public class ModifierContainer extends GenericContainer {
         if (slotType == SlotType.SLOT_PLAYERHOTBAR && index == cardIndex) {
             return new BaseSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY()) {
                 @Override
-                public boolean canTakeStack(EntityPlayer player) {
+                public boolean canTakeStack(PlayerEntity player) {
                     // We don't want to take the stack from this slot.
                     return false;
                 }

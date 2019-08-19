@@ -5,7 +5,7 @@ import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -54,7 +54,7 @@ public class ScreenControllerBlock extends GenericRFToolsBlock<ScreenControllerT
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+    public void breakBlock(World world, BlockPos pos, BlockState state) {
         if (!world.isRemote) {
             TileEntity tileEntity = world.getTileEntity(pos);
             if (tileEntity instanceof ScreenControllerTileEntity) {

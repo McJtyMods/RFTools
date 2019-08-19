@@ -1,44 +1,44 @@
 package mcjty.rftools.blocks.shield;
 
-import mcjty.lib.thirteen.ConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ShieldConfiguration {
     public static final String CATEGORY_SHIELD = "shield";
-    public static ConfigSpec.IntValue MAXENERGY;
-    public static ConfigSpec.IntValue RECEIVEPERTICK;
+    public static ForgeConfigSpec.IntValue MAXENERGY;
+    public static ForgeConfigSpec.IntValue RECEIVEPERTICK;
     // The amount of rf to use as a base per 10 blocks in the shield.
-    public static ConfigSpec.IntValue rfBase;
+    public static ForgeConfigSpec.IntValue rfBase;
     // This amount is added for a camo block.
-    public static ConfigSpec.IntValue rfCamo;
+    public static ForgeConfigSpec.IntValue rfCamo;
     // This amount is added for a shield block.
-    public static ConfigSpec.IntValue rfShield;
+    public static ForgeConfigSpec.IntValue rfShield;
     // The amount of RF to use per entity for a single damage spike.
-    public static ConfigSpec.IntValue rfDamage;
+    public static ForgeConfigSpec.IntValue rfDamage;
     // The amount of RF to use per entity for a single damage spike (used when simulating player style damage).
-    public static ConfigSpec.IntValue rfDamagePlayer;
+    public static ForgeConfigSpec.IntValue rfDamagePlayer;
     // The amount of damage to apply to a given entity.
-    public static ConfigSpec.DoubleValue damage;
+    public static ForgeConfigSpec.DoubleValue damage;
     // Maximum size of a shield in blocks.
-    public static ConfigSpec.IntValue maxShieldSize;
+    public static ForgeConfigSpec.IntValue maxShieldSize;
     // Maximum shield offset when the shape card is used
-    public static ConfigSpec.IntValue maxShieldOffset;
+    public static ForgeConfigSpec.IntValue maxShieldOffset;
     // Maximum shield dimension when the shape card is used
-    public static ConfigSpec.IntValue maxShieldDimension;
+    public static ForgeConfigSpec.IntValue maxShieldDimension;
     // Maximum distance at which you can add disjoint shield sections to a composed shield
-    public static ConfigSpec.IntValue maxDisjointShieldDistance;
+    public static ForgeConfigSpec.IntValue maxDisjointShieldDistance;
 
     // Amount of dimensional shards needed to do a looting kill
-    public static ConfigSpec.IntValue shardsPerLootingKill;
+    public static ForgeConfigSpec.IntValue shardsPerLootingKill;
     // Amount of looting that is done then.
-    public static ConfigSpec.IntValue lootingKillBonus;
+    public static ForgeConfigSpec.IntValue lootingKillBonus;
 
     // Set to true to temporarily remove the shield blocks to make your world loadable again.
-    public static ConfigSpec.BooleanValue disableShieldBlocksToUncorruptWorld;
+    public static ForgeConfigSpec.BooleanValue disableShieldBlocksToUncorruptWorld;
 
     // If false invisible shield rendering mode is not allowed
-    public static ConfigSpec.BooleanValue allowInvisibleShield;
+    public static ForgeConfigSpec.BooleanValue allowInvisibleShield;
 
-    public static void init(ConfigSpec.Builder SERVER_BUILDER, ConfigSpec.Builder CLIENT_BUILDER) {
+    public static void init(ForgeConfigSpec.Builder SERVER_BUILDER, ForgeConfigSpec.Builder CLIENT_BUILDER) {
         SERVER_BUILDER.comment("Settings for the shield system").push(CATEGORY_SHIELD);
         CLIENT_BUILDER.comment("Settings for the shield system").push(CATEGORY_SHIELD);
 

@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks;
 
-import mcjty.lib.builder.GenericBlockBuilderFactory;
+import mcjty.lib.builder.BaseBlockBuilderFactory;
 import mcjty.lib.builder.LogicSlabBlockBuilderFactory;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.blockprotector.BlockProtectorSetup;
@@ -35,12 +35,12 @@ public final class ModBlocks {
 
     public static DimensionalShardBlock dimensionalShardBlock;
 
-    public static GenericBlockBuilderFactory builderFactory;
+    public static BaseBlockBuilderFactory builderFactory;
     public static LogicSlabBlockBuilderFactory logicFactory;
 
 
     public static void init() {
-        builderFactory = new GenericBlockBuilderFactory(RFTools.instance).creativeTabs(RFTools.setup.getTab());
+        builderFactory = new BaseBlockBuilderFactory(RFTools.instance).creativeTabs(RFTools.setup.getTab());
         logicFactory = new LogicSlabBlockBuilderFactory(RFTools.instance).creativeTabs(RFTools.setup.getTab());
 
         initBaseBlocks();

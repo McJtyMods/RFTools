@@ -17,7 +17,7 @@ import mcjty.rftools.blocks.screens.network.PacketModuleUpdate;
 import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 
@@ -158,12 +158,12 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
             throw new RuntimeException(e);
         }
 
-        NBTTagCompound tagCompound = slot.getTagCompound();
+        CompoundNBT tagCompound = slot.getTag();
         if (tagCompound == null) {
-            tagCompound = new NBTTagCompound();
+            tagCompound = new CompoundNBT();
         }
 
-        final NBTTagCompound finalTagCompound = tagCompound;
+        final CompoundNBT finalTagCompound = tagCompound;
         ScreenModuleGuiBuilder guiBuilder = new ScreenModuleGuiBuilder(mc, this, tagCompound, () -> {
             slot.setTagCompound(finalTagCompound);
             tileEntity.setInventorySlotContents(i, slot);

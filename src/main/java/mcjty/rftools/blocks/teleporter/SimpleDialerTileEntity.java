@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.tileentity.LogicTileEntity;
 import mcjty.lib.varia.GlobalCoordinate;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 
 public class SimpleDialerTileEntity extends LogicTileEntity {
@@ -65,7 +65,7 @@ public class SimpleDialerTileEntity extends LogicTileEntity {
     }
 
     @Override
-    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+    public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         if (tagCompound.hasKey("transX")) {
             transmitter = new GlobalCoordinate(new BlockPos(tagCompound.getInteger("transX"), tagCompound.getInteger("transY"), tagCompound.getInteger("transZ")), tagCompound.getInteger("transDim"));
@@ -81,7 +81,7 @@ public class SimpleDialerTileEntity extends LogicTileEntity {
     }
 
     @Override
-    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+    public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         if (transmitter != null) {
             tagCompound.setInteger("transX", transmitter.getCoordinate().getX());

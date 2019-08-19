@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.GenericContainer;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 
 public class ScreenControllerContainer extends GenericContainer {
@@ -15,7 +15,7 @@ public class ScreenControllerContainer extends GenericContainer {
         }
     };
 
-    public ScreenControllerContainer(EntityPlayer player, IInventory containerInventory) {
+    public ScreenControllerContainer(PlayerEntity player, IInventory containerInventory) {
         super(factory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
         generateSlots();

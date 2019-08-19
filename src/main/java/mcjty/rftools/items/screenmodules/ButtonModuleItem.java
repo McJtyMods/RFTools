@@ -5,11 +5,10 @@ import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ButtonScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ButtonClientScreenModule;
-import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
@@ -61,7 +60,7 @@ public class ButtonModuleItem extends GenericRFToolsItem implements IModuleProvi
     public void addInformation(ItemStack itemStack, @Nullable World player, List<String> list, ITooltipFlag advanced) {
         super.addInformation(itemStack, player, list, advanced);
         list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.BUTTON_RFPERTICK.get() + " RF/tick");
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
             list.add(TextFormatting.YELLOW + "Label: " + tagCompound.getString("text"));
             int channel = tagCompound.getInteger("channel");
@@ -77,7 +76,7 @@ public class ButtonModuleItem extends GenericRFToolsItem implements IModuleProvi
     }
 
     @Override
-    public boolean doesSneakBypassUse(ItemStack stack, IBlockAccess world, BlockPos pos, EntityPlayer player) {
+    public boolean doesSneakBypassUse(ItemStack stack, IBlockAccess world, BlockPos pos, PlayerEntity player) {
         return true;
     }
 }

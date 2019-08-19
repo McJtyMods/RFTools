@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.builder;
 
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.worlddata.AbstractWorldData;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -56,11 +56,11 @@ public class SpaceChamberRepository extends AbstractWorldData<SpaceChamberReposi
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(CompoundNBT tagCompound) {
         channels.clear();
         NBTTagList lst = tagCompound.getTagList("channels", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < lst.tagCount() ; i++) {
-            NBTTagCompound tc = lst.getCompoundTagAt(i);
+            CompoundNBT tc = lst.getCompoundTagAt(i);
             int channel = tc.getInteger("channel");
 
             SpaceChamberChannel value = new SpaceChamberChannel();
@@ -73,10 +73,10 @@ public class SpaceChamberRepository extends AbstractWorldData<SpaceChamberReposi
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         NBTTagList lst = new NBTTagList();
         for (Map.Entry<Integer, SpaceChamberChannel> entry : channels.entrySet()) {
-            NBTTagCompound tc = new NBTTagCompound();
+            CompoundNBT tc = new CompoundNBT();
             tc.setInteger("channel", entry.getKey());
             tc.setInteger("dimension", entry.getValue().getDimension());
             BlockPosTools.writeToNBT(tc, "minCorner", entry.getValue().getMinCorner());

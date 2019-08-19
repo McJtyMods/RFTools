@@ -1,6 +1,6 @@
 package mcjty.rftools.api.screens;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
 
 /**
@@ -23,7 +23,7 @@ import net.minecraft.world.World;
  */
 public interface IModuleGuiBuilder {
 
-    NBTTagCompound getCurrentData();
+    CompoundNBT getCurrentData();
 
     World getWorld();
 

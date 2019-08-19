@@ -1,18 +1,18 @@
 package mcjty.rftools.blocks.crafter;
 
-import mcjty.lib.thirteen.ConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 public class CrafterConfiguration {
 
     public static final String CATEGORY_CRAFTER = "crafter";
 
-    public static ConfigSpec.BooleanValue enabled;
-    public static ConfigSpec.IntValue MAXENERGY;
-    public static ConfigSpec.IntValue RECEIVEPERTICK;
-    public static ConfigSpec.IntValue rfPerOperation;
-    public static ConfigSpec.IntValue speedOperations;
+    public static ForgeConfigSpec.BooleanValue enabled;
+    public static ForgeConfigSpec.IntValue MAXENERGY;
+    public static ForgeConfigSpec.IntValue RECEIVEPERTICK;
+    public static ForgeConfigSpec.IntValue rfPerOperation;
+    public static ForgeConfigSpec.IntValue speedOperations;
 
-    public static void init(ConfigSpec.Builder SERVER_BUILDER, ConfigSpec.Builder CLIENT_BUILDER) {
+    public static void init(ForgeConfigSpec.Builder SERVER_BUILDER, ForgeConfigSpec.Builder CLIENT_BUILDER) {
         SERVER_BUILDER.comment("Settings for the crafter").push(CATEGORY_CRAFTER);
         CLIENT_BUILDER.comment("Settings for the crafter").push(CATEGORY_CRAFTER);
 

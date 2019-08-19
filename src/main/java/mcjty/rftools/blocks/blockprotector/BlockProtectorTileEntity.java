@@ -13,9 +13,9 @@ import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.lib.typed.TypedMap;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -227,7 +227,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     @Override
-    public void selectBlock(EntityPlayer player, BlockPos pos) {
+    public void selectBlock(PlayerEntity player, BlockPos pos) {
         // This is always called server side.
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
@@ -284,20 +284,20 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
 
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(CompoundNBT tagCompound) {
         super.readFromNBT(tagCompound);
 
         NBTTagList tagList = tagCompound.getTagList("coordinates", Constants.NBT.TAG_COMPOUND);
         protectedBlocks.clear();
         for (int i = 0 ; i < tagList.tagCount() ; i++) {
-            NBTTagCompound tag = (NBTTagCompound) tagList.get(i);
+            CompoundNBT tag = (CompoundNBT) tagList.get(i);
             protectedBlocks.add(BlockPosTools.readFromNBT(tag, "c"));
         }
         active = tagCompound.getBoolean("active");
     }
 
     @Override
-    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+    public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         if (tagCompound.hasKey("protectorId")) {
             id = tagCompound.getInteger("protectorId");
@@ -307,7 +307,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         super.writeToNBT(tagCompound);
         NBTTagList list = new NBTTagList();
         for (BlockPos block : protectedBlocks) {
@@ -320,7 +320,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
 
 
     @Override
-    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+    public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         tagCompound.setInteger("protectorId", id);
     }

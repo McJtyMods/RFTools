@@ -13,13 +13,13 @@ import mcjty.rftools.shapes.RenderData;
 import mcjty.rftools.shapes.ShapeID;
 import mcjty.rftools.shapes.ShapeRenderer;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -29,7 +29,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
-import static net.minecraft.util.EnumFacing.*;
+import static net.minecraft.util.Direction.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -192,7 +192,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
     }
 
     private void updateOperations(boolean pulse) {
-        for (EnumFacing facing : EnumFacing.HORIZONTALS) {
+        for (Direction facing : Direction.HORIZONTALS) {
             int index = facing.ordinal() - 2;
             ProjectorOperation op = operations[index];
             int pl = index ^ 1;
@@ -300,7 +300,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
     }
 
     @Override
-    public boolean isUsableByPlayer(EntityPlayer player) {
+    public boolean isUsableByPlayer(PlayerEntity player) {
         return canPlayerAccess(player);
     }
 
@@ -310,7 +310,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
     }
 
     @Override
-    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+    public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
         verticalOffset = tagCompound.hasKey("offs") ? tagCompound.getFloat("offs") : .2f;
@@ -328,11 +328,11 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
         projecting = tagCompound.getBoolean("projecting");
         active = tagCompound.getBoolean("active");
         counter = tagCompound.getInteger("counter");
-        for (EnumFacing facing : EnumFacing.HORIZONTALS) {
+        for (Direction facing : Direction.HORIZONTALS) {
             if (tagCompound.hasKey("op_"+facing.getName())) {
                 int index = facing.ordinal() - 2;
                 ProjectorOperation op = operations[index];
-                NBTTagCompound tc = (NBTTagCompound) tagCompound.getTag("op_" + facing.getName());
+                CompoundNBT tc = (CompoundNBT) tagCompound.getTag("op_" + facing.getName());
                 String on = tc.getString("on");
                 Double von = null;
                 if (tc.hasKey("von")) {
@@ -352,7 +352,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
     }
 
     @Override
-    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+    public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
         tagCompound.setFloat("offs", verticalOffset);
@@ -365,10 +365,10 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
         tagCompound.setBoolean("projecting", projecting);
         tagCompound.setBoolean("active", active);
         tagCompound.setInteger("counter", counter);
-        for (EnumFacing facing : EnumFacing.HORIZONTALS) {
+        for (Direction facing : Direction.HORIZONTALS) {
             int index = facing.ordinal() - 2;
             ProjectorOperation op = operations[index];
-            NBTTagCompound tc = new NBTTagCompound();
+            CompoundNBT tc = new CompoundNBT();
             tc.setString("on", op.getOpcodeOn().getCode());
             if (op.getValueOn() != null) {
                 tc.setDouble("von", op.getValueOn());
@@ -514,7 +514,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
             return true;
         }
         if (CMD_RSSETTINGS.equals(command)) {
-            for (EnumFacing facing : EnumFacing.HORIZONTALS) {
+            for (Direction facing : Direction.HORIZONTALS) {
                 int idx = facing.ordinal()-2;
                 String opOn = params.get(PARAM_OPON.get(idx));
                 String opOff = params.get(PARAM_OPOFF.get(idx));
@@ -547,13 +547,13 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
 
     @Override
     public void checkRedstone(World world, BlockPos pos) {
-        IBlockState state = world.getBlockState(pos);
+        BlockState state = world.getBlockState(pos);
         if (state.getBlock() == BuilderSetup.projectorBlock) {
-            EnumFacing horiz = OrientationTools.getOrientationHoriz(state);
-            EnumFacing north = reorient(EnumFacing.NORTH, horiz);
-            EnumFacing south = reorient(EnumFacing.SOUTH, horiz);
-            EnumFacing west = reorient(EnumFacing.WEST, horiz);
-            EnumFacing east = reorient(EnumFacing.EAST, horiz);
+            Direction horiz = OrientationTools.getOrientationHoriz(state);
+            Direction north = reorient(Direction.NORTH, horiz);
+            Direction south = reorient(Direction.SOUTH, horiz);
+            Direction west = reorient(Direction.WEST, horiz);
+            Direction east = reorient(Direction.EAST, horiz);
 
             int powered1 = getInputStrength(world, pos, north) > 0 ? 1 : 0;
             int powered2 = getInputStrength(world, pos, south) > 0 ? 2 : 0;
@@ -563,7 +563,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
         }
     }
 
-    private static EnumFacing reorient(EnumFacing side, EnumFacing blockDirection) {
+    private static Direction reorient(Direction side, Direction blockDirection) {
         switch (blockDirection) {
             case NORTH:
                 if (side == DOWN || side == UP) {
@@ -605,13 +605,13 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
     /**
      * Returns the signal strength at one side of the block
      */
-    private int getInputStrength(World world, BlockPos pos, EnumFacing side) {
+    private int getInputStrength(World world, BlockPos pos, Direction side) {
         int power = world.getRedstonePower(pos.offset(side), side);
         if (power == 0) {
             // Check if there is no redstone wire there. If there is a 'bend' in the redstone wire it is
             // not detected with world.getRedstonePower().
             // @todo this is a bit of a hack. Don't know how to do it better right now
-            IBlockState blockState = world.getBlockState(pos.offset(side));
+            BlockState blockState = world.getBlockState(pos.offset(side));
             Block b = blockState.getBlock();
             if (b == Blocks.REDSTONE_WIRE) {
                 power = world.isBlockPowered(pos.offset(side)) ? 15 : 0;

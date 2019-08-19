@@ -1,7 +1,7 @@
 package mcjty.rftools.shapes;
 
 import mcjty.rftools.blocks.shaper.ScannerConfiguration;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
@@ -248,9 +248,9 @@ public class RenderData {
 
     // A render strip is a single horizontal (on z axis) strip of data
     public static class RenderStrip {
-        private final List<Pair<Integer, IBlockState>> data = new ArrayList<>();
+        private final List<Pair<Integer, BlockState>> data = new ArrayList<>();
         private final int x;
-        private IBlockState last;
+        private BlockState last;
         private int cnt = 0;
 
         public RenderStrip(int x) {
@@ -261,25 +261,25 @@ public class RenderData {
             return x;
         }
 
-        public List<Pair<Integer, IBlockState>> getData() {
+        public List<Pair<Integer, BlockState>> getData() {
             return data;
         }
 
-        public boolean isEmptyAt(int i, Map<IBlockState, ShapeBlockInfo> palette) {
+        public boolean isEmptyAt(int i, Map<BlockState, ShapeBlockInfo> palette) {
             if (i < 0) {
                 return true;
             }
             if (i >= data.size()) {
                 return true;
             }
-            IBlockState state = data.get(i).getValue();
+            BlockState state = data.get(i).getValue();
             if (ShapeBlockInfo.getBlockInfo(palette, state).isNonSolid()) {
                 return true;
             }
             return state == null;
         }
 
-        public void add(IBlockState state) {
+        public void add(BlockState state) {
             if (cnt == 0) {
                 last = state;
                 cnt = 1;

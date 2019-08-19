@@ -4,7 +4,7 @@ import mcjty.rftools.PlayerBuff;
 import mcjty.rftools.blocks.environmental.EnvironmentalControllerTileEntity;
 import mcjty.rftools.playerprops.BuffProperties;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -39,8 +39,8 @@ public abstract class BuffEModule implements EnvironmentModule {
         ticks = MAXTICKS;
 
         double maxsqdist = radius * radius;
-        List<EntityPlayer> players = new ArrayList<>(world.playerEntities);
-        for (EntityPlayer player : players) {
+        List<PlayerEntity> players = new ArrayList<>(world.playerEntities);
+        for (PlayerEntity player : players) {
             double py = player.posY;
             if (py >= miny && py <= maxy) {
                 double px = player.posX;

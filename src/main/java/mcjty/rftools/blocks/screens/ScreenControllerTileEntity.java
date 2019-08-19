@@ -8,7 +8,7 @@ import mcjty.lib.bindings.DefaultAction;
 import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.bindings.IAction;
 import mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
@@ -238,7 +238,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
 
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(CompoundNBT tagCompound) {
         super.readFromNBT(tagCompound);
         int[] xes = tagCompound.getIntArray("screensx");
         int[] yes = tagCompound.getIntArray("screensy");
@@ -250,12 +250,12 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
     }
 
     @Override
-    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+    public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         super.writeToNBT(tagCompound);
         int[] xes = new int[connectedScreens.size()];
         int[] yes = new int[connectedScreens.size()];
@@ -273,7 +273,7 @@ public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity 
     }
 
     @Override
-    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+    public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
     }
 

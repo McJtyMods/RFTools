@@ -1,50 +1,55 @@
 package mcjty.rftools.blocks.shield;
 
+import mcjty.lib.McJtyLib;
 import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.api.Infusable;
+import mcjty.lib.blocks.BaseBlock;
+import mcjty.lib.blocks.RotationType;
+import mcjty.lib.builder.BlockBuilder;
 import mcjty.lib.crafting.INBTPreservingIngredient;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.ModuleSupport;
-import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.blocks.builder.BuilderSetup;
-import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import mcjty.rftools.setup.GuiProxy;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.BiFunction;
 
 //@Optional.InterfaceList({
 //        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
-public class ShieldBlock extends GenericRFToolsBlock<ShieldTEBase, ShieldContainer> implements Infusable, INBTPreservingIngredient
+public class ShieldBlock extends BaseBlock implements Infusable, INBTPreservingIngredient
         /*, IRedstoneConnectable*/ {
 
     private final int max;
 
     public ShieldBlock(String blockName, Class<? extends ShieldTEBase> clazz, int max) {
-        super(Material.IRON, clazz, ShieldContainer::new, blockName, true);
+        super(blockName, new BlockBuilder()
+            .tileEntitySupplier(() -> new ShieldTileEntity()));
         this.max = max;
-    }
-
-    @Override
-    public boolean needsRedstoneCheck() {
-        return true;
     }
 
     @Override
@@ -52,55 +57,46 @@ public class ShieldBlock extends GenericRFToolsBlock<ShieldTEBase, ShieldContain
         return RotationType.NONE;
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public BiFunction<ShieldTEBase, ShieldContainer, GenericGuiContainer<? super ShieldTEBase>> getGuiFactory() {
-        return GuiShield::new;
-    }
+    public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> list, ITooltipFlag advanced) {
+        super.addInformation(stack, world, list, advanced);
 
-    @Override
-    public int getGuiID() {
-        return GuiProxy.GUI_SHIELD;
-    }
+        list.add(new StringTextComponent(TextFormatting.GREEN + "Supports " + max + " blocks"));
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
-        super.addInformation(itemStack, player, list, whatIsThis);
-
-        list.add(TextFormatting.GREEN + "Supports " + max + " blocks");
-
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(TextFormatting.WHITE + "This machine forms a shield out of adjacent");
-            list.add(TextFormatting.WHITE + "template blocks. It can filter based on type of");
-            list.add(TextFormatting.WHITE + "mob and do various things (damage, solid, ...)");
-            list.add(TextFormatting.WHITE + "Use the Smart Wrench to add sections to the shield");
-            list.add(TextFormatting.RED + "Note: block mimic is not implemented yet!");
-            list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption and");
-            list.add(TextFormatting.YELLOW + "increased damage.");
+        if (McJtyLib.proxy.isShiftKeyDown()) {
+            list.add(new StringTextComponent(TextFormatting.WHITE + "This machine forms a shield out of adjacent"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "template blocks. It can filter based on type of"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "mob and do various things (damage, solid, ...)"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "Use the Smart Wrench to add sections to the shield"));
+            list.add(new StringTextComponent(TextFormatting.RED + "Note: block mimic is not implemented yet!"));
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption and"));
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "increased damage."));
         } else {
-            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
+            list.add(new StringTextComponent(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE));
         }
     }
 
-    @Override
-    protected IModuleSupport getModuleSupport() {
-        return new ModuleSupport(ShieldContainer.SLOT_SHAPE) {
-            @Override
-            public boolean isModule(ItemStack itemStack) {
-                return itemStack.getItem() == BuilderSetup.shapeCardItem;
-            }
-        };
-    }
+    // @todo 1.14
+//    @Override
+//    protected IModuleSupport getModuleSupport() {
+//        return new ModuleSupport(ShieldContainer.SLOT_SHAPE) {
+//            @Override
+//            public boolean isModule(ItemStack itemStack) {
+//                return itemStack.getItem() == BuilderSetup.shapeCardItem;
+//            }
+//        };
+//    }
+
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        restoreBlockFromNBT(world, pos, stack);
+    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+// @todo 1.14
+        //        restoreBlockFromNBT(world, pos, stack);
         setOwner(world, pos, placer);
     }
 
     @Override
-    public void onBlockClicked(World world, BlockPos pos, EntityPlayer playerIn) {
+    public void onBlockClicked(BlockState state, World world, BlockPos pos, PlayerEntity player) {
         if (!world.isRemote) {
             composeDecomposeShield(world, pos, true);
             // @todo achievements
@@ -109,7 +105,7 @@ public class ShieldBlock extends GenericRFToolsBlock<ShieldTEBase, ShieldContain
     }
 
     @Override
-    protected boolean wrenchUse(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
+    protected boolean wrenchUse(World world, BlockPos pos, Direction side, PlayerEntity player) {
         composeDecomposeShield(world, pos, false);
         // @todo achievements
 //        Achievements.trigger(player, Achievements.shieldSafety);
@@ -117,14 +113,14 @@ public class ShieldBlock extends GenericRFToolsBlock<ShieldTEBase, ShieldContain
     }
 
     @Override
-    protected boolean wrenchSneakSelect(World world, BlockPos pos, EntityPlayer player) {
+    protected boolean wrenchSneakSelect(World world, BlockPos pos, PlayerEntity player) {
         if (!world.isRemote) {
-            GlobalCoordinate currentBlock = SmartWrenchItem.getCurrentBlock(player.getHeldItem(EnumHand.MAIN_HAND));
+            GlobalCoordinate currentBlock = SmartWrenchItem.getCurrentBlock(player.getHeldItem(Hand.MAIN_HAND));
             if (currentBlock == null) {
-                SmartWrenchItem.setCurrentBlock(player.getHeldItem(EnumHand.MAIN_HAND), new GlobalCoordinate(pos, world.provider.getDimension()));
+                SmartWrenchItem.setCurrentBlock(player.getHeldItem(Hand.MAIN_HAND), new GlobalCoordinate(pos, world.provider.getDimension()));
                 Logging.message(player, TextFormatting.YELLOW + "Selected block");
             } else {
-                SmartWrenchItem.setCurrentBlock(player.getHeldItem(EnumHand.MAIN_HAND), null);
+                SmartWrenchItem.setCurrentBlock(player.getHeldItem(Hand.MAIN_HAND), null);
                 Logging.message(player, TextFormatting.YELLOW + "Cleared selected block");
             }
         }
@@ -141,10 +137,10 @@ public class ShieldBlock extends GenericRFToolsBlock<ShieldTEBase, ShieldContain
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+    public void onPlayerDestroy(IWorld world, BlockPos pos, BlockState state) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof ShieldTEBase) {
-            if (!world.isRemote) {
+            if (!world.getWorld().isRemote) {
                 ShieldTEBase shieldTileEntity = (ShieldTEBase) te;
                 if (shieldTileEntity.isShieldComposed()) {
                     shieldTileEntity.decomposeShield();
@@ -152,12 +148,12 @@ public class ShieldBlock extends GenericRFToolsBlock<ShieldTEBase, ShieldContain
             }
         }
 
-        super.breakBlock(world, pos, state);
+        super.onPlayerDestroy(world, pos, state);
     }
 
 //
 //    @Override
-//    public boolean shouldRedstoneConduitConnect(World world, int x, int y, int z, EnumFacing from) {
+//    public boolean shouldRedstoneConduitConnect(World world, int x, int y, int z, Direction from) {
 //        return true;
 //    }
 }

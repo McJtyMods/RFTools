@@ -1,13 +1,13 @@
 package mcjty.rftools.blocks.security;
 
-import mcjty.lib.thirteen.ConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 public class SecurityConfiguration {
 
     public static final String CATEGORY_SECURITY = "security";
-    public static ConfigSpec.BooleanValue enabled;
+    public static ForgeConfigSpec.BooleanValue enabled;
 
-    public static void init(ConfigSpec.Builder SERVER_BUILDER, ConfigSpec.Builder CLIENT_BUILDER) {
+    public static void init(ForgeConfigSpec.Builder SERVER_BUILDER, ForgeConfigSpec.Builder CLIENT_BUILDER) {
         SERVER_BUILDER.comment("Settings for the block security system").push(CATEGORY_SECURITY);
         CLIENT_BUILDER.comment("Settings for the block security system").push(CATEGORY_SECURITY);
 

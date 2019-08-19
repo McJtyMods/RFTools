@@ -2,15 +2,15 @@ package mcjty.rftools.shapes;
 
 import mcjty.lib.varia.Check32;
 import mcjty.rftools.items.builder.ShapeCardItem;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 
 public interface IFormula {
 
-    void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card);
+    void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, CompoundNBT card);
 
-    default void getCheckSumClient(NBTTagCompound cardTag, Check32 crc) {
+    default void getCheckSumClient(CompoundNBT cardTag, Check32 crc) {
         ShapeCardItem.getLocalChecksum(cardTag, crc);
     }
 
@@ -21,7 +21,7 @@ public interface IFormula {
     }
 
     /// Return the blockstate resulting from the last isInside test
-    default IBlockState getLastState() { return null; }
+    default BlockState getLastState() { return null; }
 
     default boolean isBorder(int x, int y, int z) {
         if (!isInsideSafe(x - 1, y, z) || !isInsideSafe(x + 1, y, z) || !isInsideSafe(x, y, z - 1) ||
@@ -42,7 +42,7 @@ public interface IFormula {
         if (!isInside(x, y, z)) {
             return true;
         }
-        IBlockState state = getLastState();
+        BlockState state = getLastState();
         if (state != null) {
             return ShapeBlockInfo.isNonSolidBlock(state.getBlock());
         } else {
@@ -60,17 +60,17 @@ public interface IFormula {
         } else {
             return new IFormula() {
                 @Override
-                public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
+                public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, CompoundNBT card) {
                     IFormula.this.setup(thisCoord, dimension, offset, card);
                 }
 
                 @Override
-                public void getCheckSumClient(NBTTagCompound cardTag, Check32 crc) {
+                public void getCheckSumClient(CompoundNBT cardTag, Check32 crc) {
                     IFormula.this.getCheckSumClient(cardTag, crc);
                 }
 
                 @Override
-                public IBlockState getLastState() {
+                public BlockState getLastState() {
                     return IFormula.this.getLastState();
                 }
 

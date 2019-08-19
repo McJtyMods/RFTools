@@ -49,7 +49,7 @@ public class Achievements {
 //        AchievementPage.registerAchievementPage(page);
     }
 
-//    public static void trigger(EntityPlayer player, Achievement achievement) {
+//    public static void trigger(PlayerEntity player, Achievement achievement) {
 //        if (achievement.parentAchievement != null) {
 //            trigger(player, achievement.parentAchievement);
 //        }

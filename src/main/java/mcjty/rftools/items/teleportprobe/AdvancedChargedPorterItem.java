@@ -4,9 +4,9 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.TeleportConfiguration;
 import mcjty.rftools.setup.GuiProxy;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
@@ -23,7 +23,7 @@ public class AdvancedChargedPorterItem extends ChargedPorterItem {
     }
 
     @Override
-    protected void selectOnReceiver(EntityPlayer player, World world, NBTTagCompound tagCompound, int id) {
+    protected void selectOnReceiver(PlayerEntity player, World world, CompoundNBT tagCompound, int id) {
         for (int i = 0 ; i < MAXTARGETS ; i++) {
             if (tagCompound.hasKey("target"+i) && tagCompound.getInteger("target"+i) == id) {
                 // Id is already there.
@@ -51,14 +51,14 @@ public class AdvancedChargedPorterItem extends ChargedPorterItem {
     }
 
     @Override
-    protected void selectReceiver(ItemStack stack, World world, EntityPlayer player) {
+    protected void selectReceiver(ItemStack stack, World world, PlayerEntity player) {
         if (world.isRemote) {
             player.openGui(RFTools.instance, GuiProxy.GUI_ADVANCEDPORTER, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
         }
     }
 
     @Override
-    protected void selectOnThinAir(EntityPlayer player, World world, NBTTagCompound tagCompound, ItemStack stack) {
+    protected void selectOnThinAir(PlayerEntity player, World world, CompoundNBT tagCompound, ItemStack stack) {
         selectReceiver(stack, world, player);
     }
 }

@@ -1,62 +1,59 @@
 package mcjty.rftools.blocks.builder;
 
-import mcjty.lib.thirteen.ConfigSpec;
 import mcjty.lib.varia.Logging;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.InvalidBlockStateException;
-import net.minecraft.command.NumberInvalidException;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class BuilderConfiguration {
     public static final String CATEGORY_BUILDER = "builder";
 
-    public static ConfigSpec.IntValue BUILDER_MAXENERGY;// = 1000000;
-    public static ConfigSpec.IntValue BUILDER_RECEIVEPERTICK;// = 20000;
+    public static ForgeConfigSpec.IntValue BUILDER_MAXENERGY;// = 1000000;
+    public static ForgeConfigSpec.IntValue BUILDER_RECEIVEPERTICK;// = 20000;
 
-    public static ConfigSpec.IntValue builderRfPerOperation;// = 500;
-    public static ConfigSpec.IntValue builderRfPerLiquid;// = 300;
-    public static ConfigSpec.IntValue builderRfPerQuarry;// = 300;
-    public static ConfigSpec.IntValue builderRfPerSkipped;// = 50;
-    public static ConfigSpec.IntValue builderRfPerEntity;// = 5000;
-    public static ConfigSpec.IntValue builderRfPerPlayer;// = 40000;
-    public static ConfigSpec.DoubleValue dimensionCostFactor;
+    public static ForgeConfigSpec.IntValue builderRfPerOperation;// = 500;
+    public static ForgeConfigSpec.IntValue builderRfPerLiquid;// = 300;
+    public static ForgeConfigSpec.IntValue builderRfPerQuarry;// = 300;
+    public static ForgeConfigSpec.IntValue builderRfPerSkipped;// = 50;
+    public static ForgeConfigSpec.IntValue builderRfPerEntity;// = 5000;
+    public static ForgeConfigSpec.IntValue builderRfPerPlayer;// = 40000;
+    public static ForgeConfigSpec.DoubleValue dimensionCostFactor;
 
-    public static ConfigSpec.ConfigValue<BuilderTileEntityMode> teMode;
+    public static ForgeConfigSpec.ConfigValue<BuilderTileEntityMode> teMode;
 
-    public static ConfigSpec.BooleanValue showProgressHud;
+    public static ForgeConfigSpec.BooleanValue showProgressHud;
 
-    public static ConfigSpec.IntValue maxSpaceChamberDimension;
+    public static ForgeConfigSpec.IntValue maxSpaceChamberDimension;
 
-    public static ConfigSpec.DoubleValue voidShapeCardFactor;
-    public static ConfigSpec.DoubleValue silkquarryShapeCardFactor;
-    public static ConfigSpec.DoubleValue fortunequarryShapeCardFactor;
+    public static ForgeConfigSpec.DoubleValue voidShapeCardFactor;
+    public static ForgeConfigSpec.DoubleValue silkquarryShapeCardFactor;
+    public static ForgeConfigSpec.DoubleValue fortunequarryShapeCardFactor;
 
-    public static ConfigSpec.ConfigValue<String> quarryReplace;
-    private static IBlockState quarryReplaceBlock = null;
+    public static ForgeConfigSpec.ConfigValue<String> quarryReplace;
+    private static BlockState quarryReplaceBlock = null;
 
-    public static ConfigSpec.BooleanValue quarryChunkloads;
-    public static ConfigSpec.BooleanValue shapeCardAllowed;
-    public static ConfigSpec.BooleanValue quarryAllowed;
-    public static ConfigSpec.BooleanValue clearingQuarryAllowed;
+    public static ForgeConfigSpec.BooleanValue quarryChunkloads;
+    public static ForgeConfigSpec.BooleanValue shapeCardAllowed;
+    public static ForgeConfigSpec.BooleanValue quarryAllowed;
+    public static ForgeConfigSpec.BooleanValue clearingQuarryAllowed;
 
-    public static ConfigSpec.IntValue quarryBaseSpeed;
-    public static ConfigSpec.IntValue quarryInfusionSpeedFactor;
-    public static ConfigSpec.BooleanValue quarryTileEntities;
+    public static ForgeConfigSpec.IntValue quarryBaseSpeed;
+    public static ForgeConfigSpec.IntValue quarryInfusionSpeedFactor;
+    public static ForgeConfigSpec.BooleanValue quarryTileEntities;
 
-    public static ConfigSpec.IntValue maxBuilderOffset;
-    public static ConfigSpec.IntValue maxBuilderDimension;
+    public static ForgeConfigSpec.IntValue maxBuilderOffset;
+    public static ForgeConfigSpec.IntValue maxBuilderDimension;
 
-    public static ConfigSpec.BooleanValue oldSphereCylinderShape;
+    public static ForgeConfigSpec.BooleanValue oldSphereCylinderShape;
 
-    public static ConfigSpec.IntValue collectTimer;
-    public static ConfigSpec.IntValue collectRFPerItem;
-    public static ConfigSpec.DoubleValue collectRFPerXP;
-    public static ConfigSpec.DoubleValue collectRFPerTickPerArea;
+    public static ForgeConfigSpec.IntValue collectTimer;
+    public static ForgeConfigSpec.IntValue collectRFPerItem;
+    public static ForgeConfigSpec.DoubleValue collectRFPerXP;
+    public static ForgeConfigSpec.DoubleValue collectRFPerTickPerArea;
 
-    public static void init(ConfigSpec.Builder SERVER_BUILDER, ConfigSpec.Builder CLIENT_BUILDER) {
+    public static void init(ForgeConfigSpec.Builder SERVER_BUILDER, ForgeConfigSpec.Builder CLIENT_BUILDER) {
         SERVER_BUILDER.comment("Settings for the builder").push(CATEGORY_BUILDER);
         CLIENT_BUILDER.comment("Settings for the builder").push(CATEGORY_BUILDER);
 
@@ -163,17 +160,18 @@ public class BuilderConfiguration {
         CLIENT_BUILDER.pop();
     }
 
-    public static IBlockState getQuarryReplace() {
+    public static BlockState getQuarryReplace() {
         if (quarryReplaceBlock == null) {
             int index = quarryReplace.get().indexOf(' ');
             if(index == -1) {
                 quarryReplaceBlock = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(quarryReplace.get())).getDefaultState();
             } else {
-                try {
-                    quarryReplaceBlock = CommandBase.convertArgToBlockState(ForgeRegistries.BLOCKS.getValue(new ResourceLocation(quarryReplace.get().substring(0, index))), quarryReplace.get().substring(index + 1));
-                } catch (NumberInvalidException | InvalidBlockStateException e) {
-                    Logging.logError("Invalid builder quarry replace block: " + quarryReplace, e);
-                }
+                // @todo 1.14
+//                try {
+//                    quarryReplaceBlock = CommandBase.convertArgToBlockState(ForgeRegistries.BLOCKS.getValue(new ResourceLocation(quarryReplace.get().substring(0, index))), quarryReplace.get().substring(index + 1));
+//                } catch (NumberInvalidException | InvalidBlockStateException e) {
+//                    Logging.logError("Invalid builder quarry replace block: " + quarryReplace, e);
+//                }
             }
             if (quarryReplaceBlock == null) {
                 quarryReplaceBlock = Blocks.DIRT.getDefaultState();

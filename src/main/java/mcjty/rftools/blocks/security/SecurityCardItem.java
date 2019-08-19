@@ -5,16 +5,15 @@ import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.setup.CommandHandler;
 import mcjty.rftools.setup.GuiProxy;
-import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -43,7 +42,7 @@ public class SecurityCardItem extends GenericRFToolsItem {
     @Override
     public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        CompoundNBT tagCompound = itemStack.getTag();
         int channel = -1;
         if (tagCompound != null && tagCompound.hasKey("channel")) {
             channel = tagCompound.getInteger("channel");
@@ -69,7 +68,7 @@ public class SecurityCardItem extends GenericRFToolsItem {
     }
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public ActionResultType onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
             TileEntity te = world.getTileEntity(pos);
@@ -80,14 +79,14 @@ public class SecurityCardItem extends GenericRFToolsItem {
                     Logging.message(player, TextFormatting.RED + "This block has no owner!");
                 } else {
                     if (OrphaningCardItem.isPrivileged(player, world) || isOwner(player, genericTileEntity)) {
-                        NBTTagCompound tagCompound = stack.getTagCompound();
+                        CompoundNBT tagCompound = stack.getTag();
                         if (tagCompound == null || !tagCompound.hasKey("channel")) {
                             int blockSecurity = genericTileEntity.getSecurityChannel();
                             if (blockSecurity == -1) {
                                 Logging.message(player, TextFormatting.RED + "This security card is not setup correctly!");
                             } else {
                                 if (tagCompound == null) {
-                                    tagCompound = new NBTTagCompound();
+                                    tagCompound = new CompoundNBT();
                                     stack.setTagCompound(tagCompound);
                                 }
                                 tagCompound.setInteger("channel", blockSecurity);
@@ -104,19 +103,19 @@ public class SecurityCardItem extends GenericRFToolsItem {
             } else {
                 Logging.message(player, TextFormatting.RED + "Security is not supported on this block!");
             }
-            return EnumActionResult.SUCCESS;
+            return ActionResultType.SUCCESS;
         }
-       return EnumActionResult.SUCCESS;
+       return ActionResultType.SUCCESS;
     }
 
-    private boolean isOwner(EntityPlayer player, GenericTileEntity genericTileEntity) {
+    private boolean isOwner(PlayerEntity player, GenericTileEntity genericTileEntity) {
         return genericTileEntity.getOwnerUUID().equals(player.getPersistentID());
     }
 
 //    @SideOnly(Side.CLIENT)
 //    @Override
 //    public IIcon getIconIndex(ItemStack stack) {
-//        NBTTagCompound tagCompound = stack.getTagCompound();
+//        CompoundNBT tagCompound = stack.getTag();
 //        if (tagCompound != null && tagCompound.hasKey("channel")) {
 //            return activeIcon;
 //        } else {
@@ -125,7 +124,7 @@ public class SecurityCardItem extends GenericRFToolsItem {
 //    }
 
 
-    private void toggleSecuritySettings(EntityPlayer player, GenericTileEntity genericTileEntity, int channel) {
+    private void toggleSecuritySettings(PlayerEntity player, GenericTileEntity genericTileEntity, int channel) {
         int sec = genericTileEntity.getSecurityChannel();
         if (sec == channel) {
             genericTileEntity.setSecurityChannel(-1);

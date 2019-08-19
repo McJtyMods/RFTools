@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.monitor;
 
 import mcjty.lib.builder.BlockFlags;
-import mcjty.lib.blocks.GenericBlock;
+import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.container.GenericContainer;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.setup.GuiProxy;
@@ -9,8 +9,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class MonitorSetup {
-    public static GenericBlock<RFMonitorBlockTileEntity, GenericContainer> monitorBlock;
-    public static GenericBlock<LiquidMonitorBlockTileEntity, GenericContainer> liquidMonitorBlock;
+    public static BaseBlock<RFMonitorBlockTileEntity, GenericContainer> monitorBlock;
+    public static BaseBlock<LiquidMonitorBlockTileEntity, GenericContainer> liquidMonitorBlock;
 
     public static void init() {
         monitorBlock = ModBlocks.builderFactory.<RFMonitorBlockTileEntity> builder("rf_monitor")

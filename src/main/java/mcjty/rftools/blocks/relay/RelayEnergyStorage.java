@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.relay;
 
 import net.darkhax.tesla.api.ITeslaConsumer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.common.Optional;
 
@@ -12,9 +12,9 @@ import mcjty.lib.varia.EnergyTools;
 @Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaConsumer", modid = "tesla")
 class RelayEnergyStorage implements IEnergyStorage, ITeslaConsumer {
     private final RelayTileEntity relayTileEntity;
-    private final EnumFacing side;
+    private final Direction side;
 
-    public RelayEnergyStorage(RelayTileEntity relayTileEntity, @Nullable EnumFacing side) {
+    public RelayEnergyStorage(RelayTileEntity relayTileEntity, @Nullable Direction side) {
         this.relayTileEntity = relayTileEntity;
         this.side = side;
     }

@@ -3,24 +3,25 @@ package mcjty.rftools.blocks.security;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.setup.GuiProxy;
-import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.lwjgl.input.Keyboard;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
-public class OrphaningCardItem extends GenericRFToolsItem {
+public class OrphaningCardItem extends Item {
 
     public OrphaningCardItem() {
         super("orphaning_card");
@@ -46,7 +47,11 @@ public class OrphaningCardItem extends GenericRFToolsItem {
     }
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    @Nonnull
+    public ActionResultType onItemUse(ItemUseContext context) {
+        World world = context.getWorld();
+        BlockPos pos = context.getPos();
+        PlayerEntity player = context.getPlayer();
         if (!world.isRemote) {
             TileEntity te = world.getTileEntity(pos);
             if (te instanceof GenericTileEntity) {
@@ -58,7 +63,7 @@ public class OrphaningCardItem extends GenericRFToolsItem {
                     if (isPrivileged(player, world)) {
                         genericTileEntity.clearOwner();
                         Logging.message(player, "Cleared owner!");
-                    } else if (genericTileEntity.getOwnerUUID().equals(player.getPersistentID())) {
+                    } else if (genericTileEntity.getOwnerUUID().equals(player.getUniqueID())) {
                         genericTileEntity.clearOwner();
                         Logging.message(player, "Cleared owner!");
                     } else {
@@ -68,13 +73,13 @@ public class OrphaningCardItem extends GenericRFToolsItem {
             } else {
                 Logging.message(player, TextFormatting.RED + "Onwership is not supported on this block!");
             }
-            return EnumActionResult.SUCCESS;
+            return ActionResultType.SUCCESS;
         }
-        return EnumActionResult.SUCCESS;
+        return ActionResultType.SUCCESS;
     }
 
-    public static boolean isPrivileged(EntityPlayer player, World world) {
+    public static boolean isPrivileged(PlayerEntity player, World world) {
 //        return false;
-        return player.capabilities.isCreativeMode || world.getMinecraftServer().getPlayerList().canSendCommands(player.getGameProfile());
+        return player.abilities.isCreativeMode || ServerLifecycleHooks.getCurrentServer().getPlayerList().canSendCommands(player.getGameProfile());
     }
 }

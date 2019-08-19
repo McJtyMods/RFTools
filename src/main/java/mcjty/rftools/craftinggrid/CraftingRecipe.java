@@ -1,12 +1,12 @@
 package mcjty.rftools.craftinggrid;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -14,7 +14,7 @@ import net.minecraftforge.common.util.Constants;
 public class CraftingRecipe {
     private InventoryCrafting inv = new InventoryCrafting(new Container() {
         @Override
-        public boolean canInteractWith(EntityPlayer var1) {
+        public boolean canInteractWith(PlayerEntity var1) {
             return false;
         }
     }, 3, 3);
@@ -52,13 +52,13 @@ public class CraftingRecipe {
         return null;
     }
 
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(CompoundNBT tagCompound) {
         NBTTagList nbtTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < nbtTagList.tagCount(); i++) {
-            NBTTagCompound nbtTagCompound = nbtTagList.getCompoundTagAt(i);
-            inv.setInventorySlotContents(i, new ItemStack(nbtTagCompound));
+            CompoundNBT CompoundNBT = nbtTagList.getCompoundTagAt(i);
+            inv.setInventorySlotContents(i, new ItemStack(CompoundNBT));
         }
-        NBTTagCompound resultCompound = tagCompound.getCompoundTag("Result");
+        CompoundNBT resultCompound = tagCompound.getCompoundTag("Result");
         if (resultCompound != null) {
             result = new ItemStack(resultCompound);
         } else {
@@ -69,17 +69,17 @@ public class CraftingRecipe {
         recipePresent = false;
     }
 
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public void writeToNBT(CompoundNBT tagCompound) {
         NBTTagList nbtTagList = new NBTTagList();
         for (int i = 0 ; i < 9 ; i++) {
             ItemStack stack = inv.getStackInSlot(i);
-            NBTTagCompound nbtTagCompound = new NBTTagCompound();
+            CompoundNBT CompoundNBT = new CompoundNBT();
             if (!stack.isEmpty()) {
-                stack.writeToNBT(nbtTagCompound);
+                stack.writeToNBT(CompoundNBT);
             }
-            nbtTagList.appendTag(nbtTagCompound);
+            nbtTagList.appendTag(CompoundNBT);
         }
-        NBTTagCompound resultCompound = new NBTTagCompound();
+        CompoundNBT resultCompound = new CompoundNBT();
         if (!result.isEmpty()) {
             result.writeToNBT(resultCompound);
         }

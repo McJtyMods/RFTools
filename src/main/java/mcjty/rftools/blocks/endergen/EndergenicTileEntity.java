@@ -19,12 +19,12 @@ import mcjty.rftools.hud.IHudSupport;
 import mcjty.rftools.network.PacketGetHudLog;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.theoneprobe.api.*;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -170,7 +170,7 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
     }
 
     @Override
-    public EnumFacing getBlockOrientation() {
+    public Direction getBlockOrientation() {
         return null;
     }
 
@@ -381,7 +381,7 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
         /* RFTools.log(getWorld(), this, message);*/
     }
 
-    public static final EnumFacing[] HORIZ_DIRECTIONS = {EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.EAST};
+    public static final Direction[] HORIZ_DIRECTIONS = {Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST};
 
     /**
      * Something happens, we need to notify all ender monitors.
@@ -390,12 +390,12 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
      */
     private void fireMonitors(EnderMonitorMode mode) {
         BlockPos pos = getPos();
-        for (EnumFacing dir : EnumFacing.VALUES) {
+        for (Direction dir : Direction.VALUES) {
             BlockPos c = pos.offset(dir);
             TileEntity te = getWorld().getTileEntity(c);
             if (te instanceof EnderMonitorTileEntity) {
                 EnderMonitorTileEntity enderMonitorTileEntity = (EnderMonitorTileEntity) te;
-                EnumFacing inputSide = enderMonitorTileEntity.getFacing(getWorld().getBlockState(c)).getInputSide();
+                Direction inputSide = enderMonitorTileEntity.getFacing(getWorld().getBlockState(c)).getInputSide();
                 if (inputSide == dir.getOpposite()) {
                     enderMonitorTileEntity.fireFromEndergenic(mode);
                 }
@@ -409,10 +409,10 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
             return;
         }
 
-        for (EnumFacing dir : EnumFacing.VALUES) {
+        for (Direction dir : Direction.VALUES) {
             BlockPos o = getPos().offset(dir);
             TileEntity te = getWorld().getTileEntity(o);
-            EnumFacing opposite = dir.getOpposite();
+            Direction opposite = dir.getOpposite();
             if (EnergyTools.isEnergyTE(te, opposite)) {
                 long rfToGive = Math.min(EndergenicConfiguration.rfOutput.get(), energyAvailable);
                 long received = EnergyTools.receiveEnergy(te, opposite, rfToGive);
@@ -445,7 +445,7 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
     private void markDirtyClientNoRender() {
         markDirty();
         if (getWorld() != null) {
-            getWorld().getPlayers(EntityPlayer.class, p -> getPos().distanceSq(p.posX, p.posY, p.posZ) < 32 * 32)
+            getWorld().getPlayers(PlayerEntity.class, p -> getPos().distanceSq(p.posX, p.posY, p.posZ) < 32 * 32)
                     .stream()
                     .forEach(p -> RFToolsMessages.INSTANCE.sendTo(
                             new PacketSendClientCommand(RFTools.MODID, ClientCommandHandler.CMD_FLASH_ENDERGENIC,
@@ -572,7 +572,7 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
     }
 
     // Called from client side when a wrench is used.
-    public void useWrench(EntityPlayer player) {
+    public void useWrench(PlayerEntity player) {
         BlockPos thisCoord = getPos();
         BlockPos coord = RFTools.instance.clientInfo.getSelectedTE();
         TileEntity tileEntity = null;
@@ -652,7 +652,7 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(CompoundNBT tagCompound) {
         super.readFromNBT(tagCompound);
 
         chargingMode = tagCompound.getInteger("charging");
@@ -665,14 +665,14 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
         pearls.clear();
         NBTTagList list = tagCompound.getTagList("pearls", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.tagCount(); i++) {
-            NBTTagCompound tc = list.getCompoundTagAt(i);
+            CompoundNBT tc = list.getCompoundTagAt(i);
             EndergenicPearl pearl = new EndergenicPearl(tc);
             pearls.add(pearl);
         }
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         super.writeToNBT(tagCompound);
 
         tagCompound.setInteger("charging", chargingMode);
@@ -751,7 +751,7 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
     }
 
     @Override
-    public boolean wrenchUse(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
+    public boolean wrenchUse(World world, BlockPos pos, Direction side, PlayerEntity player) {
         if (world.isRemote) {
             SoundEvent pling = SoundEvent.REGISTRY.getObject(new ResourceLocation("block.note.pling"));
             world.playSound(player, pos, pling, SoundCategory.BLOCKS, 1.0f, 1.0f);
@@ -763,7 +763,7 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
 
     @Override
     @net.minecraftforge.fml.common.Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
         super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
         if (mode == ProbeMode.EXTENDED) {
             IItemStyle style = probeInfo.defaultItemStyle().width(16).height(13);

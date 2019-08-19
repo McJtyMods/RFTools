@@ -5,7 +5,7 @@ import mcjty.lib.font.TrueTypeFont;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.setup.ClientProxy;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -31,16 +31,16 @@ public class CmdFont extends AbstractRfToolsCommand {
     public void execute(ICommandSender sender, String[] args) {
         if (args.length < 3) {
             ITextComponent component = new TextComponentString(TextFormatting.RED + "Several parameters are missing!");
-            if (sender instanceof EntityPlayer) {
-                ((EntityPlayer) sender).sendStatusMessage(component, false);
+            if (sender instanceof PlayerEntity) {
+                ((PlayerEntity) sender).sendStatusMessage(component, false);
             } else {
                 sender.sendMessage(component);
             }
             return;
         } else if (args.length > 3) {
             ITextComponent component = new TextComponentString(TextFormatting.RED + "Too many parameters!");
-            if (sender instanceof EntityPlayer) {
-                ((EntityPlayer) sender).sendStatusMessage(component, false);
+            if (sender instanceof PlayerEntity) {
+                ((PlayerEntity) sender).sendStatusMessage(component, false);
             } else {
                 sender.sendMessage(component);
             }
@@ -53,8 +53,8 @@ public class CmdFont extends AbstractRfToolsCommand {
         TrueTypeFont font = FontLoader.createFont(new ResourceLocation(ScreenConfiguration.font.get()), (float) ScreenConfiguration.fontSize.get(), false);
         if (font == null) {
             ITextComponent component = new TextComponentString(TextFormatting.RED + "Could not load font!");
-            if (sender instanceof EntityPlayer) {
-                ((EntityPlayer) sender).sendStatusMessage(component, false);
+            if (sender instanceof PlayerEntity) {
+                ((PlayerEntity) sender).sendStatusMessage(component, false);
             } else {
                 sender.sendMessage(component);
             }

@@ -27,11 +27,11 @@ import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -175,7 +175,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     @Override
-    public boolean isUsableByPlayer(EntityPlayer player) {
+    public boolean isUsableByPlayer(PlayerEntity player) {
         return canPlayerAccess(player);
     }
 
@@ -214,7 +214,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     @Override
-    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+    public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
         if (tagCompound.hasKey("render")) {
@@ -231,11 +231,11 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
 
 
     @Override
-    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+    public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
         if (!renderStack.isEmpty()) {
-            NBTTagCompound tc = new NBTTagCompound();
+            CompoundNBT tc = new CompoundNBT();
             renderStack.writeToNBT(tc);
             tagCompound.setTag("render", tc);
         }
@@ -285,7 +285,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
                 boolean solid = ShapeCardItem.isSolid(cardOut);
                 ShapeCardItem.setShape(cardOut, Shape.SHAPE_SCAN, solid);
             }
-            NBTTagCompound tagOut = cardOut.getTagCompound();
+            CompoundNBT tagOut = cardOut.getTag();
             if (dataDim != null) {
                 ShapeCardItem.setDimension(cardOut, dataDim.getX(), dataDim.getY(), dataDim.getZ());
                 ShapeCardItem.setData(tagOut, getScanId());
@@ -355,12 +355,12 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
                 dataOffset.getZ()+dataDim.getZ()/2);
     }
 
-    private IBlockState mapState(List<ModifierEntry> modifiers, Map<IBlockState, IBlockState> modifierMapping, BlockPos pos, IBlockState inState) {
+    private BlockState mapState(List<ModifierEntry> modifiers, Map<BlockState, BlockState> modifierMapping, BlockPos pos, BlockState inState) {
         if (modifiers.isEmpty()) {
             return inState;
         }
         if (!modifierMapping.containsKey(inState)) {
-            IBlockState outState = inState;
+            BlockState outState = inState;
             boolean stop = false;
             for (ModifierEntry modifier : modifiers) {
                 if (stop) {
@@ -417,7 +417,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
         return modifierMapping.get(inState);
     }
 
-    private IBlockState getOutput(IBlockState input, ModifierEntry modifier) {
+    private BlockState getOutput(BlockState input, ModifierEntry modifier) {
         if (modifier.getOp() == ModifierFilterOperation.OPERATION_VOID) {
             return Blocks.AIR.getDefaultState();
         }
@@ -436,7 +436,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
 
     private static class ScanProgress {
         List<ModifierEntry> modifiers;
-        Map<IBlockState, IBlockState> modifierMapping;
+        Map<BlockState, BlockState> modifierMapping;
         RLE rle;
         BlockPos tl;
         StatePalette materialPalette;
@@ -481,7 +481,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
                 if (world.isAirBlock(mpos)) {
                     c = 0;
                 } else {
-                    IBlockState state = world.getBlockState(mpos);
+                    BlockState state = world.getBlockState(mpos);
                     getFilterCache();
                     if (filterCache != null) {
                         ItemStack item = state.getBlock().getItem(world, mpos, state);
@@ -524,7 +524,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     @Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
         super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
         probeInfo.text(TextStyleClass.LABEL + "Scan id: " + TextStyleClass.INFO + getScanId());
     }

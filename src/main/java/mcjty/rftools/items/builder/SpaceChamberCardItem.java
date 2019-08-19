@@ -5,16 +5,15 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.SpaceChamberControllerTileEntity;
 import mcjty.rftools.setup.GuiProxy;
-import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -40,7 +39,7 @@ public class SpaceChamberCardItem extends GenericRFToolsItem {
     @Override
     public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        CompoundNBT tagCompound = itemStack.getTag();
         int channel = -1;
         if (tagCompound != null) {
             channel = tagCompound.getInteger("channel");
@@ -65,7 +64,7 @@ public class SpaceChamberCardItem extends GenericRFToolsItem {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         if (!player.isSneaking()) {
             showDetails(world, player, player.getHeldItem(hand));
         }
@@ -73,12 +72,12 @@ public class SpaceChamberCardItem extends GenericRFToolsItem {
     }
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public ActionResultType onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
         TileEntity te = world.getTileEntity(pos);
-        NBTTagCompound tagCompound = stack.getTagCompound();
+        CompoundNBT tagCompound = stack.getTag();
         if (tagCompound == null) {
-            tagCompound = new NBTTagCompound();
+            tagCompound = new CompoundNBT();
             stack.setTagCompound(tagCompound);
         }
 
@@ -95,12 +94,12 @@ public class SpaceChamberCardItem extends GenericRFToolsItem {
                 Logging.message(player, "Card is set to channel '" + channel + "'");
             }
         }
-        return EnumActionResult.SUCCESS;
+        return ActionResultType.SUCCESS;
     }
 
-    private void showDetails(World world, EntityPlayer player, ItemStack stack) {
-        if (stack.getTagCompound() != null && stack.getTagCompound().hasKey("channel")) {
-            int channel = stack.getTagCompound().getInteger("channel");
+    private void showDetails(World world, PlayerEntity player, ItemStack stack) {
+        if (stack.getTag() != null && stack.getTag().hasKey("channel")) {
+            int channel = stack.getTag().getInteger("channel");
             if (channel != -1) {
                 showDetailsGui(world, player);
             } else {
@@ -109,7 +108,7 @@ public class SpaceChamberCardItem extends GenericRFToolsItem {
         }
     }
 
-    private void showDetailsGui(World world, EntityPlayer player) {
+    private void showDetailsGui(World world, PlayerEntity player) {
         if (world.isRemote) {
             player.openGui(RFTools.instance, GuiProxy.GUI_CHAMBER_DETAILS, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
         }

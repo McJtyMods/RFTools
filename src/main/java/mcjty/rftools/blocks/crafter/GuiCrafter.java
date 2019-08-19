@@ -17,7 +17,7 @@ import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
@@ -132,7 +132,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
 
         InventoryCrafting inv = new InventoryCrafting(new Container() {
             @Override
-            public boolean canInteractWith(EntityPlayer var1) {
+            public boolean canInteractWith(PlayerEntity var1) {
                 return false;
             }
         }, 3, 3);

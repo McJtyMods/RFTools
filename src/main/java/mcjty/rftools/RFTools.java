@@ -1,7 +1,6 @@
 package mcjty.rftools;
 
 import mcjty.lib.base.ModBase;
-import mcjty.lib.proxy.IProxy;
 import mcjty.rftools.api.screens.IScreenModuleRegistry;
 import mcjty.rftools.api.teleportation.ITeleportationManager;
 import mcjty.rftools.apiimpl.ScreenModuleRegistry;
@@ -12,21 +11,18 @@ import mcjty.rftools.commands.CommandRftShape;
 import mcjty.rftools.commands.CommandRftTp;
 import mcjty.rftools.items.manual.GuiRFToolsManual;
 import mcjty.rftools.setup.ModSetup;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.util.Optional;
 import java.util.function.Function;
 
-@Mod(modid = RFTools.MODID, name = "RFTools",
-        dependencies =
-                        "required-after:mcjtylib_ng@[" + RFTools.MIN_MCJTYLIB_VER + ",);" +
-                        "before:xnet@[" + RFTools.MIN_XNET_VER + ",);" +
-                        "after:forge@[" + RFTools.MIN_FORGE_VER + ",)",
-        acceptedMinecraftVersions = "[1.12,1.13)",
-        version = RFTools.VERSION)
 public class RFTools implements ModBase {
     public static final String MODID = "rftools";
     public static final String VERSION = "7.72";
@@ -34,16 +30,26 @@ public class RFTools implements ModBase {
     public static final String MIN_MCJTYLIB_VER = "3.5.4";
     public static final String MIN_XNET_VER = "1.7.0";
 
-    @SidedProxy(clientSide = "mcjty.rftools.setup.ClientProxy", serverSide = "mcjty.rftools.setup.ServerProxy")
-    public static IProxy proxy;
     public static ModSetup setup = new ModSetup();
 
-    @Mod.Instance("rftools")
     public static RFTools instance;
 
     public static ScreenModuleRegistry screenModuleRegistry = new ScreenModuleRegistry();
 
     public ClientInfo clientInfo = new ClientInfo();
+
+    public RFTools() {
+        instance = this;
+
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_CONFIG);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG);
+
+        FMLJavaModLoadingContext.get().getModEventBus().addListener((FMLCommonSetupEvent event) -> setup.init(event));
+
+        Config.loadConfig(Config.CLIENT_CONFIG, FMLPaths.CONFIGDIR.get().resolve("rftools-client.toml"));
+        Config.loadConfig(Config.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve("rftools-common.toml"));
+
+    }
 
     @Override
     public String getModId() {
@@ -108,7 +114,7 @@ public class RFTools implements ModBase {
     }
 
     @Override
-    public void openManual(EntityPlayer player, int bookIndex, String page) {
+    public void openManual(PlayerEntity player, int bookIndex, String page) {
         GuiRFToolsManual.locatePage = page;
         player.openGui(RFTools.instance, bookIndex, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
     }

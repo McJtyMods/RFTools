@@ -1,7 +1,7 @@
 package mcjty.rftools.commands;
 
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
@@ -31,16 +31,16 @@ public class CmdTeleport extends AbstractRfToolsCommand {
     public void execute(ICommandSender sender, String[] args) {
         if (args.length < 5) {
             ITextComponent component = new TextComponentString(TextFormatting.RED + "Several parameters are missing!");
-            if (sender instanceof EntityPlayer) {
-                ((EntityPlayer) sender).sendStatusMessage(component, false);
+            if (sender instanceof PlayerEntity) {
+                ((PlayerEntity) sender).sendStatusMessage(component, false);
             } else {
                 sender.sendMessage(component);
             }
             return;
         } else if (args.length > 5) {
             ITextComponent component = new TextComponentString(TextFormatting.RED + "Too many parameters!");
-            if (sender instanceof EntityPlayer) {
-                ((EntityPlayer) sender).sendStatusMessage(component, false);
+            if (sender instanceof PlayerEntity) {
+                ((PlayerEntity) sender).sendStatusMessage(component, false);
             } else {
                 sender.sendMessage(component);
             }
@@ -52,8 +52,8 @@ public class CmdTeleport extends AbstractRfToolsCommand {
         int y = fetchInt(sender, args, 3, 100);
         int z = fetchInt(sender, args, 4, 0);
 
-        if (sender instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer) sender;
+        if (sender instanceof PlayerEntity) {
+            PlayerEntity player = (PlayerEntity) sender;
 
             int currentId = player.getEntityWorld().provider.getDimension();
             if (currentId != dim) {

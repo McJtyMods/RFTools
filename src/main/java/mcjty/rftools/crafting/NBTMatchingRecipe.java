@@ -5,7 +5,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 
@@ -90,8 +90,8 @@ public class NBTMatchingRecipe extends ShapedRecipes {
                         return false;
                     }
 
-                    NBTTagCompound compound = itemstack.getTagCompound();
-                    NBTTagCompound compound1 = itemstack1.getTagCompound();
+                    CompoundNBT compound = itemstack.getTag();
+                    CompoundNBT compound1 = itemstack1.getTag();
                     if (nbt != null) {
                         if (compound == null && compound1 != null) {
                             return false;

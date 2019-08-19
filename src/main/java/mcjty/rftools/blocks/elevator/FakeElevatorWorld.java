@@ -1,9 +1,9 @@
 package mcjty.rftools.blocks.elevator;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -18,9 +18,9 @@ import java.util.Set;
 public class FakeElevatorWorld implements IBlockAccess {
 
     private Set<BlockPos> positions;
-    private IBlockState state;
+    private BlockState state;
     private World realWorld;
-    private final IBlockState AIR = Blocks.AIR.getDefaultState();
+    private final BlockState AIR = Blocks.AIR.getDefaultState();
 
 
     public void setWorldAndState(ElevatorTileEntity elevatorTileEntity) {
@@ -43,7 +43,7 @@ public class FakeElevatorWorld implements IBlockAccess {
 
 
     @Override
-    public IBlockState getBlockState(BlockPos pos) {
+    public BlockState getBlockState(BlockPos pos) {
         return positions.contains(pos) ? state : AIR;
     }
 
@@ -58,7 +58,7 @@ public class FakeElevatorWorld implements IBlockAccess {
     }
 
     @Override
-    public int getStrongPower(BlockPos pos, EnumFacing direction) {
+    public int getStrongPower(BlockPos pos, Direction direction) {
         return 0;
     }
 
@@ -68,7 +68,7 @@ public class FakeElevatorWorld implements IBlockAccess {
     }
 
     @Override
-    public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default) {
+    public boolean isSideSolid(BlockPos pos, Direction side, boolean _default) {
         return getBlockState(pos).isSideSolid(this, pos, side);
     }
 }

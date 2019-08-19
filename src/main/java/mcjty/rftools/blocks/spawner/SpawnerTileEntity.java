@@ -18,12 +18,12 @@ import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.boss.EntityDragon;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -141,7 +141,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
             return;
         }
 
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound == null) {
             clearMatter();
             return;
@@ -254,8 +254,8 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 
         markDirty();
 
-        IBlockState state = getWorld().getBlockState(getPos());
-        EnumFacing k = OrientationTools.getOrientation(state);
+        BlockState state = getWorld().getBlockState(getPos());
+        Direction k = OrientationTools.getOrientation(state);
         int sx = getPos().getX();
         int sy = getPos().getY();
         int sz = getPos().getZ();
@@ -283,13 +283,13 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 
         if (entityLiving instanceof EntityDragon) {
             // Ender dragon needs to be spawned with an additional NBT key set
-            NBTTagCompound dragonTag = new NBTTagCompound();
+            CompoundNBT dragonTag = new CompoundNBT();
             entityLiving.writeEntityToNBT(dragonTag);
             dragonTag.setShort("DragonPhase", (short) 0);
             entityLiving.readEntityFromNBT(dragonTag);
         }
 
-        if (k == EnumFacing.DOWN) {
+        if (k == Direction.DOWN) {
             sy -= entityLiving.getEyeHeight() - 1;  // @todo right? (used to be height)
         }
 
@@ -331,7 +331,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 //
 
     // Called from client side when a wrench is used.
-    public void useWrench(EntityPlayer player) {
+    public void useWrench(PlayerEntity player) {
         BlockPos coord = RFTools.instance.clientInfo.getSelectedTE();
         if (coord == null) {
             return; // Nothing to do.
@@ -353,12 +353,12 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(CompoundNBT tagCompound) {
         super.readFromNBT(tagCompound);
     }
 
     @Override
-    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+    public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
         matter[0] = tagCompound.getFloat("matter0");
@@ -372,13 +372,13 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         super.writeToNBT(tagCompound);
         return tagCompound;
     }
 
     @Override
-    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+    public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
         tagCompound.setFloat("matter0", matter[0]);
@@ -390,17 +390,17 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     @Override
-    public int[] getSlotsForFace(EnumFacing side) {
+    public int[] getSlotsForFace(Direction side) {
         return new int[]{SLOT_SYRINGE};
     }
 
     @Override
-    public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
+    public boolean canInsertItem(int index, ItemStack itemStackIn, Direction direction) {
         return isItemValidForSlot(index, itemStackIn);
     }
 
     @Override
-    public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
+    public boolean canExtractItem(int index, ItemStack stack, Direction direction) {
         return true;
     }
 
@@ -430,7 +430,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     @Override
-    public boolean isUsableByPlayer(EntityPlayer player) {
+    public boolean isUsableByPlayer(PlayerEntity player) {
         return canPlayerAccess(player);
     }
 
@@ -440,7 +440,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     @Override
-    public boolean wrenchUse(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
+    public boolean wrenchUse(World world, BlockPos pos, Direction side, PlayerEntity player) {
         if (world.isRemote) {
             world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvent.REGISTRY.getObject(new ResourceLocation("block.note.pling")), SoundCategory.BLOCKS, 1.0f, 1.0f, false);
             useWrench(player);
@@ -450,7 +450,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     @Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
         super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
         TileEntity te = world.getTileEntity(data.getPos());
         if (te instanceof SpawnerTileEntity) {

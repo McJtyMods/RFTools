@@ -13,7 +13,7 @@ import mcjty.rftools.blocks.crafter.CrafterBaseTE;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -211,7 +211,7 @@ public class CrafterDriver {
         }
 
         @Override
-        public AbstractManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing side, TileEntity tile) {
+        public AbstractManagedEnvironment createEnvironment(World world, BlockPos pos, Direction side, TileEntity tile) {
             return new InternalManagedEnvironment((CrafterBaseTE) tile);
         }
     }

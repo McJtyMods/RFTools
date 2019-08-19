@@ -6,7 +6,7 @@ import mcjty.xnet.api.channels.IChannelType;
 import mcjty.xnet.api.channels.IConnectorSettings;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -27,7 +27,7 @@ public class StorageChannelType implements IChannelType {
     }
 
     @Override
-    public boolean supportsBlock(@Nonnull World world, @Nonnull BlockPos pos, @Nullable EnumFacing side) {
+    public boolean supportsBlock(@Nonnull World world, @Nonnull BlockPos pos, @Nullable Direction side) {
         TileEntity te = world.getTileEntity(pos);
         if (te == null) {
             return false;
@@ -46,7 +46,7 @@ public class StorageChannelType implements IChannelType {
 
     @Nonnull
     @Override
-    public IConnectorSettings createConnector(@Nonnull EnumFacing side) {
+    public IConnectorSettings createConnector(@Nonnull Direction side) {
         return new StorageConnectorSettings(side);
     }
 

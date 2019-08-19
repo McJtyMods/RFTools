@@ -2,9 +2,9 @@ package mcjty.rftools.compat.wheelsupport;
 
 import mcjty.intwheel.api.IWheelAction;
 import mcjty.intwheel.api.WheelActionElement;
-import mcjty.lib.blocks.GenericBlock;
+import mcjty.lib.blocks.BaseBlock;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -26,15 +26,15 @@ public class RemoveBlockAction implements IWheelAction {
     }
 
     @Override
-    public boolean performClient(EntityPlayer player, World world, @Nullable BlockPos pos, boolean extended) {
+    public boolean performClient(PlayerEntity player, World world, @Nullable BlockPos pos, boolean extended) {
         return true;
     }
 
     @Override
-    public void performServer(EntityPlayer player, World world, @Nullable BlockPos pos, boolean extended) {
+    public void performServer(PlayerEntity player, World world, @Nullable BlockPos pos, boolean extended) {
         if (pos != null) {
             Block block = world.getBlockState(pos).getBlock();
-            if (block instanceof GenericBlock) {
+            if (block instanceof BaseBlock) {
                 block.harvestBlock(world, player, pos, world.getBlockState(pos), world.getTileEntity(pos), ItemStack.EMPTY);
             }
         }

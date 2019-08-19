@@ -6,7 +6,7 @@ import mcjty.lib.thirteen.Context;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.varia.RLE;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -69,7 +69,7 @@ public class PacketReturnShapeData implements IMessage {
             buf.writeInt(0);
         } else {
             buf.writeInt(statePalette.getPalette().size());
-            for (IBlockState state : statePalette.getPalette()) {
+            for (BlockState state : statePalette.getPalette()) {
                 if (state.getBlock().getRegistryName() == null) {
                     state = Blocks.STONE.getDefaultState();
                 }
@@ -114,7 +114,7 @@ public class PacketReturnShapeData implements IMessage {
             RenderData.RenderPlane plane = null;
 
             if (rle != null) {
-                IBlockState dummy = BuilderSetup.supportBlock.getDefaultState();
+                BlockState dummy = BuilderSetup.supportBlock.getDefaultState();
 
                 rle.reset();
 //                for (int oy = 0; oy < dy; oy++) {

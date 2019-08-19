@@ -8,9 +8,9 @@ import mcjty.lib.base.GeneralConfig;
 import mcjty.lib.integration.computers.AbstractOCDriver;
 import mcjty.rftools.blocks.infuser.MachineInfuserTileEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -43,7 +43,7 @@ public class MachineInfuserDriver {
             @Callback(doc = "function():number; Get the current number of dimensional shards the machine is infused with")
             public Object[] getShards(Context c, Arguments a) {
                 ItemStack item = tile.getInventoryHelper().getStackInSlot(1);
-                NBTTagCompound tag = MachineInfuserTileEntity.getTagCompound(item);
+                CompoundNBT tag = MachineInfuserTileEntity.getTagCompound(item);
                 if (tag == null || !tag.hasKey("infused")) {
                     return new Object[]{0};
                 }
@@ -57,7 +57,7 @@ public class MachineInfuserDriver {
         }
 
         @Override
-        public AbstractManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing side, TileEntity tile) {
+        public AbstractManagedEnvironment createEnvironment(World world, BlockPos pos, Direction side, TileEntity tile) {
             return new InternalManagedEnvironment((MachineInfuserTileEntity) tile);
         }
     }

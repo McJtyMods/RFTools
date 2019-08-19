@@ -1,7 +1,7 @@
 package mcjty.rftools.commands;
 
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
@@ -23,8 +23,8 @@ public abstract class AbstractRfToolsCommand implements RfToolsCommand {
         } catch (NumberFormatException e) {
             value = false;
             ITextComponent component = new TextComponentString(TextFormatting.RED + "Parameter is not a valid boolean!");
-            if (sender instanceof EntityPlayer) {
-                ((EntityPlayer) sender).sendStatusMessage(component, false);
+            if (sender instanceof PlayerEntity) {
+                ((PlayerEntity) sender).sendStatusMessage(component, false);
             } else {
                 sender.sendMessage(component);
             }
@@ -41,8 +41,8 @@ public abstract class AbstractRfToolsCommand implements RfToolsCommand {
         } catch (NumberFormatException e) {
             value = 0;
             ITextComponent component = new TextComponentString(TextFormatting.RED + "Parameter is not a valid integer!");
-            if (sender instanceof EntityPlayer) {
-                ((EntityPlayer) sender).sendStatusMessage(component, false);
+            if (sender instanceof PlayerEntity) {
+                ((PlayerEntity) sender).sendStatusMessage(component, false);
             } else {
                 sender.sendMessage(component);
             }
@@ -59,8 +59,8 @@ public abstract class AbstractRfToolsCommand implements RfToolsCommand {
         } catch (NumberFormatException e) {
             value = 0.0f;
             ITextComponent component = new TextComponentString(TextFormatting.RED + "Parameter is not a valid real number!");
-            if (sender instanceof EntityPlayer) {
-                ((EntityPlayer) sender).sendStatusMessage(component, false);
+            if (sender instanceof PlayerEntity) {
+                ((PlayerEntity) sender).sendStatusMessage(component, false);
             } else {
                 sender.sendMessage(component);
             }

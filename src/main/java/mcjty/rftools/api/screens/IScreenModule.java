@@ -1,8 +1,8 @@
 package mcjty.rftools.api.screens;
 
 import mcjty.rftools.api.screens.data.IModuleData;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -30,7 +30,7 @@ public interface IScreenModule<T extends IModuleData> {
      * @param dim the dimension for the screen this module is in
      * @param pos the position of the screen
      */
-    void setupFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos);
+    void setupFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos);
 
     /**
      * How much RF/tick this module consumes
@@ -46,7 +46,7 @@ public interface IScreenModule<T extends IModuleData> {
      * @param clicked
      * @param player
      */
-    void mouseClick(World world, int x, int y, boolean clicked, EntityPlayer player);
+    void mouseClick(World world, int x, int y, boolean clicked, PlayerEntity player);
 
     /**
      * @return Whether this module needs a screen controller to work,

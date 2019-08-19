@@ -11,7 +11,7 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.math.BlockPos;
@@ -182,7 +182,7 @@ public class GuiDevelopersDelight extends GuiScreen {
 
         blockClassList.removeChildren();
 
-        IBlockState state = Minecraft.getMinecraft().world.getBlockState(selected);
+        BlockState state = Minecraft.getMinecraft().world.getBlockState(selected);
         Block block = state.getBlock();
 
         blockClassList.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText("Loc Name: " + block.getLocalizedName()).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT));

@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.elevator;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -47,7 +47,7 @@ public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> 
                 GlStateManager.shadeModel(GL11.GL_FLAT);
             }
 
-            IBlockState movingState = te.getMovingState();
+            BlockState movingState = te.getMovingState();
 
             GlStateManager.translate(0, te.getMovingY() - te.getPos().getY() + diff, 0);
             Tessellator tessellator = Tessellator.getInstance();
@@ -92,7 +92,7 @@ public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> 
         return te.isMoving();
     }
 
-    private static boolean renderBlock(BlockRendererDispatcher dispatcher, IBlockState state, BlockPos pos, IBlockAccess blockAccess, BufferBuilder worldRendererIn) {
+    private static boolean renderBlock(BlockRendererDispatcher dispatcher, BlockState state, BlockPos pos, IBlockAccess blockAccess, BufferBuilder worldRendererIn) {
         try {
             EnumBlockRenderType enumblockrendertype = state.getRenderType();
 

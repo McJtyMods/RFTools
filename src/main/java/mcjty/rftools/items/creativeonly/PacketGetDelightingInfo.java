@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.thirteen.Context;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -42,7 +42,7 @@ public class PacketGetDelightingInfo implements IMessage {
     public void handle(Supplier<Context> supplier) {
         Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
-            EntityPlayer player = ctx.getSender();
+            PlayerEntity player = ctx.getSender();
             World world = player.getEntityWorld();
 
             List<String> blockClasses = new ArrayList<>();

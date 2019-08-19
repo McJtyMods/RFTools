@@ -12,7 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -24,13 +24,13 @@ import java.util.Map;
 public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
     private Minecraft mc;
     private Gui gui;
-    private NBTTagCompound currentData;
+    private CompoundNBT currentData;
     private IModuleGuiChanged moduleGuiChanged;
 
     private Panel panel;
     private List<Widget<?>> row = new ArrayList<>();
 
-    public ScreenModuleGuiBuilder(Minecraft mc, Gui gui, NBTTagCompound currentData, IModuleGuiChanged moduleGuiChanged) {
+    public ScreenModuleGuiBuilder(Minecraft mc, Gui gui, CompoundNBT currentData, IModuleGuiChanged moduleGuiChanged) {
         this.gui = gui;
         this.mc = mc;
         this.moduleGuiChanged = moduleGuiChanged;
@@ -39,7 +39,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
     }
 
     @Override
-    public NBTTagCompound getCurrentData() {
+    public CompoundNBT getCurrentData() {
         return currentData;
     }
 
@@ -263,7 +263,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
                     ItemStack copy = holding.copy();
                     copy.setCount(1);
                     blockRender.setRenderItem(copy);
-                    NBTTagCompound tc = new NBTTagCompound();
+                    CompoundNBT tc = new CompoundNBT();
                     copy.writeToNBT(tc);
                     currentData.setTag(tagname, tc);
                 }
@@ -296,7 +296,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
         return this;
     }
 
-    private static ChoiceLabel setupFormatCombo(Minecraft mc, Gui gui, String tagname, final NBTTagCompound currentData, final IModuleGuiChanged moduleGuiChanged) {
+    private static ChoiceLabel setupFormatCombo(Minecraft mc, Gui gui, String tagname, final CompoundNBT currentData, final IModuleGuiChanged moduleGuiChanged) {
         final String modeFull = FormatStyle.MODE_FULL.getName();
         final String modeCompact = FormatStyle.MODE_COMPACT.getName();
         final String modeCommas = FormatStyle.MODE_COMMAS.getName();
@@ -317,7 +317,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
         return modeButton;
     }
 
-    private static ChoiceLabel setupModeCombo(Minecraft mc, Gui gui, final String componentName, final NBTTagCompound currentData, final IModuleGuiChanged moduleGuiChanged) {
+    private static ChoiceLabel setupModeCombo(Minecraft mc, Gui gui, final String componentName, final CompoundNBT currentData, final IModuleGuiChanged moduleGuiChanged) {
         String modeNone = "None";
         final String modePertick = componentName + "/t";
         final String modePct = componentName + "%";

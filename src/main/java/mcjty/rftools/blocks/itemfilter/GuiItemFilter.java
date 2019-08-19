@@ -10,7 +10,7 @@ import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
@@ -42,7 +42,7 @@ public class GuiItemFilter extends GenericGuiContainer<ItemFilterTileEntity> {
         int[] inputMode = tileEntity.getInputMode();
         int[] outputMode = tileEntity.getOutputMode();
 
-        for (EnumFacing direction : EnumFacing.VALUES) {
+        for (Direction direction : Direction.VALUES) {
             final int side = direction.ordinal();
             for (int slot = 0; slot < ItemFilterTileEntity.BUFFER_SIZE ; slot++) {
                 ImageChoiceLabel choiceLabel = new ImageChoiceLabel(mc, this).setLayoutHint(new PositionalLayout.PositionalHint(25 + slot * 18, 4 + side * 13, 12, 12)).

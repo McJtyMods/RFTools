@@ -1,6 +1,6 @@
 package mcjty.rftools.setup;
 
-import mcjty.lib.blocks.GenericBlock;
+import mcjty.lib.blocks.BaseBlock;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.GuiModularStorage;
 import mcjty.rftools.blocks.storage.ModularStorageItemContainer;
@@ -21,7 +21,7 @@ import mcjty.rftools.items.teleportprobe.GuiAdvancedPorter;
 import mcjty.rftools.items.teleportprobe.GuiTeleportProbe;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -99,16 +99,16 @@ public class GuiProxy implements IGuiHandler {
     public static final int GUI_MANUAL_MAIN = modGuiIndex++;
 
     @Override
-    public Object getServerGuiElement(int guiid, EntityPlayer entityPlayer, World world, int x, int y, int z) {
+    public Object getServerGuiElement(int guiid, PlayerEntity PlayerEntity, World world, int x, int y, int z) {
         if (guiid == GUI_MANUAL_MAIN || guiid == GUI_MANUAL_SHAPE || guiid == GUI_TELEPORTPROBE || guiid == GUI_ADVANCEDPORTER
                 || guiid == GUI_SHAPECARD || guiid == GUI_SHAPECARD_COMPOSER
                 || guiid == GUI_CHAMBER_DETAILS || guiid == GUI_DEVELOPERS_DELIGHT || guiid == GUI_LIST_BLOCKS) {
             return null;
         } else if (guiid == GUI_REMOTE_STORAGE_ITEM) {
-            return new RemoteStorageItemContainer(entityPlayer);
+            return new RemoteStorageItemContainer(PlayerEntity);
         } else if (guiid == GUI_REMOTE_STORAGESCANNER_ITEM) {
             // We are in a tablet
-            ItemStack tablet = entityPlayer.getHeldItemMainhand();
+            ItemStack tablet = PlayerEntity.getHeldItemMainhand();
             int monitordim = RFToolsTools.getDimensionFromModule(tablet);
             BlockPos pos = RFToolsTools.getPositionFromModule(tablet);
             WorldServer w = DimensionManager.getWorld(monitordim);
@@ -119,13 +119,13 @@ public class GuiProxy implements IGuiHandler {
             if (!(te instanceof StorageScannerTileEntity)) {
                 return null;
             }
-            return new StorageScannerContainer(entityPlayer, (IInventory) te);
+            return new StorageScannerContainer(PlayerEntity, (IInventory) te);
         } else if (guiid == GUI_MODULAR_STORAGE_ITEM) {
-            return new ModularStorageItemContainer(entityPlayer);
+            return new ModularStorageItemContainer(PlayerEntity);
         } else if (guiid == GUI_STORAGE_FILTER) {
-            return new StorageFilterContainer(entityPlayer);
+            return new StorageFilterContainer(PlayerEntity);
         } else if (guiid == GUI_MODIFIER_MODULE) {
-            return new ModifierContainer(entityPlayer);
+            return new ModifierContainer(PlayerEntity);
         }
 //        if (guiid == RFTools.GUI_LIST_BLOCKS || guiid == RFTools.GUI_DEVELOPERS_DELIGHT ||
 //                guiid == RFTools.GUI_MANUAL_DIMENSION || guiid == RFTools.GUI_CHAMBER_DETAILS || guiid == RFTools.GUI_SHAPECARD) {
@@ -134,16 +134,16 @@ public class GuiProxy implements IGuiHandler {
 
         BlockPos pos = new BlockPos(x, y, z);
         Block block = world.getBlockState(pos).getBlock();
-        if (block instanceof GenericBlock) {
-            GenericBlock<?, ?> genericBlock = (GenericBlock<?, ?>) block;
+        if (block instanceof BaseBlock) {
+            BaseBlock<?, ?> BaseBlock = (BaseBlock<?, ?>) block;
             TileEntity te = world.getTileEntity(pos);
-            return genericBlock.createServerContainer(entityPlayer, te);
+            return BaseBlock.createServerContainer(PlayerEntity, te);
         }
         return null;
     }
 
     @Override
-    public Object getClientGuiElement(int guiid, EntityPlayer entityPlayer, World world, int x, int y, int z) {
+    public Object getClientGuiElement(int guiid, PlayerEntity PlayerEntity, World world, int x, int y, int z) {
         if (guiid == GUI_MANUAL_MAIN) {
             return new GuiRFToolsManual(GuiRFToolsManual.MANUAL_MAIN);
         } else if (guiid == GUI_MANUAL_SHAPE) {
@@ -157,12 +157,12 @@ public class GuiProxy implements IGuiHandler {
         } else if (guiid == GUI_DEVELOPERS_DELIGHT) {
             return new GuiDevelopersDelight();
         } else if (guiid == GUI_REMOTE_STORAGE_ITEM) {
-            return new GuiModularStorage(new RemoteStorageItemContainer(entityPlayer));
+            return new GuiModularStorage(new RemoteStorageItemContainer(PlayerEntity));
         } else if (guiid == GUI_REMOTE_STORAGESCANNER_ITEM) {
-            ItemStack tablet = entityPlayer.getHeldItemMainhand();
+            ItemStack tablet = PlayerEntity.getHeldItemMainhand();
             int monitordim = RFToolsTools.getDimensionFromModule(tablet);
             BlockPos pos = RFToolsTools.getPositionFromModule(tablet);
-            StorageScannerTileEntity te = new StorageScannerTileEntity(entityPlayer, monitordim) {
+            StorageScannerTileEntity te = new StorageScannerTileEntity(PlayerEntity, monitordim) {
                 @Override
                 public BlockPos getCraftingGridContainerPos() {
                     // We are a handheld so we return a null pos for the craftinggrid
@@ -185,13 +185,13 @@ public class GuiProxy implements IGuiHandler {
             };
             // The position of the actual storage scanner is set on the dummy te
             te.setPos(pos);
-            return new GuiStorageScanner(te, new StorageScannerContainer(entityPlayer, te));
+            return new GuiStorageScanner(te, new StorageScannerContainer(PlayerEntity, te));
         } else if (guiid == GUI_MODULAR_STORAGE_ITEM) {
-            return new GuiModularStorage(new ModularStorageItemContainer(entityPlayer));
+            return new GuiModularStorage(new ModularStorageItemContainer(PlayerEntity));
         } else if (guiid == GUI_STORAGE_FILTER) {
-            return new GuiStorageFilter(new StorageFilterContainer(entityPlayer));
+            return new GuiStorageFilter(new StorageFilterContainer(PlayerEntity));
         } else if (guiid == GUI_MODIFIER_MODULE) {
-            return new GuiModifier(new ModifierContainer(entityPlayer));
+            return new GuiModifier(new ModifierContainer(PlayerEntity));
         } else if (guiid == GUI_SHAPECARD) {
             return new GuiShapeCard(false);
         } else if (guiid == GUI_SHAPECARD_COMPOSER) {
@@ -209,10 +209,10 @@ public class GuiProxy implements IGuiHandler {
 
         BlockPos pos = new BlockPos(x, y, z);
         Block block = world.getBlockState(pos).getBlock();
-        if (block instanceof GenericBlock) {
-            GenericBlock<?, ?> genericBlock = (GenericBlock<?, ?>) block;
+        if (block instanceof BaseBlock) {
+            BaseBlock<?, ?> BaseBlock = (BaseBlock<?, ?>) block;
             TileEntity te = world.getTileEntity(pos);
-            return genericBlock.createClientGui(entityPlayer, te);
+            return BaseBlock.createClientGui(PlayerEntity, te);
         }
         return null;
     }

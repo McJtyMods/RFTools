@@ -1,24 +1,24 @@
 package mcjty.rftools.items.modifier;
 
 import mcjty.lib.varia.ItemStackList;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
 
 public class ModifierInventory implements IInventory {
 
-    private final EntityPlayer entityPlayer;
+    private final PlayerEntity PlayerEntity;
 
-    public ModifierInventory(EntityPlayer player) {
-        this.entityPlayer = player;
-        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
+    public ModifierInventory(PlayerEntity player) {
+        this.PlayerEntity = player;
+        CompoundNBT tagCompound = PlayerEntity.getHeldItem(Hand.MAIN_HAND).getTag();
         if (tagCompound == null) {
-            tagCompound = new NBTTagCompound();
-            entityPlayer.getHeldItem(EnumHand.MAIN_HAND).setTagCompound(tagCompound);
+            tagCompound = new CompoundNBT();
+            PlayerEntity.getHeldItem(Hand.MAIN_HAND).setTagCompound(tagCompound);
         }
     }
 
@@ -29,14 +29,14 @@ public class ModifierInventory implements IInventory {
 
     @Override
     public ItemStack getStackInSlot(int index) {
-        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
+        CompoundNBT tagCompound = PlayerEntity.getHeldItem(Hand.MAIN_HAND).getTag();
         ItemStackList stacks = ModifierItem.getItemStacks(tagCompound);
         return stacks.get(index);
     }
 
     @Override
     public ItemStack decrStackSize(int index, int amount) {
-        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
+        CompoundNBT tagCompound = PlayerEntity.getHeldItem(Hand.MAIN_HAND).getTag();
         ItemStackList stacks = ModifierItem.getItemStacks(tagCompound);
         if (index >= stacks.size()) {
             return ItemStack.EMPTY;
@@ -67,7 +67,7 @@ public class ModifierInventory implements IInventory {
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-        NBTTagCompound tagCompound = entityPlayer.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
+        CompoundNBT tagCompound = PlayerEntity.getHeldItem(Hand.MAIN_HAND).getTag();
         ItemStackList stacks = ModifierItem.getItemStacks(tagCompound);
         if (index >= stacks.size()) {
             return;
@@ -86,14 +86,14 @@ public class ModifierInventory implements IInventory {
         return 1;
     }
 
-    public static void convertItemsToNBT(NBTTagCompound tagCompound, ItemStackList stacks) {
+    public static void convertItemsToNBT(CompoundNBT tagCompound, ItemStackList stacks) {
         NBTTagList bufferTagList = new NBTTagList();
         for (ItemStack stack : stacks) {
-            NBTTagCompound nbtTagCompound = new NBTTagCompound();
+            CompoundNBT CompoundNBT = new CompoundNBT();
             if (!stack.isEmpty()) {
-                stack.writeToNBT(nbtTagCompound);
+                stack.writeToNBT(CompoundNBT);
             }
-            bufferTagList.appendTag(nbtTagCompound);
+            bufferTagList.appendTag(CompoundNBT);
         }
         tagCompound.setTag("Items", bufferTagList);
     }
@@ -104,7 +104,7 @@ public class ModifierInventory implements IInventory {
     }
 
     @Override
-    public boolean isUsableByPlayer(EntityPlayer player) {
+    public boolean isUsableByPlayer(PlayerEntity player) {
         return true;
     }
 
@@ -121,12 +121,12 @@ public class ModifierInventory implements IInventory {
     }
 
     @Override
-    public void openInventory(EntityPlayer player) {
+    public void openInventory(PlayerEntity player) {
 
     }
 
     @Override
-    public void closeInventory(EntityPlayer player) {
+    public void closeInventory(PlayerEntity player) {
 
     }
 

@@ -6,7 +6,7 @@ import mcjty.rftools.items.storage.StorageModuleTabletItem;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper.ShapedPrimer;
@@ -53,13 +53,13 @@ public class ContainerToItemRecipeFactory implements IRecipeFactory {
                     }
                 }
 
-                NBTTagCompound tagCompound = null;
+                CompoundNBT tagCompound = null;
                 if (!tabletItem.isEmpty()) {
-                    tagCompound = tabletItem.getTagCompound();
+                    tagCompound = tabletItem.getTag();
                 }
 
                 int childDamage = 0;
-                NBTTagCompound newtag = new NBTTagCompound();
+                CompoundNBT newtag = new CompoundNBT();
                 if (tagCompound != null) {
                     for (Object o : tagCompound.getKeySet()) {
                         String tag = (String) o;

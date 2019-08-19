@@ -13,8 +13,8 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumHand;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.Rectangle;
@@ -63,7 +63,7 @@ public class GuiStorageFilter extends GenericGuiContainer<GenericTileEntity> {
         modMode.addChoice("Off", "Don't match on mod", guiElements, 12 * 16, 32);
         modMode.addChoice("On", "Only mod must match", guiElements, 13 * 16, 32);
 
-        NBTTagCompound tagCompound = Minecraft.getMinecraft().player.getHeldItem(EnumHand.MAIN_HAND).getTagCompound();
+        CompoundNBT tagCompound = Minecraft.getMinecraft().player.getHeldItem(Hand.MAIN_HAND).getTag();
         if (tagCompound != null) {
             setBlacklistMode(tagCompound.getString("blacklistMode"));
             oredictMode.setCurrentChoice(tagCompound.getBoolean("oredictMode") ? 1 : 0);

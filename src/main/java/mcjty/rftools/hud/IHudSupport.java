@@ -1,6 +1,6 @@
 package mcjty.rftools.hud;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface IHudSupport {
 
-    EnumFacing getBlockOrientation();
+    Direction getBlockOrientation();
 
     boolean isBlockAboveAir();
 

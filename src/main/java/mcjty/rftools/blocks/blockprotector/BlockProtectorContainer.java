@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.blockprotector;
 
 import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.GenericContainer;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 
 public class BlockProtectorContainer extends GenericContainer {
@@ -13,7 +13,7 @@ public class BlockProtectorContainer extends GenericContainer {
         }
     };
 
-    public BlockProtectorContainer(EntityPlayer player, IInventory inventory) {
+    public BlockProtectorContainer(PlayerEntity player, IInventory inventory) {
         super(factory);
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
         generateSlots();

@@ -12,7 +12,7 @@ import mcjty.rftools.blocks.screens.network.PacketGetScreenData;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.ClientProxy;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -20,7 +20,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -45,9 +45,9 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
     public void render(ScreenTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         float xRotation = 0.0F, yRotation = 0.0F;
 
-        EnumFacing facing = EnumFacing.SOUTH, horizontalFacing = EnumFacing.SOUTH;
+        Direction facing = Direction.SOUTH, horizontalFacing = Direction.SOUTH;
         if (tileEntity != null) {
-            IBlockState state = Minecraft.getMinecraft().world.getBlockState(tileEntity.getPos());
+            BlockState state = Minecraft.getMinecraft().world.getBlockState(tileEntity.getPos());
             if (state.getBlock() instanceof ScreenBlock) {
                 facing = state.getValue(BaseBlock.FACING);
                 horizontalFacing = state.getValue(ScreenBlock.HORIZONTAL_FACING);
@@ -141,7 +141,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
         RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
         IClientScreenModule<?> hitModule = null;
         ScreenTileEntity.ModuleRaytraceResult hit = null;
-        IBlockState blockState = getWorld().getBlockState(pos);
+        BlockState blockState = getWorld().getBlockState(pos);
         Block block = blockState.getBlock();
         if (block != ScreenSetup.screenBlock && block != ScreenSetup.creativeScreenBlock && block != ScreenSetup.screenHitBlock) {
             // Safety
@@ -152,7 +152,7 @@ public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> 
                 double xx = mouseOver.hitVec.x - pos.getX();
                 double yy = mouseOver.hitVec.y - pos.getY();
                 double zz = mouseOver.hitVec.z - pos.getZ();
-                EnumFacing horizontalFacing = blockState.getValue(ScreenBlock.HORIZONTAL_FACING);
+                Direction horizontalFacing = blockState.getValue(ScreenBlock.HORIZONTAL_FACING);
                 hit = tileEntity.getHitModule(xx, yy, zz, mouseOver.sideHit, horizontalFacing);
                 if (hit != null) {
                     hitModule = modules.get(hit.getModuleIndex());

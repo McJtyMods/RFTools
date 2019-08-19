@@ -7,9 +7,9 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.blocks.screens.ScreenBlock;
 import mcjty.rftools.blocks.screens.ScreenTileEntity;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -23,7 +23,7 @@ public class PacketModuleUpdate implements IMessage {
     private BlockPos pos;
 
     private int slotIndex;
-    private NBTTagCompound tagCompound;
+    private CompoundNBT tagCompound;
 
     @Override
     public void fromBytes(ByteBuf buf) {
@@ -52,7 +52,7 @@ public class PacketModuleUpdate implements IMessage {
         fromBytes(buf);
     }
 
-    public PacketModuleUpdate(BlockPos pos, int slotIndex, NBTTagCompound tagCompound) {
+    public PacketModuleUpdate(BlockPos pos, int slotIndex, CompoundNBT tagCompound) {
         this.pos = pos;
         this.slotIndex = slotIndex;
         this.tagCompound = tagCompound;
@@ -65,7 +65,7 @@ public class PacketModuleUpdate implements IMessage {
             World world = player.getEntityWorld();
             Block block = world.getBlockState(pos).getBlock();
             // adapted from NetHandlerPlayServer.processTryUseItemOnBlock
-            double dist = player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() + 3;
+            double dist = player.getEntityAttribute(PlayerEntity.REACH_DISTANCE).getAttributeValue() + 3;
             if(player.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) >= dist * dist) {
                 return;
             }

@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.builder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import mcjty.lib.blocks.BaseBlock;
-import mcjty.lib.blocks.GenericBlock;
+import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.builder.BlockFlags;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.varia.BlockTools;
@@ -16,8 +16,8 @@ import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.items.builder.SpaceChamberCardItem;
 import net.minecraft.block.Block;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.registries.ObjectHolder;
 
 import java.io.*;
 import java.util.HashMap;
@@ -27,12 +27,15 @@ public class BuilderSetup {
     public static SpaceChamberBlock spaceChamberBlock;
     public static SpaceChamberControllerBlock spaceChamberControllerBlock;
     public static SupportBlock supportBlock;
-    public static GenericBlock<ComposerTileEntity, GenericContainer> composerBlock;
-    public static GenericBlock<ScannerTileEntity, GenericContainer> scannerBlock;
-    public static GenericBlock<RemoteScannerTileEntity, GenericContainer> remoteScannerBlock;
-    public static GenericBlock<ProjectorTileEntity, GenericContainer> projectorBlock;
-    public static GenericBlock<LocatorTileEntity, GenericContainer> locatorBlock;
-    public static GenericBlock<BuilderTileEntity, GenericContainer> builderBlock;
+    public static BaseBlock<ComposerTileEntity, GenericContainer> composerBlock;
+    public static BaseBlock<ScannerTileEntity, GenericContainer> scannerBlock;
+    public static BaseBlock<RemoteScannerTileEntity, GenericContainer> remoteScannerBlock;
+    public static BaseBlock<ProjectorTileEntity, GenericContainer> projectorBlock;
+    public static BaseBlock<LocatorTileEntity, GenericContainer> locatorBlock;
+    public static BaseBlock<BuilderTileEntity, GenericContainer> builderBlock;
+
+    @ObjectHolder("rftools:builder")
+    public static TileEntityType<?> TYPE_BUILDER;
 
     public static SpaceChamberCardItem spaceChamberCardItem;
     public static ShapeCardItem shapeCardItem;

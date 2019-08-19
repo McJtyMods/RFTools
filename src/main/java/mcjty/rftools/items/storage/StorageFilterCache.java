@@ -3,7 +3,7 @@ package mcjty.rftools.items.storage;
 import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.blocks.storage.sorters.ModItemSorter;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.oredict.OreDictionary;
@@ -22,7 +22,7 @@ public class StorageFilterCache {
 
     // Parameter is the filter item.
     StorageFilterCache(ItemStack stack) {
-        NBTTagCompound tagCompound = stack.getTagCompound();
+        CompoundNBT tagCompound = stack.getTag();
         if (tagCompound != null) {
             matchDamage = tagCompound.getBoolean("damageMode");
             oredictMode = tagCompound.getBoolean("oredictMode");
@@ -32,8 +32,8 @@ public class StorageFilterCache {
             NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
             int cnt = 0;
             for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
-                NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-                ItemStack s = new ItemStack(nbtTagCompound);
+                CompoundNBT CompoundNBT = bufferTagList.getCompoundTagAt(i);
+                ItemStack s = new ItemStack(CompoundNBT);
                 if (!s.isEmpty()) {
                     cnt++;
                 }
@@ -41,8 +41,8 @@ public class StorageFilterCache {
             stacks = ItemStackList.create(cnt);
             cnt = 0;
             for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
-                NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-                ItemStack s = new ItemStack(nbtTagCompound);
+                CompoundNBT CompoundNBT = bufferTagList.getCompoundTagAt(i);
+                ItemStack s = new ItemStack(CompoundNBT);
                 if (!s.isEmpty()) {
                     stacks.set(cnt++, s);
                     if (oredictMode) {

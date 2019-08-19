@@ -12,10 +12,8 @@ import mcjty.rftools.setup.CommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
@@ -29,9 +27,9 @@ public class GuiChamberDetails extends GuiItemScreen {
     private static final int CHAMBER_XSIZE = 390;
     private static final int CHAMBER_YSIZE = 210;
 
-    private static Map<IBlockState,Integer> items = null;
-    private static Map<IBlockState,Integer> costs = null;
-    private static Map<IBlockState,ItemStack> stacks = null;
+    private static Map<BlockState,Integer> items = null;
+    private static Map<BlockState,Integer> costs = null;
+    private static Map<BlockState,ItemStack> stacks = null;
     private static Map<String,Integer> entities = null;
     private static Map<String,Integer> entityCosts = null;
     private static Map<String,Entity> realEntities = null;
@@ -46,8 +44,8 @@ public class GuiChamberDetails extends GuiItemScreen {
         requestChamberInfoFromServer();
     }
 
-    public static void setItemsWithCount(Map<IBlockState,Integer> items, Map<IBlockState,Integer> costs,
-                                         Map<IBlockState,ItemStack> stacks,
+    public static void setItemsWithCount(Map<BlockState,Integer> items, Map<BlockState,Integer> costs,
+                                         Map<BlockState,ItemStack> stacks,
                                          Map<String,Integer> entities, Map<String,Integer> entityCosts,
                                          Map<String,Entity> realEntities,
                                          Map<String,String> playerNames) {
@@ -65,19 +63,19 @@ public class GuiChamberDetails extends GuiItemScreen {
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
 
-        blockList = new WidgetList(mc, this).setName("blocks");
-        Slider listSlider = new Slider(mc, this).setDesiredWidth(10).setVertical().setScrollableName("blocks");
-        Panel listPanel = new Panel(mc, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChildren(blockList, listSlider);
+        blockList = new WidgetList(minecraft, this).setName("blocks");
+        Slider listSlider = new Slider(minecraft, this).setDesiredWidth(10).setVertical().setScrollableName("blocks");
+        Panel listPanel = new Panel(minecraft, this).setLayout(new HorizontalLayout().setSpacing(1).setHorizontalMargin(3)).addChildren(blockList, listSlider);
 
-        infoLabel = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
+        infoLabel = new Label(minecraft, this).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
         infoLabel.setDesiredWidth(380).setDesiredHeight(14);
-        info2Label = new Label(mc, this).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
+        info2Label = new Label(minecraft, this).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
         info2Label.setDesiredWidth(380).setDesiredHeight(14);
 
-        Panel toplevel = new Panel(mc, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setSpacing(1).setVerticalMargin(3)).addChildren(listPanel, infoLabel, info2Label);
+        Panel toplevel = new Panel(minecraft, this).setFilledRectThickness(2).setLayout(new VerticalLayout().setSpacing(1).setVerticalMargin(3)).addChildren(listPanel, infoLabel, info2Label);
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
@@ -90,11 +88,11 @@ public class GuiChamberDetails extends GuiItemScreen {
         }
 
         int totalCost = 0;
-        for (Map.Entry<IBlockState, Integer> entry : items.entrySet()) {
-            IBlockState bm = entry.getKey();
+        for (Map.Entry<BlockState, Integer> entry : items.entrySet()) {
+            BlockState bm = entry.getKey();
             int count = entry.getValue();
             int cost = costs.get(bm);
-            Panel panel = new Panel(mc,this).setLayout(new HorizontalLayout()).setDesiredHeight(16);
+            Panel panel = new Panel(minecraft,this).setLayout(new HorizontalLayout()).setDesiredHeight(16);
             ItemStack stack;
             if (stacks.containsKey(bm)) {
                 stack = stacks.get(bm);
@@ -102,19 +100,19 @@ public class GuiChamberDetails extends GuiItemScreen {
                 // @todo uses meta
                 stack = new ItemStack(bm.getBlock(), 0, bm.getBlock().getMetaFromState(bm));
             }
-            BlockRender blockRender = new BlockRender(mc, this).setRenderItem(stack).setOffsetX(-1).setOffsetY(-1);
+            BlockRender blockRender = new BlockRender(minecraft, this).setRenderItem(stack).setOffsetX(-1).setOffsetY(-1);
 
-            Label nameLabel = new Label(mc,this).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setColor(StyleConfig.colorTextInListNormal);
+            Label nameLabel = new Label(minecraft,this).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setColor(StyleConfig.colorTextInListNormal);
             if (stack.getItem() == null) {
                 nameLabel.setText("?").setDesiredWidth(160);
             } else {
                 nameLabel.setText(stack.getDisplayName()).setDesiredWidth(160);
             }
 
-            Label countLabel = new Label(mc, this).setText(String.valueOf(count)).setColor(StyleConfig.colorTextInListNormal);
+            Label countLabel = new Label(minecraft, this).setText(String.valueOf(count)).setColor(StyleConfig.colorTextInListNormal);
             countLabel.setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setDesiredWidth(50);
 
-            Label costLabel = new Label(mc, this).setColor(StyleConfig.colorTextInListNormal);
+            Label costLabel = new Label(minecraft, this).setColor(StyleConfig.colorTextInListNormal);
             costLabel.setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
 
             if (cost == -1) {
@@ -133,7 +131,7 @@ public class GuiChamberDetails extends GuiItemScreen {
             String className = entry.getKey();
             int count = entry.getValue();
             int cost = entityCosts.get(className);
-            Panel panel = new Panel(mc,this).setLayout(new HorizontalLayout()).setDesiredHeight(16);
+            Panel panel = new Panel(minecraft,this).setLayout(new HorizontalLayout()).setDesiredHeight(16);
 
             String entityName = "<?>";
             Entity entity = null;
@@ -150,7 +148,7 @@ public class GuiChamberDetails extends GuiItemScreen {
             } else {
                 try {
                     Class<?> aClass = Class.forName(className);
-                    entity = (Entity) aClass.getConstructor(World.class).newInstance(mc.world);
+                    entity = (Entity) aClass.getConstructor(World.class).newInstance(minecraft.world);
                     entityName = aClass.getSimpleName();
                 } catch (ClassNotFoundException e) {
                 } catch (InstantiationException e) {
@@ -164,15 +162,15 @@ public class GuiChamberDetails extends GuiItemScreen {
                 entityName = playerNames.get(className);
             }
 
-            BlockRender blockRender = new BlockRender(mc, this).setRenderItem(entity).setOffsetX(-1).setOffsetY(-1);
+            BlockRender blockRender = new BlockRender(minecraft, this).setRenderItem(entity).setOffsetX(-1).setOffsetY(-1);
 
-            Label nameLabel = new Label(mc,this).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
+            Label nameLabel = new Label(minecraft,this).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
             nameLabel.setText(entityName).setDesiredWidth(160);
 
-            Label countLabel = new Label(mc, this).setText(String.valueOf(count));
+            Label countLabel = new Label(minecraft, this).setText(String.valueOf(count));
             countLabel.setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT).setDesiredWidth(50);
 
-            Label costLabel = new Label(mc, this);
+            Label costLabel = new Label(minecraft, this);
             costLabel.setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT);
 
             if (cost == -1) {
@@ -191,8 +189,8 @@ public class GuiChamberDetails extends GuiItemScreen {
     }
 
     @Override
-    public void drawScreen(int xSize_lo, int ySize_lo, float par3) {
-        super.drawScreen(xSize_lo, ySize_lo, par3);
+    public void render(int xSize_lo, int ySize_lo, float par3) {
+        super.render(xSize_lo, ySize_lo, par3);
 
         populateLists();
 

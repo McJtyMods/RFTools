@@ -1,17 +1,14 @@
 package mcjty.rftools.blocks.elevator;
 
 import mcjty.lib.blocks.BaseBlock;
-import mcjty.lib.blocks.GenericBlock;
 import mcjty.lib.builder.BlockFlags;
 import mcjty.lib.container.GenericContainer;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.setup.GuiProxy;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ElevatorSetup {
 
-    public static GenericBlock<ElevatorTileEntity, GenericContainer> elevatorBlock;
+    public static BaseBlock elevatorBlock;
 
     public static void init() {
         elevatorBlock = ModBlocks.builderFactory.<ElevatorTileEntity> builder("elevator")
@@ -26,7 +23,6 @@ public class ElevatorSetup {
                 .build();
     }
 
-    @SideOnly(Side.CLIENT)
     public static void initClient() {
         elevatorBlock.initModel();
         ElevatorTESR.register();

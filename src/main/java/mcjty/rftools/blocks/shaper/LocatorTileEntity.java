@@ -16,14 +16,14 @@ import mcjty.theoneprobe.api.ProbeMode;
 import mcjty.theoneprobe.api.TextStyleClass;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityAnimal;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -182,7 +182,7 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
                         extraData.addBeacon(pos, passiveType, passiveBeacon);
                         counter.increment(pos);
                     }
-                } else if (entity instanceof EntityPlayer) {
+                } else if (entity instanceof PlayerEntity) {
                     if (playerType != BeaconType.BEACON_OFF) {
                         extraData.addBeacon(pos, playerType, playerBeacon);
                         counter.increment(pos);
@@ -311,7 +311,7 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     @Override
-    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+    public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         counter = tagCompound.getInteger("counter");
         hostileType = BeaconType.getTypeByCode(tagCompound.getString("hostile"));
@@ -337,7 +337,7 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
 
 
     @Override
-    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+    public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         tagCompound.setInteger("counter", counter);
         tagCompound.setString("hostile", hostileType.getCode());
@@ -393,7 +393,7 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     @Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
         super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
         if (world.getBlockState(data.getPos().down()).getBlock() != BuilderSetup.scannerBlock) {
             probeInfo.text(TextStyleClass.ERROR + "Error! Needs a scanner below!");

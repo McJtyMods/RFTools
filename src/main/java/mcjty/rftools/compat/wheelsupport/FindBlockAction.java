@@ -9,10 +9,10 @@ import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.storage.RemoteStorageItemInventory;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import mcjty.rftools.items.storage.StorageModuleItem;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
@@ -42,7 +42,7 @@ public class FindBlockAction implements IWheelAction {
     }
 
     @Override
-    public boolean performClient(EntityPlayer player, World world, @Nullable BlockPos pos, boolean extended) {
+    public boolean performClient(PlayerEntity player, World world, @Nullable BlockPos pos, boolean extended) {
         return FindBlockClient.pickBlockClient(world, pos, player);
     }
 
@@ -52,13 +52,13 @@ public class FindBlockAction implements IWheelAction {
 
 
     @Override
-    public void performServer(EntityPlayer player, World world, @Nullable BlockPos pos, boolean extended) {
+    public void performServer(PlayerEntity player, World world, @Nullable BlockPos pos, boolean extended) {
         if (pos != null) {
             // If we come here we know that on client side we couldn't find a suitable block in the players inventory.
 
 
             List<ItemStack> inventory = Collections.unmodifiableList(player.inventory.mainInventory);
-            IBlockState state = world.getBlockState(pos);
+            BlockState state = world.getBlockState(pos);
             ItemStack result = state.getBlock().getItem(world, pos, state);
             if (result == null || result.isEmpty()) {
                 return;
@@ -79,7 +79,7 @@ public class FindBlockAction implements IWheelAction {
                 return;
             }
 
-            NBTTagCompound tagCompound = storage.getTagCompound();
+            CompoundNBT tagCompound = storage.getTag();
             if (tagCompound == null || !tagCompound.hasKey("childDamage")) {
                 player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "No storage module in tablet!"), false);
                 return;

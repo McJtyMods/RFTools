@@ -1,7 +1,7 @@
 package mcjty.rftools.playerprops;
 
 import mcjty.lib.varia.GlobalCoordinate;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 
@@ -31,14 +31,14 @@ public class FavoriteDestinationsProperties {
             favoriteDestinations.remove(coordinate);
         }
     }
-    public void saveNBTData(NBTTagCompound compound) {
+    public void saveNBTData(CompoundNBT compound) {
         writeFavoritesToNBT(compound, favoriteDestinations);
     }
 
-    private static void writeFavoritesToNBT(NBTTagCompound tagCompound, Collection<GlobalCoordinate> destinations) {
+    private static void writeFavoritesToNBT(CompoundNBT tagCompound, Collection<GlobalCoordinate> destinations) {
         NBTTagList lst = new NBTTagList();
         for (GlobalCoordinate destination : destinations) {
-            NBTTagCompound tc = new NBTTagCompound();
+            CompoundNBT tc = new CompoundNBT();
             BlockPos c = destination.getCoordinate();
             tc.setInteger("x", c.getX());
             tc.setInteger("y", c.getY());
@@ -49,15 +49,15 @@ public class FavoriteDestinationsProperties {
         tagCompound.setTag("destinations", lst);
     }
 
-    public void loadNBTData(NBTTagCompound compound) {
+    public void loadNBTData(CompoundNBT compound) {
         favoriteDestinations.clear();
         readCoordinatesFromNBT(compound, favoriteDestinations);
     }
 
-    private static void readCoordinatesFromNBT(NBTTagCompound tagCompound, Set<GlobalCoordinate> destinations) {
+    private static void readCoordinatesFromNBT(CompoundNBT tagCompound, Set<GlobalCoordinate> destinations) {
         NBTTagList lst = tagCompound.getTagList("destinations", net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < lst.tagCount() ; i++) {
-            NBTTagCompound tc = lst.getCompoundTagAt(i);
+            CompoundNBT tc = lst.getCompoundTagAt(i);
             BlockPos c = new BlockPos(tc.getInteger("x"), tc.getInteger("y"), tc.getInteger("z"));
             destinations.add(new GlobalCoordinate(c, tc.getInteger("dim")));
         }

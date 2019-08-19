@@ -15,16 +15,16 @@ import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.ChunkCache;
@@ -64,7 +64,7 @@ public class BlockProtectorBlock extends GenericRFToolsBlock<BlockProtectorTileE
     @Override
     public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
             int id = tagCompound.getInteger("protectorId");
             list.add(TextFormatting.GREEN + "Id: " + id);
@@ -81,7 +81,7 @@ public class BlockProtectorBlock extends GenericRFToolsBlock<BlockProtectorTileE
 
     @Override
     @Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
         super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
         TileEntity te = world.getTileEntity(data.getPos());
         if (te instanceof BlockProtectorTileEntity) {
@@ -108,14 +108,14 @@ public class BlockProtectorBlock extends GenericRFToolsBlock<BlockProtectorTileE
     }
 
     @Override
-    protected boolean wrenchSneakSelect(World world, BlockPos pos, EntityPlayer player) {
+    protected boolean wrenchSneakSelect(World world, BlockPos pos, PlayerEntity player) {
         if (!world.isRemote) {
-            GlobalCoordinate currentBlock = SmartWrenchItem.getCurrentBlock(player.getHeldItem(EnumHand.MAIN_HAND));
+            GlobalCoordinate currentBlock = SmartWrenchItem.getCurrentBlock(player.getHeldItem(Hand.MAIN_HAND));
             if (currentBlock == null) {
-                SmartWrenchItem.setCurrentBlock(player.getHeldItem(EnumHand.MAIN_HAND), new GlobalCoordinate(pos, world.provider.getDimension()));
+                SmartWrenchItem.setCurrentBlock(player.getHeldItem(Hand.MAIN_HAND), new GlobalCoordinate(pos, world.provider.getDimension()));
                 Logging.message(player, TextFormatting.YELLOW + "Selected block");
             } else {
-                SmartWrenchItem.setCurrentBlock(player.getHeldItem(EnumHand.MAIN_HAND), null);
+                SmartWrenchItem.setCurrentBlock(player.getHeldItem(Hand.MAIN_HAND), null);
                 Logging.message(player, TextFormatting.YELLOW + "Cleared selected block");
             }
         }
@@ -123,8 +123,8 @@ public class BlockProtectorBlock extends GenericRFToolsBlock<BlockProtectorTileE
     }
 
     @Override
-    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
-        IBlockState rc = super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer);
+    public BlockState getStateForPlacement(World world, BlockPos pos, Direction facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+        BlockState rc = super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer);
         if (world.isRemote) {
             return rc;
         }
@@ -150,7 +150,7 @@ public class BlockProtectorBlock extends GenericRFToolsBlock<BlockProtectorTileE
 
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, EntityLivingBase placer, ItemStack stack) {
         super.onBlockPlacedBy(world, pos, state, placer, stack);
         // This is called AFTER onBlockPlaced below. Here we need to fix the destination settings.
         if (!world.isRemote) {
@@ -161,7 +161,7 @@ public class BlockProtectorBlock extends GenericRFToolsBlock<BlockProtectorTileE
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+    public void breakBlock(World world, BlockPos pos, BlockState state) {
         super.breakBlock(world, pos, state);
         if (world.isRemote) {
             return;
@@ -172,7 +172,7 @@ public class BlockProtectorBlock extends GenericRFToolsBlock<BlockProtectorTileE
     }
 
     @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+    public BlockState getActualState(BlockState state, IBlockAccess world, BlockPos pos) {
         TileEntity te = world instanceof ChunkCache ? ((ChunkCache)world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) : world.getTileEntity(pos);
         boolean working = false;
         if (te instanceof BlockProtectorTileEntity) {
@@ -182,7 +182,7 @@ public class BlockProtectorBlock extends GenericRFToolsBlock<BlockProtectorTileE
     }
 
     @Override
-    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
+    public boolean canRenderInLayer(BlockState state, BlockRenderLayer layer) {
         return super.canRenderInLayer(state, layer) || layer == BlockRenderLayer.CUTOUT;
     }
 

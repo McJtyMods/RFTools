@@ -8,9 +8,9 @@ import mcjty.rftools.shapes.Shape;
 import mcjty.rftools.shapes.ShapeModifier;
 import mcjty.rftools.shapes.ShapeOperation;
 import mcjty.rftools.shapes.ShapeRotation;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.common.util.Constants;
@@ -53,7 +53,7 @@ public class ComposerTileEntity extends GenericTileEntity implements DefaultSide
                     ItemStack item = getStackInSlot(i);
                     if (!item.isEmpty()) {
                         if (item.hasTagCompound()) {
-                            NBTTagCompound copy = item.getTagCompound().copy();
+                            CompoundNBT copy = item.getTag().copy();
                             ShapeModifier modifier = modifiers[i - 1];
                             ShapeCardItem.setModifier(copy, modifier);
                             ItemStack materialGhost = getStackInSlot(i + SLOT_COUNT);
@@ -90,7 +90,7 @@ public class ComposerTileEntity extends GenericTileEntity implements DefaultSide
     }
 
     @Override
-    public boolean isUsableByPlayer(EntityPlayer player) {
+    public boolean isUsableByPlayer(PlayerEntity player) {
         return canPlayerAccess(player);
     }
 
@@ -100,12 +100,12 @@ public class ComposerTileEntity extends GenericTileEntity implements DefaultSide
     }
 
     @Override
-    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+    public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
         NBTTagList list = tagCompound.getTagList("ops", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < list.tagCount() ; i++) {
-            NBTTagCompound tag = list.getCompoundTagAt(i);
+            CompoundNBT tag = list.getCompoundTagAt(i);
             String op = tag.getString("mod_op");
             boolean flipY = tag.getBoolean("mod_flipy");
             String rot = tag.getString("mod_rot");
@@ -122,12 +122,12 @@ public class ComposerTileEntity extends GenericTileEntity implements DefaultSide
     }
 
     @Override
-    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+    public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
         NBTTagList list = new NBTTagList();
         for (int i = 0; i < SLOT_COUNT ; i++) {
-            NBTTagCompound tc = new NBTTagCompound();
+            CompoundNBT tc = new CompoundNBT();
             ShapeModifier mod = modifiers[i];
             tc.setString("mod_op", mod.getOperation().getCode());
             tc.setBoolean("mod_flipy", mod.isFlipY());

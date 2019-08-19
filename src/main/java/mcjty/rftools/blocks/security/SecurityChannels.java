@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.security;
 
 import mcjty.lib.worlddata.AbstractWorldData;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.world.World;
@@ -57,11 +57,11 @@ public class SecurityChannels extends AbstractWorldData<SecurityChannels> {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(CompoundNBT tagCompound) {
         channels.clear();
         NBTTagList lst = tagCompound.getTagList("channels", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < lst.tagCount() ; i++) {
-            NBTTagCompound tc = lst.getCompoundTagAt(i);
+            CompoundNBT tc = lst.getCompoundTagAt(i);
             int channel = tc.getInteger("channel");
 
             SecurityChannel value = new SecurityChannel();
@@ -83,10 +83,10 @@ public class SecurityChannels extends AbstractWorldData<SecurityChannels> {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         NBTTagList lst = new NBTTagList();
         for (Map.Entry<Integer, SecurityChannel> entry : channels.entrySet()) {
-            NBTTagCompound tc = new NBTTagCompound();
+            CompoundNBT tc = new CompoundNBT();
             tc.setInteger("channel", entry.getKey());
             SecurityChannel channel = entry.getValue();
             tc.setString("name", channel.getName());

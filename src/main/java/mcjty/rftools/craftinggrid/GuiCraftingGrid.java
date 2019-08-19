@@ -18,7 +18,7 @@ import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -200,7 +200,7 @@ public class GuiCraftingGrid {
     private void testRecipe() {
         InventoryCrafting inv = new InventoryCrafting(new net.minecraft.inventory.Container() {
             @Override
-            public boolean canInteractWith(EntityPlayer var1) {
+            public boolean canInteractWith(PlayerEntity var1) {
                 return false;
             }
         }, 3, 3);

@@ -1,14 +1,14 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
 import mcjty.lib.varia.BlockPosTools;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class CounterPlusClientScreenModule extends CounterClientScreenModule {
 
     @Override
-    protected void setupCoordinateFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
+    protected void setupCoordinateFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         coordinate = BlockPosTools.INVALID;
         if (tagCompound.hasKey("monitorx")) {
             if (tagCompound.hasKey("monitordim")) {

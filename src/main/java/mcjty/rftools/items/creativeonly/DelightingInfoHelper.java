@@ -1,9 +1,9 @@
 package mcjty.rftools.items.creativeonly;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -14,7 +14,7 @@ import java.util.Set;
 
 public class DelightingInfoHelper {
     static void parseNBT(TileEntity tileEntity, Map<String, NBTDescription> nbtData) {
-        NBTTagCompound tagCompound = new NBTTagCompound();
+        CompoundNBT tagCompound = new CompoundNBT();
         tileEntity.writeToNBT(tagCompound);
         Set<String> tags = tagCompound.getKeySet();
         for (String c : tags) {
@@ -37,7 +37,7 @@ public class DelightingInfoHelper {
 
     static int fillDelightingData(int x, int y, int z, World world, List<String> blockClasses, List<String> teClasses, Map<String, NBTDescription> nbtData) {
         BlockPos pos = new BlockPos(x, y, z);
-        IBlockState state = world.getBlockState(pos);
+        BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
         addSuperTypes(blockClasses, block.getClass());
         TileEntity tileEntity = world.getTileEntity(pos);

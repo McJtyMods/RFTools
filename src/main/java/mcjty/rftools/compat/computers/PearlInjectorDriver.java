@@ -10,7 +10,7 @@ import mcjty.rftools.blocks.endergen.PearlInjectorTileEntity;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -52,7 +52,7 @@ public class PearlInjectorDriver {
         }
 
         @Override
-        public AbstractManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing side, TileEntity tile) {
+        public AbstractManagedEnvironment createEnvironment(World world, BlockPos pos, Direction side, TileEntity tile) {
             return new InternalManagedEnvironment((PearlInjectorTileEntity) tile);
         }
     }

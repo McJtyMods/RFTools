@@ -6,9 +6,9 @@ import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.api.screens.data.IModuleDataInteger;
 import mcjty.rftools.blocks.logic.wireless.RedstoneChannels;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
@@ -17,7 +17,7 @@ public class RedstoneScreenModule implements IScreenModule<IModuleDataInteger> {
     private int channel = -1;
     private BlockPos coordinate = BlockPosTools.INVALID;
     private int dim = 0;
-    private EnumFacing side = null;
+    private Direction side = null;
 
     @Override
     public IModuleDataInteger getData(IScreenDataHelper helper, World worldObj, long millis) {
@@ -47,14 +47,14 @@ public class RedstoneScreenModule implements IScreenModule<IModuleDataInteger> {
     }
 
     @Override
-    public void setupFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
+    public void setupFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             channel = -1;
             if (tagCompound.hasKey("channel")) {
                 channel = tagCompound.getInteger("channel");
             }
             if (tagCompound.hasKey("monitorx")) {
-                side = EnumFacing.VALUES[tagCompound.getInteger("monitorside")];
+                side = Direction.VALUES[tagCompound.getInteger("monitorside")];
                 if (tagCompound.hasKey("monitordim")) {
                     this.dim = tagCompound.getInteger("monitordim");
                 } else {
@@ -80,7 +80,7 @@ public class RedstoneScreenModule implements IScreenModule<IModuleDataInteger> {
     }
 
     @Override
-    public void mouseClick(World world, int x, int y, boolean clicked, EntityPlayer player) {
+    public void mouseClick(World world, int x, int y, boolean clicked, PlayerEntity player) {
 
     }
 }

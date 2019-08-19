@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.relay;
 
 import mcjty.lib.builder.BlockFlags;
-import mcjty.lib.blocks.GenericBlock;
+import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.container.GenericContainer;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.setup.GuiProxy;
@@ -9,7 +9,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class RelaySetup {
-    public static GenericBlock<RelayTileEntity, GenericContainer> relayBlock;
+    public static BaseBlock<RelayTileEntity, GenericContainer> relayBlock;
 
     public static void init() {
         relayBlock = ModBlocks.builderFactory.<RelayTileEntity> builder("relay")

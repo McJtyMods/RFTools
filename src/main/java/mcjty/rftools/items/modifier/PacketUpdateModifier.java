@@ -3,9 +3,9 @@ package mcjty.rftools.items.modifier;
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.thirteen.Context;
 import mcjty.rftools.items.ModItems;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 import java.util.function.Supplier;
@@ -49,8 +49,8 @@ public class PacketUpdateModifier implements IMessage {
     public void handle(Supplier<Context> supplier) {
         Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
-            EntityPlayer player = ctx.getSender();
-            ItemStack heldItem = player.getHeldItem(EnumHand.MAIN_HAND);
+            PlayerEntity player = ctx.getSender();
+            ItemStack heldItem = player.getHeldItem(Hand.MAIN_HAND);
             if (!heldItem.isEmpty() && heldItem.getItem() == ModItems.modifierItem) {
                 ModifierItem.performCommand(player, heldItem, cmd, index, type, op);
             }

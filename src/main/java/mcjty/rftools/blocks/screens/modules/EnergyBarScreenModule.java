@@ -7,10 +7,10 @@ import mcjty.rftools.api.screens.IScreenDataHelper;
 import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.api.screens.data.IModuleDataContents;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
@@ -18,7 +18,7 @@ import net.minecraftforge.common.DimensionManager;
 public class EnergyBarScreenModule implements IScreenModule<IModuleDataContents> {
     protected int dim = 0;
     protected BlockPos coordinate = BlockPosTools.INVALID;
-    protected EnumFacing side = EnumFacing.DOWN;
+    protected Direction side = Direction.DOWN;
     protected ScreenModuleHelper helper = new ScreenModuleHelper();
 
     @Override
@@ -43,7 +43,7 @@ public class EnergyBarScreenModule implements IScreenModule<IModuleDataContents>
     }
 
     @Override
-    public void setupFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
+    public void setupFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             helper.setShowdiff(tagCompound.getBoolean("showdiff"));
             coordinate = BlockPosTools.INVALID;
@@ -62,7 +62,7 @@ public class EnergyBarScreenModule implements IScreenModule<IModuleDataContents>
                     if (dx <= 64 && dy <= 64 && dz <= 64) {
                         coordinate = c;
                         if(tagCompound.hasKey("monitorside")) {
-                            side = EnumFacing.VALUES[tagCompound.getInteger("monitorside")];
+                            side = Direction.VALUES[tagCompound.getInteger("monitorside")];
                         }
                     }
                 }
@@ -76,7 +76,7 @@ public class EnergyBarScreenModule implements IScreenModule<IModuleDataContents>
     }
 
     @Override
-    public void mouseClick(World world, int x, int y, boolean clicked, EntityPlayer player) {
+    public void mouseClick(World world, int x, int y, boolean clicked, PlayerEntity player) {
 
     }
 }

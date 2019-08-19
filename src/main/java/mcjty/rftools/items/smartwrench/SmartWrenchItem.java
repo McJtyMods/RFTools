@@ -5,28 +5,28 @@ import mcjty.lib.McJtyRegister;
 import mcjty.lib.api.smartwrench.SmartWrench;
 import mcjty.lib.api.smartwrench.SmartWrenchMode;
 import mcjty.lib.api.smartwrench.SmartWrenchSelector;
-import mcjty.lib.blocks.GenericBlock;
+import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ores.DimensionalShardBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -92,7 +92,7 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
             SmartWrenchMode mode = getCurrentMode(stack);
@@ -101,9 +101,9 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
             } else {
                 mode = SmartWrenchMode.MODE_WRENCH;
             }
-            NBTTagCompound tagCompound = stack.getTagCompound();
+            CompoundNBT tagCompound = stack.getTag();
             if (tagCompound == null) {
-                tagCompound = new NBTTagCompound();
+                tagCompound = new CompoundNBT();
                 stack.setTagCompound(tagCompound);
             }
             tagCompound.setString("mode", mode.getCode());
@@ -113,16 +113,16 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
     }
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public ActionResultType onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
             if (player.isSneaking()) {
-                // Make sure the block get activated if it is a GenericBlock
-                IBlockState state = world.getBlockState(pos);
+                // Make sure the block get activated if it is a BaseBlock
+                BlockState state = world.getBlockState(pos);
                 Block block = state.getBlock();
-                if (block instanceof GenericBlock) {
+                if (block instanceof BaseBlock) {
                     if (DimensionalShardBlock.activateBlock(block, world, pos, state, player, hand, facing, hitX, hitY, hitZ)) {
-                        return EnumActionResult.SUCCESS;
+                        return ActionResultType.SUCCESS;
                     }
                 }
             }
@@ -132,7 +132,7 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
                 if (b != null) {
                     if (b.getDimension() != world.provider.getDimension()) {
                         Logging.message(player, TextFormatting.RED + "The selected block is in another dimension!");
-                        return EnumActionResult.FAIL;
+                        return ActionResultType.FAIL;
                     }
                     TileEntity te = world.getTileEntity(b.getCoordinate());
                     if (te instanceof SmartWrenchSelector) {
@@ -142,11 +142,11 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
                 }
             }
         }
-        return EnumActionResult.SUCCESS;
+        return ActionResultType.SUCCESS;
     }
 
 //    @Override
-//    public boolean doesSneakBypassUse(ItemStack stack, IBlockAccess world, BlockPos pos, EntityPlayer player) {
+//    public boolean doesSneakBypassUse(ItemStack stack, IBlockAccess world, BlockPos pos, PlayerEntity player) {
 //        return true;
 //    }
 //
@@ -175,7 +175,7 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
     @Override
     public SmartWrenchMode getMode(ItemStack itemStack) {
         SmartWrenchMode mode = SmartWrenchMode.MODE_WRENCH;
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
             String modeString = tagCompound.getString("mode");
             if (modeString != null && !modeString.isEmpty()) {
@@ -187,7 +187,7 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
 
     public static SmartWrenchMode getCurrentMode(ItemStack itemStack) {
         SmartWrenchMode mode = SmartWrenchMode.MODE_WRENCH;
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
             String modeString = tagCompound.getString("mode");
             if (modeString != null && !modeString.isEmpty()) {
@@ -198,9 +198,9 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
     }
 
     public static void setCurrentBlock(ItemStack itemStack, GlobalCoordinate c) {
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound == null) {
-            tagCompound = new NBTTagCompound();
+            tagCompound = new CompoundNBT();
             itemStack.setTagCompound(tagCompound);
         }
 
@@ -218,7 +218,7 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
     }
 
     public static GlobalCoordinate getCurrentBlock(ItemStack itemStack) {
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null && tagCompound.hasKey("selectedX")) {
             int x = tagCompound.getInteger("selectedX");
             int y = tagCompound.getInteger("selectedY");

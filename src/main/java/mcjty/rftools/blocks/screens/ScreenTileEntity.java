@@ -20,11 +20,11 @@ import mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
 import mcjty.rftools.blocks.screens.modules.ScreenModuleHelper;
 import mcjty.rftools.blocks.screens.modulesclient.TextClientScreenModule;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.fml.relauncher.Side;
@@ -176,7 +176,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
                     IScreenModule<?> module = modules.get(cm.module);
                     module.mouseClick(getWorld(), cm.x, cm.y, false, null);
                     if (module instanceof IScreenModuleUpdater) {
-                        NBTTagCompound newCompound = ((IScreenModuleUpdater) module).update(itemStack.getTagCompound(), getWorld(), null);
+                        CompoundNBT newCompound = ((IScreenModuleUpdater) module).update(itemStack.getTag(), getWorld(), null);
                         if (newCompound != null) {
                             itemStack.setTagCompound(newCompound);
                             markDirtyClient();
@@ -189,17 +189,17 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     }
 
     @Override
-    public int[] getSlotsForFace(EnumFacing side) {
+    public int[] getSlotsForFace(Direction side) {
         return ScreenContainer.factory.getAccessibleSlots();
     }
 
     @Override
-    public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
+    public boolean canExtractItem(int index, ItemStack stack, Direction direction) {
         return ScreenContainer.factory.isOutputSlot(index);
     }
 
     @Override
-    public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
+    public boolean canInsertItem(int index, ItemStack itemStackIn, Direction direction) {
         return ScreenContainer.factory.isInputSlot(index);
     }
 
@@ -266,7 +266,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         return false;
     }
 
-    public void focusModuleClient(double hitX, double hitY, double hitZ, EnumFacing side, EnumFacing horizontalFacing) {
+    public void focusModuleClient(double hitX, double hitY, double hitZ, Direction side, Direction horizontalFacing) {
         int x, y, module;
         ModuleRaytraceResult result = getHitModule(hitX, hitY, hitZ, side, horizontalFacing);
         if (result == null) {
@@ -292,7 +292,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         }
     }
 
-    public void hitScreenClient(double hitX, double hitY, double hitZ, EnumFacing side, EnumFacing horizontalFacing) {
+    public void hitScreenClient(double hitX, double hitY, double hitZ, Direction side, Direction horizontalFacing) {
         ModuleRaytraceResult result = getHitModule(hitX, hitY, hitZ, side, horizontalFacing);
         if (result == null) {
             return;
@@ -315,7 +315,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
                         .build()));
     }
 
-    public ModuleRaytraceResult getHitModule(double hitX, double hitY, double hitZ, EnumFacing side, EnumFacing horizontalFacing) {
+    public ModuleRaytraceResult getHitModule(double hitX, double hitY, double hitZ, Direction side, Direction horizontalFacing) {
         ModuleRaytraceResult result;
         float factor = size+1.0f;
         float dx = 0, dy = 0;
@@ -403,14 +403,14 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         return result;
     }
 
-    private void hitScreenServer(EntityPlayer player, int x, int y, int module) {
+    private void hitScreenServer(PlayerEntity player, int x, int y, int module) {
         List<IScreenModule<?>> screenModules = getScreenModules();
         IScreenModule<?> screenModule = screenModules.get(module);
         if (screenModule != null) {
             ItemStack itemStack = inventoryHelper.getStackInSlot(module);
             screenModule.mouseClick(getWorld(), x, y, true, player);
             if (screenModule instanceof IScreenModuleUpdater) {
-                NBTTagCompound newCompound = ((IScreenModuleUpdater) screenModule).update(itemStack.getTagCompound(), getWorld(), player);
+                CompoundNBT newCompound = ((IScreenModuleUpdater) screenModule).update(itemStack.getTag(), getWorld(), player);
                 if (newCompound != null) {
                     itemStack.setTagCompound(newCompound);
                     markDirtyClient();
@@ -442,12 +442,12 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     }
 
     @Override
-    public boolean isUsableByPlayer(EntityPlayer player) {
+    public boolean isUsableByPlayer(PlayerEntity player) {
         return canPlayerAccess(player);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(CompoundNBT tagCompound) {
         super.readFromNBT(tagCompound);
         powerOn = tagCompound.getBoolean("powerOn");
         connected = tagCompound.getBoolean("connected");
@@ -456,7 +456,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     }
 
     @Override
-    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+    public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
         resetModules();
@@ -472,7 +472,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setBoolean("powerOn", powerOn);
         tagCompound.setBoolean("connected", connected);
@@ -482,7 +482,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
     }
 
     @Override
-    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+    public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
         tagCompound.setInteger("size", size);
@@ -575,7 +575,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
         return connected;
     }
 
-    public void updateModuleData(int slot, NBTTagCompound tagCompound) {
+    public void updateModuleData(int slot, CompoundNBT tagCompound) {
         ItemStack stack = inventoryHelper.getStackInSlot(slot);
         IModuleProvider moduleProvider = ScreenBlock.getModuleProvider(stack);
         if(stack.isEmpty() || moduleProvider == null) {
@@ -638,7 +638,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
                         Logging.logError("Internal error with screen modules!", e);
                         continue;
                     }
-                    clientScreenModule.setupFromNBT(itemStack.getTagCompound(), getWorld().provider.getDimension(), getPos());
+                    clientScreenModule.setupFromNBT(itemStack.getTag(), getWorld().provider.getDimension(), getPos());
                     clientScreenModules.add(clientScreenModule);
                     if (clientScreenModule.needsServerData()) {
                         needsServerData = true;
@@ -697,7 +697,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickable, De
                         Logging.logError("Internal error with screen modules!", e);
                         continue;
                     }
-                    screenModule.setupFromNBT(itemStack.getTagCompound(), getWorld().provider.getDimension(), getPos());
+                    screenModule.setupFromNBT(itemStack.getTag(), getWorld().provider.getDimension(), getPos());
                     screenModules.add(screenModule);
                     totalRfPerTick += screenModule.getRfPerTick();
                     if(screenModule.needsController()) controllerNeededInCreative = true;

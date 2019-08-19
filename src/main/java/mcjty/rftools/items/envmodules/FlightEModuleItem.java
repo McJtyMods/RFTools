@@ -4,30 +4,30 @@ import mcjty.rftools.blocks.environmental.EnvModuleProvider;
 import mcjty.rftools.blocks.environmental.EnvironmentalConfiguration;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
 import mcjty.rftools.blocks.environmental.modules.FlightEModule;
-import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
-public class FlightEModuleItem extends GenericRFToolsItem implements EnvModuleProvider {
+public class FlightEModuleItem extends Item implements EnvModuleProvider {
 
     public FlightEModuleItem() {
-        super("flight_module");
-        setMaxStackSize(16);
+        super(new Item.Properties().maxStackSize(16));
+        setRegistryName("flight_module");
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
-        super.addInformation(itemStack, player, list, whatIsThis);
-        list.add("This module gives creative type flying capabilities");
-        list.add("when used in the environmental controller.");
-        list.add(TextFormatting.GREEN + "Uses " + EnvironmentalConfiguration.FLIGHT_RFPERTICK.get() + " RF/tick (per cubic block)");
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> list, ITooltipFlag flagIn) {
+        super.addInformation(stack, worldIn, list, flagIn);
+        list.add(new StringTextComponent("This module gives creative type flying capabilities"));
+        list.add(new StringTextComponent("when used in the environmental controller."));
+        list.add(new StringTextComponent(TextFormatting.GREEN + "Uses " + EnvironmentalConfiguration.FLIGHT_RFPERTICK.get() + " RF/tick (per cubic block)"));
     }
 
     @Override

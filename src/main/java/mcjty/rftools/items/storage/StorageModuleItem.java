@@ -5,16 +5,15 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.*;
 import mcjty.rftools.setup.GuiProxy;
-import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -49,13 +48,13 @@ public class StorageModuleItem extends GenericRFToolsItem implements INBTPreserv
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
             Logging.message(player, TextFormatting.YELLOW + "Place this module in a storage module tablet to access contents");
-            return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+            return new ActionResult<>(ActionResultType.SUCCESS, stack);
         }
-        return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+        return new ActionResult<>(ActionResultType.SUCCESS, stack);
     }
 
     // Called from the Remote or Modular store TE's to update the stack size for this item while it is inside that TE.
@@ -63,9 +62,9 @@ public class StorageModuleItem extends GenericRFToolsItem implements INBTPreserv
         if (stack.isEmpty()) {
             return;
         }
-        NBTTagCompound tagCompound = stack.getTagCompound();
+        CompoundNBT tagCompound = stack.getTag();
         if (tagCompound == null) {
-            tagCompound = new NBTTagCompound();
+            tagCompound = new CompoundNBT();
             stack.setTagCompound(tagCompound);
         }
         tagCompound.setInteger("count", numStacks);
@@ -76,7 +75,7 @@ public class StorageModuleItem extends GenericRFToolsItem implements INBTPreserv
     public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         int max = MAXSIZE[itemStack.getItemDamage()];
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
             addModuleInformation(list, max, tagCompound);
         }
@@ -93,7 +92,7 @@ public class StorageModuleItem extends GenericRFToolsItem implements INBTPreserv
         }
     }
 
-    public static void addModuleInformation(List<String> list, int max, NBTTagCompound tagCompound) {
+    public static void addModuleInformation(List<String> list, int max, CompoundNBT tagCompound) {
         if (max == -1) {
             // This is a remote storage module.
             if (tagCompound.hasKey("id")) {

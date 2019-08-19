@@ -7,7 +7,7 @@ import li.cil.oc.api.prefab.AbstractManagedEnvironment;
 import mcjty.lib.integration.computers.AbstractOCDriver;
 import mcjty.rftools.blocks.powercell.PowerCellTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -62,7 +62,7 @@ public class PowercellDriver {
         }
 
         @Override
-        public AbstractManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing side, TileEntity tile) {
+        public AbstractManagedEnvironment createEnvironment(World world, BlockPos pos, Direction side, TileEntity tile) {
             return new InternalManagedEnvironment((PowerCellTileEntity) tile);
         }
     }

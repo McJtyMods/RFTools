@@ -13,15 +13,15 @@ import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import mcjty.rftools.compat.jei.JEIRecipeAcceptor;
 import mcjty.lib.typed.TypedMap;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
@@ -64,7 +64,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     private InventoryCrafting workInventory = new InventoryCrafting(new Container() {
         @SuppressWarnings("NullableProblems")
         @Override
-        public boolean canInteractWith(EntityPlayer var1) {
+        public boolean canInteractWith(PlayerEntity var1) {
             return false;
         }
     }, 3, 3);
@@ -164,7 +164,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     }
 
     @Override
-    public boolean isUsableByPlayer(EntityPlayer player) {
+    public boolean isUsableByPlayer(PlayerEntity player) {
         return canPlayerAccess(player);
     }
 
@@ -205,12 +205,12 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     }
 
     @Override
-    public int[] getSlotsForFace(EnumFacing side) {
+    public int[] getSlotsForFace(Direction side) {
         return CrafterContainer.CONTAINER_FACTORY.getAccessibleSlots();
     }
 
     @Override
-    public boolean canInsertItem(int index, ItemStack stack, EnumFacing direction) {
+    public boolean canInsertItem(int index, ItemStack stack, Direction direction) {
         if (!isItemValidForSlot(index, stack)) {
             return false;
         }
@@ -218,12 +218,12 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     }
 
     @Override
-    public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
+    public boolean canExtractItem(int index, ItemStack stack, Direction direction) {
         return CrafterContainer.CONTAINER_FACTORY.isOutputSlot(index);
     }
 
     @Override
-    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+    public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
         readGhostBufferFromNBT(tagCompound);
@@ -232,24 +232,24 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         speedMode = tagCompound.getByte("speedMode");
     }
 
-    private void readGhostBufferFromNBT(NBTTagCompound tagCompound) {
+    private void readGhostBufferFromNBT(CompoundNBT tagCompound) {
         NBTTagList bufferTagList = tagCompound.getTagList("GItems", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
-            NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-            ghostSlots.set(i, new ItemStack(nbtTagCompound));
+            CompoundNBT CompoundNBT = bufferTagList.getCompoundTagAt(i);
+            ghostSlots.set(i, new ItemStack(CompoundNBT));
         }
     }
 
-    private void readRecipesFromNBT(NBTTagCompound tagCompound) {
+    private void readRecipesFromNBT(CompoundNBT tagCompound) {
         NBTTagList recipeTagList = tagCompound.getTagList("Recipes", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < recipeTagList.tagCount() ; i++) {
-            NBTTagCompound nbtTagCompound = recipeTagList.getCompoundTagAt(i);
-            recipes[i].readFromNBT(nbtTagCompound);
+            CompoundNBT CompoundNBT = recipeTagList.getCompoundTagAt(i);
+            recipes[i].readFromNBT(CompoundNBT);
         }
     }
 
     @Override
-    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+    public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
         writeGhostBufferToNBT(tagCompound);
@@ -257,24 +257,24 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
         tagCompound.setByte("speedMode", (byte) speedMode);
     }
 
-    private void writeGhostBufferToNBT(NBTTagCompound tagCompound) {
+    private void writeGhostBufferToNBT(CompoundNBT tagCompound) {
         NBTTagList bufferTagList = new NBTTagList();
         for (ItemStack stack : ghostSlots) {
-            NBTTagCompound nbtTagCompound = new NBTTagCompound();
+            CompoundNBT CompoundNBT = new CompoundNBT();
             if (!stack.isEmpty()) {
-                stack.writeToNBT(nbtTagCompound);
+                stack.writeToNBT(CompoundNBT);
             }
-            bufferTagList.appendTag(nbtTagCompound);
+            bufferTagList.appendTag(CompoundNBT);
         }
         tagCompound.setTag("GItems", bufferTagList);
     }
 
-    private void writeRecipesToNBT(NBTTagCompound tagCompound) {
+    private void writeRecipesToNBT(CompoundNBT tagCompound) {
         NBTTagList recipeTagList = new NBTTagList();
         for (CraftingRecipe recipe : recipes) {
-            NBTTagCompound nbtTagCompound = new NBTTagCompound();
-            recipe.writeToNBT(nbtTagCompound);
-            recipeTagList.appendTag(nbtTagCompound);
+            CompoundNBT CompoundNBT = new CompoundNBT();
+            recipe.writeToNBT(CompoundNBT);
+            recipeTagList.appendTag(CompoundNBT);
         }
         tagCompound.setTag("Recipes", recipeTagList);
     }
@@ -502,7 +502,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+    public boolean hasCapability(Capability<?> capability, Direction facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return true;
         }
@@ -510,7 +510,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, Direction facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             // We always use NullSidedInvWrapper because we don't want automation
             // to access the storage slots

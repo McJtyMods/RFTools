@@ -8,16 +8,15 @@ import mcjty.rftools.blocks.logic.wireless.RedstoneChannelTileEntity;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.RedstoneScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.RedstoneClientScreenModule;
-import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -76,7 +75,7 @@ public class RedstoneModuleItem extends GenericRFToolsItem implements IModulePro
     public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.REDSTONE_RFPERTICK.get() + " RF/tick");
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
             list.add(TextFormatting.YELLOW + "Label: " + tagCompound.getString("text"));
             int channel = tagCompound.getInteger("channel");
@@ -96,16 +95,16 @@ public class RedstoneModuleItem extends GenericRFToolsItem implements IModulePro
     }
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public ActionResultType onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction facing, float hitX, float hitY, float hitZ) {
         if(world.isRemote) {
-            return EnumActionResult.SUCCESS;
+            return ActionResultType.SUCCESS;
         }
 
         ItemStack stack = player.getHeldItem(hand);
         TileEntity te = world.getTileEntity(pos);
-        NBTTagCompound tagCompound = stack.getTagCompound();
+        CompoundNBT tagCompound = stack.getTag();
         if (tagCompound == null) {
-            tagCompound = new NBTTagCompound();
+            tagCompound = new CompoundNBT();
             stack.setTagCompound(tagCompound);
         }
         int channel = -1;
@@ -121,7 +120,7 @@ public class RedstoneModuleItem extends GenericRFToolsItem implements IModulePro
             tagCompound.setInteger("monitorside", facing.ordinal());
             Logging.message(player, "Redstone module is set to " + pos);
 
-            return EnumActionResult.SUCCESS;
+            return ActionResultType.SUCCESS;
         }
 
         tagCompound.removeTag("monitordim");
@@ -137,6 +136,6 @@ public class RedstoneModuleItem extends GenericRFToolsItem implements IModulePro
             tagCompound.removeTag("channel");
             Logging.message(player, "Redstone module is cleared");
         }
-        return EnumActionResult.SUCCESS;
+        return ActionResultType.SUCCESS;
     }
 }

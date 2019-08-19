@@ -8,12 +8,12 @@ import mcjty.rftools.ClientCommandHandler;
 import mcjty.rftools.blocks.storage.*;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerContainer;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.WorldServer;
@@ -22,12 +22,12 @@ import net.minecraftforge.common.DimensionManager;
 public class StorageTools {
 
 
-    public static void compact(EntityPlayer player) {
-        ItemStack heldItem = player.getHeldItem(EnumHand.MAIN_HAND);
+    public static void compact(PlayerEntity player) {
+        ItemStack heldItem = player.getHeldItem(Hand.MAIN_HAND);
         if (heldItem.isEmpty()) {
             return;
         }
-        NBTTagCompound tagCompound = heldItem.getTagCompound();
+        CompoundNBT tagCompound = heldItem.getTag();
         if (tagCompound == null) {
             return;
         }
@@ -55,31 +55,31 @@ public class StorageTools {
         }
     }
 
-    public static void clearGrid(EntityPlayer player) {
+    public static void clearGrid(PlayerEntity player) {
         ItemStack mainhand = player.getHeldItemMainhand();
         if (!mainhand.isEmpty() && mainhand.getItem() == ModularStorageSetup.storageModuleTabletItem) {
             if (player.openContainer instanceof ModularStorageItemContainer) {
                 ModularStorageItemContainer storageItemContainer = (ModularStorageItemContainer) player.openContainer;
                 storageItemContainer.clearGrid();
-                mainhand.getTagCompound().removeTag("grid");
+                mainhand.getTag().removeTag("grid");
             } else if (player.openContainer instanceof RemoteStorageItemContainer) {
                 RemoteStorageItemContainer storageItemContainer = (RemoteStorageItemContainer) player.openContainer;
                 storageItemContainer.clearGrid();
-                mainhand.getTagCompound().removeTag("grid");
+                mainhand.getTag().removeTag("grid");
             } else if (player.openContainer instanceof StorageScannerContainer) {
                 StorageScannerContainer storageItemContainer = (StorageScannerContainer) player.openContainer;
                 storageItemContainer.clearGrid();
-                mainhand.getTagCompound().removeTag("grid");
+                mainhand.getTag().removeTag("grid");
             }
         }
     }
 
-    public static void cycleStorage(EntityPlayer player) {
-        ItemStack heldItem = player.getHeldItem(EnumHand.MAIN_HAND);
+    public static void cycleStorage(PlayerEntity player) {
+        ItemStack heldItem = player.getHeldItem(Hand.MAIN_HAND);
         if (heldItem.isEmpty()) {
             return;
         }
-        NBTTagCompound tagCompound = heldItem.getTagCompound();
+        CompoundNBT tagCompound = heldItem.getTag();
         if (tagCompound == null) {
             return;
         }
@@ -99,7 +99,7 @@ public class StorageTools {
         }
     }
 
-    public static void returnStorageInfo(EntityPlayer player, int dimension, BlockPos pos) {
+    public static void returnStorageInfo(PlayerEntity player, int dimension, BlockPos pos) {
         WorldServer world = DimensionManager.getWorld(dimension);
         int cnt = -1;
         String nameModule = "";
@@ -109,7 +109,7 @@ public class StorageTools {
                 ModularStorageTileEntity modularStorageTileEntity = (ModularStorageTileEntity) te;
                 cnt = modularStorageTileEntity.getNumStacks();
                 ItemStack storageModule = modularStorageTileEntity.getStackInSlot(ModularStorageContainer.SLOT_STORAGE_MODULE);
-                if (!storageModule.isEmpty() && storageModule.getTagCompound().hasKey("display")) {
+                if (!storageModule.isEmpty() && storageModule.getTag().hasKey("display")) {
                     nameModule = storageModule.getDisplayName();
                 }
             }

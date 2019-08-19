@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.environmental;
 
 import mcjty.lib.blocks.BaseBlock;
-import mcjty.lib.blocks.GenericBlock;
+import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.builder.BlockFlags;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.varia.ItemStackTools;
@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EnvironmentalSetup {
-    public static GenericBlock<EnvironmentalControllerTileEntity, GenericContainer> environmentalControllerBlock;
+    public static BaseBlock<EnvironmentalControllerTileEntity, GenericContainer> environmentalControllerBlock;
 
     public static RegenerationEModuleItem regenerationEModuleItem;
     public static RegenerationPlusEModuleItem regenerationPlusEModuleItem;

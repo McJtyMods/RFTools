@@ -13,12 +13,12 @@ import mcjty.rftools.api.screens.ITooltipInfo;
 import mcjty.rftools.api.screens.data.IModuleData;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
@@ -111,7 +111,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
     }
 
     @Override
-    public void setupFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
+    public void setupFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             setupCoordinateFromNBT(tagCompound, dim, pos);
             for (int i = 0; i < stacks.size(); i++) {
@@ -155,7 +155,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
         return Collections.emptyList();
     }
 
-    protected void setupCoordinateFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
+    protected void setupCoordinateFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         coordinate = BlockPosTools.INVALID;
         starred = tagCompound.getBoolean("starred");
         oredict = tagCompound.getBoolean("oredict");
@@ -194,10 +194,10 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
 
 
     @Override
-    public NBTTagCompound update(NBTTagCompound tagCompound, World world, EntityPlayer player) {
+    public CompoundNBT update(CompoundNBT tagCompound, World world, PlayerEntity player) {
         if (dirty >= 0) {
-            NBTTagCompound newCompound = tagCompound.copy();
-            NBTTagCompound tc = new NBTTagCompound();
+            CompoundNBT newCompound = tagCompound.copy();
+            CompoundNBT tc = new CompoundNBT();
             stacks.get(dirty).writeToNBT(tc);
             newCompound.setTag("stack" + dirty, tc);
             if (player != null) {
@@ -211,7 +211,7 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
     }
 
     @Override
-    public void mouseClick(World world, int hitx, int hity, boolean clicked, EntityPlayer player) {
+    public void mouseClick(World world, int hitx, int hity, boolean clicked, PlayerEntity player) {
         if ((!clicked) || player == null) {
             return;
         }
@@ -226,9 +226,9 @@ public class StorageControlScreenModule implements IScreenModule<StorageControlS
         if (hitx >= 0) {
             boolean insertStackActive = hitx >= 0 && hitx < 60 && hity > 98;
             if (insertStackActive) {
-                if (isShown(player.getHeldItem(EnumHand.MAIN_HAND))) {
-                    ItemStack stack = scannerTileEntity.injectStackFromScreen(player.getHeldItem(EnumHand.MAIN_HAND), player);
-                    player.setHeldItem(EnumHand.MAIN_HAND, stack);
+                if (isShown(player.getHeldItem(Hand.MAIN_HAND))) {
+                    ItemStack stack = scannerTileEntity.injectStackFromScreen(player.getHeldItem(Hand.MAIN_HAND), player);
+                    player.setHeldItem(Hand.MAIN_HAND, stack);
                 }
                 player.openContainer.detectAndSendChanges();
                 return;

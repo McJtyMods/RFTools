@@ -28,9 +28,9 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -119,7 +119,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
                 return ItemStack.EMPTY;
             }
         } else {
-            return mc.player.getHeldItem(EnumHand.MAIN_HAND);
+            return mc.player.getHeldItem(Hand.MAIN_HAND);
         }
     }
 
@@ -306,9 +306,9 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         if (fromTE) {
             ItemStack stack = getStackToEdit();
             if (!stack.isEmpty()) {
-                NBTTagCompound tag = stack.getTagCompound();
+                CompoundNBT tag = stack.getTag();
                 if (tag == null) {
-                    tag = new NBTTagCompound();
+                    tag = new CompoundNBT();
                 }
                 ShapeCardItem.setShape(stack, getCurrentShape(), isSolid());
                 ShapeCardItem.setDimension(stack, dx, dy, dz);
@@ -335,9 +335,9 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
         if (fromTE) {
             ItemStack stack = getStackToEdit();
             if (!stack.isEmpty()) {
-                NBTTagCompound tag = stack.getTagCompound();
+                CompoundNBT tag = stack.getTag();
                 if (tag == null) {
-                    tag = new NBTTagCompound();
+                    tag = new CompoundNBT();
                 }
                 tag.setBoolean("voidstone", stone.isPressed());
                 tag.setBoolean("voidcobble", cobble.isPressed());

@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.blockprotector;
 
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.worlddata.AbstractWorldData;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -112,17 +112,17 @@ public class BlockProtectors extends AbstractWorldData<BlockProtectors> {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(CompoundNBT tagCompound) {
         protectorById.clear();
         protectorIdByCoordinate.clear();
         lastId = tagCompound.getInteger("lastId");
         readDestinationsFromNBT(tagCompound);
     }
 
-    private void readDestinationsFromNBT(NBTTagCompound tagCompound) {
+    private void readDestinationsFromNBT(CompoundNBT tagCompound) {
         NBTTagList lst = tagCompound.getTagList("blocks", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < lst.tagCount() ; i++) {
-            NBTTagCompound tc = lst.getCompoundTagAt(i);
+            CompoundNBT tc = lst.getCompoundTagAt(i);
             BlockPos c = new BlockPos(tc.getInteger("x"), tc.getInteger("y"), tc.getInteger("z"));
             int dim = tc.getInteger("dim");
 
@@ -134,10 +134,10 @@ public class BlockProtectors extends AbstractWorldData<BlockProtectors> {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         NBTTagList lst = new NBTTagList();
         for (GlobalCoordinate destination : protectorIdByCoordinate.keySet()) {
-            NBTTagCompound tc = new NBTTagCompound();
+            CompoundNBT tc = new CompoundNBT();
             BlockPos c = destination.getCoordinate();
             tc.setInteger("x", c.getX());
             tc.setInteger("y", c.getY());

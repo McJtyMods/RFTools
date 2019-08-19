@@ -2,24 +2,24 @@ package mcjty.rftools.blocks.itemfilter;
 
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 public class ItemFilterInvWrapper implements IItemHandlerModifiable {
     private final ISidedInventory inv;
-    private final EnumFacing side;
+    private final Direction side;
 
     public ItemFilterInvWrapper(ISidedInventory inv) {
         this(inv, null);
     }
 
-    public ItemFilterInvWrapper(ISidedInventory inv, EnumFacing side) {
+    public ItemFilterInvWrapper(ISidedInventory inv, Direction side) {
         this.inv = inv;
         this.side = side;
     }
 
-    public static int getSlot(ISidedInventory inv, int slot, EnumFacing side) {
+    public static int getSlot(ISidedInventory inv, int slot, Direction side) {
         int[] slots = inv.getSlotsForFace(side);
         if (slot < slots.length) {
             return slots[slot];

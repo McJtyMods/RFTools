@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.McJtyLib;
 import mcjty.lib.blocks.BaseBlock;
-import mcjty.lib.blocks.GenericBlock;
+import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.rftools.RFTools;
 import mcjty.theoneprobe.api.IProbeHitData;
@@ -13,16 +13,16 @@ import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -36,7 +36,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.List;
 import java.util.Random;
 
-public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyContainer> {
+public class ScreenHitBlock extends BaseBlock<ScreenHitTileEntity, EmptyContainer> {
 
     public ScreenHitBlock() {
         super(RFTools.instance, Material.GLASS, ScreenHitTileEntity.class, EmptyContainer::new, null, "screen_hitblock", false);
@@ -49,10 +49,10 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
     }
 
     @Override
-    public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
+    public ItemStack getItem(World worldIn, BlockPos pos, BlockState state) {
         BlockPos screenPos = getScreenBlockPos(worldIn, pos);
         if(screenPos == null) return ItemStack.EMPTY;
-        IBlockState screenState = worldIn.getBlockState(screenPos);
+        BlockState screenState = worldIn.getBlockState(screenPos);
         return screenState.getBlock().getItem(worldIn, screenPos, screenState);
     }
 
@@ -63,7 +63,7 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
 
     @Override
     @Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
         super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
         BlockPos pos = data.getPos();
         ScreenHitTileEntity screenHitTileEntity = (ScreenHitTileEntity) world.getTileEntity(pos);
@@ -88,7 +88,7 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
         int dy = screenHitTileEntity.getDy();
         int dz = screenHitTileEntity.getDz();
         BlockPos rpos = pos.add(dx, dy, dz);
-        IBlockState state = world.getBlockState(rpos);
+        BlockState state = world.getBlockState(rpos);
         Block block = state.getBlock();
         if (block instanceof ScreenBlock) {
             TileEntity te = world.getTileEntity(rpos);
@@ -103,7 +103,7 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
     }
 
     @Override
-    public TileEntity createTileEntity(World world, IBlockState state) {
+    public TileEntity createTileEntity(World world, BlockState state) {
         return new ScreenHitTileEntity();
     }
 
@@ -120,13 +120,13 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
 
 
     @Override
-    public void onBlockClicked(World world, BlockPos pos, EntityPlayer playerIn) {
+    public void onBlockClicked(World world, BlockPos pos, PlayerEntity playerIn) {
         if (world.isRemote) {
             ScreenHitTileEntity screenHitTileEntity = (ScreenHitTileEntity) world.getTileEntity(pos);
             int dx = screenHitTileEntity.getDx();
             int dy = screenHitTileEntity.getDy();
             int dz = screenHitTileEntity.getDz();
-            IBlockState state = world.getBlockState(pos.add(dx, dy, dz));
+            BlockState state = world.getBlockState(pos.add(dx, dy, dz));
             Block block = state.getBlock();
             if (block != ScreenSetup.screenBlock && block != ScreenSetup.creativeScreenBlock) {
                 return;
@@ -139,11 +139,11 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
         return activate(world, pos, state, player, hand, side, hitX, hitY, hitZ);
     }
 
-    public boolean activate(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean activate(World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
         pos = getScreenBlockPos(world, pos);
         if (pos == null) {
             return false;
@@ -153,7 +153,7 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
     }
 
     @Override
-    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis) {
+    public boolean rotateBlock(World world, BlockPos pos, Direction axis) {
         // Doesn't make sense to rotate a potentially 3x3 screen,
         // and is incompatible with our special wrench actions.
         return false;
@@ -181,19 +181,19 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
     public static final AxisAlignedBB DOWN_AABB = new AxisAlignedBB(0.0F, 1.0F - 0.125F, 0.0F, 1.0F, 1.0F, 1.0F);
 
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        EnumFacing facing = state.getValue(BaseBlock.FACING);
-        if (facing == EnumFacing.NORTH) {
+    public AxisAlignedBB getBoundingBox(BlockState state, IBlockAccess source, BlockPos pos) {
+        Direction facing = state.getValue(BaseBlock.FACING);
+        if (facing == Direction.NORTH) {
             return NORTH_AABB;
-        } else if (facing == EnumFacing.SOUTH) {
+        } else if (facing == Direction.SOUTH) {
             return SOUTH_AABB;
-        } else if (facing == EnumFacing.WEST) {
+        } else if (facing == Direction.WEST) {
             return WEST_AABB;
-        } else if (facing == EnumFacing.EAST) {
+        } else if (facing == Direction.EAST) {
             return EAST_AABB;
-        } else if (facing == EnumFacing.UP) {
+        } else if (facing == Direction.UP) {
             return UP_AABB;
-        } else if (facing == EnumFacing.DOWN) {
+        } else if (facing == Direction.DOWN) {
             return DOWN_AABB;
         } else {
             return BLOCK_AABB;
@@ -201,32 +201,32 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
     }
 
     @Override
-    public boolean isOpaqueCube(IBlockState state) {
+    public boolean isOpaqueCube(BlockState state) {
         return false;
     }
 
     @Override
-    public boolean isBlockNormalCube(IBlockState state) {
+    public boolean isBlockNormalCube(BlockState state) {
         return false;
     }
 
     @Override
-    public boolean isFullBlock(IBlockState state) {
+    public boolean isFullBlock(BlockState state) {
         return false;
     }
 
     @Override
-    public boolean isFullCube(IBlockState state) {
+    public boolean isFullCube(BlockState state) {
         return false;
     }
 
     @Override
-    public EnumBlockRenderType getRenderType(IBlockState state) {
+    public EnumBlockRenderType getRenderType(BlockState state) {
         return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
     }
 
     @Override
-    public boolean canEntityDestroy(IBlockState state, IBlockAccess world, BlockPos pos, Entity entity) {
+    public boolean canEntityDestroy(BlockState state, IBlockAccess world, BlockPos pos, Entity entity) {
         return false;
     }
 
@@ -240,7 +240,7 @@ public class ScreenHitBlock extends GenericBlock<ScreenHitTileEntity, EmptyConta
     }
 
     @Override
-    public EnumPushReaction getMobilityFlag(IBlockState state) {
+    public EnumPushReaction getMobilityFlag(BlockState state) {
         return EnumPushReaction.BLOCK;
     }
 }

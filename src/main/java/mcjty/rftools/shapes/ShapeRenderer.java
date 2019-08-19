@@ -4,7 +4,7 @@ import mcjty.lib.varia.Check32;
 import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -355,7 +355,7 @@ public class ShapeRenderer {
 
     private void createRenderData(Tessellator tessellator, BufferBuilder buffer, RenderData.RenderPlane plane, RenderData data,
                                   boolean grayscale) {
-        Map<IBlockState, ShapeBlockInfo> palette = new HashMap<>();
+        Map<BlockState, ShapeBlockInfo> palette = new HashMap<>();
 
         double origOffsetX = buffer.xOffset;
         double origOffsetY = buffer.yOffset;
@@ -372,11 +372,11 @@ public class ShapeRenderer {
         for (RenderData.RenderStrip strip : plane.getStrips()) {
             int z = plane.getStartz();
             int x = strip.getX();
-            List<Pair<Integer, IBlockState>> columnData = strip.getData();
+            List<Pair<Integer, BlockState>> columnData = strip.getData();
             for (int i = 0; i < columnData.size(); i++) {
-                Pair<Integer, IBlockState> pair = columnData.get(i);
+                Pair<Integer, BlockState> pair = columnData.get(i);
                 int cnt = pair.getKey();
-                IBlockState state = pair.getValue();
+                BlockState state = pair.getValue();
                 if (state != null) {
                     buffer.setTranslation(origOffsetX + x, origOffsetY + y, origOffsetZ + z);
                     avgcnt += cnt;

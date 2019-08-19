@@ -8,18 +8,18 @@ import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
@@ -52,11 +52,11 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
         McJtyRegister.registerLater(this, RFTools.instance, ItemBlock::new);
     }
 
-    public static boolean activateBlock(Block block, World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public static boolean activateBlock(Block block, World world, BlockPos pos, BlockState state, PlayerEntity player, Hand hand, Direction facing, float hitX, float hitY, float hitZ) {
         return block.onBlockActivated(world, pos, state, player, hand, facing, hitX, hitY, hitZ);
     }
 
-    public static Collection<IProperty<?>> getPropertyKeys(IBlockState state) {
+    public static Collection<IProperty<?>> getPropertyKeys(BlockState state) {
         return state.getPropertyKeys();
     }
 
@@ -66,17 +66,17 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
     }
 
     @Override
-    public boolean isOpaqueCube(IBlockState state) {
+    public boolean isOpaqueCube(BlockState state) {
         return false;
     }
 
     @Override
-    public boolean isBlockNormalCube(IBlockState state) {
+    public boolean isBlockNormalCube(BlockState state) {
         return false;
     }
 
     @Override
-    public boolean canEntityDestroy(IBlockState state, IBlockAccess world, BlockPos pos, Entity entity) {
+    public boolean canEntityDestroy(BlockState state, IBlockAccess world, BlockPos pos, Entity entity) {
         return false;
     }
 
@@ -90,17 +90,17 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
     }
 
     @Override
-    public EnumPushReaction getMobilityFlag(IBlockState state) {
+    public EnumPushReaction getMobilityFlag(BlockState state) {
         return EnumPushReaction.BLOCK;
     }
 
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+    public AxisAlignedBB getCollisionBoundingBox(BlockState blockState, IBlockAccess worldIn, BlockPos pos) {
         return COLLISION_BOX;
     }
 
     @Override
-    public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> list, @Nullable Entity entity, boolean p_185477_7_) {
+    public void addCollisionBoxToList(BlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> list, @Nullable Entity entity, boolean p_185477_7_) {
         NoTickShieldBlockTileEntity shieldBlockTileEntity = (NoTickShieldBlockTileEntity) world.getTileEntity(pos);
         int cdData = shieldBlockTileEntity.getCollisionData();
 
@@ -125,8 +125,8 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
             }
         }
         if ((cdData & META_PLAYERS) != 0) {
-            if (entity instanceof EntityPlayer) {
-                if (checkPlayerCD(world, pos, (EntityPlayer) entity)) {
+            if (entity instanceof PlayerEntity) {
+                if (checkPlayerCD(world, pos, (PlayerEntity) entity)) {
                     super.addCollisionBoxToList(state, world, pos, entityBox, list, entity, p_185477_7_);
                 }
             }
@@ -161,7 +161,7 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
     }
 
 
-    private boolean checkPlayerCD(World world, BlockPos pos, EntityPlayer entity) {
+    private boolean checkPlayerCD(World world, BlockPos pos, PlayerEntity entity) {
         NoTickShieldBlockTileEntity shieldBlockTileEntity = (NoTickShieldBlockTileEntity) world.getTileEntity(pos);
         BlockPos shieldBlock = shieldBlockTileEntity.getShieldBlock();
         if (shieldBlock != null) {
@@ -187,7 +187,7 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
     }
 
     @Override
-    public void onEntityCollidedWithBlock(World world, BlockPos pos, IBlockState state, Entity entity) {
+    public void onEntityCollidedWithBlock(World world, BlockPos pos, BlockState state, Entity entity) {
         NoTickShieldBlockTileEntity shieldBlockTileEntity = (NoTickShieldBlockTileEntity) world.getTileEntity(pos);
         if (!(entity instanceof EntityLivingBase)) {
             int cdData = shieldBlockTileEntity.getCollisionData();
@@ -201,14 +201,14 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
     }
 
     @Override
-    public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos thispos, EnumFacing side) {
+    public boolean shouldSideBeRendered(BlockState state, IBlockAccess world, BlockPos thispos, Direction side) {
         BlockPos pos = thispos.offset(side);
 
         NoTickShieldBlockTileEntity shieldBlockTileEntity = (NoTickShieldBlockTileEntity) world.getTileEntity(thispos);
         if (shieldBlockTileEntity == null) {
             return super.shouldSideBeRendered(state, world, pos, side);
         }
-        IBlockState mimic = shieldBlockTileEntity.getMimicBlock();
+        BlockState mimic = shieldBlockTileEntity.getMimicBlock();
         if (mimic == null) {
             return super.shouldSideBeRendered(state, world, pos, side);
         } else {

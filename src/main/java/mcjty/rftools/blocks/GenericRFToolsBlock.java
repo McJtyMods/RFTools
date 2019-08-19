@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks;
 
-import mcjty.lib.blocks.GenericBlock;
+import mcjty.lib.blocks.BaseBlock;
+import mcjty.lib.builder.BlockBuilder;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
@@ -9,7 +10,8 @@ import mcjty.rftools.blocks.security.SecurityChannels;
 import mcjty.rftools.blocks.security.SecurityConfiguration;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemBlock;
@@ -20,29 +22,36 @@ import net.minecraft.world.World;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public abstract class GenericRFToolsBlock<T extends GenericTileEntity, C extends Container> extends GenericBlock<T, C> {
+public abstract class GenericRFToolsBlock extends BaseBlock {
 
-    public GenericRFToolsBlock(Material material, Class<? extends T> tileEntityClass, BiFunction<EntityPlayer, IInventory, C> containerFactory, String name, boolean isContainer) {
-        super(RFTools.instance, material, tileEntityClass, containerFactory, name, isContainer);
-        setCreativeTab(RFTools.setup.getTab());
+    public GenericRFToolsBlock(String name, BlockBuilder builder) {
+        super(name, builder);
     }
 
-    public GenericRFToolsBlock(Material material, Class<? extends T> tileEntityClass, BiFunction<EntityPlayer, IInventory, C> containerFactory,
-                               Function<Block, ItemBlock> itemBlockFunction, String name, boolean isContainer) {
-        super(RFTools.instance, material, tileEntityClass, containerFactory, itemBlockFunction, name, isContainer);
-        setCreativeTab(RFTools.setup.getTab());
-    }
+    //    public GenericRFToolsBlock(Material material, Class<? extends T> tileEntityClass, BiFunction<PlayerEntity, IInventory, C> containerFactory, String name, boolean isContainer) {
+//        super(RFTools.instance, material, tileEntityClass, containerFactory, name, isContainer);
+//        setCreativeTab(RFTools.setup.getTab());
+//    }
+//
+//    public GenericRFToolsBlock(Material material, Class<? extends T> tileEntityClass, BiFunction<PlayerEntity, IInventory, C> containerFactory,
+//                               Function<Block, ItemBlock> itemBlockFunction, String name, boolean isContainer) {
+//        super(RFTools.instance, material, tileEntityClass, containerFactory, itemBlockFunction, name, isContainer);
+//        setCreativeTab(RFTools.setup.getTab());
+//    }
+//
+
 
     @Override
-    public boolean checkAccess(World world, EntityPlayer player, TileEntity te) {
+    protected boolean checkAccess(World world, PlayerEntity player, TileEntity te) {
         if (SecurityConfiguration.enabled.get() && te instanceof GenericTileEntity) {
             GenericTileEntity genericTileEntity = (GenericTileEntity) te;
-            if ((!OrphaningCardItem.isPrivileged(player, world)) && (!player.getPersistentID().equals(genericTileEntity.getOwnerUUID()))) {
+            if ((!OrphaningCardItem.isPrivileged(player, world)) && (!player.getUniqueID().equals(genericTileEntity.getOwnerUUID()))) {
                 int securityChannel = genericTileEntity.getSecurityChannel();
                 if (securityChannel != -1) {
                     SecurityChannels securityChannels = SecurityChannels.getChannels(world);
                     SecurityChannels.SecurityChannel channel = securityChannels.getChannel(securityChannel);
-                    boolean playerListed = channel.getPlayers().contains(player.getDisplayNameString());
+                    // @todo 1.14 check: is this still correct? Use UUID
+                    boolean playerListed = channel.getPlayers().contains(player.getDisplayName().getFormattedText());
                     if (channel.isWhitelist() != playerListed) {
                         Logging.message(player, TextFormatting.RED + "You have no permission to use this block!");
                         return true;

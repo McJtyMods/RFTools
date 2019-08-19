@@ -4,9 +4,9 @@ import mcjty.rftools.config.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.ores.DimensionalShardBlock;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -44,8 +44,8 @@ public class RFToolsWorldGenerator implements IWorldGenerator {
         }
 
         if (oregen.contains(world.provider.getDimension())) {
-            IBlockState ore;
-            IBlockState base;
+            BlockState ore;
+            BlockState base;
             if (world.provider.getDimension() == 1) {
                 ore = ModBlocks.dimensionalShardBlock.getDefaultState().withProperty(DimensionalShardBlock.ORETYPE, DimensionalShardBlock.OreType.ORE_END);
                 base = Blocks.END_STONE.getDefaultState();
@@ -68,7 +68,7 @@ public class RFToolsWorldGenerator implements IWorldGenerator {
 
 
 
-    public void addOreSpawn(IBlockState block, IBlockState targetBlock,
+    public void addOreSpawn(BlockState block, BlockState targetBlock,
                             World world, Random random, int blockXPos, int blockZPos, int minVeinSize, int maxVeinSize, int chancesToSpawn, int minY, int maxY) {
         WorldGenMinable minable = new WorldGenMinable(block, (minVeinSize + random.nextInt(maxVeinSize - minVeinSize + 1)), state -> state.getBlock() == targetBlock.getBlock());
         for (int i = 0 ; i < chancesToSpawn ; i++) {
@@ -81,7 +81,7 @@ public class RFToolsWorldGenerator implements IWorldGenerator {
 
     @SubscribeEvent
     public void handleChunkSaveEvent(ChunkDataEvent.Save event) {
-        NBTTagCompound genTag = event.getData().getCompoundTag(RETRO_NAME);
+        CompoundNBT genTag = event.getData().getCompoundTag(RETRO_NAME);
         if (!genTag.hasKey("generated")) {
             // If we did not have this key then this is a new chunk and we will have proper ores generated.
             // Otherwise we are saving a chunk for which ores are not yet generated.
@@ -95,7 +95,7 @@ public class RFToolsWorldGenerator implements IWorldGenerator {
         int dim = event.getWorld().provider.getDimension();
 
         boolean regen = false;
-        NBTTagCompound tag = (NBTTagCompound) event.getData().getTag(RETRO_NAME);
+        CompoundNBT tag = (CompoundNBT) event.getData().getTag(RETRO_NAME);
         NBTTagList list = null;
         Pair<Integer,Integer> cCoord = Pair.of(event.getChunk().x, event.getChunk().z);
 

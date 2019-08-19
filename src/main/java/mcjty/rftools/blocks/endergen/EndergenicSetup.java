@@ -1,22 +1,22 @@
 package mcjty.rftools.blocks.endergen;
 
 import mcjty.lib.blocks.BaseBlock;
-import mcjty.lib.blocks.GenericBlock;
+import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.builder.BlockFlags;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.varia.ItemStackTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import static mcjty.lib.varia.ItemStackTools.mapTag;
 
 public class EndergenicSetup {
-    public static GenericBlock<EndergenicTileEntity, GenericContainer> endergenicBlock;
-    public static GenericBlock<PearlInjectorTileEntity, GenericContainer> pearlInjectorBlock;
+    public static BaseBlock<EndergenicTileEntity, GenericContainer> endergenicBlock;
+    public static BaseBlock<PearlInjectorTileEntity, GenericContainer> pearlInjectorBlock;
     public static EnderMonitorBlock enderMonitorBlock;
 
     public static void init() {
@@ -39,7 +39,7 @@ public class EndergenicSetup {
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.pearl_injector")
                 .infoExtendedParameter(stack -> {
-                    int count = mapTag(stack, compound -> (int) ItemStackTools.getListStream(compound, "Items").filter(nbt -> !new ItemStack((NBTTagCompound)nbt).isEmpty()).count(), 0);
+                    int count = mapTag(stack, compound -> (int) ItemStackTools.getListStream(compound, "Items").filter(nbt -> !new ItemStack((CompoundNBT)nbt).isEmpty()).count(), 0);
                     return Integer.toString(count);
                 })
                 .build();

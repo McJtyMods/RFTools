@@ -7,13 +7,13 @@ import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.varia.OrientationTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.TickOrderHandler;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -36,16 +36,16 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
     }
 
     public EndergenicTileEntity findEndergenicTileEntity() {
-        IBlockState state = getWorld().getBlockState(getPos());
-        EnumFacing k = OrientationTools.getOrientation(state);
+        BlockState state = getWorld().getBlockState(getPos());
+        Direction k = OrientationTools.getOrientation(state);
         EndergenicTileEntity te = getEndergenicGeneratorAt(k.getOpposite());
         if (te != null) {
             return te;
         }
-        return getEndergenicGeneratorAt(EnumFacing.UP);
+        return getEndergenicGeneratorAt(Direction.UP);
     }
 
-    private EndergenicTileEntity getEndergenicGeneratorAt(EnumFacing k) {
+    private EndergenicTileEntity getEndergenicGeneratorAt(Direction k) {
         BlockPos o = getPos().offset(k);
         TileEntity te = getWorld().getTileEntity(o);
         if (te instanceof EndergenicTileEntity) {
@@ -108,26 +108,26 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(CompoundNBT tagCompound) {
         super.readFromNBT(tagCompound);
         prevIn = tagCompound.getBoolean("prevIn");
     }
 
     @Override
-    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+    public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setBoolean("prevIn", prevIn);
         return tagCompound;
     }
 
     @Override
-    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+    public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
     }
@@ -143,7 +143,7 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
     }
 
     @Override
-    public boolean isUsableByPlayer(EntityPlayer player) {
+    public boolean isUsableByPlayer(PlayerEntity player) {
         return canPlayerAccess(player);
     }
 
@@ -155,7 +155,7 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
     private int[] accessibleSlots;
 
     @Override
-    public int[] getSlotsForFace(EnumFacing side) {
+    public int[] getSlotsForFace(Direction side) {
         if (accessibleSlots == null) {
             accessibleSlots = new int[BUFFER_SIZE];
             for (int i = 0 ; i < BUFFER_SIZE ; i++) {
@@ -166,12 +166,12 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
     }
 
     @Override
-    public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
+    public boolean canExtractItem(int index, ItemStack stack, Direction direction) {
         return true;
     }
 
     @Override
-    public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
+    public boolean canInsertItem(int index, ItemStack itemStackIn, Direction direction) {
         return isItemValidForSlot(index, itemStackIn);
     }
 }

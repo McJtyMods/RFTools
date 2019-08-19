@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.crafter;
 import mcjty.lib.container.*;
 import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.RFTools;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
@@ -29,7 +29,7 @@ public class CrafterContainer extends GenericContainer {
 
     public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(new ResourceLocation(RFTools.MODID, "gui/crafter.gui"));
 
-    public CrafterContainer(EntityPlayer player, IInventory containerInventory) {
+    public CrafterContainer(PlayerEntity player, IInventory containerInventory) {
         super(CONTAINER_FACTORY);
         this.crafterBaseTE = (CrafterBaseTE)containerInventory; // TODO once this method is no longer reflectively called, refactor to remove this cast
         addInventory(CONTAINER_INVENTORY, containerInventory);
@@ -76,7 +76,7 @@ public class CrafterContainer extends GenericContainer {
     }
 
     @Override
-    public ItemStack slotClick(int index, int button, ClickType mode, EntityPlayer player) {
+    public ItemStack slotClick(int index, int button, ClickType mode, PlayerEntity player) {
         // Allow replacing input slot ghost items by shift-clicking.
         if (mode == ClickType.QUICK_MOVE &&
             index >= CrafterContainer.SLOT_BUFFER &&

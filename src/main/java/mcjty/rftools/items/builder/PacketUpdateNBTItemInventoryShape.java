@@ -7,7 +7,7 @@ import mcjty.rftools.blocks.builder.BuilderTileEntity;
 import mcjty.rftools.blocks.shaper.ComposerTileEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -19,7 +19,7 @@ public class PacketUpdateNBTItemInventoryShape implements IMessage {
 
     public BlockPos pos;
     public int slotIndex;
-    public NBTTagCompound tagCompound;
+    public CompoundNBT tagCompound;
 
     public PacketUpdateNBTItemInventoryShape() {
     }
@@ -28,7 +28,7 @@ public class PacketUpdateNBTItemInventoryShape implements IMessage {
         fromBytes(buf);
     }
 
-    public PacketUpdateNBTItemInventoryShape(BlockPos pos, int slotIndex, NBTTagCompound tagCompound) {
+    public PacketUpdateNBTItemInventoryShape(BlockPos pos, int slotIndex, CompoundNBT tagCompound) {
         this.pos = pos;
         this.slotIndex = slotIndex;
         this.tagCompound = tagCompound;

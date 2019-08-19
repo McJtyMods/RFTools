@@ -3,16 +3,15 @@ package mcjty.rftools.items.modifier;
 import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.setup.GuiProxy;
-import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.items.ModItems;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -35,9 +34,9 @@ public class ModifierItem extends GenericRFToolsItem {
     private static NBTTagList getOpList(ItemStack item) {
         if (!item.isEmpty() && item.getItem() == ModItems.modifierItem) {
             if (!item.hasTagCompound()) {
-                item.setTagCompound(new NBTTagCompound());
+                item.setTagCompound(new CompoundNBT());
             }
-            NBTTagCompound tag = item.getTagCompound();
+            CompoundNBT tag = item.getTag();
             if (tag.hasKey("ops")) {
                 return tag.getTagList("ops", Constants.NBT.TAG_COMPOUND);
             } else {
@@ -49,7 +48,7 @@ public class ModifierItem extends GenericRFToolsItem {
         return null;
     }
 
-    public static void performCommand(EntityPlayer player, ItemStack stack, ModifierCommand cmd, int index, ModifierFilterType type, ModifierFilterOperation op) {
+    public static void performCommand(PlayerEntity player, ItemStack stack, ModifierCommand cmd, int index, ModifierFilterType type, ModifierFilterOperation op) {
         stack = stack.copy();
         switch (cmd) {
             case ADD:
@@ -65,22 +64,22 @@ public class ModifierItem extends GenericRFToolsItem {
                 downOp(stack, index);
                 break;
         }
-        player.setHeldItem(EnumHand.MAIN_HAND, stack);
+        player.setHeldItem(Hand.MAIN_HAND, stack);
         player.openContainer.detectAndSendChanges();
     }
 
     private static NBTTagList getTagList(List<ModifierEntry> modifiers) {
         NBTTagList taglist = new NBTTagList();
         for (ModifierEntry modifier : modifiers) {
-            NBTTagCompound tag = new NBTTagCompound();
+            CompoundNBT tag = new CompoundNBT();
 
             if (!modifier.getIn().isEmpty()) {
-                NBTTagCompound tc = new NBTTagCompound();
+                CompoundNBT tc = new CompoundNBT();
                 modifier.getIn().writeToNBT(tc);
                 tag.setTag("in", tc);
             }
             if (!modifier.getOut().isEmpty()) {
-                NBTTagCompound tc = new NBTTagCompound();
+                CompoundNBT tc = new CompoundNBT();
                 modifier.getOut().writeToNBT(tc);
                 tag.setTag("out", tc);
             }
@@ -97,16 +96,16 @@ public class ModifierItem extends GenericRFToolsItem {
 
     private static void updateModifiers(ItemStack stack, List<ModifierEntry> modifiers) {
         NBTTagList tagList = getTagList(modifiers);
-        stack.getTagCompound().setTag("ops", tagList);
+        stack.getTag().setTag("ops", tagList);
     }
 
-    public static ItemStackList getItemStacks(@Nullable NBTTagCompound tagCompound) {
+    public static ItemStackList getItemStacks(@Nullable CompoundNBT tagCompound) {
         ItemStackList stacks = ItemStackList.create(ModifierContainer.COUNT_SLOTS);
         if (tagCompound != null) {
             NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < bufferTagList.tagCount(); i++) {
-                NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-                stacks.set(i, new ItemStack(nbtTagCompound));
+                CompoundNBT CompoundNBT = bufferTagList.getCompoundTagAt(i);
+                stacks.set(i, new ItemStack(CompoundNBT));
             }
         }
         return stacks;
@@ -130,7 +129,7 @@ public class ModifierItem extends GenericRFToolsItem {
 
     private static void addOp(ItemStack stack, ModifierFilterType type, ModifierFilterOperation op) {
         List<ModifierEntry> modifiers = getModifiers(stack);
-        NBTTagCompound tagCompound = stack.getTagCompound();
+        CompoundNBT tagCompound = stack.getTag();
         ItemStackList stacks = getItemStacks(tagCompound);
         ItemStack stackIn = stacks.get(ModifierContainer.SLOT_FILTER);
         ItemStack stackOut = stacks.get(ModifierContainer.SLOT_REPLACEMENT);
@@ -146,7 +145,7 @@ public class ModifierItem extends GenericRFToolsItem {
         ModifierEntry entry = modifiers.get(index);
         ItemStack in = entry.getIn();
         ItemStack out = entry.getOut();
-        NBTTagCompound tagCompound = stack.getTagCompound();
+        CompoundNBT tagCompound = stack.getTag();
         ItemStackList stacks = getItemStacks(tagCompound);
         if (!in.isEmpty() && !stacks.get(ModifierContainer.SLOT_FILTER).isEmpty()) {
             // Something is in the way
@@ -174,7 +173,7 @@ public class ModifierItem extends GenericRFToolsItem {
             return Collections.emptyList();
         }
         for (int i = 0 ; i < taglist.tagCount() ; i++) {
-            NBTTagCompound compound = taglist.getCompoundTagAt(i);
+            CompoundNBT compound = taglist.getCompoundTagAt(i);
             ItemStack stackIn = new ItemStack(compound.getCompoundTag("in"));
             ItemStack stackOut = new ItemStack(compound.getCompoundTag("out"));
             ModifierFilterType type = ModifierFilterType.getByCode(compound.getString("type"));
@@ -198,12 +197,12 @@ public class ModifierItem extends GenericRFToolsItem {
 
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
             player.openGui(RFTools.instance, GuiProxy.GUI_MODIFIER_MODULE, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
-            return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+            return new ActionResult<>(ActionResultType.SUCCESS, stack);
         }
-        return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+        return new ActionResult<>(ActionResultType.SUCCESS, stack);
     }
 }

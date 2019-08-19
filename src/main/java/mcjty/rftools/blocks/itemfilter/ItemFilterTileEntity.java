@@ -5,11 +5,11 @@ import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -56,12 +56,12 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(CompoundNBT tagCompound) {
         super.readFromNBT(tagCompound);
     }
 
     @Override
-    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+    public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
         inputMode = tagCompound.getIntArray("inputs");
@@ -69,13 +69,13 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         super.writeToNBT(tagCompound);
         return tagCompound;
     }
 
     @Override
-    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+    public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
         tagCompound.setIntArray("inputs", inputMode);
@@ -120,7 +120,7 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
     }
 
     @Override
-    public boolean isUsableByPlayer(EntityPlayer player) {
+    public boolean isUsableByPlayer(PlayerEntity player) {
         return canPlayerAccess(player);
     }
 
@@ -134,13 +134,13 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
     }
 
     @Override
-    public int[] getSlotsForFace(EnumFacing side) {
+    public int[] getSlotsForFace(Direction side) {
         int v = SLOT_BUFFER;
         return new int[] { v, v+1, v+2, v+3, v+4, v+5, v+6, v+7, v+8 };
     }
 
     @Override
-    public boolean canInsertItem(int index, ItemStack stack, EnumFacing side) {
+    public boolean canInsertItem(int index, ItemStack stack, Direction side) {
         if (index < SLOT_BUFFER) {
             return false;
         }
@@ -167,30 +167,30 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
     }
 
     @Override
-    public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
+    public boolean canExtractItem(int index, ItemStack stack, Direction direction) {
         if (index < SLOT_BUFFER) {
             return false;
         }
         return isOutputMode(direction, index - SLOT_BUFFER);
     }
 
-    private boolean isInputMode(EnumFacing side, int slot) {
+    private boolean isInputMode(Direction side, int slot) {
         return (inputMode[side.ordinal()] & (1<<slot)) != 0;
     }
 
-    private boolean isOutputMode(EnumFacing side, int slot) {
+    private boolean isOutputMode(Direction side, int slot) {
         return (outputMode[side.ordinal()] & (1<<slot)) != 0;
     }
 
-    private IItemHandler invHandlerN = new ItemFilterInvWrapper(this, EnumFacing.NORTH);
-    private IItemHandler invHandlerS = new ItemFilterInvWrapper(this, EnumFacing.SOUTH);
-    private IItemHandler invHandlerW = new ItemFilterInvWrapper(this, EnumFacing.WEST);
-    private IItemHandler invHandlerE = new ItemFilterInvWrapper(this, EnumFacing.EAST);
-    private IItemHandler invHandlerD = new ItemFilterInvWrapper(this, EnumFacing.DOWN);
-    private IItemHandler invHandlerU = new ItemFilterInvWrapper(this, EnumFacing.UP);
+    private IItemHandler invHandlerN = new ItemFilterInvWrapper(this, Direction.NORTH);
+    private IItemHandler invHandlerS = new ItemFilterInvWrapper(this, Direction.SOUTH);
+    private IItemHandler invHandlerW = new ItemFilterInvWrapper(this, Direction.WEST);
+    private IItemHandler invHandlerE = new ItemFilterInvWrapper(this, Direction.EAST);
+    private IItemHandler invHandlerD = new ItemFilterInvWrapper(this, Direction.DOWN);
+    private IItemHandler invHandlerU = new ItemFilterInvWrapper(this, Direction.UP);
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+    public boolean hasCapability(Capability<?> capability, Direction facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return true;
         }
@@ -198,7 +198,7 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
     }
 
     @Override
-    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.EnumFacing facing) {
+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.Direction facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             switch (facing) {
                 case DOWN:

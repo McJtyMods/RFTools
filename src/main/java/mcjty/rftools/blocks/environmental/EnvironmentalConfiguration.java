@@ -1,45 +1,45 @@
 package mcjty.rftools.blocks.environmental;
 
-import mcjty.lib.thirteen.ConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 public class EnvironmentalConfiguration {
     public static final String CATEGORY_ENVIRONMENTAL = "environmental";
-    public static ConfigSpec.IntValue ENVIRONMENTAL_MAXENERGY;
-    public static ConfigSpec.IntValue ENVIRONMENTAL_RECEIVEPERTICK;
-    public static ConfigSpec.IntValue MIN_USAGE;
+    public static ForgeConfigSpec.IntValue ENVIRONMENTAL_MAXENERGY;
+    public static ForgeConfigSpec.IntValue ENVIRONMENTAL_RECEIVEPERTICK;
+    public static ForgeConfigSpec.IntValue MIN_USAGE;
 
-    public static ConfigSpec.DoubleValue FEATHERFALLING_RFPERTICK;
-    public static ConfigSpec.DoubleValue FEATHERFALLINGPLUS_RFPERTICK;
-    public static ConfigSpec.DoubleValue FLIGHT_RFPERTICK;
-    public static ConfigSpec.DoubleValue GLOWING_RFPERTICK;
-    public static ConfigSpec.DoubleValue HASTE_RFPERTICK;
-    public static ConfigSpec.DoubleValue HASTEPLUS_RFPERTICK;
-    public static ConfigSpec.DoubleValue NIGHTVISION_RFPERTICK;
-    public static ConfigSpec.DoubleValue PEACEFUL_RFPERTICK;
-    public static ConfigSpec.DoubleValue REGENERATION_RFPERTICK;
-    public static ConfigSpec.DoubleValue REGENERATIONPLUS_RFPERTICK;
-    public static ConfigSpec.DoubleValue SATURATION_RFPERTICK;
-    public static ConfigSpec.DoubleValue SATURATIONPLUS_RFPERTICK;
-    public static ConfigSpec.DoubleValue SPEED_RFPERTICK;
-    public static ConfigSpec.DoubleValue SPEEDPLUS_RFPERTICK;
-    public static ConfigSpec.DoubleValue WATERBREATHING_RFPERTICK;
-    public static ConfigSpec.DoubleValue LUCK_RFPERTICK;
-    public static ConfigSpec.DoubleValue NOTELEPORT_RFPERTICK;
+    public static ForgeConfigSpec.DoubleValue FEATHERFALLING_RFPERTICK;
+    public static ForgeConfigSpec.DoubleValue FEATHERFALLINGPLUS_RFPERTICK;
+    public static ForgeConfigSpec.DoubleValue FLIGHT_RFPERTICK;
+    public static ForgeConfigSpec.DoubleValue GLOWING_RFPERTICK;
+    public static ForgeConfigSpec.DoubleValue HASTE_RFPERTICK;
+    public static ForgeConfigSpec.DoubleValue HASTEPLUS_RFPERTICK;
+    public static ForgeConfigSpec.DoubleValue NIGHTVISION_RFPERTICK;
+    public static ForgeConfigSpec.DoubleValue PEACEFUL_RFPERTICK;
+    public static ForgeConfigSpec.DoubleValue REGENERATION_RFPERTICK;
+    public static ForgeConfigSpec.DoubleValue REGENERATIONPLUS_RFPERTICK;
+    public static ForgeConfigSpec.DoubleValue SATURATION_RFPERTICK;
+    public static ForgeConfigSpec.DoubleValue SATURATIONPLUS_RFPERTICK;
+    public static ForgeConfigSpec.DoubleValue SPEED_RFPERTICK;
+    public static ForgeConfigSpec.DoubleValue SPEEDPLUS_RFPERTICK;
+    public static ForgeConfigSpec.DoubleValue WATERBREATHING_RFPERTICK;
+    public static ForgeConfigSpec.DoubleValue LUCK_RFPERTICK;
+    public static ForgeConfigSpec.DoubleValue NOTELEPORT_RFPERTICK;
 
     // Debuffs
-    public static ConfigSpec.DoubleValue BLINDNESS_RFPERTICK;
-    public static ConfigSpec.DoubleValue WEAKNESS_RFPERTICK;
-    public static ConfigSpec.DoubleValue POISON_RFPERTICK;
-    public static ConfigSpec.DoubleValue SLOWNESS_RFPERTICK;
+    public static ForgeConfigSpec.DoubleValue BLINDNESS_RFPERTICK;
+    public static ForgeConfigSpec.DoubleValue WEAKNESS_RFPERTICK;
+    public static ForgeConfigSpec.DoubleValue POISON_RFPERTICK;
+    public static ForgeConfigSpec.DoubleValue SLOWNESS_RFPERTICK;
 
-    public static ConfigSpec.BooleanValue blindnessAvailable;
-    public static ConfigSpec.BooleanValue weaknessAvailable;
-    public static ConfigSpec.BooleanValue poisonAvailable;
-    public static ConfigSpec.BooleanValue slownessAvailable;
+    public static ForgeConfigSpec.BooleanValue blindnessAvailable;
+    public static ForgeConfigSpec.BooleanValue weaknessAvailable;
+    public static ForgeConfigSpec.BooleanValue poisonAvailable;
+    public static ForgeConfigSpec.BooleanValue slownessAvailable;
 
-    public static ConfigSpec.DoubleValue mobsPowerMultiplier;
+    public static ForgeConfigSpec.DoubleValue mobsPowerMultiplier;
 
-    public static void init(ConfigSpec.Builder SERVER_BUILDER, ConfigSpec.Builder CLIENT_BUILDER) {
+    public static void init(ForgeConfigSpec.Builder SERVER_BUILDER, ForgeConfigSpec.Builder CLIENT_BUILDER) {
         SERVER_BUILDER.comment("Settings for the environmental controller").push(CATEGORY_ENVIRONMENTAL);
         CLIENT_BUILDER.comment("Settings for the environmental controller").push(CATEGORY_ENVIRONMENTAL);
 

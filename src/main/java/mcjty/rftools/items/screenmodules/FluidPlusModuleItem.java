@@ -8,17 +8,16 @@ import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.FluidPlusBarScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.FluidPlusBarClientScreenModule;
-import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -70,7 +69,7 @@ public class FluidPlusModuleItem extends GenericRFToolsItem implements IModulePr
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.FLUIDPLUS_RFPERTICK.get() + " RF/tick");
         boolean hasTarget = false;
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
             list.add(TextFormatting.YELLOW + "Label: " + tagCompound.getString("text"));
             if (tagCompound.hasKey("monitorx")) {
@@ -97,19 +96,19 @@ public class FluidPlusModuleItem extends GenericRFToolsItem implements IModulePr
     }
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public ActionResultType onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
         TileEntity te = world.getTileEntity(pos);
-        NBTTagCompound tagCompound = stack.getTagCompound();
+        CompoundNBT tagCompound = stack.getTag();
         if (tagCompound == null) {
-            tagCompound = new NBTTagCompound();
+            tagCompound = new CompoundNBT();
         }
         if (CapabilityTools.hasFluidCapabilitySafe(te) != null) {
             tagCompound.setInteger("monitordim", world.provider.getDimension());
             tagCompound.setInteger("monitorx", pos.getX());
             tagCompound.setInteger("monitory", pos.getY());
             tagCompound.setInteger("monitorz", pos.getZ());
-            IBlockState state = world.getBlockState(pos);
+            BlockState state = world.getBlockState(pos);
             Block block = state.getBlock();
             String name = "<invalid>";
             if (block != null && !block.isAir(state, world, pos)) {
@@ -130,6 +129,6 @@ public class FluidPlusModuleItem extends GenericRFToolsItem implements IModulePr
             }
         }
         stack.setTagCompound(tagCompound);
-        return EnumActionResult.SUCCESS;
+        return ActionResultType.SUCCESS;
     }
 }

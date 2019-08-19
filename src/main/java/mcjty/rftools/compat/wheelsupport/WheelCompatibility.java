@@ -2,13 +2,13 @@ package mcjty.rftools.compat.wheelsupport;
 
 import mcjty.intwheel.api.IInteractionWheel;
 import mcjty.intwheel.api.IWheelActionProvider;
-import mcjty.lib.blocks.GenericBlock;
+import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.screens.ScreenBlock;
 import mcjty.rftools.blocks.screens.ScreenHitBlock;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
@@ -46,11 +46,11 @@ public class WheelCompatibility {
                 }
 
                 @Override
-                public void updateWheelActions(@Nonnull Set<String> actions, @Nonnull EntityPlayer player, World world, @Nullable BlockPos pos) {
+                public void updateWheelActions(@Nonnull Set<String> actions, @Nonnull PlayerEntity player, World world, @Nullable BlockPos pos) {
                     if (pos != null) {
                         Block block = world.getBlockState(pos).getBlock();
                         actions.add(FindBlockAction.ACTION_FINDBLOCK);
-                        if (block instanceof GenericBlock) {
+                        if (block instanceof BaseBlock) {
                             actions.add(RemoveBlockAction.ACTION_REMOVEBLOCK);
                         }
                         if (block instanceof ScreenBlock || block instanceof ScreenHitBlock) {

@@ -12,9 +12,9 @@ import mcjty.xnet.api.gui.IndicatorIcon;
 import mcjty.xnet.api.helper.DefaultChannelSettings;
 import mcjty.xnet.api.keys.SidedConsumer;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -37,12 +37,12 @@ public class StorageChannelSettings extends DefaultChannelSettings implements IC
     private int delay = 0;
 
     @Override
-    public void readFromNBT(NBTTagCompound tag) {
+    public void readFromNBT(CompoundNBT tag) {
 
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tag) {
+    public void writeToNBT(CompoundNBT tag) {
 
     }
 
@@ -62,7 +62,7 @@ public class StorageChannelSettings extends DefaultChannelSettings implements IC
         for (Pair<SidedConsumer, StorageConnectorSettings> entry : storageControllers) {
             BlockPos extractorPos = context.findConsumerPosition(entry.getKey().getConsumerId());
             if (extractorPos != null) {
-                EnumFacing side = entry.getKey().getSide();
+                Direction side = entry.getKey().getSide();
                 BlockPos pos = extractorPos.offset(side);
                 if (!WorldTools.chunkLoaded(world, pos)) {
                     continue;
@@ -80,7 +80,7 @@ public class StorageChannelSettings extends DefaultChannelSettings implements IC
     private BlockPos getInventory(IControllerContext context, SidedConsumer sidedConsumer) {
         BlockPos consumerPos = context.findConsumerPosition(sidedConsumer.getConsumerId());
         if (consumerPos != null) {
-            EnumFacing side = sidedConsumer.getSide();
+            Direction side = sidedConsumer.getSide();
             BlockPos pos = consumerPos.offset(side);
             TileEntity te = context.getControllerWorld().getTileEntity(pos);
             if (te != null && (te instanceof IInventory || te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null))) {

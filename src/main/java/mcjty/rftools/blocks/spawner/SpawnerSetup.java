@@ -1,6 +1,6 @@
 package mcjty.rftools.blocks.spawner;
 
-import mcjty.lib.blocks.GenericBlock;
+import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.container.GenericContainer;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.setup.GuiProxy;
@@ -8,7 +8,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class SpawnerSetup {
-    public static GenericBlock<SpawnerTileEntity, GenericContainer> spawnerBlock;
+    public static BaseBlock<SpawnerTileEntity, GenericContainer> spawnerBlock;
     public static MatterBeamerBlock matterBeamerBlock;
 
     public static void init() {

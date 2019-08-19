@@ -10,8 +10,8 @@ import mcjty.rftools.api.screens.IScreenModule;
 import mcjty.rftools.api.screens.data.IModuleData;
 import mcjty.rftools.blocks.elevator.ElevatorTileEntity;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
@@ -119,7 +119,7 @@ public class ElevatorButtonScreenModule implements IScreenModule<ElevatorButtonS
     }
 
     @Override
-    public void setupFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos) {
+    public void setupFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos) {
         if (tagCompound != null) {
             coordinate = BlockPosTools.INVALID;
             if (tagCompound.hasKey("elevatorx")) {
@@ -144,7 +144,7 @@ public class ElevatorButtonScreenModule implements IScreenModule<ElevatorButtonS
     }
 
     @Override
-    public void mouseClick(World world, int x, int y, boolean clicked, EntityPlayer player) {
+    public void mouseClick(World world, int x, int y, boolean clicked, PlayerEntity player) {
         if (BlockPosTools.INVALID.equals(coordinate)) {
             if (player != null) {
                 player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Module is not linked to elevator!"), false);

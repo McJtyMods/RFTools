@@ -3,40 +3,48 @@ package mcjty.rftools.blocks.shield;
 import com.mojang.authlib.GameProfile;
 import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.api.smartwrench.SmartWrenchSelector;
-import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.bindings.DefaultValue;
 import mcjty.lib.bindings.IValue;
+import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.RedstoneMode;
-import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
 import mcjty.rftools.blocks.shield.filters.*;
-import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.shapes.Shape;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, SmartWrenchSelector, ITickable,
-        IMachineInformation, SimpleComponent { // @todo }, IPeripheral {
+public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelector, ITickableTileEntity,
+        IMachineInformation { // @todo }, IPeripheral {
 
     public static final String CMD_APPLYCAMO = "shield.applyCamo";
     public static final Key<Integer> PARAM_PASS = new Key<>("pass", Type.INTEGER);
@@ -77,7 +85,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     // If true the shield is currently made.
     private boolean shieldComposed = false;
     // The state for the template blocks that were used.
-    private IBlockState templateState = Blocks.AIR.getDefaultState();
+    private BlockState templateState = Blocks.AIR.getDefaultState();
     // If true the shield is currently active.
     private boolean shieldActive = false;
     // Timeout in case power is low. Here we wait a bit before trying again.
@@ -101,7 +109,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     private ShieldRenderingMode shieldRenderingMode = ShieldRenderingMode.MODE_SHIELD;
 
     private List<RelCoordinateShield> shieldBlocks = new ArrayList<>();
-    private List<IBlockState> blockStateTable = new ArrayList<>();
+    private List<BlockState> blockStateTable = new ArrayList<>();
 
     private InventoryHelper inventoryHelper = new InventoryHelper(this, ShieldContainer.factory, ShieldContainer.BUFFER_SIZE);
 
@@ -131,22 +139,22 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     }
 
 
-    @Override
-    @Optional.Method(modid = "opencomputers")
-    public String getComponentName() {
-        return COMPONENT_NAME;
-    }
-
-    @Callback(doc = "Get or set the current damage mode for the shield. 'Generic' means normal damage while 'Player' means damage like a player would do", getter = true, setter = true)
-    @Optional.Method(modid = "opencomputers")
-    public Object[] damageMode(Context context, Arguments args) {
-        if(args.count() == 0) {
-            return new Object[] { getDamageMode().getDescription() };
-        } else {
-            String mode = args.checkString(0);
-            return setDamageMode(mode);
-        }
-    }
+//    @Override
+//    @Optional.Method(modid = "opencomputers")
+//    public String getComponentName() {
+//        return COMPONENT_NAME;
+//    }
+//
+//    @Callback(doc = "Get or set the current damage mode for the shield. 'Generic' means normal damage while 'Player' means damage like a player would do", getter = true, setter = true)
+//    @Optional.Method(modid = "opencomputers")
+//    public Object[] damageMode(Context context, Arguments args) {
+//        if(args.count() == 0) {
+//            return new Object[] { getDamageMode().getDescription() };
+//        } else {
+//            String mode = args.checkString(0);
+//            return setDamageMode(mode);
+//        }
+//    }
 
     private Object[] setDamageMode(String mode) {
         DamageTypeMode damageMode = DamageTypeMode.getMode(mode);
@@ -157,16 +165,16 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         return null;
     }
 
-    @Callback(doc = "Get or set the current redstone mode. Values are 'Ignored', 'Off', or 'On'", getter = true, setter = true)
-    @Optional.Method(modid = "opencomputers")
-    public Object[] redstoneMode(Context context, Arguments args) {
-        if(args.count() == 0) {
-            return new Object[] { getRSMode().getDescription() };
-        } else {
-            String mode = args.checkString(0);
-            return setRedstoneMode(mode);
-        }
-    }
+//    @Callback(doc = "Get or set the current redstone mode. Values are 'Ignored', 'Off', or 'On'", getter = true, setter = true)
+//    @Optional.Method(modid = "opencomputers")
+//    public Object[] redstoneMode(Context context, Arguments args) {
+//        if(args.count() == 0) {
+//            return new Object[] { getRSMode().getDescription() };
+//        } else {
+//            String mode = args.checkString(0);
+//            return setRedstoneMode(mode);
+//        }
+//    }
 
     private Object[] setRedstoneMode(String mode) {
         RedstoneMode redstoneMode = RedstoneMode.getMode(mode);
@@ -177,16 +185,16 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         return null;
     }
 
-    @Callback(doc = "Get or set the current shield rendering mode. Values are 'Invisible', 'Shield', or 'Solid'", getter = true, setter = true)
-    @Optional.Method(modid = "opencomputers")
-    public Object[] shieldRenderingMode(Context context, Arguments args) {
-        if(args.count() == 0) {
-            return new Object[] { getShieldRenderingMode().getDescription() };
-        } else {
-            String mode = args.checkString(0);
-            return setShieldRenderingMode(mode);
-        }
-    }
+//    @Callback(doc = "Get or set the current shield rendering mode. Values are 'Invisible', 'Shield', or 'Solid'", getter = true, setter = true)
+//    @Optional.Method(modid = "opencomputers")
+//    public Object[] shieldRenderingMode(Context context, Arguments args) {
+//        if(args.count() == 0) {
+//            return new Object[] { getShieldRenderingMode().getDescription() };
+//        } else {
+//            String mode = args.checkString(0);
+//            return setShieldRenderingMode(mode);
+//        }
+//    }
 
     private Object[] setShieldRenderingMode(String mode) {
         ShieldRenderingMode renderingMode = ShieldRenderingMode.getMode(mode);
@@ -197,29 +205,29 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         return null;
     }
 
-    @Callback(doc = "Return true if the shield is active", getter = true)
-    @Optional.Method(modid = "opencomputers")
-    public Object[] isShieldActive(Context context, Arguments args) {
-        return new Object[] { isShieldActive() };
-    }
-
-    @Callback(doc = "Return true if the shield is composed (i.e. formed)", getter = true)
-    @Optional.Method(modid = "opencomputers")
-    public Object[] isShieldComposed(Context context, Arguments args) {
-        return new Object[] { isShieldComposed() };
-    }
-
-    @Callback(doc = "Form the shield (compose it)")
-    @Optional.Method(modid = "opencomputers")
-    public Object[] composeShield(Context context, Arguments args) {
-        return composeShieldComp(false);
-    }
-
-    @Callback(doc = "Form the shield (compose it). This version works in disconnected mode (template blocks will connect on corners too)")
-    @Optional.Method(modid = "opencomputers")
-    public Object[] composeShieldDsc(Context context, Arguments args) {
-        return composeShieldComp(true);
-    }
+//    @Callback(doc = "Return true if the shield is active", getter = true)
+//    @Optional.Method(modid = "opencomputers")
+//    public Object[] isShieldActive(Context context, Arguments args) {
+//        return new Object[] { isShieldActive() };
+//    }
+//
+//    @Callback(doc = "Return true if the shield is composed (i.e. formed)", getter = true)
+//    @Optional.Method(modid = "opencomputers")
+//    public Object[] isShieldComposed(Context context, Arguments args) {
+//        return new Object[] { isShieldComposed() };
+//    }
+//
+//    @Callback(doc = "Form the shield (compose it)")
+//    @Optional.Method(modid = "opencomputers")
+//    public Object[] composeShield(Context context, Arguments args) {
+//        return composeShieldComp(false);
+//    }
+//
+//    @Callback(doc = "Form the shield (compose it). This version works in disconnected mode (template blocks will connect on corners too)")
+//    @Optional.Method(modid = "opencomputers")
+//    public Object[] composeShieldDsc(Context context, Arguments args) {
+//        return composeShieldComp(true);
+//    }
 
     private Object[] composeShieldComp(boolean ctrl) {
         boolean done = false;
@@ -230,11 +238,11 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         return new Object[] { done };
     }
 
-    @Callback(doc = "Break down the shield (decompose it)")
-    @Optional.Method(modid = "opencomputers")
-    public Object[] decomposeShield(Context context, Arguments args) {
-        return decomposeShieldComp();
-    }
+//    @Callback(doc = "Break down the shield (decompose it)")
+//    @Optional.Method(modid = "opencomputers")
+//    public Object[] decomposeShield(Context context, Arguments args) {
+//        return decomposeShieldComp();
+//    }
 
     private Object[] decomposeShieldComp() {
         boolean done = false;
@@ -333,45 +341,41 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         markDirtyClient();
     }
 
-    @Override
-    public int[] getSlotsForFace(EnumFacing side) {
-        return new int[] { ShieldContainer.SLOT_SHARD };
-    }
+//    @Override
+//    public int[] getSlotsForFace(Direction side) {
+//        return new int[] { ShieldContainer.SLOT_SHARD };
+//    }
+//
+//    @Override
+//    public boolean isItemValidForSlot(int index, ItemStack stack) {
+//        if (index == ShieldContainer.SLOT_SHAPE && stack.getItem() != BuilderSetup.shapeCardItem) {
+//            return false;
+//        }
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean canInsertItem(int index, ItemStack itemStackIn, Direction direction) {
+//        return index == ShieldContainer.SLOT_SHARD && itemStackIn.getItem() == ModItems.dimensionalShardItem;
+//    }
 
-    @Override
-    public boolean isItemValidForSlot(int index, ItemStack stack) {
-        if (index == ShieldContainer.SLOT_SHAPE && stack.getItem() != BuilderSetup.shapeCardItem) {
-            return false;
+    @Nullable
+    private ResourceLocation calculateCamoId() {
+        if (!ShieldRenderingMode.MODE_MIMIC.equals(shieldRenderingMode)) {
+            return null;
         }
-        return true;
-    }
-
-    @Override
-    public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
-        return index == ShieldContainer.SLOT_SHARD && itemStackIn.getItem() == ModItems.dimensionalShardItem;
-    }
-
-    private int[] calculateCamoId() {
-        ItemStack stack = getStackInSlot(ShieldContainer.SLOT_BUFFER);
-        int camoId = -1;
-        int meta = 0;
-        int te = 0;
-
-        if (ShieldRenderingMode.MODE_MIMIC.equals(shieldRenderingMode) && !stack.isEmpty() && stack.getItem() != null) {
-            if (!(stack.getItem() instanceof ItemBlock)) {
-                return new int[] { camoId, meta, te };
-            }
-            Block block = ((ItemBlock) stack.getItem()).getBlock();
-            camoId = Block.getIdFromBlock(block);
-            meta = stack.getMetadata();
-            if (block.hasTileEntity(block.getStateFromMeta(meta))) {
-                te = 1;
-            }
+        LazyOptional<ResourceLocation> map = getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+                .map(h -> h.getStackInSlot(ShieldContainer.SLOT_BUFFER))
+                .filter(stack -> !stack.isEmpty() && stack.getItem() != null)
+                .map(stack -> stack.getItem().getRegistryName());
+        if (map.isPresent()) {
+            return map.orElseThrow(RuntimeException::new);
+        } else {
+            return null;
         }
-        return new int[] { camoId, meta, te };
     }
 
-    private Block calculateShieldBlock(int damageBits, int[] camoId, boolean blockLight) {
+    private Block calculateShieldBlock(int damageBits, ResourceLocation camoId, boolean blockLight) {
         if (!shieldActive || powerTimeout > 0) {
             return Blocks.AIR;
         }
@@ -383,7 +387,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             }
         }
 
-        if (camoId[0] == -1) {
+        if (camoId == null) {
             if (damageBits == 0) {
                 return blockLight ? ShieldSetup.noTickSolidShieldBlockOpaque : ShieldSetup.noTickSolidShieldBlock;
             } else {
@@ -487,9 +491,9 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
                     lootingSword = EnvironmentalSetup.createEnchantedItem(Items.DIAMOND_SWORD, Enchantments.LOOTING, ShieldConfiguration.lootingKillBonus.get());
                 }
                 lootingSword.setItemDamage(0);
-                fakePlayer.setHeldItem(EnumHand.MAIN_HAND, lootingSword);
+                fakePlayer.setHeldItem(Hand.MAIN_HAND, lootingSword);
             } else {
-                fakePlayer.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
+                fakePlayer.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
             }
             source = DamageSource.causePlayerDamage(fakePlayer);
         }
@@ -537,8 +541,8 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     }
 
     @Override
-    public void update() {
-        if (!getWorld().isRemote) {
+    public void tick() {
+        if (!world.isRemote) {
             checkStateServer();
         }
     }
@@ -608,7 +612,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     public void composeShield(boolean ctrl) {
         shieldBlocks.clear();
         blockStateTable.clear();
-        Map<BlockPos, IBlockState> coordinates;
+        Map<BlockPos, BlockState> coordinates;
 
         if (isShapedShield()) {
             // Special shaped mode.
@@ -619,13 +623,13 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
             boolean solid = ShapeCardItem.isSolid(shapeItem);
             BlockPos dimension = ShapeCardItem.getClampedDimension(shapeItem, ShieldConfiguration.maxShieldDimension.get());
             BlockPos offset = ShapeCardItem.getClampedOffset(shapeItem, ShieldConfiguration.maxShieldOffset.get());
-            Map<BlockPos, IBlockState> col = new HashMap<>();
+            Map<BlockPos, BlockState> col = new HashMap<>();
             ShapeCardItem.composeFormula(shapeItem, shape.getFormulaFactory().get(), getWorld(), getPos(), dimension, offset, col, supportedBlocks, solid, false, null);
             coordinates = col;
         } else {
             if(!findTemplateState()) return;
 
-            Map<BlockPos, IBlockState> col = new HashMap<>();
+            Map<BlockPos, BlockState> col = new HashMap<>();
             findTemplateBlocks(col, templateState, ctrl, getPos());
             coordinates = col;
         }
@@ -633,9 +637,9 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         int xCoord = getPos().getX();
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
-        for (Map.Entry<BlockPos, IBlockState> entry : coordinates.entrySet()) {
+        for (Map.Entry<BlockPos, BlockState> entry : coordinates.entrySet()) {
             BlockPos c = entry.getKey();
-            IBlockState state = entry.getValue();
+            BlockState state = entry.getValue();
             int st = -1;
             if (state != null) {
                 for (int i = 0; i < blockStateTable.size(); i++) {
@@ -662,10 +666,10 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     }
 
     private boolean findTemplateState() {
-        for (EnumFacing dir : EnumFacing.VALUES) {
+        for (Direction dir : Direction.VALUES) {
             BlockPos p = getPos().offset(dir);
             if (p.getY() >= 0 && p.getY() < getWorld().getHeight()) {
-                IBlockState state = getWorld().getBlockState(p);
+                BlockState state = getWorld().getBlockState(p);
                 if (ShieldSetup.shieldTemplateBlock.equals(state.getBlock())) {
                     templateState = state;
                     return true;
@@ -676,7 +680,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     }
 
     @Override
-    public void selectBlock(EntityPlayer player, BlockPos pos) {
+    public void selectBlock(PlayerEntity player, BlockPos pos) {
         if (!shieldComposed) {
             Logging.message(player, TextFormatting.YELLOW + "Shield is not composed. Nothing happens!");
             return;
@@ -698,17 +702,17 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
                 Logging.message(player, TextFormatting.YELLOW + "You cannot add template blocks to a shaped shield (using a shape card)!");
                 return;
             }
-            Map<BlockPos, IBlockState> templateBlocks = new HashMap<>();
-            IBlockState state = getWorld().getBlockState(pos);
+            Map<BlockPos, BlockState> templateBlocks = new HashMap<>();
+            BlockState state = getWorld().getBlockState(pos);
             templateBlocks.put(pos, null);
             findTemplateBlocks(templateBlocks, state, false, pos);
 
-            int[] camoId = calculateCamoId();
+            ResourceLocation camoId = calculateCamoId();
             int cddata = calculateShieldCollisionData();
             int damageBits = calculateDamageBits();
             Block block = calculateShieldBlock(damageBits, camoId, blockLight);
 
-            for (Map.Entry<BlockPos, IBlockState> entry : templateBlocks.entrySet()) {
+            for (Map.Entry<BlockPos, BlockState> entry : templateBlocks.entrySet()) {
                 BlockPos templateBlock = entry.getKey();
                 RelCoordinateShield relc = new RelCoordinateShield(templateBlock.getX() - xCoord, templateBlock.getY() - yCoord, templateBlock.getZ() - zCoord, -1);
                 shieldBlocks.add(relc);
@@ -740,7 +744,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         for (RelCoordinateShield c : shieldBlocks) {
             if (Blocks.AIR.equals(block)) {
                 pos.setPos(xCoord + c.getDx(), yCoord + c.getDy(), zCoord + c.getDz());
-                IBlockState oldState = getWorld().getBlockState(pos);
+                BlockState oldState = getWorld().getBlockState(pos);
                 if (oldState.getBlock() instanceof AbstractShieldBlock) {
                     getWorld().setBlockToAir(pos);
                 }
@@ -756,7 +760,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         int yCoord = getPos().getY();
         int zCoord = getPos().getZ();
         BlockPos pp = new BlockPos(xCoord + c.getDx(), yCoord + c.getDy(), zCoord + c.getDz());
-        IBlockState oldState = getWorld().getBlockState(pp);
+        BlockState oldState = getWorld().getBlockState(pp);
         if ((!oldState.getBlock().isReplaceable(getWorld(), pp)) && oldState.getBlock() != ShieldSetup.shieldTemplateBlock) {
             return;
         }
@@ -765,7 +769,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         if (te instanceof NoTickShieldBlockTileEntity) {
             NoTickShieldBlockTileEntity shieldBlockTileEntity = (NoTickShieldBlockTileEntity) te;
             if (c.getState() != -1) {
-                IBlockState state = blockStateTable.get(c.getState());
+                BlockState state = blockStateTable.get(c.getState());
                 // @todo VERY DIRTY! Don't use ID
                 int id = Block.getIdFromBlock(state.getBlock());
                 shieldBlockTileEntity.setCamoBlock(id, state.getBlock().getMetaFromState(state), 0);
@@ -813,7 +817,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
      * @param templateState the state for the shield template block we support
      * @param ctrl if true also scan for blocks in corners
      */
-    private void findTemplateBlocks(Map<BlockPos, IBlockState> coordinateSet, IBlockState templateState, boolean ctrl, BlockPos start) {
+    private void findTemplateBlocks(Map<BlockPos, BlockState> coordinateSet, BlockState templateState, boolean ctrl, BlockPos start) {
         Deque<BlockPos> todo = new ArrayDeque<>();
 
         if (ctrl) {
@@ -833,12 +837,12 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         }
     }
 
-    private void addToTodoStraight(Map<BlockPos, IBlockState> coordinateSet, Deque<BlockPos> todo, BlockPos coordinate, IBlockState templateState) {
-        for (EnumFacing dir : EnumFacing.VALUES) {
+    private void addToTodoStraight(Map<BlockPos, BlockState> coordinateSet, Deque<BlockPos> todo, BlockPos coordinate, BlockState templateState) {
+        for (Direction dir : Direction.VALUES) {
             BlockPos pp = coordinate.offset(dir);
             if (pp.getY() >= 0 && pp.getY() < getWorld().getHeight()) {
                 if (!coordinateSet.containsKey(pp)) {
-                    IBlockState state = getWorld().getBlockState(pp);
+                    BlockState state = getWorld().getBlockState(pp);
                     if (state == templateState) {
                         if (!todo.contains(pp)) {
                             todo.addLast(pp);
@@ -849,7 +853,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         }
     }
 
-    private void addToTodoCornered(Map<BlockPos, IBlockState> coordinateSet, Deque<BlockPos> todo, BlockPos coordinate, IBlockState templateState) {
+    private void addToTodoCornered(Map<BlockPos, BlockState> coordinateSet, Deque<BlockPos> todo, BlockPos coordinate, BlockState templateState) {
         int x = coordinate.getX();
         int y = coordinate.getY();
         int z = coordinate.getZ();
@@ -861,7 +865,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
                         if (yy >= 0 && yy < getWorld().getHeight()) {
                             c.setPos(xx, yy, zz);
                             if (!coordinateSet.containsKey(c)) {
-                                IBlockState state = getWorld().getBlockState(c);
+                                BlockState state = getWorld().getBlockState(c);
                                 if (state == templateState) {
                                     if (!todo.contains(c)) {
                                         todo.addLast(c.toImmutable());
@@ -906,7 +910,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
 //
 
     @Override
-    public void readClientDataFromNBT(NBTTagCompound tagCompound) {
+    public void readClientDataFromNBT(CompoundNBT tagCompound) {
         powerLevel = tagCompound.getByte("powered");
         shieldComposed = tagCompound.getBoolean("composed");
         shieldActive = tagCompound.getBoolean("active");
@@ -937,7 +941,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     }
 
     @Override
-    public void writeClientDataToNBT(NBTTagCompound tagCompound) {
+    public void writeClientDataToNBT(CompoundNBT tagCompound) {
         tagCompound.setByte("powered", (byte) powerLevel);
         tagCompound.setBoolean("composed", shieldComposed);
         tagCompound.setBoolean("active", shieldActive);
@@ -958,7 +962,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(CompoundNBT tagCompound) {
         super.readFromNBT(tagCompound);
         shieldComposed = tagCompound.getBoolean("composed");
         shieldActive = tagCompound.getBoolean("active");
@@ -994,7 +998,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
 
             NBTTagList list = tagCompound.getTagList("gstates", Constants.NBT.TAG_COMPOUND);
             for (int i = 0 ; i < list.tagCount() ; i++) {
-                NBTTagCompound tc = (NBTTagCompound) list.get(i);
+                CompoundNBT tc = (CompoundNBT) list.get(i);
                 String b = tc.getString("b");
                 int m = tc.getInteger("m");
                 Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(b));
@@ -1002,7 +1006,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
                     block = Blocks.STONE;
                     m = 0;
                 }
-                IBlockState state = block.getStateFromMeta(m);
+                BlockState state = block.getStateFromMeta(m);
                 blockStateTable.add(state);
             }
         } else {
@@ -1019,7 +1023,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     }
 
     @Override
-    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+    public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
 
@@ -1036,19 +1040,19 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         readFiltersFromNBT(tagCompound);
     }
 
-    private void readFiltersFromNBT(NBTTagCompound tagCompound) {
+    private void readFiltersFromNBT(CompoundNBT tagCompound) {
         filters.clear();
         NBTTagList filterList = tagCompound.getTagList("filters", Constants.NBT.TAG_COMPOUND);
         if (filterList != null) {
             for (int i = 0 ; i < filterList.tagCount() ; i++) {
-                NBTTagCompound compound = filterList.getCompoundTagAt(i);
+                CompoundNBT compound = filterList.getCompoundTagAt(i);
                 filters.add(AbstractShieldFilter.createFilter(compound));
             }
         }
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setBoolean("composed", shieldComposed);
         tagCompound.setBoolean("active", shieldActive);
@@ -1072,8 +1076,8 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         tagCompound.setByteArray("relcoordsNew", blocks);
 
         NBTTagList list = new NBTTagList();
-        for (IBlockState state : blockStateTable) {
-            NBTTagCompound tc = new NBTTagCompound();
+        for (BlockState state : blockStateTable) {
+            CompoundNBT tc = new CompoundNBT();
             tc.setString("b", state.getBlock().getRegistryName().toString());
             tc.setInteger("m", state.getBlock().getMetaFromState(state));
             list.appendTag(tc);
@@ -1084,7 +1088,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     }
 
     @Override
-    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+    public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
         tagCompound.setInteger("visMode", shieldRenderingMode.ordinal());
@@ -1097,10 +1101,10 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
         writeFiltersToNBT(tagCompound);
     }
 
-    private void writeFiltersToNBT(NBTTagCompound tagCompound) {
+    private void writeFiltersToNBT(CompoundNBT tagCompound) {
         NBTTagList filterList = new NBTTagList();
         for (ShieldFilter filter : filters) {
-            NBTTagCompound compound = new NBTTagCompound();
+            CompoundNBT compound = new CompoundNBT();
             filter.writeToNBT(compound);
             filterList.appendTag(compound);
         }
@@ -1231,7 +1235,7 @@ public class ShieldTEBase extends GenericEnergyReceiverTileEntity implements Def
     }
 
     @Override
-    public boolean isUsableByPlayer(EntityPlayer player) {
+    public boolean isUsableByPlayer(PlayerEntity player) {
         return canPlayerAccess(player);
     }
 }

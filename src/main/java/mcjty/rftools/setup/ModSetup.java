@@ -21,10 +21,10 @@ import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.world.ModWorldgen;
 import mcjty.rftools.world.WorldTickHandler;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -102,12 +102,12 @@ public class ModSetup extends DefaultModSetup {
     private void setupCapabilities() {
         CapabilityManager.INSTANCE.register(BuffProperties.class, new Capability.IStorage<BuffProperties>() {
             @Override
-            public NBTBase writeNBT(Capability<BuffProperties> capability, BuffProperties instance, EnumFacing side) {
+            public NBTBase writeNBT(Capability<BuffProperties> capability, BuffProperties instance, Direction side) {
                 throw new UnsupportedOperationException();
             }
 
             @Override
-            public void readNBT(Capability<BuffProperties> capability, BuffProperties instance, EnumFacing side, NBTBase nbt) {
+            public void readNBT(Capability<BuffProperties> capability, BuffProperties instance, Direction side, NBTBase nbt) {
                 throw new UnsupportedOperationException();
             }
 
@@ -117,12 +117,12 @@ public class ModSetup extends DefaultModSetup {
 
         CapabilityManager.INSTANCE.register(FavoriteDestinationsProperties.class, new Capability.IStorage<FavoriteDestinationsProperties>() {
             @Override
-            public NBTBase writeNBT(Capability<FavoriteDestinationsProperties> capability, FavoriteDestinationsProperties instance, EnumFacing side) {
+            public NBTBase writeNBT(Capability<FavoriteDestinationsProperties> capability, FavoriteDestinationsProperties instance, Direction side) {
                 throw new UnsupportedOperationException();
             }
 
             @Override
-            public void readNBT(Capability<FavoriteDestinationsProperties> capability, FavoriteDestinationsProperties instance, EnumFacing side, NBTBase nbt) {
+            public void readNBT(Capability<FavoriteDestinationsProperties> capability, FavoriteDestinationsProperties instance, Direction side, NBTBase nbt) {
                 throw new UnsupportedOperationException();
             }
 
@@ -132,12 +132,12 @@ public class ModSetup extends DefaultModSetup {
 
         CapabilityManager.INSTANCE.register(IModuleProvider.class, new Capability.IStorage<IModuleProvider>() {
             @Override
-            public NBTBase writeNBT(Capability<IModuleProvider> capability, IModuleProvider instance, EnumFacing side) {
+            public NBTBase writeNBT(Capability<IModuleProvider> capability, IModuleProvider instance, Direction side) {
                 throw new UnsupportedOperationException();
             }
 
             @Override
-            public void readNBT(Capability<IModuleProvider> capability, IModuleProvider instance, EnumFacing side, NBTBase nbt) {
+            public void readNBT(Capability<IModuleProvider> capability, IModuleProvider instance, Direction side, NBTBase nbt) {
                 throw new UnsupportedOperationException();
             }
 
@@ -154,7 +154,7 @@ public class ModSetup extends DefaultModSetup {
     public static Method Block_getSilkTouch;
 
     private void reflect() {
-        Block_getSilkTouch = ReflectionHelper.findMethod(Block.class, "getSilkTouchDrop", "func_180643_i", IBlockState.class);
+        Block_getSilkTouch = ReflectionHelper.findMethod(Block.class, "getSilkTouchDrop", "func_180643_i", BlockState.class);
     }
 
     @Override

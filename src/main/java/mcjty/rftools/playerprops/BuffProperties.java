@@ -2,9 +2,9 @@ package mcjty.rftools.playerprops;
 
 import mcjty.rftools.PlayerBuff;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -107,20 +107,20 @@ public class BuffProperties {
         player.sendPlayerAbilities();
     }
 
-    public static void enableElevatorMode(EntityPlayer player) {
+    public static void enableElevatorMode(PlayerEntity player) {
         BuffProperties buffProperties = PlayerExtendedProperties.getBuffProperties(player);
         buffProperties.onElevator = true;
         buffProperties.performBuffs((EntityPlayerMP) player);
     }
 
-    public static void disableElevatorMode(EntityPlayer player) {
+    public static void disableElevatorMode(PlayerEntity player) {
         BuffProperties buffProperties = PlayerExtendedProperties.getBuffProperties(player);
         buffProperties.onElevator = false;
         player.capabilities.isFlying = false;
         buffProperties.performBuffs((EntityPlayerMP) player);
     }
 
-    public static void addBuffToPlayer(EntityPlayer player, PlayerBuff buff, int ticks) {
+    public static void addBuffToPlayer(PlayerEntity player, PlayerBuff buff, int ticks) {
         BuffProperties buffProperties = PlayerExtendedProperties.getBuffProperties(player);
         buffProperties.addBuff((EntityPlayerMP) player, buff, ticks);
     }
@@ -140,7 +140,7 @@ public class BuffProperties {
         return buffs.containsKey(buff);
     }
 
-    public void saveNBTData(NBTTagCompound compound) {
+    public void saveNBTData(CompoundNBT compound) {
         compound.setBoolean("onElevator", onElevator);
         compound.setInteger("buffTicks", buffTimeout);
         compound.setBoolean("allowFlying", allowFlying);
@@ -158,7 +158,7 @@ public class BuffProperties {
         compound.setIntArray("buffTimeouts", timeoutArray);
     }
 
-    public void loadNBTData(NBTTagCompound compound) {
+    public void loadNBTData(CompoundNBT compound) {
         onElevator = compound.getBoolean("onElevator");
         buffTimeout = compound.getInteger("buffTicks");
         int[] buffArray = compound.getIntArray("buffs");

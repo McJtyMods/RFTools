@@ -1,7 +1,7 @@
 package mcjty.rftools.items.storage;
 
 import mcjty.lib.container.*;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -22,7 +22,7 @@ public class StorageFilterContainer extends GenericContainer {
         }
     };
 
-    public StorageFilterContainer(EntityPlayer player) {
+    public StorageFilterContainer(PlayerEntity player) {
         super(factory);
         addInventory(CONTAINER_INVENTORY, new StorageFilterInventory(player));
         addInventory(ContainerFactory.CONTAINER_PLAYER, player.inventory);
@@ -35,7 +35,7 @@ public class StorageFilterContainer extends GenericContainer {
 		if (slotType == SlotType.SLOT_PLAYERHOTBAR && index == cardIndex) {
 			return new BaseSlot(inventories.get(slotFactory.getInventoryName()), slotFactory.getIndex(), slotFactory.getX(), slotFactory.getY()) {
 				@Override
-				public boolean canTakeStack(EntityPlayer player) {
+				public boolean canTakeStack(PlayerEntity player) {
 					// We don't want to take the stack from this slot.
 					return false;
 				}
@@ -46,7 +46,7 @@ public class StorageFilterContainer extends GenericContainer {
 	}
 
 	@Override
-	public ItemStack transferStackInSlot(EntityPlayer player, int index) {
+	public ItemStack transferStackInSlot(PlayerEntity player, int index) {
 		Slot slot = this.inventorySlots.get(index);
 
 		if (slot != null && slot.getHasStack() && index >= FILTER_SLOTS && index < FILTER_SLOTS + 36) {

@@ -4,7 +4,7 @@ import mcjty.rftools.PlayerBuff;
 import mcjty.rftools.blocks.environmental.EnvironmentalControllerTileEntity;
 import mcjty.rftools.playerprops.BuffProperties;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
@@ -66,8 +66,8 @@ public abstract class PotionEffectModule implements EnvironmentModule {
 
     private void processPlayers(World world, BlockPos pos, int radius, int miny, int maxy, EnvironmentalControllerTileEntity controllerTileEntity) {
         double maxsqdist = radius * radius;
-        List<EntityPlayer> players = new ArrayList<>(world.playerEntities);
-        for (EntityPlayer player : players) {
+        List<PlayerEntity> players = new ArrayList<>(world.playerEntities);
+        for (PlayerEntity player : players) {
             double py = player.posY;
             if (py >= miny && py <= maxy) {
                 double px = player.posX;
@@ -99,19 +99,19 @@ public abstract class PotionEffectModule implements EnvironmentModule {
                 double sqdist = (px-pos.getX()) * (px-pos.getX()) + (pz-pos.getZ()) * (pz-pos.getZ());
                 if (sqdist < maxsqdist) {
                     if (controllerTileEntity.isEntityAffected(entity)) {
-                        if (!(entity instanceof EntityPlayer) || allowedForPlayers()) {
+                        if (!(entity instanceof PlayerEntity) || allowedForPlayers()) {
                             entity.addPotionEffect(new PotionEffect(potion, MAXTICKS * 3, amplifier, true, false));
                             PlayerBuff buff = getBuff();
                             if (buff != null) {
-                                if (entity instanceof EntityPlayer) {
-                                    BuffProperties.addBuffToPlayer((EntityPlayer) entity, buff, MAXTICKS);
+                                if (entity instanceof PlayerEntity) {
+                                    BuffProperties.addBuffToPlayer((PlayerEntity) entity, buff, MAXTICKS);
                                 }
                             }
                         }
-                    } else if (entity instanceof EntityPlayer) {
+                    } else if (entity instanceof PlayerEntity) {
                         PlayerBuff buff = getBuff();
                         if (buff != null) {
-                            BuffProperties.addBuffToPlayer((EntityPlayer) entity, buff, MAXTICKS);
+                            BuffProperties.addBuffToPlayer((PlayerEntity) entity, buff, MAXTICKS);
                         }
                     }
                 }

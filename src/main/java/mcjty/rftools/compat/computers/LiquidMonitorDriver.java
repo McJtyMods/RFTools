@@ -8,7 +8,7 @@ import mcjty.lib.integration.computers.AbstractOCDriver;
 import mcjty.rftools.blocks.monitor.LiquidMonitorBlockTileEntity;
 import mcjty.rftools.blocks.monitor.RFMonitorMode;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
@@ -112,7 +112,7 @@ public class LiquidMonitorDriver {
         }
 
         @Override
-        public AbstractManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing side, TileEntity tile) {
+        public AbstractManagedEnvironment createEnvironment(World world, BlockPos pos, Direction side, TileEntity tile) {
             return new InternalManagedEnvironment((LiquidMonitorBlockTileEntity) tile);
         }
     }

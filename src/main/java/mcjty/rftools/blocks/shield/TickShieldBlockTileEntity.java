@@ -4,7 +4,7 @@ import mcjty.rftools.blocks.shield.filters.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 
 import java.util.List;
@@ -35,8 +35,8 @@ public class TickShieldBlockTileEntity extends NoTickShieldBlockTileEntity {
                         if (checkEntityDamage(shieldTileEntity, AnimalFilter.ANIMAL)) {
                             shieldTileEntity.applyDamageToEntity(entity);
                         }
-                    } else if ((damageBits & AbstractShieldBlock.META_PLAYERS) != 0 && entity instanceof EntityPlayer) {
-                        if (checkPlayerDamage(shieldTileEntity, (EntityPlayer) entity)) {
+                    } else if ((damageBits & AbstractShieldBlock.META_PLAYERS) != 0 && entity instanceof PlayerEntity) {
+                        if (checkPlayerDamage(shieldTileEntity, (PlayerEntity) entity)) {
                             shieldTileEntity.applyDamageToEntity(entity);
                         }
                     }
@@ -57,7 +57,7 @@ public class TickShieldBlockTileEntity extends NoTickShieldBlockTileEntity {
         return false;
     }
 
-    private boolean checkPlayerDamage(ShieldTEBase shieldTileEntity, EntityPlayer entity) {
+    private boolean checkPlayerDamage(ShieldTEBase shieldTileEntity, PlayerEntity entity) {
         List<ShieldFilter> filters = shieldTileEntity.getFilters();
         for (ShieldFilter filter : filters) {
             if (DefaultFilter.DEFAULT.equals(filter.getFilterName())) {

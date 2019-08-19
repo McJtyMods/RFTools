@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.shield.filters;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.varia.Logging;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 public abstract class AbstractShieldFilter implements ShieldFilter {
@@ -20,28 +20,28 @@ public abstract class AbstractShieldFilter implements ShieldFilter {
 
     @Override
     public void toBytes(ByteBuf buf) {
-        NBTTagCompound tagCompound = new NBTTagCompound();
+        CompoundNBT tagCompound = new CompoundNBT();
         writeToNBT(tagCompound);
         ByteBufUtils.writeTag(buf, tagCompound);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(CompoundNBT tagCompound) {
         action = tagCompound.getInteger("action");
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public void writeToNBT(CompoundNBT tagCompound) {
         tagCompound.setString("type", getFilterName());
         tagCompound.setInteger("action", action);
     }
 
     public static ShieldFilter createFilter(ByteBuf buf) {
-        NBTTagCompound compound = ByteBufUtils.readTag(buf);
+        CompoundNBT compound = ByteBufUtils.readTag(buf);
         return createFilter(compound);
     }
 
-    public static ShieldFilter createFilter(NBTTagCompound compound) {
+    public static ShieldFilter createFilter(CompoundNBT compound) {
         String type = compound.getString("type");
         ShieldFilter filter = createFilter(type);
         filter.readFromNBT(compound);

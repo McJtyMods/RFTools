@@ -24,17 +24,17 @@ import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -236,14 +236,14 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     public boolean isEntityAffected(Entity entity) {
         switch (mode) {
             case MODE_BLACKLIST:
-                if (entity instanceof EntityPlayer) {
-                    return isPlayerAffected((EntityPlayer) entity);
+                if (entity instanceof PlayerEntity) {
+                    return isPlayerAffected((PlayerEntity) entity);
                 } else {
                     return false;
                 }
             case MODE_WHITELIST:
-                if (entity instanceof EntityPlayer) {
-                    return isPlayerAffected((EntityPlayer) entity);
+                if (entity instanceof PlayerEntity) {
+                    return isPlayerAffected((PlayerEntity) entity);
                 } else {
                     return false;
                 }
@@ -254,8 +254,8 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
             case MODE_MOBS:
                 return entity instanceof IAnimals;
             case MODE_ALL:
-                if (entity instanceof EntityPlayer) {
-                    return isPlayerAffected((EntityPlayer) entity);
+                if (entity instanceof PlayerEntity) {
+                    return isPlayerAffected((PlayerEntity) entity);
                 } else {
                     return true;
                 }
@@ -263,7 +263,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         return false;
     }
 
-    public boolean isPlayerAffected(EntityPlayer player) {
+    public boolean isPlayerAffected(PlayerEntity player) {
         if (mode == EnvironmentalMode.MODE_WHITELIST) {
             return players.contains(player.getName());
         } else if (mode == EnvironmentalMode.MODE_BLACKLIST) {
@@ -444,17 +444,17 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     }
 
     @Override
-    public int[] getSlotsForFace(EnumFacing side) {
+    public int[] getSlotsForFace(Direction side) {
         return CONTAINER_FACTORY.getAccessibleSlots();
     }
 
     @Override
-    public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
+    public boolean canExtractItem(int index, ItemStack stack, Direction direction) {
         return CONTAINER_FACTORY.isOutputSlot(index);
     }
 
     @Override
-    public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
+    public boolean canInsertItem(int index, ItemStack itemStackIn, Direction direction) {
         return CONTAINER_FACTORY.isInputSlot(index);
     }
 
@@ -476,7 +476,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     }
 
     @Override
-    public boolean isUsableByPlayer(EntityPlayer player) {
+    public boolean isUsableByPlayer(PlayerEntity player) {
         return canPlayerAccess(player);
     }
 
@@ -491,14 +491,14 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(CompoundNBT tagCompound) {
         super.readFromNBT(tagCompound);
         totalRfPerTick = tagCompound.getInteger("rfPerTick");
         active = tagCompound.getBoolean("active");
     }
 
     @Override
-    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+    public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
         radius = tagCompound.getInteger("radius");
@@ -526,7 +526,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("rfPerTick", totalRfPerTick);
         tagCompound.setBoolean("active", active);
@@ -534,7 +534,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     }
 
     @Override
-    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+    public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
         tagCompound.setInteger("radius", radius);
@@ -616,13 +616,13 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     }
 
     @Override
-    public void onBlockBreak(World world, BlockPos pos, IBlockState state) {
+    public void onBlockBreak(World world, BlockPos pos, BlockState state) {
         deactivate();
     }
 
     @Override
     @Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
         super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
         int rfPerTick = getTotalRfPerTick();
         int volume = getVolume();
@@ -642,7 +642,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     @Optional.Method(modid = "waila")
     public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
         super.addWailaBody(itemStack, currenttip, accessor, config);
-        NBTTagCompound tagCompound = accessor.getNBTData();
+        CompoundNBT tagCompound = accessor.getNBTData();
         if (tagCompound != null) {
             int rfPerTick = getTotalRfPerTick();
             int volume = getVolume();

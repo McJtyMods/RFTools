@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.endergen;
 
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -18,7 +18,7 @@ public class EndergenicPearl {
         this.age = age;
     }
 
-    public EndergenicPearl(NBTTagCompound tagCompound) {
+    public EndergenicPearl(CompoundNBT tagCompound) {
         ticksLeft = tagCompound.getInteger("t");
         destination = BlockPosTools.readFromNBT(tagCompound, "dest");
         age = tagCompound.getInteger("age");
@@ -53,8 +53,8 @@ public class EndergenicPearl {
         return false;
     }
 
-    public NBTTagCompound getTagCompound() {
-        NBTTagCompound tagCompound = new NBTTagCompound();
+    public CompoundNBT getTagCompound() {
+        CompoundNBT tagCompound = new CompoundNBT();
         tagCompound.setInteger("t", ticksLeft);
         BlockPosTools.writeToNBT(tagCompound, "dest", destination);
         tagCompound.setInteger("age", age);

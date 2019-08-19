@@ -6,7 +6,7 @@ import mcjty.rftools.blocks.storage.ModularStorageItemContainer;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.storage.RemoteStorageItemContainer;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerContainer;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -79,7 +79,7 @@ public class PacketGridSync {
         }
     }
 
-    protected CraftingGridProvider handleMessage(World world, EntityPlayer player) {
+    protected CraftingGridProvider handleMessage(World world, PlayerEntity player) {
         CraftingGridProvider provider = null;
         if (pos == null) {
             // Handle tablet version

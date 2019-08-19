@@ -9,14 +9,13 @@ import mcjty.lib.varia.Logging;
 import mcjty.rftools.ForgeEventHandlers;
 import mcjty.rftools.blocks.teleporter.*;
 import mcjty.rftools.setup.GuiProxy;
-import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
@@ -62,24 +61,24 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
     }
 
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
+    public ICapabilityProvider initCapabilities(ItemStack stack, CompoundNBT nbt) {
         return new ItemCapabilityProvider(stack, this);
     }
 
     @Override
     public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
         if (!worldIn.isRemote) {
-            NBTTagCompound tagCompound = stack.getTagCompound();
+            CompoundNBT tagCompound = stack.getTag();
             if (tagCompound == null) {
                 return;
             }
             if (!tagCompound.hasKey("tpTimer")) {
                 return;
             }
-            if (!(entityIn instanceof EntityPlayer)) {
+            if (!(entityIn instanceof PlayerEntity)) {
                 return;
             }
-            EntityPlayer player = (EntityPlayer) entityIn;
+            PlayerEntity player = (PlayerEntity) entityIn;
             int timer = tagCompound.getInteger("tpTimer");
             timer--;
             if (timer <= 0) {
@@ -111,7 +110,7 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
         }
 
         ModelLoader.setCustomMeshDefinition(this, stack -> {
-            NBTTagCompound tagCompound = stack.getTagCompound();
+            CompoundNBT tagCompound = stack.getTag();
             int energy = 0;
             if (tagCompound != null) {
                 energy = tagCompound.getInteger("Energy");
@@ -139,7 +138,7 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (!player.isSneaking()) {
             startTeleport(stack, player, world);
@@ -149,11 +148,11 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
         return super.onItemRightClick(world, player, hand);
     }
 
-    protected void selectReceiver(ItemStack stack, World world, EntityPlayer player) {
+    protected void selectReceiver(ItemStack stack, World world, PlayerEntity player) {
     }
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public ActionResultType onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
         if (player.isSneaking()) {
             TileEntity te = world.getTileEntity(pos);
@@ -161,11 +160,11 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
         } else {
             startTeleport(stack, player, world);
         }
-        return EnumActionResult.SUCCESS;
+        return ActionResultType.SUCCESS;
     }
 
-    private void startTeleport(ItemStack stack, EntityPlayer player, World world) {
-        NBTTagCompound tagCompound = stack.getTagCompound();
+    private void startTeleport(ItemStack stack, PlayerEntity player, World world) {
+        CompoundNBT tagCompound = stack.getTag();
         if (tagCompound == null || (!tagCompound.hasKey("target")) || tagCompound.getInteger("target") == -1) {
             if (world.isRemote) {
                 Logging.message(player, TextFormatting.RED + "The charged porter has no target.");
@@ -223,11 +222,11 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
         }
     }
 
-    private void setTarget(ItemStack stack, EntityPlayer player, World world, TileEntity te) {
-        NBTTagCompound tagCompound = stack.getTagCompound();
+    private void setTarget(ItemStack stack, PlayerEntity player, World world, TileEntity te) {
+        CompoundNBT tagCompound = stack.getTag();
 
         if (tagCompound == null) {
-            tagCompound = new NBTTagCompound();
+            tagCompound = new CompoundNBT();
         }
         int id = -1;
         if (te instanceof MatterReceiverTileEntity) {
@@ -247,14 +246,14 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
         stack.setTagCompound(tagCompound);
     }
 
-    protected void selectOnReceiver(EntityPlayer player, World world, NBTTagCompound tagCompound, int id) {
+    protected void selectOnReceiver(PlayerEntity player, World world, CompoundNBT tagCompound, int id) {
         if (world.isRemote) {
             Logging.message(player, "Charged porter target is set to " + id + ".");
         }
         tagCompound.setInteger("target", id);
     }
 
-    protected void selectOnThinAir(EntityPlayer player, World world, NBTTagCompound tagCompound, ItemStack stack) {
+    protected void selectOnThinAir(PlayerEntity player, World world, CompoundNBT tagCompound, ItemStack stack) {
         if (world.isRemote) {
             Logging.message(player, "Charged porter is cleared.");
         }
@@ -264,7 +263,7 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
     @Override
     public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
             list.add(TextFormatting.BLUE + "Energy: " + tagCompound.getInteger("Energy") + " RF");
             if (tagCompound.hasKey("target")) {
@@ -285,54 +284,54 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
 
     @Override
     public long receiveEnergyL(ItemStack container, long maxReceive, boolean simulate) {
-        if (container.getTagCompound() == null) {
-            container.setTagCompound(new NBTTagCompound());
+        if (container.getTag() == null) {
+            container.setTagCompound(new CompoundNBT());
         }
-        int energy = container.getTagCompound().getInteger("Energy");
+        int energy = container.getTag().getInteger("Energy");
         int energyReceived = Math.min(capacity - energy, Math.min(this.maxReceive, EnergyTools.unsignedClampToInt(maxReceive)));
 
         if (!simulate) {
             energy += energyReceived;
-            container.getTagCompound().setInteger("Energy", energy);
+            container.getTag().setInteger("Energy", energy);
         }
         return energyReceived;
     }
 
     @Override
     public long extractEnergyL(ItemStack container, long maxExtract, boolean simulate) {
-        if (container.getTagCompound() == null || !container.getTagCompound().hasKey("Energy")) {
+        if (container.getTag() == null || !container.getTag().hasKey("Energy")) {
             return 0;
         }
-        int energy = container.getTagCompound().getInteger("Energy");
+        int energy = container.getTag().getInteger("Energy");
         int energyExtracted = Math.min(energy, Math.min(this.maxExtract, EnergyTools.unsignedClampToInt(maxExtract)));
 
         if (!simulate) {
             energy -= energyExtracted;
-            container.getTagCompound().setInteger("Energy", energy);
+            container.getTag().setInteger("Energy", energy);
         }
         return energyExtracted;
     }
 
     public int extractEnergyNoMax(ItemStack container, int maxExtract, boolean simulate) {
-        if (container.getTagCompound() == null || !container.getTagCompound().hasKey("Energy")) {
+        if (container.getTag() == null || !container.getTag().hasKey("Energy")) {
             return 0;
         }
-        int energy = container.getTagCompound().getInteger("Energy");
+        int energy = container.getTag().getInteger("Energy");
         int energyExtracted = Math.min(energy, maxExtract);
 
         if (!simulate) {
             energy -= energyExtracted;
-            container.getTagCompound().setInteger("Energy", energy);
+            container.getTag().setInteger("Energy", energy);
         }
         return energyExtracted;
     }
 
     @Override
     public long getEnergyStoredL(ItemStack container) {
-        if (container.getTagCompound() == null || !container.getTagCompound().hasKey("Energy")) {
+        if (container.getTag() == null || !container.getTag().hasKey("Energy")) {
             return 0;
         }
-        return container.getTagCompound().getInteger("Energy");
+        return container.getTag().getInteger("Energy");
     }
 
     @Override

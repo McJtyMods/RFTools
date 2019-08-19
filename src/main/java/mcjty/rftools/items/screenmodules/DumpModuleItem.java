@@ -10,18 +10,17 @@ import mcjty.rftools.blocks.screens.modules.DumpScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.DumpClientScreenModule;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import mcjty.rftools.setup.GuiProxy;
-import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -78,7 +77,7 @@ public class DumpModuleItem extends GenericRFToolsItem implements IModuleProvide
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.DUMP_RFPERTICK.get() + " RF/tick");
         boolean hasTarget = false;
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
             hasTarget = addModuleInformation(list, itemStack);
         }
@@ -98,11 +97,11 @@ public class DumpModuleItem extends GenericRFToolsItem implements IModuleProvide
         if (!stack.hasTagCompound()) {
             return false;
         }
-        list.add(TextFormatting.YELLOW + "Label: " + stack.getTagCompound().getString("text"));
+        list.add(TextFormatting.YELLOW + "Label: " + stack.getTag().getString("text"));
 
         if (RFToolsTools.hasModuleTarget(stack)) {
             BlockPos pos = RFToolsTools.getPositionFromModule(stack);
-            String monitorname = stack.getTagCompound().getString("monitorname");
+            String monitorname = stack.getTag().getString("monitorname");
             list.add(TextFormatting.YELLOW + "Monitoring: " + monitorname + " (at " + BlockPosTools.toString(pos) + ")");
             return true;
         }
@@ -110,11 +109,11 @@ public class DumpModuleItem extends GenericRFToolsItem implements IModuleProvide
     }
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public ActionResultType onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof StorageScannerTileEntity) {
-            IBlockState state = world.getBlockState(pos);
+            BlockState state = world.getBlockState(pos);
             Block block = state.getBlock();
             String name = "<invalid>";
             if (block != null && !block.isAir(state, world, pos)) {
@@ -130,6 +129,6 @@ public class DumpModuleItem extends GenericRFToolsItem implements IModuleProvide
                 Logging.message(player, "Storage module is cleared");
             }
         }
-        return EnumActionResult.SUCCESS;
+        return ActionResultType.SUCCESS;
     }
 }

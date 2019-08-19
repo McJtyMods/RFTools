@@ -4,7 +4,7 @@ import javax.annotation.Nullable;
 
 import mcjty.lib.varia.EnergyTools;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 
 public class BlockInfo {
@@ -12,7 +12,7 @@ public class BlockInfo {
     private long storedPower;
     private long capacity;
 
-    public BlockInfo(TileEntity tileEntity, @Nullable EnumFacing side, BlockPos coordinate) {
+    public BlockInfo(TileEntity tileEntity, @Nullable Direction side, BlockPos coordinate) {
         this.coordinate = coordinate;
         fetchEnergyValues(tileEntity, side);
     }
@@ -27,7 +27,7 @@ public class BlockInfo {
         return coordinate;
     }
 
-    private void fetchEnergyValues(TileEntity tileEntity, @Nullable EnumFacing side) {
+    private void fetchEnergyValues(TileEntity tileEntity, @Nullable Direction side) {
         EnergyTools.EnergyLevel energyLevel = EnergyTools.getEnergyLevel(tileEntity, side);
         capacity = energyLevel.getMaxEnergy();
         storedPower = energyLevel.getEnergy();

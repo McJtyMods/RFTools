@@ -3,8 +3,8 @@ package mcjty.rftools.blocks.builder;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.Logging;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 
@@ -21,7 +21,7 @@ public class SpaceChamberControllerTileEntity extends GenericTileEntity {
         return maxCorner;
     }
 
-    public void createChamber(EntityPlayer player) {
+    public void createChamber(PlayerEntity player) {
         int x1 = getPos().getX();
         int y1 = getPos().getY();
         int z1 = getPos().getZ();
@@ -128,20 +128,20 @@ public class SpaceChamberControllerTileEntity extends GenericTileEntity {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(CompoundNBT tagCompound) {
         super.readFromNBT(tagCompound);
         minCorner = BlockPosTools.readFromNBT(tagCompound, "minCorner");
         maxCorner = BlockPosTools.readFromNBT(tagCompound, "maxCorner");
     }
 
     @Override
-    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+    public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         channel = tagCompound.getInteger("channel");
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         super.writeToNBT(tagCompound);
         BlockPosTools.writeToNBT(tagCompound, "minCorner", minCorner);
         BlockPosTools.writeToNBT(tagCompound, "maxCorner", maxCorner);
@@ -149,7 +149,7 @@ public class SpaceChamberControllerTileEntity extends GenericTileEntity {
     }
 
     @Override
-    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+    public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         tagCompound.setInteger("channel", channel);
     }

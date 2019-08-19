@@ -8,9 +8,9 @@ import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.GlobalCoordinate;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ITickable;
@@ -176,7 +176,7 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     public int checkStatus() {
-        IBlockState state = getWorld().getBlockState(getPos().up());
+        BlockState state = getWorld().getBlockState(getPos().up());
         Block block = state.getBlock();
         if (!block.isAir(state, getWorld(), getPos().up())) {
             return DialingDeviceTileEntity.DIAL_RECEIVER_BLOCKED_MASK;
@@ -194,13 +194,13 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(CompoundNBT tagCompound) {
         super.readFromNBT(tagCompound);
         cachedPos = new BlockPos(tagCompound.getInteger("cachedX"), tagCompound.getInteger("cachedY"), tagCompound.getInteger("cachedZ"));
     }
 
     @Override
-    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+    public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         name = tagCompound.getString("tpName");
 
@@ -222,7 +222,7 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         super.writeToNBT(tagCompound);
         if (cachedPos != null) {
             tagCompound.setInteger("cachedX", cachedPos.getX());
@@ -233,7 +233,7 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     @Override
-    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+    public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         if (name != null && !name.isEmpty()) {
             tagCompound.setString("tpName", name);

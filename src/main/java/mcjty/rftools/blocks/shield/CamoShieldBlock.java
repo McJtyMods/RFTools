@@ -3,13 +3,13 @@ package mcjty.rftools.blocks.shield;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -37,7 +37,7 @@ public class CamoShieldBlock extends AbstractShieldBlock {
         // To make sure that our ISBM model is chosen for all states we use this custom state mapper:
         StateMapperBase ignoreState = new StateMapperBase() {
             @Override
-            protected ModelResourceLocation getModelResourceLocation(IBlockState iBlockState) {
+            protected ModelResourceLocation getModelResourceLocation(BlockState BlockState) {
                 return CamoBakedModel.modelFacade;
             }
         };
@@ -50,23 +50,23 @@ public class CamoShieldBlock extends AbstractShieldBlock {
     }
 
     @Override
-    public boolean isFullBlock(IBlockState state) {
+    public boolean isFullBlock(BlockState state) {
         return false;
     }
 
     @Override
-    public boolean isFullCube(IBlockState state) {
+    public boolean isFullCube(BlockState state) {
         return false;
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
+    public boolean canRenderInLayer(BlockState state, BlockRenderLayer layer) {
         return true; // delegated to CamoBakedModel#getQuads
     }
 
     @Override
-    public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+    public boolean shouldSideBeRendered(BlockState state, IBlockAccess world, BlockPos pos, Direction side) {
         Block block = world.getBlockState(pos.offset(side)).getBlock();
         if (block instanceof CamoShieldBlock) {
             return false;
@@ -75,7 +75,7 @@ public class CamoShieldBlock extends AbstractShieldBlock {
     }
 
     @Nullable
-    protected IBlockState getMimicBlock(IBlockAccess blockAccess, BlockPos pos) {
+    protected BlockState getMimicBlock(IBlockAccess blockAccess, BlockPos pos) {
         TileEntity te = blockAccess.getTileEntity(pos);
         if (te instanceof NoTickShieldBlockTileEntity) {
             return ((NoTickShieldBlockTileEntity) te).getMimicBlock();
@@ -87,7 +87,7 @@ public class CamoShieldBlock extends AbstractShieldBlock {
     @SideOnly(Side.CLIENT)
     public void initColorHandler(BlockColors blockColors) {
         blockColors.registerBlockColorHandler((state, world, pos, tintIndex) -> {
-            IBlockState mimicBlock = getMimicBlock(world, pos);
+            BlockState mimicBlock = getMimicBlock(world, pos);
             return mimicBlock != null ? blockColors.colorMultiplier(mimicBlock, world, pos, tintIndex) : -1;
         }, this);
     }
@@ -100,9 +100,9 @@ public class CamoShieldBlock extends AbstractShieldBlock {
     }
 
     @Override
-    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+    public BlockState getExtendedState(BlockState state, IBlockAccess world, BlockPos pos) {
         IExtendedBlockState extendedBlockState = (IExtendedBlockState) state;
-        IBlockState mimicBlock = getMimicBlock(world, pos);
+        BlockState mimicBlock = getMimicBlock(world, pos);
         if (mimicBlock != null) {
             return extendedBlockState.withProperty(CAMOID, new CamoBlockId(mimicBlock));
         } else {

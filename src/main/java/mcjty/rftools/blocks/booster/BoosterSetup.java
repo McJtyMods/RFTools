@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.booster;
 
 import mcjty.lib.builder.BlockFlags;
 import mcjty.lib.blocks.BaseBlock;
-import mcjty.lib.blocks.GenericBlock;
+import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.container.GenericContainer;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.setup.GuiProxy;
@@ -10,7 +10,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BoosterSetup {
-    public static GenericBlock<BoosterTileEntity, GenericContainer> boosterBlock;
+    public static BaseBlock<BoosterTileEntity, GenericContainer> boosterBlock;
 
     public static void init() {
         boosterBlock = ModBlocks.builderFactory.<BoosterTileEntity> builder("booster")

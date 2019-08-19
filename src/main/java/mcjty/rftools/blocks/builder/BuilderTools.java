@@ -3,18 +3,19 @@ package mcjty.rftools.blocks.builder;
 import mcjty.lib.varia.Counter;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.fml.network.NetworkDirection;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,13 +23,13 @@ import java.util.Map;
 
 public class BuilderTools {
 
-    public static void returnChamberInfo(EntityPlayer player) {
-        ItemStack cardItem = player.getHeldItem(EnumHand.MAIN_HAND);
-        if (cardItem.isEmpty() || cardItem.getTagCompound() == null) {
+    public static void returnChamberInfo(PlayerEntity player) {
+        ItemStack cardItem = player.getHeldItem(Hand.MAIN_HAND);
+        if (cardItem.isEmpty() || cardItem.getTag() == null) {
             return;
         }
 
-        int channel = cardItem.getTagCompound().getInteger("channel");
+        int channel = cardItem.getTag().getInt("channel");
         if (channel == -1) {
             return;
         }
@@ -40,14 +41,14 @@ public class BuilderTools {
         }
 
         int dimension = chamberChannel.getDimension();
-        World world = DimensionManager.getWorld(dimension);
+        World world = player.getEntityWorld().getServer().getWorld(DimensionType.getById(dimension));
         if (world == null) {
             return;
         }
 
-        Counter<IBlockState> blocks = new Counter<>();
-        Counter<IBlockState> costs = new Counter<>();
-        Map<IBlockState,ItemStack> stacks = new HashMap<>();
+        Counter<BlockState> blocks = new Counter<>();
+        Counter<BlockState> costs = new Counter<>();
+        Map<BlockState,ItemStack> stacks = new HashMap<>();
 
         BlockPos minCorner = chamberChannel.getMinCorner();
         BlockPos maxCorner = chamberChannel.getMaxCorner();
@@ -59,7 +60,7 @@ public class BuilderTools {
         findEntities(world, minCorner, maxCorner, entitiesWithCount, entitiesWithCost, firstEntity);
 
         RFToolsMessages.INSTANCE.sendTo(new PacketChamberInfoReady(blocks, costs, stacks,
-                entitiesWithCount, entitiesWithCost, firstEntity), (EntityPlayerMP) player);
+                entitiesWithCount, entitiesWithCost, firstEntity), ((ServerPlayerEntity) player).connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
     }
 
     private static void findEntities(World world, BlockPos minCorner, BlockPos maxCorner,
@@ -68,10 +69,10 @@ public class BuilderTools {
                 minCorner.getX(), minCorner.getY(), minCorner.getZ(), maxCorner.getX() + 1, maxCorner.getY() + 1, maxCorner.getZ() + 1));
         for (Entity entity : entities) {
             String canonicalName = entity.getClass().getCanonicalName();
-            if (entity instanceof EntityItem) {
-                EntityItem entityItem = (EntityItem) entity;
+            if (entity instanceof ItemEntity) {
+                ItemEntity entityItem = (ItemEntity) entity;
                 if (!entityItem.getItem().isEmpty()) {
-                    String displayName = entityItem.getItem().getDisplayName();
+                    String displayName = entityItem.getItem().getDisplayName().getFormattedText();
                     canonicalName += " (" + displayName + ")";
                 }
             }
@@ -82,7 +83,7 @@ public class BuilderTools {
                 firstEntity.put(canonicalName, entity);
             }
 
-            if (entity instanceof EntityPlayer) {
+            if (entity instanceof PlayerEntity) {
                 entitiesWithCost.increment(canonicalName, BuilderConfiguration.builderRfPerPlayer.get());
             } else {
                 entitiesWithCost.increment(canonicalName, BuilderConfiguration.builderRfPerEntity.get());
@@ -90,12 +91,12 @@ public class BuilderTools {
         }
     }
 
-    private static void findBlocks(EntityPlayer harvester, World world, Counter<IBlockState> blocks, Counter<IBlockState> costs, Map<IBlockState, ItemStack> stacks, BlockPos minCorner, BlockPos maxCorner) {
+    private static void findBlocks(PlayerEntity harvester, World world, Counter<BlockState> blocks, Counter<BlockState> costs, Map<BlockState, ItemStack> stacks, BlockPos minCorner, BlockPos maxCorner) {
         for (int x = minCorner.getX() ; x <= maxCorner.getX() ; x++) {
             for (int y = minCorner.getY() ; y <= maxCorner.getY() ; y++) {
                 for (int z = minCorner.getZ() ; z <= maxCorner.getZ() ; z++) {
                     BlockPos p = new BlockPos(x, y, z);
-                    IBlockState state = world.getBlockState(p);
+                    BlockState state = world.getBlockState(p);
                     Block block = state.getBlock();
                     if (!BuilderTileEntity.isEmpty(state, block)) {
                         blocks.increment(state);

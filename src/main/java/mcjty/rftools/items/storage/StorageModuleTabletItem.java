@@ -9,18 +9,17 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.setup.GuiProxy;
-import mcjty.rftools.items.GenericRFToolsItem;
 import mcjty.rftools.items.screenmodules.StorageControlModuleItem;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
@@ -65,7 +64,7 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
     }
 
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
+    public ICapabilityProvider initCapabilities(ItemStack stack, CompoundNBT nbt) {
         return new ItemCapabilityProvider(stack, this);
     }
 
@@ -87,17 +86,17 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
         // Make sure the tablet only works in main hand to avoid problems later
-        if (hand != EnumHand.MAIN_HAND) {
-            return new ActionResult<>(EnumActionResult.PASS, stack);
+        if (hand != Hand.MAIN_HAND) {
+            return new ActionResult<>(ActionResultType.PASS, stack);
         }
         if (!world.isRemote) {
-            NBTTagCompound tagCompound = stack.getTagCompound();
+            CompoundNBT tagCompound = stack.getTag();
             if (tagCompound == null || !tagCompound.hasKey("childDamage")) {
                 Logging.message(player, TextFormatting.YELLOW + "This tablet contains no storage module!");
-                return new ActionResult<>(EnumActionResult.FAIL, stack);
+                return new ActionResult<>(ActionResultType.FAIL, stack);
             }
 
             int moduleDamage = tagCompound.getInteger("childDamage");
@@ -114,7 +113,7 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
             int energy = tagCompound.getInteger("Energy");
             if (energy < rfNeeded) {
                 Logging.message(player, TextFormatting.YELLOW + "Not enough energy to open the contents!");
-                return new ActionResult<>(EnumActionResult.FAIL, stack);
+                return new ActionResult<>(ActionResultType.FAIL, stack);
             }
 
             energy -= rfNeeded;
@@ -139,15 +138,15 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
             } else if (moduleDamage == StorageModuleItem.STORAGE_REMOTE) {
                 if (!tagCompound.hasKey("id")) {
                     Logging.message(player, TextFormatting.YELLOW + "This remote storage module is not linked!");
-                    return new ActionResult<>(EnumActionResult.FAIL, stack);
+                    return new ActionResult<>(ActionResultType.FAIL, stack);
                 }
                 player.openGui(RFTools.instance, GuiProxy.GUI_REMOTE_STORAGE_ITEM, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
             } else {
                 player.openGui(RFTools.instance, GuiProxy.GUI_MODULAR_STORAGE_ITEM, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
             }
-            return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+            return new ActionResult<>(ActionResultType.SUCCESS, stack);
         }
-        return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+        return new ActionResult<>(ActionResultType.SUCCESS, stack);
     }
 
     @Override
@@ -175,12 +174,12 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
 //
 //    @Nullable
 //    @Override
-//    public NBTTagCompound getNBTShareTag(ItemStack stack) {
+//    public CompoundNBT getNBTShareTag(ItemStack stack) {
 //        if (!stack.hasTagCompound()) {
-//            return stack.getTagCompound();
+//            return stack.getTag();
 //        }
-//        NBTTagCompound tagCompound = new NBTTagCompound();
-//        NBTTagCompound tc = stack.getTagCompound();
+//        CompoundNBT tagCompound = new CompoundNBT();
+//        CompoundNBT tc = stack.getTag();
 //        tagCompound.setInteger("Energy", tc.getInteger("Energy"));
 //        tagCompound.setInteger("childDamage", tc.getInteger("childDamage"));
 //        if (tc.hasKey("grid")) {
@@ -192,10 +191,10 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
     @Override
     public ItemStack getContainerItem(ItemStack stack) {
         if (hasContainerItem(stack) && stack.hasTagCompound()) {
-            NBTTagCompound tagCompound = new NBTTagCompound();
-            tagCompound.setInteger("Energy", stack.getTagCompound().getInteger("Energy"));
-            if (stack.getTagCompound().hasKey("grid")) {
-                tagCompound.setTag("grid", stack.getTagCompound().getTag("grid"));
+            CompoundNBT tagCompound = new CompoundNBT();
+            tagCompound.setInteger("Energy", stack.getTag().getInteger("Energy"));
+            if (stack.getTag().hasKey("grid")) {
+                tagCompound.setTag("grid", stack.getTag().getTag("grid"));
             }
             ItemStack container = new ItemStack(getContainerItem());
             container.setTagCompound(tagCompound);
@@ -207,7 +206,7 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
     @Override
     public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
             list.add(TextFormatting.BLUE + "Energy: " + tagCompound.getInteger("Energy") + " RF");
             if (itemStack.getItemDamage() == DAMAGE_FULL) {
@@ -233,40 +232,40 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
 
     @Override
     public long receiveEnergyL(ItemStack container, long maxReceive, boolean simulate) {
-        if (container.getTagCompound() == null) {
-            container.setTagCompound(new NBTTagCompound());
+        if (container.getTag() == null) {
+            container.setTagCompound(new CompoundNBT());
         }
-        int energy = container.getTagCompound().getInteger("Energy");
+        int energy = container.getTag().getInteger("Energy");
         int energyReceived = Math.min(capacity - energy, Math.min(this.maxReceive, EnergyTools.unsignedClampToInt(maxReceive)));
 
         if (!simulate) {
             energy += energyReceived;
-            container.getTagCompound().setInteger("Energy", energy);
+            container.getTag().setInteger("Energy", energy);
         }
         return energyReceived;
     }
 
     @Override
     public long extractEnergyL(ItemStack container, long maxExtract, boolean simulate) {
-        if (container.getTagCompound() == null || !container.getTagCompound().hasKey("Energy")) {
+        if (container.getTag() == null || !container.getTag().hasKey("Energy")) {
             return 0;
         }
-        int energy = container.getTagCompound().getInteger("Energy");
+        int energy = container.getTag().getInteger("Energy");
         int energyExtracted = Math.min(energy, Math.min(this.maxExtract, EnergyTools.unsignedClampToInt(maxExtract)));
 
         if (!simulate) {
             energy -= energyExtracted;
-            container.getTagCompound().setInteger("Energy", energy);
+            container.getTag().setInteger("Energy", energy);
         }
         return energyExtracted;
     }
 
     @Override
     public long getEnergyStoredL(ItemStack container) {
-        if (container.getTagCompound() == null || !container.getTagCompound().hasKey("Energy")) {
+        if (container.getTag() == null || !container.getTag().hasKey("Energy")) {
             return 0;
         }
-        return container.getTagCompound().getInteger("Energy");
+        return container.getTag().getInteger("Energy");
     }
 
     @Override

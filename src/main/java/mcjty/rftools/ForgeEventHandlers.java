@@ -20,10 +20,10 @@ import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import mcjty.rftools.playerprops.PropertiesDispatcher;
 import mcjty.rftools.shapes.ShapeDataManagerServer;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.IMob;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -51,16 +51,16 @@ public class ForgeEventHandlers {
 
     // Workaround for the charged porter so that the teleport can be done outside
     // of the entity tick loop
-    private static List<Pair<TeleportDestination,EntityPlayer>> playersToTeleportHere = new ArrayList<>();
+    private static List<Pair<TeleportDestination,PlayerEntity>> playersToTeleportHere = new ArrayList<>();
 
-    public static void addPlayerToTeleportHere(TeleportDestination destination, EntityPlayer player) {
+    public static void addPlayerToTeleportHere(TeleportDestination destination, PlayerEntity player) {
         playersToTeleportHere.add(Pair.of(destination, player));
     }
 
     private static void performDelayedTeleports() {
         if (!playersToTeleportHere.isEmpty()) {
             // Teleport players here
-            for (Pair<TeleportDestination, EntityPlayer> pair : playersToTeleportHere) {
+            for (Pair<TeleportDestination, PlayerEntity> pair : playersToTeleportHere) {
                 TeleportationTools.performTeleport(pair.getRight(), pair.getLeft(), 0, 10, false);
             }
             playersToTeleportHere.clear();
@@ -88,7 +88,7 @@ public class ForgeEventHandlers {
 
     @SubscribeEvent
     public void onEntityConstructing(AttachCapabilitiesEvent<Entity> event){
-        if (event.getObject() instanceof EntityPlayer) {
+        if (event.getObject() instanceof PlayerEntity) {
             if (!event.getObject().hasCapability(PlayerExtendedProperties.BUFF_CAPABILITY, null)) {
                 event.addCapability(new ResourceLocation(RFTools.MODID, "Properties"), new PropertiesDispatcher());
             }
@@ -101,7 +101,7 @@ public class ForgeEventHandlers {
         if (event.getWorld().isRemote) {
             return;
         }
-        EntityPlayer player = event.getEntityPlayer();
+        PlayerEntity player = event.getEntityPlayer();
         ItemStack heldItem = player.getHeldItemMainhand();
         if (heldItem.isEmpty() || !(heldItem.getItem() instanceof SmartWrench)) {
             double blockReachDistance = ((EntityPlayerMP) player).interactionManager.getBlockReachDistance();
@@ -121,7 +121,7 @@ public class ForgeEventHandlers {
 
     @SubscribeEvent
     public void onPlayerInteractEvent(PlayerInteractEvent event) {
-        EntityPlayer player = event.getEntityPlayer();
+        PlayerEntity player = event.getEntityPlayer();
 
         if (event instanceof PlayerInteractEvent.LeftClickBlock) {
             checkCreativeClick(event);
@@ -130,7 +130,7 @@ public class ForgeEventHandlers {
                 ItemStack heldItem = player.getHeldItemMainhand();
                 if (heldItem.isEmpty() || !(heldItem.getItem() instanceof SmartWrench)) {
                     World world = event.getWorld();
-                    IBlockState state = world.getBlockState(event.getPos());
+                    BlockState state = world.getBlockState(event.getPos());
                     Block block = state.getBlock();
                     if (block instanceof ScreenBlock) {
                         Vec3d vec = ((PlayerInteractEvent.RightClickBlock) event).getHitVec();
@@ -192,8 +192,8 @@ public class ForgeEventHandlers {
 
     @SubscribeEvent
     public void onLivingFall(LivingFallEvent event) {
-        if (event.getEntityLiving() instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer) event.getEntityLiving();
+        if (event.getEntityLiving() instanceof PlayerEntity) {
+            PlayerEntity player = (PlayerEntity) event.getEntityLiving();
             BuffProperties buffProperties = PlayerExtendedProperties.getBuffProperties(player);
             if (buffProperties != null) {
                 if (buffProperties.hasBuff(PlayerBuff.BUFF_FEATHERFALLING)) {

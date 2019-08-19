@@ -2,7 +2,7 @@ package mcjty.rftools.api.screens;
 
 import mcjty.rftools.api.screens.data.IModuleData;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -74,7 +74,7 @@ public interface IClientScreenModule<T extends IModuleData> {
      * @param dim the dimension for the screen this module is in
      * @param pos the position of the screen
      */
-    void setupFromNBT(NBTTagCompound tagCompound, int dim, BlockPos pos);
+    void setupFromNBT(CompoundNBT tagCompound, int dim, BlockPos pos);
 
     // Return true if this module needs server data.
     boolean needsServerData();

@@ -10,10 +10,10 @@ import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TextFormatting;
@@ -45,14 +45,14 @@ public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterCont
     @Override
     public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
             NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
             NBTTagList recipeTagList = tagCompound.getTagList("Recipes", Constants.NBT.TAG_COMPOUND);
 
             int rc = 0;
             for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
-                NBTTagCompound itemTag = bufferTagList.getCompoundTagAt(i);
+                CompoundNBT itemTag = bufferTagList.getCompoundTagAt(i);
                 if (itemTag != null) {
                     ItemStack stack = new ItemStack(itemTag);
                     if (!stack.isEmpty()) {
@@ -65,8 +65,8 @@ public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterCont
 
             rc = 0;
             for (int i = 0 ; i < recipeTagList.tagCount() ; i++) {
-                NBTTagCompound tagRecipe = recipeTagList.getCompoundTagAt(i);
-                NBTTagCompound resultCompound = tagRecipe.getCompoundTag("Result");
+                CompoundNBT tagRecipe = recipeTagList.getCompoundTagAt(i);
+                CompoundNBT resultCompound = tagRecipe.getCompoundTag("Result");
                 if (resultCompound != null) {
                     ItemStack stack = new ItemStack(resultCompound);
                     if (!stack.isEmpty()) {
@@ -107,13 +107,13 @@ public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterCont
     }
 
     @Override
-    public Container createServerContainer(EntityPlayer entityPlayer, TileEntity tileEntity) {
+    public Container createServerContainer(PlayerEntity PlayerEntity, TileEntity tileEntity) {
         CrafterBaseTE crafterBaseTE = (CrafterBaseTE) tileEntity;
         crafterBaseTE.getInventoryHelper().setStackInSlot(CrafterContainer.SLOT_CRAFTOUTPUT, ItemStack.EMPTY);
         for (int i = CrafterContainer.SLOT_CRAFTINPUT ; i < CrafterContainer.SLOT_CRAFTINPUT + 9 ; i++) {
             crafterBaseTE.getInventoryHelper().setStackInSlot(i, ItemStack.EMPTY);
         }
-        return super.createServerContainer(entityPlayer, tileEntity);
+        return super.createServerContainer(PlayerEntity, tileEntity);
     }
 
     @Override
@@ -122,7 +122,7 @@ public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterCont
     }
 
 //    @Override
-//    public boolean shouldRedstoneConduitConnect(World world, int x, int y, int z, EnumFacing from) {
+//    public boolean shouldRedstoneConduitConnect(World world, int x, int y, int z, Direction from) {
 //        return true;
 //    }
 //

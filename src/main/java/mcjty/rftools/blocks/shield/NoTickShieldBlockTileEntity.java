@@ -1,9 +1,9 @@
 package mcjty.rftools.blocks.shield;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -15,10 +15,9 @@ import javax.annotation.Nullable;
 
 public class NoTickShieldBlockTileEntity extends TileEntity {
 
-    private IBlockState mimic = null;
+    private BlockState mimic = null;
     private int camoId = -1;
     private int camoMeta = 0;
-    private int hasTe = 0;
     private int shieldColor;
 
     private ShieldRenderingMode shieldRenderingMode = ShieldRenderingMode.MODE_SHIELD;
@@ -32,7 +31,7 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
     protected AxisAlignedBB beamBox = null;
 
     @Override
-    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate) {
+    public boolean shouldRefresh(World world, BlockPos pos, BlockState oldState, BlockState newSate) {
         return oldState.getBlock() != newSate.getBlock();
     }
 
@@ -44,7 +43,7 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
     private void markDirtyClient() {
         markDirty();
         if (getWorld() != null) {
-            IBlockState state = getWorld().getBlockState(getPos());
+            BlockState state = getWorld().getBlockState(getPos());
             getWorld().notifyBlockUpdate(getPos(), state, state, 3);
         }
     }
@@ -76,14 +75,13 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
         markDirtyClient();
     }
 
-    public IBlockState getMimicBlock() {
+    public BlockState getMimicBlock() {
         return mimic;
     }
 
-    public void setCamoBlock(int camoId, int meta, int hasTe) {
+    public void setCamoBlock(int camoId, int meta) {
         this.camoId = camoId;
         this.camoMeta = meta;
-        this.hasTe = hasTe;
         if (camoId == -1) {
             mimic = null;
         } else {
@@ -101,16 +99,11 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
         return shieldBlock;
     }
 
-    public boolean getHasTe() {
-        return hasTe != 0;
-    }
-
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("camoId", camoId);
         tagCompound.setInteger("camoMeta", camoMeta);
-        tagCompound.setInteger("hasTe", hasTe);
         tagCompound.setInteger("damageBits", damageBits);
         tagCompound.setInteger("collisionData", collisionData);
         tagCompound.setInteger("shieldColor", shieldColor);
@@ -124,18 +117,17 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
     }
 
     @Override
-    public NBTTagCompound getUpdateTag() {
-        NBTTagCompound updateTag = super.getUpdateTag();
+    public CompoundNBT getUpdateTag() {
+        CompoundNBT updateTag = super.getUpdateTag();
         writeToNBT(updateTag);
         return updateTag;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(CompoundNBT tagCompound) {
         super.readFromNBT(tagCompound);
         camoId = tagCompound.getInteger("camoId");
         camoMeta = tagCompound.getInteger("camoMeta");
-        hasTe = tagCompound.getInteger("hasTe");
         if (camoId == -1) {
             mimic = null;
         } else {
@@ -163,7 +155,7 @@ public class NoTickShieldBlockTileEntity extends TileEntity {
     @Nullable
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
-        NBTTagCompound nbtTag = new NBTTagCompound();
+        CompoundNBT nbtTag = new CompoundNBT();
         this.writeToNBT(nbtTag);
         return new SPacketUpdateTileEntity(getPos(), 1, nbtTag);
     }

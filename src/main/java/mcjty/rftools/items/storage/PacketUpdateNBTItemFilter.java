@@ -8,8 +8,8 @@ import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumHand;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Hand;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 import java.util.function.Supplier;
@@ -47,7 +47,7 @@ public class PacketUpdateNBTItemFilter implements IMessage {
         Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
             EntityPlayerMP playerEntity = ctx.getSender();
-            ItemStack heldItem = playerEntity.getHeldItem(EnumHand.MAIN_HAND);
+            ItemStack heldItem = playerEntity.getHeldItem(Hand.MAIN_HAND);
             if (heldItem.isEmpty()) {
                 return;
             }
@@ -55,9 +55,9 @@ public class PacketUpdateNBTItemFilter implements IMessage {
             if (!isValidItem(heldItem)) {
                 return;
             }
-            NBTTagCompound tagCompound = heldItem.getTagCompound();
+            CompoundNBT tagCompound = heldItem.getTag();
             if (tagCompound == null) {
-                tagCompound = new NBTTagCompound();
+                tagCompound = new CompoundNBT();
                 heldItem.setTagCompound(tagCompound);
             }
             for (Key<?> akey : args.getKeys()) {

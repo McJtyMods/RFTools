@@ -6,7 +6,7 @@ import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
 import mcjty.rftools.shapes.Shape;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -104,7 +104,7 @@ public enum ShapeCardType {
             "liquids from an tank on top/bottom into the world.");
 
     private static String getDirtOrCobbleName() {
-        IBlockState state = BuilderConfiguration.getQuarryReplace();
+        BlockState state = BuilderConfiguration.getQuarryReplace();
         Block block = state.getBlock();
         Item item = Item.getItemFromBlock(block);
         if(item == Items.AIR || !item.getHasSubtypes()) {
@@ -191,12 +191,12 @@ public enum ShapeCardType {
         list.add(TextFormatting.GREEN + (this == CARD_SHAPE ? "(final cost depends on infusion level)" : "(final cost depends on infusion level and block hardness)"));
     }
 
-    public boolean handleSingleBlock(BuilderTileEntity te, int rfNeeded, BlockPos srcPos, IBlockState srcState, IBlockState pickState) {
+    public boolean handleSingleBlock(BuilderTileEntity te, int rfNeeded, BlockPos srcPos, BlockState srcState, BlockState pickState) {
         return singleBlockHandler.handleSingleBlock(te, rfNeeded, srcPos, srcState, pickState);
     }
 
     @FunctionalInterface
     public interface SingleBlockHandler {
-        public boolean handleSingleBlock(BuilderTileEntity te, int rfNeeded, BlockPos srcPos, IBlockState srcState, IBlockState pickState);
+        public boolean handleSingleBlock(BuilderTileEntity te, int rfNeeded, BlockPos srcPos, BlockState srcState, BlockState pickState);
     }
 }

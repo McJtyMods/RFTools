@@ -4,8 +4,8 @@ import mcjty.lib.varia.Check32;
 import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -55,17 +55,17 @@ public class Formulas {
 
     static class FormulaScan implements IFormula {
         private byte[] data;
-        private List<IBlockState> palette = new ArrayList<>();
+        private List<BlockState> palette = new ArrayList<>();
         private int x1;
         private int y1;
         private int z1;
         private int dx;
         private int dy;
         private int dz;
-        private IBlockState lastState = null;
+        private BlockState lastState = null;
 
         @Override
-        public void getCheckSumClient(NBTTagCompound tc, Check32 crc) {
+        public void getCheckSumClient(CompoundNBT tc, Check32 crc) {
             ShapeCardItem.getLocalChecksum(tc, crc);
             int scanId = tc.getInteger("scanid");
             crc.add(scanId);
@@ -73,7 +73,7 @@ public class Formulas {
         }
 
         @Override
-        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, CompoundNBT card) {
             data = null;
 
             if (card == null) {
@@ -144,7 +144,7 @@ public class Formulas {
             if (!isInsideInternal(index)) {
                 return true;
             }
-            IBlockState state = getLastState();
+            BlockState state = getLastState();
             if (state != null) {
                 return ShapeBlockInfo.isNonSolidBlock(state.getBlock());
             } else {
@@ -180,21 +180,21 @@ public class Formulas {
         }
 
         @Override
-        public IBlockState getLastState() {
+        public BlockState getLastState() {
             return lastState;
         }
     }
 
     static class FormulaComposition implements IFormula {
         private BlockPos thisCoord;
-        private IBlockState blockState;
+        private BlockState blockState;
         private List<IFormula> formulas = new ArrayList<>();
         private List<Bounds> bounds = new ArrayList<>();
         private List<ShapeModifier> modifiers = new ArrayList<>();
-        private List<IBlockState> blockStates = new ArrayList<>();
+        private List<BlockState> blockStates = new ArrayList<>();
 
         @Override
-        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, CompoundNBT card) {
             this.thisCoord = thisCoord;
 
             if (card == null) {
@@ -210,7 +210,7 @@ public class Formulas {
 
             NBTTagList children = card.getTagList("children", Constants.NBT.TAG_COMPOUND);
             for (int i = 0 ; i < children.tagCount() ; i++) {
-                NBTTagCompound childTag = children.getCompoundTagAt(i);
+                CompoundNBT childTag = children.getCompoundTagAt(i);
                 IFormula formula = ShapeCardItem.createCorrectFormula(childTag);
 
                 String op = childTag.getString("mod_op");
@@ -230,7 +230,7 @@ public class Formulas {
                 BlockPos tl = new BlockPos(o.getX() - dim.getX()/2, o.getY() - dim.getY()/2, o.getZ() - dim.getZ()/2);
                 bounds.add(new Bounds(tl, tl.add(dim), o));
 
-                IBlockState state = null;
+                BlockState state = null;
                 if (childTag.hasKey("ghost_block")) {
                     Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(childTag.getString("ghost_block")));
                     if (block != null) {
@@ -243,11 +243,11 @@ public class Formulas {
         }
 
         @Override
-        public void getCheckSumClient(NBTTagCompound tc, Check32 crc) {
+        public void getCheckSumClient(CompoundNBT tc, Check32 crc) {
             ShapeCardItem.getLocalChecksum(tc, crc);
             NBTTagList children = tc.getTagList("children", Constants.NBT.TAG_COMPOUND);
             for (int i = 0 ; i < children.tagCount() ; i++) {
-                NBTTagCompound childTag = children.getCompoundTagAt(i);
+                CompoundNBT childTag = children.getCompoundTagAt(i);
                 IFormula formula = ShapeCardItem.createCorrectFormula(childTag);
                 formula.getCheckSumClient(childTag, crc);
                 crc.add(childTag.getBoolean("mod_flipy") ? 1 : 0);
@@ -261,7 +261,7 @@ public class Formulas {
                 crc.add(operation.ordinal());
 
                 if (childTag.hasKey("ghost_block")) {
-                    IBlockState state = null;
+                    BlockState state = null;
                     Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(childTag.getString("ghost_block")));
                     if (block != null) {
                         crc.add(Block.getIdFromBlock(block));
@@ -273,7 +273,7 @@ public class Formulas {
         }
 
         @Override
-        public IBlockState getLastState() {
+        public BlockState getLastState() {
             return blockState;
         }
 
@@ -369,7 +369,7 @@ public class Formulas {
         private float centerz;
 
         @Override
-        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, CompoundNBT card) {
             int dx = dimension.getX();
             int dy = dimension.getY();
             int dz = dimension.getZ();
@@ -401,7 +401,7 @@ public class Formulas {
         private int dz;
 
         @Override
-        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, CompoundNBT card) {
             dx = dimension.getX();
             dy = dimension.getY();
             dz = dimension.getZ();
@@ -436,7 +436,7 @@ public class Formulas {
         private int davg;
 
         @Override
-        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, CompoundNBT card) {
             int dx = dimension.getX();
             int dy = dimension.getY();
             int dz = dimension.getZ();
@@ -471,7 +471,7 @@ public class Formulas {
         private int davg;
 
         @Override
-        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, CompoundNBT card) {
             int dx = dimension.getX();
             int dy = dimension.getY();
             int dz = dimension.getZ();
@@ -509,7 +509,7 @@ public class Formulas {
         private int davg;
 
         @Override
-        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, CompoundNBT card) {
             int dx = dimension.getX();
             int dy = dimension.getY();
             int dz = dimension.getZ();
@@ -546,7 +546,7 @@ public class Formulas {
         private int z2;
 
         @Override
-        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, CompoundNBT card) {
             int dx = dimension.getX();
             int dy = dimension.getY();
             int dz = dimension.getZ();
@@ -583,7 +583,7 @@ public class Formulas {
         private int y2;
 
         @Override
-        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, CompoundNBT card) {
             int dx = dimension.getX();
             int dy = dimension.getY();
             int dz = dimension.getZ();
@@ -620,7 +620,7 @@ public class Formulas {
         private int davg;
 
         @Override
-        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, CompoundNBT card) {
             int dx = dimension.getX();
             int dy = dimension.getY();
             int dz = dimension.getZ();
@@ -653,7 +653,7 @@ public class Formulas {
         private int davg;
 
         @Override
-        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, CompoundNBT card) {
             int dx = dimension.getX();
             int dy = dimension.getY();
             int dz = dimension.getZ();
@@ -686,7 +686,7 @@ public class Formulas {
         private int z2;
 
         @Override
-        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, NBTTagCompound card) {
+        public void setup(BlockPos thisCoord, BlockPos dimension, BlockPos offset, CompoundNBT card) {
             int dx = dimension.getX();
             int dy = dimension.getY();
             int dz = dimension.getZ();

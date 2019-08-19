@@ -14,7 +14,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.inventory.Slot;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 
@@ -167,7 +167,7 @@ public class GuiSecurityManager extends GenericGuiContainer<SecurityManagerTileE
     private int getCardID() {
         Slot slot = inventorySlots.inventorySlots.get(SecurityManagerTileEntity.SLOT_CARD);
         if (slot.getHasStack()) {
-            NBTTagCompound tagCompound = slot.getStack().getTagCompound();
+            CompoundNBT tagCompound = slot.getStack().getTag();
             if (tagCompound == null) {
                 return -1;
             }

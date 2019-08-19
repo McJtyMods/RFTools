@@ -26,7 +26,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -54,7 +54,7 @@ public class RenderWorldLastEventHandler {
     private static void renderProtectedBlocks(RenderWorldLastEvent evt) {
         Minecraft mc = Minecraft.getMinecraft();
         EntityPlayerSP p = mc.player;
-        ItemStack heldItem = p.getHeldItem(EnumHand.MAIN_HAND);
+        ItemStack heldItem = p.getHeldItem(Hand.MAIN_HAND);
         if (heldItem.isEmpty()) {
             return;
         }

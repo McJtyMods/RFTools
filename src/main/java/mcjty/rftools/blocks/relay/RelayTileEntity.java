@@ -11,12 +11,12 @@ import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
 import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -157,13 +157,13 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
             return;
         }
 
-        IBlockState state = getWorld().getBlockState(getPos());
-        for (EnumFacing facing : EnumFacing.VALUES) { // there's no sensible way to send power out the null side, so just send it out the real sides
+        BlockState state = getWorld().getBlockState(getPos());
+        for (Direction facing : Direction.VALUES) { // there's no sensible way to send power out the null side, so just send it out the real sides
             int side = OrientationTools.reorient(facing, state).ordinal();
 //            int side = facing.ordinal();
             if (rf[side] > 0 && !inputMode[side]) {
                 TileEntity te = getWorld().getTileEntity(getPos().offset(facing));
-                EnumFacing opposite = facing.getOpposite();
+                Direction opposite = facing.getOpposite();
                 if (EnergyTools.isEnergyTE(te, opposite)) {
                     int rfToGive = (int) Math.min(rf[side], energyStored);
                     int received = (int) EnergyTools.receiveEnergy(te, opposite, rfToGive);
@@ -179,11 +179,11 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
     }
 
     // deliberately not @Optional, as other power APIs delegate to this method
-    public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
+    public int receiveEnergy(Direction from, int maxReceive, boolean simulate) {
         boolean redstoneSignal = powerLevel > 0;
 
         boolean[] inputMode = redstoneSignal ? inputModeOn : inputModeOff;
-        IBlockState state = getWorld().getBlockState(getPos());
+        BlockState state = getWorld().getBlockState(getPos());
         int side = from == null ? 6 : OrientationTools.reorient(from, state).ordinal();
         if (inputMode[side]) {
             int[] rf = redstoneSignal ? rfOn : rfOff;
@@ -213,7 +213,7 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
     }
 
     @Override
-    public void readRestorableFromNBT(NBTTagCompound tagCompound) {
+    public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         if (tagCompound.hasKey("rfOn")) {
             // Old block
@@ -243,7 +243,7 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
     }
 
     @Override
-    public void writeRestorableToNBT(NBTTagCompound tagCompound) {
+    public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         tagCompound.setIntArray("on", rfOn);
         tagCompound.setIntArray("off", rfOff);
@@ -280,7 +280,7 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
     private RelayEnergyStorage facingStorage[] = new RelayEnergyStorage[7];
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+    public boolean hasCapability(Capability<?> capability, Direction facing) {
         if (capability == EnergyTools.TESLA_CONSUMER) { // no need to test for CapabilityEnergy.ENERGY, as super already does this
             return true;
         }
@@ -288,7 +288,7 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(Capability<T> capability, Direction facing) {
         if (capability == CapabilityEnergy.ENERGY || capability == EnergyTools.TESLA_CONSUMER) {
             int facingOrdinal = facing == null ? 6 : facing.ordinal();
             if (facingStorage[facingOrdinal] == null) {
@@ -301,7 +301,7 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
 
     @Override
     @Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
         super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
         if (mode == ProbeMode.EXTENDED) {
             int rfPerTickIn = getLastRfPerTickIn();
@@ -312,7 +312,7 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
     }
 
     @Override
-    public IBlockState getActualState(IBlockState state) {
+    public BlockState getActualState(BlockState state) {
         boolean enabled = isPowered();
         return state.withProperty(ENABLED, enabled);
     }

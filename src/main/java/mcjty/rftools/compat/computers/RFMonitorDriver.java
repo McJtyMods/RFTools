@@ -9,7 +9,7 @@ import mcjty.lib.varia.EnergyTools;
 import mcjty.rftools.blocks.monitor.RFMonitorBlockTileEntity;
 import mcjty.rftools.blocks.monitor.RFMonitorMode;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -100,7 +100,7 @@ public class RFMonitorDriver {
         }
 
         @Override
-        public AbstractManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing side, TileEntity tile) {
+        public AbstractManagedEnvironment createEnvironment(World world, BlockPos pos, Direction side, TileEntity tile) {
             return new InternalManagedEnvironment((RFMonitorBlockTileEntity) tile);
         }
     }

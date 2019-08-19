@@ -1,9 +1,8 @@
 package mcjty.rftools.items.powercell;
 
-import mcjty.rftools.items.GenericRFToolsItem;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -34,16 +33,16 @@ public class PowerCellCardItem extends GenericRFToolsItem {
         if (!stack.hasTagCompound()) {
             return -1;
         }
-        if (!stack.getTagCompound().hasKey("id")) {
+        if (!stack.getTag().hasKey("id")) {
             return -1;
         }
-        return stack.getTagCompound().getInteger("id");
+        return stack.getTag().getInteger("id");
     }
 
     public static void setId(ItemStack stack, int id) {
         if (!stack.hasTagCompound()) {
-            stack.setTagCompound(new NBTTagCompound());
+            stack.setTagCompound(new CompoundNBT());
         }
-        stack.getTagCompound().setInteger("id", id);
+        stack.getTag().setInteger("id", id);
     }
 }

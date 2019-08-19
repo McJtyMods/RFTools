@@ -7,7 +7,7 @@ import mcjty.lib.worlddata.AbstractWorldData;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -223,7 +223,7 @@ public class TeleportDestinations extends AbstractWorldData<TeleportDestinations
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(CompoundNBT tagCompound) {
         destinations.clear();
         destinationById.clear();
         destinationIdByCoordinate.clear();
@@ -231,10 +231,10 @@ public class TeleportDestinations extends AbstractWorldData<TeleportDestinations
         readDestinationsFromNBT(tagCompound);
     }
 
-    private void readDestinationsFromNBT(NBTTagCompound tagCompound) {
+    private void readDestinationsFromNBT(CompoundNBT tagCompound) {
         NBTTagList lst = tagCompound.getTagList("destinations", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < lst.tagCount() ; i++) {
-            NBTTagCompound tc = lst.getCompoundTagAt(i);
+            CompoundNBT tc = lst.getCompoundTagAt(i);
             BlockPos c = new BlockPos(tc.getInteger("x"), tc.getInteger("y"), tc.getInteger("z"));
             int dim = tc.getInteger("dim");
             String name = tc.getString("name");
@@ -254,17 +254,17 @@ public class TeleportDestinations extends AbstractWorldData<TeleportDestinations
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         writeDestinationsToNBT(tagCompound, destinations.values(), destinationIdByCoordinate);
         tagCompound.setInteger("lastId", lastId);
         return tagCompound;
     }
 
-    private static void writeDestinationsToNBT(NBTTagCompound tagCompound, Collection<TeleportDestination> destinations,
+    private static void writeDestinationsToNBT(CompoundNBT tagCompound, Collection<TeleportDestination> destinations,
                                               Map<GlobalCoordinate, Integer> coordinateToInteger) {
         NBTTagList lst = new NBTTagList();
         for (TeleportDestination destination : destinations) {
-            NBTTagCompound tc = new NBTTagCompound();
+            CompoundNBT tc = new CompoundNBT();
             BlockPos c = destination.getCoordinate();
             tc.setInteger("x", c.getX());
             tc.setInteger("y", c.getY());

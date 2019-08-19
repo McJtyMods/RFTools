@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.tileentity.GenericTileEntity;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.nbt.CompoundNBT;
 
 public class ScreenHitTileEntity extends GenericTileEntity {
 
@@ -15,12 +15,12 @@ public class ScreenHitTileEntity extends GenericTileEntity {
         this.dy = dy;
         this.dz = dz;
         markDirty();
-        IBlockState state = getWorld().getBlockState(getPos());
+        BlockState state = getWorld().getBlockState(getPos());
         getWorld().notifyBlockUpdate(getPos(), state, state, 3);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(CompoundNBT tagCompound) {
         super.readFromNBT(tagCompound);
         dx = tagCompound.getInteger("dx");
         dy = tagCompound.getInteger("dy");
@@ -40,7 +40,7 @@ public class ScreenHitTileEntity extends GenericTileEntity {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("dx", dx);
         tagCompound.setInteger("dy", dy);
@@ -49,8 +49,8 @@ public class ScreenHitTileEntity extends GenericTileEntity {
     }
 
 //    @Override
-//    public NBTTagCompound getUpdateTag() {
-//        NBTTagCompound updateTag = super.getUpdateTag();
+//    public CompoundNBT getUpdateTag() {
+//        CompoundNBT updateTag = super.getUpdateTag();
 //        writeToNBT(updateTag);
 //        return updateTag;
 //    }
@@ -58,7 +58,7 @@ public class ScreenHitTileEntity extends GenericTileEntity {
 //    @Nullable
 //    @Override
 //    public SPacketUpdateTileEntity getUpdatePacket() {
-//        NBTTagCompound nbtTag = new NBTTagCompound();
+//        CompoundNBT nbtTag = new CompoundNBT();
 //        this.writeToNBT(nbtTag);
 //        return new SPacketUpdateTileEntity(getPos(), 1, nbtTag);
 //    }

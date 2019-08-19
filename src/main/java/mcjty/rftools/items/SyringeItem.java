@@ -13,12 +13,12 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.IEntityMultiPart;
 import net.minecraft.entity.MultiPartEntityPart;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
@@ -46,7 +46,7 @@ public class SyringeItem extends GenericRFToolsItem {
 
     @Override
     public boolean hasContainerItem(ItemStack stack) {
-        NBTTagCompound tagCompound = stack.getTagCompound();
+        CompoundNBT tagCompound = stack.getTag();
         return tagCompound != null && tagCompound.getInteger("level") > 0;
     }
 
@@ -73,7 +73,7 @@ public class SyringeItem extends GenericRFToolsItem {
         }
 
         ModelLoader.setCustomMeshDefinition(this, stack -> {
-            NBTTagCompound tagCompound = stack.getTagCompound();
+            CompoundNBT tagCompound = stack.getTag();
             int level = 0;
             if (tagCompound != null) {
                 level = tagCompound.getInteger("level");
@@ -97,10 +97,10 @@ public class SyringeItem extends GenericRFToolsItem {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
-            NBTTagCompound tagCompound = stack.getTagCompound();
+            CompoundNBT tagCompound = stack.getTag();
             if (tagCompound != null) {
                 String mobName = getMobName(stack);
                 if (mobName != null) {
@@ -110,21 +110,21 @@ public class SyringeItem extends GenericRFToolsItem {
                 level = level * 100 / GeneralConfiguration.maxMobInjections.get();
                 Logging.message(player, TextFormatting.BLUE + "Essence level: " + level + "%");
             }
-            return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+            return new ActionResult<>(ActionResultType.SUCCESS, stack);
         }
-        return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+        return new ActionResult<>(ActionResultType.SUCCESS, stack);
     }
 
     @Override
-    public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
+    public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity) {
         EntityLiving entityLiving = getEntityLivingFromClickedEntity(entity);
         if(entityLiving != null) {
             String prevMobId = null;
-            NBTTagCompound tagCompound = stack.getTagCompound();
+            CompoundNBT tagCompound = stack.getTag();
             if (tagCompound != null) {
                 prevMobId = EntityTools.fixEntityId(tagCompound.getString("mobId"));
             } else {
-                tagCompound = new NBTTagCompound();
+                tagCompound = new CompoundNBT();
                 stack.setTagCompound(tagCompound);
             }
             String id = findSelectedMobId(entityLiving);
@@ -162,7 +162,7 @@ public class SyringeItem extends GenericRFToolsItem {
     @Override
     public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
             String mobName = getMobName(itemStack);
             if (mobName != null) {
@@ -188,7 +188,7 @@ public class SyringeItem extends GenericRFToolsItem {
 
     private static ItemStack createMobSyringe(String id, String name) {
         ItemStack syringe = new ItemStack(ModItems.syringeItem);
-        NBTTagCompound tagCompound = new NBTTagCompound();
+        CompoundNBT tagCompound = new CompoundNBT();
         tagCompound.setString("mobId", id);
         if (name == null || name.isEmpty()) {
             name = id;
@@ -200,7 +200,7 @@ public class SyringeItem extends GenericRFToolsItem {
     }
 
     public static String getMobId(ItemStack stack) {
-        NBTTagCompound tagCompound = stack.getTagCompound();
+        CompoundNBT tagCompound = stack.getTag();
         if (tagCompound != null) {
             String mob = tagCompound.getString("mobId");
             if (mob == null) {
@@ -215,7 +215,7 @@ public class SyringeItem extends GenericRFToolsItem {
     }
 
     public static String getMobName(ItemStack stack) {
-        NBTTagCompound tagCompound = stack.getTagCompound();
+        CompoundNBT tagCompound = stack.getTag();
         if (tagCompound != null) {
             String mob = tagCompound.getString("mobName");
             if (mob == null || "unknown".equals(mob)) {

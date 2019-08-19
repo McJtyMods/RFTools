@@ -6,9 +6,9 @@ import mcjty.lib.varia.SoundTools;
 import mcjty.rftools.ModSounds;
 import mcjty.rftools.blocks.environmental.NoTeleportAreaManager;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
@@ -36,7 +36,7 @@ public class TeleportationTools {
         }
     }
 
-    public static void applyEffectForSeverity(EntityPlayer player, int severity, boolean boostNeeded) {
+    public static void applyEffectForSeverity(PlayerEntity player, int severity, boolean boostNeeded) {
         getPotions();
         switch (severity) {
             case 1:
@@ -130,7 +130,7 @@ public class TeleportationTools {
     }
 
     // Return true if we needed a boost.
-    public static boolean performTeleport(EntityPlayer player, TeleportDestination dest, int bad, int good, boolean boosted) {
+    public static boolean performTeleport(PlayerEntity player, TeleportDestination dest, int bad, int good, boolean boosted) {
         BlockPos c = dest.getCoordinate();
 
         BlockPos old = new BlockPos((int)player.posX, (int)player.posY, (int)player.posZ);
@@ -244,7 +244,7 @@ public class TeleportationTools {
      * @param dimension
      * @return 0 in case of success. 10 in case of severe failure
      */
-    private static int consumeReceiverEnergy(EntityPlayer player, BlockPos c, int dimension) {
+    private static int consumeReceiverEnergy(PlayerEntity player, BlockPos c, int dimension) {
         World world = DimensionManager.getWorld(dimension);
         TileEntity te = world.getTileEntity(c);
         if (!(te instanceof MatterReceiverTileEntity)) {
@@ -294,7 +294,7 @@ public class TeleportationTools {
         return severity;
     }
 
-    public static int applyBadEffectIfNeeded(EntityPlayer player, int severity, int bad, int total, boolean boostNeeded) {
+    public static int applyBadEffectIfNeeded(PlayerEntity player, int severity, int bad, int total, boolean boostNeeded) {
         if (player == null) {
             return 0;
         }
@@ -337,7 +337,7 @@ public class TeleportationTools {
     public static boolean checkBeam(BlockPos c, World world, int dy1, int dy2, int errory) {
         for (int dy = dy1 ; dy <= dy2 ; dy++) {
             BlockPos pos = new BlockPos(c.getX(), c.getY() + dy, c.getZ());
-            IBlockState state = world.getBlockState(pos);
+            BlockState state = world.getBlockState(pos);
             Block b = state.getBlock();
             if (!b.isAir(state, world, pos)) {
                 if (dy <= errory) {
@@ -352,7 +352,7 @@ public class TeleportationTools {
         return true;
     }
 
-    public static boolean checkValidTeleport(EntityPlayer player, int srcId, int dstId) {
+    public static boolean checkValidTeleport(PlayerEntity player, int srcId, int dstId) {
         if (TeleportConfiguration.preventInterdimensionalTeleports.get()) {
             if (srcId == dstId) {
                 Logging.warn(player, "Teleportation in the same dimension is not allowed!");

@@ -5,7 +5,7 @@ import mcjty.lib.worlddata.AbstractWorldData;
 import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
@@ -48,7 +48,7 @@ public class ScanDataManager extends AbstractWorldData<ScanDataManager> {
         dataDir.mkdirs();
         File file = new File(dataDir, "scan" + scanId);
         Scan scan = getOrCreateScan(scanId);
-        NBTTagCompound tc = new NBTTagCompound();
+        CompoundNBT tc = new CompoundNBT();
         scan.writeToNBTExternal(tc);
         try(DataOutputStream dataoutputstream = new DataOutputStream(new FileOutputStream(file))) {
             CompressedStreamTools.writeCompressed(tc, dataoutputstream);
@@ -101,7 +101,7 @@ public class ScanDataManager extends AbstractWorldData<ScanDataManager> {
             File file = new File(dataDir, "scan" + id);
             if (file.exists()) {
                 try(DataInputStream datainputstream = new DataInputStream(new FileInputStream(file))) {
-                    NBTTagCompound tag = CompressedStreamTools.readCompressed(datainputstream);
+                    CompoundNBT tag = CompressedStreamTools.readCompressed(datainputstream);
                     scan.readFromNBTExternal(tag);
                 } catch (IOException e) {
                     Logging.log("Error reading scan file for id: " + id);
@@ -140,11 +140,11 @@ public class ScanDataManager extends AbstractWorldData<ScanDataManager> {
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
+    public void readFromNBT(CompoundNBT tagCompound) {
         scans.clear();
         NBTTagList lst = tagCompound.getTagList("scans", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < lst.tagCount(); i++) {
-            NBTTagCompound tc = lst.getCompoundTagAt(i);
+            CompoundNBT tc = lst.getCompoundTagAt(i);
             int id = tc.getInteger("scan");
             Scan scan = new Scan();
             scan.readFromNBT(tc);
@@ -155,10 +155,10 @@ public class ScanDataManager extends AbstractWorldData<ScanDataManager> {
 
     @SuppressWarnings("NullableProblems")
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         NBTTagList lst = new NBTTagList();
         for (Map.Entry<Integer, Scan> entry : scans.entrySet()) {
-            NBTTagCompound tc = new NBTTagCompound();
+            CompoundNBT tc = new CompoundNBT();
             tc.setInteger("scan", entry.getKey());
             entry.getValue().writeToNBT(tc);
             lst.appendTag(tc);

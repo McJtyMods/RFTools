@@ -5,12 +5,11 @@ import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageTileEntity;
 import mcjty.rftools.setup.GuiProxy;
-import mcjty.rftools.items.GenericRFToolsItem;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -40,7 +39,7 @@ public class StorageFilterItem extends GenericRFToolsItem {
     @Override
     public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        NBTTagCompound tagCompound = itemStack.getTagCompound();
+        CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
             String blackListMode = tagCompound.getString("blacklistMode");
             String modeLine = "Mode " + ("Black".equals(blackListMode) ? "blacklist" : "whitelist");
@@ -71,7 +70,7 @@ public class StorageFilterItem extends GenericRFToolsItem {
     }
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public ActionResultType onItemUse(PlayerEntity playerIn, World worldIn, BlockPos pos, Hand hand, Direction facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = playerIn.getHeldItem(hand);
         if (playerIn.isSneaking()) {
             if (!worldIn.isRemote) {
@@ -81,36 +80,36 @@ public class StorageFilterItem extends GenericRFToolsItem {
                     Set<ResourceLocation> registeredItems = new HashSet<>();
                     InventoryHelper.getItems(te, s -> true).forEach(s -> addItem(te, stacks, registeredItems, s));
                     if (!stack.hasTagCompound()) {
-                        stack.setTagCompound(new NBTTagCompound());
+                        stack.setTagCompound(new CompoundNBT());
                     }
-                    StorageFilterInventory.convertItemsToNBT(stack.getTagCompound(), stacks);
+                    StorageFilterInventory.convertItemsToNBT(stack.getTag(), stacks);
                     playerIn.sendStatusMessage(new TextComponentString(TextFormatting.GREEN + "Stored inventory contents in filter"), false);
                 } else {
-                    IBlockState state = worldIn.getBlockState(pos);
+                    BlockState state = worldIn.getBlockState(pos);
                     ItemStack blockStack = state.getBlock().getItem(worldIn, pos, state);
                     if (!blockStack.isEmpty()) {
                         if (!stack.hasTagCompound()) {
-                            stack.setTagCompound(new NBTTagCompound());
+                            stack.setTagCompound(new CompoundNBT());
                         }
                         Set<ResourceLocation> registeredItems = new HashSet<>();
                         ItemStackList stacks = ItemStackList.create(FILTER_SLOTS);
-                        NBTTagList bufferTagList = stack.getTagCompound().getTagList("Items", Constants.NBT.TAG_COMPOUND);
+                        NBTTagList bufferTagList = stack.getTag().getTagList("Items", Constants.NBT.TAG_COMPOUND);
                         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
-                            NBTTagCompound nbtTagCompound = bufferTagList.getCompoundTagAt(i);
-                            stacks.set(i, new ItemStack(nbtTagCompound));
+                            CompoundNBT CompoundNBT = bufferTagList.getCompoundTagAt(i);
+                            stacks.set(i, new ItemStack(CompoundNBT));
                         }
                         for (int i = 0 ; i < FILTER_SLOTS ; i++) {
                             if (stacks.get(i).isEmpty()) {
                                 stacks.set(i, blockStack);
                                 playerIn.sendStatusMessage(new TextComponentString(TextFormatting.GREEN + "Added " + blockStack.getDisplayName() + " to the filter!"), false);
-                                StorageFilterInventory.convertItemsToNBT(stack.getTagCompound(), stacks);
+                                StorageFilterInventory.convertItemsToNBT(stack.getTag(), stacks);
                                 break;
                             }
                         }
                     }
                 }
             }
-            return EnumActionResult.SUCCESS;
+            return ActionResultType.SUCCESS;
         }
         return super.onItemUse(playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
     }
@@ -133,13 +132,13 @@ public class StorageFilterItem extends GenericRFToolsItem {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (!world.isRemote) {
             player.openGui(RFTools.instance, GuiProxy.GUI_STORAGE_FILTER, player.getEntityWorld(), (int) player.posX, (int) player.posY, (int) player.posZ);
-            return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+            return new ActionResult<>(ActionResultType.SUCCESS, stack);
         }
-        return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+        return new ActionResult<>(ActionResultType.SUCCESS, stack);
     }
 
     public static StorageFilterCache getCache(ItemStack stack) {

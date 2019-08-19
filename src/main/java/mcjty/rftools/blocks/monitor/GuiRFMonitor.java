@@ -17,7 +17,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.util.math.BlockPos;
 
 import java.awt.*;
@@ -129,7 +129,7 @@ public class GuiRFMonitor extends GenericGuiContainer<RFMonitorBlockTileEntity> 
         int index = 0;
         int sel = -1;
         for (BlockPos coordinate : adjacentBlocks) {
-            IBlockState state = mc.world.getBlockState(coordinate);
+            BlockState state = mc.world.getBlockState(coordinate);
             Block block = state.getBlock();
 
             int color = StyleConfig.colorTextInListNormal;

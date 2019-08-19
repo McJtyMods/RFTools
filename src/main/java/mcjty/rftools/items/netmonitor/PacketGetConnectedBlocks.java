@@ -6,7 +6,7 @@ import mcjty.lib.thirteen.Context;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.rftools.varia.BlockInfo;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -42,7 +42,7 @@ public class PacketGetConnectedBlocks implements IMessage {
     public void handle(Supplier<Context> supplier) {
         Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
-            EntityPlayer player = ctx.getSender();
+            PlayerEntity player = ctx.getSender();
             Map<BlockPos,BlockInfo> connectedBlocks = new HashMap<>();
             findConnectedBlocks(connectedBlocks, player.getEntityWorld(), pos);
 
