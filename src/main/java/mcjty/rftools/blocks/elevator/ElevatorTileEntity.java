@@ -40,8 +40,8 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.fml.common.Optional;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+
+
 
 import java.util.HashSet;
 import java.util.List;
@@ -732,14 +732,14 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         if (tagCompound.hasKey("players")) {
             entitiesOnPlatform.clear();
             ServerWorld world = DimensionManager.getWorld(0);
-            List<EntityPlayerMP> serverPlayers = world.getMinecraftServer().getPlayerList().getPlayers();
+            List<ServerPlayerEntity> serverPlayers = world.getMinecraftServer().getPlayerList().getPlayers();
             ListNBT playerList = tagCompound.getTagList("players", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < playerList.tagCount(); i++) {
                 CompoundNBT p = playerList.getCompoundTagAt(i);
                 long lsb = p.getLong("lsb");
                 long msb = p.getLong("msb");
                 UUID uuid = new UUID(msb, lsb);
-                for (EntityPlayerMP serverPlayer : serverPlayers) {
+                for (ServerPlayerEntity serverPlayer : serverPlayers) {
                     if (serverPlayer.getGameProfile().getId().equals(uuid)) {
                         entitiesOnPlatform.add(serverPlayer);
                         break;
@@ -849,7 +849,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+    public boolean execute(ServerPlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;

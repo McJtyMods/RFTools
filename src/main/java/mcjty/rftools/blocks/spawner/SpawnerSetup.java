@@ -4,8 +4,8 @@ import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.container.GenericContainer;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.setup.GuiProxy;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+
+
 
 public class SpawnerSetup {
     public static BaseBlock<SpawnerTileEntity, GenericContainer> spawnerBlock;

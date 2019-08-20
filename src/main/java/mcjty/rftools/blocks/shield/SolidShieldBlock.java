@@ -11,8 +11,8 @@ import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+
+
 
 public class SolidShieldBlock extends AbstractShieldBlock {
 

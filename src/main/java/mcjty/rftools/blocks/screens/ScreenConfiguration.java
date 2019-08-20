@@ -1,39 +1,40 @@
 package mcjty.rftools.blocks.screens;
 
-import mcjty.lib.thirteen.ConfigSpec;
+
+import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ScreenConfiguration {
 
     public static final String CATEGORY_SCREEN = "screen";
 
-    public static ConfigSpec.IntValue CONTROLLER_MAXENERGY; //60000;
-    public static ConfigSpec.IntValue CONTROLLER_RECEIVEPERTICK; //1000;
-    public static ConfigSpec.IntValue BUTTON_RFPERTICK; //0;
-    public static ConfigSpec.IntValue DUMP_RFPERTICK; //0;
-    public static ConfigSpec.IntValue ELEVATOR_BUTTON_RFPERTICK; //0;
-    public static ConfigSpec.IntValue CLOCK_RFPERTICK; //1;
-    public static ConfigSpec.IntValue COMPUTER_RFPERTICK; //4;
-    public static ConfigSpec.IntValue COUNTERPLUS_RFPERTICK; //30;
-    public static ConfigSpec.IntValue COUNTER_RFPERTICK; //4;
-    public static ConfigSpec.IntValue DIMENSION_RFPERTICK; //6;
-    public static ConfigSpec.IntValue ENERGY_RFPERTICK; //4;
-    public static ConfigSpec.IntValue ENERGYPLUS_RFPERTICK; //30;
-    public static ConfigSpec.IntValue FLUID_RFPERTICK; //4;
-    public static ConfigSpec.IntValue FLUIDPLUS_RFPERTICK; //30;
-    public static ConfigSpec.IntValue ITEMSTACKPLUS_RFPERTICK; //30;
-    public static ConfigSpec.IntValue ITEMSTACK_RFPERTICK; //4;
-    public static ConfigSpec.IntValue MACHINEINFO_RFPERTICK; //4;
-    public static ConfigSpec.IntValue REDSTONE_RFPERTICK; //4;
-    public static ConfigSpec.IntValue TEXT_RFPERTICK; //0;
-    public static ConfigSpec.IntValue STORAGE_CONTROL_RFPERTICK; //6;
-    public static ConfigSpec.IntValue SCREEN_REFRESH_TIMING; //500;
+    public static ForgeConfigSpec.IntValue CONTROLLER_MAXENERGY; //60000;
+    public static ForgeConfigSpec.IntValue CONTROLLER_RECEIVEPERTICK; //1000;
+    public static ForgeConfigSpec.IntValue BUTTON_RFPERTICK; //0;
+    public static ForgeConfigSpec.IntValue DUMP_RFPERTICK; //0;
+    public static ForgeConfigSpec.IntValue ELEVATOR_BUTTON_RFPERTICK; //0;
+    public static ForgeConfigSpec.IntValue CLOCK_RFPERTICK; //1;
+    public static ForgeConfigSpec.IntValue COMPUTER_RFPERTICK; //4;
+    public static ForgeConfigSpec.IntValue COUNTERPLUS_RFPERTICK; //30;
+    public static ForgeConfigSpec.IntValue COUNTER_RFPERTICK; //4;
+    public static ForgeConfigSpec.IntValue DIMENSION_RFPERTICK; //6;
+    public static ForgeConfigSpec.IntValue ENERGY_RFPERTICK; //4;
+    public static ForgeConfigSpec.IntValue ENERGYPLUS_RFPERTICK; //30;
+    public static ForgeConfigSpec.IntValue FLUID_RFPERTICK; //4;
+    public static ForgeConfigSpec.IntValue FLUIDPLUS_RFPERTICK; //30;
+    public static ForgeConfigSpec.IntValue ITEMSTACKPLUS_RFPERTICK; //30;
+    public static ForgeConfigSpec.IntValue ITEMSTACK_RFPERTICK; //4;
+    public static ForgeConfigSpec.IntValue MACHINEINFO_RFPERTICK; //4;
+    public static ForgeConfigSpec.IntValue REDSTONE_RFPERTICK; //4;
+    public static ForgeConfigSpec.IntValue TEXT_RFPERTICK; //0;
+    public static ForgeConfigSpec.IntValue STORAGE_CONTROL_RFPERTICK; //6;
+    public static ForgeConfigSpec.IntValue SCREEN_REFRESH_TIMING; //500;
 
-    public static ConfigSpec.BooleanValue useTruetype;
-    public static ConfigSpec.ConfigValue<String> font;
-    public static ConfigSpec.DoubleValue fontSize;
-    public static ConfigSpec.ConfigValue<String> additionalCharacters;
+    public static ForgeConfigSpec.BooleanValue useTruetype;
+    public static ForgeConfigSpec.ConfigValue<String> font;
+    public static ForgeConfigSpec.DoubleValue fontSize;
+    public static ForgeConfigSpec.ConfigValue<String> additionalCharacters;
 
-    public static void init(ConfigSpec.Builder SERVER_BUILDER, ConfigSpec.Builder CLIENT_BUILDER) {
+    public static void init(ForgeConfigSpec.Builder SERVER_BUILDER, ForgeConfigSpec.Builder CLIENT_BUILDER) {
         SERVER_BUILDER.comment("Settings for the screen system").push(CATEGORY_SCREEN);
         CLIENT_BUILDER.comment("Settings for the screen system").push(CATEGORY_SCREEN);
 

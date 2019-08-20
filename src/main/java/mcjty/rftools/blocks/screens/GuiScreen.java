@@ -175,7 +175,7 @@ public class GuiScreen  extends GenericGuiContainer<ScreenTileEntity> {
         modulePanels[i].setFilledRectThickness(-2).setFilledBackground(0xff8b8b8b);
 
         toplevel.addChild(modulePanels[i]);
-        buttons[i].setText(moduleProvider.getName());
+        buttons[i].setText(moduleProvider.getModuleName());
     }
 
     @Override

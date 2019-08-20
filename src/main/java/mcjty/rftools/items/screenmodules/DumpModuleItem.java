@@ -1,8 +1,10 @@
 package mcjty.rftools.items.screenmodules;
 
+import mcjty.lib.McJtyLib;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
@@ -14,6 +16,7 @@ import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -21,24 +24,24 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class DumpModuleItem extends GenericRFToolsItem implements IModuleProvider {
+public class DumpModuleItem extends Item implements IModuleProvider {
 
     public DumpModuleItem() {
-        super("dump_module");
+        super(new Item.Properties().defaultMaxDamage(1).group(RFTools.setup.getTab()));
+        setRegistryName("dump_module");
     }
 
-    @Override
-    public int getMaxItemUseDuration(ItemStack stack) {
-        return 1;
-    }
+//    @Override
+//    public int getMaxItemUseDuration(ItemStack stack) {
+//        return 1;
+//    }
 
     @Override
     public Class<DumpScreenModule> getServerScreenModule() {
@@ -51,7 +54,7 @@ public class DumpModuleItem extends GenericRFToolsItem implements IModuleProvide
     }
 
     @Override
-    public String getName() {
+    public String getModuleName() {
         return "Dump";
     }
 
@@ -70,38 +73,37 @@ public class DumpModuleItem extends GenericRFToolsItem implements IModuleProvide
                 .toggle("oredict", "Ore Dict", "If enabled use ore dictionary", "to match items");
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
-        super.addInformation(itemStack, player, list, whatIsThis);
-        list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.DUMP_RFPERTICK.get() + " RF/tick");
+    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
+        super.addInformation(itemStack, world, list, flag);
+        list.add(new StringTextComponent(TextFormatting.GREEN + "Uses " + ScreenConfiguration.DUMP_RFPERTICK.get() + " RF/tick"));
         boolean hasTarget = false;
         CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
             hasTarget = addModuleInformation(list, itemStack);
         }
         if (!hasTarget) {
-            list.add(TextFormatting.YELLOW + "Sneak right-click on a storage scanner to set the");
-            list.add(TextFormatting.YELLOW + "target for this dump module");
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "Sneak right-click on a storage scanner to set the"));
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "target for this dump module"));
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(TextFormatting.WHITE + "This screen module allows you to dump");
-            list.add(TextFormatting.WHITE + "a lot of items through a storage scanner");
+        if (McJtyLib.proxy.isShiftKeyDown()) {
+            list.add(new StringTextComponent(TextFormatting.WHITE + "This screen module allows you to dump"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "a lot of items through a storage scanner"));
         } else {
-            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
+            list.add(new StringTextComponent(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE));
         }
     }
 
-    public static boolean addModuleInformation(List<String> list, ItemStack stack) {
-        if (!stack.hasTagCompound()) {
+    public static boolean addModuleInformation(List<ITextComponent> list, ItemStack stack) {
+        if (!stack.hasTag()) {
             return false;
         }
-        list.add(TextFormatting.YELLOW + "Label: " + stack.getTag().getString("text"));
+        list.add(new StringTextComponent(TextFormatting.YELLOW + "Label: " + stack.getTag().getString("text")));
 
         if (RFToolsTools.hasModuleTarget(stack)) {
             BlockPos pos = RFToolsTools.getPositionFromModule(stack);
             String monitorname = stack.getTag().getString("monitorname");
-            list.add(TextFormatting.YELLOW + "Monitoring: " + monitorname + " (at " + BlockPosTools.toString(pos) + ")");
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "Monitoring: " + monitorname + " (at " + BlockPosTools.toString(pos) + ")"));
             return true;
         }
         return false;

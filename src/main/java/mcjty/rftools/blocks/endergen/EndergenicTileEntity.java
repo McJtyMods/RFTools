@@ -458,7 +458,7 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
                                             .put(ClientCommandHandler.PARAM_GOODCOUNTER, goodCounter)
                                             .put(ClientCommandHandler.PARAM_BADCOUNTER, badCounter)
                                             .build()),
-                            (EntityPlayerMP) p));
+                            (ServerPlayerEntity) p));
         }
     }
 

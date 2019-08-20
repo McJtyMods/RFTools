@@ -2,11 +2,13 @@ package mcjty.rftools.shapes;
 
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockSlab;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.SlabBlock;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.material.MapColor;
+import net.minecraft.block.material.MaterialColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.state.properties.SlabType;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
@@ -46,51 +48,56 @@ public class ShapeBlockInfo {
     private static final Set<Block> nonSolidBlocks = new HashSet<>();
 
     static {
-        nonSolidBlocks.add(Blocks.TORCH);
-        nonSolidBlocks.add(Blocks.TORCH);
-        nonSolidBlocks.add(Blocks.STONE_SLAB);
-        nonSolidBlocks.add(Blocks.WOODEN_SLAB);
-        nonSolidBlocks.add(Blocks.PURPUR_SLAB);
-        nonSolidBlocks.add(Blocks.STONE_SLAB2);
-        nonSolidBlocks.add(Blocks.SNOW_LAYER);
-        nonSolidBlocks.add(Blocks.COBBLESTONE_WALL);
-        nonSolidBlocks.add(Blocks.IRON_BARS);
-        nonSolidBlocks.add(Blocks.LADDER);
-        nonSolidBlocks.add(Blocks.VINE);
-        nonSolidBlocks.add(Blocks.RED_FLOWER);
-        nonSolidBlocks.add(Blocks.YELLOW_FLOWER);
-        nonSolidBlocks.add(Blocks.WHEAT);
-        nonSolidBlocks.add(Blocks.CARROTS);
-        nonSolidBlocks.add(Blocks.POTATOES);
-        nonSolidBlocks.add(Blocks.BEETROOTS);
-        nonSolidBlocks.add(Blocks.TALLGRASS);
-        nonSolidBlocks.add(Blocks.RAIL);
-        nonSolidBlocks.add(Blocks.ACTIVATOR_RAIL);
-        nonSolidBlocks.add(Blocks.DETECTOR_RAIL);
-        nonSolidBlocks.add(Blocks.GOLDEN_RAIL);
-        nonSolidBlocks.add(Blocks.RED_MUSHROOM);
-        nonSolidBlocks.add(Blocks.BROWN_MUSHROOM);
-        nonSolidBlocks.add(Blocks.FIRE);
-        nonSolidBlocks.add(Blocks.REDSTONE_WIRE);
-        nonSolidBlocks.add(Blocks.CHEST);
-        nonSolidBlocks.add(Blocks.TRAPPED_CHEST);
-        nonSolidBlocks.add(Blocks.TRAPDOOR);
-        nonSolidBlocks.add(Blocks.WOODEN_PRESSURE_PLATE);
-        nonSolidBlocks.add(Blocks.STONE_PRESSURE_PLATE);
-        nonSolidBlocks.add(Blocks.ACACIA_FENCE);
-        nonSolidBlocks.add(Blocks.ACACIA_FENCE_GATE);
-        nonSolidBlocks.add(Blocks.BIRCH_FENCE);
-        nonSolidBlocks.add(Blocks.BIRCH_FENCE_GATE);
-        nonSolidBlocks.add(Blocks.DARK_OAK_FENCE);
-        nonSolidBlocks.add(Blocks.DARK_OAK_FENCE_GATE);
-        nonSolidBlocks.add(Blocks.JUNGLE_FENCE);
-        nonSolidBlocks.add(Blocks.JUNGLE_FENCE_GATE);
-        nonSolidBlocks.add(Blocks.OAK_FENCE);
-        nonSolidBlocks.add(Blocks.OAK_FENCE_GATE);
-        nonSolidBlocks.add(Blocks.NETHER_BRICK_FENCE);
-        nonSolidBlocks.add(Blocks.LEVER);
-        nonSolidBlocks.add(Blocks.STONE_BUTTON);
-        nonSolidBlocks.add(Blocks.WOODEN_BUTTON);
+        // @todo 1.14 find a better way!
+//        nonSolidBlocks.add(Blocks.TORCH);
+//        nonSolidBlocks.add(Blocks.TORCH);
+//        nonSolidBlocks.add(Blocks.STONE_SLAB);
+//        nonSolidBlocks.add(Blocks.DARK_OAK_SLAB);
+//        nonSolidBlocks.add(Blocks.OAK_SLAB);
+//        nonSolidBlocks.add(Blocks.ACACIA_SLAB);
+//        nonSolidBlocks.add(Blocks.BIRCH_SLAB);
+//        nonSolidBlocks.add(Blocks.SPRUCE_SLAB);
+//        nonSolidBlocks.add(Blocks.JUNGLE_SLAB);
+//        nonSolidBlocks.add(Blocks.PURPUR_SLAB);
+//        nonSolidBlocks.add(Blocks.SNOW);
+//        nonSolidBlocks.add(Blocks.COBBLESTONE_WALL);
+//        nonSolidBlocks.add(Blocks.IRON_BARS);
+//        nonSolidBlocks.add(Blocks.LADDER);
+//        nonSolidBlocks.add(Blocks.VINE);
+//        nonSolidBlocks.add(Blocks.RED_FLOWER);
+//        nonSolidBlocks.add(Blocks.YELLOW_FLOWER);
+//        nonSolidBlocks.add(Blocks.WHEAT);
+//        nonSolidBlocks.add(Blocks.CARROTS);
+//        nonSolidBlocks.add(Blocks.POTATOES);
+//        nonSolidBlocks.add(Blocks.BEETROOTS);
+//        nonSolidBlocks.add(Blocks.TALLGRASS);
+//        nonSolidBlocks.add(Blocks.RAIL);
+//        nonSolidBlocks.add(Blocks.ACTIVATOR_RAIL);
+//        nonSolidBlocks.add(Blocks.DETECTOR_RAIL);
+//        nonSolidBlocks.add(Blocks.GOLDEN_RAIL);
+//        nonSolidBlocks.add(Blocks.RED_MUSHROOM);
+//        nonSolidBlocks.add(Blocks.BROWN_MUSHROOM);
+//        nonSolidBlocks.add(Blocks.FIRE);
+//        nonSolidBlocks.add(Blocks.REDSTONE_WIRE);
+//        nonSolidBlocks.add(Blocks.CHEST);
+//        nonSolidBlocks.add(Blocks.TRAPPED_CHEST);
+//        nonSolidBlocks.add(Blocks.TRAPDOOR);
+//        nonSolidBlocks.add(Blocks.WOODEN_PRESSURE_PLATE);
+//        nonSolidBlocks.add(Blocks.STONE_PRESSURE_PLATE);
+//        nonSolidBlocks.add(Blocks.ACACIA_FENCE);
+//        nonSolidBlocks.add(Blocks.ACACIA_FENCE_GATE);
+//        nonSolidBlocks.add(Blocks.BIRCH_FENCE);
+//        nonSolidBlocks.add(Blocks.BIRCH_FENCE_GATE);
+//        nonSolidBlocks.add(Blocks.DARK_OAK_FENCE);
+//        nonSolidBlocks.add(Blocks.DARK_OAK_FENCE_GATE);
+//        nonSolidBlocks.add(Blocks.JUNGLE_FENCE);
+//        nonSolidBlocks.add(Blocks.JUNGLE_FENCE_GATE);
+//        nonSolidBlocks.add(Blocks.OAK_FENCE);
+//        nonSolidBlocks.add(Blocks.OAK_FENCE_GATE);
+//        nonSolidBlocks.add(Blocks.NETHER_BRICK_FENCE);
+//        nonSolidBlocks.add(Blocks.LEVER);
+//        nonSolidBlocks.add(Blocks.STONE_BUTTON);
+//        nonSolidBlocks.add(Blocks.WOODEN_BUTTON);
     }
 
     public static boolean isNonSolidBlock(Block b) {
@@ -111,13 +118,13 @@ public class ShapeBlockInfo {
         Block block = state.getBlock();
         if (block == Blocks.TORCH || block == Blocks.REDSTONE_TORCH) {
             render = BD_TORCH;
-        } else if (block == Blocks.STONE_SLAB || block == Blocks.WOODEN_SLAB || block == Blocks.PURPUR_SLAB || block == Blocks.STONE_SLAB2) {
-            if (state.getValue(BlockSlab.HALF) == BlockSlab.EnumBlockHalf.BOTTOM) {
+        } else if (block == Blocks.STONE_SLAB  /*|| block == Blocks.WOODEN_SLAB || block == Blocks.PURPUR_SLAB || block == Blocks.STONE_SLAB2*/) {  // @todo 1.14
+            if (state.get(SlabBlock.TYPE) == SlabType.BOTTOM) {
                 render = BD_SLAB;
             } else {
                 render = BD_SLAB_UPPER;
             }
-        } else if (block == Blocks.SNOW_LAYER) {
+        } else if (block == Blocks.SNOW) {
             render = BD_SNOWLAYER;
         } else if (block == Blocks.COBBLESTONE_WALL) {
             render = BD_WALL;
@@ -125,12 +132,12 @@ public class ShapeBlockInfo {
             render = BD_BARS;
         } else if (block == Blocks.VINE) {
             render = BD_VINE;
-        } else if (block == Blocks.RED_FLOWER || block == Blocks.YELLOW_FLOWER || block == Blocks.WHEAT || block == Blocks.CARROTS ||
+        } else if (/*block == Blocks.RED_FLOWER || block == Blocks.YELLOW_FLOWER || */block == Blocks.WHEAT || block == Blocks.CARROTS ||// @todo 1.14
                 block == Blocks.POTATOES || block == Blocks.BEETROOTS) {
             render = BD_FLOWER;
-        } else if (block == Blocks.TALLGRASS) {
+        } else if (block == Blocks.GRASS) { // Tall grass
             render = BD_GRASS;
-        } else if (block == Blocks.RAIL || block == Blocks.ACTIVATOR_RAIL || block == Blocks.DETECTOR_RAIL || block == Blocks.GOLDEN_RAIL) {
+        } else if (block == Blocks.RAIL || block == Blocks.ACTIVATOR_RAIL || block == Blocks.DETECTOR_RAIL || block == Blocks.POWERED_RAIL) {
             render = BD_RAIL;
         } else if (block == Blocks.RED_MUSHROOM || block == Blocks.BROWN_MUSHROOM) {
             render = BD_MUSHROOM;
@@ -140,9 +147,9 @@ public class ShapeBlockInfo {
             render = BD_REDSTONE;
         } else if (block == Blocks.CHEST || block == Blocks.TRAPPED_CHEST) {
             render = BD_CHEST;
-        } else if (block == Blocks.TRAPDOOR || block == Blocks.WOODEN_PRESSURE_PLATE || block == Blocks.STONE_PRESSURE_PLATE) {
+        } else if (block == Blocks.OAK_TRAPDOOR || block == Blocks.OAK_PRESSURE_PLATE || block == Blocks.STONE_PRESSURE_PLATE) {    // @todo 1.14
             render = BD_TRAPDOOR;
-        } else if (block == Blocks.LEVER || block == Blocks.STONE_BUTTON || block == Blocks.WOODEN_BUTTON) {
+        } else if (block == Blocks.LEVER || block == Blocks.STONE_BUTTON || block == Blocks.OAK_BUTTON) {   // @todo 1.14
             render = BD_BUTTON;
         } else if (block == Blocks.ACACIA_FENCE || block == Blocks.ACACIA_FENCE_GATE ||
                 block == Blocks.BIRCH_FENCE || block == Blocks.BIRCH_FENCE_GATE ||
@@ -162,15 +169,15 @@ public class ShapeBlockInfo {
         Col col;
         Block block = state.getBlock();
         // The given world and pos are wrong but they help to avoid crashes for some code
-        MapColor mapColor = null;
+        MaterialColor mapColor = null;
         try {
-            mapColor = block.getMapColor(state, Minecraft.getMinecraft().world, new BlockPos(0, 0, 0));
+            mapColor = block.getMaterialColor(state, Minecraft.getInstance().world, new BlockPos(0, 0, 0));
         } catch (Exception e) {
-            mapColor = MapColor.RED;
+            mapColor = MaterialColor.RED;
         }
-        if (block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) {
+        if (block == Blocks.LAVA || block == Blocks.LAVA) {
             col = COL_LAVA;
-        } else if (block == Blocks.NETHER_BRICK || block == Blocks.NETHER_BRICK_FENCE || block == Blocks.NETHER_BRICK_STAIRS) {
+        } else if (block == Blocks.NETHER_BRICKS || block == Blocks.NETHER_BRICK_FENCE || block == Blocks.NETHER_BRICK_STAIRS) {
             col = COL_NETHERBRICK;
         } else if (block == BuilderSetup.scannerBlock) {
             col = COL_SCANNER;

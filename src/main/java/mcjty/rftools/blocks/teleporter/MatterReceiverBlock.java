@@ -1,108 +1,96 @@
 package mcjty.rftools.blocks.teleporter;
 
+import mcjty.lib.McJtyLib;
 import mcjty.lib.api.Infusable;
-import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.gui.GenericGuiContainer;
+import mcjty.lib.builder.BlockBuilder;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.setup.GuiProxy;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.ProbeMode;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
-import net.minecraft.block.material.Material;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Optional;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.input.Keyboard;
 
+import javax.annotation.Nullable;
 import java.util.List;
-import java.util.function.BiFunction;
 
-public class MatterReceiverBlock extends GenericRFToolsBlock<MatterReceiverTileEntity, EmptyContainer> implements Infusable {
+public class MatterReceiverBlock extends GenericRFToolsBlock implements Infusable {
 
     public MatterReceiverBlock() {
-        super(Material.IRON, MatterReceiverTileEntity.class, EmptyContainer::new, "matter_receiver", false);
-        setDefaultState(this.blockState.getBaseState());
+        super("matter_receiver", new BlockBuilder()
+            .tileEntitySupplier(MatterReceiverTileEntity::new));
+//        setDefaultState(this.blockState.getBaseState());
     }
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    public BiFunction<MatterReceiverTileEntity, EmptyContainer, GenericGuiContainer<? super MatterReceiverTileEntity>> getGuiFactory() {
-        return GuiMatterReceiver::new;
-    }
+//    @SideOnly(Side.CLIENT)
+//    @Override
+//    public BiFunction<MatterReceiverTileEntity, EmptyContainer, GenericGuiContainer<? super MatterReceiverTileEntity>> getGuiFactory() {
+//        return GuiMatterReceiver::new;
+//    }
 
-    @SideOnly(Side.CLIENT)
+
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
-        super.addInformation(itemStack, player, list, whatIsThis);
+    public void addInformation(ItemStack itemStack, @Nullable IBlockReader world, List<ITextComponent> list, ITooltipFlag advanced) {
+        super.addInformation(itemStack, world, list, advanced);
         CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
             String name = tagCompound.getString("tpName");
-            int id = tagCompound.getInteger("destinationId");
-            list.add(TextFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
+            int id = tagCompound.getInt("destinationId");
+            list.add(new StringTextComponent(TextFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id))));
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(TextFormatting.WHITE + "If you place this block anywhere in the world then");
-            list.add(TextFormatting.WHITE + "you can dial to it using a Dialing Device. Before");
-            list.add(TextFormatting.WHITE + "teleporting to this block make sure to give it power!");
-            list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption.");
+        if (McJtyLib.proxy.isShiftKeyDown()) {
+            list.add(new StringTextComponent(TextFormatting.WHITE + "If you place this block anywhere in the world then"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "you can dial to it using a Dialing Device. Before"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "teleporting to this block make sure to give it power!"));
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption."));
         } else {
-            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
+            list.add(new StringTextComponent(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE));
         }
     }
 
-    @Override
-    @Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
-        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
-        TileEntity te = world.getTileEntity(data.getPos());
-        if (te instanceof MatterReceiverTileEntity) {
-            MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
-            String name = matterReceiverTileEntity.getName();
-            int id = matterReceiverTileEntity.getId();
-            if (name == null || name.isEmpty()) {
-                probeInfo.text(TextFormatting.GREEN + (id == -1 ? "" : ("Id: " + id)));
-            } else {
-                probeInfo.text(TextFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
-            }
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    @Optional.Method(modid = "waila")
-    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        super.getWailaBody(itemStack, currenttip, accessor, config);
-        TileEntity te = accessor.getTileEntity();
-        if (te instanceof MatterReceiverTileEntity) {
-            MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
-            String name = matterReceiverTileEntity.getName();
-            int id = matterReceiverTileEntity.getId();
-            if (name == null || name.isEmpty()) {
-                currenttip.add(TextFormatting.GREEN + (id == -1 ? "" : ("Id: " + id)));
-            } else {
-                currenttip.add(TextFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
-            }
-        }
-        return currenttip;
-    }
-
-    @Override
-    public int getGuiID() {
-        return GuiProxy.GUI_MATTER_RECEIVER;
-    }
+//    @Override
+//    @Optional.Method(modid = "theoneprobe")
+//    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
+//        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+//        TileEntity te = world.getTileEntity(data.getPos());
+//        if (te instanceof MatterReceiverTileEntity) {
+//            MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
+//            String name = matterReceiverTileEntity.getName();
+//            int id = matterReceiverTileEntity.getId();
+//            if (name == null || name.isEmpty()) {
+//                probeInfo.text(TextFormatting.GREEN + (id == -1 ? "" : ("Id: " + id)));
+//            } else {
+//                probeInfo.text(TextFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
+//            }
+//        }
+//    }
+//
+//    @SideOnly(Side.CLIENT)
+//    @Override
+//    @Optional.Method(modid = "waila")
+//    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+//        super.getWailaBody(itemStack, currenttip, accessor, config);
+//        TileEntity te = accessor.getTileEntity();
+//        if (te instanceof MatterReceiverTileEntity) {
+//            MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
+//            String name = matterReceiverTileEntity.getName();
+//            int id = matterReceiverTileEntity.getId();
+//            if (name == null || name.isEmpty()) {
+//                currenttip.add(TextFormatting.GREEN + (id == -1 ? "" : ("Id: " + id)));
+//            } else {
+//                currenttip.add(TextFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
+//            }
+//        }
+//        return currenttip;
+//    }
 
     @Override
     public BlockState getStateForPlacement(World world, BlockPos pos, Direction facing, float hitX, float hitY, float hitZ, int meta, LivingEntity placer) {

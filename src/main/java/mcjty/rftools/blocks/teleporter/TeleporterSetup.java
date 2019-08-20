@@ -3,8 +3,6 @@ package mcjty.rftools.blocks.teleporter;
 import mcjty.rftools.items.teleportprobe.AdvancedChargedPorterItem;
 import mcjty.rftools.items.teleportprobe.ChargedPorterItem;
 import mcjty.rftools.items.teleportprobe.TeleportProbeItem;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TeleporterSetup {
     public static MatterTransmitterBlock matterTransmitterBlock;
@@ -31,17 +29,17 @@ public class TeleporterSetup {
         advancedChargedPorterItem = new AdvancedChargedPorterItem();
     }
 
-    @SideOnly(Side.CLIENT)
-    public static void initClient() {
-        matterTransmitterBlock.initModel();
-        matterReceiverBlock.initModel();
-        dialingDeviceBlock.initModel();
-        destinationAnalyzerBlock.initModel();
-        matterBoosterBlock.initModel();
-        simpleDialerBlock.initModel();
-
-        teleportProbeItem.initModel();
-        chargedPorterItem.initModel();
-        advancedChargedPorterItem.initModel();
-    }
+//    @SideOnly(Side.CLIENT)
+//    public static void initClient() {
+//        matterTransmitterBlock.initModel();
+//        matterReceiverBlock.initModel();
+//        dialingDeviceBlock.initModel();
+//        destinationAnalyzerBlock.initModel();
+//        matterBoosterBlock.initModel();
+//        simpleDialerBlock.initModel();
+//
+//        teleportProbeItem.initModel();
+//        chargedPorterItem.initModel();
+//        advancedChargedPorterItem.initModel();
+//    }
 }

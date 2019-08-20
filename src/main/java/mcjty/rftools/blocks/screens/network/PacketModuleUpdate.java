@@ -60,7 +60,7 @@ public class PacketModuleUpdate implements IMessage {
     public void handle(Supplier<Context> supplier) {
         Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
-            EntityPlayerMP player = ctx.getSender();
+            ServerPlayerEntity player = ctx.getSender();
             World world = player.getEntityWorld();
             Block block = world.getBlockState(pos).getBlock();
             // adapted from NetHandlerPlayServer.processTryUseItemOnBlock

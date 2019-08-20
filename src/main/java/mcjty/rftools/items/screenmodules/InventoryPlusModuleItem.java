@@ -3,6 +3,7 @@ package mcjty.rftools.items.screenmodules;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.CapabilityTools;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
@@ -12,6 +13,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -19,49 +21,48 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class InventoryPlusModuleItem extends GenericRFToolsItem implements IModuleProvider {
+public class InventoryPlusModuleItem extends Item implements IModuleProvider {
 
     public InventoryPlusModuleItem() {
-        super("inventoryplus_module");
-        setMaxStackSize(1);
+        super(new Item.Properties().maxStackSize(1).defaultMaxDamage(1).group(RFTools.setup.getTab()));
+        setRegistryName("inventoryplus_module");
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
-        super.addInformation(itemStack, player, list, whatIsThis);
-        list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.ITEMSTACK_RFPERTICK.get() + " RF/tick");
+    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
+        super.addInformation(itemStack, world, list, flag);
+        list.add(new StringTextComponent(TextFormatting.GREEN + "Uses " + ScreenConfiguration.ITEMSTACK_RFPERTICK.get() + " RF/tick"));
         boolean hasTarget = false;
         CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
-            list.add(TextFormatting.YELLOW + "Label: " + tagCompound.getString("text"));
-            if (tagCompound.hasKey("monitorx")) {
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "Label: " + tagCompound.getString("text")));
+            if (tagCompound.contains("monitorx")) {
                 int dim;
-                if (tagCompound.hasKey("monitordim")) {
-                    dim = tagCompound.getInteger("monitordim");
+                if (tagCompound.contains("monitordim")) {
+                    dim = tagCompound.getInt("monitordim");
                 } else {
                     // Compatibility reasons
-                    dim = tagCompound.getInteger("dim");
+                    dim = tagCompound.getInt("dim");
                 }
-                int monitorx = tagCompound.getInteger("monitorx");
-                int monitory = tagCompound.getInteger("monitory");
-                int monitorz = tagCompound.getInteger("monitorz");
+                int monitorx = tagCompound.getInt("monitorx");
+                int monitory = tagCompound.getInt("monitory");
+                int monitorz = tagCompound.getInt("monitorz");
                 String monitorname = tagCompound.getString("monitorname");
-                list.add(TextFormatting.YELLOW + "Monitoring: " + monitorname + " (at " + monitorx + "," + monitory + "," + monitorz + ")");
-                list.add(TextFormatting.YELLOW + "Dimension: " + dim);
+                list.add(new StringTextComponent(TextFormatting.YELLOW + "Monitoring: " + monitorname + " (at " + monitorx + "," + monitory + "," + monitorz + ")"));
+                list.add(new StringTextComponent(TextFormatting.YELLOW + "Dimension: " + dim));
                 hasTarget = true;
             }
         }
         if (!hasTarget) {
-            list.add(TextFormatting.YELLOW + "Sneak right-click on an inventory to set the");
-            list.add(TextFormatting.YELLOW + "target for this inventory module");
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "Sneak right-click on an inventory to set the"));
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "target for this inventory module"));
         }
     }
 
@@ -124,7 +125,7 @@ public class InventoryPlusModuleItem extends GenericRFToolsItem implements IModu
     }
 
     @Override
-    public String getName() {
+    public String getModuleName() {
         return "Inv";
     }
 

@@ -14,19 +14,19 @@ public class ShapeDataManagerServer {
 
 
     private static class WorkUnit {
-        private final List<EntityPlayerMP> players = new ArrayList<>();
+        private final List<ServerPlayerEntity> players = new ArrayList<>();
         private ItemStack stack;
         private int offsetY;
         private IFormula formula;
 
-        public WorkUnit(ItemStack stack, int offsetY, IFormula formula, EntityPlayerMP player) {
+        public WorkUnit(ItemStack stack, int offsetY, IFormula formula, ServerPlayerEntity player) {
             this.stack = stack;
             this.offsetY = offsetY;
             this.formula = formula;
             this.players.add(player);
         }
 
-        public void update(ItemStack stack, int offsetY, IFormula formula, EntityPlayerMP player) {
+        public void update(ItemStack stack, int offsetY, IFormula formula, ServerPlayerEntity player) {
             this.stack = stack;
             this.offsetY = offsetY;
             this.formula = formula;
@@ -35,7 +35,7 @@ public class ShapeDataManagerServer {
             }
         }
 
-        public List<EntityPlayerMP> getPlayers() {
+        public List<ServerPlayerEntity> getPlayers() {
             return players;
         }
 
@@ -60,7 +60,7 @@ public class ShapeDataManagerServer {
     // Server-side
     private static final Map<ShapeID, WorkQueue> workQueues = new HashMap<>();
 
-    public static void pushWork(ShapeID shapeID, ItemStack stack, int offsetY, IFormula formula, EntityPlayerMP player) {
+    public static void pushWork(ShapeID shapeID, ItemStack stack, int offsetY, IFormula formula, ServerPlayerEntity player) {
         WorkQueue queue = workQueues.get(shapeID);
         if (queue == null) {
             queue = new WorkQueue();
@@ -94,7 +94,7 @@ public class ShapeDataManagerServer {
                 StatePalette statePalette = new StatePalette();
                 int cnt = ShapeCardItem.getRenderPositions(card, solid, positions, statePalette, unit.getFormula(), unit.getOffsetY());
 
-                for (EntityPlayerMP player : unit.getPlayers()) {
+                for (ServerPlayerEntity player : unit.getPlayers()) {
                     RFToolsMessages.INSTANCE.sendTo(new PacketReturnShapeData(shapeID, positions, statePalette, dimension, cnt, unit.getOffsetY(), ""), player);
                 }
                 if (cnt > 0) {

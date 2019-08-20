@@ -25,8 +25,8 @@ import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+
+
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -476,7 +476,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
         double y = getPos().getY();
         double z = getPos().getZ();
         double sqradius = 40 * 40;
-        for (EntityPlayerMP player : getWorld().getMinecraftServer().getPlayerList().getPlayers()) {
+        for (ServerPlayerEntity player : getWorld().getMinecraftServer().getPlayerList().getPlayers()) {
             if (player.dimension == dimension) {
                 double d0 = x - player.posX;
                 double d1 = y - player.posY;
@@ -508,7 +508,7 @@ public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity impleme
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+    public boolean execute(ServerPlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;

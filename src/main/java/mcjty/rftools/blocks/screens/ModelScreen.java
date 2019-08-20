@@ -2,8 +2,8 @@ package mcjty.rftools.blocks.screens;
 
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.Model;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+
+
 
 @SideOnly(Side.CLIENT)
 public class ModelScreen extends Model {

@@ -2,11 +2,10 @@ package mcjty.rftools.blocks.environmental;
 
 import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.container.ContainerFactory;
-import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.gui.widgets.ScrollableLabel;
-import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
@@ -15,15 +14,12 @@ import mcjty.lib.varia.ModuleSupport;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.ProbeMode;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.IMob;
-import net.minecraft.entity.passive.IAnimals;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -32,22 +28,18 @@ import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-@Optional.InterfaceList({
-        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers"),
-//        @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")
-})
-public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickableTileEntity,
-        IMachineInformation, SimpleComponent /*, IPeripheral*/ {
+//@Optional.InterfaceList({
+//        @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers"),
+//})
+public class EnvironmentalControllerTileEntity extends GenericTileEntity implements ITickableTileEntity,
+        IMachineInformation /*, IPeripheral*/ {
 
     public static final String CMD_SETRADIUS = "env.setRadius";
     public static final String CMD_RSMODE = "env.setRsMode";
@@ -186,22 +178,22 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
 //        return false;
 //    }
 
-    @Override
-    @Optional.Method(modid = "opencomputers")
-    public String getComponentName() {
-        return COMPONENT_NAME;
-    }
-
-    @Callback(doc = "Get or set the current redstone mode. Values are 'Ignored', 'Off', or 'On'", getter = true, setter = true)
-    @Optional.Method(modid = "opencomputers")
-    public Object[] redstoneMode(Context context, Arguments args) {
-        if (args.count() == 0) {
-            return new Object[]{getRSMode().getDescription()};
-        } else {
-            String mode = args.checkString(0);
-            return setRedstoneMode(mode);
-        }
-    }
+//    @Override
+//    @Optional.Method(modid = "opencomputers")
+//    public String getComponentName() {
+//        return COMPONENT_NAME;
+//    }
+//
+//    @Callback(doc = "Get or set the current redstone mode. Values are 'Ignored', 'Off', or 'On'", getter = true, setter = true)
+//    @Optional.Method(modid = "opencomputers")
+//    public Object[] redstoneMode(Context context, Arguments args) {
+//        if (args.count() == 0) {
+//            return new Object[]{getRSMode().getDescription()};
+//        } else {
+//            String mode = args.checkString(0);
+//            return setRedstoneMode(mode);
+//        }
+//    }
 
     public EnvironmentalMode getMode() {
         return mode;
@@ -221,7 +213,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
             case MODE_PASSIVE:
             case MODE_MOBS:
             case MODE_ALL:
-                return (float) EnvironmentalConfiguration.mobsPowerMultiplier.get();
+                return (float) (double) EnvironmentalConfiguration.mobsPowerMultiplier.get();
         }
         return 1.0f;
     }
@@ -243,9 +235,9 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
             case MODE_HOSTILE:
                 return entity instanceof IMob;
             case MODE_PASSIVE:
-                return entity instanceof IAnimals && !(entity instanceof IMob);
+                return entity instanceof AnimalEntity && !(entity instanceof IMob);
             case MODE_MOBS:
-                return entity instanceof IAnimals;
+                return entity instanceof AnimalEntity;
             case MODE_ALL:
                 if (entity instanceof PlayerEntity) {
                     return isPlayerAffected((PlayerEntity) entity);
@@ -343,8 +335,8 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     }
 
     @Override
-    public void update() {
-        if (!getWorld().isRemote) {
+    public void tick() {
+        if (!world.isRemote) {
             checkStateServer();
         }
     }
@@ -519,10 +511,10 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        super.writeToNBT(tagCompound);
-        tagCompound.setInteger("rfPerTick", totalRfPerTick);
-        tagCompound.setBoolean("active", active);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
+        tagCompound.putInt("rfPerTick", totalRfPerTick);
+        tagCompound.putBoolean("active", active);
         return tagCompound;
     }
 
@@ -530,21 +522,21 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
-        tagCompound.setInteger("radius", radius);
-        tagCompound.setInteger("miny", miny);
-        tagCompound.setInteger("maxy", maxy);
+        tagCompound.putInt("radius", radius);
+        tagCompound.putInt("miny", miny);
+        tagCompound.putInt("maxy", maxy);
 
-        tagCompound.setInteger("mode", mode.ordinal());
+        tagCompound.putInt("mode", mode.ordinal());
 
         ListNBT playerTagList = new ListNBT();
         for (String player : players) {
-            playerTagList.appendTag(new StringNBT(player));
+            playerTagList.add(new StringNBT(player));
         }
-        tagCompound.setTag("players", playerTagList);
+        tagCompound.put("players", playerTagList);
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+    public boolean execute(ServerPlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
@@ -598,6 +590,8 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         return false;
     }
 
+
+
     @Override
     public boolean shouldRenderInPass(int pass) {
         return pass == 1;
@@ -613,43 +607,43 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         deactivate();
     }
 
-    @Override
-    @Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
-        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
-        int rfPerTick = getTotalRfPerTick();
-        int volume = getVolume();
-        if (isActive()) {
-            probeInfo.text(TextFormatting.GREEN + "Active " + rfPerTick + " RF/tick (" + volume + " blocks)");
-        } else {
-            probeInfo.text(TextFormatting.GREEN + "Inactive (" + volume + " blocks)");
-        }
-        int radius = getRadius();
-        int miny = getMiny();
-        int maxy = getMaxy();
-        probeInfo.text(TextFormatting.GREEN + "Area: radius " + radius + " (between " + miny + " and " + maxy + ")");
-    }
+//    @Override
+//    @Optional.Method(modid = "theoneprobe")
+//    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
+//        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+//        int rfPerTick = getTotalRfPerTick();
+//        int volume = getVolume();
+//        if (isActive()) {
+//            probeInfo.text(TextFormatting.GREEN + "Active " + rfPerTick + " RF/tick (" + volume + " blocks)");
+//        } else {
+//            probeInfo.text(TextFormatting.GREEN + "Inactive (" + volume + " blocks)");
+//        }
+//        int radius = getRadius();
+//        int miny = getMiny();
+//        int maxy = getMaxy();
+//        probeInfo.text(TextFormatting.GREEN + "Area: radius " + radius + " (between " + miny + " and " + maxy + ")");
+//    }
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    @Optional.Method(modid = "waila")
-    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        super.addWailaBody(itemStack, currenttip, accessor, config);
-        CompoundNBT tagCompound = accessor.getNBTData();
-        if (tagCompound != null) {
-            int rfPerTick = getTotalRfPerTick();
-            int volume = getVolume();
-            if (isActive()) {
-                currenttip.add(TextFormatting.GREEN + "Active " + rfPerTick + " RF/tick (" + volume + " blocks)");
-            } else {
-                currenttip.add(TextFormatting.GREEN + "Inactive (" + volume + " blocks)");
-            }
-            int radius = getRadius();
-            int miny = getMiny();
-            int maxy = getMaxy();
-            currenttip.add(TextFormatting.GREEN + "Area: radius " + radius + " (between " + miny + " and " + maxy + ")");
-        }
-    }
+//    @SideOnly(Side.CLIENT)
+//    @Override
+//    @Optional.Method(modid = "waila")
+//    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+//        super.addWailaBody(itemStack, currenttip, accessor, config);
+//        CompoundNBT tagCompound = accessor.getNBTData();
+//        if (tagCompound != null) {
+//            int rfPerTick = getTotalRfPerTick();
+//            int volume = getVolume();
+//            if (isActive()) {
+//                currenttip.add(TextFormatting.GREEN + "Active " + rfPerTick + " RF/tick (" + volume + " blocks)");
+//            } else {
+//                currenttip.add(TextFormatting.GREEN + "Inactive (" + volume + " blocks)");
+//            }
+//            int radius = getRadius();
+//            int miny = getMiny();
+//            int maxy = getMaxy();
+//            currenttip.add(TextFormatting.GREEN + "Area: radius " + radius + " (between " + miny + " and " + maxy + ")");
+//        }
+//    }
 
 
 }

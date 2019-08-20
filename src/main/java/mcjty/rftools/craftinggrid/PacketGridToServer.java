@@ -61,7 +61,7 @@ public class PacketGridToServer extends PacketGridSync implements IMessage {
     public void handle(Supplier<Context> supplier) {
         Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
-            EntityPlayerMP player = ctx.getSender();
+            ServerPlayerEntity player = ctx.getSender();
             World world = player.getEntityWorld();
             CraftingGridProvider provider = handleMessage(world, player);
             if (provider != null) {

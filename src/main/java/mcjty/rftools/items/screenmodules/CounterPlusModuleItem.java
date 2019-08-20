@@ -2,6 +2,7 @@ package mcjty.rftools.items.screenmodules;
 
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.logic.counter.CounterTileEntity;
@@ -11,6 +12,7 @@ import mcjty.rftools.blocks.screens.modulesclient.CounterPlusClientScreenModule;
 import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -18,24 +20,24 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class CounterPlusModuleItem extends GenericRFToolsItem implements IModuleProvider {
+public class CounterPlusModuleItem extends Item implements IModuleProvider {
 
     public CounterPlusModuleItem() {
-        super("counterplus_module");
-        setMaxStackSize(1);
+        super(new Properties().maxStackSize(1).defaultMaxDamage(1).group(RFTools.setup.getTab()));
+        setRegistryName("counterplus_module");
     }
 
-    @Override
-    public int getMaxItemUseDuration(ItemStack stack) {
-        return 1;
-    }
+//    @Override
+//    public int getMaxItemUseDuration(ItemStack stack) {
+//        return 1;
+//    }
 
     @Override
     public Class<CounterPlusScreenModule> getServerScreenModule() {
@@ -48,7 +50,7 @@ public class CounterPlusModuleItem extends GenericRFToolsItem implements IModule
     }
 
     @Override
-    public String getName() {
+    public String getModuleName() {
         return "Count";
     }
 
@@ -62,27 +64,26 @@ public class CounterPlusModuleItem extends GenericRFToolsItem implements IModule
                 .label("Block:").block("monitor").nl();
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
-        super.addInformation(itemStack, player, list, whatIsThis);
-        list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.COUNTERPLUS_RFPERTICK.get() + " RF/tick");
+    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
+        super.addInformation(itemStack, world, list, flag);
+        list.add(new StringTextComponent(TextFormatting.GREEN + "Uses " + ScreenConfiguration.COUNTERPLUS_RFPERTICK.get() + " RF/tick"));
         boolean hasTarget = false;
         CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
-            list.add(TextFormatting.YELLOW + "Label: " + tagCompound.getString("text"));
-            if (tagCompound.hasKey("monitorx")) {
-                int monitorx = tagCompound.getInteger("monitorx");
-                int monitory = tagCompound.getInteger("monitory");
-                int monitorz = tagCompound.getInteger("monitorz");
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "Label: " + tagCompound.getString("text")));
+            if (tagCompound.contains("monitorx")) {
+                int monitorx = tagCompound.getInt("monitorx");
+                int monitory = tagCompound.getInt("monitory");
+                int monitorz = tagCompound.getInt("monitorz");
                 String monitorname = tagCompound.getString("monitorname");
-                list.add(TextFormatting.YELLOW + "Monitoring: " + monitorname + " (at " + monitorx + "," + monitory + "," + monitorz + ")");
+                list.add(new StringTextComponent(TextFormatting.YELLOW + "Monitoring: " + monitorname + " (at " + monitorx + "," + monitory + "," + monitorz + ")"));
                 hasTarget = true;
             }
         }
         if (!hasTarget) {
-            list.add(TextFormatting.YELLOW + "Sneak right-click on a counter to set the");
-            list.add(TextFormatting.YELLOW + "target for this counter module");
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "Sneak right-click on a counter to set the"));
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "target for this counter module"));
         }
     }
 

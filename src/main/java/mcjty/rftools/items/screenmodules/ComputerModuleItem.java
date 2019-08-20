@@ -1,31 +1,33 @@
 package mcjty.rftools.items.screenmodules;
 
+import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ComputerClientScreenModule;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class ComputerModuleItem extends GenericRFToolsItem implements IModuleProvider {
+public class ComputerModuleItem extends Item implements IModuleProvider {
 
     public ComputerModuleItem() {
-        super("computer_module");
-        setMaxStackSize(16);
+        super(new Properties().maxStackSize(16).defaultMaxDamage(1).group(RFTools.setup.getTab()));
+        setRegistryName("computer_module");
     }
 
-    @Override
-    public int getMaxItemUseDuration(ItemStack stack) {
-        return 1;
-    }
-
+//    @Override
+//    public int getMaxItemUseDuration(ItemStack stack) {
+//        return 1;
+//    }
+//
     @Override
     public Class<ComputerScreenModule> getServerScreenModule() {
         return ComputerScreenModule.class;
@@ -37,7 +39,7 @@ public class ComputerModuleItem extends GenericRFToolsItem implements IModulePro
     }
 
     @Override
-    public String getName() {
+    public String getModuleName() {
         return "Comp";
     }
 
@@ -50,11 +52,10 @@ public class ComputerModuleItem extends GenericRFToolsItem implements IModulePro
                 .label("Tag:").text("moduleTag", "Tag used by LUA to identify module").nl();
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
-        super.addInformation(itemStack, player, list, whatIsThis);
-        list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.COMPUTER_RFPERTICK.get() + " RF/tick");
+    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
+        super.addInformation(itemStack, world, list, flag);
+        list.add(new StringTextComponent(TextFormatting.GREEN + "Uses " + ScreenConfiguration.COMPUTER_RFPERTICK.get() + " RF/tick"));
     }
 
 }

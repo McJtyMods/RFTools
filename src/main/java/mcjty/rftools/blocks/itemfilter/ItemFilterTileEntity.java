@@ -85,7 +85,7 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+    public boolean execute(ServerPlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;

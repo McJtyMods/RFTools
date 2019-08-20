@@ -1,37 +1,41 @@
 package mcjty.rftools.items.screenmodules;
 
+import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ClockScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ClockClientScreenModule;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class ClockModuleItem extends GenericRFToolsItem implements IModuleProvider {
+public class ClockModuleItem extends Item implements IModuleProvider {
 
     public ClockModuleItem() {
-        super("clock_module");
-        setMaxStackSize(16);
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
-        super.addInformation(itemStack, player, list, whatIsThis);
-        list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.CLOCK_RFPERTICK.get() + " RF/tick");
+        super(new Properties()
+                .maxStackSize(16)
+                .defaultMaxDamage(1)
+                .group(RFTools.setup.getTab()));
+        setRegistryName("clock_module");
     }
 
     @Override
-    public int getMaxItemUseDuration(ItemStack stack) {
-        return 1;
+    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag advanced) {
+        super.addInformation(itemStack, world, list, advanced);
+        list.add(new StringTextComponent(TextFormatting.GREEN + "Uses " + ScreenConfiguration.CLOCK_RFPERTICK.get() + " RF/tick"));
     }
+
+//    @Override
+//    public int getMaxItemUseDuration(ItemStack stack) {
+//        return 1;
+//    }
 
     @Override
     public Class<ClockScreenModule> getServerScreenModule() {
@@ -44,7 +48,7 @@ public class ClockModuleItem extends GenericRFToolsItem implements IModuleProvid
     }
 
     @Override
-    public String getName() {
+    public String getModuleName() {
         return "Clock";
     }
 

@@ -36,7 +36,7 @@ public class PacketGetAllReceivers implements IMessage {
     public void handle(Supplier<Context> supplier) {
         Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
-            EntityPlayerMP player = ctx.getSender();
+            ServerPlayerEntity player = ctx.getSender();
             TeleportDestinations destinations = TeleportDestinations.getDestinations(player.getEntityWorld());
             List<TeleportDestinationClientInfo> destinationList = new ArrayList<> (destinations.getValidDestinations(player.getEntityWorld(), null));
             addDimensions(destinationList);

@@ -26,11 +26,11 @@ public class BuffProperties {
         globalSyncNeeded = true;
     }
 
-    private void syncBuffs(EntityPlayerMP player) {
+    private void syncBuffs(ServerPlayerEntity player) {
         RFToolsMessages.INSTANCE.sendTo(new PacketSendBuffsToClient(buffs), player);
     }
 
-    public void tickBuffs(EntityPlayerMP player) {
+    public void tickBuffs(ServerPlayerEntity player) {
         buffTimeout--;
         if (buffTimeout <= 0) {
             buffTimeout = BuffProperties.BUFF_MAXTICKS;
@@ -62,7 +62,7 @@ public class BuffProperties {
         }
     }
 
-    private void performBuffs(EntityPlayerMP player) {
+    private void performBuffs(ServerPlayerEntity player) {
         // Perform all buffs that we can perform here (not potion effects and also not
         // passive effects like feather falling.
         boolean enableFlight = false;
@@ -109,22 +109,22 @@ public class BuffProperties {
     public static void enableElevatorMode(PlayerEntity player) {
         BuffProperties buffProperties = PlayerExtendedProperties.getBuffProperties(player);
         buffProperties.onElevator = true;
-        buffProperties.performBuffs((EntityPlayerMP) player);
+        buffProperties.performBuffs((ServerPlayerEntity) player);
     }
 
     public static void disableElevatorMode(PlayerEntity player) {
         BuffProperties buffProperties = PlayerExtendedProperties.getBuffProperties(player);
         buffProperties.onElevator = false;
         player.capabilities.isFlying = false;
-        buffProperties.performBuffs((EntityPlayerMP) player);
+        buffProperties.performBuffs((ServerPlayerEntity) player);
     }
 
     public static void addBuffToPlayer(PlayerEntity player, PlayerBuff buff, int ticks) {
         BuffProperties buffProperties = PlayerExtendedProperties.getBuffProperties(player);
-        buffProperties.addBuff((EntityPlayerMP) player, buff, ticks);
+        buffProperties.addBuff((ServerPlayerEntity) player, buff, ticks);
     }
 
-    public void addBuff(EntityPlayerMP player, PlayerBuff buff, int ticks) {
+    public void addBuff(ServerPlayerEntity player, PlayerBuff buff, int ticks) {
         //. We add a bit to the ticks to make sure we can live long enough.
         buffs.put(buff, ticks + 5);
         syncBuffs(player);

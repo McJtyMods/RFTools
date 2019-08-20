@@ -3,6 +3,7 @@ package mcjty.rftools.items.screenmodules;
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
@@ -11,6 +12,7 @@ import mcjty.rftools.blocks.screens.modulesclient.MachineInformationClientScreen
 import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -18,24 +20,24 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class MachineInformationModuleItem extends GenericRFToolsItem implements IModuleProvider {
+public class MachineInformationModuleItem extends Item implements IModuleProvider {
 
     public MachineInformationModuleItem() {
-        super("machineinformation_module");
-        setMaxStackSize(1);
+        super(new Item.Properties().maxStackSize(1).defaultMaxDamage(1).group(RFTools.setup.getTab()));
+        setRegistryName("machineinformation_module");
     }
 
-    @Override
-    public int getMaxItemUseDuration(ItemStack stack) {
-        return 1;
-    }
+//    @Override
+//    public int getMaxItemUseDuration(ItemStack stack) {
+//        return 1;
+//    }
 
     @Override
     public Class<MachineInformationScreenModule> getServerScreenModule() {
@@ -48,7 +50,7 @@ public class MachineInformationModuleItem extends GenericRFToolsItem implements 
     }
 
     @Override
-    public String getName() {
+    public String getModuleName() {
         return "Info";
     }
 
@@ -59,8 +61,8 @@ public class MachineInformationModuleItem extends GenericRFToolsItem implements 
         World world = guiBuilder.getWorld();
         CompoundNBT currentData = guiBuilder.getCurrentData();
         IModuleGuiBuilder.Choice[] choices = EMPTY_CHOICES;
-        if((currentData.hasKey("monitordim") ? currentData.getInteger("monitordim") : currentData.getInteger("dim")) == world.provider.getDimension()) {
-	        TileEntity tileEntity = world.getTileEntity(new BlockPos(currentData.getInteger("monitorx"), currentData.getInteger("monitory"), currentData.getInteger("monitorz")));
+        if((currentData.contains("monitordim") ? currentData.getInt("monitordim") : currentData.getInt("dim")) == world.provider.getDimension()) {
+	        TileEntity tileEntity = world.getTileEntity(new BlockPos(currentData.getInt("monitorx"), currentData.getInt("monitory"), currentData.getInt("monitorz")));
 	        if (tileEntity instanceof MachineInformation) {
 	            MachineInformation information = (MachineInformation)tileEntity;
 	            int count = information.getTagCount();
@@ -77,27 +79,26 @@ public class MachineInformationModuleItem extends GenericRFToolsItem implements 
                 .block("monitor").nl();
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
-        super.addInformation(itemStack, player, list, whatIsThis);
-        list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.MACHINEINFO_RFPERTICK.get() + " RF/tick");
+    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
+        super.addInformation(itemStack, world, list, flag);
+        list.add(new StringTextComponent(TextFormatting.GREEN + "Uses " + ScreenConfiguration.MACHINEINFO_RFPERTICK.get() + " RF/tick"));
         boolean hasTarget = false;
         CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
-            list.add(TextFormatting.YELLOW + "Label: " + tagCompound.getString("text"));
-            if (tagCompound.hasKey("monitorx")) {
-                int monitorx = tagCompound.getInteger("monitorx");
-                int monitory = tagCompound.getInteger("monitory");
-                int monitorz = tagCompound.getInteger("monitorz");
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "Label: " + tagCompound.getString("text")));
+            if (tagCompound.contains("monitorx")) {
+                int monitorx = tagCompound.getInt("monitorx");
+                int monitory = tagCompound.getInt("monitory");
+                int monitorz = tagCompound.getInt("monitorz");
                 String monitorname = tagCompound.getString("monitorname");
-                list.add(TextFormatting.YELLOW + "Monitoring: " + monitorname + " (at " + monitorx + "," + monitory + "," + monitorz + ")");
+                list.add(new StringTextComponent(TextFormatting.YELLOW + "Monitoring: " + monitorname + " (at " + monitorx + "," + monitory + "," + monitorz + ")"));
                 hasTarget = true;
             }
         }
         if (!hasTarget) {
-            list.add(TextFormatting.YELLOW + "Sneak right-click on a supported machine");
-            list.add(TextFormatting.YELLOW + "to set the target for this module");
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "Sneak right-click on a supported machine"));
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "to set the target for this module"));
         }
     }
 

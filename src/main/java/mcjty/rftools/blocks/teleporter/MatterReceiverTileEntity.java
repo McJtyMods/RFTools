@@ -2,7 +2,7 @@ package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.bindings.DefaultValue;
 import mcjty.lib.bindings.IValue;
-import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
@@ -18,7 +18,7 @@ import net.minecraftforge.common.util.Constants;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity implements ITickableTileEntity {
+public class MatterReceiverTileEntity extends GenericTileEntity implements ITickableTileEntity {
 
     public static final String CMD_ADDPLAYER = "receiver.addPlayer";
     public static final String CMD_DELPLAYER = "receiver.delPlayer";
@@ -248,7 +248,7 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+    public boolean execute(ServerPlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;

@@ -6,7 +6,9 @@ import mcjty.lib.varia.NBTTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
@@ -15,11 +17,11 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class DevelopersDelightItem extends GenericRFToolsItem {
+public class DevelopersDelightItem extends Item {
 
     public DevelopersDelightItem() {
-        super("developers_delight");
-        setMaxStackSize(1);
+        super(new Properties().maxStackSize(1).group(RFTools.setup.getTab()));
+        setRegistryName("developers_delight");
     }
 
     @Override
@@ -39,14 +41,13 @@ public class DevelopersDelightItem extends GenericRFToolsItem {
         }
         BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
-        int meta = block.getMetaFromState(state);
         String modid = BlockTools.getModidForBlock(block);
-        Logging.log("Block: " + block.getUnlocalizedName() + ", Meta: " + meta + ", Mod: " + modid);
+        Logging.log("Block: " + block.getTranslationKey() + ", Mod: " + modid);
         TileEntity tileEntity = world.getTileEntity(pos);
         if (tileEntity != null) {
             CompoundNBT tag = new CompoundNBT();
             try {
-                tileEntity.writeToNBT(tag);
+                tileEntity.write(tag);
                 StringBuffer buffer = new StringBuffer();
                 NBTTools.convertNBTtoJson(buffer, tag, 0);
                 Logging.log(buffer.toString());

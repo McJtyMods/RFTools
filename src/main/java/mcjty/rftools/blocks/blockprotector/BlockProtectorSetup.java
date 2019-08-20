@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.blockprotector;
 
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+
+
 
 public class BlockProtectorSetup {
     public static BlockProtectorBlock blockProtectorBlock;

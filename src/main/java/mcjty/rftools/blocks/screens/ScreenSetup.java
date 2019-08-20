@@ -1,8 +1,8 @@
 package mcjty.rftools.blocks.screens;
 
 import mcjty.rftools.items.screenmodules.*;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+
+
 
 public class ScreenSetup {
     public static ScreenBlock screenBlock;

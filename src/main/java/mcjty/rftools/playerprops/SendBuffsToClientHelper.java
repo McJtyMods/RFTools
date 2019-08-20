@@ -1,8 +1,8 @@
 package mcjty.rftools.playerprops;
 
 import mcjty.rftools.RenderGameOverlayEventHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+
+
 
 import java.util.ArrayList;
 

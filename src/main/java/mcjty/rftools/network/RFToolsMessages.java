@@ -133,10 +133,10 @@ public class RFToolsMessages {
     }
 
     public static void sendToClient(PlayerEntity player, String command, @Nonnull TypedMap.Builder argumentBuilder) {
-        INSTANCE.sendTo(new PacketSendClientCommand(RFTools.MODID, command, argumentBuilder.build()), (EntityPlayerMP) player);
+        INSTANCE.sendTo(new PacketSendClientCommand(RFTools.MODID, command, argumentBuilder.build()), (ServerPlayerEntity) player);
     }
 
     public static void sendToClient(PlayerEntity player, String command) {
-        INSTANCE.sendTo(new PacketSendClientCommand(RFTools.MODID, command, TypedMap.EMPTY), (EntityPlayerMP) player);
+        INSTANCE.sendTo(new PacketSendClientCommand(RFTools.MODID, command, TypedMap.EMPTY), (ServerPlayerEntity) player);
     }
 }

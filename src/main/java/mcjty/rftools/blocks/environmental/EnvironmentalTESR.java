@@ -6,8 +6,8 @@ import mcjty.rftools.RFTools;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+
+
 import org.lwjgl.opengl.GL11;
 
 import java.util.Random;

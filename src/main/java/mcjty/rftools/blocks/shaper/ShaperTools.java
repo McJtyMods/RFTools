@@ -15,7 +15,7 @@ public class ShaperTools {
 
     public static void requestExtraShapeData(PlayerEntity player, int scanId) {
         ScanExtraData extraData = ScanDataManager.getScans().getExtraData(scanId);
-        RFToolsMessages.INSTANCE.sendTo(new PacketReturnExtraData(scanId, extraData), (EntityPlayerMP) player);
+        RFToolsMessages.INSTANCE.sendTo(new PacketReturnExtraData(scanId, extraData), (ServerPlayerEntity) player);
     }
 
     public static void requestLocatorEnergyConsumption(PlayerEntity player, BlockPos pos) {

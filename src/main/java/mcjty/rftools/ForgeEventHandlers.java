@@ -79,7 +79,7 @@ public class ForgeEventHandlers {
         if (event.phase == TickEvent.Phase.START && !event.player.getEntityWorld().isRemote) {
             BuffProperties buffProperties = PlayerExtendedProperties.getBuffProperties(event.player);
             if (buffProperties != null) {
-                buffProperties.tickBuffs((EntityPlayerMP) event.player);
+                buffProperties.tickBuffs((ServerPlayerEntity) event.player);
             }
         }
     }
@@ -102,7 +102,7 @@ public class ForgeEventHandlers {
         PlayerEntity player = event.getEntityPlayer();
         ItemStack heldItem = player.getHeldItemMainhand();
         if (heldItem.isEmpty() || !(heldItem.getItem() instanceof SmartWrench)) {
-            double blockReachDistance = ((EntityPlayerMP) player).interactionManager.getBlockReachDistance();
+            double blockReachDistance = ((ServerPlayerEntity) player).interactionManager.getBlockReachDistance();
             RayTraceResult rayTrace = ForgeHooks.rayTraceEyes(player, blockReachDistance + 1);
             if (rayTrace != null && rayTrace.typeOfHit == RayTraceResult.Type.BLOCK) {
                 Block block = event.getWorld().getBlockState(rayTrace.getBlockPos()).getBlock();

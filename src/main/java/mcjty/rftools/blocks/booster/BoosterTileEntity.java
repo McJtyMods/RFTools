@@ -1,10 +1,9 @@
 package mcjty.rftools.blocks.booster;
 
 import mcjty.lib.container.ContainerFactory;
-import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
-import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.ModuleSupport;
 import mcjty.lib.varia.RedstoneMode;
@@ -13,6 +12,7 @@ import mcjty.rftools.blocks.environmental.EnvModuleProvider;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
@@ -22,7 +22,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 
 import java.util.List;
 
-public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickableTileEntity {
+public class BoosterTileEntity extends GenericTileEntity implements ITickableTileEntity {
 
     public static final String CMD_RSMODE = "booster.setRsMode";
 
@@ -51,11 +51,6 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
 
     @Override
     protected boolean needsRedstoneMode() {
-        return true;
-    }
-
-    @Override
-    protected boolean needsCustomInvWrapper() {
         return true;
     }
 
@@ -138,7 +133,7 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+    public boolean execute(ServerPlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;

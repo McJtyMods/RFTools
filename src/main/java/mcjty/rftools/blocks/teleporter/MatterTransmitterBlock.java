@@ -1,6 +1,8 @@
 package mcjty.rftools.blocks.teleporter;
 
+import mcjty.lib.McJtyLib;
 import mcjty.lib.api.Infusable;
+import mcjty.lib.blocks.RotationType;
 import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.typed.TypedMap;
@@ -9,30 +11,23 @@ import mcjty.rftools.blocks.GenericRFToolsBlock;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.CommandHandler;
 import mcjty.rftools.setup.GuiProxy;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.ProbeMode;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Optional;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.input.Keyboard;
 
+import javax.annotation.Nullable;
 import java.util.List;
-import java.util.function.BiFunction;
 
-public class MatterTransmitterBlock extends GenericRFToolsBlock<MatterTransmitterTileEntity, EmptyContainer> implements Infusable {
+public class MatterTransmitterBlock extends GenericRFToolsBlock implements Infusable {
 
     public static Integer clientSideId = null;
     public static String clientSideName = "?";
@@ -42,45 +37,40 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock<MatterTransmitte
         setDefaultState(this.blockState.getBaseState());
     }
 
-    @SideOnly(Side.CLIENT)
     public static void setDestinationInfo(Integer id, String name) {
         MatterTransmitterBlock.clientSideId = id;
         MatterTransmitterBlock.clientSideName = name;
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
     public BiFunction<MatterTransmitterTileEntity, EmptyContainer, GenericGuiContainer<? super MatterTransmitterTileEntity>> getGuiFactory() {
         return GuiMatterTransmitter::new;
     }
 
-    @Override
     public void initModel() {
-        super.initModel();
         BeamRenderer.register();
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
-        super.addInformation(itemStack, player, list, whatIsThis);
+    public void addInformation(ItemStack itemStack, @Nullable IBlockReader world, List<ITextComponent> list, ITooltipFlag advanced) {
+        super.addInformation(itemStack, world, list, advanced);
         CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
             String name = tagCompound.getString("tpName");
-            list.add(TextFormatting.GREEN + "Name: " + name);
+            list.add(new StringTextComponent(TextFormatting.GREEN + "Name: " + name));
 
             boolean dialed = false;
-            BlockPos c = BlockPosTools.readFromNBT(tagCompound, "dest");
+            BlockPos c = BlockPosTools.read(tagCompound, "dest");
             if (c != null && c.getY() >= 0) {
                 dialed = true;
-            } else if (tagCompound.hasKey("destId")) {
-                if (tagCompound.getInteger("destId") != -1) {
+            } else if (tagCompound.contains("destId")) {
+                if (tagCompound.getInt("destId") != -1) {
                     dialed = true;
                 }
             }
 
             if (dialed) {
-                int destId = tagCompound.getInteger("destId");
+                int destId = tagCompound.getInt("destId");
                 if (System.currentTimeMillis() - lastTime > 500) {
                     lastTime = System.currentTimeMillis();
                     RFToolsMessages.sendToServer(CommandHandler.CMD_GET_DESTINATION_INFO, TypedMap.builder().put(CommandHandler.PARAM_ID, destId));
@@ -90,88 +80,83 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock<MatterTransmitte
                 if (clientSideId != null && clientSideId == destId) {
                     destname = clientSideName;
                 }
-                list.add(TextFormatting.YELLOW + "[DIALED to " + destname + "]");
+                list.add(new StringTextComponent(TextFormatting.YELLOW + "[DIALED to " + destname + "]"));
             }
 
             boolean once = tagCompound.getBoolean("once");
             if (once) {
-                list.add(TextFormatting.YELLOW + "[ONCE]");
+                list.add(new StringTextComponent(TextFormatting.YELLOW + "[ONCE]"));
             }
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(TextFormatting.WHITE + "If you place this block near a Dialing Device then");
-            list.add(TextFormatting.WHITE + "you can dial it to a Matter Receiver. Make sure to give");
-            list.add(TextFormatting.WHITE + "it sufficient power!");
-            list.add(TextFormatting.WHITE + "Use a Destination Analyzer adjacent to this block");
-            list.add(TextFormatting.WHITE + "to check destination status (red is bad, green ok,");
-            list.add(TextFormatting.WHITE + "yellow is unknown).");
-            list.add(TextFormatting.WHITE + "Use a  Matter Booster adjacent to this block");
-            list.add(TextFormatting.WHITE + "to be able to teleport to unpowered receivers.");
-            list.add(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption and");
-            list.add(TextFormatting.YELLOW + "increased teleportation speed.");
+        if (McJtyLib.proxy.isShiftKeyDown()) {
+            list.add(new StringTextComponent(TextFormatting.WHITE + "If you place this block near a Dialing Device then"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "you can dial it to a Matter Receiver. Make sure to give"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "it sufficient power!"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "Use a Destination Analyzer adjacent to this block"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "to check destination status (red is bad, green ok,"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "yellow is unknown)."));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "Use a  Matter Booster adjacent to this block"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "to be able to teleport to unpowered receivers."));
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "Infusing bonus: reduced power consumption and"));
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "increased teleportation speed."));
         } else {
-            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
+            list.add(new StringTextComponent(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE));
         }
     }
 
     private static long lastTime = 0;
 
-    @Override
-    @Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
-        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
-        TileEntity te = world.getTileEntity(data.getPos());
-        if (te instanceof MatterTransmitterTileEntity) {
-            MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) te;
-            probeInfo.text(TextFormatting.GREEN + "Name: " + matterTransmitterTileEntity.getName());
-            if (matterTransmitterTileEntity.isDialed()) {
-                Integer teleportId = matterTransmitterTileEntity.getTeleportId();
-                TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
-                String name = "?";
-                if (teleportId != null) {
-                    name = TeleportDestinations.getDestinationName(destinations, teleportId);
-                }
-                probeInfo.text(TextFormatting.YELLOW + "[DIALED to " + name + "]");
-            }
-            if (matterTransmitterTileEntity.isOnce()) {
-                probeInfo.text(TextFormatting.YELLOW + "[ONCE]");
-            }
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    @Optional.Method(modid = "waila")
-    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        super.getWailaBody(itemStack, currenttip, accessor, config);
-        TileEntity te = accessor.getTileEntity();
-        if (te instanceof MatterTransmitterTileEntity) {
-            MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) te;
-            currenttip.add(TextFormatting.GREEN + "Name: " + matterTransmitterTileEntity.getName());
-            if (matterTransmitterTileEntity.isDialed()) {
-                if (System.currentTimeMillis() - lastTime > 500) {
-                    lastTime = System.currentTimeMillis();
-                    RFToolsMessages.sendToServer(CommandHandler.CMD_GET_DESTINATION_INFO,
-                            TypedMap.builder().put(CommandHandler.PARAM_ID, matterTransmitterTileEntity.getTeleportId()));
-                }
-
-                String name = "?";
-                if (clientSideId != null && clientSideId == matterTransmitterTileEntity.getTeleportId()) {
-                    name = clientSideName;
-                }
-                currenttip.add(TextFormatting.YELLOW + "[DIALED to " + name + "]");
-            }
-            if (matterTransmitterTileEntity.isOnce()) {
-                currenttip.add(TextFormatting.YELLOW + "[ONCE]");
-            }
-        }
-        return currenttip;
-    }
-
-    @Override
-    public int getGuiID() {
-        return GuiProxy.GUI_MATTER_TRANSMITTER;
-    }
+//    @Override
+//    @Optional.Method(modid = "theoneprobe")
+//    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
+//        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+//        TileEntity te = world.getTileEntity(data.getPos());
+//        if (te instanceof MatterTransmitterTileEntity) {
+//            MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) te;
+//            probeInfo.text(TextFormatting.GREEN + "Name: " + matterTransmitterTileEntity.getModuleName());
+//            if (matterTransmitterTileEntity.isDialed()) {
+//                Integer teleportId = matterTransmitterTileEntity.getTeleportId();
+//                TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
+//                String name = "?";
+//                if (teleportId != null) {
+//                    name = TeleportDestinations.getDestinationName(destinations, teleportId);
+//                }
+//                probeInfo.text(TextFormatting.YELLOW + "[DIALED to " + name + "]");
+//            }
+//            if (matterTransmitterTileEntity.isOnce()) {
+//                probeInfo.text(TextFormatting.YELLOW + "[ONCE]");
+//            }
+//        }
+//    }
+//
+//    @SideOnly(Side.CLIENT)
+//    @Override
+//    @Optional.Method(modid = "waila")
+//    public List<String> getWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+//        super.getWailaBody(itemStack, currenttip, accessor, config);
+//        TileEntity te = accessor.getTileEntity();
+//        if (te instanceof MatterTransmitterTileEntity) {
+//            MatterTransmitterTileEntity matterTransmitterTileEntity = (MatterTransmitterTileEntity) te;
+//            currenttip.add(TextFormatting.GREEN + "Name: " + matterTransmitterTileEntity.getModuleName());
+//            if (matterTransmitterTileEntity.isDialed()) {
+//                if (System.currentTimeMillis() - lastTime > 500) {
+//                    lastTime = System.currentTimeMillis();
+//                    RFToolsMessages.sendToServer(CommandHandler.CMD_GET_DESTINATION_INFO,
+//                            TypedMap.builder().put(CommandHandler.PARAM_ID, matterTransmitterTileEntity.getTeleportId()));
+//                }
+//
+//                String name = "?";
+//                if (clientSideId != null && clientSideId == matterTransmitterTileEntity.getTeleportId()) {
+//                    name = clientSideName;
+//                }
+//                currenttip.add(TextFormatting.YELLOW + "[DIALED to " + name + "]");
+//            }
+//            if (matterTransmitterTileEntity.isOnce()) {
+//                currenttip.add(TextFormatting.YELLOW + "[ONCE]");
+//            }
+//        }
+//        return currenttip;
+//    }
 
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {

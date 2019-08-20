@@ -766,7 +766,7 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
             int y = scan.getY();
             int z = scan.getZ();
             double sqradius = 30 * 30;
-            for (EntityPlayerMP player : getWorld().getMinecraftServer().getPlayerList().getPlayers()) {
+            for (ServerPlayerEntity player : getWorld().getMinecraftServer().getPlayerList().getPlayers()) {
                 if (player.dimension == getWorld().provider.getDimension()) {
                     double d0 = x - player.posX;
                     double d1 = y - player.posY;
@@ -2296,7 +2296,7 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+    public boolean execute(ServerPlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;

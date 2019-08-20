@@ -1,15 +1,15 @@
 package mcjty.rftools.blocks.booster;
 
-import mcjty.lib.thirteen.ConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 public class BoosterConfiguration {
     public static final String CATEGORY_BOOSTER = "booster";
 
-    public static ConfigSpec.IntValue BOOSTER_MAXENERGY;
-    public static ConfigSpec.IntValue BOOSTER_RECEIVEPERTICK;
-    public static ConfigSpec.DoubleValue energyMultiplier;
+    public static ForgeConfigSpec.IntValue BOOSTER_MAXENERGY;
+    public static ForgeConfigSpec.IntValue BOOSTER_RECEIVEPERTICK;
+    public static ForgeConfigSpec.DoubleValue energyMultiplier;
 
-    public static void init(ConfigSpec.Builder SERVER_BUILDER, ConfigSpec.Builder CLIENT_BUILDER) {
+    public static void init(ForgeConfigSpec.Builder SERVER_BUILDER, ForgeConfigSpec.Builder CLIENT_BUILDER) {
         SERVER_BUILDER.comment("Settings for the booster").push(CATEGORY_BOOSTER);
         CLIENT_BUILDER.comment("Settings for the booster").push(CATEGORY_BOOSTER);
 

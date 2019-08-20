@@ -168,10 +168,10 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
 
     // Server side only.
     private void changeFavorite(String playerName, BlockPos receiver, int dimension, boolean favorite) {
-        List<EntityPlayerMP> list = ((ServerWorld) getWorld()).getMinecraftServer().getPlayerList().getPlayers();
-        for (EntityPlayerMP entityplayermp : list) {
-            if (playerName.equals(entityplayermp.getName())) {
-                FavoriteDestinationsProperties favoriteDestinations = PlayerExtendedProperties.getFavoriteDestinations(entityplayermp);
+        List<ServerPlayerEntity> list = ((ServerWorld) getWorld()).getMinecraftServer().getPlayerList().getPlayers();
+        for (ServerPlayerEntity ServerPlayerEntity : list) {
+            if (playerName.equals(ServerPlayerEntity.getName())) {
+                FavoriteDestinationsProperties favoriteDestinations = PlayerExtendedProperties.getFavoriteDestinations(ServerPlayerEntity);
                 favoriteDestinations.setDestinationFavorite(new GlobalCoordinate(receiver, dimension), favorite);
                 return;
             }
@@ -241,7 +241,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
 
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+    public boolean execute(ServerPlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return rc;

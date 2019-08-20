@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.crafter;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+
+
 
 public class CrafterSetup {
 

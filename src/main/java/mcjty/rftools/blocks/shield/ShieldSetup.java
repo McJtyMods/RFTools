@@ -3,8 +3,8 @@ package mcjty.rftools.blocks.shield;
 import mcjty.rftools.RFTools;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+
+
 
 public class ShieldSetup {
     public static ShieldBlock shieldBlock1;

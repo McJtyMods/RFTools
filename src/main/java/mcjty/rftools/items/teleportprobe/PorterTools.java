@@ -168,6 +168,6 @@ public class PorterTools {
         }
 
         PacketTargetsReady msg = new PacketTargetsReady(target, targets, names);
-        RFToolsMessages.INSTANCE.sendTo(msg, (EntityPlayerMP) player);
+        RFToolsMessages.INSTANCE.sendTo(msg, (ServerPlayerEntity) player);
     }
 }

@@ -322,7 +322,7 @@ public class StorageCraftingTools {
             }
         }
         if (testResult.length > 0) {
-            RFToolsMessages.INSTANCE.sendTo(new PacketCraftTestResultToClient(testResult), (EntityPlayerMP) player);
+            RFToolsMessages.INSTANCE.sendTo(new PacketCraftTestResultToClient(testResult), (ServerPlayerEntity) player);
         }
     }
 
@@ -351,7 +351,7 @@ public class StorageCraftingTools {
             }
         }
         if (provider != null) {
-            RFToolsMessages.INSTANCE.sendTo(new PacketGridToClient(pos, provider.getCraftingGrid()), (EntityPlayerMP) player);
+            RFToolsMessages.INSTANCE.sendTo(new PacketGridToClient(pos, provider.getCraftingGrid()), (ServerPlayerEntity) player);
         }
     }
 }

@@ -14,7 +14,7 @@ public interface IModuleProvider {
 
     Class<? extends IClientScreenModule<?>> getClientScreenModule();
 
-    String getName();
+    String getModuleName();
 
     void createGui(IModuleGuiBuilder guiBuilder);
 }

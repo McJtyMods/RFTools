@@ -7,8 +7,8 @@ import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+
+
 
 import static mcjty.lib.varia.ItemStackTools.mapTag;
 

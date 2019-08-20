@@ -6,7 +6,7 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.relauncher.Side;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayDeque;

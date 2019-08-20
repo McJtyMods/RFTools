@@ -2,6 +2,7 @@ package mcjty.rftools.items.screenmodules;
 
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.elevator.ElevatorTileEntity;
@@ -11,6 +12,7 @@ import mcjty.rftools.blocks.screens.modulesclient.ElevatorButtonClientScreenModu
 import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -18,23 +20,24 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class ElevatorButtonModuleItem extends GenericRFToolsItem implements IModuleProvider {
+public class ElevatorButtonModuleItem extends Item implements IModuleProvider {
 
     public ElevatorButtonModuleItem() {
-        super("elevator_button_module");
+        super(new Properties().defaultMaxDamage(1).group(RFTools.setup.getTab()));
+        setRegistryName("elevator_button_module");
     }
 
-    @Override
-    public int getMaxItemUseDuration(ItemStack stack) {
-        return 1;
-    }
+//    @Override
+//    public int getMaxItemUseDuration(ItemStack stack) {
+//        return 1;
+//    }
 
     @Override
     public Class<ElevatorButtonScreenModule> getServerScreenModule() {
@@ -47,7 +50,7 @@ public class ElevatorButtonModuleItem extends GenericRFToolsItem implements IMod
     }
 
     @Override
-    public String getName() {
+    public String getModuleName() {
         return "EButton";
     }
 
@@ -62,26 +65,25 @@ public class ElevatorButtonModuleItem extends GenericRFToolsItem implements IMod
                 .label("Block:").block("elevator").nl();
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
-        super.addInformation(itemStack, player, list, whatIsThis);
-        list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.ELEVATOR_BUTTON_RFPERTICK.get() + " RF/tick");
+    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
+        super.addInformation(itemStack, world, list, flag);
+        list.add(new StringTextComponent(TextFormatting.GREEN + "Uses " + ScreenConfiguration.ELEVATOR_BUTTON_RFPERTICK.get() + " RF/tick"));
         boolean hasTarget = false;
         CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
-            if (tagCompound.hasKey("elevatorx")) {
-                int monitorx = tagCompound.getInteger("elevatorx");
-                int monitory = tagCompound.getInteger("elevatory");
-                int monitorz = tagCompound.getInteger("elevatorz");
+            if (tagCompound.contains("elevatorx")) {
+                int monitorx = tagCompound.getInt("elevatorx");
+                int monitory = tagCompound.getInt("elevatory");
+                int monitorz = tagCompound.getInt("elevatorz");
                 String monitorname = tagCompound.getString("elevatorname");
-                list.add(TextFormatting.YELLOW + "Elevator: " + monitorname + " (at " + monitorx + "," + monitory + "," + monitorz + ")");
+                list.add(new StringTextComponent(TextFormatting.YELLOW + "Elevator: " + monitorname + " (at " + monitorx + "," + monitory + "," + monitorz + ")"));
                 hasTarget = true;
             }
         }
         if (!hasTarget) {
-            list.add(TextFormatting.YELLOW + "Sneak right-click on an elevator block to set the");
-            list.add(TextFormatting.YELLOW + "target for this module");
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "Sneak right-click on an elevator block to set the"));
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "target for this module"));
         }
     }
 

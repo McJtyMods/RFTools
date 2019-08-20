@@ -13,7 +13,7 @@ public class SecurityTools {
         if (channel == null) {
             return;
         }
-        RFToolsMessages.INSTANCE.sendTo(new PacketSecurityInfoReady(channel), (EntityPlayerMP) player);
+        RFToolsMessages.INSTANCE.sendTo(new PacketSecurityInfoReady(channel), (ServerPlayerEntity) player);
     }
 
     public static void returnSecurityName(PlayerEntity player, int id) {

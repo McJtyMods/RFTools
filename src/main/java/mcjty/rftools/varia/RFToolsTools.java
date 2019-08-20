@@ -91,6 +91,6 @@ public class RFToolsTools {
             }
         }
 
-        RFToolsMessages.INSTANCE.sendTo(new PacketReturnRfInRange(result), (EntityPlayerMP) player);
+        RFToolsMessages.INSTANCE.sendTo(new PacketReturnRfInRange(result), (ServerPlayerEntity) player);
     }
 }

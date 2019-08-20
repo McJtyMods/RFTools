@@ -1,9 +1,11 @@
 package mcjty.rftools.items.screenmodules;
 
+import mcjty.lib.McJtyLib;
 import mcjty.lib.crafting.INBTPreservingIngredient;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
@@ -15,6 +17,7 @@ import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -22,56 +25,54 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class StorageControlModuleItem extends GenericRFToolsItem implements IModuleProvider, INBTPreservingIngredient {
+public class StorageControlModuleItem extends Item implements IModuleProvider, INBTPreservingIngredient {
 
     public StorageControlModuleItem() {
-        super("storage_control_module");
-        setMaxStackSize(1);
+        super(new Item.Properties().maxStackSize(1).defaultMaxDamage(1).group(RFTools.setup.getTab()));
+        setRegistryName("storage_control_module");
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag advanced) {
-        super.addInformation(itemStack, player, list, advanced);
-        list.add(TextFormatting.GREEN + "Uses " + ScreenConfiguration.STORAGE_CONTROL_RFPERTICK.get() + " RF/tick");
+    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
+        super.addInformation(itemStack, world, list, flag);
+        list.add(new StringTextComponent(TextFormatting.GREEN + "Uses " + ScreenConfiguration.STORAGE_CONTROL_RFPERTICK.get() + " RF/tick"));
         boolean hasTarget = false;
         CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
             hasTarget = addModuleInformation(list, itemStack);
         }
         if (!hasTarget) {
-            list.add(TextFormatting.YELLOW + "Sneak right-click on a storage scanner to set the");
-            list.add(TextFormatting.YELLOW + "target for this storage module");
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "Sneak right-click on a storage scanner to set the"));
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "target for this storage module"));
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(TextFormatting.WHITE + "This screen module allows you to monitor 9 different");
-            list.add(TextFormatting.WHITE + "items through a storage scanner.");
-            list.add(TextFormatting.WHITE + "This module can also be combined with a tablet");
-            list.add(TextFormatting.WHITE + "for remote access to a storage scanner controlled");
-            list.add(TextFormatting.WHITE + "system");
+        if (McJtyLib.proxy.isShiftKeyDown()) {
+            list.add(new StringTextComponent(TextFormatting.WHITE + "This screen module allows you to monitor 9 different"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "items through a storage scanner."));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "This module can also be combined with a tablet"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "for remote access to a storage scanner controlled"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "system"));
         } else {
-            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
+            list.add(new StringTextComponent(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE));
         }
     }
 
-    public static boolean addModuleInformation(List<String> list, ItemStack stack) {
-        if (!stack.hasTagCompound()) {
+    public static boolean addModuleInformation(List<ITextComponent> list, ItemStack stack) {
+        if (!stack.hasTag()) {
             return false;
         }
-        list.add(TextFormatting.YELLOW + "Label: " + stack.getTag().getString("text"));
+        list.add(new StringTextComponent(TextFormatting.YELLOW + "Label: " + stack.getTag().getString("text")));
 
         if (RFToolsTools.hasModuleTarget(stack)) {
             BlockPos pos = RFToolsTools.getPositionFromModule(stack);
             String monitorname = stack.getTag().getString("monitorname");
-            list.add(TextFormatting.YELLOW + "Monitoring: " + monitorname + " (at " + BlockPosTools.toString(pos) + ")");
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "Monitoring: " + monitorname + " (at " + BlockPosTools.toString(pos) + ")"));
             return true;
         }
         return false;
@@ -117,7 +118,7 @@ public class StorageControlModuleItem extends GenericRFToolsItem implements IMod
     }
 
     @Override
-    public String getName() {
+    public String getModuleName() {
         return "Stor";
     }
 

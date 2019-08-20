@@ -45,7 +45,7 @@ public class PacketUpdateNBTItemFilter implements IMessage {
     public void handle(Supplier<Context> supplier) {
         Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
-            EntityPlayerMP playerEntity = ctx.getSender();
+            ServerPlayerEntity playerEntity = ctx.getSender();
             ItemStack heldItem = playerEntity.getHeldItem(Hand.MAIN_HAND);
             if (heldItem.isEmpty()) {
                 return;

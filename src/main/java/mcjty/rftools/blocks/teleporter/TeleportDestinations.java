@@ -93,10 +93,10 @@ public class TeleportDestinations extends AbstractWorldData<TeleportDestinations
     public Collection<TeleportDestinationClientInfo> getValidDestinations(World worldObj, String playerName) {
         FavoriteDestinationsProperties properties = null;
         if (playerName != null) {
-            List<EntityPlayerMP> list = ((ServerWorld) worldObj).getMinecraftServer().getPlayerList().getPlayers();
-            for (EntityPlayerMP entityplayermp : list) {
-                if (playerName.equals(entityplayermp.getName())) {
-                    properties = PlayerExtendedProperties.getFavoriteDestinations(entityplayermp);
+            List<ServerPlayerEntity> list = ((ServerWorld) worldObj).getMinecraftServer().getPlayerList().getPlayers();
+            for (ServerPlayerEntity ServerPlayerEntity : list) {
+                if (playerName.equals(ServerPlayerEntity.getName())) {
+                    properties = PlayerExtendedProperties.getFavoriteDestinations(ServerPlayerEntity);
                     break;
                 }
             }
@@ -115,7 +115,7 @@ public class TeleportDestinations extends AbstractWorldData<TeleportDestinations
             // @todo
 //            DimensionInformation information = RfToolsDimensionManager.getDimensionManager(getWorld()).getDimensionInformation(destination.getDimension());
 //            if (information != null) {
-//                dimName = information.getName();
+//                dimName = information.getModuleName();
 //            }
             if (dimName == null || dimName.trim().isEmpty()) {
                 dimName = "Id " + destination.getDimension();
