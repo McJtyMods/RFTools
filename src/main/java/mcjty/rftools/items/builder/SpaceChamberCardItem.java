@@ -1,5 +1,6 @@
 package mcjty.rftools.items.builder;
 
+import mcjty.lib.McJtyLib;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.builder.BuilderConfiguration;
@@ -7,6 +8,7 @@ import mcjty.rftools.blocks.builder.SpaceChamberControllerTileEntity;
 import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -15,51 +17,49 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
-
-import org.lwjgl.input.Keyboard;
-
 import java.util.List;
 
-public class SpaceChamberCardItem extends GenericRFToolsItem {
+public class SpaceChamberCardItem extends Item {
 
     public SpaceChamberCardItem() {
-        super("space_chamber_card");
-        setMaxStackSize(1);
+        super(new Properties().maxStackSize(1).defaultMaxDamage(1).group(RFTools.setup.getTab()));
+        setRegistryName("space_chamber_card");
     }
 
-    @Override
-    public int getMaxItemUseDuration(ItemStack stack) {
-        return 1;
-    }
+//    @Override
+//    public int getMaxItemUseDuration(ItemStack stack) {
+//        return 1;
+//    }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
-        super.addInformation(itemStack, player, list, whatIsThis);
+    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
+        super.addInformation(itemStack, world, list, flag);
         CompoundNBT tagCompound = itemStack.getTag();
         int channel = -1;
         if (tagCompound != null) {
-            channel = tagCompound.getInteger("channel");
+            channel = tagCompound.getInt("channel");
         }
         if (channel != -1) {
-            list.add(TextFormatting.YELLOW + "Channel: " + channel);
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "Channel: " + channel));
         } else {
-            list.add(TextFormatting.YELLOW + "Channel is not set!");
+            list.add(new StringTextComponent(TextFormatting.YELLOW + "Channel is not set!"));
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(TextFormatting.WHITE + "Sneak right-click on a space chamber controller");
-            list.add(TextFormatting.WHITE + "to set the channel for this card.");
-            list.add(TextFormatting.WHITE + "Right-click in the air to show an overview of");
-            list.add(TextFormatting.WHITE + "the area contents.");
-            list.add(TextFormatting.WHITE + "Insert it in a builder to copy/move the");
-            list.add(TextFormatting.WHITE + "linked area");
-            list.add(TextFormatting.GREEN + "Base cost: " + BuilderConfiguration.builderRfPerOperation.get() + " RF/t per block");
-            list.add(TextFormatting.GREEN + "(final cost depends on infusion level)");
+        if (McJtyLib.proxy.isShiftKeyDown()) {
+            list.add(new StringTextComponent(TextFormatting.WHITE + "Sneak right-click on a space chamber controller"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "to set the channel for this card."));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "Right-click in the air to show an overview of"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "the area contents."));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "Insert it in a builder to copy/move the"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "linked area"));
+            list.add(new StringTextComponent(TextFormatting.GREEN + "Base cost: " + BuilderConfiguration.builderRfPerOperation.get() + " RF/t per block"));
+            list.add(new StringTextComponent(TextFormatting.GREEN + "(final cost depends on infusion level)"));
         } else {
-            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
+            list.add(new StringTextComponent(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE));
         }
     }
 
@@ -78,7 +78,7 @@ public class SpaceChamberCardItem extends GenericRFToolsItem {
         CompoundNBT tagCompound = stack.getTag();
         if (tagCompound == null) {
             tagCompound = new CompoundNBT();
-            stack.setTagCompound(tagCompound);
+            stack.setTag(tagCompound);
         }
 
         int channel = -1;
@@ -89,7 +89,7 @@ public class SpaceChamberCardItem extends GenericRFToolsItem {
         if (channel == -1) {
             showDetails(world, player, stack);
         } else {
-            tagCompound.setInteger("channel", channel);
+            tagCompound.putInt("channel", channel);
             if (world.isRemote) {
                 Logging.message(player, "Card is set to channel '" + channel + "'");
             }
@@ -98,8 +98,8 @@ public class SpaceChamberCardItem extends GenericRFToolsItem {
     }
 
     private void showDetails(World world, PlayerEntity player, ItemStack stack) {
-        if (stack.getTag() != null && stack.getTag().hasKey("channel")) {
-            int channel = stack.getTag().getInteger("channel");
+        if (stack.getTag() != null && stack.getTag().contains("channel")) {
+            int channel = stack.getTag().getInt("channel");
             if (channel != -1) {
                 showDetailsGui(world, player);
             } else {

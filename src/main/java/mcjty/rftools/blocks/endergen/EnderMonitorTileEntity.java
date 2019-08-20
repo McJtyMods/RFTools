@@ -4,22 +4,8 @@ import mcjty.lib.gui.widgets.ChoiceLabel;
 import mcjty.lib.tileentity.LogicTileEntity;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.TickOrderHandler;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.ProbeMode;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Optional;
-
-
-
-import java.util.List;
 
 public class EnderMonitorTileEntity extends LogicTileEntity implements ITickableTileEntity, TickOrderHandler.ICheckStateServer {
 
@@ -122,20 +108,20 @@ public class EnderMonitorTileEntity extends LogicTileEntity implements ITickable
         return false;
     }
 
-    @Override
-    @Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
-        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
-        EnderMonitorMode m = getMode();
-        probeInfo.text(TextFormatting.GREEN + "Mode: " + m.getDescription());
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    @Optional.Method(modid = "waila")
-    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
-        super.addWailaBody(itemStack, currenttip, accessor, config);
-        EnderMonitorMode m = getMode();
-        currenttip.add(TextFormatting.GREEN + "Mode: " + m.getDescription());
-    }
+//    @Override
+//    @Optional.Method(modid = "theoneprobe")
+//    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
+//        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+//        EnderMonitorMode m = getMode();
+//        probeInfo.text(TextFormatting.GREEN + "Mode: " + m.getDescription());
+//    }
+//
+//    @SideOnly(Side.CLIENT)
+//    @Override
+//    @Optional.Method(modid = "waila")
+//    public void addWailaBody(ItemStack itemStack, List<String> currenttip, IWailaDataAccessor accessor, IWailaConfigHandler config) {
+//        super.addWailaBody(itemStack, currenttip, accessor, config);
+//        EnderMonitorMode m = getMode();
+//        currenttip.add(TextFormatting.GREEN + "Mode: " + m.getDescription());
+//    }
 }

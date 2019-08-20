@@ -41,7 +41,7 @@ public class GuiRFToolsManual extends GuiScreen {
     private static final ResourceLocation iconGuiElements = new ResourceLocation(RFTools.MODID, "textures/gui/guielements.png");
 
     public GuiRFToolsManual(int manual) {
-        String gameLocale = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode().toLowerCase(java.util.Locale.ENGLISH);
+        String gameLocale = Minecraft.getInstance().getLanguageManager().getCurrentLanguage().getLanguageCode().toLowerCase(java.util.Locale.ENGLISH);
         if (manual == MANUAL_MAIN) {
             if (gameLocale.equals("en_us")) {
                 manualText = manualMainText;

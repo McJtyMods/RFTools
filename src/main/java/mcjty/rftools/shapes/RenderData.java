@@ -2,6 +2,7 @@ package mcjty.rftools.shapes;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import mcjty.rftools.blocks.shaper.ScannerConfiguration;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.Tessellator;

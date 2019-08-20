@@ -1,12 +1,10 @@
 package mcjty.rftools.items.storage;
 
 import mcjty.lib.varia.ItemStackList;
-import mcjty.rftools.blocks.storage.sorters.ModItemSorter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -29,27 +27,28 @@ public class StorageFilterCache {
             nbtMode = tagCompound.getBoolean("nbtMode");
             modMode = tagCompound.getBoolean("modMode");
             blacklistMode = "Black".equals(tagCompound.getString("blacklistMode"));
-            ListNBT bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+            ListNBT bufferTagList = tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND);
             int cnt = 0;
-            for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
-                CompoundNBT CompoundNBT = bufferTagList.getCompoundTagAt(i);
-                ItemStack s = new ItemStack(CompoundNBT);
+            for (int i = 0 ; i < bufferTagList.size() ; i++) {
+                CompoundNBT CompoundNBT = bufferTagList.getCompound(i);
+                ItemStack s = ItemStack.read(CompoundNBT);
                 if (!s.isEmpty()) {
                     cnt++;
                 }
             }
             stacks = ItemStackList.create(cnt);
             cnt = 0;
-            for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
-                CompoundNBT CompoundNBT = bufferTagList.getCompoundTagAt(i);
-                ItemStack s = new ItemStack(CompoundNBT);
+            for (int i = 0 ; i < bufferTagList.size() ; i++) {
+                CompoundNBT CompoundNBT = bufferTagList.getCompound(i);
+                ItemStack s = ItemStack.read(CompoundNBT);
                 if (!s.isEmpty()) {
                     stacks.set(cnt++, s);
-                    if (oredictMode) {
-                        for (int id : OreDictionary.getOreIDs(s)) {
-                            oredictMatches.add(id);
-                        }
-                    }
+                    // @todo 1.14
+//                    if (oredictMode) {
+//                        for (int id : OreDictionary.getOreIDs(s)) {
+//                            oredictMatches.add(id);
+//                        }
+//                    }
                 }
             }
         } else {

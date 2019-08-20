@@ -4,7 +4,7 @@ import mcjty.lib.container.ContainerFactory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.container.SlotDefinition;
 import mcjty.lib.container.SlotType;
-import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
@@ -16,17 +16,17 @@ import mcjty.rftools.shapes.RenderData;
 import mcjty.rftools.shapes.ShapeID;
 import mcjty.rftools.shapes.ShapeRenderer;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
 import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -34,7 +34,7 @@ import java.util.List;
 
 import static net.minecraft.util.Direction.*;
 
-public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickableTileEntity {
+public class ProjectorTileEntity extends GenericTileEntity implements ITickableTileEntity {
 
     public static final String CMD_RSSETTINGS = "projector.rsSettings";
 

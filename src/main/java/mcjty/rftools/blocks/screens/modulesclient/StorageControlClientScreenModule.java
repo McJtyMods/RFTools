@@ -131,12 +131,12 @@ public class StorageControlClientScreenModule implements IClientScreenModule<Sto
     }
 
     private void renderSlot(int currenty, ItemStack stack, int x) {
-        RenderItem itemRender = Minecraft.getMinecraft().getRenderItem();
+        RenderItem itemRender = Minecraft.getInstance().getRenderItem();
         itemRender.renderItemAndEffectIntoGUI(stack, x, currenty);
     }
 
     private void renderSlotOverlay(FontRenderer fontRenderer, int currenty, ItemStack stack, int amount, int x) {
-//                itemRender.renderItemOverlayIntoGUI(fontRenderer, Minecraft.getMinecraft().getTextureManager(), itm, x, currenty);
+//                itemRender.renderItemOverlayIntoGUI(fontRenderer, Minecraft.getInstance().getTextureManager(), itm, x, currenty);
         renderItemOverlayIntoGUI(fontRenderer, stack, amount, x, currenty);
     }
 

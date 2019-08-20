@@ -4,7 +4,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -53,12 +52,12 @@ public class CraftingRecipe {
     }
 
     public void readFromNBT(CompoundNBT tagCompound) {
-        ListNBT nbtTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < nbtTagList.tagCount(); i++) {
-            CompoundNBT CompoundNBT = nbtTagList.getCompoundTagAt(i);
-            inv.setInventorySlotContents(i, new ItemStack(CompoundNBT));
+        ListNBT nbtTagList = tagCompound.getList("Items", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < nbtTagList.size(); i++) {
+            CompoundNBT CompoundNBT = nbtTagList.getCompound(i);
+            inv.setInventorySlotContents(i, ItemStack.read(CompoundNBT));
         }
-        CompoundNBT resultCompound = tagCompound.getCompoundTag("Result");
+        CompoundNBT resultCompound = tagCompound.getCompound("Result");
         if (resultCompound != null) {
             result = new ItemStack(resultCompound);
         } else {
@@ -75,18 +74,18 @@ public class CraftingRecipe {
             ItemStack stack = inv.getStackInSlot(i);
             CompoundNBT CompoundNBT = new CompoundNBT();
             if (!stack.isEmpty()) {
-                stack.writeToNBT(CompoundNBT);
+                stack.write(CompoundNBT);
             }
-            nbtTagList.appendTag(CompoundNBT);
+            nbtTagList.add(CompoundNBT);
         }
         CompoundNBT resultCompound = new CompoundNBT();
         if (!result.isEmpty()) {
-            result.writeToNBT(resultCompound);
+            result.write(resultCompound);
         }
-        tagCompound.setTag("Result", resultCompound);
-        tagCompound.setTag("Items", nbtTagList);
-        tagCompound.setBoolean("Keep", keepOne);
-        tagCompound.setByte("Int", (byte) craftMode.ordinal());
+        tagCompound.put("Result", resultCompound);
+        tagCompound.put("Items", nbtTagList);
+        tagCompound.putBoolean("Keep", keepOne);
+        tagCompound.putByte("Int", (byte) craftMode.ordinal());
     }
 
     public void setRecipe(ItemStack[] items, ItemStack result) {

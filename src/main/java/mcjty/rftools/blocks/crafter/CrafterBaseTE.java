@@ -1,9 +1,8 @@
 package mcjty.rftools.blocks.crafter;
 
-import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
-import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.ItemStackList;
 import mcjty.lib.varia.Logging;
@@ -14,8 +13,9 @@ import mcjty.rftools.craftinggrid.CraftingRecipe;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.Container;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.CompoundNBT;
@@ -25,7 +25,6 @@ import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +33,7 @@ import java.util.Map;
 import static mcjty.rftools.craftinggrid.CraftingRecipe.CraftMode.EXTC;
 import static mcjty.rftools.craftinggrid.CraftingRecipe.CraftMode.INT;
 
-public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements ITickableTileEntity, DefaultSidedInventory,
+public class CrafterBaseTE extends GenericTileEntity implements ITickableTileEntity,
         JEIRecipeAcceptor {
     public static final int SPEED_SLOW = 0;
     public static final int SPEED_FAST = 1;

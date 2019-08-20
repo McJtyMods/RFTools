@@ -46,7 +46,7 @@ public class ScreenRenderer extends TileEntityRenderer<ScreenTileEntity> {
 
         Direction facing = Direction.SOUTH, horizontalFacing = Direction.SOUTH;
         if (tileEntity != null) {
-            BlockState state = Minecraft.getMinecraft().world.getBlockState(tileEntity.getPos());
+            BlockState state = Minecraft.getInstance().world.getBlockState(tileEntity.getPos());
             if (state.getBlock() instanceof ScreenBlock) {
                 facing = state.getValue(BaseBlock.FACING);
                 horizontalFacing = state.getValue(ScreenBlock.HORIZONTAL_FACING);
@@ -137,7 +137,7 @@ public class ScreenRenderer extends TileEntityRenderer<ScreenTileEntity> {
 
         BlockPos pos = tileEntity.getPos();
 
-        RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
+        RayTraceResult mouseOver = Minecraft.getInstance().objectMouseOver;
         IClientScreenModule<?> hitModule = null;
         ScreenTileEntity.ModuleRaytraceResult hit = null;
         BlockState blockState = getWorld().getBlockState(pos);
@@ -163,7 +163,7 @@ public class ScreenRenderer extends TileEntityRenderer<ScreenTileEntity> {
         }
 
         if (tileEntity.isBright()) {
-            Minecraft.getMinecraft().entityRenderer.disableLightmap();
+            Minecraft.getInstance().entityRenderer.disableLightmap();
         }
 
         for (IClientScreenModule module : modules) {
@@ -226,7 +226,7 @@ public class ScreenRenderer extends TileEntityRenderer<ScreenTileEntity> {
         }
 
         if (tileEntity.isBright()) {
-            Minecraft.getMinecraft().entityRenderer.enableLightmap();
+            Minecraft.getInstance().entityRenderer.enableLightmap();
         }
 
         if (mode != IClientScreenModule.TransformMode.NONE) {

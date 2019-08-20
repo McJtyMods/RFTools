@@ -18,9 +18,9 @@ public class KeyInputHandler {
         } else if (KeyBindings.porterPrevDestination.isPressed()) {
             RFToolsMessages.sendToServer(CommandHandler.CMD_CYCLE_DESTINATION, TypedMap.builder().put(CommandHandler.PARAM_NEXT, false));
         } else if (KeyBindings.debugDumpNBTItem.isPressed()) {
-            DumpItemNBT.dumpHeldItem(RFToolsMessages.INSTANCE, Minecraft.getMinecraft().player, false);
+            DumpItemNBT.dumpHeldItem(RFToolsMessages.INSTANCE, Minecraft.getInstance().player, false);
         } else if (KeyBindings.debugDumpNBTBlock.isPressed()) {
-            DumpBlockNBT.dumpFocusedBlock(RFToolsMessages.INSTANCE, Minecraft.getMinecraft().player, true, false);
+            DumpBlockNBT.dumpFocusedBlock(RFToolsMessages.INSTANCE, Minecraft.getInstance().player, true, false);
         }
     }
 }

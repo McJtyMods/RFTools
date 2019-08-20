@@ -31,7 +31,7 @@ public class ClockClientScreenModule implements IClientScreenModule<IModuleData>
     @Override
     public void render(IModuleRenderHelper renderHelper, FontRenderer fontRenderer, int currenty, IModuleData screenData, ModuleRenderInfo renderInfo) {
         GlStateManager.disableLighting();
-        Minecraft minecraft = Minecraft.getMinecraft();
+        Minecraft minecraft = Minecraft.getInstance();
 
         final long time = minecraft.world.getWorldTime();
         long hour = (time / 1000 + 6) % 24;

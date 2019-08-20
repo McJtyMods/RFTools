@@ -454,7 +454,7 @@ public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
 
     private void renderVoidBlock(int x, int y, ToggleButton button, Block block) {
         x += (int) button.getBounds().getX();
-        RenderHelper.renderObject(Minecraft.getMinecraft(), x, y, new ItemStack(block), button.isPressed());
+        RenderHelper.renderObject(Minecraft.getInstance(), x, y, new ItemStack(block), button.isPressed());
         if (button.isPressed()) {
             drawLine(x-1, y-1, x+18, y+18, 0xffff0000);
             drawLine(x+18, y-1, x-1, y+18, 0xffff0000);

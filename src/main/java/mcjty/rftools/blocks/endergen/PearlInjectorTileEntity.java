@@ -1,12 +1,12 @@
 package mcjty.rftools.blocks.endergen;
 
 import mcjty.lib.container.ContainerFactory;
-import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.varia.OrientationTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.TickOrderHandler;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
 import net.minecraft.item.ItemStack;
@@ -17,7 +17,7 @@ import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
-public class PearlInjectorTileEntity extends GenericTileEntity implements DefaultSidedInventory, ITickableTileEntity, TickOrderHandler.ICheckStateServer {
+public class PearlInjectorTileEntity extends GenericTileEntity implements ITickableTileEntity, TickOrderHandler.ICheckStateServer {
 
     public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(new ResourceLocation(RFTools.MODID, "gui/pearl_injector.gui"));
 
@@ -107,8 +107,8 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
     }
 
     @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
-        super.readFromNBT(tagCompound);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
         prevIn = tagCompound.getBoolean("prevIn");
     }
 
@@ -119,9 +119,9 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements Defaul
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("prevIn", prevIn);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
+        tagCompound.putBoolean("prevIn", prevIn);
         return tagCompound;
     }
 

@@ -64,8 +64,8 @@ public class EndergenicRenderer extends TileEntityRenderer<EndergenicTileEntity>
 
         GlStateManager.popMatrix();
 
-        ItemStack mainHand = Minecraft.getMinecraft().player.getHeldItemMainhand();
-        ItemStack offHand = Minecraft.getMinecraft().player.getHeldItemOffhand();
+        ItemStack mainHand = Minecraft.getInstance().player.getHeldItemMainhand();
+        ItemStack offHand = Minecraft.getInstance().player.getHeldItemOffhand();
         boolean showOverlay = (!mainHand.isEmpty() && mainHand.getItem() instanceof SmartWrenchItem) ||
                 (!offHand.isEmpty() && offHand.getItem() instanceof SmartWrenchItem);
         if (showOverlay) {

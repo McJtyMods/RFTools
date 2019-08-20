@@ -78,7 +78,7 @@ public class ScreenTextHelper implements ITextRenderHelper {
             }
         } else {
             textx = large ? 4 : 7;
-            FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+            FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
             text = fontRenderer.trimStringToWidth(line, (large ? (width/8) : (width/4))-textx);
 //            int w = large ? 58 : 115;
             int w = large ? (int) (width / 8.8f) : (int) (width / 4.45f);
@@ -103,7 +103,7 @@ public class ScreenTextHelper implements ITextRenderHelper {
             float b = (color & 255) / 255.0f;
             renderInfo.font.drawString(textx + x, 128 - y, text, 0.25f, 0.25f, -512f-40f, r, g, b, 1.0f);
         } else {
-            FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+            FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
             fontRenderer.drawString(text, textx + x, y, color);
         }
     }

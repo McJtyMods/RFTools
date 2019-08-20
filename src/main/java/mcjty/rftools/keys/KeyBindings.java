@@ -5,9 +5,6 @@ import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 
-import org.lwjgl.input.Keyboard;
-
-@SideOnly(Side.CLIENT)
 public class KeyBindings {
 
     public static KeyBinding porterNextDestination;

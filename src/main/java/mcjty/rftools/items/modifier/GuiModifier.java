@@ -47,7 +47,7 @@ public class GuiModifier extends GenericGuiContainer<GenericTileEntity> {
     }
 
     private ItemStack getItem() {
-        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        EntityPlayerSP player = Minecraft.getInstance().player;
         return player.getHeldItem(Hand.MAIN_HAND);
     }
 

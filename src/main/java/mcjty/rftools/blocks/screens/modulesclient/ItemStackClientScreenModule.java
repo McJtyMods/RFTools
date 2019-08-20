@@ -93,7 +93,7 @@ public class ItemStackClientScreenModule implements IClientScreenModule<ItemStac
                 // Ignore this.
             }
             if (!itm.isEmpty()) {
-                RenderItem itemRender = Minecraft.getMinecraft().getRenderItem();
+                RenderItem itemRender = Minecraft.getInstance().getRenderItem();
                 itemRender.renderItemAndEffectIntoGUI(itm, x, currenty);
             }
             x += 30;
@@ -105,7 +105,7 @@ public class ItemStackClientScreenModule implements IClientScreenModule<ItemStac
         if (slot != -1) {
             ItemStack itm = screenData.getStack(index);
             if (!itm.isEmpty()) {
-//                itemRender.renderItemOverlayIntoGUI(fontRenderer, Minecraft.getMinecraft().getTextureManager(), itm, x, currenty);
+//                itemRender.renderItemOverlayIntoGUI(fontRenderer, Minecraft.getInstance().getTextureManager(), itm, x, currenty);
                 renderItemOverlayIntoGUI(fontRenderer, itm, x, currenty);
             }
             x += 30;

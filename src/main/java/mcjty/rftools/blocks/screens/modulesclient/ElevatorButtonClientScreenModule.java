@@ -144,7 +144,7 @@ public class ElevatorButtonClientScreenModule implements IClientScreenModule<Ele
         } else {
             if (level < heights.size()) {
                 BlockPos posY = ElevatorTileEntity.getPosAtY(pos, heights.get(level));
-                TileEntity te = Minecraft.getMinecraft().world.getTileEntity(posY);
+                TileEntity te = Minecraft.getInstance().world.getTileEntity(posY);
                 if (te instanceof ElevatorTileEntity) {
                     return ((ElevatorTileEntity) te).getName();
                 }

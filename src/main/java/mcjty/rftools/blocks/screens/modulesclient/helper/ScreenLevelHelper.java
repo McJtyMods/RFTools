@@ -79,7 +79,7 @@ public class ScreenLevelHelper implements ILevelRenderHelper {
                     float b = (col & 255) / 255.0f;
                     renderInfo.font.drawString(x, 128 - y, diffTxt, 0.25f, 0.25f, -512f-40f, r, g, b, 1.0f);
                 } else {
-                    FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+                    FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
                     fontRenderer.drawString(diffTxt, x, y, col);
                 }
             }

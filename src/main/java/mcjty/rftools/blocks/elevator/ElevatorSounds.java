@@ -53,14 +53,14 @@ public class ElevatorSounds {
         GlobalCoordinate g = new GlobalCoordinate(pos, worldObj.provider.getDimension());
         if (sounds.containsKey(g)) {
             MovingSound movingSound = sounds.get(g);
-            Minecraft.getMinecraft().getSoundHandler().stopSound(movingSound);
+            Minecraft.getInstance().getSoundHandler().stopSound(movingSound);
             sounds.remove(g);
         }
     }
 
     private static void playSound(World worldObj, BlockPos pos, MovingSound sound) {
         stopSound(worldObj, pos);
-        Minecraft.getMinecraft().getSoundHandler().playSound(sound);
+        Minecraft.getInstance().getSoundHandler().playSound(sound);
         GlobalCoordinate g = new GlobalCoordinate(pos, worldObj.provider.getDimension());
         sounds.put(g, sound);
     }

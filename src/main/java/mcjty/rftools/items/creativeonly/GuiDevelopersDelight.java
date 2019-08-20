@@ -181,7 +181,7 @@ public class GuiDevelopersDelight extends GuiScreen {
 
         blockClassList.removeChildren();
 
-        BlockState state = Minecraft.getMinecraft().world.getBlockState(selected);
+        BlockState state = Minecraft.getInstance().world.getBlockState(selected);
         Block block = state.getBlock();
 
         blockClassList.addChild(new Label(mc, this).setColor(StyleConfig.colorTextInListNormal).setText("Loc Name: " + block.getLocalizedName()).setHorizontalAlignment(HorizontalAlignment.ALIGN_LEFT));

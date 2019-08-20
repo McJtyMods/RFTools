@@ -112,7 +112,7 @@ public class GuiNetworkMonitor extends GuiItemScreen {
         BlockPos c = indexToCoordinate.get(index);
         RFTools.instance.clientInfo.hilightBlock(c, System.currentTimeMillis()+1000* NetworkMonitorConfiguration.hilightTime.get());
         Logging.message(mc.player, "The block is now highlighted");
-        Minecraft.getMinecraft().player.closeScreen();
+        Minecraft.getInstance().player.closeScreen();
     }
 
     private void refreshList(boolean recalcPerTick) {

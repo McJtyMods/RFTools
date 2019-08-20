@@ -236,7 +236,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
     @Override
     public void onBlockClicked(World world, BlockPos pos, PlayerEntity playerIn) {
         if (world.isRemote) {
-            RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
+            RayTraceResult mouseOver = Minecraft.getInstance().objectMouseOver;
             ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos);
             screenTileEntity.hitScreenClient(mouseOver.hitVec.x - pos.getX(), mouseOver.hitVec.y - pos.getY(), mouseOver.hitVec.z - pos.getZ(), mouseOver.sideHit, world.getBlockState(pos).getValue(ScreenBlock.HORIZONTAL_FACING));
         }
@@ -455,7 +455,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
     }
 
     private void activateOnClient(World world, BlockPos pos) {
-        RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
+        RayTraceResult mouseOver = Minecraft.getInstance().objectMouseOver;
         ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos);
         screenTileEntity.hitScreenClient(mouseOver.hitVec.x - pos.getX(), mouseOver.hitVec.y - pos.getY(), mouseOver.hitVec.z - pos.getZ(), mouseOver.sideHit, world.getBlockState(pos).getValue(ScreenBlock.HORIZONTAL_FACING));
     }

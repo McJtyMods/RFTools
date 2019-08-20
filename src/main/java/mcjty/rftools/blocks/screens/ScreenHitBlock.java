@@ -130,7 +130,7 @@ public class ScreenHitBlock extends BaseBlock<ScreenHitTileEntity, EmptyContaine
                 return;
             }
 
-            RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
+            RayTraceResult mouseOver = Minecraft.getInstance().objectMouseOver;
             ScreenTileEntity screenTileEntity = (ScreenTileEntity) world.getTileEntity(pos.add(dx, dy, dz));
             screenTileEntity.hitScreenClient(mouseOver.hitVec.x - pos.getX() - dx, mouseOver.hitVec.y - pos.getY() - dy, mouseOver.hitVec.z - pos.getZ() - dz, mouseOver.sideHit, state.getValue(ScreenBlock.HORIZONTAL_FACING));
         }

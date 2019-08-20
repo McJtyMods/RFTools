@@ -28,7 +28,7 @@ public class FindBlockClient {
             if (InventoryPlayer.isHotbar(slot)) {
                 player.inventory.currentItem = slot;
             } else {
-                Minecraft.getMinecraft().playerController.pickItem(slot);
+                Minecraft.getInstance().playerController.pickItem(slot);
             }
             return false;
         }

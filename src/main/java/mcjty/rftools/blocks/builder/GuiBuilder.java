@@ -68,7 +68,7 @@ public class GuiBuilder extends GenericGuiContainer<BuilderTileEntity> {
     private void openCardGui() {
         ItemStack cardStack = inventorySlots.getSlot(SLOT_TAB).getStack();
         if (!cardStack.isEmpty()) {
-            EntityPlayerSP player = Minecraft.getMinecraft().player;
+            EntityPlayerSP player = Minecraft.getInstance().player;
             GuiShapeCard.fromTEPos = tileEntity.getPos();
             GuiShapeCard.fromTEStackSlot = SLOT_TAB;
             GuiShapeCard.returnGui = this;

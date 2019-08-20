@@ -255,7 +255,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
         blockRender.addSelectionEvent(new BlockRenderEvent() {
             @Override
             public void select(Widget<?> widget) {
-                ItemStack holding = Minecraft.getMinecraft().player.inventory.getItemStack();
+                ItemStack holding = Minecraft.getInstance().player.inventory.getItemStack();
                 if (holding.isEmpty()) {
                     currentData.removeTag(tagname);
                     blockRender.setRenderItem(null);

@@ -1,50 +1,50 @@
 package mcjty.rftools.blocks.shaper;
 
-import mcjty.lib.thirteen.ConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ScannerConfiguration {
     public static final String CATEGORY_SCANNER = "scanner";
 
-    public static ConfigSpec.IntValue SCANNER_MAXENERGY; // TODO change these to longs once Configuration supports them
-    public static ConfigSpec.IntValue SCANNER_RECEIVEPERTICK;
-    public static ConfigSpec.IntValue SCANNER_PERTICK;
-    public static ConfigSpec.IntValue REMOTE_SCANNER_PERTICK;
+    public static ForgeConfigSpec.IntValue SCANNER_MAXENERGY; // TODO change these to longs once Configuration supports them
+    public static ForgeConfigSpec.IntValue SCANNER_RECEIVEPERTICK;
+    public static ForgeConfigSpec.IntValue SCANNER_PERTICK;
+    public static ForgeConfigSpec.IntValue REMOTE_SCANNER_PERTICK;
 
-    public static ConfigSpec.IntValue LOCATOR_MAXENERGY;
-    public static ConfigSpec.IntValue LOCATOR_RECEIVEPERTICK;
-    public static ConfigSpec.IntValue LOCATOR_PERSCAN_BASE;
-    public static ConfigSpec.DoubleValue LOCATOR_PERSCAN_CHUNK;
-    public static ConfigSpec.DoubleValue LOCATOR_PERSCAN_HOSTILE;
-    public static ConfigSpec.DoubleValue LOCATOR_PERSCAN_PASSIVE;
-    public static ConfigSpec.DoubleValue LOCATOR_PERSCAN_PLAYER;
-    public static ConfigSpec.DoubleValue LOCATOR_PERSCAN_ENERGY;
-    public static ConfigSpec.DoubleValue LOCATOR_FILTER_COST;
+    public static ForgeConfigSpec.IntValue LOCATOR_MAXENERGY;
+    public static ForgeConfigSpec.IntValue LOCATOR_RECEIVEPERTICK;
+    public static ForgeConfigSpec.IntValue LOCATOR_PERSCAN_BASE;
+    public static ForgeConfigSpec.DoubleValue LOCATOR_PERSCAN_CHUNK;
+    public static ForgeConfigSpec.DoubleValue LOCATOR_PERSCAN_HOSTILE;
+    public static ForgeConfigSpec.DoubleValue LOCATOR_PERSCAN_PASSIVE;
+    public static ForgeConfigSpec.DoubleValue LOCATOR_PERSCAN_PLAYER;
+    public static ForgeConfigSpec.DoubleValue LOCATOR_PERSCAN_ENERGY;
+    public static ForgeConfigSpec.DoubleValue LOCATOR_FILTER_COST;
 
-    public static ConfigSpec.IntValue ticksPerLocatorScan;
-    public static ConfigSpec.IntValue locatorBeaconHeight;
-    public static ConfigSpec.IntValue locatorEntitySafety;
-    public static ConfigSpec.IntValue locatorMaxEnergyChunks;
+    public static ForgeConfigSpec.IntValue ticksPerLocatorScan;
+    public static ForgeConfigSpec.IntValue locatorBeaconHeight;
+    public static ForgeConfigSpec.IntValue locatorEntitySafety;
+    public static ForgeConfigSpec.IntValue locatorMaxEnergyChunks;
 
-    public static ConfigSpec.IntValue PROJECTOR_MAXENERGY;
-    public static ConfigSpec.IntValue PROJECTOR_RECEIVEPERTICK;
-    public static ConfigSpec.IntValue PROJECTOR_USEPERTICK;
+    public static ForgeConfigSpec.IntValue PROJECTOR_MAXENERGY;
+    public static ForgeConfigSpec.IntValue PROJECTOR_RECEIVEPERTICK;
+    public static ForgeConfigSpec.IntValue PROJECTOR_USEPERTICK;
 
-    public static ConfigSpec.BooleanValue useVBO;
+    public static ForgeConfigSpec.BooleanValue useVBO;
 
     // Maximum dimension when the shape card is used for projection/scanner
-    public static ConfigSpec.IntValue maxScannerDimension;
-    public static ConfigSpec.IntValue maxScannerOffset;
+    public static ForgeConfigSpec.IntValue maxScannerDimension;
+    public static ForgeConfigSpec.IntValue maxScannerOffset;
 
-    public static ConfigSpec.IntValue surfaceAreaPerTick;
-    public static ConfigSpec.IntValue planeSurfacePerTick;
-    public static ConfigSpec.IntValue clientRenderDataTimeout;
+    public static ForgeConfigSpec.IntValue surfaceAreaPerTick;
+    public static ForgeConfigSpec.IntValue planeSurfacePerTick;
+    public static ForgeConfigSpec.IntValue clientRenderDataTimeout;
 
-    public static ConfigSpec.IntValue projectorFlashTimeout;
+    public static ForgeConfigSpec.IntValue projectorFlashTimeout;
 
-    public static ConfigSpec.DoubleValue baseProjectorVolume;      // Use 0 to turn off projector sounds
+    public static ForgeConfigSpec.DoubleValue baseProjectorVolume;      // Use 0 to turn off projector sounds
 
 
-    public static void init(ConfigSpec.Builder SERVER_BUILDER, ConfigSpec.Builder CLIENT_BUILDER) {
+    public static void init(ForgeConfigSpec.Builder SERVER_BUILDER, ForgeConfigSpec.Builder CLIENT_BUILDER) {
         SERVER_BUILDER.comment("Settings for the scanner, composer, and projector").push(CATEGORY_SCANNER);
         CLIENT_BUILDER.comment("Settings for the scanner, composer, and projector").push(CATEGORY_SCANNER);
 

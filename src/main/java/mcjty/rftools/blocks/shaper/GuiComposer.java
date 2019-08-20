@@ -179,7 +179,7 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
         }
         ItemStack cardStack = inventorySlots.getSlot(slot).getStack();
         if (!cardStack.isEmpty()) {
-            EntityPlayerSP player = Minecraft.getMinecraft().player;
+            EntityPlayerSP player = Minecraft.getInstance().player;
             GuiShapeCard.fromTEPos = tileEntity.getPos();
             GuiShapeCard.fromTEStackSlot = slot;
             GuiShapeCard.returnGui = this;

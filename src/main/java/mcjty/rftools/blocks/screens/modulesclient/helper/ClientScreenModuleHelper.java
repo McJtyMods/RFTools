@@ -101,7 +101,7 @@ public class ClientScreenModuleHelper implements IModuleRenderHelper {
             float b = (color & 255) / 255.0f;
             renderInfo.font.drawString(x, 128 - y, text, 0.25f, 0.25f, -512f-40f, r, g, b, 1.0f);
         } else {
-            FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+            FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
             fontRenderer.drawString(text, x, y, color);
         }
     }
@@ -118,7 +118,7 @@ public class ClientScreenModuleHelper implements IModuleRenderHelper {
             float b = (color & 255) / 255.0f;
             renderInfo.font.drawString(x, 128 - y, trimmed, 0.25f, 0.25f, -512f-40f, r, g, b, 1.0f);
         } else {
-            FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+            FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
             String trimmed = fontRenderer.trimStringToWidth(text, maxwidth / 4);
             fontRenderer.drawString(trimmed, x, y, color);
         }

@@ -30,7 +30,7 @@ public class CamoBakedModel implements IBakedModel {
 
     private static void initTextures() {
         if (spriteCable == null) {
-            spriteCable = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(RFTools.MODID + ":blocks/facade");
+            spriteCable = Minecraft.getInstance().getTextureMapBlocks().getAtlasSprite(RFTools.MODID + ":blocks/facade");
         }
     }
 
@@ -59,7 +59,7 @@ public class CamoBakedModel implements IBakedModel {
 
     private IBakedModel getModel(@Nonnull BlockState facadeState) {
         initTextures();
-        IBakedModel model = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelForState(facadeState);
+        IBakedModel model = Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelShapes().getModelForState(facadeState);
         return model;
     }
 

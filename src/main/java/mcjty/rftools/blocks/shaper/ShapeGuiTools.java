@@ -9,7 +9,7 @@ import net.minecraft.client.gui.screen.Screen;
 public class ShapeGuiTools {
 
     public static ToggleButton createAxisButton(Screen gui, Panel toplevel, int x, int y) {
-        ToggleButton showAxis = new ToggleButton(Minecraft.getMinecraft(), gui).setCheckMarker(true)
+        ToggleButton showAxis = new ToggleButton(Minecraft.getInstance(), gui).setCheckMarker(true)
                 .setTooltips("Enable axis rendering", "in the preview")
                 .setText("A").setLayoutHint(new PositionalLayout.PositionalHint(x, y, 24, 16));
         showAxis.setPressed(true);
@@ -18,7 +18,7 @@ public class ShapeGuiTools {
     }
 
     public static ToggleButton createBoxButton(Screen gui, Panel toplevel, int x, int y) {
-        ToggleButton showAxis = new ToggleButton(Minecraft.getMinecraft(), gui).setCheckMarker(true)
+        ToggleButton showAxis = new ToggleButton(Minecraft.getInstance(), gui).setCheckMarker(true)
                 .setTooltips("Enable preview of the", "outer bounds")
                 .setText("B").setLayoutHint(new PositionalLayout.PositionalHint(x, y, 24, 16));
         showAxis.setPressed(true);
@@ -27,7 +27,7 @@ public class ShapeGuiTools {
     }
 
     public static ToggleButton createScanButton(Screen gui, Panel toplevel, int x, int y) {
-        ToggleButton showAxis = new ToggleButton(Minecraft.getMinecraft(), gui).setCheckMarker(true)
+        ToggleButton showAxis = new ToggleButton(Minecraft.getInstance(), gui).setCheckMarker(true)
                 .setTooltips("Show a visual scanline", "wherever the preview", "is updated")
                 .setText("S").setLayoutHint(new PositionalLayout.PositionalHint(x, y, 24, 16));
         showAxis.setPressed(true);

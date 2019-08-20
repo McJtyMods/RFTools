@@ -89,7 +89,7 @@ public class ClientProxy extends DefaultClientProxy {
     public void onGuiOpen(GuiOpenEvent event) {
         // If a shape card GUI was opened by a tile entity GUI, restore the tile entity GUI when it's closed
         if(event.getGui() == null) {
-            net.minecraft.client.gui.GuiScreen old = Minecraft.getMinecraft().currentScreen;
+            net.minecraft.client.gui.GuiScreen old = Minecraft.getInstance().currentScreen;
             if(old instanceof GuiShapeCard &&((GuiShapeCard)old).fromTE) {
                 event.setGui(GuiShapeCard.returnGui);
                 GuiShapeCard.returnGui = null;

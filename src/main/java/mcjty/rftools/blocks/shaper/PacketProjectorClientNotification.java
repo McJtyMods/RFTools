@@ -1,16 +1,16 @@
 package mcjty.rftools.blocks.shaper;
 
-import io.netty.buffer.ByteBuf;
+import mcjty.lib.McJtyLib;
 import mcjty.lib.network.NetworkTools;
-import mcjty.lib.thirteen.Context;
 import mcjty.rftools.RFTools;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class PacketProjectorClientNotification implements IMessage {
+public class PacketProjectorClientNotification {
     private BlockPos pos;
     private float verticalOffset;
     private float scale;
@@ -22,22 +22,7 @@ public class PacketProjectorClientNotification implements IMessage {
     private boolean grayscale;
     private int counter;
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        pos = NetworkTools.readPos(buf);
-        verticalOffset = buf.readFloat();
-        scale = buf.readFloat();
-        angle = buf.readFloat();
-        autoRotate = buf.readBoolean();
-        projecting = buf.readBoolean();
-        scanline = buf.readBoolean();
-        sound = buf.readBoolean();
-        grayscale = buf.readBoolean();
-        counter = buf.readInt();
-    }
-
-    @Override
-    public void toBytes(ByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         NetworkTools.writePos(buf, pos);
         buf.writeFloat(verticalOffset);
         buf.writeFloat(scale);
@@ -89,8 +74,17 @@ public class PacketProjectorClientNotification implements IMessage {
     public PacketProjectorClientNotification() {
     }
 
-    public PacketProjectorClientNotification(ByteBuf buf) {
-        fromBytes(buf);
+    public PacketProjectorClientNotification(PacketBuffer buf) {
+        pos = NetworkTools.readPos(buf);
+        verticalOffset = buf.readFloat();
+        scale = buf.readFloat();
+        angle = buf.readFloat();
+        autoRotate = buf.readBoolean();
+        projecting = buf.readBoolean();
+        scanline = buf.readBoolean();
+        sound = buf.readBoolean();
+        grayscale = buf.readBoolean();
+        counter = buf.readInt();
     }
 
     public PacketProjectorClientNotification(ProjectorTileEntity tileEntity) {
@@ -106,10 +100,10 @@ public class PacketProjectorClientNotification implements IMessage {
         counter = tileEntity.getCounter();
     }
 
-    public void handle(Supplier<Context> supplier) {
-        Context ctx = supplier.get();
+    public void handle(Supplier<NetworkEvent.Context> supplier) {
+        NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
-            TileEntity te = RFTools.proxy.getClientWorld().getTileEntity(pos);
+            TileEntity te = McJtyLib.proxy.getClientWorld().getTileEntity(pos);
             if (te instanceof ProjectorTileEntity) {
                 ((ProjectorTileEntity) te).updateFromServer(this);
             }

@@ -32,14 +32,14 @@ public class ProjectorSounds {
         if (sounds.containsKey(pos)) {
             MovingSound movingSound = sounds.get(pos);
             ((ProjectorSound)movingSound).stop();
-            Minecraft.getMinecraft().getSoundHandler().stopSound(movingSound);
+            Minecraft.getInstance().getSoundHandler().stopSound(movingSound);
             sounds.remove(pos);
         }
     }
 
     private static void playSound(BlockPos pos, MovingSound sound) {
         stopSound(pos);
-        Minecraft.getMinecraft().getSoundHandler().playSound(sound);
+        Minecraft.getInstance().getSoundHandler().playSound(sound);
         sounds.put(pos, sound);
     }
 

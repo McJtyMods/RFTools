@@ -52,7 +52,7 @@ public class RenderWorldLastEventHandler {
     }
 
     private static void renderProtectedBlocks(RenderWorldLastEvent evt) {
-        Minecraft mc = Minecraft.getMinecraft();
+        Minecraft mc = Minecraft.getInstance();
         EntityPlayerSP p = mc.player;
         ItemStack heldItem = p.getHeldItem(Hand.MAIN_HAND);
         if (heldItem.isEmpty()) {
@@ -103,7 +103,7 @@ public class RenderWorldLastEventHandler {
     private static void renderBuilderProgress(RenderWorldLastEvent evt) {
         Map<BlockPos, Pair<Long, BlockPos>> scans = BuilderTileEntity.getScanLocClient();
         if (!scans.isEmpty()) {
-            Minecraft mc = Minecraft.getMinecraft();
+            Minecraft mc = Minecraft.getInstance();
             EntityPlayerSP p = mc.player;
             double doubleX = p.lastTickPosX + (p.posX - p.lastTickPosX) * evt.getPartialTicks();
             double doubleY = p.lastTickPosY + (p.posY - p.lastTickPosY) * evt.getPartialTicks();
@@ -141,7 +141,7 @@ public class RenderWorldLastEventHandler {
         if (c == null) {
             return;
         }
-        Minecraft mc = Minecraft.getMinecraft();
+        Minecraft mc = Minecraft.getInstance();
         long time = System.currentTimeMillis();
 
         if (time > RFTools.instance.clientInfo.getExpireHilight()) {
@@ -157,7 +157,7 @@ public class RenderWorldLastEventHandler {
     }
 
     private static void renderPower(RenderWorldLastEvent evt) {
-        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        EntityPlayerSP player = Minecraft.getInstance().player;
 
         ItemStack mainItem = player.getHeldItemMainhand();
         ItemStack offItem = player.getHeldItemOffhand();

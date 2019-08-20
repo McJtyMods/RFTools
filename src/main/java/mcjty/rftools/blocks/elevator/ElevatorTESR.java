@@ -35,7 +35,7 @@ public class ElevatorTESR extends TileEntityRenderer<ElevatorTileEntity> {
         if (te.isMoving()) {
             // Correction in the y translation to avoid jitter when both player and platform are moving
             AxisAlignedBB aabb = te.getAABBAboveElevator(0);
-            boolean on = Minecraft.getMinecraft().player.getEntityBoundingBox().intersects(aabb);
+            boolean on = Minecraft.getInstance().player.getEntityBoundingBox().intersects(aabb);
 
             double diff = on ? (te.getPos().getY() - (y+te.getMovingY()) - 1) : 0;
 
@@ -53,7 +53,7 @@ public class ElevatorTESR extends TileEntityRenderer<ElevatorTileEntity> {
 
             GlStateManager.translate(0, te.getMovingY() - te.getPos().getY() + diff, 0);
             Tessellator tessellator = Tessellator.getInstance();
-            BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+            BlockRendererDispatcher dispatcher = Minecraft.getInstance().getBlockRendererDispatcher();
             BlockRenderLayer origLayer = MinecraftForgeClient.getRenderLayer();
 
             fakeWorld.setWorldAndState(te);

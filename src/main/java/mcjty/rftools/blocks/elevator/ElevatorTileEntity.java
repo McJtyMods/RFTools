@@ -217,7 +217,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         double d = calculateSpeed();
         handlePlatformMovement(d);
         if (bounds != null) {
-            EntityPlayerSP player = Minecraft.getMinecraft().player;
+            EntityPlayerSP player = Minecraft.getInstance().player;
             AxisAlignedBB aabb = getAABBAboveElevator(d);
             boolean on = player.getEntityBoundingBox().intersects(aabb);
             if (on) {

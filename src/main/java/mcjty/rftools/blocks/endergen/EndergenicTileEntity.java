@@ -5,7 +5,7 @@ import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.bindings.DefaultValue;
 import mcjty.lib.bindings.IValue;
 import mcjty.lib.network.PacketSendClientCommand;
-import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
@@ -24,6 +24,7 @@ import net.minecraft.item.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -41,7 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class EndergenicTileEntity extends GenericEnergyStorageTileEntity implements ITickable, MachineInformation,
+public class EndergenicTileEntity extends GenericTileEntity implements ITickableTileEntity, MachineInformation,
         IHudSupport, IMachineInformation, TickOrderHandler.ICheckStateServer {
 
     private static Random random = new Random();

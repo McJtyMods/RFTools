@@ -33,7 +33,7 @@ public class RenderGameOverlayEventHandler {
             return;
         }
 
-        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        EntityPlayerSP player = Minecraft.getInstance().player;
         PreferencesProperties preferences = McJtyLib.getPreferencesProperties(player);
 
         int x = preferences.getBuffX();
@@ -46,13 +46,13 @@ public class RenderGameOverlayEventHandler {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glDisable(GL11.GL_LIGHTING);
 
-//        Minecraft.getMinecraft().renderEngine.bindTexture(texture);
+//        Minecraft.getInstance().renderEngine.bindTexture(texture);
 
         for (PlayerBuff buff : buffs) {
             Item item = getBuffItem(buff);
             if (item != null) {
-                RenderItem itemRender = Minecraft.getMinecraft().getRenderItem();
-                RenderHelper.renderItemStack(Minecraft.getMinecraft(), itemRender, new ItemStack(item), x, y, "", false);
+                RenderItem itemRender = Minecraft.getInstance().getRenderItem();
+                RenderHelper.renderItemStack(Minecraft.getInstance(), itemRender, new ItemStack(item), x, y, "", false);
 //                itemRender.renderItem(new ItemStack(item), player, ItemCameraTransforms.TransformType.FIXED, true);
                 x += BUFF_ICON_SIZE;
             }

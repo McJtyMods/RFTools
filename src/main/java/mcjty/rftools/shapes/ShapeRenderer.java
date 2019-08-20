@@ -6,22 +6,16 @@ import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import org.apache.commons.lang3.tuple.Pair;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class ShapeRenderer {
 
@@ -73,7 +67,7 @@ public class ShapeRenderer {
     }
 
     public void initView(int dx, int dy) {
-        Minecraft mc = Minecraft.getMinecraft();
+        Minecraft mc = Minecraft.getInstance();
 
         final ScaledResolution scaledresolution = new ScaledResolution(mc);
         int xScale = scaledresolution.getScaledWidth();
@@ -132,7 +126,7 @@ public class ShapeRenderer {
         GlStateManager.rotate(angle, 0, 1, 0);
 
 //        net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
-        Minecraft.getMinecraft().entityRenderer.disableLightmap();
+        Minecraft.getInstance().entityRenderer.disableLightmap();
         GlStateManager.disableBlend();
         GlStateManager.enableCull();
         GlStateManager.disableLighting();
@@ -146,7 +140,7 @@ public class ShapeRenderer {
         GlStateManager.disableBlend();
         GlStateManager.enableLighting();
 //        RenderHelper.enableStandardItemLighting();
-        Minecraft.getMinecraft().entityRenderer.enableLightmap();
+        Minecraft.getInstance().entityRenderer.enableLightmap();
 
         GlStateManager.popMatrix();
         return doSound;
@@ -198,7 +192,7 @@ public class ShapeRenderer {
 
         RenderData data = ShapeDataManagerClient.getRenderData(shapeID);
         if (data != null && !data.previewMessage.isEmpty()) {
-            Minecraft.getMinecraft().fontRenderer.drawString(data.previewMessage, gui.getPreviewLeft()+84, gui.getPreviewTop()+50, 0xffff0000);
+            Minecraft.getInstance().fontRenderer.drawString(data.previewMessage, gui.getPreviewLeft()+84, gui.getPreviewTop()+50, 0xffff0000);
         }
 
     }
@@ -481,7 +475,7 @@ public class ShapeRenderer {
     }
 
     private static void setupScissor(IShapeParentGui gui) {
-        Minecraft mc = Minecraft.getMinecraft();
+        Minecraft mc = Minecraft.getInstance();
 
         final ScaledResolution scaledresolution = new ScaledResolution(mc);
         int xScale = scaledresolution.getScaledWidth();

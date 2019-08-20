@@ -63,7 +63,7 @@ public class GuiStorageFilter extends GenericGuiContainer<GenericTileEntity> {
         modMode.addChoice("Off", "Don't match on mod", guiElements, 12 * 16, 32);
         modMode.addChoice("On", "Only mod must match", guiElements, 13 * 16, 32);
 
-        CompoundNBT tagCompound = Minecraft.getMinecraft().player.getHeldItem(Hand.MAIN_HAND).getTag();
+        CompoundNBT tagCompound = Minecraft.getInstance().player.getHeldItem(Hand.MAIN_HAND).getTag();
         if (tagCompound != null) {
             setBlacklistMode(tagCompound.getString("blacklistMode"));
             oredictMode.setCurrentChoice(tagCompound.getBoolean("oredictMode") ? 1 : 0);
