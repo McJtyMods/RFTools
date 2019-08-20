@@ -1,13 +1,12 @@
 package mcjty.rftools.blocks.relay;
 
+import mcjty.lib.varia.EnergyTools;
 import net.darkhax.tesla.api.ITeslaConsumer;
 import net.minecraft.util.Direction;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.common.Optional;
 
 import javax.annotation.Nullable;
-
-import mcjty.lib.varia.EnergyTools;
 
 @Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaConsumer", modid = "tesla")
 class RelayEnergyStorage implements IEnergyStorage, ITeslaConsumer {

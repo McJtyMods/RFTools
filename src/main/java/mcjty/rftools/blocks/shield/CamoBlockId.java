@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.shield;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 

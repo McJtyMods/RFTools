@@ -1,15 +1,11 @@
 package mcjty.rftools.items.storage;
 
-import mcjty.lib.varia.EnergyTools;
-import mcjty.lib.varia.IEnergyItem;
-import mcjty.lib.varia.ItemCapabilityProvider;
-import mcjty.lib.varia.Logging;
-import mcjty.lib.varia.WorldTools;
+import mcjty.lib.varia.*;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageConfiguration;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
-import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.items.screenmodules.StorageControlModuleItem;
+import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;

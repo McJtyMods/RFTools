@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.tileentity.GenericTileEntity;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 
 public class ScreenHitTileEntity extends GenericTileEntity {

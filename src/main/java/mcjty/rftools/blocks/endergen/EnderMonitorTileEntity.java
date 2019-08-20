@@ -1,17 +1,15 @@
 package mcjty.rftools.blocks.endergen;
 
-import mcjty.lib.tileentity.LogicTileEntity;
 import mcjty.lib.gui.widgets.ChoiceLabel;
+import mcjty.lib.tileentity.LogicTileEntity;
+import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.TickOrderHandler;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
-import mcjty.lib.typed.TypedMap;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ITickable;

@@ -7,7 +7,6 @@ import mcjty.rftools.blocks.storage.RemoteStorageItemContainer;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerContainer;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;

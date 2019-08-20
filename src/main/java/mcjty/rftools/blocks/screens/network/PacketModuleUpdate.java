@@ -8,7 +8,6 @@ import mcjty.rftools.blocks.screens.ScreenBlock;
 import mcjty.rftools.blocks.screens.ScreenTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;

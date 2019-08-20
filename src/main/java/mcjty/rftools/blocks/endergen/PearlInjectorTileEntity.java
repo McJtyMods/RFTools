@@ -7,7 +7,6 @@ import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.varia.OrientationTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.TickOrderHandler;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;

@@ -1,19 +1,19 @@
 package mcjty.rftools.blocks.screens;
 
 import mcjty.lib.gui.GenericGuiContainer;
-import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.EnergyBar;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.Rectangle;
+import java.awt.*;
 
 public class GuiScreenController extends GenericGuiContainer<ScreenControllerTileEntity> {
     public static final int CONTROLLER_WIDTH = 180;

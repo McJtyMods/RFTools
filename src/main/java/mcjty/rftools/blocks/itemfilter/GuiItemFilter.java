@@ -8,8 +8,8 @@ import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 

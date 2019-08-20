@@ -4,7 +4,6 @@ import mcjty.lib.varia.Check32;
 import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;

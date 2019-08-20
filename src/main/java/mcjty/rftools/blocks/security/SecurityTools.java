@@ -4,7 +4,6 @@ import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.ClientCommandHandler;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.EntityPlayerMP;
 
 public class SecurityTools {
 

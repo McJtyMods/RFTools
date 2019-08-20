@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.shield;
 
 import mcjty.rftools.RFTools;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

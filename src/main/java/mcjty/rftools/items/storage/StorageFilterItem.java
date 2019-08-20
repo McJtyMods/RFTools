@@ -5,7 +5,6 @@ import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.storage.ModularStorageTileEntity;
 import mcjty.rftools.setup.GuiProxy;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

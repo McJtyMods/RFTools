@@ -6,7 +6,6 @@ import mcjty.rftools.network.MachineInfo;
 import mcjty.rftools.network.PacketReturnRfInRange;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;

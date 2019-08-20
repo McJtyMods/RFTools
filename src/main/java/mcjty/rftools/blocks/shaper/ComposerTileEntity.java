@@ -1,6 +1,9 @@
 package mcjty.rftools.blocks.shaper;
 
-import mcjty.lib.container.*;
+import mcjty.lib.container.ContainerFactory;
+import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.SlotDefinition;
+import mcjty.lib.container.SlotType;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.items.builder.ShapeCardItem;

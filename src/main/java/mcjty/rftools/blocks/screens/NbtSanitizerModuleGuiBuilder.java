@@ -1,22 +1,16 @@
 package mcjty.rftools.blocks.screens;
 
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableSet;
-
 import mcjty.rftools.api.screens.FormatStyle;
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+
+import javax.annotation.Nullable;
+import java.util.*;
 
 /**
  * Allow only changes to the NBT that could have been legitimately made via the GUI.

@@ -4,7 +4,6 @@ import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.varia.RLE;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 

@@ -5,8 +5,8 @@ import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.util.ResourceLocation;
 
 public class GuiElevator extends GenericGuiContainer<ElevatorTileEntity> {

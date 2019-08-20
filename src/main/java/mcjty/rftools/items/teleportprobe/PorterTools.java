@@ -7,7 +7,6 @@ import mcjty.rftools.blocks.teleporter.TeleportDestination;
 import mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;

@@ -6,7 +6,6 @@ import mcjty.rftools.blocks.builder.BuilderConfiguration;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
 import mcjty.rftools.shapes.Shape;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;

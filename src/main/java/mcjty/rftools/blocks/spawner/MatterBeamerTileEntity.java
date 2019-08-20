@@ -1,10 +1,10 @@
 package mcjty.rftools.blocks.spawner;
 
+import mcjty.lib.bindings.DefaultValue;
+import mcjty.lib.bindings.IValue;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
-import mcjty.lib.bindings.DefaultValue;
 import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
-import mcjty.lib.bindings.IValue;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.varia.BlockPosTools;

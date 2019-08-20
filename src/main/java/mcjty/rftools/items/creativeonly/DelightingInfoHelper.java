@@ -1,9 +1,8 @@
 package mcjty.rftools.items.creativeonly;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockState;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

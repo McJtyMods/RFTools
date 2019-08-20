@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.builder;
 
-import mcjty.lib.varia.Logging;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.ResourceLocation;

@@ -2,14 +2,11 @@ package mcjty.rftools.blocks.security;
 
 import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.builder.BlockBuilder;
-import mcjty.lib.container.GenericContainer;
 import mcjty.lib.varia.ItemStackTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.ObjectHolder;
 
 import static mcjty.lib.varia.ItemStackTools.mapTag;

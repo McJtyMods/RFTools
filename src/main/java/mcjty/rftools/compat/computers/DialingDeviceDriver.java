@@ -6,7 +6,6 @@ import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.prefab.AbstractManagedEnvironment;
 import mcjty.lib.integration.computers.AbstractOCDriver;
 import mcjty.rftools.blocks.teleporter.*;
-import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;

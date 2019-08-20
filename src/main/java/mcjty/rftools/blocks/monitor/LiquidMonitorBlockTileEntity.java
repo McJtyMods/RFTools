@@ -2,11 +2,10 @@ package mcjty.rftools.blocks.monitor;
 
 import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.tileentity.GenericTileEntity;
+import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.CapabilityTools;
-import mcjty.lib.typed.Type;
 import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;

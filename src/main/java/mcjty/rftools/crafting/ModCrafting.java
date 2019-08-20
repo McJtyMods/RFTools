@@ -4,7 +4,6 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.environmental.EnvironmentalSetup;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.items.SyringeItem;
-import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.entity.passive.EntityMooshroom;
 import net.minecraft.entity.passive.EntityOcelot;

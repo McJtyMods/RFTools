@@ -1,10 +1,9 @@
 package mcjty.rftools.world;
 
-import mcjty.rftools.config.GeneralConfiguration;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.ores.DimensionalShardBlock;
-import net.minecraft.block.state.BlockState;
+import mcjty.rftools.config.GeneralConfiguration;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;

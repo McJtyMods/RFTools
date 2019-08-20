@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.elevator;
 
 import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.builder.BlockFlags;
-import mcjty.lib.container.GenericContainer;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.setup.GuiProxy;
 

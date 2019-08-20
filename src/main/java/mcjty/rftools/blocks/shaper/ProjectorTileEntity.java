@@ -1,6 +1,9 @@
 package mcjty.rftools.blocks.shaper;
 
-import mcjty.lib.container.*;
+import mcjty.lib.container.ContainerFactory;
+import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.SlotDefinition;
+import mcjty.lib.container.SlotType;
 import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
@@ -13,9 +16,7 @@ import mcjty.rftools.shapes.RenderData;
 import mcjty.rftools.shapes.ShapeID;
 import mcjty.rftools.shapes.ShapeRenderer;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -28,11 +29,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
-
-import static net.minecraft.util.Direction.*;
-
 import java.util.Arrays;
 import java.util.List;
+
+import static net.minecraft.util.Direction.*;
 
 public class ProjectorTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable {
 

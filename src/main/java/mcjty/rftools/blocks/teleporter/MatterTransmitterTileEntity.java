@@ -2,8 +2,8 @@ package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.api.MachineInformation;
 import mcjty.lib.bindings.DefaultValue;
-import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.bindings.IValue;
+import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
@@ -13,7 +13,6 @@ import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.WorldTools;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;

@@ -2,8 +2,9 @@ package mcjty.rftools.blocks.elevator;
 
 
 import com.mojang.authlib.GameProfile;
-import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.gui.widgets.TextField;
+import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
+import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.Broadcaster;
 import mcjty.rftools.blocks.builder.BuilderTileEntity;
 import mcjty.rftools.blocks.shield.RelCoordinate;
@@ -11,17 +12,14 @@ import mcjty.rftools.playerprops.BuffProperties;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
-import mcjty.lib.typed.TypedMap;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;

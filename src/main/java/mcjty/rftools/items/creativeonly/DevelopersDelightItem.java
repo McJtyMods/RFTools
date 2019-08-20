@@ -6,7 +6,6 @@ import mcjty.lib.varia.NBTTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;

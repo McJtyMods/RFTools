@@ -3,7 +3,6 @@ package mcjty.rftools.playerprops;
 import mcjty.rftools.PlayerBuff;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.CompoundNBT;
 
 import java.util.HashMap;

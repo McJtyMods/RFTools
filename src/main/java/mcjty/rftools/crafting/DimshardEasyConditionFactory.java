@@ -1,8 +1,8 @@
 package mcjty.rftools.crafting;
 
 import com.google.gson.JsonObject;
-import mcjty.rftools.config.GeneralConfiguration;
 import mcjty.rftools.RFTools;
+import mcjty.rftools.config.GeneralConfiguration;
 import net.minecraftforge.common.crafting.IConditionFactory;
 import net.minecraftforge.common.crafting.JsonContext;
 

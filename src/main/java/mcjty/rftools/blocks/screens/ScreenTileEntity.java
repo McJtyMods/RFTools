@@ -1,11 +1,11 @@
 package mcjty.rftools.blocks.screens;
 
+import mcjty.lib.bindings.DefaultValue;
+import mcjty.lib.bindings.IValue;
 import mcjty.lib.container.DefaultSidedInventory;
 import mcjty.lib.container.InventoryHelper;
-import mcjty.lib.bindings.DefaultValue;
-import mcjty.lib.tileentity.GenericTileEntity;
-import mcjty.lib.bindings.IValue;
 import mcjty.lib.network.PacketServerCommandTyped;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
@@ -21,7 +21,6 @@ import mcjty.rftools.blocks.screens.modules.ScreenModuleHelper;
 import mcjty.rftools.blocks.screens.modulesclient.TextClientScreenModule;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;

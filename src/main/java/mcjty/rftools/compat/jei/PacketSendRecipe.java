@@ -8,7 +8,6 @@ import mcjty.rftools.blocks.storage.ModularStorageItemContainer;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.storage.RemoteStorageItemContainer;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerContainer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;

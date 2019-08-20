@@ -1,13 +1,10 @@
 package mcjty.rftools.items.teleportprobe;
 
 import mcjty.lib.crafting.INBTPreservingIngredient;
-import mcjty.lib.varia.EnergyTools;
-import mcjty.lib.varia.GlobalCoordinate;
-import mcjty.lib.varia.IEnergyItem;
-import mcjty.lib.varia.ItemCapabilityProvider;
-import mcjty.lib.varia.Logging;
+import mcjty.lib.varia.*;
 import mcjty.rftools.ForgeEventHandlers;
 import mcjty.rftools.blocks.teleporter.*;
+import mcjty.rftools.blocks.teleporter.TeleportationTools;
 import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;

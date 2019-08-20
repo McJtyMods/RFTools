@@ -1,9 +1,8 @@
 package mcjty.rftools.compat.wheelsupport;
 
-import net.minecraft.block.state.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

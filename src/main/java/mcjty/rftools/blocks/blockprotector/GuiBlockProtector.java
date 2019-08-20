@@ -1,13 +1,13 @@
 package mcjty.rftools.blocks.blockprotector;
 
 import mcjty.lib.gui.GenericGuiContainer;
-import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.widgets.EnergyBar;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
+import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.util.ResourceLocation;
 
 public class GuiBlockProtector extends GenericGuiContainer<BlockProtectorTileEntity> {

@@ -1,27 +1,18 @@
 package mcjty.rftools.blocks.builder;
 
-import io.netty.buffer.ByteBuf;
 import mcjty.lib.McJtyLib;
 import mcjty.lib.network.NetworkTools;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.items.builder.GuiChamberDetails;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.registries.ForgeRegistries;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;

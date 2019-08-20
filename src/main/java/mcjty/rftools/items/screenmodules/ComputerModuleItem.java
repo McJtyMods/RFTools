@@ -1,7 +1,5 @@
 package mcjty.rftools.items.screenmodules;
 
-import java.util.List;
-
 import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.ScreenConfiguration;
@@ -13,6 +11,8 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.List;
 
 public class ComputerModuleItem extends GenericRFToolsItem implements IModuleProvider {
 

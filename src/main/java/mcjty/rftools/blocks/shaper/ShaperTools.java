@@ -7,7 +7,6 @@ import mcjty.rftools.shapes.PacketReturnExtraData;
 import mcjty.rftools.shapes.ScanDataManager;
 import mcjty.rftools.shapes.ScanExtraData;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

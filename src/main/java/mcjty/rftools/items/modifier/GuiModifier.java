@@ -1,7 +1,6 @@
 package mcjty.rftools.items.modifier;
 
 import mcjty.lib.gui.GenericGuiContainer;
-import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
@@ -9,10 +8,11 @@ import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.items.ModItems;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.ItemStack;

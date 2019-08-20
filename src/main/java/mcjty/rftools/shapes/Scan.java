@@ -1,7 +1,6 @@
 package mcjty.rftools.shapes;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;

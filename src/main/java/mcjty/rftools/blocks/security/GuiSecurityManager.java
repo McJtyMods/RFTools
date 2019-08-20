@@ -7,18 +7,22 @@ import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
+import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.*;
+import mcjty.lib.gui.widgets.Label;
+import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.typed.TypedMap;
-import mcjty.rftools.setup.CommandHandler;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.setup.CommandHandler;
+import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.inventory.Slot;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 
-import java.awt.Rectangle;
+import java.awt.*;
 
 import static mcjty.rftools.blocks.security.SecurityManagerTileEntity.*;
 

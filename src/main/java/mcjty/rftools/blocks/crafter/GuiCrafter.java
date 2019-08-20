@@ -1,20 +1,20 @@
 package mcjty.rftools.blocks.crafter;
 
 import mcjty.lib.base.StyleConfig;
+import mcjty.lib.client.RenderHelper;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.gui.GenericGuiContainer;
-import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
-import mcjty.lib.client.RenderHelper;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.widgets.*;
+import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.craftinggrid.CraftingRecipe;
-import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.entity.player.PlayerEntity;

@@ -1,8 +1,8 @@
 package mcjty.rftools.compat.computers;
 
 import li.cil.oc.api.Driver;
-import mcjty.rftools.blocks.generator.CoalGeneratorConfiguration;
 import mcjty.rftools.blocks.crafter.CrafterConfiguration;
+import mcjty.rftools.blocks.generator.CoalGeneratorConfiguration;
 import net.minecraftforge.fml.common.Optional;
 
 public class OpenComputersIntegration {

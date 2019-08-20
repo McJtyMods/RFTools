@@ -1,7 +1,6 @@
 package mcjty.rftools.shapes;
 
 import mcjty.rftools.blocks.shaper.ScannerConfiguration;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;

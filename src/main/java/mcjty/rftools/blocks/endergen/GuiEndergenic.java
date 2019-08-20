@@ -8,8 +8,8 @@ import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.util.ResourceLocation;
 
 import static mcjty.lib.tileentity.GenericEnergyStorageTileEntity.getCurrentRF;

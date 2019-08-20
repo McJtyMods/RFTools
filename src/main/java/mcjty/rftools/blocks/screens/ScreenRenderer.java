@@ -12,7 +12,6 @@ import mcjty.rftools.blocks.screens.network.PacketGetScreenData;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.ClientProxy;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;

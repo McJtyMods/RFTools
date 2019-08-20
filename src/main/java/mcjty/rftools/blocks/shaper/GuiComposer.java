@@ -10,10 +10,10 @@ import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.items.builder.GuiShapeCard;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.shapes.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -22,7 +22,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.io.IOException;
 
 public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> implements IShapeParentGui {

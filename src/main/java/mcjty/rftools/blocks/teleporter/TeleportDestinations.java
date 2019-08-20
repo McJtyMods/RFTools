@@ -6,7 +6,6 @@ import mcjty.lib.varia.Logging;
 import mcjty.lib.worlddata.AbstractWorldData;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;

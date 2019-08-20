@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.elevator;
 
-import net.minecraft.block.state.BlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;

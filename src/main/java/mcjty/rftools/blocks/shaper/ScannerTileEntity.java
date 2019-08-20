@@ -1,7 +1,13 @@
 package mcjty.rftools.blocks.shaper;
 
-import mcjty.lib.container.*;
-import mcjty.lib.bindings.*;
+import mcjty.lib.bindings.DefaultAction;
+import mcjty.lib.bindings.DefaultValue;
+import mcjty.lib.bindings.IAction;
+import mcjty.lib.bindings.IValue;
+import mcjty.lib.container.ContainerFactory;
+import mcjty.lib.container.InventoryHelper;
+import mcjty.lib.container.SlotDefinition;
+import mcjty.lib.container.SlotType;
 import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
@@ -27,7 +33,6 @@ import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;

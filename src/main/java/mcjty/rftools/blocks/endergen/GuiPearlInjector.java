@@ -4,8 +4,8 @@ import mcjty.lib.container.GenericContainer;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.util.ResourceLocation;
 
 public class GuiPearlInjector extends GenericGuiContainer<PearlInjectorTileEntity> {

@@ -9,7 +9,6 @@ import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ElevatorButtonScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ElevatorButtonClientScreenModule;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

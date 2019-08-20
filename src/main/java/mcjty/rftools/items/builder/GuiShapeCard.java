@@ -8,6 +8,9 @@ import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
+import mcjty.lib.gui.widgets.Label;
+import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
@@ -35,7 +38,7 @@ import net.minecraft.util.math.BlockPos;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 

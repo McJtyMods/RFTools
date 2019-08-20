@@ -1,19 +1,17 @@
 package mcjty.rftools.blocks.environmental;
 
 import mcjty.lib.blocks.BaseBlock;
-import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.builder.BlockFlags;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.varia.ItemStackTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.crafting.NBTMatchingRecipe;
-import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.items.SyringeItem;
 import mcjty.rftools.items.envmodules.*;
+import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.passive.EntityHorse;

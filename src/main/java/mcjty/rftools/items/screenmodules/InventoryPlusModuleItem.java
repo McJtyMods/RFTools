@@ -9,7 +9,6 @@ import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import mcjty.rftools.blocks.screens.modules.ItemStackPlusScreenModule;
 import mcjty.rftools.blocks.screens.modulesclient.ItemStackPlusClientScreenModule;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;

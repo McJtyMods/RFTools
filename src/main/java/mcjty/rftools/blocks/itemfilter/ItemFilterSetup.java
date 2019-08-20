@@ -1,7 +1,6 @@
 package mcjty.rftools.blocks.itemfilter;
 
 import mcjty.lib.blocks.BaseBlock;
-import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.varia.ItemStackTools;
 import mcjty.rftools.blocks.ModBlocks;

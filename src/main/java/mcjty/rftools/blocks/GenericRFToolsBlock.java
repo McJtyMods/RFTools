@@ -4,23 +4,13 @@ import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.builder.BlockBuilder;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.security.OrphaningCardItem;
 import mcjty.rftools.blocks.security.SecurityChannels;
 import mcjty.rftools.blocks.security.SecurityConfiguration;
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public abstract class GenericRFToolsBlock extends BaseBlock {
 

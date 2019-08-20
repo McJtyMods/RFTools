@@ -1,9 +1,5 @@
 package mcjty.rftools.blocks.blockprotector;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import mcjty.lib.varia.GlobalCoordinate;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -14,6 +10,10 @@ import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class BlockProtectorEventHandlers {
 

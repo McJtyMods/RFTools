@@ -6,7 +6,6 @@ import mcjty.lib.varia.SoundTools;
 import mcjty.rftools.ModSounds;
 import mcjty.rftools.blocks.environmental.NoTeleportAreaManager;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.Potion;

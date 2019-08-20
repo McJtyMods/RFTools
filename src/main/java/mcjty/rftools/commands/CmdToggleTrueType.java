@@ -1,6 +1,5 @@
 package mcjty.rftools.commands;
 
-import mcjty.rftools.blocks.screens.ScreenConfiguration;
 import net.minecraft.command.ICommandSender;
 
 public class CmdToggleTrueType extends AbstractRfToolsCommand {

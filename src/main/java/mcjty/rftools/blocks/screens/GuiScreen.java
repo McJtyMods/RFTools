@@ -14,14 +14,14 @@ import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleProvider;
 import mcjty.rftools.blocks.screens.modulesclient.helper.ScreenModuleGuiBuilder;
 import mcjty.rftools.blocks.screens.network.PacketModuleUpdate;
-import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 
-import java.awt.Rectangle;
+import java.awt.*;
 
 import static mcjty.rftools.blocks.screens.ScreenTileEntity.PARAM_TRUETYPE;
 

@@ -11,7 +11,6 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.math.BlockPos;

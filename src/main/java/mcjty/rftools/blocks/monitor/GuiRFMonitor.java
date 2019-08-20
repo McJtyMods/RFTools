@@ -14,10 +14,9 @@ import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.BlockTools;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.util.math.BlockPos;
 
 import java.awt.*;

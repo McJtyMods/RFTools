@@ -2,8 +2,8 @@ package mcjty.rftools.items.modifier;
 
 import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.items.ModItems;
+import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

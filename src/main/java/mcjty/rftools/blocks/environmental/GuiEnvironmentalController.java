@@ -3,15 +3,15 @@ package mcjty.rftools.blocks.environmental;
 import mcjty.lib.base.StyleConfig;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.gui.GenericGuiContainer;
-import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.widgets.*;
+import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
+import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.network.PacketGetPlayers;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.lib.typed.TypedMap;
+import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;

@@ -1,6 +1,5 @@
 package mcjty.rftools.blocks.screens.modules;
 
-import java.util.ArrayList;
 import io.netty.buffer.ByteBuf;
 import mcjty.lib.network.NetworkTools;
 import mcjty.rftools.RFTools;
@@ -12,6 +11,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import java.util.ArrayList;
 
 public class ComputerScreenModule implements IScreenModule<ComputerScreenModule.ModuleComputerInfo> {
     private String tag = "";

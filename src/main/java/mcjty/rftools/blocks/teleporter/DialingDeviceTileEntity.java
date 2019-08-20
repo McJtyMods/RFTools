@@ -7,7 +7,6 @@ import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;

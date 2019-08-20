@@ -1,23 +1,17 @@
 package mcjty.rftools.blocks.shield;
 
 import mcjty.lib.McJtyLib;
-import mcjty.lib.api.IModuleSupport;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.blocks.RotationType;
 import mcjty.lib.builder.BlockBuilder;
 import mcjty.lib.crafting.INBTPreservingIngredient;
-import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
-import mcjty.lib.varia.ModuleSupport;
-import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -31,13 +25,9 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.function.BiFunction;
 
 //@Optional.InterfaceList({
 //        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})

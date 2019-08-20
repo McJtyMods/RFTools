@@ -12,7 +12,6 @@ import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

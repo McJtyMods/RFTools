@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.teleporter;
 
-import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.blocks.LogicSlabBlock;
+import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.varia.Logging;
@@ -14,7 +14,6 @@ import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

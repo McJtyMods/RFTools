@@ -1,8 +1,8 @@
 package mcjty.rftools.shapes;
 
 import mcjty.lib.typed.TypedMap;
-import mcjty.rftools.setup.CommandHandler;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.setup.CommandHandler;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;

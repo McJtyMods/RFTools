@@ -1,11 +1,11 @@
 package mcjty.rftools.varia;
 
-import javax.annotation.Nullable;
-
 import mcjty.lib.varia.EnergyTools;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+
+import javax.annotation.Nullable;
 
 public class BlockInfo {
     private BlockPos coordinate;

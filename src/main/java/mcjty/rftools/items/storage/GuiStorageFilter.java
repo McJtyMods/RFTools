@@ -1,23 +1,23 @@
 package mcjty.rftools.items.storage;
 
 import mcjty.lib.gui.GenericGuiContainer;
-import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.ImageChoiceLabel;
 import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.Rectangle;
+import java.awt.*;
 
 
 public class GuiStorageFilter extends GenericGuiContainer<GenericTileEntity> {

@@ -9,7 +9,6 @@ import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.storage.RemoteStorageItemInventory;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerTileEntity;
 import mcjty.rftools.items.storage.StorageModuleItem;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;

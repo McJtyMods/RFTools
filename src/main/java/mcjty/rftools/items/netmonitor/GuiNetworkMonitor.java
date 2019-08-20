@@ -8,18 +8,20 @@ import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.HorizontalLayout;
 import mcjty.lib.gui.layout.VerticalLayout;
 import mcjty.lib.gui.widgets.*;
+import mcjty.lib.gui.widgets.Label;
+import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.BlockTools;
 import mcjty.lib.varia.Logging;
-import mcjty.rftools.varia.BlockInfo;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
-import net.minecraft.block.state.BlockState;
+import mcjty.rftools.setup.GuiProxy;
+import mcjty.rftools.varia.BlockInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 

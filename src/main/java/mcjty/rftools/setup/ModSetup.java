@@ -21,7 +21,6 @@ import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.world.ModWorldgen;
 import mcjty.rftools.world.WorldTickHandler;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.Direction;

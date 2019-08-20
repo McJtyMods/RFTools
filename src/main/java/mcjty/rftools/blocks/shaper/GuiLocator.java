@@ -2,22 +2,25 @@ package mcjty.rftools.blocks.shaper;
 
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.gui.GenericGuiContainer;
-import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
-import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.layout.HorizontalAlignment;
 import mcjty.lib.gui.layout.PositionalLayout;
 import mcjty.lib.gui.widgets.*;
+import mcjty.lib.gui.widgets.Label;
+import mcjty.lib.gui.widgets.Panel;
+import mcjty.lib.gui.widgets.TextField;
+import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.RedstoneMode;
-import mcjty.rftools.setup.CommandHandler;
 import mcjty.rftools.RFTools;
-import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.network.RFToolsMessages;
+import mcjty.rftools.setup.CommandHandler;
+import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.shapes.BeaconType;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
