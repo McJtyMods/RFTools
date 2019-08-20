@@ -5,7 +5,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
 
@@ -87,7 +87,7 @@ public class ModifierInventory implements IInventory {
     }
 
     public static void convertItemsToNBT(CompoundNBT tagCompound, ItemStackList stacks) {
-        NBTTagList bufferTagList = new NBTTagList();
+        ListNBT bufferTagList = new ListNBT();
         for (ItemStack stack : stacks) {
             CompoundNBT CompoundNBT = new CompoundNBT();
             if (!stack.isEmpty()) {

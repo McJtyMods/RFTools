@@ -1,5 +1,6 @@
 package mcjty.rftools.craftinggrid;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import mcjty.lib.base.ModBase;
 import mcjty.lib.base.StyleConfig;
 import mcjty.lib.gui.GenericGuiContainer;
@@ -16,16 +17,16 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.CommandHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.inventory.container.Slot;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
@@ -52,7 +53,7 @@ public class GuiCraftingGrid {
     private int lastTestAmount = -2;
     private int lastTestTimer = 0;
 
-    public void initGui(final ModBase modBase, final SimpleNetworkWrapper network, final Minecraft mc, GenericGuiContainer<?> gui,
+    public void initGui(final ModBase modBase, final SimpleChannel network, final Minecraft mc, GenericGuiContainer<?> gui,
                         BlockPos pos, CraftingGridProvider provider,
                         int guiLeft, int guiTop, int xSize, int ySize) {
         this.mc = mc;
@@ -178,7 +179,7 @@ public class GuiCraftingGrid {
                     GlStateManager.colorMask(true, true, true, false);
                     int xPos = slot.xPos;
                     int yPos = slot.yPos;
-                    Gui.drawRect(xPos, yPos, xPos + 16, yPos + 16, 0xffff0000);
+                    Screen.drawRect(xPos, yPos, xPos + 16, yPos + 16, 0xffff0000);
                 }
             }
             for (int i = 0 ; i < 9 ; i++) {
@@ -189,7 +190,7 @@ public class GuiCraftingGrid {
                         GlStateManager.colorMask(true, true, true, false);
                         int xPos = slot.xPos;
                         int yPos = slot.yPos;
-                        Gui.drawRect(xPos, yPos, xPos + 16, yPos + 16, 0xffff0000);
+                        Screen.drawRect(xPos, yPos, xPos + 16, yPos + 16, 0xffff0000);
                     }
                 }
             }
@@ -198,7 +199,7 @@ public class GuiCraftingGrid {
     }
 
     private void testRecipe() {
-        InventoryCrafting inv = new InventoryCrafting(new net.minecraft.inventory.Container() {
+        CraftingInventory inv = new CraftingInventory(new Container() {
             @Override
             public boolean canInteractWith(PlayerEntity var1) {
                 return false;

@@ -25,7 +25,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.Explosion;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
@@ -179,7 +179,7 @@ public class ScreenHitBlock extends BaseBlock<ScreenHitTileEntity, EmptyContaine
     public static final AxisAlignedBB DOWN_AABB = new AxisAlignedBB(0.0F, 1.0F - 0.125F, 0.0F, 1.0F, 1.0F, 1.0F);
 
     @Override
-    public AxisAlignedBB getBoundingBox(BlockState state, IBlockAccess source, BlockPos pos) {
+    public AxisAlignedBB getBoundingBox(BlockState state, IBlockReader source, BlockPos pos) {
         Direction facing = state.getValue(BaseBlock.FACING);
         if (facing == Direction.NORTH) {
             return NORTH_AABB;
@@ -224,7 +224,7 @@ public class ScreenHitBlock extends BaseBlock<ScreenHitTileEntity, EmptyContaine
     }
 
     @Override
-    public boolean canEntityDestroy(BlockState state, IBlockAccess world, BlockPos pos, Entity entity) {
+    public boolean canEntityDestroy(BlockState state, IBlockReader world, BlockPos pos, Entity entity) {
         return false;
     }
 

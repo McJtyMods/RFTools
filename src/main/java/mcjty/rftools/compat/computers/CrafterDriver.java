@@ -10,7 +10,7 @@ import li.cil.oc.api.prefab.AbstractManagedEnvironment;
 import mcjty.lib.integration.computers.AbstractOCDriver;
 import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.blocks.crafter.CrafterBaseTE;
-import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -90,7 +90,7 @@ public class CrafterDriver {
                 }
 
                 List<ItemStack> ingredientList = new ArrayList<>();
-                InventoryCrafting inv = tile.getRecipe(index).getInventory();
+                CraftingInventory inv = tile.getRecipe(index).getInventory();
 
                 for (int i = 0; i < inv.getSizeInventory(); i++) {
                     ingredientList.add(inv.getStackInSlot(i).copy());
@@ -151,7 +151,7 @@ public class CrafterDriver {
                     return new Object[]{false, "given component is not a database"};
                 }
 
-                InventoryCrafting inv = tile.getRecipe(index).getInventory();
+                CraftingInventory inv = tile.getRecipe(index).getInventory();
                 Database database = (Database)databaseEnvironment;
                 if (database.size() < inv.getSizeInventory()) {
                     return new Object[]{false, "Not enough slots in database for recipe"};

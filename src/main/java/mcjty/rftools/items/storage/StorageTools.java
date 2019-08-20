@@ -16,7 +16,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.servernet.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.DimensionManager;
 
 public class StorageTools {
@@ -100,7 +100,7 @@ public class StorageTools {
     }
 
     public static void returnStorageInfo(PlayerEntity player, int dimension, BlockPos pos) {
-        WorldServer world = DimensionManager.getWorld(dimension);
+        ServerWorld world = DimensionManager.getWorld(dimension);
         int cnt = -1;
         String nameModule = "";
         if (world != null) {

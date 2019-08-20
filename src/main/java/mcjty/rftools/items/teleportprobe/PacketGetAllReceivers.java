@@ -8,7 +8,7 @@ import mcjty.rftools.blocks.teleporter.TeleportDestinations;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.servernet.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
@@ -48,8 +48,8 @@ public class PacketGetAllReceivers implements IMessage {
     }
 
     private void addDimensions(List<TeleportDestinationClientInfo> destinationList) {
-        WorldServer[] worlds = DimensionManager.getWorlds();
-        for (WorldServer world : worlds) {
+        ServerWorld[] worlds = DimensionManager.getWorlds();
+        for (ServerWorld world : worlds) {
             int id = world.provider.getDimension();
             TeleportDestination destination = new TeleportDestination(new BlockPos(0, 70, 0), id);
             destination.setName("Dimension: " + id);

@@ -200,7 +200,7 @@ public class ItemFilterTileEntity extends GenericTileEntity implements DefaultSi
     }
 
     @Override
-    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, net.minecraft.util.Direction facing) {
+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, Direction facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             switch (facing) {
                 case DOWN:

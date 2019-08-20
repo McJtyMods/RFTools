@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.builder;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.worlddata.AbstractWorldData;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -58,7 +58,7 @@ public class SpaceChamberRepository extends AbstractWorldData<SpaceChamberReposi
     @Override
     public void readFromNBT(CompoundNBT tagCompound) {
         channels.clear();
-        NBTTagList lst = tagCompound.getTagList("channels", Constants.NBT.TAG_COMPOUND);
+        ListNBT lst = tagCompound.getTagList("channels", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < lst.tagCount() ; i++) {
             CompoundNBT tc = lst.getCompoundTagAt(i);
             int channel = tc.getInteger("channel");
@@ -74,7 +74,7 @@ public class SpaceChamberRepository extends AbstractWorldData<SpaceChamberReposi
 
     @Override
     public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        NBTTagList lst = new NBTTagList();
+        ListNBT lst = new ListNBT();
         for (Map.Entry<Integer, SpaceChamberChannel> entry : channels.entrySet()) {
             CompoundNBT tc = new CompoundNBT();
             tc.setInteger("channel", entry.getKey());

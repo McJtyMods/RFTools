@@ -1,10 +1,10 @@
 package mcjty.rftools.blocks.teleporter;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import mcjty.rftools.RFTools;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -13,7 +13,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
-public class BeamRenderer extends TileEntitySpecialRenderer<MatterTransmitterTileEntity> {
+public class BeamRenderer extends TileEntityRenderer<MatterTransmitterTileEntity> {
     private static final ResourceLocation textureOk = new ResourceLocation(RFTools.MODID, "textures/blocks/machineteleporter.png");
     private static final ResourceLocation textureWarn = new ResourceLocation(RFTools.MODID, "textures/blocks/machineteleporterwarn.png");
     private static final ResourceLocation textureUnknown = new ResourceLocation(RFTools.MODID, "textures/blocks/machineteleporterunknown.png");

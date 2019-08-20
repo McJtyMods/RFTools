@@ -17,7 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.servernet.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.DimensionManager;
 
 import javax.annotation.Nullable;
@@ -100,7 +100,7 @@ public class FindBlockAction implements IWheelAction {
                     int monitory = tagCompound.getInteger("monitory");
                     int monitorz = tagCompound.getInteger("monitorz");
                     BlockPos mpos = new BlockPos(monitorx, monitory, monitorz);
-                    WorldServer w = DimensionManager.getWorld(monitordim);
+                    ServerWorld w = DimensionManager.getWorld(monitordim);
                     if (w == null || !WorldTools.chunkLoaded(w, mpos)) {
                         player.sendStatusMessage(new TextComponentString(TextFormatting.RED + "Storage scanner is out of range!"), false);
                     } else {

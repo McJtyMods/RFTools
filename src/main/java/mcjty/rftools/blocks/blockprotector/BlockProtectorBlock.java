@@ -13,9 +13,9 @@ import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.state.BooleanProperty;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -26,7 +26,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.ChunkCache;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.common.Optional;
@@ -41,7 +41,7 @@ import java.util.function.BiFunction;
 //        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
 public class BlockProtectorBlock extends GenericRFToolsBlock<BlockProtectorTileEntity, BlockProtectorContainer> implements Infusable /*, IRedstoneConnectable*/ {
 
-    public static final PropertyBool WORKING = PropertyBool.create("working");
+    public static final BooleanProperty WORKING = BooleanProperty.create("working");
 
     public BlockProtectorBlock() {
         super(Material.IRON, BlockProtectorTileEntity.class, BlockProtectorContainer::new, "block_protector", true);
@@ -121,7 +121,7 @@ public class BlockProtectorBlock extends GenericRFToolsBlock<BlockProtectorTileE
     }
 
     @Override
-    public BlockState getStateForPlacement(World world, BlockPos pos, Direction facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+    public BlockState getStateForPlacement(World world, BlockPos pos, Direction facing, float hitX, float hitY, float hitZ, int meta, LivingEntity placer) {
         BlockState rc = super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer);
         if (world.isRemote) {
             return rc;
@@ -148,7 +148,7 @@ public class BlockProtectorBlock extends GenericRFToolsBlock<BlockProtectorTileE
 
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, EntityLivingBase placer, ItemStack stack) {
+    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         super.onBlockPlacedBy(world, pos, state, placer, stack);
         // This is called AFTER onBlockPlaced below. Here we need to fix the destination settings.
         if (!world.isRemote) {
@@ -170,7 +170,7 @@ public class BlockProtectorBlock extends GenericRFToolsBlock<BlockProtectorTileE
     }
 
     @Override
-    public BlockState getActualState(BlockState state, IBlockAccess world, BlockPos pos) {
+    public BlockState getActualState(BlockState state, IBlockReader world, BlockPos pos) {
         TileEntity te = world instanceof ChunkCache ? ((ChunkCache)world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) : world.getTileEntity(pos);
         boolean working = false;
         if (te instanceof BlockProtectorTileEntity) {

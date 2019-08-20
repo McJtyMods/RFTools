@@ -17,13 +17,13 @@ import mcjty.theoneprobe.api.TextStyleClass;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -34,7 +34,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implements ITickable {
+public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implements ITickableTileEntity {
 
     public static final String CMD_SETTINGS = "locator.setSettings";
 
@@ -101,7 +101,7 @@ public class LocatorTileEntity extends GenericEnergyReceiverTileEntity implement
                 consumeEnergy(energy);
                 AxisAlignedBB bb = new AxisAlignedBB(start, start.add(dim));
 
-                List<Entity> entities = scanWorld.getEntitiesWithinAABB(EntityLivingBase.class, bb);
+                List<Entity> entities = scanWorld.getEntitiesWithinAABB(LivingEntity.class, bb);
                 int scanId = scanner.getScanId();
                 ScanExtraData extraData = ScanDataManager.getScans().getExtraData(scanId);
                 extraData.touch();

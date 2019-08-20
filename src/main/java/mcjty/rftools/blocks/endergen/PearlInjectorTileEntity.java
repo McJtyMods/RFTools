@@ -8,16 +8,16 @@ import mcjty.lib.varia.OrientationTools;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.TickOrderHandler;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.init.Items;
+import net.minecraft.item.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ITickable;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
-public class PearlInjectorTileEntity extends GenericTileEntity implements DefaultSidedInventory, ITickable, TickOrderHandler.ICheckStateServer {
+public class PearlInjectorTileEntity extends GenericTileEntity implements DefaultSidedInventory, ITickableTileEntity, TickOrderHandler.ICheckStateServer {
 
     public static final ContainerFactory CONTAINER_FACTORY = new ContainerFactory(new ResourceLocation(RFTools.MODID, "gui/pearl_injector.gui"));
 

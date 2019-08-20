@@ -9,7 +9,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.property.ExtendedBlockState;
@@ -64,7 +64,7 @@ public class CamoShieldBlock extends AbstractShieldBlock {
     }
 
     @Override
-    public boolean shouldSideBeRendered(BlockState state, IBlockAccess world, BlockPos pos, Direction side) {
+    public boolean shouldSideBeRendered(BlockState state, IBlockReader world, BlockPos pos, Direction side) {
         Block block = world.getBlockState(pos.offset(side)).getBlock();
         if (block instanceof CamoShieldBlock) {
             return false;
@@ -73,7 +73,7 @@ public class CamoShieldBlock extends AbstractShieldBlock {
     }
 
     @Nullable
-    protected BlockState getMimicBlock(IBlockAccess blockAccess, BlockPos pos) {
+    protected BlockState getMimicBlock(IBlockReader blockAccess, BlockPos pos) {
         TileEntity te = blockAccess.getTileEntity(pos);
         if (te instanceof NoTickShieldBlockTileEntity) {
             return ((NoTickShieldBlockTileEntity) te).getMimicBlock();
@@ -98,7 +98,7 @@ public class CamoShieldBlock extends AbstractShieldBlock {
     }
 
     @Override
-    public BlockState getExtendedState(BlockState state, IBlockAccess world, BlockPos pos) {
+    public BlockState getExtendedState(BlockState state, IBlockReader world, BlockPos pos) {
         IExtendedBlockState extendedBlockState = (IExtendedBlockState) state;
         BlockState mimicBlock = getMimicBlock(world, pos);
         if (mimicBlock != null) {

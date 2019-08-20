@@ -9,7 +9,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
@@ -92,7 +92,7 @@ public class StorageFilterItem extends GenericRFToolsItem {
                         }
                         Set<ResourceLocation> registeredItems = new HashSet<>();
                         ItemStackList stacks = ItemStackList.create(FILTER_SLOTS);
-                        NBTTagList bufferTagList = stack.getTag().getTagList("Items", Constants.NBT.TAG_COMPOUND);
+                        ListNBT bufferTagList = stack.getTag().getTagList("Items", Constants.NBT.TAG_COMPOUND);
                         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
                             CompoundNBT CompoundNBT = bufferTagList.getCompoundTagAt(i);
                             stacks.set(i, new ItemStack(CompoundNBT));

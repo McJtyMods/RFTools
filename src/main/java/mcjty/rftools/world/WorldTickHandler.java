@@ -2,7 +2,7 @@ package mcjty.rftools.world;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.hash.THashSet;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -64,7 +64,7 @@ public class WorldTickHandler {
         public final Pair<Integer,Integer> coord;
         public final THashSet<String> generatedFeatures;
 
-        public RetroChunkCoord(Pair<Integer,Integer> pos, NBTTagList features) {
+        public RetroChunkCoord(Pair<Integer,Integer> pos, ListNBT features) {
 
             coord = pos;
             if (features == null) {

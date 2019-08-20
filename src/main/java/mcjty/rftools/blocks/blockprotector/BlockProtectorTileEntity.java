@@ -15,10 +15,10 @@ import mcjty.lib.varia.Logging;
 import mcjty.lib.varia.RedstoneMode;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.util.ITickable;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.Constants;
@@ -31,7 +31,7 @@ import java.util.Set;
 @Optional.InterfaceList({
         @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers")
 })
-public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity implements SmartWrenchSelector, ITickable,
+public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity implements SmartWrenchSelector, ITickableTileEntity,
         IMachineInformation, SimpleComponent /*, IPeripheral*/ {
 
     public static final String CMD_RSMODE = "protector.setRsMode";
@@ -286,7 +286,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
     public void readFromNBT(CompoundNBT tagCompound) {
         super.readFromNBT(tagCompound);
 
-        NBTTagList tagList = tagCompound.getTagList("coordinates", Constants.NBT.TAG_COMPOUND);
+        ListNBT tagList = tagCompound.getTagList("coordinates", Constants.NBT.TAG_COMPOUND);
         protectedBlocks.clear();
         for (int i = 0 ; i < tagList.tagCount() ; i++) {
             CompoundNBT tag = (CompoundNBT) tagList.get(i);
@@ -308,7 +308,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
     @Override
     public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         super.writeToNBT(tagCompound);
-        NBTTagList list = new NBTTagList();
+        ListNBT list = new ListNBT();
         for (BlockPos block : protectedBlocks) {
             list.appendTag(BlockPosTools.writeToNBT(block));
         }

@@ -9,9 +9,9 @@ import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ITickable;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements ITickable {
+public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements ITickableTileEntity {
     // Data that is saved
     private BlockPos monitor;
     private RFMonitorMode alarmMode = RFMonitorMode.MODE_OFF;
@@ -270,7 +270,7 @@ public class LiquidMonitorBlockTileEntity extends GenericTileEntity implements I
     }
 
     @Override
-    public int getRedstoneOutput(BlockState state, IBlockAccess world, BlockPos pos, Direction side) {
+    public int getRedstoneOutput(BlockState state, IBlockReader world, BlockPos pos, Direction side) {
         Direction direction = state.getValue(BaseBlock.FACING);
         if (side == direction) {
             return isPowered() ? 15 : 0;

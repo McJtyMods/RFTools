@@ -13,7 +13,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.servernet.minecraft.world.server.ServerWorld;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -168,7 +168,7 @@ public class DialingDeviceTileEntity extends GenericEnergyReceiverTileEntity {
 
     // Server side only.
     private void changeFavorite(String playerName, BlockPos receiver, int dimension, boolean favorite) {
-        List<EntityPlayerMP> list = ((WorldServer) getWorld()).getMinecraftServer().getPlayerList().getPlayers();
+        List<EntityPlayerMP> list = ((ServerWorld) getWorld()).getMinecraftServer().getPlayerList().getPlayers();
         for (EntityPlayerMP entityplayermp : list) {
             if (playerName.equals(entityplayermp.getName())) {
                 FavoriteDestinationsProperties favoriteDestinations = PlayerExtendedProperties.getFavoriteDestinations(entityplayermp);

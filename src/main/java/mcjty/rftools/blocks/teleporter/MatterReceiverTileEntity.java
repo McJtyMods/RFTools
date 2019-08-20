@@ -9,16 +9,16 @@ import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.GlobalCoordinate;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.ITickable;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity implements ITickable {
+public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity implements ITickableTileEntity {
 
     public static final String CMD_ADDPLAYER = "receiver.addPlayer";
     public static final String CMD_DELPLAYER = "receiver.delPlayer";
@@ -205,7 +205,7 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
         privateAccess = tagCompound.getBoolean("private");
 
         allowedPlayers.clear();
-        NBTTagList playerList = tagCompound.getTagList("players", Constants.NBT.TAG_STRING);
+        ListNBT playerList = tagCompound.getTagList("players", Constants.NBT.TAG_STRING);
         if (playerList != null) {
             for (int i = 0 ; i < playerList.tagCount() ; i++) {
                 String player = playerList.getStringTagAt(i);
@@ -239,9 +239,9 @@ public class MatterReceiverTileEntity extends GenericEnergyReceiverTileEntity im
 
         tagCompound.setBoolean("private", privateAccess);
 
-        NBTTagList playerTagList = new NBTTagList();
+        ListNBT playerTagList = new ListNBT();
         for (String player : allowedPlayers) {
-            playerTagList.appendTag(new NBTTagString(player));
+            playerTagList.appendTag(new StringNBT(player));
         }
         tagCompound.setTag("players", playerTagList);
         tagCompound.setInteger("destinationId", id);

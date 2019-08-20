@@ -24,7 +24,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ITickable;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -32,7 +32,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public class ScreenTileEntity extends GenericTileEntity implements ITickable, DefaultSidedInventory {
+public class ScreenTileEntity extends GenericTileEntity implements ITickableTileEntity, DefaultSidedInventory {
 
     public static final String CMD_SCREEN_INFO = "getScreenInfo";
     public static final Key<List<String>> PARAM_INFO = new Key<>("info", Type.STRING_LIST);

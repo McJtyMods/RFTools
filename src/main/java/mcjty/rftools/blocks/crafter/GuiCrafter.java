@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.crafter;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import mcjty.lib.base.StyleConfig;
 import mcjty.lib.client.RenderHelper;
 import mcjty.lib.container.GenericContainer;
@@ -15,12 +16,11 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.craftinggrid.CraftingRecipe;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.GuiProxy;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
@@ -115,7 +115,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
             return;
         }
         CraftingRecipe craftingRecipe = tileEntity.getRecipe(selected);
-        InventoryCrafting inv = craftingRecipe.getInventory();
+        CraftingInventory inv = craftingRecipe.getInventory();
         for (int i = 0 ; i < 9 ; i++) {
             inventorySlots.getSlot(i).putStack(inv.getStackInSlot(i));
         }
@@ -130,7 +130,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
             return;
         }
 
-        InventoryCrafting inv = new InventoryCrafting(new Container() {
+        CraftingInventory inv = new CraftingInventory(new Container() {
             @Override
             public boolean canInteractWith(PlayerEntity var1) {
                 return false;
@@ -164,7 +164,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         }
 
         CraftingRecipe craftingRecipe = tileEntity.getRecipe(selected);
-        InventoryCrafting inv = craftingRecipe.getInventory();
+        CraftingInventory inv = craftingRecipe.getInventory();
 
         for (int i = 0 ; i < 9 ; i++) {
             ItemStack oldStack = inv.getStackInSlot(i);
@@ -220,7 +220,7 @@ public class GuiCrafter extends GenericGuiContainer<CrafterBaseTE> {
         }
     }
 
-    private void sendChangeToServer(int index, InventoryCrafting inv, ItemStack result, boolean keepOne,
+    private void sendChangeToServer(int index, CraftingInventory inv, ItemStack result, boolean keepOne,
                                     CraftingRecipe.CraftMode mode) {
 
         RFToolsMessages.INSTANCE.sendToServer(new PacketCrafter(tileEntity.getPos(), index, inv,

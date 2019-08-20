@@ -4,9 +4,9 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.ores.DimensionalShardBlock;
 import mcjty.rftools.config.GeneralConfiguration;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Blocks;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -95,7 +95,7 @@ public class RFToolsWorldGenerator implements IWorldGenerator {
 
         boolean regen = false;
         CompoundNBT tag = (CompoundNBT) event.getData().getTag(RETRO_NAME);
-        NBTTagList list = null;
+        ListNBT list = null;
         Pair<Integer,Integer> cCoord = Pair.of(event.getChunk().x, event.getChunk().z);
 
         if (tag != null) {

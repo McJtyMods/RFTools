@@ -6,7 +6,7 @@ import mcjty.rftools.RFTools;
 import mcjty.rftools.items.screenmodules.StorageControlModuleItem;
 import mcjty.rftools.items.storage.StorageModuleTabletItem;
 import net.minecraft.block.Block;
-import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.CompoundNBT;
@@ -39,7 +39,7 @@ public class ContainerAndItemRecipeFactory implements IRecipeFactory {
         }
 
         @Override
-        public ItemStack getCraftingResult(InventoryCrafting inventoryCrafting) {
+        public ItemStack getCraftingResult(CraftingInventory inventoryCrafting) {
             ItemStack result = super.getCraftingResult(inventoryCrafting);
             if (!result.isEmpty()) {
 

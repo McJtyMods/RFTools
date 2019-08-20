@@ -1,9 +1,9 @@
 package mcjty.rftools.blocks.environmental;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import mcjty.lib.client.RenderHelper;
 import mcjty.rftools.RFTools;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -13,7 +13,7 @@ import org.lwjgl.opengl.GL11;
 import java.util.Random;
 
 @SideOnly(Side.CLIENT)
-public class EnvironmentalTESR extends TileEntitySpecialRenderer<EnvironmentalControllerTileEntity> {
+public class EnvironmentalTESR extends TileEntityRenderer<EnvironmentalControllerTileEntity> {
 
     private ResourceLocation halo = new ResourceLocation(RFTools.MODID, "textures/entities/floatingsphere.png");
     private Random random = new Random();

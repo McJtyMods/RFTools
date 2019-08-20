@@ -3,11 +3,11 @@ package mcjty.rftools.blocks.spawner;
 import mcjty.lib.varia.EntityTools;
 import mcjty.lib.varia.Logging;
 import net.minecraft.block.Block;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
+import net.minecraft.item.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -332,7 +332,7 @@ public class SpawnerConfiguration {
         addMobSpawnAmount(cfg, "StraySkeleton", MATERIALTYPE_LIVING, null, 0, 20);
     }
 
-    public static void addMobSpawnRF(Configuration cfg, Class<? extends EntityLiving> clazz, int rf) {
+    public static void addMobSpawnRF(Configuration cfg, Class<? extends MobEntity> clazz, int rf) {
         String id = EntityTools.findEntityIdByClass(clazz);
         addMobSpawnRF(cfg, id, rf);
     }
@@ -341,7 +341,7 @@ public class SpawnerConfiguration {
         cfg.get(CATEGORY_MOBSPAWNRF, name, rf);
     }
 
-    public static void addMobSpawnAmount(Configuration cfg, Class<? extends EntityLiving> clazz, int materialType, Object object, int meta, float amount) {
+    public static void addMobSpawnAmount(Configuration cfg, Class<? extends MobEntity> clazz, int materialType, Object object, int meta, float amount) {
         String id = EntityTools.findEntityIdByClass(clazz);
         addMobSpawnAmount(cfg, id, materialType, object, meta, amount);
     }

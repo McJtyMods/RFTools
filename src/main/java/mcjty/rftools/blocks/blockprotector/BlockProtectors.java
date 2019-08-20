@@ -3,10 +3,10 @@ package mcjty.rftools.blocks.blockprotector;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.lib.worlddata.AbstractWorldData;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
@@ -39,7 +39,7 @@ public class BlockProtectors extends AbstractWorldData<BlockProtectors> {
         return blockProtectors.findProtectors(x, y, z, world.provider.getDimension(), 2);
     }
 
-    public static boolean checkHarvestProtection(int x, int y, int z, IBlockAccess world, Collection<GlobalCoordinate> protectors) {
+    public static boolean checkHarvestProtection(int x, int y, int z, IBlockReader world, Collection<GlobalCoordinate> protectors) {
         for (GlobalCoordinate protector : protectors) {
             TileEntity te = world.getTileEntity(protector.getCoordinate());
             if (te instanceof BlockProtectorTileEntity) {
@@ -120,7 +120,7 @@ public class BlockProtectors extends AbstractWorldData<BlockProtectors> {
     }
 
     private void readDestinationsFromNBT(CompoundNBT tagCompound) {
-        NBTTagList lst = tagCompound.getTagList("blocks", Constants.NBT.TAG_COMPOUND);
+        ListNBT lst = tagCompound.getTagList("blocks", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < lst.tagCount() ; i++) {
             CompoundNBT tc = lst.getCompoundTagAt(i);
             BlockPos c = new BlockPos(tc.getInteger("x"), tc.getInteger("y"), tc.getInteger("z"));
@@ -135,7 +135,7 @@ public class BlockProtectors extends AbstractWorldData<BlockProtectors> {
 
     @Override
     public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        NBTTagList lst = new NBTTagList();
+        ListNBT lst = new ListNBT();
         for (GlobalCoordinate destination : protectorIdByCoordinate.keySet()) {
             CompoundNBT tc = new CompoundNBT();
             BlockPos c = destination.getCoordinate();

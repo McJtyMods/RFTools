@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.screens.modulesclient;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import mcjty.lib.client.RenderHelper;
 import mcjty.rftools.api.screens.IClientScreenModule;
 import mcjty.rftools.api.screens.IModuleRenderHelper;
@@ -8,7 +9,6 @@ import mcjty.rftools.blocks.elevator.ElevatorTileEntity;
 import mcjty.rftools.blocks.screens.modules.ElevatorButtonScreenModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;

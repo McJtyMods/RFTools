@@ -47,7 +47,7 @@ public class SyringeItem extends GenericRFToolsItem {
             items.add(new ItemStack(this));
             for(EntityEntry entry : ForgeRegistries.ENTITIES) {
                 Class<? extends Entity> clazz = entry.getEntityClass();
-                if(EntityLiving.class.isAssignableFrom(clazz)) {
+                if(MobEntity.class.isAssignableFrom(clazz)) {
                     items.add(createMobSyringe(clazz));
                 }
             }
@@ -108,7 +108,7 @@ public class SyringeItem extends GenericRFToolsItem {
 
     @Override
     public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity) {
-        EntityLiving entityLiving = getEntityLivingFromClickedEntity(entity);
+        MobEntity entityLiving = getEntityLivingFromClickedEntity(entity);
         if(entityLiving != null) {
             String prevMobId = null;
             CompoundNBT tagCompound = stack.getTag();
@@ -132,13 +132,14 @@ public class SyringeItem extends GenericRFToolsItem {
         return super.onLeftClickEntity(stack, player, entity);
     }
 
-    private static @Nullable EntityLiving getEntityLivingFromClickedEntity(Entity entity) {
-        if(entity instanceof EntityLiving) {
-            return (EntityLiving)entity;
+    private static @Nullable
+    MobEntity getEntityLivingFromClickedEntity(Entity entity) {
+        if(entity instanceof MobEntity) {
+            return (MobEntity)entity;
         } else if(entity instanceof MultiPartEntityPart) {
             IEntityMultiPart parent = ((MultiPartEntityPart)entity).parent;
-            if(parent instanceof EntityLiving) {
-                return (EntityLiving)parent;
+            if(parent instanceof MobEntity) {
+                return (MobEntity)parent;
             }
         }
         return null;

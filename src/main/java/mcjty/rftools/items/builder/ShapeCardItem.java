@@ -9,14 +9,14 @@ import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.shapes.*;
 import mcjty.rftools.varia.RLE;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -151,7 +151,7 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
         }
     }
 
-    public static void setChildren(ItemStack itemStack, NBTTagList list) {
+    public static void setChildren(ItemStack itemStack, ListNBT list) {
         CompoundNBT tagCompound = getCompound(itemStack);
         tagCompound.setTag("children", list);
     }
@@ -282,7 +282,7 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
 
         if (shape.isComposition()) {
             CompoundNBT card = itemStack.getTag();
-            NBTTagList children = card.getTagList("children", Constants.NBT.TAG_COMPOUND);
+            ListNBT children = card.getTagList("children", Constants.NBT.TAG_COMPOUND);
             list.add(TextFormatting.DARK_GREEN + "Formulas: " + children.tagCount());
         }
 
@@ -457,7 +457,7 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
         }
         if (shape == Shape.SHAPE_COMPOSITION) {
             // See if there is a scan in the composition that has a scan id
-            NBTTagList children = tagCompound.getTagList("children", Constants.NBT.TAG_COMPOUND);
+            ListNBT children = tagCompound.getTagList("children", Constants.NBT.TAG_COMPOUND);
             for (int i = 0 ; i < children.tagCount() ; i++) {
                 CompoundNBT childTag = children.getCompoundTagAt(i);
                 int id = getScanIdRecursive(childTag);

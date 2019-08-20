@@ -10,12 +10,12 @@ import mcjty.lib.varia.OrientationTools;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
-import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.state.BooleanProperty;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -25,7 +25,7 @@ import net.minecraftforge.fml.common.Optional;
 import java.util.Arrays;
 import java.util.List;
 
-public class RelayTileEntity extends GenericEnergyStorageTileEntity implements ITickable, MachineInformation {
+public class RelayTileEntity extends GenericEnergyStorageTileEntity implements ITickableTileEntity, MachineInformation {
 
     public static final int MAXENERGY = 50000;
     public static final int RECEIVEPERTICK = 50000;
@@ -68,7 +68,7 @@ public class RelayTileEntity extends GenericEnergyStorageTileEntity implements I
     public static final Key<Integer> PARAM_RFOFF_I = new Key<>("rfOffI", Type.INTEGER);
     public static final List<Key<Integer>> PARAM_RFOFF = Arrays.asList(PARAM_RFOFF_D, PARAM_RFOFF_U, PARAM_RFOFF_N, PARAM_RFOFF_S, PARAM_RFOFF_W, PARAM_RFOFF_E, PARAM_RFOFF_I);
 
-    public static final PropertyBool ENABLED = PropertyBool.create("enabled");
+    public static final BooleanProperty ENABLED = BooleanProperty.create("enabled");
 
     private static final String[] TAGS = new String[]{"rfpertick_out", "rfpertick_in"};
     private static final String[] TAG_DESCRIPTIONS = new String[] {

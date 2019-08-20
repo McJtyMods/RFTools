@@ -27,7 +27,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.servernet.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
@@ -111,7 +111,7 @@ public class GuiProxy implements IGuiHandler {
             ItemStack tablet = PlayerEntity.getHeldItemMainhand();
             int monitordim = RFToolsTools.getDimensionFromModule(tablet);
             BlockPos pos = RFToolsTools.getPositionFromModule(tablet);
-            WorldServer w = DimensionManager.getWorld(monitordim);
+            ServerWorld w = DimensionManager.getWorld(monitordim);
             if (w == null) {
                 return null;
             }

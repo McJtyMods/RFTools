@@ -2,7 +2,7 @@ package mcjty.rftools.playerprops;
 
 import mcjty.lib.varia.GlobalCoordinate;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.Collection;
@@ -36,7 +36,7 @@ public class FavoriteDestinationsProperties {
     }
 
     private static void writeFavoritesToNBT(CompoundNBT tagCompound, Collection<GlobalCoordinate> destinations) {
-        NBTTagList lst = new NBTTagList();
+        ListNBT lst = new ListNBT();
         for (GlobalCoordinate destination : destinations) {
             CompoundNBT tc = new CompoundNBT();
             BlockPos c = destination.getCoordinate();
@@ -55,7 +55,7 @@ public class FavoriteDestinationsProperties {
     }
 
     private static void readCoordinatesFromNBT(CompoundNBT tagCompound, Set<GlobalCoordinate> destinations) {
-        NBTTagList lst = tagCompound.getTagList("destinations", net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+        ListNBT lst = tagCompound.getTagList("destinations", net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < lst.tagCount() ; i++) {
             CompoundNBT tc = lst.getCompoundTagAt(i);
             BlockPos c = new BlockPos(tc.getInteger("x"), tc.getInteger("y"), tc.getInteger("z"));

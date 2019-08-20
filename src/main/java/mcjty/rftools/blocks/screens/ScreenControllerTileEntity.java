@@ -9,8 +9,8 @@ import mcjty.lib.bindings.IAction;
 import mcjty.lib.tileentity.GenericEnergyReceiverTileEntity;
 import mcjty.rftools.blocks.screens.modules.ComputerScreenModule;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.Optional;
 
@@ -23,7 +23,7 @@ import java.util.Map;
         @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers"),
 //        @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft"),
 })
-public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity implements ITickable, SimpleComponent { // implements IPeripheral {
+public class ScreenControllerTileEntity extends GenericEnergyReceiverTileEntity implements ITickableTileEntity, SimpleComponent { // implements IPeripheral {
 
     public static final String ACTION_SCAN = "scan";
     public static final String ACTION_DETACH = "detach";

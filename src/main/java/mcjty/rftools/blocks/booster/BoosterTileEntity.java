@@ -11,18 +11,18 @@ import mcjty.lib.varia.RedstoneMode;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.environmental.EnvModuleProvider;
 import mcjty.rftools.blocks.environmental.modules.EnvironmentModule;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ITickable;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 
 import java.util.List;
 
-public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable {
+public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickableTileEntity {
 
     public static final String CMD_RSMODE = "booster.setRsMode";
 
@@ -99,7 +99,7 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
                 long rf = getStoredPower();
                 int rfNeeded = (int) (cachedModule.getRfPerTick() * BoosterConfiguration.energyMultiplier.get());
                 rfNeeded = (int) (rfNeeded * (3.0f - getInfusedFactor()) / 3.0f);
-                for (EntityLivingBase entity : searchEntities()) {
+                for (LivingEntity entity : searchEntities()) {
                     if (rfNeeded <= rf) {
                         if (cachedModule.apply(getWorld(), getPos(), entity, 40)) {
                             // Consume energy
@@ -126,7 +126,7 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
         return getInventoryHelper().decrStackSize(index, count);
     }
 
-    private List<EntityLivingBase> searchEntities() {
+    private List<LivingEntity> searchEntities() {
         if (beamBox == null) {
             int xCoord = getPos().getX();
             int yCoord = getPos().getY();
@@ -134,7 +134,7 @@ public class BoosterTileEntity extends GenericEnergyReceiverTileEntity implement
             beamBox = new AxisAlignedBB(xCoord, yCoord + 1, zCoord, xCoord + 1, yCoord + 3, zCoord + 1);
         }
 
-        return getWorld().getEntitiesWithinAABB(EntityLivingBase.class, beamBox);
+        return getWorld().getEntitiesWithinAABB(LivingEntity.class, beamBox);
     }
 
     @Override

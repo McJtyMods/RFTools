@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.screens;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import mcjty.lib.blocks.BaseBlock;
 import mcjty.lib.font.TrueTypeFont;
 import mcjty.lib.varia.GlobalCoordinate;
@@ -15,9 +16,8 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 @SideOnly(Side.CLIENT)
-public class ScreenRenderer extends TileEntitySpecialRenderer<ScreenTileEntity> {
+public class ScreenRenderer extends TileEntityRenderer<ScreenTileEntity> {
 
     private static final ResourceLocation texture = new ResourceLocation(RFTools.MODID, "textures/blocks/screenframe.png");
     private final ModelScreen screenModel = new ModelScreen(ScreenTileEntity.SIZE_NORMAL);

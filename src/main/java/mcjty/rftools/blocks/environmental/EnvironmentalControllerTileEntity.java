@@ -30,10 +30,10 @@ import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -50,7 +50,7 @@ import java.util.*;
         @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers"),
 //        @Optional.Interface(iface = "dan200.computercraft.api.peripheral.IPeripheral", modid = "ComputerCraft")
 })
-public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickable,
+public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTileEntity implements DefaultSidedInventory, ITickableTileEntity,
         IMachineInformation, SimpleComponent /*, IPeripheral*/ {
 
     public static final String CMD_SETRADIUS = "env.setRadius";
@@ -513,7 +513,7 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
         }
 
         players.clear();
-        NBTTagList playerList = tagCompound.getTagList("players", Constants.NBT.TAG_STRING);
+        ListNBT playerList = tagCompound.getTagList("players", Constants.NBT.TAG_STRING);
         if (playerList != null) {
             for (int i = 0; i < playerList.tagCount(); i++) {
                 String player = playerList.getStringTagAt(i);
@@ -540,9 +540,9 @@ public class EnvironmentalControllerTileEntity extends GenericEnergyReceiverTile
 
         tagCompound.setInteger("mode", mode.ordinal());
 
-        NBTTagList playerTagList = new NBTTagList();
+        ListNBT playerTagList = new ListNBT();
         for (String player : players) {
-            playerTagList.appendTag(new NBTTagString(player));
+            playerTagList.appendTag(new StringNBT(player));
         }
         tagCompound.setTag("players", playerTagList);
     }

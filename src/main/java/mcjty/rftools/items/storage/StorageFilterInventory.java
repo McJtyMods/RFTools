@@ -5,7 +5,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
@@ -21,7 +21,7 @@ public class StorageFilterInventory implements IInventory {
             tagCompound = new CompoundNBT();
             PlayerEntity.getHeldItem(Hand.MAIN_HAND).setTagCompound(tagCompound);
         }
-        NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+        ListNBT bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             CompoundNBT CompoundNBT = bufferTagList.getCompoundTagAt(i);
             stacks.set(i, new ItemStack(CompoundNBT));
@@ -105,7 +105,7 @@ public class StorageFilterInventory implements IInventory {
     }
 
     public static void convertItemsToNBT(CompoundNBT tagCompound, ItemStackList stacks) {
-        NBTTagList bufferTagList = new NBTTagList();
+        ListNBT bufferTagList = new ListNBT();
         for (ItemStack stack : stacks) {
             CompoundNBT CompoundNBT = new CompoundNBT();
             if (!stack.isEmpty()) {

@@ -10,7 +10,7 @@ import mcjty.rftools.api.screens.IModuleGuiBuilder;
 import mcjty.rftools.blocks.screens.IModuleGuiChanged;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
@@ -23,14 +23,14 @@ import java.util.Map;
 
 public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
     private Minecraft mc;
-    private Gui gui;
+    private Screen gui;
     private CompoundNBT currentData;
     private IModuleGuiChanged moduleGuiChanged;
 
     private Panel panel;
     private List<Widget<?>> row = new ArrayList<>();
 
-    public ScreenModuleGuiBuilder(Minecraft mc, Gui gui, CompoundNBT currentData, IModuleGuiChanged moduleGuiChanged) {
+    public ScreenModuleGuiBuilder(Minecraft mc, Screen gui, CompoundNBT currentData, IModuleGuiChanged moduleGuiChanged) {
         this.gui = gui;
         this.mc = mc;
         this.moduleGuiChanged = moduleGuiChanged;
@@ -296,7 +296,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
         return this;
     }
 
-    private static ChoiceLabel setupFormatCombo(Minecraft mc, Gui gui, String tagname, final CompoundNBT currentData, final IModuleGuiChanged moduleGuiChanged) {
+    private static ChoiceLabel setupFormatCombo(Minecraft mc, Screen gui, String tagname, final CompoundNBT currentData, final IModuleGuiChanged moduleGuiChanged) {
         final String modeFull = FormatStyle.MODE_FULL.getName();
         final String modeCompact = FormatStyle.MODE_COMPACT.getName();
         final String modeCommas = FormatStyle.MODE_COMMAS.getName();
@@ -317,7 +317,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
         return modeButton;
     }
 
-    private static ChoiceLabel setupModeCombo(Minecraft mc, Gui gui, final String componentName, final CompoundNBT currentData, final IModuleGuiChanged moduleGuiChanged) {
+    private static ChoiceLabel setupModeCombo(Minecraft mc, Screen gui, final String componentName, final CompoundNBT currentData, final IModuleGuiChanged moduleGuiChanged) {
         String modeNone = "None";
         final String modePertick = componentName + "/t";
         final String modePct = componentName + "%";

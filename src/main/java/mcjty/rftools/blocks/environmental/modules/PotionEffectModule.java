@@ -3,10 +3,10 @@ package mcjty.rftools.blocks.environmental.modules;
 import mcjty.rftools.PlayerBuff;
 import mcjty.rftools.blocks.environmental.EnvironmentalControllerTileEntity;
 import mcjty.rftools.playerprops.BuffProperties;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.potion.Effect;
 import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -18,7 +18,7 @@ import java.util.List;
 public abstract class PotionEffectModule implements EnvironmentModule {
     public static final int MAXTICKS = 180;
 
-    private final Potion potion;
+    private final Effect potion;
     private final int amplifier;
 
     private boolean active = false;
@@ -75,7 +75,7 @@ public abstract class PotionEffectModule implements EnvironmentModule {
                 double sqdist = (px-pos.getX()) * (px-pos.getX()) + (pz-pos.getZ()) * (pz-pos.getZ());
                 if (sqdist < maxsqdist) {
                     if (controllerTileEntity.isPlayerAffected(player)) {
-                        player.addPotionEffect(new PotionEffect(potion, MAXTICKS * 3, amplifier, true, false));
+                        player.addPotionEffect(new Effect(potion, MAXTICKS * 3, amplifier, true, false));
                         PlayerBuff buff = getBuff();
                         if (buff != null) {
                             BuffProperties.addBuffToPlayer(player, buff, MAXTICKS);
@@ -88,10 +88,10 @@ public abstract class PotionEffectModule implements EnvironmentModule {
 
     private void processEntities(World world, BlockPos pos, int radius, int miny, int maxy, EnvironmentalControllerTileEntity controllerTileEntity) {
         double maxsqdist = radius * radius;
-        List<EntityLivingBase> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(
+        List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class, new AxisAlignedBB(
                 pos.getX() - radius, pos.getY() - radius, pos.getZ() - radius,
                 pos.getX() + radius, pos.getY() + radius, pos.getZ() + radius));
-        for (EntityLivingBase entity : entities) {
+        for (LivingEntity entity : entities) {
             double py = entity.posY;
             if (py >= miny && py <= maxy) {
                 double px = entity.posX;
@@ -100,7 +100,7 @@ public abstract class PotionEffectModule implements EnvironmentModule {
                 if (sqdist < maxsqdist) {
                     if (controllerTileEntity.isEntityAffected(entity)) {
                         if (!(entity instanceof PlayerEntity) || allowedForPlayers()) {
-                            entity.addPotionEffect(new PotionEffect(potion, MAXTICKS * 3, amplifier, true, false));
+                            entity.addPotionEffect(new Effect(potion, MAXTICKS * 3, amplifier, true, false));
                             PlayerBuff buff = getBuff();
                             if (buff != null) {
                                 if (entity instanceof PlayerEntity) {
@@ -120,8 +120,8 @@ public abstract class PotionEffectModule implements EnvironmentModule {
     }
 
     @Override
-    public boolean apply(World world, BlockPos pos, EntityLivingBase entity, int duration) {
-        entity.addPotionEffect(new PotionEffect(potion, duration, amplifier, true, false));
+    public boolean apply(World world, BlockPos pos, LivingEntity entity, int duration) {
+        entity.addPotionEffect(new Effect(potion, duration, amplifier, true, false));
         return true;
     }
 

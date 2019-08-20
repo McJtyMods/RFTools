@@ -8,7 +8,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ChunkCache;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.relauncher.Side;
@@ -59,7 +59,7 @@ public class SolidShieldBlock extends AbstractShieldBlock {
     }
 
     @Override
-    public boolean shouldSideBeRendered(BlockState state, IBlockAccess world, BlockPos pos, Direction side) {
+    public boolean shouldSideBeRendered(BlockState state, IBlockReader world, BlockPos pos, Direction side) {
         Block block = world.getBlockState(pos.offset(side)).getBlock();
         if (block instanceof SolidShieldBlock) {
             return false;
@@ -68,7 +68,7 @@ public class SolidShieldBlock extends AbstractShieldBlock {
     }
 
     @Override
-    public BlockState getActualState(BlockState state, IBlockAccess world, BlockPos pos) {
+    public BlockState getActualState(BlockState state, IBlockReader world, BlockPos pos) {
         TileEntity te = world instanceof ChunkCache ? ((ChunkCache)world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) : world.getTileEntity(pos);
         if (te instanceof NoTickShieldBlockTileEntity) {
             NoTickShieldBlockTileEntity tileEntity = (NoTickShieldBlockTileEntity) te;

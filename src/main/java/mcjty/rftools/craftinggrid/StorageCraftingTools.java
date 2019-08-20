@@ -7,8 +7,8 @@ import mcjty.rftools.blocks.storage.RemoteStorageItemContainer;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerContainer;
 import mcjty.rftools.network.RFToolsMessages;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.stats.StatList;
@@ -28,14 +28,14 @@ public class StorageCraftingTools {
 
     @Nonnull
     private static int[] tryRecipe(PlayerEntity player, CraftingRecipe craftingRecipe, int n, IItemSource itemSource, boolean strictDamage) {
-        InventoryCrafting workInventory = new InventoryCrafting(new Container() {
+        CraftingInventory workInventory = new CraftingInventory(new Container() {
             @Override
             public boolean canInteractWith(PlayerEntity var1) {
                 return false;
             }
         }, 3, 3);
 
-        InventoryCrafting inventory = craftingRecipe.getInventory();
+        CraftingInventory inventory = craftingRecipe.getInventory();
 
         int[] missingCount = new int[10];
         TIntHashSet[] hashSets = new TIntHashSet[9];
@@ -97,7 +97,7 @@ public class StorageCraftingTools {
 
     private static List<ItemStack> testAndConsumeCraftingItems(PlayerEntity player, CraftingRecipe craftingRecipe,
                                                                IItemSource itemSource, boolean strictDamage) {
-        InventoryCrafting workInventory = new InventoryCrafting(new Container() {
+        CraftingInventory workInventory = new CraftingInventory(new Container() {
             @Override
             public boolean canInteractWith(PlayerEntity var1) {
                 return false;
@@ -106,7 +106,7 @@ public class StorageCraftingTools {
 
         List<Pair<IItemKey, ItemStack>> undo = new ArrayList<>();
         List<ItemStack> result = new ArrayList<>();
-        InventoryCrafting inventory = craftingRecipe.getInventory();
+        CraftingInventory inventory = craftingRecipe.getInventory();
 
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack stack = inventory.getStackInSlot(i);
@@ -168,7 +168,7 @@ public class StorageCraftingTools {
         }
     }
 
-    private static int findMatchingItems(InventoryCrafting workInventory, List<Pair<IItemKey, ItemStack>> undo, int i,
+    private static int findMatchingItems(CraftingInventory workInventory, List<Pair<IItemKey, ItemStack>> undo, int i,
                                          @Nonnull ItemStack stack,
                                          int count, IItemSource itemSource, boolean strictDamage) {
         TIntHashSet stackIDs = new TIntHashSet(OreDictionary.getOreIDs(stack));

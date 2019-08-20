@@ -10,7 +10,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.PlayerEntity;
@@ -22,7 +22,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
@@ -75,7 +75,7 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
     }
 
     @Override
-    public boolean canEntityDestroy(BlockState state, IBlockAccess world, BlockPos pos, Entity entity) {
+    public boolean canEntityDestroy(BlockState state, IBlockReader world, BlockPos pos, Entity entity) {
         return false;
     }
 
@@ -94,7 +94,7 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
     }
 
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(BlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+    public AxisAlignedBB getCollisionBoundingBox(BlockState blockState, IBlockReader worldIn, BlockPos pos) {
         return COLLISION_BOX;
     }
 
@@ -131,7 +131,7 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
             }
         }
         if ((cdData & META_ITEMS) != 0) {
-            if (!(entity instanceof EntityLivingBase)) {
+            if (!(entity instanceof LivingEntity)) {
                 if (checkEntityCD(world, pos, ItemFilter.ITEM)) {
                     super.addCollisionBoxToList(state, world, pos, entityBox, list, entity, p_185477_7_);
                 }
@@ -188,7 +188,7 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
     @Override
     public void onEntityCollidedWithBlock(World world, BlockPos pos, BlockState state, Entity entity) {
         NoTickShieldBlockTileEntity shieldBlockTileEntity = (NoTickShieldBlockTileEntity) world.getTileEntity(pos);
-        if (!(entity instanceof EntityLivingBase)) {
+        if (!(entity instanceof LivingEntity)) {
             int cdData = shieldBlockTileEntity.getCollisionData();
             if ((cdData & META_ITEMS) == 0) {
                 // Items should be able to pass through. We just move the entity to below this block.
@@ -200,7 +200,7 @@ public abstract class AbstractShieldBlock extends Block implements ITileEntityPr
     }
 
     @Override
-    public boolean shouldSideBeRendered(BlockState state, IBlockAccess world, BlockPos thispos, Direction side) {
+    public boolean shouldSideBeRendered(BlockState state, IBlockReader world, BlockPos thispos, Direction side) {
         BlockPos pos = thispos.offset(side);
 
         NoTickShieldBlockTileEntity shieldBlockTileEntity = (NoTickShieldBlockTileEntity) world.getTileEntity(thispos);

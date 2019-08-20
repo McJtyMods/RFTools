@@ -4,9 +4,9 @@ import mcjty.lib.container.*;
 import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.RFTools;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.ClickType;
+import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 

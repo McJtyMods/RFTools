@@ -1,21 +1,21 @@
 package mcjty.rftools.blocks.spawner;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import mcjty.lib.client.RenderGlowEffect;
 import mcjty.lib.client.RenderHelper;
 import mcjty.rftools.RFTools;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import org.lwjgl.opengl.GL11;
 
-public class MatterBeamerRenderer extends TileEntitySpecialRenderer<MatterBeamerTileEntity> {
+public class MatterBeamerRenderer extends TileEntityRenderer<MatterBeamerTileEntity> {
 
     private static final ResourceLocation redglow = new ResourceLocation(RFTools.MODID, "textures/blocks/redglow.png");
     private static final ResourceLocation blueglow = new ResourceLocation(RFTools.MODID, "textures/blocks/blueglow.png");

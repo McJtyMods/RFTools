@@ -3,7 +3,7 @@ package mcjty.rftools.blocks.environmental.modules;
 import mcjty.rftools.PlayerBuff;
 import mcjty.rftools.blocks.environmental.EnvironmentalControllerTileEntity;
 import mcjty.rftools.playerprops.BuffProperties;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -57,7 +57,7 @@ public abstract class BuffEModule implements EnvironmentModule {
     }
 
     @Override
-    public boolean apply(World world, BlockPos pos, EntityLivingBase entity, int duration) {
+    public boolean apply(World world, BlockPos pos, LivingEntity entity, int duration) {
         return false;
     }
 

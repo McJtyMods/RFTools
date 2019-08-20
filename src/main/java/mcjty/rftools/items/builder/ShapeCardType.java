@@ -7,7 +7,7 @@ import mcjty.rftools.blocks.builder.BuilderTileEntity;
 import mcjty.rftools.shapes.Shape;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.init.Items;
+import net.minecraft.item.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;

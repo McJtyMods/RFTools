@@ -2,7 +2,7 @@ package mcjty.rftools.craftinggrid;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
 
 public class CraftingGrid {
@@ -54,7 +54,7 @@ public class CraftingGrid {
     public CompoundNBT writeToNBT() {
         CompoundNBT tagCompound = new CompoundNBT();
 
-        NBTTagList bufferTagList = new NBTTagList();
+        ListNBT bufferTagList = new ListNBT();
         for (int i = 0 ; i < craftingGridInventory.getSizeInventory() ; i++) {
             CompoundNBT CompoundNBT = new CompoundNBT();
             ItemStack stack = craftingGridInventory.getStackInSlot(i);
@@ -65,7 +65,7 @@ public class CraftingGrid {
         }
         tagCompound.setTag("grid", bufferTagList);
 
-        NBTTagList recipeTagList = new NBTTagList();
+        ListNBT recipeTagList = new ListNBT();
         for (CraftingRecipe recipe : recipes) {
             CompoundNBT CompoundNBT = new CompoundNBT();
             recipe.writeToNBT(CompoundNBT);
@@ -80,13 +80,13 @@ public class CraftingGrid {
         if (tagCompound == null) {
             return;
         }
-        NBTTagList bufferTagList = tagCompound.getTagList("grid", Constants.NBT.TAG_COMPOUND);
+        ListNBT bufferTagList = tagCompound.getTagList("grid", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < craftingGridInventory.getSizeInventory() ; i++) {
             CompoundNBT CompoundNBT = bufferTagList.getCompoundTagAt(i);
             craftingGridInventory.setInventorySlotContents(i, new ItemStack(CompoundNBT));
         }
 
-        NBTTagList recipeTagList = tagCompound.getTagList("recipes", Constants.NBT.TAG_COMPOUND);
+        ListNBT recipeTagList = tagCompound.getTagList("recipes", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < recipeTagList.tagCount() ; i++) {
             recipes[i] = new CraftingRecipe();
             CompoundNBT CompoundNBT = recipeTagList.getCompoundTagAt(i);

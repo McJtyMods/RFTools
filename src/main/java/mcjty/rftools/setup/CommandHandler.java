@@ -19,7 +19,7 @@ import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.varia.RFToolsTools;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.servernet.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.DimensionManager;
 
 public class CommandHandler {
@@ -157,7 +157,7 @@ public class CommandHandler {
             return true;
         });
         McJtyLib.registerCommand(RFTools.MODID, CMD_GET_COUNTER_INFO, (player, arguments) -> {
-            WorldServer world = DimensionManager.getWorld(arguments.get(PARAM_DIMENSION));
+            ServerWorld world = DimensionManager.getWorld(arguments.get(PARAM_DIMENSION));
             if (world != null) {
                 TileEntity te = world.getTileEntity(arguments.get(PARAM_POS));
                 if (te instanceof CounterTileEntity) {

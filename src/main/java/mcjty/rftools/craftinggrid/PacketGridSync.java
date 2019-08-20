@@ -7,7 +7,7 @@ import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.storage.RemoteStorageItemContainer;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerContainer;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -69,7 +69,7 @@ public class PacketGridSync {
         recipes = new ArrayList<>();
         for (int i = 0 ; i < 6 ; i++) {
             CraftingRecipe recipe = grid.getRecipe(i);
-            InventoryCrafting inventory = recipe.getInventory();
+            CraftingInventory inventory = recipe.getInventory();
             ItemStack[] stacks = new ItemStack[10];
             stacks[0] = recipe.getResult();
             for (int j = 0 ; j < 9 ; j++) {

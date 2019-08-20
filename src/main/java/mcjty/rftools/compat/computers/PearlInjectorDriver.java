@@ -7,7 +7,7 @@ import li.cil.oc.api.prefab.AbstractManagedEnvironment;
 import mcjty.lib.container.InventoryHelper;
 import mcjty.lib.integration.computers.AbstractOCDriver;
 import mcjty.rftools.blocks.endergen.PearlInjectorTileEntity;
-import net.minecraft.init.Items;
+import net.minecraft.item.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;

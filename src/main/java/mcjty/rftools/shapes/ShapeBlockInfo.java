@@ -3,10 +3,10 @@ package mcjty.rftools.shapes;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSlab;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;

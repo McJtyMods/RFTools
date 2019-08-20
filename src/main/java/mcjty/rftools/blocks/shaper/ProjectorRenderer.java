@@ -1,14 +1,14 @@
 package mcjty.rftools.blocks.shaper;
 
 import mcjty.rftools.shapes.ShapeRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class ProjectorRenderer extends TileEntitySpecialRenderer<ProjectorTileEntity> {
+public class ProjectorRenderer extends TileEntityRenderer<ProjectorTileEntity> {
 
     @Override
     public void render(ProjectorTileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {

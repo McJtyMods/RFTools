@@ -2,8 +2,8 @@ package mcjty.rftools.blocks.security;
 
 import mcjty.lib.worlddata.AbstractWorldData;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
@@ -59,7 +59,7 @@ public class SecurityChannels extends AbstractWorldData<SecurityChannels> {
     @Override
     public void readFromNBT(CompoundNBT tagCompound) {
         channels.clear();
-        NBTTagList lst = tagCompound.getTagList("channels", Constants.NBT.TAG_COMPOUND);
+        ListNBT lst = tagCompound.getTagList("channels", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < lst.tagCount() ; i++) {
             CompoundNBT tc = lst.getCompoundTagAt(i);
             int channel = tc.getInteger("channel");
@@ -69,7 +69,7 @@ public class SecurityChannels extends AbstractWorldData<SecurityChannels> {
             value.setWhitelist(tc.getBoolean("whitelist"));
 
             value.clearPlayers();
-            NBTTagList playerList = tc.getTagList("players", Constants.NBT.TAG_STRING);
+            ListNBT playerList = tc.getTagList("players", Constants.NBT.TAG_STRING);
             if (playerList != null) {
                 for (int j = 0 ; j < playerList.tagCount() ; j++) {
                     String player = playerList.getStringTagAt(j);
@@ -84,7 +84,7 @@ public class SecurityChannels extends AbstractWorldData<SecurityChannels> {
 
     @Override
     public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        NBTTagList lst = new NBTTagList();
+        ListNBT lst = new ListNBT();
         for (Map.Entry<Integer, SecurityChannel> entry : channels.entrySet()) {
             CompoundNBT tc = new CompoundNBT();
             tc.setInteger("channel", entry.getKey());
@@ -92,9 +92,9 @@ public class SecurityChannels extends AbstractWorldData<SecurityChannels> {
             tc.setString("name", channel.getName());
             tc.setBoolean("whitelist", channel.isWhitelist());
 
-            NBTTagList playerTagList = new NBTTagList();
+            ListNBT playerTagList = new ListNBT();
             for (String player : channel.getPlayers()) {
-                playerTagList.appendTag(new NBTTagString(player));
+                playerTagList.appendTag(new StringNBT(player));
             }
             tc.setTag("players", playerTagList);
 

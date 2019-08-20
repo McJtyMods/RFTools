@@ -20,10 +20,10 @@ import mcjty.rftools.network.PacketGetHudLog;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.theoneprobe.api.*;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.init.Items;
+import net.minecraft.item.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -667,7 +667,7 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
         badCounter = tagCompound.getByte("bad");
         goodCounter = tagCompound.getByte("good");
         pearls.clear();
-        NBTTagList list = tagCompound.getTagList("pearls", Constants.NBT.TAG_COMPOUND);
+        ListNBT list = tagCompound.getTagList("pearls", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.tagCount(); i++) {
             CompoundNBT tc = list.getCompoundTagAt(i);
             EndergenicPearl pearl = new EndergenicPearl(tc);
@@ -687,7 +687,7 @@ public class EndergenicTileEntity extends GenericEnergyStorageTileEntity impleme
         tagCompound.setByte("bad", (byte) badCounter);
         tagCompound.setByte("good", (byte) goodCounter);
 
-        NBTTagList pearlList = new NBTTagList();
+        ListNBT pearlList = new ListNBT();
         for (EndergenicPearl pearl : pearls) {
             pearlList.appendTag(pearl.getTagCompound());
         }

@@ -16,7 +16,7 @@ import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -66,27 +66,27 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
 
     @Optional.Method(modid = "cofhapi|item")
     @Override
-    public boolean isUsable(ItemStack item, EntityLivingBase user, BlockPos pos) {
+    public boolean isUsable(ItemStack item, LivingEntity user, BlockPos pos) {
         SmartWrenchMode mode = getCurrentMode(item);
         return mode == SmartWrenchMode.MODE_WRENCH;
     }
 
     @Optional.Method(modid = "cofhapi|item")
     @Override
-    public boolean isUsable(ItemStack item, EntityLivingBase user, Entity entity) {
+    public boolean isUsable(ItemStack item, LivingEntity user, Entity entity) {
         SmartWrenchMode mode = getCurrentMode(item);
         return mode == SmartWrenchMode.MODE_WRENCH;
     }
 
     @Optional.Method(modid = "cofhapi|item")
     @Override
-    public void toolUsed(ItemStack item, EntityLivingBase user, BlockPos pos) {
+    public void toolUsed(ItemStack item, LivingEntity user, BlockPos pos) {
 
     }
 
     @Optional.Method(modid = "cofhapi|item")
     @Override
-    public void toolUsed(ItemStack item, EntityLivingBase user, Entity entity) {
+    public void toolUsed(ItemStack item, LivingEntity user, Entity entity) {
 
     }
 

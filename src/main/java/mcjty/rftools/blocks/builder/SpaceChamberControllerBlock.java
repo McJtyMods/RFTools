@@ -10,7 +10,7 @@ import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -116,7 +116,7 @@ public class SpaceChamberControllerBlock extends GenericRFToolsBlock<SpaceChambe
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, EntityLivingBase entityLivingBase, ItemStack itemStack) {
+    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity entityLivingBase, ItemStack itemStack) {
         super.onBlockPlacedBy(world, pos, state, entityLivingBase, itemStack);
         if (!world.isRemote) {
             SpaceChamberRepository chamberRepository = SpaceChamberRepository.getChannels(world);

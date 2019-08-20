@@ -18,23 +18,23 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.servernet.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.FakePlayer;
@@ -50,7 +50,7 @@ import java.util.UUID;
 
 import static mcjty.lib.blocks.BaseBlock.FACING_HORIZ;
 
-public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implements ITickable {
+public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implements ITickableTileEntity {
 
     public static String CMD_SETNAME = "elevator.setName";
 
@@ -87,7 +87,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
 
     private FakePlayer getHarvester() {
         if (harvester == null) {
-            harvester = FakePlayerFactory.get((WorldServer) world, new GameProfile(UUID.nameUUIDFromBytes("rftools_elevator".getBytes()), "rftools_elevator"));
+            harvester = FakePlayerFactory.get((ServerWorld) world, new GameProfile(UUID.nameUUIDFromBytes("rftools_elevator".getBytes()), "rftools_elevator"));
         }
         harvester.setWorld(world);
         harvester.setPosition(pos.getX(), pos.getY(), pos.getZ());
@@ -731,9 +731,9 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         entitiesOnPlatformComplete = false;
         if (tagCompound.hasKey("players")) {
             entitiesOnPlatform.clear();
-            WorldServer world = DimensionManager.getWorld(0);
+            ServerWorld world = DimensionManager.getWorld(0);
             List<EntityPlayerMP> serverPlayers = world.getMinecraftServer().getPlayerList().getPlayers();
-            NBTTagList playerList = tagCompound.getTagList("players", Constants.NBT.TAG_COMPOUND);
+            ListNBT playerList = tagCompound.getTagList("players", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < playerList.tagCount(); i++) {
                 CompoundNBT p = playerList.getCompoundTagAt(i);
                 long lsb = p.getLong("lsb");
@@ -819,7 +819,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
         if (!getWorld().isRemote) {
             // Only do this server side
             if (!entitiesOnPlatform.isEmpty()) {
-                NBTTagList playerList = new NBTTagList();
+                ListNBT playerList = new ListNBT();
                 for (Entity entity : entitiesOnPlatform) {
                     if (entity instanceof PlayerEntity) {
                         PlayerEntity player = (PlayerEntity) entity;
@@ -862,7 +862,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, EntityLivingBase placer, ItemStack stack) {
+    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         super.onBlockPlacedBy(world, pos, state, placer, stack);
         clearCaches(world.getBlockState(pos).getValue(FACING_HORIZ));
     }
@@ -893,7 +893,7 @@ public class ElevatorTileEntity extends GenericEnergyReceiverTileEntity implemen
     }
 
     @Override
-    public int getRedstoneOutput(BlockState state, IBlockAccess world, BlockPos pos, Direction side) {
+    public int getRedstoneOutput(BlockState state, IBlockReader world, BlockPos pos, Direction side) {
         Direction direction = state.getValue(FACING_HORIZ);
         if (side == direction) {
             return isPlatformHere() ? 15 : 0;

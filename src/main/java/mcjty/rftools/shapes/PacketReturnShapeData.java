@@ -6,7 +6,7 @@ import mcjty.lib.thirteen.Context;
 import mcjty.rftools.blocks.builder.BuilderSetup;
 import mcjty.rftools.varia.RLE;
 import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;

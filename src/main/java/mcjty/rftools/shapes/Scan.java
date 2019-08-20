@@ -1,9 +1,9 @@
 package mcjty.rftools.shapes;
 
 import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Blocks;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
@@ -69,7 +69,7 @@ public class Scan {
 
     public void writeToNBTExternal(CompoundNBT tagCompound) {
         tagCompound.setByteArray("data", rledata == null ? new byte[0] : rledata);
-        NBTTagList pal = new NBTTagList();
+        ListNBT pal = new ListNBT();
         for (BlockState state : materialPalette) {
             CompoundNBT tc = new CompoundNBT();
             Block block = state.getBlock();
@@ -100,7 +100,7 @@ public class Scan {
     }
 
     public void readFromNBTExternal(CompoundNBT tagCompound) {
-        NBTTagList list = tagCompound.getTagList("scanpal", Constants.NBT.TAG_COMPOUND);
+        ListNBT list = tagCompound.getTagList("scanpal", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.tagCount(); i++) {
             CompoundNBT tc = list.getCompoundTagAt(i);
             Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(tc.getString("r")));

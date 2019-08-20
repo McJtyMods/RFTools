@@ -18,7 +18,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
@@ -128,7 +128,7 @@ public class SupportBlock extends Block {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public boolean shouldSideBeRendered(BlockState blockState, IBlockAccess blockAccess, BlockPos pos, Direction side) {
+    public boolean shouldSideBeRendered(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
         BlockState state = blockAccess.getBlockState(pos);
         Block block = state.getBlock();
         BlockState state2 = blockAccess.getBlockState(pos.offset(side));

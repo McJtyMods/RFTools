@@ -8,7 +8,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
@@ -31,7 +31,7 @@ public class ModifierItem extends GenericRFToolsItem {
         setMaxStackSize(1);
     }
 
-    private static NBTTagList getOpList(ItemStack item) {
+    private static ListNBT getOpList(ItemStack item) {
         if (!item.isEmpty() && item.getItem() == ModItems.modifierItem) {
             if (!item.hasTagCompound()) {
                 item.setTagCompound(new CompoundNBT());
@@ -40,7 +40,7 @@ public class ModifierItem extends GenericRFToolsItem {
             if (tag.hasKey("ops")) {
                 return tag.getTagList("ops", Constants.NBT.TAG_COMPOUND);
             } else {
-                NBTTagList taglist = new NBTTagList();
+                ListNBT taglist = new ListNBT();
                 tag.setTag("ops", taglist);
                 return taglist;
             }
@@ -68,8 +68,8 @@ public class ModifierItem extends GenericRFToolsItem {
         player.openContainer.detectAndSendChanges();
     }
 
-    private static NBTTagList getTagList(List<ModifierEntry> modifiers) {
-        NBTTagList taglist = new NBTTagList();
+    private static ListNBT getTagList(List<ModifierEntry> modifiers) {
+        ListNBT taglist = new ListNBT();
         for (ModifierEntry modifier : modifiers) {
             CompoundNBT tag = new CompoundNBT();
 
@@ -95,14 +95,14 @@ public class ModifierItem extends GenericRFToolsItem {
     }
 
     private static void updateModifiers(ItemStack stack, List<ModifierEntry> modifiers) {
-        NBTTagList tagList = getTagList(modifiers);
+        ListNBT tagList = getTagList(modifiers);
         stack.getTag().setTag("ops", tagList);
     }
 
     public static ItemStackList getItemStacks(@Nullable CompoundNBT tagCompound) {
         ItemStackList stacks = ItemStackList.create(ModifierContainer.COUNT_SLOTS);
         if (tagCompound != null) {
-            NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+            ListNBT bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < bufferTagList.tagCount(); i++) {
                 CompoundNBT CompoundNBT = bufferTagList.getCompoundTagAt(i);
                 stacks.set(i, new ItemStack(CompoundNBT));
@@ -168,7 +168,7 @@ public class ModifierItem extends GenericRFToolsItem {
 
     public static List<ModifierEntry> getModifiers(ItemStack item) {
         List<ModifierEntry> modifiers = new ArrayList<>();
-        NBTTagList taglist = getOpList(item);
+        ListNBT taglist = getOpList(item);
         if (taglist == null) {
             return Collections.emptyList();
         }

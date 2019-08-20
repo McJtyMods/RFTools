@@ -14,11 +14,11 @@ import mcjty.rftools.shapes.ShapeRotation;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ITickable;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraftforge.common.util.Constants;
 
-public class ComposerTileEntity extends GenericTileEntity implements DefaultSidedInventory, ITickable {
+public class ComposerTileEntity extends GenericTileEntity implements DefaultSidedInventory, ITickableTileEntity {
 
     public static final int SLOT_COUNT = 9;
     public static final int SLOT_OUT = 0;
@@ -51,7 +51,7 @@ public class ComposerTileEntity extends GenericTileEntity implements DefaultSide
         if (!getWorld().isRemote) {
             ItemStack output = getStackInSlot(SLOT_OUT);
             if (!output.isEmpty()) {
-                NBTTagList list = new NBTTagList();
+                ListNBT list = new ListNBT();
                 for (int i = SLOT_TABS; i < SLOT_TABS + SLOT_COUNT; i++) {
                     ItemStack item = getStackInSlot(i);
                     if (!item.isEmpty()) {
@@ -106,7 +106,7 @@ public class ComposerTileEntity extends GenericTileEntity implements DefaultSide
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
-        NBTTagList list = tagCompound.getTagList("ops", Constants.NBT.TAG_COMPOUND);
+        ListNBT list = tagCompound.getTagList("ops", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < list.tagCount() ; i++) {
             CompoundNBT tag = list.getCompoundTagAt(i);
             String op = tag.getString("mod_op");
@@ -128,7 +128,7 @@ public class ComposerTileEntity extends GenericTileEntity implements DefaultSide
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
-        NBTTagList list = new NBTTagList();
+        ListNBT list = new ListNBT();
         for (int i = 0; i < SLOT_COUNT ; i++) {
             CompoundNBT tc = new CompoundNBT();
             ShapeModifier mod = modifiers[i];

@@ -1,10 +1,10 @@
 package mcjty.rftools.blocks.elevator;
 
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
@@ -14,7 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 import java.util.Set;
 
-public class FakeElevatorWorld implements IBlockAccess {
+public class FakeElevatorWorld implements IBlockReader {
 
     private Set<BlockPos> positions;
     private BlockState state;

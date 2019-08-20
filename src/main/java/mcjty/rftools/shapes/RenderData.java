@@ -1,9 +1,9 @@
 package mcjty.rftools.shapes;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.apache.commons.lang3.tuple.Pair;

@@ -1,18 +1,18 @@
 package mcjty.rftools.craftinggrid;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
 public class CraftingRecipe {
-    private InventoryCrafting inv = new InventoryCrafting(new Container() {
+    private CraftingInventory inv = new CraftingInventory(new Container() {
         @Override
         public boolean canInteractWith(PlayerEntity var1) {
             return false;
@@ -43,7 +43,7 @@ public class CraftingRecipe {
 
     private CraftMode craftMode = CraftMode.EXT;
 
-    public static IRecipe findRecipe(World world, InventoryCrafting inv) {
+    public static IRecipe findRecipe(World world, CraftingInventory inv) {
         for (IRecipe r : CraftingManager.REGISTRY) {
             if (r != null && r.matches(inv, world)) {
                 return r;
@@ -53,7 +53,7 @@ public class CraftingRecipe {
     }
 
     public void readFromNBT(CompoundNBT tagCompound) {
-        NBTTagList nbtTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+        ListNBT nbtTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < nbtTagList.tagCount(); i++) {
             CompoundNBT CompoundNBT = nbtTagList.getCompoundTagAt(i);
             inv.setInventorySlotContents(i, new ItemStack(CompoundNBT));
@@ -70,7 +70,7 @@ public class CraftingRecipe {
     }
 
     public void writeToNBT(CompoundNBT tagCompound) {
-        NBTTagList nbtTagList = new NBTTagList();
+        ListNBT nbtTagList = new ListNBT();
         for (int i = 0 ; i < 9 ; i++) {
             ItemStack stack = inv.getStackInSlot(i);
             CompoundNBT CompoundNBT = new CompoundNBT();
@@ -97,7 +97,7 @@ public class CraftingRecipe {
         recipePresent = false;
     }
 
-    public InventoryCrafting getInventory() {
+    public CraftingInventory getInventory() {
         return inv;
     }
 

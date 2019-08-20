@@ -5,7 +5,7 @@ import mcjty.rftools.blocks.shaper.ScannerConfiguration;
 import mcjty.rftools.items.builder.ShapeCardItem;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
@@ -207,7 +207,7 @@ public class Formulas {
                 return;
             }
 
-            NBTTagList children = card.getTagList("children", Constants.NBT.TAG_COMPOUND);
+            ListNBT children = card.getTagList("children", Constants.NBT.TAG_COMPOUND);
             for (int i = 0 ; i < children.tagCount() ; i++) {
                 CompoundNBT childTag = children.getCompoundTagAt(i);
                 IFormula formula = ShapeCardItem.createCorrectFormula(childTag);
@@ -244,7 +244,7 @@ public class Formulas {
         @Override
         public void getCheckSumClient(CompoundNBT tc, Check32 crc) {
             ShapeCardItem.getLocalChecksum(tc, crc);
-            NBTTagList children = tc.getTagList("children", Constants.NBT.TAG_COMPOUND);
+            ListNBT children = tc.getTagList("children", Constants.NBT.TAG_COMPOUND);
             for (int i = 0 ; i < children.tagCount() ; i++) {
                 CompoundNBT childTag = children.getCompoundTagAt(i);
                 IFormula formula = ShapeCardItem.createCorrectFormula(childTag);

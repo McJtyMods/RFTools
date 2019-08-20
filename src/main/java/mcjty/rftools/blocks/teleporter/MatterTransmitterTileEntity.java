@@ -14,10 +14,10 @@ import mcjty.lib.varia.WorldTools;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ITickable;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -29,7 +29,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity implements MachineInformation, ITickable {
+public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity implements MachineInformation, ITickableTileEntity {
 
     public static final String CMD_ADDPLAYER = "transmitter.addPlayer";
     public static final String CMD_DELPLAYER = "transmitter.delPlayer";
@@ -210,7 +210,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         once = tagCompound.getBoolean("once");
 
         allowedPlayers.clear();
-        NBTTagList playerList = tagCompound.getTagList("players", Constants.NBT.TAG_STRING);
+        ListNBT playerList = tagCompound.getTagList("players", Constants.NBT.TAG_STRING);
         if (playerList != null) {
             for (int i = 0 ; i < playerList.tagCount() ; i++) {
                 String player = playerList.getStringTagAt(i);
@@ -256,9 +256,9 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
         tagCompound.setBoolean("hideBeam", beamHidden);
         tagCompound.setBoolean("once", once);
 
-        NBTTagList playerTagList = new NBTTagList();
+        ListNBT playerTagList = new ListNBT();
         for (String player : allowedPlayers) {
-            playerTagList.appendTag(new NBTTagString(player));
+            playerTagList.appendTag(new StringNBT(player));
         }
         tagCompound.setTag("players", playerTagList);
     }

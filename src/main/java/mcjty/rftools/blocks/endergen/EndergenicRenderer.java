@@ -1,21 +1,21 @@
 package mcjty.rftools.blocks.endergen;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import mcjty.lib.client.RenderGlowEffect;
 import mcjty.lib.client.RenderHelper;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.hud.HudRenderer;
 import mcjty.rftools.items.smartwrench.SmartWrenchItem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import org.lwjgl.opengl.GL11;
 
-public class EndergenicRenderer extends TileEntitySpecialRenderer<EndergenicTileEntity> {
+public class EndergenicRenderer extends TileEntityRenderer<EndergenicTileEntity> {
 
     private ResourceLocation halo = new ResourceLocation(RFTools.MODID, "textures/entities/floatingpearl.png");
     private ResourceLocation whiteflash = new ResourceLocation(RFTools.MODID, "textures/entities/whiteflash.png");

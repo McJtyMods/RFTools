@@ -1,5 +1,6 @@
 package mcjty.rftools;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import mcjty.lib.api.information.IMachineInformation;
 import mcjty.lib.api.smartwrench.SmartWrenchMode;
 import mcjty.lib.client.BlockOutlineRenderer;
@@ -21,7 +22,6 @@ import mcjty.rftools.shapes.ShapeDataManagerClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;

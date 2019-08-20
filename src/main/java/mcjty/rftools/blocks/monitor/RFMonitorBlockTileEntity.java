@@ -9,16 +9,16 @@ import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ITickable;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITickable {
+public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITickableTileEntity {
     // Data that is saved
     private BlockPos monitor;
     private RFMonitorMode alarmMode = RFMonitorMode.MODE_OFF;
@@ -252,7 +252,7 @@ public class RFMonitorBlockTileEntity extends GenericTileEntity implements ITick
     }
 
     @Override
-    public int getRedstoneOutput(BlockState state, IBlockAccess world, BlockPos pos, Direction side) {
+    public int getRedstoneOutput(BlockState state, IBlockReader world, BlockPos pos, Direction side) {
         Direction direction = state.getValue(BaseBlock.FACING);
         if (side == direction) {
             return isPowered() ? 15 : 0;

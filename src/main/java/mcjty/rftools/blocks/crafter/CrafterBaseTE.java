@@ -14,14 +14,14 @@ import mcjty.rftools.craftinggrid.CraftingRecipe;
 import mcjty.rftools.items.storage.StorageFilterCache;
 import mcjty.rftools.items.storage.StorageFilterItem;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ITickable;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -34,7 +34,7 @@ import java.util.Map;
 import static mcjty.rftools.craftinggrid.CraftingRecipe.CraftMode.EXTC;
 import static mcjty.rftools.craftinggrid.CraftingRecipe.CraftMode.INT;
 
-public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements ITickable, DefaultSidedInventory,
+public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements ITickableTileEntity, DefaultSidedInventory,
         JEIRecipeAcceptor {
     public static final int SPEED_SLOW = 0;
     public static final int SPEED_FAST = 1;
@@ -60,7 +60,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     // any of its inventories or recipes change.
     /*package*/ boolean noRecipesWork = false;
 
-    private InventoryCrafting workInventory = new InventoryCrafting(new Container() {
+    private CraftingInventory workInventory = new CraftingInventory(new Container() {
         @SuppressWarnings("NullableProblems")
         @Override
         public boolean canInteractWith(PlayerEntity var1) {
@@ -101,7 +101,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     public void selectRecipe(int index) {
         CraftingRecipe recipe = recipes[index];
         setInventorySlotContents(CrafterContainer.SLOT_CRAFTOUTPUT, recipe.getResult());
-        InventoryCrafting inv = recipe.getInventory();
+        CraftingInventory inv = recipe.getInventory();
         int size = inv.getSizeInventory();
         for (int i = 0 ; i < size ; ++i) {
             setInventorySlotContents(CrafterContainer.SLOT_CRAFTINPUT + i, inv.getStackInSlot(i));
@@ -232,7 +232,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     }
 
     private void readGhostBufferFromNBT(CompoundNBT tagCompound) {
-        NBTTagList bufferTagList = tagCompound.getTagList("GItems", Constants.NBT.TAG_COMPOUND);
+        ListNBT bufferTagList = tagCompound.getTagList("GItems", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
             CompoundNBT CompoundNBT = bufferTagList.getCompoundTagAt(i);
             ghostSlots.set(i, new ItemStack(CompoundNBT));
@@ -240,7 +240,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     }
 
     private void readRecipesFromNBT(CompoundNBT tagCompound) {
-        NBTTagList recipeTagList = tagCompound.getTagList("Recipes", Constants.NBT.TAG_COMPOUND);
+        ListNBT recipeTagList = tagCompound.getTagList("Recipes", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < recipeTagList.tagCount() ; i++) {
             CompoundNBT CompoundNBT = recipeTagList.getCompoundTagAt(i);
             recipes[i].readFromNBT(CompoundNBT);
@@ -257,7 +257,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     }
 
     private void writeGhostBufferToNBT(CompoundNBT tagCompound) {
-        NBTTagList bufferTagList = new NBTTagList();
+        ListNBT bufferTagList = new ListNBT();
         for (ItemStack stack : ghostSlots) {
             CompoundNBT CompoundNBT = new CompoundNBT();
             if (!stack.isEmpty()) {
@@ -269,7 +269,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
     }
 
     private void writeRecipesToNBT(CompoundNBT tagCompound) {
-        NBTTagList recipeTagList = new NBTTagList();
+        ListNBT recipeTagList = new ListNBT();
         for (CraftingRecipe recipe : recipes) {
             CompoundNBT CompoundNBT = new CompoundNBT();
             recipe.writeToNBT(CompoundNBT);
@@ -388,7 +388,7 @@ public class CrafterBaseTE extends GenericEnergyReceiverTileEntity implements IT
 
     private boolean testAndConsumeCraftingItems(CraftingRecipe craftingRecipe, Map<Integer, ItemStack> undo, boolean strictDamage) {
         int keep = craftingRecipe.isKeepOne() ? 1 : 0;
-        InventoryCrafting inventory = craftingRecipe.getInventory();
+        CraftingInventory inventory = craftingRecipe.getInventory();
 
         for (int i = 0 ; i < inventory.getSizeInventory() ; i++) {
             ItemStack stack = inventory.getStackInSlot(i);

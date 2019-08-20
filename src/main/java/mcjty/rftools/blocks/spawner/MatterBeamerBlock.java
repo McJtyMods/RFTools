@@ -10,7 +10,7 @@ import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.state.BooleanProperty;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -22,7 +22,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.ChunkCache;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.common.Optional;
@@ -37,7 +37,7 @@ import java.util.function.BiFunction;
 //        @Optional.Interface(iface = "crazypants.enderio.api.redstone.IRedstoneConnectable", modid = "EnderIO")})
 public class MatterBeamerBlock extends GenericRFToolsBlock<MatterBeamerTileEntity, MatterBeamerContainer> implements Infusable /*, IRedstoneConnectable*/ {
 
-    public static final PropertyBool WORKING = PropertyBool.create("working");
+    public static final BooleanProperty WORKING = BooleanProperty.create("working");
 
     public MatterBeamerBlock() {
         super(Material.IRON, MatterBeamerTileEntity.class, MatterBeamerContainer::new, "matter_beamer", true);
@@ -136,7 +136,7 @@ public class MatterBeamerBlock extends GenericRFToolsBlock<MatterBeamerTileEntit
     }
 
     @Override
-    public BlockState getActualState(BlockState state, IBlockAccess world, BlockPos pos) {
+    public BlockState getActualState(BlockState state, IBlockReader world, BlockPos pos) {
         TileEntity te = world instanceof ChunkCache ? ((ChunkCache)world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) : world.getTileEntity(pos);
         boolean working = false;
         if (te instanceof MatterBeamerTileEntity) {

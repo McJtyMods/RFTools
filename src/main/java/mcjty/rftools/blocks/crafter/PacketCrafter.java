@@ -5,7 +5,7 @@ import mcjty.lib.network.NetworkTools;
 import mcjty.lib.thirteen.Context;
 import mcjty.lib.varia.Logging;
 import mcjty.rftools.craftinggrid.CraftingRecipe;
-import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -74,7 +74,7 @@ public class PacketCrafter implements IMessage {
         fromBytes(buf);
     }
 
-    public PacketCrafter(BlockPos pos, int recipeIndex, InventoryCrafting inv, ItemStack result, boolean keepOne, CraftingRecipe.CraftMode craftInternal) {
+    public PacketCrafter(BlockPos pos, int recipeIndex, CraftingInventory inv, ItemStack result, boolean keepOne, CraftingRecipe.CraftMode craftInternal) {
         this.pos = pos;
         this.recipeIndex = recipeIndex;
         this.items = new ItemStack[10];

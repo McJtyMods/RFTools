@@ -4,7 +4,7 @@ import mcjty.lib.varia.ItemStackList;
 import mcjty.rftools.blocks.storage.sorters.ModItemSorter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -29,7 +29,7 @@ public class StorageFilterCache {
             nbtMode = tagCompound.getBoolean("nbtMode");
             modMode = tagCompound.getBoolean("modMode");
             blacklistMode = "Black".equals(tagCompound.getString("blacklistMode"));
-            NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+            ListNBT bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
             int cnt = 0;
             for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {
                 CompoundNBT CompoundNBT = bufferTagList.getCompoundTagAt(i);

@@ -8,8 +8,8 @@ import mcjty.rftools.blocks.environmental.NoTeleportAreaManager;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.potion.Effect;
 import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
@@ -23,8 +23,8 @@ public class TeleportationTools {
     public static final int STATUS_WARN = 1;
     public static final int STATUS_UNKNOWN = 2;
 
-    public static Potion confusion;
-    public static Potion harm;
+    public static Effect confusion;
+    public static Effect harm;
     public static Potion wither;
 
     public static void getPotions() {
@@ -40,47 +40,47 @@ public class TeleportationTools {
         switch (severity) {
             case 1:
                 if (boostNeeded) {
-                    player.addPotionEffect(new PotionEffect(confusion, 100));
-                    player.addPotionEffect(new PotionEffect(harm, 5));
+                    player.addPotionEffect(new Effect(confusion, 100));
+                    player.addPotionEffect(new Effect(harm, 5));
                 }
                 break;
             case 2:
-                player.addPotionEffect(new PotionEffect(harm, 100));
+                player.addPotionEffect(new Effect(harm, 100));
                 break;
             case 3:
-                player.addPotionEffect(new PotionEffect(harm, 100));
+                player.addPotionEffect(new Effect(harm, 100));
                 player.attackEntityFrom(DamageSource.GENERIC, 0.5f);
                 break;
             case 4:
-                player.addPotionEffect(new PotionEffect(harm, 200));
+                player.addPotionEffect(new Effect(harm, 200));
                 player.attackEntityFrom(DamageSource.GENERIC, 0.5f);
                 break;
             case 5:
-                player.addPotionEffect(new PotionEffect(harm, 200));
+                player.addPotionEffect(new Effect(harm, 200));
                 player.attackEntityFrom(DamageSource.GENERIC, 1.0f);
                 break;
             case 6:
-                player.addPotionEffect(new PotionEffect(harm, 300));
+                player.addPotionEffect(new Effect(harm, 300));
                 player.attackEntityFrom(DamageSource.GENERIC, 1.0f);
                 break;
             case 7:
-                player.addPotionEffect(new PotionEffect(harm, 300));
-                player.addPotionEffect(new PotionEffect(wither, 200));
+                player.addPotionEffect(new Effect(harm, 300));
+                player.addPotionEffect(new Effect(wither, 200));
                 player.attackEntityFrom(DamageSource.GENERIC, 2.0f);
                 break;
             case 8:
-                player.addPotionEffect(new PotionEffect(harm, 400));
-                player.addPotionEffect(new PotionEffect(wither, 300));
+                player.addPotionEffect(new Effect(harm, 400));
+                player.addPotionEffect(new Effect(wither, 300));
                 player.attackEntityFrom(DamageSource.GENERIC, 2.0f);
                 break;
             case 9:
-                player.addPotionEffect(new PotionEffect(harm, 400));
-                player.addPotionEffect(new PotionEffect(wither, 400));
+                player.addPotionEffect(new Effect(harm, 400));
+                player.addPotionEffect(new Effect(wither, 400));
                 player.attackEntityFrom(DamageSource.GENERIC, 3.0f);
                 break;
             case 10:
-                player.addPotionEffect(new PotionEffect(harm, 500));
-                player.addPotionEffect(new PotionEffect(wither, 500));
+                player.addPotionEffect(new Effect(harm, 500));
+                player.addPotionEffect(new Effect(wither, 500));
                 player.attackEntityFrom(DamageSource.GENERIC, 3.0f);
                 break;
         }

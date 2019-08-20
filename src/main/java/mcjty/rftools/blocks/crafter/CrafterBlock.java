@@ -11,10 +11,10 @@ import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Container;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -47,8 +47,8 @@ public class CrafterBlock extends GenericRFToolsBlock<CrafterBaseTE, CrafterCont
         super.addInformation(itemStack, player, list, whatIsThis);
         CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
-            NBTTagList bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
-            NBTTagList recipeTagList = tagCompound.getTagList("Recipes", Constants.NBT.TAG_COMPOUND);
+            ListNBT bufferTagList = tagCompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+            ListNBT recipeTagList = tagCompound.getTagList("Recipes", Constants.NBT.TAG_COMPOUND);
 
             int rc = 0;
             for (int i = 0 ; i < bufferTagList.tagCount() ; i++) {

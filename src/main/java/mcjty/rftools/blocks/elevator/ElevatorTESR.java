@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
@@ -16,14 +16,14 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.WorldType;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import org.lwjgl.opengl.GL11;
 
-public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> {
+public class ElevatorTESR extends TileEntityRenderer<ElevatorTileEntity> {
 
     private static final BlockRenderLayer[] LAYERS = BlockRenderLayer.values();
 
@@ -94,7 +94,7 @@ public class ElevatorTESR extends TileEntitySpecialRenderer<ElevatorTileEntity> 
         return te.isMoving();
     }
 
-    private static boolean renderBlock(BlockRendererDispatcher dispatcher, BlockState state, BlockPos pos, IBlockAccess blockAccess, BufferBuilder worldRendererIn) {
+    private static boolean renderBlock(BlockRendererDispatcher dispatcher, BlockState state, BlockPos pos, IBlockReader blockAccess, BufferBuilder worldRendererIn) {
         try {
             EnumBlockRenderType enumblockrendertype = state.getRenderType();
 

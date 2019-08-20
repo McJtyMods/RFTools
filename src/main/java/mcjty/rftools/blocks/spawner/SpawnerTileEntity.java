@@ -21,7 +21,7 @@ import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -280,7 +280,7 @@ public class SpawnerTileEntity extends GenericEnergyReceiverTileEntity implement
 //        }
 
 
-        EntityLiving entityLiving = EntityTools.createEntity(getWorld(), mobId);
+        MobEntity entityLiving = EntityTools.createEntity(getWorld(), mobId);
         if (entityLiving == null) {
             Logging.logError("Fail to spawn mob: " + mobId);
             return;

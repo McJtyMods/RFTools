@@ -1,14 +1,14 @@
 package mcjty.rftools.blocks.screens;
 
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.entity.model.RendererModel;
+import net.minecraft.client.renderer.model.Model;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class ModelScreen extends ModelBase {
+public class ModelScreen extends Model {
 
-    private ModelRenderer renderer = new ModelRenderer(this, 0, 0);
+    private RendererModel renderer = new RendererModel(this, 0, 0);
 
     public ModelScreen(int size) {
         if (size == ScreenTileEntity.SIZE_HUGE) {

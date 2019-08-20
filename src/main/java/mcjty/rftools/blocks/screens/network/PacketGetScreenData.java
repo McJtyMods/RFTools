@@ -11,7 +11,7 @@ import mcjty.rftools.blocks.screens.ScreenTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 import java.util.Map;
 import java.util.function.Supplier;
@@ -63,7 +63,7 @@ public class PacketGetScreenData implements IMessage {
             }
             Map<Integer, IModuleData> screenData = ((ScreenTileEntity) te).getScreenData(millis);
 
-            SimpleNetworkWrapper wrapper = PacketHandler.modNetworking.get(modid);
+            SimpleChannel wrapper = PacketHandler.modNetworking.get(modid);
             PacketReturnScreenData msg = new PacketReturnScreenData(pos, screenData);
             wrapper.sendTo(msg, ctx.getSender());
         });
