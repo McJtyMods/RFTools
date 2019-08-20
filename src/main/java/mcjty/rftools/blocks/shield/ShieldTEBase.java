@@ -22,7 +22,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
@@ -685,7 +687,7 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
             return;
         }
 
-        float squaredDistance = (float) getPos().distanceSq(pos.getX(), pos.getY(), pos.getZ());
+        float squaredDistance = (float) getPos().distanceSq(pos);
         if (squaredDistance > ShieldConfiguration.maxDisjointShieldDistance.get() * ShieldConfiguration.maxDisjointShieldDistance.get()) {
             Logging.message(player, TextFormatting.YELLOW + "This template is too far to connect to the shield!");
             return;
@@ -913,25 +915,25 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
         powerLevel = tagCompound.getByte("powered");
         shieldComposed = tagCompound.getBoolean("composed");
         shieldActive = tagCompound.getBoolean("active");
-        powerTimeout = tagCompound.getInteger("powerTimeout");
-        if (tagCompound.hasKey("templateColor")) {
-            int templateColor = tagCompound.getInteger("templateColor");
+        powerTimeout = tagCompound.getInt("powerTimeout");
+        if (tagCompound.contains("templateColor")) {
+            int templateColor = tagCompound.getInt("templateColor");
             templateState = ShieldSetup.shieldTemplateBlock.getDefaultState().withProperty(ShieldTemplateBlock.COLOR, ShieldTemplateBlock.TemplateColor.values()[templateColor]);
-        } else if (tagCompound.hasKey("templateMeta")) {
+        } else if (tagCompound.contains("templateMeta")) {
             // Deprecated @todo remove with 1.13
-            int meta = tagCompound.getInteger("templateMeta");
+            int meta = tagCompound.getInt("templateMeta");
             templateState = ShieldSetup.shieldTemplateBlock.getStateFromMeta(meta);
         } else {
             templateState = Blocks.AIR.getDefaultState();
         }
 
-        shieldRenderingMode = ShieldRenderingMode.values()[tagCompound.getInteger("visMode")];
+        shieldRenderingMode = ShieldRenderingMode.values()[tagCompound.getInt("visMode")];
         rsMode = RedstoneMode.values()[(tagCompound.getByte("rsMode"))];
         damageMode = DamageTypeMode.values()[(tagCompound.getByte("damageMode"))];
-        camoRenderPass = tagCompound.getInteger("camoRenderPass");
+        camoRenderPass = tagCompound.getInt("camoRenderPass");
         blockLight = tagCompound.getBoolean("blocklight");
 
-        shieldColor = tagCompound.getInteger("shieldColor");
+        shieldColor = tagCompound.getInt("shieldColor");
         if (shieldColor == 0) {
             shieldColor = 0x96ffc8;
         }
@@ -941,21 +943,21 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
 
     @Override
     public void writeClientDataToNBT(CompoundNBT tagCompound) {
-        tagCompound.setByte("powered", (byte) powerLevel);
-        tagCompound.setBoolean("composed", shieldComposed);
-        tagCompound.setBoolean("active", shieldActive);
-        tagCompound.setInteger("powerTimeout", powerTimeout);
+        tagCompound.putByte("powered", (byte) powerLevel);
+        tagCompound.putBoolean("composed", shieldComposed);
+        tagCompound.putBoolean("active", shieldActive);
+        tagCompound.putInt("powerTimeout", powerTimeout);
         if (templateState.getMaterial() != Material.AIR) {
-            tagCompound.setInteger("templateColor", templateState.getValue(ShieldTemplateBlock.COLOR).ordinal());
+            tagCompound.putInt("templateColor", templateState.getValue(ShieldTemplateBlock.COLOR).ordinal());
         }
 
-        tagCompound.setInteger("visMode", shieldRenderingMode.ordinal());
-        tagCompound.setByte("rsMode", (byte) rsMode.ordinal());
-        tagCompound.setByte("damageMode", (byte) damageMode.ordinal());
+        tagCompound.putInt("visMode", shieldRenderingMode.ordinal());
+        tagCompound.putByte("rsMode", (byte) rsMode.ordinal());
+        tagCompound.putByte("damageMode", (byte) damageMode.ordinal());
 
-        tagCompound.setInteger("camoRenderPass", camoRenderPass);
-        tagCompound.setBoolean("blocklight", blockLight);
-        tagCompound.setInteger("shieldColor", shieldColor);
+        tagCompound.putInt("camoRenderPass", camoRenderPass);
+        tagCompound.putBoolean("blocklight", blockLight);
+        tagCompound.putInt("shieldColor", shieldColor);
 
         writeFiltersToNBT(tagCompound);
     }
@@ -965,14 +967,14 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
         super.readFromNBT(tagCompound);
         shieldComposed = tagCompound.getBoolean("composed");
         shieldActive = tagCompound.getBoolean("active");
-        powerTimeout = tagCompound.getInteger("powerTimeout");
+        powerTimeout = tagCompound.getInt("powerTimeout");
         if (!isShapedShield()) {
-            if (tagCompound.hasKey("templateColor")) {
-                int templateColor = tagCompound.getInteger("templateColor");
+            if (tagCompound.contains("templateColor")) {
+                int templateColor = tagCompound.getInt("templateColor");
                 templateState = ShieldSetup.shieldTemplateBlock.getDefaultState().withProperty(ShieldTemplateBlock.COLOR, ShieldTemplateBlock.TemplateColor.values()[templateColor]);
-            } else if (tagCompound.hasKey("templateMeta")) {
+            } else if (tagCompound.contains("templateMeta")) {
                 // Deprecated @todo remove with 1.13
-                int meta = tagCompound.getInteger("templateMeta");
+                int meta = tagCompound.getInt("templateMeta");
                 templateState = ShieldSetup.shieldTemplateBlock.getStateFromMeta(meta);
             } else {
                 templateState = Blocks.AIR.getDefaultState();
@@ -983,7 +985,7 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
 
         shieldBlocks.clear();
         blockStateTable.clear();
-        if (tagCompound.hasKey("relcoordsNew")) {
+        if (tagCompound.contains("relcoordsNew")) {
             byte[] byteArray = tagCompound.getByteArray("relcoordsNew");
             int j = 0;
             for (int i = 0; i < byteArray.length / 8; i++) {
@@ -999,7 +1001,7 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
             for (int i = 0 ; i < list.tagCount() ; i++) {
                 CompoundNBT tc = (CompoundNBT) list.get(i);
                 String b = tc.getString("b");
-                int m = tc.getInteger("m");
+                int m = tc.getInt("m");
                 Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(b));
                 if (block == null) {
                     block = Blocks.STONE;
@@ -1026,12 +1028,12 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
         super.readRestorableFromNBT(tagCompound);
         readBufferFromNBT(tagCompound, inventoryHelper);
 
-        shieldRenderingMode = ShieldRenderingMode.values()[tagCompound.getInteger("visMode")];
+        shieldRenderingMode = ShieldRenderingMode.values()[tagCompound.getInt("visMode")];
         damageMode = DamageTypeMode.values()[(tagCompound.getByte("damageMode"))];
-        camoRenderPass = tagCompound.getInteger("camoRenderPass");
+        camoRenderPass = tagCompound.getInt("camoRenderPass");
         blockLight = tagCompound.getBoolean("blocklight");
 
-        shieldColor = tagCompound.getInteger("shieldColor");
+        shieldColor = tagCompound.getInt("shieldColor");
         if (shieldColor == 0) {
             shieldColor = 0x96ffc8;
         }
@@ -1053,11 +1055,11 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
     @Override
     public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("composed", shieldComposed);
-        tagCompound.setBoolean("active", shieldActive);
-        tagCompound.setInteger("powerTimeout", powerTimeout);
+        tagCompound.putBoolean("composed", shieldComposed);
+        tagCompound.putBoolean("active", shieldActive);
+        tagCompound.putInt("powerTimeout", powerTimeout);
         if (templateState.getMaterial() != Material.AIR) {
-            tagCompound.setInteger("templateColor", templateState.getValue(ShieldTemplateBlock.COLOR).ordinal());
+            tagCompound.putInt("templateColor", templateState.getValue(ShieldTemplateBlock.COLOR).ordinal());
         }
         byte[] blocks = new byte[shieldBlocks.size() * 8];
         int j = 0;
@@ -1077,8 +1079,8 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
         NBTTagList list = new NBTTagList();
         for (BlockState state : blockStateTable) {
             CompoundNBT tc = new CompoundNBT();
-            tc.setString("b", state.getBlock().getRegistryName().toString());
-            tc.setInteger("m", state.getBlock().getMetaFromState(state));
+            tc.putString("b", state.getBlock().getRegistryName().toString());
+            tc.putInt("m", state.getBlock().getMetaFromState(state));
             list.appendTag(tc);
         }
         tagCompound.setTag("gstates", list);
@@ -1090,12 +1092,12 @@ public class ShieldTEBase extends GenericTileEntity implements SmartWrenchSelect
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
         super.writeRestorableToNBT(tagCompound);
         writeBufferToNBT(tagCompound, inventoryHelper);
-        tagCompound.setInteger("visMode", shieldRenderingMode.ordinal());
-        tagCompound.setByte("damageMode", (byte) damageMode.ordinal());
+        tagCompound.putInt("visMode", shieldRenderingMode.ordinal());
+        tagCompound.putByte("damageMode", (byte) damageMode.ordinal());
 
-        tagCompound.setInteger("camoRenderPass", camoRenderPass);
-        tagCompound.setBoolean("blocklight", blockLight);
-        tagCompound.setInteger("shieldColor", shieldColor);
+        tagCompound.putInt("camoRenderPass", camoRenderPass);
+        tagCompound.putBoolean("blocklight", blockLight);
+        tagCompound.putInt("shieldColor", shieldColor);
 
         writeFiltersToNBT(tagCompound);
     }

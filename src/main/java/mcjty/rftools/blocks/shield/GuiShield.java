@@ -1,6 +1,7 @@
 package mcjty.rftools.blocks.shield;
 
 import mcjty.lib.base.StyleConfig;
+import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.events.DefaultSelectionEvent;
@@ -12,7 +13,6 @@ import mcjty.lib.gui.widgets.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
-import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.RedstoneMode;
@@ -30,7 +30,7 @@ import java.util.List;
 
 import static mcjty.rftools.blocks.shield.ShieldTEBase.*;
 
-public class GuiShield extends GenericGuiContainer<ShieldTEBase> {
+public class GuiShield extends GenericGuiContainer<ShieldTEBase, ShieldContainer> {
     public static final int SHIELD_WIDTH = 256;
     public static final int SHIELD_HEIGHT = 224;
 
