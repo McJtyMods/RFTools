@@ -1,25 +1,25 @@
 package mcjty.rftools.blocks.endergen;
 
-import mcjty.lib.thirteen.ConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 public class EndergenicConfiguration {
     public static final String CATEGORY_ENDERGENIC = "endergenic";
     // This value indicates the chance (with 0 being no chance and 1000 being 100% chance) that an
     // endergenic pearl is lost while holding it.
-    public static ConfigSpec.IntValue chanceLost;
+    public static ForgeConfigSpec.IntValue chanceLost;
     // This value indicates how much RF is being consumed every tick to try to keep the endergenic pearl.
-    public static ConfigSpec.IntValue rfToHoldPearl;
+    public static ForgeConfigSpec.IntValue rfToHoldPearl;
     // This value indicates how much RF will be kept in the internal buffer (not given to conduits and machines next to it) as
     // a reserve to be able to hold pearls.
-    public static ConfigSpec.IntValue keepRfInBuffer;
+    public static ForgeConfigSpec.IntValue keepRfInBuffer;
     // This value indicates how much RF/tick this block can send out to neighbours
-    public static ConfigSpec.IntValue rfOutput;
-    public static ConfigSpec.IntValue goodParticleCount;
-    public static ConfigSpec.IntValue badParticleCount;
+    public static ForgeConfigSpec.IntValue rfOutput;
+    public static ForgeConfigSpec.IntValue goodParticleCount;
+    public static ForgeConfigSpec.IntValue badParticleCount;
 
-    public static ConfigSpec.DoubleValue powergenFactor;
+    public static ForgeConfigSpec.DoubleValue powergenFactor;
 
-    public static void init(ConfigSpec.Builder SERVER_BUILDER, ConfigSpec.Builder CLIENT_BUILDER) {
+    public static void init(ForgeConfigSpec.Builder SERVER_BUILDER, ForgeConfigSpec.Builder CLIENT_BUILDER) {
         SERVER_BUILDER.comment("Settings for the endergenic generator").push(CATEGORY_ENDERGENIC);
         CLIENT_BUILDER.comment("Settings for the endergenic generator").push(CATEGORY_ENDERGENIC);
 

@@ -3,6 +3,8 @@ package mcjty.rftools;
 import mcjty.rftools.blocks.endergen.EnderMonitorTileEntity;
 import mcjty.rftools.blocks.endergen.EndergenicTileEntity;
 import mcjty.rftools.blocks.endergen.PearlInjectorTileEntity;
+import mcjty.rftools.blocks.logic.sequencer.SequencerTileEntity;
+import mcjty.rftools.blocks.logic.timer.TimerTileEntity;
 
 import java.util.ArrayList;
 import java.util.List;

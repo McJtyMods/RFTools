@@ -8,19 +8,11 @@ import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.TickOrderHandler;
-import mcjty.rftools.compat.theoneprobe.TheOneProbeSupport;
-import mcjty.theoneprobe.api.ElementAlignment;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.ProbeMode;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Optional;
+
+import static mcjty.rftools.blocks.logic.LogicBlockSetup.TYPE_SEQUENCER;
 
 public class SequencerTileEntity extends LogicTileEntity implements ITickableTileEntity, TickOrderHandler.ICheckStateServer {
 
@@ -48,6 +40,7 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickableTil
     private int timer = 0;
 
     public SequencerTileEntity() {
+        super(TYPE_SEQUENCER);
     }
 
     public int getDelay() {
@@ -135,8 +128,8 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickableTil
     }
 
     @Override
-    public void update() {
-        if (!getWorld().isRemote) {
+    public void tick() {
+        if (!world.isRemote) {
             TickOrderHandler.queueSequencer(this);
         }
     }
@@ -165,7 +158,7 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickableTil
 
     @Override
     public int getDimension() {
-        return world.provider.getDimension();
+        return world.getDimension().getType().getId();
     }
 
     public boolean checkOutput() {
@@ -255,25 +248,25 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickableTil
     }
 
     @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
-        super.readFromNBT(tagCompound);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
         powerOutput = tagCompound.getBoolean("rs") ? 15 : 0;
-        currentStep = tagCompound.getInteger("step");
+        currentStep = tagCompound.getInt("step");
         prevIn = tagCompound.getBoolean("prevIn");
-        timer = tagCompound.getInteger("timer");
+        timer = tagCompound.getInt("timer");
+        readRestorableFromNBT(tagCompound);
     }
 
-    @Override
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
+        // @todo 1.14 loot table
         cycleBits = tagCompound.getLong("bits");
-        int m = tagCompound.getInteger("mode");
+        int m = tagCompound.getInt("mode");
         mode = SequencerMode.values()[m];
-        delay = tagCompound.getInteger("delay");
+        delay = tagCompound.getInt("delay");
         if (delay == 0) {
             delay = 1;
         }
-        stepCount = tagCompound.getInteger("stepCount");
+        stepCount = tagCompound.getInt("stepCount");
         if (stepCount == 0) {
             stepCount = 64;
         }
@@ -281,27 +274,27 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickableTil
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("rs", powerOutput > 0);
-        tagCompound.setInteger("step", currentStep);
-        tagCompound.setBoolean("prevIn", prevIn);
-        tagCompound.setInteger("timer", timer);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
+        tagCompound.putBoolean("rs", powerOutput > 0);
+        tagCompound.putInt("step", currentStep);
+        tagCompound.putBoolean("prevIn", prevIn);
+        tagCompound.putInt("timer", timer);
+        writeRestorableToNBT(tagCompound);
         return tagCompound;
     }
 
-    @Override
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
-        tagCompound.setLong("bits", cycleBits);
-        tagCompound.setInteger("mode", mode.ordinal());
-        tagCompound.setInteger("delay", delay);
-        tagCompound.setInteger("stepCount", stepCount);
-        tagCompound.setBoolean("endState", endState);
+        // @todo 1.14 loot table
+        tagCompound.putLong("bits", cycleBits);
+        tagCompound.putInt("mode", mode.ordinal());
+        tagCompound.putInt("delay", delay);
+        tagCompound.putInt("stepCount", stepCount);
+        tagCompound.putBoolean("endState", endState);
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+    public boolean execute(PlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
@@ -347,18 +340,18 @@ public class SequencerTileEntity extends LogicTileEntity implements ITickableTil
         return false;
     }
 
-    @Override
-    @Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, BlockState blockState, IProbeHitData data) {
-        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
-        IProbeInfo horizontal = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
-        horizontal.text(TextFormatting.GREEN + "Mode: " + getMode().getDescription());
-        TheOneProbeSupport.addSequenceElement(horizontal, getCycleBits(),
-                getCurrentStep(), mode == ProbeMode.EXTENDED);
-        int currentStep = getCurrentStep();
-        boolean rc = checkOutput();
-        probeInfo.text(TextFormatting.GREEN + "Step: " + TextFormatting.WHITE + currentStep +
-                TextFormatting.GREEN + " -> " + TextFormatting.WHITE + (rc ? "on" : "off"));
-    }
+//    @Override
+//    @Optional.Method(modid = "theoneprobe")
+//    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, BlockState blockState, IProbeHitData data) {
+//        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+//        IProbeInfo horizontal = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
+//        horizontal.text(TextFormatting.GREEN + "Mode: " + getMode().getDescription());
+//        TheOneProbeSupport.addSequenceElement(horizontal, getCycleBits(),
+//                getCurrentStep(), mode == ProbeMode.EXTENDED);
+//        int currentStep = getCurrentStep();
+//        boolean rc = checkOutput();
+//        probeInfo.text(TextFormatting.GREEN + "Step: " + TextFormatting.WHITE + currentStep +
+//                TextFormatting.GREEN + " -> " + TextFormatting.WHITE + (rc ? "on" : "off"));
+//    }
 
 }

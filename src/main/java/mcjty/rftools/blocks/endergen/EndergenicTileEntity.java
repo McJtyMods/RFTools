@@ -12,16 +12,15 @@ import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.lib.varia.EnergyTools;
 import mcjty.lib.varia.Logging;
+import mcjty.lib.varia.OrientationTools;
 import mcjty.rftools.ClientCommandHandler;
 import mcjty.rftools.RFTools;
 import mcjty.rftools.TickOrderHandler;
 import mcjty.rftools.hud.IHudSupport;
 import mcjty.rftools.network.PacketGetHudLog;
 import mcjty.rftools.network.RFToolsMessages;
-import mcjty.theoneprobe.api.*;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Items;
-import net.minecraft.item.ItemStack;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
@@ -35,6 +34,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -349,7 +349,7 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
 
     @Override
     public int getDimension() {
-        return world.provider.getDimension();
+        return world.getDimension().getType().getId();
     }
 
     @Override
@@ -395,7 +395,7 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
      */
     private void fireMonitors(EnderMonitorMode mode) {
         BlockPos pos = getPos();
-        for (Direction dir : Direction.VALUES) {
+        for (Direction dir : OrientationTools.DIRECTION_VALUES) {
             BlockPos c = pos.offset(dir);
             TileEntity te = getWorld().getTileEntity(c);
             if (te instanceof EnderMonitorTileEntity) {
@@ -414,7 +414,7 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
             return;
         }
 
-        for (Direction dir : Direction.VALUES) {
+        for (Direction dir : OrientationTools.DIRECTION_VALUES) {
             BlockPos o = getPos().offset(dir);
             TileEntity te = getWorld().getTileEntity(o);
             Direction opposite = dir.getOpposite();
@@ -657,42 +657,42 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
     }
 
     @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
-        super.readFromNBT(tagCompound);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
 
         chargingMode = tagCompound.getInt("charging");
         currentAge = tagCompound.getInt("age");
-        destination = BlockPosTools.readFromNBT(tagCompound, "dest");
+        destination = BlockPosTools.read(tagCompound, "dest");
         distance = tagCompound.getInt("distance");
         prevIn = tagCompound.getBoolean("prevIn");
         badCounter = tagCompound.getByte("bad");
         goodCounter = tagCompound.getByte("good");
         pearls.clear();
-        ListNBT list = tagCompound.getTagList("pearls", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < list.tagCount(); i++) {
-            CompoundNBT tc = list.getCompoundTagAt(i);
+        ListNBT list = tagCompound.getList("pearls", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < list.size(); i++) {
+            CompoundNBT tc = list.getCompound(i);
             EndergenicPearl pearl = new EndergenicPearl(tc);
             pearls.add(pearl);
         }
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        super.writeToNBT(tagCompound);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
 
         tagCompound.putInt("charging", chargingMode);
         tagCompound.putInt("age", currentAge);
-        BlockPosTools.writeToNBT(tagCompound, "dest", destination);
+        BlockPosTools.write(tagCompound, "dest", destination);
         tagCompound.putInt("distance", distance);
         tagCompound.putBoolean("prevIn", prevIn);
-        tagCompound.setByte("bad", (byte) badCounter);
-        tagCompound.setByte("good", (byte) goodCounter);
+        tagCompound.putByte("bad", (byte) badCounter);
+        tagCompound.putByte("good", (byte) goodCounter);
 
         ListNBT pearlList = new ListNBT();
         for (EndergenicPearl pearl : pearls) {
-            pearlList.appendTag(pearl.getTagCompound());
+            pearlList.add(pearl.getTagCompound());
         }
-        tagCompound.setTag("pearls", pearlList);
+        tagCompound.put("pearls", pearlList);
         return tagCompound;
     }
 
@@ -758,7 +758,7 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
     @Override
     public boolean wrenchUse(World world, BlockPos pos, Direction side, PlayerEntity player) {
         if (world.isRemote) {
-            SoundEvent pling = SoundEvent.REGISTRY.getObject(new ResourceLocation("block.note.pling"));
+            SoundEvent pling = ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation("block.note.pling"));
             world.playSound(player, pos, pling, SoundCategory.BLOCKS, 1.0f, 1.0f);
             useWrench(player);
         }
@@ -766,35 +766,35 @@ public class EndergenicTileEntity extends GenericTileEntity implements ITickable
     }
 
 
-    @Override
-    @net.minecraftforge.fml.common.Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
-        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
-        if (mode == ProbeMode.EXTENDED) {
-            IItemStyle style = probeInfo.defaultItemStyle().width(16).height(13);
-            ILayoutStyle layoutStyle = probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER);
-            probeInfo.text(TextFormatting.BLUE + "Stats over the last 5 seconds:");
-            probeInfo.horizontal(layoutStyle)
-                    .item(new ItemStack(Items.REDSTONE), style)
-                    .text("Charged " + getLastChargeCounter() + " time(s)");
-            probeInfo.horizontal(layoutStyle)
-                    .item(new ItemStack(Items.ENDER_PEARL), style)
-                    .text("Fired " + getLastPearlsLaunched())
-                    .text(" / Lost " + getLastPearlsLost());
-            if (getLastPearlsLost() > 0) {
-                probeInfo.text(TextFormatting.RED + getLastPearlsLostReason());
-            }
-            if (getLastPearlArrivedAt() > -2) {
-                probeInfo.text("Last pearl arrived at " + getLastPearlArrivedAt());
-            }
-            probeInfo.horizontal()
-                    .text(TextFormatting.GREEN + "RF Gain " + getLastRfGained())
-                    .text(" / ")
-                    .text(TextFormatting.RED + "Lost " + getLastRfLost())
-                    .text(" (RF/t " + getLastRfPerTick() + ")");
-        } else {
-            probeInfo.text("(sneak to get statistics)");
-        }
-    }
+//    @Override
+//    @net.minecraftforge.fml.common.Optional.Method(modid = "theoneprobe")
+//    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
+//        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+//        if (mode == ProbeMode.EXTENDED) {
+//            IItemStyle style = probeInfo.defaultItemStyle().width(16).height(13);
+//            ILayoutStyle layoutStyle = probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER);
+//            probeInfo.text(TextFormatting.BLUE + "Stats over the last 5 seconds:");
+//            probeInfo.horizontal(layoutStyle)
+//                    .item(new ItemStack(Items.REDSTONE), style)
+//                    .text("Charged " + getLastChargeCounter() + " time(s)");
+//            probeInfo.horizontal(layoutStyle)
+//                    .item(new ItemStack(Items.ENDER_PEARL), style)
+//                    .text("Fired " + getLastPearlsLaunched())
+//                    .text(" / Lost " + getLastPearlsLost());
+//            if (getLastPearlsLost() > 0) {
+//                probeInfo.text(TextFormatting.RED + getLastPearlsLostReason());
+//            }
+//            if (getLastPearlArrivedAt() > -2) {
+//                probeInfo.text("Last pearl arrived at " + getLastPearlArrivedAt());
+//            }
+//            probeInfo.horizontal()
+//                    .text(TextFormatting.GREEN + "RF Gain " + getLastRfGained())
+//                    .text(" / ")
+//                    .text(TextFormatting.RED + "Lost " + getLastRfLost())
+//                    .text(" (RF/t " + getLastRfPerTick() + ")");
+//        } else {
+//            probeInfo.text("(sneak to get statistics)");
+//        }
+//    }
 
 }

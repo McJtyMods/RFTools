@@ -1,159 +1,148 @@
 package mcjty.rftools.blocks.logic;
 
-import mcjty.lib.blocks.GenericBlock;
-import mcjty.lib.builder.BlockFlags;
-import mcjty.lib.container.GenericContainer;
+import mcjty.lib.blocks.BaseBlock;
+import mcjty.lib.builder.BlockBuilder;
 import mcjty.lib.varia.ItemStackTools;
-import mcjty.rftools.blocks.ModBlocks;
 import mcjty.rftools.blocks.logic.analog.AnalogTileEntity;
-import mcjty.rftools.blocks.logic.analog.GuiAnalog;
 import mcjty.rftools.blocks.logic.counter.CounterTileEntity;
-import mcjty.rftools.blocks.logic.counter.GuiCounter;
 import mcjty.rftools.blocks.logic.digit.DigitTileEntity;
-import mcjty.rftools.blocks.logic.invchecker.GuiInvChecker;
 import mcjty.rftools.blocks.logic.invchecker.InvCheckerTileEntity;
-import mcjty.rftools.blocks.logic.sensor.GuiSensor;
 import mcjty.rftools.blocks.logic.sensor.SensorTileEntity;
-import mcjty.rftools.blocks.logic.sequencer.GuiSequencer;
 import mcjty.rftools.blocks.logic.sequencer.SequencerMode;
 import mcjty.rftools.blocks.logic.sequencer.SequencerTileEntity;
-import mcjty.rftools.blocks.logic.threelogic.GuiThreeLogic;
 import mcjty.rftools.blocks.logic.threelogic.ThreeLogicTileEntity;
-import mcjty.rftools.blocks.logic.timer.GuiTimer;
 import mcjty.rftools.blocks.logic.timer.TimerTileEntity;
 import mcjty.rftools.blocks.logic.wire.WireTileEntity;
 import mcjty.rftools.blocks.logic.wireless.RedstoneReceiverBlock;
 import mcjty.rftools.blocks.logic.wireless.RedstoneTransmitterBlock;
-import mcjty.rftools.setup.GuiProxy;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.registries.ObjectHolder;
 
 public class LogicBlockSetup {
     public static RedstoneTransmitterBlock redstoneTransmitterBlock;
     public static RedstoneReceiverBlock redstoneReceiverBlock;
 
-    public static GenericBlock<SequencerTileEntity, GenericContainer> sequencerBlock;
-    public static GenericBlock<CounterTileEntity, GenericContainer> counterBlock;
-    public static GenericBlock<ThreeLogicTileEntity, GenericContainer> threeLogicBlock;
-    public static GenericBlock<InvCheckerTileEntity, GenericContainer> invCheckerBlock;
-    public static GenericBlock<SensorTileEntity, GenericContainer> sensorBlock;
-    public static GenericBlock<AnalogTileEntity, GenericContainer> analogBlock;
-    public static GenericBlock<DigitTileEntity, GenericContainer> digitBlock;
-    public static GenericBlock<WireTileEntity, GenericContainer> wireBlock;
-    public static GenericBlock<TimerTileEntity, GenericContainer> timerBlock;
+    @ObjectHolder("rftools:sequencer_block")
+    public static BaseBlock sequencerBlock;
+
+    @ObjectHolder("rftools:counter_block")
+    public static BaseBlock counterBlock;
+
+    @ObjectHolder("rftools:logic_block")
+    public static BaseBlock threeLogicBlock;
+
+    @ObjectHolder("rftools:invchecker_block")
+    public static BaseBlock invCheckerBlock;
+
+    @ObjectHolder("rftools:sensor_block")
+    public static BaseBlock sensorBlock;
+
+    @ObjectHolder("rftools:analog_block")
+    public static BaseBlock analogBlock;
+
+    @ObjectHolder("rftools:digit_block")
+    public static BaseBlock digitBlock;
+
+    @ObjectHolder("rftools:wire_block")
+    public static BaseBlock wireBlock;
+
+    @ObjectHolder("rftools:timer_block")
+    public static BaseBlock timerBlock;
+
+    @ObjectHolder("rftools:sequencer")
+    public static TileEntityType<?> TYPE_SEQUENCER;
+
+    @ObjectHolder("rftools:timer")
+    public static TileEntityType<?> TYPE_TIMER;
 
     public static void init() {
         redstoneTransmitterBlock = new RedstoneTransmitterBlock();
         redstoneReceiverBlock = new RedstoneReceiverBlock();
 
-        sequencerBlock = ModBlocks.logicFactory.<SequencerTileEntity> builder("sequencer_block")
-                .tileEntityClass(SequencerTileEntity.class)
-                .guiId(GuiProxy.GUI_SEQUENCER)
-                .emptyContainer()
-                .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
+        sequencerBlock = new BaseBlock("sequencer_block", new BlockBuilder()
+                .tileEntitySupplier(SequencerTileEntity::new)
+//                .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.sequencer")
                 .infoExtendedParameter(ItemStackTools.intGetter("delay", 0))
-                .infoExtendedParameter(stack -> ItemStackTools.mapTag(stack, compound -> SequencerMode.values()[compound.getInteger("mode")].getDescription(), "<none>"))
-                .infoExtendedParameter(stack -> ItemStackTools.mapTag(stack, compound -> Long.toHexString(compound.getLong("bits")), "<unset>"))
-                .build();
-        counterBlock = ModBlocks.logicFactory.<CounterTileEntity> builder("counter_block")
-                .tileEntityClass(CounterTileEntity.class)
-                .guiId(GuiProxy.GUI_COUNTER)
-                .emptyContainer()
-                .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
+                .infoExtendedParameter(stack -> ItemStackTools.mapTag(stack, compound -> SequencerMode.values()[compound.getInt("mode")].getDescription(), "<none>"))
+                .infoExtendedParameter(stack -> ItemStackTools.mapTag(stack, compound -> Long.toHexString(compound.getLong("bits")), "<unset>")));
+        counterBlock = new BaseBlock("counter_block", new BlockBuilder()
+                .tileEntitySupplier(CounterTileEntity::new)
+//                .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.counter")
                 .infoExtendedParameter(ItemStackTools.intGetter("counter", 0))
-                .infoExtendedParameter(ItemStackTools.intGetter("current", 0))
-                .build();
-        threeLogicBlock = ModBlocks.logicFactory.<ThreeLogicTileEntity> builder("logic_block")
-                .tileEntityClass(ThreeLogicTileEntity.class)
-                .guiId(GuiProxy.GUI_THREE_LOGIC)
-                .emptyContainer()
-                .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
+                .infoExtendedParameter(ItemStackTools.intGetter("current", 0)));
+        threeLogicBlock = new BaseBlock("logic_block", new BlockBuilder()
+                .tileEntitySupplier(ThreeLogicTileEntity::new)
+//                .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
                 .info("message.rftools.shiftmessage")
-                .infoExtended("message.rftools.threelogic")
-                .build();
-        invCheckerBlock = ModBlocks.logicFactory.<InvCheckerTileEntity> builder("invchecker_block")
-                .tileEntityClass(InvCheckerTileEntity.class)
-                .guiId(GuiProxy.GUI_INVCHECKER)
-                .container(InvCheckerTileEntity.CONTAINER_FACTORY)
-                .flags(BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
+                .infoExtended("message.rftools.threelogic"));
+        invCheckerBlock = new BaseBlock("invchecker_block", new BlockBuilder()
+                .tileEntitySupplier(InvCheckerTileEntity::new)
+//                .container(InvCheckerTileEntity.CONTAINER_FACTORY)
+//                .flags(BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
                 .info("message.rftools.shiftmessage")
-                .infoExtended("message.rftools.invchecker")
-                .build();
-        sensorBlock = ModBlocks.logicFactory.<SensorTileEntity> builder("sensor_block")
-                .tileEntityClass(SensorTileEntity.class)
-                .guiId(GuiProxy.GUI_SENSOR)
-                .container(SensorTileEntity.CONTAINER_FACTORY)
-                .flags(BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
+                .infoExtended("message.rftools.invchecker"));
+        sensorBlock = new BaseBlock("sensor_block", new BlockBuilder()
+                .tileEntitySupplier(SensorTileEntity::new)
+//                .container(SensorTileEntity.CONTAINER_FACTORY)
+//                .flags(BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
                 .info("message.rftools.shiftmessage")
-                .infoExtended("message.rftools.sensor")
-                .build();
-        analogBlock = ModBlocks.logicFactory.<AnalogTileEntity> builder("analog_block")
-                .tileEntityClass(AnalogTileEntity.class)
-                .guiId(GuiProxy.GUI_ANALOG)
-                .emptyContainer()
-                .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
+                .infoExtended("message.rftools.sensor"));
+        analogBlock = new BaseBlock("analog_block", new BlockBuilder()
+                .tileEntitySupplier(AnalogTileEntity::new)
+//                .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
                 .info("message.rftools.shiftmessage")
-                .infoExtended("message.rftools.analog")
-                .build();
-        digitBlock = ModBlocks.logicFactory.<DigitTileEntity> builder("digit_block")
-                .tileEntityClass(DigitTileEntity.class)
-                .emptyContainer()
-                .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE,
-                        BlockFlags.RENDER_CUTOUT, BlockFlags.RENDER_SOLID)
-                .property(DigitTileEntity.VALUE)
+                .infoExtended("message.rftools.analog"));
+        digitBlock = new BaseBlock("digit_block", new BlockBuilder()
+                .tileEntitySupplier(DigitTileEntity::new)
+//                .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE,
+//                        BlockFlags.RENDER_CUTOUT, BlockFlags.RENDER_SOLID)
+//                .property(DigitTileEntity.VALUE)
                 .info("message.rftools.shiftmessage")
-                .infoExtended("message.rftools.digit")
-                .build();
-        wireBlock = ModBlocks.logicFactory.<WireTileEntity> builder("wire_block")
-                .tileEntityClass(WireTileEntity.class)
-                .emptyContainer()
-                .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
+                .infoExtended("message.rftools.digit"));
+        wireBlock = new BaseBlock("wire_block", new BlockBuilder()
+                .tileEntitySupplier(WireTileEntity::new)
+//                .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
                 .info("message.rftools.shiftmessage")
-                .infoExtended("message.rftools.wire")
-                .build();
-        timerBlock = ModBlocks.logicFactory.<TimerTileEntity> builder("timer_block")
-                .tileEntityClass(TimerTileEntity.class)
-                .guiId(GuiProxy.GUI_TIMER)
-                .emptyContainer()
-                .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
+                .infoExtended("message.rftools.wire"));
+        timerBlock = new BaseBlock("timer_block", new BlockBuilder()
+                .tileEntitySupplier(TimerTileEntity::new)
+//                .flags(BlockFlags.REDSTONE_CHECK, BlockFlags.REDSTONE_OUTPUT, BlockFlags.NON_OPAQUE)
                 .info("message.rftools.shiftmessage")
                 .infoExtended("message.rftools.timer")
-                .infoExtendedParameter(ItemStackTools.intGetter("delay", 0))
-                .build();
+                .infoExtendedParameter(ItemStackTools.intGetter("delay", 0)));
     }
 
-    @SideOnly(Side.CLIENT)
-    public static void initClient() {
-        sequencerBlock.initModel();
-        sequencerBlock.setGuiFactory(GuiSequencer::new);
-
-        timerBlock.initModel();
-        timerBlock.setGuiFactory(GuiTimer::new);
-
-        counterBlock.initModel();
-        counterBlock.setGuiFactory(GuiCounter::new);
-
-        redstoneTransmitterBlock.initModel();
-        redstoneReceiverBlock.initModel();
-
-        threeLogicBlock.initModel();
-        threeLogicBlock.setGuiFactory(GuiThreeLogic::new);
-
-        invCheckerBlock.initModel();
-        invCheckerBlock.setGuiFactory(GuiInvChecker::new);
-
-        sensorBlock.initModel();
-        sensorBlock.setGuiFactory(GuiSensor::new);
-
-        wireBlock.initModel();
-
-        analogBlock.initModel();
-        analogBlock.setGuiFactory(GuiAnalog::new);
-
-        digitBlock.initModel();
-    }
+//    public static void initClient() {
+//        sequencerBlock.initModel();
+//        sequencerBlock.setGuiFactory(GuiSequencer::new);
+//
+//        timerBlock.initModel();
+//        timerBlock.setGuiFactory(GuiTimer::new);
+//
+//        counterBlock.initModel();
+//        counterBlock.setGuiFactory(GuiCounter::new);
+//
+//        redstoneTransmitterBlock.initModel();
+//        redstoneReceiverBlock.initModel();
+//
+//        threeLogicBlock.initModel();
+//        threeLogicBlock.setGuiFactory(GuiThreeLogic::new);
+//
+//        invCheckerBlock.initModel();
+//        invCheckerBlock.setGuiFactory(GuiInvChecker::new);
+//
+//        sensorBlock.initModel();
+//        sensorBlock.setGuiFactory(GuiSensor::new);
+//
+//        wireBlock.initModel();
+//
+//        analogBlock.initModel();
+//        analogBlock.setGuiFactory(GuiAnalog::new);
+//
+//        digitBlock.initModel();
+//    }
 }

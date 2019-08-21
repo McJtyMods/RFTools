@@ -5,17 +5,11 @@ import mcjty.lib.gui.widgets.ToggleButton;
 import mcjty.lib.tileentity.LogicTileEntity;
 import mcjty.lib.typed.TypedMap;
 import mcjty.rftools.TickOrderHandler;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.ProbeMode;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Optional;
+
+import static mcjty.rftools.blocks.logic.LogicBlockSetup.TYPE_TIMER;
 
 public class TimerTileEntity extends LogicTileEntity implements ITickableTileEntity, TickOrderHandler.ICheckStateServer {
 
@@ -30,6 +24,7 @@ public class TimerTileEntity extends LogicTileEntity implements ITickableTileEnt
     private boolean redstonePauses = false;
 
     public TimerTileEntity() {
+        super(TYPE_TIMER);
     }
 
     public int getDelay() {
@@ -59,8 +54,8 @@ public class TimerTileEntity extends LogicTileEntity implements ITickableTileEnt
     }
 
     @Override
-    public void update() {
-        if (!getWorld().isRemote) {
+    public void tick() {
+        if (!world.isRemote) {
             TickOrderHandler.queueTimer(this);
         }
     }
@@ -93,42 +88,42 @@ public class TimerTileEntity extends LogicTileEntity implements ITickableTileEnt
 
     @Override
     public int getDimension() {
-        return world.provider.getDimension();
+        return world.getDimension().getType().getId();
     }
 
     @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
-        super.readFromNBT(tagCompound);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
         powerOutput = tagCompound.getBoolean("rs") ? 15 : 0;
         prevIn = tagCompound.getBoolean("prevIn");
-        timer = tagCompound.getInteger("timer");
+        timer = tagCompound.getInt("timer");
+        readRestorableFromNBT(tagCompound);
     }
 
-    @Override
+    // @todo 1.14 loot table
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
-        delay = tagCompound.getInteger("delay");
+        delay = tagCompound.getInt("delay");
         redstonePauses = tagCompound.getBoolean("redstonePauses");
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("rs", powerOutput > 0);
-        tagCompound.setBoolean("prevIn", prevIn);
-        tagCompound.setInteger("timer", timer);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
+        tagCompound.putBoolean("rs", powerOutput > 0);
+        tagCompound.putBoolean("prevIn", prevIn);
+        tagCompound.putInt("timer", timer);
+        writeRestorableToNBT(tagCompound);
         return tagCompound;
     }
 
-    @Override
+    // @todo 1.14 loot table
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
-        tagCompound.setInteger("delay", delay);
-        tagCompound.setBoolean("redstonePauses", redstonePauses);
+        tagCompound.putInt("delay", delay);
+        tagCompound.putBoolean("redstonePauses", redstonePauses);
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+    public boolean execute(PlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
@@ -152,10 +147,10 @@ public class TimerTileEntity extends LogicTileEntity implements ITickableTileEnt
     }
 
 
-    @Override
-    @Optional.Method(modid = "theoneprobe")
-    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, BlockState blockState, IProbeHitData data) {
-        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
-        probeInfo.text(TextFormatting.GREEN + "Time: " + TextFormatting.WHITE + getTimer());
-    }
+//    @Override
+//    @Optional.Method(modid = "theoneprobe")
+//    public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, BlockState blockState, IProbeHitData data) {
+//        super.addProbeInfo(mode, probeInfo, player, world, blockState, data);
+//        probeInfo.text(TextFormatting.GREEN + "Time: " + TextFormatting.WHITE + getTimer());
+//    }
 }
