@@ -166,7 +166,7 @@ public class CounterTileEntity extends LogicTileEntity {
         if (System.currentTimeMillis() - lastTime > 500) {
             lastTime = System.currentTimeMillis();
             RFToolsMessages.sendToServer(CommandHandler.CMD_GET_COUNTER_INFO,
-                    TypedMap.builder().put(CommandHandler.PARAM_DIMENSION, getWorld().provider.getDimension()).put(CommandHandler.PARAM_POS, getPos()));
+                    TypedMap.builder().put(CommandHandler.PARAM_DIMENSION, getWorld().getDimension().getType().getId()).put(CommandHandler.PARAM_POS, getPos()));
         }
 
         currenttip.add(TextFormatting.GREEN + "Current: " + cntReceived);

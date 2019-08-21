@@ -85,7 +85,7 @@ public class ShapeRenderer {
 
     public void handleShapeDragging(int x, int y) {
         if (x >= 100 && y <= 120) {
-            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            if (McJtyLib.proxy.isShiftKeyDown()) {
                 if (prevX != -1 && Mouse.isButtonDown(0)) {
                     dx += (x - prevX);
                     dy += (y - prevY);

@@ -1,32 +1,36 @@
 package mcjty.rftools.items.teleportprobe;
 
+import mcjty.lib.McJtyLib;
 import mcjty.lib.crafting.INBTPreservingIngredient;
 import mcjty.lib.varia.*;
 import mcjty.rftools.ForgeEventHandlers;
-import mcjty.rftools.blocks.teleporter.*;
+import mcjty.rftools.RFTools;
 import mcjty.rftools.blocks.teleporter.TeleportationTools;
+import mcjty.rftools.blocks.teleporter.*;
 import mcjty.rftools.setup.GuiProxy;
-import net.minecraft.client.renderer.block.model.ModelBakery;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
-
-import org.lwjgl.input.Keyboard;
-
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
-public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem, INBTPreservingIngredient {
+public class ChargedPorterItem extends Item implements IEnergyItem, INBTPreservingIngredient {
 
     private int capacity;
     private int maxReceive;
@@ -41,9 +45,9 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
     }
 
     protected ChargedPorterItem(String name, int capacity) {
-        super(name);
+        super(new Properties().maxStackSize(1).defaultMaxDamage(1).group(RFTools.setup.getTab()));
+        setRegistryName(name);
         this.capacity = capacity;
-        setMaxStackSize(1);
 
         maxReceive = TeleportConfiguration.CHARGEDPORTER_RECEIVEPERTICK.get();
         maxExtract = 0;
@@ -63,13 +67,13 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
     }
 
     @Override
-    public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+    public void inventoryTick(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
         if (!worldIn.isRemote) {
             CompoundNBT tagCompound = stack.getTag();
             if (tagCompound == null) {
                 return;
             }
-            if (!tagCompound.hasKey("tpTimer")) {
+            if (!tagCompound.contains("tpTimer")) {
                 return;
             }
             if (!(entityIn instanceof PlayerEntity)) {
@@ -79,7 +83,7 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
             int timer = tagCompound.getInt("tpTimer");
             timer--;
             if (timer <= 0) {
-                tagCompound.removeTag("tpTimer");
+                tagCompound.remove("tpTimer");
                 TeleportDestinations destinations = TeleportDestinations.getDestinations(worldIn);
                 int target = tagCompound.getInt("target");
                 GlobalCoordinate coordinate = destinations.getCoordinateForId(target);
@@ -97,42 +101,42 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
         }
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void initModel() {
-        for (int i = 0 ; i <= 8 ; i++) {
-            String domain = getRegistryName().getResourceDomain();
-            String path = getRegistryName().getResourcePath();
-            ModelBakery.registerItemVariants(this, new ModelResourceLocation(new ResourceLocation(domain, path + i), "inventory"));
-        }
-
-        ModelLoader.setCustomMeshDefinition(this, stack -> {
-            CompoundNBT tagCompound = stack.getTag();
-            int energy = 0;
-            if (tagCompound != null) {
-                energy = tagCompound.getInt("Energy");
-            }
-            int level = (9 * energy) / capacity;
-            if (level < 0) {
-                level = 0;
-            } else if (level > 8) {
-                level = 8;
-            }
-            String domain = getRegistryName().getResourceDomain();
-            String path = getRegistryName().getResourcePath();
-            return new ModelResourceLocation(new ResourceLocation(domain, path + (8 - level)), "inventory");
-        });
-    }
+//    @Override
+//    @SideOnly(Side.CLIENT)
+//    public void initModel() {
+//        for (int i = 0 ; i <= 8 ; i++) {
+//            String domain = getRegistryName().getResourceDomain();
+//            String path = getRegistryName().getResourcePath();
+//            ModelBakery.registerItemVariants(this, new ModelResourceLocation(new ResourceLocation(domain, path + i), "inventory"));
+//        }
+//
+//        ModelLoader.setCustomMeshDefinition(this, stack -> {
+//            CompoundNBT tagCompound = stack.getTag();
+//            int energy = 0;
+//            if (tagCompound != null) {
+//                energy = tagCompound.getInt("Energy");
+//            }
+//            int level = (9 * energy) / capacity;
+//            if (level < 0) {
+//                level = 0;
+//            } else if (level > 8) {
+//                level = 8;
+//            }
+//            String domain = getRegistryName().getResourceDomain();
+//            String path = getRegistryName().getResourcePath();
+//            return new ModelResourceLocation(new ResourceLocation(domain, path + (8 - level)), "inventory");
+//        });
+//    }
 
 
     protected int getSpeedBonus() {
         return 1;
     }
 
-    @Override
-    public int getMaxItemUseDuration(ItemStack stack) {
-        return 1;
-    }
+//    @Override
+//    public int getMaxItemUseDuration(ItemStack stack) {
+//        return 1;
+//    }
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
@@ -149,7 +153,11 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
     }
 
     @Override
-    public ActionResultType onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction facing, float hitX, float hitY, float hitZ) {
+    public ActionResultType onItemUse(ItemUseContext context) {
+        PlayerEntity player = context.getPlayer();
+        Hand hand = context.getHand();
+        World world = context.getWorld();
+        BlockPos pos = context.getPos();
         ItemStack stack = player.getHeldItem(hand);
         if (player.isSneaking()) {
             TileEntity te = world.getTileEntity(pos);
@@ -162,7 +170,7 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
 
     private void startTeleport(ItemStack stack, PlayerEntity player, World world) {
         CompoundNBT tagCompound = stack.getTag();
-        if (tagCompound == null || (!tagCompound.hasKey("target")) || tagCompound.getInt("target") == -1) {
+        if (tagCompound == null || (!tagCompound.contains("target")) || tagCompound.getInt("target") == -1) {
             if (world.isRemote) {
                 Logging.message(player, TextFormatting.RED + "The charged porter has no target.");
             }
@@ -170,7 +178,7 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
         }
 
         if (!world.isRemote) {
-            if (tagCompound.hasKey("tpTimer")) {
+            if (tagCompound.contains("tpTimer")) {
                 Logging.message(player, TextFormatting.RED + "Already teleporting!");
                 return;
             }
@@ -195,7 +203,7 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
             }
             TeleportDestination destination = destinations.getDestination(coordinate);
 
-            if (!TeleportationTools.checkValidTeleport(player, world.provider.getDimension(), destination.getDimension())) {
+            if (!TeleportationTools.checkValidTeleport(player, world.getDimension().getType().getId(), destination.getDimension())) {
                 return;
             }
 
@@ -228,7 +236,7 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
         int id = -1;
         if (te instanceof MatterReceiverTileEntity) {
             MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
-            if (!matterReceiverTileEntity.checkAccess(player.getName())) {
+            if (!matterReceiverTileEntity.checkAccess(player.getName().getFormattedText())) {   // @todo 1.14 this is probably not right
                 Logging.message(player, TextFormatting.RED + "You have no access to target this receiver!");
                 return;
             }
@@ -240,7 +248,7 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
         } else {
             selectOnThinAir(player, world, tagCompound, stack);
         }
-        stack.setTagCompound(tagCompound);
+        stack.setTag(tagCompound);
     }
 
     protected void selectOnReceiver(PlayerEntity player, World world, CompoundNBT tagCompound, int id) {
@@ -254,85 +262,90 @@ public class ChargedPorterItem extends GenericRFToolsItem implements IEnergyItem
         if (world.isRemote) {
             Logging.message(player, "Charged porter is cleared.");
         }
-        tagCompound.removeTag("target");
+        tagCompound.remove("target");
     }
 
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
-        super.addInformation(itemStack, player, list, whatIsThis);
+    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
+        super.addInformation(itemStack, world, list, flag);
         CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
-            list.add(TextFormatting.BLUE + "Energy: " + tagCompound.getInt("Energy") + " RF");
-            if (tagCompound.hasKey("target")) {
-                list.add(TextFormatting.BLUE + "Target: " + tagCompound.getInt("target"));
+            list.add(new StringTextComponent(TextFormatting.BLUE + "Energy: " + tagCompound.getInt("Energy") + " RF"));
+            if (tagCompound.contains("target")) {
+                list.add(new StringTextComponent(TextFormatting.BLUE + "Target: " + tagCompound.getInt("target")));
             } else {
-                list.add(TextFormatting.RED + "No target set! Sneak-Right click on receiver to set.");
+                list.add(new StringTextComponent(TextFormatting.RED + "No target set! Sneak-Right click on receiver to set."));
             }
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add("This RF/charged item allows you to teleport to a");
-            list.add("previously set matter receiver. Sneak-right click");
-            list.add("on a receiver to set the destination.");
-            list.add("Right click to perform the teleport.");
+        if (McJtyLib.proxy.isShiftKeyDown()) {
+            list.add(new StringTextComponent("This RF/charged item allows you to teleport to a"));
+            list.add(new StringTextComponent("previously set matter receiver. Sneak-right click"));
+            list.add(new StringTextComponent("on a receiver to set the destination."));
+            list.add(new StringTextComponent("Right click to perform the teleport."));
         } else {
-            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
+            list.add(new StringTextComponent(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE));
         }
     }
 
     @Override
     public long receiveEnergyL(ItemStack container, long maxReceive, boolean simulate) {
         if (container.getTag() == null) {
-            container.setTagCompound(new CompoundNBT());
+            container.setTag(new CompoundNBT());
         }
-        int energy = container.getTag().getInteger("Energy");
+        int energy = container.getTag().getInt("Energy");
         int energyReceived = Math.min(capacity - energy, Math.min(this.maxReceive, EnergyTools.unsignedClampToInt(maxReceive)));
 
         if (!simulate) {
             energy += energyReceived;
-            container.getTag().setInteger("Energy", energy);
+            container.getTag().putInt("Energy", energy);
         }
         return energyReceived;
     }
 
     @Override
     public long extractEnergyL(ItemStack container, long maxExtract, boolean simulate) {
-        if (container.getTag() == null || !container.getTag().hasKey("Energy")) {
+        if (container.getTag() == null || !container.getTag().contains("Energy")) {
             return 0;
         }
-        int energy = container.getTag().getInteger("Energy");
+        int energy = container.getTag().getInt("Energy");
         int energyExtracted = Math.min(energy, Math.min(this.maxExtract, EnergyTools.unsignedClampToInt(maxExtract)));
 
         if (!simulate) {
             energy -= energyExtracted;
-            container.getTag().setInteger("Energy", energy);
+            container.getTag().putInt("Energy", energy);
         }
         return energyExtracted;
     }
 
     public int extractEnergyNoMax(ItemStack container, int maxExtract, boolean simulate) {
-        if (container.getTag() == null || !container.getTag().hasKey("Energy")) {
+        if (container.getTag() == null || !container.getTag().contains("Energy")) {
             return 0;
         }
-        int energy = container.getTag().getInteger("Energy");
+        int energy = container.getTag().getInt("Energy");
         int energyExtracted = Math.min(energy, maxExtract);
 
         if (!simulate) {
             energy -= energyExtracted;
-            container.getTag().setInteger("Energy", energy);
+            container.getTag().putInt("Energy", energy);
         }
         return energyExtracted;
     }
 
     @Override
     public long getEnergyStoredL(ItemStack container) {
-        if (container.getTag() == null || !container.getTag().hasKey("Energy")) {
+        if (container.getTag() == null || !container.getTag().contains("Energy")) {
             return 0;
         }
-        return container.getTag().getInteger("Energy");
+        return container.getTag().getInt("Energy");
     }
 
     @Override
     public long getMaxEnergyStoredL(ItemStack container) {
         return capacity;
+    }
+
+    @Override
+    public Collection<String> getTagsToPreserve() {
+        return Collections.emptyList(); // @todo 1.14
     }
 }

@@ -35,9 +35,9 @@ public class OrphaningCardItem extends Item {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<ITextComponent> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+        if (McJtyLib.proxy.isShiftKeyDown()) {
             list.add(TextFormatting.WHITE + "Sneak right-click on an RFTools machine to clear");
             list.add(TextFormatting.WHITE + "the owner. You can only do this on blocks you own");
             list.add(TextFormatting.WHITE + "(unless you are admin)");

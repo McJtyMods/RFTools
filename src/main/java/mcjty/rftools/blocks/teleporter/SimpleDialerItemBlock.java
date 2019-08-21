@@ -41,7 +41,7 @@ public class SimpleDialerItemBlock extends GenericItemBlock {
                 tagCompound.putInt("transX", matterTransmitterTileEntity.getPos().getX());
                 tagCompound.putInt("transY", matterTransmitterTileEntity.getPos().getY());
                 tagCompound.putInt("transZ", matterTransmitterTileEntity.getPos().getZ());
-                tagCompound.putInt("transDim", world.provider.getDimension());
+                tagCompound.putInt("transDim", world.getDimension().getType().getId());
 
                 if (matterTransmitterTileEntity.isDialed()) {
                     Integer id = matterTransmitterTileEntity.getTeleportId();

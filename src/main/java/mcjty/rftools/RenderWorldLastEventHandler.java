@@ -62,7 +62,7 @@ public class RenderWorldLastEventHandler {
             if (BlockProtectorConfiguration.enabled.get() && SmartWrenchItem.getCurrentMode(heldItem) == SmartWrenchMode.MODE_SELECT) {
                 GlobalCoordinate current = SmartWrenchItem.getCurrentBlock(heldItem);
                 if (current != null) {
-                    if (current.getDimension() == mc.world.provider.getDimension()) {
+                    if (current.getDimension() == mc.world.getDimension().getType().getId()) {
                         TileEntity te = mc.world.getTileEntity(current.getCoordinate());
                         if (te instanceof BlockProtectorTileEntity) {
                             BlockProtectorTileEntity blockProtectorTileEntity = (BlockProtectorTileEntity) te;
@@ -78,7 +78,7 @@ public class RenderWorldLastEventHandler {
             int mode = ShapeCardItem.getMode(heldItem);
             if (mode == ShapeCardItem.MODE_CORNER1 || mode == ShapeCardItem.MODE_CORNER2) {
                 GlobalCoordinate current = ShapeCardItem.getCurrentBlock(heldItem);
-                if (current != null && current.getDimension() == mc.world.provider.getDimension()) {
+                if (current != null && current.getDimension() == mc.world.getDimension().getType().getId()) {
                     Set<BlockPos> coordinates = new HashSet<>();
                     coordinates.add(new BlockPos(0, 0, 0));
                     if (mode == ShapeCardItem.MODE_CORNER2) {

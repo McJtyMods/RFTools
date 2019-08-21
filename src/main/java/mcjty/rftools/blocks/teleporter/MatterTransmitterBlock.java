@@ -3,8 +3,7 @@ package mcjty.rftools.blocks.teleporter;
 import mcjty.lib.McJtyLib;
 import mcjty.lib.api.Infusable;
 import mcjty.lib.blocks.RotationType;
-import mcjty.lib.container.EmptyContainer;
-import mcjty.lib.gui.GenericGuiContainer;
+import mcjty.lib.builder.BlockBuilder;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.BlockPosTools;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
@@ -12,7 +11,6 @@ import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.CommandHandler;
 import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
@@ -33,8 +31,8 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock implements Infus
     public static String clientSideName = "?";
 
     public MatterTransmitterBlock() {
-        super(Material.IRON, MatterTransmitterTileEntity.class, EmptyContainer::new, "matter_transmitter", false);
-        setDefaultState(this.blockState.getBaseState());
+        super("matter_transmitter", new BlockBuilder()
+            .tileEntitySupplier(MatterReceiverTileEntity::new));
     }
 
     public static void setDestinationInfo(Integer id, String name) {
@@ -42,10 +40,10 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock implements Infus
         MatterTransmitterBlock.clientSideName = name;
     }
 
-    @Override
-    public BiFunction<MatterTransmitterTileEntity, EmptyContainer, GenericGuiContainer<? super MatterTransmitterTileEntity>> getGuiFactory() {
-        return GuiMatterTransmitter::new;
-    }
+//    @Override
+//    public BiFunction<MatterTransmitterTileEntity, EmptyContainer, GenericGuiContainer<? super MatterTransmitterTileEntity>> getGuiFactory() {
+//        return GuiMatterTransmitter::new;
+//    }
 
     public void initModel() {
         BeamRenderer.register();
@@ -161,7 +159,8 @@ public class MatterTransmitterBlock extends GenericRFToolsBlock implements Infus
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         // We don't want what BaseBlock does.
-        restoreBlockFromNBT(world, pos, stack);
+        // @todo 1.14
+//        restoreBlockFromNBT(world, pos, stack);
         setOwner(world, pos, placer);
     }
 

@@ -22,7 +22,7 @@ public class NoTeleportEModuleItem extends GenericRFToolsItem implements EnvModu
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<ITextComponent> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add("This module prevents enderman from teleporting");
         list.add("when used in the environmental controller.");
@@ -40,7 +40,7 @@ public class NoTeleportEModuleItem extends GenericRFToolsItem implements EnvModu
     }
 
     @Override
-    public String getName() {
+    public String getModuleName() {
         return "NoTP";
     }
 }

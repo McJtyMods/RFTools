@@ -66,7 +66,7 @@ public class FluidModuleItem extends Item implements IModuleProvider, INBTPreser
     }
 
     @Override
-    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
+    public void addInformation(ItemStack itemStack, IBlockReader world, List<ITextComponent> list, ITooltipFlag flag) {
         super.addInformation(itemStack, world, list, flag);
         list.add(new StringTextComponent(TextFormatting.GREEN + "Uses " + ScreenConfiguration.FLUID_RFPERTICK.get() + " RF/tick"));
         boolean hasTarget = false;
@@ -97,7 +97,7 @@ public class FluidModuleItem extends Item implements IModuleProvider, INBTPreser
             tagCompound = new CompoundNBT();
         }
         if (CapabilityTools.hasFluidCapabilitySafe(te) != null) {
-            tagCompound.putInt("monitordim", world.provider.getDimension());
+            tagCompound.putInt("monitordim", world.getDimension().getType().getId());
             tagCompound.putInt("monitorx", pos.getX());
             tagCompound.putInt("monitory", pos.getY());
             tagCompound.putInt("monitorz", pos.getZ());

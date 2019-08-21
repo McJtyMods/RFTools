@@ -25,7 +25,7 @@ import mcjty.rftools.shapes.ShapeRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -42,7 +42,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
-public class GuiShapeCard extends GuiScreen implements IShapeParentGui {
+public class GuiShapeCard extends Screen implements IShapeParentGui {
 
     /** The X size of the window in pixels. */
     protected int xSize = 360;

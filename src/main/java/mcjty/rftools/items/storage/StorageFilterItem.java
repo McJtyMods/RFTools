@@ -36,7 +36,7 @@ public class StorageFilterItem extends GenericRFToolsItem {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<ITextComponent> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
@@ -56,7 +56,7 @@ public class StorageFilterItem extends GenericRFToolsItem {
             }
             list.add(TextFormatting.BLUE + modeLine);
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+        if (McJtyLib.proxy.isShiftKeyDown()) {
             list.add(TextFormatting.WHITE + "This filter module is for the Modular Storage block,");
             list.add(TextFormatting.WHITE + "the Builder or the Area Scanner.");
             list.add(TextFormatting.WHITE + "This module can make sure the block only accepts");

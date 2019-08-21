@@ -74,7 +74,7 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
             if (mode == MODE_NONE) {
                 if (player.isSneaking()) {
                     if (world.getTileEntity(pos) instanceof BuilderTileEntity) {
-                        setCurrentBlock(stack, new GlobalCoordinate(pos, world.provider.getDimension()));
+                        setCurrentBlock(stack, new GlobalCoordinate(pos, world.getDimension().getType().getId()));
                         Logging.message(player, TextFormatting.GREEN + "Now select the first corner");
                         setMode(stack, MODE_CORNER1);
                         setCorner1(stack, null);
@@ -86,7 +86,7 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
                 }
             } else if (mode == MODE_CORNER1) {
                 GlobalCoordinate currentBlock = getCurrentBlock(stack);
-                if (currentBlock.getDimension() != world.provider.getDimension()) {
+                if (currentBlock.getDimension() != world.getDimension().getType().getId()) {
                     Logging.message(player, TextFormatting.RED + "The Builder is in another dimension!");
                 } else if (currentBlock.getCoordinate().equals(pos)) {
                     Logging.message(player, TextFormatting.RED + "Cleared area selection mode!");
@@ -98,7 +98,7 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
                 }
             } else {
                 GlobalCoordinate currentBlock = getCurrentBlock(stack);
-                if (currentBlock.getDimension() != world.provider.getDimension()) {
+                if (currentBlock.getDimension() != world.getDimension().getType().getId()) {
                     Logging.message(player, TextFormatting.RED + "The Builder is in another dimension!");
                 } else if (currentBlock.getCoordinate().equals(pos)) {
                     Logging.message(player, TextFormatting.RED + "Cleared area selection mode!");
@@ -258,7 +258,7 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<ITextComponent> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
 
         ShapeCardType type = ShapeCardType.fromDamage(itemStack.getItemDamage());
@@ -292,7 +292,7 @@ public class ShapeCardItem extends Item implements INBTPreservingIngredient {
             list.add(TextFormatting.DARK_GREEN + "Scan id: " + scanid);
         }
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+        if (McJtyLib.proxy.isShiftKeyDown()) {
             list.add(TextFormatting.YELLOW + "Sneak right click on builder to start mark mode");
             list.add(TextFormatting.YELLOW + "Then right click to mark two corners of wanted area");
             type.addInformation(list);

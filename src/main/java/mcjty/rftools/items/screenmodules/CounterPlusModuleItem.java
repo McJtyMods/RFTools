@@ -65,7 +65,7 @@ public class CounterPlusModuleItem extends Item implements IModuleProvider {
     }
 
     @Override
-    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
+    public void addInformation(ItemStack itemStack, IBlockReader world, List<ITextComponent> list, ITooltipFlag flag) {
         super.addInformation(itemStack, world, list, flag);
         list.add(new StringTextComponent(TextFormatting.GREEN + "Uses " + ScreenConfiguration.COUNTERPLUS_RFPERTICK.get() + " RF/tick"));
         boolean hasTarget = false;
@@ -96,7 +96,7 @@ public class CounterPlusModuleItem extends Item implements IModuleProvider {
             tagCompound = new CompoundNBT();
         }
         if (te instanceof CounterTileEntity) {
-            tagCompound.putInt("monitordim", world.provider.getDimension());
+            tagCompound.putInt("monitordim", world.getDimension().getType().getId());
             tagCompound.putInt("monitorx", pos.getX());
             tagCompound.putInt("monitory", pos.getY());
             tagCompound.putInt("monitorz", pos.getZ());

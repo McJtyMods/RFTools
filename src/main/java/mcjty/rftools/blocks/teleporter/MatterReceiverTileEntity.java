@@ -2,21 +2,27 @@ package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.bindings.DefaultValue;
 import mcjty.lib.bindings.IValue;
+import mcjty.lib.tileentity.GenericEnergyStorage;
 import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.GlobalCoordinate;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+
+import static mcjty.rftools.blocks.teleporter.TeleporterSetup.TYPE_MATTER_RECEIVER;
 
 public class MatterReceiverTileEntity extends GenericTileEntity implements ITickableTileEntity {
 
@@ -43,10 +49,13 @@ public class MatterReceiverTileEntity extends GenericTileEntity implements ITick
         };
     }
 
+    private LazyOptional<GenericEnergyStorage> energyHandler = LazyOptional.of(() -> new GenericEnergyStorage(this, true,
+            TeleportConfiguration.RECEIVER_MAXENERGY.get(), TeleportConfiguration.RECEIVER_RECEIVEPERTICK.get()));
+
     private BlockPos cachedPos;
 
     public MatterReceiverTileEntity() {
-        super(TeleportConfiguration.RECEIVER_MAXENERGY.get(), TeleportConfiguration.RECEIVER_RECEIVEPERTICK.get());
+        super(TYPE_MATTER_RECEIVER);
     }
 
     public String getName() {
@@ -56,7 +65,7 @@ public class MatterReceiverTileEntity extends GenericTileEntity implements ITick
     public int getOrCalculateID() {
         if (id == -1) {
             TeleportDestinations destinations = TeleportDestinations.getDestinations(getWorld());
-            GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().provider.getDimension());
+            GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().getDimension().getType().getId());
             id = destinations.getNewId(gc);
 
             destinations.save();
@@ -77,7 +86,7 @@ public class MatterReceiverTileEntity extends GenericTileEntity implements ITick
     public void setName(String name) {
         this.name = name;
         TeleportDestinations destinations = TeleportDestinations.getDestinations(getWorld());
-        TeleportDestination destination = destinations.getDestination(getPos(), getWorld().provider.getDimension());
+        TeleportDestination destination = destinations.getDestination(getPos(), getWorld().getDimension().getType().getId());
         if (destination != null) {
             destination.setName(name);
             destinations.save();
@@ -87,8 +96,8 @@ public class MatterReceiverTileEntity extends GenericTileEntity implements ITick
     }
 
     @Override
-    public void update() {
-        if (!getWorld().isRemote) {
+    public void tick() {
+        if (!world.isRemote) {
             checkStateServer();
         }
     }
@@ -97,11 +106,11 @@ public class MatterReceiverTileEntity extends GenericTileEntity implements ITick
         if (!getPos().equals(cachedPos)) {
             TeleportDestinations destinations = TeleportDestinations.getDestinations(getWorld());
 
-            destinations.removeDestination(cachedPos, getWorld().provider.getDimension());
+            destinations.removeDestination(cachedPos, getWorld().getDimension().getType().getId());
 
             cachedPos = getPos();
 
-            GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().provider.getDimension());
+            GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().getDimension().getType().getId());
 
             if (id == -1) {
                 id = destinations.getNewId(gc);
@@ -122,7 +131,7 @@ public class MatterReceiverTileEntity extends GenericTileEntity implements ITick
     public void updateDestination() {
         TeleportDestinations destinations = TeleportDestinations.getDestinations(getWorld());
 
-        GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().provider.getDimension());
+        GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().getDimension().getType().getId());
         TeleportDestination destination = destinations.getDestination(gc.getCoordinate(), gc.getDimension());
         if (destination != null) {
             destination.setName(name);
@@ -191,28 +200,32 @@ public class MatterReceiverTileEntity extends GenericTileEntity implements ITick
         return DialingDeviceTileEntity.DIAL_OK;
     }
 
-    @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
-        super.readFromNBT(tagCompound);
-        cachedPos = new BlockPos(tagCompound.getInt("cachedX"), tagCompound.getInt("cachedY"), tagCompound.getInt("cachedZ"));
+    private int getStoredPower() {
+        return energyHandler.map(h -> h.getEnergyStored()).orElse(0);
     }
 
     @Override
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
+        cachedPos = new BlockPos(tagCompound.getInt("cachedX"), tagCompound.getInt("cachedY"), tagCompound.getInt("cachedZ"));
+        readRestorableFromNBT(tagCompound);
+    }
+
+    // @todo 1.14 loot table
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
         name = tagCompound.getString("tpName");
 
         privateAccess = tagCompound.getBoolean("private");
 
         allowedPlayers.clear();
-        ListNBT playerList = tagCompound.getTagList("players", Constants.NBT.TAG_STRING);
+        ListNBT playerList = tagCompound.getList("players", Constants.NBT.TAG_STRING);
         if (playerList != null) {
-            for (int i = 0 ; i < playerList.tagCount() ; i++) {
-                String player = playerList.getStringTagAt(i);
+            for (int i = 0 ; i < playerList.size() ; i++) {
+                String player = playerList.getString(i);
                 allowedPlayers.add(player);
             }
         }
-        if (tagCompound.hasKey("destinationId")) {
+        if (tagCompound.contains("destinationId")) {
             id = tagCompound.getInt("destinationId");
         } else {
             id = -1;
@@ -220,35 +233,35 @@ public class MatterReceiverTileEntity extends GenericTileEntity implements ITick
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        super.writeToNBT(tagCompound);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
         if (cachedPos != null) {
             tagCompound.putInt("cachedX", cachedPos.getX());
             tagCompound.putInt("cachedY", cachedPos.getY());
             tagCompound.putInt("cachedZ", cachedPos.getZ());
         }
+        writeRestorableToNBT(tagCompound);
         return tagCompound;
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
         if (name != null && !name.isEmpty()) {
-            tagCompound.setString("tpName", name);
+            tagCompound.putString("tpName", name);
         }
 
         tagCompound.putBoolean("private", privateAccess);
 
         ListNBT playerTagList = new ListNBT();
         for (String player : allowedPlayers) {
-            playerTagList.appendTag(new StringNBT(player));
+            playerTagList.add(new StringNBT(player));
         }
-        tagCompound.setTag("players", playerTagList);
+        tagCompound.put("players", playerTagList);
         tagCompound.putInt("destinationId", id);
     }
 
     @Override
-    public boolean execute(ServerPlayerEntity playerMP, String command, TypedMap params) {
+    public boolean execute(PlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;

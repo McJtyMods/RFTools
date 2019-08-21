@@ -18,7 +18,6 @@ import mcjty.rftools.items.ModItems;
 import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.playerprops.BuffProperties;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
-import mcjty.rftools.world.ModWorldgen;
 import mcjty.rftools.world.WorldTickHandler;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;

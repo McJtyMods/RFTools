@@ -107,7 +107,7 @@ public class ShieldBlock extends BaseBlock implements Infusable, INBTPreservingI
         if (!world.isRemote) {
             GlobalCoordinate currentBlock = SmartWrenchItem.getCurrentBlock(player.getHeldItem(Hand.MAIN_HAND));
             if (currentBlock == null) {
-                SmartWrenchItem.setCurrentBlock(player.getHeldItem(Hand.MAIN_HAND), new GlobalCoordinate(pos, world.provider.getDimension()));
+                SmartWrenchItem.setCurrentBlock(player.getHeldItem(Hand.MAIN_HAND), new GlobalCoordinate(pos, world.getDimension().getType().getId()));
                 Logging.message(player, TextFormatting.YELLOW + "Selected block");
             } else {
                 SmartWrenchItem.setCurrentBlock(player.getHeldItem(Hand.MAIN_HAND), null);

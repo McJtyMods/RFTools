@@ -530,7 +530,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<ITextComponent> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
 
         CompoundNBT tagCompound = itemStack.getTag();
@@ -564,7 +564,7 @@ public class ScreenBlock extends GenericRFToolsBlock<ScreenTileEntity, ScreenCon
             list.add(TextFormatting.BLUE + String.valueOf(rc) + " modules");
         }
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+        if (McJtyLib.proxy.isShiftKeyDown()) {
             list.add(TextFormatting.WHITE + "This is a modular screen. As such it doesn't show anything.");
             list.add(TextFormatting.WHITE + "You must insert modules to control what you can see.");
             list.add(TextFormatting.WHITE + "This screen cannot be directly powered. It has to be remotely");

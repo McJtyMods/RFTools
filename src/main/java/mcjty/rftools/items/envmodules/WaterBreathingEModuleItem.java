@@ -22,7 +22,7 @@ public class WaterBreathingEModuleItem extends GenericRFToolsItem implements Env
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<ITextComponent> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add("This module gives water breathing bonus");
         list.add("when used in the environmental controller.");
@@ -40,7 +40,7 @@ public class WaterBreathingEModuleItem extends GenericRFToolsItem implements Env
     }
 
     @Override
-    public String getName() {
+    public String getModuleName() {
         return "Water";
     }
 }

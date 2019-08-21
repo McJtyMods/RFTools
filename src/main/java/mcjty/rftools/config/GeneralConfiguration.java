@@ -1,6 +1,6 @@
 package mcjty.rftools.config;
 
-import mcjty.lib.thirteen.ConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -14,30 +14,30 @@ public class GeneralConfiguration {
     public static final int CRAFT_NONE = 0;
     public static final int CRAFT_EASY = 1;
     public static final int CRAFT_HARD = 2;
-    public static ConfigSpec.IntValue dimensionalShardRecipeWithDimensions;
-    public static ConfigSpec.IntValue dimensionalShardRecipeWithoutDimensions;
+    public static ForgeConfigSpec.IntValue dimensionalShardRecipeWithDimensions;
+    public static ForgeConfigSpec.IntValue dimensionalShardRecipeWithoutDimensions;
 
     // Dimensions where dimensional shard ore can generate.
-    private static ConfigSpec.ConfigValue<List<? extends Integer>> dimensionalShardOregenWithDimensions;
-    private static ConfigSpec.ConfigValue<List<? extends Integer>> dimensionalShardOregenWithoutDimensions;
+    private static ForgeConfigSpec.ConfigValue<List<? extends Integer>> dimensionalShardOregenWithDimensions;
+    private static ForgeConfigSpec.ConfigValue<List<? extends Integer>> dimensionalShardOregenWithoutDimensions;
     public static Set<Integer> oregenDimensionsWithDimensions = new HashSet<>();
     public static Set<Integer> oregenDimensionsWithoutDimensions = new HashSet<>();
 
     // Ore settings
-    public static ConfigSpec.IntValue oreMinimumVeinSize;
-    public static ConfigSpec.IntValue oreMaximumVeinSize;
-    public static ConfigSpec.IntValue oreMaximumVeinCount;
-    public static ConfigSpec.IntValue oreMinimumHeight;
-    public static ConfigSpec.IntValue oreMaximumHeight;
-    public static ConfigSpec.BooleanValue retrogen;
+    public static ForgeConfigSpec.IntValue oreMinimumVeinSize;
+    public static ForgeConfigSpec.IntValue oreMaximumVeinSize;
+    public static ForgeConfigSpec.IntValue oreMaximumVeinCount;
+    public static ForgeConfigSpec.IntValue oreMinimumHeight;
+    public static ForgeConfigSpec.IntValue oreMaximumHeight;
+    public static ForgeConfigSpec.BooleanValue retrogen;
 
     // For the syringe
-    public static ConfigSpec.IntValue maxMobInjections;        // Maximum amount of injections we need to do a full mob extraction.
+    public static ForgeConfigSpec.IntValue maxMobInjections;        // Maximum amount of injections we need to do a full mob extraction.
 
 
-    public static ConfigSpec.IntValue villagerId;               // -1 means disable, 0 means auto-id, other means fixed id
+    public static ForgeConfigSpec.IntValue villagerId;               // -1 means disable, 0 means auto-id, other means fixed id
 
-    public static void init(ConfigSpec.Builder SERVER_BUILDER, ConfigSpec.Builder CLIENT_BUILDER) {
+    public static void init(ForgeConfigSpec.Builder SERVER_BUILDER, ForgeConfigSpec.Builder CLIENT_BUILDER) {
         SERVER_BUILDER.comment("General settings").push(CATEGORY_GENERAL);
         CLIENT_BUILDER.comment("General settings").push(CATEGORY_GENERAL);
 
@@ -69,10 +69,10 @@ public class GeneralConfiguration {
 
         dimensionalShardOregenWithDimensions = SERVER_BUILDER
                 .comment("Oregen for dimensional shards in case RFTools Dimensions is present")
-                .defineIntList("dimensionalShardOregenWithDimensions", Arrays.asList(-1, 1), o -> o instanceof Integer);
+                .defineList("dimensionalShardOregenWithDimensions", Arrays.asList(-1, 1), o -> o instanceof Integer);
         dimensionalShardOregenWithoutDimensions = SERVER_BUILDER
                 .comment("Oregen for dimensional shards in case RFTools Dimensions is not present")
-                .defineIntList("dimensionalShardOregenWithoutDimensions", Arrays.asList(-1, 1), o -> o instanceof Integer);
+                .defineList("dimensionalShardOregenWithoutDimensions", Arrays.asList(-1, 1), o -> o instanceof Integer);
 
         maxMobInjections = SERVER_BUILDER
                 .comment("Amount of injections needed to get a fully absorbed mob essence")

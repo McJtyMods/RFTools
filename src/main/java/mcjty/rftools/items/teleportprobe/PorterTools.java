@@ -46,7 +46,7 @@ public class PorterTools {
         int x = pos.getX();
         int y = pos.getY();
         int z = pos.getZ();
-        int currentId = player.getEntityWorld().provider.getDimension();
+        int currentId = player.getEntityWorld().getDimension().getType().getId();
         if (currentId != dimension) {
             mcjty.lib.varia.TeleportationTools.teleportToDimension(player, dimension, x + .5, y + 1, z + .5);
         } else {

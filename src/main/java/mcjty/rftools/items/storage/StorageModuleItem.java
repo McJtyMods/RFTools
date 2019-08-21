@@ -72,14 +72,14 @@ public class StorageModuleItem extends GenericRFToolsItem implements INBTPreserv
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<ITextComponent> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         int max = MAXSIZE[itemStack.getItemDamage()];
         CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
             addModuleInformation(list, max, tagCompound);
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+        if (McJtyLib.proxy.isShiftKeyDown()) {
             list.add(TextFormatting.WHITE + "This storage module is for the Modular Storage block.");
             if (max == -1) {
                 list.add(TextFormatting.WHITE + "This module supports a remote inventory.");

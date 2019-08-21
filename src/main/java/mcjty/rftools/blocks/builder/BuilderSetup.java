@@ -36,6 +36,9 @@ public class BuilderSetup {
     @ObjectHolder("rftools:builder")
     public static TileEntityType<?> TYPE_BUILDER;
 
+    @ObjectHolder("rftools:composer")
+    public static TileEntityType<?> TYPE_COMPOSER;
+
     public static SpaceChamberCardItem spaceChamberCardItem;
     public static ShapeCardItem shapeCardItem;
 

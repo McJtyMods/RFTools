@@ -618,7 +618,7 @@ public class MatterTransmitterTileEntity extends GenericEnergyReceiverTileEntity
                 return;
             }
 
-            int srcId = getWorld().provider.getDimension();
+            int srcId = getWorld().getDimension().getType().getId();
             int dstId = dest.getDimension();
             if (!TeleportationTools.checkValidTeleport(player, srcId, dstId)) {
                 cooldownTimer = 80;

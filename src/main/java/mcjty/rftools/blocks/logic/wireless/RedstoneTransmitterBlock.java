@@ -1,52 +1,46 @@
 package mcjty.rftools.blocks.logic.wireless;
 
-import mcjty.lib.blocks.GenericItemBlock;
-import mcjty.lib.container.EmptyContainer;
+import mcjty.lib.McJtyLib;
+import mcjty.lib.builder.BlockBuilder;
 import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-public class RedstoneTransmitterBlock extends RedstoneChannelBlock<RedstoneTransmitterTileEntity, EmptyContainer> {
+public class RedstoneTransmitterBlock extends RedstoneChannelBlock {
 
     public RedstoneTransmitterBlock() {
-        super(Material.IRON, RedstoneTransmitterTileEntity.class, EmptyContainer::new, GenericItemBlock::new, "redstone_transmitter_block");
+        super("redstone_transmitter_block", new BlockBuilder()
+            .tileEntitySupplier(RedstoneTransmitterTileEntity::new));
     }
 
     @Override
-    public boolean hasRedstoneOutput() {
-        return false;
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
-        super.addInformation(itemStack, player, list, whatIsThis);
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-            list.add(TextFormatting.WHITE + "This logic block accepts redstone signals and");
-            list.add(TextFormatting.WHITE + "sends them out wirelessly to linked receivers");
-            list.add(TextFormatting.WHITE + "Place down to create a channel or else right");
-            list.add(TextFormatting.WHITE + "click on receiver/transmitter to use that channel");
+    public void addInformation(ItemStack itemStack, IBlockReader world, List<ITextComponent> list, ITooltipFlag flag) {
+        super.addInformation(itemStack, world, list, flag);
+        if (McJtyLib.proxy.isShiftKeyDown()) {
+            list.add(new StringTextComponent(TextFormatting.WHITE + "This logic block accepts redstone signals and"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "sends them out wirelessly to linked receivers"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "Place down to create a channel or else right"));
+            list.add(new StringTextComponent(TextFormatting.WHITE + "click on receiver/transmitter to use that channel"));
         } else {
-            list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
+            list.add(new StringTextComponent(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE));
         }
     }
 
     @Override
-    public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
-        super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
-        RedstoneTransmitterTileEntity te = (RedstoneTransmitterTileEntity) worldIn.getTileEntity(pos);
+    public void neighborChanged(BlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos, boolean p_220069_6_) {
+        super.neighborChanged(state, world, pos, blockIn, fromPos, p_220069_6_);
+        RedstoneTransmitterTileEntity te = (RedstoneTransmitterTileEntity) world.getTileEntity(pos);
         te.update();
     }
 
@@ -57,10 +51,5 @@ public class RedstoneTransmitterBlock extends RedstoneChannelBlock<RedstoneTrans
             // @todo double check
             ((RedstoneTransmitterTileEntity)world.getTileEntity(pos)).update();
         }
-    }
-
-    @Override
-    public int getGuiID() {
-        return -1;
     }
 }

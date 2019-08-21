@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.relay;
 
 import mcjty.lib.api.MachineInformation;
-import mcjty.lib.tileentity.GenericEnergyStorageTileEntity;
+import mcjty.lib.tileentity.GenericTileEntity;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
@@ -10,9 +10,9 @@ import mcjty.lib.varia.OrientationTools;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
-import net.minecraft.state.BooleanProperty;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.state.BooleanProperty;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -25,7 +25,7 @@ import net.minecraftforge.fml.common.Optional;
 import java.util.Arrays;
 import java.util.List;
 
-public class RelayTileEntity extends GenericEnergyStorageTileEntity implements ITickableTileEntity, MachineInformation {
+public class RelayTileEntity extends GenericTileEntity implements ITickableTileEntity, MachineInformation {
 
     public static final int MAXENERGY = 50000;
     public static final int RECEIVEPERTICK = 50000;

@@ -61,7 +61,7 @@ public class MatterBeamerBlock extends GenericRFToolsBlock<MatterBeamerTileEntit
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<ITextComponent> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
 //        CompoundNBT tagCompound = itemStack.getTag();
 //        if (tagCompound != null) {
@@ -69,7 +69,7 @@ public class MatterBeamerBlock extends GenericRFToolsBlock<MatterBeamerTileEntit
 //            int id = tagCompound.getInt("destinationId");
 //            list.add(EnumChatFormatting.GREEN + "Name: " + name + (id == -1 ? "" : (", Id: " + id)));
 //        }
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+        if (McJtyLib.proxy.isShiftKeyDown()) {
             list.add(TextFormatting.WHITE + "This block converts matter into a beam");
             list.add(TextFormatting.WHITE + "of energy. It can then send that beam to");
             list.add(TextFormatting.WHITE + "a connected spawner. Connect by using a wrench.");

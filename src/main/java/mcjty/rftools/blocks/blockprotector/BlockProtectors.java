@@ -36,7 +36,7 @@ public class BlockProtectors extends AbstractWorldData<BlockProtectors> {
             return Collections.emptyList();
         }
         BlockProtectors blockProtectors = getProtectors(world);
-        return blockProtectors.findProtectors(x, y, z, world.provider.getDimension(), 2);
+        return blockProtectors.findProtectors(x, y, z, world.getDimension().getType().getId(), 2);
     }
 
     public static boolean checkHarvestProtection(int x, int y, int z, IBlockReader world, Collection<GlobalCoordinate> protectors) {

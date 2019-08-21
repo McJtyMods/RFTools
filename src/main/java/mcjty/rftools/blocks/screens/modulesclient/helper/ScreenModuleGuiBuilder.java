@@ -224,7 +224,7 @@ public class ScreenModuleGuiBuilder implements IModuleGuiBuilder {
                 dim = currentData.getInteger("dim");
             }
             World world = getWorld();
-            if (dim == world.provider.getDimension()) {
+            if (dim == world.getDimension().getType().getId()) {
                 int x = currentData.getInteger(tagnamePos+"x");
                 int y = currentData.getInteger(tagnamePos+"y");
                 int z = currentData.getInteger(tagnamePos+"z");

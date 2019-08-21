@@ -40,7 +40,7 @@ public class StorageControlModuleItem extends Item implements IModuleProvider, I
     }
 
     @Override
-    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
+    public void addInformation(ItemStack itemStack, IBlockReader world, List<ITextComponent> list, ITooltipFlag flag) {
         super.addInformation(itemStack, world, list, flag);
         list.add(new StringTextComponent(TextFormatting.GREEN + "Uses " + ScreenConfiguration.STORAGE_CONTROL_RFPERTICK.get() + " RF/tick"));
         boolean hasTarget = false;
@@ -89,7 +89,7 @@ public class StorageControlModuleItem extends Item implements IModuleProvider, I
             if (block != null && !block.isAir(state, world, pos)) {
                 name = BlockTools.getReadableName(world, pos);
             }
-            RFToolsTools.setPositionInModule(stack, world.provider.getDimension(), pos, name);
+            RFToolsTools.setPositionInModule(stack, world.getDimension().getType().getId(), pos, name);
             if (world.isRemote) {
                 Logging.message(player, "Storage module is set to block '" + name + "'");
             }

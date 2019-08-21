@@ -61,7 +61,7 @@ public class MachineInformationModuleItem extends Item implements IModuleProvide
         World world = guiBuilder.getWorld();
         CompoundNBT currentData = guiBuilder.getCurrentData();
         IModuleGuiBuilder.Choice[] choices = EMPTY_CHOICES;
-        if((currentData.contains("monitordim") ? currentData.getInt("monitordim") : currentData.getInt("dim")) == world.provider.getDimension()) {
+        if((currentData.contains("monitordim") ? currentData.getInt("monitordim") : currentData.getInt("dim")) == world.getDimension().getType().getId()) {
 	        TileEntity tileEntity = world.getTileEntity(new BlockPos(currentData.getInt("monitorx"), currentData.getInt("monitory"), currentData.getInt("monitorz")));
 	        if (tileEntity instanceof MachineInformation) {
 	            MachineInformation information = (MachineInformation)tileEntity;
@@ -80,7 +80,7 @@ public class MachineInformationModuleItem extends Item implements IModuleProvide
     }
 
     @Override
-    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
+    public void addInformation(ItemStack itemStack, IBlockReader world, List<ITextComponent> list, ITooltipFlag flag) {
         super.addInformation(itemStack, world, list, flag);
         list.add(new StringTextComponent(TextFormatting.GREEN + "Uses " + ScreenConfiguration.MACHINEINFO_RFPERTICK.get() + " RF/tick"));
         boolean hasTarget = false;
@@ -111,7 +111,7 @@ public class MachineInformationModuleItem extends Item implements IModuleProvide
             tagCompound = new CompoundNBT();
         }
         if (te instanceof MachineInformation) {
-            tagCompound.putInt("monitordim", world.provider.getDimension());
+            tagCompound.putInt("monitordim", world.getDimension().getType().getId());
             tagCompound.putInt("monitorx", pos.getX());
             tagCompound.putInt("monitory", pos.getY());
             tagCompound.putInt("monitorz", pos.getZ());

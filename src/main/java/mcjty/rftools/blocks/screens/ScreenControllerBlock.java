@@ -37,10 +37,10 @@ public class ScreenControllerBlock extends GenericRFToolsBlock<ScreenControllerT
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<ITextComponent> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+        if (McJtyLib.proxy.isShiftKeyDown()) {
             list.add(TextFormatting.WHITE + "Before screens can work they need to get power from");
             list.add(TextFormatting.WHITE + "this controller. Even a screen that has only modules");
             list.add(TextFormatting.WHITE + "that require no power will need to have a controller.");

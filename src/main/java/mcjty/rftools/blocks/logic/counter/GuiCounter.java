@@ -61,6 +61,6 @@ public class GuiCounter extends GenericGuiContainer<CounterTileEntity> {
     private void requestCurrentCounter() {
         lastTime = System.currentTimeMillis();
         RFToolsMessages.sendToServer(CommandHandler.CMD_GET_COUNTER_INFO,
-                TypedMap.builder().put(CommandHandler.PARAM_DIMENSION, tileEntity.getWorld().provider.getDimension()).put(CommandHandler.PARAM_POS, tileEntity.getPos()));
+                TypedMap.builder().put(CommandHandler.PARAM_DIMENSION, tileEntity.getWorld().getDimension().getType().getId()).put(CommandHandler.PARAM_POS, tileEntity.getPos()));
     }
 }

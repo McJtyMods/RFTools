@@ -2,7 +2,6 @@ package mcjty.rftools.blocks.endergen;
 
 import mcjty.lib.blocks.LogicSlabBlock;
 import mcjty.lib.builder.BlockBuilder;
-import mcjty.lib.container.EmptyContainer;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -14,7 +13,7 @@ import net.minecraft.world.IBlockReader;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class EnderMonitorBlock extends LogicSlabBlock<EnderMonitorTileEntity, EmptyContainer> {
+public class EnderMonitorBlock extends LogicSlabBlock {
 
     public EnderMonitorBlock() {
         super("ender_monitor", new BlockBuilder().tileEntitySupplier(EnderMonitorTileEntity::new));

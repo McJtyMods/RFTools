@@ -55,6 +55,9 @@ public class LogicBlockSetup {
     @ObjectHolder("rftools:timer")
     public static TileEntityType<?> TYPE_TIMER;
 
+    @ObjectHolder("rftools:three_logic")
+    public static TileEntityType<?> TYPE_THREE_LOGIC;
+
     public static void init() {
         redstoneTransmitterBlock = new RedstoneTransmitterBlock();
         redstoneReceiverBlock = new RedstoneReceiverBlock();

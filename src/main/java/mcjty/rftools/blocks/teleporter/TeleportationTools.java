@@ -94,7 +94,7 @@ public class TeleportationTools {
      * @return
      */
     public static int calculateRFCost(World world, BlockPos c1, TeleportDestination teleportDestination) {
-        if (world.provider.getDimension() != teleportDestination.getDimension()) {
+        if (world.getDimension().getType().getId() != teleportDestination.getDimension()) {
             return TeleportConfiguration.rfStartTeleportBaseDim.get();
         } else {
             BlockPos c2 = teleportDestination.getCoordinate();
@@ -115,7 +115,7 @@ public class TeleportationTools {
      * @return
      */
     public static int calculateTime(World world, BlockPos c1, TeleportDestination teleportDestination) {
-        if (world.provider.getDimension() != teleportDestination.getDimension()) {
+        if (world.getDimension().getType().getId() != teleportDestination.getDimension()) {
             return TeleportConfiguration.timeTeleportBaseDim.get();
         } else {
             BlockPos c2 = teleportDestination.getCoordinate();
@@ -133,7 +133,7 @@ public class TeleportationTools {
         BlockPos c = dest.getCoordinate();
 
         BlockPos old = new BlockPos((int)player.posX, (int)player.posY, (int)player.posZ);
-        int oldId = player.getEntityWorld().provider.getDimension();
+        int oldId = player.getEntityWorld().getDimension().getType().getId();
 
         if (!TeleportationTools.allowTeleport(player, oldId, old, dest.getDimension(), dest.getCoordinate())) {
             return false;

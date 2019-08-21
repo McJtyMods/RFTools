@@ -100,7 +100,7 @@ public class SpaceChamberControllerTileEntity extends GenericTileEntity {
 
         SpaceChamberRepository chamberRepository = SpaceChamberRepository.getChannels(getWorld());
         SpaceChamberRepository.SpaceChamberChannel chamberChannel = chamberRepository.getOrCreateChannel(channel);
-        chamberChannel.setDimension(getWorld().provider.getDimension());
+        chamberChannel.setDimension(getWorld().getDimension().getType().getId());
         chamberChannel.setMinCorner(minCorner);
         chamberChannel.setMaxCorner(maxCorner);
         chamberRepository.save();

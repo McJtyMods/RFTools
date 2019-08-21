@@ -66,7 +66,7 @@ public class ElevatorButtonModuleItem extends Item implements IModuleProvider {
     }
 
     @Override
-    public void addInformation(ItemStack itemStack, World world, List<ITextComponent> list, ITooltipFlag flag) {
+    public void addInformation(ItemStack itemStack, IBlockReader world, List<ITextComponent> list, ITooltipFlag flag) {
         super.addInformation(itemStack, world, list, flag);
         list.add(new StringTextComponent(TextFormatting.GREEN + "Uses " + ScreenConfiguration.ELEVATOR_BUTTON_RFPERTICK.get() + " RF/tick"));
         boolean hasTarget = false;
@@ -96,7 +96,7 @@ public class ElevatorButtonModuleItem extends Item implements IModuleProvider {
             tagCompound = new CompoundNBT();
         }
         if (te instanceof ElevatorTileEntity) {
-            tagCompound.putInt("elevatordim", world.provider.getDimension());
+            tagCompound.putInt("elevatordim", world.getDimension().getType().getId());
             tagCompound.putInt("elevatorx", pos.getX());
             tagCompound.putInt("elevatory", pos.getY());
             tagCompound.putInt("elevatorz", pos.getZ());

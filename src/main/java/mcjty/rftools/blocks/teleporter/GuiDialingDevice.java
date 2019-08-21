@@ -195,7 +195,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
         BlockPos c = destination.getCoordinate();
         double distance = new Vec3d(c.getX(), c.getY(), c.getZ()).distanceTo(mc.player.getPositionVector());
 
-        if (destination.getDimension() != mc.world.provider.getDimension() || distance > 150) {
+        if (destination.getDimension() != mc.world.getDimension().getType().getId() || distance > 150) {
             Logging.warn(mc.player, "Receiver is too far to hilight!");
             mc.player.closeScreen();
             return;
@@ -317,7 +317,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
                 TypedMap.builder()
                         .put(PARAM_PLAYER, mc.player.getName())
                         .put(PARAM_TRANSMITTER, transmitterInfo.getCoordinate())
-                        .put(PARAM_TRANS_DIMENSION, mc.world.provider.getDimension())
+                        .put(PARAM_TRANS_DIMENSION, mc.world.getDimension().getType().getId())
                         .put(PARAM_POS, destination.getCoordinate())
                         .put(PARAM_DIMENSION, destination.getDimension())
                         .build());
@@ -346,7 +346,7 @@ public class GuiDialingDevice extends GenericGuiContainer<DialingDeviceTileEntit
                 TypedMap.builder()
                         .put(PARAM_PLAYER, mc.player.getName())
                         .put(PARAM_TRANSMITTER, transmitterInfo.getCoordinate())
-                        .put(PARAM_TRANS_DIMENSION, mc.world.provider.getDimension())
+                        .put(PARAM_TRANS_DIMENSION, mc.world.getDimension().getType().getId())
                         .put(PARAM_POS, null)
                         .put(PARAM_DIMENSION, 0)
                         .build());

@@ -28,7 +28,7 @@ public class DialingDeviceDriver {
 //                    TileEntity transmitterTE = tile.getWorld().getTileEntity(pos);
 //
 //                    Map<String, Object> transmitterInfo = new HashMap<>();
-//                    transmitterInfo.put("name", info.getName());
+//                    transmitterInfo.put("name", info.getModuleName());
 //                    transmitterInfo.put("position", getCoordinateMap(pos));
 //                    transmitterInfo.put("dialed", transmitterTE instanceof MatterTransmitterTileEntity && ((MatterTransmitterTileEntity)transmitterTE).isDialed());
 //                    return transmitterInfo;
@@ -40,7 +40,7 @@ public class DialingDeviceDriver {
 //                TeleportDestinations receivers = TeleportDestinations.getDestinations(tile.getWorld());
 //                List<Map<String, Object>> ret = receivers.getValidDestinations(tile.getWorld(), null)
 //                        .stream().map(destination -> {
-//                            String name = destination.getName();
+//                            String name = destination.getModuleName();
 //                            Map<String, Integer> pos = getCoordinateMap(destination.getCoordinate());
 //                            int dimension = destination.getDimension();
 //                            String dimName = destination.getDimensionName();
@@ -79,7 +79,7 @@ public class DialingDeviceDriver {
 //                BlockPos transmitterPos = transmitter.getPos();
 //                BlockPos receiverPos = receiver.getPos();
 //
-//                TeleportationTools.dial(tile.getWorld(), tile, null, transmitterPos, tile.getWorld().provider.getDimension(), receiverPos, targetDim, once);
+//                TeleportationTools.dial(tile.getWorld(), tile, null, transmitterPos, tile.getWorld().getDimension().getType().getId(), receiverPos, targetDim, once);
 //
 //                return new Object[]{true};
 //            }
@@ -96,7 +96,7 @@ public class DialingDeviceDriver {
 //                MatterTransmitterTileEntity transmitter = (MatterTransmitterTileEntity)transmitterTE;
 //                BlockPos transmitterPos = transmitter.getPos();
 //
-//                TeleportationTools.dial(tile.getWorld(), tile, null, transmitterPos, tile.getWorld().provider.getDimension(), null, 0, false);
+//                TeleportationTools.dial(tile.getWorld(), tile, null, transmitterPos, tile.getWorld().getDimension().getType().getId(), null, 0, false);
 //
 //                return new Object[]{true};
 //            }

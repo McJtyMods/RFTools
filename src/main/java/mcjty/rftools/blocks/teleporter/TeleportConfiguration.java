@@ -1,7 +1,7 @@
 package mcjty.rftools.blocks.teleporter;
 
-import mcjty.lib.thirteen.ConfigSpec;
 import mcjty.lib.varia.Logging;
+import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashSet;
@@ -10,63 +10,63 @@ import java.util.Set;
 public class TeleportConfiguration {
     public static final String CATEGORY_TELEPORTER = "teleporter";
 
-    public static ConfigSpec.IntValue TRANSMITTER_MAXENERGY;
-    public static ConfigSpec.IntValue TRANSMITTER_RECEIVEPERTICK;
-    public static ConfigSpec.IntValue RECEIVER_MAXENERGY;
-    public static ConfigSpec.IntValue RECEIVER_RECEIVEPERTICK;
-    public static ConfigSpec.IntValue DIALER_MAXENERGY;
-    public static ConfigSpec.IntValue DIALER_RECEIVEPERTICK;
-    public static ConfigSpec.IntValue horizontalDialerRange;           // Horizontal range the dialing device can check for transmitters
-    public static ConfigSpec.IntValue verticalDialerRange;              // Vertical range the dialing device can check for transmitters
-    public static ConfigSpec.IntValue rfPerDial;                     // RF Consumed by dialing device when making a new dial
-    public static ConfigSpec.IntValue rfPerCheck;                    // RF Used to do a check on a receiver.
-    public static ConfigSpec.IntValue rfDialedConnectionPerTick;       // RF Consumed by transmitter when a dial is active and not doing anything else
+    public static ForgeConfigSpec.IntValue TRANSMITTER_MAXENERGY;
+    public static ForgeConfigSpec.IntValue TRANSMITTER_RECEIVEPERTICK;
+    public static ForgeConfigSpec.IntValue RECEIVER_MAXENERGY;
+    public static ForgeConfigSpec.IntValue RECEIVER_RECEIVEPERTICK;
+    public static ForgeConfigSpec.IntValue DIALER_MAXENERGY;
+    public static ForgeConfigSpec.IntValue DIALER_RECEIVEPERTICK;
+    public static ForgeConfigSpec.IntValue horizontalDialerRange;           // Horizontal range the dialing device can check for transmitters
+    public static ForgeConfigSpec.IntValue verticalDialerRange;              // Vertical range the dialing device can check for transmitters
+    public static ForgeConfigSpec.IntValue rfPerDial;                     // RF Consumed by dialing device when making a new dial
+    public static ForgeConfigSpec.IntValue rfPerCheck;                    // RF Used to do a check on a receiver.
+    public static ForgeConfigSpec.IntValue rfDialedConnectionPerTick;       // RF Consumed by transmitter when a dial is active and not doing anything else
 
-    public static ConfigSpec.IntValue ADVANCED_CHARGEDPORTER_MAXENERGY;     // Maximum RF capacity of a charged porter item. Teleporting costs 50% more then normal so keep this into account
-    public static ConfigSpec.IntValue CHARGEDPORTER_MAXENERGY;     // Maximum RF capacity of a charged porter item. Teleporting costs 50% more then normal so keep this into account
-    public static ConfigSpec.IntValue CHARGEDPORTER_RECEIVEPERTICK;
+    public static ForgeConfigSpec.IntValue ADVANCED_CHARGEDPORTER_MAXENERGY;     // Maximum RF capacity of a charged porter item. Teleporting costs 50% more then normal so keep this into account
+    public static ForgeConfigSpec.IntValue CHARGEDPORTER_MAXENERGY;     // Maximum RF capacity of a charged porter item. Teleporting costs 50% more then normal so keep this into account
+    public static ForgeConfigSpec.IntValue CHARGEDPORTER_RECEIVEPERTICK;
 
-    public static ConfigSpec.IntValue advancedSpeedBonus;               // How much faster the speed of the advanced porter is
+    public static ForgeConfigSpec.IntValue advancedSpeedBonus;               // How much faster the speed of the advanced porter is
 
     // The following flags are used to calculate power usage for even starting a teleport. The rfStartTeleportBaseDim (cost of
     // teleporting to another dimension) is also the cap of the local teleport which is calculated by doing
     // rfStartTelelportBaseLocal + dist * rfStartTeleportDist
-    public static ConfigSpec.IntValue rfStartTeleportBaseLocal;      // Base RF consumed by transmitter when starting a teleport in same dimension
-    public static ConfigSpec.IntValue rfStartTeleportBaseDim;      // Base RF consumed by transmitter when starting a teleport to another dimension
-    public static ConfigSpec.IntValue rfStartTeleportDist;             // RF per distance unit when starting a teleport
-    public static ConfigSpec.IntValue rfTeleportPerTick;              // During the time the teleport is busy this RF is used per tick on the transmitter
-    public static ConfigSpec.IntValue rfMatterIdleTick;                 // The rf per tick a dialed transmitter consumes.
-    public static ConfigSpec.IntValue rfPerTeleportReceiver;         // On the receiver side we need this amount of power
-    public static ConfigSpec.IntValue rfBoostedTeleport;            // The RF needed to do a boosted teleportation
+    public static ForgeConfigSpec.IntValue rfStartTeleportBaseLocal;      // Base RF consumed by transmitter when starting a teleport in same dimension
+    public static ForgeConfigSpec.IntValue rfStartTeleportBaseDim;      // Base RF consumed by transmitter when starting a teleport to another dimension
+    public static ForgeConfigSpec.IntValue rfStartTeleportDist;             // RF per distance unit when starting a teleport
+    public static ForgeConfigSpec.IntValue rfTeleportPerTick;              // During the time the teleport is busy this RF is used per tick on the transmitter
+    public static ForgeConfigSpec.IntValue rfMatterIdleTick;                 // The rf per tick a dialed transmitter consumes.
+    public static ForgeConfigSpec.IntValue rfPerTeleportReceiver;         // On the receiver side we need this amount of power
+    public static ForgeConfigSpec.IntValue rfBoostedTeleport;            // The RF needed to do a boosted teleportation
 
     // The following flags are used to calculate the time used for doing the actual teleportation. Same principle as with
     // the power usage above with regards to local/dimensional teleport.
-    public static ConfigSpec.IntValue timeTeleportBaseLocal;
-    public static ConfigSpec.IntValue timeTeleportBaseDim;
-    public static ConfigSpec.IntValue timeTeleportDist;                // Value in militicks (1000 == 1 tick)
+    public static ForgeConfigSpec.IntValue timeTeleportBaseLocal;
+    public static ForgeConfigSpec.IntValue timeTeleportBaseDim;
+    public static ForgeConfigSpec.IntValue timeTeleportDist;                // Value in militicks (1000 == 1 tick)
 
     // Base volume for the teleporting sound (whoosh!)
-    public static ConfigSpec.DoubleValue teleportVolume;
-    public static ConfigSpec.DoubleValue teleportErrorVolume;
+    public static ForgeConfigSpec.DoubleValue teleportVolume;
+    public static ForgeConfigSpec.DoubleValue teleportErrorVolume;
 
     // Set these flags if you want the matter transmitter to more aggressively check for receiver quality. Possibly with some performance penalty.
-    public static ConfigSpec.IntValue matterTransmitterLoadChunk;
-    public static ConfigSpec.IntValue matterTransmitterLoadWorld;
+    public static ForgeConfigSpec.IntValue matterTransmitterLoadChunk;
+    public static ForgeConfigSpec.IntValue matterTransmitterLoadWorld;
 
-    public static ConfigSpec.BooleanValue whooshMessage;
+    public static ForgeConfigSpec.BooleanValue whooshMessage;
 
     // Prevent inter-dimensional teleportation.
-    public static ConfigSpec.BooleanValue preventInterdimensionalTeleports;
+    public static ForgeConfigSpec.BooleanValue preventInterdimensionalTeleports;
     // Blacklist the following dimensions to be able to teleport from.
-    public static ConfigSpec.ConfigValue<String> blacklistedTeleportationSources;
+    public static ForgeConfigSpec.ConfigValue<String> blacklistedTeleportationSources;
     private static Set<Integer> blacklistedTeleportationSourcesSet = null;
     // Blacklist the following dimensions to be able to teleport too.
-    public static ConfigSpec.ConfigValue<String> blacklistedTeleportationDestinations;
+    public static ForgeConfigSpec.ConfigValue<String> blacklistedTeleportationDestinations;
     private static Set<Integer> blacklistedTeleportationDestinationsSet = null;
 
-    public static ConfigSpec.BooleanValue logTeleportUsages;
+    public static ForgeConfigSpec.BooleanValue logTeleportUsages;
 
-    public static void init(ConfigSpec.Builder SERVER_BUILDER, ConfigSpec.Builder CLIENT_BUILDER) {
+    public static void init(ForgeConfigSpec.Builder SERVER_BUILDER, ForgeConfigSpec.Builder CLIENT_BUILDER) {
         SERVER_BUILDER.comment("Settings for the teleportation system").push(CATEGORY_TELEPORTER);
         CLIENT_BUILDER.comment("Settings for the teleportation system").push(CATEGORY_TELEPORTER);
 

@@ -332,7 +332,7 @@ public class ScannerTileEntity extends GenericEnergyReceiverTileEntity implement
     }
 
     public int getScanDimension() {
-        return getWorld().provider.getDimension();
+        return getWorld().getDimension().getType().getId();
     }
 
     public BlockPos getScanCenter() {

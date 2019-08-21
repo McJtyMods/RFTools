@@ -18,7 +18,9 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraftforge.common.util.Constants;
 
-public class ComposerTileEntity extends GenericTileEntity implements DefaultSidedInventory, ITickableTileEntity {
+import static mcjty.rftools.blocks.builder.BuilderSetup.TYPE_COMPOSER;
+
+public class ComposerTileEntity extends GenericTileEntity implements ITickableTileEntity {
 
     public static final int SLOT_COUNT = 9;
     public static final int SLOT_OUT = 0;
@@ -41,14 +43,15 @@ public class ComposerTileEntity extends GenericTileEntity implements DefaultSide
     private ShapeModifier modifiers[] = new ShapeModifier[SLOT_COUNT];
 
     public ComposerTileEntity() {
+        super(TYPE_COMPOSER);
         for (int i = 0; i < modifiers.length ; i++) {
             modifiers[i] = new ShapeModifier(ShapeOperation.UNION, false, ShapeRotation.NONE);
         }
     }
 
     @Override
-    public void update() {
-        if (!getWorld().isRemote) {
+    public void tick() {
+        if (!world.isRemote) {
             ItemStack output = getStackInSlot(SLOT_OUT);
             if (!output.isEmpty()) {
                 ListNBT list = new ListNBT();

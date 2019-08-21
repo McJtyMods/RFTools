@@ -637,7 +637,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickableTile
                         Logging.logError("Internal error with screen modules!", e);
                         continue;
                     }
-                    clientScreenModule.setupFromNBT(itemStack.getTag(), getWorld().provider.getDimension(), getPos());
+                    clientScreenModule.setupFromNBT(itemStack.getTag(), getWorld().getDimension().getType().getId(), getPos());
                     clientScreenModules.add(clientScreenModule);
                     if (clientScreenModule.needsServerData()) {
                         needsServerData = true;
@@ -696,7 +696,7 @@ public class ScreenTileEntity extends GenericTileEntity implements ITickableTile
                         Logging.logError("Internal error with screen modules!", e);
                         continue;
                     }
-                    screenModule.setupFromNBT(itemStack.getTag(), getWorld().provider.getDimension(), getPos());
+                    screenModule.setupFromNBT(itemStack.getTag(), getWorld().getDimension().getType().getId(), getPos());
                     screenModules.add(screenModule);
                     totalRfPerTick += screenModule.getRfPerTick();
                     if(screenModule.needsController()) controllerNeededInCreative = true;

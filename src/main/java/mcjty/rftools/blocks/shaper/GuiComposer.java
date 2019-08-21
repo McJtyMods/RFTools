@@ -1,5 +1,6 @@
 package mcjty.rftools.blocks.shaper;
 
+import mcjty.lib.container.EmptyContainer;
 import mcjty.lib.container.GenericContainer;
 import mcjty.lib.gui.GenericGuiContainer;
 import mcjty.lib.gui.Window;
@@ -16,16 +17,16 @@ import mcjty.rftools.network.RFToolsMessages;
 import mcjty.rftools.setup.GuiProxy;
 import mcjty.rftools.shapes.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.input.Mouse;
 
 import java.awt.*;
 import java.io.IOException;
 
-public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> implements IShapeParentGui {
+public class GuiComposer extends GenericGuiContainer<ComposerTileEntity, GenericContainer> implements IShapeParentGui {
     public static final int SIDEWIDTH = 80;
     public static final int SHAPER_WIDTH = 256;
     public static final int SHAPER_HEIGHT = 238;
@@ -49,8 +50,8 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
     private Window sideWindow;
 
 
-    public GuiComposer(ComposerTileEntity composerTileEntity, GenericContainer container) {
-        super(RFTools.instance, RFToolsMessages.INSTANCE, composerTileEntity, container, GuiProxy.GUI_MANUAL_SHAPE, "composer");
+    public GuiComposer(ComposerTileEntity composerTileEntity, GenericContainer container, PlayerInventory playerInventory) {
+        super(RFTools.instance, RFToolsMessages.INSTANCE, composerTileEntity, container, playerInventory, GuiProxy.GUI_MANUAL_SHAPE, "composer");
 
         xSize = SHAPER_WIDTH;
         ySize = SHAPER_HEIGHT;
@@ -64,18 +65,18 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
     }
 
     private ShapeID getShapeID() {
-        Slot slot = inventorySlots.getSlot(ComposerTileEntity.SLOT_OUT);
+        Slot slot = container.getSlot(ComposerTileEntity.SLOT_OUT);
         ItemStack stack = slot.getHasStack() ? slot.getStack() : ItemStack.EMPTY;
 
-        return new ShapeID(tileEntity.getWorld().provider.getDimension(), tileEntity.getPos(), ShapeCardItem.getScanId(stack), false, ShapeCardItem.isSolid(stack));
+        return new ShapeID(tileEntity.getWorld().getDimension().getType().getId(), tileEntity.getPos(), ShapeCardItem.getScanId(stack), false, ShapeCardItem.isSolid(stack));
     }
 
 
     @Override
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
 
-        Panel toplevel = new Panel(mc, this).setBackground(iconLocation).setLayout(new PositionalLayout());
+        Panel toplevel = new Panel(minecraft, this).setBackground(iconLocation).setLayout(new PositionalLayout());
 
         getShapeRenderer().initView(getPreviewLeft(), guiTop+100);
 
@@ -83,7 +84,7 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
 
         operationLabels[0] = null;
         for (int i = 0; i < ComposerTileEntity.SLOT_COUNT ; i++) {
-            operationLabels[i] = new ChoiceLabel(mc, this).addChoices(
+            operationLabels[i] = new ChoiceLabel(minecraft, this).addChoices(
                     ShapeOperation.UNION.getCode(),
                     ShapeOperation.SUBTRACT.getCode(),
                     ShapeOperation.INTERSECT.getCode());
@@ -98,12 +99,12 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
         operationLabels[0].setEnabled(false);
 
         for (int i = 0; i < ComposerTileEntity.SLOT_COUNT ; i++) {
-            configButton[i] = new Button(mc, this).setText("?").setChannel("config" + i);
+            configButton[i] = new Button(minecraft, this).setText("?").setChannel("config" + i);
             configButton[i].setLayoutHint(new PositionalLayout.PositionalHint(3, 7 + i*18+2, 13, 12));
             configButton[i].setTooltips("Click to open the card gui");
             toplevel.addChild(configButton[i]);
         }
-        outConfigButton = new Button(mc, this).setText("?").setChannel("outconfig");
+        outConfigButton = new Button(minecraft, this).setText("?").setChannel("outconfig");
         outConfigButton.setLayoutHint(new PositionalLayout.PositionalHint(3, 200+2, 13, 12));
         outConfigButton.setTooltips("Click to open the card gui");
         toplevel.addChild(outConfigButton);
@@ -114,26 +115,26 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
 
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
-        Panel sidePanel = new Panel(mc, this).setLayout(new PositionalLayout()).setBackground(sideBackground);
+        Panel sidePanel = new Panel(minecraft, this).setLayout(new PositionalLayout()).setBackground(sideBackground);
         String[] tt = {
                 "Drag left mouse button to rotate",
                 "Shift drag left mouse to pan",
                 "Use mouse wheel to zoom in/out",
                 "Use middle click to reset rotation" };
-        sidePanel.addChild(new Label(mc, this).setText("E").setColor(0xffff0000).setTooltips(tt).setLayoutHint(5, 175, 15, 15));
-        sidePanel.addChild(new Label(mc, this).setText("W").setColor(0xffff0000).setTooltips(tt).setLayoutHint(40, 175, 15, 15));
-        sidePanel.addChild(new Label(mc, this).setText("U").setColor(0xff00bb00).setTooltips(tt).setLayoutHint(5, 190, 15, 15));
-        sidePanel.addChild(new Label(mc, this).setText("D").setColor(0xff00bb00).setTooltips(tt).setLayoutHint(40, 190, 15, 15));
-        sidePanel.addChild(new Label(mc, this).setText("N").setColor(0xff0000ff).setTooltips(tt).setLayoutHint(5, 205, 15, 15));
-        sidePanel.addChild(new Label(mc, this).setText("S").setColor(0xff0000ff).setTooltips(tt).setLayoutHint(40, 205, 15, 15));
+        sidePanel.addChild(new Label(minecraft, this).setText("E").setColor(0xffff0000).setTooltips(tt).setLayoutHint(5, 175, 15, 15));
+        sidePanel.addChild(new Label(minecraft, this).setText("W").setColor(0xffff0000).setTooltips(tt).setLayoutHint(40, 175, 15, 15));
+        sidePanel.addChild(new Label(minecraft, this).setText("U").setColor(0xff00bb00).setTooltips(tt).setLayoutHint(5, 190, 15, 15));
+        sidePanel.addChild(new Label(minecraft, this).setText("D").setColor(0xff00bb00).setTooltips(tt).setLayoutHint(40, 190, 15, 15));
+        sidePanel.addChild(new Label(minecraft, this).setText("N").setColor(0xff0000ff).setTooltips(tt).setLayoutHint(5, 205, 15, 15));
+        sidePanel.addChild(new Label(minecraft, this).setText("S").setColor(0xff0000ff).setTooltips(tt).setLayoutHint(40, 205, 15, 15));
 
         for (int i = 0; i < ComposerTileEntity.SLOT_COUNT ; i++) {
-            ToggleButton flip = new ToggleButton(mc, this).setText("Flip").setCheckMarker(true).setLayoutHint(new PositionalLayout.PositionalHint(6, 7 + i*18, 35, 16));
+            ToggleButton flip = new ToggleButton(minecraft, this).setText("Flip").setCheckMarker(true).setLayoutHint(new PositionalLayout.PositionalHint(6, 7 + i*18, 35, 16));
             flip.setPressed(modifiers[i].isFlipY());
             flip.addButtonEvent(parent -> update());
             sidePanel.addChild(flip);
             flipButtons[i] = flip;
-            ChoiceLabel rot = new ChoiceLabel(mc, this).addChoices("None", "X", "Y", "Z").setChoice("None").setLayoutHint(new PositionalLayout.PositionalHint(45, 7 + i*18, 35, 16));
+            ChoiceLabel rot = new ChoiceLabel(minecraft, this).addChoices("None", "X", "Y", "Z").setChoice("None").setLayoutHint(new PositionalLayout.PositionalHint(45, 7 + i*18, 35, 16));
             rot.setChoice(modifiers[i].getRotation().getCode());
             rot.addChoiceEvent((parent, newChoice) -> update());
             sidePanel.addChild(rot);
@@ -177,9 +178,9 @@ public class GuiComposer extends GenericGuiContainer<ComposerTileEntity> impleme
         } else {
             slot = ComposerTileEntity.SLOT_TABS+i;
         }
-        ItemStack cardStack = inventorySlots.getSlot(slot).getStack();
+        ItemStack cardStack = container.getSlot(slot).getStack();
         if (!cardStack.isEmpty()) {
-            EntityPlayerSP player = Minecraft.getInstance().player;
+            PlayerEntity player = Minecraft.getInstance().player;
             GuiShapeCard.fromTEPos = tileEntity.getPos();
             GuiShapeCard.fromTEStackSlot = slot;
             GuiShapeCard.returnGui = this;

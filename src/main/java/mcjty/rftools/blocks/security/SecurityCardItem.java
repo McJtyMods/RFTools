@@ -40,7 +40,7 @@ public class SecurityCardItem extends GenericRFToolsItem {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<ITextComponent> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         CompoundNBT tagCompound = itemStack.getTag();
         int channel = -1;
@@ -56,7 +56,7 @@ public class SecurityCardItem extends GenericRFToolsItem {
         } else {
             list.add(TextFormatting.YELLOW + "Channel is not set!");
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+        if (McJtyLib.proxy.isShiftKeyDown()) {
             list.add(TextFormatting.WHITE + "Manage security channels in the Security Manager");
             list.add(TextFormatting.WHITE + "and link this card to a channel. Sneak right-click");
             list.add(TextFormatting.WHITE + "a block to link the channel to that block.");

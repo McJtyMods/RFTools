@@ -60,14 +60,14 @@ public class BlockProtectorBlock extends GenericRFToolsBlock<BlockProtectorTileE
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<ITextComponent> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
             int id = tagCompound.getInt("protectorId");
             list.add(TextFormatting.GREEN + "Id: " + id);
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+        if (McJtyLib.proxy.isShiftKeyDown()) {
             list.add(TextFormatting.WHITE + "Use the smart wrench with this block to select");
             list.add(TextFormatting.WHITE + "other blocks to protect them against explosions");
             list.add(TextFormatting.WHITE + "and other breackage.");
@@ -110,7 +110,7 @@ public class BlockProtectorBlock extends GenericRFToolsBlock<BlockProtectorTileE
         if (!world.isRemote) {
             GlobalCoordinate currentBlock = SmartWrenchItem.getCurrentBlock(player.getHeldItem(Hand.MAIN_HAND));
             if (currentBlock == null) {
-                SmartWrenchItem.setCurrentBlock(player.getHeldItem(Hand.MAIN_HAND), new GlobalCoordinate(pos, world.provider.getDimension()));
+                SmartWrenchItem.setCurrentBlock(player.getHeldItem(Hand.MAIN_HAND), new GlobalCoordinate(pos, world.getDimension().getType().getId()));
                 Logging.message(player, TextFormatting.YELLOW + "Selected block");
             } else {
                 SmartWrenchItem.setCurrentBlock(player.getHeldItem(Hand.MAIN_HAND), null);
@@ -128,7 +128,7 @@ public class BlockProtectorBlock extends GenericRFToolsBlock<BlockProtectorTileE
         }
         BlockProtectors protectors = BlockProtectors.getProtectors(world);
 
-        GlobalCoordinate gc = new GlobalCoordinate(pos, world.provider.getDimension());
+        GlobalCoordinate gc = new GlobalCoordinate(pos, world.getDimension().getType().getId());
 
         protectors.getNewId(gc);
         protectors.save();
@@ -165,7 +165,7 @@ public class BlockProtectorBlock extends GenericRFToolsBlock<BlockProtectorTileE
             return;
         }
         BlockProtectors protectors = BlockProtectors.getProtectors(world);
-        protectors.removeDestination(pos, world.provider.getDimension());
+        protectors.removeDestination(pos, world.getDimension().getType().getId());
         protectors.save();
     }
 

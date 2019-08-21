@@ -63,7 +63,7 @@ public class EnderMonitorTileEntity extends LogicTileEntity implements ITickable
 
     @Override
     public int getDimension() {
-        return world.provider.getDimension();
+        return world.getDimension().getType().getId();
     }
 
     @Override

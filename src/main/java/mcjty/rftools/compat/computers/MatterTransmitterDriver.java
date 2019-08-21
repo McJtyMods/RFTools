@@ -22,8 +22,8 @@ public class MatterTransmitterDriver {
 //            }
 //
 //            @Callback(doc="function():string; Get the current name")
-//            public Object[] getName(Context c, Arguments a) {
-//                return new Object[]{tile.getName()};
+//            public Object[] getModuleName(Context c, Arguments a) {
+//                return new Object[]{tile.getModuleName()};
 //            }
 //
 //            @Callback(doc="function(name:string); Set the current name")

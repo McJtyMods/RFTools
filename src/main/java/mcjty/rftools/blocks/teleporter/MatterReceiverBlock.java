@@ -2,6 +2,7 @@ package mcjty.rftools.blocks.teleporter;
 
 import mcjty.lib.McJtyLib;
 import mcjty.lib.api.Infusable;
+import mcjty.lib.blocks.RotationType;
 import mcjty.lib.builder.BlockBuilder;
 import mcjty.lib.varia.GlobalCoordinate;
 import mcjty.rftools.blocks.GenericRFToolsBlock;
@@ -9,9 +10,9 @@ import mcjty.rftools.setup.GuiProxy;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -19,6 +20,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -63,7 +65,7 @@ public class MatterReceiverBlock extends GenericRFToolsBlock implements Infusabl
 //        TileEntity te = world.getTileEntity(data.getPos());
 //        if (te instanceof MatterReceiverTileEntity) {
 //            MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
-//            String name = matterReceiverTileEntity.getName();
+//            String name = matterReceiverTileEntity.getModuleName();
 //            int id = matterReceiverTileEntity.getId();
 //            if (name == null || name.isEmpty()) {
 //                probeInfo.text(TextFormatting.GREEN + (id == -1 ? "" : ("Id: " + id)));
@@ -81,7 +83,7 @@ public class MatterReceiverBlock extends GenericRFToolsBlock implements Infusabl
 //        TileEntity te = accessor.getTileEntity();
 //        if (te instanceof MatterReceiverTileEntity) {
 //            MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) te;
-//            String name = matterReceiverTileEntity.getName();
+//            String name = matterReceiverTileEntity.getModuleName();
 //            int id = matterReceiverTileEntity.getId();
 //            if (name == null || name.isEmpty()) {
 //                currenttip.add(TextFormatting.GREEN + (id == -1 ? "" : ("Id: " + id)));
@@ -92,15 +94,19 @@ public class MatterReceiverBlock extends GenericRFToolsBlock implements Infusabl
 //        return currenttip;
 //    }
 
+
+    @Nullable
     @Override
-    public BlockState getStateForPlacement(World world, BlockPos pos, Direction facing, float hitX, float hitY, float hitZ, int meta, LivingEntity placer) {
-        BlockState state = super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer);
+    public BlockState getStateForPlacement(BlockItemUseContext context) {
+        BlockState state = super.getStateForPlacement(context);
+        World world = context.getWorld();
         if (world.isRemote) {
             return state;
         }
         TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
 
-        GlobalCoordinate gc = new GlobalCoordinate(pos, world.provider.getDimension());
+        BlockPos pos = context.getPos();
+        GlobalCoordinate gc = new GlobalCoordinate(pos, world.getDimension().getType().getId());
 
         destinations.getNewId(gc);
         destinations.addDestination(gc);
@@ -113,7 +119,8 @@ public class MatterReceiverBlock extends GenericRFToolsBlock implements Infusabl
     public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         // We don't want what BaseBlock does.
         // This is called AFTER onBlockPlaced below. Here we need to fix the destination settings.
-        restoreBlockFromNBT(world, pos, stack);
+        // @todo 1.14 check
+//        restoreBlockFromNBT(world, pos, stack);
         if (!world.isRemote) {
             MatterReceiverTileEntity matterReceiverTileEntity = (MatterReceiverTileEntity) world.getTileEntity(pos);
             matterReceiverTileEntity.getOrCalculateID();
@@ -123,13 +130,13 @@ public class MatterReceiverBlock extends GenericRFToolsBlock implements Infusabl
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, BlockState state) {
-        super.breakBlock(world, pos, state);
+    public void onReplaced(BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull BlockState newstate, boolean isMoving) {
+        super.onReplaced(state, world, pos, newstate, isMoving);
         if (world.isRemote) {
             return;
         }
         TeleportDestinations destinations = TeleportDestinations.getDestinations(world);
-        destinations.removeDestination(pos, world.provider.getDimension());
+        destinations.removeDestination(pos, world.getDimension().getType().getId());
         destinations.save();
     }
 

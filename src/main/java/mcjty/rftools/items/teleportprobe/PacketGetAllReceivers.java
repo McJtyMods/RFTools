@@ -50,7 +50,7 @@ public class PacketGetAllReceivers implements IMessage {
     private void addDimensions(List<TeleportDestinationClientInfo> destinationList) {
         ServerWorld[] worlds = DimensionManager.getWorlds();
         for (ServerWorld world : worlds) {
-            int id = world.provider.getDimension();
+            int id = world.getDimension().getType().getId();
             TeleportDestination destination = new TeleportDestination(new BlockPos(0, 70, 0), id);
             destination.setName("Dimension: " + id);
             TeleportDestinationClientInfo teleportDestinationClientInfo = new TeleportDestinationClientInfo(destination);

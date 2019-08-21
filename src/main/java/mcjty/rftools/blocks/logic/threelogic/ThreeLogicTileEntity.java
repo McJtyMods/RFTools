@@ -7,14 +7,16 @@ import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.LogicFacing;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import static mcjty.rftools.blocks.logic.LogicBlockSetup.TYPE_THREE_LOGIC;
 
 public class ThreeLogicTileEntity extends LogicTileEntity {
 
@@ -25,6 +27,7 @@ public class ThreeLogicTileEntity extends LogicTileEntity {
     private int[] logicTable = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };    // 0 == off, 1 == on, -1 == keep
 
     public ThreeLogicTileEntity() {
+        super(TYPE_THREE_LOGIC);
     }
 
 //    @Override
@@ -47,36 +50,36 @@ public class ThreeLogicTileEntity extends LogicTileEntity {
     }
 
     @Override
-    public void readFromNBT(CompoundNBT tagCompound) {
-        super.readFromNBT(tagCompound);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
         powerOutput = tagCompound.getBoolean("rs") ? 15 : 0;
+        readRestorableFromNBT(tagCompound);
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void readRestorableFromNBT(CompoundNBT tagCompound) {
-        super.readRestorableFromNBT(tagCompound);
         for (int i = 0 ; i < 8 ; i++) {
-            logicTable[i] = tagCompound.getInteger("state" + i);
+            logicTable[i] = tagCompound.getInt("state" + i);
         }
     }
 
     @Override
-    public CompoundNBT writeToNBT(CompoundNBT tagCompound) {
-        super.writeToNBT(tagCompound);
-        tagCompound.setBoolean("rs", powerOutput > 0);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        super.write(tagCompound);
+        tagCompound.putBoolean("rs", powerOutput > 0);
+        writeRestorableToNBT(tagCompound);
         return tagCompound;
     }
 
-    @Override
+    // @todo 1.14 loot tables
     public void writeRestorableToNBT(CompoundNBT tagCompound) {
-        super.writeRestorableToNBT(tagCompound);
         for (int i = 0 ; i < 8 ; i++) {
-            tagCompound.setInteger("state" + i, logicTable[i]);
+            tagCompound.putInt("state" + i, logicTable[i]);
         }
     }
 
     @Override
-    public boolean execute(EntityPlayerMP playerMP, String command, TypedMap params) {
+    public boolean execute(PlayerEntity playerMP, String command, TypedMap params) {
         boolean rc = super.execute(playerMP, command, params);
         if (rc) {
             return true;
@@ -99,10 +102,10 @@ public class ThreeLogicTileEntity extends LogicTileEntity {
         if (loopDetector.add(pos)) {
             try {
                 LogicFacing facing = getFacing(state);
-                EnumFacing downSide = facing.getSide();
-                EnumFacing inputSide = facing.getInputSide();
-                EnumFacing leftSide = LogicSlabBlock.rotateLeft(downSide, inputSide);
-                EnumFacing rightSide = LogicSlabBlock.rotateRight(downSide, inputSide);
+                Direction downSide = facing.getSide();
+                Direction inputSide = facing.getInputSide();
+                Direction leftSide = LogicSlabBlock.rotateLeft(downSide, inputSide);
+                Direction rightSide = LogicSlabBlock.rotateRight(downSide, inputSide);
 
                 int powered1 = getInputStrength(world, pos, leftSide) > 0 ? 1 : 0;
                 int powered2 = getInputStrength(world, pos, inputSide) > 0 ? 2 : 0;

@@ -41,7 +41,7 @@ public class FlightEModuleItem extends Item implements EnvModuleProvider {
     }
 
     @Override
-    public String getName() {
+    public String getModuleName() {
         return "Flight";
     }
 }

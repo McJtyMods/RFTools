@@ -22,7 +22,7 @@ public class WeaknessEModuleItem extends GenericRFToolsItem implements EnvModule
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<ITextComponent> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add("This module gives weakness when");
         list.add("used in the environmental controller.");
@@ -43,7 +43,7 @@ public class WeaknessEModuleItem extends GenericRFToolsItem implements EnvModule
     }
 
     @Override
-    public String getName() {
+    public String getModuleName() {
         return "Weakness";
     }
 }

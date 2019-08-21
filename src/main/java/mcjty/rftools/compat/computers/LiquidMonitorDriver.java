@@ -43,7 +43,7 @@ public class LiquidMonitorDriver {
 //                        if (contents == null) {
 //                            return new Object[] {"null", 0};
 //                        }
-//                        return new Object[] {contents.getFluid().getName(), contents.amount};
+//                        return new Object[] {contents.getFluid().getModuleName(), contents.amount};
 //                    }
 //                }
 //                return new Object[] {null, "Invalid monitored block"};

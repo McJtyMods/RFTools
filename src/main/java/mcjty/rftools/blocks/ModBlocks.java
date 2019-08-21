@@ -15,7 +15,6 @@ import mcjty.rftools.blocks.infuser.MachineInfuserSetup;
 import mcjty.rftools.blocks.itemfilter.ItemFilterSetup;
 import mcjty.rftools.blocks.logic.LogicBlockSetup;
 import mcjty.rftools.blocks.monitor.MonitorSetup;
-import mcjty.rftools.blocks.ores.DimensionalShardBlock;
 import mcjty.rftools.blocks.powercell.PowerCellSetup;
 import mcjty.rftools.blocks.relay.RelaySetup;
 import mcjty.rftools.blocks.screens.ScreenSetup;
@@ -25,6 +24,7 @@ import mcjty.rftools.blocks.spawner.SpawnerSetup;
 import mcjty.rftools.blocks.storage.ModularStorageSetup;
 import mcjty.rftools.blocks.storagemonitor.StorageScannerSetup;
 import mcjty.rftools.blocks.teleporter.TeleporterSetup;
+import mcjty.rftoolsbase.blocks.DimensionalShardBlock;
 import net.minecraft.client.renderer.color.BlockColors;
 
 
@@ -32,8 +32,6 @@ import net.minecraft.client.renderer.color.BlockColors;
 public final class ModBlocks {
     public static MachineFrame machineFrame;
     public static MachineBase machineBase;
-
-    public static DimensionalShardBlock dimensionalShardBlock;
 
     public static BaseBlockBuilderFactory builderFactory;
     public static LogicSlabBlockBuilderFactory logicFactory;

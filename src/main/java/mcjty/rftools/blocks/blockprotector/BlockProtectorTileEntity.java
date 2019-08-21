@@ -212,7 +212,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
 
     // Toggle a coordinate to be protected or not. The coordinate given here is absolute.
     public void toggleCoordinate(GlobalCoordinate c) {
-        if (c.getDimension() != getWorld().provider.getDimension()) {
+        if (c.getDimension() != getWorld().getDimension().getType().getId()) {
             // Wrong dimension. Don't do anything.
             return;
         }
@@ -237,14 +237,14 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
             Logging.message(player, TextFormatting.RED + "Block out of range of the block protector!");
             return;
         }
-        GlobalCoordinate gc = new GlobalCoordinate(pos, getWorld().provider.getDimension());
+        GlobalCoordinate gc = new GlobalCoordinate(pos, getWorld().getDimension().getType().getId());
         toggleCoordinate(gc);
     }
 
     public int getOrCalculateID() {
         if (id == -1) {
             BlockProtectors protectors = BlockProtectors.getProtectors(getWorld());
-            GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().provider.getDimension());
+            GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().getDimension().getType().getId());
             id = protectors.getNewId(gc);
             protectors.save();
             setId(id);
@@ -268,7 +268,7 @@ public class BlockProtectorTileEntity extends GenericEnergyReceiverTileEntity im
     public void updateDestination() {
         BlockProtectors protectors = BlockProtectors.getProtectors(getWorld());
 
-        GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().provider.getDimension());
+        GlobalCoordinate gc = new GlobalCoordinate(getPos(), getWorld().getDimension().getType().getId());
 
         if (id == -1) {
             id = protectors.getNewId(gc);

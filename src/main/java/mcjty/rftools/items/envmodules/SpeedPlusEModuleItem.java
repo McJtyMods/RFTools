@@ -22,7 +22,7 @@ public class SpeedPlusEModuleItem extends GenericRFToolsItem implements EnvModul
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<ITextComponent> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         list.add("This module gives speed III bonus when");
         list.add("used in the environmental controller.");
@@ -40,7 +40,7 @@ public class SpeedPlusEModuleItem extends GenericRFToolsItem implements EnvModul
     }
 
     @Override
-    public String getName() {
+    public String getModuleName() {
         return "Speed+";
     }
 }

@@ -3,6 +3,8 @@ package mcjty.rftools.blocks.teleporter;
 import mcjty.rftools.items.teleportprobe.AdvancedChargedPorterItem;
 import mcjty.rftools.items.teleportprobe.ChargedPorterItem;
 import mcjty.rftools.items.teleportprobe.TeleportProbeItem;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.registries.ObjectHolder;
 
 public class TeleporterSetup {
     public static MatterTransmitterBlock matterTransmitterBlock;
@@ -15,6 +17,10 @@ public class TeleporterSetup {
     public static TeleportProbeItem teleportProbeItem;
     public static ChargedPorterItem chargedPorterItem;
     public static AdvancedChargedPorterItem advancedChargedPorterItem;
+
+    @ObjectHolder("rftools:matter_receiver")
+    public static TileEntityType<?> TYPE_MATTER_RECEIVER;
+
 
     public static void init() {
         matterTransmitterBlock = new MatterTransmitterBlock();

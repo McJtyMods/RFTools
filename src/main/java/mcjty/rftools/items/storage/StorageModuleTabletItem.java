@@ -200,7 +200,7 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
     }
 
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<ITextComponent> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
@@ -215,7 +215,7 @@ public class StorageModuleTabletItem extends GenericRFToolsItem implements IEner
                 list.add(TextFormatting.YELLOW + "No storage module installed!");
             }
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+        if (McJtyLib.proxy.isShiftKeyDown()) {
             list.add("This RF/charged tablet can hold a storage module");
             list.add("and allows the wielder to manipulate the contents of");
             list.add("this module (remote or normal).");

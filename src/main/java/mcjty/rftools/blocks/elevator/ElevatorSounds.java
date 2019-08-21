@@ -34,7 +34,7 @@ public class ElevatorSounds {
     }
 
     public static void moveSound(World world, BlockPos pos, float y) {
-        GlobalCoordinate g = new GlobalCoordinate(pos, world.provider.getDimension());
+        GlobalCoordinate g = new GlobalCoordinate(pos, world.getDimension().getType().getId());
         if (sounds.containsKey(g)) {
             MovingSound movingSound = sounds.get(g);
             // @todo slightly dirty. A superclass would be nice. Move to mcjtylib perhaps?
@@ -50,7 +50,7 @@ public class ElevatorSounds {
 
 
     public static void stopSound(World worldObj, BlockPos pos) {
-        GlobalCoordinate g = new GlobalCoordinate(pos, worldObj.provider.getDimension());
+        GlobalCoordinate g = new GlobalCoordinate(pos, worldObj.getDimension().getType().getId());
         if (sounds.containsKey(g)) {
             MovingSound movingSound = sounds.get(g);
             Minecraft.getInstance().getSoundHandler().stopSound(movingSound);
@@ -61,7 +61,7 @@ public class ElevatorSounds {
     private static void playSound(World worldObj, BlockPos pos, MovingSound sound) {
         stopSound(worldObj, pos);
         Minecraft.getInstance().getSoundHandler().playSound(sound);
-        GlobalCoordinate g = new GlobalCoordinate(pos, worldObj.provider.getDimension());
+        GlobalCoordinate g = new GlobalCoordinate(pos, worldObj.getDimension().getType().getId());
         sounds.put(g, sound);
     }
 
@@ -82,19 +82,19 @@ public class ElevatorSounds {
     }
 
     public static boolean isStartupPlaying(World worldObj, BlockPos pos) {
-        GlobalCoordinate g = new GlobalCoordinate(pos, worldObj.provider.getDimension());
+        GlobalCoordinate g = new GlobalCoordinate(pos, worldObj.getDimension().getType().getId());
         MovingSound movingSound = sounds.get(g);
         return movingSound instanceof ElevatorStartupSound;
     }
 
     public static boolean isLoopPlaying(World worldObj, BlockPos pos) {
-        GlobalCoordinate g = new GlobalCoordinate(pos, worldObj.provider.getDimension());
+        GlobalCoordinate g = new GlobalCoordinate(pos, worldObj.getDimension().getType().getId());
         MovingSound movingSound = sounds.get(g);
         return movingSound instanceof ElevatorLoopSound;
     }
 
     public static boolean isStopPlaying(World worldObj, BlockPos pos) {
-        GlobalCoordinate g = new GlobalCoordinate(pos, worldObj.provider.getDimension());
+        GlobalCoordinate g = new GlobalCoordinate(pos, worldObj.getDimension().getType().getId());
         MovingSound movingSound = sounds.get(g);
         return movingSound instanceof ElevatorStopSound;
     }

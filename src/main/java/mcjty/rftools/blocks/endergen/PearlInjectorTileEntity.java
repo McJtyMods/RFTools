@@ -76,7 +76,7 @@ public class PearlInjectorTileEntity extends GenericTileEntity implements ITicka
 
     @Override
     public int getDimension() {
-        return world.provider.getDimension();
+        return world.getDimension().getType().getId();
     }
 
     private boolean takePearl() {

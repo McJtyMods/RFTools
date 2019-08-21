@@ -67,7 +67,7 @@ public class ForgeEventHandlers {
 
     @SubscribeEvent
     public void onWorldTick(TickEvent.WorldTickEvent event) {
-        if (event.phase == TickEvent.Phase.START && event.world.provider.getDimension() == 0) {
+        if (event.phase == TickEvent.Phase.START && event.world.getDimension().getType().getId() == 0) {
             performDelayedTeleports();
             ShapeDataManagerServer.handleWork();
         }
@@ -207,7 +207,7 @@ public class ForgeEventHandlers {
     @SubscribeEvent
     public void onEntityTeleport(EnderTeleportEvent event) {
         World world = event.getEntity().getEntityWorld();
-        int id = world.provider.getDimension();
+        int id = world.getDimension().getType().getId();
 
         Entity entity = event.getEntity();
         BlockPos coordinate = new BlockPos((int) entity.posX, (int) entity.posY, (int) entity.posZ);
@@ -225,7 +225,7 @@ public class ForgeEventHandlers {
     @SubscribeEvent
     public void onEntitySpawnEvent(LivingSpawnEvent.CheckSpawn event) {
         World world = event.getWorld();
-        int id = world.provider.getDimension();
+        int id = world.getDimension().getType().getId();
 
         Entity entity = event.getEntity();
         if (entity instanceof IMob) {
@@ -251,7 +251,7 @@ public class ForgeEventHandlers {
     @SubscribeEvent
     public void onPostWorldTick(TickEvent.WorldTickEvent event) {
         if (!event.world.isRemote) {
-            TickOrderHandler.postWorldTick(event.world.provider.getDimension());
+            TickOrderHandler.postWorldTick(event.world.getDimension().getType().getId());
         }
     }
 }

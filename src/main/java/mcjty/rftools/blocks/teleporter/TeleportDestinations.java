@@ -6,14 +6,16 @@ import mcjty.lib.varia.Logging;
 import mcjty.lib.worlddata.AbstractWorldData;
 import mcjty.rftools.playerprops.FavoriteDestinationsProperties;
 import mcjty.rftools.playerprops.PlayerExtendedProperties;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.servernet.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.util.*;
 
@@ -30,13 +32,13 @@ public class TeleportDestinations extends AbstractWorldData<TeleportDestinations
         super(name);
     }
 
-    @Override
-    public void clear() {
-        destinationById.clear();
-        destinationIdByCoordinate.clear();
-        destinations.clear();
-        lastId = 0;
-    }
+//    @Override
+//    public void clear() {
+//        destinationById.clear();
+//        destinationIdByCoordinate.clear();
+//        destinations.clear();
+//        lastId = 0;
+//    }
 
     public static String getDestinationName(TeleportDestinations destinations, int receiverId) {
         GlobalCoordinate coordinate = destinations.getCoordinateForId(receiverId);
@@ -93,7 +95,8 @@ public class TeleportDestinations extends AbstractWorldData<TeleportDestinations
     public Collection<TeleportDestinationClientInfo> getValidDestinations(World worldObj, String playerName) {
         FavoriteDestinationsProperties properties = null;
         if (playerName != null) {
-            List<ServerPlayerEntity> list = ((ServerWorld) worldObj).getMinecraftServer().getPlayerList().getPlayers();
+            MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+            List<ServerPlayerEntity> list = server.getPlayerList().getPlayers();
             for (ServerPlayerEntity ServerPlayerEntity : list) {
                 if (playerName.equals(ServerPlayerEntity.getName())) {
                     properties = PlayerExtendedProperties.getFavoriteDestinations(ServerPlayerEntity);

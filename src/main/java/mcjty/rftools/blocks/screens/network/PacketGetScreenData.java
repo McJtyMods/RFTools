@@ -53,7 +53,7 @@ public class PacketGetScreenData implements IMessage {
         Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
             World world = ctx.getSender().getEntityWorld();
-            if (pos.getDimension() != world.provider.getDimension()) {
+            if (pos.getDimension() != world.getDimension().getType().getId()) {
                 return;
             }
             TileEntity te = world.getTileEntity(pos.getCoordinate());

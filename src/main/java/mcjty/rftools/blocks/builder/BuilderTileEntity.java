@@ -767,7 +767,7 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
             int z = scan.getZ();
             double sqradius = 30 * 30;
             for (ServerPlayerEntity player : getWorld().getMinecraftServer().getPlayerList().getPlayers()) {
-                if (player.dimension == getWorld().provider.getDimension()) {
+                if (player.dimension == getWorld().getDimension().getType().getId()) {
                     double d0 = x - player.posX;
                     double d1 = y - player.posY;
                     double d2 = z - player.posZ;
@@ -1729,7 +1729,7 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
     }
 
     private double getDimensionCostFactor(World world, World destWorld) {
-        return destWorld.provider.getDimension() == world.provider.getDimension() ? 1.0 : BuilderConfiguration.dimensionCostFactor.get();
+        return destWorld.getDimension().getType().getId() == world.getDimension().getType().getId() ? 1.0 : BuilderConfiguration.dimensionCostFactor.get();
     }
 
     private boolean consumeEntityEnergy(int rfNeeded, int rfNeededPlayer, Entity entity) {
@@ -1803,7 +1803,7 @@ public class BuilderTileEntity extends GenericTileEntity implements ITickableTil
     }
 
     private void teleportEntity(World world, World destWorld, Entity entity, double newX, double newY, double newZ) {
-        if (!TeleportationTools.allowTeleport(entity, world.provider.getDimension(), entity.getPosition(), destWorld.provider.getDimension(), new BlockPos(newX, newY, newZ))) {
+        if (!TeleportationTools.allowTeleport(entity, world.getDimension().getType().getId(), entity.getPosition(), destWorld.getDimension().getType().getId(), new BlockPos(newX, newY, newZ))) {
             return;
         }
         mcjty.lib.varia.TeleportationTools.teleportEntity(entity, destWorld, newX, newY, newZ, null);

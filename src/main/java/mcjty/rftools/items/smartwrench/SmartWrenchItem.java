@@ -129,7 +129,7 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
             if (mode == SmartWrenchMode.MODE_SELECT) {
                 GlobalCoordinate b = getCurrentBlock(stack);
                 if (b != null) {
-                    if (b.getDimension() != world.provider.getDimension()) {
+                    if (b.getDimension() != world.getDimension().getType().getId()) {
                         Logging.message(player, TextFormatting.RED + "The selected block is in another dimension!");
                         return ActionResultType.FAIL;
                     }
@@ -151,7 +151,7 @@ public class SmartWrenchItem extends Item implements IToolHammer, SmartWrench {
 //
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<ITextComponent> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         GlobalCoordinate b = getCurrentBlock(itemStack);
         if (b != null) {

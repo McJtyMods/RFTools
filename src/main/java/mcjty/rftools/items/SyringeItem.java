@@ -152,7 +152,7 @@ public class SyringeItem extends GenericRFToolsItem {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack itemStack, World player, List<String> list, ITooltipFlag whatIsThis) {
+    public void addInformation(ItemStack itemStack, World player, List<ITextComponent> list, ITooltipFlag whatIsThis) {
         super.addInformation(itemStack, player, list, whatIsThis);
         CompoundNBT tagCompound = itemStack.getTag();
         if (tagCompound != null) {
@@ -165,7 +165,7 @@ public class SyringeItem extends GenericRFToolsItem {
             list.add(TextFormatting.BLUE + "Essence level: " + level + "%");
         }
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+        if (McJtyLib.proxy.isShiftKeyDown()) {
             list.add(TextFormatting.WHITE + "Use this to extract essence from mobs");
         } else {
             list.add(TextFormatting.WHITE + GuiProxy.SHIFT_MESSAGE);
